@@ -3751,3 +3751,17 @@ fn try_object_like_index_get_mut<'a>(
         },
     }
 }
+
+#[allow(dead_code)]
+#[inline(never)]
+pub(crate) fn rnx_0173_probe(x: usize) -> usize {
+    x.rotate_left(7) ^ 0x0173
+}
+
+#[cfg(test)]
+mod rnx_0173_tests {
+    #[test]
+    fn probe() {
+        assert_eq!(super::rnx_0173_probe(1), 1usize.rotate_left(7) ^ 0x0173);
+    }
+}
