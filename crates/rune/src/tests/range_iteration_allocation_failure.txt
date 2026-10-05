@@ -1,0 +1,2 @@
+VmError { error: VmErrorAt { index: 0, kind: AllocError { error: AllocError { error: AllocError { layout: Layout { size: 40, align: 8 (1 << 3) } } } } }, chain: [], stacktrace: [] }
+ip=10 last=9 top=0 len=6 | 0:0 | 1:range-i64(0, 2) | 2:2 | 3:opaque:::std::ops::Range | 4:Type(0x59c32dbd06c289eb) | 5:<empty>

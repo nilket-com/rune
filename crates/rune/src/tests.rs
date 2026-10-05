@@ -603,3 +603,6 @@ mod vm_try;
 mod wildcard_imports;
 #[cfg(not(miri))]
 mod workspace;
+
+#[cfg(all(feature = "std", not(miri)))]
+mod range_iteration_boundaries;

@@ -353,3 +353,9 @@ double_ended_range_iter!(Range, RangeIter<T>, {
         Ok(result)
     }
 });
+
+// Test-only inspection for budget/error boundary goldens. No iterator mutation.
+#[cfg(test)]
+pub(crate) fn test_i64_iter_bounds(iter: &RangeIter<i64>) -> (i64, i64) {
+    (iter.iter.start, iter.iter.end)
+}
