@@ -1273,6 +1273,11 @@ fn fields_to_arguments(fields: &Fields) -> alloc::Result<Box<[meta::DocArgument]
 #[cfg(test)]
 static_assertions::assert_impl_all!(Context: Send, Sync);
 
+#[allow(dead_code)]
+fn rnx_0173_unused(x: u64) -> u64 {
+    x.wrapping_mul(0x9E37_79B9_7F4A_7C15) ^ 0x0173
+}
+
 /// A deterministic, exhaustive description of everything a context has
 /// registered, pinned against a golden recorded on the unchanged code, so that
 /// a change to how items are installed can be shown to register the same
