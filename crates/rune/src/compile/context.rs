@@ -982,22 +982,6 @@ impl Context {
         Ok(())
     }
 
-    fn install_reexport(&mut self, r: &ModuleReexport) -> Result<(), ContextError> {
-        self.install_meta(ContextMeta {
-            hash: r.hash,
-            item: Some(r.item.try_clone()?),
-            kind: meta::Kind::Alias(meta::Alias {
-                to: r.to.try_clone()?,
-            }),
-            #[cfg(feature = "doc")]
-            deprecated: None,
-            #[cfg(feature = "doc")]
-            docs: Docs::EMPTY,
-        })?;
-
-        Ok(())
-    }
-
     /// Install a constant constructor.
     fn install_construct(
         &mut self,
@@ -1013,6 +997,22 @@ impl Context {
                 hash,
             });
         }
+
+        Ok(())
+    }
+
+    fn install_reexport(&mut self, r: &ModuleReexport) -> Result<(), ContextError> {
+        self.install_meta(ContextMeta {
+            hash: r.hash,
+            item: Some(r.item.try_clone()?),
+            kind: meta::Kind::Alias(meta::Alias {
+                to: r.to.try_clone()?,
+            }),
+            #[cfg(feature = "doc")]
+            deprecated: None,
+            #[cfg(feature = "doc")]
+            docs: Docs::EMPTY,
+        })?;
 
         Ok(())
     }
