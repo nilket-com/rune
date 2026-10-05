@@ -94,21 +94,28 @@ fn every_one_permit_boundary_matches_base() {
 
 #[test]
 fn every_budget_prefix_and_resume_matches_base_steps() {
-    let golden = trace_with_memoization(true);
-    let lines: Vec<_> = golden.lines().collect();
-    for permits in 0..lines.len() - 1 {
-        let mut vm = machine(SOURCE);
-        drop(vm.execute(["main"], ()).unwrap());
-        assert!(matches!(
-            budget::with(permits, || vm.run(None)).call().unwrap(),
-            VmHalt::Limited
-        ));
-        if permits > 0 {
-            assert!(lines[permits - 1].ends_with(&snapshot(&vm)));
+    for (memoize, golden) in [
+        (true, include_str!("range_iteration_boundaries.txt")),
+        (
+            false,
+            include_str!("range_iteration_associated_boundaries.txt"),
+        ),
+    ] {
+        let lines: Vec<_> = golden.lines().collect();
+        for permits in 0..lines.len() - 1 {
+            let mut vm = machine_with_memoization(SOURCE, memoize);
+            drop(vm.execute(["main"], ()).unwrap());
+            assert!(matches!(
+                budget::with(permits, || vm.run(None)).call().unwrap(),
+                VmHalt::Limited
+            ));
+            if permits > 0 {
+                assert!(lines[permits - 1].ends_with(&snapshot(&vm)));
+            }
+            let halt = budget::with(1, || vm.run(None)).call().unwrap();
+            assert!(matches!(halt, VmHalt::Limited));
+            assert!(lines[permits].ends_with(&snapshot(&vm)));
         }
-        let halt = budget::with(1, || vm.run(None)).call().unwrap();
-        assert!(matches!(halt, VmHalt::Limited));
-        assert!(lines[permits].ends_with(&snapshot(&vm)));
     }
 }
 
@@ -282,6 +289,10 @@ fn stable_error(error: &crate::runtime::VmError) -> String {
 }
 
 fn raw_machine(kinds: &[crate::runtime::inst::Kind]) -> Vm {
+    raw_machine_with_args(kinds, 1)
+}
+
+fn raw_machine_with_args(kinds: &[crate::runtime::inst::Kind], arguments: usize) -> Vm {
     use crate::runtime::unit::{DefaultStorage, UnitEncoder, UnitFn};
     use crate::runtime::{Call, Inst, Unit};
     let mut storage = DefaultStorage::default();
@@ -295,7 +306,7 @@ fn raw_machine(kinds: &[crate::runtime::inst::Kind]) -> Vm {
             UnitFn::Offset {
                 offset: 0,
                 call: Call::Immediate,
-                args: 1,
+                args: arguments,
                 captures: None,
             },
         )
@@ -454,3 +465,6 @@ fn unusual_next_units_preserve_errors_and_raw_slots() {
     }
     check_golden(&actual, include_str!("range_iteration_unusual_units.txt"));
 }
+
+#[path = "range_iteration_observers.rs"]
+mod observers;

@@ -1,0 +1,13 @@
+CASE resource-old-output budget=1
+Limited remaining-budget=0 drops=0 ip=1 last=0 top=0 len=3 | 0:range-i64(0, 3) | 1:opaque:ResourceProbe | 2:<empty>
+Limited remaining-budget=0 drops=1 ip=2 last=1 top=0 len=3 | 0:<empty> | 1:Some(0) | 2:<empty>
+Limited remaining-budget=0 drops=1 ip=3 last=2 top=0 len=3 | 0:<empty> | 1:0 | 2:<empty>
+Exited(Some(0)) remaining-budget=0 drops=1 ip=4 last=3 top=0 len=1 | 0:()
+CASE resource-old-output budget=2
+Limited remaining-budget=0 drops=1 ip=2 last=1 top=0 len=3 | 0:<empty> | 1:Some(0) | 2:<empty>
+Exited(Some(0)) remaining-budget=0 drops=1 ip=4 last=3 top=0 len=1 | 0:()
+CASE resource-old-output budget=3
+Limited remaining-budget=0 drops=1 ip=3 last=2 top=0 len=3 | 0:<empty> | 1:0 | 2:<empty>
+Exited(Some(0)) remaining-budget=2 drops=1 ip=4 last=3 top=0 len=1 | 0:()
+CASE resource-old-output budget=10
+Exited(Some(0)) remaining-budget=6 drops=1 ip=4 last=3 top=0 len=1 | 0:()
