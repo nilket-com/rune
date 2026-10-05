@@ -883,3 +883,213 @@ impl From<Vec<Value>> for Stack {
         Self { stack, top: 0 }
     }
 }
+
+/// Order and drop behaviour of [`Stack::store_with`], pinned before the store
+/// path is changed: conversion happens before the slot is touched, a failed
+/// conversion or a bad address leaves the slot as it was, and the value which
+/// is written over is dropped after the new one has been produced.
+#[cfg(test)]
+mod store_with_tests {
+    use core::cell::RefCell;
+
+    use rust_alloc::string::{String, ToString};
+    use rust_alloc::vec::Vec;
+
+    use super::{Stack, Worklist};
+    use crate::runtime::{Address, Output, RuntimeError, Value};
+    use crate::Any;
+
+    std::thread_local! {
+        static LOG: RefCell<Vec<String>> = const { RefCell::new(Vec::new()) };
+    }
+
+    fn log(event: impl ToString) {
+        LOG.with(|l| l.borrow_mut().push(event.to_string()));
+    }
+
+    fn take_log() -> Vec<String> {
+        LOG.with(|l| core::mem::take(&mut *l.borrow_mut()))
+    }
+
+    /// A native value which records when it is dropped.
+    #[derive(Any)]
+    #[rune(crate)]
+    struct DropSpy {
+        id: i64,
+    }
+
+    impl Drop for DropSpy {
+        fn drop(&mut self) {
+            log(format_args!("drop {}", self.id));
+        }
+    }
+
+    fn spy(id: i64) -> Value {
+        Value::new(DropSpy { id }).unwrap()
+    }
+
+    fn stack_of(values: impl IntoIterator<Item = Value>) -> Stack {
+        let mut stack = Stack::new();
+
+        for value in values {
+            stack.push(value).unwrap();
+        }
+
+        stack
+    }
+
+    /// Store `new` into `slot`, recording the conversion as an event.
+    fn store(stack: &mut Stack, slot: usize, new: Value) -> bool {
+        let mut work = Worklist::new();
+
+        stack
+            .store_with(
+                Output::keep(slot),
+                || {
+                    log("convert");
+                    Ok::<Value, RuntimeError>(new)
+                },
+                &mut work,
+            )
+            .is_ok()
+    }
+
+    fn id_at(stack: &Stack, slot: usize) -> i64 {
+        stack
+            .at(Address::new(slot))
+            .borrow_ref::<DropSpy>()
+            .map(|s| s.id)
+            .unwrap_or(-1)
+    }
+
+    #[test]
+    fn non_inline_over_non_inline() {
+        let mut stack = stack_of([spy(1)]);
+        let _ = take_log();
+        assert!(store(&mut stack, 0, spy(2)));
+        assert_eq!(take_log(), ["convert", "drop 1"]);
+        assert_eq!(id_at(&stack, 0), 2);
+        drop(stack);
+        assert_eq!(take_log(), ["drop 2"]);
+    }
+
+    #[test]
+    fn inline_over_non_inline() {
+        let mut stack = stack_of([spy(1)]);
+        let _ = take_log();
+        assert!(store(&mut stack, 0, Value::from(7i64)));
+        assert_eq!(take_log(), ["convert", "drop 1"]);
+        assert_eq!(stack.at(Address::new(0)).as_integer::<i64>().unwrap(), 7);
+    }
+
+    #[test]
+    fn non_inline_over_inline() {
+        let mut stack = stack_of([Value::from(7i64)]);
+        assert!(store(&mut stack, 0, spy(3)));
+        assert_eq!(take_log(), ["convert"]);
+        assert_eq!(id_at(&stack, 0), 3);
+        drop(stack);
+        assert_eq!(take_log(), ["drop 3"]);
+    }
+
+    #[test]
+    fn inline_over_inline() {
+        let mut stack = stack_of([Value::from(7i64), Value::from(true)]);
+        assert!(store(&mut stack, 0, Value::from(8i64)));
+        assert!(store(&mut stack, 1, Value::from(1.5f64)));
+        assert_eq!(take_log(), ["convert", "convert"]);
+        assert_eq!(stack.at(Address::new(0)).as_integer::<i64>().unwrap(), 8);
+        assert!(matches!(stack.at(Address::new(1)).as_inline(), Some(crate::runtime::Inline::Float(f)) if *f == 1.5));
+    }
+
+    #[test]
+    fn failed_conversion_leaves_the_slot() {
+        let mut stack = stack_of([spy(1)]);
+        let _ = take_log();
+        let mut work = Worklist::new();
+        let result = stack.store_with(
+            Output::keep(0),
+            || {
+                log("convert");
+                Err::<Value, RuntimeError>(RuntimeError::panic("no"))
+            },
+            &mut work,
+        );
+        assert!(result.is_err());
+        assert_eq!(take_log(), ["convert"]);
+        assert_eq!(id_at(&stack, 0), 1);
+    }
+
+    #[test]
+    fn bad_address_drops_the_new_value_and_leaves_the_stack() {
+        let mut stack = stack_of([spy(1)]);
+        let _ = take_log();
+        assert!(!store(&mut stack, 5, spy(2)));
+        assert_eq!(take_log(), ["convert", "drop 2"]);
+        assert_eq!(id_at(&stack, 0), 1);
+    }
+
+    #[test]
+    fn discard_converts_nothing() {
+        let mut stack = stack_of([spy(1)]);
+        let _ = take_log();
+        let mut work = Worklist::new();
+        let stored = stack
+            .store_with(
+                Output::discard(),
+                || {
+                    log("convert");
+                    Ok::<Value, RuntimeError>(spy(2))
+                },
+                &mut work,
+            )
+            .is_ok();
+        assert!(stored);
+        assert_eq!(take_log(), Vec::<String>::new());
+        assert_eq!(id_at(&stack, 0), 1);
+    }
+
+    #[test]
+    fn aliased_old_value_is_not_dropped_while_shared() {
+        let mut vec = crate::runtime::Vec::new();
+        vec.push(spy(1)).unwrap();
+        let shared = Value::try_from(vec).unwrap();
+        let mut stack = stack_of([shared.clone(), shared]);
+        let _ = take_log();
+        assert!(store(&mut stack, 0, Value::from(0i64)));
+        assert_eq!(take_log(), ["convert"]);
+        assert!(store(&mut stack, 1, Value::from(0i64)));
+        assert_eq!(take_log(), ["convert", "drop 1"]);
+    }
+
+    #[test]
+    fn deep_old_value_is_taken_apart_without_recursing() {
+        const DEPTH: usize = if cfg!(miri) { 128 } else { 100_000 };
+
+        let mut value = spy(9);
+
+        for _ in 0..DEPTH {
+            let mut vec = crate::runtime::Vec::new();
+            vec.push(value).unwrap();
+            value = Value::try_from(vec).unwrap();
+        }
+
+        let mut stack = stack_of([value]);
+        let _ = take_log();
+        assert!(store(&mut stack, 0, Value::from(1i64)));
+        assert_eq!(take_log(), ["convert", "drop 9"]);
+    }
+
+    #[test]
+    fn non_inline_drops_in_store_order() {
+        let mut stack = stack_of([spy(1), spy(2), spy(3)]);
+        let _ = take_log();
+        assert!(store(&mut stack, 2, Value::from(0i64)));
+        assert!(store(&mut stack, 0, Value::from(0i64)));
+        assert!(store(&mut stack, 1, spy(4)));
+        assert_eq!(
+            take_log(),
+            ["convert", "drop 3", "convert", "drop 1", "convert", "drop 2"]
+        );
+    }
+}

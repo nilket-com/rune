@@ -1,0 +1,6 @@
+budget=1 outcome=limited ip=1 last_ip=0 ticks=0 stack=["<empty>", "<empty>", "<empty>", "<empty>", "<empty>", "<empty>"]
+budget=2 outcome=limited ip=2 last_ip=1 ticks=0 stack=["0", "<empty>", "<empty>", "<empty>", "<empty>", "<empty>"]
+budget=3 outcome=limited ip=3 last_ip=2 ticks=0 stack=["0", "vec[]", "<empty>", "<empty>", "<empty>", "<empty>"]
+budget=10 outcome=limited ip=11 last_ip=10 ticks=0 stack=["0", "vec[]", "object[]", "0", "0", "1000000"]
+budget=1000 outcome=limited ip=11 last_ip=10 ticks=66 stack=["66", "vec[\"65\", \"65\"]", "object[\"n=65\"]", "66", "66", "1000000"]
+budget=1000000 outcome=limited ip=11 last_ip=10 ticks=66666 stack=["66666", "vec[\"66665\", \"66665\"]", "object[\"n=66665\"]", "66666", "66666", "1000000"]

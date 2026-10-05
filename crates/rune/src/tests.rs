@@ -438,6 +438,8 @@ mod bug_326;
 #[cfg(not(miri))]
 mod bug_344;
 #[cfg(not(miri))]
+mod store_halt_state;
+#[cfg(not(miri))]
 mod bug_417;
 #[cfg(not(miri))]
 mod bug_422;
