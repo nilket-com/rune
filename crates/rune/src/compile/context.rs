@@ -1272,3 +1272,166 @@ fn fields_to_arguments(fields: &Fields) -> alloc::Result<Box<[meta::DocArgument]
 
 #[cfg(test)]
 static_assertions::assert_impl_all!(Context: Send, Sync);
+
+/// A deterministic, exhaustive description of everything a context has
+/// registered, pinned against a golden recorded on the unchanged code, so that
+/// a change to how items are installed can be shown to register the same
+/// structure. Function, macro and trait handlers are closures and are
+/// described by the hash they are registered under.
+#[cfg(test)]
+mod inventory_tests {
+    use std::collections::BTreeMap;
+    use std::format;
+    use std::string::String;
+    use std::vec::Vec;
+
+    use super::{ConstValueBuf, Context};
+    use crate::alloc::clone::TryClone;
+    use crate::compile::ContextError;
+    use crate::{Any, Module};
+
+    /// Every category, sorted, with its entry count first.
+    fn inventory(cx: &Context) -> BTreeMap<&'static str, Vec<String>> {
+        fn sorted<I: IntoIterator<Item = String>>(items: I) -> Vec<String> {
+            let mut v: Vec<String> = items.into_iter().collect();
+            v.sort();
+            v
+        }
+
+        let mut out = BTreeMap::new();
+        out.insert("unique", sorted(cx.unique.iter().map(|s| format!("{s}"))));
+        out.insert("has_default_modules", std::vec![format!("{}", cx.has_default_modules)]);
+        out.insert("meta", cx.meta.iter().map(|m| format!("{m:?}")).collect());
+        out.insert("hash_to_meta", sorted(cx.hash_to_meta.iter().map(|(h, v)| format!("{h:?} {v:?}"))));
+        out.insert("item_to_hash", sorted(cx.item_to_hash.iter().map(|(i, h)| format!("{i:?} {h:?}"))));
+        out.insert("functions", sorted(cx.functions.keys().map(|h| format!("{h:?}"))));
+        out.insert("deprecations", sorted(cx.deprecations.iter().map(|(h, d)| format!("{h:?} {d:?}"))));
+        #[cfg(feature = "doc")]
+        out.insert("associated", sorted(cx.associated.iter().map(|(h, v)| format!("{h:?} {v:?}"))));
+        #[cfg(feature = "doc")]
+        out.insert("implemented_traits", sorted(cx.implemented_traits.iter().map(|(h, v)| format!("{h:?} {v:?}"))));
+        out.insert("macros", sorted(cx.macros.keys().map(|h| format!("{h:?}"))));
+        out.insert("traits", sorted(cx.traits.iter().map(|(h, t)| format!("{h:?} handler={}", t.is_some()))));
+        out.insert("attribute_macros", sorted(cx.attribute_macros.keys().map(|h| format!("{h:?}"))));
+        // A type's `TypeInfo` holds a function pointer for its name, so it is
+        // described by what that pointer produces rather than by its address.
+        out.insert(
+            "types",
+            sorted(cx.types.iter().map(|(h, t)| {
+                format!(
+                    "{h:?} item={} hash={:?} type_info={} type_parameters={:?}",
+                    t.item, t.hash, t.type_info, t.type_parameters
+                )
+            })),
+        );
+        out.insert("names", std::vec![format!("{:?}", cx.names)]);
+        out.insert("crates", sorted(cx.crates.iter().map(|c| format!("{c}"))));
+        out.insert("constants", sorted(cx.constants.iter().map(|(h, c)| format!("{h:?} {c:?}"))));
+        out.insert("construct", sorted(cx.construct.keys().map(|h| format!("{h:?}"))));
+        out
+    }
+
+    fn render(inv: &BTreeMap<&'static str, Vec<String>>) -> String {
+        let mut s = String::new();
+
+        for (category, entries) in inv {
+            s.push_str(&format!("## {category} {}\n", entries.len()));
+
+            for e in entries {
+                // An entry which embeds an address is not deterministic and
+                // cannot be compared with a golden; refuse rather than omit.
+                assert!(
+                    !e.contains(" at 0x") && !e.contains("full_name: 0x"),
+                    "unrepresentable {category} entry: {e}"
+                );
+                s.push_str(e);
+                s.push('\n');
+            }
+        }
+
+        s
+    }
+
+    #[derive(Any)]
+    #[rune(crate)]
+    struct Unregistered;
+
+    /// Installing an associated function for a type that was never registered
+    /// still fails the same way.
+    fn missing_container() -> String {
+        let mut module = Module::new();
+        let result = module
+            .associated_function("unregistered", |_: &Unregistered| ())
+            .map(|_| ());
+
+        let mut cx = Context::new();
+        let error = match result {
+            Ok(()) => cx.install(module).err(),
+            Err(e) => Some(e),
+        };
+
+        match error {
+            Some(e) => format!("{}", e),
+            None => String::from("no error"),
+        }
+    }
+
+    fn snapshot() -> String {
+        let mut s = String::new();
+
+        for stdio in [true, false] {
+            let cx = Context::with_config(stdio).unwrap();
+            s.push_str(&format!("# stdio={stdio}\n"));
+            s.push_str(&render(&inventory(&cx)));
+        }
+
+        s.push_str(&format!("# missing container\n{}\n", missing_container()));
+        s
+    }
+
+    fn golden_path() -> std::path::PathBuf {
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src/compile/context_inventory.golden")
+    }
+
+    #[test]
+    fn registered_inventory_matches_the_golden() {
+        let state = snapshot();
+
+        if std::env::var_os("RUNE_UPDATE_INVENTORY_GOLDEN").is_some() {
+            std::fs::write(golden_path(), &state).unwrap();
+            return;
+        }
+
+        let golden = std::fs::read_to_string(golden_path()).unwrap();
+        assert!(state == golden, "inventory differs from the golden");
+    }
+
+    /// The comparison refuses a removed function, a changed constant and a
+    /// removed metadata entry.
+    #[test]
+    fn inventory_comparison_detects_changes() {
+        let baseline = render(&inventory(&Context::with_config(true).unwrap()));
+
+        let mut cx = Context::with_config(true).unwrap();
+        let some = *cx.functions.keys().next().unwrap();
+        cx.functions.remove(&some);
+        assert_ne!(render(&inventory(&cx)), baseline, "removed function not detected");
+
+        let mut cx = Context::with_config(true).unwrap();
+        let key = *cx.constants.keys().next().unwrap();
+        let value = ConstValueBuf::try_from(crate::alloc::String::try_from("changed").unwrap()).unwrap();
+        cx.constants.try_insert(key, value).unwrap();
+        assert_ne!(render(&inventory(&cx)), baseline, "changed constant not detected");
+
+        let mut cx = Context::with_config(true).unwrap();
+        cx.meta.pop();
+        assert_ne!(render(&inventory(&cx)), baseline, "removed metadata not detected");
+
+        let mut cx = Context::with_config(true).unwrap();
+        let item = cx.item_to_hash.keys().next().unwrap().try_clone().unwrap();
+        cx.item_to_hash.remove(&item);
+        assert_ne!(render(&inventory(&cx)), baseline, "removed name entry not detected");
+
+        let _: Option<ContextError> = None;
+    }
+}
