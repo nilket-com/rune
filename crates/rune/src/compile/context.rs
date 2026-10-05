@@ -711,7 +711,7 @@ impl Context {
 
     /// Install a single type.
     fn install_type(&mut self, ty: &ModuleType) -> Result<(), ContextError> {
-        self.install_type_info(ContextType {
+        self.register_type_info(ContextType {
             item: ty.item.try_to_owned()?,
             hash: ty.hash,
             type_info: ty.type_info.try_clone()?,
@@ -786,7 +786,7 @@ impl Context {
                         let item = ty.item.extended(variant.name)?;
                         let hash = Hash::type_hash(&item);
 
-                        self.install_type_info(ContextType {
+                        self.register_type_info(ContextType {
                             item: item.try_clone()?,
                             hash,
                             type_info: TypeInfo::rtti(Arc::try_new(Rtti {
@@ -1017,7 +1017,7 @@ impl Context {
         Ok(())
     }
 
-    fn install_type_info(&mut self, ty: ContextType) -> Result<(), ContextError> {
+    fn register_type_info(&mut self, ty: ContextType) -> Result<(), ContextError> {
         let item_hash = Hash::type_hash(&ty.item).with_type_parameters(ty.type_parameters);
 
         if ty.hash != item_hash {
