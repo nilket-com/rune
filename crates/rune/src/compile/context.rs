@@ -1102,11 +1102,16 @@ impl Context {
     }
 
     fn install_associated(&mut self, assoc: &ModuleAssociated) -> Result<(), ContextError> {
-        let Some(info) = self.types.get(&assoc.container).try_cloned()? else {
+        // The container is only read to name the item and to take its type
+        // parameters, so it is borrowed for that rather than cloned, and the
+        // borrow ends before the context is written to below.
+        let Some(info) = self.types.get(&assoc.container) else {
             return Err(ContextError::MissingContainer {
                 container: assoc.container_type_info.try_clone()?,
             });
         };
+
+        let type_parameters = info.type_parameters;
 
         let hash = assoc
             .name
@@ -1124,7 +1129,7 @@ impl Context {
             let item = info.item.extended(name.as_ref())?;
 
             let hash = Hash::type_hash(&item)
-                .with_type_parameters(info.type_parameters)
+                .with_type_parameters(type_parameters)
                 .with_function_parameters(assoc.name.function_parameters);
 
             Some((hash, item))
@@ -1172,7 +1177,7 @@ impl Context {
                     is_test: false,
                     is_bench: false,
                     parameters: Hash::EMPTY
-                        .with_type_parameters(info.type_parameters)
+                        .with_type_parameters(type_parameters)
                         .with_function_parameters(assoc.name.function_parameters),
                     #[cfg(feature = "doc")]
                     container: Some(assoc.container),
