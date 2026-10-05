@@ -29,3 +29,13 @@ pub(super) fn rune_memory_get() -> usize {
 pub(super) fn rune_memory_replace(value: usize) -> usize {
     MEMORY.with(|tls| tls.replace(value))
 }
+
+std::thread_local!(static EXPLICIT_SCOPE: Cell<bool> = const { Cell::new(false) });
+
+pub(super) fn explicit_scope_active() -> bool {
+    EXPLICIT_SCOPE.with(Cell::get)
+}
+
+pub(super) fn replace_explicit_scope(active: bool) -> bool {
+    EXPLICIT_SCOPE.with(|tls| tls.replace(active))
+}

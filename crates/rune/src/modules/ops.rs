@@ -25,10 +25,10 @@ static STATE: OnceCell<RandomState> = OnceCell::new();
 pub fn module() -> Result<Module, ContextError> {
     let mut m = Module::from_meta(self::module__meta)?;
 
-    macro_rules! iter {
-        ($ty:ident) => {
+    macro_rules! iter_impl {
+        ($ty:ident, $next:path) => {
             m.ty::<$ty<i64>>()?;
-            m.function_meta($ty::<i64>::next__meta)?;
+            m.function_meta($next)?;
             m.function_meta($ty::<i64>::size_hint__meta)?;
             m.implement_trait::<$ty<i64>>(rune::item!(::std::iter::Iterator))?;
 
@@ -41,6 +41,15 @@ pub fn module() -> Result<Module, ContextError> {
             m.function_meta($ty::<char>::next__meta)?;
             m.function_meta($ty::<char>::size_hint__meta)?;
             m.implement_trait::<$ty<char>>(rune::item!(::std::iter::Iterator))?;
+        };
+    }
+
+    macro_rules! iter {
+        (RangeIter) => {
+            iter_impl!(RangeIter, range_i64_next_meta);
+        };
+        ($ty:ident) => {
+            iter_impl!($ty, $ty::<i64>::next__meta);
         };
     }
 
@@ -345,4 +354,25 @@ fn hash(value: Value) -> Result<u64, VmError> {
     Value::hash_with(&value, &mut hasher, &mut EnvProtocolCaller)?;
 
     Ok(hasher.finish())
+}
+
+fn range_i64_next_meta() -> crate::alloc::Result<crate::function_meta::FunctionMetaData> {
+    #[cfg(all(feature = "std", not(feature = "tracing")))]
+    {
+        use crate::function::InstanceFunction;
+        use crate::function_meta::FunctionMetaKind;
+        use crate::runtime::FunctionHandler;
+
+        let mut meta = RangeIter::<i64>::next__meta()?;
+        if let FunctionMetaKind::AssociatedFunction(data) = &mut meta.kind {
+            data.handler = FunctionHandler::new_tagged::<_, 1>(|stack, addr, args, out| {
+                InstanceFunction::call(&RangeIter::<i64>::next, stack, addr, args, out)
+            })?;
+        }
+        Ok(meta)
+    }
+    #[cfg(any(not(feature = "std"), feature = "tracing"))]
+    {
+        RangeIter::<i64>::next__meta()
+    }
 }

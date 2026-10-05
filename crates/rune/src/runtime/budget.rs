@@ -242,3 +242,9 @@ where
         poll
     }
 }
+
+#[cfg(all(feature = "std", not(feature = "tracing")))]
+#[inline]
+pub(crate) fn remaining() -> usize {
+    self::no_std::rune_budget_get()
+}

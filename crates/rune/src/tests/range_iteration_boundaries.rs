@@ -81,6 +81,7 @@ fn trace_with_memoization(memoize: bool) -> String {
 
 #[test]
 fn every_one_permit_boundary_matches_base() {
+    crate::runtime::range_next_test_reset();
     for (memoize, golden) in [
         (true, include_str!("range_iteration_boundaries.txt")),
         (
@@ -90,6 +91,7 @@ fn every_one_permit_boundary_matches_base() {
     ] {
         assert_eq!(trace_with_memoization(memoize), golden);
     }
+    assert_eq!(crate::runtime::range_next_test_counts().0, 0);
 }
 
 #[test]
@@ -122,7 +124,9 @@ fn every_budget_prefix_and_resume_matches_base_steps() {
 #[test]
 fn nested_memory_limits_restore_on_return_and_unwind() {
     let outside = limit::get();
+    assert!(!limit::__explicit_scope_active());
     limit::with(4096, || {
+        assert!(limit::__explicit_scope_active());
         assert_eq!(limit::get(), 4096);
         limit::with(64, || assert_eq!(limit::get(), 64)).call();
         assert_eq!(limit::get(), 4096);
@@ -134,6 +138,7 @@ fn nested_memory_limits_restore_on_return_and_unwind() {
     })
     .call();
     assert_eq!(limit::get(), outside);
+    assert!(!limit::__explicit_scope_active());
 }
 
 #[test]
@@ -143,6 +148,7 @@ fn memory_future_restores_after_pending_and_ready() {
     let outside = limit::get();
     let mut polls = 0;
     let inner = core::future::poll_fn(|_| {
+        assert!(limit::__explicit_scope_active());
         assert_eq!(limit::get(), 128);
         limit::with(16, || assert_eq!(limit::get(), 16)).call();
         assert_eq!(limit::get(), 128);
@@ -157,8 +163,10 @@ fn memory_future_restores_after_pending_and_ready() {
     let waker = futures_util::task::noop_waker();
     let mut context = TaskContext::from_waker(&waker);
     assert!(future.as_mut().poll(&mut context).is_pending());
+    assert!(!limit::__explicit_scope_active());
     assert_eq!(limit::get(), outside);
     assert!(future.as_mut().poll(&mut context).is_ready());
+    assert!(!limit::__explicit_scope_active());
     assert_eq!(limit::get(), outside);
     drop(future);
     assert_eq!(polls, 2);
@@ -439,6 +447,7 @@ fn unusual_next_units_preserve_errors_and_raw_slots() {
         kinds.push(Kind::ReturnUnit);
         kinds.push(Kind::ReturnUnit);
         for permits in [1, 2, 3, 10] {
+            crate::runtime::range_next_test_reset();
             let mut vm = raw_machine(&kinds);
             let range = Value::new(crate::runtime::range::RangeIter::new(0i64..3)).unwrap();
             let alias = range.clone();
@@ -482,6 +491,12 @@ fn unusual_next_units_preserve_errors_and_raw_slots() {
                     .unwrap(),
             );
             writeln!(actual, "remaining={remaining:?}").unwrap();
+            let hits = crate::runtime::range_next_test_counts().0;
+            assert_eq!(
+                hits,
+                usize::from(!cfg!(feature = "tracing") && name == "ordinary" && permits >= 3),
+                "{name} permits={permits}"
+            );
         }
     }
     check_golden(&actual, include_str!("range_iteration_unusual_units.txt"));
@@ -491,7 +506,32 @@ fn unusual_next_units_preserve_errors_and_raw_slots() {
 mod observers;
 
 #[test]
+fn specialization_is_reached_in_both_dispatch_forms() {
+    for memoize in [true, false] {
+        let mut vm = machine_with_memoization(SOURCE, memoize);
+        crate::runtime::range_next_test_reset();
+        let value = budget::with(1_000_000, || vm.call(["main"], ()))
+            .call()
+            .unwrap();
+        assert_eq!(from_value::<i64>(value).unwrap(), 0);
+        assert_eq!(
+            crate::runtime::range_next_test_counts(),
+            if cfg!(feature = "tracing") {
+                (0, 0)
+            } else {
+                (3, 1)
+            }
+        );
+    }
+    assert_eq!(
+        core::mem::size_of::<crate::runtime::FunctionHandler>(),
+        2 * core::mem::size_of::<usize>()
+    );
+}
+
+#[test]
 fn unit_function_shadows_native_range_callable() {
+    crate::runtime::range_next_test_reset();
     use crate::runtime::inst::Kind;
     use crate::runtime::{Type, TypeHash};
     let hash = Hash::associated_function(
@@ -555,4 +595,5 @@ fn unit_function_shadows_native_range_callable() {
         writeln!(trace, "remaining={bounds:?}").unwrap();
     }
     check_golden(&trace, include_str!("range_iteration_unit_shadow.txt"));
+    assert_eq!(crate::runtime::range_next_test_counts().0, 0);
 }

@@ -252,3 +252,6 @@ pub(crate) fn new_field_hash_map_with_capacity<K, V>(
 ) -> crate::alloc::Result<FieldMap<K, V>> {
     FieldMap::try_with_capacity(cap)
 }
+
+#[cfg(test)]
+pub(crate) use self::vm::{range_next_test_counts, range_next_test_reset};

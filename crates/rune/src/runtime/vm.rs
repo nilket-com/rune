@@ -3077,6 +3077,88 @@ impl Vm {
         }
     }
 
+    /// Fuse only the compiler's adjacent, same-slot NEXT/IterNext shape.
+    /// Every refusal occurs before consuming an argument or advancing the range.
+    #[cfg(all(feature = "std", not(feature = "tracing")))]
+    fn try_range_next(&mut self, addr: Address, args: usize, out: Output) -> Result<bool, VmError> {
+        use crate::runtime::range::RangeIter;
+        use crate::runtime::Memory;
+
+        #[cfg(test)]
+        RANGE_NEXT_COUNTS.with(|c| {
+            let (hits, calls) = c.get();
+            c.set((hits, calls + 1));
+        });
+        if args != 1 || budget::remaining() == 0 || crate::alloc::limit::__explicit_scope_active() {
+            return Ok(false);
+        }
+        let Some(output) = out.as_addr() else {
+            return Ok(false);
+        };
+        if output == addr {
+            return Ok(false);
+        }
+        let Ok(receiver) = self.stack.slice_at(addr, 1) else {
+            return Ok(false);
+        };
+        if receiver[0].type_hash() != RangeIter::<i64>::HASH {
+            return Ok(false);
+        }
+        let Ok(old) = self.stack.slice_at(output, 1) else {
+            return Ok(false);
+        };
+        if !matches!(
+            old[0].as_ref(),
+            Repr::Inline(Inline::Empty | Inline::Signed(_))
+        ) {
+            return Ok(false);
+        }
+        let Ok(Some((next, next_len))) = self.unit.instruction_at(self.ip) else {
+            return Ok(false);
+        };
+        let inst::Kind::IterNext {
+            addr: next_addr,
+            jump: _,
+            out: next_out,
+        } = next.kind
+        else {
+            return Ok(false);
+        };
+        if next_addr != output || next_out.as_addr() != Some(output) {
+            return Ok(false);
+        }
+
+        let value = take(&mut self.stack.slice_at_mut(addr, 1)?[0]);
+        let mut range = value.into_mut::<RangeIter<i64>>().map_err(|error| {
+            VmError::with_error(VmError::from(error), VmErrorKind::BadArgument { arg: 0 })
+        })?;
+        let value = RangeIter::<i64>::next(&mut range);
+        drop(range);
+        match value {
+            Some(value) => {
+                if !budget::take() {
+                    // Preserve the original CALL boundary if a second permit is unavailable.
+                    (&mut self.stack as &mut dyn Memory)
+                        .store(out, crate::to_value(Some(value))?)?;
+                    return Ok(true);
+                }
+                self.ip = self.ip.wrapping_add(next_len);
+                self.last_ip_len = next_len as u8;
+                self.store(out, value)?;
+                #[cfg(test)]
+                RANGE_NEXT_COUNTS.with(|c| {
+                    let (hits, calls) = c.get();
+                    c.set((hits + 1, calls));
+                });
+            }
+            None => {
+                // Terminal None remains visible until the ordinary IterNext executes.
+                (&mut self.stack as &mut dyn Memory).store(out, crate::to_value(None::<i64>)?)?;
+            }
+        }
+        Ok(true)
+    }
+
     #[cfg_attr(feature = "bench", inline(never))]
     fn op_iter_next(&mut self, addr: Address, jump: usize, out: Output) -> Result<(), VmError> {
         let value = self.stack.at(addr);
@@ -3219,6 +3301,20 @@ impl Vm {
                     args,
                     out,
                 } => {
+                    #[cfg(all(feature = "std", not(feature = "tracing")))]
+                    if hash == Protocol::NEXT.hash && args == 1 && diagnostics.is_none() {
+                        let resolved =
+                            Hash::associated_function(self.stack.at(addr).type_hash(), hash);
+                        if self
+                            .context
+                            .function(&resolved)
+                            .is_some_and(|h| h.intrinsic() == 1)
+                            && self.try_range_next(addr, args, out)?
+                        {
+                            // run() installed no diagnostics, so the skipped call hook is a no-op.
+                            continue;
+                        }
+                    }
                     self.op_call_associated(hash, addr, args, out)?;
                 }
                 inst::Kind::CallFn {
@@ -3227,6 +3323,29 @@ impl Vm {
                     args,
                     out,
                 } => {
+                    #[cfg(all(feature = "std", not(feature = "tracing")))]
+                    if args == 1 && diagnostics.is_none() {
+                        let tagged = match self.stack.at(function).as_ref() {
+                            Repr::Inline(Inline::Type(ty)) => {
+                                let hash = ty.into_hash();
+                                // Rejecting prefilter only; the resolved handler tag is authoritative.
+                                hash == range_i64_next_hash()
+                                    && self.unit.function(&hash).is_none()
+                                    && self
+                                        .context
+                                        .function(&hash)
+                                        .is_some_and(|handler| handler.intrinsic() == 1)
+                            }
+                            Repr::Any(value) if value.type_hash() == Function::HASH => {
+                                value.borrow_ref::<Function>()?.native_intrinsic() == 1
+                            }
+                            _ => false,
+                        };
+                        if tagged && self.try_range_next(addr, args, out)? {
+                            // No diagnostic call hook can observe this fused dispatch.
+                            continue;
+                        }
+                    }
                     if let Some(reason) = self.op_call_fn(function, addr, args, out)? {
                         return Ok(reason);
                     }
@@ -3750,4 +3869,31 @@ fn try_object_like_index_get_mut<'a>(
             _ => Ok(None),
         },
     }
+}
+
+#[cfg(test)]
+std::thread_local!(static RANGE_NEXT_COUNTS: core::cell::Cell<(usize, usize)> = const { core::cell::Cell::new((0, 0)) });
+
+#[cfg(test)]
+pub(crate) fn range_next_test_reset() {
+    RANGE_NEXT_COUNTS.with(|c| c.set((0, 0)));
+}
+
+#[cfg(test)]
+pub(crate) fn range_next_test_counts() -> (usize, usize) {
+    RANGE_NEXT_COUNTS.with(|c| {
+        let (hits, calls) = c.get();
+        (hits, calls - hits)
+    })
+}
+
+#[cfg(all(feature = "std", not(feature = "tracing")))]
+#[inline(always)]
+fn range_i64_next_hash() -> Hash {
+    // associated_function is not const in this revision; both inputs are constants,
+    // so release code folds this rejecting prefilter without duplicating the hash formula.
+    Hash::associated_function(
+        crate::runtime::range::RangeIter::<i64>::HASH,
+        Protocol::NEXT.hash,
+    )
 }

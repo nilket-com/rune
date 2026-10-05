@@ -116,6 +116,9 @@ macro_rules! __declare_dyn_fn {
             call: unsafe fn(ptr: *const () $(, $arg: $ty)*) -> $ret,
             drop: unsafe fn(ptr: *const ()),
             clone: unsafe fn(ptr: *const ()) -> *const (),
+            // Macro handlers use the same representation but never dispatch VM intrinsics.
+            #[allow(dead_code)]
+            intrinsic: u8,
         }
 
         $(#[doc = $doc])*
@@ -127,6 +130,20 @@ macro_rules! __declare_dyn_fn {
         impl $name {
             #[inline]
             pub(crate) fn new<F>(f: F) -> $crate::alloc::Result<Self>
+            where
+                F: Fn($($ty),*) -> $ret + Send + Sync + 'static,
+            {
+                Self::new_tagged::<F, 0>(f)
+            }
+
+            #[inline]
+            #[allow(dead_code)] // Only runtime FunctionHandler queries this shared field.
+            pub(crate) fn intrinsic(&self) -> u8 {
+                self.vtable.intrinsic
+            }
+
+            #[inline]
+            pub(crate) fn new_tagged<F, const TAG: u8>(f: F) -> $crate::alloc::Result<Self>
             where
                 F: Fn($($ty),*) -> $ret + Send + Sync + 'static,
             {
@@ -172,6 +189,7 @@ macro_rules! __declare_dyn_fn {
                     call: call_impl::<F>,
                     drop: drop_impl::<F>,
                     clone: clone_impl::<F>,
+                    intrinsic: TAG,
                 };
 
                 Ok(Self { ptr, vtable })

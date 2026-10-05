@@ -30,6 +30,7 @@ fn observer_golden(actual: &str, expected: &str) {
 
 #[test]
 fn owning_old_output_preserves_drop_and_slot_boundaries() {
+    crate::runtime::range_next_test_reset();
     use crate::runtime::inst::Kind;
     let kinds = [
         Kind::Allocate { size: 3 },
@@ -80,6 +81,7 @@ fn owning_old_output_preserves_drop_and_slot_boundaries() {
         );
     }
     observer_golden(&trace, include_str!("range_iteration_resource_output.txt"));
+    assert_eq!(crate::runtime::range_next_test_counts().0, 0);
 }
 
 fn execution_trace(permits: usize, observed: bool) -> String {
@@ -118,16 +120,19 @@ fn execution_trace_on(mut vm: Vm, permits: usize, observed: bool) -> String {
 
 #[test]
 fn diagnostics_preserve_every_observed_boundary() {
+    crate::runtime::range_next_test_reset();
     let mut trace = String::new();
     for permits in [1, 2, 1000] {
         writeln!(trace, "CASE diagnostics budget={permits}").unwrap();
         trace.push_str(&execution_trace(permits, true));
     }
     observer_golden(&trace, include_str!("range_iteration_diagnostics.txt"));
+    assert_eq!(crate::runtime::range_next_test_counts().0, 0);
 }
 
 #[test]
 fn whole_execution_inside_explicit_memory_scopes() {
+    crate::runtime::range_next_test_reset();
     let mut trace = String::new();
     for memory in [usize::MAX, 1 << 20] {
         for permits in [1, 2, 1000] {
@@ -148,6 +153,7 @@ fn whole_execution_inside_explicit_memory_scopes() {
         writeln!(trace, "ASYNC limit={memory} result={result}").unwrap();
     }
     observer_golden(&trace, include_str!("range_iteration_explicit_scopes.txt"));
+    assert_eq!(crate::runtime::range_next_test_counts().0, 0);
 }
 
 #[derive(Any)]
@@ -191,6 +197,7 @@ fn custom_machine() -> Vm {
 
 #[test]
 fn other_receiver_and_user_iterator_keep_their_protocols() {
+    crate::runtime::range_next_test_reset();
     let mut trace = String::new();
     for permits in [1, 2, 1000] {
         let mut vm =
@@ -246,4 +253,5 @@ fn other_receiver_and_user_iterator_keep_their_protocols() {
         }
     }
     observer_golden(&trace, include_str!("range_iteration_other_receivers.txt"));
+    assert_eq!(crate::runtime::range_next_test_counts().0, 0);
 }

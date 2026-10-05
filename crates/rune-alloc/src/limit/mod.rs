@@ -145,12 +145,34 @@ pub(crate) fn release(amount: usize) {
     self::no_std::rune_memory_release(amount);
 }
 
-#[repr(transparent)]
-struct MemoryGuard(usize);
+/// Internal Rune execution query; unsupported outside the Rune runtime.
+#[cfg(feature = "std")]
+#[doc(hidden)]
+pub fn __explicit_scope_active() -> bool {
+    self::no_std::explicit_scope_active()
+}
+
+struct MemoryGuard {
+    memory: usize,
+    #[cfg(feature = "std")]
+    explicit: bool,
+}
+
+impl MemoryGuard {
+    fn enter(memory: usize) -> Self {
+        Self {
+            memory: self::no_std::rune_memory_replace(memory),
+            #[cfg(feature = "std")]
+            explicit: self::no_std::replace_explicit_scope(true),
+        }
+    }
+}
 
 impl Drop for MemoryGuard {
     fn drop(&mut self) {
-        let _ = self::no_std::rune_memory_replace(self.0);
+        let _ = self::no_std::rune_memory_replace(self.memory);
+        #[cfg(feature = "std")]
+        self::no_std::replace_explicit_scope(self.explicit);
     }
 }
 
@@ -238,7 +260,7 @@ where
 
     #[inline]
     fn call(self) -> Self::Output {
-        let _guard = MemoryGuard(self::no_std::rune_memory_replace(self.memory));
+        let _guard = MemoryGuard::enter(self.memory);
         self.value.call()
     }
 }
@@ -325,7 +347,7 @@ where
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         let this = self.project();
 
-        let _guard = MemoryGuard(self::no_std::rune_memory_replace(*this.memory));
+        let _guard = MemoryGuard::enter(*this.memory);
         let poll = this.value.poll(cx);
         *this.memory = self::no_std::rune_memory_get();
         poll

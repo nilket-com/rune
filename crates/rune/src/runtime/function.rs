@@ -172,6 +172,15 @@ impl Function {
         self.0.call(args)
     }
 
+    /// Intrinsic of the actual native handler, never a name or type-hash guess.
+    #[cfg(all(feature = "std", not(feature = "tracing")))]
+    pub(crate) fn native_intrinsic(&self) -> u8 {
+        match &self.0.inner {
+            Inner::FnHandler(handler) => handler.handler.intrinsic(),
+            _ => 0,
+        }
+    }
+
     /// Call with the given virtual machine. This allows for certain
     /// optimizations, like avoiding the allocation of a new vm state in case
     /// the call is internal.
