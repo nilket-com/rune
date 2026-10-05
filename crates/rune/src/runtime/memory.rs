@@ -485,10 +485,19 @@ impl Stack {
     {
         if let Some(addr) = out.as_addr() {
             let value = o.into_output().map_err(StoreError::error)?;
+            let slot = self.at_mut(addr)?;
 
-            // The value which is replaced is taken apart rather than left to
-            // its destructor, so that the machine does not descend into it.
-            work.replace(self.at_mut(addr)?, value);
+            // A value which holds no other values has nothing to take apart
+            // and its destructor cannot descend into anything, so it is
+            // written over directly.
+            if slot.is_inline() {
+                *slot = value;
+            } else {
+                // The value which is replaced is taken apart rather than left
+                // to its destructor, so that the machine does not descend into
+                // it.
+                work.replace(slot, value);
+            }
         }
 
         Ok(())

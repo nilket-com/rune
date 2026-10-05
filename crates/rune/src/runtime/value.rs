@@ -1458,6 +1458,7 @@ impl Value {
     }
 
     /// Test if the value is inline.
+    #[inline]
     pub(crate) fn is_inline(&self) -> bool {
         matches!(self.repr, Repr::Inline(..))
     }
