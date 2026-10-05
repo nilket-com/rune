@@ -474,6 +474,7 @@ impl Stack {
     /// it lives, so that whatever memory taking values apart needs is grown
     /// once rather than for every value which is written over.
     #[inline(always)]
+    // rnx 0173 control: comment-only change.
     pub(crate) fn store_with<O>(
         &mut self,
         out: Output,
