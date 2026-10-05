@@ -293,6 +293,14 @@ fn raw_machine(kinds: &[crate::runtime::inst::Kind]) -> Vm {
 }
 
 fn raw_machine_with_args(kinds: &[crate::runtime::inst::Kind], arguments: usize) -> Vm {
+    raw_machine_with_shadow(kinds, arguments, None)
+}
+
+fn raw_machine_with_shadow(
+    kinds: &[crate::runtime::inst::Kind],
+    arguments: usize,
+    shadow: Option<(Hash, usize)>,
+) -> Vm {
     use crate::runtime::unit::{DefaultStorage, UnitEncoder, UnitFn};
     use crate::runtime::{Call, Inst, Unit};
     let mut storage = DefaultStorage::default();
@@ -311,6 +319,19 @@ fn raw_machine_with_args(kinds: &[crate::runtime::inst::Kind], arguments: usize)
             },
         )
         .unwrap();
+    if let Some((hash, offset)) = shadow {
+        functions
+            .try_insert(
+                hash,
+                UnitFn::Offset {
+                    offset,
+                    call: Call::Immediate,
+                    args: 1,
+                    captures: None,
+                },
+            )
+            .unwrap();
+    }
     let unit = Unit::new(
         storage,
         functions,
@@ -468,3 +489,70 @@ fn unusual_next_units_preserve_errors_and_raw_slots() {
 
 #[path = "range_iteration_observers.rs"]
 mod observers;
+
+#[test]
+fn unit_function_shadows_native_range_callable() {
+    use crate::runtime::inst::Kind;
+    use crate::runtime::{Type, TypeHash};
+    let hash = Hash::associated_function(
+        crate::runtime::range::RangeIter::<i64>::HASH,
+        Protocol::NEXT.hash,
+    );
+    let kinds = [
+        Kind::Allocate { size: 3 },
+        Kind::CallFn {
+            function: Address::new(1),
+            addr: Address::ZERO,
+            args: 1,
+            out: Output::keep(2),
+        },
+        Kind::IterNext {
+            addr: Address::new(2),
+            jump: 4,
+            out: Output::keep(2),
+        },
+        Kind::ReturnUnit,
+        Kind::ReturnUnit,
+        Kind::ReturnUnit,
+    ];
+    let mut trace = String::new();
+    for permits in [1, 2, 10] {
+        let mut vm = raw_machine_with_shadow(&kinds, 2, Some((hash, 5)));
+        let range = Value::new(crate::runtime::range::RangeIter::new(0i64..3)).unwrap();
+        let alias = range.clone();
+        drop(
+            vm.execute(Hash::EMPTY, (range, Value::from(Type::new(hash))))
+                .unwrap(),
+        );
+        writeln!(trace, "CASE unit-shadow budget={permits}").unwrap();
+        let mut failed = false;
+        for _ in 0..16 {
+            let result = budget::with(permits, || vm.run(None)).call();
+            match result {
+                Ok(VmHalt::Limited) => writeln!(trace, "Limited {}", snapshot(&vm)).unwrap(),
+                Err(error) => {
+                    let VmErrorKind::UnsupportedIterNextOperand { actual } = error.error().kind()
+                    else {
+                        panic!("{error:?}")
+                    };
+                    assert_eq!(*actual, Value::unit().type_info());
+                    assert!(error.chain().is_empty());
+                    writeln!(
+                        trace,
+                        "UnsupportedIterNextOperand actual={actual} {}",
+                        snapshot(&vm)
+                    )
+                    .unwrap();
+                    failed = true;
+                    break;
+                }
+                other => panic!("unit callable must take precedence: {other:?}"),
+            }
+        }
+        assert!(failed);
+        let bounds = crate::runtime::range::test_i64_iter_bounds(&alias.borrow_ref().unwrap());
+        assert_eq!(bounds, (0, 3));
+        writeln!(trace, "remaining={bounds:?}").unwrap();
+    }
+    check_golden(&trace, include_str!("range_iteration_unit_shadow.txt"));
+}
