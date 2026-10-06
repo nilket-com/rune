@@ -3080,9 +3080,42 @@ impl Vm {
     /// Fuse only the compiler's adjacent, same-slot NEXT/IterNext shape.
     /// Every refusal occurs before consuming an argument or advancing the range.
     #[cfg(all(feature = "std", not(feature = "tracing")))]
-    fn try_range_next(&mut self, addr: Address, args: usize, out: Output) -> Result<bool, VmError> {
+    #[inline(never)]
+    fn try_range_dispatch(
+        &mut self,
+        call: RangeNextCall,
+        addr: Address,
+        args: usize,
+        out: Output,
+    ) -> Result<bool, VmError> {
         use crate::runtime::range::RangeIter;
         use crate::runtime::Memory;
+
+        // No handler or Function borrow survives resolution into the mutable range operation.
+        let tagged = match call {
+            RangeNextCall::Associated(hash) => {
+                let resolved = Hash::associated_function(self.stack.at(addr).type_hash(), hash);
+                self.context
+                    .function(&resolved)
+                    .is_some_and(|h| h.intrinsic() == 1)
+            }
+            RangeNextCall::InlineType(hash) => {
+                self.unit.function(&hash).is_none()
+                    && self
+                        .context
+                        .function(&hash)
+                        .is_some_and(|h| h.intrinsic() == 1)
+            }
+            RangeNextCall::NativeFunction(function) => match self.stack.at(function).as_ref() {
+                Repr::Any(value) if value.type_hash() == Function::HASH => {
+                    value.borrow_ref::<Function>()?.native_intrinsic() == 1
+                }
+                _ => false,
+            },
+        };
+        if !tagged {
+            return Ok(false);
+        }
 
         #[cfg(test)]
         RANGE_NEXT_COUNTS.with(|c| {
@@ -3303,14 +3336,12 @@ impl Vm {
                 } => {
                     #[cfg(all(feature = "std", not(feature = "tracing")))]
                     if hash == Protocol::NEXT.hash && args == 1 && diagnostics.is_none() {
-                        let resolved =
-                            Hash::associated_function(self.stack.at(addr).type_hash(), hash);
-                        if self
-                            .context
-                            .function(&resolved)
-                            .is_some_and(|h| h.intrinsic() == 1)
-                            && self.try_range_next(addr, args, out)?
-                        {
+                        if self.try_range_dispatch(
+                            RangeNextCall::Associated(hash),
+                            addr,
+                            args,
+                            out,
+                        )? {
                             // run() installed no diagnostics, so the skipped call hook is a no-op.
                             continue;
                         }
@@ -3325,25 +3356,23 @@ impl Vm {
                 } => {
                     #[cfg(all(feature = "std", not(feature = "tracing")))]
                     if args == 1 && diagnostics.is_none() {
-                        let tagged = match self.stack.at(function).as_ref() {
+                        let call = match self.stack.at(function).as_ref() {
                             Repr::Inline(Inline::Type(ty)) => {
                                 let hash = ty.into_hash();
-                                // Rejecting prefilter only; the resolved handler tag is authoritative.
-                                hash == range_i64_next_hash()
-                                    && self.unit.function(&hash).is_none()
-                                    && self
-                                        .context
-                                        .function(&hash)
-                                        .is_some_and(|handler| handler.intrinsic() == 1)
+                                // Rejecting prefilter only; the outlined helper proves handler identity.
+                                (hash == range_i64_next_hash())
+                                    .then_some(RangeNextCall::InlineType(hash))
                             }
                             Repr::Any(value) if value.type_hash() == Function::HASH => {
-                                value.borrow_ref::<Function>()?.native_intrinsic() == 1
+                                Some(RangeNextCall::NativeFunction(function))
                             }
-                            _ => false,
+                            _ => None,
                         };
-                        if tagged && self.try_range_next(addr, args, out)? {
-                            // No diagnostic call hook can observe this fused dispatch.
-                            continue;
+                        if let Some(call) = call {
+                            if self.try_range_dispatch(call, addr, args, out)? {
+                                // No diagnostic call hook can observe this fused dispatch.
+                                continue;
+                            }
                         }
                     }
                     if let Some(reason) = self.op_call_fn(function, addr, args, out)? {
@@ -3869,6 +3898,13 @@ fn try_object_like_index_get_mut<'a>(
             _ => Ok(None),
         },
     }
+}
+
+#[cfg(all(feature = "std", not(feature = "tracing")))]
+enum RangeNextCall {
+    Associated(Hash),
+    InlineType(Hash),
+    NativeFunction(Address),
 }
 
 #[cfg(test)]
