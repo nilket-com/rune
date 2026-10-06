@@ -161,3 +161,25 @@ fn every_module_first_use_completes_with_and_without_stdio() {
         assert_eq!(crate::from_value::<i64>(value).unwrap(), 42);
     }
 }
+
+#[test]
+fn direct_alias_names_match_the_frozen_display_or_fall_back() {
+    for (item, expected) in display_fixtures() {
+        let direct = super::direct_associated_type_name(&item).unwrap();
+        let fallback = item.iter().next().is_none()
+            || item.iter().any(|part| matches!(part, ComponentRef::Id(_)));
+        assert_eq!(
+            direct.is_none(),
+            fallback,
+            "unexpected path for {expected:?}"
+        );
+        if let Some(direct) = direct {
+            assert_eq!(direct.as_str(), expected);
+        }
+        assert_eq!(
+            super::associated_type_name(&item).unwrap().as_str(),
+            expected
+        );
+        assert_eq!(item.try_to_string().unwrap().as_str(), expected);
+    }
+}

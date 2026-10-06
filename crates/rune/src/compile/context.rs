@@ -24,6 +24,62 @@ use crate::runtime::{
 use crate::sync::Arc;
 use crate::{Hash, Item, ItemBuf};
 
+// Preserve Item's display spelling while avoiding generic formatting for the
+// crate/string paths used by associated function aliases. Numeric components
+// and the root retain the original whole-item formatter.
+fn associated_type_name(item: &Item) -> alloc::Result<String> {
+    match direct_associated_type_name(item)? {
+        Some(name) => Ok(name),
+        None => item.try_to_string(),
+    }
+}
+
+fn direct_associated_type_name(item: &Item) -> alloc::Result<Option<String>> {
+    let mut capacity = 0usize;
+    let mut first = true;
+
+    for component in item.iter() {
+        let (prefix, text) = match component {
+            ComponentRef::Crate(text) => (2usize, text),
+            ComponentRef::Str(text) => (0usize, text),
+            ComponentRef::Id(_) => return Ok(None),
+        };
+
+        capacity = capacity
+            .checked_add(if first { 0 } else { 2 })
+            .and_then(|size| size.checked_add(prefix))
+            .and_then(|size| size.checked_add(text.len()))
+            .ok_or(alloc::Error::CapacityOverflow)?;
+        first = false;
+    }
+
+    if first {
+        return Ok(None);
+    }
+
+    let mut name = String::try_with_capacity(capacity)?;
+    let mut first = true;
+
+    // The immutable item was fully checked before allocating the string.
+    for component in item.iter() {
+        if !first {
+            name.try_push_str("::")?;
+        }
+        first = false;
+
+        match component {
+            ComponentRef::Crate(text) => {
+                name.try_push_str("::")?;
+                name.try_push_str(text)?;
+            }
+            ComponentRef::Str(text) => name.try_push_str(text)?,
+            ComponentRef::Id(_) => return Ok(None),
+        }
+    }
+
+    Ok(Some(name))
+}
+
 crate::declare_dyn_fn! {
     struct MacroHandlerVtable;
 
@@ -1165,7 +1221,7 @@ impl Context {
                 if let Some((hash, item)) = &item {
                     self.constants.try_insert(
                         Hash::associated_function(*hash, &Protocol::INTO_TYPE_NAME),
-                        ConstValueBuf::try_from(item.try_to_string()?)?,
+                        ConstValueBuf::try_from(associated_type_name(item)?)?,
                     )?;
 
                     self.insert_native_fn(
