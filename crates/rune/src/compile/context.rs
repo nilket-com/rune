@@ -430,6 +430,8 @@ impl Context {
         M: AsRef<Module>,
     {
         let module = module.as_ref();
+        #[cfg(test)]
+        startup_tests::record("module", Hash::type_hash(&module.item));
         tracing::trace!("installing");
 
         if let Some(id) = module.unique {
@@ -637,6 +639,8 @@ impl Context {
     /// Install the given meta.
     #[tracing::instrument(skip_all)]
     fn install_meta(&mut self, meta: ContextMeta) -> Result<(), ContextError> {
+        #[cfg(test)]
+        startup_tests::record("meta", meta.hash);
         if let Some(item) = &meta.item {
             tracing::trace!(?item);
 
@@ -946,6 +950,11 @@ impl Context {
     }
 
     fn install_trait_impl(&mut self, i: &ModuleTraitImpl) -> Result<(), ContextError> {
+        #[cfg(test)]
+        startup_tests::record(
+            "trait-impl",
+            Hash::associated_function(i.hash, i.trait_hash),
+        );
         if !self.types.contains_key(&i.hash) {
             return Err(ContextError::MissingType {
                 item: i.item.try_to_owned()?,
@@ -1102,6 +1111,15 @@ impl Context {
     }
 
     fn install_associated(&mut self, assoc: &ModuleAssociated) -> Result<(), ContextError> {
+        #[cfg(test)]
+        startup_tests::record(
+            "associated",
+            assoc
+                .name
+                .kind
+                .hash(assoc.container)
+                .with_function_parameters(assoc.name.function_parameters),
+        );
         let Some(info) = self.types.get(&assoc.container).try_cloned()? else {
             return Err(ContextError::MissingContainer {
                 container: assoc.container_type_info.try_clone()?,
@@ -1202,6 +1220,8 @@ impl Context {
         handler: &FunctionHandler,
         deprecation: Option<&str>,
     ) -> Result<(), ContextError> {
+        #[cfg(test)]
+        startup_tests::record("native", hash);
         if self.functions.contains_key(&hash) {
             return Err(ContextError::ConflictingFunction {
                 part: display.try_to_string()?.try_into()?,
@@ -1300,19 +1320,54 @@ mod inventory_tests {
 
         let mut out = BTreeMap::new();
         out.insert("unique", sorted(cx.unique.iter().map(|s| format!("{s}"))));
-        out.insert("has_default_modules", std::vec![format!("{}", cx.has_default_modules)]);
+        out.insert(
+            "has_default_modules",
+            std::vec![format!("{}", cx.has_default_modules)],
+        );
         out.insert("meta", cx.meta.iter().map(|m| format!("{m:?}")).collect());
-        out.insert("hash_to_meta", sorted(cx.hash_to_meta.iter().map(|(h, v)| format!("{h:?} {v:?}"))));
-        out.insert("item_to_hash", sorted(cx.item_to_hash.iter().map(|(i, h)| format!("{i:?} {h:?}"))));
-        out.insert("functions", sorted(cx.functions.keys().map(|h| format!("{h:?}"))));
-        out.insert("deprecations", sorted(cx.deprecations.iter().map(|(h, d)| format!("{h:?} {d:?}"))));
+        out.insert(
+            "hash_to_meta",
+            sorted(cx.hash_to_meta.iter().map(|(h, v)| format!("{h:?} {v:?}"))),
+        );
+        out.insert(
+            "item_to_hash",
+            sorted(cx.item_to_hash.iter().map(|(i, h)| format!("{i:?} {h:?}"))),
+        );
+        out.insert(
+            "functions",
+            sorted(cx.functions.keys().map(|h| format!("{h:?}"))),
+        );
+        out.insert(
+            "deprecations",
+            sorted(cx.deprecations.iter().map(|(h, d)| format!("{h:?} {d:?}"))),
+        );
         #[cfg(feature = "doc")]
-        out.insert("associated", sorted(cx.associated.iter().map(|(h, v)| format!("{h:?} {v:?}"))));
+        out.insert(
+            "associated",
+            sorted(cx.associated.iter().map(|(h, v)| format!("{h:?} {v:?}"))),
+        );
         #[cfg(feature = "doc")]
-        out.insert("implemented_traits", sorted(cx.implemented_traits.iter().map(|(h, v)| format!("{h:?} {v:?}"))));
+        out.insert(
+            "implemented_traits",
+            sorted(
+                cx.implemented_traits
+                    .iter()
+                    .map(|(h, v)| format!("{h:?} {v:?}")),
+            ),
+        );
         out.insert("macros", sorted(cx.macros.keys().map(|h| format!("{h:?}"))));
-        out.insert("traits", sorted(cx.traits.iter().map(|(h, t)| format!("{h:?} handler={}", t.is_some()))));
-        out.insert("attribute_macros", sorted(cx.attribute_macros.keys().map(|h| format!("{h:?}"))));
+        out.insert(
+            "traits",
+            sorted(
+                cx.traits
+                    .iter()
+                    .map(|(h, t)| format!("{h:?} handler={}", t.is_some())),
+            ),
+        );
+        out.insert(
+            "attribute_macros",
+            sorted(cx.attribute_macros.keys().map(|h| format!("{h:?}"))),
+        );
         // A type's `TypeInfo` holds a function pointer for its name, so it is
         // described by what that pointer produces rather than by its address.
         out.insert(
@@ -1326,8 +1381,14 @@ mod inventory_tests {
         );
         out.insert("names", std::vec![format!("{:?}", cx.names)]);
         out.insert("crates", sorted(cx.crates.iter().map(|c| format!("{c}"))));
-        out.insert("constants", sorted(cx.constants.iter().map(|(h, c)| format!("{h:?} {c:?}"))));
-        out.insert("construct", sorted(cx.construct.keys().map(|h| format!("{h:?}"))));
+        out.insert(
+            "constants",
+            sorted(cx.constants.iter().map(|(h, c)| format!("{h:?} {c:?}"))),
+        );
+        out.insert(
+            "construct",
+            sorted(cx.construct.keys().map(|h| format!("{h:?}"))),
+        );
         out
     }
 
@@ -1390,7 +1451,11 @@ mod inventory_tests {
     }
 
     fn golden_path() -> std::path::PathBuf {
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("src/compile/context_inventory.golden")
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(if cfg!(feature = "doc") {
+            "src/compile/context_inventory.golden"
+        } else {
+            "src/compile/context_inventory_nodoc.golden"
+        })
     }
 
     #[test]
@@ -1415,23 +1480,44 @@ mod inventory_tests {
         let mut cx = Context::with_config(true).unwrap();
         let some = *cx.functions.keys().next().unwrap();
         cx.functions.remove(&some);
-        assert_ne!(render(&inventory(&cx)), baseline, "removed function not detected");
+        assert_ne!(
+            render(&inventory(&cx)),
+            baseline,
+            "removed function not detected"
+        );
 
         let mut cx = Context::with_config(true).unwrap();
         let key = *cx.constants.keys().next().unwrap();
-        let value = ConstValueBuf::try_from(crate::alloc::String::try_from("changed").unwrap()).unwrap();
+        let value =
+            ConstValueBuf::try_from(crate::alloc::String::try_from("changed").unwrap()).unwrap();
         cx.constants.try_insert(key, value).unwrap();
-        assert_ne!(render(&inventory(&cx)), baseline, "changed constant not detected");
+        assert_ne!(
+            render(&inventory(&cx)),
+            baseline,
+            "changed constant not detected"
+        );
 
         let mut cx = Context::with_config(true).unwrap();
         cx.meta.pop();
-        assert_ne!(render(&inventory(&cx)), baseline, "removed metadata not detected");
+        assert_ne!(
+            render(&inventory(&cx)),
+            baseline,
+            "removed metadata not detected"
+        );
 
         let mut cx = Context::with_config(true).unwrap();
         let item = cx.item_to_hash.keys().next().unwrap().try_clone().unwrap();
         cx.item_to_hash.remove(&item);
-        assert_ne!(render(&inventory(&cx)), baseline, "removed name entry not detected");
+        assert_ne!(
+            render(&inventory(&cx)),
+            baseline,
+            "removed name entry not detected"
+        );
 
         let _: Option<ContextError> = None;
     }
 }
+
+#[cfg(test)]
+#[path = "context_startup_tests.rs"]
+mod startup_tests;

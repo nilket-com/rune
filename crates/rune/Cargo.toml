@@ -14,7 +14,7 @@ keywords = ["language", "scripting", "scripting-language"]
 categories = ["parser-implementations"]
 
 [lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(rune_nightly, rune_docsrs, rune_byte_code)'] }
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(rune_nightly, rune_docsrs, rune_byte_code, rune_startup_inventory)'] }
 
 [features]
 default = ["emit", "std", "anyhow"]

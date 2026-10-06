@@ -901,7 +901,7 @@ mod musli;
 #[cfg(feature = "serde")]
 mod serde;
 
-#[cfg(test)]
+#[cfg(all(test, not(rune_startup_inventory)))]
 mod tests;
 
 rune_macros::binding! {

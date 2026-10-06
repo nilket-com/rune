@@ -1,0 +1,79 @@
+use std::collections::{HashMap, HashSet, VecDeque};
+use std::hash::Hasher;
+use std::num::{ParseIntError, ParseFloatError};
+use std::fmt::Formatter;
+use std::test::Bencher;
+use std::macros;
+use std::io;
+
+fn generator() {
+	yield 7;
+	yield 8;
+}
+
+async fn stream() {
+	yield 9;
+	yield 10;
+}
+
+pub async fn main(_args) {
+	assert_eq!(Hasher, std::hash::Hasher);
+	assert_eq!(Formatter, std::fmt::Formatter);
+	assert_eq!(Bencher, std::test::Bencher);
+	assert_eq!(ParseIntError, std::num::ParseIntError);
+	assert_eq!(ParseFloatError, std::num::ParseFloatError);
+	assert_eq!((0..4).iter().sum::<i64>(), 6);
+	assert_eq!(std::cmp::Ordering::Less, std::cmp::Ordering::Less);
+	assert_eq!(std::any::type_name_of_val(1), "::std::i64");
+	assert_eq!(std::clone::clone([1, 2]), [1, 2]);
+	assert!(std::is_readable([1]));
+	assert_eq!("42".parse::<i64>(), Ok(42));
+	assert_eq!("2.5".parse::<f64>(), Ok(2.5));
+	match "x".parse::<i64>() {
+		Err(error) => assert!(format!("{}", error).len() > 0),
+		Ok(_) => panic!("invalid integer parsed"),
+	}
+	assert_eq!("ab".len(), 2);
+	assert_eq!(b"ab".len(), 2);
+
+	let map = HashMap::new();
+	map.insert("answer", 42);
+	assert_eq!(map.get("answer"), Some(42));
+	let set = HashSet::new();
+	set.insert(3);
+	assert!(set.contains(3));
+	let deque = VecDeque::new();
+	deque.push_back(4);
+	assert_eq!(deque.pop_front(), Some(4));
+
+	assert_eq!('A'.to_i64(), 65);
+	assert_eq!(0.0.cos(), 1.0);
+	assert!(std::f64::consts::PI > 3.0);
+	assert_eq!((1, 2).len(), 2);
+	assert_eq!(format!("{}:{}", 1, 2), "1:2");
+	assert_eq!((-3).abs(), 3);
+	assert_eq!(3u64.pow(2), 9u64);
+	assert!(std::macros::builtin::line!() > 0);
+	assert!(std::macros::builtin::file!().len() > 0);
+
+	std::mem::drop("discard");
+	let object = #{a: 1};
+	assert_eq!(object.len(), 1);
+	let gen = generator();
+	assert_eq!(gen.next(), Some(7));
+	assert_eq!(gen.next(), Some(8));
+	assert_eq!(gen.next(), None);
+	assert_eq!(Some(11).unwrap(), 11);
+	assert_eq!(Ok(12).unwrap(), 12);
+	let values = [1, 2, 3];
+	assert_eq!(values.len(), 3);
+	assert_eq!(values.iter().next_back(), Some(3));
+
+	let (a, b) = std::future::join((async { 1 }, async { 2 })).await;
+	assert_eq!(a + b, 3);
+	let events = stream();
+	assert_eq!(events.next().await, Some(9));
+	assert_eq!(events.next().await, Some(10));
+	assert_eq!(events.next().await, None);
+	42
+}
