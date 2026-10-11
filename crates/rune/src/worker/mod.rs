@@ -513,6 +513,14 @@ impl<'a, 'arena> Worker<'a, 'arena> {
 
         let hash = self.q.pool.item_type_hash(named.item);
 
+        #[cfg(feature = "fresh-core")]
+        if self.q.inner.fresh_mode && !self.q.context.fresh_format_macro(hash) {
+            return Err(compile::Error::msg(
+                this.location.span,
+                "fresh core: macro handler not admitted",
+            ));
+        }
+
         let Some(handler) = self.q.context.lookup_macro(hash) else {
             return Err(compile::Error::new(
                 &this.node,
@@ -673,6 +681,14 @@ impl<'a, 'arena> Worker<'a, 'arena> {
         }
 
         let hash = self.q.pool.item_type_hash(named.item);
+
+        #[cfg(feature = "fresh-core")]
+        if self.q.inner.fresh_mode {
+            return Err(compile::Error::msg(
+                this.location.span,
+                "fresh core: macro handler not admitted",
+            ));
+        }
 
         let Some(handler) = self.q.context.lookup_attribute_macro(hash) else {
             return Err(compile::Error::msg(

@@ -305,6 +305,14 @@ pub struct Context {
     implemented_traits: hash::Map<Vec<Hash>>,
     /// Registered native macro handlers.
     macros: hash::Map<MacroHandler>,
+    /// Fresh core: certified std format macros. A hash here implies that the handler stored
+    /// in `macros` at that hash is the marked std builtin; a builtin may be absent from it
+    /// after an allocation failure (fail closed).
+    #[cfg(feature = "fresh-core")]
+    fresh_format_macros: HashSet<Hash>,
+    /// Fresh core: the handler installed at `::std::io::println` is the std stdio builtin.
+    #[cfg(feature = "fresh-core")]
+    fresh_stdio_println: bool,
     /// Handlers for realising traits.
     traits: hash::Map<Option<TraitHandler>>,
     /// Registered native attribute macro handlers.
@@ -458,6 +466,15 @@ impl Context {
         tracing::trace!(items = module.items.len(), "items");
         for item in &module.items {
             self.install_item(item)?;
+            // Certified only after this item's handler was inserted: functions are
+            // insert-once (ConflictingFunction), so the stored handler is this one.
+            #[cfg(feature = "fresh-core")]
+            if module.fresh_stdio_println
+                && item.hash == Hash::type_hash(crate::item!(::std::io::println))
+                && matches!(item.kind, rune::module::ModuleItemKind::Function(..))
+            {
+                self.fresh_stdio_println = true;
+            }
         }
 
         tracing::trace!(associated = module.associated.len(), "associated");
@@ -586,6 +603,23 @@ impl Context {
             .unwrap_or_default()
             .iter()
             .copied()
+    }
+
+    #[cfg(feature = "fresh-core")]
+    pub(crate) fn fresh_format_macro(&self, hash: Hash) -> bool {
+        self.fresh_format_macros.contains(&hash)
+            && (hash == Hash::type_hash(crate::item!(::std::fmt::format))
+                || hash == Hash::type_hash(crate::item!(::std::io::println)))
+    }
+
+    /// Fresh core: whether `::std::io::println` resolves to the certified std
+    /// stdio builtin (not capture, disable, custom or absent).
+    #[cfg(feature = "fresh-core")]
+    pub(crate) fn fresh_stdio_println(&self) -> bool {
+        self.fresh_stdio_println
+            && self
+                .functions
+                .contains_key(&Hash::type_hash(crate::item!(::std::io::println)))
     }
 
     /// Lookup the given macro handler.
@@ -1078,7 +1112,20 @@ impl Context {
                 }
             }
             rune::module::ModuleItemKind::Macro(macro_) => {
+                // Fresh core: certification implies that the handler stored at this hash is
+                // the marked std builtin. A non-builtin macro drops it before replacing the
+                // handler, and the builtin is certified only after it is stored. The reverse
+                // is not guaranteed: after an allocation failure a stored builtin may stay
+                // uncertified, which only refuses (fail closed).
+                #[cfg(feature = "fresh-core")]
+                if !macro_.fresh_format_builtin {
+                    self.fresh_format_macros.remove(&m.hash);
+                }
                 self.macros.try_insert(m.hash, macro_.handler.clone())?;
+                #[cfg(feature = "fresh-core")]
+                if macro_.fresh_format_builtin {
+                    self.fresh_format_macros.try_insert(m.hash)?;
+                }
                 meta::Kind::Macro
             }
             rune::module::ModuleItemKind::AttributeMacro(macro_) => {

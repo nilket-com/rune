@@ -21,6 +21,9 @@ default = ["emit", "std", "anyhow"]
 tracing = ["tracing/enabled"]
 emit = ["std", "anyhow", "codespan-reporting"]
 bench = []
+# Opt-in fresh execution core (unstable API); never enabled by default.
+# Needs `anyhow`: the stock compiler front end it drives uses `anyhow` under `std`.
+fresh-core = ["std", "anyhow"]
 workspace = ["std", "anyhow", "toml", "semver", "relative-path", "serde-hashkey", "linked-hash-map"]
 doc = ["std", "anyhow", "rust-embed", "handlebars", "pulldown-cmark", "pulldown-cmark-escape", "syntect", "sha2", "base64", "rune-core/doc", "relative-path"]
 cli = ["std", "anyhow", "emit", "doc", "tracing-subscriber", "clap", "webbrowser", "capture-io", "disable-io", "languageserver", "fmt", "similar", "rand", "musli/storage"]

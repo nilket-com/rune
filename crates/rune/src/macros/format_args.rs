@@ -84,7 +84,28 @@ impl FormatArgs {
 
     /// Expand the format specification.
     pub fn expand(&self, cx: &mut MacroContext<'_, '_, '_>) -> compile::Result<Quote<'_>> {
+        #[cfg(not(feature = "fresh-core"))]
         let format = cx.eval_stream(&self.format)?;
+        #[cfg(feature = "fresh-core")]
+        let literal = if cx.idx.q.inner.fresh_mode {
+            let mut parser =
+                crate::parse::Parser::from_token_stream(&self.format, self.format_span);
+            let literal = parser.parse_all::<ast::LitStr>().map_err(|_| {
+                compile::Error::msg(
+                    self.format_span,
+                    "fresh core: format string must be a literal",
+                )
+            })?;
+            Some(String::try_from(cx.resolve(literal)?.as_ref())?)
+        } else {
+            None
+        };
+        #[cfg(feature = "fresh-core")]
+        let format = if literal.is_none() {
+            Some(cx.eval_stream(&self.format)?)
+        } else {
+            None
+        };
 
         let mut pos = Vec::new();
         let mut named = HashMap::<Box<str>, _>::new();
@@ -107,7 +128,16 @@ impl FormatArgs {
             }
         }
 
+        #[cfg(not(feature = "fresh-core"))]
         let format = format.downcast::<String>().with_span(self.format_span)?;
+        #[cfg(feature = "fresh-core")]
+        let format = match literal {
+            Some(literal) => literal,
+            None => format
+                .ok_or_else(|| compile::Error::msg(self.format_span, "missing format value"))?
+                .downcast::<String>()
+                .with_span(self.format_span)?,
+        };
 
         let mut unused_pos = (0..pos.len()).try_collect::<BTreeSet<_>>()?;
         let mut unused_named = named
@@ -658,6 +688,13 @@ fn expand_format_spec<'a>(
 
             unused_pos.remove(count);
 
+            #[cfg(feature = "fresh-core")]
+            if cx.idx.q.inner.fresh_mode {
+                return Err(compile::Error::msg(
+                    span,
+                    "fresh core: dynamic precision is not admitted",
+                ));
+            }
             let value = cx.eval_stream(&arg.value)?;
             let precision = value.as_usize().with_span(span)?;
 

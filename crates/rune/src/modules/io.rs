@@ -48,6 +48,8 @@ pub fn module(
     if stdio {
         m.function_meta(print_impl)?;
         m.function_meta(println_impl)?;
+        #[cfg(feature = "fresh-core")]
+        m.fresh_mark_stdio_println();
 
         m.raw_function("dbg", dbg_impl).build()?.docs(docstring! {
             /// Debug to output.
@@ -75,6 +77,8 @@ pub fn module(
     m.macro_meta(dbg_macro)?;
     m.macro_meta(print_macro)?;
     m.macro_meta(println_macro)?;
+    #[cfg(feature = "fresh-core")]
+    m.fresh_mark_format_macro();
     Ok(m)
 }
 

@@ -1,0 +1,30 @@
+pub fn display(a) { format!("{}", a) }
+pub fn debug(a) { format!("{:?}", a) }
+pub fn template(a) { `<${a}>` }
+pub fn debug_some(a) { format!("{:?}", Some(a)) }
+pub fn debug_ok(a) { format!("{:?}", Ok(a)) }
+pub fn debug_err(a) { format!("{:?}", Err(a)) }
+pub fn display_two(a, b) { format!("{} and {}", a, b) }
+pub fn debug_vec(a, b) { format!("{:?}", [a, b]) }
+pub fn display_vec(a, b) { format!("{}", [a, b]) }
+pub fn debug_tuple(a, b) { format!("{:?}", (a, b)) }
+pub fn debug_object(a, b) { format!("{:?}", #{y: a, x: b}) }
+pub fn debug_nested(a, b) { format!("{:?}", [[a], (b,), #{k: a}]) }
+pub fn order_binary(a, b, c, w) { t(w, 1, a) + t(w, 2, b) * t(w, 3, c) }
+pub fn order_compare(a, b, c, w) { t(w, 1, a) < t(w, 2, b) }
+pub fn order_call(a, b, c, w) { pick(t(w, 1, a), t(w, 2, b), t(w, 3, c)) } fn pick(x, y, z) { x }
+pub fn order_vec(a, b, c, w) { let v = [t(w, 1, a), t(w, 2, b), t(w, 3, c)]; v[0] }
+pub fn order_tuple(a, b, c, w) { let v = (t(w, 1, a), t(w, 2, b), t(w, 3, c)); v.0 }
+pub fn order_object(a, b, c, w) { let o = #{z: t(w, 1, a), y: t(w, 2, b), x: t(w, 3, c)}; o.z }
+pub fn order_index_get(a, b, c, w) { let v = [a, c]; t(w, 1, v)[t(w, 2, b)] }
+pub fn order_index_set(a, b, c, w) { let v = [a, a]; t(w, 1, v)[t(w, 2, b)] = t(w, 3, c); v[0] }
+pub fn order_field_set(a, b, c, w) { let o = #{x: a}; t(w, 1, o).x = t(w, 2, c); o.x }
+pub fn order_index_compound(a, b, c, w) { let v = [a, a]; t(w, 1, v)[t(w, 2, b)] += t(w, 3, c); v[0] }
+pub fn order_field_compound(a, b, c, w) { let o = #{x: a}; t(w, 1, o).x += t(w, 2, c); o.x }
+pub fn order_method(a, b, c, w) { let v = [a]; t(w, 1, v).push(t(w, 2, c)); v.len() }
+pub fn order_range(a, b, c, w) { let n = 0; for i in t(w, 1, b)..t(w, 2, a) { n += 1; } n }
+pub fn order_template(a, b, c, w) { `${t(w, 1, a)}-${t(w, 2, b)}` }
+pub fn order_format(a, b, c, w) { format!("{} {}", t(w, 1, a), t(w, 2, b)) }
+pub fn order_compound_local(a, b, c) { let x = a; x += { x = b; c }; x }
+pub fn order_rebind_target(a, b, c) { let v = [a]; let w = [b]; v[0] = { v = w; c }; w[0] }
+fn t(w, n, x) { w.push(n); x }

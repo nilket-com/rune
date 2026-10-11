@@ -257,6 +257,8 @@ pub(crate) struct ModuleAssociated {
 /// Handle to a macro inserted into a module.
 pub(crate) struct ModuleMacro {
     pub(crate) handler: MacroHandler,
+    #[cfg(feature = "fresh-core")]
+    pub(crate) fresh_format_builtin: bool,
 }
 
 /// Handle to an attribute macro inserted into a module.

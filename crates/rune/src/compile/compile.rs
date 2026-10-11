@@ -31,13 +31,20 @@ pub(crate) fn compile(
     args: &[String],
     statics: &Statics,
     unit_storage: &mut dyn UnitEncoder,
+    #[cfg(feature = "fresh-core")] mut fresh: Option<
+        &mut crate::experimental_core::frontend::Collector,
+    >,
 ) -> alloc::Result<()> {
     // Shared id generator.
     let gen = Gen::new();
     let const_arena = hir::Arena::new();
     let mut consts = Consts::default();
     let mut storage = Storage::default();
-    let mut inner = Default::default();
+    let mut inner = crate::query::QueryInner::default();
+    #[cfg(feature = "fresh-core")]
+    {
+        inner.fresh_mode = fresh.is_some();
+    }
 
     let q = Query::new(
         unit,
@@ -107,6 +114,8 @@ pub(crate) fn compile(
             let task = CompileBuildEntry {
                 options,
                 q: worker.q.borrow(),
+                #[cfg(feature = "fresh-core")]
+                fresh: fresh.as_deref_mut(),
             };
 
             if let Err(error) = task.compile(entry, unit_storage) {
@@ -131,6 +140,8 @@ pub(crate) fn compile(
 struct CompileBuildEntry<'a, 'arena> {
     options: &'a Options,
     q: Query<'a, 'arena>,
+    #[cfg(feature = "fresh-core")]
+    fresh: Option<&'a mut crate::experimental_core::frontend::Collector>,
 }
 
 impl<'arena> CompileBuildEntry<'_, 'arena> {
@@ -292,6 +303,64 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
                 // Lowering is done, so the expressions it produced can be handed
                 // over to assembly.
                 let exprs = cx.take_exprs();
+
+                #[cfg(feature = "fresh-core")]
+                if let Some(fresh) = self.fresh.as_deref_mut() {
+                    let mut refused_functions = Vec::new();
+                    for build in &secondary_builds {
+                        let operation = match &build.build {
+                            SecondaryBuild::Closure(_) => {
+                                crate::experimental_core::error::Refusal::CallClosure
+                            }
+                            SecondaryBuild::AsyncBlock(_) => {
+                                crate::experimental_core::error::Refusal::AsyncBlock
+                            }
+                        };
+                        refused_functions.try_push((
+                            self.q.pool.item_type_hash(build.item_meta.item),
+                            operation,
+                        ))?;
+                    }
+                    let hash = self.q.pool.item_type_hash(item_meta.item);
+                    // Preserve the first named expression refusal (e.g. Yield),
+                    // before classifying a whole non-immediate function.
+                    fresh
+                        .lower(
+                            hash,
+                            location.source_id.into_index() as u32,
+                            &exprs,
+                            &hir,
+                            self.q.inner,
+                            self.q.context,
+                            &refused_functions,
+                        )
+                        .map_err(|e| {
+                            let at = e
+                                .location
+                                .map(|l| Span::new(l.start, l.end))
+                                .unwrap_or(location.span);
+                            compile::Error::msg(at, e.operation)
+                        })?;
+                    if !matches!(f.call, crate::runtime::Call::Immediate) {
+                        let operation = if matches!(f.call, crate::runtime::Call::Async) {
+                            crate::experimental_core::error::Refusal::AsyncFunction
+                        } else {
+                            crate::experimental_core::error::Refusal::GeneratorFunction
+                        };
+                        let at = span.span();
+                        let error = crate::experimental_core::error::Error::refused(operation).at(
+                            crate::experimental_core::error::Location {
+                                source: location.source_id.into_index() as u32,
+                                revision: fresh.revision(),
+                                start: at.start.0,
+                                end: at.end.0,
+                            },
+                        );
+                        fresh.failure.get_or_insert(error);
+                        return Err(compile::Error::msg(span, operation.name()));
+                    }
+                    return Ok(());
+                }
 
                 let size = self.assemble_fn(location, span, &mut asm, &exprs, &hir)?;
 

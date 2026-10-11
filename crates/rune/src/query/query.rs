@@ -55,6 +55,8 @@ const MAX_ITEM_RECURSION: usize = 8;
 
 #[derive(Default)]
 pub(crate) struct QueryInner<'arena> {
+    #[cfg(feature = "fresh-core")]
+    pub(crate) fresh_mode: bool,
     /// Scratch space for parsing numbers.
     pub(crate) scratch: RefCell<String>,
     /// How deeply the item being built depends on other items which have to be
@@ -110,6 +112,22 @@ pub(crate) struct QueryInner<'arena> {
 }
 
 impl QueryInner<'_> {
+    // Descriptor lookup only: never construct a legacy value or invoke a protocol.
+    #[cfg(feature = "fresh-core")]
+    pub(crate) fn fresh_struct_type(&self, hash: Hash) -> bool {
+        self.meta.values().any(|meta| {
+            !meta.context
+                && meta.hash == hash
+                && matches!(
+                    meta.kind,
+                    meta::Kind::Struct {
+                        enum_hash: Hash::EMPTY,
+                        ..
+                    }
+                )
+        })
+    }
+
     /// Get a constant value but only from the dynamic query system.
     pub(crate) fn get_const_value(&self, hash: Hash) -> Option<&ConstValue> {
         Some(self.constants.get(&hash)?)
@@ -994,6 +1012,17 @@ impl<'a, 'arena> Query<'a, 'arena> {
         span: &dyn Spanned,
         entry: Entry<'_>,
     ) -> compile::Result<ConstValueBuf> {
+        #[cfg(feature = "fresh-core")]
+        if self.inner.fresh_mode {
+            let Entry::Expr(exprs, expr) = entry else {
+                return Err(compile::Error::msg(
+                    span,
+                    "fresh core: constant blocks/calls refused",
+                ));
+            };
+            return crate::experimental_core::constants::eval(self.inner, exprs, expr)
+                .map_err(|e| compile::Error::msg(expr.span, e.operation));
+        }
         let value = const_eval::eval(self, location, span, entry, Vec::new())?;
         Ok(crate::from_value(value).with_span(span)?)
     }
@@ -1034,6 +1063,13 @@ impl<'a, 'arena> Query<'a, 'arena> {
         id: ItemId,
         args: &[ConstValueBuf],
     ) -> compile::Result<ConstValueBuf> {
+        #[cfg(feature = "fresh-core")]
+        if self.inner.fresh_mode {
+            return Err(compile::Error::msg(
+                span,
+                "fresh core: constant function calls refused",
+            ));
+        }
         let const_fn = self.const_fn_for(id).with_span(span)?;
 
         if const_fn.hir.args.len() != args.len() {
@@ -1801,6 +1837,13 @@ impl<'a, 'arena> Query<'a, 'arena> {
                 meta::Kind::Const
             }
             Indexed::Static(s) => {
+                #[cfg(feature = "fresh-core")]
+                if self.inner.fresh_mode {
+                    return Err(compile::Error::msg(
+                        item_meta.location.span,
+                        "fresh core: statics, constant blocks and constant functions refused",
+                    ));
+                }
                 if let Some(c) = s.init {
                     let (hir, exprs) = {
                         let mut hir_ctx = crate::hir::Ctxt::with_const(
@@ -1829,6 +1872,13 @@ impl<'a, 'arena> Query<'a, 'arena> {
                 meta::Kind::Static
             }
             Indexed::ConstBlock(c) => {
+                #[cfg(feature = "fresh-core")]
+                if self.inner.fresh_mode {
+                    return Err(compile::Error::msg(
+                        item_meta.location.span,
+                        "fresh core: statics, constant blocks and constant functions refused",
+                    ));
+                }
                 let (hir, exprs) = {
                     let mut hir_ctx = crate::hir::Ctxt::with_const(
                         self.const_arena,
@@ -1859,6 +1909,13 @@ impl<'a, 'arena> Query<'a, 'arena> {
                 meta::Kind::Const
             }
             Indexed::ConstFn(c) => {
+                #[cfg(feature = "fresh-core")]
+                if self.inner.fresh_mode {
+                    return Err(compile::Error::msg(
+                        item_meta.location.span,
+                        "fresh core: statics, constant blocks and constant functions refused",
+                    ));
+                }
                 // The body may call the function it belongs to, directly or
                 // through another constant function, so the function answers
                 // for itself while its body is lowered.

@@ -68,6 +68,9 @@ pub struct Module {
     pub(crate) trait_impls: Vec<ModuleTraitImpl>,
     /// A re-export in the current module.
     pub(crate) reexports: Vec<ModuleReexport>,
+    /// Fresh core: this module registers the std stdio `println` builtin.
+    #[cfg(feature = "fresh-core")]
+    pub(crate) fresh_stdio_println: bool,
     /// Constant constructors.
     pub(crate) construct: Vec<(Hash, AnyTypeInfo, ConstConstructImpl)>,
     /// Defines construct hashes.
@@ -131,6 +134,8 @@ impl Module {
             trait_impls: Vec::new(),
             types_hash: HashMap::new(),
             reexports: Vec::new(),
+            #[cfg(feature = "fresh-core")]
+            fresh_stdio_println: false,
             construct: Vec::new(),
             construct_hash: HashSet::new(),
             common: ModuleItemCommon {
@@ -508,6 +513,8 @@ impl Module {
                     },
                     kind: ModuleItemKind::Macro(ModuleMacro {
                         handler: data.handler,
+                        #[cfg(feature = "fresh-core")]
+                        fresh_format_builtin: false,
                     }),
                 })?;
 
@@ -595,7 +602,11 @@ impl Module {
             item,
             hash,
             common: ModuleItemCommon::default(),
-            kind: ModuleItemKind::Macro(ModuleMacro { handler }),
+            kind: ModuleItemKind::Macro(ModuleMacro {
+                handler,
+                #[cfg(feature = "fresh-core")]
+                fresh_format_builtin: false,
+            }),
         })?;
 
         let m = self.items.last_mut().unwrap();
@@ -1355,5 +1366,28 @@ impl AsRef<Module> for Module {
     #[inline]
     fn as_ref(&self) -> &Module {
         self
+    }
+}
+
+impl Module {
+    // Called immediately after the two pinned std format macro registrations.
+    // External macro registration APIs never set this marker.
+    #[cfg(feature = "fresh-core")]
+    pub(crate) fn fresh_mark_format_macro(&mut self) {
+        if let Some(ModuleItem {
+            kind: ModuleItemKind::Macro(macro_),
+            ..
+        }) = self.items.last_mut()
+        {
+            macro_.fresh_format_builtin = true;
+        }
+    }
+
+    // Called only by `modules::io::module(true)` after registering `println_impl`.
+    // External registration APIs never set this; `Context::install` certifies it
+    // per item (see `Context::fresh_stdio_println`).
+    #[cfg(feature = "fresh-core")]
+    pub(crate) fn fresh_mark_stdio_println(&mut self) {
+        self.fresh_stdio_println = true;
     }
 }

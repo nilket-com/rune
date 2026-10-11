@@ -257,6 +257,10 @@ pub(crate) mod grammar;
 pub mod query;
 
 pub mod runtime;
+
+/// Opt-in fresh execution core (feature `fresh-core`); unstable, no semver promise.
+#[cfg(feature = "fresh-core")]
+pub mod experimental_core;
 #[doc(inline)]
 pub use self::runtime::{
     from_const_value, from_value, to_const_value, to_value, FromConstValue, FromValue, Mut, Ref,

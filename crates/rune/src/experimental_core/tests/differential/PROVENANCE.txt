@@ -1,0 +1,33 @@
+Provenance of this directory's case data
+
+Files: differential_cases.tsv and programs/{operators,addendum,rebind,supplement,objfmt}.rn
+(paths relative to this directory), generated from rnx replay receipts and kept unchanged.
+
+Origin:      the rnx repository (github.com/nilket-com/rnx) at revision
+             bc286c817cae84e06a3254246bc4dc212b85fc26, paths
+             probes/0184/reference/receipts/d29sf-replay1/attempt/{*.stdout[.gz],
+             *.result.json[.gz], stage/*.tsv[.gz], stage/*.rn}, retained by commit
+             72a677062f4983012e99dbfe9ee30b501b34923f.
+Generator:   a deterministic script that reads the receipts only (kept with the M1 review
+             records, not in this repository).
+Fresh side:  outcomes of the candidate replay engine pinned at 515d4a779595d0d607ffec32048b8d2e718111b0,
+             whose partitions are identical to D21's (3ffdb3da4d22fb7820f3a4103d8c179814acc7c6).
+Stock side:  reference outcomes observed on the stock VM of fork bb8e69372353c50e271c9f115bc771c77aa6b83e
+             by the rnx reference runners; error kinds are read as classes by the site tables of
+             probes/0184/reference/OPERATOR_AMENDMENT.md and CANDIDATE_REPLAY.md (R1).
+Re-expression: host::mark(x) -> mark(w, x) and host::t(n, x) -> t(w, n, x), with a
+             caller-owned witness vector `w`.
+
+Licence of these test cases
+  SPDX-License-Identifier: MIT OR Apache-2.0
+  See LICENSE-MIT and LICENSE-APACHE at the root of this repository.
+  Scope: exactly the six files below, and nothing else from rnx. The grant covers THESE TEST
+  CASES ONLY; it is not a licence for rnx, which remains unlicensed.
+    differential_cases.tsv   sha256 7f260ae088a0a4d502a088f7451de494f55b0a4507b22b0db8820cad4c3cde59
+    programs/addendum.rn     sha256 5259545392eabd2e41e9b8101327636ad3af98847ccc2cb998477f93729624d1
+    programs/objfmt.rn       sha256 74dcd34bd46bd515c710aae65f5cf88c43ee88439391abd18b122b86e1819578
+    programs/operators.rn    sha256 1397741f4a1b6ac47b775f9485edef5b533e134d5cd02e4b1ac5be2566acfc80
+    programs/rebind.rn       sha256 e1a10e65f37f3397bfd3a773e4e5d26e0a770a1e28755df87f14f5d93ddf1d2d
+    programs/supplement.rn   sha256 ca926391ff6209525b6406b01a75da85fbe7dfb57b84f10bdeeedda6f9f6ac53
+  Authorship: as recorded in the rnx git history (receipts retained by commit
+  72a677062f4983012e99dbfe9ee30b501b34923f, author Joel Bondurant). No other holder is claimed.

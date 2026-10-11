@@ -553,6 +553,8 @@ impl<'a, S> Build<'a, S> {
             &self.args,
             statics,
             &mut unit_storage,
+            #[cfg(feature = "fresh-core")]
+            None,
         )?;
 
         if diagnostics.has_error() {
