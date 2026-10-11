@@ -1,4 +1,5 @@
 //! D1 tests-first on unchanged D2. Source-only until review.
+
 use crate::experimental_core::{
 	arithmetic::{Binary, Unary},
 	code::{Builder, Function, Op},
@@ -71,9 +72,11 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_args_start, b_args_start);
 			assert_eq!(a_args_len, b_args_len);
 		}
+
 		(Op::Print { value: a_value }, Op::Print { value: b_value }) => {
 			assert_eq!(a_value, b_value);
 		}
+
 		(
 			Op::TupleField {
 				out: a_out,
@@ -90,6 +93,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_value, b_value);
 			assert_eq!(a_index, b_index);
 		}
+
 		(
 			Op::SetTupleField {
 				value: a_value,
@@ -106,6 +110,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_index, b_index);
 			assert_eq!(a_new, b_new);
 		}
+
 		(
 			Op::Record {
 				out: a_out,
@@ -125,6 +130,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_args_start, b_args_start);
 			assert_eq!(a_args_len, b_args_len);
 		}
+
 		(
 			Op::Field {
 				out: a_out,
@@ -141,6 +147,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_value, b_value);
 			assert_eq!(a_key, b_key);
 		}
+
 		(
 			Op::SetField {
 				value: a_value,
@@ -157,6 +164,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_key, b_key);
 			assert_eq!(a_new, b_new);
 		}
+
 		(
 			Op::Variant {
 				out: a_out,
@@ -176,6 +184,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_success, b_success);
 			assert_eq!(a_payload, b_payload);
 		}
+
 		(
 			Op::Try {
 				out: a_out,
@@ -189,6 +198,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_out, b_out);
 			assert_eq!(a_value, b_value);
 		}
+
 		(
 			Op::CallValue {
 				out: a_out,
@@ -208,6 +218,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_args_start, b_args_start);
 			assert_eq!(a_args_len, b_args_len);
 		}
+
 		(
 			Op::Range {
 				out: a_out,
@@ -224,6 +235,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_start, b_start);
 			assert_eq!(a_end, b_end);
 		}
+
 		(
 			Op::IterStart {
 				out: a_out,
@@ -237,6 +249,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_out, b_out);
 			assert_eq!(a_value, b_value);
 		}
+
 		(
 			Op::IterNext {
 				out: a_out,
@@ -253,6 +266,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_iterator, b_iterator);
 			assert_eq!(a_none, b_none);
 		}
+
 		(
 			Op::String {
 				out: a_out,
@@ -266,6 +280,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_out, b_out);
 			assert_eq!(a_text, b_text);
 		}
+
 		(
 			Op::Clone {
 				out: a_out,
@@ -279,6 +294,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_out, b_out);
 			assert_eq!(a_value, b_value);
 		}
+
 		(
 			Op::AssignBinary {
 				out: a_out,
@@ -298,6 +314,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_lhs, b_lhs);
 			assert_eq!(a_rhs, b_rhs);
 		}
+
 		(
 			Op::Literal {
 				out: a_out,
@@ -311,6 +328,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_out, b_out);
 			same_value(a_value, b_value);
 		}
+
 		(
 			Op::Copy {
 				out: a_out,
@@ -324,9 +342,11 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_out, b_out);
 			assert_eq!(a_value, b_value);
 		}
+
 		(Op::Release { value: a_value }, Op::Release { value: b_value }) => {
 			assert_eq!(a_value, b_value);
 		}
+
 		(
 			Op::Unary {
 				out: a_out,
@@ -343,6 +363,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_op, b_op);
 			assert_eq!(a_value, b_value);
 		}
+
 		(
 			Op::Binary {
 				out: a_out,
@@ -362,6 +383,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_lhs, b_lhs);
 			assert_eq!(a_rhs, b_rhs);
 		}
+
 		(
 			Op::Cast {
 				out: a_out,
@@ -378,6 +400,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_value, b_value);
 			assert_eq!(a_tag, b_tag);
 		}
+
 		(
 			Op::Is {
 				out: a_out,
@@ -397,9 +420,11 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_tag, b_tag);
 			assert_eq!(a_negate, b_negate);
 		}
+
 		(Op::Jump { target: a_target }, Op::Jump { target: b_target }) => {
 			assert_eq!(a_target, b_target);
 		}
+
 		(
 			Op::Branch {
 				condition: a_condition,
@@ -416,6 +441,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_yes, b_yes);
 			assert_eq!(a_no, b_no);
 		}
+
 		(
 			Op::Call {
 				out: a_out,
@@ -435,9 +461,11 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_args_start, b_args_start);
 			assert_eq!(a_args_len, b_args_len);
 		}
+
 		(Op::Return { value: a_value }, Op::Return { value: b_value }) => {
 			assert_eq!(a_value, b_value);
 		}
+
 		(
 			Op::List {
 				out: a_out,
@@ -457,6 +485,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_args_start, b_args_start);
 			assert_eq!(a_args_len, b_args_len);
 		}
+
 		(
 			Op::Get {
 				out: a_out,
@@ -473,6 +502,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_value, b_value);
 			assert_eq!(a_index, b_index);
 		}
+
 		(
 			Op::Set {
 				value: a_value,
@@ -489,6 +519,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_index, b_index);
 			assert_eq!(a_new, b_new);
 		}
+
 		(
 			Op::Len {
 				out: a_out,
@@ -502,6 +533,7 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_out, b_out);
 			assert_eq!(a_value, b_value);
 		}
+
 		(
 			Op::Push {
 				value: a_value,
@@ -515,12 +547,14 @@ fn same(a: Op, b: Op) {
 			assert_eq!(a_value, b_value);
 			assert_eq!(a_new, b_new);
 		}
+
 		(Op::Drop { value: a_value }, Op::Drop { value: b_value }) => {
 			assert_eq!(a_value, b_value);
 		}
 		_ => panic!("decoded variant changed"),
 	}
 }
+
 fn same_value(a: Value, b: Value) {
 	match (a, b) {
 		(Value::F64(a), Value::F64(b)) => assert_eq!(a.to_bits(), b.to_bits()),
@@ -660,6 +694,7 @@ fn every_encoded_variant_round_trips_fields() {
 		Op::Drop { value: 2 },
 	];
 	let mut coverage = [false; 33];
+
 	for expected in ops {
 		let index = variant_index(expected);
 		assert!(!coverage[index], "duplicate variant {index}");
@@ -667,6 +702,7 @@ fn every_encoded_variant_round_trips_fields() {
 		let pc = function.push(expected, location()).unwrap();
 		same(expected, function.operation(pc as usize).unwrap());
 	}
+
 	assert!(coverage.into_iter().all(|seen| seen));
 	function.push(Op::Return { value: 0 }, location()).unwrap();
 	let mut callee = Function::new(2, 2).unwrap();
@@ -678,11 +714,13 @@ fn every_encoded_variant_round_trips_fields() {
 	let f = code.function(0).unwrap();
 	assert_eq!(f.cache_layout().unwrap().0, ops.len() + 1);
 	assert_eq!(f.cache_layout().unwrap().0, f.cache_layout().unwrap().1);
+
 	for (pc, expected) in ops.into_iter().enumerate() {
 		same(expected, f.cached(pc).unwrap().op);
 		f.audit_cached(pc, f.cached(pc).unwrap()).unwrap();
 	}
 }
+
 #[test]
 fn float_literals_keep_nan_payloads_and_signed_zero() {
 	let mut function = Function::new(1, 0).unwrap();
@@ -691,10 +729,12 @@ fn float_literals_keep_nan_payloads_and_signed_zero() {
 			out: 0,
 			value: Value::F64(f64::from_bits(bits)),
 		};
+
 		let pc = function.push(op, location()).unwrap();
 		same(op, function.operation(pc as usize).unwrap());
 	}
 }
+
 #[test]
 fn local_function_literals_are_stamped_before_publication() {
 	let mut function = Function::new(1, 0).unwrap();
@@ -723,6 +763,7 @@ fn local_function_literals_are_stamped_before_publication() {
 		code.function(0).unwrap().operation(0).unwrap(),
 	);
 }
+
 #[test]
 fn completed_charge_map_preserves_gap_and_backward_target() {
 	let mut function = Function::new(1, 0).unwrap();
@@ -731,6 +772,7 @@ fn completed_charge_map_preserves_gap_and_backward_target() {
 			.push(Op::Copy { out: 0, value: 0 }, location())
 			.unwrap();
 	}
+
 	function.push(Op::Jump { target: 0 }, location()).unwrap();
 	let mut builder = Builder::default();
 	builder.push(function).unwrap();
@@ -744,6 +786,7 @@ fn completed_charge_map_preserves_gap_and_backward_target() {
 		.collect();
 	assert_eq!(charges, [0, 257, 514]);
 }
+
 #[test]
 fn cache_preparation_refuses_the_old_charge_scratch_only_budget() {
 	// Baseline code.rs:675-676: finish allocates one gap Vec<usize> per function,
@@ -761,15 +804,18 @@ fn cache_preparation_refuses_the_old_charge_scratch_only_budget() {
 				.push(Op::Copy { out: 0, value: 0 }, location())
 				.unwrap();
 		}
+
 		function.push(Op::Return { value: 0 }, location()).unwrap();
 		builder.push(function).unwrap();
 	}
+
 	let result = rune_alloc::limit::with(128 * core::mem::size_of::<usize>(), || {
 		builder.finish().err().map(|e| e.kind)
 	})
 	.call();
 	assert_eq!(result, Some(ErrorKind::Allocation));
 }
+
 #[test]
 fn invalid_literal_and_argument_are_refused_before_execution() {
 	for op in [
@@ -817,6 +863,7 @@ fn all_non_heap_literal_kinds_survive_validation_and_pool_decode() {
 			code.function(0).unwrap().operation(0).unwrap(),
 		);
 	}
+
 	let mut function = Function::new(1, 0).unwrap();
 	function
 		.push(

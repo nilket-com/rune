@@ -7,6 +7,7 @@
 //! uncertified handler can run.
 //!
 //! Each custom macro counts its calls, so a test can tell whether the host callback ran.
+
 use crate::alloc::prelude::*;
 use crate::experimental_core::frontend;
 use crate::{Context, Diagnostics, Module, Source, Sources};
@@ -49,6 +50,7 @@ const PRINTLN: &str = "pub fn main() { println!(\"{}\", 42); 1 }";
 fn builtin_then_custom_format_is_refused_before_the_custom_handler_runs() {
 	let calls = Arc::new(AtomicUsize::new(0));
 	let mut context = Context::with_default_modules().unwrap();
+
 	// Stock semantics: the replacing install succeeds.
 	context
 		.install(counting_macro("fmt", "format", &calls))
@@ -117,6 +119,7 @@ fn custom_then_builtin_format_admits_the_builtin() {
 	// The std modules up to `fmt`, in `Context::with_config`'s order (later ones need the
 	// types and traits of earlier ones).
 	use crate::modules as m;
+
 	for module in [
 		m::iter::module(),
 		m::core::module(),
@@ -139,6 +142,7 @@ fn custom_then_builtin_format_admits_the_builtin() {
 	] {
 		context.install(module.unwrap()).unwrap();
 	}
+
 	// No std prelude on this Context, so the macro is named by its full path.
 	let text = "pub fn main() { ::std::fmt::format!(\"{}\", 42) }";
 	assert!(
@@ -162,6 +166,7 @@ fn custom_then_builtin_println_admits_the_builtin() {
 		.install(counting_macro("io", "println", &calls))
 		.unwrap();
 	use crate::modules as m;
+
 	for module in [
 		m::iter::module(),
 		m::core::module(),
@@ -188,6 +193,7 @@ fn custom_then_builtin_println_admits_the_builtin() {
 	] {
 		context.install(module.unwrap()).unwrap();
 	}
+
 	let text = "pub fn main() { ::std::io::println!(\"{}\", 42); 1 }";
 	assert!(
 		fresh_compile(&context, text),

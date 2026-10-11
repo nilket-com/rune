@@ -1,4 +1,5 @@
 //! D5 candidate uses the same fast_i64 helper as both production arms.
+
 use super::*;
 use crate::experimental_core::{
 	arithmetic::Binary,
@@ -6,6 +7,7 @@ use crate::experimental_core::{
 	heap::Limits,
 	value::Type,
 };
+
 const OPS: [Binary; 16] = [
 	Binary::Add,
 	Binary::Sub,
@@ -35,6 +37,7 @@ const NUMBERS: [i64; 9] = [
 	i64::MAX - 1,
 	i64::MAX,
 ];
+
 fn eligible(op: Binary, a: Value, b: Value) -> bool {
 	let operation = match op {
 		Binary::Add
@@ -50,14 +53,18 @@ fn eligible(op: Binary, a: Value, b: Value) -> bool {
 		| Binary::Ge => true,
 		Binary::BitAnd | Binary::BitOr | Binary::BitXor | Binary::Shl | Binary::Shr => false,
 	};
+
 	operation && matches!((a, b), (Value::I64(_), Value::I64(_)))
 }
+
 fn selected(store: &mut Store, assign: bool, op: Binary, a: Value, b: Value) -> Result<Value> {
 	let result = fast_i64(op, a, b);
 	assert_eq!(result.is_some(), eligible(op, a, b));
+
 	if let Some(result) = result {
 		return result;
 	}
+
 	if assign && op == Binary::Add && store.tag(a)? == Type::String {
 		store.append_string(a, b)?;
 		store.retain(a)?;
@@ -66,6 +73,7 @@ fn selected(store: &mut Store, assign: bool, op: Binary, a: Value, b: Value) -> 
 		binary(store, op, a, b)
 	}
 }
+
 fn loc() -> Location {
 	Location {
 		source: 3,
@@ -74,6 +82,7 @@ fn loc() -> Location {
 		end: 103,
 	}
 }
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 32,
@@ -81,6 +90,7 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 fn program(assign: bool, op: Binary, out: u32) -> Code {
 	let mut f = Function::new(3, 2).unwrap();
 	let instruction = if assign {
@@ -98,12 +108,14 @@ fn program(assign: bool, op: Binary, out: u32) -> Code {
 			rhs: 1,
 		}
 	};
+
 	f.push(instruction, loc()).unwrap();
 	f.push(Op::Return { value: out }, loc()).unwrap();
 	let mut b = Builder::default();
 	b.push(f).unwrap();
 	b.finish().unwrap()
 }
+
 /// Compares arithmetic results. Rust does not guarantee the payload or sign of a NaN
 /// produced by float arithmetic (Miri, for one, picks them non-deterministically), so two
 /// NaNs are one class here. Every other float, including the signed zeros, must match
@@ -124,6 +136,7 @@ fn same_treats_nans_as_one_class_and_nothing_else() {
 	same(Value::F64(quiet), Value::F64(negative));
 	same(Value::F64(-0.0), Value::F64(-0.0));
 	same(Value::F64(1.5), Value::F64(1.5));
+
 	for (a, b) in [
 		(quiet, 1.0),
 		(1.0, quiet),
@@ -136,6 +149,7 @@ fn same_treats_nans_as_one_class_and_nothing_else() {
 		assert!(mismatch.is_err(), "{a:?} vs {b:?} must not match");
 	}
 }
+
 fn run_case(assign: bool, op: Binary, a: Value, b: Value, out: u32, expected: Result<Value>) {
 	let code = program(assign, op, out);
 	let mut store = store();
@@ -144,11 +158,13 @@ fn run_case(assign: bool, op: Binary, a: Value, b: Value, out: u32, expected: Re
 	let br = store.export(b);
 	let before = (store.live_entries(), store.payload_bytes());
 	let result = e.invoke_code(&code, &mut store, 0, &[&ar, &br], 100);
+
 	match (result, expected) {
 		(Ok(root), Ok(want)) => {
 			same(root.value, want);
 			store.root_release(root).unwrap();
 		}
+
 		(Err(failure), Err(want)) => {
 			assert_eq!(failure.error, want.at(loc()));
 			assert!(failure.cleanup_error.is_none());
@@ -156,12 +172,14 @@ fn run_case(assign: bool, op: Binary, a: Value, b: Value, out: u32, expected: Re
 		}
 		_ => panic!("result kind differs: {assign} {op:?} {a:?} {b:?}"),
 	}
+
 	assert!(e.is_idle());
 	assert_eq!((store.live_entries(), store.payload_bytes()), before);
 	same(ar.value, a);
 	same(br.value, b);
 	store.root_release(ar).unwrap();
 	store.root_release(br).unwrap();
+
 	// The same executor can run a succeeding operation after every failure.
 	let next = program(false, Binary::Add, 2);
 	let a = store.root_i64(20);
@@ -173,6 +191,7 @@ fn run_case(assign: bool, op: Binary, a: Value, b: Value, out: u32, expected: Re
 	store.root_release(b).unwrap();
 	assert!(e.is_idle());
 }
+
 #[test]
 fn d5_all_ops_i64_boundary_matrix_runs_both_instruction_kinds() {
 	let mut count = 0;
@@ -193,8 +212,10 @@ fn d5_all_ops_i64_boundary_matrix_runs_both_instruction_kinds() {
 			}
 		}
 	}
+
 	assert_eq!(count, 2592);
 }
+
 #[test]
 fn d5_output_aliases_preserve_operands_before_store() {
 	for assign in [false, true] {
@@ -214,6 +235,7 @@ fn d5_output_aliases_preserve_operands_before_store() {
 		}
 	}
 }
+
 #[test]
 fn d5_error_selector_does_not_touch_scalar_or_heap_destination() {
 	for assign in [false, true] {
@@ -222,6 +244,7 @@ fn d5_error_selector_does_not_touch_scalar_or_heap_destination() {
 				Binary::Sub => (i64::MIN, 1),
 				_ => (i64::MAX, 2),
 			};
+
 			let mut store = store();
 			let mut e = Executor::new().unwrap();
 			let heap = store.string("destination").unwrap();
@@ -242,6 +265,7 @@ fn d5_error_selector_does_not_touch_scalar_or_heap_destination() {
 		}
 	}
 }
+
 #[test]
 fn d5_non_i64_scalar_classes_keep_fallback_results() {
 	let pairs = [
@@ -277,16 +301,19 @@ fn d5_non_i64_scalar_classes_keep_fallback_results() {
 				} else {
 					arithmetic::binary(op, a, b)
 				};
+
 				match (selected(&mut store, assign, op, a, b), expected) {
 					(Ok(a), Ok(b)) => same(a, b),
 					(Err(a), Err(b)) => assert_eq!(a, b),
 					_ => panic!("fallback mismatch"),
 				}
+
 				run_case(assign, op, a, b, 2, expected);
 			}
 		}
 	}
 }
+
 #[test]
 fn d5_heap_strings_keep_binary_and_compound_alias_effects() {
 	for assign in [false, true] {
@@ -313,6 +340,7 @@ fn d5_heap_strings_keep_binary_and_compound_alias_effects() {
 		store.root_release(br).unwrap();
 		assert_eq!(store.live_entries(), 0);
 	}
+
 	for op in [
 		Binary::Eq,
 		Binary::Ne,
@@ -332,6 +360,7 @@ fn d5_heap_strings_keep_binary_and_compound_alias_effects() {
 		store.release(b).unwrap();
 	}
 }
+
 #[test]
 fn d5_invalid_heap_fallback_errors_keep_their_precedence() {
 	for assign in [false, true] {
@@ -357,6 +386,7 @@ fn d5_invalid_heap_fallback_errors_keep_their_precedence() {
 		assert_eq!(store.live_entries(), 0);
 	}
 }
+
 #[test]
 fn d7_admission_set_is_exactly_eleven_ops_on_two_i64_values() {
 	let mut admitted = 0;
@@ -367,12 +397,15 @@ fn d7_admission_set_is_exactly_eleven_ops_on_two_i64_values() {
 		);
 		assert!(fast_i64(op, Value::I64(1), Value::U64(2)).is_none());
 		assert!(fast_i64(op, Value::U64(1), Value::I64(2)).is_none());
+
 		if eligible(op, Value::I64(1), Value::I64(2)) {
 			admitted += 1;
 		}
+
 		assert!(!eligible(op, Value::I64(1), Value::U64(2)));
 		assert!(!eligible(op, Value::U64(1), Value::I64(2)));
 	}
+
 	assert_eq!(admitted, 11);
 }
 
@@ -382,6 +415,7 @@ fn d7_expected(n: core::result::Result<i64, ErrorKind>) -> Result<Value> {
 	n.map(Value::I64)
 		.map_err(|kind| Error::new(kind, "primitive operation"))
 }
+
 fn d7_program(assign: bool, op: Binary, out: u32, lhs: u32, rhs: u32, parameters: u32) -> Code {
 	let mut f = Function::new(3, parameters).unwrap();
 	let instruction = if assign {
@@ -389,15 +423,18 @@ fn d7_program(assign: bool, op: Binary, out: u32, lhs: u32, rhs: u32, parameters
 	} else {
 		Op::Binary { out, op, lhs, rhs }
 	};
+
 	f.push(instruction, loc()).unwrap();
 	f.push(Op::Return { value: out }, loc()).unwrap();
 	let mut b = Builder::default();
 	b.push(f).unwrap();
 	b.finish().unwrap()
 }
+
 #[test]
 fn d7_explicit_signed_divrem_values_errors_and_output_aliases() {
 	use ErrorKind::{DivisionByZero as Zero, Overflow};
+
 	// Explicit oracle: quotient truncates toward zero, remainder follows lhs.
 	let cases = [
 		(7, 3, Ok(2), Ok(1)),
@@ -412,6 +449,7 @@ fn d7_explicit_signed_divrem_values_errors_and_output_aliases() {
 		(0, 0, Err(Zero), Err(Zero)),
 		(7, 0, Err(Zero), Err(Zero)),
 	];
+
 	for assign in [false, true] {
 		for out in [0, 1, 2] {
 			for (a, b, div, rem) in cases {
@@ -429,6 +467,7 @@ fn d7_explicit_signed_divrem_values_errors_and_output_aliases() {
 		}
 	}
 }
+
 #[test]
 fn d7_identical_operand_slot_and_output_aliases() {
 	for assign in [false, true] {
@@ -441,6 +480,7 @@ fn d7_identical_operand_slot_and_output_aliases() {
 					let b = store.root_i64(99);
 					let mut executor = Executor::new().unwrap();
 					let result = executor.invoke_code(&code, &mut store, 0, &[&a, &b], 100);
+
 					if n == 0 {
 						let failure = result.unwrap_err();
 						assert_eq!(
@@ -456,6 +496,7 @@ fn d7_identical_operand_slot_and_output_aliases() {
 						);
 						store.root_release(root).unwrap();
 					}
+
 					assert!(executor.is_idle());
 					same(a.value, Value::I64(n));
 					same(b.value, Value::I64(99));
@@ -467,6 +508,7 @@ fn d7_identical_operand_slot_and_output_aliases() {
 		}
 	}
 }
+
 #[test]
 fn d7_divrem_non_i64_fallback_and_ieee_zero_classes() {
 	let pairs = [
@@ -495,11 +537,13 @@ fn d7_divrem_non_i64_fallback_and_ieee_zero_classes() {
 			for (a, b) in pairs {
 				assert!(fast_i64(op, a, b).is_none());
 				let expected = arithmetic::binary(op, a, b);
+
 				// Exact float bits, except that any two NaNs are one class (see `same`).
 				run_case(assign, op, a, b, 2, expected);
 			}
 		}
 	}
+
 	for (divisor, sign) in [(0.0, false), (-0.0, true)] {
 		let mut store = store();
 		let Value::F64(div) = selected(
@@ -512,6 +556,7 @@ fn d7_divrem_non_i64_fallback_and_ieee_zero_classes() {
 		.unwrap() else {
 			panic!("float result");
 		};
+
 		assert!(div.is_infinite() && div.is_sign_negative() == sign);
 		let Value::F64(rem) = selected(
 			&mut store,
@@ -523,9 +568,11 @@ fn d7_divrem_non_i64_fallback_and_ieee_zero_classes() {
 		.unwrap() else {
 			panic!("float result");
 		};
+
 		assert!(rem.is_nan());
 	}
 }
+
 #[test]
 fn d7_production_heap_type_errors_preserve_roots_and_release_frame() {
 	for assign in [false, true] {
@@ -538,6 +585,7 @@ fn d7_production_heap_type_errors_preserve_roots_and_release_frame() {
 				} else {
 					Value::I64(0)
 				};
+
 				let dv = store.string("old destination").unwrap();
 				let a = store.export(av);
 				let b = store.export(bv);
@@ -557,9 +605,11 @@ fn d7_production_heap_type_errors_preserve_roots_and_release_frame() {
 				assert_eq!((store.live_entries(), store.payload_bytes()), before);
 				assert_eq!(store.text(destination.value).unwrap(), "old destination");
 				assert_eq!(store.text(a.value).unwrap(), "lhs");
+
 				if heap_rhs {
 					assert_eq!(store.text(b.value).unwrap(), "rhs");
 				}
+
 				// This proves observable root preservation and production frame cleanup;
 				// it does not observe the discarded destination slot mid-failure.
 				let good = program(false, Binary::Add, 2);
@@ -569,14 +619,17 @@ fn d7_production_heap_type_errors_preserve_roots_and_release_frame() {
 					.invoke_code(&good, &mut store, 0, &[&x, &y], 100)
 					.unwrap();
 				same(result.value, Value::I64(42));
+
 				for root in [result, x, y, a, b, destination] {
 					store.root_release(root).unwrap();
 				}
+
 				assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 			}
 		}
 	}
 }
+
 #[test]
 fn d7_nested_failure_locations_call_chain_cleanup_and_reuse() {
 	for assign in [false, true] {
@@ -590,6 +643,7 @@ fn d7_nested_failure_locations_call_chain_cleanup_and_reuse() {
 					end: 13,
 					..loc()
 				};
+
 				let mut caller = Function::new(3, 2).unwrap();
 				let (args_start, args_len) = caller.arguments(&[0, 1]).unwrap();
 				caller
@@ -654,15 +708,18 @@ fn d7_nested_failure_locations_call_chain_cleanup_and_reuse() {
 					result.value,
 					Value::I64(if op == Binary::Div { 2 } else { 1 }),
 				);
+
 				for root in [result, x, y] {
 					store.root_release(root).unwrap();
 				}
+
 				assert!(executor.is_idle());
 				assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 			}
 		}
 	}
 }
+
 #[test]
 fn d7_invalid_operand_or_output_is_refused_before_execution() {
 	for assign in [false, true] {
@@ -685,6 +742,7 @@ fn d7_invalid_operand_or_output_is_refused_before_execution() {
 			}
 		}
 	}
+
 	// Validated Code cannot express invalid lhs/rhs/out at execution. No new
 	// corruption hook is added; runtime error-order claims are not made here.
 }

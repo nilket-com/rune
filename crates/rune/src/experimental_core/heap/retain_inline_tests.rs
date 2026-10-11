@@ -1,4 +1,5 @@
 //! D9 tests-first: private retain's existing behavior, with no new host API.
+
 use super::*;
 
 fn state(store: &Store) -> std::string::String {
@@ -16,6 +17,7 @@ fn state(store: &Store) -> std::string::String {
 		)
 	)
 }
+
 fn scalar_matrix(closed: bool) {
 	let mut store = Store::new(Limits {
 		entries: 8,
@@ -25,6 +27,7 @@ fn scalar_matrix(closed: bool) {
 	if closed {
 		store.close().unwrap();
 	}
+
 	let before = state(&store);
 	let values = [
 		Value::Unit,
@@ -40,11 +43,13 @@ fn scalar_matrix(closed: bool) {
 		Value::Char('μ'),
 		Value::Function { code: 42, id: 7 },
 	];
+
 	for value in values {
 		// The success payload is deliberately unused: D11 returns unit.
 		store.retain(value).unwrap();
 		assert_eq!(state(&store), before);
 	}
+
 	let types = [
 		Type::Unit,
 		Type::Bool,
@@ -64,19 +69,23 @@ fn scalar_matrix(closed: bool) {
 	];
 	for tag in types {
 		let value = Value::Type(tag);
+
 		// The success payload is deliberately unused: D11 returns unit.
 		store.retain(value).unwrap();
 		assert_eq!(state(&store), before);
 	}
 }
+
 #[test]
 fn d9_all_non_heap_variants_retain_bits_on_open_store() {
 	scalar_matrix(false);
 }
+
 #[test]
 fn d9_all_non_heap_variants_retain_bits_on_closed_store() {
 	scalar_matrix(true);
 }
+
 #[test]
 fn d9_live_retain_counts_and_alias_survives_original_release() {
 	let mut store = Store::new(Limits {
@@ -88,6 +97,7 @@ fn d9_live_retain_counts_and_alias_survives_original_release() {
 	let Value::Heap(h) = original else {
 		panic!("heap expected")
 	};
+
 	assert_eq!(store.entry(h).unwrap().strong, 1);
 	store.retain(original).unwrap();
 	let alias = original;
@@ -99,6 +109,7 @@ fn d9_live_retain_counts_and_alias_survives_original_release() {
 	store.release(alias).unwrap();
 	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 }
+
 #[test]
 fn d9_invalid_and_wrong_generation_retains_leave_store_unchanged() {
 	let mut store = Store::new(Limits {
@@ -110,6 +121,7 @@ fn d9_invalid_and_wrong_generation_retains_leave_store_unchanged() {
 	let Value::Heap(h) = valid else {
 		panic!("heap expected")
 	};
+
 	for bad in [
 		Handle {
 			slot: u32::MAX,
@@ -127,8 +139,10 @@ fn d9_invalid_and_wrong_generation_retains_leave_store_unchanged() {
 		);
 		assert_eq!(state(&store), before);
 	}
+
 	store.release(valid).unwrap();
 }
+
 #[test]
 fn d9_stale_retain_refused_before_and_after_slot_reuse() {
 	let mut store = Store::new(Limits {
@@ -148,6 +162,7 @@ fn d9_stale_retain_refused_before_and_after_slot_reuse() {
 	let (Value::Heap(old_h), Value::Heap(new_h)) = (stale, new) else {
 		panic!("heap expected")
 	};
+
 	assert_eq!(old_h.slot, new_h.slot);
 	assert_ne!(old_h.generation, new_h.generation);
 	let before = state(&store);
@@ -159,6 +174,7 @@ fn d9_stale_retain_refused_before_and_after_slot_reuse() {
 	assert_eq!(store.text(new).unwrap(), "new");
 	store.release(new).unwrap();
 }
+
 #[test]
 fn d9_closed_heap_retains_keep_closed_error_precedence_and_state() {
 	let mut store = Store::new(Limits {
@@ -168,6 +184,7 @@ fn d9_closed_heap_retains_keep_closed_error_precedence_and_state() {
 	.unwrap();
 	let value = store.string("closed").unwrap();
 	store.close().unwrap();
+
 	for value in [
 		value,
 		Value::Heap(Handle {
@@ -183,6 +200,7 @@ fn d9_closed_heap_retains_keep_closed_error_precedence_and_state() {
 		assert_eq!(state(&store), before);
 	}
 }
+
 #[test]
 fn d9_checked_strong_overflow_is_nonmutating_and_recovery_counts() {
 	let mut store = Store::new(Limits {
@@ -194,6 +212,7 @@ fn d9_checked_strong_overflow_is_nonmutating_and_recovery_counts() {
 	let Value::Heap(h) = value else {
 		panic!("heap expected")
 	};
+
 	// Module-local synthetic count: no production hook or visibility change.
 	store.entry_mut(h).unwrap().strong = u32::MAX;
 	let before = state(&store);
@@ -205,6 +224,7 @@ fn d9_checked_strong_overflow_is_nonmutating_and_recovery_counts() {
 	assert_eq!(store.entry(h).unwrap().strong, u32::MAX);
 	store.release(alias).unwrap();
 	assert_eq!(store.entry(h).unwrap().strong, u32::MAX - 1);
+
 	// Restore synthetic outstanding references, then release the real edge.
 	store.entry_mut(h).unwrap().strong = 1;
 	store.release(value).unwrap();

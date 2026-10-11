@@ -1,8 +1,10 @@
 #![cfg(feature = "fresh-core")]
+
 //! The sealed host boundary through the public API only: owner checks at every
 //! root operand position, root ownership semantics and function-token provenance.
 //! Moved from the D21 dev crate (`experimental/0184-dev/tests/boundary.rs`); the
 //! layout, hand-built-code and interner tests are in-crate (`tests/boundary_internal.rs`).
+
 use rune::experimental_core::{
 	error::ErrorKind,
 	execute::Executor,
@@ -18,6 +20,7 @@ fn compile(text: &str) -> Program {
 	sources.insert(Source::memory(text).unwrap()).unwrap();
 	frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 7).unwrap()
 }
+
 fn new_store() -> Store {
 	Store::new(Limits {
 		entries: 16,
@@ -25,9 +28,11 @@ fn new_store() -> Store {
 	})
 	.unwrap()
 }
+
 fn main_of(program: &Program) -> u32 {
 	program.function(Hash::type_hash(["main"])).unwrap()
 }
+
 /// Two stores whose first entries share slot and generation: a list `[1]` in
 /// each. Inside the core the handles are identical bits.
 fn pair() -> (Store, Store, Root, Root) {
@@ -39,9 +44,11 @@ fn pair() -> (Store, Store, Root, Root) {
 	let list_b = b.root_list(Type::Vec, &[&one]).unwrap();
 	(a, b, list_a, list_b)
 }
+
 fn counters(store: &Store) -> (usize, usize) {
 	(store.live_entries(), store.payload_bytes())
 }
+
 fn i64_of(store: &Store, root: &Root) -> i64 {
 	match store.root_scalar(root).unwrap() {
 		Some(Scalar::I64(n)) => n,
@@ -64,6 +71,7 @@ fn over_cap_host_requests_are_refused_before_any_scratch_or_retain() {
 	let before = counters(&a);
 	let b = new_store();
 	let foreign = b.root_i64(2);
+
 	// Bytes refused first (a 2-element list needs 32 > 16 remaining); nothing retained,
 	// including when a foreign root sits in the request.
 	assert_eq!(
@@ -78,6 +86,7 @@ fn over_cap_host_requests_are_refused_before_any_scratch_or_retain() {
 		a.root_record(None, &[("k", &keep)]).unwrap_err().kind,
 		ErrorKind::StoreCapacity
 	);
+
 	// Shape refusals precede everything.
 	assert_eq!(
 		a.root_list(Type::String, &[]).unwrap_err().kind,
@@ -91,6 +100,7 @@ fn over_cap_host_requests_are_refused_before_any_scratch_or_retain() {
 	);
 	assert_eq!(counters(&a), before);
 	assert_eq!(b.live_entries(), 0);
+
 	// A one-element list fits exactly.
 	let last = a.root_list(Type::Vec, &[&keep]).unwrap();
 	assert_eq!(a.payload_bytes(), 64);
@@ -114,6 +124,7 @@ fn invoke_refuses_a_missing_function_and_a_wrong_arity_before_touching_roots() {
 	let main = main_of(&program);
 	let (mut a, mut b, la, lb) = pair();
 	let mut executor = Executor::new().unwrap();
+
 	// Wrong arity with a foreign root: the arity refusal comes first.
 	let failure = executor
 		.invoke(&program, &mut a, main, &[&la, &lb], 10)
@@ -136,11 +147,13 @@ fn every_root_operand_position_is_owner_checked() {
 	let before = (counters(&a), counters(&b));
 	let foreign = |r: Result<(), ErrorKind>| assert_eq!(r, Err(ErrorKind::InvalidHandle));
 	let kind = |e: rune::experimental_core::error::Error| e.kind;
+
 	// Scalars are branded too: a foreign scalar root is refused, never read.
 	let one_b = b.root_i64(1);
 	foreign(a.root_scalar(&one_b).map(drop).map_err(kind));
 	foreign(a.root_tag(&one_b).map(drop).map_err(kind));
 	foreign(a.root_is_function(&one_b).map(drop).map_err(kind));
+
 	// Construction operands.
 	foreign(a.root_list(Type::Vec, &[&lb]).map(drop).map_err(kind));
 	foreign(a.root_list(Type::Vec, &[&la, &lb]).map(drop).map_err(kind));
@@ -150,6 +163,7 @@ fn every_root_operand_position_is_owner_checked() {
 			.map(drop)
 			.map_err(kind),
 	);
+
 	// Reads.
 	foreign(a.root_get(&lb, 0).map(drop).map_err(kind));
 	foreign(a.root_len(&lb).map(drop).map_err(kind));
@@ -158,6 +172,7 @@ fn every_root_operand_position_is_owner_checked() {
 	foreign(a.root_field(&lb, "x").map(drop).map_err(kind));
 	foreign(a.root_format(&lb, true).map(drop).map_err(kind));
 	foreign(a.root_variant_parts(&lb).map(drop).map_err(kind));
+
 	// Mutation: receiver and value positions.
 	let one_a = a.root_i64(1);
 	foreign(a.root_set(&lb, 0, &one_a).map_err(kind));
@@ -168,9 +183,11 @@ fn every_root_operand_position_is_owner_checked() {
 	let rec_b = b.root_record(None, &[("x", &one_b)]).unwrap();
 	foreign(a.root_set_field(&rec_b, "x", &one_a).map_err(kind));
 	foreign(a.root_set_field(&rec, "x", &one_b).map_err(kind));
+
 	// Ownership operations.
 	foreign(a.root_retain(&lb).map(drop).map_err(kind));
 	foreign(a.root_invalidate(&lb).map_err(kind));
+
 	// Release: refused, and the unchanged root comes back.
 	let lb = match a.root_release(lb) {
 		Err(ReleaseError::Refused { root, error }) => {
@@ -179,6 +196,7 @@ fn every_root_operand_position_is_owner_checked() {
 		}
 		other => panic!("expected refusal, got {other:?}"),
 	};
+
 	a.root_release(rec).unwrap();
 	b.root_release(rec_b).unwrap();
 	assert_eq!(
@@ -186,6 +204,7 @@ fn every_root_operand_position_is_owner_checked() {
 		before,
 		"nothing changed in either store"
 	);
+
 	// Still usable in their own stores afterwards.
 	assert_eq!(a.root_len(&la).unwrap(), 1);
 	assert_eq!(b.root_len(&lb).unwrap(), 1);
@@ -205,6 +224,7 @@ fn invoke_checks_every_argument_before_retaining_any() {
 	let main = main_of(&program);
 	let (mut a, mut b, la, lb) = pair();
 	let mut executor = Executor::new().unwrap();
+
 	for args in [[&la, &lb], [&lb, &la], [&lb, &lb]] {
 		let failure = executor
 			.invoke(&program, &mut a, main, &args, 10_000)
@@ -215,10 +235,12 @@ fn invoke_checks_every_argument_before_retaining_any() {
 		assert_eq!(a.live_entries(), 1);
 		assert_eq!(b.live_entries(), 1);
 	}
+
 	let out = executor
 		.invoke(&program, &mut a, main, &[&la, &la], 10_000)
 		.unwrap();
 	assert_eq!(a.root_scalar(&out).unwrap(), Some(Scalar::U64(2)));
+
 	// The result is branded by the store that ran: foreign to the other.
 	assert_eq!(
 		b.root_scalar(&out).unwrap_err().kind,
@@ -242,7 +264,9 @@ fn closed_and_dropped_stores_refuse_their_roots() {
 		}
 		other => panic!("expected refusal, got {other:?}"),
 	};
+
 	drop(a);
+
 	// Store identities are never reused: the stale root is foreign everywhere.
 	let b = new_store();
 	assert_eq!(
@@ -267,6 +291,7 @@ fn two_owners_release_once_each_in_either_order() {
 		} else {
 			(first, second)
 		};
+
 		store.root_release(x).unwrap();
 		assert_eq!(store.live_entries(), 1, "one owner keeps the entry");
 		assert_eq!(store.root_text(&y).unwrap(), "shared");
@@ -286,6 +311,7 @@ fn retained_reads_and_container_edges_are_counted() {
 	let field = store.root_field(&rec, "k").unwrap();
 	assert_eq!(store.root_text(&got).unwrap(), "in");
 	assert_eq!(store.root_text(&field).unwrap(), "in");
+
 	// The host's own root goes away; the containers and the retained reads keep the string.
 	store.root_release(inner).unwrap();
 	assert_eq!(store.live_entries(), 3);
@@ -319,6 +345,7 @@ fn mutation_operands_are_retained_by_the_container() {
 	store.root_release(list).unwrap();
 	store.root_release(rec).unwrap();
 	assert_eq!(store.live_entries(), 0);
+
 	// Scalar roots release nothing and are consumed.
 	store.root_release(zero).unwrap();
 }
@@ -362,6 +389,7 @@ fn scalar_roots_read_back_and_heap_roots_do_not() {
 fn function_tokens_carry_their_program_identity() {
 	let producer = compile("pub fn f() { 41 } pub fn main() { f }");
 	let consumer = compile("pub fn main(g) { g() + 1 }");
+
 	// M1: the `code.id()` assertions moved in-crate
 	// (`boundary_internal::compiled_programs_have_distinct_nonzero_identities`).
 	let mut store = new_store();
@@ -371,6 +399,7 @@ fn function_tokens_carry_their_program_identity() {
 		.unwrap();
 	assert!(store.root_is_function(&token).unwrap());
 	assert_eq!(store.root_scalar(&token).unwrap(), None);
+
 	// The token is foreign to the consumer program: a type error at the call,
 	// with nothing retained and the executor idle.
 	let failure = executor
@@ -380,6 +409,7 @@ fn function_tokens_carry_their_program_identity() {
 	assert!(failure.error.location.is_some(), "located at the call");
 	assert!(executor.is_idle());
 	assert_eq!(store.live_entries(), 0);
+
 	// Its own program calls it.
 	let caller = producer.function(Hash::type_hash(["f"])).unwrap();
 	let out = executor
@@ -387,6 +417,7 @@ fn function_tokens_carry_their_program_identity() {
 		.unwrap();
 	assert_eq!(i64_of(&store, &out), 41);
 	store.root_release(out).unwrap();
+
 	// Dropping the producer never frees its identity for a later program.
 	drop(producer);
 	let later = compile("pub fn main(g) { g() }");

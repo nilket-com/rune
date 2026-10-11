@@ -1,4 +1,5 @@
 //! Development checks on hand-built owned code; no frontend/conformance claim.
+
 use crate::experimental_core::{
 	arithmetic::Binary,
 	code::{Builder, Function, Op},
@@ -7,6 +8,7 @@ use crate::experimental_core::{
 	heap::{Limits, Store},
 	value::{Type, Value},
 };
+
 fn loc(n: u32) -> Location {
 	Location {
 		source: 1,
@@ -15,6 +17,7 @@ fn loc(n: u32) -> Location {
 		end: n + 1,
 	}
 }
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 128,
@@ -22,6 +25,7 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 #[test]
 fn loop_backedge_charges_and_runs() {
 	let mut f = Function::new(5, 0).unwrap();
@@ -35,6 +39,7 @@ fn loop_backedge_charges_and_runs() {
 		)
 		.unwrap();
 	}
+
 	f.push(
 		Op::Binary {
 			out: 4,
@@ -98,6 +103,7 @@ fn loop_backedge_charges_and_runs() {
 	assert_eq!(error.error.location, Some(loc(4)));
 	assert_eq!(s.live_entries(), 0);
 }
+
 #[test]
 fn explicit_recursive_frames_and_return() {
 	let mut f = Function::new(6, 1).unwrap();
@@ -189,6 +195,7 @@ fn explicit_recursive_frames_and_return() {
 	assert_eq!(error.error.kind, ErrorKind::FrameCapacity);
 	assert_eq!(error.call_chain.len(), 1023);
 }
+
 #[test]
 fn writes_survive_error_but_local_roots_are_released() {
 	let mut s = store();
@@ -253,6 +260,7 @@ fn writes_survive_error_but_local_roots_are_released() {
 	s.release(rows).unwrap();
 	assert_eq!(s.live_entries(), 0);
 }
+
 #[test]
 fn long_forward_path_is_split_and_invalid_code_refused() {
 	let mut f = Function::new(1, 0).unwrap();
@@ -266,6 +274,7 @@ fn long_forward_path_is_split_and_invalid_code_refused() {
 		)
 		.unwrap();
 	}
+
 	f.push(Op::Return { value: 0 }, loc(900)).unwrap();
 	let mut b = Builder::default();
 	b.push(f).unwrap();
@@ -289,6 +298,7 @@ fn long_forward_path_is_split_and_invalid_code_refused() {
 	b.push(bad).unwrap();
 	assert!(b.finish().is_err());
 }
+
 #[test]
 fn cancellation_and_closed_store_are_named_errors() {
 	let mut f = Function::new(1, 0).unwrap();

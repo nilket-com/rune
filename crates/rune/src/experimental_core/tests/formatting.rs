@@ -1,9 +1,11 @@
 //! Local renderer construction checks, not the complete reference addendum gate.
+
 use crate::experimental_core::{
 	error::ErrorKind,
 	heap::{Limits, Store},
 	value::{Type, Value},
 };
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 8192,
@@ -11,6 +13,7 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 #[test]
 fn scalar_reference_shapes_and_container_insertion_order() {
 	let mut store = store();
@@ -32,6 +35,7 @@ fn scalar_reference_shapes_and_container_insertion_order() {
 			assert_eq!(store.format_value(Value::F64(n), debug).unwrap(), text);
 		}
 	}
+
 	assert_eq!(
 		store.format_value(Value::Char('\0'), true).unwrap(),
 		"'\\0'"
@@ -65,6 +69,7 @@ fn scalar_reference_shapes_and_container_insertion_order() {
 			ErrorKind::Type
 		);
 	}
+
 	let tag = Type::Struct(crate::experimental_core::nominal::intern(42, "Point").unwrap());
 	let nominal = store.record(tag, &[("x", Value::I64(1))]).unwrap();
 	assert_eq!(
@@ -72,6 +77,7 @@ fn scalar_reference_shapes_and_container_insertion_order() {
 		ErrorKind::Unsupported
 	);
 }
+
 #[test]
 fn caps_cycles_invalid_handles_and_closed_store_refuse() {
 	let mut store = store();

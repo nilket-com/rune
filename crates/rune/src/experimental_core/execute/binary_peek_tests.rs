@@ -5,6 +5,7 @@
 //! store: `arithmetic::binary` for mixed pairs, and `append_string` + `retain` for
 //! AssignBinary Add on a string target. These pass on D20 and are the oracle for
 //! D21's borrowed i64 operands.
+
 use super::*;
 use crate::experimental_core::{
 	arithmetic::Binary,
@@ -13,6 +14,7 @@ use crate::experimental_core::{
 	value::Type,
 };
 use std::{borrow::ToOwned, format, string::String};
+
 const OPS: [Binary; 16] = [
 	Binary::Add,
 	Binary::Sub,
@@ -31,6 +33,7 @@ const OPS: [Binary; 16] = [
 	Binary::Shl,
 	Binary::Shr,
 ];
+
 /// One side of a mixed pair: never two I64 values.
 #[derive(Clone, Copy, Debug)]
 enum Class {
@@ -42,6 +45,7 @@ enum Class {
 	Unit,
 	Text,
 }
+
 const OTHERS: [Class; 9] = [
 	Class::U64(5),
 	Class::U64(70),
@@ -54,6 +58,7 @@ const OTHERS: [Class; 9] = [
 	Class::F64(0.0),
 ];
 const INTS: [i64; 3] = [3, -1, 0];
+
 fn loc() -> Location {
 	Location {
 		source: 21,
@@ -62,6 +67,7 @@ fn loc() -> Location {
 		end: 211,
 	}
 }
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 16,
@@ -69,6 +75,7 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 fn value(store: &mut Store, class: Class) -> Value {
 	match class {
 		Class::I64(n) => Value::I64(n),
@@ -80,6 +87,7 @@ fn value(store: &mut Store, class: Class) -> Value {
 		Class::Text => store.string("ab").unwrap(),
 	}
 }
+
 /// Slots 0 and 1 are the operands; `out` is 0, 1 or the fresh slot 2.
 fn program(assign: bool, op: Binary, out: u32) -> Code {
 	let mut f = Function::new(3, 2).unwrap();
@@ -98,12 +106,14 @@ fn program(assign: bool, op: Binary, out: u32) -> Code {
 			rhs: 1,
 		}
 	};
+
 	f.push(instruction, loc()).unwrap();
 	f.push(Op::Return { value: out }, loc()).unwrap();
 	let mut b = Builder::default();
 	b.push(f).unwrap();
 	b.finish().unwrap()
 }
+
 /// What a value reads as after the run: text for a heap string, else the scalar.
 #[derive(Debug, PartialEq)]
 enum Seen {
@@ -111,6 +121,7 @@ enum Seen {
 	F64(u64),
 	Text(String),
 }
+
 fn seen(store: &Store, v: Value) -> Seen {
 	match v {
 		Value::F64(n) => Seen::F64(n.to_bits()),
@@ -118,6 +129,7 @@ fn seen(store: &Store, v: Value) -> Seen {
 		_ => Seen::Scalar(v),
 	}
 }
+
 /// The independent semantics on a twin store: the result (or error) and what
 /// the two operands read as afterwards.
 fn oracle(
@@ -141,9 +153,11 @@ fn oracle(
 	} else {
 		arithmetic::binary(op, a, b)
 	};
+
 	let result = result.map(|v| seen(&twin, v));
 	(result, seen(&twin, a), seen(&twin, b))
 }
+
 fn run(assign: bool, op: Binary, l: Class, r: Class, out: u32) {
 	let (want, want_l, want_r) = oracle(assign, op, l, r);
 	let code = program(assign, op, out);
@@ -155,26 +169,32 @@ fn run(assign: bool, op: Binary, l: Class, r: Class, out: u32) {
 	let before = (store.live_entries(), store.payload_bytes());
 	let mut e = Executor::new().unwrap();
 	let case = format!("{assign} {op:?} {l:?} {r:?} out={out}");
+
 	match (e.invoke_code(&code, &mut store, 0, &[&ar, &br], 100), want) {
 		(Ok(root), Ok(want)) => {
 			assert_eq!(seen(&store, root.value), want, "{case}");
 			store.root_release(root).unwrap();
 		}
+
 		(Err(failure), Err(want)) => {
 			assert_eq!(failure.error, want.at(loc()), "{case}");
 			assert!(failure.cleanup_error.is_none(), "{case}");
 			assert!(failure.call_chain.is_empty(), "{case}");
 		}
+
 		(got, want) => panic!(
 			"{case}: result kind differs: {:?} vs {want:?}",
 			got.map(|r| r.value)
 		),
 	}
+
 	assert!(e.is_idle(), "{case}");
+
 	// The operands read exactly as on the twin (an AssignBinary append mutates
 	// the target in both); every executor root and slot reference is gone.
 	assert_eq!(seen(&store, ar.value), want_l, "{case}");
 	assert_eq!(seen(&store, br.value), want_r, "{case}");
+
 	if !(assign && op == Binary::Add && matches!(l, Class::Text)) {
 		assert_eq!(
 			(store.live_entries(), store.payload_bytes()),
@@ -182,9 +202,11 @@ fn run(assign: bool, op: Binary, l: Class, r: Class, out: u32) {
 			"{case}"
 		);
 	}
+
 	store.root_release(ar).unwrap();
 	store.root_release(br).unwrap();
 	assert_eq!(store.live_entries(), 0, "{case}");
+
 	// The executor and store still run a valid i64 operation afterwards.
 	let next = program(false, Binary::Add, 2);
 	let x = store.root_i64(20);
@@ -194,6 +216,7 @@ fn run(assign: bool, op: Binary, l: Class, r: Class, out: u32) {
 	store.root_release(root).unwrap();
 	assert!(e.is_idle(), "{case}");
 }
+
 #[test]
 fn d21_mixed_classes_select_the_fallback_in_both_directions_and_kinds() {
 	let mut count = 0;
@@ -208,8 +231,10 @@ fn d21_mixed_classes_select_the_fallback_in_both_directions_and_kinds() {
 			}
 		}
 	}
+
 	assert_eq!(count, 2 * 16 * 3 * 9 * 2);
 }
+
 #[test]
 fn d21_mixed_classes_keep_output_alias_semantics() {
 	for assign in [false, true] {
@@ -223,6 +248,7 @@ fn d21_mixed_classes_keep_output_alias_semantics() {
 		}
 	}
 }
+
 #[test]
 fn d21_excluded_operations_on_two_i64_values_fall_back_through_the_handler() {
 	// BitAnd/BitOr/BitXor/Shl/Shr are not admitted by fast_i64 even for two I64
@@ -244,6 +270,7 @@ fn d21_excluded_operations_on_two_i64_values_fall_back_through_the_handler() {
 		}
 	}
 }
+
 #[test]
 fn d21_assign_add_string_target_with_an_i64_operand_in_both_directions() {
 	// String target + I64: the append path's own result or error, the target

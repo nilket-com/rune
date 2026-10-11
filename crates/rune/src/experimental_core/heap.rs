@@ -4,6 +4,7 @@
 //! Cleanup uses storage reserved up front; reference cycles stay charged until the store
 //! is closed or dropped. Hosts reach the store only through [`Root`](super::value::Root)s
 //! (see the `root_*` methods).
+
 use super::error::{Error, ErrorKind, Result};
 use super::value::{Handle, Type, Value};
 use crate::alloc::{String, Vec};
@@ -21,8 +22,10 @@ mod retain_inline_tests;
 mod scalar_release_tests;
 
 static NEXT_STORE: AtomicU64 = AtomicU64::new(1);
+
 const MAX_ENTRIES: usize = 65_536;
 const MAX_BYTES: usize = 16 << 20;
+
 /// Capacity limits of a [`Store`].
 ///
 /// The default is the maximum: 65,536 entries and 16 MiB of payload.
@@ -33,6 +36,7 @@ pub struct Limits {
 	/// The maximum payload bytes charged to live entries (at most 16 MiB).
 	pub bytes: usize,
 }
+
 impl Default for Limits {
 	fn default() -> Self {
 		Self {
@@ -41,6 +45,7 @@ impl Default for Limits {
 		}
 	}
 }
+
 #[derive(Debug)]
 enum Payload {
 	String(String),
@@ -67,6 +72,7 @@ enum Payload {
 		values: Vec<Value>,
 	},
 }
+
 impl Payload {
 	fn bytes(&self) -> Result<usize> {
 		let bytes = match self {
@@ -84,8 +90,10 @@ impl Payload {
 						.try_fold(n, |n, (key, _)| n.checked_add(key.capacity()))
 				}),
 		};
+
 		bytes.ok_or_else(|| err(ErrorKind::Overflow))
 	}
+
 	/// Inert child handles in construction order. They acquire ownership only
 	/// when admission retains them; dropping an unpublished payload owns none.
 	fn children(&self) -> impl Iterator<Item = Value> + '_ {
@@ -98,10 +106,12 @@ impl Payload {
 				Self::List { values, .. } => values.get(index).copied(),
 				_ => None,
 			};
+
 			index += usize::from(value.is_some());
 			value
 		})
 	}
+
 	fn tag(&self) -> Type {
 		match self {
 			Self::String(_) => Type::String,
@@ -112,6 +122,7 @@ impl Payload {
 		}
 	}
 }
+
 #[derive(Debug)]
 struct Entry {
 	previous: Option<u32>,
@@ -123,11 +134,13 @@ struct Entry {
 	charged_bytes: usize,
 	payload: Option<Payload>,
 }
+
 #[derive(Debug)]
 struct Slot {
 	generation: u32,
 	entry: Option<Entry>,
 }
+
 /// An iteration token owns a retained root and holds a logical shared lease.
 /// It exposes no Rust borrow and must be closed by the executor on all exits.
 #[derive(Debug)]
@@ -135,6 +148,7 @@ pub(crate) struct Iter {
 	handle: Handle,
 	index: usize,
 }
+
 /// A bounded heap for one runtime (not `Send`), with a process-unique identity.
 ///
 /// Scalars occupy no entry. Strings, vectors, tuples, objects, structs and variants are
@@ -154,9 +168,11 @@ pub struct Store {
 	// The experiment is local to one runtime. No accidental cross-thread host use.
 	_local: core::marker::PhantomData<std::rc::Rc<()>>,
 }
+
 fn err(kind: ErrorKind) -> Error {
 	Error::new(kind, "store")
 }
+
 impl Store {
 	/// A new, empty store. Reserves its bookkeeping for `limits` up front; limits of zero
 	/// entries or above the maximum are refused with [`ErrorKind::StoreCapacity`].
@@ -164,6 +180,7 @@ impl Store {
 		if limits.entries == 0 || limits.entries > MAX_ENTRIES || limits.bytes > MAX_BYTES {
 			return Err(err(ErrorKind::StoreCapacity));
 		}
+
 		let id = NEXT_STORE
 			.try_update(Ordering::Relaxed, Ordering::Relaxed, |n| n.checked_add(1))
 			.map_err(|_| err(ErrorKind::StoreCapacity))?;
@@ -187,39 +204,47 @@ impl Store {
 			_local: core::marker::PhantomData,
 		})
 	}
+
 	/// Whether [`close`](Self::close) has run.
 	pub fn is_closed(&self) -> bool {
 		self.closed
 	}
+
 	/// The number of live heap entries.
 	pub fn live_entries(&self) -> usize {
 		self.live
 	}
+
 	/// The payload bytes charged to live entries.
 	pub fn payload_bytes(&self) -> usize {
 		self.bytes
 	}
+
 	#[cfg_attr(not(test), allow(dead_code))]
 	pub(crate) fn reserved_metadata_bytes(&self) -> usize {
 		self.slots.capacity() * size_of::<Slot>()
 			+ self.free.capacity() * size_of::<u32>()
 			+ self.work.capacity() * size_of::<Value>()
 	}
+
 	fn slot(&self, h: Handle) -> Result<&Slot> {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
 		}
+
 		self.slots
 			.get(h.slot as usize)
 			.filter(|s| s.generation == h.generation && s.entry.is_some())
 			.ok_or_else(|| err(ErrorKind::InvalidHandle))
 	}
+
 	fn entry(&self, h: Handle) -> Result<&Entry> {
 		self.slot(h)?
 			.entry
 			.as_ref()
 			.ok_or_else(|| err(ErrorKind::InvalidHandle))
 	}
+
 	fn entry_mut(&mut self, h: Handle) -> Result<&mut Entry> {
 		self.slot(h)?;
 		self.slots[h.slot as usize]
@@ -227,21 +252,25 @@ impl Store {
 			.as_mut()
 			.ok_or_else(|| err(ErrorKind::InvalidHandle))
 	}
+
 	fn payload(&self, h: Handle) -> Result<&Payload> {
 		self.entry(h)?
 			.payload
 			.as_ref()
 			.ok_or_else(|| err(ErrorKind::AccessConflict))
 	}
+
 	fn mutable(&mut self, h: Handle) -> Result<&mut Payload> {
 		let e = self.entry_mut(h)?;
 		if e.readers != 0 {
 			return Err(err(ErrorKind::AccessConflict));
 		}
+
 		e.payload
 			.as_mut()
 			.ok_or_else(|| err(ErrorKind::AccessConflict))
 	}
+
 	/// Undo only references acquired for an unpublished payload. Each acquired
 	/// heap edge still has its original owner, so this cannot destroy a value,
 	/// enqueue cleanup, allocate, or invoke user code (duplicates included).
@@ -257,10 +286,12 @@ impl Store {
 			}
 		}
 	}
+
 	fn admit(&mut self, payload: Payload) -> Result<Value> {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
 		}
+
 		let charged_bytes = payload.bytes()?;
 		let bytes = self
 			.bytes
@@ -272,6 +303,7 @@ impl Store {
 		{
 			return Err(err(ErrorKind::StoreCapacity));
 		}
+
 		// Validate the links and the reusable slot before acquiring any edges.
 		if let Some(last) = self.last {
 			if self
@@ -283,10 +315,12 @@ impl Store {
 				return Err(err(ErrorKind::InvalidHandle));
 			}
 		}
+
 		let readers = if let Payload::VectorIterator(iter) = &payload {
 			if self.payload(iter.handle)?.tag() != Type::Vec {
 				return Err(err(ErrorKind::Type));
 			}
+
 			Some(
 				self.entry(iter.handle)?
 					.readers
@@ -296,6 +330,7 @@ impl Store {
 		} else {
 			None
 		};
+
 		let reused = self.free.last().copied();
 		let index = if let Some(index) = reused {
 			if self
@@ -305,6 +340,7 @@ impl Store {
 			{
 				return Err(err(ErrorKind::InvalidHandle));
 			}
+
 			index
 		} else {
 			let index =
@@ -317,6 +353,7 @@ impl Store {
 			})?;
 			index
 		};
+
 		// No release may be called in this loop: rollback relies on original owners staying live.
 		for (retained, value) in payload.children().enumerate() {
 			if let Err(error) = self.retain(value) {
@@ -324,9 +361,11 @@ impl Store {
 				if reused.is_none() {
 					self.slots.pop();
 				}
+
 				return Err(error);
 			}
 		}
+
 		// No fallible operation remains. No external code ran during preparation,
 		// so the validated links, slot, child roots and lease are unchanged.
 		if let Payload::VectorIterator(iter) = &payload {
@@ -336,9 +375,11 @@ impl Store {
 				.expect("validated iterator owner stays live")
 				.readers = readers.expect("iterator readers checked");
 		}
+
 		if reused.is_some() {
 			self.free.pop();
 		}
+
 		self.slots[index as usize].entry = Some(Entry {
 			previous: self.last,
 			next: None,
@@ -356,6 +397,7 @@ impl Store {
 		} else {
 			self.first = Some(index);
 		}
+
 		self.last = Some(index);
 		self.live += 1;
 		self.bytes = bytes;
@@ -364,28 +406,35 @@ impl Store {
 			generation: self.slots[index as usize].generation,
 		}))
 	}
+
 	pub(crate) fn string(&mut self, text: &str) -> Result<Value> {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
 		}
+
 		if text.len() > self.limits.bytes.saturating_sub(self.bytes) {
 			return Err(err(ErrorKind::StoreCapacity));
 		}
+
 		let mut s = String::try_with_capacity(text.len())?;
 		s.try_push_str(text)?;
 		self.admit(Payload::String(s))
 	}
+
 	/// Admit the renderer's already bounded buffer without a second text copy.
 	pub(crate) fn string_owned(&mut self, text: String) -> Result<Value> {
 		self.admit(Payload::String(text))
 	}
+
 	pub(crate) fn list(&mut self, tag: Type, values: &[Value]) -> Result<Value> {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
 		}
+
 		if !matches!(tag, Type::Vec | Type::Tuple) {
 			return Err(err(ErrorKind::Type));
 		}
+
 		let bytes = values
 			.len()
 			.checked_mul(size_of::<Value>())
@@ -393,10 +442,12 @@ impl Store {
 		if bytes > self.limits.bytes.saturating_sub(self.bytes) {
 			return Err(err(ErrorKind::StoreCapacity));
 		}
+
 		let mut copy = Vec::try_with_capacity(values.len())?;
 		for &v in values {
 			copy.try_push(v)?;
 		}
+
 		self.admit(Payload::List { tag, values: copy })
 	}
 
@@ -405,9 +456,11 @@ impl Store {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
 		}
+
 		if !matches!(tag, Type::Object | Type::Struct(_)) {
 			return Err(err(ErrorKind::Type));
 		}
+
 		let mut bytes = fields
 			.len()
 			.checked_mul(size_of::<(String, Value)>())
@@ -416,34 +469,42 @@ impl Store {
 			if fields[..i].iter().any(|(prior, _)| prior == key) {
 				return Err(err(ErrorKind::InvalidCode));
 			}
+
 			bytes = bytes
 				.checked_add(key.len())
 				.ok_or_else(|| err(ErrorKind::Overflow))?;
 		}
+
 		if bytes > self.limits.bytes.saturating_sub(self.bytes)
 			|| self.live == self.limits.entries
 			|| (self.free.is_empty() && self.slots.len() == self.limits.entries)
 		{
 			return Err(err(ErrorKind::StoreCapacity));
 		}
+
 		// Allocate every key before acquiring any child root. Later retain failures
 		// release only the successfully retained prefix, without recursive cleanup.
 		let mut copy = Vec::try_with_capacity(fields.len())?;
 		for (key, value) in fields {
 			copy.try_push((String::try_from(*key)?, *value))?;
 		}
+
 		self.record_owned(tag, copy)
 	}
+
 	fn record_owned(&mut self, tag: Type, copy: Vec<(String, Value)>) -> Result<Value> {
 		self.admit(Payload::Record { tag, fields: copy })
 	}
+
 	pub(crate) fn field(&mut self, value: Value, key: &str) -> Result<Value> {
 		let Value::Heap(handle) = value else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		let Payload::Record { fields, .. } = self.payload(handle)? else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		let value = fields
 			.iter()
 			.find(|(name, _)| name.as_str() == key)
@@ -452,13 +513,16 @@ impl Store {
 		self.retain(value)?;
 		Ok(value)
 	}
+
 	pub(crate) fn set_field(&mut self, value: Value, key: &str, new: Value) -> Result<()> {
 		let Value::Heap(handle) = value else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		let Payload::Record { fields, .. } = self.mutable(handle)? else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		let index = fields
 			.iter()
 			.position(|(name, _)| name.as_str() == key)
@@ -467,6 +531,7 @@ impl Store {
 		let Payload::Record { fields, .. } = self.mutable(handle)? else {
 			unreachable!()
 		};
+
 		let old = core::mem::replace(&mut fields[index].1, new);
 		self.release(old)
 	}
@@ -476,14 +541,17 @@ impl Store {
 			self.retain(value)?;
 			return Ok(value);
 		};
+
 		match self.payload(h)? {
 			Payload::String(text) => {
 				if text.len() > self.limits.bytes.saturating_sub(self.bytes) {
 					return Err(err(ErrorKind::StoreCapacity));
 				}
+
 				let copy = String::try_from(text.as_str())?;
 				self.admit(Payload::String(copy))
 			}
+
 			Payload::Record { tag, fields } => {
 				let tag = *tag;
 				let bytes = fields
@@ -501,12 +569,15 @@ impl Store {
 				{
 					return Err(err(ErrorKind::StoreCapacity));
 				}
+
 				let mut keys = Vec::try_with_capacity(fields.len())?;
 				for (key, value) in fields {
 					keys.try_push((String::try_from(key.as_str())?, *value))?;
 				}
+
 				self.record_owned(tag, keys)
 			}
+
 			Payload::List { tag, values } => {
 				let tag = *tag;
 				let bytes = values
@@ -516,23 +587,29 @@ impl Store {
 				if bytes > self.limits.bytes.saturating_sub(self.bytes) {
 					return Err(err(ErrorKind::StoreCapacity));
 				}
+
 				let mut copy = Vec::try_with_capacity(values.len())?;
 				for &v in values {
 					copy.try_push(v)?;
 				}
+
 				self.list(tag, &copy)
 			}
+
 			_ => Err(err(ErrorKind::Type)),
 		}
 	}
+
 	pub(crate) fn append_string(&mut self, target: Value, rhs: Value) -> Result<()> {
 		let Value::Heap(h) = target else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		let (len, cap) = match self.mutable(h)? {
 			Payload::String(s) => (s.len(), s.capacity()),
 			_ => return Err(err(ErrorKind::Type)),
 		};
+
 		let suffix = self.text(rhs)?;
 		let new_len = len
 			.checked_add(suffix.len())
@@ -540,6 +617,7 @@ impl Store {
 		if new_len.saturating_sub(cap) > self.limits.bytes.saturating_sub(self.bytes) {
 			return Err(err(ErrorKind::StoreCapacity));
 		}
+
 		if new_len > cap {
 			// Grow off-store. An allocator may round capacity up: account the
 			// returned capacity before publishing, rather than a guessed delta.
@@ -554,6 +632,7 @@ impl Store {
 			self.bytes = bytes;
 			return Ok(());
 		}
+
 		// Bounded temporary is necessary when rhs aliases target. No borrowed
 		// script reference crosses mutation; the store contains only owned buffers.
 		let copy = String::try_from(suffix)?;
@@ -563,8 +642,10 @@ impl Store {
 			}
 			_ => unreachable!(),
 		}
+
 		Ok(())
 	}
+
 	fn replacement_bytes(&self, h: Handle, charged_bytes: usize) -> Result<usize> {
 		let bytes = self
 			.bytes
@@ -574,8 +655,10 @@ impl Store {
 		if bytes > self.limits.bytes {
 			return Err(err(ErrorKind::StoreCapacity));
 		}
+
 		Ok(bytes)
 	}
+
 	pub(crate) fn concat_string(&mut self, a: Value, b: Value) -> Result<Value> {
 		let left = self.text(a)?;
 		let right = self.text(b)?;
@@ -586,11 +669,13 @@ impl Store {
 		if len > self.limits.bytes.saturating_sub(self.bytes) {
 			return Err(err(ErrorKind::StoreCapacity));
 		}
+
 		let mut text = String::try_with_capacity(len)?;
 		text.try_push_str(left)?;
 		text.try_push_str(right)?;
 		self.admit(Payload::String(text))
 	}
+
 	pub(crate) fn retain(&mut self, value: Value) -> Result<()> {
 		if let Value::Heap(h) = value {
 			let e = self.entry_mut(h)?;
@@ -599,14 +684,17 @@ impl Store {
 				.checked_add(1)
 				.ok_or_else(|| err(ErrorKind::Overflow))?;
 		}
+
 		Ok(())
 	}
+
 	pub(crate) fn tag(&self, value: Value) -> Result<Type> {
 		match value {
 			Value::Heap(h) => Ok(self.payload(h)?.tag()),
 			_ => value.primitive_type().ok_or_else(|| err(ErrorKind::Type)),
 		}
 	}
+
 	pub(crate) fn text(&self, value: Value) -> Result<&str> {
 		match value {
 			Value::Heap(h) => match self.payload(h)? {
@@ -616,6 +704,7 @@ impl Store {
 			_ => Err(err(ErrorKind::Type)),
 		}
 	}
+
 	pub(crate) fn len(&self, value: Value) -> Result<usize> {
 		match value {
 			Value::Heap(h) => match self.payload(h)? {
@@ -626,6 +715,7 @@ impl Store {
 			_ => Err(err(ErrorKind::Type)),
 		}
 	}
+
 	pub(crate) fn get(&mut self, value: Value, index: usize) -> Result<Value> {
 		let v = match value {
 			Value::Heap(h) => match self.payload(h)? {
@@ -634,31 +724,39 @@ impl Store {
 					.ok_or_else(|| err(ErrorKind::IndexOutOfBounds))?,
 				_ => return Err(err(ErrorKind::Type)),
 			},
+
 			_ => return Err(err(ErrorKind::Type)),
 		};
+
 		self.retain(v)?;
 		Ok(v)
 	}
+
 	pub(crate) fn set(&mut self, value: Value, index: usize, new: Value) -> Result<()> {
 		let Value::Heap(h) = value else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		match self.mutable(h)? {
 			Payload::List { values, .. } if index < values.len() => (),
 			Payload::List { .. } => return Err(err(ErrorKind::IndexOutOfBounds)),
 			_ => return Err(err(ErrorKind::Type)),
 		};
+
 		self.retain(new)?;
 		let old = match self.mutable(h)? {
 			Payload::List { values, .. } => core::mem::replace(&mut values[index], new),
 			_ => unreachable!(),
 		};
+
 		self.release(old)
 	}
+
 	pub(crate) fn push(&mut self, value: Value, new: Value) -> Result<()> {
 		let Value::Heap(h) = value else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		let (len, cap) = match self.mutable(h)? {
 			Payload::List {
 				tag: Type::Vec,
@@ -666,6 +764,7 @@ impl Store {
 			} => (values.len(), values.capacity()),
 			_ => return Err(err(ErrorKind::Type)),
 		};
+
 		if len == cap {
 			let next = cap
 				.checked_mul(2)
@@ -679,15 +778,18 @@ impl Store {
 			let Payload::List { values, .. } = self.payload(h)? else {
 				unreachable!()
 			};
+
 			for &value in values {
 				replacement.try_push(value)?;
 			}
+
 			replacement.try_push(new)?;
 			let charged_bytes = replacement
 				.capacity()
 				.checked_mul(size_of::<Value>())
 				.ok_or_else(|| err(ErrorKind::Overflow))?;
 			let bytes = self.replacement_bytes(h, charged_bytes)?;
+
 			// Existing edges transfer to the replacement without another retain.
 			// All allocations and accounting checks precede the new edge retain.
 			self.retain(new)?;
@@ -700,13 +802,16 @@ impl Store {
 			self.bytes = bytes;
 			return Ok(());
 		}
+
 		self.retain(new)?;
 		match self.mutable(h)? {
 			Payload::List { values, .. } => values.try_push(new)?,
 			_ => unreachable!(),
 		};
+
 		Ok(())
 	}
+
 	pub(crate) fn variant(
 		&mut self,
 		tag: Type,
@@ -719,16 +824,19 @@ impl Store {
 		{
 			return Err(err(ErrorKind::Type));
 		}
+
 		self.admit(Payload::Variant {
 			tag,
 			success,
 			payload,
 		})
 	}
+
 	pub(crate) fn variant_parts(&self, value: Value) -> Result<(Type, bool, Option<Value>)> {
 		let Value::Heap(h) = value else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		match self.payload(h)? {
 			Payload::Variant {
 				tag,
@@ -738,9 +846,11 @@ impl Store {
 			_ => Err(err(ErrorKind::Type)),
 		}
 	}
+
 	pub(crate) fn range(&mut self, start: i64, end: i64) -> Result<Value> {
 		self.admit(Payload::Range { start, end })
 	}
+
 	pub(crate) fn iterator(&mut self, value: Value) -> Result<Value> {
 		if let Value::Heap(h) = value {
 			if let Payload::Range { start, end } = self.payload(h)? {
@@ -750,22 +860,27 @@ impl Store {
 				});
 			}
 		}
+
 		let Value::Heap(handle) = value else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		// Admission acquires the retained root and shared lease together only
 		// after every capacity and metadata check; no temporary lease escapes.
 		self.admit(Payload::VectorIterator(Iter { handle, index: 0 }))
 	}
+
 	pub(crate) fn iterator_next(&mut self, value: Value) -> Result<Option<Value>> {
 		let Value::Heap(h) = value else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		match self.payload(h)? {
 			Payload::RangeIterator { next, end } => {
 				if next >= end {
 					return Ok(None);
 				}
+
 				let value = *next;
 				let new = value
 					.checked_add(1)
@@ -776,31 +891,39 @@ impl Store {
 				*next = new;
 				Ok(Some(Value::I64(value)))
 			}
+
 			Payload::VectorIterator(iter) => {
 				let root = Value::Heap(iter.handle);
 				let index = iter.index;
+
 				if index == self.len(root)? {
 					return Ok(None);
 				}
+
 				let value = self.get(root, index)?;
 				let Payload::VectorIterator(iter) = self.mutable(h)? else {
 					return Err(err(ErrorKind::Type));
 				};
+
 				iter.index += 1;
 				Ok(Some(value))
 			}
+
 			_ => Err(err(ErrorKind::Type)),
 		}
 	}
+
 	// Lease-token iteration: exercised by the crate's own tests, not yet by the executor.
 	#[cfg_attr(not(test), allow(dead_code))]
 	pub(crate) fn begin_iter(&mut self, value: Value) -> Result<Iter> {
 		let Value::Heap(h) = value else {
 			return Err(err(ErrorKind::Type));
 		};
+
 		if self.payload(h)?.tag() != Type::Vec {
 			return Err(err(ErrorKind::Type));
 		}
+
 		let readers = self
 			.entry(h)?
 			.readers
@@ -813,6 +936,7 @@ impl Store {
 			index: 0,
 		})
 	}
+
 	// Lease-token iteration: exercised by the crate's own tests, not yet by the executor.
 	#[cfg_attr(not(test), allow(dead_code))]
 	pub(crate) fn next(&mut self, iter: &mut Iter) -> Result<Option<Value>> {
@@ -820,10 +944,12 @@ impl Store {
 		if iter.index == len {
 			return Ok(None);
 		}
+
 		let v = self.get(Value::Heap(iter.handle), iter.index)?;
 		iter.index += 1;
 		Ok(Some(v))
 	}
+
 	// Lease-token iteration: exercised by the crate's own tests, not yet by the executor.
 	#[cfg_attr(not(test), allow(dead_code))]
 	pub(crate) fn end_iter(&mut self, iter: Iter) -> Result<()> {
@@ -834,6 +960,7 @@ impl Store {
 			.ok_or_else(|| err(ErrorKind::InvalidHandle))?;
 		self.release(Value::Heap(iter.handle))
 	}
+
 	fn children_room(&self, payload: &Payload) -> Result<()> {
 		let count = payload
 			.children()
@@ -844,8 +971,10 @@ impl Store {
 			// internal invariant error, not permission to allocate during cleanup.
 			return Err(err(ErrorKind::InvalidCode));
 		}
+
 		Ok(())
 	}
+
 	/// Queue every owned heap edge without allocation. The capacity was checked
 	/// before taking the payload. A malformed iterator lease reports an error
 	/// but must still queue its retained owner root for drainage.
@@ -864,6 +993,7 @@ impl Store {
 				failure = Some(error);
 			}
 		}
+
 		for value in payload.children() {
 			if matches!(value, Value::Heap(_)) {
 				// Preflight and the store-wide edge bound prove spare capacity.
@@ -872,8 +1002,10 @@ impl Store {
 					.expect("release work was pre-reserved and checked");
 			}
 		}
+
 		failure.map_or(Ok(()), Err)
 	}
+
 	/// Process one release. Validate retirement bookkeeping before changing a
 	/// last reference; malformed handles/links leave this entry untouched.
 	fn release_one(&mut self, h: Handle) -> Result<()> {
@@ -885,12 +1017,15 @@ impl Store {
 		if next == 0 && entry.readers != 0 {
 			return Err(err(ErrorKind::AccessConflict));
 		}
+
 		if next != 0 {
 			self.entry_mut(h)?.strong = next;
 			return Ok(());
 		}
+
 		let previous = entry.previous;
 		let following = entry.next;
+
 		if let Some(previous) = previous {
 			if self
 				.slots
@@ -903,6 +1038,7 @@ impl Store {
 		} else if self.first != Some(h.slot) {
 			return Err(err(ErrorKind::InvalidHandle));
 		}
+
 		if let Some(following) = following {
 			if self
 				.slots
@@ -915,6 +1051,7 @@ impl Store {
 		} else if self.last != Some(h.slot) {
 			return Err(err(ErrorKind::InvalidHandle));
 		}
+
 		let bytes = self
 			.bytes
 			.checked_sub(entry.charged_bytes)
@@ -924,12 +1061,15 @@ impl Store {
 			.checked_sub(1)
 			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
 		let generation = self.slots[h.slot as usize].generation.checked_add(1);
+
 		if generation.is_some() && self.free.len() == self.free.capacity() {
 			return Err(err(ErrorKind::InvalidCode));
 		}
+
 		if let Some(payload) = &entry.payload {
 			self.children_room(payload)?;
 		}
+
 		// All retirement checks passed. No fallible structural mutation remains.
 		let mut entry = self.slots[h.slot as usize]
 			.entry
@@ -944,6 +1084,7 @@ impl Store {
 		} else {
 			self.first = following;
 		}
+
 		if let Some(following) = following {
 			self.slots[following as usize]
 				.entry
@@ -953,19 +1094,24 @@ impl Store {
 		} else {
 			self.last = previous;
 		}
+
 		self.bytes = bytes;
 		self.live = live;
+
 		if let Some(generation) = generation {
 			self.slots[h.slot as usize].generation = generation;
 			self.free
 				.try_push(h.slot)
 				.expect("retired slot fits reserved free list");
 		} // Exhausted generations retire their slot permanently.
+
 		if let Some(payload) = entry.payload.take() {
 			self.enqueue_children(payload)?;
 		}
+
 		Ok(())
 	}
+
 	/// Always finish the queue. An invalid edge must not strand unrelated owned
 	/// edges or hide the first error behind a later one; no recursion/allocation.
 	fn drain_work(&mut self, mut failure: Option<Error>) -> Result<()> {
@@ -978,8 +1124,10 @@ impl Store {
 				}
 			}
 		}
+
 		failure.map_or(Ok(()), Err)
 	}
+
 	/// A host root's release, reporting whether the root's own edge was consumed:
 	/// `Err((false, e))` left the entry untouched (closed store, work queue
 	/// full, or a last release refused by its retirement checks); `Err((true,
@@ -992,12 +1140,15 @@ impl Store {
 		if self.closed {
 			return Err((false, err(ErrorKind::ClosedStore)));
 		}
+
 		let Value::Heap(h) = value else {
 			return Ok(());
 		};
+
 		if self.work.len() == self.work.capacity() {
 			return Err((false, err(ErrorKind::InvalidCode)));
 		}
+
 		if let Err(error) = self.release_one(h) {
 			// release_one validates before changing a last reference and a
 			// non-last decrement cannot fail; but a last release can fail AFTER
@@ -1009,21 +1160,27 @@ impl Store {
 			if self.slot(h).is_ok() {
 				return Err((false, error));
 			}
+
 			return self.drain_work(Some(error)).map_err(|error| (true, error));
 		}
+
 		self.drain_work(None).map_err(|error| (true, error))
 	}
+
 	#[cfg(test)]
 	pub(crate) fn zero_readers_for_test(&mut self, value: Value) {
 		let Value::Heap(h) = value else {
 			panic!("heap value expected");
 		};
+
 		self.entry_mut(h).unwrap().readers = 0;
 	}
+
 	#[cfg(test)]
 	pub(crate) fn queued_work_for_test(&self) -> usize {
 		self.work.len()
 	}
+
 	/// Test hook: move a live slot's generation near exhaustion so retirement
 	/// at `u32::MAX` is reachable without `u32::MAX` releases.
 	#[cfg(test)]
@@ -1031,21 +1188,25 @@ impl Store {
 		let Value::Heap(h) = value else {
 			panic!("heap value expected");
 		};
+
 		self.slots[h.slot as usize].generation = generation;
 		Value::Heap(Handle {
 			slot: h.slot,
 			generation,
 		})
 	}
+
 	#[cfg(test)]
 	pub(crate) fn free_slots_for_test(&self) -> usize {
 		self.free.len()
 	}
+
 	/// D13 test hook: queue a pending release without draining it.
 	#[cfg(test)]
 	pub(crate) fn push_work_for_test(&mut self, value: Value) {
 		self.work.try_push(value).unwrap();
 	}
+
 	/// D13 test hook: the store's mutable state and accounting (everything but
 	/// the process-unique id, the constant limits and the thread marker).
 	#[cfg(test)]
@@ -1064,12 +1225,14 @@ impl Store {
 			)
 		)
 	}
+
 	/// D13: `release_slot` of a scalar is a no-op exactly while the store is
 	/// open and no release work is queued.
 	#[inline]
 	pub(crate) fn scalar_release_is_noop(&self) -> bool {
 		!self.closed && self.work.is_empty()
 	}
+
 	/// D13: `release_slot`'s scalar classification. Exhaustive with no
 	/// wildcard, so a new `Value` variant must be classified here explicitly.
 	#[inline]
@@ -1086,6 +1249,7 @@ impl Store {
 			Value::Heap(_) => false,
 		}
 	}
+
 	/// Executor slot release: skip only the empty scalar case. Closed stores
 	/// and queued work still go through the original error/drainage path.
 	#[inline]
@@ -1101,30 +1265,37 @@ impl Store {
 			| Value::Function { .. } => true,
 			Value::Heap(_) => false,
 		};
+
 		if scalar && !self.closed && self.work.is_empty() {
 			Ok(())
 		} else {
 			self.release(value)
 		}
 	}
+
 	pub(crate) fn release(&mut self, value: Value) -> Result<()> {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
 		}
+
 		if matches!(value, Value::Heap(_)) {
 			if self.work.len() == self.work.capacity() {
 				return self.drain_work(Some(err(ErrorKind::InvalidCode)));
 			}
+
 			self.work
 				.try_push(value)
 				.expect("initial release root fits reserved work");
 		}
+
 		self.drain_work(None)
 	}
+
 	pub(crate) fn invalidate(&mut self, value: Value) -> Result<()> {
 		let Value::Heap(h) = value else {
 			return Ok(());
 		};
+
 		self.mutable(h)?;
 		let entry = self.entry(h)?;
 		let payload = entry
@@ -1143,6 +1314,7 @@ impl Store {
 		let failure = self.enqueue_children(payload).err();
 		self.drain_work(failure)
 	}
+
 	/// Closes the store and frees every entry, including cycles. Closing twice is a
 	/// no-op. Refused with [`ErrorKind::AccessConflict`] while an iteration holds an entry.
 	/// Afterwards every root of this store is refused with [`ErrorKind::ClosedStore`].
@@ -1150,6 +1322,7 @@ impl Store {
 		if self.closed {
 			return Ok(());
 		}
+
 		if self
 			.slots
 			.iter()
@@ -1158,20 +1331,26 @@ impl Store {
 		{
 			return Err(err(ErrorKind::AccessConflict));
 		}
+
 		self.drain();
 		Ok(())
 	}
+
 	fn drain(&mut self) {
 		self.closed = true;
+
 		// Handle edges are inert bits. Do not decrement/follow them while draining.
 		while let Some(index) = self.last {
 			let Some(entry) = self.slots[index as usize].entry.take() else {
 				break;
 			};
+
 			self.last = entry.previous;
+
 			// Dropping payload buffers follows no heap edge; Value::Heap is plain bits.
 			drop(entry);
 		}
+
 		self.first = None;
 		self.work.clear();
 		self.free.clear();
@@ -1179,6 +1358,7 @@ impl Store {
 		self.bytes = 0;
 	}
 }
+
 impl Drop for Store {
 	fn drop(&mut self) {
 		self.drain();
@@ -1192,12 +1372,15 @@ impl Store {
 		let Value::Heap(h) = value else {
 			panic!("heap expected")
 		};
+
 		self.entry(h).unwrap().strong
 	}
+
 	pub(super) fn test_set_strong(&mut self, value: Value, count: u32) {
 		let Value::Heap(h) = value else {
 			panic!("heap expected")
 		};
+
 		self.entry_mut(h).unwrap().strong = count;
 	}
 }

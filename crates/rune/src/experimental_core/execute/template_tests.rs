@@ -3,6 +3,7 @@
 //! closure) and are the oracle for D18. Output covers every mode flag and part
 //! order; the failure cases put two distinguishable runtime formatting failures
 //! in both orders, so the first failing part is identified by its exact error.
+
 use super::*;
 use crate::experimental_core::{
 	code::{Builder, Function},
@@ -17,6 +18,7 @@ fn loc(n: u32) -> Location {
 		end: n + 1,
 	}
 }
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 16,
@@ -24,17 +26,20 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 fn code(f: Function) -> Code {
 	let mut b = Builder::default();
 	b.push(f).unwrap();
 	b.finish().unwrap()
 }
+
 /// Slots 0..=5 hold I64 42, Char 'x', Bool true, Unit, the string "ab" and a
 /// function token; the template at pc 6 (location 60) formats `parts` into slot
 /// 6, which is returned.
 fn template(parts: &[u32]) -> Code {
 	let mut f = Function::new(7, 0).unwrap();
 	let text = f.string("ab").unwrap();
+
 	for (out, value) in [
 		(0, Value::I64(42)),
 		(1, Value::Char('x')),
@@ -43,6 +48,7 @@ fn template(parts: &[u32]) -> Code {
 	] {
 		f.push(Op::Literal { out, value }, loc(out)).unwrap();
 	}
+
 	f.push(Op::String { out: 4, text }, loc(4)).unwrap();
 	f.push(
 		Op::Literal {

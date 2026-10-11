@@ -1,6 +1,7 @@
 //! Primitive rules from the explicitly post-observation 0184 operator amendment.
 //! Strict-bool lazy operators remain a deliberate slice difference.
 //! No old Value, protocol dispatcher, VM or native binding is consulted here.
+
 use super::error::{Error, ErrorKind, Result};
 use super::value::{Type as ValueType, Value};
 
@@ -23,17 +24,21 @@ pub enum Binary {
 	Shl,
 	Shr,
 }
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Unary {
 	Neg,
 	Not,
 }
+
 fn error(kind: ErrorKind) -> Error {
 	Error::new(kind, "primitive operation")
 }
+
 fn checked<T>(value: Option<T>) -> Result<T> {
 	value.ok_or_else(|| error(ErrorKind::Overflow))
 }
+
 pub(crate) fn compare(op: Binary, eq: bool, lt: bool, gt: bool) -> Result<Value> {
 	Ok(Value::Bool(match op {
 		Binary::Eq => eq,
@@ -45,12 +50,14 @@ pub(crate) fn compare(op: Binary, eq: bool, lt: bool, gt: bool) -> Result<Value>
 		_ => return Err(error(ErrorKind::Type)),
 	}))
 }
+
 // Semantics, not style: `a < b` and `a > b` on two bools are the script's bool ordering
 // (false < true), as on the stock VM; they feed `compare` for `<`, `<=`, `>` and `>=`.
 #[allow(clippy::bool_comparison)]
 pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 	use Binary::*;
 	use Value::*;
+
 	// Shifts convert the count to u32 independently of the left integer's tag.
 	// Other mixed integer operations convert the right operand to the left tag.
 	let b = match (op, a, b) {
@@ -69,11 +76,13 @@ pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 		(_, I64(_), U64(n)) => {
 			I64(i64::try_from(n).map_err(|_| error(ErrorKind::IntegerCoercion))?)
 		}
+
 		(_, U64(_), I64(n)) => {
 			U64(u64::try_from(n).map_err(|_| error(ErrorKind::IntegerCoercion))?)
 		}
 		_ => b,
 	};
+
 	match (a, b) {
 		(I64(a), I64(b)) => Ok(match op {
 			Add => I64(checked(a.checked_add(b))?),
@@ -96,6 +105,7 @@ pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 					I64(a >> n)
 				}
 			}
+
 			_ => return compare(op, a == b, a < b, a > b),
 		}),
 		(U64(a), U64(b)) => Ok(match op {
@@ -119,6 +129,7 @@ pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 					U64(a >> n)
 				}
 			}
+
 			_ => return compare(op, a == b, a < b, a > b),
 		}),
 		(F64(a), F64(b)) => Ok(match op {
@@ -136,11 +147,13 @@ pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 			Eq | Ne | Lt | Le | Gt | Ge => compare(op, a == b, a < b, a > b),
 			_ => Err(error(ErrorKind::Type)),
 		},
+
 		(Char(a), Char(b)) => compare(op, a == b, a < b, a > b),
 		(Unit, Unit) => compare(op, true, false, false),
 		_ => Err(error(ErrorKind::Type)),
 	}
 }
+
 pub fn unary(op: Unary, value: Value) -> Result<Value> {
 	Ok(match (op, value) {
 		(Unary::Neg, Value::I64(a)) => Value::I64(checked(a.checked_neg())?),
@@ -151,6 +164,7 @@ pub fn unary(op: Unary, value: Value) -> Result<Value> {
 		_ => return Err(error(ErrorKind::Type)),
 	})
 }
+
 /// Numeric Rust `as`: integer wrapping, IEEE rounding and saturating float casts.
 /// Identity casts are admitted only for the three numeric tags.
 pub fn cast(value: Value, target: ValueType) -> Result<Value> {

@@ -1,4 +1,5 @@
 //! D13 tests-first: Executor::leave against the literal pre-D13 loop.
+
 use super::*;
 use crate::experimental_core::{
 	code::{Builder, Function},
@@ -14,6 +15,7 @@ fn location(n: u32) -> Location {
 		end: n + 1,
 	}
 }
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 16,
@@ -21,6 +23,7 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 fn frame(base: usize) -> Frame {
 	Frame {
 		function: 0,
@@ -30,6 +33,7 @@ fn frame(base: usize) -> Frame {
 		callsite_pc: NO_CALLSITE,
 	}
 }
+
 fn scalars() -> [Value; 9] {
 	[
 		Value::Unit,
@@ -43,6 +47,7 @@ fn scalars() -> [Value; 9] {
 		Value::Function { code: 0, id: 0 },
 	]
 }
+
 /// Exact slot identity: floats by bits, so -0.0 and NaN payloads are distinct.
 fn key(value: &Value) -> std::string::String {
 	match value {
@@ -61,6 +66,7 @@ fn old_leave(e: &mut Executor, store: &mut Store) -> Result<()> {
 	while e.slots.len() > frame.base {
 		store.release_slot(e.slots.pop().ok_or_else(|| error(ErrorKind::InvalidCode))?)?;
 	}
+
 	Ok(())
 }
 
@@ -74,6 +80,7 @@ struct Observed {
 	diagnostics: std::vec::Vec<Location>,
 	store: std::string::String,
 }
+
 fn observe(result: Result<()>, e: &Executor, store: &Store) -> Observed {
 	Observed {
 		result: std::format!("{:?}", result.map_err(|error| (error.kind, error.location))),
@@ -104,6 +111,7 @@ fn compare_observed(setup: impl Fn(&mut Executor, &mut Store)) -> (bool, Observe
 	assert_eq!(observe(r1, &e1, &s1), expected);
 	(taken == 1, expected)
 }
+
 fn compare(setup: impl Fn(&mut Executor, &mut Store)) -> bool {
 	compare_observed(setup).0
 }
@@ -128,9 +136,11 @@ fn d13_all_scalar_windows_take_the_fast_path_exactly() {
 					e.diagnostics.try_push(location(98)).unwrap();
 					base = 2;
 				}
+
 				for v in &scalars()[..len] {
 					e.slots.try_push(*v).unwrap();
 				}
+
 				e.frames
 					.try_push(Frame {
 						callsite_pc: 7,
@@ -139,6 +149,7 @@ fn d13_all_scalar_windows_take_the_fast_path_exactly() {
 					.unwrap();
 			});
 			assert!(taken, "len {len} prefix {prefix}");
+
 			if prefix {
 				// The surviving caller keeps its callsite and the diagnostics stay.
 				assert_eq!(seen.frames, [(0, 0, 0, None, 99)]);
@@ -175,12 +186,14 @@ fn d13_heap_anywhere_in_the_window_uses_the_old_loop() {
 						s.release(child).unwrap();
 						list
 					}
+
 					2 => {
 						// Stale: retired before the leave, so release fails early.
 						let v = s.string("stale").unwrap();
 						s.release(v).unwrap();
 						v
 					}
+
 					_ => {
 						// Leased: a live iteration token holds a reader.
 						let list = s.list(Type::Vec, &[Value::I64(1)]).unwrap();
@@ -188,11 +201,14 @@ fn d13_heap_anywhere_in_the_window_uses_the_old_loop() {
 						list
 					}
 				};
+
 				let mut window = [Value::I64(7), Value::Unit, Value::Bool(false)];
 				window[at] = heap;
+
 				for v in window {
 					e.slots.try_push(v).unwrap();
 				}
+
 				e.frames.try_push(frame(0)).unwrap();
 			});
 			assert!(!taken, "at {at} kind {kind}");
@@ -220,9 +236,11 @@ fn d13_closed_store_uses_the_old_loop() {
 			for v in &scalars()[..len] {
 				e.slots.try_push(*v).unwrap();
 			}
+
 			e.frames.try_push(frame(0)).unwrap();
 			s.close().unwrap();
 		});
+
 		// Closed + empty window: the old loop succeeds without any release.
 		assert!(!taken, "len {len}");
 	}
@@ -237,10 +255,12 @@ fn d13_queued_work_uses_the_old_loop() {
 				if malformed {
 					s.release(v).unwrap();
 				}
+
 				s.push_work_for_test(v);
 				for x in &scalars()[..len] {
 					e.slots.try_push(*x).unwrap();
 				}
+
 				e.frames.try_push(frame(0)).unwrap();
 			});
 			assert!(!taken, "malformed {malformed} len {len}");
@@ -290,6 +310,7 @@ fn d13_scalar_calls_take_the_fast_path_through_invoke() {
 	assert_eq!(root.value, Value::I64(40));
 	s.root_release(root).unwrap();
 	s.root_release(arg).unwrap();
+
 	// The callee's and main's frames are both all-scalar.
 	assert_eq!(leave_fast_hits_for_test() - before, 2);
 	assert!(e.is_idle());
@@ -302,11 +323,13 @@ fn d13_slot_scalar_classification_matches_release_slot() {
 	// values is_slot_scalar accepts; a heap value is freed.
 	let mut s = store();
 	let heap = s.string("heap").unwrap();
+
 	for value in scalars().into_iter().chain([heap]) {
 		let before = s.state_for_test();
 		assert!(s.scalar_release_is_noop());
 		s.release_slot(value).unwrap();
 		assert_eq!(Store::is_slot_scalar(&value), s.state_for_test() == before);
 	}
+
 	assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
 }

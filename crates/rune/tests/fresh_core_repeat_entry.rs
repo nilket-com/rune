@@ -1,8 +1,10 @@
 #![cfg(feature = "fresh-core")]
+
 //! Repeat entry: one executor and store invoked K times through the normal checked path,
 //! left clean after success, run-time error and fuel halt. Moved from the D21 dev crate
 //! (`experimental/0184-dev/tests/repeat_entry.rs`); its two real-output tests are rewritten
 //! as the in-crate `io_policy` cap test and `fresh_core_stdout.rs`.
+
 use rune::experimental_core::{
 	error::ErrorKind,
 	execute::{Executor, Failure},
@@ -18,6 +20,7 @@ fn compile(text: &str) -> Program {
 	sources.insert(Source::memory(text).unwrap()).unwrap();
 	frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 7).unwrap()
 }
+
 fn new_store(entries: usize) -> Store {
 	Store::new(Limits {
 		entries,
@@ -25,12 +28,14 @@ fn new_store(entries: usize) -> Store {
 	})
 	.unwrap()
 }
+
 /// Read a scalar result and release it.
 fn scalar(store: &mut Store, root: Root) -> Scalar {
 	let scalar = store.root_scalar(&root).unwrap().expect("scalar result");
 	store.root_release(root).unwrap();
 	scalar
 }
+
 /// Invoke, then release the result (the caller's one strong reference) and check the
 /// executor and store are back where they started.
 #[allow(clippy::result_large_err)] // `Failure` is the public error type of `invoke`.
@@ -56,6 +61,7 @@ fn once(
 	);
 	result
 }
+
 // Smaller return-value fixtures in the shape of the five diagnostic programs. They do
 // not print; exact five-program output and completion checks are owed by the diagnostic
 // precondition and are not claimed here.
@@ -106,6 +112,7 @@ fn five_programs_repeat_identically_on_one_executor_and_store() {
 			.unwrap();
 		let fresh = fresh_store.root_scalar(&fresh).unwrap();
 		assert_eq!(first, fresh, "{name}: invoke differs from run");
+
 		for k in 1..5 {
 			let again = once(&mut executor, &program, &mut store, 10_000_000).unwrap();
 			assert_eq!(again, first, "{name}: invocation {k} differs");
@@ -122,6 +129,7 @@ fn a_runtime_error_leaves_the_executor_reusable() {
 	let program = compile("pub fn main() { let v = [1, 2]; let s = \"x\" + \"y\"; v[0] / 0 }");
 	let mut store = new_store(256);
 	let mut executor = Executor::new().unwrap();
+
 	for k in 0..5 {
 		let failure = once(&mut executor, &program, &mut store, 10_000).unwrap_err();
 		assert_eq!(
@@ -131,6 +139,7 @@ fn a_runtime_error_leaves_the_executor_reusable() {
 		);
 		assert!(failure.cleanup_error.is_none());
 	}
+
 	// The same executor then succeeds on another program.
 	let ok = compile("pub fn main() { 7 }");
 	assert_eq!(
@@ -148,6 +157,7 @@ fn a_fuel_halt_leaves_the_executor_reusable() {
 	let program = compile("pub fn main() { let v = [1]; let n = 0; loop { n += 1; v.push(n); } }");
 	let mut store = new_store(256);
 	let mut executor = Executor::new().unwrap();
+
 	for k in 0..5 {
 		let failure = once(&mut executor, &program, &mut store, 200).unwrap_err();
 		assert_eq!(
@@ -157,6 +167,7 @@ fn a_fuel_halt_leaves_the_executor_reusable() {
 		);
 		assert!(failure.error.location.is_some());
 	}
+
 	let ok = compile("pub fn main() { 7 }");
 	assert_eq!(
 		once(&mut executor, &ok, &mut store, 10_000).unwrap(),
@@ -174,6 +185,7 @@ fn failing_and_succeeding_invocations_alternate() {
 	let works = compile("pub fn main() { let v = [1, 2, 3]; v[2] }");
 	let mut store = new_store(256);
 	let mut executor = Executor::new().unwrap();
+
 	for _ in 0..4 {
 		assert_eq!(
 			once(&mut executor, &fails, &mut store, 10_000)
@@ -200,12 +212,14 @@ fn no_invocation_leaks_an_entry_into_the_next() {
 	let program = compile("pub fn main() { let v = [1]; v.len() as i64 }");
 	let mut store = new_store(1);
 	let mut executor = Executor::new().unwrap();
+
 	for _ in 0..5 {
 		assert_eq!(
 			once(&mut executor, &program, &mut store, 10_000).unwrap(),
 			Some(Scalar::I64(1))
 		);
 	}
+
 	let failing = compile("pub fn main() { let v = [1]; v[5] }");
 	for _ in 0..3 {
 		assert_eq!(
@@ -256,6 +270,7 @@ fn a_heap_result_is_released_on_every_repetition() {
 	let mut executor = Executor::new().unwrap();
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let baseline = (store.live_entries(), store.payload_bytes());
+
 	for _ in 0..5 {
 		let value = executor
 			.invoke(&program, &mut store, main, &[], 10_000)
@@ -279,6 +294,7 @@ fn a_returned_alias_of_an_input_leaves_the_callers_ownership_intact() {
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let one = store.root_i64(1);
 	let root = store.root_list(Type::Vec, &[&one]).unwrap();
+
 	for k in 1..=3 {
 		let result = executor
 			.invoke(&program, &mut store, main, &[&root], 10_000)
@@ -288,6 +304,7 @@ fn a_returned_alias_of_an_input_leaves_the_callers_ownership_intact() {
 		assert_eq!(store.live_entries(), 1);
 		assert_eq!(store.root_len(&root).unwrap(), 1 + k);
 		assert_eq!(store.root_len(&result).unwrap(), 1 + k);
+
 		// Bytes after the script's intended mutation; releasing the alias changes nothing.
 		let mutated = (store.live_entries(), store.payload_bytes());
 		store.root_release(result).unwrap();
@@ -298,6 +315,7 @@ fn a_returned_alias_of_an_input_leaves_the_callers_ownership_intact() {
 		);
 		assert!(executor.is_idle());
 	}
+
 	store.root_release(root).unwrap();
 	assert_eq!(store.live_entries(), 0);
 }
@@ -315,11 +333,13 @@ fn a_foreign_argument_is_refused_before_any_argument_is_retained() {
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let one = store.root_i64(1);
 	let root = store.root_list(Type::Vec, &[&one]).unwrap();
+
 	// A root owned by another store, with the same slot and generation as `root`:
 	// inside the core they are indistinguishable; the boundary tells them apart.
 	let mut other = new_store(4);
 	let two = other.root_i64(2);
 	let bogus = other.root_list(Type::Vec, &[&two]).unwrap();
+
 	for _ in 0..3 {
 		let failure = executor
 			.invoke(&program, &mut store, main, &[&root, &bogus], 10_000)
@@ -336,6 +356,7 @@ fn a_foreign_argument_is_refused_before_any_argument_is_retained() {
 		store.root_release(ok).unwrap();
 		assert_eq!(store.live_entries(), 1);
 	}
+
 	store.root_release(root).unwrap();
 	assert_eq!(store.live_entries(), 0);
 	other.root_release(bogus).unwrap();
@@ -389,6 +410,7 @@ fn run_and_invoke_report_the_same_failure() {
 		assert_eq!(failure.call_chain, by_run.call_chain);
 		assert!(failure.cleanup_error.is_none() && by_run.cleanup_error.is_none());
 	}
+
 	assert_eq!(by_run.error.kind, ErrorKind::DivisionByZero);
 	assert!(by_run.error.location.is_some());
 	assert_eq!(by_run.call_chain.len(), 2);
@@ -415,6 +437,7 @@ fn a_pending_cancellation_is_consumed_only_by_a_charged_instruction() {
 		.invoke(&program, &mut store, main, &[], 10_000)
 		.unwrap();
 	assert_eq!(scalar(&mut store, out), Scalar::I64(10));
+
 	// An entry refusal before the first charge does not swallow the request.
 	executor.request_cancel();
 	let refused = executor

@@ -3,6 +3,7 @@
 //! Call temporary) and are the oracle for D20. Each failure is identified by its
 //! exact Error (kind, operation, the CallValue's location); cleanup, idleness and
 //! executor reuse are checked after every failure.
+
 use super::*;
 use crate::experimental_core::{
 	code::{Builder, Function},
@@ -17,6 +18,7 @@ fn loc(n: u32) -> Location {
 		end: n + 1,
 	}
 }
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 16,
@@ -24,12 +26,14 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 /// Function 1: `parameters` parameters, returns its first.
 fn callee(parameters: u32) -> Function {
 	let mut f = Function::new(parameters.max(1), parameters).unwrap();
 	f.push(Op::Return { value: 0 }, loc(90)).unwrap();
 	f
 }
+
 /// Function 0 (one parameter, slot 0): slot 1 = I64 5, slot 2 = "ab",
 /// slot 3 = a literal token for function 1, then at pc 3 (location 30)
 /// `CallValue { out: 4, value: token_slot, args: [2, 1][..args_len] }`, then
@@ -71,6 +75,7 @@ fn program(token_slot: u32, args_len: u32, callee_parameters: u32) -> Code {
 	b.push(callee(callee_parameters)).unwrap();
 	b.finish().unwrap()
 }
+
 fn fails(code: &Code, arg: Value, fuel: usize, expected: Error) {
 	let mut store = store();
 	let mut executor = Executor::new().unwrap();
@@ -78,12 +83,15 @@ fn fails(code: &Code, arg: Value, fuel: usize, expected: Error) {
 		.invoke_args(code, &mut store, 0, Args::Values(&[arg]), fuel)
 		.unwrap_err();
 	assert_eq!(failure.error, expected);
+
 	// The CallValue fails in the entry frame before publishing a callee frame.
 	assert!(failure.call_chain.is_empty());
 	assert!(failure.cleanup_error.is_none());
 	assert!(executor.is_idle());
+
 	// The "ab" string and every argument transfer are released by cleanup.
 	assert_eq!(store.live_entries(), 0);
+
 	// Reuse after the failure: the executor and store still run a valid call.
 	let ok = program(3, 2, 2);
 	let value = executor
@@ -94,6 +102,7 @@ fn fails(code: &Code, arg: Value, fuel: usize, expected: Error) {
 	assert_eq!(store.live_entries(), 0);
 	assert!(executor.is_idle());
 }
+
 fn at_call(kind: ErrorKind) -> Error {
 	Error::new(kind, "execute").at(loc(30))
 }
@@ -103,6 +112,7 @@ fn d20_dynamic_call_through_a_literal_token_succeeds_and_releases() {
 	let code = program(3, 2, 2);
 	let mut store = store();
 	let mut executor = Executor::new().unwrap();
+
 	for _ in 0..2 {
 		let value = executor
 			.invoke_args(&code, &mut store, 0, Args::Values(&[Value::Unit]), 1024)
@@ -227,6 +237,7 @@ fn d20_charge_precedes_call_value_checks() {
 	assert!(code.function(0).unwrap().cached_ref(0).unwrap().charged);
 	let mut store = store();
 	let mut executor = Executor::new().unwrap();
+
 	// Fuel exhaustion at the charged CallValue, even though its value is not a function.
 	let failure = executor
 		.invoke_args(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 0)
@@ -237,6 +248,7 @@ fn d20_charge_precedes_call_value_checks() {
 	);
 	assert!(failure.call_chain.is_empty() && failure.cleanup_error.is_none());
 	assert!(executor.is_idle());
+
 	// A pending cancellation is consumed at the same charged CallValue.
 	executor.request_cancel();
 	let failure = executor
@@ -247,6 +259,7 @@ fn d20_charge_precedes_call_value_checks() {
 		Error::new(ErrorKind::Cancelled, "execute").at(loc(40))
 	);
 	assert!(executor.is_idle());
+
 	// Consumed: the next invocation reaches the CallValue's own checks.
 	let failure = executor
 		.invoke_args(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 1024)
@@ -255,11 +268,13 @@ fn d20_charge_precedes_call_value_checks() {
 		failure.error,
 		Error::new(ErrorKind::Type, "execute").at(loc(40))
 	);
+
 	// And a valid token succeeds: the callee returns its argument, the token.
 	let token = Value::Function {
 		code: code.id(),
 		id: 1,
 	};
+
 	let value = executor
 		.invoke_args(&code, &mut store, 0, Args::Values(&[token]), 1024)
 		.unwrap();

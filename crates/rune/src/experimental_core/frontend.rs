@@ -3,6 +3,7 @@
 //! The ordinary Rune compiler front end resolves and checks the sources; each admitted
 //! function is then lowered to fresh-core code. The legacy `UnitBuilder` is metadata
 //! scratch only: no function is assembled into a legacy unit.
+
 use super::code::{Builder, Code, Function};
 use super::error::{Error, ErrorKind, Location, Refusal, Result};
 use crate::alloc::{String, Vec};
@@ -35,6 +36,7 @@ pub struct Program {
 	functions: Vec<Hash>,
 	pub(crate) sources: Vec<SourceRecord>,
 }
+
 impl Program {
 	/// Source records for rendering error locations after frontend teardown.
 	pub fn sources(&self) -> &[SourceRecord] {
@@ -52,26 +54,32 @@ impl Program {
 			.map(|n| n as u32)
 	}
 }
+
 pub(crate) struct Collector {
 	revision: u64,
 	entries: Vec<(Hash, Option<Function>, Option<Location>)>,
 	pub(crate) failure: Option<Error>,
 }
+
 impl Collector {
 	pub(crate) fn revision(&self) -> u64 {
 		self.revision
 	}
+
 	pub(crate) fn reserve(&mut self, hash: Hash) -> Result<u32> {
 		if let Some(id) = self.entries.iter().position(|(h, _, _)| *h == hash) {
 			return Ok(id as u32);
 		}
+
 		if self.entries.len() >= 65_536 {
 			return Err(Error::new(ErrorKind::FrameCapacity, "function registry"));
 		}
+
 		let id = self.entries.len() as u32;
 		self.entries.try_push((hash, None, None))?;
 		Ok(id)
 	}
+
 	pub(crate) fn lower(
 		&mut self,
 		hash: Hash,
@@ -86,6 +94,7 @@ impl Collector {
 		if self.entries[id as usize].1.is_some() {
 			return Err(Error::new(ErrorKind::InvalidCode, "duplicate function"));
 		}
+
 		let revision = self.revision;
 		let result = super::lower::function(
 			exprs,
@@ -96,9 +105,11 @@ impl Collector {
 				if let Some((_, operation)) = refused_functions.iter().find(|(h, _)| *h == hash) {
 					return Err(Error::refused(*operation).at(at));
 				}
+
 				if context.lookup_function(hash).is_some() {
 					return Err(Error::refused(Refusal::Native).at(at));
 				}
+
 				let id = self.reserve(hash)?;
 				self.entries[id as usize].2.get_or_insert(at);
 				Ok(id)
@@ -113,12 +124,15 @@ impl Collector {
 				return Err(error);
 			}
 		};
+
 		self.entries[id as usize].1 = Some(function);
 		Ok(())
 	}
+
 	fn finish(self) -> Result<Program> {
 		let mut builder = Builder::default();
 		let mut functions = Vec::new();
+
 		for (hash, function, location) in self.entries {
 			let function = function.ok_or_else(|| {
 				let mut error = Error::refused(Refusal::UnresolvedFunction);
@@ -128,6 +142,7 @@ impl Collector {
 			functions.try_push(hash)?;
 			builder.push(function)?;
 		}
+
 		Ok(Program {
 			code: builder.finish()?,
 			functions,
@@ -135,6 +150,7 @@ impl Collector {
 		})
 	}
 }
+
 /// Compiles `sources` against `context` for the fresh core.
 ///
 /// Anything outside the admitted subset is a compile-time refusal: an [`Error`] with
@@ -161,6 +177,7 @@ pub fn compile(
 	// Preflight the complete input before proportional source copies.
 	let mut bytes = 0usize;
 	let mut count = 0usize;
+
 	for id in sources.source_ids() {
 		let source = sources
 			.get(id)
@@ -174,6 +191,7 @@ pub fn compile(
 			return Err(Error::refused(Refusal::SourceLimit));
 		}
 	}
+
 	let mut retained = Vec::try_with_capacity(count)?;
 	for id in sources.source_ids() {
 		let source = sources
@@ -186,17 +204,20 @@ pub fn compile(
 			text: String::try_from(source.as_str())?,
 		})?;
 	}
+
 	let mut collector = Collector {
 		revision,
 		entries: Vec::new(),
 		failure: None,
 	};
+
 	let mut unit = UnitBuilder::default();
 	let prelude = if context.has_default_modules() {
 		Prelude::with_default_prelude()?
 	} else {
 		Prelude::default()
 	};
+
 	let mut pool = Pool::new()?;
 	let mut visitor = NoopCompileVisitor::new();
 	let mut loader = NoopSourceLoader::default();
@@ -218,9 +239,11 @@ pub fn compile(
 		&mut storage,
 		Some(&mut collector),
 	)?;
+
 	if let Some(error) = collector.failure {
 		return Err(error);
 	}
+
 	if diagnostics.has_error() {
 		let mut error = Error::refused(Refusal::FrontendDiagnostic);
 		for diagnostic in diagnostics.diagnostics() {
@@ -237,8 +260,10 @@ pub fn compile(
 				}
 			}
 		}
+
 		return Err(error);
 	}
+
 	let mut program = collector.finish()?;
 	program.sources = retained;
 	Ok(program)

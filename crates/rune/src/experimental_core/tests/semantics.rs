@@ -5,6 +5,7 @@
 //! functions over a caller-owned witness vector `w`:
 //! `fn t(w, n, x) { w.push(n); x }` and `fn mark(w, x) { w.push(0); x }`.
 //! The witness survives a later failure, because it is the caller's root.
+
 use crate::experimental_core::error::ErrorKind;
 use crate::experimental_core::execute::Executor;
 use crate::experimental_core::frontend::{self, Program};
@@ -33,8 +34,10 @@ fn witness(store: &mut Store, w: &Root) -> std::vec::Vec<i64> {
 			Some(Scalar::I64(n)) => out.push(n),
 			other => panic!("witness item {other:?}"),
 		}
+
 		store.root_release(item).unwrap();
 	}
+
 	out
 }
 
@@ -48,6 +51,7 @@ fn effects_keep_argument_order_aliases_failures_and_reset() {
 	let mut store = Store::new(Limits::default()).unwrap();
 	let mut ex = Executor::new().unwrap();
 	let n = store.root_i64(7);
+
 	for (text, events) in [
 		(
 			"pub fn main(a, w) { t(w, 1, a); t(w, 1, t(w, 2, a)) }",
@@ -71,6 +75,7 @@ fn effects_keep_argument_order_aliases_failures_and_reset() {
 		),
 	] {
 		let p = compile(&std::format!("{EFFECTS} {text}"));
+
 		// A fresh witness per invocation is the reset.
 		let w = store.root_list(Type::Vec, &[]).unwrap();
 		let out = ex
@@ -82,12 +87,14 @@ fn effects_keep_argument_order_aliases_failures_and_reset() {
 		assert!(ex.is_idle());
 		assert_eq!(store.live_entries(), 0);
 	}
+
 	// The effect functions return their argument itself: an alias of the caller's list.
 	let p = compile(&std::format!(
 		"{EFFECTS} pub fn main(a, w) {{ mark(w, t(w, 1, a)) }}"
 	));
 	let item = store.root_i64(1);
 	let list = store.root_list(Type::Vec, &[&item]).unwrap();
+
 	// The baseline excludes the witness, which grows with the effects.
 	let baseline = (store.live_entries(), store.payload_bytes());
 	let w = store.root_list(Type::Vec, &[]).unwrap();
@@ -104,6 +111,7 @@ fn effects_keep_argument_order_aliases_failures_and_reset() {
 	store.root_release(out).unwrap();
 	assert_eq!((store.live_entries(), store.payload_bytes()), baseline);
 	store.root_release(list).unwrap();
+
 	// Effects before a failure are kept.
 	let p = compile(&std::format!(
 		"{EFFECTS} pub fn main(a, w) {{ mark(w, a); t(w, 3, a); 1/0 }}"
@@ -134,6 +142,7 @@ fn short_circuit_records_only_executed_rhs() {
 	let mut store = Store::new(Limits::default()).unwrap();
 	let mut ex = Executor::new().unwrap();
 	let b = store.root_bool(true);
+
 	for (left, marks) in [(false, 0), (true, 1)] {
 		let a = store.root_bool(left);
 		let w = store.root_list(Type::Vec, &[]).unwrap();
@@ -145,6 +154,7 @@ fn short_circuit_records_only_executed_rhs() {
 		store.root_release(out).unwrap();
 		store.root_release(w).unwrap();
 	}
+
 	let a = store.root_i64(1);
 	let w = store.root_list(Type::Vec, &[]).unwrap();
 	let failure = ex
@@ -171,6 +181,7 @@ fn missing_display_forms_are_type_errors_through_format_and_template() {
 		let unit = store.root_unit();
 		let vector = store.root_list(Type::Vec, &[&unit]).unwrap();
 		let baseline = (store.live_entries(), store.payload_bytes());
+
 		for arg in [&unit, &vector] {
 			let failure = ex.invoke(&p, &mut store, main, &[arg], 1000).unwrap_err();
 			assert_eq!(failure.error.kind, ErrorKind::Type);
@@ -178,6 +189,7 @@ fn missing_display_forms_are_type_errors_through_format_and_template() {
 			assert!(ex.is_idle());
 			assert_eq!((store.live_entries(), store.payload_bytes()), baseline);
 		}
+
 		store.root_release(vector).unwrap();
 		store.root_release(unit).unwrap();
 		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));

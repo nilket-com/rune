@@ -50,6 +50,7 @@ pub enum ErrorKind {
 	/// A cancellation requested with [`Executor::request_cancel`](crate::experimental_core::execute::Executor::request_cancel) was consumed.
 	Cancelled,
 }
+
 /// Named compile-time refusal categories. The adapter consumes this enum,
 /// never parses prose or guesses a category from an error message.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -143,6 +144,7 @@ pub enum Refusal {
 	/// A `yield` expression.
 	Yield,
 }
+
 impl Refusal {
 	/// Stable category names, including the reviewed batch E vocabulary.
 	pub const fn name(self) -> &'static str {
@@ -193,6 +195,7 @@ impl Refusal {
 		}
 	}
 }
+
 /// A byte range in one source of a compiled program.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Location {
@@ -229,6 +232,7 @@ impl Error {
 			refusal: None,
 		}
 	}
+
 	/// A compile-time refusal: kind [`ErrorKind::Unsupported`], operation the refusal's
 	/// [`name`](Refusal::name).
 	pub const fn refused(refusal: Refusal) -> Self {
@@ -239,16 +243,19 @@ impl Error {
 			refusal: Some(refusal),
 		}
 	}
+
 	/// The same error at `location`.
 	pub fn at(mut self, location: Location) -> Self {
 		self.location = Some(location);
 		self
 	}
 }
+
 impl From<crate::alloc::Error> for Error {
 	fn from(_: crate::alloc::Error) -> Self {
 		Self::new(ErrorKind::Allocation, "reserve")
 	}
 }
+
 /// The result type of the fresh core.
 pub type Result<T> = core::result::Result<T, Error>;

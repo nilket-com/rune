@@ -1,4 +1,5 @@
 //! Local source-to-core construction tests, not the reviewed A-E conformance run.
+
 use crate::experimental_core::{
 	error::{ErrorKind, Refusal},
 	execute::Executor,
@@ -8,6 +9,7 @@ use crate::experimental_core::{
 };
 use crate::{Context, Diagnostics, Hash, Source, Sources};
 use std::string::ToString;
+
 fn run(text: &str, args: &[Value]) -> Value {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
@@ -27,6 +29,7 @@ fn run(text: &str, args: &[Value]) -> Value {
 	assert_eq!(store.live_entries(), 0);
 	result
 }
+
 #[test]
 #[cfg_attr(
 	miri,
@@ -75,6 +78,7 @@ fn direct_arithmetic_operands_keep_snapshot_and_live_local_rules() {
 		Value::I64(4)
 	);
 }
+
 #[test]
 #[cfg_attr(
 	miri,
@@ -89,6 +93,7 @@ fn source_forward_and_recursive_functions() {
 		Value::I64(42)
 	);
 }
+
 #[test]
 #[cfg_attr(
 	miri,
@@ -111,6 +116,7 @@ fn source_vector_alias_and_short_circuit() {
 		Value::Bool(true)
 	);
 }
+
 #[test]
 #[cfg_attr(
 	miri,
@@ -268,6 +274,7 @@ fn source_range_and_vector_for_cleanup() {
 		Value::I64(42)
 	);
 }
+
 #[test]
 #[cfg_attr(
 	miri,
@@ -324,6 +331,7 @@ fn source_named_function_tokens_use_new_frames_only() {
 fn source_builtin_variants_and_question_propagation() {
 	assert_eq!(run("pub fn main() { Ok(42)? }", &[]), Value::I64(42));
 	assert_eq!(run("pub fn main() { Some(42)? }", &[]), Value::I64(42));
+
 	for (text, tag, payload) in [
 		(
 			"fn f() { Err(7)? } pub fn main() { f()?; 42 }",
@@ -410,6 +418,7 @@ fn source_assignment_preserves_target_and_rhs_evaluation_order() {
 		),
 		Value::I64(52)
 	);
+
 	// A call target is materialised before the RHS and keeps the earlier handle.
 	assert_eq!(
 		run(
@@ -418,6 +427,7 @@ fn source_assignment_preserves_target_and_rhs_evaluation_order() {
 		),
 		Value::I64(422)
 	);
+
 	// The source-reviewed adjacent-shape reference follow-up confirms this too.
 	assert_eq!(
 		run(
@@ -456,6 +466,7 @@ fn a_custom_macro_at_the_builtin_path_is_not_trusted() {
 		atomic::{AtomicUsize, Ordering},
 		Arc,
 	};
+
 	let calls = Arc::new(AtomicUsize::new(0));
 	let seen = calls.clone();
 	let mut context = Context::new();
@@ -574,6 +585,7 @@ fn source_literal_formatting_uses_core_renderer() {
 		Value::Bool(true)
 	);
 }
+
 #[test]
 #[cfg_attr(
 	miri,
@@ -644,6 +656,7 @@ fn unadmitted_native_call_is_refused_at_its_call_site() {
 	let mut module = crate::Module::with_item(["host"]).unwrap();
 	module.function("forbidden", || 42i64).build().unwrap();
 	context.install(module).unwrap();
+
 	for body in ["host::forbidden()", "let f = host::forbidden; f()"] {
 		let text = format!("pub fn main() {{ {body} }}");
 		let mut sources = Sources::new();

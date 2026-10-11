@@ -6,6 +6,7 @@
 //! `modules::io::module(true)`. Functions are insert-once (`ConflictingFunction`), and a
 //! module whose `unique` id was already installed is skipped entirely, so the marker cannot
 //! certify a handler that some other module inserted.
+
 use crate::experimental_core::error::Refusal;
 use crate::experimental_core::execute::Executor;
 use crate::experimental_core::frontend;
@@ -13,14 +14,17 @@ use crate::experimental_core::heap::{Limits, Store};
 use crate::{Context, Diagnostics, Hash, Module, Source, Sources};
 
 const PRINTS: &str = "pub fn main() { println!(\"first\"); println!(\"{:?}\", [1, 2]); 1 / 0 }";
+
 /// `println!` in value position (the lowering's `call` path, not the statement path).
 const PRINT_VALUE: &str = "pub fn main() { let x = println!(\"first\"); x }";
+
 /// A direct call, for contexts without the std `println!` macro.
 const PRINT_DIRECT: &str = "pub fn main() { std::io::println(\"first\"); 1 }";
 
 fn outcome(context: &Context, text: &str) -> Result<(), Option<Refusal>> {
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(text).unwrap()).unwrap();
+
 	match frontend::compile(&mut sources, context, &mut Diagnostics::new(), 1) {
 		Ok(_) => Ok(()),
 		Err(e) => Err(e.refusal),
@@ -33,6 +37,7 @@ fn admitted(context: &Context) -> bool {
 	let statement = outcome(context, PRINTS);
 	let value = outcome(context, PRINT_VALUE);
 	assert_eq!(statement, value, "statement and value positions agree");
+
 	match statement {
 		Ok(()) => true,
 		Err(refusal) => {
@@ -151,6 +156,7 @@ fn custom_first_then_builtin_conflicts_and_stays_uncertified() {
 		.install(crate::modules::io::module(true).unwrap())
 		.is_err());
 	assert!(!context.fresh_stdio_println());
+
 	// `Context::new()` has no `println!` macro, and the partial install stopped before
 	// it; call the custom function directly.
 	assert_eq!(outcome(&context, PRINT_DIRECT), Err(Some(Refusal::Native)));
@@ -273,6 +279,7 @@ fn the_output_cap_resets_per_invocation() {
 	let mut executor = Executor::new().unwrap();
 	executor.test_output = Some(std::vec::Vec::new());
 	let baseline = (store.live_entries(), store.payload_bytes());
+
 	for _ in 0..3 {
 		let out = executor
 			.invoke(&program, &mut store, main, &[&unit], 1_000_000_000)
@@ -281,6 +288,7 @@ fn the_output_cap_resets_per_invocation() {
 		assert!(executor.is_idle());
 		assert_eq!((store.live_entries(), store.payload_bytes()), baseline);
 	}
+
 	let mut line = "x".repeat(65536);
 	line.push('\n');
 	assert_eq!(

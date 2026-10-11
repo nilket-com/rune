@@ -1,6 +1,7 @@
 //! A1 lowering-shape regressions: direct local operands under the writes_nothing rule,
 //! snapshot where a later operand writes, stack slot reuse, single lifetime-based releases,
 //! effect-only statements, and loop/branch cleanup. Local construction checks, not evidence.
+
 use crate::experimental_core::{
 	execute::Executor,
 	frontend,
@@ -30,12 +31,14 @@ fn run(text: &str, args: &[Value]) -> Value {
 	assert_eq!(store.live_entries(), 0, "live entries after {text}");
 	result
 }
+
 fn int(text: &str) -> i64 {
 	match run(text, &[]) {
 		Value::I64(n) => n,
 		other => panic!("expected an integer from {text}, got {other:?}"),
 	}
 }
+
 fn text(src: &str) -> String {
 	// Strings are heap values; read them back through a length-and-sum so the
 	// helper's zero-live-entries check still applies to the whole program.
@@ -57,11 +60,13 @@ fn call_argument_snapshots_when_a_later_argument_writes_the_local() {
 		int("fn f(a, b) { a * 10 + b } pub fn main() { let x = 1; f(x, { x = 2; x }) }"),
 		12
 	);
+
 	// With a later argument that writes nothing the local is read in place.
 	assert_eq!(
 		int("fn f(a, b) { a * 10 + b } pub fn main() { let x = 1; f(x, 5) }"),
 		15
 	);
+
 	// A later call argument is not assumed pure either.
 	assert_eq!(
 		int("fn g() { 3 } fn f(a, b) { a * 10 + b } pub fn main() { let x = 1; f(x, g()) }"),
@@ -104,6 +109,7 @@ fn index_read_materialises_its_target_before_a_writing_index() {
 		int("pub fn main() { let v = [7, 8]; v[{ v = [9]; 0 }] }"),
 		7
 	);
+
 	// A bare index is read in place.
 	assert_eq!(int("pub fn main() { let v = [7, 8]; let i = 1; v[i] }"), 8);
 }
@@ -122,6 +128,7 @@ fn assignment_to_an_existing_local_is_not_written_early() {
 		),
 		Value::Bool(false)
 	);
+
 	// A let binding may be written directly: nothing can read it first.
 	assert_eq!(
 		run(
@@ -294,6 +301,7 @@ fn string_concatenation_results_are_released() {
 fn one_entry(text: &str) -> Value {
 	entries(1, text)
 }
+
 fn entries(entries: usize, text: &str) -> Value {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
@@ -346,6 +354,7 @@ fn heap_values_written_on_one_path_are_released_when_their_scope_ends() {
 		),
 		Value::I64(1)
 	);
+
 	// Nested alternatives, both shapes.
 	assert_eq!(
 		one_entry(
@@ -359,6 +368,7 @@ fn heap_values_written_on_one_path_are_released_when_their_scope_ends() {
 		),
 		Value::I64(1)
 	);
+
 	// A pre-existing scalar local that a branch rebinds to a vector.
 	assert_eq!(
 		one_entry(
@@ -366,6 +376,7 @@ fn heap_values_written_on_one_path_are_released_when_their_scope_ends() {
 		),
 		Value::I64(1)
 	);
+
 	// Zero iterations the other way round: the local holds a vector and the body
 	// that would have written a scalar never ran; its flag must not be cleared.
 	assert_eq!(
@@ -374,6 +385,7 @@ fn heap_values_written_on_one_path_are_released_when_their_scope_ends() {
 		),
 		Value::I64(1)
 	);
+
 	// Zero iterations: the loop body never ran, so the local still holds its scalar.
 	assert_eq!(
 		one_entry(
@@ -381,6 +393,7 @@ fn heap_values_written_on_one_path_are_released_when_their_scope_ends() {
 		),
 		Value::I64(1)
 	);
+
 	// A back edge: the vector from the previous iteration is still bound while the
 	// next one is built (two entries at that instant, as on the reference), is
 	// released by the assignment, and the scope's release follows the loop: the
@@ -392,6 +405,7 @@ fn heap_values_written_on_one_path_are_released_when_their_scope_ends() {
 		),
 		Value::I64(2)
 	);
+
 	// Per-iteration temporaries and a value kept across iterations.
 	assert_eq!(
 		one_entry(

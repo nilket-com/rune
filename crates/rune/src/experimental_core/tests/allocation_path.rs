@@ -1,6 +1,7 @@
 //! Item 9, executor side: on the five early-diagnostic programs, repeated invocation on one
 //! executor and store never grows the executor's reserved buffers and leaves the store at its
 //! baseline. Local construction check over the batch A sources; not a measurement.
+
 use crate::experimental_core::{
 	execute::Executor,
 	frontend,
@@ -54,6 +55,7 @@ fn repeated_invocation_never_grows_executor_buffers_or_leaves_store_state() {
 			store.reserved_metadata_bytes(),
 		);
 		let unit = store.root_unit();
+
 		for k in 0..3 {
 			let out = executor
 				.invoke(&program, &mut store, main, &[&unit], 1_000_000_000)
@@ -97,6 +99,7 @@ fn compiled(text: &str) -> (frontend::Program, u32) {
 fn executor_construction_refuses_at_each_reservation() {
 	let [frames, slots, diagnostics] = Executor::reservation_bytes_for_test();
 	let total = frames + slots + diagnostics;
+
 	for (site, budget) in [
 		("frames", frames - 1),
 		("slots", frames + slots - 1),
@@ -109,6 +112,7 @@ fn executor_construction_refuses_at_each_reservation() {
 			"{site}: budget {budget}"
 		);
 	}
+
 	let built = limit::with(total, || Executor::new().is_ok()).call();
 	assert!(built, "construction fits in exactly {total} bytes");
 }
@@ -188,6 +192,7 @@ fn sampled_allocation_budgets_leave_clean_reusable_state_on_the_five_programs() 
 		let mut failures = 0;
 		let mut budget = 0usize;
 		let mut reached = std::collections::BTreeSet::new();
+
 		loop {
 			let warm = executor
 				.invoke(&program, &mut store, main, &[&unit], 1_000_000_000)
@@ -217,11 +222,13 @@ fn sampled_allocation_budgets_leave_clean_reusable_state_on_the_five_programs() 
 				baseline,
 				"{name}: store not at baseline at budget {budget}"
 			);
+
 			match outcome {
 				Ok(released) => {
 					assert!(released, "{name}: result release at budget {budget}");
 					break;
 				}
+
 				Err((kind, at)) => {
 					reached.insert(at);
 					assert!(
@@ -236,22 +243,27 @@ fn sampled_allocation_budgets_leave_clean_reusable_state_on_the_five_programs() 
 					failures += 1;
 				}
 			}
+
 			budget = if budget < 256 { budget + 8 } else { budget * 2 };
 			assert!(budget < 1 << 30, "{name}: never succeeded");
 		}
+
 		let out = executor
 			.invoke(&program, &mut store, main, &[&unit], 1_000_000_000)
 			.unwrap();
 		store.root_release(out).unwrap();
 		assert_eq!(store.live_entries(), 0, "{name}");
+
 		// Not vacuous: small budgets refuse, and at more than one source location.
 		assert!(failures >= 1, "{name}: no budget refused");
+
 		if name == "shared_rows" {
 			assert!(
 				reached.len() >= 2,
 				"shared_rows: refusals reached only {reached:?}"
 			);
 		}
+
 		std::eprintln!(
 			"{name}: {failures} refused budgets before success; refusal sites {reached:?}"
 		);
@@ -323,6 +335,7 @@ fn decoded_cache_footprints_are_exact_for_each_kernel() {
 		let program =
 			frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 7).unwrap();
 		let mut bytes = 0usize;
+
 		for id in 0..program.code.functions() {
 			let function = program.code.function(id as u32).unwrap();
 			let (len, capacity, allocation) = function.cache_layout().unwrap();
@@ -337,6 +350,7 @@ fn decoded_cache_footprints_are_exact_for_each_kernel() {
 				"D1 {name} function {id}: len={len} capacity={capacity} requested_bytes={allocation}"
 			);
 		}
+
 		let footprint = program.code.footprint().unwrap();
 		assert_eq!(footprint.cache_payload, bytes);
 		assert_eq!(

@@ -1,4 +1,5 @@
 //! Targeted allocation transitions, independently of the executor budget sweep.
+
 use super::*;
 use rune_alloc::limit;
 
@@ -24,13 +25,16 @@ fn construction_refuses_each_metadata_reservation() {
 		entries: 4,
 		bytes: 128,
 	};
+
 	let slots = limits.entries * size_of::<Slot>();
 	let free = limits.entries * size_of::<u32>();
 	let work = (limits.bytes / size_of::<Value>() + 1) * size_of::<Value>();
+
 	for budget in [slots - 1, slots + free - 1, slots + free + work - 1] {
 		let kind = limit::with(budget, || Store::new(limits).err().map(|e| e.kind)).call();
 		assert_eq!(kind, Some(ErrorKind::Allocation));
 	}
+
 	let built = limit::with(slots + free + work, || Store::new(limits))
 		.call()
 		.unwrap();
@@ -59,6 +63,7 @@ fn payload_copy_refusals_publish_nothing_and_keep_children_owned() {
 		.strong,
 		1
 	);
+
 	// Record fields reserve first, then copy keys; one byte short of the key
 	// reservation tests destruction of the unpublished field buffer.
 	let fields = size_of::<(String, Value)>();
@@ -82,6 +87,7 @@ fn clone_second_copy_refusal_keeps_original_and_children() {
 	let list = s.list(Type::Vec, &[child]).unwrap();
 	s.release(child).unwrap();
 	let baseline = state(&s);
+
 	// clone_outer allocates a scratch list, then list allocates its own copy.
 	let kind = limit::with(size_of::<Value>(), || s.clone_outer(list).unwrap_err().kind).call();
 	assert_eq!(kind, ErrorKind::Allocation);
@@ -122,6 +128,7 @@ fn admission_retain_overflow_rolls_back_the_prefix_without_allocation() {
 	let Value::Heap(h) = overflowing else {
 		unreachable!()
 	};
+
 	s.entry_mut(h).unwrap().strong = u32::MAX;
 	let baseline = state(&s);
 	let kind = s
@@ -133,6 +140,7 @@ fn admission_retain_overflow_rolls_back_the_prefix_without_allocation() {
 	let Value::Heap(c) = child else {
 		unreachable!()
 	};
+
 	assert_eq!(s.entry(c).unwrap().strong, 1);
 	assert_eq!(s.entry(h).unwrap().strong, u32::MAX);
 	s.entry_mut(h).unwrap().strong = 1;
@@ -150,6 +158,7 @@ fn formatting_refusal_and_owned_admission_keep_original_state() {
 	assert_eq!(kind, ErrorKind::Allocation);
 	assert_eq!(state(&s), baseline);
 	assert_eq!(s.text(text).unwrap(), "held");
+
 	// The pre-count and render share an immutable store; only the bounded
 	// output buffer allocates. Owned admission must not copy it again.
 	let rendered = s.format_value(text, false).unwrap();

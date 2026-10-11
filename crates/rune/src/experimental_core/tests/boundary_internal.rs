@@ -1,6 +1,7 @@
 //! Sealed-boundary obligations that need crate-private access: generation
 //! retirement near `u32::MAX`, and the owned-root disposition when a release is
 //! refused before versus after the root's edge is released.
+
 use crate::experimental_core::{
 	error::ErrorKind,
 	heap::{Limits, Store},
@@ -19,12 +20,14 @@ fn store(entries: usize) -> Store {
 fn a_slot_whose_generation_is_exhausted_retires_permanently() {
 	let mut s = store(2);
 	let first = s.string("first").unwrap();
+
 	// The next release moves the generation to u32::MAX and the slot stays reusable.
 	let first = s.set_generation_for_test(first, u32::MAX - 1);
 	let before = s.free_slots_for_test();
 	s.release(first).unwrap();
 	assert_eq!(s.free_slots_for_test(), before + 1);
 	assert_eq!(s.live_entries(), 0);
+
 	// Reuse the slot at generation u32::MAX; releasing it then exhausts the
 	// generation: the slot is retired for good, accounting stays exact, and the
 	// store keeps working on its remaining slot.
@@ -42,6 +45,7 @@ fn a_slot_whose_generation_is_exhausted_retires_permanently() {
 	assert_eq!(s.text(second).unwrap_err().kind, ErrorKind::InvalidHandle);
 	let third = s.string("third").unwrap();
 	assert_eq!(s.live_entries(), 1);
+
 	// Only one slot remains usable; the second admission is a capacity refusal.
 	assert_eq!(
 		s.string("fourth").unwrap_err().kind,
@@ -56,6 +60,7 @@ fn a_last_release_refused_by_its_retirement_checks_returns_the_owner() {
 	let mut s = store(4);
 	let one = s.root_i64(1);
 	let list = s.root_list(Type::Vec, &[&one]).unwrap();
+
 	// Deliberate internal misuse: take a reader lease, then drop the lease's own
 	// retained reference so the host root is the last owner while a reader is
 	// still registered. Its release is then an AccessConflict, checked before
@@ -70,16 +75,19 @@ fn a_last_release_refused_by_its_retirement_checks_returns_the_owner() {
 		}
 		other => panic!("expected refusal, got {other:?}"),
 	};
+
 	assert_eq!(s.live_entries(), 1);
 	assert_eq!(
 		s.root_len(&list).unwrap(),
 		1,
 		"the owner still names a live entry"
 	);
+
 	// Ending the lease releases the last reference; the returned root is then
 	// stale and is refused unchanged.
 	s.end_iter(iter).unwrap();
 	assert_eq!(s.live_entries(), 0);
+
 	match s.root_release(list) {
 		Err(ReleaseError::Refused { error, .. }) => {
 			assert_eq!(error.kind, ErrorKind::InvalidHandle)
@@ -91,20 +99,24 @@ fn a_last_release_refused_by_its_retirement_checks_returns_the_owner() {
 #[test]
 fn a_release_failing_after_the_edge_is_consumed_reports_failed() {
 	let mut s = store(8);
+
 	// parent -> child, with the child's edge malformed from the parent's point of
 	// view: releasing the parent consumes the parent's edge, then the child's
 	// drainage reports the first error. B5 drains everything it can.
 	let child = s.string("child").unwrap();
 	let parent = s.list(Type::Vec, &[child]).unwrap();
 	s.release(child).unwrap();
+
 	// Deliberate raw misuse: over-release the child so its count underflows
 	// during drainage.
 	s.release(child).unwrap();
 	let parent_root = s.export(parent);
+
 	match s.root_release(parent_root) {
 		Err(ReleaseError::Failed(error)) => assert_eq!(error.kind, ErrorKind::InvalidHandle),
 		other => panic!("expected a post-edge failure, got {other:?}"),
 	}
+
 	assert_eq!(
 		s.live_entries(),
 		0,
@@ -119,6 +131,7 @@ fn a_post_retirement_enqueue_failure_drains_and_consumes_the_owner() {
 	let source = s.root_list(Type::Vec, &[&one]).unwrap();
 	let raw_source = s.import(&source).unwrap();
 	let iterator = s.iterator(raw_source).unwrap();
+
 	// Deliberate internal misuse: the iterator's lease no longer counts as a
 	// reader, and the caller's own source root goes away, so the iterator holds
 	// the last strong edge to the vector.
@@ -126,14 +139,17 @@ fn a_post_retirement_enqueue_failure_drains_and_consumes_the_owner() {
 	s.root_release(source).unwrap();
 	assert_eq!(s.live_entries(), 2);
 	let baseline = (0, 0);
+
 	// Releasing the iterator retires it, then its lease release fails
 	// (readers underflow) AFTER the source edge was queued: the first error is
 	// kept, the queue drains, the owner is consumed.
 	let iterator = s.export(iterator);
+
 	match s.root_release(iterator) {
 		Err(ReleaseError::Failed(error)) => assert_eq!(error.kind, ErrorKind::InvalidHandle),
 		other => panic!("expected Failed, got {other:?}"),
 	}
+
 	assert_eq!(s.queued_work_for_test(), 0);
 	assert_eq!((s.live_entries(), s.payload_bytes()), baseline);
 	let again = s.root_string("reuse").unwrap();
@@ -163,6 +179,7 @@ mod moved {
 		sources.insert(Source::memory(text).unwrap()).unwrap();
 		frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 7).unwrap()
 	}
+
 	fn new_store() -> Store {
 		Store::new(Limits {
 			entries: 16,
@@ -170,6 +187,7 @@ mod moved {
 		})
 		.unwrap()
 	}
+
 	fn main_of(program: &Program) -> u32 {
 		program.function(Hash::type_hash(["main"])).unwrap()
 	}
@@ -199,6 +217,7 @@ mod moved {
 			start: 0,
 			end: 1,
 		};
+
 		for code in [1, 7, u32::MAX] {
 			let mut f = Function::new(1, 0).unwrap();
 			f.push(
@@ -217,6 +236,7 @@ mod moved {
 				Some(ErrorKind::InvalidCode)
 			);
 		}
+
 		// The unstamped form is accepted and stamped with the program's identity.
 		let mut f = Function::new(1, 0).unwrap();
 		f.push(
@@ -255,12 +275,14 @@ mod moved {
 			.unwrap();
 		assert_eq!(store.root_scalar(&out).unwrap(), Some(Scalar::Bool(true)));
 		store.root_release(out).unwrap();
+
 		// The same hash from a second program is the same nominal (process-wide).
 		let hash = Hash::type_hash(["Point"]).into_inner();
 		let n1 = nominal::intern(hash, "Point").unwrap();
 		let n2 = nominal::intern(hash, "other name, same hash").unwrap();
 		assert_eq!(n1, n2);
 		assert!(nominal::contains(n1));
+
 		// A host record carries the interned identity.
 		let one = store.root_i64(1);
 		let rec = store.root_record(Some(n1), &[("x", &one)]).unwrap();

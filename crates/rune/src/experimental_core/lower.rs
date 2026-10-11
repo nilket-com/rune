@@ -7,6 +7,7 @@
 //! have stored a heap handle in it; popping emits one Release per dirty slot and
 //! nothing for the others. Bare locals are read in place where the reference's
 //! `writes_nothing` rule allows; nothing here moves a user local.
+
 use super::arithmetic::{Binary, Unary};
 use super::code::{Function, Op};
 use super::error::{Error, ErrorKind, Location, Refusal, Result};
@@ -40,13 +41,16 @@ pub(crate) fn function(
 		constants,
 		stdio_println,
 	};
+
 	for arg in item.args {
 		let hir::FnArg::Pat(pat) = arg;
 		let slot = cx.slot()?;
+
 		// Arguments arrive retained by the caller and may be anything.
 		cx.raise(slot);
 		cx.bind(&pat.pat, slot)?;
 	}
+
 	cx.function.parameters = cx.next;
 	cx.block(&item.body, Mode::Return)?;
 	cx.function.slots = cx.high.max(1);
@@ -63,6 +67,7 @@ enum Mode {
 	/// Returned from the function: a Return instruction, no cleanup code after it.
 	Return,
 }
+
 struct Loop {
 	label: Option<String>,
 	start: u32,
@@ -72,6 +77,7 @@ struct Loop {
 	out: Option<u32>,
 	breaks: Vec<u32>,
 }
+
 struct Lower<'a, 'hir> {
 	exprs: &'a hir::Exprs<'hir>,
 	function: Function,
@@ -89,6 +95,7 @@ struct Lower<'a, 'hir> {
 	/// The Context's `println` is the certified stdio builtin; otherwise refuse.
 	stdio_println: bool,
 }
+
 impl<'a, 'hir> Lower<'a, 'hir> {
 	fn location(&self, span: Span) -> Location {
 		Location {
@@ -98,26 +105,33 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			end: span.end.0,
 		}
 	}
+
 	fn refused(&self, span: Span, refusal: Refusal) -> Error {
 		Error::refused(refusal).at(self.location(span))
 	}
+
 	/// Allocate the next slot on the frame stack. A popped slot was released
 	/// before it was popped, so a fresh allocation starts clean.
 	fn slot(&mut self) -> Result<u32> {
 		if self.next >= 65_536 {
 			return Err(Error::new(ErrorKind::FrameCapacity, "lower slots"));
 		}
+
 		let slot = self.next;
 		self.next += 1;
+
 		if self.next > self.high {
 			self.high = self.next;
 		}
+
 		while self.dirty.len() <= slot as usize {
 			self.dirty.try_push(false)?;
 		}
+
 		self.dirty[slot as usize] = false;
 		Ok(slot)
 	}
+
 	/// A slot's flag is a may-hold-heap fact over every path that reaches the
 	/// current point, so a write only ever raises it; it falls only when a
 	/// Release is emitted on the fall-through path (pop_to) or the slot is
@@ -128,6 +142,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			*flag = true;
 		}
 	}
+
 	/// Emit an instruction and record whether its destination may now hold a
 	/// heap handle. This is the only place that classification lives.
 	fn emit(&mut self, op: Op, span: Span) -> Result<u32> {
@@ -144,6 +159,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					self.raise(out);
 				}
 			}
+
 			Op::Copy { out, .. }
 			| Op::String { out, .. }
 			| Op::List { out, .. }
@@ -173,8 +189,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			| Op::Drop { .. }
 			| Op::Print { .. } => (),
 		}
+
 		self.function.push(op, self.location(span))
 	}
+
 	/// Release every dirty slot at or above `mark`, once, then pop to `mark`.
 	fn pop_to(&mut self, mark: u32, span: Span) -> Result<()> {
 		for value in (mark..self.next).rev() {
@@ -183,16 +201,20 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				self.dirty[value as usize] = false;
 			}
 		}
+
 		self.next = mark;
 		Ok(())
 	}
+
 	/// Pop without emitting: only after a Return, where the frame is gone.
 	fn forget_to(&mut self, mark: u32) {
 		for value in mark..self.next {
 			self.dirty[value as usize] = false;
 		}
+
 		self.next = mark;
 	}
+
 	/// Release dirty slots at or above `mark` on a path that leaves the loop,
 	/// without forgetting them: the fall-through path still owns them.
 	fn release_from(&mut self, mark: u32, span: Span) -> Result<()> {
@@ -202,11 +224,14 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					.push(Op::Release { value }, self.location(span))?;
 			}
 		}
+
 		Ok(())
 	}
+
 	fn pc(&self) -> u32 {
 		self.function.len() as u32
 	}
+
 	fn variable(&self, variable: hir::Variable, span: Span) -> Result<u32> {
 		self.variables
 			.iter()
@@ -215,6 +240,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			.map(|(_, slot)| *slot)
 			.ok_or_else(|| self.refused(span, Refusal::Variable))
 	}
+
 	fn bind(&mut self, pat: &hir::Pat<'_>, slot: u32) -> Result<()> {
 		match pat.kind {
 			hir::PatKind::Ignore => Ok(()),
@@ -222,18 +248,21 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				self.variables.try_push((*variable, slot))?;
 				Ok(())
 			}
+
 			hir::PatKind::Path(hir::PatPathKind::Kind(_))
 			| hir::PatKind::Lit(_)
 			| hir::PatKind::Sequence(_)
 			| hir::PatKind::Object(_) => Err(self.refused(pat.span, Refusal::Pattern)),
 		}
 	}
+
 	fn loop_index(&self, label: Option<&str>, span: Span) -> Result<usize> {
 		self.loops
 			.iter()
 			.rposition(|context| label.is_none() || context.label.as_deref() == label)
 			.ok_or_else(|| self.refused(span, Refusal::LoopControl))
 	}
+
 	fn unit_into(&mut self, out: u32, span: Span) -> Result<()> {
 		self.emit(
 			Op::Literal {
@@ -244,12 +273,15 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		)?;
 		Ok(())
 	}
+
 	fn block(&mut self, block: &hir::Block<'_>, mode: Mode) -> Result<()> {
 		if block.label.is_some() {
 			return Err(self.refused(block.span, Refusal::LabelledBlock));
 		}
+
 		let vars = self.variables.len();
 		let mark = self.next;
+
 		for statement in block.statements {
 			match statement {
 				hir::Stmt::Local(local) => {
@@ -259,18 +291,22 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					self.expr_into(local.expr, slot)?;
 					self.bind(&local.pat.pat, slot)?;
 				}
+
 				hir::Stmt::Expr(_, expr) => self.statement(*expr)?,
 			}
 		}
+
 		match (mode, block.value) {
 			(Mode::Into(out), Some(value)) => {
 				self.expr_into(value, out)?;
 				self.pop_to(mark, block.span)?;
 			}
+
 			(Mode::Into(out), None) => {
 				self.unit_into(out, block.span)?;
 				self.pop_to(mark, block.span)?;
 			}
+
 			(Mode::Discard, Some(value)) => {
 				self.statement(value)?;
 				self.pop_to(mark, block.span)?;
@@ -285,23 +321,29 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 						slot
 					}
 				};
+
 				self.emit(Op::Return { value }, block.span)?;
 				self.forget_to(mark);
 			}
 		}
+
 		self.variables.truncate(vars);
 		Ok(())
 	}
+
 	fn enter(&mut self, id: hir::ExprId) -> Result<hir::Expr<'hir>> {
 		let expr = *self.exprs.get(id);
+
 		// The frontend is recursive too. This is a named construction bound,
 		// not an unbounded host-stack walk.
 		if self.depth >= 128 {
 			return Err(self.refused(expr.span, Refusal::DepthLimit));
 		}
+
 		self.depth += 1;
 		Ok(expr)
 	}
+
 	/// Evaluate into a fresh slot, which is returned. Operand temporaries are
 	/// released (if dirty) and popped; the result stays allocated for the caller.
 	fn expr(&mut self, id: hir::ExprId) -> Result<u32> {
@@ -313,6 +355,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		self.pop_to(out + 1, expr.span)?;
 		Ok(out)
 	}
+
 	/// Evaluate into `out`, a slot the caller allocated earlier (so no operand
 	/// can alias it). Everything allocated here is released and popped.
 	fn expr_into(&mut self, id: hir::ExprId, out: u32) -> Result<()> {
@@ -323,6 +366,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		result?;
 		self.pop_to(mark, expr.span)
 	}
+
 	/// Evaluate for effect only; no result slot survives.
 	fn statement(&mut self, id: hir::ExprId) -> Result<()> {
 		let expr = self.enter(id)?;
@@ -332,6 +376,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		result?;
 		self.pop_to(mark, expr.span)
 	}
+
 	/// A read-only operand: a bare local is used in place, anything else is
 	/// evaluated into a temporary. Valid until the consuming instruction runs;
 	/// the caller must not let a later-evaluated expression replace the local.
@@ -341,6 +386,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			_ => self.expr(id),
 		}
 	}
+
 	/// The reference assembler's conservative `writes_nothing` predicate:
 	/// only a literal, a variable read or a type is known not to write.
 	fn writes_nothing(&self, id: hir::ExprId) -> bool {
@@ -349,6 +395,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			hir::ExprKind::Lit(..) | hir::ExprKind::Variable(..) | hir::ExprKind::Type(..)
 		)
 	}
+
 	/// Operands evaluated left to right. A bare local is used in place only if
 	/// every later operand is known not to write; otherwise it is snapshotted,
 	/// because a later operand could rebind it before the instruction runs.
@@ -363,10 +410,13 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			} else {
 				self.operand(*id)?
 			};
+
 			slots.try_push(slot)?;
 		}
+
 		Ok(slots)
 	}
+
 	/// Assignment operands use deferred local addresses (observed reference
 	/// behaviour): a bare local is read when the store executes, after the
 	/// right side; a non-trivial expression materialises in source order.
@@ -376,17 +426,21 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			_ => self.expr(id),
 		}
 	}
+
 	/// `Ok(None)`: not a type this core knows. A fresh struct is interned
 	/// process-wide; interner exhaustion is the `TypeTable` refusal.
 	fn type_tag(&self, hash: Hash, span: Span) -> Result<Option<Type>> {
 		if let Some(tag) = type_tag(hash) {
 			return Ok(Some(tag));
 		}
+
 		if !self.constants.fresh_struct_type(hash) {
 			return Ok(None);
 		}
+
 		self.struct_tag(hash, span).map(Some)
 	}
+
 	/// The identity is the type hash; the name recorded with it is the hash's
 	/// text, formatted on the stack only when the hash is new (item paths are
 	/// not plumbed into the lowerer).
@@ -396,6 +450,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			Err(e) => Err(e.at(self.location(span))),
 		}
 	}
+
 	fn field_index(&mut self, index: usize, span: Span) -> Result<u32> {
 		let index = i64::try_from(index).map_err(|_| self.refused(span, Refusal::FieldIndex))?;
 		let out = self.slot()?;
@@ -408,6 +463,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		)?;
 		Ok(out)
 	}
+
 	fn read_field(
 		&mut self,
 		out: u32,
@@ -420,14 +476,17 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				let index = self.field_index(index, span)?;
 				self.emit(Op::TupleField { out, value, index }, span)?;
 			}
+
 			hir::ExprField::Ident(key) => {
 				let key = self.function.string(key)?;
 				self.emit(Op::Field { out, value, key }, span)?;
 			}
 			hir::ExprField::IdentGenerics(..) => return Err(self.refused(span, Refusal::Field)),
 		}
+
 		Ok(())
 	}
+
 	fn write_field(
 		&mut self,
 		value: u32,
@@ -440,20 +499,24 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				let index = self.field_index(index, span)?;
 				self.emit(Op::SetTupleField { value, index, new }, span)?;
 			}
+
 			hir::ExprField::Ident(key) => {
 				let key = self.function.string(key)?;
 				self.emit(Op::SetField { value, key, new }, span)?;
 			}
 			hir::ExprField::IdentGenerics(..) => return Err(self.refused(span, Refusal::Field)),
 		}
+
 		Ok(())
 	}
+
 	/// Lower an expression whose value is not needed. Forms with a natural
 	/// effect-only shape avoid producing a unit; everything else goes through
 	/// `inner` into a temporary that the caller pops.
 	fn effect(&mut self, expr: hir::Expr<'hir>) -> Result<()> {
 		use hir::ExprKind as E;
 		let span = expr.span;
+
 		match expr.kind {
 			E::Assign(assign) => self.assign(assign, span),
 			E::Binary(binary) if binary.op.is_assign() => self.compound_assign(binary, span),
@@ -466,8 +529,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					let out = self.slot()?;
 					self.inner(expr, out)?;
 				}
+
 				Ok(())
 			}
+
 			E::Group(id) => self.statement(id),
 			_ => {
 				let out = self.slot()?;
@@ -475,6 +540,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 		}
 	}
+
 	/// Calls whose value is unit by construction: println, push, drop.
 	/// Returns false (having emitted nothing) when the call is not one of them.
 	fn effect_call(&mut self, call: &hir::ExprCall<'_>, span: Span) -> Result<bool> {
@@ -492,6 +558,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				)?;
 				Ok(true)
 			}
+
 			hir::Call::Meta { hash }
 				if hash == Hash::type_hash(crate::item!(::std::io::println))
 					&& call.args.len() == 1 =>
@@ -501,10 +568,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				if !self.stdio_println {
 					return Err(self.refused(span, Refusal::Native));
 				}
+
 				let value = self.operand(call.args[0])?;
 				self.emit(Op::Print { value }, span)?;
 				Ok(true)
 			}
+
 			hir::Call::Meta { hash }
 				if hash == Hash::type_hash(crate::item!(::std::mem::drop))
 					&& call.args.len() == 1 =>
@@ -516,6 +585,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			_ => Ok(false),
 		}
 	}
+
 	fn assign(&mut self, assign: &hir::ExprAssign, span: Span) -> Result<()> {
 		use hir::ExprKind as E;
 		match self.exprs.get(assign.lhs).kind {
@@ -526,6 +596,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				let value = self.expr(assign.rhs)?;
 				self.emit(Op::Copy { out, value }, span)?;
 			}
+
 			E::Index(index) => {
 				// The reference defers a bare local address rather than copying
 				// its value: RHS rebinding changes the receiver read at Set.
@@ -542,6 +613,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					span,
 				)?;
 			}
+
 			E::FieldAccess(field) => {
 				let target = self.assignment_operand(field.expr, span)?;
 				let value = self.operand(assign.rhs)?;
@@ -549,11 +621,14 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 			_ => return Err(self.refused(span, Refusal::Assignment)),
 		}
+
 		Ok(())
 	}
+
 	fn compound_assign(&mut self, binary: &hir::ExprBinary, span: Span) -> Result<()> {
 		use hir::ExprKind as E;
 		let op = binary_op(binary.op).ok_or_else(|| self.refused(span, Refusal::Operator))?;
+
 		match self.exprs.get(binary.lhs).kind {
 			E::Variable(variable) => {
 				// The local is read by the instruction, after the right side ran.
@@ -569,6 +644,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					span,
 				)?;
 			}
+
 			E::Index(index) => {
 				let target = self.assignment_operand(index.target, span)?;
 				let key = self.assignment_operand(index.index, span)?;
@@ -600,6 +676,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					span,
 				)?;
 			}
+
 			E::FieldAccess(field) => {
 				let target = self.assignment_operand(field.expr, span)?;
 				let rhs = self.operand(binary.rhs)?;
@@ -616,10 +693,13 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				)?;
 				self.write_field(target, field.expr_field, old, span)?;
 			}
+
 			_ => return Err(self.refused(span, Refusal::Assignment)),
 		}
+
 		Ok(())
 	}
+
 	fn conditional(
 		&mut self,
 		conditional: &hir::Conditional<'_>,
@@ -627,43 +707,53 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		span: Span,
 	) -> Result<()> {
 		let mut ends = Vec::new();
+
 		// Condition temporaries stay allocated until the whole conditional ends,
 		// where one pop releases them on every path (a release placed between
 		// the Branch and its targets would be skipped by both).
 		let mark = self.next;
+
 		for branch in conditional.branches {
 			let hir::Condition::Expr(_, id) = branch.condition else {
 				return Err(self.refused(span, Refusal::Condition));
 			};
+
 			let condition = self.operand(*id)?;
 			let test = self.emit(Op::Jump { target: 0 }, span)?;
 			let yes = self.pc();
+
 			match out {
 				Some(out) => self.block(&branch.block, Mode::Into(out))?,
 				None => self.block(&branch.block, Mode::Discard)?,
 			}
+
 			ends.try_push(self.emit(Op::Jump { target: 0 }, span)?)?;
 			let no = self.pc();
 			self.function
 				.patch(test, Op::Branch { condition, yes, no })?;
 		}
+
 		match (conditional.fallback, out) {
 			(Some(block), Some(out)) => self.block(block, Mode::Into(out))?,
 			(Some(block), None) => self.block(block, Mode::Discard)?,
 			(None, Some(out)) => self.unit_into(out, span)?,
 			(None, None) => (),
 		}
+
 		let end = self.pc();
 		for jump in ends {
 			self.function.patch(jump, Op::Jump { target: end })?;
 		}
+
 		self.pop_to(mark, span)
 	}
+
 	fn loop_(&mut self, loop_: &hir::ExprLoop<'_>, out: Option<u32>, span: Span) -> Result<()> {
 		if let Some(out) = out {
 			// A loop that ends without `break value` is unit.
 			self.unit_into(out, span)?;
 		}
+
 		// A condition temporary (if any) lives across the body and is released
 		// once after the loop; each iteration overwrites it.
 		let mark = self.next;
@@ -672,12 +762,14 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			let hir::Condition::Expr(_, id) = condition else {
 				return Err(self.refused(span, Refusal::Condition));
 			};
+
 			let value = self.operand(*id)?;
 			let pc = self.emit(Op::Jump { target: 0 }, span)?;
 			Some((value, pc))
 		} else {
 			None
 		};
+
 		self.loops.try_push(Loop {
 			label: loop_.label.map(String::try_from).transpose()?,
 			start,
@@ -689,6 +781,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		self.block(&loop_.body, Mode::Discard)?;
 		self.emit(Op::Jump { target: start }, span)?;
 		let end = self.pc();
+
 		if let Some((condition, pc)) = condition {
 			self.function.patch(
 				pc,
@@ -699,6 +792,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				},
 			)?;
 		}
+
 		let context = self
 			.loops
 			.pop()
@@ -706,12 +800,15 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		for pc in context.breaks {
 			self.function.patch(pc, Op::Jump { target: end })?;
 		}
+
 		self.pop_to(mark, span)
 	}
+
 	fn for_(&mut self, for_: &hir::ExprFor<'_>, out: Option<u32>, span: Span) -> Result<()> {
 		if let Some(out) = out {
 			self.unit_into(out, span)?;
 		}
+
 		let vars = self.variables.len();
 		let mark = self.next;
 		let value = self.operand(for_.iter)?;
@@ -759,15 +856,18 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		for pc in context.breaks {
 			self.function.patch(pc, Op::Jump { target: end })?;
 		}
+
 		// Ends the iterator's lease (and drops the iterable temporary, if any)
 		// on every exit path, since breaks land here too.
 		self.pop_to(mark, span)?;
 		self.variables.truncate(vars);
 		Ok(())
 	}
+
 	fn inner(&mut self, expr: hir::Expr<'hir>, out: u32) -> Result<()> {
 		use hir::ExprKind as E;
 		let span = expr.span;
+
 		match expr.kind {
 			E::Const(hash) => {
 				let constant = self
@@ -778,12 +878,14 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					super::constants::Scalar::Primitive(value) => {
 						self.emit(Op::Literal { out, value }, span)?;
 					}
+
 					super::constants::Scalar::Text(value) => {
 						let text = self.function.string(&value)?;
 						self.emit(Op::String { out, text }, span)?;
 					}
 				}
 			}
+
 			E::Type(tag) => {
 				let value = Value::Type(
 					self.type_tag(tag.into_hash(), span)?
@@ -791,18 +893,22 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				);
 				self.emit(Op::Literal { out, value }, span)?;
 			}
+
 			E::Fn(hash) => {
 				let at = self.location(span);
 				let id = (self.resolve)(hash, at)?;
+
 				// Stamped with the program identity by `Builder::finish`.
 				let value = Value::Function { code: 0, id };
 				self.emit(Op::Literal { out, value }, span)?;
 			}
+
 			E::Group(id) => self.expr_into(id, out)?,
 			E::Variable(variable) => {
 				let value = self.variable(variable, span)?;
 				self.emit(Op::Copy { out, value }, span)?;
 			}
+
 			E::Lit(lit) => {
 				let value = match lit {
 					hir::Lit::Bool(v) => Value::Bool(v),
@@ -817,8 +923,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					}
 					hir::Lit::ByteStr(_) => return Err(self.refused(span, Refusal::ByteStr)),
 				};
+
 				self.emit(Op::Literal { out, value }, span)?;
 			}
+
 			E::Block(block) => self.block(block, Mode::Into(out))?,
 			E::Range(range) => {
 				let (start, end) = match range {
@@ -831,6 +939,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 						return Err(self.refused(span, Refusal::Range));
 					}
 				};
+
 				let slots = self.operands(&[*start, *end])?;
 				self.emit(
 					Op::Range {
@@ -841,6 +950,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					span,
 				)?;
 			}
+
 			E::For(for_) => self.for_(for_, Some(out), span)?,
 			E::Loop(loop_) => self.loop_(loop_, Some(out), span)?,
 			E::Break(break_) => {
@@ -851,12 +961,15 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					(None, Some(id)) => self.statement(id)?,
 					(None, None) => (),
 				}
+
 				let cleanup = self.loops[index].cleanup;
 				self.release_from(cleanup, span)?;
 				let pc = self.emit(Op::Jump { target: 0 }, span)?;
 				self.loops[index].breaks.try_push(pc)?;
+
 				// `out` is never written: no instruction after the jump runs.
 			}
+
 			E::Continue(continue_) => {
 				let index = self.loop_index(continue_.label, span)?;
 				let target = self.loops[index].start;
@@ -864,15 +977,18 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				self.release_from(cleanup, span)?;
 				self.emit(Op::Jump { target }, span)?;
 			}
+
 			E::Unary(unary) => {
 				let op = match unary.op {
 					UnOp::Neg(..) => Unary::Neg,
 					UnOp::Not(..) => Unary::Not,
 					_ => return Err(self.refused(span, Refusal::Operator)),
 				};
+
 				let value = self.operand(unary.expr)?;
 				self.emit(Op::Unary { out, op, value }, span)?;
 			}
+
 			E::Binary(binary) => self.binary(binary, out, span)?,
 			E::Object(object) => {
 				let tag = match object.kind {
@@ -882,18 +998,23 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 						return Err(self.refused(span, Refusal::ObjectConstructor));
 					}
 				};
+
 				let mut keys = Vec::try_with_capacity(object.assignments.len())?;
 				let mut ids = Vec::try_with_capacity(object.assignments.len())?;
+
 				for field in object.assignments {
 					keys.try_push(self.function.string(field.key.1)?)?;
 					ids.try_push(field.assign)?;
 				}
+
 				let values = self.operands(&ids)?;
 				let mut fields = Vec::try_with_capacity(keys.len() * 2)?;
+
 				for (key, value) in keys.iter().zip(values.iter()) {
 					fields.try_push(*key)?;
 					fields.try_push(*value)?;
 				}
+
 				let (args_start, args_len) = self.function.arguments(&fields)?;
 				self.emit(
 					Op::Record {
@@ -905,14 +1026,17 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					span,
 				)?;
 			}
+
 			E::FieldAccess(field) => {
 				let value = self.operand(field.expr)?;
 				self.read_field(out, value, field.expr_field, span)?;
 			}
+
 			E::Assign(assign) => {
 				self.assign(assign, span)?;
 				self.unit_into(out, span)?;
 			}
+
 			E::Index(index) => {
 				let slots = self.operands(&[index.target, index.index])?;
 				self.emit(
@@ -924,12 +1048,15 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					span,
 				)?;
 			}
+
 			E::Template(template) => {
 				if template.exprs.len() > 4096 {
 					return Err(self.refused(span, Refusal::FormatParts));
 				}
+
 				let mut ids = Vec::try_with_capacity(template.exprs.len())?;
 				let mut debugs = Vec::try_with_capacity(template.exprs.len())?;
+
 				for id in template.exprs {
 					let (id, debug) = match self.exprs.get(*id).kind {
 						E::Format(format) => {
@@ -941,25 +1068,32 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 							{
 								return Err(self.refused(span, Refusal::FormatSpec));
 							}
+
 							let debug = match spec.format_type.unwrap_or_default() {
 								crate::runtime::format::Type::Display => false,
 								crate::runtime::format::Type::Debug => true,
 								_ => return Err(self.refused(span, Refusal::FormatSpec)),
 							};
+
 							(format.value, debug)
 						}
+
 						_ => (*id, false),
 					};
+
 					ids.try_push(id)?;
 					debugs.try_push(u32::from(debug))?;
 				}
+
 				// Preserve argument effects: render only after all operands ran.
 				let values = self.operands(&ids)?;
 				let mut descriptors = Vec::try_with_capacity(ids.len() * 2)?;
+
 				for (value, debug) in values.iter().zip(debugs.iter()) {
 					descriptors.try_push(*value)?;
 					descriptors.try_push(*debug)?;
 				}
+
 				let (args_start, args_len) = self.function.arguments(&descriptors)?;
 				self.emit(
 					Op::Template {
@@ -970,16 +1104,19 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					span,
 				)?;
 			}
+
 			E::Tuple(sequence) | E::Vec(sequence) => {
 				let tag = if matches!(expr.kind, E::Vec(..)) {
 					Type::Vec
 				} else {
 					Type::Tuple
 				};
+
 				if tag == Type::Tuple && sequence.items.is_empty() {
 					self.unit_into(out, span)?;
 					return Ok(());
 				}
+
 				let values = self.operands(sequence.items)?;
 				let (args_start, args_len) = self.function.arguments(&values)?;
 				self.emit(
@@ -992,10 +1129,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					span,
 				)?;
 			}
+
 			E::Try(value) => {
 				let value = self.operand(value)?;
 				self.emit(Op::Try { out, value }, span)?;
 			}
+
 			E::Return(value) => {
 				let value = match value {
 					Some(id) => self.operand(id)?,
@@ -1005,9 +1144,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 						slot
 					}
 				};
+
 				self.emit(Op::Return { value }, span)?;
+
 				// `out` is never written: nothing after a Return runs.
 			}
+
 			E::Call(call) => self.call(call, out, span)?,
 			E::If(conditional) => self.conditional(conditional, Some(out), span)?,
 			E::Match(_) => return Err(self.refused(span, Refusal::Match)),
@@ -1019,18 +1161,22 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			E::Format(_) => return Err(self.refused(span, Refusal::Format)),
 			E::Static(_) => return Err(self.refused(span, Refusal::Static)),
 		}
+
 		Ok(())
 	}
+
 	fn binary(&mut self, binary: &hir::ExprBinary, out: u32, span: Span) -> Result<()> {
 		use hir::ExprKind as E;
 		if matches!(binary.op, BinOp::As(..) | BinOp::Is(..) | BinOp::IsNot(..)) {
 			let E::Type(tag) = self.exprs.get(binary.rhs).kind else {
 				return Err(self.refused(span, Refusal::TypeExpr));
 			};
+
 			let tag = self
 				.type_tag(tag.into_hash(), span)?
 				.ok_or_else(|| self.refused(span, Refusal::TypeExpr))?;
 			let value = self.operand(binary.lhs)?;
+
 			if matches!(binary.op, BinOp::As(..)) {
 				self.emit(Op::Cast { out, value, tag }, span)?;
 			} else {
@@ -1044,8 +1190,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					span,
 				)?;
 			}
+
 			return Ok(());
 		}
+
 		if matches!(binary.op, BinOp::And(..) | BinOp::Or(..)) {
 			// `out` holds the left value while the right side is decided. It is a
 			// fresh slot, so the right side cannot observe it through a local.
@@ -1054,6 +1202,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			let rhs_pc = self.pc();
 			let mark = self.next;
 			let rhs = self.operand(binary.rhs)?;
+
 			// A Branch validates bool on both the taken RHS and LHS.
 			let check = self.emit(
 				Op::Branch {
@@ -1080,6 +1229,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			} else {
 				(end, rhs_pc)
 			};
+
 			self.function.patch(
 				branch,
 				Op::Branch {
@@ -1090,11 +1240,13 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			)?;
 			return Ok(());
 		}
+
 		if binary.op.is_assign() {
 			self.compound_assign(binary, span)?;
 			self.unit_into(out, span)?;
 			return Ok(());
 		}
+
 		let op = binary_op(binary.op).ok_or_else(|| self.refused(span, Refusal::Operator))?;
 		let slots = self.operands(&[binary.lhs, binary.rhs])?;
 		self.emit(
@@ -1108,6 +1260,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		)?;
 		Ok(())
 	}
+
 	fn call(&mut self, call: &hir::ExprCall<'_>, out: u32, span: Span) -> Result<()> {
 		if let hir::Call::Meta { hash } = call.call {
 			let tag = if hash == Hash::type_hash(crate::item!(::std::option::Option::Some))
@@ -1121,16 +1274,19 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			} else {
 				None
 			};
+
 			if let Some(tag) = tag {
 				let none = hash == Hash::type_hash(crate::item!(::std::option::Option::None));
 				if call.args.len() != usize::from(!none) {
 					return Err(self.refused(span, Refusal::Arity));
 				}
+
 				let payload = if none {
 					None
 				} else {
 					Some(self.operand(call.args[0])?)
 				};
+
 				let success = hash == Hash::type_hash(crate::item!(::std::option::Option::Some))
 					|| hash == Hash::type_hash(crate::item!(::std::result::Result::Ok));
 				self.emit(
@@ -1145,6 +1301,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				return Ok(());
 			}
 		}
+
 		if let hir::Call::Var { name } = call.call {
 			// The callee token is read when the call executes, after the arguments.
 			let value = self.variable(name, span)?;
@@ -1161,6 +1318,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			)?;
 			return Ok(());
 		}
+
 		if let hir::Call::Associated { target, hash } = call.call {
 			if hash == Hash::ident("len") && call.args.is_empty() {
 				let value = self.operand(target)?;
@@ -1174,8 +1332,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			} else {
 				return Err(self.refused(span, Refusal::Method));
 			}
+
 			return Ok(());
 		}
+
 		let hash = match call.call {
 			hir::Call::Meta { hash } => hash,
 			hir::Call::Expr { .. } => return Err(self.refused(span, Refusal::Call)),
@@ -1186,29 +1346,35 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				return Err(Error::new(ErrorKind::InvalidCode, "call disposition"));
 			}
 		};
+
 		if hash == Hash::type_hash(crate::item!(::std::io::println)) && !self.stdio_println {
 			// Host IO policy (capture, disable, custom or none): explicit compile-time
 			// refusal before any fresh execution or output; the caller decides fallback.
 			return Err(self.refused(span, Refusal::Native));
 		}
+
 		if hash == Hash::type_hash(crate::item!(::std::io::println))
 			|| hash == Hash::type_hash(crate::item!(::std::mem::drop))
 		{
 			if call.args.len() != 1 {
 				return Err(self.refused(span, Refusal::Arity));
 			}
+
 			self.effect_call(call, span)?;
 			self.unit_into(out, span)?;
 			return Ok(());
 		}
+
 		if hash == Hash::type_hash(crate::item!(::std::clone::clone)) {
 			if call.args.len() != 1 {
 				return Err(self.refused(span, Refusal::Arity));
 			}
+
 			let value = self.operand(call.args[0])?;
 			self.emit(Op::Clone { out, value }, span)?;
 			return Ok(());
 		}
+
 		let at = self.location(span);
 		let function = (self.resolve)(hash, at).map_err(|e| e.at(self.location(span)))?;
 		let args = self.operands(call.args)?;
@@ -1225,6 +1391,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		Ok(())
 	}
 }
+
 pub(crate) fn binary_op(op: BinOp) -> Option<Binary> {
 	Some(match op {
 		BinOp::Add(..) | BinOp::AddAssign(..) => Binary::Add,

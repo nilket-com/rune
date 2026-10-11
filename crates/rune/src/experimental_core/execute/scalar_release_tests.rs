@@ -1,4 +1,5 @@
 //! D4 private-site tests: unchanged D1 put/leave/Release behavior.
+
 use super::*;
 use crate::experimental_core::{
 	code::{Builder, Function},
@@ -13,6 +14,7 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 fn location(n: u32) -> Location {
 	Location {
 		source: 1,
@@ -21,6 +23,7 @@ fn location(n: u32) -> Location {
 		end: n + 1,
 	}
 }
+
 fn scalar(kind: usize) -> Value {
 	match kind {
 		0 => Value::Unit,
@@ -35,6 +38,7 @@ fn scalar(kind: usize) -> Value {
 		_ => unreachable!(),
 	}
 }
+
 fn code_for(value: Value) -> Code {
 	let mut f = Function::new(2, 0).unwrap();
 	f.push(Op::Literal { out: 0, value }, location(1)).unwrap();
@@ -52,20 +56,24 @@ fn code_for(value: Value) -> Code {
 	b.push(f).unwrap();
 	b.finish().unwrap()
 }
+
 #[test]
 fn d4_all_scalars_pass_through_put_leave_and_explicit_release() {
 	for kind in 0..9 {
 		let mut store = store();
 		let mut e = Executor::new().unwrap();
 		let mut value = scalar(kind);
+
 		// Builder stamps validated Function tokens with this code's identity.
 		let code = code_for(value);
+
 		if let Value::Function { id, .. } = value {
 			value = Value::Function {
 				code: code.id(),
 				id,
 			};
 		}
+
 		e.slots.try_push(value).unwrap();
 		e.put(&mut store, 0, Value::Unit).unwrap();
 		assert_eq!(e.slots[0], Value::Unit);
@@ -81,6 +89,7 @@ fn d4_all_scalars_pass_through_put_leave_and_explicit_release() {
 			.unwrap();
 		e.leave(&mut store).unwrap();
 		assert!(e.is_idle());
+
 		for _ in 0..2 {
 			let root = e.invoke_code(&code, &mut store, 0, &[], 100).unwrap();
 			assert_eq!(root.value, Value::I64(42));
@@ -90,6 +99,7 @@ fn d4_all_scalars_pass_through_put_leave_and_explicit_release() {
 		}
 	}
 }
+
 #[test]
 fn d4_put_and_leave_release_heap_mixtures_in_slot_order() {
 	let mut store = store();
@@ -119,6 +129,7 @@ fn d4_put_and_leave_release_heap_mixtures_in_slot_order() {
 	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 	assert!(e.is_idle());
 }
+
 #[test]
 fn d4_closed_private_sites_keep_mutation_before_error_and_public_refusal() {
 	let mut store = store();
@@ -194,6 +205,7 @@ fn d4_mixed_explicit_release_trace_order_error_location_and_reuse() {
 				value: Value::I64(if fail { 0 } else { 42 })
 			},
 		];
+
 		if fail {
 			ops.push(Op::Binary {
 				out: 5,
@@ -202,16 +214,19 @@ fn d4_mixed_explicit_release_trace_order_error_location_and_reuse() {
 				rhs: 5,
 			});
 		}
+
 		ops.push(Op::Return { value: 5 });
 		for (i, op) in ops.into_iter().enumerate() {
 			f.push(op, location(i as u32 + 10)).unwrap();
 		}
+
 		let mut b = Builder::default();
 		b.push(f).unwrap();
 		let code = b.finish().unwrap();
 		let mut store = store();
 		let mut e = Executor::new().unwrap();
 		e.test_output = Some(std::vec::Vec::new());
+
 		for heap in [false, true] {
 			let input = if heap {
 				let v = store.string("input").unwrap();
@@ -219,6 +234,7 @@ fn d4_mixed_explicit_release_trace_order_error_location_and_reuse() {
 			} else {
 				store.root_i64(9)
 			};
+
 			let before = (store.live_entries(), store.payload_bytes());
 			for _ in 0..2 {
 				match e.invoke_code(&code, &mut store, 0, &[&input], 100) {
@@ -227,6 +243,7 @@ fn d4_mixed_explicit_release_trace_order_error_location_and_reuse() {
 						assert_eq!(root.value, Value::I64(42));
 						store.root_release(root).unwrap();
 					}
+
 					Err(failure) => {
 						assert!(fail);
 						assert_eq!(failure.error.kind, ErrorKind::DivisionByZero);
@@ -234,6 +251,7 @@ fn d4_mixed_explicit_release_trace_order_error_location_and_reuse() {
 						assert!(failure.cleanup_error.is_none());
 					}
 				}
+
 				// Every effect before the failure is kept, in program order.
 				assert_eq!(
 					e.test_output.replace(std::vec::Vec::new()).as_deref(),
@@ -242,9 +260,11 @@ fn d4_mixed_explicit_release_trace_order_error_location_and_reuse() {
 				assert!(e.is_idle());
 				assert_eq!((store.live_entries(), store.payload_bytes()), before);
 			}
+
 			store.root_release(input).unwrap();
 			assert_eq!(store.live_entries(), 0);
 		}
+
 		store.close().unwrap();
 		assert_eq!(
 			e.invoke_code(&code, &mut store, 0, &[], 100)

@@ -1,4 +1,5 @@
 #![cfg(feature = "fresh-core")]
+
 //! External integration test of the fresh core: it uses only the public API, as a host
 //! would.
 
@@ -40,9 +41,11 @@ fn compile_invoke_read_back_and_release_through_roots() {
 	assert_eq!(store.root_scalar(&first).unwrap(), Some(Scalar::I64(40)));
 	let second = store.root_get(&out, 1).unwrap();
 	assert_eq!(store.root_text(&second).unwrap(), "x");
+
 	for root in [first, second, out, a, b] {
 		store.root_release(root).unwrap();
 	}
+
 	assert_eq!(store.live_entries(), 0);
 	assert!(executor.is_idle());
 }
@@ -136,10 +139,12 @@ fn a_native_function_call_is_refused_at_compile_time() {
 	fn handler(_: i64) -> i64 {
 		panic!("a native handler must never be reached from the fresh core")
 	}
+
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = Module::with_crate("host").unwrap();
 	module.function("mark", handler).build().unwrap();
 	context.install(module).unwrap();
+
 	for text in [
 		"pub fn main(a) { host::mark(a) }",
 		"pub fn main(a) { let f = host::mark; f(a) }",

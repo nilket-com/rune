@@ -1,4 +1,5 @@
 #![cfg(feature = "fresh-core")]
+
 //! Real-stdout behaviour of the fresh core's `println!`.
 //!
 //! The in-crate `test_output` seam proves only the ordering and cap logic; this file
@@ -34,6 +35,7 @@ fn child_prints_through_the_fresh_core() {
 	let Some(mode) = std::env::var_os(CHILD) else {
 		return;
 	};
+
 	let mode = mode.into_string().unwrap();
 	let (text, invocations) = match mode.as_str() {
 		"ok" => (
@@ -54,6 +56,7 @@ fn child_prints_through_the_fresh_core() {
 		),
 		other => panic!("unknown child scenario {other}"),
 	};
+
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(text).unwrap()).unwrap();
@@ -65,26 +68,32 @@ fn child_prints_through_the_fresh_core() {
 	} else {
 		store.root_unit()
 	};
+
 	let mut executor = Executor::new().unwrap();
 	let baseline = (store.live_entries(), store.payload_bytes());
 	print!("{BEGIN}");
 	let mut outcome = String::from("ok");
+
 	for _ in 0..invocations {
 		match executor.invoke(&program, &mut store, main, &[&arg], 1_000_000) {
 			Ok(root) => {
 				if mode == "ok" {
 					assert_eq!(store.root_scalar(&root).unwrap(), Some(Scalar::I64(42)));
 				}
+
 				store.root_release(root).unwrap();
 			}
+
 			Err(failure) => {
 				outcome = format!("error:{:?}", failure.error.kind);
 				break;
 			}
 		}
+
 		assert!(executor.is_idle());
 		assert_eq!((store.live_entries(), store.payload_bytes()), baseline);
 	}
+
 	println!("{END} {outcome} invocations={invocations}");
 	store.root_release(arg).unwrap();
 	assert_eq!(store.live_entries(), 0);

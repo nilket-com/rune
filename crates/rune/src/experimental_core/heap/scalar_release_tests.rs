@@ -1,4 +1,5 @@
 //! D4 candidate: selected_release uses the guarded slot helper.
+
 use super::*;
 
 // Heap work-at-capacity delegates unchanged; this matrix targets the scalar
@@ -25,15 +26,18 @@ fn make(kind: usize, store: &mut Store) -> Value {
 			store.release(v).unwrap();
 			v
 		}
+
 		11 => {
 			let v = store.string("retired").unwrap();
 			let v = store.set_generation_for_test(v, u32::MAX);
 			store.release(v).unwrap();
 			v
 		}
+
 		_ => unreachable!(),
 	}
 }
+
 fn state(store: &Store) -> std::string::String {
 	// Excludes only the unique owner id; includes generations, refs, payloads,
 	// links, work/free order and all accounting. No raw padding comparisons.
@@ -51,6 +55,7 @@ fn state(store: &Store) -> std::string::String {
 		)
 	)
 }
+
 fn setup(kind: usize, closed: bool, queue: usize) -> (Store, Value) {
 	let mut store = Store::new(Limits {
 		entries: 8,
@@ -58,10 +63,13 @@ fn setup(kind: usize, closed: bool, queue: usize) -> (Store, Value) {
 	})
 	.unwrap();
 	let value = make(kind, &mut store);
+
 	if queue != 0 {
 		let valid = store.string("independent queued edge").unwrap();
+
 		// Transfer the one owned edge to work, do not retain a second root.
 		store.work.try_push(valid).unwrap();
+
 		if queue == 2 {
 			// LIFO: malformed edge reports first, independent edge still drains.
 			store
@@ -73,12 +81,15 @@ fn setup(kind: usize, closed: bool, queue: usize) -> (Store, Value) {
 				.unwrap();
 		}
 	}
+
 	if closed {
 		// Artificial closed-with-work state: preserve closed-check precedence.
 		store.closed = true;
 	}
+
 	(store, value)
 }
+
 #[test]
 fn d4_release_equivalence_matrix_covers_scalar_and_heap_states() {
 	let mut count = 0;
@@ -95,6 +106,7 @@ fn d4_release_equivalence_matrix_covers_scalar_and_heap_states() {
 					"kind={kind} closed={closed} queue={queue}"
 				);
 				assert_eq!(state(&a), state(&b));
+
 				if closed {
 					assert_eq!(actual, Err(ErrorKind::ClosedStore));
 				} else {
@@ -105,12 +117,15 @@ fn d4_release_equivalence_matrix_covers_scalar_and_heap_states() {
 						assert_eq!(actual, Ok(()));
 					}
 				}
+
 				count += 1;
 			}
 		}
 	}
+
 	assert_eq!(count, 72);
 }
+
 #[test]
 fn d4_scalar_pending_release_retires_the_independent_edge() {
 	for queue in [1, 2] {

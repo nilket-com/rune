@@ -1,4 +1,5 @@
 //! D11 tests-first: caller ownership, independent of retain's success payload.
+
 use super::*;
 use crate::experimental_core::{
 	arithmetic::Binary,
@@ -15,6 +16,7 @@ fn location(n: u32) -> Location {
 		end: n + 1,
 	}
 }
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 16,
@@ -22,18 +24,22 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 fn function(slots: u32, parameters: u32, ops: &[Op]) -> Function {
 	let mut f = Function::new(slots, parameters).unwrap();
 	for (i, op) in ops.iter().enumerate() {
 		f.push(*op, location(i as u32)).unwrap();
 	}
+
 	f
 }
+
 fn code(f: Function) -> Code {
 	let mut b = Builder::default();
 	b.push(f).unwrap();
 	b.finish().unwrap()
 }
+
 fn fail(e: &mut Executor, code: &Code, store: &mut Store, args: &[Value], kind: ErrorKind) {
 	let failure = e
 		.invoke_args(code, store, 0, Args::Values(args), 1024)
@@ -42,6 +48,7 @@ fn fail(e: &mut Executor, code: &Code, store: &mut Store, args: &[Value], kind: 
 	assert!(failure.cleanup_error.is_none());
 	assert!(e.is_idle());
 }
+
 fn restore(store: &mut Store, value: Value) {
 	// Assert the synthetic remainder before restoring the sole real host edge.
 	assert_eq!(store.test_strong(value), u32::MAX - 1);
@@ -138,6 +145,7 @@ fn d11_enter_checks_all_root_owners_before_reservation_or_acquisition() {
 		before
 	);
 	s.root_release(own).unwrap();
+
 	// The receiving store must be closed: closing the foreign store would
 	// merely repeat its owner mismatch against an open receiver.
 	let scalar = s.root_i64(7);
@@ -148,6 +156,7 @@ fn d11_enter_checks_all_root_owners_before_reservation_or_acquisition() {
 		e.frames.capacity(),
 	);
 	s.close().unwrap();
+
 	for roots in [[&scalar, &scalar], [&scalar, &foreign]] {
 		assert_eq!(
 			e.enter(&c, &mut s, 0, Args::Roots(&roots), None)
@@ -199,6 +208,7 @@ fn d11_copy_and_successful_try_preserve_alias_and_replace_destination() {
 		assert!(e.is_idle());
 		assert_eq!(s.live_entries(), 0);
 	}
+
 	let mut s = store();
 	let mut e = Executor::new().unwrap();
 	let value = s.string("copy-refusal").unwrap();
@@ -223,6 +233,7 @@ fn d11_copy_and_successful_try_preserve_alias_and_replace_destination() {
 	assert_eq!(s.test_strong(variant), 1);
 	assert_eq!(s.test_strong(payload), u32::MAX);
 	assert_eq!(s.text(payload).unwrap(), "try-refusal");
+
 	// Two real edges: the original host edge and the surviving variant child.
 	s.test_set_strong(payload, 2);
 	s.release(variant).unwrap();
@@ -240,11 +251,13 @@ fn d11_return_and_unsuccessful_try_transfer_or_cleanup_exact_edge() {
 		} else {
 			s.string("return").unwrap()
 		};
+
 		let op = if unsuccessful {
 			Op::Try { out: 0, value: 0 }
 		} else {
 			Op::Return { value: 0 }
 		};
+
 		let c = code(function(1, 1, &[op, Op::Return { value: 0 }]));
 		let mut e = Executor::new().unwrap();
 		let result = e

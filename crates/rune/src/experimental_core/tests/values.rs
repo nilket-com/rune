@@ -1,10 +1,12 @@
 //! Candidate-local development checks, not batch A–E conformance evidence.
+
 use crate::experimental_core::{
 	arithmetic::{binary, cast, unary, Binary, Unary},
 	error::ErrorKind,
 	heap::{Limits, Store},
 	value::{Type, Value},
 };
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 128,
@@ -12,6 +14,7 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 #[test]
 fn arithmetic_checked_edges() {
 	assert_eq!(
@@ -63,6 +66,7 @@ fn arithmetic_checked_edges() {
 		Value::Bool(true)
 	);
 }
+
 #[test]
 fn floating_and_cast_boundaries() {
 	assert_eq!(
@@ -91,6 +95,7 @@ fn floating_and_cast_boundaries() {
 	);
 	assert_eq!(cast(Value::F64(3.75), Type::I64).unwrap(), Value::I64(3));
 }
+
 #[test]
 fn alias_writes_and_nested_outer_copy() {
 	let mut s = store();
@@ -107,6 +112,7 @@ fn alias_writes_and_nested_outer_copy() {
 	assert_eq!(s.live_entries(), 0);
 	assert_eq!(s.payload_bytes(), 0);
 }
+
 #[test]
 fn invalidation_affects_all_aliases() {
 	let mut s = store();
@@ -119,6 +125,7 @@ fn invalidation_affects_all_aliases() {
 	s.release(alias).unwrap();
 	assert_eq!(s.live_entries(), 0);
 }
+
 #[test]
 fn iterator_blocks_mutation_and_close() {
 	let mut s = store();
@@ -140,6 +147,7 @@ fn iterator_blocks_mutation_and_close() {
 	s.release(row).unwrap();
 	assert_eq!(s.live_entries(), 0);
 }
+
 #[test]
 fn cycles_are_charged_and_close_invalidates_roots() {
 	let mut s = Store::new(Limits {
@@ -152,6 +160,7 @@ fn cycles_are_charged_and_close_invalidates_roots() {
 		s.push(v, v).unwrap();
 		s.release(v).unwrap();
 	}
+
 	assert_eq!(s.live_entries(), 4);
 	assert_eq!(
 		s.list(Type::Vec, &[]).unwrap_err().kind,
@@ -162,6 +171,7 @@ fn cycles_are_charged_and_close_invalidates_roots() {
 	assert_eq!(s.payload_bytes(), 0);
 	assert_eq!(s.string("x").unwrap_err().kind, ErrorKind::ClosedStore);
 }
+
 #[test]
 fn generation_and_store_identity_are_checked() {
 	let mut s = store();
@@ -177,6 +187,7 @@ fn generation_and_store_identity_are_checked() {
 	s.close().unwrap();
 	assert_eq!(s.text(second).unwrap_err().kind, ErrorKind::ClosedStore);
 }
+
 #[test]
 fn deep_release_and_byte_cap_preserve_existing_value() {
 	let mut s = Store::new(Limits {
@@ -185,11 +196,13 @@ fn deep_release_and_byte_cap_preserve_existing_value() {
 	})
 	.unwrap();
 	let mut root = s.string("leaf").unwrap();
+
 	for _ in 0..4096 {
 		let next = s.list(Type::Vec, &[root]).unwrap();
 		s.release(root).unwrap();
 		root = next;
 	}
+
 	s.release(root).unwrap();
 	assert_eq!(s.live_entries(), 0);
 	assert_eq!(s.payload_bytes(), 0);
@@ -217,9 +230,11 @@ fn shared_string_append_self_and_outer_clone() {
 	s.append_string(a, suffix).unwrap();
 	assert_eq!(s.text(a).unwrap(), "abcabc!");
 	assert_eq!(s.text(cloned).unwrap(), "abcabc");
+
 	for v in [a, alias, cloned, suffix] {
 		s.release(v).unwrap();
 	}
+
 	assert_eq!(s.live_entries(), 0);
 	assert_eq!(s.payload_bytes(), 0);
 }
@@ -278,6 +293,7 @@ fn amended_mixed_integer_and_numeric_cast_rules() {
 		binary(Binary::Add, Value::U64(2), Value::I64(3)).unwrap(),
 		Value::U64(5)
 	);
+
 	for (a, b) in [
 		(Value::I64(1), Value::U64(u64::MAX)),
 		(Value::U64(1), Value::I64(-1)),
@@ -289,6 +305,7 @@ fn amended_mixed_integer_and_numeric_cast_rules() {
 			);
 		}
 	}
+
 	assert_eq!(
 		binary(Binary::Shl, Value::I64(1), Value::U64(63)).unwrap(),
 		Value::I64(i64::MIN)
@@ -323,6 +340,7 @@ fn amended_mixed_integer_and_numeric_cast_rules() {
 		cast(Value::U64(u64::MAX), Type::I64).unwrap(),
 		Value::I64(-1)
 	);
+
 	for (v, t) in [
 		(Value::Bool(true), Type::Bool),
 		(Value::Char('a'), Type::Char),

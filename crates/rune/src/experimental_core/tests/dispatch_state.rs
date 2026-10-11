@@ -1,5 +1,6 @@
 //! Tests-first transfer contracts on the unchanged 145bb453 executor.
 //! Source only until review: no claim of baseline execution yet.
+
 use crate::experimental_core::{
 	arithmetic::Binary,
 	code::{Builder, Function, Op},
@@ -19,6 +20,7 @@ fn loc(n: u32) -> Location {
 		end: n + 1,
 	}
 }
+
 fn compiled(text: &str) -> (frontend::Program, u32) {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
@@ -52,6 +54,7 @@ fn exhausted_iterator_and_dynamic_calls_resume_the_correct_caller() {
 	let mut store = Store::new(Limits::default()).unwrap();
 	let mut executor = Executor::new().unwrap();
 	let baseline = (store.live_entries(), store.payload_bytes());
+
 	for _ in 0..3 {
 		let out = executor
 			.invoke(&program, &mut store, main, &[], 1000)
@@ -79,6 +82,7 @@ fn failed_try_returns_a_heap_alias_without_running_the_tail() {
 	let mut store = Store::new(Limits::default()).unwrap();
 	let mut executor = Executor::new().unwrap();
 	let baseline = (store.live_entries(), store.payload_bytes());
+
 	for _ in 0..3 {
 		let out = executor
 			.invoke(&program, &mut store, main, &[], 1000)
@@ -184,6 +188,7 @@ fn callee_errors_keep_the_instruction_pc_callsite_and_reusable_state() {
 	let code = builder.finish().unwrap();
 	let mut store = Store::new(Limits::default()).unwrap();
 	let mut executor = Executor::new().unwrap();
+
 	for (fuel, kind, where_) in [
 		(1000, ErrorKind::DivisionByZero, loc(101)),
 		(1, ErrorKind::FuelExhausted, loc(100)),
@@ -246,6 +251,7 @@ fn call_frame_capacity_is_at_the_call_and_cleanup_allows_reuse() {
 		.unwrap_err();
 	assert_eq!(failure.error.kind, ErrorKind::FrameCapacity);
 	assert_eq!(failure.error.location, Some(loc(300)));
+
 	// There are 1024 published frames. Entry has no callsite; the refused
 	// next callee is never published, leaving 1023 identical recursive sites.
 	assert_eq!(failure.call_chain.len(), 1023);

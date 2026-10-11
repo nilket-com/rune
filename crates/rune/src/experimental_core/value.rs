@@ -12,6 +12,7 @@ pub(crate) struct Handle {
 	pub(crate) slot: u32,
 	pub(crate) generation: u32,
 }
+
 /// A nominal type identity: an index into the crate-private, process-wide
 /// interner. Same hash, same identity, in every program and store.
 /// Private field: a host cannot fabricate one.
@@ -27,6 +28,7 @@ pub(crate) struct Handle {
 /// ```
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Nominal(pub(crate) u32);
+
 /// The type of a value.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Type {
@@ -61,6 +63,7 @@ pub enum Type {
 	/// An iterator.
 	Iterator,
 }
+
 /// The executor's slot value. A `Heap` variant can only be produced by a
 /// `Store`, because no `Handle` can be constructed or read outside the crate
 /// (see [`Handle`]); `Function` carries the identity of the program it
@@ -78,6 +81,7 @@ pub(crate) enum Value {
 	Function { code: u32, id: u32 },
 	Type(Type),
 }
+
 impl Value {
 	/// Heap tags require generation validation by the store, not a blind tag read.
 	pub(crate) fn primitive_type(self) -> Option<Type> {
@@ -92,6 +96,7 @@ impl Value {
 		})
 	}
 }
+
 /// A scalar read back through the host boundary.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Scalar {
@@ -108,6 +113,7 @@ pub enum Scalar {
 	/// A `char`.
 	Char(char),
 }
+
 /// The host's owned reference to a value of one store: the only way a value
 /// crosses the boundary. Affine: not `Copy`, not `Clone`; `Store::root_release`
 /// consumes it and `Store::root_retain` makes an independently counted owner.
@@ -154,6 +160,7 @@ pub struct Root {
 	pub(crate) store: u64,
 	pub(crate) value: Value,
 }
+
 /// Why `root_release` refused before consuming the reference: the unchanged
 /// owned root comes back so the only owner is not lost.
 #[derive(Debug)]
@@ -170,6 +177,7 @@ pub enum ReleaseError {
 	/// The edge was released and a later drainage step failed: the root is consumed.
 	Failed(super::error::Error),
 }
+
 impl Type {
 	pub(crate) fn nominal(self) -> Option<Nominal> {
 		match self {

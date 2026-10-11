@@ -1,4 +1,5 @@
 //! Local store construction regressions, not reviewed conformance evidence.
+
 use crate::experimental_core::{
 	error::ErrorKind,
 	heap::{Limits, Store},
@@ -15,9 +16,11 @@ fn grown_string_charge_is_released_once_through_aliases() {
 	let text = store.string("abc").unwrap();
 	store.retain(text).unwrap();
 	let alias = text;
+
 	for _ in 0..4 {
 		store.append_string(text, text).unwrap();
 	}
+
 	assert_eq!(store.text(alias).unwrap().len(), 48);
 	assert!(store.payload_bytes() >= 48);
 	store.release(text).unwrap();
@@ -39,9 +42,11 @@ fn vector_growth_transfers_existing_edges_and_charges_actual_capacity() {
 	let child = store.string("held").unwrap();
 	let list = store.list(Type::Vec, &[child]).unwrap();
 	store.release(child).unwrap();
+
 	for n in 0..17 {
 		store.push(list, Value::I64(n)).unwrap();
 	}
+
 	assert_eq!(store.len(list).unwrap(), 18);
 	let retained = store.get(list, 0).unwrap();
 	assert_eq!(store.text(retained).unwrap(), "held");
@@ -122,6 +127,7 @@ fn refused_list_admission_undoes_duplicate_retained_prefix_and_metadata_reservat
 		bytes: 4096,
 	})
 	.unwrap();
+
 	// A retired handle is the in-core invalid edge; a foreign store's handle is
 	// indistinguishable bits inside the core and is refused at the root boundary.
 	let invalid = store.string("gone").unwrap();
@@ -141,6 +147,7 @@ fn refused_list_admission_undoes_duplicate_retained_prefix_and_metadata_reservat
 	store.release(child).unwrap();
 	assert_eq!(store.live_entries(), 0);
 	assert_eq!(store.payload_bytes(), 0);
+
 	// The unpublished metadata reservation did not consume a usable slot.
 	let a = store.string("a").unwrap();
 	let b = store.string("b").unwrap();
@@ -272,6 +279,7 @@ fn release_drains_valid_siblings_after_an_invalid_edge_and_allows_reuse() {
 	let parent = store.list(Type::Vec, &[good, bad]).unwrap();
 	store.release(good).unwrap();
 	store.release(bad).unwrap();
+
 	// Deliberately misuse the raw host API to leave a stale edge in parent.
 	// It is queued last, hence visited first by the LIFO release work list.
 	store.release(bad).unwrap();
@@ -344,6 +352,7 @@ fn drainage_reports_the_first_error_and_still_releases_other_edges() {
 	let iterator = store.iterator(leased).unwrap();
 	let stale = store.string("bad").unwrap();
 	let parent = store.list(Type::Vec, &[leased, stale]).unwrap();
+
 	// Deliberate raw-API misuse: stale is visited first (InvalidHandle), then
 	// leased's last release is blocked (AccessConflict). Preserve the former.
 	store.release(stale).unwrap();

@@ -34,7 +34,9 @@
 //! ```compile_fail
 //! let _ = rune::experimental_core::nominal::intern(0, "x");
 //! ```
+
 #![forbid(unsafe_code)]
+
 pub(crate) mod arithmetic;
 pub(crate) mod code;
 pub mod error;

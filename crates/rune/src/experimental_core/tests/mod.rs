@@ -36,6 +36,7 @@
 //! times quoted for the ignored set (on the order of 13 hours) are projections, not
 //! measurements. A one-time deep run is not continuous coverage: only the default
 //! selection runs on every Miri CI pass.
+
 mod allocation_path;
 mod boundary_internal;
 mod differential;

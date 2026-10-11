@@ -19,6 +19,7 @@
 //! caller-owned witness vector `w`: `fn mark(w, x) { w.push(0); x }` and
 //! `fn t(w, n, x) { w.push(n); x }`. A row's `marks=N` is read as N witness entries of 0,
 //! and `ev=a,b,c` as the witness entries a, b, c.
+
 use crate::experimental_core::execute::Executor;
 use crate::experimental_core::frontend;
 use crate::experimental_core::heap::{Limits, Store};
@@ -98,6 +99,7 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 			Some((base, _)) => base,
 			None => function.strip_suffix("_effect").unwrap_or(function),
 		};
+
 		let site = if matches!(base, "shl" | "shr") {
 			"shift"
 		} else if function.starts_with("index_") {
@@ -109,10 +111,12 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 		} else {
 			"binary"
 		};
+
 		let sited = match (site, kind) {
 			("shift", K::Overflow | K::Underflow | K::ValueToIntegerCoercionError { .. }) => {
 				Some("InvalidShift")
 			}
+
 			(
 				"index",
 				K::ValueToIntegerCoercionError { .. }
@@ -122,6 +126,7 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 			("index", K::UnsupportedIndexGet { .. } | K::UnsupportedIndexSet { .. }) => {
 				Some("Type")
 			}
+
 			("cast", K::UnsupportedAs { .. } | K::UnsupportedAsTarget { .. }) => {
 				Some("InvalidCast")
 			}
@@ -131,6 +136,7 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 			("unary", K::Overflow) => Some("Overflow"),
 			_ => None,
 		};
+
 		return sited.or(match kind {
 			K::UnsupportedBinaryOperation { .. }
 			| K::UnsupportedUnaryOperation { .. }
@@ -140,6 +146,7 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 			_ => None,
 		});
 	}
+
 	match (batch, function, kind) {
 		(
 			"addendum",
@@ -155,6 +162,7 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 		("supplement", "order_supp_field_read_missing", K::ObjectIndexMissing { .. }) => {
 			Some("IndexOutOfBounds")
 		}
+
 		("supplement", "order_supp_field_compound_missing", K::MissingField { .. }) => {
 			Some("IndexOutOfBounds")
 		}
@@ -167,6 +175,7 @@ fn stock_operand(text: &str) -> Value {
 	if text == "n" {
 		return crate::to_value(()).unwrap();
 	}
+
 	let (tag, body) = text.split_once(':').unwrap();
 	match tag {
 		"i" => crate::to_value(body.parse::<i64>().unwrap()).unwrap(),
@@ -184,6 +193,7 @@ fn fresh_operand(store: &mut Store, text: &str) -> Root {
 	if text == "n" {
 		return store.root_unit();
 	}
+
 	let (tag, body) = text.split_once(':').unwrap();
 	match tag {
 		"i" => store.root_i64(body.parse().unwrap()),
@@ -212,6 +222,7 @@ fn hex_text(body: &str) -> std::string::String {
 	if body == "-" {
 		return std::string::String::new();
 	}
+
 	assert!(body.len().is_multiple_of(2), "hex text {body}");
 	let bytes: std::vec::Vec<u8> = (0..body.len())
 		.step_by(2)
@@ -224,10 +235,12 @@ fn enc_str(s: &str) -> std::string::String {
 	if s.is_empty() {
 		return "s:-".into();
 	}
+
 	let mut out = std::string::String::from("s:");
 	for b in s.bytes() {
 		out.push_str(&std::format!("{b:02x}"));
 	}
+
 	out
 }
 
@@ -239,13 +252,16 @@ fn fresh_encode(store: &mut Store, root: &Root) -> std::string::String {
 		Type::Vec => {
 			let n = store.root_len(root).unwrap();
 			let mut parts = std::vec::Vec::new();
+
 			for i in 0..n {
 				let item = store.root_get(root, i).unwrap();
 				parts.push(fresh_encode(store, &item));
 				store.root_release(item).unwrap();
 			}
+
 			std::format!("v[{}]", parts.join(","))
 		}
+
 		tag => match store.root_scalar(root).unwrap() {
 			Some(Scalar::I64(n)) => std::format!("i:{n}"),
 			Some(Scalar::U64(n)) => std::format!("u:{n}"),
@@ -270,13 +286,16 @@ fn stock_encode(value: &Value) -> std::string::String {
 			ref other => std::format!("unencodable:{other:?}"),
 		};
 	}
+
 	if let Ok(text) = value.borrow_string_ref() {
 		return enc_str(&text);
 	}
+
 	if let Ok(vec) = value.borrow_ref::<crate::runtime::Vec>() {
 		let parts: std::vec::Vec<_> = vec.iter().map(stock_encode).collect();
 		return std::format!("v[{}]", parts.join(","));
 	}
+
 	std::format!("unencodable:{:?}", value.type_hash())
 }
 
@@ -284,6 +303,7 @@ fn expected_witness(effects: &str) -> std::vec::Vec<i64> {
 	if let Some(n) = effects.strip_prefix("marks=") {
 		return std::vec![0; n.parse().unwrap()];
 	}
+
 	match effects.strip_prefix("ev=") {
 		Some("-") => std::vec::Vec::new(),
 		Some(ev) => ev.split(',').map(|x| x.parse().unwrap()).collect(),
@@ -308,12 +328,14 @@ fn object_content(encoded: &str) -> std::collections::BTreeMap<std::string::Stri
 	let text = hex_text(encoded.strip_prefix("s:").unwrap());
 	let inner = text.strip_prefix('{').unwrap().strip_suffix('}').unwrap();
 	let mut out = std::collections::BTreeMap::new();
+
 	for kv in inner.split(", ") {
 		let (k, v) = kv.split_once(": ").unwrap();
 		let k = k.strip_prefix('"').unwrap().strip_suffix('"').unwrap();
 		assert!(k.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_'));
 		assert!(out.insert(k.into(), v.parse().unwrap()).is_none());
 	}
+
 	out
 }
 
@@ -328,10 +350,12 @@ fn unit_source(text: &str, function: &str) -> std::string::String {
 		.unwrap_or_else(|| panic!("no function {function}"));
 	assert!(lines.next().is_none(), "duplicate function {function}");
 	let mut out = std::string::String::from(line);
+
 	for helper in text.lines().filter(|l| !l.starts_with("pub fn ")) {
 		out.push('\n');
 		out.push_str(helper);
 	}
+
 	out
 }
 
@@ -374,6 +398,7 @@ fn run(miri_only: bool) {
 	let context = Context::with_default_modules().unwrap();
 	let mut mismatches = std::vec::Vec::new();
 	let mut ran = 0;
+
 	for (batch, text) in PROGRAMS {
 		let rows: std::vec::Vec<&Case<'_>> = all
 			.iter()
@@ -382,9 +407,11 @@ fn run(miri_only: bool) {
 		if rows.is_empty() {
 			continue;
 		}
+
 		let mut units = std::collections::BTreeMap::new();
 		let mut store = Store::new(Limits::default()).unwrap();
 		let mut executor = Executor::new().unwrap();
+
 		for case in rows {
 			ran += 1;
 			let at = std::format!("{} {} {}", case.batch, case.id, case.function);
@@ -400,15 +427,18 @@ fn run(miri_only: bool) {
 					);
 				}
 			}
+
 			// ---- stock side ----
 			let mut args: crate::alloc::Vec<Value> = crate::alloc::Vec::new();
 			for op in &case.operands {
 				args.try_push(stock_operand(op)).unwrap();
 			}
+
 			let stock_w = crate::to_value(crate::runtime::Vec::new()).unwrap();
 			if witness {
 				args.try_push(stock_w.clone()).unwrap();
 			}
+
 			let got_stock = match vm.call(Hash::type_hash([case.function]), args) {
 				Ok(v) => ("ok", stock_encode(&v)),
 				Err(e) => {
@@ -419,17 +449,20 @@ fn run(miri_only: bool) {
 					}
 				}
 			};
+
 			let (want_kind, want_value, want_effects) = case.stock;
 			let stock_ok = if case.rule == INSERTION_ORDER && got_stock.0 == "ok" {
 				want_kind == "ok" && object_content(&got_stock.1) == object_content(want_value)
 			} else {
 				(got_stock.0, got_stock.1.as_str()) == (want_kind, want_value)
 			};
+
 			if !stock_ok {
 				mismatches.push(std::format!(
 					"stock {at}: got {got_stock:?}, want ({want_kind}, {want_value})"
 				));
 			}
+
 			if witness {
 				let w = stock_w.borrow_ref::<crate::runtime::Vec>().unwrap();
 				let got: std::vec::Vec<i64> = w
@@ -445,6 +478,7 @@ fn run(miri_only: bool) {
 					));
 				}
 			}
+
 			// ---- fresh side ----
 			let roots: std::vec::Vec<Root> = case
 				.operands
@@ -453,9 +487,11 @@ fn run(miri_only: bool) {
 				.collect();
 			let fresh_w = store.root_list(Type::Vec, &[]).unwrap();
 			let mut refs: std::vec::Vec<&Root> = roots.iter().collect();
+
 			if witness {
 				refs.push(&fresh_w);
 			}
+
 			let function = program
 				.function(Hash::type_hash([case.function]))
 				.unwrap_or_else(|| panic!("{at}: no fresh function"));
@@ -468,6 +504,7 @@ fn run(miri_only: bool) {
 				}
 				Err(failure) => ("err", std::format!("{:?}", failure.error.kind)),
 			};
+
 			if (got_fresh.0, got_fresh.1.as_str()) != (case.fresh.0, case.fresh.1) {
 				mismatches.push(std::format!(
 					"fresh {at}: got {got_fresh:?}, want ({}, {})",
@@ -475,6 +512,7 @@ fn run(miri_only: bool) {
 					case.fresh.1
 				));
 			}
+
 			if witness {
 				let mut got = std::vec::Vec::new();
 				for i in 0..store.root_len(&fresh_w).unwrap() {
@@ -483,8 +521,10 @@ fn run(miri_only: bool) {
 						Some(Scalar::I64(x)) => got.push(x),
 						other => panic!("{at}: fresh witness item {other:?}"),
 					}
+
 					store.root_release(item).unwrap();
 				}
+
 				if got != expected_witness(case.fresh.2) {
 					mismatches.push(std::format!(
 						"fresh effects {at}: got {got:?}, want {}",
@@ -492,14 +532,17 @@ fn run(miri_only: bool) {
 					));
 				}
 			}
+
 			store.root_release(fresh_w).unwrap();
 			for root in roots {
 				store.root_release(root).unwrap();
 			}
+
 			assert_eq!(store.live_entries(), 0, "leak after {at}");
 			assert!(executor.is_idle(), "executor not idle after {at}");
 		}
 	}
+
 	assert_eq!(
 		ran,
 		if miri_only { MIRI_ROWS } else { FULL_ROWS },

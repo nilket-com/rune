@@ -2,6 +2,7 @@
 //! lazily derived callsite must preserve exactly. These pass on D13 (eager
 //! Location per frame) and are the oracle for D14. Every site is distinct, the
 //! calls sit at nonzero pcs, and the expected chain is innermost-first.
+
 use super::*;
 use crate::experimental_core::{
 	arithmetic::Binary,
@@ -17,6 +18,7 @@ fn loc(n: u32) -> Location {
 		end: n + 1,
 	}
 }
+
 fn store() -> Store {
 	Store::new(Limits {
 		entries: 16,
@@ -24,14 +26,17 @@ fn store() -> Store {
 	})
 	.unwrap()
 }
+
 /// Push `ops` with their own locations.
 fn function(slots: u32, parameters: u32, ops: &[(Op, u32)]) -> Function {
 	let mut f = Function::new(slots, parameters).unwrap();
 	for &(op, at) in ops {
 		f.push(op, loc(at)).unwrap();
 	}
+
 	f
 }
+
 fn call(f: &mut Function, out: u32, callee: u32, args: &[u32], at: u32) {
 	let (args_start, args_len) = f.arguments(args).unwrap();
 	f.push(
@@ -45,16 +50,20 @@ fn call(f: &mut Function, out: u32, callee: u32, args: &[u32], at: u32) {
 	)
 	.unwrap();
 }
+
 fn lit(out: u32, value: Value) -> Op {
 	Op::Literal { out, value }
 }
+
 fn code(functions: std::vec::Vec<Function>) -> Code {
 	let mut b = Builder::default();
 	for f in functions {
 		b.push(f).unwrap();
 	}
+
 	b.finish().unwrap()
 }
+
 /// main(a, b) -> f1(a, b) -> f2(a, b) = a / b; calls at nonzero pcs.
 fn three_levels() -> Code {
 	let mut main = function(3, 2, &[(lit(2, Value::I64(0)), 100)]);
@@ -85,6 +94,7 @@ fn three_levels() -> Code {
 	);
 	code(std::vec![main, f1, f2])
 }
+
 // `Failure`, the public error type of `invoke`, is large by design.
 #[allow(clippy::result_large_err)]
 fn run(
@@ -101,9 +111,11 @@ fn run(
 		s.root_release(root).unwrap();
 		v
 	});
+
 	for r in roots {
 		s.root_release(r).unwrap();
 	}
+
 	result
 }
 
@@ -112,10 +124,12 @@ fn d14_nested_failure_chain_is_innermost_first_with_caller_sites() {
 	let c = three_levels();
 	let mut s = store();
 	let mut e = Executor::new().unwrap();
+
 	for _ in 0..2 {
 		let failure = run(&mut e, &c, &mut s, &[7, 0], 100).unwrap_err();
 		assert_eq!(failure.error.kind, ErrorKind::DivisionByZero);
 		assert_eq!(failure.error.location, Some(loc(300)));
+
 		// f2 was called from f1's pc 2 (loc 202); f1 from main's pc 1 (loc 101).
 		assert_eq!(&failure.call_chain[..], &[loc(202), loc(101)]);
 		assert!(failure.cleanup_error.is_none() && e.is_idle());
@@ -125,6 +139,7 @@ fn d14_nested_failure_chain_is_innermost_first_with_caller_sites() {
 		);
 		assert!(e.is_idle());
 	}
+
 	assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
 }
 
@@ -187,6 +202,7 @@ fn d14_recursion_chain_repeats_the_recursive_site_then_the_entry_site() {
 	let c = recursion();
 	let mut s = store();
 	let mut e = Executor::new().unwrap();
+
 	for depth in [0usize, 1, 2, 5] {
 		let failure = run(&mut e, &c, &mut s, &[depth as i64], 1_000).unwrap_err();
 		assert_eq!(failure.error.kind, ErrorKind::DivisionByZero);
@@ -196,6 +212,7 @@ fn d14_recursion_chain_repeats_the_recursive_site_then_the_entry_site() {
 		assert_eq!(&failure.call_chain[..], &want[..], "depth {depth}");
 		assert!(failure.cleanup_error.is_none() && e.is_idle());
 	}
+
 	assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
 }
 
@@ -214,6 +231,7 @@ fn d14_frame_capacity_chain_has_every_published_callsite_in_order() {
 	let failure = e.invoke_code(&c, &mut s, 0, &[], 100_000).unwrap_err();
 	assert_eq!(failure.error.kind, ErrorKind::FrameCapacity);
 	assert_eq!(failure.error.location, Some(loc(701)));
+
 	// 1024 published frames: main (no callsite), rec from main, 1022 recursive.
 	let mut want = std::vec![loc(701); MAX_FRAMES - 2];
 	want.push(loc(601));
@@ -227,6 +245,7 @@ fn charged_chain(k: usize) -> (Location, std::vec::Vec<Location>) {
 	if k == 0 {
 		return (loc(400), std::vec::Vec::new());
 	}
+
 	let mut chain = std::vec![loc(505); k - 1];
 	chain.push(loc(401));
 	(loc(500), chain)
@@ -237,6 +256,7 @@ fn d14_fuel_exhaustion_inside_nested_callees_has_the_exact_chain() {
 	let c = recursion();
 	let mut s = store();
 	let mut e = Executor::new().unwrap();
+
 	// Depth 3 publishes main plus rec(3..0): charges 0..=4 exist; fuel k fails at charge k.
 	for fuel in 0..=4 {
 		let failure = run(&mut e, &c, &mut s, &[3], fuel).unwrap_err();
@@ -246,6 +266,7 @@ fn d14_fuel_exhaustion_inside_nested_callees_has_the_exact_chain() {
 		assert_eq!(&failure.call_chain[..], &chain[..], "fuel {fuel}");
 		assert!(failure.cleanup_error.is_none() && e.is_idle());
 	}
+
 	// Enough fuel reaches the division by zero in the deepest frame.
 	let failure = run(&mut e, &c, &mut s, &[3], 5).unwrap_err();
 	assert_eq!(failure.error.kind, ErrorKind::DivisionByZero);
@@ -264,6 +285,7 @@ fn d14_cancellation_inside_nested_callees_has_the_exact_chain() {
 	let c = recursion();
 	let mut s = store();
 	let mut e = Executor::new().unwrap();
+
 	for n in 0..=4 {
 		cancel_at_charge_for_test(Some(n));
 		let failure = run(&mut e, &c, &mut s, &[3], 1_000).unwrap_err();
@@ -273,11 +295,13 @@ fn d14_cancellation_inside_nested_callees_has_the_exact_chain() {
 		assert_eq!(failure.error.location, Some(location), "charge {n}");
 		assert_eq!(&failure.call_chain[..], &chain[..], "charge {n}");
 		assert!(failure.cleanup_error.is_none() && e.is_idle());
+
 		// The request is consumed: the next invocation is not cancelled.
 		let next = run(&mut e, &c, &mut s, &[1], 1_000).unwrap_err();
 		assert_eq!(next.error.kind, ErrorKind::DivisionByZero);
 		assert_eq!(&next.call_chain[..], &[loc(505), loc(401)]);
 	}
+
 	assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
 }
 
@@ -294,6 +318,7 @@ fn d14_failed_unpublished_call_adds_no_chain_entry() {
 	let c = code(std::vec![main, f1, f2]);
 	let mut s = store();
 	let text = s.root_string("held").unwrap();
+
 	// Host root (1) + entry slot (+1) + main's call (+1) reach u32::MAX; f1's call overflows.
 	s.test_set_strong(text.value, u32::MAX - 2);
 	let mut e = Executor::new().unwrap();
@@ -334,6 +359,7 @@ fn d14_failure_in_leave_after_return_popped_its_frame_adds_no_chain_entry() {
 	assert_eq!(&failure.call_chain[..], &[loc(1101)]);
 	assert!(failure.cleanup_error.is_none() && e.is_idle());
 	assert_eq!(s.queued_work_for_test(), 0);
+
 	// The queued stale edge was the only extra state; the store owns nothing else.
 	s.root_release(arg).unwrap();
 	assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
@@ -374,17 +400,21 @@ fn d14_synthetic_put_failure_after_return_popped_its_frame_adds_no_chain_entry()
 		.unwrap();
 	let root = s.export(list);
 	let iter = s.begin_iter(list).unwrap();
+
 	// True owners: the host root and the lease. Synthetic count 0: enter (+1),
 	// Copy (+1) and Release (-1) leave 1, so put's release is the last one.
 	s.test_set_strong(list, 0);
 	let mut e = Executor::new().unwrap();
 	let failure = e.invoke_code(&c, &mut s, 0, &[&root], 100).unwrap_err();
+
 	// release_one refuses a last release of a leased entry (heap.rs, next == 0 && readers != 0).
 	assert_eq!(failure.error.kind, ErrorKind::AccessConflict);
 	assert_eq!(failure.error.location, Some(loc(1401)));
+
 	// f1's frame was popped before put; only the entry remains, which has no callsite.
 	assert!(failure.call_chain.is_empty());
 	assert!(failure.cleanup_error.is_none() && e.is_idle());
+
 	// The refused last release left the entry untouched; restore the two real owners.
 	assert_eq!(s.test_strong(list), 1);
 	s.test_set_strong(list, 2);
@@ -405,9 +435,11 @@ fn d14_diagnostics_exhaustion_breaks_after_the_last_pushed_site() {
 	let mut e = Executor::new().unwrap();
 	let capacity = e.diagnostics.capacity();
 	assert!(capacity >= MAX_FRAMES);
+
 	while e.diagnostics.len() + 1 < capacity {
 		e.diagnostics.try_push(loc(1)).unwrap();
 	}
+
 	let a = s.root_i64(7);
 	let b = s.root_i64(0);
 	let failure = rune_alloc::limit::with(0, || e.invoke_code(&c, &mut s, 0, &[&a, &b], 100))
@@ -424,6 +456,7 @@ fn d14_diagnostics_exhaustion_breaks_after_the_last_pushed_site() {
 	assert!(failure.cleanup_error.is_none() && e.is_idle());
 	s.root_release(a).unwrap();
 	s.root_release(b).unwrap();
+
 	// Reuse after the buffer was moved out: it is reserved again.
 	assert_eq!(
 		run(&mut e, &c, &mut s, &[9, 3], 100).unwrap(),

@@ -8,6 +8,7 @@
 //! invocation: the cap is checked before each write, and a line that would exceed it is
 //! not written and fails the invocation with [`ErrorKind::FormatLimit`]. The cap and the
 //! per-line flush are declared differences from the stock `println`, which has neither.
+
 use super::{
 	arithmetic,
 	code::{Code, Op},
@@ -17,7 +18,9 @@ use super::{
 	value::{Root, Value},
 };
 use crate::alloc::Vec;
+
 const MAX_FRAMES: usize = 1024;
+
 /// Entry arguments: host roots (owner-checked in `enter`, read in place) or
 /// crate-internal values.
 #[derive(Clone, Copy)]
@@ -26,6 +29,7 @@ enum Args<'a> {
 	#[cfg_attr(not(test), allow(dead_code))]
 	Values(&'a [Value]),
 }
+
 impl Args<'_> {
 	fn len(self) -> usize {
 		match self {
@@ -33,6 +37,7 @@ impl Args<'_> {
 			Self::Values(values) => values.len(),
 		}
 	}
+
 	fn get(self, i: usize) -> Value {
 		match self {
 			Self::Roots(roots) => roots[i].value,
@@ -40,12 +45,15 @@ impl Args<'_> {
 		}
 	}
 }
+
 const MAX_SLOTS: usize = 65_536;
+
 /// D14: a frame records only its callsite's pc in the caller; the Location is
 /// derived on failure from the frame below it. `u32::MAX` is never a valid pc:
 /// the Builder assigns pcs with `u32::try_from` and caps a function at
 /// `MAX_CODE_BYTES / size_of::<Instruction>()` (1,048,576) instructions.
 const NO_CALLSITE: u32 = u32::MAX;
+
 #[derive(Clone, Copy)]
 struct Frame {
 	function: u32,
@@ -56,6 +64,7 @@ struct Frame {
 	base: usize,
 	out: Option<usize>,
 }
+
 /// A failed invocation. Plain source diagnostics only: this record cannot root a
 /// script heap.
 #[derive(Debug)]
@@ -83,9 +92,11 @@ pub struct Executor {
 	#[cfg(test)]
 	pub(crate) test_output: Option<std::vec::Vec<u8>>,
 }
+
 fn error(kind: ErrorKind) -> Error {
 	Error::new(kind, "execute")
 }
+
 // `Failure` carries a located error and its call chain by value; it is the public error
 // type of `invoke`, so boxing it would change the API.
 #[allow(clippy::result_large_err)]
@@ -102,12 +113,14 @@ impl Executor {
 			test_output: None,
 		})
 	}
+
 	/// Requests cancellation. The next charged instruction of this executor consumes the
 	/// request and fails its invocation with [`ErrorKind::Cancelled`]; a refusal before
 	/// the first charged instruction leaves the request pending.
 	pub fn request_cancel(&mut self) {
 		self.cancelled = true;
 	}
+
 	/// Single-shot entry: one invocation on an executor that is then dropped.
 	/// Literally `invoke`; there is no separate execution path.
 	pub fn run(
@@ -120,6 +133,7 @@ impl Executor {
 	) -> core::result::Result<Root, Failure> {
 		self.invoke(program, store, function, args, fuel)
 	}
+
 	/// One invocation on a prepared code object and store. The function, its
 	/// arity and then every argument root (closed-store policy, store,
 	/// generation) are checked before any argument is retained: a refused
@@ -140,6 +154,7 @@ impl Executor {
 	) -> core::result::Result<Root, Failure> {
 		self.invoke_code(&program.code, store, function, args, fuel)
 	}
+
 	/// Crate-internal entry over hand-built `Code` (tests); same checked path.
 	pub(crate) fn invoke_code(
 		&mut self,
@@ -152,6 +167,7 @@ impl Executor {
 		let value = self.invoke_args(code, store, function, Args::Roots(args), fuel)?;
 		Ok(store.export(value))
 	}
+
 	// D21-derived execution logic preserved during extraction: the loops read fixed
 	// (slot, flag) pairs from the argument table.
 	#[allow(clippy::chunks_exact_to_as_chunks)]
@@ -176,13 +192,16 @@ impl Executor {
 				});
 			}
 		}
+
 		let result = (|| {
 			if store.is_closed() {
 				return Err(error(ErrorKind::ClosedStore));
 			}
+
 			if !self.frames.is_empty() || !self.slots.is_empty() {
 				return Err(error(ErrorKind::InvalidCode));
 			}
+
 			self.enter(code, store, function, args, None)?;
 			'frames: loop {
 				let frame = *self
@@ -196,6 +215,7 @@ impl Executor {
 				// No borrowed frame/slot reference crosses those mutations.
 				let frame_index = self.frames.len() - 1;
 				let mut pc = frame.pc;
+
 				loop {
 					let source_pc = pc;
 					let instruction = match function.cached_ref(source_pc) {
@@ -207,6 +227,7 @@ impl Executor {
 							return Err(error(ErrorKind::InvalidCode));
 						}
 					};
+
 					let mut transferred = false;
 					let result = (|| {
 						// Charge and cancellation ride an existing instruction, no Charge opcode.
@@ -215,15 +236,18 @@ impl Executor {
 							if cancel_tick_for_test() {
 								self.cancelled = true;
 							}
+
 							if self.cancelled {
 								// The pending request is consumed here and only here.
 								self.cancelled = false;
 								return Err(error(ErrorKind::Cancelled));
 							}
+
 							fuel = fuel
 								.checked_sub(1)
 								.ok_or_else(|| error(ErrorKind::FuelExhausted))?;
 						}
+
 						pc += 1;
 						let get = |n: u32| -> Result<Value> {
 							self.slots
@@ -231,6 +255,7 @@ impl Executor {
 								.copied()
 								.ok_or_else(|| error(ErrorKind::InvalidCode))
 						};
+
 						// D20: operands are bound per arm from the borrowed cached instruction (no
 						// whole-Op temporary). Call and CallValue name their call here; the shared
 						// Call body runs after the match, so CallValue's checks still precede
@@ -265,6 +290,7 @@ impl Executor {
 								let value = store.string_owned(text)?;
 								self.put(store, frame.base + out as usize, value)?;
 							}
+
 							Op::Print { value } => {
 								use std::io::Write;
 								let text = store.text(get(value)?)?;
@@ -275,6 +301,7 @@ impl Executor {
 									.filter(|n| *n <= 128 << 10)
 									.ok_or_else(|| error(ErrorKind::FormatLimit))?;
 								self.output_bytes = bytes;
+
 								// Test-only seam, scoped to this executor: same cap and order, no stdout.
 								#[cfg(test)]
 								let captured = match self.test_output.as_mut() {
@@ -287,6 +314,7 @@ impl Executor {
 								};
 								#[cfg(not(test))]
 								let captured = false;
+
 								// Real ordered stdout, flushed now rather than returned as a
 								// result recording. Earlier output survives later failures.
 								if !captured {
@@ -298,6 +326,7 @@ impl Executor {
 										.map_err(|_| error(ErrorKind::Output))?;
 								}
 							}
+
 							Op::Variant {
 								out,
 								tag,
@@ -308,9 +337,11 @@ impl Executor {
 									store.variant(tag, success, payload.map(get).transpose()?)?;
 								self.put(store, frame.base + out as usize, value)?;
 							}
+
 							Op::Try { out, value } => {
 								let value = get(value)?;
 								let (_, success, payload) = store.variant_parts(value)?;
+
 								if success {
 									let payload = payload.ok_or_else(|| error(ErrorKind::Type))?;
 									store.retain(payload)?;
@@ -321,6 +352,7 @@ impl Executor {
 									self.commit_pc(frame_index, pc)?;
 									self.leave(store)?;
 									transferred = true;
+
 									if let Some(out) = out {
 										self.put(store, out, value)?;
 									} else {
@@ -342,31 +374,38 @@ impl Executor {
 								else {
 									return Err(error(ErrorKind::Type));
 								};
+
 								// A token from another program is a type error at the call,
 								// before any argument is retained.
 								if owner != code.id() {
 									return Err(error(ErrorKind::Type));
 								}
+
 								let target = code
 									.function(callee)
 									.ok_or_else(|| error(ErrorKind::InvalidCode))?;
 								if target.parameters != args_len {
 									return Err(error(ErrorKind::Type));
 								}
+
 								call = Some((out, callee, args_start, args_len));
 							}
+
 							Op::Range { out, start, end } => {
 								let (Value::I64(start), Value::I64(end)) = (get(start)?, get(end)?)
 								else {
 									return Err(error(ErrorKind::Type));
 								};
+
 								let value = store.range(start, end)?;
 								self.put(store, frame.base + out as usize, value)?;
 							}
+
 							Op::IterStart { out, value } => {
 								let value = store.iterator(get(value)?)?;
 								self.put(store, frame.base + out as usize, value)?;
 							}
+
 							Op::IterNext {
 								out,
 								iterator,
@@ -388,6 +427,7 @@ impl Executor {
 								)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
+
 							Op::Clone { out, value } => {
 								let tag = store.tag(get(value)?)?;
 								if !matches!(
@@ -406,6 +446,7 @@ impl Executor {
 								let v = store.clone_outer(get(value)?)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
+
 							Op::AssignBinary { out, op, lhs, rhs } => {
 								// D21: borrow both operand slots (lhs then rhs, the same
 								// InvalidCode order as `get`); two I64 values go to fast_i64
@@ -425,6 +466,7 @@ impl Executor {
 									}
 									_ => None,
 								};
+
 								let v = if let Some(result) = fast {
 									result?
 								} else {
@@ -439,24 +481,29 @@ impl Executor {
 										binary(store, op, a, b)?
 									}
 								};
+
 								self.put(store, base + out as usize, v)?;
 							}
 
 							Op::Literal { out, value } => {
 								self.put(store, frame.base + out as usize, value)?
 							}
+
 							Op::Copy { out, value } => {
 								let v = get(value)?;
 								store.retain(v)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
+
 							Op::Release { value } => {
 								self.put(store, frame.base + value as usize, Value::Unit)?
 							}
+
 							Op::Unary { out, op, value } => {
 								let v = arithmetic::unary(op, get(value)?)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
+
 							Op::Binary { out, op, lhs, rhs } => {
 								// D21: as AssignBinary, without the string append arm.
 								let base = frame.base;
@@ -473,17 +520,21 @@ impl Executor {
 									}
 									_ => None,
 								};
+
 								let v = if let Some(result) = fast {
 									result?
 								} else {
 									binary(store, op, *left, *right)?
 								};
+
 								self.put(store, base + out as usize, v)?;
 							}
+
 							Op::Cast { out, value, tag } => {
 								let v = arithmetic::cast(get(value)?, tag)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
+
 							Op::Is {
 								out,
 								value,
@@ -495,16 +546,20 @@ impl Executor {
 									Value::Function { .. } | Value::Type(_) => false,
 									_ => store.tag(operand)? == tag,
 								};
+
 								let v = Value::Bool(matches ^ negate);
 								self.put(store, frame.base + out as usize, v)?;
 							}
+
 							Op::Jump { target } => pc = target as usize,
 							Op::Branch { condition, yes, no } => {
 								let Value::Bool(condition) = get(condition)? else {
 									return Err(error(ErrorKind::Type));
 								};
+
 								pc = if condition { yes as usize } else { no as usize };
 							}
+
 							Op::Call {
 								out,
 								function: callee,
@@ -518,12 +573,14 @@ impl Executor {
 								self.commit_pc(frame_index, pc)?;
 								self.leave(store)?;
 								transferred = true;
+
 								if let Some(out) = out {
 									self.put(store, out, value)?;
 								} else {
 									return Ok(Some(value));
 								}
 							}
+
 							Op::Record {
 								out,
 								tag,
@@ -533,20 +590,24 @@ impl Executor {
 								let descriptors = &function.args
 									[args_start as usize..(args_start + args_len) as usize];
 								let mut fields = Vec::try_with_capacity(descriptors.len() / 2)?;
+
 								for pair in descriptors.chunks_exact(2) {
 									fields.try_push((
 										function.strings[pair[0] as usize].as_str(),
 										get(pair[1])?,
 									))?;
 								}
+
 								let value = store.record(tag, &fields)?;
 								self.put(store, frame.base + out as usize, value)?;
 							}
+
 							Op::Field { out, value, key } => {
 								let value = store
 									.field(get(value)?, function.strings[key as usize].as_str())?;
 								self.put(store, frame.base + out as usize, value)?;
 							}
+
 							Op::SetField { value, key, new } => store.set_field(
 								get(value)?,
 								function.strings[key as usize].as_str(),
@@ -563,25 +624,32 @@ impl Executor {
 								let indices = &function.args
 									[args_start as usize..args_start as usize + args_len as usize];
 								let mut values = Vec::try_with_capacity(indices.len())?;
+
 								for &i in indices {
 									values.try_push(get(i)?)?;
 								}
+
 								let value = store.list(tag, &values)?;
 								self.put(store, frame.base + out as usize, value)?;
 							}
+
 							Op::TupleField { out, value, index } => {
 								if store.tag(get(value)?)? != super::value::Type::Tuple {
 									return Err(error(ErrorKind::Type));
 								}
+
 								let v = store.get(get(value)?, index_value(get(index)?)?)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
+
 							Op::SetTupleField { value, index, new } => {
 								if store.tag(get(value)?)? != super::value::Type::Tuple {
 									return Err(error(ErrorKind::Type));
 								}
+
 								store.set(get(value)?, index_value(get(index)?)?, get(new)?)?;
 							}
+
 							Op::Get { out, value, index } => {
 								if !matches!(
 									store.tag(get(value)?)?,
@@ -594,9 +662,11 @@ impl Executor {
 								let v = store.get(get(value)?, i)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
+
 							Op::Set { value, index, new } => {
 								store.set(get(value)?, index_value(get(index)?)?, get(new)?)?
 							}
+
 							Op::Len { out, value } => {
 								if !matches!(
 									store.tag(get(value)?)?,
@@ -613,6 +683,7 @@ impl Executor {
 							Op::Push { value, new } => store.push(get(value)?, get(new)?)?,
 							Op::Drop { value } => store.invalidate(get(value)?)?,
 						}
+
 						if let Some((out, callee, args_start, args_len)) = call {
 							self.commit_pc(frame_index, pc)?;
 							let callee_code = code
@@ -621,11 +692,13 @@ impl Executor {
 							let source_args = &function.args
 								[args_start as usize..args_start as usize + args_len as usize];
 							let new_base = self.reserve_frame(callee_code.slots as usize)?;
+
 							for (i, &slot) in source_args.iter().enumerate() {
 								let value = self.slots[frame.base + slot as usize];
 								store.retain(value)?;
 								self.slots[new_base + i] = value;
 							}
+
 							self.frames.try_push(Frame {
 								function: callee,
 								pc: 0,
@@ -636,6 +709,7 @@ impl Executor {
 							})?;
 							transferred = true;
 						}
+
 						Ok(None)
 					})();
 					match result {
@@ -649,6 +723,7 @@ impl Executor {
 							if let Some(current) = self.frames.get_mut(frame_index) {
 								current.pc = pc;
 							}
+
 							return Err(e.at(function.locations[source_pc]));
 						}
 					}
@@ -659,6 +734,7 @@ impl Executor {
 			Ok(value) => Ok(value),
 			Err(failure) => {
 				let mut cleanup_error = None;
+
 				// Innermost first. Only Op::Call sets a callsite, pushing the callee
 				// directly above its caller; the entry frame has none, so pairing each
 				// frame with the one below it visits exactly the frames that have one.
@@ -674,12 +750,14 @@ impl Executor {
 						}
 					}
 				}
+
 				// Includes a partially filled callee reserve if retaining an arg failed.
 				while let Some(value) = self.slots.pop() {
 					if let Err(e) = store.release(value) {
 						cleanup_error = Some(e);
 					}
 				}
+
 				self.frames.clear();
 				Err(Failure {
 					error: failure,
@@ -689,15 +767,18 @@ impl Executor {
 			}
 		}
 	}
+
 	/// Clean-state check for callers that repeat invocations: true when no
 	/// frame, slot or pending diagnostic survives the last invocation.
 	pub fn is_idle(&self) -> bool {
 		self.frames.is_empty() && self.slots.is_empty() && self.diagnostics.is_empty()
 	}
+
 	fn reserve_frame(&mut self, slots: usize) -> Result<usize> {
 		if self.frames.len() == MAX_FRAMES {
 			return Err(error(ErrorKind::FrameCapacity));
 		}
+
 		let base = self.slots.len();
 		let len = base
 			.checked_add(slots)
@@ -705,9 +786,11 @@ impl Executor {
 		if len > MAX_SLOTS {
 			return Err(error(ErrorKind::FrameCapacity));
 		}
+
 		self.slots.try_resize_with(len, || Value::Unit)?;
 		Ok(base)
 	}
+
 	fn enter(
 		&mut self,
 		code: &Code,
@@ -722,16 +805,19 @@ impl Executor {
 		if args.len() != f.parameters as usize {
 			return Err(error(ErrorKind::InvalidCode));
 		}
+
 		// Host roots: every one owner-checked before any retain, no allocation.
 		if let Args::Roots(roots) = args {
 			store.import_all(roots.iter().copied())?;
 		}
+
 		let base = self.reserve_frame(f.slots as usize)?;
 		for i in 0..args.len() {
 			let value = args.get(i);
 			store.retain(value)?;
 			self.slots[base + i] = value;
 		}
+
 		self.frames.try_push(Frame {
 			function,
 			pc: 0,
@@ -741,6 +827,7 @@ impl Executor {
 		})?;
 		Ok(())
 	}
+
 	/// Publish only into the frame whose local pc is being executed.
 	fn commit_pc(&mut self, frame_index: usize, pc: usize) -> Result<()> {
 		self.frames
@@ -749,6 +836,7 @@ impl Executor {
 			.pc = pc;
 		Ok(())
 	}
+
 	#[inline(always)]
 	fn put(&mut self, store: &mut Store, index: usize, value: Value) -> Result<()> {
 		let slot = self
@@ -758,6 +846,7 @@ impl Executor {
 		let old = core::mem::replace(slot, value);
 		store.release_slot(old)
 	}
+
 	fn leave(&mut self, store: &mut Store) -> Result<()> {
 		let frame = self
 			.frames
@@ -777,6 +866,7 @@ impl Executor {
 			self.slots.truncate(frame.base);
 			return Ok(());
 		}
+
 		while self.slots.len() > frame.base {
 			store.release_slot(
 				self.slots
@@ -784,9 +874,11 @@ impl Executor {
 					.ok_or_else(|| error(ErrorKind::InvalidCode))?,
 			)?;
 		}
+
 		Ok(())
 	}
 }
+
 fn index_value(value: Value) -> Result<usize> {
 	match value {
 		Value::I64(n) => usize::try_from(n).map_err(|_| error(ErrorKind::IndexOutOfBounds)),
@@ -803,6 +895,7 @@ fn fast_i64(op: arithmetic::Binary, a: Value, b: Value) -> Option<Result<Value>>
 	let (Value::I64(a), Value::I64(b)) = (a, b) else {
 		return None;
 	};
+
 	Some(match op {
 		Binary::Add => a
 			.checked_add(b)
@@ -819,6 +912,7 @@ fn fast_i64(op: arithmetic::Binary, a: Value, b: Value) -> Option<Result<Value>>
 		Binary::Div | Binary::Rem if b == 0 => {
 			Err(Error::new(ErrorKind::DivisionByZero, "primitive operation"))
 		}
+
 		Binary::Div => a
 			.checked_div(b)
 			.map(Value::I64)
@@ -848,13 +942,16 @@ fn binary(store: &mut Store, op: arithmetic::Binary, a: Value, b: Value) -> Resu
 			if op == arithmetic::Binary::Add {
 				return store.concat_string(a, b);
 			}
+
 			let left = store.text(a)?;
 			let right = store.text(b)?;
 			return arithmetic::compare(op, left == right, left < right, left > right);
 		}
 	}
+
 	arithmetic::binary(op, a, b)
 }
+
 #[cfg(test)]
 // `Failure` carries a located error and its call chain by value; it is the public error
 // type of `invoke`, so boxing it would change the API.
@@ -868,6 +965,7 @@ impl Executor {
 			self.diagnostics.capacity(),
 		)
 	}
+
 	/// Byte sizes of the three construction reservations, in reservation order.
 	pub(crate) fn reservation_bytes_for_test() -> [usize; 3] {
 		[
@@ -876,6 +974,7 @@ impl Executor {
 			MAX_FRAMES * core::mem::size_of::<Location>(),
 		]
 	}
+
 	/// Owner-free single-shot entry for the crate's own tests.
 	pub(crate) fn run_values(
 		mut self,
@@ -903,6 +1002,7 @@ std::thread_local! {
 	/// D13: per-thread count of leaves that took the bulk scalar fast path.
 	static LEAVE_FAST_HITS: core::cell::Cell<usize> = const { core::cell::Cell::new(0) };
 }
+
 #[cfg(test)]
 pub(crate) fn leave_fast_hits_for_test() -> usize {
 	LEAVE_FAST_HITS.with(|c| c.get())
@@ -915,10 +1015,12 @@ std::thread_local! {
 	/// cancelled; there is no other way to cancel mid-invocation.
 	static CANCEL_AT_CHARGE: core::cell::Cell<Option<usize>> = const { core::cell::Cell::new(None) };
 }
+
 #[cfg(test)]
 pub(crate) fn cancel_at_charge_for_test(n: Option<usize>) {
 	CANCEL_AT_CHARGE.with(|c| c.set(n));
 }
+
 #[cfg(test)]
 fn cancel_tick_for_test() -> bool {
 	CANCEL_AT_CHARGE.with(|c| match c.get() {
@@ -926,6 +1028,7 @@ fn cancel_tick_for_test() -> bool {
 			c.set(None);
 			true
 		}
+
 		Some(n) => {
 			c.set(Some(n - 1));
 			false
