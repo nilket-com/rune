@@ -85,23 +85,23 @@ pub use rune_macros::FromValue;
 
 /// Cheap conversion trait to convert something infallibly into a dynamic [`Value`].
 pub trait IntoValue {
-    /// Convert into a dynamic [`Value`].
-    #[doc(hidden)]
-    fn into_value(self) -> Value;
+	/// Convert into a dynamic [`Value`].
+	#[doc(hidden)]
+	fn into_value(self) -> Value;
 }
 
 impl IntoValue for Value {
-    #[inline]
-    fn into_value(self) -> Value {
-        self
-    }
+	#[inline]
+	fn into_value(self) -> Value {
+		self
+	}
 }
 
 impl IntoValue for &Value {
-    #[inline]
-    fn into_value(self) -> Value {
-        self.clone()
-    }
+	#[inline]
+	fn into_value(self) -> Value {
+		self.clone()
+	}
 }
 
 /// Convert something into the dynamic [`Value`].
@@ -137,9 +137,9 @@ impl IntoValue for &Value {
 /// ```
 pub fn from_value<T>(value: impl IntoValue) -> Result<T, RuntimeError>
 where
-    T: FromValue,
+	T: FromValue,
 {
-    T::from_value(value.into_value())
+	T::from_value(value.into_value())
 }
 
 /// Trait for converting types from the dynamic [Value] container.
@@ -174,159 +174,159 @@ where
 /// # Ok::<_, rune::support::Error>(())
 /// ```
 #[diagnostic::on_unimplemented(
-    message = "FromValue is not implemented for `{Self}`",
-    label = "FromValue is not implemented for `{Self}`",
-    note = "This probably means that `{Self}` hasn't derived rune::Any"
+	message = "FromValue is not implemented for `{Self}`",
+	label = "FromValue is not implemented for `{Self}`",
+	note = "This probably means that `{Self}` hasn't derived rune::Any"
 )]
 pub trait FromValue: 'static + Sized {
-    /// Try to convert to the given type, from the given value.
-    fn from_value(value: Value) -> Result<Self, RuntimeError>;
+	/// Try to convert to the given type, from the given value.
+	fn from_value(value: Value) -> Result<Self, RuntimeError>;
 }
 
 /// Unsafe to mut coercion.
 pub trait UnsafeToMut {
-    /// The raw guard returned.
-    ///
-    /// Must only be dropped *after* the value returned from this function is no
-    /// longer live.
-    type Guard: 'static;
+	/// The raw guard returned.
+	///
+	/// Must only be dropped *after* the value returned from this function is no
+	/// longer live.
+	type Guard: 'static;
 
-    /// # Safety
-    ///
-    /// Caller must ensure that the returned reference does not outlive the
-    /// guard.
-    unsafe fn unsafe_to_mut<'a>(value: Value) -> Result<(&'a mut Self, Self::Guard), RuntimeError>;
+	/// # Safety
+	///
+	/// Caller must ensure that the returned reference does not outlive the
+	/// guard.
+	unsafe fn unsafe_to_mut<'a>(value: Value) -> Result<(&'a mut Self, Self::Guard), RuntimeError>;
 }
 
 /// Unsafe to ref coercion.
 pub trait UnsafeToRef {
-    /// The raw guard returned.
-    ///
-    /// Must only be dropped *after* the value returned from this function is no
-    /// longer live.
-    type Guard: 'static;
+	/// The raw guard returned.
+	///
+	/// Must only be dropped *after* the value returned from this function is no
+	/// longer live.
+	type Guard: 'static;
 
-    /// # Safety
-    ///
-    /// Caller must ensure that the returned reference does not outlive the
-    /// guard.
-    unsafe fn unsafe_to_ref<'a>(value: Value) -> Result<(&'a Self, Self::Guard), RuntimeError>;
+	/// # Safety
+	///
+	/// Caller must ensure that the returned reference does not outlive the
+	/// guard.
+	unsafe fn unsafe_to_ref<'a>(value: Value) -> Result<(&'a Self, Self::Guard), RuntimeError>;
 }
 
 impl<T> FromValue for T
 where
-    T: AnyMarker,
+	T: AnyMarker,
 {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        value.downcast()
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		value.downcast()
+	}
 }
 
 impl FromValue for Value {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        Ok(value)
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		Ok(value)
+	}
 }
 
 // Option impls
 
 impl<T> FromValue for Option<T>
 where
-    T: FromValue,
+	T: FromValue,
 {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        Ok(match value.downcast::<Option<Value>>()? {
-            Some(some) => Some(T::from_value(some.clone())?),
-            None => None,
-        })
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		Ok(match value.downcast::<Option<Value>>()? {
+			Some(some) => Some(T::from_value(some.clone())?),
+			None => None,
+		})
+	}
 }
 
 impl FromValue for rust_alloc::string::String {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        let string = String::from_value(value)?;
-        let string = rust_alloc::string::String::from(string);
-        Ok(string)
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		let string = String::from_value(value)?;
+		let string = rust_alloc::string::String::from(string);
+		Ok(string)
+	}
 }
 
 impl FromValue for alloc::Box<str> {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        let string = value.borrow_string_ref()?;
-        let string = alloc::Box::try_from(string.as_ref())?;
-        Ok(string)
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		let string = value.borrow_string_ref()?;
+		let string = alloc::Box::try_from(string.as_ref())?;
+		Ok(string)
+	}
 }
 
 impl FromValue for rust_alloc::boxed::Box<str> {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        let string = value.borrow_string_ref()?;
-        let string = rust_alloc::boxed::Box::<str>::from(string.as_ref());
-        Ok(string)
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		let string = value.borrow_string_ref()?;
+		let string = rust_alloc::boxed::Box::<str>::from(string.as_ref());
+		Ok(string)
+	}
 }
 
 impl FromValue for Ref<str> {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        Ok(Ref::map(Ref::<String>::from_value(value)?, String::as_str))
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		Ok(Ref::map(Ref::<String>::from_value(value)?, String::as_str))
+	}
 }
 
 impl UnsafeToRef for str {
-    type Guard = RawAnyGuard;
+	type Guard = RawAnyGuard;
 
-    #[inline]
-    unsafe fn unsafe_to_ref<'a>(value: Value) -> Result<(&'a Self, Self::Guard), RuntimeError> {
-        let string = value.into_ref::<String>()?;
-        let (string, guard) = Ref::into_raw(string);
-        Ok((string.as_ref().as_str(), guard))
-    }
+	#[inline]
+	unsafe fn unsafe_to_ref<'a>(value: Value) -> Result<(&'a Self, Self::Guard), RuntimeError> {
+		let string = value.into_ref::<String>()?;
+		let (string, guard) = Ref::into_raw(string);
+		Ok((string.as_ref().as_str(), guard))
+	}
 }
 
 impl UnsafeToMut for str {
-    type Guard = RawAnyGuard;
+	type Guard = RawAnyGuard;
 
-    #[inline]
-    unsafe fn unsafe_to_mut<'a>(value: Value) -> Result<(&'a mut Self, Self::Guard), RuntimeError> {
-        let string = value.into_mut::<String>()?;
-        let (mut string, guard) = Mut::into_raw(string);
-        Ok((string.as_mut().as_mut_str(), guard))
-    }
+	#[inline]
+	unsafe fn unsafe_to_mut<'a>(value: Value) -> Result<(&'a mut Self, Self::Guard), RuntimeError> {
+		let string = value.into_mut::<String>()?;
+		let (mut string, guard) = Mut::into_raw(string);
+		Ok((string.as_mut().as_mut_str(), guard))
+	}
 }
 
 impl<T, E> FromValue for Result<T, E>
 where
-    T: FromValue,
-    E: FromValue,
+	T: FromValue,
+	E: FromValue,
 {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        Ok(match value.downcast::<Result<Value, Value>>()? {
-            Ok(ok) => Result::Ok(T::from_value(ok.clone())?),
-            Err(err) => Result::Err(E::from_value(err.clone())?),
-        })
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		Ok(match value.downcast::<Result<Value, Value>>()? {
+			Ok(ok) => Result::Ok(T::from_value(ok.clone())?),
+			Err(err) => Result::Err(E::from_value(err.clone())?),
+		})
+	}
 }
 
 impl FromValue for bool {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        value.as_bool()
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		value.as_bool()
+	}
 }
 
 impl FromValue for char {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        value.as_char()
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		value.as_char()
+	}
 }
 
 macro_rules! impl_integer {
@@ -345,83 +345,83 @@ macro_rules! impl_integer {
 impl_integer!(u8, u16, u32, u64, u128, usize, i8, i16, i32, i64, i128, isize);
 
 impl FromValue for f64 {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        value.as_float()
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		value.as_float()
+	}
 }
 
 impl FromValue for f32 {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        Ok(value.as_float()? as f32)
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		Ok(value.as_float()? as f32)
+	}
 }
 
 macro_rules! impl_map {
-    ($ty:ty, $key:ty) => {
-        #[cfg(feature = "std")]
-        #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
-        impl<T> FromValue for $ty
-        where
-            T: FromValue,
-        {
-            fn from_value(value: Value) -> Result<Self, RuntimeError> {
-                let object = value.downcast::<$crate::runtime::Object>()?;
+	($ty:ty, $key:ty) => {
+		#[cfg(feature = "std")]
+		#[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
+		impl<T> FromValue for $ty
+		where
+			T: FromValue,
+		{
+			fn from_value(value: Value) -> Result<Self, RuntimeError> {
+				let object = value.downcast::<$crate::runtime::Object>()?;
 
-                let mut output = <$ty>::with_capacity(object.len());
+				let mut output = <$ty>::with_capacity(object.len());
 
-                for (key, value) in object {
-                    let key = <$key>::try_from(key)?;
-                    let value = <T>::from_value(value)?;
-                    output.insert(key, value);
-                }
+				for (key, value) in object {
+					let key = <$key>::try_from(key)?;
+					let value = <T>::from_value(value)?;
+					output.insert(key, value);
+				}
 
-                Ok(output)
-            }
-        }
-    };
+				Ok(output)
+			}
+		}
+	};
 }
 
 impl_map!(::std::collections::HashMap<String, T>, String);
 impl_map!(::std::collections::HashMap<rust_alloc::string::String, T>, rust_alloc::string::String);
 
 macro_rules! impl_try_map {
-    ($ty:ty, $key:ty) => {
-        impl<T> FromValue for $ty
-        where
-            T: FromValue,
-        {
-            fn from_value(value: Value) -> Result<Self, RuntimeError> {
-                let object = value.downcast::<$crate::runtime::Object>()?;
+	($ty:ty, $key:ty) => {
+		impl<T> FromValue for $ty
+		where
+			T: FromValue,
+		{
+			fn from_value(value: Value) -> Result<Self, RuntimeError> {
+				let object = value.downcast::<$crate::runtime::Object>()?;
 
-                let mut output = <$ty>::try_with_capacity(object.len())?;
+				let mut output = <$ty>::try_with_capacity(object.len())?;
 
-                for (key, value) in object {
-                    let key = <$key>::try_from(key)?;
-                    let value = <T>::from_value(value)?;
-                    output.try_insert(key, value)?;
-                }
+				for (key, value) in object {
+					let key = <$key>::try_from(key)?;
+					let value = <T>::from_value(value)?;
+					output.try_insert(key, value)?;
+				}
 
-                Ok(output)
-            }
-        }
-    };
+				Ok(output)
+			}
+		}
+	};
 }
 
 impl_try_map!(alloc::HashMap<String, T>, String);
 impl_try_map!(alloc::HashMap<rust_alloc::string::String, T>, rust_alloc::string::String);
 
 impl FromValue for Ordering {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        value.as_ordering()
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		value.as_ordering()
+	}
 }
 
 impl FromValue for Hash {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        value.as_hash()
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		value.as_hash()
+	}
 }

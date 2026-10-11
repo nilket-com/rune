@@ -10,9 +10,9 @@ use crate::sync::Arc;
 use crate::{vm_error, Any, Hash, Item, ItemBuf};
 
 use super::{
-    AccessError, AnyObjError, AnyObjErrorKind, AnySequenceTakeError, BoxedPanic, CallFrame,
-    DynArgsUsed, ExecutionState, Panic, Protocol, SliceError, StackError, StaticString, StoreError,
-    StoreErrorKind, TypeInfo, TypeOf, Unit, Vm, VmHaltInfo,
+	AccessError, AnyObjError, AnyObjErrorKind, AnySequenceTakeError, BoxedPanic, CallFrame,
+	DynArgsUsed, ExecutionState, Panic, Protocol, SliceError, StackError, StaticString, StoreError,
+	StoreErrorKind, TypeInfo, TypeOf, Unit, Vm, VmHaltInfo,
 };
 
 macro_rules! from_new {
@@ -34,138 +34,138 @@ vm_error!(VmError);
 
 /// A virtual machine error which includes tracing information.
 pub struct VmError {
-    inner: Box<VmErrorInner>,
+	inner: Box<VmErrorInner>,
 }
 
 impl VmError {
-    #[inline]
-    pub(crate) fn new<E>(error: E) -> Self
-    where
-        VmErrorKind: From<E>,
-    {
-        Self {
-            inner: Box::new(VmErrorInner {
-                error: VmErrorAt {
-                    #[cfg(feature = "emit")]
-                    index: 0,
-                    kind: VmErrorKind::from(error),
-                },
-                chain: rust_alloc::vec::Vec::new(),
-                stacktrace: rust_alloc::vec::Vec::new(),
-            }),
-        }
-    }
+	#[inline]
+	pub(crate) fn new<E>(error: E) -> Self
+	where
+		VmErrorKind: From<E>,
+	{
+		Self {
+			inner: Box::new(VmErrorInner {
+				error: VmErrorAt {
+					#[cfg(feature = "emit")]
+					index: 0,
+					kind: VmErrorKind::from(error),
+				},
+				chain: rust_alloc::vec::Vec::new(),
+				stacktrace: rust_alloc::vec::Vec::new(),
+			}),
+		}
+	}
 
-    /// Construct an error containing a panic.
-    #[inline]
-    pub fn panic<D>(message: D) -> Self
-    where
-        D: 'static + BoxedPanic,
-    {
-        Self::from(Panic::custom(message))
-    }
+	/// Construct an error containing a panic.
+	#[inline]
+	pub fn panic<D>(message: D) -> Self
+	where
+		D: 'static + BoxedPanic,
+	{
+		Self::from(Panic::custom(message))
+	}
 
-    /// Construct an expectation error. The actual type received is `actual`,
-    /// but we expected `E`.
-    #[inline]
-    pub fn expected<E>(actual: TypeInfo) -> Self
-    where
-        E: ?Sized + TypeOf,
-    {
-        Self::from(VmErrorKind::expected::<E>(actual))
-    }
+	/// Construct an expectation error. The actual type received is `actual`,
+	/// but we expected `E`.
+	#[inline]
+	pub fn expected<E>(actual: TypeInfo) -> Self
+	where
+		E: ?Sized + TypeOf,
+	{
+		Self::from(VmErrorKind::expected::<E>(actual))
+	}
 
-    /// Get the location where the error happened.
-    #[inline]
-    pub fn at(&self) -> &VmErrorAt {
-        &self.inner.error
-    }
+	/// Get the location where the error happened.
+	#[inline]
+	pub fn at(&self) -> &VmErrorAt {
+		&self.inner.error
+	}
 
-    /// Get the top-level error.
-    #[inline]
-    pub fn error(&self) -> &VmErrorAt {
-        &self.inner.error
-    }
+	/// Get the top-level error.
+	#[inline]
+	pub fn error(&self) -> &VmErrorAt {
+		&self.inner.error
+	}
 
-    /// Get the full backtrace of errors and their corresponding instructions.
-    #[inline]
-    pub fn chain(&self) -> &[VmErrorAt] {
-        &self.inner.chain
-    }
+	/// Get the full backtrace of errors and their corresponding instructions.
+	#[inline]
+	pub fn chain(&self) -> &[VmErrorAt] {
+		&self.inner.chain
+	}
 
-    /// Get the full backtrace of errors and their corresponding instructions.
-    #[inline]
-    pub fn stacktrace(&self) -> &[VmErrorLocation] {
-        &self.inner.stacktrace
-    }
+	/// Get the full backtrace of errors and their corresponding instructions.
+	#[inline]
+	pub fn stacktrace(&self) -> &[VmErrorLocation] {
+		&self.inner.stacktrace
+	}
 
-    /// Construct an overflow error.
-    #[inline]
-    pub fn overflow() -> Self {
-        Self::from(VmErrorKind::Overflow)
-    }
+	/// Construct an overflow error.
+	#[inline]
+	pub fn overflow() -> Self {
+		Self::from(VmErrorKind::Overflow)
+	}
 
-    /// Get the first error location.
-    #[inline]
-    pub fn first_location(&self) -> Option<&VmErrorLocation> {
-        self.inner.stacktrace.first()
-    }
+	/// Get the first error location.
+	#[inline]
+	pub fn first_location(&self) -> Option<&VmErrorLocation> {
+		self.inner.stacktrace.first()
+	}
 
-    #[inline]
-    pub(crate) fn into_kind(self) -> VmErrorKind {
-        self.inner.error.kind
-    }
+	#[inline]
+	pub(crate) fn into_kind(self) -> VmErrorKind {
+		self.inner.error.kind
+	}
 
-    /// Apply the given frame to the current result.
-    pub(crate) fn with_vm<T>(result: Result<T, Self>, vm: &Vm) -> Result<T, Self> {
-        match result {
-            Ok(ok) => Ok(ok),
-            Err(mut err) => {
-                err.inner.stacktrace.push(VmErrorLocation {
-                    unit: vm.unit().clone(),
-                    ip: vm.last_ip(),
-                    frames: vm.call_frames().to_vec(),
-                });
+	/// Apply the given frame to the current result.
+	pub(crate) fn with_vm<T>(result: Result<T, Self>, vm: &Vm) -> Result<T, Self> {
+		match result {
+			Ok(ok) => Ok(ok),
+			Err(mut err) => {
+				err.inner.stacktrace.push(VmErrorLocation {
+					unit: vm.unit().clone(),
+					ip: vm.last_ip(),
+					frames: vm.call_frames().to_vec(),
+				});
 
-                Err(err)
-            }
-        }
-    }
+				Err(err)
+			}
+		}
+	}
 
-    /// Add auxilliary errors if appropriate.
-    #[inline]
-    pub(crate) fn with_error<E>(mut self, error: E) -> Self
-    where
-        VmErrorKind: From<E>,
-    {
-        #[cfg(feature = "emit")]
-        let index = self.inner.stacktrace.len();
+	/// Add auxilliary errors if appropriate.
+	#[inline]
+	pub(crate) fn with_error<E>(mut self, error: E) -> Self
+	where
+		VmErrorKind: From<E>,
+	{
+		#[cfg(feature = "emit")]
+		let index = self.inner.stacktrace.len();
 
-        self.inner.chain.push(VmErrorAt {
-            #[cfg(feature = "emit")]
-            index,
-            kind: VmErrorKind::from(error),
-        });
+		self.inner.chain.push(VmErrorAt {
+			#[cfg(feature = "emit")]
+			index,
+			kind: VmErrorKind::from(error),
+		});
 
-        self
-    }
+		self
+	}
 }
 
 impl fmt::Display for VmError {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.inner.error.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.inner.error.fmt(f)
+	}
 }
 
 impl fmt::Debug for VmError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("VmError")
-            .field("error", &self.inner.error)
-            .field("chain", &self.inner.chain)
-            .field("stacktrace", &self.inner.stacktrace)
-            .finish()
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		f.debug_struct("VmError")
+			.field("error", &self.inner.error)
+			.field("chain", &self.inner.chain)
+			.field("stacktrace", &self.inner.stacktrace)
+			.finish()
+	}
 }
 
 impl core::error::Error for VmError {}
@@ -174,49 +174,49 @@ impl core::error::Error for VmError {}
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct VmErrorLocation {
-    /// Associated unit.
-    pub unit: Arc<Unit>,
-    /// Frozen instruction pointer.
-    pub ip: usize,
-    /// All lower call frames before the unwind trigger point
-    pub frames: rust_alloc::vec::Vec<CallFrame>,
+	/// Associated unit.
+	pub unit: Arc<Unit>,
+	/// Frozen instruction pointer.
+	pub ip: usize,
+	/// All lower call frames before the unwind trigger point
+	pub frames: rust_alloc::vec::Vec<CallFrame>,
 }
 
 #[derive(Debug)]
 #[non_exhaustive]
 pub struct VmErrorAt {
-    /// Index into the backtrace which contains information of what caused this error.
-    #[cfg(feature = "emit")]
-    index: usize,
-    /// The kind of error.
-    kind: VmErrorKind,
+	/// Index into the backtrace which contains information of what caused this error.
+	#[cfg(feature = "emit")]
+	index: usize,
+	/// The kind of error.
+	kind: VmErrorKind,
 }
 
 impl VmErrorAt {
-    /// Get the instruction which caused the error.
-    #[cfg(feature = "emit")]
-    pub(crate) fn index(&self) -> usize {
-        self.index
-    }
+	/// Get the instruction which caused the error.
+	#[cfg(feature = "emit")]
+	pub(crate) fn index(&self) -> usize {
+		self.index
+	}
 
-    #[cfg(feature = "emit")]
-    pub(crate) fn kind(&self) -> &VmErrorKind {
-        &self.kind
-    }
+	#[cfg(feature = "emit")]
+	pub(crate) fn kind(&self) -> &VmErrorKind {
+		&self.kind
+	}
 }
 
 impl fmt::Display for VmErrorAt {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.kind.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.kind.fmt(f)
+	}
 }
 
 #[non_exhaustive]
 pub(crate) struct VmErrorInner {
-    pub(crate) error: VmErrorAt,
-    pub(crate) chain: rust_alloc::vec::Vec<VmErrorAt>,
-    pub(crate) stacktrace: rust_alloc::vec::Vec<VmErrorLocation>,
+	pub(crate) error: VmErrorAt,
+	pub(crate) chain: rust_alloc::vec::Vec<VmErrorAt>,
+	pub(crate) stacktrace: rust_alloc::vec::Vec<VmErrorLocation>,
 }
 
 /// A result produced by the virtual machine.
@@ -225,93 +225,93 @@ pub type VmResult<T> = Result<T, VmError>;
 
 impl<E> From<E> for VmError
 where
-    VmErrorKind: From<E>,
+	VmErrorKind: From<E>,
 {
-    #[inline]
-    fn from(error: E) -> Self {
-        Self::new(error)
-    }
+	#[inline]
+	fn from(error: E) -> Self {
+		Self::new(error)
+	}
 }
 
 impl<E> From<CustomError<E>> for VmError
 where
-    VmError: From<E>,
+	VmError: From<E>,
 {
-    #[inline]
-    fn from(error: CustomError<E>) -> Self {
-        match error {
-            CustomError::Custom(error) => Self::from(error),
-            CustomError::Error(error) => VmError::new(error),
-        }
-    }
+	#[inline]
+	fn from(error: CustomError<E>) -> Self {
+		match error {
+			CustomError::Custom(error) => Self::from(error),
+			CustomError::Error(error) => VmError::new(error),
+		}
+	}
 }
 
 impl<const N: usize> From<[VmErrorKind; N]> for VmError {
-    fn from(kinds: [VmErrorKind; N]) -> Self {
-        let mut it = kinds.into_iter();
+	fn from(kinds: [VmErrorKind; N]) -> Self {
+		let mut it = kinds.into_iter();
 
-        let Some(first) = it.next() else {
-            return VmError::panic("Cannot construct an empty collection of errors");
-        };
+		let Some(first) = it.next() else {
+			return VmError::panic("Cannot construct an empty collection of errors");
+		};
 
-        let mut chain = rust_alloc::vec::Vec::with_capacity(it.len());
+		let mut chain = rust_alloc::vec::Vec::with_capacity(it.len());
 
-        for kind in it {
-            chain.push(VmErrorAt {
-                #[cfg(feature = "emit")]
-                index: 0,
-                kind,
-            });
-        }
+		for kind in it {
+			chain.push(VmErrorAt {
+				#[cfg(feature = "emit")]
+				index: 0,
+				kind,
+			});
+		}
 
-        Self {
-            inner: Box::new(VmErrorInner {
-                error: VmErrorAt {
-                    #[cfg(feature = "emit")]
-                    index: 0,
-                    kind: first,
-                },
-                chain,
-                stacktrace: rust_alloc::vec::Vec::new(),
-            }),
-        }
-    }
+		Self {
+			inner: Box::new(VmErrorInner {
+				error: VmErrorAt {
+					#[cfg(feature = "emit")]
+					index: 0,
+					kind: first,
+				},
+				chain,
+				stacktrace: rust_alloc::vec::Vec::new(),
+			}),
+		}
+	}
 }
 
 impl From<Panic> for VmErrorKind {
-    #[inline]
-    fn from(reason: Panic) -> Self {
-        VmErrorKind::Panic { reason }
-    }
+	#[inline]
+	fn from(reason: Panic) -> Self {
+		VmErrorKind::Panic { reason }
+	}
 }
 
 impl From<ExpectedType> for VmErrorKind {
-    #[inline]
-    fn from(expected: ExpectedType) -> Self {
-        VmErrorKind::ExpectedType {
-            expected: expected.expected,
-            actual: expected.actual,
-        }
-    }
+	#[inline]
+	fn from(expected: ExpectedType) -> Self {
+		VmErrorKind::ExpectedType {
+			expected: expected.expected,
+			actual: expected.actual,
+		}
+	}
 }
 
 /// A expected error.
 pub struct ExpectedType {
-    pub(crate) expected: TypeInfo,
-    pub(crate) actual: TypeInfo,
+	pub(crate) expected: TypeInfo,
+	pub(crate) actual: TypeInfo,
 }
 
 impl ExpectedType {
-    /// Construct an expected error.
-    pub(crate) fn new<T>(actual: TypeInfo) -> Self
-    where
-        T: ?Sized + TypeOf,
-    {
-        Self {
-            expected: T::type_info(),
-            actual,
-        }
-    }
+	/// Construct an expected error.
+	pub(crate) fn new<T>(actual: TypeInfo) -> Self
+	where
+		T: ?Sized + TypeOf,
+	{
+		Self {
+			expected: T::type_info(),
+			actual,
+		}
+	}
 }
 
 vm_error!(RuntimeError);
@@ -319,125 +319,125 @@ vm_error!(RuntimeError);
 /// An opaque simple runtime error.
 #[cfg_attr(test, derive(PartialEq))]
 pub struct RuntimeError {
-    error: Box<VmErrorKind>,
+	error: Box<VmErrorKind>,
 }
 
 impl RuntimeError {
-    #[inline]
-    pub(crate) fn new<E>(error: E) -> Self
-    where
-        VmErrorKind: From<E>,
-    {
-        Self {
-            error: Box::new(VmErrorKind::from(error)),
-        }
-    }
+	#[inline]
+	pub(crate) fn new<E>(error: E) -> Self
+	where
+		VmErrorKind: From<E>,
+	{
+		Self {
+			error: Box::new(VmErrorKind::from(error)),
+		}
+	}
 
-    #[inline]
-    pub(crate) fn into_vm_error_kind(self) -> VmErrorKind {
-        *self.error
-    }
+	#[inline]
+	pub(crate) fn into_vm_error_kind(self) -> VmErrorKind {
+		*self.error
+	}
 
-    /// Construct an error containing a panic.
-    #[inline]
-    pub fn panic<D>(message: D) -> Self
-    where
-        D: 'static + BoxedPanic,
-    {
-        Self::new(Panic::custom(message))
-    }
+	/// Construct an error containing a panic.
+	#[inline]
+	pub fn panic<D>(message: D) -> Self
+	where
+		D: 'static + BoxedPanic,
+	{
+		Self::new(Panic::custom(message))
+	}
 
-    /// Bad argument count.
-    pub fn bad_argument_count(actual: usize, expected: usize) -> Self {
-        Self::new(VmErrorKind::BadArgumentCount { actual, expected })
-    }
+	/// Bad argument count.
+	pub fn bad_argument_count(actual: usize, expected: usize) -> Self {
+		Self::new(VmErrorKind::BadArgumentCount { actual, expected })
+	}
 
-    /// Construct an expected error.
-    pub fn expected<T>(actual: TypeInfo) -> Self
-    where
-        T: ?Sized + TypeOf,
-    {
-        Self::new(VmErrorKind::ExpectedType {
-            expected: T::type_info(),
-            actual,
-        })
-    }
+	/// Construct an expected error.
+	pub fn expected<T>(actual: TypeInfo) -> Self
+	where
+		T: ?Sized + TypeOf,
+	{
+		Self::new(VmErrorKind::ExpectedType {
+			expected: T::type_info(),
+			actual,
+		})
+	}
 
-    /// Construct an expected error from any.
-    pub(crate) fn expected_any<T>(actual: TypeInfo) -> Self
-    where
-        T: Any,
-    {
-        Self::new(VmErrorKind::ExpectedType {
-            expected: TypeInfo::any::<T>(),
-            actual,
-        })
-    }
+	/// Construct an expected error from any.
+	pub(crate) fn expected_any<T>(actual: TypeInfo) -> Self
+	where
+		T: Any,
+	{
+		Self::new(VmErrorKind::ExpectedType {
+			expected: TypeInfo::any::<T>(),
+			actual,
+		})
+	}
 
-    /// Construct an expected any error.
-    pub(crate) fn expected_any_obj(actual: TypeInfo) -> Self {
-        Self::new(VmErrorKind::ExpectedAny { actual })
-    }
+	/// Construct an expected any error.
+	pub(crate) fn expected_any_obj(actual: TypeInfo) -> Self {
+		Self::new(VmErrorKind::ExpectedAny { actual })
+	}
 
-    /// Indicate that a constant constructor is missing.
-    pub(crate) fn missing_constant_constructor(hash: Hash) -> Self {
-        Self::new(VmErrorKind::MissingConstantConstructor { hash })
-    }
+	/// Indicate that a constant constructor is missing.
+	pub(crate) fn missing_constant_constructor(hash: Hash) -> Self {
+		Self::new(VmErrorKind::MissingConstantConstructor { hash })
+	}
 
-    pub(crate) fn expected_empty(actual: TypeInfo) -> Self {
-        Self::new(VmErrorKind::ExpectedEmpty { actual })
-    }
+	pub(crate) fn expected_empty(actual: TypeInfo) -> Self {
+		Self::new(VmErrorKind::ExpectedEmpty { actual })
+	}
 
-    pub(crate) fn expected_tuple(actual: TypeInfo) -> Self {
-        Self::new(VmErrorKind::ExpectedTuple { actual })
-    }
+	pub(crate) fn expected_tuple(actual: TypeInfo) -> Self {
+		Self::new(VmErrorKind::ExpectedTuple { actual })
+	}
 
-    pub(crate) fn expected_struct(actual: TypeInfo) -> Self {
-        Self::new(VmErrorKind::ExpectedStruct { actual })
-    }
+	pub(crate) fn expected_struct(actual: TypeInfo) -> Self {
+		Self::new(VmErrorKind::ExpectedStruct { actual })
+	}
 }
 
 impl core::error::Error for RuntimeError {}
 
 impl fmt::Display for RuntimeError {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.error.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.error.fmt(f)
+	}
 }
 
 impl fmt::Debug for RuntimeError {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.error.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.error.fmt(f)
+	}
 }
 
 impl From<VmError> for RuntimeError {
-    #[inline]
-    fn from(error: VmError) -> Self {
-        Self::new(error.into_kind())
-    }
+	#[inline]
+	fn from(error: VmError) -> Self {
+		Self::new(error.into_kind())
+	}
 }
 
 impl From<Infallible> for RuntimeError {
-    #[inline]
-    fn from(error: Infallible) -> Self {
-        match error {}
-    }
+	#[inline]
+	fn from(error: Infallible) -> Self {
+		match error {}
+	}
 }
 
 from_new! {
-    RuntimeError {
-        alloc::Error,
-        alloc::alloc::AllocError,
-        AccessError,
-        AnySequenceTakeError,
-        AnyObjError,
-        StackError,
-        VmErrorKind,
-        ExpectedType,
-    }
+	RuntimeError {
+		alloc::Error,
+		alloc::alloc::AllocError,
+		AccessError,
+		AnySequenceTakeError,
+		AnyObjError,
+		StackError,
+		VmErrorKind,
+		ExpectedType,
+	}
 }
 
 /// The kind of error encountered.
@@ -445,302 +445,302 @@ from_new! {
 #[cfg_attr(test, derive(PartialEq))]
 #[doc(hidden)]
 pub(crate) enum VmErrorKind {
-    AllocError {
-        error: alloc::Error,
-    },
-    AccessError {
-        error: AccessError,
-    },
-    StackError {
-        error: StackError,
-    },
-    SliceError {
-        error: SliceError,
-    },
-    BadInstruction {
-        error: BadInstruction,
-    },
-    BadJump {
-        error: BadJump,
-    },
-    DynArgsUsed {
-        error: DynArgsUsed,
-    },
-    Panic {
-        reason: Panic,
-    },
-    NoRunningVm,
-    Halted {
-        halt: VmHaltInfo,
-    },
-    Overflow,
-    Underflow,
-    DivideByZero,
-    MissingEntry {
-        item: ItemBuf,
-        hash: Hash,
-    },
-    MissingEntryHash {
-        hash: Hash,
-    },
-    MissingFunction {
-        hash: Hash,
-    },
-    MissingContextFunction {
-        hash: Hash,
-    },
-    NotOwned {
-        type_info: TypeInfo,
-    },
-    MissingProtocolFunction {
-        protocol: &'static Protocol,
-        instance: TypeInfo,
-    },
-    MissingInstanceFunction {
-        hash: Hash,
-        instance: TypeInfo,
-    },
-    IpOutOfBounds {
-        ip: usize,
-        length: usize,
-    },
-    UnsupportedBinaryOperation {
-        op: &'static str,
-        lhs: TypeInfo,
-        rhs: TypeInfo,
-    },
-    UnsupportedUnaryOperation {
-        op: &'static str,
-        operand: TypeInfo,
-    },
-    MissingStaticString {
-        slot: usize,
-    },
-    MissingStaticBytes {
-        slot: usize,
-    },
-    MissingStaticObjectKeys {
-        slot: usize,
-    },
-    MissingDropSet {
-        set: usize,
-    },
-    MissingGlobals {
-        slot: usize,
-        name: Option<ItemBuf>,
-    },
-    BadGlobalSlot {
-        slot: usize,
-        name: Option<ItemBuf>,
-    },
-    UninitializedGlobal {
-        slot: usize,
-        name: Option<ItemBuf>,
-    },
-    MissingRtti {
-        hash: Hash,
-    },
-    BadArgumentCount {
-        actual: usize,
-        expected: usize,
-    },
-    /// A walk over a value descended more deeply than it is allowed to.
-    ///
-    /// Comparing, ordering, hashing and formatting a value all recurse into the
-    /// values it is made of, so a graph which nests too deeply is reported
-    /// rather than overflowing the stack.
-    MaxValueDepth {
-        max: usize,
-    },
-    /// A value was nested more deeply than a constant is allowed to be.
-    ///
-    /// A `ConstValue` is built, walked, cloned and dropped by recursing over
-    /// it, and the value it is built from is produced by evaluation, so how
-    /// deep it is has nothing to do with how deep the source was.
-    MaxConstDepth {
-        max: usize,
-    },
-    /// A constant is made of more values than it is allowed to be.
-    MaxConstSize {
-        max: usize,
-    },
-    /// The array a constant is stored as does not describe a tree.
-    ///
-    /// A constant is one array of nodes in which every subtree is a contiguous
-    /// run, so an array in which a node claims children it does not have is not
-    /// a constant. Building one here cannot produce such an array; reading one
-    /// back from somewhere else can.
-    MalformedConstValue,
-    /// Executions were nested more deeply than they are allowed to be.
-    ///
-    /// A call which a native function performs is driven by a machine of its
-    /// own, which costs a native frame, so a script which nests them too deeply
-    /// is reported rather than overflowing the stack.
-    MaxExecutionDepth {
-        max: usize,
-    },
-    BadEnvironmentCount {
-        actual: usize,
-        expected: usize,
-    },
-    BadArgument {
-        arg: usize,
-    },
-    UnsupportedIndexSet {
-        target: TypeInfo,
-        index: TypeInfo,
-        value: TypeInfo,
-    },
-    UnsupportedIndexGet {
-        target: TypeInfo,
-        index: TypeInfo,
-    },
-    UnsupportedTupleIndexGet {
-        target: TypeInfo,
-        index: usize,
-    },
-    UnsupportedTupleIndexSet {
-        target: TypeInfo,
-    },
-    UnsupportedObjectSlotIndexGet {
-        target: TypeInfo,
-        field: Arc<StaticString>,
-    },
-    UnsupportedObjectSlotIndexSet {
-        target: TypeInfo,
-        field: Arc<StaticString>,
-    },
-    UnsupportedIs {
-        value: TypeInfo,
-        test_type: TypeInfo,
-    },
-    UnsupportedAs {
-        value: TypeInfo,
-    },
-    UnsupportedAsTarget {
-        value: TypeInfo,
-    },
-    UnsupportedCallFn {
-        actual: TypeInfo,
-    },
-    ObjectIndexMissing {
-        slot: usize,
-    },
-    MissingIndex {
-        target: TypeInfo,
-    },
-    MissingIndexInteger {
-        target: TypeInfo,
-        index: VmIntegerRepr,
-    },
-    MissingIndexKey {
-        target: TypeInfo,
-    },
-    OutOfRange {
-        index: VmIntegerRepr,
-        length: VmIntegerRepr,
-    },
-    UnsupportedTryOperand {
-        actual: TypeInfo,
-    },
-    UnsupportedIterRangeInclusive {
-        start: TypeInfo,
-        end: TypeInfo,
-    },
-    UnsupportedIterRangeFrom {
-        start: TypeInfo,
-    },
-    UnsupportedIterRange {
-        start: TypeInfo,
-        end: TypeInfo,
-    },
-    UnsupportedIterNextOperand {
-        actual: TypeInfo,
-    },
-    ExpectedType {
-        expected: TypeInfo,
-        actual: TypeInfo,
-    },
-    ExpectedAny {
-        actual: TypeInfo,
-    },
-    ExpectedNumber {
-        actual: TypeInfo,
-    },
-    ExpectedEmpty {
-        actual: TypeInfo,
-    },
-    ExpectedTuple {
-        actual: TypeInfo,
-    },
-    ExpectedStruct {
-        actual: TypeInfo,
-    },
-    MissingConstantConstructor {
-        hash: Hash,
-    },
-    ValueToIntegerCoercionError {
-        from: VmIntegerRepr,
-        to: &'static str,
-    },
-    IntegerToValueCoercionError {
-        from: VmIntegerRepr,
-        to: &'static str,
-    },
-    ExpectedTupleLength {
-        actual: usize,
-        expected: usize,
-    },
-    ExpectedVecLength {
-        actual: usize,
-        expected: usize,
-    },
-    ConstNotSupported {
-        actual: TypeInfo,
-    },
-    MissingInterfaceEnvironment,
-    ExpectedExitedExecutionState {
-        actual: ExecutionState,
-    },
-    GeneratorComplete,
-    FutureCompleted,
-    // Used in rune-macros.
-    MissingVariant {
-        name: String,
-    },
-    MissingField {
-        target: TypeInfo,
-        field: String,
-    },
-    MissingVariantName,
-    MissingStructField {
-        target: &'static str,
-        name: &'static str,
-    },
-    MissingTupleIndex {
-        target: &'static str,
-        index: usize,
-    },
-    ExpectedVariant {
-        actual: TypeInfo,
-    },
-    UnsupportedObjectFieldGet {
-        target: TypeInfo,
-    },
-    IllegalFloatComparison {
-        lhs: f64,
-        rhs: f64,
-    },
-    IllegalFloatOperation {
-        value: f64,
-    },
-    MissingCallFrame,
-    IllegalFormat,
+	AllocError {
+		error: alloc::Error,
+	},
+	AccessError {
+		error: AccessError,
+	},
+	StackError {
+		error: StackError,
+	},
+	SliceError {
+		error: SliceError,
+	},
+	BadInstruction {
+		error: BadInstruction,
+	},
+	BadJump {
+		error: BadJump,
+	},
+	DynArgsUsed {
+		error: DynArgsUsed,
+	},
+	Panic {
+		reason: Panic,
+	},
+	NoRunningVm,
+	Halted {
+		halt: VmHaltInfo,
+	},
+	Overflow,
+	Underflow,
+	DivideByZero,
+	MissingEntry {
+		item: ItemBuf,
+		hash: Hash,
+	},
+	MissingEntryHash {
+		hash: Hash,
+	},
+	MissingFunction {
+		hash: Hash,
+	},
+	MissingContextFunction {
+		hash: Hash,
+	},
+	NotOwned {
+		type_info: TypeInfo,
+	},
+	MissingProtocolFunction {
+		protocol: &'static Protocol,
+		instance: TypeInfo,
+	},
+	MissingInstanceFunction {
+		hash: Hash,
+		instance: TypeInfo,
+	},
+	IpOutOfBounds {
+		ip: usize,
+		length: usize,
+	},
+	UnsupportedBinaryOperation {
+		op: &'static str,
+		lhs: TypeInfo,
+		rhs: TypeInfo,
+	},
+	UnsupportedUnaryOperation {
+		op: &'static str,
+		operand: TypeInfo,
+	},
+	MissingStaticString {
+		slot: usize,
+	},
+	MissingStaticBytes {
+		slot: usize,
+	},
+	MissingStaticObjectKeys {
+		slot: usize,
+	},
+	MissingDropSet {
+		set: usize,
+	},
+	MissingGlobals {
+		slot: usize,
+		name: Option<ItemBuf>,
+	},
+	BadGlobalSlot {
+		slot: usize,
+		name: Option<ItemBuf>,
+	},
+	UninitializedGlobal {
+		slot: usize,
+		name: Option<ItemBuf>,
+	},
+	MissingRtti {
+		hash: Hash,
+	},
+	BadArgumentCount {
+		actual: usize,
+		expected: usize,
+	},
+	/// A walk over a value descended more deeply than it is allowed to.
+	///
+	/// Comparing, ordering, hashing and formatting a value all recurse into the
+	/// values it is made of, so a graph which nests too deeply is reported
+	/// rather than overflowing the stack.
+	MaxValueDepth {
+		max: usize,
+	},
+	/// A value was nested more deeply than a constant is allowed to be.
+	///
+	/// A `ConstValue` is built, walked, cloned and dropped by recursing over
+	/// it, and the value it is built from is produced by evaluation, so how
+	/// deep it is has nothing to do with how deep the source was.
+	MaxConstDepth {
+		max: usize,
+	},
+	/// A constant is made of more values than it is allowed to be.
+	MaxConstSize {
+		max: usize,
+	},
+	/// The array a constant is stored as does not describe a tree.
+	///
+	/// A constant is one array of nodes in which every subtree is a contiguous
+	/// run, so an array in which a node claims children it does not have is not
+	/// a constant. Building one here cannot produce such an array; reading one
+	/// back from somewhere else can.
+	MalformedConstValue,
+	/// Executions were nested more deeply than they are allowed to be.
+	///
+	/// A call which a native function performs is driven by a machine of its
+	/// own, which costs a native frame, so a script which nests them too deeply
+	/// is reported rather than overflowing the stack.
+	MaxExecutionDepth {
+		max: usize,
+	},
+	BadEnvironmentCount {
+		actual: usize,
+		expected: usize,
+	},
+	BadArgument {
+		arg: usize,
+	},
+	UnsupportedIndexSet {
+		target: TypeInfo,
+		index: TypeInfo,
+		value: TypeInfo,
+	},
+	UnsupportedIndexGet {
+		target: TypeInfo,
+		index: TypeInfo,
+	},
+	UnsupportedTupleIndexGet {
+		target: TypeInfo,
+		index: usize,
+	},
+	UnsupportedTupleIndexSet {
+		target: TypeInfo,
+	},
+	UnsupportedObjectSlotIndexGet {
+		target: TypeInfo,
+		field: Arc<StaticString>,
+	},
+	UnsupportedObjectSlotIndexSet {
+		target: TypeInfo,
+		field: Arc<StaticString>,
+	},
+	UnsupportedIs {
+		value: TypeInfo,
+		test_type: TypeInfo,
+	},
+	UnsupportedAs {
+		value: TypeInfo,
+	},
+	UnsupportedAsTarget {
+		value: TypeInfo,
+	},
+	UnsupportedCallFn {
+		actual: TypeInfo,
+	},
+	ObjectIndexMissing {
+		slot: usize,
+	},
+	MissingIndex {
+		target: TypeInfo,
+	},
+	MissingIndexInteger {
+		target: TypeInfo,
+		index: VmIntegerRepr,
+	},
+	MissingIndexKey {
+		target: TypeInfo,
+	},
+	OutOfRange {
+		index: VmIntegerRepr,
+		length: VmIntegerRepr,
+	},
+	UnsupportedTryOperand {
+		actual: TypeInfo,
+	},
+	UnsupportedIterRangeInclusive {
+		start: TypeInfo,
+		end: TypeInfo,
+	},
+	UnsupportedIterRangeFrom {
+		start: TypeInfo,
+	},
+	UnsupportedIterRange {
+		start: TypeInfo,
+		end: TypeInfo,
+	},
+	UnsupportedIterNextOperand {
+		actual: TypeInfo,
+	},
+	ExpectedType {
+		expected: TypeInfo,
+		actual: TypeInfo,
+	},
+	ExpectedAny {
+		actual: TypeInfo,
+	},
+	ExpectedNumber {
+		actual: TypeInfo,
+	},
+	ExpectedEmpty {
+		actual: TypeInfo,
+	},
+	ExpectedTuple {
+		actual: TypeInfo,
+	},
+	ExpectedStruct {
+		actual: TypeInfo,
+	},
+	MissingConstantConstructor {
+		hash: Hash,
+	},
+	ValueToIntegerCoercionError {
+		from: VmIntegerRepr,
+		to: &'static str,
+	},
+	IntegerToValueCoercionError {
+		from: VmIntegerRepr,
+		to: &'static str,
+	},
+	ExpectedTupleLength {
+		actual: usize,
+		expected: usize,
+	},
+	ExpectedVecLength {
+		actual: usize,
+		expected: usize,
+	},
+	ConstNotSupported {
+		actual: TypeInfo,
+	},
+	MissingInterfaceEnvironment,
+	ExpectedExitedExecutionState {
+		actual: ExecutionState,
+	},
+	GeneratorComplete,
+	FutureCompleted,
+	// Used in rune-macros.
+	MissingVariant {
+		name: String,
+	},
+	MissingField {
+		target: TypeInfo,
+		field: String,
+	},
+	MissingVariantName,
+	MissingStructField {
+		target: &'static str,
+		name: &'static str,
+	},
+	MissingTupleIndex {
+		target: &'static str,
+		index: usize,
+	},
+	ExpectedVariant {
+		actual: TypeInfo,
+	},
+	UnsupportedObjectFieldGet {
+		target: TypeInfo,
+	},
+	IllegalFloatComparison {
+		lhs: f64,
+		rhs: f64,
+	},
+	IllegalFloatOperation {
+		value: f64,
+	},
+	MissingCallFrame,
+	IllegalFormat,
 }
 
 impl fmt::Display for VmErrorKind {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		match self {
             VmErrorKind::AllocError { error } => error.fmt(f),
             VmErrorKind::AccessError { error } => error.fmt(f),
             VmErrorKind::StackError { error } => error.fmt(f),
@@ -1019,159 +1019,159 @@ impl fmt::Display for VmErrorKind {
                 write!(f, "Value cannot be formatted")
             }
         }
-    }
+	}
 }
 
 impl From<Infallible> for VmErrorKind {
-    #[inline]
-    fn from(error: Infallible) -> Self {
-        match error {}
-    }
+	#[inline]
+	fn from(error: Infallible) -> Self {
+		match error {}
+	}
 }
 
 impl<E> From<StoreError<E>> for VmErrorKind
 where
-    VmErrorKind: From<E>,
+	VmErrorKind: From<E>,
 {
-    #[inline]
-    fn from(value: StoreError<E>) -> Self {
-        match value.into_kind() {
-            StoreErrorKind::Stack(error) => VmErrorKind::StackError { error },
-            StoreErrorKind::Error(error) => VmErrorKind::from(error),
-            StoreErrorKind::Alloc(error) => VmErrorKind::AllocError { error },
-        }
-    }
+	#[inline]
+	fn from(value: StoreError<E>) -> Self {
+		match value.into_kind() {
+			StoreErrorKind::Stack(error) => VmErrorKind::StackError { error },
+			StoreErrorKind::Error(error) => VmErrorKind::from(error),
+			StoreErrorKind::Alloc(error) => VmErrorKind::AllocError { error },
+		}
+	}
 }
 
 impl From<RuntimeError> for VmErrorKind {
-    #[inline]
-    fn from(value: RuntimeError) -> Self {
-        value.into_vm_error_kind()
-    }
+	#[inline]
+	fn from(value: RuntimeError) -> Self {
+		value.into_vm_error_kind()
+	}
 }
 
 impl From<AnySequenceTakeError> for VmErrorKind {
-    #[inline]
-    fn from(value: AnySequenceTakeError) -> Self {
-        match value {
-            AnySequenceTakeError::Access(error) => Self::from(error),
-            AnySequenceTakeError::Alloc(error) => Self::from(error),
-        }
-    }
+	#[inline]
+	fn from(value: AnySequenceTakeError) -> Self {
+		match value {
+			AnySequenceTakeError::Access(error) => Self::from(error),
+			AnySequenceTakeError::Alloc(error) => Self::from(error),
+		}
+	}
 }
 
 impl From<AnyObjError> for VmErrorKind {
-    #[inline]
-    fn from(value: AnyObjError) -> Self {
-        match value.into_kind() {
-            AnyObjErrorKind::Alloc(error) => Self::from(error),
-            AnyObjErrorKind::Cast(expected, actual) => VmErrorKind::ExpectedType {
-                expected: TypeInfo::any_type_info(expected),
-                actual,
-            },
-            AnyObjErrorKind::AccessError(error) => Self::from(error),
-            AnyObjErrorKind::NotOwned(type_info) => VmErrorKind::NotOwned { type_info },
-        }
-    }
+	#[inline]
+	fn from(value: AnyObjError) -> Self {
+		match value.into_kind() {
+			AnyObjErrorKind::Alloc(error) => Self::from(error),
+			AnyObjErrorKind::Cast(expected, actual) => VmErrorKind::ExpectedType {
+				expected: TypeInfo::any_type_info(expected),
+				actual,
+			},
+			AnyObjErrorKind::AccessError(error) => Self::from(error),
+			AnyObjErrorKind::NotOwned(type_info) => VmErrorKind::NotOwned { type_info },
+		}
+	}
 }
 
 impl From<AccessError> for VmErrorKind {
-    #[inline]
-    fn from(error: AccessError) -> Self {
-        VmErrorKind::AccessError { error }
-    }
+	#[inline]
+	fn from(error: AccessError) -> Self {
+		VmErrorKind::AccessError { error }
+	}
 }
 
 impl From<StackError> for VmErrorKind {
-    #[inline]
-    fn from(error: StackError) -> Self {
-        VmErrorKind::StackError { error }
-    }
+	#[inline]
+	fn from(error: StackError) -> Self {
+		VmErrorKind::StackError { error }
+	}
 }
 
 impl From<SliceError> for VmErrorKind {
-    #[inline]
-    fn from(error: SliceError) -> Self {
-        VmErrorKind::SliceError { error }
-    }
+	#[inline]
+	fn from(error: SliceError) -> Self {
+		VmErrorKind::SliceError { error }
+	}
 }
 
 impl From<BadInstruction> for VmErrorKind {
-    #[inline]
-    fn from(error: BadInstruction) -> Self {
-        VmErrorKind::BadInstruction { error }
-    }
+	#[inline]
+	fn from(error: BadInstruction) -> Self {
+		VmErrorKind::BadInstruction { error }
+	}
 }
 
 impl From<BadJump> for VmErrorKind {
-    #[inline]
-    fn from(error: BadJump) -> Self {
-        VmErrorKind::BadJump { error }
-    }
+	#[inline]
+	fn from(error: BadJump) -> Self {
+		VmErrorKind::BadJump { error }
+	}
 }
 
 impl From<DynArgsUsed> for VmErrorKind {
-    #[inline]
-    fn from(error: DynArgsUsed) -> Self {
-        VmErrorKind::DynArgsUsed { error }
-    }
+	#[inline]
+	fn from(error: DynArgsUsed) -> Self {
+		VmErrorKind::DynArgsUsed { error }
+	}
 }
 
 impl From<alloc::Error> for VmErrorKind {
-    #[inline]
-    fn from(error: alloc::Error) -> Self {
-        VmErrorKind::AllocError { error }
-    }
+	#[inline]
+	fn from(error: alloc::Error) -> Self {
+		VmErrorKind::AllocError { error }
+	}
 }
 
 impl From<alloc::alloc::AllocError> for VmErrorKind {
-    #[inline]
-    fn from(error: alloc::alloc::AllocError) -> Self {
-        VmErrorKind::AllocError {
-            error: error.into(),
-        }
-    }
+	#[inline]
+	fn from(error: alloc::alloc::AllocError) -> Self {
+		VmErrorKind::AllocError {
+			error: error.into(),
+		}
+	}
 }
 
 impl VmErrorKind {
-    /// Bad argument.
-    pub(crate) fn bad_argument(arg: usize) -> Self {
-        Self::BadArgument { arg }
-    }
+	/// Bad argument.
+	pub(crate) fn bad_argument(arg: usize) -> Self {
+		Self::BadArgument { arg }
+	}
 
-    /// Construct an expected error.
-    pub(crate) fn expected<T>(actual: TypeInfo) -> Self
-    where
-        T: ?Sized + TypeOf,
-    {
-        Self::ExpectedType {
-            expected: T::type_info(),
-            actual,
-        }
-    }
+	/// Construct an expected error.
+	pub(crate) fn expected<T>(actual: TypeInfo) -> Self
+	where
+		T: ?Sized + TypeOf,
+	{
+		Self::ExpectedType {
+			expected: T::type_info(),
+			actual,
+		}
+	}
 }
 
 #[derive(Debug, Clone, Copy)]
 #[cfg_attr(test, derive(PartialEq))]
 enum VmIntegerReprKind {
-    Signed(i128),
-    Unsigned(u128),
-    Isize(isize),
-    Usize(usize),
+	Signed(i128),
+	Unsigned(u128),
+	Isize(isize),
+	Usize(usize),
 }
 
 /// A type-erased integer representation.
 #[derive(Clone)]
 #[cfg_attr(test, derive(PartialEq))]
 pub(crate) struct VmIntegerRepr {
-    kind: VmIntegerReprKind,
+	kind: VmIntegerReprKind,
 }
 
 impl VmIntegerRepr {
-    #[inline]
-    fn new(kind: VmIntegerReprKind) -> Self {
-        Self { kind }
-    }
+	#[inline]
+	fn new(kind: VmIntegerReprKind) -> Self {
+		Self { kind }
+	}
 }
 
 macro_rules! impl_from {
@@ -1188,36 +1188,36 @@ macro_rules! impl_from {
 }
 
 impl_from! {
-    Signed => [i8, i16, i32, i64, i128],
-    Unsigned => [u8, u16, u32, u64, u128],
-    Isize => [isize],
-    Usize => [usize],
+	Signed => [i8, i16, i32, i64, i128],
+	Unsigned => [u8, u16, u32, u64, u128],
+	Isize => [isize],
+	Usize => [usize],
 }
 
 impl fmt::Display for VmIntegerRepr {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.kind {
-            VmIntegerReprKind::Signed(value) => value.fmt(f),
-            VmIntegerReprKind::Unsigned(value) => value.fmt(f),
-            VmIntegerReprKind::Isize(value) => value.fmt(f),
-            VmIntegerReprKind::Usize(value) => value.fmt(f),
-        }
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		match &self.kind {
+			VmIntegerReprKind::Signed(value) => value.fmt(f),
+			VmIntegerReprKind::Unsigned(value) => value.fmt(f),
+			VmIntegerReprKind::Isize(value) => value.fmt(f),
+			VmIntegerReprKind::Usize(value) => value.fmt(f),
+		}
+	}
 }
 
 impl fmt::Debug for VmIntegerRepr {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.kind.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.kind.fmt(f)
+	}
 }
 
 /// Format a static item for diagnostics, using its name if debug information
 /// was available and falling back to its slot if it wasn't.
 fn fmt_global(f: &mut fmt::Formatter<'_>, slot: usize, name: Option<&Item>) -> fmt::Result {
-    match name {
-        Some(name) => write!(f, "`{name}` (slot {slot})"),
-        None => write!(f, "in slot {slot}"),
-    }
+	match name {
+		Some(name) => write!(f, "`{name}` (slot {slot})"),
+		None => write!(f, "in slot {slot}"),
+	}
 }

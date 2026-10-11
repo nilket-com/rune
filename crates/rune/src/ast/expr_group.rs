@@ -3,8 +3,8 @@ use crate::ast::prelude::*;
 #[test]
 #[cfg(not(miri))]
 fn ast_parse() {
-    rt::<ast::ExprGroup>("(for i in x {})");
-    rt::<ast::ExprGroup>("(1 + 2)");
+	rt::<ast::ExprGroup>("(for i in x {})");
+	rt::<ast::ExprGroup>("(1 + 2)");
 }
 
 /// A prioritized expression group.
@@ -13,15 +13,15 @@ fn ast_parse() {
 #[derive(Debug, TryClone, PartialEq, Eq, ToTokens, Spanned)]
 #[non_exhaustive]
 pub struct ExprGroup {
-    /// Attributes associated with expression.
-    #[rune(iter)]
-    pub attributes: Vec<ast::Attribute>,
-    /// The open parenthesis.
-    pub open: ast::OpenParen,
-    /// The grouped expression.
-    pub expr: Box<ast::Expr>,
-    /// The close parenthesis.
-    pub close: ast::CloseParen,
+	/// Attributes associated with expression.
+	#[rune(iter)]
+	pub attributes: Vec<ast::Attribute>,
+	/// The open parenthesis.
+	pub open: ast::OpenParen,
+	/// The grouped expression.
+	pub expr: Box<ast::Expr>,
+	/// The close parenthesis.
+	pub close: ast::CloseParen,
 }
 
 expr_parse!(Group, ExprGroup, "group expression");

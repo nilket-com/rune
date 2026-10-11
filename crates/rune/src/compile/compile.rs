@@ -3,8 +3,8 @@ use crate::alloc::prelude::*;
 use crate::ast::{Span, Spanned};
 use crate::compile::v2;
 use crate::compile::{
-    self, Assembly, CompileVisitor, Context, ErrorKind, Location, Options, Pool, Prelude,
-    SourceLoader, UnitBuilder,
+	self, Assembly, CompileVisitor, Context, ErrorKind, Location, Options, Pool, Prelude,
+	SourceLoader, UnitBuilder,
 };
 use crate::hir;
 use crate::indexing::FunctionAst;
@@ -19,594 +19,594 @@ use crate::{Diagnostics, SourceId, Sources, Statics};
 
 /// Encode the given object into a collection of asm.
 pub(crate) fn compile(
-    unit: &mut UnitBuilder,
-    prelude: &Prelude,
-    sources: &mut Sources,
-    pool: &mut Pool,
-    context: &Context,
-    visitor: &mut dyn CompileVisitor,
-    diagnostics: &mut Diagnostics,
-    source_loader: &mut dyn SourceLoader,
-    options: &Options,
-    args: &[String],
-    statics: &Statics,
-    unit_storage: &mut dyn UnitEncoder,
-    #[cfg(feature = "fresh-core")] mut fresh: Option<
-        &mut crate::experimental_core::frontend::Collector,
-    >,
+	unit: &mut UnitBuilder,
+	prelude: &Prelude,
+	sources: &mut Sources,
+	pool: &mut Pool,
+	context: &Context,
+	visitor: &mut dyn CompileVisitor,
+	diagnostics: &mut Diagnostics,
+	source_loader: &mut dyn SourceLoader,
+	options: &Options,
+	args: &[String],
+	statics: &Statics,
+	unit_storage: &mut dyn UnitEncoder,
+	#[cfg(feature = "fresh-core")] mut fresh: Option<
+		&mut crate::experimental_core::frontend::Collector,
+	>,
 ) -> alloc::Result<()> {
-    // Shared id generator.
-    let gen = Gen::new();
-    let const_arena = hir::Arena::new();
-    let mut consts = Consts::default();
-    let mut storage = Storage::default();
-    let mut inner = crate::query::QueryInner::default();
-    #[cfg(feature = "fresh-core")]
-    {
-        inner.fresh_mode = fresh.is_some();
-    }
+	// Shared id generator.
+	let gen = Gen::new();
+	let const_arena = hir::Arena::new();
+	let mut consts = Consts::default();
+	let mut storage = Storage::default();
+	let mut inner = crate::query::QueryInner::default();
+	#[cfg(feature = "fresh-core")]
+	{
+		inner.fresh_mode = fresh.is_some();
+	}
 
-    let q = Query::new(
-        unit,
-        prelude,
-        &const_arena,
-        &mut consts,
-        &mut storage,
-        sources,
-        pool,
-        visitor,
-        diagnostics,
-        source_loader,
-        options,
-        args,
-        &gen,
-        context,
-        &mut inner,
-    );
+	let q = Query::new(
+		unit,
+		prelude,
+		&const_arena,
+		&mut consts,
+		&mut storage,
+		sources,
+		pool,
+		visitor,
+		diagnostics,
+		source_loader,
+		options,
+		args,
+		&gen,
+		context,
+		&mut inner,
+	);
 
-    // The worker queue.
-    let mut worker = Worker::new(q);
+	// The worker queue.
+	let mut worker = Worker::new(q);
 
-    // Declare any statics the caller has asked for before indexing, so that a
-    // source which uses one can be compiled against it.
-    for s in statics.iter() {
-        if let Err(error) = worker.q.declare_static(s.item()) {
-            worker.q.diagnostics.error(SourceId::empty(), error)?;
-        }
-    }
+	// Declare any statics the caller has asked for before indexing, so that a
+	// source which uses one can be compiled against it.
+	for s in statics.iter() {
+		if let Err(error) = worker.q.declare_static(s.item()) {
+			worker.q.diagnostics.error(SourceId::empty(), error)?;
+		}
+	}
 
-    // Queue up the initial sources to be loaded.
-    for source_id in worker.q.sources.source_ids() {
-        let (root_item_id, mod_item) = match worker.q.insert_root_mod(source_id, Span::empty()) {
-            Ok(result) => result,
-            Err(error) => {
-                worker.q.diagnostics.error(source_id, error)?;
-                continue;
-            }
-        };
+	// Queue up the initial sources to be loaded.
+	for source_id in worker.q.sources.source_ids() {
+		let (root_item_id, mod_item) = match worker.q.insert_root_mod(source_id, Span::empty()) {
+			Ok(result) => result,
+			Err(error) => {
+				worker.q.diagnostics.error(source_id, error)?;
+				continue;
+			}
+		};
 
-        let result = worker.queue.try_push_back(Task::LoadFile {
-            kind: LoadFileKind::Original,
-            source_id,
-            mod_item,
-            mod_item_id: root_item_id,
-        });
+		let result = worker.queue.try_push_back(Task::LoadFile {
+			kind: LoadFileKind::Original,
+			source_id,
+			mod_item,
+			mod_item_id: root_item_id,
+		});
 
-        if let Err(error) = result {
-            worker
-                .q
-                .diagnostics
-                .error(source_id, compile::Error::from(error))?;
-        }
-    }
+		if let Err(error) = result {
+			worker
+				.q
+				.diagnostics
+				.error(source_id, compile::Error::from(error))?;
+		}
+	}
 
-    worker.index()?;
+	worker.index()?;
 
-    if worker.q.diagnostics.has_error() {
-        return Ok(());
-    }
+	if worker.q.diagnostics.has_error() {
+		return Ok(());
+	}
 
-    loop {
-        while let Some(entry) = worker.q.next_build_entry() {
-            tracing::trace!(item = ?worker.q.pool.item(entry.item_meta.item), "next build entry");
-            let source_id = entry.item_meta.location.source_id;
+	loop {
+		while let Some(entry) = worker.q.next_build_entry() {
+			tracing::trace!(item = ?worker.q.pool.item(entry.item_meta.item), "next build entry");
+			let source_id = entry.item_meta.location.source_id;
 
-            let task = CompileBuildEntry {
-                options,
-                q: worker.q.borrow(),
-                #[cfg(feature = "fresh-core")]
-                fresh: fresh.as_deref_mut(),
-            };
+			let task = CompileBuildEntry {
+				options,
+				q: worker.q.borrow(),
+				#[cfg(feature = "fresh-core")]
+				fresh: fresh.as_deref_mut(),
+			};
 
-            if let Err(error) = task.compile(entry, unit_storage) {
-                worker.q.diagnostics.error(source_id, error)?;
-            }
-        }
+			if let Err(error) = task.compile(entry, unit_storage) {
+				worker.q.diagnostics.error(source_id, error)?;
+			}
+		}
 
-        let mut errors = Vec::new();
+		let mut errors = Vec::new();
 
-        if worker.q.queue_unused_entries(&mut errors)? {
-            break;
-        }
+		if worker.q.queue_unused_entries(&mut errors)? {
+			break;
+		}
 
-        for (source_id, error) in errors {
-            worker.q.diagnostics.error(source_id, error)?;
-        }
-    }
+		for (source_id, error) in errors {
+			worker.q.diagnostics.error(source_id, error)?;
+		}
+	}
 
-    Ok(())
+	Ok(())
 }
 
 struct CompileBuildEntry<'a, 'arena> {
-    options: &'a Options,
-    q: Query<'a, 'arena>,
-    #[cfg(feature = "fresh-core")]
-    fresh: Option<&'a mut crate::experimental_core::frontend::Collector>,
+	options: &'a Options,
+	q: Query<'a, 'arena>,
+	#[cfg(feature = "fresh-core")]
+	fresh: Option<&'a mut crate::experimental_core::frontend::Collector>,
 }
 
 impl<'arena> CompileBuildEntry<'_, 'arena> {
-    fn compiler<'a, 'hir>(
-        &'a mut self,
-        location: Location,
-        span: &'hir dyn Spanned,
-        asm: &'a mut Assembly,
-        exprs: &'hir hir::Exprs<'hir>,
-        scopes: &'a mut v2::Scopes<'hir>,
-    ) -> alloc::Result<v2::Ctxt<'a, 'hir, 'arena>> {
-        Ok(v2::Ctxt {
-            source_id: location.source_id,
-            q: self.q.borrow(),
-            asm,
-            exprs,
-            scopes,
-            contexts: try_vec![span],
-            breaks: self::v2::Breaks::new(),
-            options: self.options,
-            select_branches: Vec::new(),
-            drop: Vec::new(),
-            const_eval: false,
-        })
-    }
+	fn compiler<'a, 'hir>(
+		&'a mut self,
+		location: Location,
+		span: &'hir dyn Spanned,
+		asm: &'a mut Assembly,
+		exprs: &'hir hir::Exprs<'hir>,
+		scopes: &'a mut v2::Scopes<'hir>,
+	) -> alloc::Result<v2::Ctxt<'a, 'hir, 'arena>> {
+		Ok(v2::Ctxt {
+			source_id: location.source_id,
+			q: self.q.borrow(),
+			asm,
+			exprs,
+			scopes,
+			contexts: try_vec![span],
+			breaks: self::v2::Breaks::new(),
+			options: self.options,
+			select_branches: Vec::new(),
+			drop: Vec::new(),
+			const_eval: false,
+		})
+	}
 
-    /// Assemble a function.
-    fn assemble_fn<'hir>(
-        &mut self,
-        location: Location,
-        span: &'hir dyn Spanned,
-        asm: &mut Assembly,
-        exprs: &'hir hir::Exprs<'hir>,
-        hir: &'hir hir::ItemFn<'hir>,
-    ) -> compile::Result<usize> {
-        let mut scopes = v2::Scopes::new(location.source_id)?;
-        let mut cx = self.compiler(location, span, asm, exprs, &mut scopes)?;
-        v2::assemble::fn_from_item_fn(&mut cx, hir)?;
-        Ok(cx.scopes.size())
-    }
+	/// Assemble a function.
+	fn assemble_fn<'hir>(
+		&mut self,
+		location: Location,
+		span: &'hir dyn Spanned,
+		asm: &mut Assembly,
+		exprs: &'hir hir::Exprs<'hir>,
+		hir: &'hir hir::ItemFn<'hir>,
+	) -> compile::Result<usize> {
+		let mut scopes = v2::Scopes::new(location.source_id)?;
+		let mut cx = self.compiler(location, span, asm, exprs, &mut scopes)?;
+		v2::assemble::fn_from_item_fn(&mut cx, hir)?;
+		Ok(cx.scopes.size())
+	}
 
-    /// Assemble the secondary build of a closure.
-    fn assemble_closure<'hir>(
-        &mut self,
-        location: Location,
-        asm: &mut Assembly,
-        exprs: &'hir hir::Exprs<'hir>,
-        hir: &'hir hir::ExprClosure<'hir>,
-    ) -> compile::Result<usize> {
-        let mut scopes = v2::Scopes::new(location.source_id)?;
-        let mut cx = self.compiler(location, hir, asm, exprs, &mut scopes)?;
-        v2::assemble::expr_closure_secondary(&mut cx, hir)?;
-        Ok(cx.scopes.size())
-    }
+	/// Assemble the secondary build of a closure.
+	fn assemble_closure<'hir>(
+		&mut self,
+		location: Location,
+		asm: &mut Assembly,
+		exprs: &'hir hir::Exprs<'hir>,
+		hir: &'hir hir::ExprClosure<'hir>,
+	) -> compile::Result<usize> {
+		let mut scopes = v2::Scopes::new(location.source_id)?;
+		let mut cx = self.compiler(location, hir, asm, exprs, &mut scopes)?;
+		v2::assemble::expr_closure_secondary(&mut cx, hir)?;
+		Ok(cx.scopes.size())
+	}
 
-    /// Assemble the secondary build of an async block.
-    fn assemble_async_block<'hir>(
-        &mut self,
-        location: Location,
-        asm: &mut Assembly,
-        exprs: &'hir hir::Exprs<'hir>,
-        hir: &'hir hir::AsyncBlock<'hir>,
-    ) -> compile::Result<usize> {
-        let mut scopes = v2::Scopes::new(location.source_id)?;
-        let mut cx = self.compiler(location, &hir.block, asm, exprs, &mut scopes)?;
-        v2::assemble::async_block_secondary(&mut cx, hir)?;
-        Ok(cx.scopes.size())
-    }
+	/// Assemble the secondary build of an async block.
+	fn assemble_async_block<'hir>(
+		&mut self,
+		location: Location,
+		asm: &mut Assembly,
+		exprs: &'hir hir::Exprs<'hir>,
+		hir: &'hir hir::AsyncBlock<'hir>,
+	) -> compile::Result<usize> {
+		let mut scopes = v2::Scopes::new(location.source_id)?;
+		let mut cx = self.compiler(location, &hir.block, asm, exprs, &mut scopes)?;
+		v2::assemble::async_block_secondary(&mut cx, hir)?;
+		Ok(cx.scopes.size())
+	}
 
-    #[tracing::instrument(skip_all)]
-    fn compile(
-        mut self,
-        entry: BuildEntry,
-        unit_storage: &mut dyn UnitEncoder,
-    ) -> compile::Result<()> {
-        let BuildEntry { item_meta, build } = entry;
+	#[tracing::instrument(skip_all)]
+	fn compile(
+		mut self,
+		entry: BuildEntry,
+		unit_storage: &mut dyn UnitEncoder,
+	) -> compile::Result<()> {
+		let BuildEntry { item_meta, build } = entry;
 
-        let location = item_meta.location;
+		let location = item_meta.location;
 
-        match build {
-            Build::Query => {
-                tracing::trace!("query: {}", self.q.pool.item(item_meta.item));
+		match build {
+			Build::Query => {
+				tracing::trace!("query: {}", self.q.pool.item(item_meta.item));
 
-                let used = if self.q.is_used(&item_meta) {
-                    Used::Used
-                } else {
-                    Used::Unused
-                };
+				let used = if self.q.is_used(&item_meta) {
+					Used::Used
+				} else {
+					Used::Unused
+				};
 
-                if self
-                    .q
-                    .query_meta(&item_meta.location, item_meta.item, used)?
-                    .is_none()
-                {
-                    return Err(compile::Error::new(
-                        item_meta.location.span,
-                        ErrorKind::MissingItem {
-                            item: self.q.pool.item(item_meta.item).try_to_owned()?,
-                        },
-                    ));
-                }
-            }
-            Build::Function(f) => {
-                let mut asm = self.q.unit.new_assembly(location);
+				if self
+					.q
+					.query_meta(&item_meta.location, item_meta.item, used)?
+					.is_none()
+				{
+					return Err(compile::Error::new(
+						item_meta.location.span,
+						ErrorKind::MissingItem {
+							item: self.q.pool.item(item_meta.item).try_to_owned()?,
+						},
+					));
+				}
+			}
+			Build::Function(f) => {
+				let mut asm = self.q.unit.new_assembly(location);
 
-                tracing::trace!("function: {}", self.q.pool.item(item_meta.item));
+				tracing::trace!("function: {}", self.q.pool.item(item_meta.item));
 
-                // For instance functions, we are required to know the type hash
-                // of the type it is associated with to perform the proper
-                // naming of the function.
-                let type_hash = if let Some(item) = f.impl_item.filter(|_| f.is_instance) {
-                    Some(self.q.pool.item_type_hash(item))
-                } else {
-                    None
-                };
+				// For instance functions, we are required to know the type hash
+				// of the type it is associated with to perform the proper
+				// naming of the function.
+				let type_hash = if let Some(item) = f.impl_item.filter(|_| f.is_instance) {
+					Some(self.q.pool.item_type_hash(item))
+				} else {
+					None
+				};
 
-                let debug_args = format_ast_args(self.q.sources, location, false, &f.args)?;
-                let span: &dyn Spanned = &f.ast;
+				let debug_args = format_ast_args(self.q.sources, location, false, &f.args)?;
+				let span: &dyn Spanned = &f.ast;
 
-                let arena = hir::Arena::new();
-                let mut secondary_builds = Vec::new();
+				let arena = hir::Arena::new();
+				let mut secondary_builds = Vec::new();
 
-                let args = self.q.args;
+				let args = self.q.args;
 
-                let mut cx = hir::Ctxt::with_query(
-                    &arena,
-                    self.q.borrow(),
-                    item_meta.location.source_id,
-                    &mut secondary_builds,
-                )?;
+				let mut cx = hir::Ctxt::with_query(
+					&arena,
+					self.q.borrow(),
+					item_meta.location.source_id,
+					&mut secondary_builds,
+				)?;
 
-                let hir = match &f.ast {
-                    FunctionAst::Bare(node) => {
-                        #[cfg(feature = "std")]
-                        if cx.q.options.print_tree {
-                            node.print_with_sources(
-                                format_args!("Bare function {}", cx.q.pool.item(item_meta.item)),
-                                cx.q.sources,
-                            )?;
-                        }
+				let hir = match &f.ast {
+					FunctionAst::Bare(node) => {
+						#[cfg(feature = "std")]
+						if cx.q.options.print_tree {
+							node.print_with_sources(
+								format_args!("Bare function {}", cx.q.pool.item(item_meta.item)),
+								cx.q.sources,
+							)?;
+						}
 
-                        node.parse(|p| hir::lowering2::bare(&mut cx, p, args))?
-                    }
-                    FunctionAst::Node(node, _) => {
-                        #[cfg(feature = "std")]
-                        if cx.q.options.print_tree {
-                            node.print_with_sources(
-                                format_args!("Node function {}", cx.q.pool.item(item_meta.item)),
-                                cx.q.sources,
-                            )?;
-                        }
+						node.parse(|p| hir::lowering2::bare(&mut cx, p, args))?
+					}
+					FunctionAst::Node(node, _) => {
+						#[cfg(feature = "std")]
+						if cx.q.options.print_tree {
+							node.print_with_sources(
+								format_args!("Node function {}", cx.q.pool.item(item_meta.item)),
+								cx.q.sources,
+							)?;
+						}
 
-                        node.parse(|p| hir::lowering2::item_fn(&mut cx, p, f.impl_item.is_some()))?
-                    }
-                };
+						node.parse(|p| hir::lowering2::item_fn(&mut cx, p, f.impl_item.is_some()))?
+					}
+				};
 
-                let count = hir.args.len();
+				let count = hir.args.len();
 
-                // Lowering is done, so the expressions it produced can be handed
-                // over to assembly.
-                let exprs = cx.take_exprs();
+				// Lowering is done, so the expressions it produced can be handed
+				// over to assembly.
+				let exprs = cx.take_exprs();
 
-                #[cfg(feature = "fresh-core")]
-                if let Some(fresh) = self.fresh.as_deref_mut() {
-                    let mut refused_functions = Vec::new();
-                    for build in &secondary_builds {
-                        let operation = match &build.build {
-                            SecondaryBuild::Closure(_) => {
-                                crate::experimental_core::error::Refusal::CallClosure
-                            }
-                            SecondaryBuild::AsyncBlock(_) => {
-                                crate::experimental_core::error::Refusal::AsyncBlock
-                            }
-                        };
-                        refused_functions.try_push((
-                            self.q.pool.item_type_hash(build.item_meta.item),
-                            operation,
-                        ))?;
-                    }
-                    let hash = self.q.pool.item_type_hash(item_meta.item);
-                    // Preserve the first named expression refusal (e.g. Yield),
-                    // before classifying a whole non-immediate function.
-                    fresh
-                        .lower(
-                            hash,
-                            location.source_id.into_index() as u32,
-                            &exprs,
-                            &hir,
-                            self.q.inner,
-                            self.q.context,
-                            &refused_functions,
-                        )
-                        .map_err(|e| {
-                            let at = e
-                                .location
-                                .map(|l| Span::new(l.start, l.end))
-                                .unwrap_or(location.span);
-                            compile::Error::msg(at, e.operation)
-                        })?;
-                    if !matches!(f.call, crate::runtime::Call::Immediate) {
-                        let operation = if matches!(f.call, crate::runtime::Call::Async) {
-                            crate::experimental_core::error::Refusal::AsyncFunction
-                        } else {
-                            crate::experimental_core::error::Refusal::GeneratorFunction
-                        };
-                        let at = span.span();
-                        let error = crate::experimental_core::error::Error::refused(operation).at(
-                            crate::experimental_core::error::Location {
-                                source: location.source_id.into_index() as u32,
-                                revision: fresh.revision(),
-                                start: at.start.0,
-                                end: at.end.0,
-                            },
-                        );
-                        fresh.failure.get_or_insert(error);
-                        return Err(compile::Error::msg(span, operation.name()));
-                    }
-                    return Ok(());
-                }
+				#[cfg(feature = "fresh-core")]
+				if let Some(fresh) = self.fresh.as_deref_mut() {
+					let mut refused_functions = Vec::new();
+					for build in &secondary_builds {
+						let operation = match &build.build {
+							SecondaryBuild::Closure(_) => {
+								crate::experimental_core::error::Refusal::CallClosure
+							}
+							SecondaryBuild::AsyncBlock(_) => {
+								crate::experimental_core::error::Refusal::AsyncBlock
+							}
+						};
+						refused_functions.try_push((
+							self.q.pool.item_type_hash(build.item_meta.item),
+							operation,
+						))?;
+					}
+					let hash = self.q.pool.item_type_hash(item_meta.item);
+					// Preserve the first named expression refusal (e.g. Yield),
+					// before classifying a whole non-immediate function.
+					fresh
+						.lower(
+							hash,
+							location.source_id.into_index() as u32,
+							&exprs,
+							&hir,
+							self.q.inner,
+							self.q.context,
+							&refused_functions,
+						)
+						.map_err(|e| {
+							let at = e
+								.location
+								.map(|l| Span::new(l.start, l.end))
+								.unwrap_or(location.span);
+							compile::Error::msg(at, e.operation)
+						})?;
+					if !matches!(f.call, crate::runtime::Call::Immediate) {
+						let operation = if matches!(f.call, crate::runtime::Call::Async) {
+							crate::experimental_core::error::Refusal::AsyncFunction
+						} else {
+							crate::experimental_core::error::Refusal::GeneratorFunction
+						};
+						let at = span.span();
+						let error = crate::experimental_core::error::Error::refused(operation).at(
+							crate::experimental_core::error::Location {
+								source: location.source_id.into_index() as u32,
+								revision: fresh.revision(),
+								start: at.start.0,
+								end: at.end.0,
+							},
+						);
+						fresh.failure.get_or_insert(error);
+						return Err(compile::Error::msg(span, operation.name()));
+					}
+					return Ok(());
+				}
 
-                let size = self.assemble_fn(location, span, &mut asm, &exprs, &hir)?;
+				let size = self.assemble_fn(location, span, &mut asm, &exprs, &hir)?;
 
-                if !self.q.is_used(&item_meta) {
-                    self.q
-                        .diagnostics
-                        .not_used(location.source_id, span, None)?;
-                } else {
-                    let instance = match (type_hash, &f.ast) {
-                        (Some(type_hash), FunctionAst::Node(_, Some(name))) => {
-                            let name = name.resolve(resolve_context!(self.q))?;
-                            Some((type_hash, name))
-                        }
-                        _ => None,
-                    };
+				if !self.q.is_used(&item_meta) {
+					self.q
+						.diagnostics
+						.not_used(location.source_id, span, None)?;
+				} else {
+					let instance = match (type_hash, &f.ast) {
+						(Some(type_hash), FunctionAst::Node(_, Some(name))) => {
+							let name = name.resolve(resolve_context!(self.q))?;
+							Some((type_hash, name))
+						}
+						_ => None,
+					};
 
-                    let item = self.q.pool.item(item_meta.item);
+					let item = self.q.pool.item(item_meta.item);
 
-                    self.q.unit.new_function(
-                        location,
-                        item,
-                        instance,
-                        count,
-                        None,
-                        asm,
-                        f.call,
-                        debug_args,
-                        unit_storage,
-                        size,
-                    )?;
-                }
+					self.q.unit.new_function(
+						location,
+						item,
+						instance,
+						count,
+						None,
+						asm,
+						f.call,
+						debug_args,
+						unit_storage,
+						size,
+					)?;
+				}
 
-                for build in secondary_builds {
-                    let item_meta = build.item_meta;
+				for build in secondary_builds {
+					let item_meta = build.item_meta;
 
-                    let mut asm = self.q.unit.new_assembly(item_meta.location);
+					let mut asm = self.q.unit.new_assembly(item_meta.location);
 
-                    match build.build {
-                        SecondaryBuild::Closure(c) => {
-                            tracing::trace!("closure: {}", self.q.pool.item(item_meta.item));
+					match build.build {
+						SecondaryBuild::Closure(c) => {
+							tracing::trace!("closure: {}", self.q.pool.item(item_meta.item));
 
-                            let debug_args =
-                                format_hir_args(self.q.sources, location, true, c.hir.args.iter())?;
+							let debug_args =
+								format_hir_args(self.q.sources, location, true, c.hir.args.iter())?;
 
-                            let size = self.assemble_closure(location, &mut asm, &exprs, c.hir)?;
+							let size = self.assemble_closure(location, &mut asm, &exprs, c.hir)?;
 
-                            if !self.q.is_used(&item_meta) {
-                                self.q.diagnostics.not_used(
-                                    location.source_id,
-                                    &location.span,
-                                    None,
-                                )?;
-                            } else {
-                                let captures =
-                                    (!c.hir.captures.is_empty()).then_some(c.hir.captures.len());
+							if !self.q.is_used(&item_meta) {
+								self.q.diagnostics.not_used(
+									location.source_id,
+									&location.span,
+									None,
+								)?;
+							} else {
+								let captures =
+									(!c.hir.captures.is_empty()).then_some(c.hir.captures.len());
 
-                                let args = c
-                                    .hir
-                                    .args
-                                    .len()
-                                    .saturating_add(usize::from(captures.is_some()));
+								let args = c
+									.hir
+									.args
+									.len()
+									.saturating_add(usize::from(captures.is_some()));
 
-                                self.q.unit.new_function(
-                                    location,
-                                    self.q.pool.item(item_meta.item),
-                                    None,
-                                    args,
-                                    captures,
-                                    asm,
-                                    c.call,
-                                    debug_args,
-                                    unit_storage,
-                                    size,
-                                )?;
-                            }
-                        }
-                        SecondaryBuild::AsyncBlock(b) => {
-                            tracing::trace!("async block: {}", self.q.pool.item(item_meta.item));
+								self.q.unit.new_function(
+									location,
+									self.q.pool.item(item_meta.item),
+									None,
+									args,
+									captures,
+									asm,
+									c.call,
+									debug_args,
+									unit_storage,
+									size,
+								)?;
+							}
+						}
+						SecondaryBuild::AsyncBlock(b) => {
+							tracing::trace!("async block: {}", self.q.pool.item(item_meta.item));
 
-                            let size =
-                                self.assemble_async_block(location, &mut asm, &exprs, b.hir)?;
+							let size =
+								self.assemble_async_block(location, &mut asm, &exprs, b.hir)?;
 
-                            if !self.q.is_used(&item_meta) {
-                                self.q.diagnostics.not_used(
-                                    location.source_id,
-                                    &location.span,
-                                    None,
-                                )?;
-                            } else {
-                                let args = b.hir.captures.len();
+							if !self.q.is_used(&item_meta) {
+								self.q.diagnostics.not_used(
+									location.source_id,
+									&location.span,
+									None,
+								)?;
+							} else {
+								let args = b.hir.captures.len();
 
-                                self.q.unit.new_function(
-                                    location,
-                                    self.q.pool.item(item_meta.item),
-                                    None,
-                                    args,
-                                    None,
-                                    asm,
-                                    b.call,
-                                    Default::default(),
-                                    unit_storage,
-                                    size,
-                                )?;
-                            }
-                        }
-                    }
-                }
-            }
-            Build::Unused => {
-                tracing::trace!("unused: {}", self.q.pool.item(item_meta.item));
+								self.q.unit.new_function(
+									location,
+									self.q.pool.item(item_meta.item),
+									None,
+									args,
+									None,
+									asm,
+									b.call,
+									Default::default(),
+									unit_storage,
+									size,
+								)?;
+							}
+						}
+					}
+				}
+			}
+			Build::Unused => {
+				tracing::trace!("unused: {}", self.q.pool.item(item_meta.item));
 
-                if !item_meta.visibility.is_public() {
-                    self.q
-                        .diagnostics
-                        .not_used(location.source_id, &location.span, None)?;
-                }
-            }
-            Build::Import(import) => {
-                tracing::trace!("import: {}", self.q.pool.item(item_meta.item));
+				if !item_meta.visibility.is_public() {
+					self.q
+						.diagnostics
+						.not_used(location.source_id, &location.span, None)?;
+				}
+			}
+			Build::Import(import) => {
+				tracing::trace!("import: {}", self.q.pool.item(item_meta.item));
 
-                let used = if self.q.is_used(&item_meta) {
-                    Used::Used
-                } else {
-                    Used::Unused
-                };
+				let used = if self.q.is_used(&item_meta) {
+					Used::Used
+				} else {
+					Used::Unused
+				};
 
-                // Issue the import to check access.
-                let result =
-                    self.q
-                        .import(&location, item_meta.module, item_meta.item, used, used)?;
+				// Issue the import to check access.
+				let result =
+					self.q
+						.import(&location, item_meta.module, item_meta.item, used, used)?;
 
-                if !self.q.is_used(&item_meta) {
-                    self.q
-                        .diagnostics
-                        .not_used(location.source_id, &location.span, None)?;
-                }
+				if !self.q.is_used(&item_meta) {
+					self.q
+						.diagnostics
+						.not_used(location.source_id, &location.span, None)?;
+				}
 
-                let missing = match result {
-                    Some(item_id) => {
-                        let item = self.q.pool.item(item_id);
+				let missing = match result {
+					Some(item_id) => {
+						let item = self.q.pool.item(item_id);
 
-                        if self.q.context.contains_prefix(item)? || self.q.contains_prefix(item)? {
-                            None
-                        } else {
-                            Some(item_id)
-                        }
-                    }
-                    None => Some(import.entry.target),
-                };
+						if self.q.context.contains_prefix(item)? || self.q.contains_prefix(item)? {
+							None
+						} else {
+							Some(item_id)
+						}
+					}
+					None => Some(import.entry.target),
+				};
 
-                if let Some(item) = missing {
-                    return Err(compile::Error::new(
-                        location,
-                        ErrorKind::MissingItem {
-                            item: self.q.pool.item(item).try_to_owned()?,
-                        },
-                    ));
-                }
-            }
-            Build::ReExport => {
-                tracing::trace!("re-export: {}", self.q.pool.item(item_meta.item));
+				if let Some(item) = missing {
+					return Err(compile::Error::new(
+						location,
+						ErrorKind::MissingItem {
+							item: self.q.pool.item(item).try_to_owned()?,
+						},
+					));
+				}
+			}
+			Build::ReExport => {
+				tracing::trace!("re-export: {}", self.q.pool.item(item_meta.item));
 
-                let used = if self.q.is_used(&item_meta) {
-                    Used::Used
-                } else {
-                    Used::Unused
-                };
+				let used = if self.q.is_used(&item_meta) {
+					Used::Used
+				} else {
+					Used::Unused
+				};
 
-                let Some(import) =
-                    self.q
-                        .import(&location, item_meta.module, item_meta.item, used, used)?
-                else {
-                    return Err(compile::Error::new(
-                        location.span,
-                        ErrorKind::MissingItem {
-                            item: self.q.pool.item(item_meta.item).try_to_owned()?,
-                        },
-                    ));
-                };
+				let Some(import) =
+					self.q
+						.import(&location, item_meta.module, item_meta.item, used, used)?
+				else {
+					return Err(compile::Error::new(
+						location.span,
+						ErrorKind::MissingItem {
+							item: self.q.pool.item(item_meta.item).try_to_owned()?,
+						},
+					));
+				};
 
-                self.q.unit.new_function_reexport(
-                    location,
-                    self.q.pool.item(item_meta.item),
-                    self.q.pool.item(import),
-                )?;
-            }
-        }
+				self.q.unit.new_function_reexport(
+					location,
+					self.q.pool.item(item_meta.item),
+					self.q.pool.item(import),
+				)?;
+			}
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 }
 
 fn format_hir_args<'hir, I>(
-    sources: &Sources,
-    location: Location,
-    environment: bool,
-    arguments: I,
+	sources: &Sources,
+	location: Location,
+	environment: bool,
+	arguments: I,
 ) -> compile::Result<Box<[Box<str>]>>
 where
-    I: IntoIterator<Item = &'hir hir::FnArg<'hir>>,
+	I: IntoIterator<Item = &'hir hir::FnArg<'hir>>,
 {
-    let mut args = Vec::new();
+	let mut args = Vec::new();
 
-    for arg in arguments {
-        match arg {
-            hir::FnArg::Pat(pat) => {
-                let span = pat.span();
+	for arg in arguments {
+		match arg {
+			hir::FnArg::Pat(pat) => {
+				let span = pat.span();
 
-                if let Some(s) = sources.source(location.source_id, span) {
-                    args.try_push(Box::try_from(s)?)?;
-                } else {
-                    args.try_push(Box::try_from("*")?)?;
-                }
-            }
-        }
-    }
+				if let Some(s) = sources.source(location.source_id, span) {
+					args.try_push(Box::try_from(s)?)?;
+				} else {
+					args.try_push(Box::try_from("*")?)?;
+				}
+			}
+		}
+	}
 
-    if environment {
-        args.try_push(Box::try_from("environment")?)?;
-    }
+	if environment {
+		args.try_push(Box::try_from("environment")?)?;
+	}
 
-    Ok(args.try_into_boxed_slice()?)
+	Ok(args.try_into_boxed_slice()?)
 }
 
 fn format_ast_args<'a, I>(
-    sources: &Sources,
-    location: Location,
-    environment: bool,
-    arguments: I,
+	sources: &Sources,
+	location: Location,
+	environment: bool,
+	arguments: I,
 ) -> compile::Result<Box<[Box<str>]>>
 where
-    I: IntoIterator<Item = &'a Span>,
+	I: IntoIterator<Item = &'a Span>,
 {
-    let mut args = Vec::new();
+	let mut args = Vec::new();
 
-    for &span in arguments {
-        if let Some(s) = sources.source(location.source_id, span) {
-            args.try_push(Box::try_from(s)?)?;
-        } else {
-            args.try_push(Box::try_from("*")?)?;
-        }
-    }
+	for &span in arguments {
+		if let Some(s) = sources.source(location.source_id, span) {
+			args.try_push(Box::try_from(s)?)?;
+		} else {
+			args.try_push(Box::try_from("*")?)?;
+		}
+	}
 
-    if environment {
-        args.try_push(Box::try_from("environment")?)?;
-    }
+	if environment {
+		args.try_push(Box::try_from("environment")?)?;
+	}
 
-    Ok(args.try_into_boxed_slice()?)
+	Ok(args.try_into_boxed_slice()?)
 }

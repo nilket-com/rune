@@ -21,166 +21,166 @@ use crate::raw_vec::RawVec;
 /// let iter: std::vec::IntoIter<_> = v.into_iter();
 /// ```
 pub struct IntoIter<T, A: Allocator = Global> {
-    pub(super) buf: NonNull<T>,
-    pub(super) phantom: PhantomData<T>,
-    pub(super) cap: usize,
-    // the drop impl reconstructs a RawVec from buf, cap and alloc
-    // to avoid dropping the allocator twice we need to wrap it into ManuallyDrop
-    pub(super) alloc: ManuallyDrop<A>,
-    pub(super) ptr: *const T,
-    pub(super) end: *const T, // If T is a ZST, this is actually ptr+len. This encoding is picked so that
-                              // ptr == end is a quick test for the Iterator being empty, that works
-                              // for both ZST and non-ZST.
+	pub(super) buf: NonNull<T>,
+	pub(super) phantom: PhantomData<T>,
+	pub(super) cap: usize,
+	// the drop impl reconstructs a RawVec from buf, cap and alloc
+	// to avoid dropping the allocator twice we need to wrap it into ManuallyDrop
+	pub(super) alloc: ManuallyDrop<A>,
+	pub(super) ptr: *const T,
+	pub(super) end: *const T, // If T is a ZST, this is actually ptr+len. This encoding is picked so that
+	                          // ptr == end is a quick test for the Iterator being empty, that works
+	                          // for both ZST and non-ZST.
 }
 
 impl<T, A> fmt::Debug for IntoIter<T, A>
 where
-    T: fmt::Debug,
-    A: Allocator,
+	T: fmt::Debug,
+	A: Allocator,
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_tuple("IntoIter").field(&self.as_slice()).finish()
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		f.debug_tuple("IntoIter").field(&self.as_slice()).finish()
+	}
 }
 
 impl<T, A> IntoIter<T, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    /// Returns the remaining items of this iterator as a slice.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let vec = vec!['a', 'b', 'c'];
-    /// let mut into_iter = vec.into_iter();
-    /// assert_eq!(into_iter.as_slice(), &['a', 'b', 'c']);
-    /// let _ = into_iter.next().unwrap();
-    /// assert_eq!(into_iter.as_slice(), &['b', 'c']);
-    /// ```
-    pub fn as_slice(&self) -> &[T] {
-        unsafe { slice::from_raw_parts(self.ptr, self.len()) }
-    }
+	/// Returns the remaining items of this iterator as a slice.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// let vec = vec!['a', 'b', 'c'];
+	/// let mut into_iter = vec.into_iter();
+	/// assert_eq!(into_iter.as_slice(), &['a', 'b', 'c']);
+	/// let _ = into_iter.next().unwrap();
+	/// assert_eq!(into_iter.as_slice(), &['b', 'c']);
+	/// ```
+	pub fn as_slice(&self) -> &[T] {
+		unsafe { slice::from_raw_parts(self.ptr, self.len()) }
+	}
 
-    /// Returns the remaining items of this iterator as a mutable slice.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let vec = vec!['a', 'b', 'c'];
-    /// let mut into_iter = vec.into_iter();
-    /// assert_eq!(into_iter.as_slice(), &['a', 'b', 'c']);
-    /// into_iter.as_mut_slice()[2] = 'z';
-    /// assert_eq!(into_iter.next().unwrap(), 'a');
-    /// assert_eq!(into_iter.next().unwrap(), 'b');
-    /// assert_eq!(into_iter.next().unwrap(), 'z');
-    /// ```
-    pub fn as_mut_slice(&mut self) -> &mut [T] {
-        unsafe { &mut *self.as_raw_mut_slice() }
-    }
+	/// Returns the remaining items of this iterator as a mutable slice.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// let vec = vec!['a', 'b', 'c'];
+	/// let mut into_iter = vec.into_iter();
+	/// assert_eq!(into_iter.as_slice(), &['a', 'b', 'c']);
+	/// into_iter.as_mut_slice()[2] = 'z';
+	/// assert_eq!(into_iter.next().unwrap(), 'a');
+	/// assert_eq!(into_iter.next().unwrap(), 'b');
+	/// assert_eq!(into_iter.next().unwrap(), 'z');
+	/// ```
+	pub fn as_mut_slice(&mut self) -> &mut [T] {
+		unsafe { &mut *self.as_raw_mut_slice() }
+	}
 
-    /// Returns a reference to the underlying allocator.
-    #[inline]
-    pub fn allocator(&self) -> &A {
-        &self.alloc
-    }
+	/// Returns a reference to the underlying allocator.
+	#[inline]
+	pub fn allocator(&self) -> &A {
+		&self.alloc
+	}
 
-    fn as_raw_mut_slice(&mut self) -> *mut [T] {
-        ptr::slice_from_raw_parts_mut(self.ptr as *mut T, self.len())
-    }
+	fn as_raw_mut_slice(&mut self) -> *mut [T] {
+		ptr::slice_from_raw_parts_mut(self.ptr as *mut T, self.len())
+	}
 
-    /// Forgets to Drop the remaining elements while still allowing the backing allocation to be freed.
-    #[cfg(rune_nightly)]
-    pub(crate) fn forget_remaining_elements(&mut self) {
-        // For th ZST case, it is crucial that we mutate `end` here, not `ptr`.
-        // `ptr` must stay aligned, while `end` may be unaligned.
-        self.end = self.ptr;
-    }
+	/// Forgets to Drop the remaining elements while still allowing the backing allocation to be freed.
+	#[cfg(rune_nightly)]
+	pub(crate) fn forget_remaining_elements(&mut self) {
+		// For th ZST case, it is crucial that we mutate `end` here, not `ptr`.
+		// `ptr` must stay aligned, while `end` may be unaligned.
+		self.end = self.ptr;
+	}
 }
 
 impl<T, A> AsRef<[T]> for IntoIter<T, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    fn as_ref(&self) -> &[T] {
-        self.as_slice()
-    }
+	fn as_ref(&self) -> &[T] {
+		self.as_slice()
+	}
 }
 
 unsafe impl<T, A> Send for IntoIter<T, A>
 where
-    T: Send,
-    A: Allocator + Send,
+	T: Send,
+	A: Allocator + Send,
 {
 }
 unsafe impl<T, A> Sync for IntoIter<T, A>
 where
-    T: Sync,
-    A: Allocator + Sync,
+	T: Sync,
+	A: Allocator + Sync,
 {
 }
 
 impl<T, A> Iterator for IntoIter<T, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    type Item = T;
+	type Item = T;
 
-    #[inline]
-    fn next(&mut self) -> Option<T> {
-        if self.ptr == self.end {
-            None
-        } else if T::IS_ZST {
-            // `ptr` has to stay where it is to remain aligned, so we reduce the length by 1 by
-            // reducing the `end`.
-            self.end = self.end.wrapping_byte_sub(1);
+	#[inline]
+	fn next(&mut self) -> Option<T> {
+		if self.ptr == self.end {
+			None
+		} else if T::IS_ZST {
+			// `ptr` has to stay where it is to remain aligned, so we reduce the length by 1 by
+			// reducing the `end`.
+			self.end = self.end.wrapping_byte_sub(1);
 
-            // Make up a value of this ZST.
-            Some(unsafe { mem::zeroed() })
-        } else {
-            let old = self.ptr;
-            self.ptr = unsafe { self.ptr.add(1) };
+			// Make up a value of this ZST.
+			Some(unsafe { mem::zeroed() })
+		} else {
+			let old = self.ptr;
+			self.ptr = unsafe { self.ptr.add(1) };
 
-            Some(unsafe { ptr::read(old) })
-        }
-    }
+			Some(unsafe { ptr::read(old) })
+		}
+	}
 
-    #[inline]
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        let exact = if T::IS_ZST {
-            self.end.addr().wrapping_sub(self.ptr.addr())
-        } else {
-            unsafe { self.end.offset_from_unsigned(self.ptr) }
-        };
-        (exact, Some(exact))
-    }
+	#[inline]
+	fn size_hint(&self) -> (usize, Option<usize>) {
+		let exact = if T::IS_ZST {
+			self.end.addr().wrapping_sub(self.ptr.addr())
+		} else {
+			unsafe { self.end.offset_from_unsigned(self.ptr) }
+		};
+		(exact, Some(exact))
+	}
 
-    #[inline]
-    fn count(self) -> usize {
-        self.len()
-    }
+	#[inline]
+	fn count(self) -> usize {
+		self.len()
+	}
 }
 
 impl<T, A> DoubleEndedIterator for IntoIter<T, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    #[inline]
-    fn next_back(&mut self) -> Option<T> {
-        if self.end == self.ptr {
-            None
-        } else if T::IS_ZST {
-            // See above for why 'ptr.offset' isn't used
-            self.end = self.end.wrapping_byte_sub(1);
+	#[inline]
+	fn next_back(&mut self) -> Option<T> {
+		if self.end == self.ptr {
+			None
+		} else if T::IS_ZST {
+			// See above for why 'ptr.offset' isn't used
+			self.end = self.end.wrapping_byte_sub(1);
 
-            // Make up a value of this ZST.
-            Some(unsafe { mem::zeroed() })
-        } else {
-            self.end = unsafe { self.end.sub(1) };
+			// Make up a value of this ZST.
+			Some(unsafe { mem::zeroed() })
+		} else {
+			self.end = unsafe { self.end.sub(1) };
 
-            Some(unsafe { ptr::read(self.end) })
-        }
-    }
+			Some(unsafe { ptr::read(self.end) })
+		}
+	}
 }
 
 impl<T, A> ExactSizeIterator for IntoIter<T, A> where A: Allocator {}
@@ -189,83 +189,83 @@ impl<T, A> FusedIterator for IntoIter<T, A> where A: Allocator {}
 
 impl<T, A> Default for IntoIter<T, A>
 where
-    A: Allocator + Default,
+	A: Allocator + Default,
 {
-    /// Creates an empty `vec::IntoIter`.
-    ///
-    /// ```
-    /// # use std::vec;
-    /// let iter: vec::IntoIter<u8> = Default::default();
-    /// assert_eq!(iter.len(), 0);
-    /// assert_eq!(iter.as_slice(), &[]);
-    /// ```
-    fn default() -> Self {
-        super::Vec::new_in(Default::default()).into_iter()
-    }
+	/// Creates an empty `vec::IntoIter`.
+	///
+	/// ```
+	/// # use std::vec;
+	/// let iter: vec::IntoIter<u8> = Default::default();
+	/// assert_eq!(iter.len(), 0);
+	/// assert_eq!(iter.as_slice(), &[]);
+	/// ```
+	fn default() -> Self {
+		super::Vec::new_in(Default::default()).into_iter()
+	}
 }
 
 #[cfg(rune_nightly)]
 unsafe impl<#[may_dangle] T, A> Drop for IntoIter<T, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    fn drop(&mut self) {
-        struct DropGuard<'a, T, A>(&'a mut IntoIter<T, A>)
-        where
-            A: Allocator;
+	fn drop(&mut self) {
+		struct DropGuard<'a, T, A>(&'a mut IntoIter<T, A>)
+		where
+			A: Allocator;
 
-        impl<T, A> Drop for DropGuard<'_, T, A>
-        where
-            A: Allocator,
-        {
-            fn drop(&mut self) {
-                unsafe {
-                    // `IntoIter::alloc` is not used anymore after this and will be dropped by RawVec
-                    let alloc = ManuallyDrop::take(&mut self.0.alloc);
-                    // RawVec handles deallocation
-                    let _ = RawVec::from_raw_parts_in(self.0.buf.as_ptr(), self.0.cap, alloc);
-                }
-            }
-        }
+		impl<T, A> Drop for DropGuard<'_, T, A>
+		where
+			A: Allocator,
+		{
+			fn drop(&mut self) {
+				unsafe {
+					// `IntoIter::alloc` is not used anymore after this and will be dropped by RawVec
+					let alloc = ManuallyDrop::take(&mut self.0.alloc);
+					// RawVec handles deallocation
+					let _ = RawVec::from_raw_parts_in(self.0.buf.as_ptr(), self.0.cap, alloc);
+				}
+			}
+		}
 
-        let guard = DropGuard(self);
-        // destroy the remaining elements
-        unsafe {
-            ptr::drop_in_place(guard.0.as_raw_mut_slice());
-        }
-        // now `guard` will be dropped and do the rest
-    }
+		let guard = DropGuard(self);
+		// destroy the remaining elements
+		unsafe {
+			ptr::drop_in_place(guard.0.as_raw_mut_slice());
+		}
+		// now `guard` will be dropped and do the rest
+	}
 }
 
 #[cfg(not(rune_nightly))]
 impl<T, A> Drop for IntoIter<T, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    fn drop(&mut self) {
-        struct DropGuard<'a, T, A>(&'a mut IntoIter<T, A>)
-        where
-            A: Allocator;
+	fn drop(&mut self) {
+		struct DropGuard<'a, T, A>(&'a mut IntoIter<T, A>)
+		where
+			A: Allocator;
 
-        impl<T, A> Drop for DropGuard<'_, T, A>
-        where
-            A: Allocator,
-        {
-            fn drop(&mut self) {
-                unsafe {
-                    // `IntoIter::alloc` is not used anymore after this and will be dropped by RawVec
-                    let alloc = ManuallyDrop::take(&mut self.0.alloc);
-                    // RawVec handles deallocation
-                    let _ = RawVec::from_raw_parts_in(self.0.buf.as_ptr(), self.0.cap, alloc);
-                }
-            }
-        }
+		impl<T, A> Drop for DropGuard<'_, T, A>
+		where
+			A: Allocator,
+		{
+			fn drop(&mut self) {
+				unsafe {
+					// `IntoIter::alloc` is not used anymore after this and will be dropped by RawVec
+					let alloc = ManuallyDrop::take(&mut self.0.alloc);
+					// RawVec handles deallocation
+					let _ = RawVec::from_raw_parts_in(self.0.buf.as_ptr(), self.0.cap, alloc);
+				}
+			}
+		}
 
-        let guard = DropGuard(self);
-        // destroy the remaining elements
-        unsafe {
-            ptr::drop_in_place(guard.0.as_raw_mut_slice());
-        }
-        // now `guard` will be dropped and do the rest
-    }
+		let guard = DropGuard(self);
+		// destroy the remaining elements
+		unsafe {
+			ptr::drop_in_place(guard.0.as_raw_mut_slice());
+		}
+		// now `guard` will be dropped and do the rest
+	}
 }

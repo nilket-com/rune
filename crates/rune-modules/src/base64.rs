@@ -17,13 +17,13 @@ use rune::{nested_try, ContextError, Module};
 /// ```
 #[rune::module(::base64)]
 pub fn module(_stdio: bool) -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
+	let mut m = Module::from_meta(self::module__meta)?;
 
-    m.ty::<DecodeError>()?;
+	m.ty::<DecodeError>()?;
 
-    m.function_meta(decode)?;
-    m.function_meta(encode)?;
-    Ok(m)
+	m.function_meta(decode)?;
+	m.function_meta(encode)?;
+	Ok(m)
 }
 
 /// Decode a base64 String into data
@@ -35,19 +35,19 @@ pub fn module(_stdio: bool) -> Result<Module, ContextError> {
 /// ```
 #[rune::function]
 fn decode(inp: &str) -> alloc::Result<Result<Bytes, DecodeError>> {
-    // estimate the max size
-    let decoded_size = base64::decoded_len_estimate(inp.len());
+	// estimate the max size
+	let decoded_size = base64::decoded_len_estimate(inp.len());
 
-    // try to allocate enough bytes
-    let mut v = Vec::new();
+	// try to allocate enough bytes
+	let mut v = Vec::new();
 
-    v.try_resize(decoded_size, 0)?;
+	v.try_resize(decoded_size, 0)?;
 
-    // decode
-    let len = nested_try!(BASE64_STANDARD.decode_slice(inp, &mut v));
+	// decode
+	let len = nested_try!(BASE64_STANDARD.decode_slice(inp, &mut v));
 
-    v.truncate(len);
-    Ok(Ok(Bytes::from_vec(v)))
+	v.truncate(len);
+	Ok(Ok(Bytes::from_vec(v)))
 }
 
 /// Encode a data into a base64 String.
@@ -59,22 +59,22 @@ fn decode(inp: &str) -> alloc::Result<Result<Bytes, DecodeError>> {
 /// ```
 #[rune::function]
 fn encode(bytes: &[u8]) -> Result<String, VmError> {
-    let Some(encoded_size) = base64::encoded_len(bytes.len(), true) else {
-        return Err(VmError::panic("encoded input length overflows usize"));
-    };
+	let Some(encoded_size) = base64::encoded_len(bytes.len(), true) else {
+		return Err(VmError::panic("encoded input length overflows usize"));
+	};
 
-    let mut buf = Vec::new();
-    buf.try_resize(encoded_size, 0)?;
+	let mut buf = Vec::new();
+	buf.try_resize(encoded_size, 0)?;
 
-    // this should never panic
-    if let Err(e) = BASE64_STANDARD.encode_slice(bytes, &mut buf) {
-        return Err(VmError::panic(e));
-    }
+	// this should never panic
+	if let Err(e) = BASE64_STANDARD.encode_slice(bytes, &mut buf) {
+		return Err(VmError::panic(e));
+	}
 
-    // base64 should only return valid utf8 strings
-    let string = String::from_utf8(buf).map_err(VmError::panic)?;
+	// base64 should only return valid utf8 strings
+	let string = String::from_utf8(buf).map_err(VmError::panic)?;
 
-    Ok(string)
+	Ok(string)
 }
 
 /// Errors that can occur while decoding.
@@ -82,18 +82,18 @@ fn encode(bytes: &[u8]) -> Result<String, VmError> {
 #[rune(item = ::base64)]
 #[allow(dead_code)]
 pub struct DecodeError {
-    inner: base64::DecodeSliceError,
+	inner: base64::DecodeSliceError,
 }
 
 impl From<base64::DecodeSliceError> for DecodeError {
-    fn from(inner: base64::DecodeSliceError) -> Self {
-        Self { inner }
-    }
+	fn from(inner: base64::DecodeSliceError) -> Self {
+		Self { inner }
+	}
 }
 
 impl DecodeError {
-    #[rune::function(instance, protocol = DISPLAY_FMT)]
-    fn display_fmt(&self, f: &mut Formatter) -> alloc::Result<()> {
-        write!(f, "{}", self.inner)
-    }
+	#[rune::function(instance, protocol = DISPLAY_FMT)]
+	fn display_fmt(&self, f: &mut Formatter) -> alloc::Result<()> {
+		write!(f, "{}", self.inner)
+	}
 }

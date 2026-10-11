@@ -3,8 +3,8 @@ use crate::ast::prelude::*;
 #[test]
 #[cfg(not(miri))]
 fn ast_parse() {
-    rt::<ast::LitBool>("true");
-    rt::<ast::LitBool>("false");
+	rt::<ast::LitBool>("true");
+	rt::<ast::LitBool>("false");
 }
 
 /// The boolean literal.
@@ -15,51 +15,51 @@ fn ast_parse() {
 #[try_clone(copy)]
 #[non_exhaustive]
 pub struct LitBool {
-    /// The span corresponding to the literal.
-    pub span: Span,
-    /// The value of the literal.
-    #[rune(skip)]
-    pub value: bool,
+	/// The span corresponding to the literal.
+	pub span: Span,
+	/// The value of the literal.
+	#[rune(skip)]
+	pub value: bool,
 }
 
 impl Parse for LitBool {
-    fn parse(p: &mut Parser<'_>) -> Result<Self> {
-        let t = p.next()?;
+	fn parse(p: &mut Parser<'_>) -> Result<Self> {
+		let t = p.next()?;
 
-        let value = match t.kind {
-            K![true] => true,
-            K![false] => false,
-            _ => {
-                return Err(compile::Error::expected(t, Expectation::Boolean));
-            }
-        };
+		let value = match t.kind {
+			K![true] => true,
+			K![false] => false,
+			_ => {
+				return Err(compile::Error::expected(t, Expectation::Boolean));
+			}
+		};
 
-        Ok(Self {
-            span: t.span,
-            value,
-        })
-    }
+		Ok(Self {
+			span: t.span,
+			value,
+		})
+	}
 }
 
 impl Peek for LitBool {
-    fn peek(p: &mut Peeker<'_>) -> bool {
-        matches!(p.nth(0), K![true] | K![false])
-    }
+	fn peek(p: &mut Peeker<'_>) -> bool {
+		matches!(p.nth(0), K![true] | K![false])
+	}
 }
 
 impl ToTokens for LitBool {
-    fn to_tokens(
-        &self,
-        _: &mut MacroContext<'_, '_, '_>,
-        stream: &mut TokenStream,
-    ) -> alloc::Result<()> {
-        stream.push(ast::Token {
-            span: self.span,
-            kind: if self.value {
-                ast::Kind::True
-            } else {
-                ast::Kind::False
-            },
-        })
-    }
+	fn to_tokens(
+		&self,
+		_: &mut MacroContext<'_, '_, '_>,
+		stream: &mut TokenStream,
+	) -> alloc::Result<()> {
+		stream.push(ast::Token {
+			span: self.span,
+			kind: if self.value {
+				ast::Kind::True
+			} else {
+				ast::Kind::False
+			},
+		})
+	}
 }

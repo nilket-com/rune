@@ -34,20 +34,20 @@ macro_rules! test_case {
 
 #[test]
 fn test_object_like_early_term() {
-    test_case!(( #{} ), test, "test");
+	test_case!(( #{} ), test, "test");
 }
 
 #[test]
 fn test_tuple_like_early_term() {
-    test_case!((()), 0, 0);
+	test_case!((()), 0, 0);
 }
 
 #[test]
 fn test_typed_object_early_term() {
-    test_case!((Foo()), 0, 0, struct Foo(););
+	test_case!((Foo()), 0, 0, struct Foo(););
 }
 
 #[test]
 fn test_typed_tuple_early_term() {
-    test_case!(( Foo { test: 0 } ), test, "test", struct Foo { test };);
+	test_case!(( Foo { test: 0 } ), test, "test", struct Foo { test };);
 }

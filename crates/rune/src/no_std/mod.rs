@@ -6,32 +6,32 @@ use core::ptr::NonNull;
 #[derive(Clone, Copy)]
 #[repr(C)]
 pub struct RawEnv {
-    pub(crate) context: Option<NonNull<()>>,
-    pub(crate) unit: Option<NonNull<()>>,
-    pub(crate) globals: Option<NonNull<()>>,
-    pub(crate) diagnostics: Option<NonNull<()>>,
-    /// How deeply the walk over a value in progress has descended, which has to
-    /// be stored along with the rest of the environment since a walk which goes
-    /// through a protocol function is counted across it.
-    pub(crate) depth: usize,
-    /// How deeply the executions in progress are nested, which is stored here
-    /// for the same reason: an execution entered through a native frame is
-    /// counted across it.
-    pub(crate) executions: usize,
+	pub(crate) context: Option<NonNull<()>>,
+	pub(crate) unit: Option<NonNull<()>>,
+	pub(crate) globals: Option<NonNull<()>>,
+	pub(crate) diagnostics: Option<NonNull<()>>,
+	/// How deeply the walk over a value in progress has descended, which has to
+	/// be stored along with the rest of the environment since a walk which goes
+	/// through a protocol function is counted across it.
+	pub(crate) depth: usize,
+	/// How deeply the executions in progress are nested, which is stored here
+	/// for the same reason: an execution entered through a native frame is
+	/// counted across it.
+	pub(crate) executions: usize,
 }
 
 impl RawEnv {
-    /// Initialize an empty raw environment.
-    pub const fn null() -> RawEnv {
-        RawEnv {
-            context: None,
-            unit: None,
-            globals: None,
-            diagnostics: None,
-            depth: 0,
-            executions: 0,
-        }
-    }
+	/// Initialize an empty raw environment.
+	pub const fn null() -> RawEnv {
+		RawEnv {
+			context: None,
+			unit: None,
+			globals: None,
+			diagnostics: None,
+			depth: 0,
+			executions: 0,
+		}
+	}
 }
 
 /// Defines a static budget and environment implementation suitable for
@@ -50,102 +50,102 @@ impl RawEnv {
 /// ```
 #[macro_export]
 macro_rules! static_env {
-    () => {
-        $crate::no_std::__static_env!();
-    };
+	() => {
+		$crate::no_std::__static_env!();
+	};
 }
 
 #[cfg(feature = "std")]
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __static_env {
-    () => {};
+	() => {};
 }
 
 #[cfg(not(feature = "std"))]
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __static_env {
-    () => {
-        const _: () = {
-            use $crate::no_std::RawEnv;
+	() => {
+		const _: () = {
+			use $crate::no_std::RawEnv;
 
-            static mut BUDGET: usize = usize::MAX;
-            static mut MEMORY: usize = usize::MAX;
-            static mut RAW_ENV: RawEnv = RawEnv::null();
+			static mut BUDGET: usize = usize::MAX;
+			static mut MEMORY: usize = usize::MAX;
+			static mut RAW_ENV: RawEnv = RawEnv::null();
 
-            /// Necessary hook to abort the current process.
-            #[no_mangle]
-            extern "C" fn __rune_alloc_abort() -> ! {
-                ::core::intrinsics::abort()
-            }
+			/// Necessary hook to abort the current process.
+			#[no_mangle]
+			extern "C" fn __rune_alloc_abort() -> ! {
+				::core::intrinsics::abort()
+			}
 
-            #[no_mangle]
-            extern "C" fn __rune_alloc_memory_take(amount: usize) -> bool {
-                unsafe {
-                    if MEMORY == usize::MAX {
-                        return true;
-                    }
+			#[no_mangle]
+			extern "C" fn __rune_alloc_memory_take(amount: usize) -> bool {
+				unsafe {
+					if MEMORY == usize::MAX {
+						return true;
+					}
 
-                    if MEMORY >= amount {
-                        MEMORY -= amount;
-                        return true;
-                    }
+					if MEMORY >= amount {
+						MEMORY -= amount;
+						return true;
+					}
 
-                    return false;
-                }
-            }
+					return false;
+				}
+			}
 
-            /// Release the given amount of memory to the current budget.
-            #[no_mangle]
-            extern "C" fn __rune_alloc_memory_release(amount: usize) {
-                unsafe {
-                    if MEMORY == usize::MAX {
-                        return;
-                    }
+			/// Release the given amount of memory to the current budget.
+			#[no_mangle]
+			extern "C" fn __rune_alloc_memory_release(amount: usize) {
+				unsafe {
+					if MEMORY == usize::MAX {
+						return;
+					}
 
-                    MEMORY = MEMORY.saturating_add(amount);
-                }
-            }
+					MEMORY = MEMORY.saturating_add(amount);
+				}
+			}
 
-            /// Get the remaining memory budget for the current thread.
-            #[no_mangle]
-            extern "C" fn __rune_alloc_memory_get() -> usize {
-                unsafe { MEMORY }
-            }
+			/// Get the remaining memory budget for the current thread.
+			#[no_mangle]
+			extern "C" fn __rune_alloc_memory_get() -> usize {
+				unsafe { MEMORY }
+			}
 
-            /// Replace the memory budget for the current thread and return the one which
-            /// was previously set.
-            #[no_mangle]
-            extern "C" fn __rune_alloc_memory_replace(value: usize) -> usize {
-                unsafe { core::ptr::replace(core::ptr::addr_of_mut!(MEMORY), value) }
-            }
+			/// Replace the memory budget for the current thread and return the one which
+			/// was previously set.
+			#[no_mangle]
+			extern "C" fn __rune_alloc_memory_replace(value: usize) -> usize {
+				unsafe { core::ptr::replace(core::ptr::addr_of_mut!(MEMORY), value) }
+			}
 
-            #[no_mangle]
-            extern "C" fn __rune_budget_replace(value: usize) -> usize {
-                // SAFETY: this is only ever executed in a singlethreaded environment.
-                unsafe { core::ptr::replace(core::ptr::addr_of_mut!(BUDGET), value) }
-            }
+			#[no_mangle]
+			extern "C" fn __rune_budget_replace(value: usize) -> usize {
+				// SAFETY: this is only ever executed in a singlethreaded environment.
+				unsafe { core::ptr::replace(core::ptr::addr_of_mut!(BUDGET), value) }
+			}
 
-            #[no_mangle]
-            extern "C" fn __rune_budget_get() -> usize {
-                // SAFETY: this is only ever executed in a singlethreaded environment.
-                unsafe { BUDGET }
-            }
+			#[no_mangle]
+			extern "C" fn __rune_budget_get() -> usize {
+				// SAFETY: this is only ever executed in a singlethreaded environment.
+				unsafe { BUDGET }
+			}
 
-            #[no_mangle]
-            extern "C" fn __rune_env_get() -> RawEnv {
-                // SAFETY: this is only ever executed in a singlethreaded environment.
-                unsafe { RAW_ENV }
-            }
+			#[no_mangle]
+			extern "C" fn __rune_env_get() -> RawEnv {
+				// SAFETY: this is only ever executed in a singlethreaded environment.
+				unsafe { RAW_ENV }
+			}
 
-            #[no_mangle]
-            extern "C" fn __rune_env_replace(env: RawEnv) -> RawEnv {
-                // SAFETY: this is only ever executed in a singlethreaded environment.
-                unsafe { core::ptr::replace(core::ptr::addr_of_mut!(RAW_ENV), env) }
-            }
-        };
-    };
+			#[no_mangle]
+			extern "C" fn __rune_env_replace(env: RawEnv) -> RawEnv {
+				// SAFETY: this is only ever executed in a singlethreaded environment.
+				unsafe { core::ptr::replace(core::ptr::addr_of_mut!(RAW_ENV), env) }
+			}
+		};
+	};
 }
 
 #[doc(hidden)]

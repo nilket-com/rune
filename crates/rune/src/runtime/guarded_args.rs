@@ -8,29 +8,29 @@ use crate::runtime::{Stack, UnsafeToValue, Value, VmError};
 /// implemented in contexts where it can be guaranteed that the references will
 /// not outlive the call.
 pub trait GuardedArgs {
-    /// Guard that when dropped will invalidate any values encoded.
-    type Guard;
+	/// Guard that when dropped will invalidate any values encoded.
+	type Guard;
 
-    /// Encode arguments onto a stack.
-    ///
-    /// # Safety
-    ///
-    /// This can encode references onto the stack. The caller must ensure that
-    /// the guard is dropped before any references which have been encoded are
-    /// no longer alive.
-    unsafe fn guarded_into_stack(self, stack: &mut Stack) -> Result<Self::Guard, VmError>;
+	/// Encode arguments onto a stack.
+	///
+	/// # Safety
+	///
+	/// This can encode references onto the stack. The caller must ensure that
+	/// the guard is dropped before any references which have been encoded are
+	/// no longer alive.
+	unsafe fn guarded_into_stack(self, stack: &mut Stack) -> Result<Self::Guard, VmError>;
 
-    /// Encode arguments into a vector.
-    ///
-    /// # Safety
-    ///
-    /// This can encode references into the vector. The caller must ensure that
-    /// the guard is dropped before any references which have been encoded are
-    /// no longer alive.
-    unsafe fn guarded_into_vec(self) -> Result<(Vec<Value>, Self::Guard), VmError>;
+	/// Encode arguments into a vector.
+	///
+	/// # Safety
+	///
+	/// This can encode references into the vector. The caller must ensure that
+	/// the guard is dropped before any references which have been encoded are
+	/// no longer alive.
+	unsafe fn guarded_into_vec(self) -> Result<(Vec<Value>, Self::Guard), VmError>;
 
-    /// The number of arguments.
-    fn count(&self) -> usize;
+	/// The number of arguments.
+	fn count(&self) -> usize;
 }
 
 macro_rules! impl_into_args {
@@ -71,39 +71,39 @@ macro_rules! impl_into_args {
 repeat_macro!(impl_into_args);
 
 impl GuardedArgs for Vec<Value> {
-    type Guard = ();
+	type Guard = ();
 
-    #[inline]
-    unsafe fn guarded_into_stack(self, stack: &mut Stack) -> Result<Self::Guard, VmError> {
-        self.into_stack(stack)
-    }
+	#[inline]
+	unsafe fn guarded_into_stack(self, stack: &mut Stack) -> Result<Self::Guard, VmError> {
+		self.into_stack(stack)
+	}
 
-    #[inline]
-    unsafe fn guarded_into_vec(self) -> Result<(Vec<Value>, Self::Guard), VmError> {
-        Ok((self, ()))
-    }
+	#[inline]
+	unsafe fn guarded_into_vec(self) -> Result<(Vec<Value>, Self::Guard), VmError> {
+		Ok((self, ()))
+	}
 
-    #[inline]
-    fn count(&self) -> usize {
-        (self as &dyn Args).count()
-    }
+	#[inline]
+	fn count(&self) -> usize {
+		(self as &dyn Args).count()
+	}
 }
 
 impl GuardedArgs for rust_alloc::vec::Vec<Value> {
-    type Guard = ();
+	type Guard = ();
 
-    #[inline]
-    unsafe fn guarded_into_stack(self, stack: &mut Stack) -> Result<Self::Guard, VmError> {
-        self.into_stack(stack)
-    }
+	#[inline]
+	unsafe fn guarded_into_stack(self, stack: &mut Stack) -> Result<Self::Guard, VmError> {
+		self.into_stack(stack)
+	}
 
-    #[inline]
-    unsafe fn guarded_into_vec(self) -> Result<(Vec<Value>, Self::Guard), VmError> {
-        Ok((Vec::try_from(self)?, ()))
-    }
+	#[inline]
+	unsafe fn guarded_into_vec(self) -> Result<(Vec<Value>, Self::Guard), VmError> {
+		Ok((Vec::try_from(self)?, ()))
+	}
 
-    #[inline]
-    fn count(&self) -> usize {
-        self.len()
-    }
+	#[inline]
+	fn count(&self) -> usize {
+		self.len()
+	}
 }

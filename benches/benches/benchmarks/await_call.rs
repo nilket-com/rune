@@ -12,49 +12,49 @@ criterion::criterion_group!(benches, sync_call, await_call);
 const ITERATIONS: i64 = 100_000;
 
 fn sync_call(b: &mut Criterion) {
-    let mut vm = rune_vm! {
-        fn work(a) { a + 1 }
+	let mut vm = rune_vm! {
+		fn work(a) { a + 1 }
 
-        pub async fn main(n) {
-            let a = 0;
-            let i = 0;
+		pub async fn main(n) {
+			let a = 0;
+			let i = 0;
 
-            while i < n {
-                a = work(a);
-                i += 1;
-            }
+			while i < n {
+				a = work(a);
+				i += 1;
+			}
 
-            a
-        }
-    };
+			a
+		}
+	};
 
-    let entry = rune::Hash::type_hash(["main"]);
+	let entry = rune::Hash::type_hash(["main"]);
 
-    b.bench_function("sync_call", |b| {
-        b.iter(|| block_on(vm.async_call(entry, (ITERATIONS,))).expect("failed call"));
-    });
+	b.bench_function("sync_call", |b| {
+		b.iter(|| block_on(vm.async_call(entry, (ITERATIONS,))).expect("failed call"));
+	});
 }
 
 fn await_call(b: &mut Criterion) {
-    let mut vm = rune_vm! {
-        async fn work(a) { a + 1 }
+	let mut vm = rune_vm! {
+		async fn work(a) { a + 1 }
 
-        pub async fn main(n) {
-            let a = 0;
-            let i = 0;
+		pub async fn main(n) {
+			let a = 0;
+			let i = 0;
 
-            while i < n {
-                a = work(a).await;
-                i += 1;
-            }
+			while i < n {
+				a = work(a).await;
+				i += 1;
+			}
 
-            a
-        }
-    };
+			a
+		}
+	};
 
-    let entry = rune::Hash::type_hash(["main"]);
+	let entry = rune::Hash::type_hash(["main"]);
 
-    b.bench_function("await_call", |b| {
-        b.iter(|| block_on(vm.async_call(entry, (ITERATIONS,))).expect("failed call"));
-    });
+	b.bench_function("await_call", |b| {
+		b.iter(|| block_on(vm.async_call(entry, (ITERATIONS,))).expect("failed call"));
+	});
 }

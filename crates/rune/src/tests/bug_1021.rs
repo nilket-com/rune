@@ -7,29 +7,29 @@ prelude!();
 /// See https://github.com/rune-rs/rune/issues/1021
 #[test]
 fn test_bug_1021() {
-    let _: () = rune! {
-        pub fn main() {
-            if true { }
-            (1, 2, 3);
-        }
+	let _: () = rune! {
+		pub fn main() {
+			if true { }
+			(1, 2, 3);
+		}
 
-        main()
-    };
+		main()
+	};
 
-    let _: () = rune! {
-        pub fn main() {
-            if true { 1 } else { 0 }
-            (1, 2, 3);
-        }
+	let _: () = rune! {
+		pub fn main() {
+			if true { 1 } else { 0 }
+			(1, 2, 3);
+		}
 
-        main()
-    };
+		main()
+	};
 
-    // In expression position a block-like expression can still be called.
-    let out: i64 = rune! {
-        let f = if true { || 1 } else { || 2 }();
-        f
-    };
+	// In expression position a block-like expression can still be called.
+	let out: i64 = rune! {
+		let f = if true { || 1 } else { || 2 }();
+		f
+	};
 
-    assert_eq!(out, 1);
+	assert_eq!(out, 1);
 }

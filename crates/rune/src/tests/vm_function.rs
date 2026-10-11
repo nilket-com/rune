@@ -2,62 +2,62 @@ prelude!();
 
 #[test]
 fn test_function() -> Result<()> {
-    let context = Arc::try_new(Context::with_default_modules()?)?;
+	let context = Arc::try_new(Context::with_default_modules()?)?;
 
-    // ptr to dynamic function.
-    let function: Function = rune! {
-        fn foo(a, b) { a + b }
-        foo
-    };
+	// ptr to dynamic function.
+	let function: Function = rune! {
+		fn foo(a, b) { a + b }
+		foo
+	};
 
-    assert_eq!(function.call::<i64>((1i64, 3i64)).unwrap(), 4i64);
-    assert!(function.call::<i64>((1i64,)).is_err());
+	assert_eq!(function.call::<i64>((1i64, 3i64)).unwrap(), 4i64);
+	assert!(function.call::<i64>((1i64,)).is_err());
 
-    // ptr to native function
-    let function: Function = rune!(Vec::new);
+	// ptr to native function
+	let function: Function = rune!(Vec::new);
 
-    let value: Vec<Value> = function.call(()).unwrap();
-    assert_eq!(value.len(), 0);
+	let value: Vec<Value> = function.call(()).unwrap();
+	assert_eq!(value.len(), 0);
 
-    // ptr to dynamic function.
-    let function: Function = rune! {
-        enum Custom { A(a) }
-        Custom::A
-    };
+	// ptr to dynamic function.
+	let function: Function = rune! {
+		enum Custom { A(a) }
+		Custom::A
+	};
 
-    assert!(function.call::<Value>(()).is_err());
-    let value: Value = function.call((1i64,)).unwrap();
-    assert!(rune::from_value::<DynamicTuple>(value).is_ok());
+	assert!(function.call::<Value>(()).is_err());
+	let value: Value = function.call((1i64,)).unwrap();
+	assert!(rune::from_value::<DynamicTuple>(value).is_ok());
 
-    // ptr to dynamic function.
-    let function: Function = rune! {
-        struct Custom(a);
-        Custom
-    };
+	// ptr to dynamic function.
+	let function: Function = rune! {
+		struct Custom(a);
+		Custom
+	};
 
-    assert!(function.call::<Value>(()).is_err());
-    let value: Value = function.call((1i64,)).unwrap();
-    assert!(crate::from_value::<DynamicTuple>(value).is_ok());
+	assert!(function.call::<Value>(()).is_err());
+	let value: Value = function.call((1i64,)).unwrap();
+	assert!(crate::from_value::<DynamicTuple>(value).is_ok());
 
-    // non-capturing closure == free function
-    let function: Function = rune! {
-        |a, b| a + b
-    };
+	// non-capturing closure == free function
+	let function: Function = rune! {
+		|a, b| a + b
+	};
 
-    assert!(function.call::<Value>((1i64,)).is_err());
-    let value: Value = function.call((1i64, 2i64)).unwrap();
-    assert_eq!(value.as_signed().unwrap(), 3);
+	assert!(function.call::<Value>((1i64,)).is_err());
+	let value: Value = function.call((1i64, 2i64)).unwrap();
+	assert_eq!(value.as_signed().unwrap(), 3);
 
-    // closure with captures
-    let function: Function = run(
-        &context,
-        "pub fn main(a, b) { || a + b }",
-        (1i64, 2i64),
-        false,
-    )?;
+	// closure with captures
+	let function: Function = run(
+		&context,
+		"pub fn main(a, b) { || a + b }",
+		(1i64, 2i64),
+		false,
+	)?;
 
-    assert!(function.call::<Value>((1i64,)).is_err());
-    let value: Value = function.call(()).unwrap();
-    assert_eq!(value.as_signed().unwrap(), 3);
-    Ok(())
+	assert!(function.call::<Value>((1i64,)).is_err());
+	let value: Value = function.call(()).unwrap();
+	assert_eq!(value.as_signed().unwrap(), 3);
+	Ok(())
 }

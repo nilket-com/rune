@@ -60,75 +60,75 @@ use crate::{Item, ItemBuf};
 /// ```
 #[derive(Default)]
 pub struct Statics {
-    statics: Vec<Static>,
+	statics: Vec<Static>,
 }
 
 impl Statics {
-    /// Construct an empty collection of statics.
-    #[inline]
-    pub const fn new() -> Self {
-        Self {
-            statics: Vec::new(),
-        }
-    }
+	/// Construct an empty collection of statics.
+	#[inline]
+	pub const fn new() -> Self {
+		Self {
+			statics: Vec::new(),
+		}
+	}
 
-    /// Declare a static with the given name.
-    ///
-    /// The name is the item the static is declared as, so `["LIMIT"]` declares
-    /// it at the root of the unit and `["config", "LIMIT"]` declares it inside
-    /// of the `config` module. Every component has to be a valid identifier.
-    ///
-    /// Declaring the same name twice does nothing the second time.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::Statics;
-    ///
-    /// let mut statics = Statics::new();
-    /// statics.insert(["LIMIT"])?;
-    /// statics.insert(["config", "LIMIT"])?;
-    /// assert_eq!(statics.len(), 2);
-    ///
-    /// statics.insert(["LIMIT"])?;
-    /// assert_eq!(statics.len(), 2);
-    /// # Ok::<_, rune::support::Error>(())
-    /// ```
-    #[inline]
-    pub fn insert(&mut self, name: impl IntoIterator<Item: IntoComponent>) -> alloc::Result<()> {
-        let item = ItemBuf::with_item(name)?;
+	/// Declare a static with the given name.
+	///
+	/// The name is the item the static is declared as, so `["LIMIT"]` declares
+	/// it at the root of the unit and `["config", "LIMIT"]` declares it inside
+	/// of the `config` module. Every component has to be a valid identifier.
+	///
+	/// Declaring the same name twice does nothing the second time.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::Statics;
+	///
+	/// let mut statics = Statics::new();
+	/// statics.insert(["LIMIT"])?;
+	/// statics.insert(["config", "LIMIT"])?;
+	/// assert_eq!(statics.len(), 2);
+	///
+	/// statics.insert(["LIMIT"])?;
+	/// assert_eq!(statics.len(), 2);
+	/// # Ok::<_, rune::support::Error>(())
+	/// ```
+	#[inline]
+	pub fn insert(&mut self, name: impl IntoIterator<Item: IntoComponent>) -> alloc::Result<()> {
+		let item = ItemBuf::with_item(name)?;
 
-        if self.statics.iter().any(|s| s.item == item) {
-            return Ok(());
-        }
+		if self.statics.iter().any(|s| s.item == item) {
+			return Ok(());
+		}
 
-        self.statics.try_push(Static { item })?;
-        Ok(())
-    }
+		self.statics.try_push(Static { item })?;
+		Ok(())
+	}
 
-    /// The number of statics being declared.
-    #[inline]
-    pub fn len(&self) -> usize {
-        self.statics.len()
-    }
+	/// The number of statics being declared.
+	#[inline]
+	pub fn len(&self) -> usize {
+		self.statics.len()
+	}
 
-    /// Test if the collection is empty.
-    #[inline]
-    pub fn is_empty(&self) -> bool {
-        self.statics.is_empty()
-    }
+	/// Test if the collection is empty.
+	#[inline]
+	pub fn is_empty(&self) -> bool {
+		self.statics.is_empty()
+	}
 
-    /// Iterate over the statics being declared.
-    pub(crate) fn iter(&self) -> impl Iterator<Item = &Static> {
-        self.statics.iter()
-    }
+	/// Iterate over the statics being declared.
+	pub(crate) fn iter(&self) -> impl Iterator<Item = &Static> {
+		self.statics.iter()
+	}
 }
 
 impl fmt::Debug for Statics {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_list().entries(self.statics.iter()).finish()
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		f.debug_list().entries(self.statics.iter()).finish()
+	}
 }
 
 /// A single static being declared.
@@ -136,20 +136,20 @@ impl fmt::Debug for Statics {
 /// This is a type of its own so that a declaration can carry more than its name
 /// in the future, such as the type it is expected to hold.
 pub(crate) struct Static {
-    item: ItemBuf,
+	item: ItemBuf,
 }
 
 impl Static {
-    /// The item the static is declared as.
-    #[inline]
-    pub(crate) fn item(&self) -> &Item {
-        &self.item
-    }
+	/// The item the static is declared as.
+	#[inline]
+	pub(crate) fn item(&self) -> &Item {
+		&self.item
+	}
 }
 
 impl fmt::Debug for Static {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.item.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.item.fmt(f)
+	}
 }

@@ -8,28 +8,28 @@
 /// it'll get the appropriate non-null metadata in the backend without needing
 /// to call `assume` manually.
 macro_rules! if_zst {
-    (mut $this:ident, $len:ident => $zst_body:expr, $end:ident => $other_body:expr,) => {{
-        if T::IS_ZST {
-            // SAFETY: for ZSTs, the pointer is storing a provenance-free length,
-            // so consuming and updating it as a `usize` is fine.
-            let $len = unsafe { &mut *ptr::addr_of_mut!($this.end_or_len).cast::<usize>() };
-            $zst_body
-        } else {
-            // SAFETY: for non-ZSTs, the type invariant ensures it cannot be null
-            let $end = unsafe { &mut *ptr::addr_of_mut!($this.end_or_len).cast::<NonNull<T>>() };
-            $other_body
-        }
-    }};
-    ($this:ident, $len:ident => $zst_body:expr, $end:ident => $other_body:expr,) => {{
-        if T::IS_ZST {
-            let $len = $this.end_or_len.addr();
-            $zst_body
-        } else {
-            // SAFETY: for non-ZSTs, the type invariant ensures it cannot be null
-            let $end = unsafe { *ptr::addr_of!($this.end_or_len).cast::<NonNull<T>>() };
-            $other_body
-        }
-    }};
+	(mut $this:ident, $len:ident => $zst_body:expr, $end:ident => $other_body:expr,) => {{
+		if T::IS_ZST {
+			// SAFETY: for ZSTs, the pointer is storing a provenance-free length,
+			// so consuming and updating it as a `usize` is fine.
+			let $len = unsafe { &mut *ptr::addr_of_mut!($this.end_or_len).cast::<usize>() };
+			$zst_body
+		} else {
+			// SAFETY: for non-ZSTs, the type invariant ensures it cannot be null
+			let $end = unsafe { &mut *ptr::addr_of_mut!($this.end_or_len).cast::<NonNull<T>>() };
+			$other_body
+		}
+	}};
+	($this:ident, $len:ident => $zst_body:expr, $end:ident => $other_body:expr,) => {{
+		if T::IS_ZST {
+			let $len = $this.end_or_len.addr();
+			$zst_body
+		} else {
+			// SAFETY: for non-ZSTs, the type invariant ensures it cannot be null
+			let $end = unsafe { *ptr::addr_of!($this.end_or_len).cast::<NonNull<T>>() };
+			$other_body
+		}
+	}};
 }
 
 // Inlining is_empty and len makes a huge performance difference

@@ -4,8 +4,8 @@ use ErrorKind::*;
 
 #[test]
 fn test_import_cycle() {
-    assert_errors! {
-        r#"
+	assert_errors! {
+		r#"
         mod a {
             pub mod c { pub use super::b::Bar as Baz; }
             pub mod b { pub use super::c::Baz as Bar; }
@@ -14,11 +14,11 @@ fn test_import_cycle() {
 
         use self::a::Foo;
         "#,
-        span!(41, 69), ImportCycle { .. }
-    };
+		span!(41, 69), ImportCycle { .. }
+	};
 
-    assert_errors! {
-        r#"
+	assert_errors! {
+		r#"
         mod b {
             pub use super::a::Foo;
         }
@@ -31,10 +31,10 @@ fn test_import_cycle() {
             a::Foo
         }           
         "#,
-        span!(161, 167), ImportCycle { path, .. } => {
-            assert_eq!(3, path.len());
-            assert_eq!(span!(91, 112), path[0].location.span);
-            assert_eq!(span!(29, 50), path[1].location.span);
-        }
-    };
+		span!(161, 167), ImportCycle { path, .. } => {
+			assert_eq!(3, path.len());
+			assert_eq!(span!(91, 112), path[0].location.span);
+			assert_eq!(span!(29, 50), path[1].location.span);
+		}
+	};
 }

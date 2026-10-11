@@ -14,20 +14,20 @@ use crate::{docstring, ContextError, Hash, Module};
 /// constructed through the [`Type::of_val`] function.
 #[rune::module(::std::any)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
+	let mut m = Module::from_meta(self::module__meta)?;
 
-    m.ty::<Type>()?.docs(docstring! {
-        /// Represents a type in the Rune type system.
-    })?;
+	m.ty::<Type>()?.docs(docstring! {
+		/// Represents a type in the Rune type system.
+	})?;
 
-    m.ty::<Hash>()?.docs(docstring! {
-        /// Represents an opaque hash in the Rune type system.
-    })?;
+	m.ty::<Hash>()?.docs(docstring! {
+		/// Represents an opaque hash in the Rune type system.
+	})?;
 
-    m.function_meta(type_of_val)?;
-    m.function_meta(type_name_of_val)?;
-    m.function_meta(format_type)?;
-    Ok(m)
+	m.function_meta(type_of_val)?;
+	m.function_meta(type_name_of_val)?;
+	m.function_meta(format_type)?;
+	Ok(m)
 }
 
 /// Convert a value into a [`Type`] object.
@@ -44,7 +44,7 @@ pub fn module() -> Result<Module, ContextError> {
 #[rune::function(free, path = Type::of_val)]
 #[inline]
 fn type_of_val(value: Value) -> Type {
-    Type::new(value.type_hash())
+	Type::new(value.type_hash())
 }
 
 /// Formatting a type.
@@ -58,7 +58,7 @@ fn type_of_val(value: Value) -> Type {
 /// ```
 #[rune::function(instance, protocol = DISPLAY_FMT)]
 fn format_type(ty: Type, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{ty:?}")
+	write!(f, "{ty:?}")
 }
 
 /// Get the type name of a value.
@@ -77,5 +77,5 @@ fn format_type(ty: Type, f: &mut Formatter) -> alloc::Result<()> {
 #[rune::function]
 #[inline]
 pub fn type_name_of_val(value: Value) -> Result<String, VmError> {
-    value.into_type_name()
+	value.into_type_name()
 }

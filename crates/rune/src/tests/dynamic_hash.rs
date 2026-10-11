@@ -11,8 +11,8 @@ prelude!();
 /// type could be compared but not used.
 #[test]
 fn a_script_declared_type_can_be_a_key() {
-    let out: i64 = eval(
-        r#"
+	let out: i64 = eval(
+		r#"
         use std::collections::HashMap;
 
         struct S { a, b }
@@ -26,9 +26,9 @@ fn a_script_declared_type_can_be_a_key() {
 
         hit + if miss { 1 } else { 0 } + m.len()
         "#,
-    );
+	);
 
-    assert_eq!(out, 13);
+	assert_eq!(out, 13);
 }
 
 /// A variant is hashed as the variant it is.
@@ -37,8 +37,8 @@ fn a_script_declared_type_can_be_a_key() {
 /// they must not land on one another.
 #[test]
 fn a_variant_is_hashed_as_the_variant_it_is() {
-    let out: i64 = eval(
-        r#"
+	let out: i64 = eval(
+		r#"
         use std::collections::HashSet;
 
         enum E { A, B(x), C(x) }
@@ -51,16 +51,16 @@ fn a_variant_is_hashed_as_the_variant_it_is() {
 
         s.len()
         "#,
-    );
+	);
 
-    assert_eq!(out, 3);
+	assert_eq!(out, 3);
 }
 
 /// Hashing is structural all the way down.
 #[test]
 fn a_field_is_hashed_by_what_it_holds() {
-    let out: bool = eval(
-        r#"
+	let out: bool = eval(
+		r#"
         use std::collections::HashMap;
 
         struct Inner { v }
@@ -73,9 +73,9 @@ fn a_field_is_hashed_by_what_it_holds() {
             && m.get(Outer { inner: Inner { v: 2 }, list: [1, 2] }) is Option
             && m.get(Outer { inner: Inner { v: 2 }, list: [1, 2] }).is_none()
         "#,
-    );
+	);
 
-    assert!(out);
+	assert!(out);
 }
 
 /// What hashes together compares equal.
@@ -85,8 +85,8 @@ fn a_field_is_hashed_by_what_it_holds() {
 /// compare equal have to hash the same or a map built from them loses entries.
 #[test]
 fn what_compares_equal_hashes_the_same() {
-    let out: bool = eval(
-        r#"
+	let out: bool = eval(
+		r#"
         use std::collections::HashMap;
 
         struct S { a }
@@ -107,7 +107,7 @@ fn what_compares_equal_hashes_the_same() {
 
         ok && m.len() == 64
         "#,
-    );
+	);
 
-    assert!(out);
+	assert!(out);
 }

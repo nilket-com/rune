@@ -19,39 +19,39 @@
 
 #[cfg(feature = "enabled")]
 mod r#impl {
-    pub use rune_tracing_macros::instrument_ast;
-    pub use tracing::{
-        debug, enabled, error, event, field, if_log_enabled, info, instrument, level_enabled, span,
-        trace, warn, Level,
-    };
+	pub use rune_tracing_macros::instrument_ast;
+	pub use tracing::{
+		debug, enabled, error, event, field, if_log_enabled, info, instrument, level_enabled, span,
+		trace, warn, Level,
+	};
 }
 
 #[cfg(not(feature = "enabled"))]
 mod r#impl {
-    pub use rune_tracing_macros::passthrough as instrument;
-    pub use rune_tracing_macros::passthrough as instrument_ast;
+	pub use rune_tracing_macros::passthrough as instrument;
+	pub use rune_tracing_macros::passthrough as instrument_ast;
 
-    #[macro_export]
-    macro_rules! __noop {
-        ($($arg:tt)*) => {
-            ()
-        };
-    }
+	#[macro_export]
+	macro_rules! __noop {
+		($($arg:tt)*) => {
+			()
+		};
+	}
 
-    #[macro_export]
-    macro_rules! __enabled {
-        ($($arg:tt)*) => {
-            false
-        };
-    }
+	#[macro_export]
+	macro_rules! __enabled {
+		($($arg:tt)*) => {
+			false
+		};
+	}
 
-    pub use __enabled as enabled;
-    pub use __noop as span;
-    pub use __noop as trace;
-    pub use __noop as info;
-    pub use __noop as error;
-    pub use __noop as warn;
-    pub use __noop as debug;
+	pub use __enabled as enabled;
+	pub use __noop as span;
+	pub use __noop as trace;
+	pub use __noop as info;
+	pub use __noop as error;
+	pub use __noop as warn;
+	pub use __noop as debug;
 }
 
 pub use self::r#impl::*;

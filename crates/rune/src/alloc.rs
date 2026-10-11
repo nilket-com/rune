@@ -81,9 +81,9 @@ pub use rune_alloc::{vec, Vec};
 pub use rune_alloc::{vec_deque, VecDeque};
 
 pub mod prelude {
-    //! Prelude for common traits used in combination with this crate which
-    //! matches the behavior of the std prelude.
+	//! Prelude for common traits used in combination with this crate which
+	//! matches the behavior of the std prelude.
 
-    #[doc(inline)]
-    pub use rune_alloc::prelude::*;
+	#[doc(inline)]
+	pub use rune_alloc::prelude::*;
 }

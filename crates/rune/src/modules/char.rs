@@ -12,22 +12,22 @@ use crate as rune;
 /// The character module for Rune.
 #[rune::module(::std::char)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut module = Module::from_meta(self::module__meta)?;
+	let mut module = Module::from_meta(self::module__meta)?;
 
-    module.ty::<ParseCharError>()?;
-    module.function_meta(parse_char_error_display_fmt)?;
-    module.function_meta(parse_char_error_debug_fmt)?;
-    module.function_meta(from_i64)?;
-    module.function_meta(to_i64)?;
-    module.function_meta(is_alphabetic)?;
-    module.function_meta(is_alphanumeric)?;
-    module.function_meta(is_control)?;
-    module.function_meta(is_lowercase)?;
-    module.function_meta(is_numeric)?;
-    module.function_meta(is_uppercase)?;
-    module.function_meta(is_whitespace)?;
-    module.function_meta(to_digit)?;
-    Ok(module)
+	module.ty::<ParseCharError>()?;
+	module.function_meta(parse_char_error_display_fmt)?;
+	module.function_meta(parse_char_error_debug_fmt)?;
+	module.function_meta(from_i64)?;
+	module.function_meta(to_i64)?;
+	module.function_meta(is_alphabetic)?;
+	module.function_meta(is_alphanumeric)?;
+	module.function_meta(is_control)?;
+	module.function_meta(is_lowercase)?;
+	module.function_meta(is_numeric)?;
+	module.function_meta(is_uppercase)?;
+	module.function_meta(is_whitespace)?;
+	module.function_meta(to_digit)?;
+	Ok(module)
 }
 
 /// Write why a character could not be parsed.
@@ -45,7 +45,7 @@ pub fn module() -> Result<Module, ContextError> {
 /// ```
 #[rune::function(instance, protocol = DISPLAY_FMT)]
 fn parse_char_error_display_fmt(error: &ParseCharError, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{error}")
+	write!(f, "{error}")
 }
 
 /// Write a debug representation of why a character could not be parsed.
@@ -63,7 +63,7 @@ fn parse_char_error_display_fmt(error: &ParseCharError, f: &mut Formatter) -> al
 /// ```
 #[rune::function(instance, protocol = DEBUG_FMT)]
 fn parse_char_error_debug_fmt(error: &ParseCharError, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{error:?}")
+	write!(f, "{error:?}")
 }
 
 /// Try to convert a number into a character.
@@ -76,17 +76,17 @@ fn parse_char_error_debug_fmt(error: &ParseCharError, f: &mut Formatter) -> allo
 /// ```
 #[rune::function]
 fn from_i64(value: i64) -> Result<Option<Value>, VmError> {
-    if value < 0 {
-        Err(VmError::new(VmErrorKind::Underflow))
-    } else if value > u32::MAX as i64 {
-        Err(VmError::new(VmErrorKind::Overflow))
-    } else {
-        let Some(c) = char::from_u32(value as u32) else {
-            return Ok(None);
-        };
+	if value < 0 {
+		Err(VmError::new(VmErrorKind::Underflow))
+	} else if value > u32::MAX as i64 {
+		Err(VmError::new(VmErrorKind::Overflow))
+	} else {
+		let Some(c) = char::from_u32(value as u32) else {
+			return Ok(None);
+		};
 
-        Ok(Some(Value::from(c)))
-    }
+		Ok(Some(Value::from(c)))
+	}
 }
 
 /// Convert a character into an integer.
@@ -99,7 +99,7 @@ fn from_i64(value: i64) -> Result<Option<Value>, VmError> {
 /// ```
 #[rune::function(instance)]
 fn to_i64(value: char) -> i64 {
-    value as i64
+	value as i64
 }
 
 /// Returns `true` if this `char` has the `Alphabetic` property.
@@ -124,7 +124,7 @@ fn to_i64(value: char) -> i64 {
 #[rune::function(instance)]
 #[inline]
 fn is_alphabetic(c: char) -> bool {
-    char::is_alphabetic(c)
+	char::is_alphabetic(c)
 }
 
 /// Returns `true` if this `char` satisfies either [`is_alphabetic()`] or [`is_numeric()`].
@@ -149,7 +149,7 @@ fn is_alphabetic(c: char) -> bool {
 #[rune::function(instance)]
 #[inline]
 fn is_alphanumeric(c: char) -> bool {
-    char::is_alphanumeric(c)
+	char::is_alphanumeric(c)
 }
 
 /// Returns `true` if this `char` has the general category for control codes.
@@ -175,7 +175,7 @@ fn is_alphanumeric(c: char) -> bool {
 #[rune::function(instance)]
 #[inline]
 fn is_control(c: char) -> bool {
-    char::is_control(c)
+	char::is_control(c)
 }
 
 /// Returns `true` if this `char` has the `Lowercase` property.
@@ -205,7 +205,7 @@ fn is_control(c: char) -> bool {
 #[rune::function(instance)]
 #[inline]
 fn is_lowercase(c: char) -> bool {
-    char::is_lowercase(c)
+	char::is_lowercase(c)
 }
 
 /// Returns `true` if this `char` has one of the general categories for numbers.
@@ -245,7 +245,7 @@ fn is_lowercase(c: char) -> bool {
 #[rune::function(instance)]
 #[inline]
 fn is_numeric(c: char) -> bool {
-    char::is_numeric(c)
+	char::is_numeric(c)
 }
 
 /// Returns `true` if this `char` has the `Uppercase` property.
@@ -275,7 +275,7 @@ fn is_numeric(c: char) -> bool {
 #[rune::function(instance)]
 #[inline]
 fn is_uppercase(c: char) -> bool {
-    char::is_uppercase(c)
+	char::is_uppercase(c)
 }
 
 /// Returns `true` if this `char` has the `White_Space` property.
@@ -304,7 +304,7 @@ fn is_uppercase(c: char) -> bool {
 #[rune::function(instance)]
 #[inline]
 fn is_whitespace(c: char) -> bool {
-    char::is_whitespace(c)
+	char::is_whitespace(c)
 }
 
 /// Converts a `char` to a digit in the given radix.
@@ -353,9 +353,9 @@ fn is_whitespace(c: char) -> bool {
 #[rune::function(instance)]
 #[inline]
 fn to_digit(c: char, radix: u32) -> Result<Option<u32>, VmError> {
-    if radix > 36 {
-        return Err(VmError::panic("to_digit: radix is too high (maximum 36)"));
-    }
+	if radix > 36 {
+		return Err(VmError::panic("to_digit: radix is too high (maximum 36)"));
+	}
 
-    Ok(char::to_digit(c, radix))
+	Ok(char::to_digit(c, radix))
 }

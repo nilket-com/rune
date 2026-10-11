@@ -7,20 +7,20 @@ use crate::alloc::borrow::Cow;
 use crate::doc::Artifacts;
 
 mod embed {
-    use rust_embed::RustEmbed;
+	use rust_embed::RustEmbed;
 
-    #[derive(RustEmbed)]
-    #[folder = "src/ace/static"]
-    pub(super) struct Assets;
+	#[derive(RustEmbed)]
+	#[folder = "src/ace/static"]
+	pub(super) struct Assets;
 }
 
 pub(crate) fn theme(artifacts: &mut Artifacts) -> Result<()> {
-    for name in ["rune-mode.js", "rune-highlight-rules.js"] {
-        artifacts.asset(false, name, || {
-            let file = embed::Assets::get(name).with_context(|| anyhow!("missing {name}"))?;
-            Ok(Cow::try_from(file.data)?)
-        })?;
-    }
+	for name in ["rune-mode.js", "rune-highlight-rules.js"] {
+		artifacts.asset(false, name, || {
+			let file = embed::Assets::get(name).with_context(|| anyhow!("missing {name}"))?;
+			Ok(Cow::try_from(file.data)?)
+		})?;
+	}
 
-    Ok(())
+	Ok(())
 }

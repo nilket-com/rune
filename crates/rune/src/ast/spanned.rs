@@ -10,112 +10,112 @@ pub use rune_macros::Spanned;
 
 /// Types for which we can get a span.
 pub trait Spanned {
-    /// Get the span of the type.
-    fn span(&self) -> Span;
+	/// Get the span of the type.
+	fn span(&self) -> Span;
 }
 
 impl Spanned for syntree::Span<u32> {
-    fn span(&self) -> Span {
-        Span::new(self.start, self.end)
-    }
+	fn span(&self) -> Span {
+		Span::new(self.start, self.end)
+	}
 }
 
 impl<A, B> Spanned for (A, B)
 where
-    A: Spanned,
-    B: OptionSpanned,
+	A: Spanned,
+	B: OptionSpanned,
 {
-    fn span(&self) -> Span {
-        if let Some(end) = self.1.option_span() {
-            self.0.span().join(end)
-        } else {
-            self.0.span()
-        }
-    }
+	fn span(&self) -> Span {
+		if let Some(end) = self.1.option_span() {
+			self.0.span().join(end)
+		} else {
+			self.0.span()
+		}
+	}
 }
 
 impl Spanned for Span {
-    fn span(&self) -> Span {
-        *self
-    }
+	fn span(&self) -> Span {
+		*self
+	}
 }
 
 impl<T> Spanned for alloc::Box<T>
 where
-    T: Spanned,
+	T: Spanned,
 {
-    #[inline]
-    fn span(&self) -> Span {
-        Spanned::span(&**self)
-    }
+	#[inline]
+	fn span(&self) -> Span {
+		Spanned::span(&**self)
+	}
 }
 
 impl<T> Spanned for &T
 where
-    T: ?Sized + Spanned,
+	T: ?Sized + Spanned,
 {
-    fn span(&self) -> Span {
-        Spanned::span(*self)
-    }
+	fn span(&self) -> Span {
+		Spanned::span(*self)
+	}
 }
 
 impl<T> Spanned for &mut T
 where
-    T: ?Sized + Spanned,
+	T: ?Sized + Spanned,
 {
-    fn span(&self) -> Span {
-        Spanned::span(*self)
-    }
+	fn span(&self) -> Span {
+		Spanned::span(*self)
+	}
 }
 
 impl<S> Spanned for (S, NonZeroId)
 where
-    S: Spanned,
+	S: Spanned,
 {
-    fn span(&self) -> Span {
-        self.0.span()
-    }
+	fn span(&self) -> Span {
+		self.0.span()
+	}
 }
 
 /// Types for which we can optionally get a span.
 pub trait OptionSpanned {
-    /// Get the optional span of the type.
-    fn option_span(&self) -> Option<Span>;
+	/// Get the optional span of the type.
+	fn option_span(&self) -> Option<Span>;
 }
 
 /// Take the span of a vector of spanned.
 /// Provides the span between the first and the last element.
 impl<T> OptionSpanned for [T]
 where
-    T: Spanned,
+	T: Spanned,
 {
-    fn option_span(&self) -> Option<Span> {
-        let span = self.first()?.span();
+	fn option_span(&self) -> Option<Span> {
+		let span = self.first()?.span();
 
-        if let Some(last) = self.last() {
-            Some(span.join(last.span()))
-        } else {
-            Some(span)
-        }
-    }
+		if let Some(last) = self.last() {
+			Some(span.join(last.span()))
+		} else {
+			Some(span)
+		}
+	}
 }
 
 impl<T> OptionSpanned for Option<T>
 where
-    T: Spanned,
+	T: Spanned,
 {
-    #[inline]
-    fn option_span(&self) -> Option<Span> {
-        Some(self.as_ref()?.span())
-    }
+	#[inline]
+	fn option_span(&self) -> Option<Span> {
+		Some(self.as_ref()?.span())
+	}
 }
 
 impl<T> OptionSpanned for alloc::Box<T>
 where
-    T: OptionSpanned,
+	T: OptionSpanned,
 {
-    #[inline]
-    fn option_span(&self) -> Option<Span> {
-        OptionSpanned::option_span(&**self)
-    }
+	#[inline]
+	fn option_span(&self) -> Option<Span> {
+		OptionSpanned::option_span(&**self)
+	}
 }

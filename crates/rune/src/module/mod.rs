@@ -11,9 +11,9 @@ pub use self::install_with::InstallWith;
 
 mod module_meta;
 pub(crate) use self::module_meta::{
-    AssociatedKey, DocFunction, Fields, ModuleAssociated, ModuleAssociatedKind, ModuleFunction,
-    ModuleItem, ModuleItemCommon, ModuleItemKind, ModuleReexport, ModuleTrait, ModuleTraitImpl,
-    ModuleType, TraitFunction, TypeConstructor, TypeSpecification,
+	AssociatedKey, DocFunction, Fields, ModuleAssociated, ModuleAssociatedKind, ModuleFunction,
+	ModuleItem, ModuleItemCommon, ModuleItemKind, ModuleReexport, ModuleTrait, ModuleTraitImpl,
+	ModuleType, TraitFunction, TypeConstructor, TypeSpecification,
 };
 use self::module_meta::{Enum, ModuleAttributeMacro, ModuleMacro, Variant};
 #[doc(inline)]

@@ -68,33 +68,33 @@ mod generated;
 pub use self::generated::*;
 
 macro_rules! expr_parse {
-    ($ty:ident, $local:ty, $expected:literal) => {
-        impl $crate::parse::Parse for $local {
-            fn parse(p: &mut $crate::parse::Parser<'_>) -> $crate::compile::Result<Self> {
-                let t = p.tok_at(0)?;
+	($ty:ident, $local:ty, $expected:literal) => {
+		impl $crate::parse::Parse for $local {
+			fn parse(p: &mut $crate::parse::Parser<'_>) -> $crate::compile::Result<Self> {
+				let t = p.tok_at(0)?;
 
-                match $crate::ast::Expr::parse(p)? {
-                    $crate::ast::Expr::$ty(expr) => Ok(expr),
-                    _ => Err($crate::compile::Error::expected(t, $expected)),
-                }
-            }
-        }
-    };
+				match $crate::ast::Expr::parse(p)? {
+					$crate::ast::Expr::$ty(expr) => Ok(expr),
+					_ => Err($crate::compile::Error::expected(t, $expected)),
+				}
+			}
+		}
+	};
 }
 
 macro_rules! item_parse {
-    ($ty:ident, $local:ty, $expected:literal) => {
-        impl $crate::parse::Parse for $local {
-            fn parse(p: &mut $crate::parse::Parser<'_>) -> $crate::compile::Result<Self> {
-                let t = p.tok_at(0)?;
+	($ty:ident, $local:ty, $expected:literal) => {
+		impl $crate::parse::Parse for $local {
+			fn parse(p: &mut $crate::parse::Parser<'_>) -> $crate::compile::Result<Self> {
+				let t = p.tok_at(0)?;
 
-                match $crate::ast::Item::parse(p)? {
-                    $crate::ast::Item::$ty(item) => Ok(item),
-                    _ => Err($crate::compile::Error::expected(t, $expected)),
-                }
-            }
-        }
-    };
+				match $crate::ast::Item::parse(p)? {
+					$crate::ast::Item::$ty(item) => Ok(item),
+					_ => Err($crate::compile::Error::expected(t, $expected)),
+				}
+			}
+		}
+	};
 }
 
 #[cfg(test)]
@@ -228,7 +228,7 @@ pub use self::local::Local;
 pub use self::macro_call::MacroCall;
 pub use self::macro_utils::{EqValue, Group};
 pub use self::pat::{
-    Pat, PatBinding, PatIgnore, PatLit, PatObject, PatPath, PatRest, PatTuple, PatVec,
+	Pat, PatBinding, PatIgnore, PatLit, PatObject, PatPath, PatRest, PatTuple, PatVec,
 };
 pub use self::path::{Path, PathKind, PathSegment, PathSegmentExpr};
 use self::prelude::*;
@@ -238,8 +238,8 @@ pub use self::spanned::{OptionSpanned, Spanned};
 pub use self::stmt::{ItemOrExpr, Stmt, StmtSemi, StmtSortKey};
 pub(crate) use self::to_ast::ToAst;
 pub use self::token::{
-    BuiltIn, CopySource, Delimiter, LitSource, Number, NumberBase, NumberSize, NumberSource,
-    NumberSuffix, NumberText, NumberValue, StrSource, StrText, Token,
+	BuiltIn, CopySource, Delimiter, LitSource, Number, NumberBase, NumberSize, NumberSource,
+	NumberSuffix, NumberText, NumberValue, StrSource, StrText, Token,
 };
 pub use self::vis::Visibility;
 
@@ -293,14 +293,14 @@ macro_rules! decl_tokens {
 }
 
 decl_tokens! {
-    (CloseBrace, "a closing brace `}`", "closing brace", Kind::Close(Delimiter::Brace)),
-    (CloseBracket, "a closing bracket `]`", "closing bracket", Kind::Close(Delimiter::Bracket)),
-    (CloseParen, "a closing parenthesis `)`", "closing parenthesis", Kind::Close(Delimiter::Parenthesis)),
-    (CloseEmpty, "an empty closing marker", "closing marker", Kind::Close(Delimiter::Empty)),
-    (OpenBrace, "an opening brace `{`", "opening brace", Kind::Open(Delimiter::Brace)),
-    (OpenBracket, "an open bracket `[`", "opening bracket", Kind::Open(Delimiter::Bracket)),
-    (OpenParen, "an opening parenthesis `(`", "opening parenthesis", Kind::Open(Delimiter::Parenthesis)),
-    (OpenEmpty, "an empty opening marker", "opening marker", Kind::Open(Delimiter::Empty)),
+	(CloseBrace, "a closing brace `}`", "closing brace", Kind::Close(Delimiter::Brace)),
+	(CloseBracket, "a closing bracket `]`", "closing bracket", Kind::Close(Delimiter::Bracket)),
+	(CloseParen, "a closing parenthesis `)`", "closing parenthesis", Kind::Close(Delimiter::Parenthesis)),
+	(CloseEmpty, "an empty closing marker", "closing marker", Kind::Close(Delimiter::Empty)),
+	(OpenBrace, "an opening brace `{`", "opening brace", Kind::Open(Delimiter::Brace)),
+	(OpenBracket, "an open bracket `[`", "opening bracket", Kind::Open(Delimiter::Bracket)),
+	(OpenParen, "an opening parenthesis `(`", "opening parenthesis", Kind::Open(Delimiter::Parenthesis)),
+	(OpenEmpty, "an empty opening marker", "opening marker", Kind::Open(Delimiter::Empty)),
 }
 
 /// The composite `is not` operation.
@@ -308,8 +308,8 @@ decl_tokens! {
 #[try_clone(copy)]
 #[non_exhaustive]
 pub struct IsNot {
-    /// The `is` token.
-    pub is: Is,
-    /// The `not` token.
-    pub not: Not,
+	/// The `is` token.
+	pub is: Is,
+	/// The `not` token.
+	pub not: Not,
 }

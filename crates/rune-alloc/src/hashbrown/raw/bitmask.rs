@@ -1,5 +1,5 @@
 use super::imp::{
-    BitMaskWord, NonZeroBitMaskWord, BITMASK_ITER_MASK, BITMASK_MASK, BITMASK_STRIDE,
+	BitMaskWord, NonZeroBitMaskWord, BITMASK_ITER_MASK, BITMASK_MASK, BITMASK_STRIDE,
 };
 
 /// A bit mask which contains the result of a `Match` operation on a `Group` and
@@ -23,81 +23,81 @@ pub(crate) struct BitMask(pub(crate) BitMaskWord);
 
 #[allow(clippy::use_self)]
 impl BitMask {
-    /// Returns a new `BitMask` with all bits inverted.
-    #[inline]
-    #[must_use]
-    #[allow(dead_code)]
-    pub(crate) fn invert(self) -> Self {
-        BitMask(self.0 ^ BITMASK_MASK)
-    }
+	/// Returns a new `BitMask` with all bits inverted.
+	#[inline]
+	#[must_use]
+	#[allow(dead_code)]
+	pub(crate) fn invert(self) -> Self {
+		BitMask(self.0 ^ BITMASK_MASK)
+	}
 
-    /// Returns a new `BitMask` with the lowest bit removed.
-    #[inline]
-    #[must_use]
-    fn remove_lowest_bit(self) -> Self {
-        BitMask(self.0 & (self.0 - 1))
-    }
+	/// Returns a new `BitMask` with the lowest bit removed.
+	#[inline]
+	#[must_use]
+	fn remove_lowest_bit(self) -> Self {
+		BitMask(self.0 & (self.0 - 1))
+	}
 
-    /// Returns whether the `BitMask` has at least one set bit.
-    #[inline]
-    pub(crate) fn any_bit_set(self) -> bool {
-        self.0 != 0
-    }
+	/// Returns whether the `BitMask` has at least one set bit.
+	#[inline]
+	pub(crate) fn any_bit_set(self) -> bool {
+		self.0 != 0
+	}
 
-    /// Returns the first set bit in the `BitMask`, if there is one.
-    #[inline]
-    pub(crate) fn lowest_set_bit(self) -> Option<usize> {
-        if let Some(nonzero) = NonZeroBitMaskWord::new(self.0) {
-            Some(Self::nonzero_trailing_zeros(nonzero))
-        } else {
-            None
-        }
-    }
+	/// Returns the first set bit in the `BitMask`, if there is one.
+	#[inline]
+	pub(crate) fn lowest_set_bit(self) -> Option<usize> {
+		if let Some(nonzero) = NonZeroBitMaskWord::new(self.0) {
+			Some(Self::nonzero_trailing_zeros(nonzero))
+		} else {
+			None
+		}
+	}
 
-    /// Returns the number of trailing zeroes in the `BitMask`.
-    #[inline]
-    pub(crate) fn trailing_zeros(self) -> usize {
-        // ARM doesn't have a trailing_zeroes instruction, and instead uses
-        // reverse_bits (RBIT) + leading_zeroes (CLZ). However older ARM
-        // versions (pre-ARMv7) don't have RBIT and need to emulate it
-        // instead. Since we only have 1 bit set in each byte on ARM, we can
-        // use swap_bytes (REV) + leading_zeroes instead.
-        if cfg!(target_arch = "arm") && BITMASK_STRIDE.is_multiple_of(8) {
-            self.0.swap_bytes().leading_zeros() as usize / BITMASK_STRIDE
-        } else {
-            self.0.trailing_zeros() as usize / BITMASK_STRIDE
-        }
-    }
+	/// Returns the number of trailing zeroes in the `BitMask`.
+	#[inline]
+	pub(crate) fn trailing_zeros(self) -> usize {
+		// ARM doesn't have a trailing_zeroes instruction, and instead uses
+		// reverse_bits (RBIT) + leading_zeroes (CLZ). However older ARM
+		// versions (pre-ARMv7) don't have RBIT and need to emulate it
+		// instead. Since we only have 1 bit set in each byte on ARM, we can
+		// use swap_bytes (REV) + leading_zeroes instead.
+		if cfg!(target_arch = "arm") && BITMASK_STRIDE.is_multiple_of(8) {
+			self.0.swap_bytes().leading_zeros() as usize / BITMASK_STRIDE
+		} else {
+			self.0.trailing_zeros() as usize / BITMASK_STRIDE
+		}
+	}
 
-    /// Same as above but takes a `NonZeroBitMaskWord`.
-    #[inline]
-    fn nonzero_trailing_zeros(nonzero: NonZeroBitMaskWord) -> usize {
-        if cfg!(target_arch = "arm") && BITMASK_STRIDE.is_multiple_of(8) {
-            // SAFETY: A byte-swapped non-zero value is still non-zero.
-            let swapped = unsafe { NonZeroBitMaskWord::new_unchecked(nonzero.get().swap_bytes()) };
-            swapped.leading_zeros() as usize / BITMASK_STRIDE
-        } else {
-            nonzero.trailing_zeros() as usize / BITMASK_STRIDE
-        }
-    }
+	/// Same as above but takes a `NonZeroBitMaskWord`.
+	#[inline]
+	fn nonzero_trailing_zeros(nonzero: NonZeroBitMaskWord) -> usize {
+		if cfg!(target_arch = "arm") && BITMASK_STRIDE.is_multiple_of(8) {
+			// SAFETY: A byte-swapped non-zero value is still non-zero.
+			let swapped = unsafe { NonZeroBitMaskWord::new_unchecked(nonzero.get().swap_bytes()) };
+			swapped.leading_zeros() as usize / BITMASK_STRIDE
+		} else {
+			nonzero.trailing_zeros() as usize / BITMASK_STRIDE
+		}
+	}
 
-    /// Returns the number of leading zeroes in the `BitMask`.
-    #[inline]
-    pub(crate) fn leading_zeros(self) -> usize {
-        self.0.leading_zeros() as usize / BITMASK_STRIDE
-    }
+	/// Returns the number of leading zeroes in the `BitMask`.
+	#[inline]
+	pub(crate) fn leading_zeros(self) -> usize {
+		self.0.leading_zeros() as usize / BITMASK_STRIDE
+	}
 }
 
 impl IntoIterator for BitMask {
-    type Item = usize;
-    type IntoIter = BitMaskIter;
+	type Item = usize;
+	type IntoIter = BitMaskIter;
 
-    #[inline]
-    fn into_iter(self) -> BitMaskIter {
-        // A BitMask only requires each element (group of bits) to be non-zero.
-        // However for iteration we need each element to only contain 1 bit.
-        BitMaskIter(BitMask(self.0 & BITMASK_ITER_MASK))
-    }
+	#[inline]
+	fn into_iter(self) -> BitMaskIter {
+		// A BitMask only requires each element (group of bits) to be non-zero.
+		// However for iteration we need each element to only contain 1 bit.
+		BitMaskIter(BitMask(self.0 & BITMASK_ITER_MASK))
+	}
 }
 
 /// Iterator over the contents of a `BitMask`, returning the indices of set
@@ -106,27 +106,27 @@ impl IntoIterator for BitMask {
 pub(crate) struct BitMaskIter(pub(crate) BitMask);
 
 impl BitMaskIter {
-    /// Flip the bit in the mask for the entry at the given index.
-    ///
-    /// Returns the bit's previous state.
-    #[inline]
-    #[allow(clippy::cast_ptr_alignment)]
-    pub(crate) unsafe fn flip(&mut self, index: usize) -> bool {
-        // NOTE: The + BITMASK_STRIDE - 1 is to set the high bit.
-        let mask = 1 << (index * BITMASK_STRIDE + BITMASK_STRIDE - 1);
-        self.0 .0 ^= mask;
-        // The bit was set if the bit is now 0.
-        self.0 .0 & mask == 0
-    }
+	/// Flip the bit in the mask for the entry at the given index.
+	///
+	/// Returns the bit's previous state.
+	#[inline]
+	#[allow(clippy::cast_ptr_alignment)]
+	pub(crate) unsafe fn flip(&mut self, index: usize) -> bool {
+		// NOTE: The + BITMASK_STRIDE - 1 is to set the high bit.
+		let mask = 1 << (index * BITMASK_STRIDE + BITMASK_STRIDE - 1);
+		self.0 .0 ^= mask;
+		// The bit was set if the bit is now 0.
+		self.0 .0 & mask == 0
+	}
 }
 
 impl Iterator for BitMaskIter {
-    type Item = usize;
+	type Item = usize;
 
-    #[inline]
-    fn next(&mut self) -> Option<usize> {
-        let bit = self.0.lowest_set_bit()?;
-        self.0 = self.0.remove_lowest_bit();
-        Some(bit)
-    }
+	#[inline]
+	fn next(&mut self) -> Option<usize> {
+		let bit = self.0.lowest_set_bit()?;
+		self.0 = self.0.remove_lowest_bit();
+		Some(bit)
+	}
 }

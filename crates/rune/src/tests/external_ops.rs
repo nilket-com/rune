@@ -4,7 +4,7 @@ use std::cmp::Ordering;
 
 #[test]
 fn struct_assign() -> Result<()> {
-    macro_rules! test_case {
+	macro_rules! test_case {
         ([$($op:tt)*], $protocol:ident, $derived:tt, $initial:literal, $arg:literal, $expected:literal) => {{
             #[derive(Debug, Default, Any)]
             struct External {
@@ -78,22 +78,22 @@ fn struct_assign() -> Result<()> {
         }};
     }
 
-    test_case!([+=], ADD_ASSIGN, add_assign, 0, 3, 3);
-    test_case!([-=], SUB_ASSIGN, sub_assign, 4, 3, 1);
-    test_case!([*=], MUL_ASSIGN, mul_assign, 8, 2, 16);
-    test_case!([/=], DIV_ASSIGN, div_assign, 8, 3, 2);
-    test_case!([%=], REM_ASSIGN, rem_assign, 25, 10, 5);
-    test_case!([&=], BIT_AND_ASSIGN, bit_and_assign, 0b1001, 0b0011, 0b0001);
-    test_case!([|=], BIT_OR_ASSIGN, bit_or_assign, 0b1001, 0b0011, 0b1011);
-    test_case!([^=], BIT_XOR_ASSIGN, bit_xor_assign, 0b1001, 0b0011, 0b1010);
-    test_case!([<<=], SHL_ASSIGN, shl_assign, 0b1001, 0b0001, 0b10010);
-    test_case!([>>=], SHR_ASSIGN, shr_assign, 0b1001, 0b0001, 0b100);
-    Ok(())
+	test_case!([+=], ADD_ASSIGN, add_assign, 0, 3, 3);
+	test_case!([-=], SUB_ASSIGN, sub_assign, 4, 3, 1);
+	test_case!([*=], MUL_ASSIGN, mul_assign, 8, 2, 16);
+	test_case!([/=], DIV_ASSIGN, div_assign, 8, 3, 2);
+	test_case!([%=], REM_ASSIGN, rem_assign, 25, 10, 5);
+	test_case!([&=], BIT_AND_ASSIGN, bit_and_assign, 0b1001, 0b0011, 0b0001);
+	test_case!([|=], BIT_OR_ASSIGN, bit_or_assign, 0b1001, 0b0011, 0b1011);
+	test_case!([^=], BIT_XOR_ASSIGN, bit_xor_assign, 0b1001, 0b0011, 0b1010);
+	test_case!([<<=], SHL_ASSIGN, shl_assign, 0b1001, 0b0001, 0b10010);
+	test_case!([>>=], SHR_ASSIGN, shr_assign, 0b1001, 0b0001, 0b100);
+	Ok(())
 }
 
 #[test]
 fn tuple_assign() -> Result<()> {
-    macro_rules! test_case {
+	macro_rules! test_case {
         ([$($op:tt)*], $protocol:ident, $derived:tt, $initial:literal, $arg:literal, $expected:literal) => {{
             #[derive(Debug, Default, Any)]
             struct External(i64, i64, #[rune($derived)] i64, #[rune($derived = External::custom)] i64);
@@ -160,22 +160,22 @@ fn tuple_assign() -> Result<()> {
         }};
     }
 
-    test_case!([+=], ADD_ASSIGN, add_assign, 0, 3, 3);
-    test_case!([-=], SUB_ASSIGN, sub_assign, 4, 3, 1);
-    test_case!([*=], MUL_ASSIGN, mul_assign, 8, 2, 16);
-    test_case!([/=], DIV_ASSIGN, div_assign, 8, 3, 2);
-    test_case!([%=], REM_ASSIGN, rem_assign, 25, 10, 5);
-    test_case!([&=], BIT_AND_ASSIGN, bit_and_assign, 0b1001, 0b0011, 0b0001);
-    test_case!([|=], BIT_OR_ASSIGN, bit_or_assign, 0b1001, 0b0011, 0b1011);
-    test_case!([^=], BIT_XOR_ASSIGN, bit_xor_assign, 0b1001, 0b0011, 0b1010);
-    test_case!([<<=], SHL_ASSIGN, shl_assign, 0b1001, 0b0001, 0b10010);
-    test_case!([>>=], SHR_ASSIGN, shr_assign, 0b1001, 0b0001, 0b100);
-    Ok(())
+	test_case!([+=], ADD_ASSIGN, add_assign, 0, 3, 3);
+	test_case!([-=], SUB_ASSIGN, sub_assign, 4, 3, 1);
+	test_case!([*=], MUL_ASSIGN, mul_assign, 8, 2, 16);
+	test_case!([/=], DIV_ASSIGN, div_assign, 8, 3, 2);
+	test_case!([%=], REM_ASSIGN, rem_assign, 25, 10, 5);
+	test_case!([&=], BIT_AND_ASSIGN, bit_and_assign, 0b1001, 0b0011, 0b0001);
+	test_case!([|=], BIT_OR_ASSIGN, bit_or_assign, 0b1001, 0b0011, 0b1011);
+	test_case!([^=], BIT_XOR_ASSIGN, bit_xor_assign, 0b1001, 0b0011, 0b1010);
+	test_case!([<<=], SHL_ASSIGN, shl_assign, 0b1001, 0b0001, 0b10010);
+	test_case!([>>=], SHR_ASSIGN, shr_assign, 0b1001, 0b0001, 0b100);
+	Ok(())
 }
 
 #[test]
 fn struct_binary() -> Result<()> {
-    macro_rules! test_case {
+	macro_rules! test_case {
         ([$($op:tt)*], $protocol:ident, $derived:tt, $initial:literal, $arg:literal, $expected:literal) => {{
             #[derive(Debug, Any)]
             struct External {
@@ -218,22 +218,22 @@ fn struct_binary() -> Result<()> {
         }};
     }
 
-    test_case!([+], ADD, add, 0, 3, 3);
-    test_case!([-], SUB, sub, 4, 3, 1);
-    test_case!([*], MUL, mul, 8, 2, 16);
-    test_case!([/], DIV, div, 8, 3, 2);
-    test_case!([%], REM, rem, 25, 10, 5);
-    test_case!([&], BIT_AND, bit_and, 0b1001, 0b0011, 0b0001);
-    test_case!([|], BIT_OR, bit_or, 0b1001, 0b0011, 0b1011);
-    test_case!([^], BIT_XOR, bit_xor, 0b1001, 0b0011, 0b1010);
-    test_case!([<<], SHL, shl, 0b1001, 0b0001, 0b10010);
-    test_case!([>>], SHR, shr, 0b1001, 0b0001, 0b100);
-    Ok(())
+	test_case!([+], ADD, add, 0, 3, 3);
+	test_case!([-], SUB, sub, 4, 3, 1);
+	test_case!([*], MUL, mul, 8, 2, 16);
+	test_case!([/], DIV, div, 8, 3, 2);
+	test_case!([%], REM, rem, 25, 10, 5);
+	test_case!([&], BIT_AND, bit_and, 0b1001, 0b0011, 0b0001);
+	test_case!([|], BIT_OR, bit_or, 0b1001, 0b0011, 0b1011);
+	test_case!([^], BIT_XOR, bit_xor, 0b1001, 0b0011, 0b1010);
+	test_case!([<<], SHL, shl, 0b1001, 0b0001, 0b10010);
+	test_case!([>>], SHR, shr, 0b1001, 0b0001, 0b100);
+	Ok(())
 }
 
 #[test]
 fn struct_unary() -> Result<()> {
-    macro_rules! test_case {
+	macro_rules! test_case {
         ([$($op:tt)*], $protocol:ident, $derived:tt, $ty:ty, $initial:literal, $expected:expr) => {{
             #[derive(Debug, Any)]
             struct External {
@@ -278,17 +278,17 @@ fn struct_unary() -> Result<()> {
         }};
     }
 
-    test_case!([-], NEG, neg, i64, 100, -100);
-    test_case!([-], NEG, neg, f64, 100.0, -100.0);
-    test_case!([!], NOT, not, i64, 100, !100);
-    test_case!([!], NOT, not, u64, 100, !100);
-    test_case!([!], NOT, not, bool, true, false);
-    Ok(())
+	test_case!([-], NEG, neg, i64, 100, -100);
+	test_case!([-], NEG, neg, f64, 100.0, -100.0);
+	test_case!([!], NOT, not, i64, 100, !100);
+	test_case!([!], NOT, not, u64, 100, !100);
+	test_case!([!], NOT, not, bool, true, false);
+	Ok(())
 }
 
 #[test]
 fn ordering_struct() -> Result<()> {
-    macro_rules! test_case {
+	macro_rules! test_case {
         ([$($op:tt)*], $protocol:ident, $initial:literal, $arg:literal, $expected:literal) => {{
             #[derive(Debug, Default, Any)]
             struct External {
@@ -340,25 +340,25 @@ fn ordering_struct() -> Result<()> {
         }};
     }
 
-    test_case!([<], PARTIAL_CMP, 1, 2, true);
-    test_case!([<], PARTIAL_CMP, 2, 1, false);
+	test_case!([<], PARTIAL_CMP, 1, 2, true);
+	test_case!([<], PARTIAL_CMP, 2, 1, false);
 
-    test_case!([>], PARTIAL_CMP, 2, 1, true);
-    test_case!([>], PARTIAL_CMP, 1, 2, false);
+	test_case!([>], PARTIAL_CMP, 2, 1, true);
+	test_case!([>], PARTIAL_CMP, 1, 2, false);
 
-    test_case!([>=], PARTIAL_CMP, 3, 2, true);
-    test_case!([>=], PARTIAL_CMP, 2, 2, true);
-    test_case!([>=], PARTIAL_CMP, 1, 2, false);
+	test_case!([>=], PARTIAL_CMP, 3, 2, true);
+	test_case!([>=], PARTIAL_CMP, 2, 2, true);
+	test_case!([>=], PARTIAL_CMP, 1, 2, false);
 
-    test_case!([<=], PARTIAL_CMP, 2, 3, true);
-    test_case!([<=], PARTIAL_CMP, 2, 2, true);
-    test_case!([<=], PARTIAL_CMP, 2, 1, false);
-    Ok(())
+	test_case!([<=], PARTIAL_CMP, 2, 3, true);
+	test_case!([<=], PARTIAL_CMP, 2, 2, true);
+	test_case!([<=], PARTIAL_CMP, 2, 1, false);
+	Ok(())
 }
 
 #[test]
 fn eq_struct() -> Result<()> {
-    macro_rules! test_case {
+	macro_rules! test_case {
         ([$($op:tt)*], $protocol:ident, $initial:literal, $arg:literal, $expected:literal) => {{
             #[derive(Debug, Default, Any)]
             struct External {
@@ -408,7 +408,7 @@ fn eq_struct() -> Result<()> {
         }};
     }
 
-    test_case!([==], PARTIAL_EQ, 2, 2, true);
-    test_case!([==], PARTIAL_EQ, 2, 1, false);
-    Ok(())
+	test_case!([==], PARTIAL_EQ, 2, 2, true);
+	test_case!([==], PARTIAL_EQ, 2, 1, false);
+	Ok(())
 }

@@ -14,13 +14,13 @@ use crate::any::AnyMarker;
 use super::{FromValue, RuntimeError, Value};
 
 pub(super) struct RefVtable {
-    pub(super) drop: DropFn,
-    /// Hand the value which is referred to back, if the reference is one which
-    /// keeps a value alive rather than something borrowed from elsewhere.
-    ///
-    /// The reference is released by this, so it must not be released again,
-    /// which is what [`RawAnyGuard::take_value`] makes sure of.
-    pub(super) into_value: Option<IntoValueFn>,
+	pub(super) drop: DropFn,
+	/// Hand the value which is referred to back, if the reference is one which
+	/// keeps a value alive rather than something borrowed from elsewhere.
+	///
+	/// The reference is released by this, so it must not be released again,
+	/// which is what [`RawAnyGuard::take_value`] makes sure of.
+	pub(super) into_value: Option<IntoValueFn>,
 }
 
 type DropFn = unsafe fn(NonNull<()>);
@@ -38,248 +38,248 @@ type IntoValueFn = unsafe fn(NonNull<()>) -> Value;
 /// let value: Ref<str> = Ref::from_static("hello world");
 /// ```
 pub struct Ref<T: ?Sized> {
-    value: NonNull<T>,
-    guard: RawAnyGuard,
+	value: NonNull<T>,
+	guard: RawAnyGuard,
 }
 
 impl<T> From<Rc<T>> for Ref<T> {
-    /// Construct from an atomically reference-counted value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::rc::Rc;
-    /// use rune::Ref;
-    ///
-    /// let value: Ref<String> = Ref::from(Rc::new(String::from("hello world")));
-    /// assert_eq!(value.as_ref(), "hello world");
-    /// ```
-    #[inline]
-    fn from(value: Rc<T>) -> Ref<T> {
-        unsafe fn drop_fn<T>(data: NonNull<()>) {
-            let _ = Rc::from_raw(data.cast::<T>().as_ptr().cast_const());
-        }
+	/// Construct from an atomically reference-counted value.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use std::rc::Rc;
+	/// use rune::Ref;
+	///
+	/// let value: Ref<String> = Ref::from(Rc::new(String::from("hello world")));
+	/// assert_eq!(value.as_ref(), "hello world");
+	/// ```
+	#[inline]
+	fn from(value: Rc<T>) -> Ref<T> {
+		unsafe fn drop_fn<T>(data: NonNull<()>) {
+			let _ = Rc::from_raw(data.cast::<T>().as_ptr().cast_const());
+		}
 
-        let value = Rc::into_raw(value);
-        let value = unsafe { NonNull::new_unchecked(value as *mut _) };
+		let value = Rc::into_raw(value);
+		let value = unsafe { NonNull::new_unchecked(value as *mut _) };
 
-        let guard = RawAnyGuard::new(
-            value.cast(),
-            &RefVtable {
-                drop: drop_fn::<T>,
-                into_value: None,
-            },
-        );
+		let guard = RawAnyGuard::new(
+			value.cast(),
+			&RefVtable {
+				drop: drop_fn::<T>,
+				into_value: None,
+			},
+		);
 
-        Ref::new(value, guard)
-    }
+		Ref::new(value, guard)
+	}
 }
 
 impl<T> From<Arc<T>> for Ref<T> {
-    /// Construct from an atomically reference-counted value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::sync::Arc;
-    ///
-    /// use rune::Ref;
-    ///
-    /// let value: Ref<String> = Ref::from(Arc::new(String::from("hello world")));
-    /// assert_eq!(value.as_ref(), "hello world");
-    /// ```
-    #[inline]
-    fn from(value: Arc<T>) -> Ref<T> {
-        unsafe fn drop_fn<T>(data: NonNull<()>) {
-            let _ = Arc::from_raw(data.cast::<T>().as_ptr().cast_const());
-        }
+	/// Construct from an atomically reference-counted value.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use std::sync::Arc;
+	///
+	/// use rune::Ref;
+	///
+	/// let value: Ref<String> = Ref::from(Arc::new(String::from("hello world")));
+	/// assert_eq!(value.as_ref(), "hello world");
+	/// ```
+	#[inline]
+	fn from(value: Arc<T>) -> Ref<T> {
+		unsafe fn drop_fn<T>(data: NonNull<()>) {
+			let _ = Arc::from_raw(data.cast::<T>().as_ptr().cast_const());
+		}
 
-        let value = Arc::into_raw(value);
-        let value = unsafe { NonNull::new_unchecked(value as *mut _) };
+		let value = Arc::into_raw(value);
+		let value = unsafe { NonNull::new_unchecked(value as *mut _) };
 
-        let guard = RawAnyGuard::new(
-            value.cast(),
-            &RefVtable {
-                drop: drop_fn::<T>,
-                into_value: None,
-            },
-        );
+		let guard = RawAnyGuard::new(
+			value.cast(),
+			&RefVtable {
+				drop: drop_fn::<T>,
+				into_value: None,
+			},
+		);
 
-        Ref::new(value, guard)
-    }
+		Ref::new(value, guard)
+	}
 }
 
 impl<T: ?Sized> Ref<T> {
-    #[inline]
-    pub(super) const fn new(value: NonNull<T>, guard: RawAnyGuard) -> Self {
-        Self { value, guard }
-    }
+	#[inline]
+	pub(super) const fn new(value: NonNull<T>, guard: RawAnyGuard) -> Self {
+		Self { value, guard }
+	}
 
-    /// Hand the value this keeps alive back, leaving the reference released.
-    ///
-    /// What is pointed to must not be used afterwards, which is why this is
-    /// only used while the thing holding the reference is being taken apart.
-    ///
-    /// See [`RawAnyGuard::take_value`].
-    #[inline]
-    pub(crate) fn take_value(this: &mut Self) -> Option<Value> {
-        this.guard.take_value()
-    }
+	/// Hand the value this keeps alive back, leaving the reference released.
+	///
+	/// What is pointed to must not be used afterwards, which is why this is
+	/// only used while the thing holding the reference is being taken apart.
+	///
+	/// See [`RawAnyGuard::take_value`].
+	#[inline]
+	pub(crate) fn take_value(this: &mut Self) -> Option<Value> {
+		this.guard.take_value()
+	}
 
-    /// The guard which keeps what is referred to alive, so that it can be
-    /// handed over while whatever holds the reference is taken apart.
-    #[inline]
-    pub(crate) fn guard_mut(&mut self) -> &mut RawAnyGuard {
-        &mut self.guard
-    }
+	/// The guard which keeps what is referred to alive, so that it can be
+	/// handed over while whatever holds the reference is taken apart.
+	#[inline]
+	pub(crate) fn guard_mut(&mut self) -> &mut RawAnyGuard {
+		&mut self.guard
+	}
 
-    /// Construct an owned reference from a static value.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use rune::Ref;
-    ///
-    /// let value: Ref<str> = Ref::from_static("Hello World");
-    /// assert_eq!(value.as_ref(), "Hello World");
-    /// ```
-    #[inline]
-    pub const fn from_static(value: &'static T) -> Ref<T> {
-        let value = unsafe { NonNull::new_unchecked((value as *const T).cast_mut()) };
-        let guard = RawAnyGuard::new(NonNull::dangling(), &NOOP_VTABLE);
-        Self::new(value, guard)
-    }
+	/// Construct an owned reference from a static value.
+	///
+	/// # Examples
+	///
+	/// ```rust
+	/// use rune::Ref;
+	///
+	/// let value: Ref<str> = Ref::from_static("Hello World");
+	/// assert_eq!(value.as_ref(), "Hello World");
+	/// ```
+	#[inline]
+	pub const fn from_static(value: &'static T) -> Ref<T> {
+		let value = unsafe { NonNull::new_unchecked((value as *const T).cast_mut()) };
+		let guard = RawAnyGuard::new(NonNull::dangling(), &NOOP_VTABLE);
+		Self::new(value, guard)
+	}
 
-    /// Map the interior reference of an owned mutable value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::Ref;
-    /// use rune::runtime::Bytes;
-    /// use rune::alloc::try_vec;
-    ///
-    /// let bytes = rune::to_value(Bytes::from_vec(try_vec![1, 2, 3, 4]))?;
-    /// let bytes: Ref<Bytes> = rune::from_value(bytes)?;
-    /// let value: Ref<[u8]> = Ref::map(bytes, |vec| &vec[0..2]);
-    ///
-    /// assert_eq!(&*value, &[1, 2][..]);
-    /// # Ok::<_, rune::support::Error>(())
-    /// ```
-    #[inline]
-    pub fn map<U: ?Sized, F>(this: Self, f: F) -> Ref<U>
-    where
-        F: FnOnce(&T) -> &U,
-    {
-        let Self { value, guard } = this;
+	/// Map the interior reference of an owned mutable value.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::Ref;
+	/// use rune::runtime::Bytes;
+	/// use rune::alloc::try_vec;
+	///
+	/// let bytes = rune::to_value(Bytes::from_vec(try_vec![1, 2, 3, 4]))?;
+	/// let bytes: Ref<Bytes> = rune::from_value(bytes)?;
+	/// let value: Ref<[u8]> = Ref::map(bytes, |vec| &vec[0..2]);
+	///
+	/// assert_eq!(&*value, &[1, 2][..]);
+	/// # Ok::<_, rune::support::Error>(())
+	/// ```
+	#[inline]
+	pub fn map<U: ?Sized, F>(this: Self, f: F) -> Ref<U>
+	where
+		F: FnOnce(&T) -> &U,
+	{
+		let Self { value, guard } = this;
 
-        // Safety: this follows the same safety guarantees as when the managed
-        // ref was acquired. And since we have a managed reference to `T`, we're
-        // permitted to do any sort of projection to `U`.
-        let value = f(unsafe { value.as_ref() });
+		// Safety: this follows the same safety guarantees as when the managed
+		// ref was acquired. And since we have a managed reference to `T`, we're
+		// permitted to do any sort of projection to `U`.
+		let value = f(unsafe { value.as_ref() });
 
-        Ref::new(value.into(), guard)
-    }
+		Ref::new(value.into(), guard)
+	}
 
-    /// Try to map the reference to a projection.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::Ref;
-    /// use rune::runtime::Bytes;
-    /// use rune::alloc::try_vec;
-    ///
-    /// let bytes = rune::to_value(Bytes::from_vec(try_vec![1, 2, 3, 4]))?;
-    /// let bytes: Ref<Bytes> = rune::from_value(bytes)?;
-    ///
-    /// let Ok(value) = Ref::try_map(bytes, |bytes| bytes.get(0..2)) else {
-    ///     panic!("Conversion failed");
-    /// };
-    ///
-    /// assert_eq!(&value[..], &[1, 2][..]);
-    /// # Ok::<_, rune::support::Error>(())
-    /// ```
-    #[inline]
-    pub fn try_map<U: ?Sized, F>(this: Self, f: F) -> Result<Ref<U>, Ref<T>>
-    where
-        F: FnOnce(&T) -> Option<&U>,
-    {
-        let Self { value, guard } = this;
+	/// Try to map the reference to a projection.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::Ref;
+	/// use rune::runtime::Bytes;
+	/// use rune::alloc::try_vec;
+	///
+	/// let bytes = rune::to_value(Bytes::from_vec(try_vec![1, 2, 3, 4]))?;
+	/// let bytes: Ref<Bytes> = rune::from_value(bytes)?;
+	///
+	/// let Ok(value) = Ref::try_map(bytes, |bytes| bytes.get(0..2)) else {
+	///     panic!("Conversion failed");
+	/// };
+	///
+	/// assert_eq!(&value[..], &[1, 2][..]);
+	/// # Ok::<_, rune::support::Error>(())
+	/// ```
+	#[inline]
+	pub fn try_map<U: ?Sized, F>(this: Self, f: F) -> Result<Ref<U>, Ref<T>>
+	where
+		F: FnOnce(&T) -> Option<&U>,
+	{
+		let Self { value, guard } = this;
 
-        // Safety: this follows the same safety guarantees as when the managed
-        // ref was acquired. And since we have a managed reference to `T`, we're
-        // permitted to do any sort of projection to `U`.
+		// Safety: this follows the same safety guarantees as when the managed
+		// ref was acquired. And since we have a managed reference to `T`, we're
+		// permitted to do any sort of projection to `U`.
 
-        unsafe {
-            let Some(value) = f(value.as_ref()) else {
-                return Err(Ref::new(value, guard));
-            };
+		unsafe {
+			let Some(value) = f(value.as_ref()) else {
+				return Err(Ref::new(value, guard));
+			};
 
-            Ok(Ref::new(value.into(), guard))
-        }
-    }
+			Ok(Ref::new(value.into(), guard))
+		}
+	}
 
-    /// Convert into a raw pointer and associated raw access guard.
-    ///
-    /// # Safety
-    ///
-    /// The returned pointer must not outlive the associated guard, since this
-    /// prevents other uses of the underlying data which is incompatible with
-    /// the current.
-    #[inline]
-    pub fn into_raw(this: Self) -> (NonNull<T>, RawAnyGuard) {
-        (this.value, this.guard)
-    }
+	/// Convert into a raw pointer and associated raw access guard.
+	///
+	/// # Safety
+	///
+	/// The returned pointer must not outlive the associated guard, since this
+	/// prevents other uses of the underlying data which is incompatible with
+	/// the current.
+	#[inline]
+	pub fn into_raw(this: Self) -> (NonNull<T>, RawAnyGuard) {
+		(this.value, this.guard)
+	}
 
-    /// Convert a raw reference and guard into a regular reference.
-    ///
-    /// # Safety
-    ///
-    /// The caller is responsible for ensuring that the raw reference is
-    /// associated with the specific pointer.
-    #[inline]
-    pub unsafe fn from_raw(value: NonNull<T>, guard: RawAnyGuard) -> Self {
-        Self { value, guard }
-    }
+	/// Convert a raw reference and guard into a regular reference.
+	///
+	/// # Safety
+	///
+	/// The caller is responsible for ensuring that the raw reference is
+	/// associated with the specific pointer.
+	#[inline]
+	pub unsafe fn from_raw(value: NonNull<T>, guard: RawAnyGuard) -> Self {
+		Self { value, guard }
+	}
 }
 
 impl<T: ?Sized> AsRef<T> for Ref<T> {
-    #[inline]
-    fn as_ref(&self) -> &T {
-        self
-    }
+	#[inline]
+	fn as_ref(&self) -> &T {
+		self
+	}
 }
 
 impl<T: ?Sized> Deref for Ref<T> {
-    type Target = T;
+	type Target = T;
 
-    #[inline]
-    fn deref(&self) -> &Self::Target {
-        // Safety: An owned ref holds onto a hard pointer to the data,
-        // preventing it from being dropped for the duration of the owned ref.
-        unsafe { self.value.as_ref() }
-    }
+	#[inline]
+	fn deref(&self) -> &Self::Target {
+		// Safety: An owned ref holds onto a hard pointer to the data,
+		// preventing it from being dropped for the duration of the owned ref.
+		unsafe { self.value.as_ref() }
+	}
 }
 
 impl<T: ?Sized> fmt::Debug for Ref<T>
 where
-    T: fmt::Debug,
+	T: fmt::Debug,
 {
-    #[inline]
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, fmt)
-    }
+	#[inline]
+	fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+		fmt::Debug::fmt(&**self, fmt)
+	}
 }
 
 impl<T> FromValue for Ref<T>
 where
-    T: AnyMarker,
+	T: AnyMarker,
 {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        value.into_ref()
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		value.into_ref()
+	}
 }
 
 /// A strong owned mutable reference to the given type that can be safely
@@ -296,246 +296,246 @@ where
 /// assert_eq!(&value[..], b"");
 /// ```
 pub struct Mut<T: ?Sized> {
-    value: NonNull<T>,
-    guard: RawAnyGuard,
+	value: NonNull<T>,
+	guard: RawAnyGuard,
 }
 
 impl<T: ?Sized> Mut<T> {
-    #[inline]
-    pub(super) const fn new(value: NonNull<T>, guard: RawAnyGuard) -> Self {
-        Self { value, guard }
-    }
+	#[inline]
+	pub(super) const fn new(value: NonNull<T>, guard: RawAnyGuard) -> Self {
+		Self { value, guard }
+	}
 
-    /// Construct an owned mutable reference from a static value.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use rune::Mut;
-    ///
-    /// let value: Mut<[u8]> = Mut::from_static(&mut [][..]);
-    /// assert_eq!(&value[..], b"");
-    /// ```
-    #[inline]
-    pub fn from_static(value: &'static mut T) -> Mut<T> {
-        let value = unsafe { NonNull::new_unchecked((value as *const T).cast_mut()) };
-        let guard = RawAnyGuard::new(NonNull::dangling(), &NOOP_VTABLE);
-        Self::new(value, guard)
-    }
+	/// Construct an owned mutable reference from a static value.
+	///
+	/// # Examples
+	///
+	/// ```rust
+	/// use rune::Mut;
+	///
+	/// let value: Mut<[u8]> = Mut::from_static(&mut [][..]);
+	/// assert_eq!(&value[..], b"");
+	/// ```
+	#[inline]
+	pub fn from_static(value: &'static mut T) -> Mut<T> {
+		let value = unsafe { NonNull::new_unchecked((value as *const T).cast_mut()) };
+		let guard = RawAnyGuard::new(NonNull::dangling(), &NOOP_VTABLE);
+		Self::new(value, guard)
+	}
 
-    /// Map the interior reference of an owned mutable value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::Mut;
-    /// use rune::runtime::Bytes;
-    /// use rune::alloc::try_vec;
-    ///
-    /// let bytes = rune::to_value(Bytes::from_vec(try_vec![1, 2, 3, 4]))?;
-    /// let bytes: Mut<Bytes> = rune::from_value(bytes)?;
-    /// let value: Mut<[u8]> = Mut::map(bytes, |bytes| &mut bytes[0..2]);
-    ///
-    /// assert_eq!(&*value, &mut [1, 2][..]);
-    /// # Ok::<_, rune::support::Error>(())
-    /// ```
-    #[inline]
-    pub fn map<U: ?Sized, F>(this: Self, f: F) -> Mut<U>
-    where
-        F: FnOnce(&mut T) -> &mut U,
-    {
-        let Self {
-            mut value, guard, ..
-        } = this;
+	/// Map the interior reference of an owned mutable value.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::Mut;
+	/// use rune::runtime::Bytes;
+	/// use rune::alloc::try_vec;
+	///
+	/// let bytes = rune::to_value(Bytes::from_vec(try_vec![1, 2, 3, 4]))?;
+	/// let bytes: Mut<Bytes> = rune::from_value(bytes)?;
+	/// let value: Mut<[u8]> = Mut::map(bytes, |bytes| &mut bytes[0..2]);
+	///
+	/// assert_eq!(&*value, &mut [1, 2][..]);
+	/// # Ok::<_, rune::support::Error>(())
+	/// ```
+	#[inline]
+	pub fn map<U: ?Sized, F>(this: Self, f: F) -> Mut<U>
+	where
+		F: FnOnce(&mut T) -> &mut U,
+	{
+		let Self {
+			mut value, guard, ..
+		} = this;
 
-        // Safety: this follows the same safety guarantees as when the managed
-        // ref was acquired. And since we have a managed reference to `T`, we're
-        // permitted to do any sort of projection to `U`.
-        let value = f(unsafe { value.as_mut() });
+		// Safety: this follows the same safety guarantees as when the managed
+		// ref was acquired. And since we have a managed reference to `T`, we're
+		// permitted to do any sort of projection to `U`.
+		let value = f(unsafe { value.as_mut() });
 
-        Mut::new(value.into(), guard)
-    }
+		Mut::new(value.into(), guard)
+	}
 
-    /// Try to map the mutable reference to a projection.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::Mut;
-    /// use rune::runtime::Bytes;
-    /// use rune::alloc::try_vec;
-    ///
-    /// let bytes = rune::to_value(Bytes::from_vec(try_vec![1, 2, 3, 4]))?;
-    /// let bytes: Mut<Bytes> = rune::from_value(bytes)?;
-    ///
-    /// let Ok(mut value) = Mut::try_map(bytes, |bytes| bytes.get_mut(0..2)) else {
-    ///     panic!("Conversion failed");
-    /// };
-    ///
-    /// assert_eq!(&mut value[..], &mut [1, 2][..]);
-    /// # Ok::<_, rune::support::Error>(())
-    /// ```
-    #[inline]
-    pub fn try_map<U: ?Sized, F>(this: Self, f: F) -> Result<Mut<U>, Mut<T>>
-    where
-        F: FnOnce(&mut T) -> Option<&mut U>,
-    {
-        let Self {
-            mut value, guard, ..
-        } = this;
+	/// Try to map the mutable reference to a projection.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::Mut;
+	/// use rune::runtime::Bytes;
+	/// use rune::alloc::try_vec;
+	///
+	/// let bytes = rune::to_value(Bytes::from_vec(try_vec![1, 2, 3, 4]))?;
+	/// let bytes: Mut<Bytes> = rune::from_value(bytes)?;
+	///
+	/// let Ok(mut value) = Mut::try_map(bytes, |bytes| bytes.get_mut(0..2)) else {
+	///     panic!("Conversion failed");
+	/// };
+	///
+	/// assert_eq!(&mut value[..], &mut [1, 2][..]);
+	/// # Ok::<_, rune::support::Error>(())
+	/// ```
+	#[inline]
+	pub fn try_map<U: ?Sized, F>(this: Self, f: F) -> Result<Mut<U>, Mut<T>>
+	where
+		F: FnOnce(&mut T) -> Option<&mut U>,
+	{
+		let Self {
+			mut value, guard, ..
+		} = this;
 
-        // Safety: this follows the same safety guarantees as when the managed
-        // ref was acquired. And since we have a managed reference to `T`, we're
-        // permitted to do any sort of projection to `U`.
-        unsafe {
-            let Some(value) = f(value.as_mut()) else {
-                return Err(Mut::new(value, guard));
-            };
+		// Safety: this follows the same safety guarantees as when the managed
+		// ref was acquired. And since we have a managed reference to `T`, we're
+		// permitted to do any sort of projection to `U`.
+		unsafe {
+			let Some(value) = f(value.as_mut()) else {
+				return Err(Mut::new(value, guard));
+			};
 
-            Ok(Mut::new(value.into(), guard))
-        }
-    }
+			Ok(Mut::new(value.into(), guard))
+		}
+	}
 
-    /// Convert into a raw pointer and associated raw access guard.
-    ///
-    /// # Safety
-    ///
-    /// The returned pointer must not outlive the associated guard, since this
-    /// prevents other uses of the underlying data which is incompatible with
-    /// the current.
-    #[inline]
-    pub fn into_raw(this: Self) -> (NonNull<T>, RawAnyGuard) {
-        (this.value, this.guard)
-    }
+	/// Convert into a raw pointer and associated raw access guard.
+	///
+	/// # Safety
+	///
+	/// The returned pointer must not outlive the associated guard, since this
+	/// prevents other uses of the underlying data which is incompatible with
+	/// the current.
+	#[inline]
+	pub fn into_raw(this: Self) -> (NonNull<T>, RawAnyGuard) {
+		(this.value, this.guard)
+	}
 
-    /// Convert a raw mutable reference and guard into a regular mutable
-    /// reference.
-    ///
-    /// # Safety
-    ///
-    /// The caller is responsible for ensuring that the raw mutable reference is
-    /// associated with the specific pointer.
-    #[inline]
-    pub unsafe fn from_raw(value: NonNull<T>, guard: RawAnyGuard) -> Self {
-        Self { value, guard }
-    }
+	/// Convert a raw mutable reference and guard into a regular mutable
+	/// reference.
+	///
+	/// # Safety
+	///
+	/// The caller is responsible for ensuring that the raw mutable reference is
+	/// associated with the specific pointer.
+	#[inline]
+	pub unsafe fn from_raw(value: NonNull<T>, guard: RawAnyGuard) -> Self {
+		Self { value, guard }
+	}
 }
 
 impl<T: ?Sized> AsRef<T> for Mut<T> {
-    #[inline]
-    fn as_ref(&self) -> &T {
-        self
-    }
+	#[inline]
+	fn as_ref(&self) -> &T {
+		self
+	}
 }
 
 impl<T: ?Sized> AsMut<T> for Mut<T> {
-    #[inline]
-    fn as_mut(&mut self) -> &mut T {
-        self
-    }
+	#[inline]
+	fn as_mut(&mut self) -> &mut T {
+		self
+	}
 }
 
 impl<T: ?Sized> Deref for Mut<T> {
-    type Target = T;
+	type Target = T;
 
-    #[inline]
-    fn deref(&self) -> &Self::Target {
-        // Safety: An owned mut holds onto a hard pointer to the data,
-        // preventing it from being dropped for the duration of the owned mut.
-        unsafe { self.value.as_ref() }
-    }
+	#[inline]
+	fn deref(&self) -> &Self::Target {
+		// Safety: An owned mut holds onto a hard pointer to the data,
+		// preventing it from being dropped for the duration of the owned mut.
+		unsafe { self.value.as_ref() }
+	}
 }
 
 impl<T: ?Sized> DerefMut for Mut<T> {
-    #[inline]
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        // Safety: An owned mut holds onto a hard pointer to the data,
-        // preventing it from being dropped for the duration of the owned mut.
-        unsafe { self.value.as_mut() }
-    }
+	#[inline]
+	fn deref_mut(&mut self) -> &mut Self::Target {
+		// Safety: An owned mut holds onto a hard pointer to the data,
+		// preventing it from being dropped for the duration of the owned mut.
+		unsafe { self.value.as_mut() }
+	}
 }
 
 impl<T: ?Sized> fmt::Debug for Mut<T>
 where
-    T: fmt::Debug,
+	T: fmt::Debug,
 {
-    #[inline]
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&**self, fmt)
-    }
+	#[inline]
+	fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+		fmt::Debug::fmt(&**self, fmt)
+	}
 }
 
 impl<T> FromValue for Mut<T>
 where
-    T: AnyMarker,
+	T: AnyMarker,
 {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        value.into_mut()
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		value.into_mut()
+	}
 }
 
 impl<F> Future for Mut<F>
 where
-    F: Unpin + Future,
+	F: Unpin + Future,
 {
-    type Output = F::Output;
+	type Output = F::Output;
 
-    #[inline]
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        // NB: inner Future is Unpin.
-        let this = self.get_mut();
-        Pin::new(&mut **this).poll(cx)
-    }
+	#[inline]
+	fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+		// NB: inner Future is Unpin.
+		let this = self.get_mut();
+		Pin::new(&mut **this).poll(cx)
+	}
 }
 
 /// A raw guard for a [`Ref`] or a [`Mut`] that has been converted into its raw
 /// components through [`Ref::into_raw`] or [`Mut::into_raw`].
 pub struct RawAnyGuard {
-    data: NonNull<()>,
-    vtable: &'static RefVtable,
+	data: NonNull<()>,
+	vtable: &'static RefVtable,
 }
 
 impl RawAnyGuard {
-    #[inline]
-    pub(super) const fn new(data: NonNull<()>, vtable: &'static RefVtable) -> Self {
-        Self { data, vtable }
-    }
+	#[inline]
+	pub(super) const fn new(data: NonNull<()>, vtable: &'static RefVtable) -> Self {
+		Self { data, vtable }
+	}
 
-    /// Hand the value this keeps alive back, leaving the guard released so that
-    /// dropping it does nothing.
-    ///
-    /// This is what a value which refers to another one rather than holding it
-    /// in a slot - an iterator over a collection - uses to hand the collection
-    /// over while it is being taken apart, so that dropping it does not descend
-    /// into the collection and recurse.
-    ///
-    /// Returns `None` for a reference which does not keep a value alive, which
-    /// leaves the guard alone.
-    pub(crate) fn take_value(&mut self) -> Option<Value> {
-        let into_value = self.vtable.into_value?;
-        let data = replace(&mut self.data, NonNull::dangling());
-        self.vtable = &NOOP_VTABLE;
-        // Safety: type and referential safety is guaranteed at construction
-        // time, and the guard is released here so it cannot be released again.
-        Some(unsafe { into_value(data) })
-    }
+	/// Hand the value this keeps alive back, leaving the guard released so that
+	/// dropping it does nothing.
+	///
+	/// This is what a value which refers to another one rather than holding it
+	/// in a slot - an iterator over a collection - uses to hand the collection
+	/// over while it is being taken apart, so that dropping it does not descend
+	/// into the collection and recurse.
+	///
+	/// Returns `None` for a reference which does not keep a value alive, which
+	/// leaves the guard alone.
+	pub(crate) fn take_value(&mut self) -> Option<Value> {
+		let into_value = self.vtable.into_value?;
+		let data = replace(&mut self.data, NonNull::dangling());
+		self.vtable = &NOOP_VTABLE;
+		// Safety: type and referential safety is guaranteed at construction
+		// time, and the guard is released here so it cannot be released again.
+		Some(unsafe { into_value(data) })
+	}
 }
 
 /// The guard of a reference which owns nothing, which is what a guard is
 /// replaced with once what it kept alive has been handed over.
 static NOOP_VTABLE: RefVtable = RefVtable {
-    drop: |_| {},
-    into_value: None,
+	drop: |_| {},
+	into_value: None,
 };
 
 impl Drop for RawAnyGuard {
-    #[inline]
-    fn drop(&mut self) {
-        // Safety: type and referential safety is guaranteed at construction
-        // time, since all constructors are unsafe.
-        unsafe {
-            (self.vtable.drop)(self.data);
-        }
-    }
+	#[inline]
+	fn drop(&mut self) {
+		// Safety: type and referential safety is guaranteed at construction
+		// time, since all constructors are unsafe.
+		unsafe {
+			(self.vtable.drop)(self.data);
+		}
+	}
 }

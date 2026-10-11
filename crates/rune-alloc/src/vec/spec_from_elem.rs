@@ -13,94 +13,94 @@ use super::Vec;
 
 // Specialization trait used for Vec::from_elem
 pub(super) trait SpecFromElem: Sized {
-    fn from_elem<A>(elem: Self, n: usize, alloc: A) -> Result<Vec<Self, A>, Error>
-    where
-        A: Allocator;
+	fn from_elem<A>(elem: Self, n: usize, alloc: A) -> Result<Vec<Self, A>, Error>
+	where
+		A: Allocator;
 }
 
 impl<T> SpecFromElem for T
 where
-    T: TryClone,
+	T: TryClone,
 {
-    default_fn! {
-        fn from_elem<A>(elem: Self, n: usize, alloc: A) -> Result<Vec<Self, A>, Error>
-        where
-            A: Allocator,
-        {
-            let mut v = Vec::try_with_capacity_in(n, alloc)?;
-            v.try_extend_with(n, elem)?;
-            Ok(v)
-        }
-    }
+	default_fn! {
+		fn from_elem<A>(elem: Self, n: usize, alloc: A) -> Result<Vec<Self, A>, Error>
+		where
+			A: Allocator,
+		{
+			let mut v = Vec::try_with_capacity_in(n, alloc)?;
+			v.try_extend_with(n, elem)?;
+			Ok(v)
+		}
+	}
 }
 
 #[cfg(rune_nightly)]
 impl<T> SpecFromElem for T
 where
-    T: TryClone + IsZero,
+	T: TryClone + IsZero,
 {
-    default_fn! {
-        #[inline]
-        fn from_elem<A>(elem: T, n: usize, alloc: A) -> Result<Vec<T, A>, Error>
-        where
-            A: Allocator,
-        {
-            if elem.is_zero() {
-                return Ok(Vec {
-                    buf: RawVec::try_with_capacity_zeroed_in(n, alloc)?,
-                    len: n,
-                });
-            }
+	default_fn! {
+		#[inline]
+		fn from_elem<A>(elem: T, n: usize, alloc: A) -> Result<Vec<T, A>, Error>
+		where
+			A: Allocator,
+		{
+			if elem.is_zero() {
+				return Ok(Vec {
+					buf: RawVec::try_with_capacity_zeroed_in(n, alloc)?,
+					len: n,
+				});
+			}
 
-            let mut v = Vec::try_with_capacity_in(n, alloc)?;
-            v.try_extend_with(n, elem)?;
-            Ok(v)
-        }
-    }
+			let mut v = Vec::try_with_capacity_in(n, alloc)?;
+			v.try_extend_with(n, elem)?;
+			Ok(v)
+		}
+	}
 }
 
 #[cfg(rune_nightly)]
 impl SpecFromElem for i8 {
-    #[inline]
-    fn from_elem<A>(elem: i8, n: usize, alloc: A) -> Result<Vec<i8, A>, Error>
-    where
-        A: Allocator,
-    {
-        if elem == 0 {
-            return Ok(Vec {
-                buf: RawVec::try_with_capacity_zeroed_in(n, alloc)?,
-                len: n,
-            });
-        }
+	#[inline]
+	fn from_elem<A>(elem: i8, n: usize, alloc: A) -> Result<Vec<i8, A>, Error>
+	where
+		A: Allocator,
+	{
+		if elem == 0 {
+			return Ok(Vec {
+				buf: RawVec::try_with_capacity_zeroed_in(n, alloc)?,
+				len: n,
+			});
+		}
 
-        unsafe {
-            let mut v = Vec::try_with_capacity_in(n, alloc)?;
-            ptr::write_bytes(v.as_mut_ptr(), elem as u8, n);
-            v.set_len(n);
-            Ok(v)
-        }
-    }
+		unsafe {
+			let mut v = Vec::try_with_capacity_in(n, alloc)?;
+			ptr::write_bytes(v.as_mut_ptr(), elem as u8, n);
+			v.set_len(n);
+			Ok(v)
+		}
+	}
 }
 
 #[cfg(rune_nightly)]
 impl SpecFromElem for u8 {
-    #[inline]
-    fn from_elem<A>(elem: u8, n: usize, alloc: A) -> Result<Vec<u8, A>, Error>
-    where
-        A: Allocator,
-    {
-        if elem == 0 {
-            return Ok(Vec {
-                buf: RawVec::try_with_capacity_zeroed_in(n, alloc)?,
-                len: n,
-            });
-        }
+	#[inline]
+	fn from_elem<A>(elem: u8, n: usize, alloc: A) -> Result<Vec<u8, A>, Error>
+	where
+		A: Allocator,
+	{
+		if elem == 0 {
+			return Ok(Vec {
+				buf: RawVec::try_with_capacity_zeroed_in(n, alloc)?,
+				len: n,
+			});
+		}
 
-        unsafe {
-            let mut v = Vec::try_with_capacity_in(n, alloc)?;
-            ptr::write_bytes(v.as_mut_ptr(), elem, n);
-            v.set_len(n);
-            Ok(v)
-        }
-    }
+		unsafe {
+			let mut v = Vec::try_with_capacity_in(n, alloc)?;
+			ptr::write_bytes(v.as_mut_ptr(), elem, n);
+			v.set_len(n);
+			Ok(v)
+		}
+	}
 }

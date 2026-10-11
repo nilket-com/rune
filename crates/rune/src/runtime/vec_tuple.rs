@@ -12,12 +12,12 @@ pub struct VecTuple<T>(pub T);
 
 impl<T> VecTuple<T>
 where
-    Self: ToValue,
+	Self: ToValue,
 {
-    /// Construct a new vector tuple for serializing values.
-    pub fn new(inner: T) -> Self {
-        Self(inner)
-    }
+	/// Construct a new vector tuple for serializing values.
+	pub fn new(inner: T) -> Self {
+		Self(inner)
+	}
 }
 
 macro_rules! impl_from_value_tuple_vec {

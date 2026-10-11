@@ -1,12 +1,12 @@
 /// Helper to borrow out a [ResolveContext][crate::parse::ResolveContext].
 macro_rules! __resolve_context {
-    ($q:expr) => {
-        $crate::parse::ResolveContext {
-            sources: $q.sources,
-            storage: $q.storage,
-            scratch: &$q.inner.scratch,
-        }
-    };
+	($q:expr) => {
+		$crate::parse::ResolveContext {
+			sources: $q.sources,
+			storage: $q.storage,
+			scratch: &$q.inner.scratch,
+		}
+	};
 }
 
 pub(crate) use __resolve_context as resolve_context;
@@ -61,45 +61,45 @@ macro_rules! assert_impl {
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __async_vm_try {
-    ($expr:expr) => {
-        match $expr {
-            ::core::result::Result::Ok(value) => value,
-            ::core::result::Result::Err(err) => {
-                return ::core::task::Poll::Ready(::core::result::Result::Err(
-                    ::core::convert::From::from(err),
-                ));
-            }
-        }
-    };
+	($expr:expr) => {
+		match $expr {
+			::core::result::Result::Ok(value) => value,
+			::core::result::Result::Err(err) => {
+				return ::core::task::Poll::Ready(::core::result::Result::Err(
+					::core::convert::From::from(err),
+				));
+			}
+		}
+	};
 }
 
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __vm_error {
-    ($ty:ty) => {
-        impl<T> $crate::runtime::MaybeTypeOf for Result<T, $ty>
-        where
-            T: $crate::runtime::MaybeTypeOf,
-        {
-            #[inline]
-            fn maybe_type_of() -> $crate::alloc::Result<$crate::compile::meta::DocType> {
-                <T as $crate::runtime::MaybeTypeOf>::maybe_type_of()
-            }
-        }
+	($ty:ty) => {
+		impl<T> $crate::runtime::MaybeTypeOf for Result<T, $ty>
+		where
+			T: $crate::runtime::MaybeTypeOf,
+		{
+			#[inline]
+			fn maybe_type_of() -> $crate::alloc::Result<$crate::compile::meta::DocType> {
+				<T as $crate::runtime::MaybeTypeOf>::maybe_type_of()
+			}
+		}
 
-        impl<T> $crate::runtime::IntoReturn for Result<T, $ty>
-        where
-            T: $crate::runtime::ToValue,
-        {
-            #[inline]
-            fn into_return(self) -> Result<$crate::runtime::Value, $crate::runtime::VmError> {
-                match self {
-                    Ok(value) => Ok(value.to_value()?),
-                    Err(error) => Err($crate::runtime::VmError::from(error)),
-                }
-            }
-        }
-    };
+		impl<T> $crate::runtime::IntoReturn for Result<T, $ty>
+		where
+			T: $crate::runtime::ToValue,
+		{
+			#[inline]
+			fn into_return(self) -> Result<$crate::runtime::Value, $crate::runtime::VmError> {
+				match self {
+					Ok(value) => Ok(value.to_value()?),
+					Err(error) => Err($crate::runtime::VmError::from(error)),
+				}
+			}
+		}
+	};
 }
 
 macro_rules! __declare_dyn_fn {

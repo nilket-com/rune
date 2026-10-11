@@ -8,7 +8,7 @@ const SEED: u64 = 18446744073709551557u64;
 
 #[doc(inline)]
 pub use rune_core::hash::{
-    Hash, IntoHash, NonZeroHash, ParametersBuilder, ToTypeHash, TooManyParameters,
+	Hash, IntoHash, NonZeroHash, ParametersBuilder, ToTypeHash, TooManyParameters,
 };
 
 /// A hash map suitable for storing values with hash keys.
@@ -18,29 +18,29 @@ pub(crate) type Map<T> = HashMap<Hash, T, HashBuildHasher>;
 pub(crate) struct HashBuildHasher;
 
 impl BuildHasher for HashBuildHasher {
-    type Hasher = HashHasher;
+	type Hasher = HashHasher;
 
-    #[inline]
-    fn build_hasher(&self) -> Self::Hasher {
-        HashHasher(SEED)
-    }
+	#[inline]
+	fn build_hasher(&self) -> Self::Hasher {
+		HashHasher(SEED)
+	}
 }
 
 pub(crate) struct HashHasher(u64);
 
 impl Hasher for HashHasher {
-    #[inline]
-    fn finish(&self) -> u64 {
-        self.0
-    }
+	#[inline]
+	fn finish(&self) -> u64 {
+		self.0
+	}
 
-    #[inline]
-    fn write(&mut self, _: &[u8]) {
-        panic!("Hash hashers assume that 64-bit hashes are already random")
-    }
+	#[inline]
+	fn write(&mut self, _: &[u8]) {
+		panic!("Hash hashers assume that 64-bit hashes are already random")
+	}
 
-    #[inline]
-    fn write_u64(&mut self, hash: u64) {
-        self.0 ^= hash;
-    }
+	#[inline]
+	fn write_u64(&mut self, hash: u64) {
+		self.0 ^= hash;
+	}
 }

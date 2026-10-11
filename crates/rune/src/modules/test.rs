@@ -10,40 +10,40 @@ use crate::{docstring, Any, ContextError, Module};
 /// Testing and benchmarking.
 #[rune::module(::std::test)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?.with_unique("std::test");
+	let mut m = Module::from_meta(self::module__meta)?.with_unique("std::test");
 
-    m.macro_meta(assert)?;
-    m.macro_meta(assert_eq)?;
-    m.macro_meta(assert_ne)?;
+	m.macro_meta(assert)?;
+	m.macro_meta(assert_eq)?;
+	m.macro_meta(assert_ne)?;
 
-    m.ty::<Bencher>()?.docs(docstring! {
-        /// A type to perform benchmarks.
-        ///
-        /// This is the type of the argument to any function which is annotated with `#[bench]`
-    })?;
+	m.ty::<Bencher>()?.docs(docstring! {
+		/// A type to perform benchmarks.
+		///
+		/// This is the type of the argument to any function which is annotated with `#[bench]`
+	})?;
 
-    m.function_meta(Bencher::iter)?;
-    Ok(m)
+	m.function_meta(Bencher::iter)?;
+	Ok(m)
 }
 
 /// A helper type to capture benchmarks.
 #[derive(Default, Any)]
 #[rune(module = crate, item = ::std::test)]
 pub struct Bencher {
-    fns: Vec<Function>,
+	fns: Vec<Function>,
 }
 
 impl Bencher {
-    /// Coerce bencher into its underlying functions.
-    pub fn into_functions(self) -> Vec<Function> {
-        self.fns
-    }
+	/// Coerce bencher into its underlying functions.
+	pub fn into_functions(self) -> Vec<Function> {
+		self.fns
+	}
 
-    /// Run a benchmark using the given closure.
-    #[rune::function]
-    fn iter(&mut self, f: Function) -> alloc::Result<()> {
-        self.fns.try_push(f)
-    }
+	/// Run a benchmark using the given closure.
+	#[rune::function]
+	fn iter(&mut self, f: Function) -> alloc::Result<()> {
+		self.fns.try_push(f)
+	}
 }
 
 /// Assert that the expression provided as an argument is true, or cause a vm
@@ -62,42 +62,42 @@ impl Bencher {
 /// ```
 #[rune::macro_]
 pub(crate) fn assert(
-    cx: &mut MacroContext<'_, '_, '_>,
-    stream: &TokenStream,
+	cx: &mut MacroContext<'_, '_, '_>,
+	stream: &TokenStream,
 ) -> compile::Result<TokenStream> {
-    use crate as rune;
+	use crate as rune;
 
-    let mut it = cx.exprs(stream)?.into_iter().peekable();
+	let mut it = cx.exprs(stream)?.into_iter().peekable();
 
-    let Some(expr) = it.next() else {
-        return Err(compile::Error::msg(
-            cx.input_span(),
-            "expected an expression to assert",
-        ));
-    };
+	let Some(expr) = it.next() else {
+		return Err(compile::Error::msg(
+			cx.input_span(),
+			"expected an expression to assert",
+		));
+	};
 
-    let message = if it.peek().is_some() {
-        Some(FormatArgs::from_exprs(cx, it)?)
-    } else {
-        None
-    };
+	let message = if it.peek().is_some() {
+		Some(FormatArgs::from_exprs(cx, it)?)
+	} else {
+		None
+	};
 
-    let output = if let Some(message) = &message {
-        let expanded = message.expand(cx)?;
+	let output = if let Some(message) = &message {
+		let expanded = message.expand(cx)?;
 
-        quote!(if !(#expr) {
-            ::std::panic("assertion failed: " + (#expanded));
-        })
-    } else {
-        let message = try_format!("assertion failed: {}", cx.stringify(&expr)?);
-        let message = cx.lit(&message)?;
+		quote!(if !(#expr) {
+			::std::panic("assertion failed: " + (#expanded));
+		})
+	} else {
+		let message = try_format!("assertion failed: {}", cx.stringify(&expr)?);
+		let message = cx.lit(&message)?;
 
-        quote!(if !(#expr) {
-            ::std::panic(#message);
-        })
-    };
+		quote!(if !(#expr) {
+			::std::panic(#message);
+		})
+	};
 
-    Ok(output.into_token_stream(cx)?)
+	Ok(output.into_token_stream(cx)?)
 }
 
 /// Assert that the two arguments provided are equal, or cause a vm panic.
@@ -113,57 +113,57 @@ pub(crate) fn assert(
 /// ```
 #[rune::macro_]
 pub(crate) fn assert_eq(
-    cx: &mut MacroContext<'_, '_, '_>,
-    stream: &TokenStream,
+	cx: &mut MacroContext<'_, '_, '_>,
+	stream: &TokenStream,
 ) -> compile::Result<TokenStream> {
-    use crate as rune;
+	use crate as rune;
 
-    let mut it = cx.exprs(stream)?.into_iter().peekable();
+	let mut it = cx.exprs(stream)?.into_iter().peekable();
 
-    let (Some(left), Some(right)) = (it.next(), it.next()) else {
-        return Err(compile::Error::msg(
-            cx.input_span(),
-            "expected two expressions to compare",
-        ));
-    };
+	let (Some(left), Some(right)) = (it.next(), it.next()) else {
+		return Err(compile::Error::msg(
+			cx.input_span(),
+			"expected two expressions to compare",
+		));
+	};
 
-    let message = if it.peek().is_some() {
-        Some(FormatArgs::from_exprs(cx, it)?)
-    } else {
-        None
-    };
+	let message = if it.peek().is_some() {
+		Some(FormatArgs::from_exprs(cx, it)?)
+	} else {
+		None
+	};
 
-    let output = if let Some(message) = &message {
-        let message = message.expand(cx)?;
+	let output = if let Some(message) = &message {
+		let message = message.expand(cx)?;
 
-        quote! {{
-            let left = #left;
-            let right = #right;
+		quote! {{
+			let left = #left;
+			let right = #right;
 
-            if !(left == right) {
-                let message = #message;
-                message += ::std::fmt::format!("\nleft: {:?}", left);
-                message += ::std::fmt::format!("\nright: {:?}", right);
-                ::std::panic("assertion failed (left == right): " + message);
-            }
-        }}
-    } else {
-        let message = cx.lit("assertion failed (left == right):")?;
+			if !(left == right) {
+				let message = #message;
+				message += ::std::fmt::format!("\nleft: {:?}", left);
+				message += ::std::fmt::format!("\nright: {:?}", right);
+				::std::panic("assertion failed (left == right): " + message);
+			}
+		}}
+	} else {
+		let message = cx.lit("assertion failed (left == right):")?;
 
-        quote! {{
-            let left = #left;
-            let right = #right;
+		quote! {{
+			let left = #left;
+			let right = #right;
 
-            if !(left == right) {
-                let message = ::std::string::String::from(#message);
-                message += ::std::fmt::format!("\nleft: {:?}", left);
-                message += ::std::fmt::format!("\nright: {:?}", right);
-                ::std::panic(message);
-            }
-        }}
-    };
+			if !(left == right) {
+				let message = ::std::string::String::from(#message);
+				message += ::std::fmt::format!("\nleft: {:?}", left);
+				message += ::std::fmt::format!("\nright: {:?}", right);
+				::std::panic(message);
+			}
+		}}
+	};
 
-    Ok(output.into_token_stream(cx)?)
+	Ok(output.into_token_stream(cx)?)
 }
 
 /// Assert that the two arguments provided are not equal, or cause a vm panic.
@@ -179,55 +179,55 @@ pub(crate) fn assert_eq(
 /// ```
 #[rune::macro_]
 pub(crate) fn assert_ne(
-    cx: &mut MacroContext<'_, '_, '_>,
-    stream: &TokenStream,
+	cx: &mut MacroContext<'_, '_, '_>,
+	stream: &TokenStream,
 ) -> compile::Result<TokenStream> {
-    use crate as rune;
+	use crate as rune;
 
-    let mut it = cx.exprs(stream)?.into_iter().peekable();
+	let mut it = cx.exprs(stream)?.into_iter().peekable();
 
-    let (Some(left), Some(right)) = (it.next(), it.next()) else {
-        return Err(compile::Error::msg(
-            cx.input_span(),
-            "expected two expressions to compare",
-        ));
-    };
+	let (Some(left), Some(right)) = (it.next(), it.next()) else {
+		return Err(compile::Error::msg(
+			cx.input_span(),
+			"expected two expressions to compare",
+		));
+	};
 
-    let message = if it.peek().is_some() {
-        Some(FormatArgs::from_exprs(cx, it)?)
-    } else {
-        None
-    };
+	let message = if it.peek().is_some() {
+		Some(FormatArgs::from_exprs(cx, it)?)
+	} else {
+		None
+	};
 
-    let output = if let Some(message) = &message {
-        let message = message.expand(cx)?;
+	let output = if let Some(message) = &message {
+		let message = message.expand(cx)?;
 
-        quote! {{
-            let left = #left;
-            let right = #right;
+		quote! {{
+			let left = #left;
+			let right = #right;
 
-            if !(left != right) {
-                let message = #message;
-                message += ::std::fmt::format!("\nleft: {:?}", left);
-                message += ::std::fmt::format!("\nright: {:?}", right);
-                ::std::panic("assertion failed (left != right): " + message);
-            }
-        }}
-    } else {
-        let message = cx.lit("assertion failed (left != right):")?;
+			if !(left != right) {
+				let message = #message;
+				message += ::std::fmt::format!("\nleft: {:?}", left);
+				message += ::std::fmt::format!("\nright: {:?}", right);
+				::std::panic("assertion failed (left != right): " + message);
+			}
+		}}
+	} else {
+		let message = cx.lit("assertion failed (left != right):")?;
 
-        quote! {{
-            let left = #left;
-            let right = #right;
+		quote! {{
+			let left = #left;
+			let right = #right;
 
-            if !(left != right) {
-                let message = ::std::string::String::from(#message);
-                message += ::std::fmt::format!("\nleft: {:?}", left);
-                message += ::std::fmt::format!("\nright: {:?}", right);
-                ::std::panic(message);
-            }
-        }}
-    };
+			if !(left != right) {
+				let message = ::std::string::String::from(#message);
+				message += ::std::fmt::format!("\nleft: {:?}", left);
+				message += ::std::fmt::format!("\nright: {:?}", right);
+				::std::panic(message);
+			}
+		}}
+	};
 
-    Ok(output.into_token_stream(cx)?)
+	Ok(output.into_token_stream(cx)?)
 }

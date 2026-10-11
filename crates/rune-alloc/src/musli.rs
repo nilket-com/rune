@@ -9,12 +9,12 @@ use crate::{BTreeMap, BTreeSet, Box, HashMap, HashSet, String, Vec, VecDeque};
 use musli_core::alloc::ToOwned;
 use musli_core::de::SizeHint;
 use musli_core::de::{
-    Decode, DecodeBytes, DecodeSliceBuilder, DecodeTrace, Decoder, EntryDecoder, MapDecoder,
-    SequenceDecoder, UnsizedVisitor,
+	Decode, DecodeBytes, DecodeSliceBuilder, DecodeTrace, Decoder, EntryDecoder, MapDecoder,
+	SequenceDecoder, UnsizedVisitor,
 };
 use musli_core::en::{
-    Encode, EncodeBytes, EncodePacked, EncodeTrace, Encoder, EntryEncoder, MapEncoder,
-    SequenceEncoder,
+	Encode, EncodeBytes, EncodePacked, EncodeTrace, Encoder, EntryEncoder, MapEncoder,
+	SequenceEncoder,
 };
 use musli_core::{Allocator, Context};
 
@@ -22,92 +22,92 @@ use musli_core::{Allocator, Context};
 // https://github.com/serde-rs/serde/blob/d91f8ba950e2faf4db4e283e917ba2ee94a9b8a4/serde/src/de/size_hint.rs#L12
 #[inline]
 pub(crate) fn cautious<T>(hint: impl Into<SizeHint>) -> usize {
-    const MAX_PREALLOC_BYTES: usize = 1024 * 1024;
+	const MAX_PREALLOC_BYTES: usize = 1024 * 1024;
 
-    if size_of::<T>() == 0 {
-        return 0;
-    }
+	if size_of::<T>() == 0 {
+		return 0;
+	}
 
-    hint.into()
-        .or_default()
-        .min(MAX_PREALLOC_BYTES / size_of::<T>())
+	hint.into()
+		.or_default()
+		.min(MAX_PREALLOC_BYTES / size_of::<T>())
 }
 
 impl<M> Encode<M> for String {
-    type Encode = str;
+	type Encode = str;
 
-    const IS_BITWISE_ENCODE: bool = false;
+	const IS_BITWISE_ENCODE: bool = false;
 
-    #[inline]
-    fn encode<E>(&self, encoder: E) -> Result<(), E::Error>
-    where
-        E: Encoder<Mode = M>,
-    {
-        self.as_str().encode(encoder)
-    }
+	#[inline]
+	fn encode<E>(&self, encoder: E) -> Result<(), E::Error>
+	where
+		E: Encoder<Mode = M>,
+	{
+		self.as_str().encode(encoder)
+	}
 
-    #[inline]
-    fn as_encode(&self) -> &Self::Encode {
-        self
-    }
+	#[inline]
+	fn as_encode(&self) -> &Self::Encode {
+		self
+	}
 }
 
 impl<'de, M, A> Decode<'de, M, A> for String
 where
-    A: Allocator,
+	A: Allocator,
 {
-    const IS_BITWISE_DECODE: bool = false;
+	const IS_BITWISE_DECODE: bool = false;
 
-    #[inline]
-    fn decode<D>(decoder: D) -> Result<Self, D::Error>
-    where
-        D: Decoder<'de, Mode = M>,
-    {
-        struct Visitor;
+	#[inline]
+	fn decode<D>(decoder: D) -> Result<Self, D::Error>
+	where
+		D: Decoder<'de, Mode = M>,
+	{
+		struct Visitor;
 
-        #[musli_core::trait_defaults]
-        impl<C> UnsizedVisitor<'_, C, str> for Visitor
-        where
-            C: Context,
-        {
-            type Ok = String;
+		#[musli_core::trait_defaults]
+		impl<C> UnsizedVisitor<'_, C, str> for Visitor
+		where
+			C: Context,
+		{
+			type Ok = String;
 
-            #[inline]
-            fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                write!(f, "string")
-            }
+			#[inline]
+			fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+				write!(f, "string")
+			}
 
-            #[inline]
-            fn visit_ref(self, cx: C, string: &str) -> Result<Self::Ok, Self::Error> {
-                string.try_to_owned().map_err(|e| cx.custom(e))
-            }
-        }
+			#[inline]
+			fn visit_ref(self, cx: C, string: &str) -> Result<Self::Ok, Self::Error> {
+				string.try_to_owned().map_err(|e| cx.custom(e))
+			}
+		}
 
-        decoder.decode_string(Visitor)
-    }
+		decoder.decode_string(Visitor)
+	}
 }
 
 impl<'de, M, A> Decode<'de, M, A> for Box<str>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    const IS_BITWISE_DECODE: bool = false;
+	const IS_BITWISE_DECODE: bool = false;
 
-    #[inline]
-    fn decode<D>(decoder: D) -> Result<Self, D::Error>
-    where
-        D: Decoder<'de, Mode = M>,
-    {
-        let cx = decoder.cx();
-        decoder
-            .decode::<String>()?
-            .try_into()
-            .map_err(|e| cx.custom(e))
-    }
+	#[inline]
+	fn decode<D>(decoder: D) -> Result<Self, D::Error>
+	where
+		D: Decoder<'de, Mode = M>,
+	{
+		let cx = decoder.cx();
+		decoder
+			.decode::<String>()?
+			.try_into()
+			.map_err(|e| cx.custom(e))
+	}
 }
 
 macro_rules! cow {
-    (
+	(
         $encode:ident :: $encode_fn:ident,
         $as_encode:ident,
         $decode:ident :: $decode_fn:ident,
@@ -119,118 +119,118 @@ macro_rules! cow {
         |$borrowed:ident| $borrowed_expr:expr,
         |$reference:ident| $reference_expr:expr $(,)?
     ) => {
-        impl<M> $encode<M> for Cow<'_, $ty> {
-            const $encode_packed: bool = false;
+		impl<M> $encode<M> for Cow<'_, $ty> {
+			const $encode_packed: bool = false;
 
-            type $encode = $ty;
+			type $encode = $ty;
 
-            #[inline]
-            fn $encode_fn<E>(&self, encoder: E) -> Result<(), E::Error>
-            where
-                E: Encoder<Mode = M>,
-            {
-                self.as_ref().$encode_fn(encoder)
-            }
+			#[inline]
+			fn $encode_fn<E>(&self, encoder: E) -> Result<(), E::Error>
+			where
+				E: Encoder<Mode = M>,
+			{
+				self.as_ref().$encode_fn(encoder)
+			}
 
-            #[inline]
-            fn $as_encode(&self) -> &Self::$encode {
-                self
-            }
-        }
+			#[inline]
+			fn $as_encode(&self) -> &Self::$encode {
+				self
+			}
+		}
 
-        impl<'de, M, A> $decode<'de, M, A> for Cow<'_, $ty>
-        where
-            A: Allocator,
-        {
-            const $decode_packed: bool = false;
+		impl<'de, M, A> $decode<'de, M, A> for Cow<'_, $ty>
+		where
+			A: Allocator,
+		{
+			const $decode_packed: bool = false;
 
-            #[inline]
-            fn $decode_fn<D>(decoder: D) -> Result<Self, D::Error>
-            where
-                D: Decoder<'de, Mode = M, Allocator = A>,
-            {
-                struct Visitor;
+			#[inline]
+			fn $decode_fn<D>(decoder: D) -> Result<Self, D::Error>
+			where
+				D: Decoder<'de, Mode = M, Allocator = A>,
+			{
+				struct Visitor;
 
-                #[musli_core::trait_defaults]
-                impl<'de, C> UnsizedVisitor<'de, C, $source> for Visitor
-                where
-                    C: Context,
-                {
-                    type Ok = Cow<'static, $ty>;
+				#[musli_core::trait_defaults]
+				impl<'de, C> UnsizedVisitor<'de, C, $source> for Visitor
+				where
+					C: Context,
+				{
+					type Ok = Cow<'static, $ty>;
 
-                    #[inline]
-                    fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                        write!(f, "a string")
-                    }
+					#[inline]
+					fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+						write!(f, "a string")
+					}
 
-                    #[inline]
-                    fn visit_owned(
-                        self,
-                        $cx: C,
-                        $owned: <$source as ToOwned>::Owned<Self::Allocator>,
-                    ) -> Result<Self::Ok, Self::Error> {
-                        Ok($owned_expr)
-                    }
+					#[inline]
+					fn visit_owned(
+						self,
+						$cx: C,
+						$owned: <$source as ToOwned>::Owned<Self::Allocator>,
+					) -> Result<Self::Ok, Self::Error> {
+						Ok($owned_expr)
+					}
 
-                    #[inline]
-                    fn visit_borrowed(
-                        self,
-                        $cx: C,
-                        $borrowed: &'de $source,
-                    ) -> Result<Self::Ok, Self::Error> {
-                        Ok($borrowed_expr)
-                    }
+					#[inline]
+					fn visit_borrowed(
+						self,
+						$cx: C,
+						$borrowed: &'de $source,
+					) -> Result<Self::Ok, Self::Error> {
+						Ok($borrowed_expr)
+					}
 
-                    #[inline]
-                    fn visit_ref(
-                        self,
-                        $cx: C,
-                        $reference: &$source,
-                    ) -> Result<Self::Ok, Self::Error> {
-                        Ok($reference_expr)
-                    }
-                }
+					#[inline]
+					fn visit_ref(
+						self,
+						$cx: C,
+						$reference: &$source,
+					) -> Result<Self::Ok, Self::Error> {
+						Ok($reference_expr)
+					}
+				}
 
-                decoder.$decode_method(Visitor)
-            }
-        }
-    };
+				decoder.$decode_method(Visitor)
+			}
+		}
+	};
 }
 
 cow! {
-    Encode::encode,
-    as_encode,
-    Decode::decode,
-    IS_BITWISE_ENCODE,
-    IS_BITWISE_DECODE,
-    str, str, decode_string, cx,
-    |owned| {
-        match owned.into_std() {
-            Ok(owned) => Cow::Owned(owned.try_into().map_err(|e| cx.custom(e))?),
-            Err(owned) => {
-                Cow::Owned(TryToOwned::try_to_owned(owned.as_str()).map_err(|e| cx.custom(e))?)
-            }
-        }
-    },
-    |borrowed| Cow::Owned(TryToOwned::try_to_owned(borrowed).map_err(|e| cx.custom(e))?),
-    |reference| Cow::Owned(TryToOwned::try_to_owned(reference).map_err(|e| cx.custom(e))?),
+	Encode::encode,
+	as_encode,
+	Decode::decode,
+	IS_BITWISE_ENCODE,
+	IS_BITWISE_DECODE,
+	str, str, decode_string, cx,
+	|owned| {
+		match owned.into_std() {
+			Ok(owned) => Cow::Owned(owned.try_into().map_err(|e| cx.custom(e))?),
+			Err(owned) => {
+				Cow::Owned(TryToOwned::try_to_owned(owned.as_str()).map_err(|e| cx.custom(e))?)
+			}
+		}
+	},
+	|borrowed| Cow::Owned(TryToOwned::try_to_owned(borrowed).map_err(|e| cx.custom(e))?),
+	|reference| Cow::Owned(TryToOwned::try_to_owned(reference).map_err(|e| cx.custom(e))?),
 }
 
 cow! {
-    EncodeBytes::encode_bytes,
-    as_encode_bytes,
-    DecodeBytes::decode_bytes,
-    ENCODE_BYTES_PACKED,
-    DECODE_BYTES_PACKED,
-    [u8], [u8], decode_bytes, cx,
-    |owned| {
-        match owned.into_std() {
-            Ok(owned) => Cow::Owned(owned.try_into().map_err(|e| cx.custom(e))?),
-            Err(owned) => Cow::Owned(TryToOwned::try_to_owned(owned.as_slice()).map_err(|e| cx.custom(e))?),
-        }
-    },
-    |borrowed| Cow::Owned(TryToOwned::try_to_owned(borrowed).map_err(|e| cx.custom(e))?),
-    |reference| Cow::Owned(TryToOwned::try_to_owned(reference).map_err(|e| cx.custom(e))?),
+	EncodeBytes::encode_bytes,
+	as_encode_bytes,
+	DecodeBytes::decode_bytes,
+	ENCODE_BYTES_PACKED,
+	DECODE_BYTES_PACKED,
+	[u8], [u8], decode_bytes, cx,
+	|owned| {
+		match owned.into_std() {
+			Ok(owned) => Cow::Owned(owned.try_into().map_err(|e| cx.custom(e))?),
+			Err(owned) => Cow::Owned(TryToOwned::try_to_owned(owned.as_slice()).map_err(|e| cx.custom(e))?),
+		}
+	},
+	|borrowed| Cow::Owned(TryToOwned::try_to_owned(borrowed).map_err(|e| cx.custom(e))?),
+	|reference| Cow::Owned(TryToOwned::try_to_owned(reference).map_err(|e| cx.custom(e))?),
 }
 
 macro_rules! sequence {
@@ -481,83 +481,83 @@ macro_rules! slice_sequence {
 }
 
 slice_sequence! {
-    cx,
-    Vec<T>,
-    || Vec::new(),
-    |vec, value| vec.try_push(value).map_err(|e| cx.custom(e))?,
-    |vec, capacity| vec.try_reserve(capacity).map_err(|e| cx.custom(e))?,
-    |size| Vec::try_with_capacity(size).map_err(|e| cx.custom(e))?,
+	cx,
+	Vec<T>,
+	|| Vec::new(),
+	|vec, value| vec.try_push(value).map_err(|e| cx.custom(e))?,
+	|vec, capacity| vec.try_reserve(capacity).map_err(|e| cx.custom(e))?,
+	|size| Vec::try_with_capacity(size).map_err(|e| cx.custom(e))?,
 }
 
 impl<M, T> Encode<M> for VecDeque<T>
 where
-    T: Encode<M>,
+	T: Encode<M>,
 {
-    type Encode = Self;
+	type Encode = Self;
 
-    const IS_BITWISE_ENCODE: bool = false;
+	const IS_BITWISE_ENCODE: bool = false;
 
-    #[inline]
-    fn encode<E>(&self, encoder: E) -> Result<(), E::Error>
-    where
-        E: Encoder<Mode = M>,
-    {
-        let (a, b) = self.as_slices();
-        encoder.encode_slices(self.len(), [a, b])
-    }
+	#[inline]
+	fn encode<E>(&self, encoder: E) -> Result<(), E::Error>
+	where
+		E: Encoder<Mode = M>,
+	{
+		let (a, b) = self.as_slices();
+		encoder.encode_slices(self.len(), [a, b])
+	}
 
-    #[inline]
-    fn as_encode(&self) -> &Self::Encode {
-        self
-    }
+	#[inline]
+	fn as_encode(&self) -> &Self::Encode {
+		self
+	}
 }
 
 impl<'de, M, A, T> Decode<'de, M, A> for VecDeque<T>
 where
-    A: Allocator,
-    T: Decode<'de, M, A>,
+	A: Allocator,
+	T: Decode<'de, M, A>,
 {
-    const IS_BITWISE_DECODE: bool = false;
+	const IS_BITWISE_DECODE: bool = false;
 
-    #[inline]
-    fn decode<D>(decoder: D) -> Result<Self, D::Error>
-    where
-        D: Decoder<'de, Mode = M, Allocator = A>,
-    {
-        Ok(VecDeque::from(Vec::decode(decoder)?))
-    }
+	#[inline]
+	fn decode<D>(decoder: D) -> Result<Self, D::Error>
+	where
+		D: Decoder<'de, Mode = M, Allocator = A>,
+	{
+		Ok(VecDeque::from(Vec::decode(decoder)?))
+	}
 }
 
 impl<M, T> EncodePacked<M> for VecDeque<T>
 where
-    T: Encode<M>,
+	T: Encode<M>,
 {
-    #[inline]
-    fn encode_packed<E>(&self, encoder: E) -> Result<(), E::Error>
-    where
-        E: Encoder<Mode = M>,
-    {
-        encoder.encode_pack_fn(|pack| {
-            let (a, b) = self.as_slices();
-            pack.encode_slices([a, b])
-        })
-    }
+	#[inline]
+	fn encode_packed<E>(&self, encoder: E) -> Result<(), E::Error>
+	where
+		E: Encoder<Mode = M>,
+	{
+		encoder.encode_pack_fn(|pack| {
+			let (a, b) = self.as_slices();
+			pack.encode_slices([a, b])
+		})
+	}
 }
 
 sequence! {
-    cx,
-    BTreeSet<T: Ord>,
-    try_insert,
-    seq,
-    BTreeSet::new()
+	cx,
+	BTreeSet<T: Ord>,
+	try_insert,
+	seq,
+	BTreeSet::new()
 }
 
 sequence! {
-    cx,
-    HashSet<T: Eq + Hash, S: BuildHasher + Default>,
-    try_insert,
-    seq,
-    HashSet::try_with_capacity_and_hasher(cautious::<T>(seq.size_hint()), S::default()).map_err(|e| cx.custom(e))?
+	cx,
+	HashSet<T: Eq + Hash, S: BuildHasher + Default>,
+	try_insert,
+	seq,
+	HashSet::try_with_capacity_and_hasher(cautious::<T>(seq.size_hint()), S::default()).map_err(|e| cx.custom(e))?
 }
 
 macro_rules! map {
@@ -698,10 +698,10 @@ macro_rules! map {
 map!(_cx, BTreeMap<K: Ord, V>, map, BTreeMap::new());
 
 map!(
-    cx,
-    HashMap<K: Eq + Hash, V, S: BuildHasher + Default>,
-    map,
-    HashMap::try_with_capacity_and_hasher(cautious::<(K, V)>(map.size_hint()), S::default()).map_err(|e| cx.custom(e))?
+	cx,
+	HashMap<K: Eq + Hash, V, S: BuildHasher + Default>,
+	map,
+	HashMap::try_with_capacity_and_hasher(cautious::<(K, V)>(map.size_hint()), S::default()).map_err(|e| cx.custom(e))?
 );
 
 macro_rules! smart_pointer {
@@ -785,114 +785,114 @@ macro_rules! smart_pointer {
 smart_pointer!(Arc, Box);
 
 impl<M> EncodeBytes<M> for Vec<u8> {
-    const ENCODE_BYTES_PACKED: bool = false;
+	const ENCODE_BYTES_PACKED: bool = false;
 
-    type EncodeBytes = [u8];
+	type EncodeBytes = [u8];
 
-    #[inline]
-    fn encode_bytes<E>(&self, encoder: E) -> Result<(), E::Error>
-    where
-        E: Encoder<Mode = M>,
-    {
-        encoder.encode_bytes(self.as_slice())
-    }
+	#[inline]
+	fn encode_bytes<E>(&self, encoder: E) -> Result<(), E::Error>
+	where
+		E: Encoder<Mode = M>,
+	{
+		encoder.encode_bytes(self.as_slice())
+	}
 
-    #[inline]
-    fn as_encode_bytes(&self) -> &Self::EncodeBytes {
-        self
-    }
+	#[inline]
+	fn as_encode_bytes(&self) -> &Self::EncodeBytes {
+		self
+	}
 }
 
 impl<M> EncodeBytes<M> for Box<[u8]> {
-    const ENCODE_BYTES_PACKED: bool = false;
+	const ENCODE_BYTES_PACKED: bool = false;
 
-    type EncodeBytes = [u8];
+	type EncodeBytes = [u8];
 
-    #[inline]
-    fn encode_bytes<E>(&self, encoder: E) -> Result<(), E::Error>
-    where
-        E: Encoder<Mode = M>,
-    {
-        encoder.encode_bytes(self.as_ref())
-    }
+	#[inline]
+	fn encode_bytes<E>(&self, encoder: E) -> Result<(), E::Error>
+	where
+		E: Encoder<Mode = M>,
+	{
+		encoder.encode_bytes(self.as_ref())
+	}
 
-    #[inline]
-    fn as_encode_bytes(&self) -> &Self::EncodeBytes {
-        self
-    }
+	#[inline]
+	fn as_encode_bytes(&self) -> &Self::EncodeBytes {
+		self
+	}
 }
 
 impl<'de, M, A> DecodeBytes<'de, M, A> for Vec<u8>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    const DECODE_BYTES_PACKED: bool = false;
+	const DECODE_BYTES_PACKED: bool = false;
 
-    #[inline]
-    fn decode_bytes<D>(decoder: D) -> Result<Self, D::Error>
-    where
-        D: Decoder<'de, Mode = M, Allocator = A>,
-    {
-        struct Visitor;
+	#[inline]
+	fn decode_bytes<D>(decoder: D) -> Result<Self, D::Error>
+	where
+		D: Decoder<'de, Mode = M, Allocator = A>,
+	{
+		struct Visitor;
 
-        #[musli_core::trait_defaults]
-        impl<'de, C> UnsizedVisitor<'de, C, [u8]> for Visitor
-        where
-            C: Context,
-        {
-            type Ok = Vec<u8>;
+		#[musli_core::trait_defaults]
+		impl<'de, C> UnsizedVisitor<'de, C, [u8]> for Visitor
+		where
+			C: Context,
+		{
+			type Ok = Vec<u8>;
 
-            #[inline]
-            fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                write!(f, "bytes")
-            }
+			#[inline]
+			fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+				write!(f, "bytes")
+			}
 
-            #[inline]
-            fn visit_borrowed(self, cx: C, bytes: &'de [u8]) -> Result<Self::Ok, Self::Error> {
-                Vec::try_from(bytes).map_err(|e| cx.custom(e))
-            }
+			#[inline]
+			fn visit_borrowed(self, cx: C, bytes: &'de [u8]) -> Result<Self::Ok, Self::Error> {
+				Vec::try_from(bytes).map_err(|e| cx.custom(e))
+			}
 
-            #[inline]
-            fn visit_ref(self, cx: C, bytes: &[u8]) -> Result<Self::Ok, Self::Error> {
-                Vec::try_from(bytes).map_err(|e| cx.custom(e))
-            }
-        }
+			#[inline]
+			fn visit_ref(self, cx: C, bytes: &[u8]) -> Result<Self::Ok, Self::Error> {
+				Vec::try_from(bytes).map_err(|e| cx.custom(e))
+			}
+		}
 
-        decoder.decode_bytes(Visitor)
-    }
+		decoder.decode_bytes(Visitor)
+	}
 }
 
 impl<M> EncodeBytes<M> for VecDeque<u8> {
-    const ENCODE_BYTES_PACKED: bool = false;
+	const ENCODE_BYTES_PACKED: bool = false;
 
-    type EncodeBytes = VecDeque<u8>;
+	type EncodeBytes = VecDeque<u8>;
 
-    #[inline]
-    fn encode_bytes<E>(&self, encoder: E) -> Result<(), E::Error>
-    where
-        E: Encoder<Mode = M>,
-    {
-        let (first, second) = self.as_slices();
-        encoder.encode_bytes_vectored(self.len(), &[first, second])
-    }
+	#[inline]
+	fn encode_bytes<E>(&self, encoder: E) -> Result<(), E::Error>
+	where
+		E: Encoder<Mode = M>,
+	{
+		let (first, second) = self.as_slices();
+		encoder.encode_bytes_vectored(self.len(), &[first, second])
+	}
 
-    #[inline]
-    fn as_encode_bytes(&self) -> &Self::EncodeBytes {
-        self
-    }
+	#[inline]
+	fn as_encode_bytes(&self) -> &Self::EncodeBytes {
+		self
+	}
 }
 
 impl<'de, M, A> DecodeBytes<'de, M, A> for VecDeque<u8>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    const DECODE_BYTES_PACKED: bool = false;
+	const DECODE_BYTES_PACKED: bool = false;
 
-    #[inline]
-    fn decode_bytes<D>(decoder: D) -> Result<Self, D::Error>
-    where
-        D: Decoder<'de, Mode = M, Allocator = A>,
-    {
-        Ok(VecDeque::from(<Vec<u8>>::decode_bytes(decoder)?))
-    }
+	#[inline]
+	fn decode_bytes<D>(decoder: D) -> Result<Self, D::Error>
+	where
+		D: Decoder<'de, Mode = M, Allocator = A>,
+	{
+		Ok(VecDeque::from(<Vec<u8>>::decode_bytes(decoder)?))
+	}
 }

@@ -17,26 +17,26 @@ use core::cmp::Ordering;
 use crate::alloc::AllocError;
 
 trait Recover<Q: ?Sized> {
-    type Key;
+	type Key;
 
-    fn get<C: ?Sized, E>(
-        &self,
-        cx: &mut C,
-        key: &Q,
-        cmp: fn(&mut C, &Q, &Q) -> Result<Ordering, E>,
-    ) -> Result<Option<&Self::Key>, E>;
+	fn get<C: ?Sized, E>(
+		&self,
+		cx: &mut C,
+		key: &Q,
+		cmp: fn(&mut C, &Q, &Q) -> Result<Ordering, E>,
+	) -> Result<Option<&Self::Key>, E>;
 
-    fn take<C: ?Sized, E>(
-        &mut self,
-        cx: &mut C,
-        key: &Q,
-        cmp: fn(&mut C, &Q, &Q) -> Result<Ordering, E>,
-    ) -> Result<Option<Self::Key>, E>;
+	fn take<C: ?Sized, E>(
+		&mut self,
+		cx: &mut C,
+		key: &Q,
+		cmp: fn(&mut C, &Q, &Q) -> Result<Ordering, E>,
+	) -> Result<Option<Self::Key>, E>;
 
-    fn try_replace<C: ?Sized, E>(
-        &mut self,
-        cx: &mut C,
-        key: Self::Key,
-        cmp: fn(&mut C, &Q, &Q) -> Result<Ordering, E>,
-    ) -> Result<Result<Option<Self::Key>, AllocError>, E>;
+	fn try_replace<C: ?Sized, E>(
+		&mut self,
+		cx: &mut C,
+		key: Self::Key,
+		cmp: fn(&mut C, &Q, &Q) -> Result<Ordering, E>,
+	) -> Result<Result<Option<Self::Key>, AllocError>, E>;
 }

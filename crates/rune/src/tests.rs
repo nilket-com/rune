@@ -9,35 +9,35 @@
 /// Import by adding `prelude!();` to your test module.
 #[allow(unused_imports)]
 pub(crate) mod prelude {
-    pub(crate) use crate as rune;
-    pub(crate) use crate::alloc;
-    pub(crate) use crate::alloc::fmt::TryWrite;
-    pub(crate) use crate::alloc::prelude::*;
-    pub(crate) use crate::ast;
-    pub(crate) use crate::compile::{self, ErrorKind, Located, Named};
-    pub(crate) use crate::diagnostics::{self, WarningDiagnosticKind};
-    pub(crate) use crate::hash;
-    pub(crate) use crate::macros;
-    pub(crate) use crate::module::InstallWith;
-    pub(crate) use crate::parse;
-    pub(crate) use crate::runtime::{
-        self, Address, Bytes, DynamicTuple, Formatter, Function, MaybeTypeOf, Object, Output,
-        OwnedTuple, Protocol, RawAnyGuard, Ref, Shared, Stack, Tuple, TypeHash, TypeInfo, TypeOf,
-        UnsafeToRef, VecTuple, VmErrorKind,
-    };
-    pub(crate) use crate::support::Result;
-    pub(crate) use crate::sync::Arc;
-    pub(crate) use crate::tests::{eval, run};
-    pub(crate) use crate::{
-        from_value, prepare, sources, span, Any, Context, ContextError, Diagnostics, FromValue,
-        Hash, Item, ItemBuf, Module, Options, Source, Sources, Value, Vm,
-    };
-    pub(crate) use futures_executor::block_on;
+	pub(crate) use crate as rune;
+	pub(crate) use crate::alloc;
+	pub(crate) use crate::alloc::fmt::TryWrite;
+	pub(crate) use crate::alloc::prelude::*;
+	pub(crate) use crate::ast;
+	pub(crate) use crate::compile::{self, ErrorKind, Located, Named};
+	pub(crate) use crate::diagnostics::{self, WarningDiagnosticKind};
+	pub(crate) use crate::hash;
+	pub(crate) use crate::macros;
+	pub(crate) use crate::module::InstallWith;
+	pub(crate) use crate::parse;
+	pub(crate) use crate::runtime::{
+		self, Address, Bytes, DynamicTuple, Formatter, Function, MaybeTypeOf, Object, Output,
+		OwnedTuple, Protocol, RawAnyGuard, Ref, Shared, Stack, Tuple, TypeHash, TypeInfo, TypeOf,
+		UnsafeToRef, VecTuple, VmErrorKind,
+	};
+	pub(crate) use crate::support::Result;
+	pub(crate) use crate::sync::Arc;
+	pub(crate) use crate::tests::{eval, run};
+	pub(crate) use crate::{
+		from_value, prepare, sources, span, Any, Context, ContextError, Diagnostics, FromValue,
+		Hash, Item, ItemBuf, Module, Options, Source, Sources, Value, Vm,
+	};
+	pub(crate) use futures_executor::block_on;
 
-    pub(crate) use rust_alloc::string::{String, ToString};
-    pub(crate) use rust_alloc::vec::Vec;
+	pub(crate) use rust_alloc::string::{String, ToString};
+	pub(crate) use rust_alloc::vec::Vec;
 
-    pub(crate) use anyhow::Context as AnyhowContext;
+	pub(crate) use anyhow::Context as AnyhowContext;
 }
 
 use core::fmt;
@@ -49,206 +49,206 @@ use anyhow::{Context as _, Error, Result};
 use crate::runtime::{Args, VmError};
 use crate::sync::Arc;
 use crate::{
-    alloc, termcolor, BuildError, Context, Diagnostics, FromValue, Hash, Options, Source, Sources,
-    Unit, Vm,
+	alloc, termcolor, BuildError, Context, Diagnostics, FromValue, Hash, Options, Source, Sources,
+	Unit, Vm,
 };
 
 /// An error that can be raised during testing.
 #[derive(Debug)]
 pub enum TestError {
-    /// A load error was raised during testing.
-    Error(Error),
-    /// A virtual machine error was raised during testing.
-    VmError(VmError),
+	/// A load error was raised during testing.
+	Error(Error),
+	/// A virtual machine error was raised during testing.
+	VmError(VmError),
 }
 
 impl From<Error> for TestError {
-    fn from(error: Error) -> Self {
-        TestError::Error(error)
-    }
+	fn from(error: Error) -> Self {
+		TestError::Error(error)
+	}
 }
 
 impl From<alloc::Error> for TestError {
-    fn from(error: alloc::Error) -> Self {
-        TestError::Error(Error::new(error))
-    }
+	fn from(error: alloc::Error) -> Self {
+		TestError::Error(Error::new(error))
+	}
 }
 
 impl fmt::Display for TestError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            TestError::Error(error) => write!(f, "Build error: {error}"),
-            TestError::VmError(error) => write!(f, "Vm error: {error}"),
-        }
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		match self {
+			TestError::Error(error) => write!(f, "Build error: {error}"),
+			TestError::VmError(error) => write!(f, "Vm error: {error}"),
+		}
+	}
 }
 
 impl core::error::Error for TestError {
-    fn source(&self) -> Option<&(dyn core::error::Error + 'static)> {
-        match self {
-            TestError::Error(error) => Some(error.as_ref()),
-            TestError::VmError(error) => Some(error),
-        }
-    }
+	fn source(&self) -> Option<&(dyn core::error::Error + 'static)> {
+		match self {
+			TestError::Error(error) => Some(error.as_ref()),
+			TestError::VmError(error) => Some(error),
+		}
+	}
 }
 
 /// Compile the given source into a unit and collection of warnings.
 #[doc(hidden)]
 pub fn compile_helper(source: &str, diagnostics: &mut Diagnostics) -> Result<Unit, BuildError> {
-    let context = crate::Context::with_default_modules().expect("setting up default modules");
+	let context = crate::Context::with_default_modules().expect("setting up default modules");
 
-    let mut sources = Sources::new();
-    sources.insert(Source::new("main", source)?)?;
+	let mut sources = Sources::new();
+	sources.insert(Source::new("main", source)?)?;
 
-    let mut options = Options::from_default_env().expect("parsing RUNEFLAGS");
-    options.script(true);
+	let mut options = Options::from_default_env().expect("parsing RUNEFLAGS");
+	options.script(true);
 
-    let unit = crate::prepare(&mut sources)
-        .with_context(&context)
-        .with_diagnostics(diagnostics)
-        .with_options(&options)
-        .build()?;
+	let unit = crate::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(diagnostics)
+		.with_options(&options)
+		.build()?;
 
-    Ok(unit)
+	Ok(unit)
 }
 
 /// Construct a virtual machine for the given sources.
 #[doc(hidden)]
 pub fn vm(
-    context: &Context,
-    sources: &mut Sources,
-    diagnostics: &mut Diagnostics,
-    script: bool,
+	context: &Context,
+	sources: &mut Sources,
+	diagnostics: &mut Diagnostics,
+	script: bool,
 ) -> Result<Vm, TestError> {
-    let runtime = Arc::try_new(context.runtime()?)?;
+	let runtime = Arc::try_new(context.runtime()?)?;
 
-    let mut options = Options::from_default_env().expect("parsing RUNEFLAGS");
+	let mut options = Options::from_default_env().expect("parsing RUNEFLAGS");
 
-    if script {
-        options.script(true);
-    }
+	if script {
+		options.script(true);
+	}
 
-    let result = crate::prepare(sources)
-        .with_context(context)
-        .with_diagnostics(diagnostics)
-        .with_options(&options)
-        .build();
+	let result = crate::prepare(sources)
+		.with_context(context)
+		.with_diagnostics(diagnostics)
+		.with_options(&options)
+		.build();
 
-    let Ok(unit) = result else {
-        let mut buffer = termcolor::Buffer::no_color();
+	let Ok(unit) = result else {
+		let mut buffer = termcolor::Buffer::no_color();
 
-        diagnostics
-            .emit(&mut buffer, sources)
-            .context("Emit diagnostics")?;
+		diagnostics
+			.emit(&mut buffer, sources)
+			.context("Emit diagnostics")?;
 
-        let error = Error::msg(String::from_utf8(buffer.into_inner()).context("Non utf-8 output")?);
-        return Err(TestError::Error(error));
-    };
+		let error = Error::msg(String::from_utf8(buffer.into_inner()).context("Non utf-8 output")?);
+		return Err(TestError::Error(error));
+	};
 
-    let unit = Arc::try_new(unit)?;
-    Ok(Vm::new(runtime, unit))
+	let unit = Arc::try_new(unit)?;
+	Ok(Vm::new(runtime, unit))
 }
 
 /// Call the specified function in the given script sources.
 #[doc(hidden)]
 pub fn run_helper<T>(
-    context: &Context,
-    sources: &mut Sources,
-    diagnostics: &mut Diagnostics,
-    args: impl Args,
-    script: bool,
+	context: &Context,
+	sources: &mut Sources,
+	diagnostics: &mut Diagnostics,
+	args: impl Args,
+	script: bool,
 ) -> Result<T, TestError>
 where
-    T: FromValue,
+	T: FromValue,
 {
-    let mut vm = vm(context, sources, diagnostics, script)?;
+	let mut vm = vm(context, sources, diagnostics, script)?;
 
-    let mut execute = if script {
-        vm.execute(Hash::EMPTY, args).map_err(TestError::VmError)?
-    } else {
-        vm.execute(["main"], args).map_err(TestError::VmError)?
-    };
+	let mut execute = if script {
+		vm.execute(Hash::EMPTY, args).map_err(TestError::VmError)?
+	} else {
+		vm.execute(["main"], args).map_err(TestError::VmError)?
+	};
 
-    let output = ::futures_executor::block_on(execute.resume())
-        .map_err(TestError::VmError)?
-        .into_complete()
-        .map_err(TestError::VmError)?;
+	let output = ::futures_executor::block_on(execute.resume())
+		.map_err(TestError::VmError)?
+		.into_complete()
+		.map_err(TestError::VmError)?;
 
-    crate::from_value(output).map_err(|error| TestError::VmError(error.into()))
+	crate::from_value(output).map_err(|error| TestError::VmError(error.into()))
 }
 
 #[doc(hidden)]
 pub fn sources(source: &str) -> Sources {
-    let mut sources = Sources::new();
-    sources
-        .insert(Source::new("main", source).expect("Failed to build source"))
-        .expect("Failed to insert source");
-    sources
+	let mut sources = Sources::new();
+	sources
+		.insert(Source::new("main", source).expect("Failed to build source"))
+		.expect("Failed to insert source");
+	sources
 }
 
 /// Run the given source with diagnostics being printed to stderr.
 pub fn run<T>(context: &Context, source: &str, args: impl Args, script: bool) -> Result<T>
 where
-    T: FromValue,
+	T: FromValue,
 {
-    let mut sources = Sources::new();
-    sources.insert(Source::memory(source)?)?;
+	let mut sources = Sources::new();
+	sources.insert(Source::memory(source)?)?;
 
-    let mut diagnostics = Default::default();
+	let mut diagnostics = Default::default();
 
-    let e = match run_helper(context, &mut sources, &mut diagnostics, args, script) {
-        Ok(value) => return Ok(value),
-        Err(e) => e,
-    };
+	let e = match run_helper(context, &mut sources, &mut diagnostics, args, script) {
+		Ok(value) => return Ok(value),
+		Err(e) => e,
+	};
 
-    match e {
-        TestError::Error(error) => Err(error),
-        TestError::VmError(e) => {
-            let mut buffer = termcolor::Buffer::no_color();
-            e.emit(&mut buffer, &sources).context("Emit diagnostics")?;
-            let buffer =
-                String::from_utf8(buffer.into_inner()).context("Decode output as utf-8")?;
-            Err(Error::msg(buffer))
-        }
-    }
+	match e {
+		TestError::Error(error) => Err(error),
+		TestError::VmError(e) => {
+			let mut buffer = termcolor::Buffer::no_color();
+			e.emit(&mut buffer, &sources).context("Emit diagnostics")?;
+			let buffer =
+				String::from_utf8(buffer.into_inner()).context("Decode output as utf-8")?;
+			Err(Error::msg(buffer))
+		}
+	}
 }
 
 /// Generate an expectation panic.
 macro_rules! expected {
-    ($name:literal, $expected:pat, $actual:expr) => {
-        panic!(
-            "Did not match expected {}\nExpected: {}\n  Actual: {:?}",
-            $name,
-            stringify!($expected),
-            $actual,
-        )
-    };
+	($name:literal, $expected:pat, $actual:expr) => {
+		panic!(
+			"Did not match expected {}\nExpected: {}\n  Actual: {:?}",
+			$name,
+			stringify!($expected),
+			$actual,
+		)
+	};
 
-    ($name:literal, $expected:pat, $actual:expr, $extra:expr) => {
-        panic!(
-            "Did not match expected {}\nExpected: {}\n  Actual: {:?}\n{}",
-            $name,
-            stringify!($expected),
-            $actual,
-            $extra,
-        )
-    };
+	($name:literal, $expected:pat, $actual:expr, $extra:expr) => {
+		panic!(
+			"Did not match expected {}\nExpected: {}\n  Actual: {:?}\n{}",
+			$name,
+			stringify!($expected),
+			$actual,
+			$extra,
+		)
+	};
 }
 
 #[track_caller]
 pub(crate) fn eval<T>(source: impl AsRef<str>) -> T
 where
-    T: FromValue,
+	T: FromValue,
 {
-    let source = source.as_ref();
-    let context = Context::with_default_modules().expect("Failed to build context");
+	let source = source.as_ref();
+	let context = Context::with_default_modules().expect("Failed to build context");
 
-    match run(&context, source, (), true) {
-        Ok(output) => output,
-        Err(error) => {
-            panic!("Program failed to run:\n{error}\n{source}");
-        }
-    }
+	match run(&context, source, (), true) {
+		Ok(output) => output,
+		Err(error) => {
+			panic!("Program failed to run:\n{error}\n{source}");
+		}
+	}
 }
 
 /// Evaluate a Rust token tree. This works fairly well because Rust and Rune has
@@ -316,10 +316,10 @@ macro_rules! assert_vm_error {
 
 /// Assert that the given rune program parses.
 macro_rules! assert_parse {
-    ($source:expr) => {{
-        let mut diagnostics = Default::default();
-        $crate::tests::compile_helper($source, &mut diagnostics).unwrap()
-    }};
+	($source:expr) => {{
+		let mut diagnostics = Default::default();
+		$crate::tests::compile_helper($source, &mut diagnostics).unwrap()
+	}};
 }
 
 /// Assert that the given rune program raises a query error.
@@ -404,19 +404,19 @@ macro_rules! assert_warnings {
 
 /// Assert that the given value matches the provided pattern.
 macro_rules! assert_matches {
-    ($value:expr, $pat:pat) => {
-        match $value {
-            $pat => (),
-            other => panic!("expected {}, but was {:?}", stringify!($pat), other),
-        }
-    };
+	($value:expr, $pat:pat) => {
+		match $value {
+			$pat => (),
+			other => panic!("expected {}, but was {:?}", stringify!($pat), other),
+		}
+	};
 }
 
 macro_rules! prelude {
-    () => {
-        #[allow(unused_imports)]
-        use crate::tests::prelude::*;
-    };
+	() => {
+		#[allow(unused_imports)]
+		use crate::tests::prelude::*;
+	};
 }
 
 #[cfg(not(miri))]

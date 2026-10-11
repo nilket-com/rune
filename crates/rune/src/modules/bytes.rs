@@ -13,52 +13,52 @@ use crate::{ContextError, Module, Value};
 /// The bytes module.
 #[rune::module(::std::bytes)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
+	let mut m = Module::from_meta(self::module__meta)?;
 
-    m.ty::<Bytes>()?;
-    m.function_meta(new)?;
-    m.function_meta(with_capacity)?;
-    m.function_meta(from_vec)?;
-    m.function_meta(into_vec)?;
-    m.function_meta(as_vec)?;
-    m.function_meta(extend)?;
-    m.function_meta(extend_str)?;
-    m.function_meta(pop)?;
-    m.function_meta(push)?;
-    m.function_meta(remove)?;
-    m.function_meta(insert)?;
-    m.function_meta(index_get)?;
-    m.function_meta(index_set)?;
-    m.function_meta(first)?;
-    m.function_meta(last)?;
-    m.function_meta(len)?;
-    m.function_meta(is_empty)?;
-    m.function_meta(capacity)?;
-    m.function_meta(clear)?;
-    m.function_meta(reserve)?;
-    m.function_meta(reserve_exact)?;
-    m.function_meta(shrink_to_fit)?;
+	m.ty::<Bytes>()?;
+	m.function_meta(new)?;
+	m.function_meta(with_capacity)?;
+	m.function_meta(from_vec)?;
+	m.function_meta(into_vec)?;
+	m.function_meta(as_vec)?;
+	m.function_meta(extend)?;
+	m.function_meta(extend_str)?;
+	m.function_meta(pop)?;
+	m.function_meta(push)?;
+	m.function_meta(remove)?;
+	m.function_meta(insert)?;
+	m.function_meta(index_get)?;
+	m.function_meta(index_set)?;
+	m.function_meta(first)?;
+	m.function_meta(last)?;
+	m.function_meta(len)?;
+	m.function_meta(is_empty)?;
+	m.function_meta(capacity)?;
+	m.function_meta(clear)?;
+	m.function_meta(reserve)?;
+	m.function_meta(reserve_exact)?;
+	m.function_meta(shrink_to_fit)?;
 
-    m.function_meta(clone__meta)?;
-    m.implement_trait::<Bytes>(rune::item!(::std::clone::Clone))?;
+	m.function_meta(clone__meta)?;
+	m.implement_trait::<Bytes>(rune::item!(::std::clone::Clone))?;
 
-    m.function_meta(partial_eq__meta)?;
-    m.implement_trait::<Bytes>(rune::item!(::std::cmp::PartialEq))?;
+	m.function_meta(partial_eq__meta)?;
+	m.implement_trait::<Bytes>(rune::item!(::std::cmp::PartialEq))?;
 
-    m.function_meta(eq__meta)?;
-    m.implement_trait::<Bytes>(rune::item!(::std::cmp::Eq))?;
+	m.function_meta(eq__meta)?;
+	m.implement_trait::<Bytes>(rune::item!(::std::cmp::Eq))?;
 
-    m.function_meta(partial_cmp__meta)?;
-    m.implement_trait::<Bytes>(rune::item!(::std::cmp::PartialOrd))?;
+	m.function_meta(partial_cmp__meta)?;
+	m.implement_trait::<Bytes>(rune::item!(::std::cmp::PartialOrd))?;
 
-    m.function_meta(cmp__meta)?;
-    m.implement_trait::<Bytes>(rune::item!(::std::cmp::Ord))?;
+	m.function_meta(cmp__meta)?;
+	m.implement_trait::<Bytes>(rune::item!(::std::cmp::Ord))?;
 
-    m.function_meta(hash__meta)?;
+	m.function_meta(hash__meta)?;
 
-    m.function_meta(debug_fmt__meta)?;
+	m.function_meta(debug_fmt__meta)?;
 
-    Ok(m)
+	Ok(m)
 }
 
 /// Construct a new byte array.
@@ -72,7 +72,7 @@ pub fn module() -> Result<Module, ContextError> {
 #[rune::function(free, path = Bytes::new)]
 #[inline]
 pub const fn new() -> Bytes {
-    Bytes::new()
+	Bytes::new()
 }
 
 /// Construct a byte array with the given preallocated capacity.
@@ -88,7 +88,7 @@ pub const fn new() -> Bytes {
 #[rune::function(free, path = Bytes::with_capacity)]
 #[inline]
 pub fn with_capacity(capacity: usize) -> Result<Bytes, VmError> {
-    Ok(Bytes::with_capacity(capacity)?)
+	Ok(Bytes::with_capacity(capacity)?)
 }
 
 /// Convert a byte array into bytes.
@@ -102,7 +102,7 @@ pub fn with_capacity(capacity: usize) -> Result<Bytes, VmError> {
 #[rune::function(free, path = Bytes::from_vec)]
 #[inline]
 pub fn from_vec(bytes: Vec<u8>) -> Bytes {
-    Bytes::from_vec(bytes)
+	Bytes::from_vec(bytes)
 }
 
 /// Convert the byte array into a vector of bytes.
@@ -118,7 +118,7 @@ pub fn from_vec(bytes: Vec<u8>) -> Bytes {
 #[rune::function(instance)]
 #[inline]
 pub fn into_vec(bytes: Bytes) -> Vec<u8> {
-    bytes.into_vec()
+	bytes.into_vec()
 }
 
 /// Convert the byte array into a vector of bytes without consuming it.
@@ -134,7 +134,7 @@ pub fn into_vec(bytes: Bytes) -> Vec<u8> {
 #[rune::function(instance)]
 #[inline]
 pub fn as_vec(bytes: &Bytes) -> Result<Vec<u8>, VmError> {
-    Ok(Vec::try_from(bytes.as_slice())?)
+	Ok(Vec::try_from(bytes.as_slice())?)
 }
 
 /// Extend these bytes with another collection of bytes.
@@ -149,8 +149,8 @@ pub fn as_vec(bytes: &Bytes) -> Result<Vec<u8>, VmError> {
 #[rune::function(instance)]
 #[inline]
 pub fn extend(this: &mut Bytes, other: &Bytes) -> Result<(), VmError> {
-    this.extend(other)?;
-    Ok(())
+	this.extend(other)?;
+	Ok(())
 }
 
 /// Extend this bytes collection with a string.
@@ -164,8 +164,8 @@ pub fn extend(this: &mut Bytes, other: &Bytes) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 pub fn extend_str(this: &mut Bytes, s: &str) -> Result<(), VmError> {
-    this.extend(s.as_bytes())?;
-    Ok(())
+	this.extend(s.as_bytes())?;
+	Ok(())
 }
 
 /// Pop the last byte.
@@ -180,7 +180,7 @@ pub fn extend_str(this: &mut Bytes, s: &str) -> Result<(), VmError> {
 #[rune::function(instance)]
 #[inline]
 pub fn pop(this: &mut Bytes) -> Option<u8> {
-    this.pop()
+	this.pop()
 }
 
 /// Append a byte to the back.
@@ -195,8 +195,8 @@ pub fn pop(this: &mut Bytes) -> Option<u8> {
 #[rune::function(instance)]
 #[inline]
 pub fn push(this: &mut Bytes, value: u8) -> Result<(), VmError> {
-    this.push(value)?;
-    Ok(())
+	this.push(value)?;
+	Ok(())
 }
 
 /// Removes and returns the byte at position `index` within the Bytes,
@@ -220,15 +220,15 @@ pub fn push(this: &mut Bytes, value: u8) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn remove(this: &mut Bytes, index: usize) -> Result<u8, VmError> {
-    if index >= this.len() {
-        return Err(VmError::new(VmErrorKind::OutOfRange {
-            index: index.into(),
-            length: this.len().into(),
-        }));
-    }
+	if index >= this.len() {
+		return Err(VmError::new(VmErrorKind::OutOfRange {
+			index: index.into(),
+			length: this.len().into(),
+		}));
+	}
 
-    let value = this.remove(index);
-    Ok(value)
+	let value = this.remove(index);
+	Ok(value)
 }
 
 /// Inserts a byte at position `index` within the inner vector, shifting all
@@ -249,15 +249,15 @@ fn remove(this: &mut Bytes, index: usize) -> Result<u8, VmError> {
 /// ```
 #[rune::function(instance)]
 fn insert(this: &mut Bytes, index: usize, value: u8) -> Result<(), VmError> {
-    if index > this.len() {
-        return Err(VmError::new(VmErrorKind::OutOfRange {
-            index: index.into(),
-            length: this.len().into(),
-        }));
-    }
+	if index > this.len() {
+		return Err(VmError::new(VmErrorKind::OutOfRange {
+			index: index.into(),
+			length: this.len().into(),
+		}));
+	}
 
-    this.insert(index, value)?;
-    Ok(())
+	this.insert(index, value)?;
+	Ok(())
 }
 
 /// Get the first byte.
@@ -271,7 +271,7 @@ fn insert(this: &mut Bytes, index: usize, value: u8) -> Result<(), VmError> {
 #[rune::function(instance)]
 #[inline]
 pub fn first(this: &Bytes) -> Option<u8> {
-    this.first()
+	this.first()
 }
 
 /// Get the last byte.
@@ -285,7 +285,7 @@ pub fn first(this: &Bytes) -> Option<u8> {
 #[rune::function(instance)]
 #[inline]
 pub fn last(this: &Bytes) -> Option<u8> {
-    this.last()
+	this.last()
 }
 
 /// Get the length of the bytes collection.
@@ -301,7 +301,7 @@ pub fn last(this: &Bytes) -> Option<u8> {
 #[rune::function(instance)]
 #[inline]
 pub fn len(this: &Bytes) -> usize {
-    this.len()
+	this.len()
 }
 
 /// Test if the collection is empty.
@@ -315,7 +315,7 @@ pub fn len(this: &Bytes) -> usize {
 #[rune::function(instance)]
 #[inline]
 pub fn is_empty(this: &Bytes) -> bool {
-    this.is_empty()
+	this.is_empty()
 }
 
 /// Returns the total number of elements the vector can hold without
@@ -330,7 +330,7 @@ pub fn is_empty(this: &Bytes) -> bool {
 /// ```
 #[rune::function(instance)]
 fn capacity(this: &Bytes) -> usize {
-    this.capacity()
+	this.capacity()
 }
 
 /// Clears the vector, removing all values.
@@ -346,7 +346,7 @@ fn capacity(this: &Bytes) -> usize {
 /// ```
 #[rune::function(instance)]
 fn clear(this: &mut Bytes) {
-    this.clear();
+	this.clear();
 }
 
 /// Reserves capacity for at least `additional` more elements to be inserted in
@@ -368,8 +368,8 @@ fn clear(this: &mut Bytes) {
 /// ```
 #[rune::function(instance)]
 fn reserve(this: &mut Bytes, additional: usize) -> Result<(), VmError> {
-    this.reserve(additional)?;
-    Ok(())
+	this.reserve(additional)?;
+	Ok(())
 }
 
 /// Reserves the minimum capacity for at least `additional` more elements to be
@@ -398,8 +398,8 @@ fn reserve(this: &mut Bytes, additional: usize) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn reserve_exact(this: &mut Bytes, additional: usize) -> Result<(), VmError> {
-    this.reserve_exact(additional)?;
-    Ok(())
+	this.reserve_exact(additional)?;
+	Ok(())
 }
 
 /// Clone the byte array.
@@ -417,7 +417,7 @@ fn reserve_exact(this: &mut Bytes, additional: usize) -> Result<(), VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn clone(this: &Bytes) -> Result<Bytes, VmError> {
-    Ok(this.try_clone()?)
+	Ok(this.try_clone()?)
 }
 
 /// Test two byte arrays for partial equality.
@@ -434,7 +434,7 @@ fn clone(this: &Bytes) -> Result<Bytes, VmError> {
 #[rune::function(keep, instance, protocol = PARTIAL_EQ)]
 #[inline]
 fn partial_eq(this: &[u8], rhs: &[u8]) -> bool {
-    this.eq(rhs)
+	this.eq(rhs)
 }
 
 /// Test two byte arrays for total equality.
@@ -451,7 +451,7 @@ fn partial_eq(this: &[u8], rhs: &[u8]) -> bool {
 #[rune::function(keep, instance, protocol = EQ)]
 #[inline]
 fn eq(this: &[u8], rhs: &[u8]) -> bool {
-    this.eq(rhs)
+	this.eq(rhs)
 }
 
 /// Perform a partial ordered comparison between two byte arrays.
@@ -477,7 +477,7 @@ fn eq(this: &[u8], rhs: &[u8]) -> bool {
 #[rune::function(keep, instance, protocol = PARTIAL_CMP)]
 #[inline]
 fn partial_cmp(this: &[u8], rhs: &[u8]) -> Option<Ordering> {
-    this.partial_cmp(rhs)
+	this.partial_cmp(rhs)
 }
 
 /// Perform a totally ordered comparison between two byte arrays.
@@ -495,7 +495,7 @@ fn partial_cmp(this: &[u8], rhs: &[u8]) -> Option<Ordering> {
 #[rune::function(keep, instance, protocol = CMP)]
 #[inline]
 fn cmp(this: &[u8], rhs: &[u8]) -> Ordering {
-    this.cmp(rhs)
+	this.cmp(rhs)
 }
 
 /// Hash the byte array.
@@ -512,7 +512,7 @@ fn cmp(this: &[u8], rhs: &[u8]) -> Ordering {
 /// ```
 #[rune::function(keep, instance, protocol = HASH)]
 fn hash(this: &[u8], hasher: &mut Hasher) {
-    hasher.write(this);
+	hasher.write(this);
 }
 
 /// Write a debug representation of a byte array.
@@ -525,7 +525,7 @@ fn hash(this: &[u8], hasher: &mut Hasher) {
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 #[inline]
 fn debug_fmt(this: &[u8], f: &mut Formatter) -> Result<(), VmError> {
-    Ok(write!(f, "{this:?}")?)
+	Ok(write!(f, "{this:?}")?)
 }
 
 /// Shrinks the capacity of the byte array as much as possible.
@@ -544,8 +544,8 @@ fn debug_fmt(this: &[u8], f: &mut Formatter) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn shrink_to_fit(this: &mut Bytes) -> Result<(), VmError> {
-    this.shrink_to_fit()?;
-    Ok(())
+	this.shrink_to_fit()?;
+	Ok(())
 }
 
 /// Returns a subslice of Bytes.
@@ -576,10 +576,10 @@ fn shrink_to_fit(this: &mut Bytes) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance, protocol = INDEX_GET)]
 fn index_get(this: &Bytes, index: Value) -> Result<Value, VmError> {
-    match this.index_get(index)? {
-        Some(bytes) => Ok(bytes),
-        None => Err(VmError::panic("missing bytes slice")),
-    }
+	match this.index_get(index)? {
+		Some(bytes) => Ok(bytes),
+		None => Err(VmError::panic("missing bytes slice")),
+	}
 }
 
 /// Inserts a byte into the Bytes.
@@ -593,5 +593,5 @@ fn index_get(this: &Bytes, index: Value) -> Result<Value, VmError> {
 /// ```
 #[rune::function(instance, protocol = INDEX_SET)]
 fn index_set(this: &mut Bytes, index: usize, value: u8) -> Result<(), VmError> {
-    this.set(index, value)
+	this.set(index, value)
 }

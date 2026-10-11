@@ -7,7 +7,7 @@ use crate as rune;
 use crate::alloc::fmt::TryWrite;
 use crate::alloc::prelude::*;
 use crate::runtime::{
-    ControlFlow, EnvProtocolCaller, Formatter, Function, Hasher, Panic, Protocol, Value, VmError,
+	ControlFlow, EnvProtocolCaller, Formatter, Function, Hasher, Panic, Protocol, Value, VmError,
 };
 use crate::{hash_in, ContextError, Hash, Module};
 
@@ -16,77 +16,77 @@ use crate::{hash_in, ContextError, Hash, Module};
 /// This module deals with the fundamental [`Result`] type in Rune.
 #[rune::module(::std::result)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
+	let mut m = Module::from_meta(self::module__meta)?;
 
-    // Sorted for ease of finding
-    let mut result = m
-        .ty::<Result<Value, Value>>()?
-        .static_docs(&["Result is a type that represents either success (Ok) or failure (Err)."])?
-        .make_enum(&["Ok", "Err"])?;
+	// Sorted for ease of finding
+	let mut result = m
+		.ty::<Result<Value, Value>>()?
+		.static_docs(&["Result is a type that represents either success (Ok) or failure (Err)."])?
+		.make_enum(&["Ok", "Err"])?;
 
-    result
-        .variant_mut(0)?
-        .make_unnamed(1)?
-        .constructor(Result::Ok)?
-        .static_docs(&["Contains the success value"])?;
+	result
+		.variant_mut(0)?
+		.make_unnamed(1)?
+		.constructor(Result::Ok)?
+		.static_docs(&["Contains the success value"])?;
 
-    result
-        .variant_mut(1)?
-        .make_unnamed(1)?
-        .constructor(Result::Err)?
-        .static_docs(&["Contains the error value"])?;
+	result
+		.variant_mut(1)?
+		.make_unnamed(1)?
+		.constructor(Result::Err)?
+		.static_docs(&["Contains the error value"])?;
 
-    m.function_meta(is_variant__meta)?;
+	m.function_meta(is_variant__meta)?;
 
-    m.index_function(
-        &Protocol::GET,
-        0,
-        |this: &Result<Value, Value>| match this {
-            Result::Ok(value) => value.clone(),
-            Result::Err(value) => value.clone(),
-        },
-    )?;
+	m.index_function(
+		&Protocol::GET,
+		0,
+		|this: &Result<Value, Value>| match this {
+			Result::Ok(value) => value.clone(),
+			Result::Err(value) => value.clone(),
+		},
+	)?;
 
-    m.function_meta(ok)?;
-    m.function_meta(is_ok)?;
-    m.function_meta(is_err)?;
-    m.function_meta(unwrap)?;
-    m.function_meta(unwrap_or)?;
-    m.function_meta(unwrap_or_else)?;
-    m.function_meta(expect)?;
-    m.function_meta(and_then)?;
-    m.function_meta(map)?;
+	m.function_meta(ok)?;
+	m.function_meta(is_ok)?;
+	m.function_meta(is_err)?;
+	m.function_meta(unwrap)?;
+	m.function_meta(unwrap_or)?;
+	m.function_meta(unwrap_or_else)?;
+	m.function_meta(expect)?;
+	m.function_meta(and_then)?;
+	m.function_meta(map)?;
 
-    m.function_meta(clone__meta)?;
-    m.implement_trait::<Result<Value, Value>>(rune::item!(::std::clone::Clone))?;
+	m.function_meta(clone__meta)?;
+	m.implement_trait::<Result<Value, Value>>(rune::item!(::std::clone::Clone))?;
 
-    m.function_meta(partial_eq__meta)?;
-    m.implement_trait::<Result<Value, Value>>(rune::item!(::std::cmp::PartialEq))?;
+	m.function_meta(partial_eq__meta)?;
+	m.implement_trait::<Result<Value, Value>>(rune::item!(::std::cmp::PartialEq))?;
 
-    m.function_meta(eq__meta)?;
-    m.implement_trait::<Result<Value, Value>>(rune::item!(::std::cmp::Eq))?;
+	m.function_meta(eq__meta)?;
+	m.implement_trait::<Result<Value, Value>>(rune::item!(::std::cmp::Eq))?;
 
-    m.function_meta(partial_cmp__meta)?;
-    m.implement_trait::<Result<Value, Value>>(rune::item!(::std::cmp::PartialOrd))?;
+	m.function_meta(partial_cmp__meta)?;
+	m.implement_trait::<Result<Value, Value>>(rune::item!(::std::cmp::PartialOrd))?;
 
-    m.function_meta(cmp__meta)?;
-    m.implement_trait::<Result<Value, Value>>(rune::item!(::std::cmp::Ord))?;
+	m.function_meta(cmp__meta)?;
+	m.implement_trait::<Result<Value, Value>>(rune::item!(::std::cmp::Ord))?;
 
-    m.function_meta(hash__meta)?;
-    m.function_meta(debug_fmt__meta)?;
+	m.function_meta(hash__meta)?;
+	m.function_meta(debug_fmt__meta)?;
 
-    m.function_meta(result_try__meta)?;
-    Ok(m)
+	m.function_meta(result_try__meta)?;
+	Ok(m)
 }
 
 #[rune::function(instance, keep, protocol = IS_VARIANT)]
 #[inline]
 pub(crate) fn is_variant(this: &Result<Value, Value>, variant_hash: Hash) -> bool {
-    match (this, variant_hash) {
-        (Ok(..), hash_in!(crate, ::std::result::Result::Ok)) => true,
-        (Err(..), hash_in!(crate, ::std::result::Result::Err)) => true,
-        _ => false,
-    }
+	match (this, variant_hash) {
+		(Ok(..), hash_in!(crate, ::std::result::Result::Ok)) => true,
+		(Err(..), hash_in!(crate, ::std::result::Result::Err)) => true,
+		_ => false,
+	}
 }
 
 /// Converts from `Result` to `Option`.
@@ -102,7 +102,7 @@ pub(crate) fn is_variant(this: &Result<Value, Value>, variant_hash: Hash) -> boo
 /// ```
 #[rune::function(instance)]
 fn ok(result: &Result<Value, Value>) -> Option<Value> {
-    result.as_ref().ok().cloned()
+	result.as_ref().ok().cloned()
 }
 
 /// Returns `true` if the result is [`Ok`].
@@ -118,7 +118,7 @@ fn ok(result: &Result<Value, Value>) -> Option<Value> {
 /// ```
 #[rune::function(instance)]
 fn is_ok(result: &Result<Value, Value>) -> bool {
-    result.is_ok()
+	result.is_ok()
 }
 
 /// Returns `true` if the result is [`Err`].
@@ -134,7 +134,7 @@ fn is_ok(result: &Result<Value, Value>) -> bool {
 /// ```
 #[rune::function(instance)]
 fn is_err(result: &Result<Value, Value>) -> bool {
-    result.is_err()
+	result.is_err()
 }
 
 /// Returns the contained [`Ok`] value, consuming the `self` value.
@@ -167,15 +167,15 @@ fn is_err(result: &Result<Value, Value>) -> bool {
 /// ```
 #[rune::function(instance)]
 fn unwrap(result: &Result<Value, Value>) -> Result<Value, VmError> {
-    match result {
-        Ok(value) => Ok(value.clone()),
-        Err(err) => {
-            let mut m = String::new();
-            write!(m, "Called `Result::unwrap()` on an `Err` value: ")?;
-            Formatter::format_with(&mut m, |f| err.debug_fmt(f))?;
-            Err(VmError::from(Panic::custom(m)))
-        }
-    }
+	match result {
+		Ok(value) => Ok(value.clone()),
+		Err(err) => {
+			let mut m = String::new();
+			write!(m, "Called `Result::unwrap()` on an `Err` value: ")?;
+			Formatter::format_with(&mut m, |f| err.debug_fmt(f))?;
+			Err(VmError::from(Panic::custom(m)))
+		}
+	}
 }
 
 /// Returns the contained [`Ok`] value or a provided default.
@@ -198,10 +198,10 @@ fn unwrap(result: &Result<Value, Value>) -> Result<Value, VmError> {
 /// ```
 #[rune::function(instance)]
 fn unwrap_or(this: &Result<Value, Value>, default: Value) -> Value {
-    match this {
-        Ok(value) => value.clone(),
-        Err(_) => default.clone(),
-    }
+	match this {
+		Ok(value) => value.clone(),
+		Err(_) => default.clone(),
+	}
 }
 
 /// Returns the contained [`Ok`] value or computes it from a closure.
@@ -219,10 +219,10 @@ fn unwrap_or(this: &Result<Value, Value>, default: Value) -> Value {
 /// ```
 #[rune::function(instance)]
 fn unwrap_or_else(this: &Result<Value, Value>, default: Function) -> Result<Value, VmError> {
-    match this {
-        Ok(value) => Ok(value.clone()),
-        Err(error) => default.call((error,)),
-    }
+	match this {
+		Ok(value) => Ok(value.clone()),
+		Err(error) => default.call((error,)),
+	}
 }
 
 /// Returns the contained [`Ok`] value, consuming the `self` value.
@@ -256,19 +256,19 @@ fn unwrap_or_else(this: &Result<Value, Value>, default: Function) -> Result<Valu
 /// available and executable by the current user".
 #[rune::function(instance)]
 fn expect(result: &Result<Value, Value>, message: Value) -> Result<Value, VmError> {
-    match result {
-        Ok(value) => Ok(value.clone()),
-        Err(err) => {
-            let mut s = String::new();
-            Formatter::format_with(&mut s, |f| {
-                message.display_fmt(f)?;
-                f.try_write_str(": ")?;
-                err.debug_fmt(f)?;
-                Ok::<_, VmError>(())
-            })?;
-            Err(VmError::from(Panic::custom(s)))
-        }
-    }
+	match result {
+		Ok(value) => Ok(value.clone()),
+		Err(err) => {
+			let mut s = String::new();
+			Formatter::format_with(&mut s, |f| {
+				message.display_fmt(f)?;
+				f.try_write_str(": ")?;
+				err.debug_fmt(f)?;
+				Ok::<_, VmError>(())
+			})?;
+			Err(VmError::from(Panic::custom(s)))
+		}
+	}
 }
 
 /// Calls `op` if the result is [`Ok`], otherwise returns the [`Err`] value of `self`.
@@ -288,10 +288,10 @@ fn expect(result: &Result<Value, Value>, message: Value) -> Result<Value, VmErro
 /// ```
 #[rune::function(instance)]
 fn and_then(this: &Result<Value, Value>, op: Function) -> Result<Result<Value, Value>, VmError> {
-    match this {
-        Ok(v) => Ok(op.call((v,))?),
-        Err(e) => Ok(Err(e.clone())),
-    }
+	match this {
+		Ok(v) => Ok(op.call((v,))?),
+		Err(e) => Ok(Err(e.clone())),
+	}
 }
 
 /// Maps a `Result<T, E>` to `Result<U, E>` by applying a function to a
@@ -315,10 +315,10 @@ fn and_then(this: &Result<Value, Value>, op: Function) -> Result<Result<Value, V
 /// ```
 #[rune::function(instance)]
 fn map(this: &Result<Value, Value>, then: Function) -> Result<Result<Value, Value>, VmError> {
-    match this {
-        Ok(v) => Ok(Ok(then.call((v,))?)),
-        Err(e) => Ok(Err(e.clone())),
-    }
+	match this {
+		Ok(v) => Ok(Ok(then.call((v,))?)),
+		Err(e) => Ok(Err(e.clone())),
+	}
 }
 
 /// Clone the result.
@@ -336,10 +336,10 @@ fn map(this: &Result<Value, Value>, then: Function) -> Result<Result<Value, Valu
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn clone(this: &Result<Value, Value>) -> Result<Result<Value, Value>, VmError> {
-    Ok(match this {
-        Ok(ok) => Ok(ok.clone_with(&mut EnvProtocolCaller)?),
-        Err(err) => Err(err.clone_with(&mut EnvProtocolCaller)?),
-    })
+	Ok(match this {
+		Ok(ok) => Ok(ok.clone_with(&mut EnvProtocolCaller)?),
+		Err(err) => Err(err.clone_with(&mut EnvProtocolCaller)?),
+	})
 }
 
 /// Test two results for partial equality.
@@ -364,11 +364,11 @@ fn clone(this: &Result<Value, Value>) -> Result<Result<Value, Value>, VmError> {
 #[rune::function(keep, instance, protocol = PARTIAL_EQ)]
 #[inline]
 fn partial_eq(this: &Result<Value, Value>, rhs: &Result<Value, Value>) -> Result<bool, VmError> {
-    match (this, rhs) {
-        (Ok(a), Ok(b)) => Ok(Value::partial_eq(a, b)?),
-        (Err(a), Err(b)) => Ok(Value::partial_eq(a, b)?),
-        _ => Ok(false),
-    }
+	match (this, rhs) {
+		(Ok(a), Ok(b)) => Ok(Value::partial_eq(a, b)?),
+		(Err(a), Err(b)) => Ok(Value::partial_eq(a, b)?),
+		_ => Ok(false),
+	}
 }
 
 /// Test two results for total equality.
@@ -385,11 +385,11 @@ fn partial_eq(this: &Result<Value, Value>, rhs: &Result<Value, Value>) -> Result
 #[rune::function(keep, instance, protocol = EQ)]
 #[inline]
 fn eq(this: &Result<Value, Value>, rhs: &Result<Value, Value>) -> Result<bool, VmError> {
-    match (this, rhs) {
-        (Ok(a), Ok(b)) => Value::eq(a, b),
-        (Err(a), Err(b)) => Value::eq(a, b),
-        _ => Ok(false),
-    }
+	match (this, rhs) {
+		(Ok(a), Ok(b)) => Value::eq(a, b),
+		(Err(a), Err(b)) => Value::eq(a, b),
+		_ => Ok(false),
+	}
 }
 
 /// Perform a partial ordered comparison between two results.
@@ -415,15 +415,15 @@ fn eq(this: &Result<Value, Value>, rhs: &Result<Value, Value>) -> Result<bool, V
 #[rune::function(keep, instance, protocol = PARTIAL_CMP)]
 #[inline]
 fn partial_cmp(
-    this: &Result<Value, Value>,
-    rhs: &Result<Value, Value>,
+	this: &Result<Value, Value>,
+	rhs: &Result<Value, Value>,
 ) -> Result<Option<Ordering>, VmError> {
-    match (this, rhs) {
-        (Ok(a), Ok(b)) => Value::partial_cmp(a, b),
-        (Err(a), Err(b)) => Value::partial_cmp(a, b),
-        (Ok(..), Err(..)) => Ok(Some(Ordering::Greater)),
-        (Err(..), Ok(..)) => Ok(Some(Ordering::Less)),
-    }
+	match (this, rhs) {
+		(Ok(a), Ok(b)) => Value::partial_cmp(a, b),
+		(Err(a), Err(b)) => Value::partial_cmp(a, b),
+		(Ok(..), Err(..)) => Ok(Some(Ordering::Greater)),
+		(Err(..), Ok(..)) => Ok(Some(Ordering::Less)),
+	}
 }
 
 /// Perform a totally ordered comparison between two results.
@@ -441,12 +441,12 @@ fn partial_cmp(
 #[rune::function(keep, instance, protocol = CMP)]
 #[inline]
 fn cmp(this: &Result<Value, Value>, rhs: &Result<Value, Value>) -> Result<Ordering, VmError> {
-    match (this, rhs) {
-        (Ok(a), Ok(b)) => Value::cmp(a, b),
-        (Err(a), Err(b)) => Value::cmp(a, b),
-        (Ok(..), Err(..)) => Ok(Ordering::Greater),
-        (Err(..), Ok(..)) => Ok(Ordering::Less),
-    }
+	match (this, rhs) {
+		(Ok(a), Ok(b)) => Value::cmp(a, b),
+		(Err(a), Err(b)) => Value::cmp(a, b),
+		(Ok(..), Err(..)) => Ok(Ordering::Greater),
+		(Err(..), Ok(..)) => Ok(Ordering::Less),
+	}
 }
 
 /// Hash the result.
@@ -463,18 +463,18 @@ fn cmp(this: &Result<Value, Value>, rhs: &Result<Value, Value>) -> Result<Orderi
 /// ```
 #[rune::function(keep, instance, protocol = HASH)]
 fn hash(this: &Result<Value, Value>, hasher: &mut Hasher) -> Result<(), VmError> {
-    match this {
-        Ok(value) => {
-            hasher.write_u64(0);
-            value.hash(hasher)?;
-        }
-        Err(value) => {
-            hasher.write_u64(1);
-            value.hash(hasher)?;
-        }
-    }
+	match this {
+		Ok(value) => {
+			hasher.write_u64(0);
+			value.hash(hasher)?;
+		}
+		Err(value) => {
+			hasher.write_u64(1);
+			value.hash(hasher)?;
+		}
+	}
 
-    Ok(())
+	Ok(())
 }
 
 /// Write a debug representation of a result.
@@ -488,20 +488,20 @@ fn hash(this: &Result<Value, Value>, hasher: &mut Hasher) -> Result<(), VmError>
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 #[inline]
 fn debug_fmt(this: &Result<Value, Value>, f: &mut Formatter) -> Result<(), VmError> {
-    match this {
-        Ok(value) => {
-            f.try_write_str("Ok(")?;
-            value.debug_fmt(f)?;
-            f.try_write_str(")")?;
-        }
-        Err(value) => {
-            f.try_write_str("Err(")?;
-            value.debug_fmt(f)?;
-            f.try_write_str(")")?;
-        }
-    }
+	match this {
+		Ok(value) => {
+			f.try_write_str("Ok(")?;
+			value.debug_fmt(f)?;
+			f.try_write_str(")")?;
+		}
+		Err(value) => {
+			f.try_write_str("Err(")?;
+			value.debug_fmt(f)?;
+			f.try_write_str(")")?;
+		}
+	}
 
-    Ok(())
+	Ok(())
 }
 
 /// Using [`Result`] with the try protocol.
@@ -518,8 +518,8 @@ fn debug_fmt(this: &Result<Value, Value>, f: &mut Formatter) -> Result<(), VmErr
 /// ```
 #[rune::function(keep, instance, protocol = TRY)]
 pub(crate) fn result_try(this: &Result<Value, Value>) -> Result<ControlFlow, VmError> {
-    Ok(match this {
-        Ok(value) => ControlFlow::Continue(value.clone()),
-        Err(error) => ControlFlow::Break(Value::try_from(Err(error.clone()))?),
-    })
+	Ok(match this {
+		Ok(value) => ControlFlow::Continue(value.clone()),
+		Err(error) => ControlFlow::Break(Value::try_from(Err(error.clone()))?),
+	})
 }

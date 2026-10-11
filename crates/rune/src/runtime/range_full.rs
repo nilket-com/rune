@@ -36,106 +36,106 @@ use crate::Any;
 pub struct RangeFull;
 
 impl RangeFull {
-    /// Construct a new full range.
-    pub const fn new() -> Self {
-        Self
-    }
+	/// Construct a new full range.
+	pub const fn new() -> Self {
+		Self
+	}
 
-    /// Test if the range contains the given value.
-    ///
-    /// The check is performed using the [`PARTIAL_CMP`] protocol.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let range = ..;
-    ///
-    /// assert!(range.contains(-10));
-    /// assert!(range.contains(5));
-    /// assert!(range.contains(10));
-    /// assert!(range.contains(20));
-    ///
-    /// assert!(range is std::ops::RangeFull);
-    /// ```
-    #[rune::function(keep)]
-    pub(crate) fn contains(&self, _: Value) -> bool {
-        true
-    }
+	/// Test if the range contains the given value.
+	///
+	/// The check is performed using the [`PARTIAL_CMP`] protocol.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let range = ..;
+	///
+	/// assert!(range.contains(-10));
+	/// assert!(range.contains(5));
+	/// assert!(range.contains(10));
+	/// assert!(range.contains(20));
+	///
+	/// assert!(range is std::ops::RangeFull);
+	/// ```
+	#[rune::function(keep)]
+	pub(crate) fn contains(&self, _: Value) -> bool {
+		true
+	}
 
-    /// Test the full range for partial equality.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let range = ..;
-    /// assert!(range == ..);
-    /// ```
-    #[rune::function(keep, protocol = PARTIAL_EQ)]
-    pub fn partial_eq(&self, _: &Self) -> bool {
-        true
-    }
+	/// Test the full range for partial equality.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let range = ..;
+	/// assert!(range == ..);
+	/// ```
+	#[rune::function(keep, protocol = PARTIAL_EQ)]
+	pub fn partial_eq(&self, _: &Self) -> bool {
+		true
+	}
 
-    /// Test the full range for total equality.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// use std::ops::eq;
-    ///
-    /// let range = ..;
-    /// assert!(eq(range, ..));
-    /// ```
-    #[rune::function(keep, protocol = EQ)]
-    pub fn eq(&self, _: &Self) -> bool {
-        true
-    }
+	/// Test the full range for total equality.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// use std::ops::eq;
+	///
+	/// let range = ..;
+	/// assert!(eq(range, ..));
+	/// ```
+	#[rune::function(keep, protocol = EQ)]
+	pub fn eq(&self, _: &Self) -> bool {
+		true
+	}
 
-    /// Test the full range for partial ordering.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// assert!(!((..) < (..)));
-    /// assert!(!((..) > (..)));
-    /// ```
-    #[rune::function(keep, protocol = PARTIAL_CMP)]
-    pub fn partial_cmp(&self, _: &Self) -> Option<Ordering> {
-        Some(Ordering::Equal)
-    }
+	/// Test the full range for partial ordering.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// assert!(!((..) < (..)));
+	/// assert!(!((..) > (..)));
+	/// ```
+	#[rune::function(keep, protocol = PARTIAL_CMP)]
+	pub fn partial_cmp(&self, _: &Self) -> Option<Ordering> {
+		Some(Ordering::Equal)
+	}
 
-    /// Test the full range for total ordering.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// use std::ops::cmp;
-    /// use std::cmp::Ordering;
-    ///
-    /// assert_eq!(cmp(.., ..), Ordering::Equal);
-    /// ```
-    #[rune::function(keep, protocol = CMP)]
-    pub fn cmp(&self, _: &Self) -> Ordering {
-        Ordering::Equal
-    }
+	/// Test the full range for total ordering.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// use std::ops::cmp;
+	/// use std::cmp::Ordering;
+	///
+	/// assert_eq!(cmp(.., ..), Ordering::Equal);
+	/// ```
+	#[rune::function(keep, protocol = CMP)]
+	pub fn cmp(&self, _: &Self) -> Ordering {
+		Ordering::Equal
+	}
 }
 
 impl fmt::Debug for RangeFull {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "..")
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(f, "..")
+	}
 }
 
 impl ToValue for ops::RangeFull {
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        let range = RangeFull::new();
-        Ok(Value::new(range)?)
-    }
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		let range = RangeFull::new();
+		Ok(Value::new(range)?)
+	}
 }
 
 impl FromValue for ops::RangeFull {
-    #[inline]
-    fn from_value(value: Value) -> Result<Self, RuntimeError> {
-        let RangeFull = value.downcast::<RangeFull>()?;
-        Ok(ops::RangeFull)
-    }
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		let RangeFull = value.downcast::<RangeFull>()?;
+		Ok(ops::RangeFull)
+	}
 }

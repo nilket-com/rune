@@ -9,8 +9,8 @@
 /// construct or inspect one.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Handle {
-    pub(crate) slot: u32,
-    pub(crate) generation: u32,
+	pub(crate) slot: u32,
+	pub(crate) generation: u32,
 }
 /// A nominal type identity: an index into the crate-private, process-wide
 /// interner. Same hash, same identity, in every program and store.
@@ -30,36 +30,36 @@ pub struct Nominal(pub(crate) u32);
 /// The type of a value.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Type {
-    /// `()`.
-    Unit,
-    /// `bool`.
-    Bool,
-    /// `i64`.
-    I64,
-    /// `u64`.
-    U64,
-    /// `f64`.
-    F64,
-    /// `char`.
-    Char,
-    /// `String`.
-    String,
-    /// `Vec`.
-    Vec,
-    /// A tuple.
-    Tuple,
-    /// An anonymous object (`#{...}`).
-    Object,
-    /// A struct declared by a script, identified by its interned [`Nominal`].
-    Struct(Nominal),
-    /// `Option`.
-    Option,
-    /// `Result`.
-    Result,
-    /// A range.
-    Range,
-    /// An iterator.
-    Iterator,
+	/// `()`.
+	Unit,
+	/// `bool`.
+	Bool,
+	/// `i64`.
+	I64,
+	/// `u64`.
+	U64,
+	/// `f64`.
+	F64,
+	/// `char`.
+	Char,
+	/// `String`.
+	String,
+	/// `Vec`.
+	Vec,
+	/// A tuple.
+	Tuple,
+	/// An anonymous object (`#{...}`).
+	Object,
+	/// A struct declared by a script, identified by its interned [`Nominal`].
+	Struct(Nominal),
+	/// `Option`.
+	Option,
+	/// `Result`.
+	Result,
+	/// A range.
+	Range,
+	/// An iterator.
+	Iterator,
 }
 /// The executor's slot value. A `Heap` variant can only be produced by a
 /// `Store`, because no `Handle` can be constructed or read outside the crate
@@ -68,45 +68,45 @@ pub enum Type {
 /// and every `Store` method a host can call take and return [`Root`]s.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub(crate) enum Value {
-    Unit,
-    Bool(bool),
-    I64(i64),
-    U64(u64),
-    F64(f64),
-    Char(char),
-    Heap(Handle),
-    Function { code: u32, id: u32 },
-    Type(Type),
+	Unit,
+	Bool(bool),
+	I64(i64),
+	U64(u64),
+	F64(f64),
+	Char(char),
+	Heap(Handle),
+	Function { code: u32, id: u32 },
+	Type(Type),
 }
 impl Value {
-    /// Heap tags require generation validation by the store, not a blind tag read.
-    pub(crate) fn primitive_type(self) -> Option<Type> {
-        Some(match self {
-            Self::Unit => Type::Unit,
-            Self::Bool(_) => Type::Bool,
-            Self::I64(_) => Type::I64,
-            Self::U64(_) => Type::U64,
-            Self::F64(_) => Type::F64,
-            Self::Char(_) => Type::Char,
-            _ => return None,
-        })
-    }
+	/// Heap tags require generation validation by the store, not a blind tag read.
+	pub(crate) fn primitive_type(self) -> Option<Type> {
+		Some(match self {
+			Self::Unit => Type::Unit,
+			Self::Bool(_) => Type::Bool,
+			Self::I64(_) => Type::I64,
+			Self::U64(_) => Type::U64,
+			Self::F64(_) => Type::F64,
+			Self::Char(_) => Type::Char,
+			_ => return None,
+		})
+	}
 }
 /// A scalar read back through the host boundary.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Scalar {
-    /// `()`.
-    Unit,
-    /// A `bool`.
-    Bool(bool),
-    /// An `i64`.
-    I64(i64),
-    /// A `u64`.
-    U64(u64),
-    /// An `f64`.
-    F64(f64),
-    /// A `char`.
-    Char(char),
+	/// `()`.
+	Unit,
+	/// A `bool`.
+	Bool(bool),
+	/// An `i64`.
+	I64(i64),
+	/// A `u64`.
+	U64(u64),
+	/// An `f64`.
+	F64(f64),
+	/// A `char`.
+	Char(char),
 }
 /// The host's owned reference to a value of one store: the only way a value
 /// crosses the boundary. Affine: not `Copy`, not `Clone`; `Store::root_release`
@@ -151,30 +151,30 @@ pub enum Scalar {
 /// ```
 #[derive(Debug)]
 pub struct Root {
-    pub(crate) store: u64,
-    pub(crate) value: Value,
+	pub(crate) store: u64,
+	pub(crate) value: Value,
 }
 /// Why `root_release` refused before consuming the reference: the unchanged
 /// owned root comes back so the only owner is not lost.
 #[derive(Debug)]
 pub enum ReleaseError {
-    /// Refused before the root's edge was released (closed, foreign or retired
-    /// store entry, or a last release rejected by its retirement checks): the
-    /// unchanged root is returned.
-    Refused {
-        /// The unchanged root, still owned by the caller.
-        root: Root,
-        /// Why the release was refused.
-        error: super::error::Error,
-    },
-    /// The edge was released and a later drainage step failed: the root is consumed.
-    Failed(super::error::Error),
+	/// Refused before the root's edge was released (closed, foreign or retired
+	/// store entry, or a last release rejected by its retirement checks): the
+	/// unchanged root is returned.
+	Refused {
+		/// The unchanged root, still owned by the caller.
+		root: Root,
+		/// Why the release was refused.
+		error: super::error::Error,
+	},
+	/// The edge was released and a later drainage step failed: the root is consumed.
+	Failed(super::error::Error),
 }
 impl Type {
-    pub(crate) fn nominal(self) -> Option<Nominal> {
-        match self {
-            Self::Struct(n) => Some(n),
-            _ => None,
-        }
-    }
+	pub(crate) fn nominal(self) -> Option<Nominal> {
+		match self {
+			Self::Struct(n) => Some(n),
+			_ => None,
+		}
+	}
 }

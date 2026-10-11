@@ -12,22 +12,22 @@ use crate::termcolor;
 
 /// Run `source` and emit the error it produced against it.
 fn emitted(source: &str) -> rust_alloc::string::String {
-    let context = Context::with_default_modules().expect("Failed to build context");
+	let context = Context::with_default_modules().expect("Failed to build context");
 
-    let mut sources = crate::tests::sources(source);
-    let mut diagnostics = Diagnostics::new();
+	let mut sources = crate::tests::sources(source);
+	let mut diagnostics = Diagnostics::new();
 
-    let mut vm = crate::tests::vm(&context, &mut sources, &mut diagnostics, true)
-        .expect("Source should compile");
+	let mut vm = crate::tests::vm(&context, &mut sources, &mut diagnostics, true)
+		.expect("Source should compile");
 
-    let error = vm
-        .call(Hash::EMPTY, ())
-        .expect_err("The program should not have run");
+	let error = vm
+		.call(Hash::EMPTY, ())
+		.expect_err("The program should not have run");
 
-    let mut buffer = termcolor::Buffer::no_color();
-    error.emit(&mut buffer, &sources).expect("Failed to emit");
+	let mut buffer = termcolor::Buffer::no_color();
+	error.emit(&mut buffer, &sources).expect("Failed to emit");
 
-    rust_alloc::string::String::from_utf8(buffer.into_inner()).expect("Output should be utf-8")
+	rust_alloc::string::String::from_utf8(buffer.into_inner()).expect("Output should be utf-8")
 }
 
 /// Reaching for a field which is not there says which field it was.
@@ -36,25 +36,25 @@ fn emitted(source: &str) -> rust_alloc::string::String {
 /// tells whoever wrote it nothing.
 #[test]
 fn a_missing_field_is_named() {
-    let out = emitted("let a = #{}; a.x");
+	let out = emitted("let a = #{}; a.x");
 
-    assert!(out.contains("This corresponds to the field `x`"), "{out}");
+	assert!(out.contains("This corresponds to the field `x`"), "{out}");
 
-    // The same for a field of a struct, which is reached the same way.
-    let out = emitted("struct S { a } let s = S { a: 1 }; s.b");
+	// The same for a field of a struct, which is reached the same way.
+	let out = emitted("struct S { a } let s = S { a: 1 }; s.b");
 
-    assert!(out.contains("This corresponds to the field `b`"), "{out}");
+	assert!(out.contains("This corresponds to the field `b`"), "{out}");
 }
 
 /// Calling an instance function which is not there says which one it was.
 #[test]
 fn a_missing_instance_function_is_named() {
-    let out = emitted("let a = 1; a.nope()");
+	let out = emitted("let a = 1; a.nope()");
 
-    assert!(
-        out.contains("`::std::i64::nope` instance function"),
-        "{out}"
-    );
+	assert!(
+		out.contains("`::std::i64::nope` instance function"),
+		"{out}"
+	);
 }
 
 /// What `as` cannot do says what it can, rather than naming a hash.
@@ -64,23 +64,23 @@ fn a_missing_instance_function_is_named() {
 /// front of them does not already say.
 #[test]
 fn an_unsupported_cast_says_what_as_converts() {
-    // The value is not something `as` converts.
-    let out = emitted(r#"let a = "x" as i64; a"#);
+	// The value is not something `as` converts.
+	let out = emitted(r#"let a = "x" as i64; a"#);
 
-    assert!(
-        out.contains("cannot be converted with `as`, which only converts between"),
-        "{out}"
-    );
+	assert!(
+		out.contains("cannot be converted with `as`, which only converts between"),
+		"{out}"
+	);
 
-    // The value is, but what it was asked to convert to is not.
-    let out = emitted("let a = 1 as String; a");
+	// The value is, but what it was asked to convert to is not.
+	let out = emitted("let a = 1 as String; a");
 
-    assert!(
-        out.contains("to that type, which only converts to"),
-        "{out}"
-    );
+	assert!(
+		out.contains("to that type, which only converts to"),
+		"{out}"
+	);
 
-    assert!(!out.contains("0x"), "the hash should not be in it: {out}");
+	assert!(!out.contains("0x"), "the hash should not be in it: {out}");
 }
 
 /// Being unable to reach a value says what is being done with it.
@@ -92,27 +92,27 @@ fn an_unsupported_cast_says_what_as_converts() {
 /// is shared.
 #[test]
 fn an_unavailable_value_says_what_is_being_done_with_it() {
-    let cases = [
-        (
-            "let a = #{f: 1}; let b = a; drop(b); a.f",
-            "Cannot read, the value has been moved",
-        ),
-        (
-            "let v = [1, 2, 3]; for x in v { v.push(1); } v",
-            "Cannot write, the value is being read from",
-        ),
-        (
-            "let v = [3, 1, 2, 5, 4]; v.sort_by(|a, b| { v.push(1); a.cmp(b) }); v",
-            "Cannot write, the value is being written to",
-        ),
-        (
-            "let v = [1, 2, 3]; for x in v { drop(v); } v",
-            "Cannot take, the value is being read from",
-        ),
-    ];
+	let cases = [
+		(
+			"let a = #{f: 1}; let b = a; drop(b); a.f",
+			"Cannot read, the value has been moved",
+		),
+		(
+			"let v = [1, 2, 3]; for x in v { v.push(1); } v",
+			"Cannot write, the value is being read from",
+		),
+		(
+			"let v = [3, 1, 2, 5, 4]; v.sort_by(|a, b| { v.push(1); a.cmp(b) }); v",
+			"Cannot write, the value is being written to",
+		),
+		(
+			"let v = [1, 2, 3]; for x in v { drop(v); } v",
+			"Cannot take, the value is being read from",
+		),
+	];
 
-    for (source, expected) in cases {
-        let out = emitted(source);
-        assert!(out.contains(expected), "{source}: {out}");
-    }
+	for (source, expected) in cases {
+		let out = emitted(source);
+		assert!(out.contains(expected), "{source}: {out}");
+	}
 }

@@ -5,7 +5,7 @@ use core::cmp::Ordering;
 use crate as rune;
 use crate::runtime::slice::Iter;
 use crate::runtime::{
-    EnvProtocolCaller, Formatter, Hasher, OwnedTuple, Ref, Tuple, Value, Vec, VmError,
+	EnvProtocolCaller, Formatter, Hasher, OwnedTuple, Ref, Tuple, Value, Vec, VmError,
 };
 use crate::{docstring, ContextError, Module};
 
@@ -43,34 +43,34 @@ use crate::{docstring, ContextError, Module};
 /// ```
 #[rune::module(::std::tuple)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
-    m.ty::<OwnedTuple>()?.docs(docstring! {
-        /// The tuple type.
-    })?;
-    m.function_meta(len)?;
-    m.function_meta(is_empty)?;
-    m.function_meta(get)?;
-    m.function_meta(iter)?;
-    m.function_meta(into_iter)?;
+	let mut m = Module::from_meta(self::module__meta)?;
+	m.ty::<OwnedTuple>()?.docs(docstring! {
+		/// The tuple type.
+	})?;
+	m.function_meta(len)?;
+	m.function_meta(is_empty)?;
+	m.function_meta(get)?;
+	m.function_meta(iter)?;
+	m.function_meta(into_iter)?;
 
-    m.function_meta(partial_eq__meta)?;
-    m.implement_trait::<OwnedTuple>(rune::item!(::std::cmp::PartialEq))?;
+	m.function_meta(partial_eq__meta)?;
+	m.implement_trait::<OwnedTuple>(rune::item!(::std::cmp::PartialEq))?;
 
-    m.function_meta(eq__meta)?;
-    m.implement_trait::<OwnedTuple>(rune::item!(::std::cmp::Eq))?;
+	m.function_meta(eq__meta)?;
+	m.implement_trait::<OwnedTuple>(rune::item!(::std::cmp::Eq))?;
 
-    m.function_meta(partial_cmp__meta)?;
-    m.implement_trait::<OwnedTuple>(rune::item!(::std::cmp::PartialOrd))?;
+	m.function_meta(partial_cmp__meta)?;
+	m.implement_trait::<OwnedTuple>(rune::item!(::std::cmp::PartialOrd))?;
 
-    m.function_meta(cmp__meta)?;
-    m.implement_trait::<OwnedTuple>(rune::item!(::std::cmp::Ord))?;
+	m.function_meta(cmp__meta)?;
+	m.implement_trait::<OwnedTuple>(rune::item!(::std::cmp::Ord))?;
 
-    m.function_meta(clone__meta)?;
-    m.implement_trait::<OwnedTuple>(rune::item!(::std::clone::Clone))?;
+	m.function_meta(clone__meta)?;
+	m.implement_trait::<OwnedTuple>(rune::item!(::std::clone::Clone))?;
 
-    m.function_meta(hash__meta)?;
-    m.function_meta(debug_fmt__meta)?;
-    Ok(m)
+	m.function_meta(hash__meta)?;
+	m.function_meta(debug_fmt__meta)?;
+	Ok(m)
 }
 
 /// Returns the number of elements in the tuple.
@@ -83,7 +83,7 @@ pub fn module() -> Result<Module, ContextError> {
 /// ```
 #[rune::function(instance)]
 fn len(this: &Tuple) -> usize {
-    this.len()
+	this.len()
 }
 
 /// Returns `true` if the tuple has a length of 0.
@@ -99,7 +99,7 @@ fn len(this: &Tuple) -> usize {
 /// ```
 #[rune::function(instance)]
 fn is_empty(this: &Tuple) -> bool {
-    this.is_empty()
+	this.is_empty()
 }
 
 /// Returns a reference to an element or subslice depending on the type of
@@ -121,7 +121,7 @@ fn is_empty(this: &Tuple) -> bool {
 /// ```
 #[rune::function(instance)]
 fn get(this: &Tuple, index: Value) -> Result<Option<Value>, VmError> {
-    Vec::index_get(this, index)
+	Vec::index_get(this, index)
 }
 
 /// Construct an iterator over the tuple.
@@ -134,7 +134,7 @@ fn get(this: &Tuple, index: Value) -> Result<Option<Value>, VmError> {
 /// ```
 #[rune::function(instance)]
 fn iter(this: Ref<Tuple>) -> Iter {
-    Iter::new(Ref::map(this, |tuple| &**tuple))
+	Iter::new(Ref::map(this, |tuple| &**tuple))
 }
 
 /// Construct an iterator over the tuple.
@@ -153,7 +153,7 @@ fn iter(this: Ref<Tuple>) -> Iter {
 /// ```
 #[rune::function(instance, instance, protocol = INTO_ITER)]
 fn into_iter(this: Ref<Tuple>) -> Iter {
-    Iter::new(Ref::map(this, |tuple| &**tuple))
+	Iter::new(Ref::map(this, |tuple| &**tuple))
 }
 
 /// Perform a partial equality check with this tuple.
@@ -172,7 +172,7 @@ fn into_iter(this: Ref<Tuple>) -> Iter {
 /// ```
 #[rune::function(keep, instance, protocol = PARTIAL_EQ)]
 fn partial_eq(this: &Tuple, other: Value) -> Result<bool, VmError> {
-    Vec::partial_eq_with(this, other, &mut EnvProtocolCaller)
+	Vec::partial_eq_with(this, other, &mut EnvProtocolCaller)
 }
 
 /// Perform a total equality check with this tuple.
@@ -189,7 +189,7 @@ fn partial_eq(this: &Tuple, other: Value) -> Result<bool, VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = EQ)]
 fn eq(this: &Tuple, other: &Tuple) -> Result<bool, VmError> {
-    Vec::eq_with(this, other, Value::eq_with, &mut EnvProtocolCaller)
+	Vec::eq_with(this, other, Value::eq_with, &mut EnvProtocolCaller)
 }
 
 /// Perform a partial comparison check with this tuple.
@@ -204,7 +204,7 @@ fn eq(this: &Tuple, other: &Tuple) -> Result<bool, VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = PARTIAL_CMP)]
 fn partial_cmp(this: &Tuple, other: &Tuple) -> Result<Option<Ordering>, VmError> {
-    Vec::partial_cmp_with(this, other, &mut EnvProtocolCaller)
+	Vec::partial_cmp_with(this, other, &mut EnvProtocolCaller)
 }
 
 /// Perform a total comparison check with this tuple.
@@ -222,7 +222,7 @@ fn partial_cmp(this: &Tuple, other: &Tuple) -> Result<Option<Ordering>, VmError>
 /// ```
 #[rune::function(keep, instance, protocol = CMP)]
 fn cmp(this: &Tuple, other: &Tuple) -> Result<Ordering, VmError> {
-    Vec::cmp_with(this, other, &mut EnvProtocolCaller)
+	Vec::cmp_with(this, other, &mut EnvProtocolCaller)
 }
 
 /// Calculate a hash for a tuple.
@@ -238,7 +238,7 @@ fn cmp(this: &Tuple, other: &Tuple) -> Result<Ordering, VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = HASH)]
 fn hash(this: &Tuple, hasher: &mut Hasher) -> Result<(), VmError> {
-    Tuple::hash_with(this, hasher, &mut EnvProtocolCaller)
+	Tuple::hash_with(this, hasher, &mut EnvProtocolCaller)
 }
 
 /// Clone a tuple.
@@ -259,7 +259,7 @@ fn hash(this: &Tuple, hasher: &mut Hasher) -> Result<(), VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn clone(this: &Tuple) -> Result<OwnedTuple, VmError> {
-    this.clone_with(&mut EnvProtocolCaller)
+	this.clone_with(&mut EnvProtocolCaller)
 }
 
 /// Write a debug representation of a tuple.
@@ -273,5 +273,5 @@ fn clone(this: &Tuple) -> Result<OwnedTuple, VmError> {
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 #[inline]
 fn debug_fmt(this: &Tuple, f: &mut Formatter) -> Result<(), VmError> {
-    this.debug_fmt_with(f, &mut EnvProtocolCaller)
+	this.debug_fmt_with(f, &mut EnvProtocolCaller)
 }

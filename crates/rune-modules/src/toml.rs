@@ -35,125 +35,125 @@ use rune::{nested_try, ContextError, Module, VmError};
 
 /// Construct the `toml` module.
 pub fn module(_stdio: bool) -> Result<Module, ContextError> {
-    let mut module = Module::with_crate("toml")?;
-    module.function_meta(from_bytes)?;
-    module.function_meta(from_string)?;
-    module.function_meta(to_string)?;
-    module.function_meta(to_bytes)?;
-    Ok(module)
+	let mut module = Module::with_crate("toml")?;
+	module.function_meta(from_bytes)?;
+	module.function_meta(from_string)?;
+	module.function_meta(to_string)?;
+	module.function_meta(to_bytes)?;
+	Ok(module)
 }
 
 pub mod de {
-    //! Deserializer types for the toml module.
+	//! Deserializer types for the toml module.
 
-    use rune::alloc;
-    use rune::alloc::fmt::TryWrite;
-    use rune::runtime::Formatter;
-    use rune::{Any, ContextError, Module};
+	use rune::alloc;
+	use rune::alloc::fmt::TryWrite;
+	use rune::runtime::Formatter;
+	use rune::{Any, ContextError, Module};
 
-    pub fn module(_stdio: bool) -> Result<Module, ContextError> {
-        let mut module = Module::with_crate_item("toml", ["de"])?;
-        module.ty::<Error>()?;
-        module.function_meta(Error::display)?;
-        module.function_meta(Error::debug)?;
-        Ok(module)
-    }
+	pub fn module(_stdio: bool) -> Result<Module, ContextError> {
+		let mut module = Module::with_crate_item("toml", ["de"])?;
+		module.ty::<Error>()?;
+		module.function_meta(Error::display)?;
+		module.function_meta(Error::debug)?;
+		Ok(module)
+	}
 
-    #[derive(Any)]
-    #[rune(item = ::toml::de)]
-    pub(crate) struct Error {
-        pub(crate) error: toml::de::Error,
-    }
+	#[derive(Any)]
+	#[rune(item = ::toml::de)]
+	pub(crate) struct Error {
+		pub(crate) error: toml::de::Error,
+	}
 
-    impl Error {
-        #[rune::function(protocol = DISPLAY_FMT)]
-        pub(crate) fn display(&self, f: &mut Formatter) -> alloc::Result<()> {
-            write!(f, "{}", self.error)
-        }
+	impl Error {
+		#[rune::function(protocol = DISPLAY_FMT)]
+		pub(crate) fn display(&self, f: &mut Formatter) -> alloc::Result<()> {
+			write!(f, "{}", self.error)
+		}
 
-        #[rune::function(protocol = DEBUG_FMT)]
-        pub(crate) fn debug(&self, f: &mut Formatter) -> alloc::Result<()> {
-            write!(f, "{:?}", self.error)
-        }
-    }
+		#[rune::function(protocol = DEBUG_FMT)]
+		pub(crate) fn debug(&self, f: &mut Formatter) -> alloc::Result<()> {
+			write!(f, "{:?}", self.error)
+		}
+	}
 
-    impl From<toml::de::Error> for Error {
-        fn from(error: toml::de::Error) -> Self {
-            Self { error }
-        }
-    }
+	impl From<toml::de::Error> for Error {
+		fn from(error: toml::de::Error) -> Self {
+			Self { error }
+		}
+	}
 }
 
 pub mod ser {
-    //! Serializer types for the toml module.
+	//! Serializer types for the toml module.
 
-    use rune::alloc;
-    use rune::alloc::fmt::TryWrite;
-    use rune::runtime::Formatter;
-    use rune::{Any, ContextError, Module};
+	use rune::alloc;
+	use rune::alloc::fmt::TryWrite;
+	use rune::runtime::Formatter;
+	use rune::{Any, ContextError, Module};
 
-    pub fn module(_stdio: bool) -> Result<Module, ContextError> {
-        let mut module = Module::with_crate_item("toml", ["ser"])?;
-        module.ty::<Error>()?;
-        module.function_meta(Error::display)?;
-        module.function_meta(Error::debug)?;
-        Ok(module)
-    }
+	pub fn module(_stdio: bool) -> Result<Module, ContextError> {
+		let mut module = Module::with_crate_item("toml", ["ser"])?;
+		module.ty::<Error>()?;
+		module.function_meta(Error::display)?;
+		module.function_meta(Error::debug)?;
+		Ok(module)
+	}
 
-    #[derive(Any)]
-    #[rune(item = ::toml::ser)]
-    pub(crate) struct Error {
-        pub(crate) error: toml::ser::Error,
-    }
+	#[derive(Any)]
+	#[rune(item = ::toml::ser)]
+	pub(crate) struct Error {
+		pub(crate) error: toml::ser::Error,
+	}
 
-    impl Error {
-        #[rune::function(protocol = DISPLAY_FMT)]
-        pub(crate) fn display(&self, f: &mut Formatter) -> alloc::Result<()> {
-            write!(f, "{}", self.error)
-        }
+	impl Error {
+		#[rune::function(protocol = DISPLAY_FMT)]
+		pub(crate) fn display(&self, f: &mut Formatter) -> alloc::Result<()> {
+			write!(f, "{}", self.error)
+		}
 
-        #[rune::function(protocol = DEBUG_FMT)]
-        pub(crate) fn debug(&self, f: &mut Formatter) -> alloc::Result<()> {
-            write!(f, "{:?}", self.error)
-        }
-    }
+		#[rune::function(protocol = DEBUG_FMT)]
+		pub(crate) fn debug(&self, f: &mut Formatter) -> alloc::Result<()> {
+			write!(f, "{:?}", self.error)
+		}
+	}
 
-    impl From<toml::ser::Error> for Error {
-        fn from(error: toml::ser::Error) -> Self {
-            Self { error }
-        }
-    }
+	impl From<toml::ser::Error> for Error {
+		fn from(error: toml::ser::Error) -> Self {
+			Self { error }
+		}
+	}
 }
 
 /// Convert bytes of TOML into a rune value.
 #[rune::function]
 fn from_bytes(bytes: &[u8]) -> Result<Result<Value, Value>, VmError> {
-    let bytes = match std::str::from_utf8(bytes) {
-        Ok(bytes) => bytes,
-        Err(error) => return Ok(Err(rune::to_value(error)?)),
-    };
+	let bytes = match std::str::from_utf8(bytes) {
+		Ok(bytes) => bytes,
+		Err(error) => return Ok(Err(rune::to_value(error)?)),
+	};
 
-    match toml::from_str(bytes).map_err(de::Error::from) {
-        Ok(value) => Ok(Ok(value)),
-        Err(error) => Ok(Err(rune::to_value(error)?)),
-    }
+	match toml::from_str(bytes).map_err(de::Error::from) {
+		Ok(value) => Ok(Ok(value)),
+		Err(error) => Ok(Err(rune::to_value(error)?)),
+	}
 }
 
 /// Convert a string of TOML into a rune value.
 #[rune::function]
 fn from_string(string: &str) -> Result<Value, de::Error> {
-    Ok(toml::from_str(string)?)
+	Ok(toml::from_str(string)?)
 }
 
 /// Convert any value to a toml string.
 #[rune::function]
 fn to_string(value: Value) -> alloc::Result<Result<String, ser::Error>> {
-    Ok(Ok(String::try_from(nested_try!(toml::to_string(&value)))?))
+	Ok(Ok(String::try_from(nested_try!(toml::to_string(&value)))?))
 }
 
 /// Convert any value to toml bytes.
 #[rune::function]
 fn to_bytes(value: Value) -> alloc::Result<Result<Bytes, ser::Error>> {
-    let string = String::try_from(nested_try!(toml::to_string(&value)))?;
-    Ok(Ok(Bytes::from_vec(string.into_bytes())))
+	let string = String::try_from(nested_try!(toml::to_string(&value)))?;
+	Ok(Ok(Bytes::from_vec(string.into_bytes())))
 }

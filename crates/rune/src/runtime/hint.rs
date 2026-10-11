@@ -13,5 +13,5 @@ const MAX_HINT_CAPACITY: usize = 1024;
 /// Clamp a size hint down to what is worth reserving up front.
 #[inline]
 pub(crate) fn hint_capacity(hint: usize) -> usize {
-    hint.min(MAX_HINT_CAPACITY)
+	hint.min(MAX_HINT_CAPACITY)
 }

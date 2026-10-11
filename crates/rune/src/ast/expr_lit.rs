@@ -3,9 +3,9 @@ use crate::ast::prelude::*;
 #[test]
 #[cfg(not(miri))]
 fn ast_parse() {
-    rt::<ast::ExprLit>("42");
-    rt::<ast::ExprLit>("\"test\"");
-    rt::<ast::ExprLit>("#[attr] 42");
+	rt::<ast::ExprLit>("42");
+	rt::<ast::ExprLit>("\"test\"");
+	rt::<ast::ExprLit>("#[attr] 42");
 }
 
 /// A literal expression. With the addition of being able to receive attributes,
@@ -14,11 +14,11 @@ fn ast_parse() {
 #[rune(parse = "meta_only")]
 #[non_exhaustive]
 pub struct ExprLit {
-    /// Attributes associated with the literal expression.
-    #[rune(iter, meta)]
-    pub attributes: Vec<ast::Attribute>,
-    /// The literal in the expression.
-    pub lit: ast::Lit,
+	/// Attributes associated with the literal expression.
+	#[rune(iter, meta)]
+	pub attributes: Vec<ast::Attribute>,
+	/// The literal in the expression.
+	pub lit: ast::Lit,
 }
 
 expr_parse!(Lit, ExprLit, "literal expression");

@@ -140,19 +140,19 @@ pub use rune_alloc_macros::TryClone;
 
 /// Fallible `TryClone` trait.
 pub trait TryClone: Sized {
-    /// Try to clone the current value, raising an allocation error if it's unsuccessful.
-    fn try_clone(&self) -> Result<Self, Error>;
+	/// Try to clone the current value, raising an allocation error if it's unsuccessful.
+	fn try_clone(&self) -> Result<Self, Error>;
 
-    /// Performs copy-assignment from `source`.
-    ///
-    /// `a.try_clone_from(&b)` is equivalent to `a = b.clone()` in
-    /// functionality, but can be overridden to reuse the resources of `a` to
-    /// avoid unnecessary allocations.
-    #[inline]
-    fn try_clone_from(&mut self, source: &Self) -> Result<(), Error> {
-        *self = source.try_clone()?;
-        Ok(())
-    }
+	/// Performs copy-assignment from `source`.
+	///
+	/// `a.try_clone_from(&b)` is equivalent to `a = b.clone()` in
+	/// functionality, but can be overridden to reuse the resources of `a` to
+	/// avoid unnecessary allocations.
+	#[inline]
+	fn try_clone_from(&mut self, source: &Self) -> Result<(), Error> {
+		*self = source.try_clone()?;
+		Ok(())
+	}
 }
 
 /// Marker trait for types which are `Copy`.
@@ -160,9 +160,9 @@ pub trait TryClone: Sized {
 pub trait TryCopy: TryClone {}
 
 impl<T: ?Sized> TryClone for &T {
-    fn try_clone(&self) -> Result<Self, Error> {
-        Ok(*self)
-    }
+	fn try_clone(&self) -> Result<Self, Error> {
+		Ok(*self)
+	}
 }
 
 macro_rules! impl_tuple {
@@ -180,16 +180,16 @@ macro_rules! impl_tuple {
 repeat_macro!(impl_tuple);
 
 macro_rules! impl_copy {
-    ($ty:ty) => {
-        impl TryClone for $ty {
-            #[inline]
-            fn try_clone(&self) -> Result<Self, Error> {
-                Ok(*self)
-            }
-        }
+	($ty:ty) => {
+		impl TryClone for $ty {
+			#[inline]
+			fn try_clone(&self) -> Result<Self, Error> {
+				Ok(*self)
+			}
+		}
 
-        impl TryCopy for $ty {}
-    };
+		impl TryCopy for $ty {}
+	};
 }
 
 impl_copy!(char);
@@ -227,101 +227,101 @@ impl_copy!(::std::process::ExitStatus);
 
 impl<T, E> TryClone for core::result::Result<T, E>
 where
-    T: TryClone,
-    E: TryClone,
+	T: TryClone,
+	E: TryClone,
 {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, Error> {
-        Ok(match self {
-            Ok(value) => Ok(value.try_clone()?),
-            Err(value) => Err(value.try_clone()?),
-        })
-    }
+	#[inline]
+	fn try_clone(&self) -> Result<Self, Error> {
+		Ok(match self {
+			Ok(value) => Ok(value.try_clone()?),
+			Err(value) => Err(value.try_clone()?),
+		})
+	}
 }
 
 impl<T> TryClone for core::option::Option<T>
 where
-    T: TryClone,
+	T: TryClone,
 {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, Error> {
-        Ok(match self {
-            Some(value) => Some(value.try_clone()?),
-            None => None,
-        })
-    }
+	#[inline]
+	fn try_clone(&self) -> Result<Self, Error> {
+		Ok(match self {
+			Some(value) => Some(value.try_clone()?),
+			None => None,
+		})
+	}
 }
 
 #[cfg(feature = "alloc")]
 impl<T: ?Sized> TryClone for rust_alloc::sync::Arc<T> {
-    fn try_clone(&self) -> Result<Self, Error> {
-        Ok(self.clone())
-    }
+	fn try_clone(&self) -> Result<Self, Error> {
+		Ok(self.clone())
+	}
 }
 
 #[cfg(feature = "alloc")]
 impl<T: ?Sized> TryClone for rust_alloc::rc::Rc<T> {
-    fn try_clone(&self) -> Result<Self, Error> {
-        Ok(self.clone())
-    }
+	fn try_clone(&self) -> Result<Self, Error> {
+		Ok(self.clone())
+	}
 }
 
 #[cfg(feature = "alloc")]
 impl<T> TryClone for rust_alloc::boxed::Box<T>
 where
-    T: TryClone,
+	T: TryClone,
 {
-    fn try_clone(&self) -> Result<Self, Error> {
-        Ok(rust_alloc::boxed::Box::new(self.as_ref().try_clone()?))
-    }
+	fn try_clone(&self) -> Result<Self, Error> {
+		Ok(rust_alloc::boxed::Box::new(self.as_ref().try_clone()?))
+	}
 }
 
 #[cfg(feature = "alloc")]
 impl<T> TryClone for rust_alloc::boxed::Box<[T]>
 where
-    T: TryClone,
+	T: TryClone,
 {
-    fn try_clone(&self) -> Result<Self, Error> {
-        // TODO: use a fallible box allocation.
-        let mut out = rust_alloc::vec::Vec::with_capacity(self.len());
+	fn try_clone(&self) -> Result<Self, Error> {
+		// TODO: use a fallible box allocation.
+		let mut out = rust_alloc::vec::Vec::with_capacity(self.len());
 
-        for value in self.iter() {
-            out.push(value.try_clone()?);
-        }
+		for value in self.iter() {
+			out.push(value.try_clone()?);
+		}
 
-        Ok(out.into())
-    }
+		Ok(out.into())
+	}
 }
 
 #[cfg(feature = "alloc")]
 impl TryClone for rust_alloc::string::String {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, Error> {
-        // TODO: use fallible allocations for component.
-        Ok(self.clone())
-    }
+	#[inline]
+	fn try_clone(&self) -> Result<Self, Error> {
+		// TODO: use fallible allocations for component.
+		Ok(self.clone())
+	}
 }
 
 #[cfg(all(test, feature = "alloc"))]
 impl<T> TryClone for rust_alloc::vec::Vec<T>
 where
-    T: TryClone,
+	T: TryClone,
 {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, Error> {
-        let mut out = rust_alloc::vec::Vec::with_capacity(self.len());
+	#[inline]
+	fn try_clone(&self) -> Result<Self, Error> {
+		let mut out = rust_alloc::vec::Vec::with_capacity(self.len());
 
-        for value in self {
-            out.push(value.try_clone()?);
-        }
+		for value in self {
+			out.push(value.try_clone()?);
+		}
 
-        Ok(out)
-    }
+		Ok(out)
+	}
 }
 
 #[cfg(feature = "std")]
 impl TryClone for std::path::PathBuf {
-    fn try_clone(&self) -> Result<Self, Error> {
-        Ok(self.clone())
-    }
+	fn try_clone(&self) -> Result<Self, Error> {
+		Ok(self.clone())
+	}
 }

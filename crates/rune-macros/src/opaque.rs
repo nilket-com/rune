@@ -4,105 +4,105 @@ use quote::quote;
 
 /// Derive implementation of `Opaque`.
 pub struct Derive {
-    input: syn::DeriveInput,
+	input: syn::DeriveInput,
 }
 
 impl syn::parse::Parse for Derive {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        Ok(Self {
-            input: input.parse()?,
-        })
-    }
+	fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+		Ok(Self {
+			input: input.parse()?,
+		})
+	}
 }
 
 impl Derive {
-    pub(super) fn expand(self, cx: &Context) -> Result<TokenStream, ()> {
-        let attr = cx.type_attrs(&self.input.attrs);
-        let tokens = cx.tokens_with_module(attr.module.as_ref());
-        let mut expander = Expander { cx, tokens };
+	pub(super) fn expand(self, cx: &Context) -> Result<TokenStream, ()> {
+		let attr = cx.type_attrs(&self.input.attrs);
+		let tokens = cx.tokens_with_module(attr.module.as_ref());
+		let mut expander = Expander { cx, tokens };
 
-        match &self.input.data {
-            syn::Data::Struct(st) => Ok(expander.expand_struct(&self.input, st)?),
-            syn::Data::Enum(en) => {
-                expander.cx.error(syn::Error::new_spanned(
-                    en.enum_token,
-                    "not supported on enums",
-                ));
+		match &self.input.data {
+			syn::Data::Struct(st) => Ok(expander.expand_struct(&self.input, st)?),
+			syn::Data::Enum(en) => {
+				expander.cx.error(syn::Error::new_spanned(
+					en.enum_token,
+					"not supported on enums",
+				));
 
-                Err(())
-            }
-            syn::Data::Union(un) => {
-                expander.cx.error(syn::Error::new_spanned(
-                    un.union_token,
-                    "not supported on unions",
-                ));
+				Err(())
+			}
+			syn::Data::Union(un) => {
+				expander.cx.error(syn::Error::new_spanned(
+					un.union_token,
+					"not supported on unions",
+				));
 
-                Err(())
-            }
-        }
-    }
+				Err(())
+			}
+		}
+	}
 }
 
 struct Expander<'cx> {
-    cx: &'cx Context,
-    tokens: Tokens,
+	cx: &'cx Context,
+	tokens: Tokens,
 }
 
 impl Expander<'_> {
-    /// Expand on a struct.
-    fn expand_struct(
-        &mut self,
-        input: &syn::DeriveInput,
-        st: &syn::DataStruct,
-    ) -> Result<TokenStream, ()> {
-        let accessor = self.pick_field(&st.fields)?;
+	/// Expand on a struct.
+	fn expand_struct(
+		&mut self,
+		input: &syn::DeriveInput,
+		st: &syn::DataStruct,
+	) -> Result<TokenStream, ()> {
+		let accessor = self.pick_field(&st.fields)?;
 
-        let ident = &input.ident;
-        let opaque = &self.tokens.opaque;
-        let id = &self.tokens.id;
+		let ident = &input.ident;
+		let opaque = &self.tokens.opaque;
+		let id = &self.tokens.id;
 
-        let (gen_impl, gen_type, gen_where) = input.generics.split_for_impl();
+		let (gen_impl, gen_type, gen_where) = input.generics.split_for_impl();
 
-        Ok(quote! {
-            #[automatically_derived]
-            impl #gen_impl #opaque for #ident #gen_type #gen_where {
-                fn id(&self) -> #id {
-                    #accessor
-                }
-            }
-        })
-    }
+		Ok(quote! {
+			#[automatically_derived]
+			impl #gen_impl #opaque for #ident #gen_type #gen_where {
+				fn id(&self) -> #id {
+					#accessor
+				}
+			}
+		})
+	}
 
-    /// Expand field decoding.
-    fn pick_field(&mut self, fields: &syn::Fields) -> Result<TokenStream, ()> {
-        let mut field = None;
+	/// Expand field decoding.
+	fn pick_field(&mut self, fields: &syn::Fields) -> Result<TokenStream, ()> {
+		let mut field = None;
 
-        for (n, f) in fields.iter().enumerate() {
-            let attrs = self.cx.field_attrs(&f.attrs);
+		for (n, f) in fields.iter().enumerate() {
+			let attrs = self.cx.field_attrs(&f.attrs);
 
-            if attrs.id.is_some() {
-                if field.is_some() {
-                    self.cx.error(syn::Error::new_spanned(
-                        f,
-                        "only one field can be marked `#[rune(id)]`",
-                    ));
-                }
+			if attrs.id.is_some() {
+				if field.is_some() {
+					self.cx.error(syn::Error::new_spanned(
+						f,
+						"only one field can be marked `#[rune(id)]`",
+					));
+				}
 
-                field = Some((n, f));
-            }
-        }
+				field = Some((n, f));
+			}
+		}
 
-        let Some((n, f)) = field else {
-            self.cx.error(syn::Error::new_spanned(
-                fields,
-                "Could not find a suitable identifier field",
-            ));
-            return Err(());
-        };
+		let Some((n, f)) = field else {
+			self.cx.error(syn::Error::new_spanned(
+				fields,
+				"Could not find a suitable identifier field",
+			));
+			return Err(());
+		};
 
-        Ok(match &f.ident {
-            Some(ident) => quote!(self.#ident),
-            None => quote!(self.#n),
-        })
-    }
+		Ok(match &f.ident {
+			Some(ident) => quote!(self.#ident),
+			None => quote!(self.#n),
+		})
+	}
 }

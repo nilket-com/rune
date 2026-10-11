@@ -23,7 +23,7 @@ use crate::alloc::prelude::*;
 use crate::alloc::{self, Box, String, Vec};
 use crate::hash;
 use crate::runtime::{
-    Address, Call, ConstValue, ConstValueBuf, DebugInfo, Inst, Rtti, StaticString,
+	Address, Call, ConstValue, ConstValueBuf, DebugInfo, Inst, Rtti, StaticString,
 };
 use crate::sync::Arc;
 use crate::Hash;
@@ -51,11 +51,11 @@ pub type DefaultStorage = ByteCodeUnit;
 #[cfg_attr(feature = "musli", musli(Binary, bound = {S: Encode<Binary>}, decode_bound<'de, A> = {S: Decode<'de, Binary, A>}))]
 #[try_clone(bound = {S: TryClone})]
 pub struct Unit<S = DefaultStorage> {
-    /// The information needed to execute the program.
-    #[cfg_attr(feature = "serde", serde(flatten))]
-    logic: Logic<S>,
-    /// Debug info if available for unit.
-    debug: Option<Box<DebugInfo>>,
+	/// The information needed to execute the program.
+	#[cfg_attr(feature = "serde", serde(flatten))]
+	logic: Logic<S>,
+	/// Debug info if available for unit.
+	debug: Option<Box<DebugInfo>>,
 }
 
 assert_impl!(Unit<DefaultStorage>: Send + Sync);
@@ -63,258 +63,258 @@ assert_impl!(Unit<DefaultStorage>: Send + Sync);
 /// Instructions from a single source file.
 #[derive(Debug, TryClone, Default)]
 #[cfg_attr(
-    feature = "serde",
-    derive(Serialize, Deserialize),
-    serde(rename = "Unit")
+	feature = "serde",
+	derive(Serialize, Deserialize),
+	serde(rename = "Unit")
 )]
 #[cfg_attr(feature = "musli", derive(Decode, Encode), musli(crate = musli_core))]
 #[try_clone(bound = {S: TryClone})]
 pub struct Logic<S = DefaultStorage> {
-    /// Storage for the unit.
-    storage: S,
-    /// Where functions are located in the collection of instructions.
-    functions: hash::Map<UnitFn>,
-    /// Static strings.
-    static_strings: Vec<Arc<StaticString>>,
-    /// A static byte string.
-    static_bytes: Vec<Vec<u8>>,
-    /// Slots used for object keys.
-    ///
-    /// This is used when an object is used in a pattern match, to avoid having
-    /// to send the collection of keys to the virtual machine.
-    ///
-    /// All keys are sorted with the default string sort.
-    static_object_keys: Vec<Box<[String]>>,
-    /// Drop sets.
-    drop_sets: Vec<Arc<[Address]>>,
-    /// Runtime information for types.
-    rtti: hash::Map<Arc<Rtti>>,
-    /// Named constants
-    constants: hash::Map<ConstValueBuf>,
-    /// Initializers for statics declared in this unit, indexed by slot.
-    ///
-    /// A slot without an initializer has to be assigned before it can be read.
-    globals: Vec<Option<ConstValueBuf>>,
-    /// Maps the type hash of a static item to the slot it has been assigned.
-    globals_rev: hash::Map<usize>,
+	/// Storage for the unit.
+	storage: S,
+	/// Where functions are located in the collection of instructions.
+	functions: hash::Map<UnitFn>,
+	/// Static strings.
+	static_strings: Vec<Arc<StaticString>>,
+	/// A static byte string.
+	static_bytes: Vec<Vec<u8>>,
+	/// Slots used for object keys.
+	///
+	/// This is used when an object is used in a pattern match, to avoid having
+	/// to send the collection of keys to the virtual machine.
+	///
+	/// All keys are sorted with the default string sort.
+	static_object_keys: Vec<Box<[String]>>,
+	/// Drop sets.
+	drop_sets: Vec<Arc<[Address]>>,
+	/// Runtime information for types.
+	rtti: hash::Map<Arc<Rtti>>,
+	/// Named constants
+	constants: hash::Map<ConstValueBuf>,
+	/// Initializers for statics declared in this unit, indexed by slot.
+	///
+	/// A slot without an initializer has to be assigned before it can be read.
+	globals: Vec<Option<ConstValueBuf>>,
+	/// Maps the type hash of a static item to the slot it has been assigned.
+	globals_rev: hash::Map<usize>,
 }
 
 impl<S> Unit<S> {
-    /// Constructs a new unit from a pair of data and debug info.
-    #[inline]
-    pub fn from_parts(data: Logic<S>, debug: Option<DebugInfo>) -> alloc::Result<Self> {
-        Ok(Self {
-            logic: data,
-            debug: debug.map(Box::try_new).transpose()?,
-        })
-    }
+	/// Constructs a new unit from a pair of data and debug info.
+	#[inline]
+	pub fn from_parts(data: Logic<S>, debug: Option<DebugInfo>) -> alloc::Result<Self> {
+		Ok(Self {
+			logic: data,
+			debug: debug.map(Box::try_new).transpose()?,
+		})
+	}
 
-    /// Construct a new unit with the given content.
-    #[allow(clippy::too_many_arguments)]
-    #[inline]
-    pub(crate) fn new(
-        storage: S,
-        functions: hash::Map<UnitFn>,
-        static_strings: Vec<Arc<StaticString>>,
-        static_bytes: Vec<Vec<u8>>,
-        static_object_keys: Vec<Box<[String]>>,
-        drop_sets: Vec<Arc<[Address]>>,
-        rtti: hash::Map<Arc<Rtti>>,
-        debug: Option<Box<DebugInfo>>,
-        constants: hash::Map<ConstValueBuf>,
-        globals: Vec<Option<ConstValueBuf>>,
-        globals_rev: hash::Map<usize>,
-    ) -> Self {
-        Self {
-            logic: Logic {
-                storage,
-                functions,
-                static_strings,
-                static_bytes,
-                static_object_keys,
-                drop_sets,
-                rtti,
-                constants,
-                globals,
-                globals_rev,
-            },
-            debug,
-        }
-    }
+	/// Construct a new unit with the given content.
+	#[allow(clippy::too_many_arguments)]
+	#[inline]
+	pub(crate) fn new(
+		storage: S,
+		functions: hash::Map<UnitFn>,
+		static_strings: Vec<Arc<StaticString>>,
+		static_bytes: Vec<Vec<u8>>,
+		static_object_keys: Vec<Box<[String]>>,
+		drop_sets: Vec<Arc<[Address]>>,
+		rtti: hash::Map<Arc<Rtti>>,
+		debug: Option<Box<DebugInfo>>,
+		constants: hash::Map<ConstValueBuf>,
+		globals: Vec<Option<ConstValueBuf>>,
+		globals_rev: hash::Map<usize>,
+	) -> Self {
+		Self {
+			logic: Logic {
+				storage,
+				functions,
+				static_strings,
+				static_bytes,
+				static_object_keys,
+				drop_sets,
+				rtti,
+				constants,
+				globals,
+				globals_rev,
+			},
+			debug,
+		}
+	}
 
-    /// Access unit data.
-    #[inline]
-    pub fn logic(&self) -> &Logic<S> {
-        &self.logic
-    }
+	/// Access unit data.
+	#[inline]
+	pub fn logic(&self) -> &Logic<S> {
+		&self.logic
+	}
 
-    /// Access debug information for the given location if it is available.
-    #[inline]
-    pub fn debug_info(&self) -> Option<&DebugInfo> {
-        Some(&**self.debug.as_ref()?)
-    }
+	/// Access debug information for the given location if it is available.
+	#[inline]
+	pub fn debug_info(&self) -> Option<&DebugInfo> {
+		Some(&**self.debug.as_ref()?)
+	}
 
-    /// Get raw underlying instructions storage.
-    #[inline]
-    pub(crate) fn instructions(&self) -> &S {
-        &self.logic.storage
-    }
+	/// Get raw underlying instructions storage.
+	#[inline]
+	pub(crate) fn instructions(&self) -> &S {
+		&self.logic.storage
+	}
 
-    /// Iterate over all static strings in the unit.
-    #[cfg(feature = "cli")]
-    #[inline]
-    pub(crate) fn iter_static_strings(&self) -> impl Iterator<Item = &Arc<StaticString>> + '_ {
-        self.logic.static_strings.iter()
-    }
+	/// Iterate over all static strings in the unit.
+	#[cfg(feature = "cli")]
+	#[inline]
+	pub(crate) fn iter_static_strings(&self) -> impl Iterator<Item = &Arc<StaticString>> + '_ {
+		self.logic.static_strings.iter()
+	}
 
-    /// Iterate over all static bytes in the unit.
-    #[cfg(feature = "cli")]
-    #[inline]
-    pub(crate) fn iter_static_bytes(&self) -> impl Iterator<Item = &[u8]> + '_ {
-        self.logic.static_bytes.iter().map(|v| &**v)
-    }
+	/// Iterate over all static bytes in the unit.
+	#[cfg(feature = "cli")]
+	#[inline]
+	pub(crate) fn iter_static_bytes(&self) -> impl Iterator<Item = &[u8]> + '_ {
+		self.logic.static_bytes.iter().map(|v| &**v)
+	}
 
-    /// Iterate over all available drop sets.
-    #[cfg(feature = "cli")]
-    #[inline]
-    pub(crate) fn iter_static_drop_sets(&self) -> impl Iterator<Item = &[Address]> + '_ {
-        self.logic.drop_sets.iter().map(|v| &**v)
-    }
+	/// Iterate over all available drop sets.
+	#[cfg(feature = "cli")]
+	#[inline]
+	pub(crate) fn iter_static_drop_sets(&self) -> impl Iterator<Item = &[Address]> + '_ {
+		self.logic.drop_sets.iter().map(|v| &**v)
+	}
 
-    /// Iterate over all constants in the unit.
-    #[cfg(feature = "cli")]
-    #[inline]
-    pub(crate) fn iter_constants(&self) -> impl Iterator<Item = (&Hash, &ConstValue)> + '_ {
-        self.logic
-            .constants
-            .iter()
-            .map(|(hash, value)| (hash, &**value))
-    }
+	/// Iterate over all constants in the unit.
+	#[cfg(feature = "cli")]
+	#[inline]
+	pub(crate) fn iter_constants(&self) -> impl Iterator<Item = (&Hash, &ConstValue)> + '_ {
+		self.logic
+			.constants
+			.iter()
+			.map(|(hash, value)| (hash, &**value))
+	}
 
-    /// Iterate over all static object keys in the unit.
-    #[cfg(feature = "cli")]
-    #[inline]
-    pub(crate) fn iter_static_object_keys(&self) -> impl Iterator<Item = (usize, &[String])> + '_ {
-        use core::iter;
+	/// Iterate over all static object keys in the unit.
+	#[cfg(feature = "cli")]
+	#[inline]
+	pub(crate) fn iter_static_object_keys(&self) -> impl Iterator<Item = (usize, &[String])> + '_ {
+		use core::iter;
 
-        let mut it = self.logic.static_object_keys.iter().enumerate();
+		let mut it = self.logic.static_object_keys.iter().enumerate();
 
-        iter::from_fn(move || {
-            let (n, s) = it.next()?;
-            Some((n, &s[..]))
-        })
-    }
+		iter::from_fn(move || {
+			let (n, s) = it.next()?;
+			Some((n, &s[..]))
+		})
+	}
 
-    /// Iterate over dynamic functions.
-    #[cfg(feature = "cli")]
-    #[inline]
-    pub(crate) fn iter_functions(&self) -> impl Iterator<Item = (Hash, &UnitFn)> + '_ {
-        self.logic.functions.iter().map(|(h, f)| (*h, f))
-    }
+	/// Iterate over dynamic functions.
+	#[cfg(feature = "cli")]
+	#[inline]
+	pub(crate) fn iter_functions(&self) -> impl Iterator<Item = (Hash, &UnitFn)> + '_ {
+		self.logic.functions.iter().map(|(h, f)| (*h, f))
+	}
 
-    /// Lookup the static string by slot, if it exists.
-    #[inline]
-    pub(crate) fn lookup_string(&self, slot: usize) -> Option<&Arc<StaticString>> {
-        self.logic.static_strings.get(slot)
-    }
+	/// Lookup the static string by slot, if it exists.
+	#[inline]
+	pub(crate) fn lookup_string(&self, slot: usize) -> Option<&Arc<StaticString>> {
+		self.logic.static_strings.get(slot)
+	}
 
-    /// Lookup the static byte string by slot, if it exists.
-    #[inline]
-    pub(crate) fn lookup_bytes(&self, slot: usize) -> Option<&[u8]> {
-        Some(self.logic.static_bytes.get(slot)?)
-    }
+	/// Lookup the static byte string by slot, if it exists.
+	#[inline]
+	pub(crate) fn lookup_bytes(&self, slot: usize) -> Option<&[u8]> {
+		Some(self.logic.static_bytes.get(slot)?)
+	}
 
-    /// Lookup the static object keys by slot, if it exists.
-    #[inline]
-    pub(crate) fn lookup_object_keys(&self, slot: usize) -> Option<&[String]> {
-        Some(self.logic.static_object_keys.get(slot)?)
-    }
+	/// Lookup the static object keys by slot, if it exists.
+	#[inline]
+	pub(crate) fn lookup_object_keys(&self, slot: usize) -> Option<&[String]> {
+		Some(self.logic.static_object_keys.get(slot)?)
+	}
 
-    #[inline]
-    pub(crate) fn lookup_drop_set(&self, set: usize) -> Option<&[Address]> {
-        Some(self.logic.drop_sets.get(set)?)
-    }
+	#[inline]
+	pub(crate) fn lookup_drop_set(&self, set: usize) -> Option<&[Address]> {
+		Some(self.logic.drop_sets.get(set)?)
+	}
 
-    /// Lookup run-time information for the given type hash.
-    #[inline]
-    pub(crate) fn lookup_rtti(&self, hash: &Hash) -> Option<&Arc<Rtti>> {
-        self.logic.rtti.get(hash)
-    }
+	/// Lookup run-time information for the given type hash.
+	#[inline]
+	pub(crate) fn lookup_rtti(&self, hash: &Hash) -> Option<&Arc<Rtti>> {
+		self.logic.rtti.get(hash)
+	}
 
-    /// Lookup a function in the unit.
-    #[inline]
-    pub(crate) fn function(&self, hash: &Hash) -> Option<&UnitFn> {
-        self.logic.functions.get(hash)
-    }
+	/// Lookup a function in the unit.
+	#[inline]
+	pub(crate) fn function(&self, hash: &Hash) -> Option<&UnitFn> {
+		self.logic.functions.get(hash)
+	}
 
-    /// Lookup a constant from the unit.
-    #[inline]
-    pub(crate) fn constant(&self, hash: &Hash) -> Option<&ConstValue> {
-        Some(self.logic.constants.get(hash)?)
-    }
+	/// Lookup a constant from the unit.
+	#[inline]
+	pub(crate) fn constant(&self, hash: &Hash) -> Option<&ConstValue> {
+		Some(self.logic.constants.get(hash)?)
+	}
 
-    /// The number of static slots declared in this unit.
-    ///
-    /// This is the size that a [`Globals`] storage constructed for this unit
-    /// will have.
-    ///
-    /// [`Globals`]: crate::runtime::Globals
-    #[inline]
-    pub fn globals_len(&self) -> usize {
-        self.logic.globals.len()
-    }
+	/// The number of static slots declared in this unit.
+	///
+	/// This is the size that a [`Globals`] storage constructed for this unit
+	/// will have.
+	///
+	/// [`Globals`]: crate::runtime::Globals
+	#[inline]
+	pub fn globals_len(&self) -> usize {
+		self.logic.globals.len()
+	}
 
-    /// Lookup the slot assigned to the static item with the given type hash.
-    ///
-    /// This is how a caller addresses a static by item without having to know
-    /// its slot.
-    #[inline]
-    pub fn global_slot(&self, hash: &Hash) -> Option<usize> {
-        self.logic.globals_rev.get(hash).copied()
-    }
+	/// Lookup the slot assigned to the static item with the given type hash.
+	///
+	/// This is how a caller addresses a static by item without having to know
+	/// its slot.
+	#[inline]
+	pub fn global_slot(&self, hash: &Hash) -> Option<usize> {
+		self.logic.globals_rev.get(hash).copied()
+	}
 
-    /// Lookup the initializer for the given static slot, if it has one.
-    #[inline]
-    pub(crate) fn global_init(&self, slot: usize) -> Option<&ConstValue> {
-        Some(self.logic.globals.get(slot)?.as_ref()?)
-    }
+	/// Lookup the initializer for the given static slot, if it has one.
+	#[inline]
+	pub(crate) fn global_init(&self, slot: usize) -> Option<&ConstValue> {
+		Some(self.logic.globals.get(slot)?.as_ref()?)
+	}
 
-    /// Iterate over all static slots in the unit.
-    #[cfg(feature = "cli")]
-    #[inline]
-    pub(crate) fn iter_globals(&self) -> impl Iterator<Item = (usize, Option<&ConstValue>)> + '_ {
-        self.logic
-            .globals
-            .iter()
-            .enumerate()
-            .map(|(slot, init)| (slot, init.as_deref()))
-    }
+	/// Iterate over all static slots in the unit.
+	#[cfg(feature = "cli")]
+	#[inline]
+	pub(crate) fn iter_globals(&self) -> impl Iterator<Item = (usize, Option<&ConstValue>)> + '_ {
+		self.logic
+			.globals
+			.iter()
+			.enumerate()
+			.map(|(slot, init)| (slot, init.as_deref()))
+	}
 }
 
 impl<S> Unit<S>
 where
-    S: UnitStorage,
+	S: UnitStorage,
 {
-    #[inline]
-    pub(crate) fn translate(&self, jump: usize) -> Result<usize, BadJump> {
-        self.logic.storage.translate(jump)
-    }
+	#[inline]
+	pub(crate) fn translate(&self, jump: usize) -> Result<usize, BadJump> {
+		self.logic.storage.translate(jump)
+	}
 
-    /// Get the instruction at the given instruction pointer.
-    #[inline]
-    pub(crate) fn instruction_at(
-        &self,
-        ip: usize,
-    ) -> Result<Option<(Inst, usize)>, BadInstruction> {
-        self.logic.storage.get(ip)
-    }
+	/// Get the instruction at the given instruction pointer.
+	#[inline]
+	pub(crate) fn instruction_at(
+		&self,
+		ip: usize,
+	) -> Result<Option<(Inst, usize)>, BadInstruction> {
+		self.logic.storage.get(ip)
+	}
 
-    /// Iterate over all instructions in order.
-    #[cfg(feature = "emit")]
-    #[inline]
-    pub(crate) fn iter_instructions(&self) -> impl Iterator<Item = (usize, Inst)> + '_ {
-        self.logic.storage.iter()
-    }
+	/// Iterate over all instructions in order.
+	#[cfg(feature = "emit")]
+	#[inline]
+	pub(crate) fn iter_instructions(&self) -> impl Iterator<Item = (usize, Inst)> + '_ {
+		self.logic.storage.iter()
+	}
 }
 
 /// The kind and necessary information on registered functions.
@@ -322,63 +322,63 @@ where
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "musli", derive(Decode, Encode), musli(crate = musli_core))]
 pub(crate) enum UnitFn {
-    /// Instruction offset of a function inside of the unit.
-    Offset {
-        /// Offset of the registered function.
-        offset: usize,
-        /// The way the function is called.
-        call: Call,
-        /// The number of arguments the function takes.
-        args: usize,
-        /// If the offset is a closure, this indicates the number of captures in
-        /// the first argument.
-        captures: Option<usize>,
-    },
-    /// An empty constructor of the type identified by the given hash.
-    EmptyStruct {
-        /// The type hash of the empty.
-        hash: Hash,
-    },
-    /// A tuple constructor of the type identified by the given hash.
-    TupleStruct {
-        /// The type hash of the tuple.
-        hash: Hash,
-        /// The number of arguments the tuple takes.
-        args: usize,
-    },
+	/// Instruction offset of a function inside of the unit.
+	Offset {
+		/// Offset of the registered function.
+		offset: usize,
+		/// The way the function is called.
+		call: Call,
+		/// The number of arguments the function takes.
+		args: usize,
+		/// If the offset is a closure, this indicates the number of captures in
+		/// the first argument.
+		captures: Option<usize>,
+	},
+	/// An empty constructor of the type identified by the given hash.
+	EmptyStruct {
+		/// The type hash of the empty.
+		hash: Hash,
+	},
+	/// A tuple constructor of the type identified by the given hash.
+	TupleStruct {
+		/// The type hash of the tuple.
+		hash: Hash,
+		/// The number of arguments the tuple takes.
+		args: usize,
+	},
 }
 
 impl TryClone for UnitFn {
-    #[inline]
-    fn try_clone(&self) -> alloc::Result<Self> {
-        Ok(*self)
-    }
+	#[inline]
+	fn try_clone(&self) -> alloc::Result<Self> {
+		Ok(*self)
+	}
 }
 
 impl fmt::Display for UnitFn {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::Offset {
-                offset,
-                call,
-                args,
-                captures,
-            } => {
-                write!(
-                    f,
-                    "offset offset={offset}, call={call}, args={args}, captures={captures:?}"
-                )?;
-            }
-            Self::EmptyStruct { hash } => {
-                write!(f, "unit hash={hash}")?;
-            }
-            Self::TupleStruct { hash, args } => {
-                write!(f, "tuple hash={hash}, args={args}")?;
-            }
-        }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		match self {
+			Self::Offset {
+				offset,
+				call,
+				args,
+				captures,
+			} => {
+				write!(
+					f,
+					"offset offset={offset}, call={call}, args={args}, captures={captures:?}"
+				)?;
+			}
+			Self::EmptyStruct { hash } => {
+				write!(f, "unit hash={hash}")?;
+			}
+			Self::TupleStruct { hash, args } => {
+				write!(f, "tuple hash={hash}, args={args}")?;
+			}
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 }
 
 #[cfg(test)]

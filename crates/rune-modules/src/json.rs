@@ -45,40 +45,40 @@ use rune::{nested_try, Any, ContextError, Module};
 /// assert_eq!(object, #{"number": 42, "string": "Hello World"});
 /// ```
 pub fn module(_stdio: bool) -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
-    m.ty::<Error>()?;
-    m.function_meta(Error::display)?;
-    m.function_meta(Error::debug)?;
-    m.function_meta(from_bytes)?;
-    m.function_meta(from_string)?;
-    m.function_meta(to_string)?;
-    m.function_meta(to_bytes)?;
-    Ok(m)
+	let mut m = Module::from_meta(self::module__meta)?;
+	m.ty::<Error>()?;
+	m.function_meta(Error::display)?;
+	m.function_meta(Error::debug)?;
+	m.function_meta(from_bytes)?;
+	m.function_meta(from_string)?;
+	m.function_meta(to_string)?;
+	m.function_meta(to_bytes)?;
+	Ok(m)
 }
 
 #[derive(Any)]
 #[rune(item = ::json)]
 /// Error type raised during JSON serialization.
 struct Error {
-    error: serde_json::Error,
+	error: serde_json::Error,
 }
 
 impl Error {
-    #[rune::function(protocol = DISPLAY_FMT)]
-    pub(crate) fn display(&self, f: &mut Formatter) -> alloc::Result<()> {
-        write!(f, "{}", self.error)
-    }
+	#[rune::function(protocol = DISPLAY_FMT)]
+	pub(crate) fn display(&self, f: &mut Formatter) -> alloc::Result<()> {
+		write!(f, "{}", self.error)
+	}
 
-    #[rune::function(protocol = DEBUG_FMT)]
-    pub(crate) fn debug(&self, f: &mut Formatter) -> alloc::Result<()> {
-        write!(f, "{:?}", self.error)
-    }
+	#[rune::function(protocol = DEBUG_FMT)]
+	pub(crate) fn debug(&self, f: &mut Formatter) -> alloc::Result<()> {
+		write!(f, "{:?}", self.error)
+	}
 }
 
 impl From<serde_json::Error> for Error {
-    fn from(error: serde_json::Error) -> Self {
-        Self { error }
-    }
+	fn from(error: serde_json::Error) -> Self {
+		Self { error }
+	}
 }
 
 /// Convert JSON bytes into a rune value.
@@ -91,7 +91,7 @@ impl From<serde_json::Error> for Error {
 /// ```
 #[rune::function]
 fn from_bytes(bytes: &[u8]) -> Result<Value, Error> {
-    Ok(serde_json::from_slice(bytes)?)
+	Ok(serde_json::from_slice(bytes)?)
 }
 
 /// Convert a JSON string into a rune value.
@@ -104,7 +104,7 @@ fn from_bytes(bytes: &[u8]) -> Result<Value, Error> {
 /// ```
 #[rune::function]
 fn from_string(string: &str) -> Result<Value, Error> {
-    Ok(serde_json::from_str(string)?)
+	Ok(serde_json::from_str(string)?)
 }
 
 /// Convert any value to a json string.
@@ -118,9 +118,9 @@ fn from_string(string: &str) -> Result<Value, Error> {
 /// ```
 #[rune::function]
 fn to_string(value: Value) -> alloc::Result<Result<String, Error>> {
-    Ok(Ok(String::try_from(nested_try!(serde_json::to_string(
-        &value
-    )))?))
+	Ok(Ok(String::try_from(nested_try!(serde_json::to_string(
+		&value
+	)))?))
 }
 
 /// Convert any value to json bytes.
@@ -134,7 +134,7 @@ fn to_string(value: Value) -> alloc::Result<Result<String, Error>> {
 /// ```
 #[rune::function]
 fn to_bytes(value: Value) -> alloc::Result<Result<Bytes, Error>> {
-    Ok(Ok(Bytes::from_vec(Vec::try_from(nested_try!(
-        serde_json::to_vec(&value)
-    ))?)))
+	Ok(Ok(Bytes::from_vec(Vec::try_from(nested_try!(
+		serde_json::to_vec(&value)
+	))?)))
 }

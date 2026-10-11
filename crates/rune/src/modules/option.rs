@@ -7,7 +7,7 @@ use crate as rune;
 use crate::alloc::fmt::TryWrite;
 use crate::alloc::String;
 use crate::runtime::{
-    ControlFlow, EnvProtocolCaller, Formatter, Function, Hasher, Panic, Protocol, Value, VmError,
+	ControlFlow, EnvProtocolCaller, Formatter, Function, Hasher, Panic, Protocol, Value, VmError,
 };
 use crate::Any;
 use crate::{hash_in, ContextError, Hash, Module};
@@ -17,86 +17,86 @@ use crate::{hash_in, ContextError, Hash, Module};
 /// This module deals with the fundamental [`Option`] type in rune.
 #[rune::module(::std::option)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
-    let mut option = m.ty::<Option<Value>>()?.make_enum(&["Some", "None"])?;
+	let mut m = Module::from_meta(self::module__meta)?;
+	let mut option = m.ty::<Option<Value>>()?.make_enum(&["Some", "None"])?;
 
-    option
-        .variant_mut(0)?
-        .make_unnamed(1)?
-        .constructor(Option::Some)?
-        .static_docs(&["Some value."])?;
+	option
+		.variant_mut(0)?
+		.make_unnamed(1)?
+		.constructor(Option::Some)?
+		.static_docs(&["Some value."])?;
 
-    option
-        .variant_mut(1)?
-        .make_empty()?
-        .constructor(|| Option::None)?
-        .static_docs(&["No value."])?;
+	option
+		.variant_mut(1)?
+		.make_empty()?
+		.constructor(|| Option::None)?
+		.static_docs(&["No value."])?;
 
-    m.function_meta(is_variant__meta)?;
+	m.function_meta(is_variant__meta)?;
 
-    m.index_function(&Protocol::GET, 0, |this: &Option<Value>| match this {
-        Option::Some(value) => Ok(value.clone()),
-        _ => Err(crate::__priv::e::unsupported_tuple_index_get(
-            <Option<Value> as Any>::ANY_TYPE_INFO,
-            0,
-        )),
-    })?;
+	m.index_function(&Protocol::GET, 0, |this: &Option<Value>| match this {
+		Option::Some(value) => Ok(value.clone()),
+		_ => Err(crate::__priv::e::unsupported_tuple_index_get(
+			<Option<Value> as Any>::ANY_TYPE_INFO,
+			0,
+		)),
+	})?;
 
-    m.function_meta(expect)?;
-    m.function_meta(is_some)?;
-    m.function_meta(is_none)?;
-    m.function_meta(iter)?;
-    m.function_meta(into_iter)?;
-    m.function_meta(and_then)?;
-    m.function_meta(map)?;
-    m.function_meta(take)?;
-    m.function_meta(transpose)?;
-    m.function_meta(unwrap)?;
-    m.function_meta(unwrap_or)?;
-    m.function_meta(unwrap_or_else)?;
-    m.function_meta(ok_or)?;
-    m.function_meta(ok_or_else)?;
+	m.function_meta(expect)?;
+	m.function_meta(is_some)?;
+	m.function_meta(is_none)?;
+	m.function_meta(iter)?;
+	m.function_meta(into_iter)?;
+	m.function_meta(and_then)?;
+	m.function_meta(map)?;
+	m.function_meta(take)?;
+	m.function_meta(transpose)?;
+	m.function_meta(unwrap)?;
+	m.function_meta(unwrap_or)?;
+	m.function_meta(unwrap_or_else)?;
+	m.function_meta(ok_or)?;
+	m.function_meta(ok_or_else)?;
 
-    m.function_meta(clone__meta)?;
-    m.implement_trait::<Option<Value>>(rune::item!(::std::clone::Clone))?;
+	m.function_meta(clone__meta)?;
+	m.implement_trait::<Option<Value>>(rune::item!(::std::clone::Clone))?;
 
-    m.function_meta(partial_eq__meta)?;
-    m.implement_trait::<Option<Value>>(rune::item!(::std::cmp::PartialEq))?;
+	m.function_meta(partial_eq__meta)?;
+	m.implement_trait::<Option<Value>>(rune::item!(::std::cmp::PartialEq))?;
 
-    m.function_meta(eq__meta)?;
-    m.implement_trait::<Option<Value>>(rune::item!(::std::cmp::Eq))?;
+	m.function_meta(eq__meta)?;
+	m.implement_trait::<Option<Value>>(rune::item!(::std::cmp::Eq))?;
 
-    m.function_meta(partial_cmp__meta)?;
-    m.implement_trait::<Option<Value>>(rune::item!(::std::cmp::PartialOrd))?;
+	m.function_meta(partial_cmp__meta)?;
+	m.implement_trait::<Option<Value>>(rune::item!(::std::cmp::PartialOrd))?;
 
-    m.function_meta(cmp__meta)?;
-    m.implement_trait::<Option<Value>>(rune::item!(::std::cmp::Ord))?;
+	m.function_meta(cmp__meta)?;
+	m.implement_trait::<Option<Value>>(rune::item!(::std::cmp::Ord))?;
 
-    m.function_meta(hash__meta)?;
-    m.function_meta(debug_fmt__meta)?;
+	m.function_meta(hash__meta)?;
+	m.function_meta(debug_fmt__meta)?;
 
-    m.function_meta(option_try__meta)?;
+	m.function_meta(option_try__meta)?;
 
-    m.ty::<Iter>()?;
-    m.function_meta(Iter::next__meta)?;
-    m.function_meta(Iter::next_back__meta)?;
-    m.function_meta(Iter::size_hint__meta)?;
-    m.implement_trait::<Iter>(rune::item!(::std::iter::Iterator))?;
-    m.implement_trait::<Iter>(rune::item!(::std::iter::DoubleEndedIterator))?;
-    m.function_meta(Iter::clone__meta)?;
-    m.implement_trait::<Iter>(rune::item!(::std::clone::Clone))?;
+	m.ty::<Iter>()?;
+	m.function_meta(Iter::next__meta)?;
+	m.function_meta(Iter::next_back__meta)?;
+	m.function_meta(Iter::size_hint__meta)?;
+	m.implement_trait::<Iter>(rune::item!(::std::iter::Iterator))?;
+	m.implement_trait::<Iter>(rune::item!(::std::iter::DoubleEndedIterator))?;
+	m.function_meta(Iter::clone__meta)?;
+	m.implement_trait::<Iter>(rune::item!(::std::clone::Clone))?;
 
-    Ok(m)
+	Ok(m)
 }
 
 #[rune::function(instance, keep, protocol = IS_VARIANT)]
 #[inline]
 pub(crate) fn is_variant(this: &Option<Value>, variant_hash: Hash) -> bool {
-    match (this, variant_hash) {
-        (Option::Some(_), hash_in!(crate, ::std::option::Option::Some)) => true,
-        (Option::None, hash_in!(crate, ::std::option::Option::None)) => true,
-        _ => false,
-    }
+	match (this, variant_hash) {
+		(Option::Some(_), hash_in!(crate, ::std::option::Option::Some)) => true,
+		(Option::None, hash_in!(crate, ::std::option::Option::None)) => true,
+		_ => false,
+	}
 }
 
 /// Returns the contained [`Some`] value, consuming the `self` value.
@@ -139,14 +139,14 @@ pub(crate) fn is_variant(this: &Option<Value>, variant_hash: Hash) -> bool {
 /// [`std::error`](../../std/error/index.html) module docs.
 #[rune::function(instance)]
 fn expect(option: &Option<Value>, message: Value) -> Result<Value, VmError> {
-    match option {
-        Some(some) => Ok(some.clone()),
-        None => {
-            let mut s = String::new();
-            Formatter::format_with(&mut s, |f| message.display_fmt(f))?;
-            Err(VmError::from(Panic::custom(s)))
-        }
-    }
+	match option {
+		Some(some) => Ok(some.clone()),
+		None => {
+			let mut s = String::new();
+			Formatter::format_with(&mut s, |f| message.display_fmt(f))?;
+			Err(VmError::from(Panic::custom(s)))
+		}
+	}
 }
 
 /// Returns `true` if the option is a [`Some`] value.
@@ -162,7 +162,7 @@ fn expect(option: &Option<Value>, message: Value) -> Result<Value, VmError> {
 /// ```
 #[rune::function(instance)]
 fn is_some(this: &Option<Value>) -> bool {
-    this.is_some()
+	this.is_some()
 }
 
 /// Returns `true` if the option is a [`None`] value.
@@ -178,7 +178,7 @@ fn is_some(this: &Option<Value>) -> bool {
 /// ```
 #[rune::function(instance)]
 fn is_none(this: &Option<Value>) -> bool {
-    this.is_none()
+	this.is_none()
 }
 
 /// Construct an iterator over an optional value.
@@ -199,7 +199,7 @@ fn is_none(this: &Option<Value>) -> bool {
 /// ```
 #[rune::function(instance)]
 fn iter(value: &Option<Value>) -> Iter {
-    Iter::new(value.clone())
+	Iter::new(value.clone())
 }
 
 /// Construct an iterator over an optional value.
@@ -219,7 +219,7 @@ fn iter(value: &Option<Value>) -> Iter {
 /// ```
 #[rune::function(instance, protocol = INTO_ITER)]
 fn into_iter(this: &Option<Value>) -> Iter {
-    Iter::new(this.clone())
+	Iter::new(this.clone())
 }
 
 /// Returns [`None`] if the option is [`None`], otherwise calls `f` with the
@@ -252,11 +252,11 @@ fn into_iter(this: &Option<Value>) -> Iter {
 /// ```
 #[rune::function(instance)]
 fn and_then(option: &Option<Value>, then: Function) -> Result<Option<Value>, VmError> {
-    match option {
-        // no need to clone v, passing the same reference forward
-        Some(v) => Ok(then.call((v.clone(),))?),
-        None => Ok(None),
-    }
+	match option {
+		// no need to clone v, passing the same reference forward
+		Some(v) => Ok(then.call((v.clone(),))?),
+		None => Ok(None),
+	}
 }
 
 /// Maps an `Option<T>` to `Option<U>` by applying a function to a contained
@@ -280,11 +280,11 @@ fn and_then(option: &Option<Value>, then: Function) -> Result<Option<Value>, VmE
 /// ```
 #[rune::function(instance)]
 fn map(option: &Option<Value>, then: Function) -> Result<Option<Value>, VmError> {
-    match option {
-        // no need to clone v, passing the same reference forward
-        Some(v) => Ok(Some(then.call((v.clone(),))?)),
-        None => Ok(None),
-    }
+	match option {
+		// no need to clone v, passing the same reference forward
+		Some(v) => Ok(Some(then.call((v.clone(),))?)),
+		None => Ok(None),
+	}
 }
 
 /// Takes the value out of the option, leaving a [`None`] in its place.
@@ -304,7 +304,7 @@ fn map(option: &Option<Value>, then: Function) -> Result<Option<Value>, VmError>
 /// ```
 #[rune::function(instance)]
 fn take(option: &mut Option<Value>) -> Option<Value> {
-    option.take()
+	option.take()
 }
 
 /// Transposes an `Option` of a [`Result`] into a [`Result`] of an `Option`.
@@ -322,26 +322,26 @@ fn take(option: &mut Option<Value>) -> Option<Value> {
 /// ```
 #[rune::function(instance)]
 fn transpose(this: &Option<Value>) -> Result<Value, VmError> {
-    let value = match this {
-        Some(value) => value,
-        None => {
-            let none = Value::try_from(Option::<Value>::None)?;
-            let result = Value::try_from(Result::<Value, Value>::Ok(none))?;
-            return Ok(result);
-        }
-    };
+	let value = match this {
+		Some(value) => value,
+		None => {
+			let none = Value::try_from(Option::<Value>::None)?;
+			let result = Value::try_from(Result::<Value, Value>::Ok(none))?;
+			return Ok(result);
+		}
+	};
 
-    match &*value.borrow_ref::<Result<Value, Value>>()? {
-        Ok(ok) => {
-            let some = Value::try_from(Some(ok.clone()))?;
-            let result = Value::try_from(Ok(some))?;
-            Ok(result)
-        }
-        Err(err) => {
-            let result = Value::try_from(Err(err.clone()))?;
-            Ok(result)
-        }
-    }
+	match &*value.borrow_ref::<Result<Value, Value>>()? {
+		Ok(ok) => {
+			let some = Value::try_from(Some(ok.clone()))?;
+			let result = Value::try_from(Ok(some))?;
+			Ok(result)
+		}
+		Err(err) => {
+			let result = Value::try_from(Err(err.clone()))?;
+			Ok(result)
+		}
+	}
 }
 
 /// Returns the contained [`Some`] value, consuming the `self` value.
@@ -371,12 +371,12 @@ fn transpose(this: &Option<Value>) -> Result<Value, VmError> {
 /// ```
 #[rune::function(instance)]
 fn unwrap(option: &Option<Value>) -> Result<Value, VmError> {
-    match option {
-        Some(some) => Ok(some.clone()),
-        None => Err(VmError::from(Panic::custom(
-            "Called `Option::unwrap()` on a `None` value",
-        ))),
-    }
+	match option {
+		Some(some) => Ok(some.clone()),
+		None => Err(VmError::from(Panic::custom(
+			"Called `Option::unwrap()` on a `None` value",
+		))),
+	}
 }
 
 /// Returns the contained [`Some`] value or a provided `default`.
@@ -395,10 +395,10 @@ fn unwrap(option: &Option<Value>) -> Result<Value, VmError> {
 /// ```
 #[rune::function(instance)]
 fn unwrap_or(this: &Option<Value>, default: Value) -> Value {
-    match this {
-        Some(value) => value.clone(),
-        None => default,
-    }
+	match this {
+		Some(value) => value.clone(),
+		None => default,
+	}
 }
 
 /// Returns the contained [`Some`] value or computes it from a closure.
@@ -412,10 +412,10 @@ fn unwrap_or(this: &Option<Value>, default: Value) -> Value {
 /// ```
 #[rune::function(instance)]
 fn unwrap_or_else(this: &Option<Value>, default: Function) -> Result<Value, VmError> {
-    match this {
-        Some(value) => Ok(value.clone()),
-        None => default.call(()),
-    }
+	match this {
+		Some(value) => Ok(value.clone()),
+		None => default.call(()),
+	}
 }
 
 /// Transforms the `Option<T>` into a [`Result<T, E>`], mapping [`Some(v)`] to
@@ -441,10 +441,10 @@ fn unwrap_or_else(this: &Option<Value>, default: Function) -> Result<Value, VmEr
 /// ```
 #[rune::function(instance)]
 fn ok_or(this: &Option<Value>, err: Value) -> Result<Value, Value> {
-    match this {
-        Some(value) => Ok(value.clone()),
-        None => Err(err),
-    }
+	match this {
+		Some(value) => Ok(value.clone()),
+		None => Err(err),
+	}
 }
 
 /// Transforms the `Option<T>` into a [`Result<T, E>`], mapping [`Some(v)`] to
@@ -465,10 +465,10 @@ fn ok_or(this: &Option<Value>, err: Value) -> Result<Value, Value> {
 /// ```
 #[rune::function(instance)]
 fn ok_or_else(this: &Option<Value>, err: Function) -> Result<Result<Value, Value>, VmError> {
-    match this {
-        Some(value) => Ok(Ok(value.clone())),
-        None => Ok(Err(err.call(())?)),
-    }
+	match this {
+		Some(value) => Ok(Ok(value.clone())),
+		None => Ok(Err(err.call(())?)),
+	}
 }
 
 /// Clone the option.
@@ -486,10 +486,10 @@ fn ok_or_else(this: &Option<Value>, err: Function) -> Result<Result<Value, Value
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn clone(this: &Option<Value>) -> Result<Option<Value>, VmError> {
-    Ok(match this {
-        Some(value) => Some(value.clone_with(&mut EnvProtocolCaller)?),
-        None => None,
-    })
+	Ok(match this {
+		Some(value) => Some(value.clone_with(&mut EnvProtocolCaller)?),
+		None => None,
+	})
 }
 
 /// Test two options for partial equality.
@@ -516,11 +516,11 @@ fn clone(this: &Option<Value>) -> Result<Option<Value>, VmError> {
 #[rune::function(keep, instance, protocol = PARTIAL_EQ)]
 #[inline]
 fn partial_eq(this: &Option<Value>, rhs: &Option<Value>) -> Result<bool, VmError> {
-    match (this, rhs) {
-        (Some(a), Some(b)) => Ok(Value::partial_eq(a, b)?),
-        (None, None) => Ok(true),
-        _ => Ok(false),
-    }
+	match (this, rhs) {
+		(Some(a), Some(b)) => Ok(Value::partial_eq(a, b)?),
+		(None, None) => Ok(true),
+		_ => Ok(false),
+	}
 }
 
 /// Test two options for total equality.
@@ -538,11 +538,11 @@ fn partial_eq(this: &Option<Value>, rhs: &Option<Value>) -> Result<bool, VmError
 #[rune::function(keep, instance, protocol = EQ)]
 #[inline]
 fn eq(this: &Option<Value>, rhs: &Option<Value>) -> Result<bool, VmError> {
-    match (this, rhs) {
-        (Some(a), Some(b)) => Ok(Value::eq(a, b)?),
-        (None, None) => Ok(true),
-        _ => Ok(false),
-    }
+	match (this, rhs) {
+		(Some(a), Some(b)) => Ok(Value::eq(a, b)?),
+		(None, None) => Ok(true),
+		_ => Ok(false),
+	}
 }
 
 /// Perform a partial ordered comparison between two options.
@@ -568,12 +568,12 @@ fn eq(this: &Option<Value>, rhs: &Option<Value>) -> Result<bool, VmError> {
 #[rune::function(keep, instance, protocol = PARTIAL_CMP)]
 #[inline]
 fn partial_cmp(this: &Option<Value>, rhs: &Option<Value>) -> Result<Option<Ordering>, VmError> {
-    match (this, rhs) {
-        (Some(a), Some(b)) => Ok(Value::partial_cmp(a, b)?),
-        (None, None) => Ok(Some(Ordering::Equal)),
-        (Some(..), None) => Ok(Some(Ordering::Greater)),
-        (None, Some(..)) => Ok(Some(Ordering::Less)),
-    }
+	match (this, rhs) {
+		(Some(a), Some(b)) => Ok(Value::partial_cmp(a, b)?),
+		(None, None) => Ok(Some(Ordering::Equal)),
+		(Some(..), None) => Ok(Some(Ordering::Greater)),
+		(None, Some(..)) => Ok(Some(Ordering::Less)),
+	}
 }
 
 /// Perform a totally ordered comparison between two options.
@@ -591,12 +591,12 @@ fn partial_cmp(this: &Option<Value>, rhs: &Option<Value>) -> Result<Option<Order
 #[rune::function(keep, instance, protocol = CMP)]
 #[inline]
 fn cmp(this: &Option<Value>, rhs: &Option<Value>) -> Result<Ordering, VmError> {
-    match (this, rhs) {
-        (Some(a), Some(b)) => Ok(Value::cmp(a, b)?),
-        (None, None) => Ok(Ordering::Equal),
-        (Some(..), None) => Ok(Ordering::Greater),
-        (None, Some(..)) => Ok(Ordering::Less),
-    }
+	match (this, rhs) {
+		(Some(a), Some(b)) => Ok(Value::cmp(a, b)?),
+		(None, None) => Ok(Ordering::Equal),
+		(Some(..), None) => Ok(Ordering::Greater),
+		(None, Some(..)) => Ok(Ordering::Less),
+	}
 }
 
 /// Hash the result.
@@ -613,17 +613,17 @@ fn cmp(this: &Option<Value>, rhs: &Option<Value>) -> Result<Ordering, VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = HASH)]
 fn hash(this: &Option<Value>, hasher: &mut Hasher) -> Result<(), VmError> {
-    match this {
-        Some(value) => {
-            hasher.write_u64(0);
-            value.hash(hasher)?;
-        }
-        None => {
-            hasher.write_u64(1);
-        }
-    }
+	match this {
+		Some(value) => {
+			hasher.write_u64(0);
+			value.hash(hasher)?;
+		}
+		None => {
+			hasher.write_u64(1);
+		}
+	}
 
-    Ok(())
+	Ok(())
 }
 
 /// Write a debug representation of a result.
@@ -637,18 +637,18 @@ fn hash(this: &Option<Value>, hasher: &mut Hasher) -> Result<(), VmError> {
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 #[inline]
 fn debug_fmt(this: &Option<Value>, f: &mut Formatter) -> Result<(), VmError> {
-    match this {
-        Some(value) => {
-            f.try_write_str("Some(")?;
-            value.debug_fmt(f)?;
-            f.try_write_str(")")?;
-        }
-        None => {
-            f.try_write_str("None")?;
-        }
-    }
+	match this {
+		Some(value) => {
+			f.try_write_str("Some(")?;
+			value.debug_fmt(f)?;
+			f.try_write_str(")")?;
+		}
+		None => {
+			f.try_write_str("None")?;
+		}
+	}
 
-    Ok(())
+	Ok(())
 }
 
 /// Using [`Option`] with the try protocol.
@@ -665,10 +665,10 @@ fn debug_fmt(this: &Option<Value>, f: &mut Formatter) -> Result<(), VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = TRY)]
 pub(crate) fn option_try(this: &Option<Value>) -> Result<ControlFlow, VmError> {
-    Ok(match this {
-        Some(value) => ControlFlow::Continue(value.clone()),
-        None => ControlFlow::Break(Value::try_from(None)?),
-    })
+	Ok(match this {
+		Some(value) => ControlFlow::Continue(value.clone()),
+		None => ControlFlow::Break(Value::try_from(None)?),
+	})
 }
 
 /// The iterator holds the value it hands out, and a script can nest one inside
@@ -677,96 +677,96 @@ pub(crate) fn option_try(this: &Option<Value>) -> Result<ControlFlow, VmError> {
 #[derive(Any, Clone)]
 #[rune(item = ::std::option)]
 pub(crate) struct Iter {
-    #[rune(dismantle)]
-    value: Option<Value>,
+	#[rune(dismantle)]
+	value: Option<Value>,
 }
 
 impl Iter {
-    /// Construct a new iterator.
-    fn new(value: Option<Value>) -> Self {
-        Self { value }
-    }
+	/// Construct a new iterator.
+	fn new(value: Option<Value>) -> Self {
+		Self { value }
+	}
 
-    /// Get the next value in the iterator.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let a = Some(1).iter();
-    ///
-    /// assert_eq!(a.next(), Some(1));
-    /// assert_eq!(a.next(), None);
-    /// ```
-    #[rune::function(keep, protocol = NEXT)]
-    fn next(&mut self) -> Option<Value> {
-        self.value.take()
-    }
+	/// Get the next value in the iterator.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let a = Some(1).iter();
+	///
+	/// assert_eq!(a.next(), Some(1));
+	/// assert_eq!(a.next(), None);
+	/// ```
+	#[rune::function(keep, protocol = NEXT)]
+	fn next(&mut self) -> Option<Value> {
+		self.value.take()
+	}
 
-    /// Get the next back value in the iterator.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let a = Some(1).iter();
-    ///
-    /// assert_eq!(a.next_back(), Some(1));
-    /// assert_eq!(a.next_back(), None);
-    /// ```
-    #[rune::function(keep, protocol = NEXT_BACK)]
-    fn next_back(&mut self) -> Option<Value> {
-        self.value.take()
-    }
+	/// Get the next back value in the iterator.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let a = Some(1).iter();
+	///
+	/// assert_eq!(a.next_back(), Some(1));
+	/// assert_eq!(a.next_back(), None);
+	/// ```
+	#[rune::function(keep, protocol = NEXT_BACK)]
+	fn next_back(&mut self) -> Option<Value> {
+		self.value.take()
+	}
 
-    /// Get a size hint of the option iterator.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let a = Some(1).iter();
-    ///
-    /// assert_eq!(a.size_hint(), (1, Some(1)));
-    /// ```
-    #[rune::function(keep, protocol = SIZE_HINT)]
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        let len = usize::from(self.value.is_some());
-        (len, Some(len))
-    }
+	/// Get a size hint of the option iterator.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let a = Some(1).iter();
+	///
+	/// assert_eq!(a.size_hint(), (1, Some(1)));
+	/// ```
+	#[rune::function(keep, protocol = SIZE_HINT)]
+	fn size_hint(&self) -> (usize, Option<usize>) {
+		let len = usize::from(self.value.is_some());
+		(len, Some(len))
+	}
 
-    /// Convert into an iterator.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let a = Some(42);
-    ///
-    /// let v = 0;
-    ///
-    /// for i in a {
-    ///     v = 42;
-    /// }
-    ///
-    /// assert_eq!(v, 1);
-    /// ```
-    #[rune::function(keep, protocol = INTO_ITER)]
-    fn into_iter(self) -> Self {
-        self
-    }
+	/// Convert into an iterator.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let a = Some(42);
+	///
+	/// let v = 0;
+	///
+	/// for i in a {
+	///     v = 42;
+	/// }
+	///
+	/// assert_eq!(v, 1);
+	/// ```
+	#[rune::function(keep, protocol = INTO_ITER)]
+	fn into_iter(self) -> Self {
+		self
+	}
 
-    /// Clone the option iterator.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let a = Some(1);
-    /// let it = a.iter();
-    ///
-    /// assert_eq!(it.clone().next(), Some(1));
-    /// assert_eq!(it.next(), Some(1));
-    /// assert_eq!(it.next(), None);
-    /// ```
-    #[rune::function(keep, protocol = CLONE)]
-    #[inline]
-    fn clone(&self) -> Self {
-        Clone::clone(self)
-    }
+	/// Clone the option iterator.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let a = Some(1);
+	/// let it = a.iter();
+	///
+	/// assert_eq!(it.clone().next(), Some(1));
+	/// assert_eq!(it.next(), Some(1));
+	/// assert_eq!(it.next(), None);
+	/// ```
+	#[rune::function(keep, protocol = CLONE)]
+	#[inline]
+	fn clone(&self) -> Self {
+		Clone::clone(self)
+	}
 }

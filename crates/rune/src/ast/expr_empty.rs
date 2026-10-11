@@ -7,15 +7,15 @@ use crate::ast::prelude::*;
 #[derive(Debug, TryClone, PartialEq, Eq, ToTokens, Spanned)]
 #[non_exhaustive]
 pub struct ExprEmpty {
-    /// Attributes associated with expression.
-    #[rune(iter)]
-    pub attributes: Vec<ast::Attribute>,
-    /// The open parenthesis.
-    pub open: ast::OpenEmpty,
-    /// The grouped expression.
-    pub expr: Box<ast::Expr>,
-    /// The close parenthesis.
-    pub close: ast::CloseEmpty,
+	/// Attributes associated with expression.
+	#[rune(iter)]
+	pub attributes: Vec<ast::Attribute>,
+	/// The open parenthesis.
+	pub open: ast::OpenEmpty,
+	/// The grouped expression.
+	pub expr: Box<ast::Expr>,
+	/// The close parenthesis.
+	pub close: ast::CloseEmpty,
 }
 
 expr_parse!(Empty, ExprEmpty, "empty group expression");

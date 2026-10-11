@@ -11,8 +11,8 @@ use crate::alloc::hash_map;
 use crate::alloc::prelude::*;
 use crate::alloc::{self, String};
 use crate::runtime::{
-    Dismantle, FieldMap, FromValue, Handover, ProtocolCaller, RawAnyGuard, Ref, ToValue, Value,
-    VmError, Worklist,
+	Dismantle, FieldMap, FromValue, Handover, ProtocolCaller, RawAnyGuard, Ref, ToValue, Value,
+	VmError, Worklist,
 };
 use crate::Any;
 
@@ -84,549 +84,549 @@ pub type Values<'a> = hash_map::Values<'a, String, Value>;
 #[repr(transparent)]
 #[rune(item = ::std::object, dismantle)]
 pub struct Object {
-    inner: FieldMap<String, Value>,
+	inner: FieldMap<String, Value>,
 }
 
 /// An object is made of the values put into it, and a script can nest one
 /// inside another without any bound, so it hands over what it is made of rather
 /// than being dropped in place.
 impl Dismantle for Object {
-    fn dismantle(&mut self, out: &mut Handover<'_>) {
-        // The map is emptied rather than walked in place, so that what it holds
-        // is handed over in one pass over it.
-        for (_, value) in core::mem::take(&mut self.inner) {
-            out.push(value);
-        }
-    }
+	fn dismantle(&mut self, out: &mut Handover<'_>) {
+		// The map is emptied rather than walked in place, so that what it holds
+		// is handed over in one pass over it.
+		for (_, value) in core::mem::take(&mut self.inner) {
+			out.push(value);
+		}
+	}
 }
 
 impl Object {
-    /// Construct a new object.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let object = Object::new();
-    /// object.insert("Hello", "World");
-    /// ```
-    #[inline]
-    #[rune::function(keep, path = Self::new)]
-    pub fn new() -> Self {
-        Self {
-            inner: crate::runtime::new_field_map(),
-        }
-    }
+	/// Construct a new object.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let object = Object::new();
+	/// object.insert("Hello", "World");
+	/// ```
+	#[inline]
+	#[rune::function(keep, path = Self::new)]
+	pub fn new() -> Self {
+		Self {
+			inner: crate::runtime::new_field_map(),
+		}
+	}
 
-    /// Construct a new object with the given capacity.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let object = Object::with_capacity(16);
-    /// object.insert("Hello", "World");
-    /// ```
-    #[inline]
-    #[rune::function(keep, path = Self::with_capacity)]
-    pub fn with_capacity(capacity: usize) -> alloc::Result<Self> {
-        Ok(Self {
-            inner: crate::runtime::new_field_hash_map_with_capacity(capacity)?,
-        })
-    }
+	/// Construct a new object with the given capacity.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let object = Object::with_capacity(16);
+	/// object.insert("Hello", "World");
+	/// ```
+	#[inline]
+	#[rune::function(keep, path = Self::with_capacity)]
+	pub fn with_capacity(capacity: usize) -> alloc::Result<Self> {
+		Ok(Self {
+			inner: crate::runtime::new_field_hash_map_with_capacity(capacity)?,
+		})
+	}
 
-    /// Returns the number of elements in the object.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let object = Object::with_capacity(16);
-    /// object.insert("Hello", "World");
-    /// assert_eq!(object.len(), 1);
-    /// ```
-    #[inline]
-    #[rune::function(keep)]
-    pub fn len(&self) -> usize {
-        self.inner.len()
-    }
+	/// Returns the number of elements in the object.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let object = Object::with_capacity(16);
+	/// object.insert("Hello", "World");
+	/// assert_eq!(object.len(), 1);
+	/// ```
+	#[inline]
+	#[rune::function(keep)]
+	pub fn len(&self) -> usize {
+		self.inner.len()
+	}
 
-    /// Returns `true` if the object is empty.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let object = Object::with_capacity(16);
-    /// assert!(object.is_empty());
-    /// object.insert("Hello", "World");
-    /// assert!(!object.is_empty());
-    /// ```
-    #[inline]
-    #[rune::function(keep)]
-    pub fn is_empty(&self) -> bool {
-        self.inner.is_empty()
-    }
+	/// Returns `true` if the object is empty.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let object = Object::with_capacity(16);
+	/// assert!(object.is_empty());
+	/// object.insert("Hello", "World");
+	/// assert!(!object.is_empty());
+	/// ```
+	#[inline]
+	#[rune::function(keep)]
+	pub fn is_empty(&self) -> bool {
+		self.inner.is_empty()
+	}
 
-    /// Returns a reference to the value corresponding to the key.
-    #[inline]
-    pub fn get<Q>(&self, k: &Q) -> Option<&Value>
-    where
-        String: borrow::Borrow<Q>,
-        Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
-    {
-        self.inner.get(k)
-    }
+	/// Returns a reference to the value corresponding to the key.
+	#[inline]
+	pub fn get<Q>(&self, k: &Q) -> Option<&Value>
+	where
+		String: borrow::Borrow<Q>,
+		Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
+	{
+		self.inner.get(k)
+	}
 
-    /// Get the given value at the given index.
-    pub fn get_value<Q, T>(&self, k: &Q) -> Result<Option<T>, VmError>
-    where
-        String: borrow::Borrow<Q>,
-        Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
-        T: FromValue,
-    {
-        let value = match self.inner.get(k) {
-            Some(value) => value.clone(),
-            None => return Ok(None),
-        };
+	/// Get the given value at the given index.
+	pub fn get_value<Q, T>(&self, k: &Q) -> Result<Option<T>, VmError>
+	where
+		String: borrow::Borrow<Q>,
+		Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
+		T: FromValue,
+	{
+		let value = match self.inner.get(k) {
+			Some(value) => value.clone(),
+			None => return Ok(None),
+		};
 
-        Ok(Some(T::from_value(value)?))
-    }
+		Ok(Some(T::from_value(value)?))
+	}
 
-    /// Returns a mutable reference to the value corresponding to the key.
-    #[inline]
-    pub fn get_mut<Q>(&mut self, k: &Q) -> Option<&mut Value>
-    where
-        String: borrow::Borrow<Q>,
-        Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
-    {
-        self.inner.get_mut(k)
-    }
+	/// Returns a mutable reference to the value corresponding to the key.
+	#[inline]
+	pub fn get_mut<Q>(&mut self, k: &Q) -> Option<&mut Value>
+	where
+		String: borrow::Borrow<Q>,
+		Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
+	{
+		self.inner.get_mut(k)
+	}
 
-    /// Returns `true` if the map contains a value for the specified key.
-    #[inline]
-    pub fn contains_key<Q>(&self, k: &Q) -> bool
-    where
-        String: borrow::Borrow<Q>,
-        Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
-    {
-        self.inner.contains_key(k)
-    }
+	/// Returns `true` if the map contains a value for the specified key.
+	#[inline]
+	pub fn contains_key<Q>(&self, k: &Q) -> bool
+	where
+		String: borrow::Borrow<Q>,
+		Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
+	{
+		self.inner.contains_key(k)
+	}
 
-    /// Removes a key from the map, returning the value at the key if the key
-    /// was previously in the map.
-    #[inline]
-    pub fn remove<Q>(&mut self, k: &Q) -> Option<Value>
-    where
-        String: borrow::Borrow<Q>,
-        Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
-    {
-        self.inner.remove(k)
-    }
+	/// Removes a key from the map, returning the value at the key if the key
+	/// was previously in the map.
+	#[inline]
+	pub fn remove<Q>(&mut self, k: &Q) -> Option<Value>
+	where
+		String: borrow::Borrow<Q>,
+		Q: ?Sized + hash::Hash + cmp::Eq + cmp::Ord,
+	{
+		self.inner.remove(k)
+	}
 
-    /// Inserts a key-value pair into the dynamic object, converting it as
-    /// necessary through the [`ToValue`] trait.
-    #[inline]
-    pub fn insert_value<T>(&mut self, k: String, v: T) -> Result<(), VmError>
-    where
-        T: ToValue,
-    {
-        // Any value which was already there is taken apart rather than dropped
-        // in place. A native function has no worklist of its own to do that
-        // over, so it gets one which is empty - which costs nothing until it is
-        // handed a value made of other values.
-        if let Some(old) = self.inner.try_insert(k, v.to_value()?)? {
-            Worklist::new().dismantle(old);
-        }
+	/// Inserts a key-value pair into the dynamic object, converting it as
+	/// necessary through the [`ToValue`] trait.
+	#[inline]
+	pub fn insert_value<T>(&mut self, k: String, v: T) -> Result<(), VmError>
+	where
+		T: ToValue,
+	{
+		// Any value which was already there is taken apart rather than dropped
+		// in place. A native function has no worklist of its own to do that
+		// over, so it gets one which is empty - which costs nothing until it is
+		// handed a value made of other values.
+		if let Some(old) = self.inner.try_insert(k, v.to_value()?)? {
+			Worklist::new().dismantle(old);
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 
-    /// Inserts a key-value pair into the map.
-    ///
-    /// If the map did not have this key present, `None` is returned.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let map = #{};
-    /// assert_eq!(map.insert("a", 1), None);
-    /// assert_eq!(map.is_empty(), false);
-    ///
-    /// map.insert("b", 2);
-    /// assert_eq!(map.insert("b", 3), Some(2));
-    /// assert_eq!(map["b"], 3);
-    /// ```
-    #[inline]
-    #[rune::function(keep, path = Self::insert)]
-    pub fn insert(&mut self, k: String, v: Value) -> alloc::Result<Option<Value>> {
-        self.inner.try_insert(k, v)
-    }
+	/// Inserts a key-value pair into the map.
+	///
+	/// If the map did not have this key present, `None` is returned.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let map = #{};
+	/// assert_eq!(map.insert("a", 1), None);
+	/// assert_eq!(map.is_empty(), false);
+	///
+	/// map.insert("b", 2);
+	/// assert_eq!(map.insert("b", 3), Some(2));
+	/// assert_eq!(map["b"], 3);
+	/// ```
+	#[inline]
+	#[rune::function(keep, path = Self::insert)]
+	pub fn insert(&mut self, k: String, v: Value) -> alloc::Result<Option<Value>> {
+		self.inner.try_insert(k, v)
+	}
 
-    /// Take every value in the object apart rather than dropping them where
-    /// they are - see [`Worklist::dismantle`].
-    pub(crate) fn dismantle(&mut self, work: &mut Worklist) {
-        work.dismantle_all(self.inner.iter_mut().map(|(_, value)| value));
-        self.inner.clear();
-    }
+	/// Take every value in the object apart rather than dropping them where
+	/// they are - see [`Worklist::dismantle`].
+	pub(crate) fn dismantle(&mut self, work: &mut Worklist) {
+		work.dismantle_all(self.inner.iter_mut().map(|(_, value)| value));
+		self.inner.clear();
+	}
 
-    /// Clears the object, removing all key-value pairs. Keeps the allocated
-    /// memory for reuse.
-    #[inline]
-    pub fn clear(&mut self) {
-        self.inner.clear();
-    }
+	/// Clears the object, removing all key-value pairs. Keeps the allocated
+	/// memory for reuse.
+	#[inline]
+	pub fn clear(&mut self) {
+		self.inner.clear();
+	}
 
-    /// Clears the object, removing all key-value pairs. Keeps the allocated
-    /// memory for reuse.
-    ///
-    /// The values are taken apart rather than dropped where they are - see
-    /// [`Object::dismantle`].
-    #[inline]
-    #[rune::function(keep, path = Self::clear)]
-    pub(crate) fn rune_clear(&mut self) {
-        self.dismantle(&mut Worklist::new());
-    }
+	/// Clears the object, removing all key-value pairs. Keeps the allocated
+	/// memory for reuse.
+	///
+	/// The values are taken apart rather than dropped where they are - see
+	/// [`Object::dismantle`].
+	#[inline]
+	#[rune::function(keep, path = Self::clear)]
+	pub(crate) fn rune_clear(&mut self) {
+		self.dismantle(&mut Worklist::new());
+	}
 
-    /// An iterator visiting all key-value pairs in arbitrary order.
-    /// The iterator element type is `(&'a String, &'a Value)`.
-    pub fn iter(&self) -> Iter<'_> {
-        self.inner.iter()
-    }
+	/// An iterator visiting all key-value pairs in arbitrary order.
+	/// The iterator element type is `(&'a String, &'a Value)`.
+	pub fn iter(&self) -> Iter<'_> {
+		self.inner.iter()
+	}
 
-    /// An iterator visiting all keys in arbitrary order.
-    /// The iterator element type is `&'a String`.
-    pub fn keys(&self) -> Keys<'_> {
-        self.inner.keys()
-    }
+	/// An iterator visiting all keys in arbitrary order.
+	/// The iterator element type is `&'a String`.
+	pub fn keys(&self) -> Keys<'_> {
+		self.inner.keys()
+	}
 
-    /// An iterator visiting all values in arbitrary order.
-    /// The iterator element type is `&'a Value`.
-    pub fn values(&self) -> Values<'_> {
-        self.inner.values()
-    }
+	/// An iterator visiting all values in arbitrary order.
+	/// The iterator element type is `&'a Value`.
+	pub fn values(&self) -> Values<'_> {
+		self.inner.values()
+	}
 
-    /// An iterator visiting all key-value pairs in arbitrary order,
-    /// with mutable references to the values.
-    ///
-    /// The iterator element type is `(&'a String, &'a mut Value)`.
-    pub fn iter_mut(&mut self) -> IterMut<'_> {
-        self.inner.iter_mut()
-    }
+	/// An iterator visiting all key-value pairs in arbitrary order,
+	/// with mutable references to the values.
+	///
+	/// The iterator element type is `(&'a String, &'a mut Value)`.
+	pub fn iter_mut(&mut self) -> IterMut<'_> {
+		self.inner.iter_mut()
+	}
 
-    /// An iterator visiting all keys and values in arbitrary order.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let object = #{a: 1, b: 2, c: 3};
-    /// let vec = [];
-    ///
-    /// for key in object.iter() {
-    ///     vec.push(key);
-    /// }
-    ///
-    /// vec.sort_by(|a, b| a.0.cmp(b.0));
-    /// assert_eq!(vec, [("a", 1), ("b", 2), ("c", 3)]);
-    /// ```
-    #[rune::function(keep, path = Self::iter)]
-    pub fn rune_iter(this: Ref<Self>) -> RuneIter {
-        // SAFETY: we're holding onto the related reference guard, and making
-        // sure that it's dropped after the iterator.
-        let iter = unsafe { this.inner.raw_table().iter() };
-        let (_, guard) = Ref::into_raw(this);
-        RuneIter { iter, guard }
-    }
+	/// An iterator visiting all keys and values in arbitrary order.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let object = #{a: 1, b: 2, c: 3};
+	/// let vec = [];
+	///
+	/// for key in object.iter() {
+	///     vec.push(key);
+	/// }
+	///
+	/// vec.sort_by(|a, b| a.0.cmp(b.0));
+	/// assert_eq!(vec, [("a", 1), ("b", 2), ("c", 3)]);
+	/// ```
+	#[rune::function(keep, path = Self::iter)]
+	pub fn rune_iter(this: Ref<Self>) -> RuneIter {
+		// SAFETY: we're holding onto the related reference guard, and making
+		// sure that it's dropped after the iterator.
+		let iter = unsafe { this.inner.raw_table().iter() };
+		let (_, guard) = Ref::into_raw(this);
+		RuneIter { iter, guard }
+	}
 
-    /// An iterator visiting all keys in arbitrary order.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let object = #{a: 1, b: 2, c: 3};
-    /// let vec = [];
-    ///
-    /// for key in object.keys() {
-    ///     vec.push(key);
-    /// }
-    ///
-    /// vec.sort_by(|a, b| a.cmp(b));
-    /// assert_eq!(vec, ["a", "b", "c"]);
-    /// ```
-    #[rune::function(keep, path = Self::keys)]
-    pub fn rune_keys(this: Ref<Self>) -> RuneIterKeys {
-        // SAFETY: we're holding onto the related reference guard, and making
-        // sure that it's dropped after the iterator.
-        let iter = unsafe { this.inner.raw_table().iter() };
-        let (_, guard) = Ref::into_raw(this);
-        RuneIterKeys { iter, guard }
-    }
+	/// An iterator visiting all keys in arbitrary order.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let object = #{a: 1, b: 2, c: 3};
+	/// let vec = [];
+	///
+	/// for key in object.keys() {
+	///     vec.push(key);
+	/// }
+	///
+	/// vec.sort_by(|a, b| a.cmp(b));
+	/// assert_eq!(vec, ["a", "b", "c"]);
+	/// ```
+	#[rune::function(keep, path = Self::keys)]
+	pub fn rune_keys(this: Ref<Self>) -> RuneIterKeys {
+		// SAFETY: we're holding onto the related reference guard, and making
+		// sure that it's dropped after the iterator.
+		let iter = unsafe { this.inner.raw_table().iter() };
+		let (_, guard) = Ref::into_raw(this);
+		RuneIterKeys { iter, guard }
+	}
 
-    /// An iterator visiting all values in arbitrary order.
-    ///
-    /// # Examples
-    ///
-    /// ```rune
-    /// let object = #{a: 1, b: 2, c: 3};
-    /// let vec = [];
-    ///
-    /// for key in object.values() {
-    ///     vec.push(key);
-    /// }
-    ///
-    /// vec.sort_by(|a, b| a.cmp(b));
-    /// assert_eq!(vec, [1, 2, 3]);
-    /// ```
-    #[rune::function(keep, path = Self::values)]
-    pub fn rune_values(this: Ref<Self>) -> RuneValues {
-        // SAFETY: we're holding onto the related reference guard, and making
-        // sure that it's dropped after the iterator.
-        let iter = unsafe { this.inner.raw_table().iter() };
-        let (_, guard) = Ref::into_raw(this);
-        RuneValues { iter, guard }
-    }
+	/// An iterator visiting all values in arbitrary order.
+	///
+	/// # Examples
+	///
+	/// ```rune
+	/// let object = #{a: 1, b: 2, c: 3};
+	/// let vec = [];
+	///
+	/// for key in object.values() {
+	///     vec.push(key);
+	/// }
+	///
+	/// vec.sort_by(|a, b| a.cmp(b));
+	/// assert_eq!(vec, [1, 2, 3]);
+	/// ```
+	#[rune::function(keep, path = Self::values)]
+	pub fn rune_values(this: Ref<Self>) -> RuneValues {
+		// SAFETY: we're holding onto the related reference guard, and making
+		// sure that it's dropped after the iterator.
+		let iter = unsafe { this.inner.raw_table().iter() };
+		let (_, guard) = Ref::into_raw(this);
+		RuneValues { iter, guard }
+	}
 
-    pub(crate) fn partial_eq_with(
-        a: &Self,
-        b: &Self,
-        caller: &mut dyn ProtocolCaller,
-    ) -> Result<bool, VmError> {
-        if a.len() != b.len() {
-            return Ok(false);
-        }
+	pub(crate) fn partial_eq_with(
+		a: &Self,
+		b: &Self,
+		caller: &mut dyn ProtocolCaller,
+	) -> Result<bool, VmError> {
+		if a.len() != b.len() {
+			return Ok(false);
+		}
 
-        for (k1, v1) in a.iter() {
-            let Some(v2) = b.get(k1) else {
-                return Ok(false);
-            };
+		for (k1, v1) in a.iter() {
+			let Some(v2) = b.get(k1) else {
+				return Ok(false);
+			};
 
-            if !Value::partial_eq_with(v1, v2, caller)? {
-                return Ok(false);
-            }
-        }
+			if !Value::partial_eq_with(v1, v2, caller)? {
+				return Ok(false);
+			}
+		}
 
-        Ok(true)
-    }
+		Ok(true)
+	}
 
-    pub(crate) fn eq_with(
-        a: &Self,
-        b: &Self,
-        eq: fn(&Value, &Value, &mut dyn ProtocolCaller) -> Result<bool, VmError>,
-        caller: &mut dyn ProtocolCaller,
-    ) -> Result<bool, VmError> {
-        if a.inner.len() != b.inner.len() {
-            return Ok(false);
-        }
+	pub(crate) fn eq_with(
+		a: &Self,
+		b: &Self,
+		eq: fn(&Value, &Value, &mut dyn ProtocolCaller) -> Result<bool, VmError>,
+		caller: &mut dyn ProtocolCaller,
+	) -> Result<bool, VmError> {
+		if a.inner.len() != b.inner.len() {
+			return Ok(false);
+		}
 
-        for (key, a) in a.inner.iter() {
-            let Some(b) = b.inner.get(key) else {
-                return Ok(false);
-            };
+		for (key, a) in a.inner.iter() {
+			let Some(b) = b.inner.get(key) else {
+				return Ok(false);
+			};
 
-            if !eq(a, b, caller)? {
-                return Ok(false);
-            }
-        }
+			if !eq(a, b, caller)? {
+				return Ok(false);
+			}
+		}
 
-        Ok(true)
-    }
+		Ok(true)
+	}
 }
 
 impl TryClone for Object {
-    fn try_clone(&self) -> alloc::Result<Self> {
-        Ok(Self {
-            inner: self.inner.try_clone()?,
-        })
-    }
+	fn try_clone(&self) -> alloc::Result<Self> {
+		Ok(Self {
+			inner: self.inner.try_clone()?,
+		})
+	}
 }
 
 impl<'a> IntoIterator for &'a Object {
-    type Item = (&'a String, &'a Value);
-    type IntoIter = Iter<'a>;
+	type Item = (&'a String, &'a Value);
+	type IntoIter = Iter<'a>;
 
-    fn into_iter(self) -> Self::IntoIter {
-        self.iter()
-    }
+	fn into_iter(self) -> Self::IntoIter {
+		self.iter()
+	}
 }
 
 impl<'a> IntoIterator for &'a mut Object {
-    type Item = (&'a String, &'a mut Value);
-    type IntoIter = IterMut<'a>;
+	type Item = (&'a String, &'a mut Value);
+	type IntoIter = IterMut<'a>;
 
-    fn into_iter(self) -> Self::IntoIter {
-        self.iter_mut()
-    }
+	fn into_iter(self) -> Self::IntoIter {
+		self.iter_mut()
+	}
 }
 
 impl IntoIterator for Object {
-    type Item = (String, Value);
-    type IntoIter = IntoIter;
+	type Item = (String, Value);
+	type IntoIter = IntoIter;
 
-    /// Creates a consuming iterator, that is, one that moves each key-value
-    /// pair out of the object in arbitrary order. The object cannot be used
-    /// after calling this.
-    fn into_iter(self) -> Self::IntoIter {
-        self.inner.into_iter()
-    }
+	/// Creates a consuming iterator, that is, one that moves each key-value
+	/// pair out of the object in arbitrary order. The object cannot be used
+	/// after calling this.
+	fn into_iter(self) -> Self::IntoIter {
+		self.inner.into_iter()
+	}
 }
 
 impl fmt::Debug for Object {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_map().entries(self.inner.iter()).finish()
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		f.debug_map().entries(self.inner.iter()).finish()
+	}
 }
 
 #[derive(Any)]
 #[rune(item = ::std::object, name = Iter, dismantle)]
 pub struct RuneIter {
-    iter: RawIter<(String, Value)>,
-    guard: RawAnyGuard,
+	iter: RawIter<(String, Value)>,
+	guard: RawAnyGuard,
 }
 
 /// The object is kept alive through a guard rather than through a slot, so
 /// taking the iterator apart releases the guard and hands the object over.
 impl Dismantle for RuneIter {
-    fn dismantle(&mut self, out: &mut Handover<'_>) {
-        out.consume_ref(&mut self.guard);
-    }
+	fn dismantle(&mut self, out: &mut Handover<'_>) {
+		out.consume_ref(&mut self.guard);
+	}
 }
 
 impl RuneIter {
-    #[rune::function(instance, keep, protocol = NEXT)]
-    pub fn next(&mut self) -> Result<Option<(String, Value)>, VmError> {
-        unsafe {
-            let Some(bucket) = self.iter.next() else {
-                return Ok(None);
-            };
+	#[rune::function(instance, keep, protocol = NEXT)]
+	pub fn next(&mut self) -> Result<Option<(String, Value)>, VmError> {
+		unsafe {
+			let Some(bucket) = self.iter.next() else {
+				return Ok(None);
+			};
 
-            let (key, value) = bucket.as_ref();
-            let key = key.try_clone()?;
-            Ok(Some((key, value.clone())))
-        }
-    }
+			let (key, value) = bucket.as_ref();
+			let key = key.try_clone()?;
+			Ok(Some((key, value.clone())))
+		}
+	}
 
-    #[rune::function(instance, keep, protocol = SIZE_HINT)]
-    pub fn size_hint(&self) -> (usize, Option<usize>) {
-        self.iter.size_hint()
-    }
+	#[rune::function(instance, keep, protocol = SIZE_HINT)]
+	pub fn size_hint(&self) -> (usize, Option<usize>) {
+		self.iter.size_hint()
+	}
 
-    #[rune::function(instance, keep, protocol = LEN)]
-    pub fn len(&self) -> usize {
-        self.iter.len()
-    }
+	#[rune::function(instance, keep, protocol = LEN)]
+	pub fn len(&self) -> usize {
+		self.iter.len()
+	}
 }
 
 impl iter::Iterator for RuneIter {
-    type Item = Result<(String, Value), VmError>;
+	type Item = Result<(String, Value), VmError>;
 
-    #[inline]
-    fn next(&mut self) -> Option<Self::Item> {
-        match RuneIter::next(self) {
-            Ok(Some(value)) => Some(Ok(value)),
-            Ok(None) => None,
-            Err(err) => Some(Err(err)),
-        }
-    }
+	#[inline]
+	fn next(&mut self) -> Option<Self::Item> {
+		match RuneIter::next(self) {
+			Ok(Some(value)) => Some(Ok(value)),
+			Ok(None) => None,
+			Err(err) => Some(Err(err)),
+		}
+	}
 }
 
 #[derive(Any)]
 #[rune(item = ::std::object, name = Keys, dismantle)]
 pub struct RuneIterKeys {
-    iter: RawIter<(String, Value)>,
-    guard: RawAnyGuard,
+	iter: RawIter<(String, Value)>,
+	guard: RawAnyGuard,
 }
 
 /// The object is kept alive through a guard rather than through a slot, so
 /// taking the iterator apart releases the guard and hands the object over.
 impl Dismantle for RuneIterKeys {
-    fn dismantle(&mut self, out: &mut Handover<'_>) {
-        out.consume_ref(&mut self.guard);
-    }
+	fn dismantle(&mut self, out: &mut Handover<'_>) {
+		out.consume_ref(&mut self.guard);
+	}
 }
 
 impl RuneIterKeys {
-    #[rune::function(instance, keep, protocol = NEXT)]
-    pub fn next(&mut self) -> Result<Option<String>, VmError> {
-        unsafe {
-            let Some(bucket) = self.iter.next() else {
-                return Ok(None);
-            };
+	#[rune::function(instance, keep, protocol = NEXT)]
+	pub fn next(&mut self) -> Result<Option<String>, VmError> {
+		unsafe {
+			let Some(bucket) = self.iter.next() else {
+				return Ok(None);
+			};
 
-            let (key, _) = bucket.as_ref();
-            let key = key.try_clone()?;
-            Ok(Some(key))
-        }
-    }
+			let (key, _) = bucket.as_ref();
+			let key = key.try_clone()?;
+			Ok(Some(key))
+		}
+	}
 
-    #[rune::function(instance, keep, protocol = SIZE_HINT)]
-    pub fn size_hint(&self) -> (usize, Option<usize>) {
-        self.iter.size_hint()
-    }
+	#[rune::function(instance, keep, protocol = SIZE_HINT)]
+	pub fn size_hint(&self) -> (usize, Option<usize>) {
+		self.iter.size_hint()
+	}
 
-    #[rune::function(instance, keep, protocol = LEN)]
-    pub fn len(&self) -> usize {
-        self.iter.len()
-    }
+	#[rune::function(instance, keep, protocol = LEN)]
+	pub fn len(&self) -> usize {
+		self.iter.len()
+	}
 }
 
 impl iter::Iterator for RuneIterKeys {
-    type Item = Result<String, VmError>;
+	type Item = Result<String, VmError>;
 
-    #[inline]
-    fn next(&mut self) -> Option<Self::Item> {
-        match RuneIterKeys::next(self) {
-            Ok(Some(value)) => Some(Ok(value)),
-            Ok(None) => None,
-            Err(err) => Some(Err(err)),
-        }
-    }
+	#[inline]
+	fn next(&mut self) -> Option<Self::Item> {
+		match RuneIterKeys::next(self) {
+			Ok(Some(value)) => Some(Ok(value)),
+			Ok(None) => None,
+			Err(err) => Some(Err(err)),
+		}
+	}
 }
 
 #[derive(Any)]
 #[rune(item = ::std::object, name = Values, dismantle)]
 pub struct RuneValues {
-    iter: RawIter<(String, Value)>,
-    guard: RawAnyGuard,
+	iter: RawIter<(String, Value)>,
+	guard: RawAnyGuard,
 }
 
 /// The object is kept alive through a guard rather than through a slot, so
 /// taking the iterator apart releases the guard and hands the object over.
 impl Dismantle for RuneValues {
-    fn dismantle(&mut self, out: &mut Handover<'_>) {
-        out.consume_ref(&mut self.guard);
-    }
+	fn dismantle(&mut self, out: &mut Handover<'_>) {
+		out.consume_ref(&mut self.guard);
+	}
 }
 
 impl RuneValues {
-    #[rune::function(instance, keep, protocol = NEXT)]
-    pub fn next(&mut self) -> Result<Option<Value>, VmError> {
-        unsafe {
-            let Some(bucket) = self.iter.next() else {
-                return Ok(None);
-            };
+	#[rune::function(instance, keep, protocol = NEXT)]
+	pub fn next(&mut self) -> Result<Option<Value>, VmError> {
+		unsafe {
+			let Some(bucket) = self.iter.next() else {
+				return Ok(None);
+			};
 
-            let (_, value) = bucket.as_ref();
-            Ok(Some(value.clone()))
-        }
-    }
+			let (_, value) = bucket.as_ref();
+			Ok(Some(value.clone()))
+		}
+	}
 
-    #[rune::function(instance, keep, protocol = SIZE_HINT)]
-    pub fn size_hint(&self) -> (usize, Option<usize>) {
-        self.iter.size_hint()
-    }
+	#[rune::function(instance, keep, protocol = SIZE_HINT)]
+	pub fn size_hint(&self) -> (usize, Option<usize>) {
+		self.iter.size_hint()
+	}
 
-    #[rune::function(instance, keep, protocol = LEN)]
-    pub fn len(&self) -> usize {
-        self.iter.len()
-    }
+	#[rune::function(instance, keep, protocol = LEN)]
+	pub fn len(&self) -> usize {
+		self.iter.len()
+	}
 }
 
 impl iter::Iterator for RuneValues {
-    type Item = Result<Value, VmError>;
+	type Item = Result<Value, VmError>;
 
-    #[inline]
-    fn next(&mut self) -> Option<Self::Item> {
-        match RuneValues::next(self) {
-            Ok(Some(value)) => Some(Ok(value)),
-            Ok(None) => None,
-            Err(err) => Some(Err(err)),
-        }
-    }
+	#[inline]
+	fn next(&mut self) -> Option<Self::Item> {
+		match RuneValues::next(self) {
+			Ok(Some(value)) => Some(Ok(value)),
+			Ok(None) => None,
+			Err(err) => Some(Err(err)),
+		}
+	}
 }

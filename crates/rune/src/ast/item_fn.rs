@@ -3,42 +3,42 @@ use crate::ast::prelude::*;
 #[test]
 #[cfg(not(miri))]
 fn ast_parse() {
-    use crate::parse;
-    use crate::SourceId;
+	use crate::parse;
+	use crate::SourceId;
 
-    rt::<ast::ItemFn>("async fn hello() {}");
-    assert!(
-        parse::parse_all::<ast::ItemFn>("fn async hello() {}", SourceId::EMPTY, false).is_err()
-    );
+	rt::<ast::ItemFn>("async fn hello() {}");
+	assert!(
+		parse::parse_all::<ast::ItemFn>("fn async hello() {}", SourceId::EMPTY, false).is_err()
+	);
 
-    let item = rt::<ast::ItemFn>("fn hello() {}");
-    assert_eq!(item.args.len(), 0);
+	let item = rt::<ast::ItemFn>("fn hello() {}");
+	assert_eq!(item.args.len(), 0);
 
-    let item = rt::<ast::ItemFn>("fn hello(foo, bar) {}");
-    assert_eq!(item.args.len(), 2);
+	let item = rt::<ast::ItemFn>("fn hello(foo, bar) {}");
+	assert_eq!(item.args.len(), 2);
 
-    rt::<ast::ItemFn>("pub fn hello(foo, bar) {}");
-    rt::<ast::ItemFn>("pub async fn hello(foo, bar) {}");
-    rt::<ast::ItemFn>("#[inline] fn hello(foo, bar) {}");
+	rt::<ast::ItemFn>("pub fn hello(foo, bar) {}");
+	rt::<ast::ItemFn>("pub async fn hello(foo, bar) {}");
+	rt::<ast::ItemFn>("#[inline] fn hello(foo, bar) {}");
 
-    let item = rt::<ast::ItemFn>("#[inline] pub async fn hello(foo, bar) {}");
-    assert!(matches!(item.visibility, ast::Visibility::Public(..)));
+	let item = rt::<ast::ItemFn>("#[inline] pub async fn hello(foo, bar) {}");
+	assert!(matches!(item.visibility, ast::Visibility::Public(..)));
 
-    assert_eq!(item.args.len(), 2);
-    assert_eq!(item.attributes.len(), 1);
-    assert!(item.async_token.is_some());
-    assert!(item.const_token.is_none());
+	assert_eq!(item.args.len(), 2);
+	assert_eq!(item.attributes.len(), 1);
+	assert!(item.async_token.is_some());
+	assert!(item.const_token.is_none());
 
-    let item = rt::<ast::ItemFn>("#[inline] pub const fn hello(foo, bar) {}");
-    assert!(matches!(item.visibility, ast::Visibility::Public(..)));
+	let item = rt::<ast::ItemFn>("#[inline] pub const fn hello(foo, bar) {}");
+	assert!(matches!(item.visibility, ast::Visibility::Public(..)));
 
-    assert_eq!(item.args.len(), 2);
-    assert_eq!(item.attributes.len(), 1);
-    assert!(item.async_token.is_none());
-    assert!(item.const_token.is_some());
+	assert_eq!(item.args.len(), 2);
+	assert_eq!(item.attributes.len(), 1);
+	assert!(item.async_token.is_none());
+	assert!(item.const_token.is_some());
 
-    let item_with_type = rt::<ast::ItemFn>("pub async fn hello(foo, bar) -> Type {}");
-    assert!(item_with_type.output.is_some());
+	let item_with_type = rt::<ast::ItemFn>("pub async fn hello(foo, bar) -> Type {}");
+	assert!(item_with_type.output.is_some());
 }
 
 /// A function item.
@@ -46,32 +46,32 @@ fn ast_parse() {
 #[rune(parse = "meta_only")]
 #[non_exhaustive]
 pub struct ItemFn {
-    /// The attributes for the fn
-    #[rune(iter, meta)]
-    pub attributes: Vec<ast::Attribute>,
-    /// The visibility of the `fn` item
-    #[rune(option, meta)]
-    pub visibility: ast::Visibility,
-    /// The optional `const` keyword.
-    #[rune(iter, meta)]
-    pub const_token: Option<T![const]>,
-    /// The optional `async` keyword.
-    #[rune(iter, meta)]
-    pub async_token: Option<T![async]>,
-    /// The `fn` token.
-    pub fn_token: T![fn],
-    /// The name of the function.
-    pub name: ast::Ident,
-    /// The arguments of the function.
-    pub args: ast::Parenthesized<ast::FnArg, T![,]>,
-    /// The function type.
-    #[rune(option)]
-    pub output: Option<(T![->], ast::Type)>,
-    /// The body of the function.
-    pub body: ast::Block,
-    /// Opaque identifier for fn item.
-    #[rune(skip)]
-    pub(crate) id: ItemId,
+	/// The attributes for the fn
+	#[rune(iter, meta)]
+	pub attributes: Vec<ast::Attribute>,
+	/// The visibility of the `fn` item
+	#[rune(option, meta)]
+	pub visibility: ast::Visibility,
+	/// The optional `const` keyword.
+	#[rune(iter, meta)]
+	pub const_token: Option<T![const]>,
+	/// The optional `async` keyword.
+	#[rune(iter, meta)]
+	pub async_token: Option<T![async]>,
+	/// The `fn` token.
+	pub fn_token: T![fn],
+	/// The name of the function.
+	pub name: ast::Ident,
+	/// The arguments of the function.
+	pub args: ast::Parenthesized<ast::FnArg, T![,]>,
+	/// The function type.
+	#[rune(option)]
+	pub output: Option<(T![->], ast::Type)>,
+	/// The body of the function.
+	pub body: ast::Block,
+	/// Opaque identifier for fn item.
+	#[rune(skip)]
+	pub(crate) id: ItemId,
 }
 
 impl ItemFn {}
@@ -79,12 +79,12 @@ impl ItemFn {}
 item_parse!(Fn, ItemFn, "function item");
 
 impl Peek for ItemFn {
-    fn peek(p: &mut Peeker<'_>) -> bool {
-        match (p.nth(0), p.nth(1)) {
-            (K![fn], _) => true,
-            (K![async], K![fn]) => true,
-            (K![const], K![fn]) => true,
-            _ => false,
-        }
-    }
+	fn peek(p: &mut Peeker<'_>) -> bool {
+		match (p.nth(0), p.nth(1)) {
+			(K![fn], _) => true,
+			(K![async], K![fn]) => true,
+			(K![const], K![fn]) => true,
+			_ => false,
+		}
+	}
 }

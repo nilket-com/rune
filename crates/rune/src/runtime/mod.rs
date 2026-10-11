@@ -55,11 +55,11 @@ mod const_value;
 #[doc(hidden)]
 pub use self::const_value::ToConstValue;
 pub use self::const_value::{
-    from_const_value, to_const_value, ConstConstruct, ConstConstructImpl, ConstFields,
-    ConstFieldsIter, ConstValue, ConstValueBuf, FromConstValue,
+	from_const_value, to_const_value, ConstConstruct, ConstConstructImpl, ConstFields,
+	ConstFieldsIter, ConstValue, ConstValueBuf, FromConstValue,
 };
 pub(crate) use self::const_value::{
-    ConstContext, ConstNodeKind, EmptyConstContext, MAX_CONST_DEPTH,
+	ConstContext, ConstNodeKind, EmptyConstContext, MAX_CONST_DEPTH,
 };
 
 pub mod debug;
@@ -98,8 +98,8 @@ pub use self::into_output::IntoOutput;
 pub(crate) mod inst;
 pub use self::inst::{Address, Inst, Output};
 pub(crate) use self::inst::{
-    InstArithmeticOp, InstBitwiseOp, InstOp, InstRange, InstShiftOp, InstTarget, InstValue,
-    PanicReason,
+	InstArithmeticOp, InstBitwiseOp, InstOp, InstRange, InstShiftOp, InstTarget, InstValue,
+	PanicReason,
 };
 
 mod iterator;
@@ -182,8 +182,8 @@ pub use self::unit::{Unit, UnitStorage};
 
 mod value;
 pub use self::value::{
-    Accessor, Dismantle, EmptyStruct, Handover, Inline, RawValueGuard, Rtti, Struct, TupleStruct,
-    TypeValue, Value, ValueMutGuard, ValueRefGuard,
+	Accessor, Dismantle, EmptyStruct, Handover, Inline, RawValueGuard, Rtti, Struct, TupleStruct,
+	TypeValue, Value, ValueMutGuard, ValueRefGuard,
 };
 pub(crate) use self::value::{AnySequence, AnySequenceTakeError, Repr, RttiKind, Worklist};
 
@@ -231,24 +231,24 @@ mod hasher;
 pub use self::hasher::Hasher;
 
 crate::declare_dyn_fn! {
-    struct FunctionHandlerVTable;
+	struct FunctionHandlerVTable;
 
-    /// A function handler.
-    pub struct FunctionHandler {
-        fn call(memory: &mut dyn Memory, addr: Address, count: usize, out: Output) -> Result<(), VmError>;
-    }
+	/// A function handler.
+	pub struct FunctionHandler {
+		fn call(memory: &mut dyn Memory, addr: Address, count: usize, out: Output) -> Result<(), VmError>;
+	}
 }
 
 pub(crate) type FieldMap<K, V> = crate::alloc::HashMap<K, V>;
 
 #[inline(always)]
 pub(crate) fn new_field_map<K, V>() -> FieldMap<K, V> {
-    FieldMap::new()
+	FieldMap::new()
 }
 
 #[inline(always)]
 pub(crate) fn new_field_hash_map_with_capacity<K, V>(
-    cap: usize,
+	cap: usize,
 ) -> crate::alloc::Result<FieldMap<K, V>> {
-    FieldMap::try_with_capacity(cap)
+	FieldMap::try_with_capacity(cap)
 }

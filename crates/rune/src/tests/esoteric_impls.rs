@@ -4,8 +4,8 @@ use ErrorKind::*;
 
 #[test]
 fn deny_self_impl() {
-    assert_errors! {
-        r#"
+	assert_errors! {
+		r#"
         struct Foo;
 
         impl Foo {
@@ -16,6 +16,6 @@ fn deny_self_impl() {
             }
         }
         "#,
-        span!(83, 87), UnsupportedSelfType,
-    }
+		span!(83, 87), UnsupportedSelfType,
+	}
 }

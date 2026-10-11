@@ -6,11 +6,11 @@ use core::iter::FusedIterator;
 /// for instance a union or a symmetric difference.
 pub(crate) struct MergeIterInner<I>
 where
-    I: Iterator,
+	I: Iterator,
 {
-    a: I,
-    b: I,
-    peeked: Option<Peeked<I>>,
+	a: I,
+	b: I,
+	peeked: Option<Peeked<I>>,
 }
 
 /// Benchmarks faster than wrapping both iterators in a Peekable,
@@ -18,98 +18,98 @@ where
 #[derive(Clone, Debug)]
 enum Peeked<I>
 where
-    I: Iterator,
+	I: Iterator,
 {
-    A(I::Item),
-    B(I::Item),
+	A(I::Item),
+	B(I::Item),
 }
 
 impl<I> Clone for MergeIterInner<I>
 where
-    I: Iterator<Item: Clone> + Clone,
+	I: Iterator<Item: Clone> + Clone,
 {
-    #[inline]
-    fn clone(&self) -> Self {
-        Self {
-            a: self.a.clone(),
-            b: self.b.clone(),
-            peeked: self.peeked.clone(),
-        }
-    }
+	#[inline]
+	fn clone(&self) -> Self {
+		Self {
+			a: self.a.clone(),
+			b: self.b.clone(),
+			peeked: self.peeked.clone(),
+		}
+	}
 }
 
 impl<I> Debug for MergeIterInner<I>
 where
-    I: Iterator<Item: Debug> + Debug,
+	I: Iterator<Item: Debug> + Debug,
 {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_tuple("MergeIterInner")
-            .field(&self.a)
-            .field(&self.b)
-            .field(&self.peeked)
-            .finish()
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		f.debug_tuple("MergeIterInner")
+			.field(&self.a)
+			.field(&self.b)
+			.field(&self.peeked)
+			.finish()
+	}
 }
 
 impl<I> MergeIterInner<I>
 where
-    I: Iterator,
+	I: Iterator,
 {
-    /// Creates a new core for an iterator merging a pair of sources.
-    pub(crate) fn new(a: I, b: I) -> Self {
-        MergeIterInner { a, b, peeked: None }
-    }
+	/// Creates a new core for an iterator merging a pair of sources.
+	pub(crate) fn new(a: I, b: I) -> Self {
+		MergeIterInner { a, b, peeked: None }
+	}
 
-    /// Returns the next pair of items stemming from the pair of sources
-    /// being merged. If both returned options contain a value, that value
-    /// is equal and occurs in both sources. If one of the returned options
-    /// contains a value, that value doesn't occur in the other source (or
-    /// the sources are not strictly ascending). If neither returned option
-    /// contains a value, iteration has finished and subsequent calls will
-    /// return the same empty pair.
-    pub(crate) fn nexts<Cmp: Fn(&I::Item, &I::Item) -> Ordering>(
-        &mut self,
-        cmp: Cmp,
-    ) -> (Option<I::Item>, Option<I::Item>)
-    where
-        I: FusedIterator,
-    {
-        let mut a_next;
-        let mut b_next;
-        match self.peeked.take() {
-            Some(Peeked::A(next)) => {
-                a_next = Some(next);
-                b_next = self.b.next();
-            }
-            Some(Peeked::B(next)) => {
-                b_next = Some(next);
-                a_next = self.a.next();
-            }
-            None => {
-                a_next = self.a.next();
-                b_next = self.b.next();
-            }
-        }
-        if let (Some(ref a1), Some(ref b1)) = (&a_next, &b_next) {
-            match cmp(a1, b1) {
-                Ordering::Less => self.peeked = b_next.take().map(Peeked::B),
-                Ordering::Greater => self.peeked = a_next.take().map(Peeked::A),
-                Ordering::Equal => (),
-            }
-        }
-        (a_next, b_next)
-    }
+	/// Returns the next pair of items stemming from the pair of sources
+	/// being merged. If both returned options contain a value, that value
+	/// is equal and occurs in both sources. If one of the returned options
+	/// contains a value, that value doesn't occur in the other source (or
+	/// the sources are not strictly ascending). If neither returned option
+	/// contains a value, iteration has finished and subsequent calls will
+	/// return the same empty pair.
+	pub(crate) fn nexts<Cmp: Fn(&I::Item, &I::Item) -> Ordering>(
+		&mut self,
+		cmp: Cmp,
+	) -> (Option<I::Item>, Option<I::Item>)
+	where
+		I: FusedIterator,
+	{
+		let mut a_next;
+		let mut b_next;
+		match self.peeked.take() {
+			Some(Peeked::A(next)) => {
+				a_next = Some(next);
+				b_next = self.b.next();
+			}
+			Some(Peeked::B(next)) => {
+				b_next = Some(next);
+				a_next = self.a.next();
+			}
+			None => {
+				a_next = self.a.next();
+				b_next = self.b.next();
+			}
+		}
+		if let (Some(ref a1), Some(ref b1)) = (&a_next, &b_next) {
+			match cmp(a1, b1) {
+				Ordering::Less => self.peeked = b_next.take().map(Peeked::B),
+				Ordering::Greater => self.peeked = a_next.take().map(Peeked::A),
+				Ordering::Equal => (),
+			}
+		}
+		(a_next, b_next)
+	}
 
-    /// Returns a pair of upper bounds for the `size_hint` of the final iterator.
-    pub(crate) fn lens(&self) -> (usize, usize)
-    where
-        I: ExactSizeIterator,
-    {
-        match self.peeked {
-            Some(Peeked::A(_)) => (1 + self.a.len(), self.b.len()),
-            Some(Peeked::B(_)) => (self.a.len(), 1 + self.b.len()),
-            _ => (self.a.len(), self.b.len()),
-        }
-    }
+	/// Returns a pair of upper bounds for the `size_hint` of the final iterator.
+	pub(crate) fn lens(&self) -> (usize, usize)
+	where
+		I: ExactSizeIterator,
+	{
+		match self.peeked {
+			Some(Peeked::A(_)) => (1 + self.a.len(), self.b.len()),
+			Some(Peeked::B(_)) => (self.a.len(), 1 + self.b.len()),
+			_ => (self.a.len(), self.b.len()),
+		}
+	}
 }

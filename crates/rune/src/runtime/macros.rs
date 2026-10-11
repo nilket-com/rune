@@ -1,54 +1,54 @@
 macro_rules! inline_macros {
-    ($path:path) => {
-        $path! {
-            /// Coerce into [`Ordering`].
-            Ordering(Ordering),
-            as_ordering,
-            as_ordering_mut,
-        }
+	($path:path) => {
+		$path! {
+			/// Coerce into [`Ordering`].
+			Ordering(Ordering),
+			as_ordering,
+			as_ordering_mut,
+		}
 
-        $path! {
-            /// Coerce into [`bool`].
-            Bool(bool),
-            as_bool,
-            as_bool_mut,
-        }
+		$path! {
+			/// Coerce into [`bool`].
+			Bool(bool),
+			as_bool,
+			as_bool_mut,
+		}
 
-        $path! {
-            /// Coerce into [`char`].
-            Char(char),
-            as_char,
-            as_char_mut,
-        }
+		$path! {
+			/// Coerce into [`char`].
+			Char(char),
+			as_char,
+			as_char_mut,
+		}
 
-        $path! {
-            /// Coerce into [`u64`] unsigned integer.
-            Unsigned(u64),
-            as_unsigned,
-            as_unsigned_mut,
-        }
+		$path! {
+			/// Coerce into [`u64`] unsigned integer.
+			Unsigned(u64),
+			as_unsigned,
+			as_unsigned_mut,
+		}
 
-        $path! {
-            /// Coerce into [`i64`] signed integer.
-            Signed(i64),
-            as_signed,
-            as_signed_mut,
-        }
+		$path! {
+			/// Coerce into [`i64`] signed integer.
+			Signed(i64),
+			as_signed,
+			as_signed_mut,
+		}
 
-        $path! {
-            /// Coerce into [`f64`] float.
-            Float(f64),
-            as_float,
-            as_float_mut,
-        }
+		$path! {
+			/// Coerce into [`f64`] float.
+			Float(f64),
+			as_float,
+			as_float_mut,
+		}
 
-        $path! {
-            /// Coerce into [`Type`].
-            Type(Type),
-            as_type,
-            as_type_mut,
-        }
-    };
+		$path! {
+			/// Coerce into [`Type`].
+			Type(Type),
+			as_type,
+			as_type_mut,
+		}
+	};
 }
 
 macro_rules! range_iter {

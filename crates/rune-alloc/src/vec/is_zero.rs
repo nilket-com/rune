@@ -4,20 +4,20 @@ use crate::boxed::Box;
 
 #[rustc_specialization_trait]
 pub(super) unsafe trait IsZero {
-    /// Whether this value's representation is all zeros,
-    /// or can be represented with all zeroes.
-    fn is_zero(&self) -> bool;
+	/// Whether this value's representation is all zeros,
+	/// or can be represented with all zeroes.
+	fn is_zero(&self) -> bool;
 }
 
 macro_rules! impl_is_zero {
-    ($t:ty, $is_zero:expr) => {
-        unsafe impl IsZero for $t {
-            #[inline]
-            fn is_zero(&self) -> bool {
-                $is_zero(*self)
-            }
-        }
-    };
+	($t:ty, $is_zero:expr) => {
+		unsafe impl IsZero for $t {
+			#[inline]
+			fn is_zero(&self) -> bool {
+				$is_zero(*self)
+			}
+		}
+	};
 }
 
 impl_is_zero!(i8, |x| x == 0); // It is needed to impl for arrays and tuples of i8.
@@ -41,31 +41,31 @@ impl_is_zero!(f32, |x: f32| x.to_bits() == 0);
 impl_is_zero!(f64, |x: f64| x.to_bits() == 0);
 
 unsafe impl<T> IsZero for *const T {
-    #[inline]
-    fn is_zero(&self) -> bool {
-        (*self).is_null()
-    }
+	#[inline]
+	fn is_zero(&self) -> bool {
+		(*self).is_null()
+	}
 }
 
 unsafe impl<T> IsZero for *mut T {
-    #[inline]
-    fn is_zero(&self) -> bool {
-        (*self).is_null()
-    }
+	#[inline]
+	fn is_zero(&self) -> bool {
+		(*self).is_null()
+	}
 }
 
 unsafe impl<T: IsZero, const N: usize> IsZero for [T; N] {
-    #[inline]
-    fn is_zero(&self) -> bool {
-        // Because this is generated as a runtime check, it's not obvious that
-        // it's worth doing if the array is really long. The threshold here
-        // is largely arbitrary, but was picked because as of 2022-07-01 LLVM
-        // fails to const-fold the check in `vec![[1; 32]; n]`
-        // See https://github.com/rust-lang/rust/pull/97581#issuecomment-1166628022
-        // Feel free to tweak if you have better evidence.
+	#[inline]
+	fn is_zero(&self) -> bool {
+		// Because this is generated as a runtime check, it's not obvious that
+		// it's worth doing if the array is really long. The threshold here
+		// is largely arbitrary, but was picked because as of 2022-07-01 LLVM
+		// fails to const-fold the check in `vec![[1; 32]; n]`
+		// See https://github.com/rust-lang/rust/pull/97581#issuecomment-1166628022
+		// Feel free to tweak if you have better evidence.
 
-        N <= 16 && self.iter().all(IsZero::is_zero)
-    }
+		N <= 16 && self.iter().all(IsZero::is_zero)
+	}
 }
 
 // This is recursive macro.
@@ -102,17 +102,17 @@ impl_for_tuples!(A, B, C, D, E, F, G, H);
 // `SpecFromElem`.
 
 unsafe impl<T: ?Sized> IsZero for Option<&T> {
-    #[inline]
-    fn is_zero(&self) -> bool {
-        self.is_none()
-    }
+	#[inline]
+	fn is_zero(&self) -> bool {
+		self.is_none()
+	}
 }
 
 unsafe impl<T: ?Sized> IsZero for Option<Box<T>> {
-    #[inline]
-    fn is_zero(&self) -> bool {
-        self.is_none()
-    }
+	#[inline]
+	fn is_zero(&self) -> bool {
+		self.is_none()
+	}
 }
 
 // `Option<num::NonZeroU32>` and similar have a representation guarantee that
@@ -134,18 +134,18 @@ macro_rules! impl_is_zero_option_of_nonzero {
 }
 
 impl_is_zero_option_of_nonzero!(
-    NonZeroU8,
-    NonZeroU16,
-    NonZeroU32,
-    NonZeroU64,
-    NonZeroU128,
-    NonZeroI8,
-    NonZeroI16,
-    NonZeroI32,
-    NonZeroI64,
-    NonZeroI128,
-    NonZeroUsize,
-    NonZeroIsize,
+	NonZeroU8,
+	NonZeroU16,
+	NonZeroU32,
+	NonZeroU64,
+	NonZeroU128,
+	NonZeroI8,
+	NonZeroI16,
+	NonZeroI32,
+	NonZeroI64,
+	NonZeroI128,
+	NonZeroUsize,
+	NonZeroIsize,
 );
 
 macro_rules! impl_is_zero_option_of_num {
@@ -167,20 +167,20 @@ impl_is_zero_option_of_num!(u8, u16, u32, u64, u128, i8, i16, i32, i64, i128, us
 
 unsafe impl<T> IsZero for Wrapping<T>
 where
-    T: IsZero,
+	T: IsZero,
 {
-    #[inline]
-    fn is_zero(&self) -> bool {
-        self.0.is_zero()
-    }
+	#[inline]
+	fn is_zero(&self) -> bool {
+		self.0.is_zero()
+	}
 }
 
 unsafe impl<T> IsZero for Saturating<T>
 where
-    T: IsZero,
+	T: IsZero,
 {
-    #[inline]
-    fn is_zero(&self) -> bool {
-        self.0.is_zero()
-    }
+	#[inline]
+	fn is_zero(&self) -> bool {
+		self.0.is_zero()
+	}
 }

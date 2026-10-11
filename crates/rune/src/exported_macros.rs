@@ -9,14 +9,14 @@
 #[doc(hidden)]
 #[deprecated = "Use `?` on `VmResult` instead of this macro."]
 macro_rules! __vm_try {
-    ($expr:expr) => {
-        match $expr {
-            Ok(value) => value,
-            Err(err) => {
-                return Err($crate::VmError::from(err));
-            }
-        }
-    };
+	($expr:expr) => {
+		match $expr {
+			Ok(value) => value,
+			Err(err) => {
+				return Err($crate::VmError::from(err));
+			}
+		}
+	};
 }
 
 /// Helper to perform the try operation over an inner value of a
@@ -30,17 +30,17 @@ macro_rules! __vm_try {
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __nested_try {
-    ($expr:expr) => {
-        match $expr {
-            Ok(value) => value,
-            Err(err) => {
-                return Ok(Err(
-                    #[allow(clippy::useless_conversion)]
-                    ::core::convert::From::from(err),
-                ));
-            }
-        }
-    };
+	($expr:expr) => {
+		match $expr {
+			Ok(value) => value,
+			Err(err) => {
+				return Ok(Err(
+					#[allow(clippy::useless_conversion)]
+					::core::convert::From::from(err),
+				));
+			}
+		}
+	};
 }
 
 /// Helper to cause a panic.
@@ -67,9 +67,9 @@ macro_rules! __nested_try {
 #[macro_export]
 #[doc(hidden)]
 macro_rules! __vm_panic {
-    ($expr:expr) => {{
-        return Err($crate::runtime::VmError::panic($expr));
-    }};
+	($expr:expr) => {{
+		return Err($crate::runtime::VmError::panic($expr));
+	}};
 }
 
 /// Helper macro to perform a `write!` in a context which errors with

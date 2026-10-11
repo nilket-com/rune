@@ -20,47 +20,47 @@ use crate::vec::Vec;
 /// `&T` to `T`. The `ToOwned` trait generalizes `TryClone` to construct owned
 /// data from any borrow of a given type.
 pub trait TryToOwned {
-    /// The resulting type after obtaining ownership.
-    type Owned: Borrow<Self>;
+	/// The resulting type after obtaining ownership.
+	type Owned: Borrow<Self>;
 
-    /// Creates owned data from borrowed data, usually by cloning.
-    ///
-    /// # Examples
-    ///
-    /// Basic usage:
-    ///
-    /// ```
-    /// use rune::alloc::{Vec, String};
-    /// use rune::alloc::prelude::*;
-    ///
-    /// let s: &str = "a";
-    /// let ss: String = s.try_to_owned()?;
-    /// # let v: &[i32] = &[1, 2];
-    /// # let vv: Vec<i32> = v.try_to_owned()?;
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    fn try_to_owned(&self) -> Result<Self::Owned, Error>;
+	/// Creates owned data from borrowed data, usually by cloning.
+	///
+	/// # Examples
+	///
+	/// Basic usage:
+	///
+	/// ```
+	/// use rune::alloc::{Vec, String};
+	/// use rune::alloc::prelude::*;
+	///
+	/// let s: &str = "a";
+	/// let ss: String = s.try_to_owned()?;
+	/// # let v: &[i32] = &[1, 2];
+	/// # let vv: Vec<i32> = v.try_to_owned()?;
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	fn try_to_owned(&self) -> Result<Self::Owned, Error>;
 }
 
 impl<T> TryToOwned for T
 where
-    T: TryClone,
+	T: TryClone,
 {
-    type Owned = T;
+	type Owned = T;
 
-    #[inline]
-    fn try_to_owned(&self) -> Result<T, Error> {
-        self.try_clone()
-    }
+	#[inline]
+	fn try_to_owned(&self) -> Result<T, Error> {
+		self.try_clone()
+	}
 }
 
 #[cfg(feature = "std")]
 impl TryToOwned for std::path::Path {
-    type Owned = std::path::PathBuf;
+	type Owned = std::path::PathBuf;
 
-    fn try_to_owned(&self) -> Result<Self::Owned, Error> {
-        Ok(self.to_path_buf())
-    }
+	fn try_to_owned(&self) -> Result<Self::Owned, Error> {
+		Ok(self.to_path_buf())
+	}
 }
 
 /// A clone-on-write smart pointer.
@@ -153,259 +153,259 @@ impl TryToOwned for std::path::Path {
 /// ```
 pub enum Cow<'b, T: ?Sized + 'b>
 where
-    T: TryToOwned,
+	T: TryToOwned,
 {
-    /// Borrowed data.
-    Borrowed(&'b T),
-    /// Owned data.
-    Owned(<T as TryToOwned>::Owned),
+	/// Borrowed data.
+	Borrowed(&'b T),
+	/// Owned data.
+	Owned(<T as TryToOwned>::Owned),
 }
 
 impl<B: ?Sized + TryToOwned> Cow<'_, B> {
-    /// Returns true if the data is borrowed, i.e. if `to_mut` would require
-    /// additional work.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::borrow::Cow;
-    /// use rune::alloc::prelude::*;
-    ///
-    /// let cow = Cow::Borrowed("moo");
-    /// assert!(cow.is_borrowed());
-    ///
-    /// let bull: Cow<'_, str> = Cow::Owned("...moo?".try_to_string()?);
-    /// assert!(!bull.is_borrowed());
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    pub const fn is_borrowed(&self) -> bool {
-        matches!(self, Cow::Borrowed(..))
-    }
+	/// Returns true if the data is borrowed, i.e. if `to_mut` would require
+	/// additional work.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::borrow::Cow;
+	/// use rune::alloc::prelude::*;
+	///
+	/// let cow = Cow::Borrowed("moo");
+	/// assert!(cow.is_borrowed());
+	///
+	/// let bull: Cow<'_, str> = Cow::Owned("...moo?".try_to_string()?);
+	/// assert!(!bull.is_borrowed());
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	pub const fn is_borrowed(&self) -> bool {
+		matches!(self, Cow::Borrowed(..))
+	}
 
-    /// Returns true if the data is owned, i.e. if `to_mut` would be a no-op.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::borrow::Cow;
-    /// use rune::alloc::prelude::*;
-    ///
-    /// let cow: Cow<'_, str> = Cow::Owned("moo".try_to_string()?);
-    /// assert!(cow.is_owned());
-    ///
-    /// let bull = Cow::Borrowed("...moo?");
-    /// assert!(!bull.is_owned());
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    pub const fn is_owned(&self) -> bool {
-        !self.is_borrowed()
-    }
+	/// Returns true if the data is owned, i.e. if `to_mut` would be a no-op.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::borrow::Cow;
+	/// use rune::alloc::prelude::*;
+	///
+	/// let cow: Cow<'_, str> = Cow::Owned("moo".try_to_string()?);
+	/// assert!(cow.is_owned());
+	///
+	/// let bull = Cow::Borrowed("...moo?");
+	/// assert!(!bull.is_owned());
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	pub const fn is_owned(&self) -> bool {
+		!self.is_borrowed()
+	}
 
-    /// Acquires a mutable reference to the owned form of the data.
-    ///
-    /// Clones the data if it is not already owned.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::borrow::Cow;
-    /// use rune::alloc::String;
-    ///
-    /// let mut cow = Cow::Borrowed("foo");
-    /// cow.try_to_mut()?.make_ascii_uppercase();
-    ///
-    /// assert_eq!(cow, Cow::Owned(String::try_from("FOO")?));
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    pub fn try_to_mut(&mut self) -> Result<&mut <B as TryToOwned>::Owned, Error> {
-        Ok(match *self {
-            Cow::Borrowed(borrowed) => {
-                *self = Cow::Owned(borrowed.try_to_owned()?);
+	/// Acquires a mutable reference to the owned form of the data.
+	///
+	/// Clones the data if it is not already owned.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::borrow::Cow;
+	/// use rune::alloc::String;
+	///
+	/// let mut cow = Cow::Borrowed("foo");
+	/// cow.try_to_mut()?.make_ascii_uppercase();
+	///
+	/// assert_eq!(cow, Cow::Owned(String::try_from("FOO")?));
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	pub fn try_to_mut(&mut self) -> Result<&mut <B as TryToOwned>::Owned, Error> {
+		Ok(match *self {
+			Cow::Borrowed(borrowed) => {
+				*self = Cow::Owned(borrowed.try_to_owned()?);
 
-                match *self {
-                    Cow::Borrowed(..) => unreachable!(),
-                    Cow::Owned(ref mut owned) => owned,
-                }
-            }
-            Cow::Owned(ref mut owned) => owned,
-        })
-    }
+				match *self {
+					Cow::Borrowed(..) => unreachable!(),
+					Cow::Owned(ref mut owned) => owned,
+				}
+			}
+			Cow::Owned(ref mut owned) => owned,
+		})
+	}
 
-    /// Extracts the owned data.
-    ///
-    /// Clones the data if it is not already owned.
-    ///
-    /// # Examples
-    ///
-    /// Calling `into_owned` on a `Cow::Borrowed` returns a clone of the borrowed data:
-    ///
-    /// ```
-    /// use rune::alloc::borrow::Cow;
-    /// use rune::alloc::String;
-    ///
-    /// let s = "Hello world!";
-    /// let cow = Cow::Borrowed(s);
-    ///
-    /// assert_eq!(cow.try_into_owned()?, String::try_from(s)?);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    ///
-    /// Calling `into_owned` on a `Cow::Owned` returns the owned data. The data is moved out of the
-    /// `Cow` without being cloned.
-    ///
-    /// ```
-    /// use rune::alloc::borrow::Cow;
-    /// use rune::alloc::String;
-    ///
-    /// let s = "Hello world!";
-    /// let cow: Cow<'_, str> = Cow::Owned(String::try_from(s)?);
-    ///
-    /// assert_eq!(cow.try_into_owned()?, String::try_from(s)?);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    pub fn try_into_owned(self) -> Result<<B as TryToOwned>::Owned, Error> {
-        match self {
-            Cow::Borrowed(borrowed) => borrowed.try_to_owned(),
-            Cow::Owned(owned) => Ok(owned),
-        }
-    }
+	/// Extracts the owned data.
+	///
+	/// Clones the data if it is not already owned.
+	///
+	/// # Examples
+	///
+	/// Calling `into_owned` on a `Cow::Borrowed` returns a clone of the borrowed data:
+	///
+	/// ```
+	/// use rune::alloc::borrow::Cow;
+	/// use rune::alloc::String;
+	///
+	/// let s = "Hello world!";
+	/// let cow = Cow::Borrowed(s);
+	///
+	/// assert_eq!(cow.try_into_owned()?, String::try_from(s)?);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	///
+	/// Calling `into_owned` on a `Cow::Owned` returns the owned data. The data is moved out of the
+	/// `Cow` without being cloned.
+	///
+	/// ```
+	/// use rune::alloc::borrow::Cow;
+	/// use rune::alloc::String;
+	///
+	/// let s = "Hello world!";
+	/// let cow: Cow<'_, str> = Cow::Owned(String::try_from(s)?);
+	///
+	/// assert_eq!(cow.try_into_owned()?, String::try_from(s)?);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	pub fn try_into_owned(self) -> Result<<B as TryToOwned>::Owned, Error> {
+		match self {
+			Cow::Borrowed(borrowed) => borrowed.try_to_owned(),
+			Cow::Owned(owned) => Ok(owned),
+		}
+	}
 }
 
 impl<'a, T: ?Sized + 'a> From<&'a T> for Cow<'a, T>
 where
-    T: TryToOwned,
+	T: TryToOwned,
 {
-    /// Construct a `Cow` from a reference.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::borrow::Cow;
-    ///
-    /// let s = Cow::from("Hello World");
-    /// assert_eq!("Hello World", s);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[inline]
-    fn from(b: &'a T) -> Self {
-        Cow::Borrowed(b)
-    }
+	/// Construct a `Cow` from a reference.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::borrow::Cow;
+	///
+	/// let s = Cow::from("Hello World");
+	/// assert_eq!("Hello World", s);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[inline]
+	fn from(b: &'a T) -> Self {
+		Cow::Borrowed(b)
+	}
 }
 
 #[cfg(feature = "alloc")]
 impl<'a, T: ?Sized + 'a> TryFrom<rust_alloc::borrow::Cow<'a, T>> for Cow<'a, T>
 where
-    T: ToOwned + TryToOwned<Owned: TryFrom<<T as ToOwned>::Owned>>,
+	T: ToOwned + TryToOwned<Owned: TryFrom<<T as ToOwned>::Owned>>,
 {
-    type Error = <<T as TryToOwned>::Owned as TryFrom<<T as ToOwned>::Owned>>::Error;
+	type Error = <<T as TryToOwned>::Owned as TryFrom<<T as ToOwned>::Owned>>::Error;
 
-    fn try_from(value: rust_alloc::borrow::Cow<'a, T>) -> Result<Self, Self::Error> {
-        Ok(match value {
-            rust_alloc::borrow::Cow::Borrowed(b) => Cow::Borrowed(b),
-            rust_alloc::borrow::Cow::Owned(o) => Cow::Owned(<T as TryToOwned>::Owned::try_from(o)?),
-        })
-    }
+	fn try_from(value: rust_alloc::borrow::Cow<'a, T>) -> Result<Self, Self::Error> {
+		Ok(match value {
+			rust_alloc::borrow::Cow::Borrowed(b) => Cow::Borrowed(b),
+			rust_alloc::borrow::Cow::Owned(o) => Cow::Owned(<T as TryToOwned>::Owned::try_from(o)?),
+		})
+	}
 }
 
 impl<B> Deref for Cow<'_, B>
 where
-    B: ?Sized + TryToOwned<Owned: Borrow<B>>,
+	B: ?Sized + TryToOwned<Owned: Borrow<B>>,
 {
-    type Target = B;
+	type Target = B;
 
-    fn deref(&self) -> &B {
-        match *self {
-            Cow::Borrowed(borrowed) => borrowed,
-            Cow::Owned(ref owned) => owned.borrow(),
-        }
-    }
+	fn deref(&self) -> &B {
+		match *self {
+			Cow::Borrowed(borrowed) => borrowed,
+			Cow::Owned(ref owned) => owned.borrow(),
+		}
+	}
 }
 
 impl<T: ?Sized + TryToOwned> AsRef<T> for Cow<'_, T> {
-    #[inline]
-    fn as_ref(&self) -> &T {
-        self
-    }
+	#[inline]
+	fn as_ref(&self) -> &T {
+		self
+	}
 }
 
 impl<T: ?Sized> fmt::Display for Cow<'_, T>
 where
-    T: fmt::Display + TryToOwned,
+	T: fmt::Display + TryToOwned,
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        (**self).fmt(f)
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		(**self).fmt(f)
+	}
 }
 
 impl<T: ?Sized> fmt::Debug for Cow<'_, T>
 where
-    T: fmt::Debug + TryToOwned,
+	T: fmt::Debug + TryToOwned,
 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        (**self).fmt(f)
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		(**self).fmt(f)
+	}
 }
 
 impl TryClone for Cow<'_, str> {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, Error> {
-        Ok(match self {
-            Cow::Borrowed(b) => Cow::Borrowed(b),
-            Cow::Owned(o) => Cow::Owned(o.try_clone()?),
-        })
-    }
+	#[inline]
+	fn try_clone(&self) -> Result<Self, Error> {
+		Ok(match self {
+			Cow::Borrowed(b) => Cow::Borrowed(b),
+			Cow::Owned(o) => Cow::Owned(o.try_clone()?),
+		})
+	}
 }
 
 impl<T> From<Vec<T>> for Cow<'_, [T]>
 where
-    T: TryClone,
+	T: TryClone,
 {
-    fn from(vec: Vec<T>) -> Self {
-        Cow::Owned(vec)
-    }
+	fn from(vec: Vec<T>) -> Self {
+		Cow::Owned(vec)
+	}
 }
 
 impl<B: ?Sized> PartialEq for Cow<'_, B>
 where
-    B: PartialEq + TryToOwned,
+	B: PartialEq + TryToOwned,
 {
-    #[inline]
-    fn eq(&self, other: &Self) -> bool {
-        (**self).eq(&**other)
-    }
+	#[inline]
+	fn eq(&self, other: &Self) -> bool {
+		(**self).eq(&**other)
+	}
 }
 
 impl<B: ?Sized> Eq for Cow<'_, B> where B: Eq + TryToOwned {}
 
 impl<B: ?Sized> PartialOrd for Cow<'_, B>
 where
-    B: PartialOrd + TryToOwned,
+	B: PartialOrd + TryToOwned,
 {
-    #[inline]
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        (**self).partial_cmp(&**other)
-    }
+	#[inline]
+	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+		(**self).partial_cmp(&**other)
+	}
 }
 
 impl<B: ?Sized> Ord for Cow<'_, B>
 where
-    B: Ord + TryToOwned,
+	B: Ord + TryToOwned,
 {
-    #[inline]
-    fn cmp(&self, other: &Self) -> Ordering {
-        (**self).cmp(&**other)
-    }
+	#[inline]
+	fn cmp(&self, other: &Self) -> Ordering {
+		(**self).cmp(&**other)
+	}
 }
 
 impl<B> Hash for Cow<'_, B>
 where
-    B: ?Sized + Hash + TryToOwned,
+	B: ?Sized + Hash + TryToOwned,
 {
-    #[inline]
-    fn hash<H>(&self, state: &mut H)
-    where
-        H: Hasher,
-    {
-        Hash::hash(&**self, state)
-    }
+	#[inline]
+	fn hash<H>(&self, state: &mut H)
+	where
+		H: Hasher,
+	{
+		Hash::hash(&**self, state)
+	}
 }

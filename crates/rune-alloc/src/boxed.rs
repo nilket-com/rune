@@ -178,613 +178,613 @@ use crate::vec::Vec;
 
 #[test]
 fn ensure_niche_size() {
-    assert_eq!(
-        core::mem::size_of::<Option<Box<u32>>>(),
-        core::mem::size_of::<Box<u32>>()
-    );
+	assert_eq!(
+		core::mem::size_of::<Option<Box<u32>>>(),
+		core::mem::size_of::<Box<u32>>()
+	);
 }
 
 /// A pointer type that uniquely owns a heap allocation of type `T`.
 pub struct Box<T, A = Global>
 where
-    T: ?Sized,
-    A: Allocator,
+	T: ?Sized,
+	A: Allocator,
 {
-    ptr: Unique<T>,
-    alloc: A,
+	ptr: Unique<T>,
+	alloc: A,
 }
 
 impl<T> Box<T, Global> {
-    /// Allocates memory on the heap and then places `x` into it.
-    ///
-    /// This doesn't actually allocate if `T` is zero-sized.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    ///
-    /// let five = Box::try_new(5)?;
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    pub fn try_new(value: T) -> Result<Self, AllocError> {
-        Self::try_new_in(value, Global)
-    }
+	/// Allocates memory on the heap and then places `x` into it.
+	///
+	/// This doesn't actually allocate if `T` is zero-sized.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	///
+	/// let five = Box::try_new(5)?;
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	pub fn try_new(value: T) -> Result<Self, AllocError> {
+		Self::try_new_in(value, Global)
+	}
 
-    /// Constructs a new `Pin<Box<T>>`. If `T` does not implement [`Unpin`],
-    /// then `x` will be pinned in memory and unable to be moved.
-    ///
-    /// Constructing and pinning of the `Box` can also be done in two steps:
-    /// `Box::try?pin(x)` does the same as
-    /// <code>[Box::into_pin]\([Box::try?new]\(x))</code>. Consider using
-    /// [`into_pin`](Box::into_pin) if you already have a `Box<T>`, or if you
-    /// want to construct a (pinned) `Box` in a different way than with
-    /// [`Box::try_new`].
-    #[inline(always)]
-    pub fn try_pin(x: T) -> Result<Pin<Box<T>>, AllocError> {
-        Ok(Box::try_new(x)?.into())
-    }
+	/// Constructs a new `Pin<Box<T>>`. If `T` does not implement [`Unpin`],
+	/// then `x` will be pinned in memory and unable to be moved.
+	///
+	/// Constructing and pinning of the `Box` can also be done in two steps:
+	/// `Box::try?pin(x)` does the same as
+	/// <code>[Box::into_pin]\([Box::try?new]\(x))</code>. Consider using
+	/// [`into_pin`](Box::into_pin) if you already have a `Box<T>`, or if you
+	/// want to construct a (pinned) `Box` in a different way than with
+	/// [`Box::try_new`].
+	#[inline(always)]
+	pub fn try_pin(x: T) -> Result<Pin<Box<T>>, AllocError> {
+		Ok(Box::try_new(x)?.into())
+	}
 }
 
 impl<T: ?Sized> Box<T> {
-    /// Convert from a std `Box`.
-    ///
-    /// This causes the underlying allocation to be accounted for by the
-    /// [`Global`] allocator.
-    ///
-    /// A caveat of this method is that the allocation is already in use, but
-    /// this might still be necessary because we want access to certain methods
-    /// in std `Box` such as the ability to coerce to unsized values.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::{Box, Vec};
-    /// use rune::alloc::limit;
-    /// use std::boxed::Box as StdBox;
-    ///
-    /// assert_eq!(limit::get(), usize::MAX);
-    ///
-    /// let b: StdBox<dyn Iterator<Item = u32>> = StdBox::new(1..3);
-    /// let mut b = Box::from_std(b)?;
-    /// assert_eq!(b.next(), Some(1));
-    /// assert_eq!(b.next(), Some(2));
-    /// assert_eq!(b.next(), None);
-    ///
-    /// assert!(limit::get() < usize::MAX);
-    /// drop(b);
-    ///
-    /// assert_eq!(limit::get(), usize::MAX);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[cfg(feature = "alloc")]
-    pub fn from_std(b: rust_alloc::boxed::Box<T>) -> Result<Self, Error> {
-        // SAFETY: We've ensured that standard allocations only happen in an
-        // allocator which is compatible with our `Global`.
-        unsafe {
-            // NB: Layout::for_value will return the size of the pointed to
-            // value by the box, which for unsized types is the size of the
-            // metadata. For sized types the value inside of the box.
-            Global.take(Layout::for_value(b.as_ref()))?;
-            let raw = rust_alloc::boxed::Box::into_raw(b);
-            Ok(Box::from_raw_in(raw, Global))
-        }
-    }
+	/// Convert from a std `Box`.
+	///
+	/// This causes the underlying allocation to be accounted for by the
+	/// [`Global`] allocator.
+	///
+	/// A caveat of this method is that the allocation is already in use, but
+	/// this might still be necessary because we want access to certain methods
+	/// in std `Box` such as the ability to coerce to unsized values.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::{Box, Vec};
+	/// use rune::alloc::limit;
+	/// use std::boxed::Box as StdBox;
+	///
+	/// assert_eq!(limit::get(), usize::MAX);
+	///
+	/// let b: StdBox<dyn Iterator<Item = u32>> = StdBox::new(1..3);
+	/// let mut b = Box::from_std(b)?;
+	/// assert_eq!(b.next(), Some(1));
+	/// assert_eq!(b.next(), Some(2));
+	/// assert_eq!(b.next(), None);
+	///
+	/// assert!(limit::get() < usize::MAX);
+	/// drop(b);
+	///
+	/// assert_eq!(limit::get(), usize::MAX);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[cfg(feature = "alloc")]
+	pub fn from_std(b: rust_alloc::boxed::Box<T>) -> Result<Self, Error> {
+		// SAFETY: We've ensured that standard allocations only happen in an
+		// allocator which is compatible with our `Global`.
+		unsafe {
+			// NB: Layout::for_value will return the size of the pointed to
+			// value by the box, which for unsized types is the size of the
+			// metadata. For sized types the value inside of the box.
+			Global.take(Layout::for_value(b.as_ref()))?;
+			let raw = rust_alloc::boxed::Box::into_raw(b);
+			Ok(Box::from_raw_in(raw, Global))
+		}
+	}
 }
 
 impl<T, A> Box<T, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    /// Allocates memory in the given allocator then places `x` into it,
-    /// returning an error if the allocation fails
-    ///
-    /// This doesn't actually allocate if `T` is zero-sized.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    /// use rune::alloc::alloc::Global;
-    ///
-    /// let five = Box::try_new_in(5, Global)?;
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[inline]
-    pub fn try_new_in(x: T, alloc: A) -> Result<Self, AllocError> {
-        let mut boxed = Self::try_new_uninit_in(alloc)?;
+	/// Allocates memory in the given allocator then places `x` into it,
+	/// returning an error if the allocation fails
+	///
+	/// This doesn't actually allocate if `T` is zero-sized.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	/// use rune::alloc::alloc::Global;
+	///
+	/// let five = Box::try_new_in(5, Global)?;
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[inline]
+	pub fn try_new_in(x: T, alloc: A) -> Result<Self, AllocError> {
+		let mut boxed = Self::try_new_uninit_in(alloc)?;
 
-        unsafe {
-            boxed.as_mut_ptr().write(x);
-            Ok(boxed.assume_init())
-        }
-    }
+		unsafe {
+			boxed.as_mut_ptr().write(x);
+			Ok(boxed.assume_init())
+		}
+	}
 
-    /// Constructs a new box with uninitialized contents in the provided
-    /// allocator, returning an error if the allocation fails
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    /// use rune::alloc::alloc::Global;
-    ///
-    /// let mut five = Box::<u32>::try_new_uninit_in(Global)?;
-    ///
-    /// let five: Box<u32> = unsafe {
-    ///     // Deferred initialization:
-    ///     five.as_mut_ptr().write(5);
-    ///
-    ///     five.assume_init()
-    /// };
-    ///
-    /// assert_eq!(*five, 5);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    pub fn try_new_uninit_in(alloc: A) -> Result<Box<mem::MaybeUninit<T>, A>, AllocError> {
-        let layout = Layout::new::<mem::MaybeUninit<T>>();
-        let ptr = alloc.allocate(layout)?.cast();
-        unsafe { Ok(Box::from_raw_in(ptr.as_ptr(), alloc)) }
-    }
+	/// Constructs a new box with uninitialized contents in the provided
+	/// allocator, returning an error if the allocation fails
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	/// use rune::alloc::alloc::Global;
+	///
+	/// let mut five = Box::<u32>::try_new_uninit_in(Global)?;
+	///
+	/// let five: Box<u32> = unsafe {
+	///     // Deferred initialization:
+	///     five.as_mut_ptr().write(5);
+	///
+	///     five.assume_init()
+	/// };
+	///
+	/// assert_eq!(*five, 5);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	pub fn try_new_uninit_in(alloc: A) -> Result<Box<mem::MaybeUninit<T>, A>, AllocError> {
+		let layout = Layout::new::<mem::MaybeUninit<T>>();
+		let ptr = alloc.allocate(layout)?.cast();
+		unsafe { Ok(Box::from_raw_in(ptr.as_ptr(), alloc)) }
+	}
 
-    /// Consumes the `Box`, returning the wrapped value.
-    #[inline]
-    pub fn into_inner(boxed: Self) -> T {
-        let this = mem::ManuallyDrop::new(boxed);
-        let value = unsafe { ptr::read(this.ptr.as_ptr()) };
+	/// Consumes the `Box`, returning the wrapped value.
+	#[inline]
+	pub fn into_inner(boxed: Self) -> T {
+		let this = mem::ManuallyDrop::new(boxed);
+		let value = unsafe { ptr::read(this.ptr.as_ptr()) };
 
-        // Free memory associated with the box.
-        //
-        // SAFETY: We own the box, so we know we can safely deallocate it.
-        unsafe {
-            let layout = for_value_raw(this.ptr.as_ptr());
+		// Free memory associated with the box.
+		//
+		// SAFETY: We own the box, so we know we can safely deallocate it.
+		unsafe {
+			let layout = for_value_raw(this.ptr.as_ptr());
 
-            if layout.size() != 0 {
-                this.alloc.deallocate(From::from(this.ptr.cast()), layout);
-            }
-        }
+			if layout.size() != 0 {
+				this.alloc.deallocate(From::from(this.ptr.cast()), layout);
+			}
+		}
 
-        value
-    }
+		value
+	}
 }
 
 impl<T, A> Box<T, A>
 where
-    T: ?Sized,
-    A: Allocator,
+	T: ?Sized,
+	A: Allocator,
 {
-    /// Consumes and leaks the `Box`, returning a mutable reference, `&'a mut
-    /// T`. Note that the type `T` must outlive the chosen lifetime `'a`. If the
-    /// type has only static references, or none at all, then this may be chosen
-    /// to be `'static`.
-    ///
-    /// This function is mainly useful for data that lives for the remainder of
-    /// the program's life. Dropping the returned reference will cause a memory
-    /// leak. If this is not acceptable, the reference should first be wrapped
-    /// with the [`Box::from_raw_in`] function producing a `Box`. This `Box` can
-    /// then be dropped which will properly destroy `T` and release the
-    /// allocated memory.
-    ///
-    /// Note: this is an associated function, which means that you have to call
-    /// it as `Box::leak(b)` instead of `b.leak()`. This is so that there is no
-    /// conflict with a method on the inner type.
-    ///
-    /// # Examples
-    ///
-    /// Simple usage:
-    ///
-    /// ```
-    /// # #[cfg(not(miri))]
-    /// # fn main() -> Result<(), rune::alloc::Error> {
-    /// use rune::alloc::Box;
-    ///
-    /// let x = Box::try_new(41)?;
-    /// let static_ref: &'static mut usize = Box::leak(x);
-    /// *static_ref += 1;
-    /// assert_eq!(*static_ref, 42);
-    /// # Ok(())
-    /// # }
-    /// # #[cfg(miri)] fn main() {}
-    /// ```
-    ///
-    /// Unsized data:
-    ///
-    /// ```
-    /// # #[cfg(not(miri))]
-    /// # fn main() -> Result<(), rune::alloc::Error> {
-    /// use rune::alloc::{try_vec, Box};
-    ///
-    /// let x = try_vec![1, 2, 3].try_into_boxed_slice()?;
-    /// let static_ref = Box::leak(x);
-    /// static_ref[0] = 4;
-    /// assert_eq!(*static_ref, [4, 2, 3]);
-    /// # Ok(())
-    /// # }
-    /// # #[cfg(miri)] fn main() {}
-    /// ```
-    #[inline]
-    pub fn leak<'a>(b: Self) -> &'a mut T
-    where
-        A: 'a,
-    {
-        unsafe { &mut *mem::ManuallyDrop::new(b).ptr.as_ptr() }
-    }
+	/// Consumes and leaks the `Box`, returning a mutable reference, `&'a mut
+	/// T`. Note that the type `T` must outlive the chosen lifetime `'a`. If the
+	/// type has only static references, or none at all, then this may be chosen
+	/// to be `'static`.
+	///
+	/// This function is mainly useful for data that lives for the remainder of
+	/// the program's life. Dropping the returned reference will cause a memory
+	/// leak. If this is not acceptable, the reference should first be wrapped
+	/// with the [`Box::from_raw_in`] function producing a `Box`. This `Box` can
+	/// then be dropped which will properly destroy `T` and release the
+	/// allocated memory.
+	///
+	/// Note: this is an associated function, which means that you have to call
+	/// it as `Box::leak(b)` instead of `b.leak()`. This is so that there is no
+	/// conflict with a method on the inner type.
+	///
+	/// # Examples
+	///
+	/// Simple usage:
+	///
+	/// ```
+	/// # #[cfg(not(miri))]
+	/// # fn main() -> Result<(), rune::alloc::Error> {
+	/// use rune::alloc::Box;
+	///
+	/// let x = Box::try_new(41)?;
+	/// let static_ref: &'static mut usize = Box::leak(x);
+	/// *static_ref += 1;
+	/// assert_eq!(*static_ref, 42);
+	/// # Ok(())
+	/// # }
+	/// # #[cfg(miri)] fn main() {}
+	/// ```
+	///
+	/// Unsized data:
+	///
+	/// ```
+	/// # #[cfg(not(miri))]
+	/// # fn main() -> Result<(), rune::alloc::Error> {
+	/// use rune::alloc::{try_vec, Box};
+	///
+	/// let x = try_vec![1, 2, 3].try_into_boxed_slice()?;
+	/// let static_ref = Box::leak(x);
+	/// static_ref[0] = 4;
+	/// assert_eq!(*static_ref, [4, 2, 3]);
+	/// # Ok(())
+	/// # }
+	/// # #[cfg(miri)] fn main() {}
+	/// ```
+	#[inline]
+	pub fn leak<'a>(b: Self) -> &'a mut T
+	where
+		A: 'a,
+	{
+		unsafe { &mut *mem::ManuallyDrop::new(b).ptr.as_ptr() }
+	}
 
-    /// Converts a `Box<T>` into a `Pin<Box<T>>`. If `T` does not implement [`Unpin`], then
-    /// `*boxed` will be pinned in memory and unable to be moved.
-    ///
-    /// This conversion does not allocate on the heap and happens in place.
-    ///
-    /// This is also available via [`From`].
-    ///
-    /// Constructing and pinning a `Box` with <code>Box::into_pin([Box::try?new]\(x))</code>
-    /// can also be written more concisely using <code>[Box::try?pin]\(x)</code>.
-    /// This `into_pin` method is useful if you already have a `Box<T>`, or you are
-    /// constructing a (pinned) `Box` in a different way than with [`Box::try_new`].
-    ///
-    /// # Notes
-    ///
-    /// It's not recommended that crates add an impl like `From<Box<T>> for Pin<T>`,
-    /// as it'll introduce an ambiguity when calling `Pin::from`.
-    /// A demonstration of such a poor impl is shown below.
-    ///
-    /// ```compile_fail
-    /// # use core::pin::Pin;
-    /// use rune::alloc::Box;
-    ///
-    /// struct Foo; // A type defined in this crate.
-    /// impl From<Box<()>> for Pin<Foo> {
-    ///     fn from(_: Box<()>) -> Pin<Foo> {
-    ///         Pin::new(Foo)
-    ///     }
-    /// }
-    ///
-    /// let foo = Box::try_new(())?;
-    /// let bar = Pin::from(foo);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    pub fn into_pin(boxed: Self) -> Pin<Self>
-    where
-        A: 'static,
-    {
-        // It's not possible to move or replace the insides of a `Pin<Box<T>>`
-        // when `T: !Unpin`, so it's safe to pin it directly without any
-        // additional requirements.
-        unsafe { Pin::new_unchecked(boxed) }
-    }
+	/// Converts a `Box<T>` into a `Pin<Box<T>>`. If `T` does not implement [`Unpin`], then
+	/// `*boxed` will be pinned in memory and unable to be moved.
+	///
+	/// This conversion does not allocate on the heap and happens in place.
+	///
+	/// This is also available via [`From`].
+	///
+	/// Constructing and pinning a `Box` with <code>Box::into_pin([Box::try?new]\(x))</code>
+	/// can also be written more concisely using <code>[Box::try?pin]\(x)</code>.
+	/// This `into_pin` method is useful if you already have a `Box<T>`, or you are
+	/// constructing a (pinned) `Box` in a different way than with [`Box::try_new`].
+	///
+	/// # Notes
+	///
+	/// It's not recommended that crates add an impl like `From<Box<T>> for Pin<T>`,
+	/// as it'll introduce an ambiguity when calling `Pin::from`.
+	/// A demonstration of such a poor impl is shown below.
+	///
+	/// ```compile_fail
+	/// # use core::pin::Pin;
+	/// use rune::alloc::Box;
+	///
+	/// struct Foo; // A type defined in this crate.
+	/// impl From<Box<()>> for Pin<Foo> {
+	///     fn from(_: Box<()>) -> Pin<Foo> {
+	///         Pin::new(Foo)
+	///     }
+	/// }
+	///
+	/// let foo = Box::try_new(())?;
+	/// let bar = Pin::from(foo);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	pub fn into_pin(boxed: Self) -> Pin<Self>
+	where
+		A: 'static,
+	{
+		// It's not possible to move or replace the insides of a `Pin<Box<T>>`
+		// when `T: !Unpin`, so it's safe to pin it directly without any
+		// additional requirements.
+		unsafe { Pin::new_unchecked(boxed) }
+	}
 
-    /// Constructs a box from a raw pointer in the given allocator.
-    ///
-    /// After calling this function, the raw pointer is owned by the resulting
-    /// `Box`. Specifically, the `Box` destructor will call the destructor of
-    /// `T` and free the allocated memory. For this to be safe, the memory must
-    /// have been allocated in accordance with the [memory layout] used by `Box`
-    /// .
-    ///
-    /// # Safety
-    ///
-    /// This function is unsafe because improper use may lead to memory
-    /// problems. For example, a double-free may occur if the function is called
-    /// twice on the same raw pointer.
-    ///
-    /// # Examples
-    ///
-    /// Recreate a `Box` which was previously converted to a raw pointer using
-    /// [`Box::into_raw_with_allocator`]:
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    /// use rune::alloc::alloc::Global;
-    ///
-    /// let x = Box::try_new_in(5, Global)?;
-    /// let (ptr, alloc) = Box::into_raw_with_allocator(x);
-    /// let x = unsafe { Box::from_raw_in(ptr, alloc) };
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    ///
-    /// Manually create a `Box` from scratch by using the system allocator:
-    ///
-    /// ```
-    /// use core::alloc::Layout;
-    ///
-    /// use rune::alloc::Box;
-    /// use rune::alloc::alloc::{Allocator, Global};
-    ///
-    /// unsafe {
-    ///     let ptr = Global.allocate(Layout::new::<i32>())?.as_ptr() as *mut i32;
-    ///     // In general .write is required to avoid attempting to destruct
-    ///     // the (uninitialized) previous contents of `ptr`, though for this
-    ///     // simple example `*ptr = 5` would have worked as well.
-    ///     ptr.write(5);
-    ///     let x = Box::from_raw_in(ptr, Global);
-    /// }
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    ///
-    /// [memory layout]: self#memory-layout
-    /// [`Layout`]: core::alloc::Layout
-    #[inline]
-    pub unsafe fn from_raw_in(raw: *mut T, alloc: A) -> Self {
-        Self {
-            ptr: unsafe { Unique::new_unchecked(raw) },
-            alloc,
-        }
-    }
+	/// Constructs a box from a raw pointer in the given allocator.
+	///
+	/// After calling this function, the raw pointer is owned by the resulting
+	/// `Box`. Specifically, the `Box` destructor will call the destructor of
+	/// `T` and free the allocated memory. For this to be safe, the memory must
+	/// have been allocated in accordance with the [memory layout] used by `Box`
+	/// .
+	///
+	/// # Safety
+	///
+	/// This function is unsafe because improper use may lead to memory
+	/// problems. For example, a double-free may occur if the function is called
+	/// twice on the same raw pointer.
+	///
+	/// # Examples
+	///
+	/// Recreate a `Box` which was previously converted to a raw pointer using
+	/// [`Box::into_raw_with_allocator`]:
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	/// use rune::alloc::alloc::Global;
+	///
+	/// let x = Box::try_new_in(5, Global)?;
+	/// let (ptr, alloc) = Box::into_raw_with_allocator(x);
+	/// let x = unsafe { Box::from_raw_in(ptr, alloc) };
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	///
+	/// Manually create a `Box` from scratch by using the system allocator:
+	///
+	/// ```
+	/// use core::alloc::Layout;
+	///
+	/// use rune::alloc::Box;
+	/// use rune::alloc::alloc::{Allocator, Global};
+	///
+	/// unsafe {
+	///     let ptr = Global.allocate(Layout::new::<i32>())?.as_ptr() as *mut i32;
+	///     // In general .write is required to avoid attempting to destruct
+	///     // the (uninitialized) previous contents of `ptr`, though for this
+	///     // simple example `*ptr = 5` would have worked as well.
+	///     ptr.write(5);
+	///     let x = Box::from_raw_in(ptr, Global);
+	/// }
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	///
+	/// [memory layout]: self#memory-layout
+	/// [`Layout`]: core::alloc::Layout
+	#[inline]
+	pub unsafe fn from_raw_in(raw: *mut T, alloc: A) -> Self {
+		Self {
+			ptr: unsafe { Unique::new_unchecked(raw) },
+			alloc,
+		}
+	}
 
-    /// Consumes the `Box`, returning a wrapped raw pointer and the allocator.
-    ///
-    /// The pointer will be properly aligned and non-null.
-    ///
-    /// After calling this function, the caller is responsible for the
-    /// memory previously managed by the `Box`. In particular, the
-    /// caller should properly destroy `T` and release the memory, taking
-    /// into account the [memory layout] used by `Box`. The easiest way to
-    /// do this is to convert the raw pointer back into a `Box` with the
-    /// [`Box::from_raw_in`] function, allowing the `Box` destructor to perform
-    /// the cleanup.
-    ///
-    /// Note: this is an associated function, which means that you have
-    /// to call it as `Box::into_raw_with_allocator(b)` instead of `b.into_raw_with_allocator()`. This
-    /// is so that there is no conflict with a method on the inner type.
-    ///
-    /// # Examples
-    ///
-    /// Converting the raw pointer back into a `Box` with [`Box::from_raw_in`]
-    /// for automatic cleanup:
-    ///
-    /// ```
-    /// use rune::alloc::{Box, String};
-    /// use rune::alloc::alloc::Global;
-    ///
-    /// let x = Box::try_new_in(String::try_from("Hello")?, Global)?;
-    /// let (ptr, alloc) = Box::into_raw_with_allocator(x);
-    /// let x = unsafe { Box::from_raw_in(ptr, alloc) };
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    ///
-    /// Manual cleanup by explicitly running the destructor and deallocating the
-    /// memory:
-    ///
-    /// ```
-    /// use core::alloc::Layout;
-    /// use core::ptr::{self, NonNull};
-    ///
-    /// use rune::alloc::{Box, String};
-    /// use rune::alloc::alloc::{Allocator, Global};
-    ///
-    /// let x = Box::try_new_in(String::try_from("Hello")?, Global)?;
-    ///
-    /// let (ptr, alloc) = Box::into_raw_with_allocator(x);
-    ///
-    /// unsafe {
-    ///     ptr::drop_in_place(ptr);
-    ///     let non_null = NonNull::new_unchecked(ptr);
-    ///     alloc.deallocate(non_null.cast(), Layout::new::<String>());
-    /// }
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    ///
-    /// [memory layout]: self#memory-layout
-    #[inline]
-    pub fn into_raw_with_allocator(b: Self) -> (*mut T, A) {
-        let leaked = mem::ManuallyDrop::new(b);
-        // SAFETY: We prevent the alloc field from being dropped, so we can
-        // safely smuggle it out.
-        let alloc = unsafe { ptr::read(&leaked.alloc) };
-        (leaked.ptr.as_ptr(), alloc)
-    }
+	/// Consumes the `Box`, returning a wrapped raw pointer and the allocator.
+	///
+	/// The pointer will be properly aligned and non-null.
+	///
+	/// After calling this function, the caller is responsible for the
+	/// memory previously managed by the `Box`. In particular, the
+	/// caller should properly destroy `T` and release the memory, taking
+	/// into account the [memory layout] used by `Box`. The easiest way to
+	/// do this is to convert the raw pointer back into a `Box` with the
+	/// [`Box::from_raw_in`] function, allowing the `Box` destructor to perform
+	/// the cleanup.
+	///
+	/// Note: this is an associated function, which means that you have
+	/// to call it as `Box::into_raw_with_allocator(b)` instead of `b.into_raw_with_allocator()`. This
+	/// is so that there is no conflict with a method on the inner type.
+	///
+	/// # Examples
+	///
+	/// Converting the raw pointer back into a `Box` with [`Box::from_raw_in`]
+	/// for automatic cleanup:
+	///
+	/// ```
+	/// use rune::alloc::{Box, String};
+	/// use rune::alloc::alloc::Global;
+	///
+	/// let x = Box::try_new_in(String::try_from("Hello")?, Global)?;
+	/// let (ptr, alloc) = Box::into_raw_with_allocator(x);
+	/// let x = unsafe { Box::from_raw_in(ptr, alloc) };
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	///
+	/// Manual cleanup by explicitly running the destructor and deallocating the
+	/// memory:
+	///
+	/// ```
+	/// use core::alloc::Layout;
+	/// use core::ptr::{self, NonNull};
+	///
+	/// use rune::alloc::{Box, String};
+	/// use rune::alloc::alloc::{Allocator, Global};
+	///
+	/// let x = Box::try_new_in(String::try_from("Hello")?, Global)?;
+	///
+	/// let (ptr, alloc) = Box::into_raw_with_allocator(x);
+	///
+	/// unsafe {
+	///     ptr::drop_in_place(ptr);
+	///     let non_null = NonNull::new_unchecked(ptr);
+	///     alloc.deallocate(non_null.cast(), Layout::new::<String>());
+	/// }
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	///
+	/// [memory layout]: self#memory-layout
+	#[inline]
+	pub fn into_raw_with_allocator(b: Self) -> (*mut T, A) {
+		let leaked = mem::ManuallyDrop::new(b);
+		// SAFETY: We prevent the alloc field from being dropped, so we can
+		// safely smuggle it out.
+		let alloc = unsafe { ptr::read(&leaked.alloc) };
+		(leaked.ptr.as_ptr(), alloc)
+	}
 
-    #[inline]
-    pub(crate) fn into_unique_with_allocator(b: Self) -> (Unique<T>, A) {
-        let (ptr, alloc) = Box::into_raw_with_allocator(b);
-        unsafe { (Unique::from(&mut *ptr), alloc) }
-    }
+	#[inline]
+	pub(crate) fn into_unique_with_allocator(b: Self) -> (Unique<T>, A) {
+		let (ptr, alloc) = Box::into_raw_with_allocator(b);
+		unsafe { (Unique::from(&mut *ptr), alloc) }
+	}
 }
 
 impl<T, A> Box<mem::MaybeUninit<T>, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    /// Converts to `Box<T, A>`.
-    ///
-    /// # Safety
-    ///
-    /// As with [`MaybeUninit::assume_init`],
-    /// it is up to the caller to guarantee that the value
-    /// really is in an initialized state.
-    /// Calling this when the content is not yet fully initialized
-    /// causes immediate undefined behavior.
-    ///
-    /// [`MaybeUninit::assume_init`]: mem::MaybeUninit::assume_init
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    /// use rune::alloc::alloc::Global;
-    ///
-    /// let mut five = Box::<u32>::try_new_uninit_in(Global)?;
-    ///
-    /// let five: Box<u32> = unsafe {
-    ///     // Deferred initialization:
-    ///     five.as_mut_ptr().write(5);
-    ///
-    ///     five.assume_init()
-    /// };
-    ///
-    /// assert_eq!(*five, 5);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[inline]
-    pub unsafe fn assume_init(self) -> Box<T, A> {
-        let (raw, alloc) = Box::into_raw_with_allocator(self);
-        unsafe { Box::from_raw_in(raw as *mut T, alloc) }
-    }
+	/// Converts to `Box<T, A>`.
+	///
+	/// # Safety
+	///
+	/// As with [`MaybeUninit::assume_init`],
+	/// it is up to the caller to guarantee that the value
+	/// really is in an initialized state.
+	/// Calling this when the content is not yet fully initialized
+	/// causes immediate undefined behavior.
+	///
+	/// [`MaybeUninit::assume_init`]: mem::MaybeUninit::assume_init
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	/// use rune::alloc::alloc::Global;
+	///
+	/// let mut five = Box::<u32>::try_new_uninit_in(Global)?;
+	///
+	/// let five: Box<u32> = unsafe {
+	///     // Deferred initialization:
+	///     five.as_mut_ptr().write(5);
+	///
+	///     five.assume_init()
+	/// };
+	///
+	/// assert_eq!(*five, 5);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[inline]
+	pub unsafe fn assume_init(self) -> Box<T, A> {
+		let (raw, alloc) = Box::into_raw_with_allocator(self);
+		unsafe { Box::from_raw_in(raw as *mut T, alloc) }
+	}
 }
 
 impl<T, A> Box<[T], A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    /// Constructs a new boxed slice with uninitialized contents. Returns an error if
-    /// the allocation fails
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    /// use rune::alloc::alloc::Global;
-    ///
-    /// let mut values = Box::<[u32]>::try_new_uninit_slice_in(3, Global)?;
-    ///
-    /// let values = unsafe {
-    ///     // Deferred initialization:
-    ///     values[0].as_mut_ptr().write(1);
-    ///     values[1].as_mut_ptr().write(2);
-    ///     values[2].as_mut_ptr().write(3);
-    ///     values.assume_init()
-    /// };
-    ///
-    /// assert_eq!(*values, [1, 2, 3]);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[inline]
-    pub fn try_new_uninit_slice_in(
-        len: usize,
-        alloc: A,
-    ) -> Result<Box<[mem::MaybeUninit<T>], A>, Error> {
-        unsafe {
-            let layout = match Layout::array::<mem::MaybeUninit<T>>(len) {
-                Ok(l) => l,
-                Err(_) => return Err(Error::LayoutError),
-            };
-            let ptr = alloc.allocate(layout)?;
-            Ok(RawVec::from_raw_parts_in(ptr.as_ptr() as *mut _, len, alloc).into_box(len))
-        }
-    }
+	/// Constructs a new boxed slice with uninitialized contents. Returns an error if
+	/// the allocation fails
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	/// use rune::alloc::alloc::Global;
+	///
+	/// let mut values = Box::<[u32]>::try_new_uninit_slice_in(3, Global)?;
+	///
+	/// let values = unsafe {
+	///     // Deferred initialization:
+	///     values[0].as_mut_ptr().write(1);
+	///     values[1].as_mut_ptr().write(2);
+	///     values[2].as_mut_ptr().write(3);
+	///     values.assume_init()
+	/// };
+	///
+	/// assert_eq!(*values, [1, 2, 3]);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[inline]
+	pub fn try_new_uninit_slice_in(
+		len: usize,
+		alloc: A,
+	) -> Result<Box<[mem::MaybeUninit<T>], A>, Error> {
+		unsafe {
+			let layout = match Layout::array::<mem::MaybeUninit<T>>(len) {
+				Ok(l) => l,
+				Err(_) => return Err(Error::LayoutError),
+			};
+			let ptr = alloc.allocate(layout)?;
+			Ok(RawVec::from_raw_parts_in(ptr.as_ptr() as *mut _, len, alloc).into_box(len))
+		}
+	}
 }
 
 impl<T, A> Box<[mem::MaybeUninit<T>], A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    /// Converts to `Box<[T], A>`.
-    ///
-    /// # Safety
-    ///
-    /// As with [`MaybeUninit::assume_init`],
-    /// it is up to the caller to guarantee that the values
-    /// really are in an initialized state.
-    /// Calling this when the content is not yet fully initialized
-    /// causes immediate undefined behavior.
-    ///
-    /// [`MaybeUninit::assume_init`]: mem::MaybeUninit::assume_init
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    /// use rune::alloc::alloc::Global;
-    ///
-    /// let mut values = Box::<[u32]>::try_new_uninit_slice_in(3, Global)?;
-    ///
-    /// let values = unsafe {
-    ///     // Deferred initialization:
-    ///     values[0].as_mut_ptr().write(1);
-    ///     values[1].as_mut_ptr().write(2);
-    ///     values[2].as_mut_ptr().write(3);
-    ///     values.assume_init()
-    /// };
-    ///
-    /// assert_eq!(*values, [1, 2, 3]);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[inline]
-    pub unsafe fn assume_init(self) -> Box<[T], A> {
-        let (raw, alloc) = Box::into_raw_with_allocator(self);
-        unsafe { Box::from_raw_in(raw as *mut [T], alloc) }
-    }
+	/// Converts to `Box<[T], A>`.
+	///
+	/// # Safety
+	///
+	/// As with [`MaybeUninit::assume_init`],
+	/// it is up to the caller to guarantee that the values
+	/// really are in an initialized state.
+	/// Calling this when the content is not yet fully initialized
+	/// causes immediate undefined behavior.
+	///
+	/// [`MaybeUninit::assume_init`]: mem::MaybeUninit::assume_init
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	/// use rune::alloc::alloc::Global;
+	///
+	/// let mut values = Box::<[u32]>::try_new_uninit_slice_in(3, Global)?;
+	///
+	/// let values = unsafe {
+	///     // Deferred initialization:
+	///     values[0].as_mut_ptr().write(1);
+	///     values[1].as_mut_ptr().write(2);
+	///     values[2].as_mut_ptr().write(3);
+	///     values.assume_init()
+	/// };
+	///
+	/// assert_eq!(*values, [1, 2, 3]);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[inline]
+	pub unsafe fn assume_init(self) -> Box<[T], A> {
+		let (raw, alloc) = Box::into_raw_with_allocator(self);
+		unsafe { Box::from_raw_in(raw as *mut [T], alloc) }
+	}
 }
 
 impl<T, A> TryClone for Box<T, A>
 where
-    T: TryClone,
-    A: Allocator + Clone,
+	T: TryClone,
+	A: Allocator + Clone,
 {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, Error> {
-        let value = (**self).try_clone()?;
-        let alloc = self.alloc.clone();
-        Ok(Box::try_new_in(value, alloc)?)
-    }
+	#[inline]
+	fn try_clone(&self) -> Result<Self, Error> {
+		let value = (**self).try_clone()?;
+		let alloc = self.alloc.clone();
+		Ok(Box::try_new_in(value, alloc)?)
+	}
 }
 
 impl<T, A> TryClone for Box<[T], A>
 where
-    T: TryClone,
-    A: Allocator + Clone,
+	T: TryClone,
+	A: Allocator + Clone,
 {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, Error> {
-        let alloc = self.alloc.clone();
-        let vec = crate::slice::to_vec(self, alloc)?;
-        vec.try_into_boxed_slice()
-    }
+	#[inline]
+	fn try_clone(&self) -> Result<Self, Error> {
+		let alloc = self.alloc.clone();
+		let vec = crate::slice::to_vec(self, alloc)?;
+		vec.try_into_boxed_slice()
+	}
 }
 
 impl<A> TryClone for Box<str, A>
 where
-    A: Allocator + Clone,
+	A: Allocator + Clone,
 {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, Error> {
-        let alloc = self.alloc.clone();
-        Box::try_from_string_in(self.as_ref(), alloc)
-    }
+	#[inline]
+	fn try_clone(&self) -> Result<Self, Error> {
+		let alloc = self.alloc.clone();
+		Box::try_from_string_in(self.as_ref(), alloc)
+	}
 }
 
 impl<T, A> Borrow<T> for Box<T, A>
 where
-    T: ?Sized,
-    A: Allocator,
+	T: ?Sized,
+	A: Allocator,
 {
-    #[inline]
-    fn borrow(&self) -> &T {
-        self
-    }
+	#[inline]
+	fn borrow(&self) -> &T {
+		self
+	}
 }
 
 impl<T, A> BorrowMut<T> for Box<T, A>
 where
-    T: ?Sized,
-    A: Allocator,
+	T: ?Sized,
+	A: Allocator,
 {
-    #[inline]
-    fn borrow_mut(&mut self) -> &mut T {
-        self
-    }
+	#[inline]
+	fn borrow_mut(&mut self) -> &mut T {
+		self
+	}
 }
 
 impl<T, A> AsRef<T> for Box<T, A>
 where
-    T: ?Sized,
-    A: Allocator,
+	T: ?Sized,
+	A: Allocator,
 {
-    #[inline]
-    fn as_ref(&self) -> &T {
-        self
-    }
+	#[inline]
+	fn as_ref(&self) -> &T {
+		self
+	}
 }
 
 impl<T, A> AsMut<T> for Box<T, A>
 where
-    T: ?Sized,
-    A: Allocator,
+	T: ?Sized,
+	A: Allocator,
 {
-    #[inline]
-    fn as_mut(&mut self) -> &mut T {
-        self
-    }
+	#[inline]
+	fn as_mut(&mut self) -> &mut T {
+		self
+	}
 }
 
 /* Nota bene
@@ -811,130 +811,130 @@ where
  */
 impl<T, A> Unpin for Box<T, A>
 where
-    A: 'static,
-    T: ?Sized,
-    A: Allocator,
+	A: 'static,
+	T: ?Sized,
+	A: Allocator,
 {
 }
 
 impl<T, A> Deref for Box<T, A>
 where
-    T: ?Sized,
-    A: Allocator,
+	T: ?Sized,
+	A: Allocator,
 {
-    type Target = T;
+	type Target = T;
 
-    #[inline]
-    fn deref(&self) -> &T {
-        unsafe { self.ptr.as_ref() }
-    }
+	#[inline]
+	fn deref(&self) -> &T {
+		unsafe { self.ptr.as_ref() }
+	}
 }
 
 impl<T, A> DerefMut for Box<T, A>
 where
-    T: ?Sized,
-    A: Allocator,
+	T: ?Sized,
+	A: Allocator,
 {
-    #[inline]
-    fn deref_mut(&mut self) -> &mut T {
-        unsafe { self.ptr.as_mut() }
-    }
+	#[inline]
+	fn deref_mut(&mut self) -> &mut T {
+		unsafe { self.ptr.as_mut() }
+	}
 }
 
 impl<T, A> Drop for Box<T, A>
 where
-    T: ?Sized,
-    A: Allocator,
+	T: ?Sized,
+	A: Allocator,
 {
-    #[inline]
-    fn drop(&mut self) {
-        unsafe {
-            let ptr = self.ptr;
+	#[inline]
+	fn drop(&mut self) {
+		unsafe {
+			let ptr = self.ptr;
 
-            if mem::needs_drop::<T>() {
-                ptr::drop_in_place(ptr.as_ptr());
-            }
+			if mem::needs_drop::<T>() {
+				ptr::drop_in_place(ptr.as_ptr());
+			}
 
-            let layout = for_value_raw(ptr.as_ptr());
+			let layout = for_value_raw(ptr.as_ptr());
 
-            if layout.size() != 0 {
-                self.alloc.deallocate(From::from(ptr.cast()), layout);
-            }
-        }
-    }
+			if layout.size() != 0 {
+				self.alloc.deallocate(From::from(ptr.cast()), layout);
+			}
+		}
+	}
 }
 
 impl Default for Box<str, Global> {
-    #[inline]
-    fn default() -> Self {
-        // SAFETY: The layout of `Box<[u8]>` is the same as `Box<str>`.
-        unsafe {
-            let b = Box::<[u8]>::default();
-            let (ptr, alloc) = Box::into_raw_with_allocator(b);
-            Box::from_raw_in(ptr as *mut str, alloc)
-        }
-    }
+	#[inline]
+	fn default() -> Self {
+		// SAFETY: The layout of `Box<[u8]>` is the same as `Box<str>`.
+		unsafe {
+			let b = Box::<[u8]>::default();
+			let (ptr, alloc) = Box::into_raw_with_allocator(b);
+			Box::from_raw_in(ptr as *mut str, alloc)
+		}
+	}
 }
 
 impl<T> Default for Box<[T], Global> {
-    #[inline]
-    fn default() -> Self {
-        Box {
-            ptr: Unique::dangling_empty_slice(),
-            alloc: Global,
-        }
-    }
+	#[inline]
+	fn default() -> Self {
+		Box {
+			ptr: Unique::dangling_empty_slice(),
+			alloc: Global,
+		}
+	}
 }
 
 impl<T, A> fmt::Display for Box<T, A>
 where
-    T: ?Sized + fmt::Display,
-    A: Allocator,
+	T: ?Sized + fmt::Display,
+	A: Allocator,
 {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        (**self).fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		(**self).fmt(f)
+	}
 }
 
 impl<T, A> fmt::Debug for Box<T, A>
 where
-    T: ?Sized + fmt::Debug,
-    A: Allocator,
+	T: ?Sized + fmt::Debug,
+	A: Allocator,
 {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        (**self).fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		(**self).fmt(f)
+	}
 }
 
 impl<A> From<Box<str, A>> for Box<[u8], A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    fn from(value: Box<str, A>) -> Self {
-        // SAFETY: `[u8]` is layout compatible with `str` and there are no
-        // checks needed.
-        unsafe {
-            let (ptr, alloc) = Box::into_raw_with_allocator(value);
-            Box::from_raw_in(ptr as *mut [u8], alloc)
-        }
-    }
+	fn from(value: Box<str, A>) -> Self {
+		// SAFETY: `[u8]` is layout compatible with `str` and there are no
+		// checks needed.
+		unsafe {
+			let (ptr, alloc) = Box::into_raw_with_allocator(value);
+			Box::from_raw_in(ptr as *mut [u8], alloc)
+		}
+	}
 }
 
 impl<T, const N: usize> TryFrom<[T; N]> for Box<[T]> {
-    type Error = Error;
+	type Error = Error;
 
-    #[inline]
-    fn try_from(values: [T; N]) -> Result<Self, Self::Error> {
-        let mut vec = Vec::try_with_capacity(values.len())?;
+	#[inline]
+	fn try_from(values: [T; N]) -> Result<Self, Self::Error> {
+		let mut vec = Vec::try_with_capacity(values.len())?;
 
-        for value in values {
-            vec.try_push(value)?;
-        }
+		for value in values {
+			vec.try_push(value)?;
+		}
 
-        vec.try_into_boxed_slice()
-    }
+		vec.try_into_boxed_slice()
+	}
 }
 
 /// Casts a boxed slice to a boxed array.
@@ -943,313 +943,313 @@ impl<T, const N: usize> TryFrom<[T; N]> for Box<[T]> {
 ///
 /// `boxed_slice.len()` must be exactly `N`.
 unsafe fn boxed_slice_as_array_unchecked<T, A, const N: usize>(
-    boxed_slice: Box<[T], A>,
+	boxed_slice: Box<[T], A>,
 ) -> Box<[T; N], A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    debug_assert_eq!(boxed_slice.len(), N);
+	debug_assert_eq!(boxed_slice.len(), N);
 
-    let (ptr, alloc) = Box::into_raw_with_allocator(boxed_slice);
-    // SAFETY: Pointer and allocator came from an existing box,
-    // and our safety condition requires that the length is exactly `N`
-    unsafe { Box::from_raw_in(ptr as *mut [T; N], alloc) }
+	let (ptr, alloc) = Box::into_raw_with_allocator(boxed_slice);
+	// SAFETY: Pointer and allocator came from an existing box,
+	// and our safety condition requires that the length is exactly `N`
+	unsafe { Box::from_raw_in(ptr as *mut [T; N], alloc) }
 }
 
 impl<T, const N: usize> TryFrom<Box<[T]>> for Box<[T; N]> {
-    type Error = Box<[T]>;
+	type Error = Box<[T]>;
 
-    /// Attempts to convert a `Box<[T]>` into a `Box<[T; N]>`.
-    ///
-    /// The conversion occurs in-place and does not require a
-    /// new memory allocation.
-    ///
-    /// # Errors
-    ///
-    /// Returns the old `Box<[T]>` in the `Err` variant if
-    /// `boxed_slice.len()` does not equal `N`.
-    fn try_from(boxed_slice: Box<[T]>) -> Result<Self, Self::Error> {
-        if boxed_slice.len() == N {
-            Ok(unsafe { boxed_slice_as_array_unchecked(boxed_slice) })
-        } else {
-            Err(boxed_slice)
-        }
-    }
+	/// Attempts to convert a `Box<[T]>` into a `Box<[T; N]>`.
+	///
+	/// The conversion occurs in-place and does not require a
+	/// new memory allocation.
+	///
+	/// # Errors
+	///
+	/// Returns the old `Box<[T]>` in the `Err` variant if
+	/// `boxed_slice.len()` does not equal `N`.
+	fn try_from(boxed_slice: Box<[T]>) -> Result<Self, Self::Error> {
+		if boxed_slice.len() == N {
+			Ok(unsafe { boxed_slice_as_array_unchecked(boxed_slice) })
+		} else {
+			Err(boxed_slice)
+		}
+	}
 }
 
 impl<T, A> TryFrom<Vec<T, A>> for Box<[T], A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    type Error = Error;
+	type Error = Error;
 
-    #[inline]
-    fn try_from(vec: Vec<T, A>) -> Result<Self, Error> {
-        vec.try_into_boxed_slice()
-    }
+	#[inline]
+	fn try_from(vec: Vec<T, A>) -> Result<Self, Error> {
+		vec.try_into_boxed_slice()
+	}
 }
 
 impl<A> Box<[u8], A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    #[inline]
-    pub(crate) fn try_from_bytes_in(bytes: &[u8], alloc: A) -> Result<Self, Error> {
-        let mut vec = Vec::<u8, A>::try_with_capacity_in(bytes.len(), alloc)?;
+	#[inline]
+	pub(crate) fn try_from_bytes_in(bytes: &[u8], alloc: A) -> Result<Self, Error> {
+		let mut vec = Vec::<u8, A>::try_with_capacity_in(bytes.len(), alloc)?;
 
-        unsafe {
-            ptr::copy_nonoverlapping(bytes.as_ptr(), vec.as_mut_ptr(), bytes.len());
-            vec.set_len(bytes.len());
-            vec.try_into_boxed_slice()
-        }
-    }
+		unsafe {
+			ptr::copy_nonoverlapping(bytes.as_ptr(), vec.as_mut_ptr(), bytes.len());
+			vec.set_len(bytes.len());
+			vec.try_into_boxed_slice()
+		}
+	}
 }
 
 impl<A> Box<str, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    #[inline]
-    pub(crate) fn try_from_string_in(string: &str, alloc: A) -> Result<Self, Error> {
-        unsafe {
-            let b = Box::try_from_bytes_in(string.as_bytes(), alloc)?;
-            let (raw, alloc) = Box::into_raw_with_allocator(b);
-            Ok(Box::from_raw_in(raw as *mut str, alloc))
-        }
-    }
+	#[inline]
+	pub(crate) fn try_from_string_in(string: &str, alloc: A) -> Result<Self, Error> {
+		unsafe {
+			let b = Box::try_from_bytes_in(string.as_bytes(), alloc)?;
+			let (raw, alloc) = Box::into_raw_with_allocator(b);
+			Ok(Box::from_raw_in(raw as *mut str, alloc))
+		}
+	}
 }
 
 #[cfg(feature = "std")]
 #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
 impl<A> Box<Path, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    #[inline]
-    pub(crate) fn try_from_path_in(path: &Path, alloc: A) -> Result<Self, Error> {
-        unsafe {
-            let bytes = path.as_os_str().as_encoded_bytes();
-            let b = Box::try_from_bytes_in(bytes, alloc)?;
-            let (raw, alloc) = Box::into_raw_with_allocator(b);
-            Ok(Box::from_raw_in(raw as *mut Path, alloc))
-        }
-    }
+	#[inline]
+	pub(crate) fn try_from_path_in(path: &Path, alloc: A) -> Result<Self, Error> {
+		unsafe {
+			let bytes = path.as_os_str().as_encoded_bytes();
+			let b = Box::try_from_bytes_in(bytes, alloc)?;
+			let (raw, alloc) = Box::into_raw_with_allocator(b);
+			Ok(Box::from_raw_in(raw as *mut Path, alloc))
+		}
+	}
 }
 
 #[cfg(feature = "std")]
 #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
 impl<A> TryClone for Box<Path, A>
 where
-    A: Allocator + Clone,
+	A: Allocator + Clone,
 {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, Error> {
-        let alloc = self.alloc.clone();
-        Box::try_from_path_in(self.as_ref(), alloc)
-    }
+	#[inline]
+	fn try_clone(&self) -> Result<Self, Error> {
+		let alloc = self.alloc.clone();
+		Box::try_from_path_in(self.as_ref(), alloc)
+	}
 }
 
 impl TryFrom<&str> for Box<str> {
-    type Error = Error;
+	type Error = Error;
 
-    /// Converts a `&str` into a `Box<str>`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    ///
-    /// let s: Box<str> = Box::try_from("Hello World")?;
-    /// assert_eq!(s.as_ref(), "Hello World");
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[inline]
-    fn try_from(values: &str) -> Result<Self, Error> {
-        Box::try_from_string_in(values, Global)
-    }
+	/// Converts a `&str` into a `Box<str>`.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	///
+	/// let s: Box<str> = Box::try_from("Hello World")?;
+	/// assert_eq!(s.as_ref(), "Hello World");
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[inline]
+	fn try_from(values: &str) -> Result<Self, Error> {
+		Box::try_from_string_in(values, Global)
+	}
 }
 
 #[cfg(feature = "alloc")]
 impl TryFrom<rust_alloc::string::String> for Box<str> {
-    type Error = Error;
+	type Error = Error;
 
-    /// Converts a std `String` into a `Box<str>`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    ///
-    /// let s = String::from("Hello World");
-    /// let s: Box<str> = Box::try_from(s)?;
-    /// assert_eq!(s.as_ref(), "Hello World");
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[inline]
-    fn try_from(string: rust_alloc::string::String) -> Result<Self, Error> {
-        Box::from_std(string.into_boxed_str())
-    }
+	/// Converts a std `String` into a `Box<str>`.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	///
+	/// let s = String::from("Hello World");
+	/// let s: Box<str> = Box::try_from(s)?;
+	/// assert_eq!(s.as_ref(), "Hello World");
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[inline]
+	fn try_from(string: rust_alloc::string::String) -> Result<Self, Error> {
+		Box::from_std(string.into_boxed_str())
+	}
 }
 
 impl TryFrom<&[u8]> for Box<[u8]> {
-    type Error = Error;
+	type Error = Error;
 
-    /// Converts a `&[u8]` into a `Box<[u8]>`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::Box;
-    ///
-    /// let s: Box<[u8]> = Box::try_from(&b"Hello World"[..])?;
-    /// assert_eq!(s.as_ref(), b"Hello World");
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[inline]
-    fn try_from(values: &[u8]) -> Result<Self, Self::Error> {
-        Box::try_from_bytes_in(values, Global)
-    }
+	/// Converts a `&[u8]` into a `Box<[u8]>`.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::Box;
+	///
+	/// let s: Box<[u8]> = Box::try_from(&b"Hello World"[..])?;
+	/// assert_eq!(s.as_ref(), b"Hello World");
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[inline]
+	fn try_from(values: &[u8]) -> Result<Self, Self::Error> {
+		Box::try_from_bytes_in(values, Global)
+	}
 }
 
 #[cfg(feature = "std")]
 #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
 impl TryFrom<&Path> for Box<Path> {
-    type Error = Error;
+	type Error = Error;
 
-    /// Converts a `&[u8]` into a `Box<[u8]>`.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use std::path::Path;
-    /// use rune::alloc::Box;
-    ///
-    /// let path = Path::new("foo/bar");
-    ///
-    /// let s: Box<Path> = Box::try_from(path)?;
-    /// assert_eq!(s.as_ref(), Path::new("foo/bar"));
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    #[inline]
-    fn try_from(path: &Path) -> Result<Self, Error> {
-        Box::try_from_path_in(path, Global)
-    }
+	/// Converts a `&[u8]` into a `Box<[u8]>`.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use std::path::Path;
+	/// use rune::alloc::Box;
+	///
+	/// let path = Path::new("foo/bar");
+	///
+	/// let s: Box<Path> = Box::try_from(path)?;
+	/// assert_eq!(s.as_ref(), Path::new("foo/bar"));
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	#[inline]
+	fn try_from(path: &Path) -> Result<Self, Error> {
+		Box::try_from_path_in(path, Global)
+	}
 }
 
 impl<T, A> TryFromIteratorIn<T, A> for Box<[T], A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    #[inline]
-    fn try_from_iter_in<I>(iter: I, alloc: A) -> Result<Self, Error>
-    where
-        I: IntoIterator<Item = T>,
-    {
-        Vec::<T, A>::try_from_iter_in(iter, alloc)?.try_into_boxed_slice()
-    }
+	#[inline]
+	fn try_from_iter_in<I>(iter: I, alloc: A) -> Result<Self, Error>
+	where
+		I: IntoIterator<Item = T>,
+	{
+		Vec::<T, A>::try_from_iter_in(iter, alloc)?.try_into_boxed_slice()
+	}
 }
 
 unsafe fn for_value_raw<T: ?Sized>(t: *const T) -> Layout {
-    // SAFETY: we pass along the prerequisites of these functions to the caller
-    // TODO: Use mem::{size_of_val_raw, align_of_val_raw} when they become
-    // stable, for now we privately know that this can safely be turned into a
-    // reference since it's only used while dropping an owned value of type `T`.
-    let (size, align) = (mem::size_of_val(&*t), mem::align_of_val(&*t));
-    // SAFETY: see rationale in `new` for why this is using the unsafe variant
-    Layout::from_size_align_unchecked(size, align)
+	// SAFETY: we pass along the prerequisites of these functions to the caller
+	// TODO: Use mem::{size_of_val_raw, align_of_val_raw} when they become
+	// stable, for now we privately know that this can safely be turned into a
+	// reference since it's only used while dropping an owned value of type `T`.
+	let (size, align) = (mem::size_of_val(&*t), mem::align_of_val(&*t));
+	// SAFETY: see rationale in `new` for why this is using the unsafe variant
+	Layout::from_size_align_unchecked(size, align)
 }
 
 impl<T, A> Hash for Box<T, A>
 where
-    T: ?Sized + Hash,
-    A: Allocator,
+	T: ?Sized + Hash,
+	A: Allocator,
 {
-    #[inline]
-    fn hash<H>(&self, state: &mut H)
-    where
-        H: Hasher,
-    {
-        (**self).hash(state);
-    }
+	#[inline]
+	fn hash<H>(&self, state: &mut H)
+	where
+		H: Hasher,
+	{
+		(**self).hash(state);
+	}
 }
 
 impl<T, A> From<Box<T, A>> for Pin<Box<T, A>>
 where
-    T: ?Sized,
-    A: 'static + Allocator,
+	T: ?Sized,
+	A: 'static + Allocator,
 {
-    /// Converts a `Box<T>` into a `Pin<Box<T>>`. If `T` does not implement
-    /// [`Unpin`], then `*boxed` will be pinned in memory and unable to be
-    /// moved.
-    ///
-    /// This conversion does not allocate on the heap and happens in place.
-    ///
-    /// This is also available via [`Box::into_pin`].
-    ///
-    /// Constructing and pinning a `Box` with
-    /// <code><Pin<Box\<T>>>::from([Box::try?new]\(x))</code> can also be
-    /// written more concisely using <code>[Box::try?pin]\(x)</code>. This
-    /// `From` implementation is useful if you already have a `Box<T>`, or you
-    /// are constructing a (pinned) `Box` in a different way than with
-    /// [`Box::try_new`].
-    #[inline]
-    fn from(boxed: Box<T, A>) -> Self {
-        Box::into_pin(boxed)
-    }
+	/// Converts a `Box<T>` into a `Pin<Box<T>>`. If `T` does not implement
+	/// [`Unpin`], then `*boxed` will be pinned in memory and unable to be
+	/// moved.
+	///
+	/// This conversion does not allocate on the heap and happens in place.
+	///
+	/// This is also available via [`Box::into_pin`].
+	///
+	/// Constructing and pinning a `Box` with
+	/// <code><Pin<Box\<T>>>::from([Box::try?new]\(x))</code> can also be
+	/// written more concisely using <code>[Box::try?pin]\(x)</code>. This
+	/// `From` implementation is useful if you already have a `Box<T>`, or you
+	/// are constructing a (pinned) `Box` in a different way than with
+	/// [`Box::try_new`].
+	#[inline]
+	fn from(boxed: Box<T, A>) -> Self {
+		Box::into_pin(boxed)
+	}
 }
 
 impl<T, A> PartialEq for Box<T, A>
 where
-    T: ?Sized + PartialEq,
-    A: Allocator,
+	T: ?Sized + PartialEq,
+	A: Allocator,
 {
-    #[inline]
-    fn eq(&self, other: &Self) -> bool {
-        (**self).eq(other)
-    }
+	#[inline]
+	fn eq(&self, other: &Self) -> bool {
+		(**self).eq(other)
+	}
 }
 
 impl<T, A> Eq for Box<T, A>
 where
-    T: ?Sized + Eq,
-    A: Allocator,
+	T: ?Sized + Eq,
+	A: Allocator,
 {
 }
 
 impl<T, A> PartialOrd for Box<T, A>
 where
-    T: ?Sized + PartialOrd,
-    A: Allocator,
+	T: ?Sized + PartialOrd,
+	A: Allocator,
 {
-    #[inline]
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        (**self).partial_cmp(other)
-    }
+	#[inline]
+	fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+		(**self).partial_cmp(other)
+	}
 }
 
 impl<T, A> Ord for Box<T, A>
 where
-    T: ?Sized + Ord,
-    A: Allocator,
+	T: ?Sized + Ord,
+	A: Allocator,
 {
-    #[inline]
-    fn cmp(&self, other: &Self) -> Ordering {
-        (**self).cmp(other)
-    }
+	#[inline]
+	fn cmp(&self, other: &Self) -> Ordering {
+		(**self).cmp(other)
+	}
 }
 
 #[cfg(feature = "alloc")]
 impl<T> TryFrom<rust_alloc::boxed::Box<[T]>> for Box<[T]> {
-    type Error = Error;
+	type Error = Error;
 
-    #[inline]
-    fn try_from(values: rust_alloc::boxed::Box<[T]>) -> Result<Self, Self::Error> {
-        let mut vec = Vec::try_with_capacity(values.len())?;
+	#[inline]
+	fn try_from(values: rust_alloc::boxed::Box<[T]>) -> Result<Self, Self::Error> {
+		let mut vec = Vec::try_with_capacity(values.len())?;
 
-        for value in rust_alloc::vec::Vec::from(values) {
-            vec.try_push(value)?;
-        }
+		for value in rust_alloc::vec::Vec::from(values) {
+			vec.try_push(value)?;
+		}
 
-        vec.try_into_boxed_slice()
-    }
+		vec.try_into_boxed_slice()
+	}
 }

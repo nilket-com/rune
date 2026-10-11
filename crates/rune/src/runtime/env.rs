@@ -27,28 +27,28 @@ use crate::sync::Arc;
 /// recursively accessed.
 pub(crate) fn shared<F, T>(c: F) -> Result<T, VmError>
 where
-    F: FnOnce(&Arc<RuntimeContext>, &Arc<Unit>, &Globals) -> Result<T, VmError>,
+	F: FnOnce(&Arc<RuntimeContext>, &Arc<Unit>, &Globals) -> Result<T, VmError>,
 {
-    let env = self::no_std::rune_env_get();
+	let env = self::no_std::rune_env_get();
 
-    let Env {
-        context: Some(context),
-        unit: Some(unit),
-        globals,
-        ..
-    } = env
-    else {
-        return Err(VmError::new(VmErrorKind::MissingInterfaceEnvironment));
-    };
+	let Env {
+		context: Some(context),
+		unit: Some(unit),
+		globals,
+		..
+	} = env
+	else {
+		return Err(VmError::new(VmErrorKind::MissingInterfaceEnvironment));
+	};
 
-    // Safety: context and unit can only be registered publicly through
-    // [`Guard`], which makes sure that they are live for the duration of the
-    // registration.
-    let context =
-        unsafe { ManuallyDrop::new(Arc::from_raw_in(context.as_ptr().cast_const(), Global)) };
-    let unit = unsafe { ManuallyDrop::new(Arc::from_raw_in(unit.as_ptr().cast_const(), Global)) };
-    let globals = unsafe { ManuallyDrop::new(globals_from_raw(globals)) };
-    c(&context, &unit, &globals)
+	// Safety: context and unit can only be registered publicly through
+	// [`Guard`], which makes sure that they are live for the duration of the
+	// registration.
+	let context =
+		unsafe { ManuallyDrop::new(Arc::from_raw_in(context.as_ptr().cast_const(), Global)) };
+	let unit = unsafe { ManuallyDrop::new(Arc::from_raw_in(unit.as_ptr().cast_const(), Global)) };
+	let globals = unsafe { ManuallyDrop::new(globals_from_raw(globals)) };
+	c(&context, &unit, &globals)
 }
 
 /// Call the given closure with access to the checked environment accessing it
@@ -58,40 +58,40 @@ where
 /// supported.
 pub(crate) fn exclusive<F, T>(c: F) -> Result<T, VmError>
 where
-    F: FnOnce(
-        &Arc<RuntimeContext>,
-        &Arc<Unit>,
-        &Globals,
-        Option<&mut VmDiagnosticsObj>,
-    ) -> Result<T, VmError>,
+	F: FnOnce(
+		&Arc<RuntimeContext>,
+		&Arc<Unit>,
+		&Globals,
+		Option<&mut VmDiagnosticsObj>,
+	) -> Result<T, VmError>,
 {
-    let guard = Guard {
-        env: self::no_std::rune_env_replace(Env::null()),
-    };
+	let guard = Guard {
+		env: self::no_std::rune_env_replace(Env::null()),
+	};
 
-    let Env {
-        context: Some(context),
-        unit: Some(unit),
-        globals,
-        ..
-    } = guard.env
-    else {
-        return Err(VmError::new(VmErrorKind::MissingInterfaceEnvironment));
-    };
+	let Env {
+		context: Some(context),
+		unit: Some(unit),
+		globals,
+		..
+	} = guard.env
+	else {
+		return Err(VmError::new(VmErrorKind::MissingInterfaceEnvironment));
+	};
 
-    // Safety: context and unit can only be registered publicly through
-    // [`Guard`], which makes sure that they are live for the duration of the
-    // registration.
-    let context =
-        unsafe { ManuallyDrop::new(Arc::from_raw_in(context.as_ptr().cast_const(), Global)) };
-    let unit = unsafe { ManuallyDrop::new(Arc::from_raw_in(unit.as_ptr().cast_const(), Global)) };
-    let globals = unsafe { ManuallyDrop::new(globals_from_raw(globals)) };
-    let diagnostics = match guard.env.diagnostics {
-        Some(mut d) => Some(unsafe { d.as_mut() }),
-        None => None,
-    };
+	// Safety: context and unit can only be registered publicly through
+	// [`Guard`], which makes sure that they are live for the duration of the
+	// registration.
+	let context =
+		unsafe { ManuallyDrop::new(Arc::from_raw_in(context.as_ptr().cast_const(), Global)) };
+	let unit = unsafe { ManuallyDrop::new(Arc::from_raw_in(unit.as_ptr().cast_const(), Global)) };
+	let globals = unsafe { ManuallyDrop::new(globals_from_raw(globals)) };
+	let diagnostics = match guard.env.diagnostics {
+		Some(mut d) => Some(unsafe { d.as_mut() }),
+		None => None,
+	};
 
-    c(&context, &unit, &globals, diagnostics)
+	c(&context, &unit, &globals, diagnostics)
 }
 
 /// Reconstruct a [`Globals`] handle from the raw pointer stored in the
@@ -103,110 +103,110 @@ where
 /// produced it must still be live. The returned handle must not be dropped,
 /// since it does not own the reference count it reconstructs.
 unsafe fn globals_from_raw(globals: Option<NonNull<GlobalsInner>>) -> Globals {
-    let Some(globals) = globals else {
-        return Globals::empty();
-    };
+	let Some(globals) = globals else {
+		return Globals::empty();
+	};
 
-    Globals::from_inner(Some(unsafe { Rc::from_raw(globals.as_ptr().cast_const()) }))
+	Globals::from_inner(Some(unsafe { Rc::from_raw(globals.as_ptr().cast_const()) }))
 }
 
 pub(crate) struct Guard {
-    env: Env,
+	env: Env,
 }
 
 impl Guard {
-    /// Construct a new environment guard with the given context and unit.
-    ///
-    /// # Safety
-    ///
-    /// The returned guard must be dropped before the pointed to elements are.
-    #[inline]
-    pub(crate) fn new(
-        context: Arc<RuntimeContext>,
-        unit: Arc<Unit>,
-        globals: Globals,
-        diagnostics: Option<NonNull<VmDiagnosticsObj>>,
-    ) -> Guard {
-        let (context, Global) = Arc::into_raw_with_allocator(context);
-        let (unit, Global) = Arc::into_raw_with_allocator(unit);
+	/// Construct a new environment guard with the given context and unit.
+	///
+	/// # Safety
+	///
+	/// The returned guard must be dropped before the pointed to elements are.
+	#[inline]
+	pub(crate) fn new(
+		context: Arc<RuntimeContext>,
+		unit: Arc<Unit>,
+		globals: Globals,
+		diagnostics: Option<NonNull<VmDiagnosticsObj>>,
+	) -> Guard {
+		let (context, Global) = Arc::into_raw_with_allocator(context);
+		let (unit, Global) = Arc::into_raw_with_allocator(unit);
 
-        let globals = globals.into_inner().map(|globals| {
-            let globals = Rc::into_raw(globals);
-            unsafe { NonNull::new_unchecked(globals.cast_mut()) }
-        });
+		let globals = globals.into_inner().map(|globals| {
+			let globals = Rc::into_raw(globals);
+			unsafe { NonNull::new_unchecked(globals.cast_mut()) }
+		});
 
-        // The depth of the walk in progress is carried over, since registering
-        // an environment is what a walk which goes through a protocol function
-        // does, and the nesting has to be counted across it. The same goes for
-        // how deeply executions are nested, since registering an environment is
-        // also what running one does.
-        let Env {
-            depth, executions, ..
-        } = self::no_std::rune_env_get();
+		// The depth of the walk in progress is carried over, since registering
+		// an environment is what a walk which goes through a protocol function
+		// does, and the nesting has to be counted across it. The same goes for
+		// how deeply executions are nested, since registering an environment is
+		// also what running one does.
+		let Env {
+			depth, executions, ..
+		} = self::no_std::rune_env_get();
 
-        let env = unsafe {
-            self::no_std::rune_env_replace(Env {
-                context: Some(NonNull::new_unchecked(context.cast_mut())),
-                unit: Some(NonNull::new_unchecked(unit.cast_mut())),
-                globals,
-                diagnostics,
-                depth,
-                executions,
-            })
-        };
+		let env = unsafe {
+			self::no_std::rune_env_replace(Env {
+				context: Some(NonNull::new_unchecked(context.cast_mut())),
+				unit: Some(NonNull::new_unchecked(unit.cast_mut())),
+				globals,
+				diagnostics,
+				depth,
+				executions,
+			})
+		};
 
-        Guard { env }
-    }
+		Guard { env }
+	}
 }
 
 impl Drop for Guard {
-    #[inline]
-    fn drop(&mut self) {
-        let old_env = self::no_std::rune_env_replace(self.env);
+	#[inline]
+	fn drop(&mut self) {
+		let old_env = self::no_std::rune_env_replace(self.env);
 
-        unsafe {
-            if let Some(context) = old_env.context {
-                drop(Arc::from_raw_in(context.as_ptr().cast_const(), Global));
-            }
+		unsafe {
+			if let Some(context) = old_env.context {
+				drop(Arc::from_raw_in(context.as_ptr().cast_const(), Global));
+			}
 
-            if let Some(unit) = old_env.unit {
-                drop(Arc::from_raw_in(unit.as_ptr().cast_const(), Global));
-            }
+			if let Some(unit) = old_env.unit {
+				drop(Arc::from_raw_in(unit.as_ptr().cast_const(), Global));
+			}
 
-            if let Some(globals) = old_env.globals {
-                drop(Rc::from_raw(globals.as_ptr().cast_const()));
-            }
-        }
-    }
+			if let Some(globals) = old_env.globals {
+				drop(Rc::from_raw(globals.as_ptr().cast_const()));
+			}
+		}
+	}
 }
 
 #[derive(Debug, Clone, Copy)]
 struct Env {
-    context: Option<NonNull<RuntimeContext>>,
-    unit: Option<NonNull<Unit>>,
-    globals: Option<NonNull<GlobalsInner>>,
-    diagnostics: Option<NonNull<VmDiagnosticsObj>>,
-    /// How deeply the walk over a value in progress has descended.
-    ///
-    /// See [`enter_value`].
-    depth: usize,
-    /// How deeply the executions in progress are nested.
-    ///
-    /// See [`enter_execution`].
-    executions: usize,
+	context: Option<NonNull<RuntimeContext>>,
+	unit: Option<NonNull<Unit>>,
+	globals: Option<NonNull<GlobalsInner>>,
+	diagnostics: Option<NonNull<VmDiagnosticsObj>>,
+	/// How deeply the walk over a value in progress has descended.
+	///
+	/// See [`enter_value`].
+	depth: usize,
+	/// How deeply the executions in progress are nested.
+	///
+	/// See [`enter_execution`].
+	executions: usize,
 }
 
 impl Env {
-    const fn null() -> Self {
-        Self {
-            context: None,
-            unit: None,
-            globals: None,
-            diagnostics: None,
-            depth: 0,
-            executions: 0,
-        }
-    }
+	const fn null() -> Self {
+		Self {
+			context: None,
+			unit: None,
+			globals: None,
+			diagnostics: None,
+			depth: 0,
+			executions: 0,
+		}
+	}
 }
 
 /// How deeply a walk over a value graph is allowed to nest.
@@ -232,17 +232,17 @@ pub(crate) const MAX_VALUE_DEPTH: usize = 64;
 /// because a walk which goes through a protocol function implemented natively
 /// gets a caller of its own, and the nesting has to be counted across it.
 pub(crate) fn enter_value() -> Result<EnterValue, VmError> {
-    let mut env = self::no_std::rune_env_get();
+	let mut env = self::no_std::rune_env_get();
 
-    if env.depth >= MAX_VALUE_DEPTH {
-        return Err(VmError::new(VmErrorKind::MaxValueDepth {
-            max: MAX_VALUE_DEPTH,
-        }));
-    }
+	if env.depth >= MAX_VALUE_DEPTH {
+		return Err(VmError::new(VmErrorKind::MaxValueDepth {
+			max: MAX_VALUE_DEPTH,
+		}));
+	}
 
-    env.depth += 1;
-    self::no_std::rune_env_replace(env);
-    Ok(EnterValue)
+	env.depth += 1;
+	self::no_std::rune_env_replace(env);
+	Ok(EnterValue)
 }
 
 /// The guard returned by [`enter_value`].
@@ -250,11 +250,11 @@ pub(crate) fn enter_value() -> Result<EnterValue, VmError> {
 pub(crate) struct EnterValue;
 
 impl Drop for EnterValue {
-    fn drop(&mut self) {
-        let mut env = self::no_std::rune_env_get();
-        env.depth = env.depth.saturating_sub(1);
-        self::no_std::rune_env_replace(env);
-    }
+	fn drop(&mut self) {
+		let mut env = self::no_std::rune_env_get();
+		env.depth = env.depth.saturating_sub(1);
+		self::no_std::rune_env_replace(env);
+	}
 }
 
 /// How deeply executions are allowed to nest.
@@ -281,17 +281,17 @@ pub(crate) const MAX_EXECUTION_DEPTH: usize = 32;
 /// what nests is one execution inside the native frames of another, and those
 /// have no handle on each other.
 pub(crate) fn enter_execution() -> Result<EnterExecution, VmError> {
-    let mut env = self::no_std::rune_env_get();
+	let mut env = self::no_std::rune_env_get();
 
-    if env.executions >= MAX_EXECUTION_DEPTH {
-        return Err(VmError::new(VmErrorKind::MaxExecutionDepth {
-            max: MAX_EXECUTION_DEPTH,
-        }));
-    }
+	if env.executions >= MAX_EXECUTION_DEPTH {
+		return Err(VmError::new(VmErrorKind::MaxExecutionDepth {
+			max: MAX_EXECUTION_DEPTH,
+		}));
+	}
 
-    env.executions += 1;
-    self::no_std::rune_env_replace(env);
-    Ok(EnterExecution)
+	env.executions += 1;
+	self::no_std::rune_env_replace(env);
+	Ok(EnterExecution)
 }
 
 /// The guard returned by [`enter_execution`].
@@ -299,9 +299,9 @@ pub(crate) fn enter_execution() -> Result<EnterExecution, VmError> {
 pub(crate) struct EnterExecution;
 
 impl Drop for EnterExecution {
-    fn drop(&mut self) {
-        let mut env = self::no_std::rune_env_get();
-        env.executions = env.executions.saturating_sub(1);
-        self::no_std::rune_env_replace(env);
-    }
+	fn drop(&mut self) {
+		let mut env = self::no_std::rune_env_get();
+		env.executions = env.executions.saturating_sub(1);
+		self::no_std::rune_env_replace(env);
+	}
 }

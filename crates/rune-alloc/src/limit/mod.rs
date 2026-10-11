@@ -39,11 +39,11 @@ use crate::callable::Callable;
 /// See [`with`].
 #[pin_project]
 pub struct Memory<T> {
-    /// The current limit.
-    memory: usize,
-    /// The thing being budgeted.
-    #[pin]
-    value: T,
+	/// The current limit.
+	memory: usize,
+	/// The thing being budgeted.
+	#[pin]
+	value: T,
 }
 
 /// Wrap the given value with a memory limit. Using a value of [`usize::MAX`]
@@ -101,7 +101,7 @@ pub struct Memory<T> {
 /// assert!(f.call().is_err());
 /// ```
 pub fn with<T>(memory: usize, value: T) -> Memory<T> {
-    Memory { memory, value }
+	Memory { memory, value }
 }
 
 /// Get remaining memory that may be allocated.
@@ -130,117 +130,117 @@ pub fn with<T>(memory: usize, value: T) -> Memory<T> {
 /// # Ok::<_, rune::alloc::Error>(())
 /// ```
 pub fn get() -> usize {
-    self::no_std::rune_memory_get()
+	self::no_std::rune_memory_get()
 }
 
 /// Take memory from the current budget.
 #[inline(never)]
 pub(crate) fn take(amount: usize) -> bool {
-    self::no_std::rune_memory_take(amount)
+	self::no_std::rune_memory_take(amount)
 }
 
 /// Release memory from the current budget.
 #[inline(never)]
 pub(crate) fn release(amount: usize) {
-    self::no_std::rune_memory_release(amount);
+	self::no_std::rune_memory_release(amount);
 }
 
 #[repr(transparent)]
 struct MemoryGuard(usize);
 
 impl Drop for MemoryGuard {
-    fn drop(&mut self) {
-        let _ = self::no_std::rune_memory_replace(self.0);
-    }
+	fn drop(&mut self) {
+		let _ = self::no_std::rune_memory_replace(self.0);
+	}
 }
 
 impl<T> Memory<T>
 where
-    T: Callable,
+	T: Callable,
 {
-    /// Call the wrapped function, replacing the current budget and restoring it
-    /// once the function call completes.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::alloc::limit;
-    /// use rune::alloc::{Box, Result};
-    /// use rune::alloc::alloc::AllocError;
-    ///
-    /// const LIMIT: usize = 1024;
-    ///
-    /// fn doit() -> Result<Box<[u8; 256]>, AllocError> {
-    ///     Box::try_new([0u8; 256])
-    /// }
-    ///
-    /// fn limited() -> Result<()> {
-    ///     assert_eq!(limit::get(), LIMIT);
-    ///
-    ///     // Hold onto a 256 byte allocation.
-    ///     let b = doit()?;
-    ///     assert_eq!(limit::get(), LIMIT - 256);
-    ///
-    ///     // Drop the allocation, making the memory available again.
-    ///     drop(b);
-    ///     assert_eq!(limit::get(), LIMIT);
-    ///     Ok(())
-    /// }
-    ///
-    /// let inner = limit::with(LIMIT, limited);
-    ///
-    /// assert_eq!(limit::get(), usize::MAX);
-    /// inner.call()?;
-    /// assert_eq!(limit::get(), usize::MAX);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    ///
-    /// Limit being restored after its been breached:
-    ///
-    /// ```
-    /// use rune::alloc::limit;
-    /// use rune::alloc::{Box, Result};
-    /// use rune::alloc::alloc::AllocError;
-    ///
-    /// const LIMIT: usize = 128;
-    ///
-    /// fn doit() -> Result<Box<[u8; 256]>, AllocError> {
-    ///     Box::try_new([0u8; 256])
-    /// }
-    ///
-    /// fn limited() -> Result<()> {
-    ///     assert_eq!(limit::get(), LIMIT);
-    ///
-    ///     // Fail to allocate since we don't have enough memory available.
-    ///     assert!(doit().is_err());
-    ///
-    ///     assert_eq!(limit::get(), LIMIT);
-    ///     Ok(())
-    /// }
-    ///
-    /// let inner = limit::with(LIMIT, limited);
-    ///
-    /// assert_eq!(limit::get(), usize::MAX);
-    /// inner.call()?;
-    /// assert_eq!(limit::get(), usize::MAX);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    pub fn call(self) -> T::Output {
-        Callable::call(self)
-    }
+	/// Call the wrapped function, replacing the current budget and restoring it
+	/// once the function call completes.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::alloc::limit;
+	/// use rune::alloc::{Box, Result};
+	/// use rune::alloc::alloc::AllocError;
+	///
+	/// const LIMIT: usize = 1024;
+	///
+	/// fn doit() -> Result<Box<[u8; 256]>, AllocError> {
+	///     Box::try_new([0u8; 256])
+	/// }
+	///
+	/// fn limited() -> Result<()> {
+	///     assert_eq!(limit::get(), LIMIT);
+	///
+	///     // Hold onto a 256 byte allocation.
+	///     let b = doit()?;
+	///     assert_eq!(limit::get(), LIMIT - 256);
+	///
+	///     // Drop the allocation, making the memory available again.
+	///     drop(b);
+	///     assert_eq!(limit::get(), LIMIT);
+	///     Ok(())
+	/// }
+	///
+	/// let inner = limit::with(LIMIT, limited);
+	///
+	/// assert_eq!(limit::get(), usize::MAX);
+	/// inner.call()?;
+	/// assert_eq!(limit::get(), usize::MAX);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	///
+	/// Limit being restored after its been breached:
+	///
+	/// ```
+	/// use rune::alloc::limit;
+	/// use rune::alloc::{Box, Result};
+	/// use rune::alloc::alloc::AllocError;
+	///
+	/// const LIMIT: usize = 128;
+	///
+	/// fn doit() -> Result<Box<[u8; 256]>, AllocError> {
+	///     Box::try_new([0u8; 256])
+	/// }
+	///
+	/// fn limited() -> Result<()> {
+	///     assert_eq!(limit::get(), LIMIT);
+	///
+	///     // Fail to allocate since we don't have enough memory available.
+	///     assert!(doit().is_err());
+	///
+	///     assert_eq!(limit::get(), LIMIT);
+	///     Ok(())
+	/// }
+	///
+	/// let inner = limit::with(LIMIT, limited);
+	///
+	/// assert_eq!(limit::get(), usize::MAX);
+	/// inner.call()?;
+	/// assert_eq!(limit::get(), usize::MAX);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	pub fn call(self) -> T::Output {
+		Callable::call(self)
+	}
 }
 
 impl<T> Callable for Memory<T>
 where
-    T: Callable,
+	T: Callable,
 {
-    type Output = T::Output;
+	type Output = T::Output;
 
-    #[inline]
-    fn call(self) -> Self::Output {
-        let _guard = MemoryGuard(self::no_std::rune_memory_replace(self.memory));
-        self.value.call()
-    }
+	#[inline]
+	fn call(self) -> Self::Output {
+		let _guard = MemoryGuard(self::no_std::rune_memory_replace(self.memory));
+		self.value.call()
+	}
 }
 
 /// Treat the current budget as a future, ensuring that the budget is suspended
@@ -318,16 +318,16 @@ where
 /// ```
 impl<T> Future for Memory<T>
 where
-    T: Future,
+	T: Future,
 {
-    type Output = T::Output;
+	type Output = T::Output;
 
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        let this = self.project();
+	fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+		let this = self.project();
 
-        let _guard = MemoryGuard(self::no_std::rune_memory_replace(*this.memory));
-        let poll = this.value.poll(cx);
-        *this.memory = self::no_std::rune_memory_get();
-        poll
-    }
+		let _guard = MemoryGuard(self::no_std::rune_memory_replace(*this.memory));
+		let poll = this.value.poll(cx);
+		*this.memory = self::no_std::rune_memory_get();
+		poll
+	}
 }

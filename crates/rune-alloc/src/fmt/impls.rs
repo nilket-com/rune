@@ -8,10 +8,10 @@ use super::TryWrite;
 /// vector will grow as needed.
 impl<A> TryWrite for Vec<u8, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    #[inline]
-    fn try_write_str(&mut self, s: &str) -> Result<(), Error> {
-        self.try_extend_from_slice(s.as_bytes())
-    }
+	#[inline]
+	fn try_write_str(&mut self, s: &str) -> Result<(), Error> {
+		self.try_extend_from_slice(s.as_bytes())
+	}
 }

@@ -15,45 +15,45 @@ use crate::error::{CustomError, Error};
 /// Error raised while allocating.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct AllocError {
-    pub(crate) layout: Layout,
+	pub(crate) layout: Layout,
 }
 
 impl fmt::Display for AllocError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "Failed to allocate {} bytes of memory",
-            self.layout.size()
-        )
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(
+			f,
+			"Failed to allocate {} bytes of memory",
+			self.layout.size()
+		)
+	}
 }
 
 impl core::error::Error for AllocError {}
 
 pub(crate) trait SizedTypeProperties: Sized {
-    const IS_ZST: bool = core::mem::size_of::<Self>() == 0;
-    const NEEDS_DROP: bool = core::mem::needs_drop::<Self>();
+	const IS_ZST: bool = core::mem::size_of::<Self>() == 0;
+	const NEEDS_DROP: bool = core::mem::needs_drop::<Self>();
 }
 
 impl<T> SizedTypeProperties for T {}
 
 #[inline(always)]
 pub(crate) fn into_ok<T>(result: Result<T, Infallible>) -> T {
-    match result {
-        Ok(value) => value,
-        #[allow(unreachable_patterns)]
-        Err(error) => match error {},
-    }
+	match result {
+		Ok(value) => value,
+		#[allow(unreachable_patterns)]
+		Err(error) => match error {},
+	}
 }
 
 #[inline(always)]
 pub(crate) fn into_ok_try<T>(result: Result<T, CustomError<Infallible>>) -> Result<T, Error> {
-    match result {
-        Ok(value) => Ok(value),
-        Err(error) => match error {
-            CustomError::Error(error) => Err(error),
-            #[allow(unreachable_patterns)]
-            CustomError::Custom(error) => match error {},
-        },
-    }
+	match result {
+		Ok(value) => Ok(value),
+		Err(error) => match error {
+			CustomError::Error(error) => Err(error),
+			#[allow(unreachable_patterns)]
+			CustomError::Custom(error) => match error {},
+		},
+	}
 }

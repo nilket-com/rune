@@ -24,27 +24,27 @@ use crate::{ContextError, Module};
 /// ```
 #[rune::module(::std::fmt)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?.with_unique("std::fmt");
+	let mut m = Module::from_meta(self::module__meta)?.with_unique("std::fmt");
 
-    m.ty::<Formatter>()?;
-    m.ty::<fmt::Error>()?;
-    m.function_meta(fmt_error_display_fmt)?;
-    m.macro_meta(format)?;
-    #[cfg(feature = "fresh-core")]
-    m.fresh_mark_format_macro();
+	m.ty::<Formatter>()?;
+	m.ty::<fmt::Error>()?;
+	m.function_meta(fmt_error_display_fmt)?;
+	m.macro_meta(format)?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_macro();
 
-    m.ty::<Format>()?;
-    m.function_meta(format_display_fmt__meta)?;
-    m.function_meta(format_debug_fmt__meta)?;
-    m.function_meta(format_clone__meta)?;
-    m.implement_trait::<Format>(rune::item!(::std::clone::Clone))?;
+	m.ty::<Format>()?;
+	m.function_meta(format_display_fmt__meta)?;
+	m.function_meta(format_debug_fmt__meta)?;
+	m.function_meta(format_clone__meta)?;
+	m.implement_trait::<Format>(rune::item!(::std::clone::Clone))?;
 
-    Ok(m)
+	Ok(m)
 }
 
 #[rune::function(instance, protocol = DISPLAY_FMT)]
 fn fmt_error_display_fmt(error: &fmt::Error, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{error}")
+	write!(f, "{error}")
 }
 
 /// Format a string using a format specifier.
@@ -58,12 +58,12 @@ fn fmt_error_display_fmt(error: &fmt::Error, f: &mut Formatter) -> alloc::Result
 /// ```
 #[rune::macro_(path = format)]
 pub(crate) fn format(
-    cx: &mut MacroContext<'_, '_, '_>,
-    stream: &TokenStream,
+	cx: &mut MacroContext<'_, '_, '_>,
+	stream: &TokenStream,
 ) -> compile::Result<TokenStream> {
-    let args = FormatArgs::parse(cx, stream)?;
-    let expanded = args.expand(cx)?;
-    Ok(expanded.into_token_stream(cx)?)
+	let args = FormatArgs::parse(cx, stream)?;
+	let expanded = args.expand(cx)?;
+	Ok(expanded.into_token_stream(cx)?)
 }
 
 /// Write a display representation of a format specification.
@@ -76,10 +76,10 @@ pub(crate) fn format(
 /// ```
 #[rune::function(keep, instance, protocol = DISPLAY_FMT)]
 fn format_display_fmt(format: &Format, f: &mut Formatter) -> Result<(), VmError> {
-    format
-        .spec
-        .format(&format.value, f, &mut EnvProtocolCaller)?;
-    Ok(())
+	format
+		.spec
+		.format(&format.value, f, &mut EnvProtocolCaller)?;
+	Ok(())
 }
 
 /// Write a debug representation of a format specification.
@@ -93,7 +93,7 @@ fn format_display_fmt(format: &Format, f: &mut Formatter) -> Result<(), VmError>
 /// ```
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 fn format_debug_fmt(format: &Format, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{format:?}")
+	write!(f, "{format:?}")
 }
 
 /// Clones a format specification.
@@ -107,5 +107,5 @@ fn format_debug_fmt(format: &Format, f: &mut Formatter) -> alloc::Result<()> {
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn format_clone(this: &Format) -> Result<Format, VmError> {
-    Ok(this.try_clone()?)
+	Ok(this.try_clone()?)
 }

@@ -7,9 +7,9 @@ use rune::modules::capture_io::CaptureIo;
 criterion::criterion_group!(benches, entry);
 
 fn entry(b: &mut Criterion) {
-    let (mut vm, io) = make_vm().unwrap();
+	let (mut vm, io) = make_vm().unwrap();
 
-    b.bench_function("brainfuck_hello_world", move |b| {
+	b.bench_function("brainfuck_hello_world", move |b| {
         let program = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
         let entry = Hash::type_hash(["main"]);
 
@@ -21,24 +21,24 @@ fn entry(b: &mut Criterion) {
         });
     });
 
-    let (mut vm, io) = make_vm().unwrap();
+	let (mut vm, io) = make_vm().unwrap();
 
-    b.bench_function("brainfuck_hello_world2", |b| {
-        // interesting hello world which wraps cells on the negative side
-        let program = "+[-[<<[+[--->]-[<<<]]]>>>-]>-.---.>..>.<<<<-.<+.>>>>>.>.<<.<-.";
-        let entry = Hash::type_hash(["main"]);
+	b.bench_function("brainfuck_hello_world2", |b| {
+		// interesting hello world which wraps cells on the negative side
+		let program = "+[-[<<[+[--->]-[<<<]]]>>>-]>-.---.>..>.<<<<-.<+.>>>>>.>.<<.<-.";
+		let entry = Hash::type_hash(["main"]);
 
-        b.iter(|| {
-            let value = vm.call(entry, (program, 0)).expect("failed call");
-            let out = io.drain_utf8();
-            assert_eq!(out.as_deref(), Ok("hello world"));
-            value
-        });
-    });
+		b.iter(|| {
+			let value = vm.call(entry, (program, 0)).expect("failed call");
+			let out = io.drain_utf8();
+			assert_eq!(out.as_deref(), Ok("hello world"));
+			value
+		});
+	});
 
-    let (mut vm, io) = make_vm().unwrap();
+	let (mut vm, io) = make_vm().unwrap();
 
-    b.bench_function("brainfuck_fib", |b| {
+	b.bench_function("brainfuck_fib", |b| {
         // Computes the first 16 fib numbers
         let program = "++++++++++++++++++++++++++++++++++++++++++++>++++++++++++++++++++++++++++++++>++ ++++++++++++++>>+<<[>>>>++++++++++<<[->+>-[>+>>]>[+[-<+>]>+>>]<<<<<<]>[<+>-]>[-] >>>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]>>[+++++++++++++++++++++++++++++ +++++++++++++++++++.[-]]<[++++++++++++++++++++++++++++++++++++++++++++++++.[-]]< <<++++++++++++++++++++++++++++++++++++++++++++++++.[-]<<<<<<<.>.>>[>>+<<-]>[>+<< +>-]>[<+>-]<<<-]<<++...";
         let entry = Hash::type_hash(["main"]);
@@ -54,127 +54,127 @@ fn entry(b: &mut Criterion) {
         });
     });
 
-    let (mut vm, io) = make_vm().unwrap();
+	let (mut vm, io) = make_vm().unwrap();
 
-    b.bench_function("brainfuck_loopity", |b| {
-        // Just a program that runs a lot of instructions
-        let program = ">+[>++>+++[-<]>>]+";
-        let entry = Hash::type_hash(["main"]);
+	b.bench_function("brainfuck_loopity", |b| {
+		// Just a program that runs a lot of instructions
+		let program = ">+[>++>+++[-<]>>]+";
+		let entry = Hash::type_hash(["main"]);
 
-        b.iter(|| {
-            let value = vm.call(entry, (program, 5)).expect("failed call");
-            let out = io.drain_utf8();
-            assert_eq!(out.as_deref(), Ok(""));
-            value
-        });
-    });
+		b.iter(|| {
+			let value = vm.call(entry, (program, 5)).expect("failed call");
+			let out = io.drain_utf8();
+			assert_eq!(out.as_deref(), Ok(""));
+			value
+		});
+	});
 }
 
 fn make_vm() -> Result<(Vm, CaptureIo)> {
-    Ok(rune_vm_capture! {
-        enum Op {
-            Inc(v),
-            Move(v),
-            Loop(ops),
-            Input,
-            Print,
-        }
+	Ok(rune_vm_capture! {
+		enum Op {
+			Inc(v),
+			Move(v),
+			Loop(ops),
+			Input,
+			Print,
+		}
 
-        struct Tape {
-            pos,
-            tape,
-        }
+		struct Tape {
+			pos,
+			tape,
+		}
 
-        impl Tape {
-            fn new() {
-                Tape { pos: 0, tape: [0] }
-            }
+		impl Tape {
+			fn new() {
+				Tape { pos: 0, tape: [0] }
+			}
 
-            fn get(self) {
-                self.tape[self.pos]
-            }
+			fn get(self) {
+				self.tape[self.pos]
+			}
 
-            fn inc(self, x) {
-                self.tape[self.pos] = (self.tape[self.pos] + x) % 256;
+			fn inc(self, x) {
+				self.tape[self.pos] = (self.tape[self.pos] + x) % 256;
 
-                if self.tape[self.pos] < 0 {
-                    self.tape[self.pos] = self.tape[self.pos] + 256;
-                }
-            }
+				if self.tape[self.pos] < 0 {
+					self.tape[self.pos] = self.tape[self.pos] + 256;
+				}
+			}
 
-            fn mov(self, x) {
-                self.pos += x;
+			fn mov(self, x) {
+				self.pos += x;
 
-                while self.pos >= self.tape.len() {
-                    self.tape.push(0);
-                }
-            }
+				while self.pos >= self.tape.len() {
+					self.tape.push(0);
+				}
+			}
 
-            fn set(self, v) {
-                self.tape[self.pos] = v;
-            }
-        }
+			fn set(self, v) {
+				self.tape[self.pos] = v;
+			}
+		}
 
-        fn run(program, tape, inputs) {
-            for op in program {
-                match op {
-                    Op::Inc(x) => tape.inc(x),
-                    Op::Move(x) => tape.mov(x),
-                    Op::Loop(program) => while tape.get() != 0 {
-                        run(program, tape, inputs);
-                    },
-                    Op::Print => {
-                        let c = char::from_i64(tape.get()).expect("A valid char");
-                        print!("{}", c);
-                    }
-                    Op::Input => {
-                        tape.set(0)
-                    }
-                }
-            }
-        }
+		fn run(program, tape, inputs) {
+			for op in program {
+				match op {
+					Op::Inc(x) => tape.inc(x),
+					Op::Move(x) => tape.mov(x),
+					Op::Loop(program) => while tape.get() != 0 {
+						run(program, tape, inputs);
+					},
+					Op::Print => {
+						let c = char::from_i64(tape.get()).expect("A valid char");
+						print!("{}", c);
+					}
+					Op::Input => {
+						tape.set(0)
+					}
+				}
+			}
+		}
 
-        fn parse(it) {
-            let buf = Vec::new();
+		fn parse(it) {
+			let buf = Vec::new();
 
-            while let Some(c) = it.next() {
-                let op = match c {
-                    '+' => Op::Inc(1),
-                    '-' => Op::Inc(-1),
-                    '>' => Op::Move(1),
-                    '<' => Op::Move(-1),
-                    '.' => Op::Print,
-                    '[' => Op::Loop(parse(it)),
-                    ',' => Op::Input,
-                    ']' => break,
-                    _ => continue,
-                };
+			while let Some(c) = it.next() {
+				let op = match c {
+					'+' => Op::Inc(1),
+					'-' => Op::Inc(-1),
+					'>' => Op::Move(1),
+					'<' => Op::Move(-1),
+					'.' => Op::Print,
+					'[' => Op::Loop(parse(it)),
+					',' => Op::Input,
+					']' => break,
+					_ => continue,
+				};
 
-                buf.push(op);
-            }
+				buf.push(op);
+			}
 
-            buf
-        }
+			buf
+		}
 
-        struct Program {
-            ops,
-            inputs
-        }
+		struct Program {
+			ops,
+			inputs
+		}
 
-        impl Program {
-            fn new(code, inputs) {
-                Program { ops: parse(code), inputs }
-            }
+		impl Program {
+			fn new(code, inputs) {
+				Program { ops: parse(code), inputs }
+			}
 
-            fn run(self) {
-                let tape = Tape::new();
-                run(self.ops, tape, self.inputs);
-            }
-        }
+			fn run(self) {
+				let tape = Tape::new();
+				run(self.ops, tape, self.inputs);
+			}
+		}
 
-        pub fn main(s, i) {
-            let program = Program::new(s.chars(), i);
-            program.run();
-        }
-    })
+		pub fn main(s, i) {
+			let program = Program::new(s.chars(), i);
+			program.run();
+		}
+	})
 }

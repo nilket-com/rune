@@ -70,30 +70,30 @@ use crate::error::Error;
 /// assert_eq!("MyCollection([5, 6, 7, 1, 2, 3])", format!("{c:?}"));
 /// ```
 pub trait TryExtend<T> {
-    /// Extends a collection with the contents of an iterator.
-    ///
-    /// As this is the only required method for this trait, the [trait-level]
-    /// docs contain more details.
-    ///
-    /// [trait-level]: TryExtend
-    ///
-    /// # Examples
-    ///
-    /// Basic usage:
-    ///
-    /// ```
-    /// use rune::alloc::String;
-    /// use rune::alloc::prelude::*;
-    ///
-    /// // You can extend a String with some chars:
-    /// let mut message = String::try_from("abc")?;
-    ///
-    /// message.try_extend(['d', 'e', 'f'].into_iter())?;
-    ///
-    /// assert_eq!("abcdef", &message);
-    /// # Ok::<_, rune::alloc::Error>(())
-    /// ```
-    fn try_extend<I>(&mut self, iter: I) -> Result<(), Error>
-    where
-        I: IntoIterator<Item = T>;
+	/// Extends a collection with the contents of an iterator.
+	///
+	/// As this is the only required method for this trait, the [trait-level]
+	/// docs contain more details.
+	///
+	/// [trait-level]: TryExtend
+	///
+	/// # Examples
+	///
+	/// Basic usage:
+	///
+	/// ```
+	/// use rune::alloc::String;
+	/// use rune::alloc::prelude::*;
+	///
+	/// // You can extend a String with some chars:
+	/// let mut message = String::try_from("abc")?;
+	///
+	/// message.try_extend(['d', 'e', 'f'].into_iter())?;
+	///
+	/// assert_eq!("abcdef", &message);
+	/// # Ok::<_, rune::alloc::Error>(())
+	/// ```
+	fn try_extend<I>(&mut self, iter: I) -> Result<(), Error>
+	where
+		I: IntoIterator<Item = T>;
 }

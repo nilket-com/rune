@@ -2,26 +2,26 @@ use rune::sync::Arc;
 use rune::{BuildError, Context, Diagnostics, Source, Sources, Vm};
 
 pub(crate) fn vm(
-    context: &Context,
-    sources: &mut Sources,
-    diagnostics: &mut Diagnostics,
+	context: &Context,
+	sources: &mut Sources,
+	diagnostics: &mut Diagnostics,
 ) -> Result<Vm, BuildError> {
-    let unit = rune::prepare(sources)
-        .with_context(context)
-        .with_diagnostics(diagnostics)
-        .build()?;
+	let unit = rune::prepare(sources)
+		.with_context(context)
+		.with_diagnostics(diagnostics)
+		.build()?;
 
-    let context = Arc::try_new(context.runtime()?)?;
-    let unit = Arc::try_new(unit)?;
-    Ok(Vm::new(context, unit))
+	let context = Arc::try_new(context.runtime()?)?;
+	let unit = Arc::try_new(unit)?;
+	Ok(Vm::new(context, unit))
 }
 
 pub(crate) fn sources(source: &str) -> Sources {
-    let mut sources = Sources::new();
-    sources
-        .insert(Source::new("main", source).expect("Failed to construct source"))
-        .expect("Failed to insert source");
-    sources
+	let mut sources = Sources::new();
+	sources
+		.insert(Source::new("main", source).expect("Failed to construct source"))
+		.expect("Failed to insert source");
+	sources
 }
 
 macro_rules! rune_vm {
@@ -47,23 +47,23 @@ macro_rules! rune_vm_capture {
 }
 
 mod benchmarks {
-    pub mod aoc_2020_11a;
-    pub mod aoc_2020_19b;
-    pub mod aoc_2020_1a;
-    pub mod aoc_2020_1b;
-    pub mod await_call;
-    pub mod brainfuck;
-    pub mod external_functions;
-    pub mod fib;
+	pub mod aoc_2020_11a;
+	pub mod aoc_2020_19b;
+	pub mod aoc_2020_1a;
+	pub mod aoc_2020_1b;
+	pub mod await_call;
+	pub mod brainfuck;
+	pub mod external_functions;
+	pub mod fib;
 }
 
 criterion::criterion_main! {
-    benchmarks::aoc_2020_1a::benches,
-    benchmarks::aoc_2020_1b::benches,
-    benchmarks::aoc_2020_11a::benches,
-    benchmarks::aoc_2020_19b::benches,
-    benchmarks::await_call::benches,
-    benchmarks::brainfuck::benches,
-    benchmarks::fib::benches,
-    benchmarks::external_functions::benches,
+	benchmarks::aoc_2020_1a::benches,
+	benchmarks::aoc_2020_1b::benches,
+	benchmarks::aoc_2020_11a::benches,
+	benchmarks::aoc_2020_19b::benches,
+	benchmarks::await_call::benches,
+	benchmarks::brainfuck::benches,
+	benchmarks::fib::benches,
+	benchmarks::external_functions::benches,
 }

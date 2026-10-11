@@ -16,39 +16,39 @@ vm_error!(Panic);
 /// able to panic.
 #[derive(Debug)]
 pub struct Panic {
-    inner: Box<dyn BoxedPanic>,
+	inner: Box<dyn BoxedPanic>,
 }
 
 impl Panic {
-    /// A custom panic reason.
-    pub(crate) fn custom<D>(message: D) -> Self
-    where
-        D: 'static + BoxedPanic,
-    {
-        Self {
-            inner: Box::new(message),
-        }
-    }
+	/// A custom panic reason.
+	pub(crate) fn custom<D>(message: D) -> Self
+	where
+		D: 'static + BoxedPanic,
+	{
+		Self {
+			inner: Box::new(message),
+		}
+	}
 }
 
 impl fmt::Display for Panic {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", self.inner)
-    }
+	fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(fmt, "{}", self.inner)
+	}
 }
 
 impl From<PanicReason> for Panic {
-    fn from(value: PanicReason) -> Self {
-        Self {
-            inner: Box::new(value),
-        }
-    }
+	fn from(value: PanicReason) -> Self {
+		Self {
+			inner: Box::new(value),
+		}
+	}
 }
 
 #[cfg(test)]
 impl PartialEq for Panic {
-    #[inline]
-    fn eq(&self, _: &Self) -> bool {
-        true
-    }
+	#[inline]
+	fn eq(&self, _: &Self) -> bool {
+		true
+	}
 }

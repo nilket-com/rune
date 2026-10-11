@@ -200,66 +200,66 @@ macro_rules! unary_error_test {
 
 #[test]
 fn i64() {
-    op_tests!(i64, 10 + 2 = 12);
-    op_tests!(i64, 10 - 2 = 8);
-    op_tests!(i64, 10 * 2 = 20);
-    op_tests!(i64, 10 / 2 = 5);
-    op_tests!(i64, 10 % 3 = 1);
-    op_tests!(i64, 0b1100 & 0b0110 = 0b1100 & 0b0110);
-    op_tests!(i64, 0b1100 ^ 0b0110 = 0b1100 ^ 0b0110);
-    op_tests!(i64, 0b1100 | 0b0110 = 0b1100 | 0b0110);
-    op_tests!(i64, 0b1100 << 2 = 0b1100 << 2);
-    op_tests!(i64, 0b1100 >> 2 = 0b1100 >> 2);
-    op_tests!(i64, !0b10100i64 = !0b10100i64);
-    op_tests!(i64, -10i64 = -10i64);
+	op_tests!(i64, 10 + 2 = 12);
+	op_tests!(i64, 10 - 2 = 8);
+	op_tests!(i64, 10 * 2 = 20);
+	op_tests!(i64, 10 / 2 = 5);
+	op_tests!(i64, 10 % 3 = 1);
+	op_tests!(i64, 0b1100 & 0b0110 = 0b1100 & 0b0110);
+	op_tests!(i64, 0b1100 ^ 0b0110 = 0b1100 ^ 0b0110);
+	op_tests!(i64, 0b1100 | 0b0110 = 0b1100 | 0b0110);
+	op_tests!(i64, 0b1100 << 2 = 0b1100 << 2);
+	op_tests!(i64, 0b1100 >> 2 = 0b1100 >> 2);
+	op_tests!(i64, !0b10100i64 = !0b10100i64);
+	op_tests!(i64, -10i64 = -10i64);
 
-    error_test!(9223372036854775807i64 + 2 = Overflow);
-    error_test!(-9223372036854775808i64 - 2 = Underflow);
-    error_test!(9223372036854775807i64 * 2 = Overflow);
-    error_test!(10 / 0 = DivideByZero);
-    error_test!(10 % 0 = DivideByZero);
-    error_test!(0b1 << 64 = Overflow);
-    error_test!(0b1 >> 64 = Underflow);
+	error_test!(9223372036854775807i64 + 2 = Overflow);
+	error_test!(-9223372036854775808i64 - 2 = Underflow);
+	error_test!(9223372036854775807i64 * 2 = Overflow);
+	error_test!(10 / 0 = DivideByZero);
+	error_test!(10 % 0 = DivideByZero);
+	error_test!(0b1 << 64 = Overflow);
+	error_test!(0b1 >> 64 = Underflow);
 
-    // The one division which fails without a divisor of zero. It was reported
-    // as a division by zero, which is the only reason division usually fails.
-    error_test!(-9223372036854775808i64 / -1 = Overflow);
-    error_test!(-9223372036854775808i64 % -1 = Overflow);
+	// The one division which fails without a divisor of zero. It was reported
+	// as a division by zero, which is the only reason division usually fails.
+	error_test!(-9223372036854775808i64 / -1 = Overflow);
+	error_test!(-9223372036854775808i64 % -1 = Overflow);
 
-    unary_error_test!(--9223372036854775808i64 = Overflow);
+	unary_error_test!(--9223372036854775808i64 = Overflow);
 }
 
 #[test]
 fn u64() {
-    op_tests!(u64, 0b1100 & 0b0110 = 0b1100 & 0b0110);
-    op_tests!(u64, 0b1100 ^ 0b0110 = 0b1100 ^ 0b0110);
-    op_tests!(u64, 0b1100 | 0b0110 = 0b1100 | 0b0110);
-    op_tests!(u64, 0b1100 << 2 = 0b1100 << 2);
-    op_tests!(u64, 0b1100 >> 2 = 0b1100 >> 2);
-    op_tests!(u64, !0b10100u64 = !0b10100u64);
+	op_tests!(u64, 0b1100 & 0b0110 = 0b1100 & 0b0110);
+	op_tests!(u64, 0b1100 ^ 0b0110 = 0b1100 ^ 0b0110);
+	op_tests!(u64, 0b1100 | 0b0110 = 0b1100 | 0b0110);
+	op_tests!(u64, 0b1100 << 2 = 0b1100 << 2);
+	op_tests!(u64, 0b1100 >> 2 = 0b1100 >> 2);
+	op_tests!(u64, !0b10100u64 = !0b10100u64);
 
-    error_test!(0b1 << 64 = Overflow);
-    error_test!(0b1 >> 64 = Underflow);
+	error_test!(0b1 << 64 = Overflow);
+	error_test!(0b1 >> 64 = Underflow);
 }
 
 #[test]
 fn u8() {
-    op_tests!(u8, 0b1100u8 & 0b0110u8 = 0b1100u8 & 0b0110u8);
-    op_tests!(u8, 0b1100u8 ^ 0b0110u8 = 0b1100u8 ^ 0b0110u8);
-    op_tests!(u8, 0b1100u8 | 0b0110u8 = 0b1100u8 | 0b0110u8);
-    op_tests!(u8, 0b1100u8 << 2 = 0b1100u8 << 2);
-    op_tests!(u8, 0b1100u8 >> 2 = 0b1100u8 >> 2);
-    op_tests!(u64, !0b10100u8 = !0b10100u64);
+	op_tests!(u8, 0b1100u8 & 0b0110u8 = 0b1100u8 & 0b0110u8);
+	op_tests!(u8, 0b1100u8 ^ 0b0110u8 = 0b1100u8 ^ 0b0110u8);
+	op_tests!(u8, 0b1100u8 | 0b0110u8 = 0b1100u8 | 0b0110u8);
+	op_tests!(u8, 0b1100u8 << 2 = 0b1100u8 << 2);
+	op_tests!(u8, 0b1100u8 >> 2 = 0b1100u8 >> 2);
+	op_tests!(u64, !0b10100u8 = !0b10100u64);
 }
 
 #[test]
 fn i8() {
-    op_tests!(i8, 0b1100i8 & 0b0110i8 = 0b1100i8 & 0b0110i8);
-    op_tests!(i8, 0b1100i8 ^ 0b0110i8 = 0b1100i8 ^ 0b0110i8);
-    op_tests!(i8, 0b1100i8 | 0b0110i8 = 0b1100i8 | 0b0110i8);
-    op_tests!(i8, 0b1100i8 << 2 = 0b1100i8 << 2);
-    op_tests!(i8, 0b1100i8 >> 2 = 0b1100i8 >> 2);
-    op_tests!(i64, !0b10100i8 = !0b10100i64);
+	op_tests!(i8, 0b1100i8 & 0b0110i8 = 0b1100i8 & 0b0110i8);
+	op_tests!(i8, 0b1100i8 ^ 0b0110i8 = 0b1100i8 ^ 0b0110i8);
+	op_tests!(i8, 0b1100i8 | 0b0110i8 = 0b1100i8 | 0b0110i8);
+	op_tests!(i8, 0b1100i8 << 2 = 0b1100i8 << 2);
+	op_tests!(i8, 0b1100i8 >> 2 = 0b1100i8 >> 2);
+	op_tests!(i64, !0b10100i8 = !0b10100i64);
 }
 
 /// Overflowing `pow` and `abs` is an error, the way overflowing any other
@@ -271,27 +271,27 @@ fn i8() {
 /// asking for it.
 #[test]
 fn pow_and_abs_report_an_overflow() {
-    assert_vm_error!("let a = 2; a.pow(64);", Overflow => {});
-    assert_vm_error!("let a = 2u64; a.pow(64);", Overflow => {});
-    assert_vm_error!("let a = -9223372036854775808i64; a.abs();", Overflow => {});
+	assert_vm_error!("let a = 2; a.pow(64);", Overflow => {});
+	assert_vm_error!("let a = 2u64; a.pow(64);", Overflow => {});
+	assert_vm_error!("let a = -9223372036854775808i64; a.abs();", Overflow => {});
 
-    // What still holds.
-    let out: i64 = eval("2.pow(10)");
-    assert_eq!(out, 1024);
+	// What still holds.
+	let out: i64 = eval("2.pow(10)");
+	assert_eq!(out, 1024);
 
-    let out: i64 = eval("(-10).abs()");
-    assert_eq!(out, 10);
+	let out: i64 = eval("(-10).abs()");
+	assert_eq!(out, 10);
 
-    // And what the wrapping and checked forms answer instead.
-    let out: i64 = eval("2.wrapping_pow(64)");
-    assert_eq!(out, 0);
+	// And what the wrapping and checked forms answer instead.
+	let out: i64 = eval("2.wrapping_pow(64)");
+	assert_eq!(out, 0);
 
-    let out: i64 = eval("(-9223372036854775808i64).wrapping_abs()");
-    assert_eq!(out, i64::MIN);
+	let out: i64 = eval("(-9223372036854775808i64).wrapping_abs()");
+	assert_eq!(out, i64::MIN);
 
-    let out: Option<i64> = eval("2.checked_pow(64)");
-    assert_eq!(out, None);
+	let out: Option<i64> = eval("2.checked_pow(64)");
+	assert_eq!(out, None);
 
-    let out: Option<i64> = eval("(-9223372036854775808i64).checked_abs()");
-    assert_eq!(out, None);
+	let out: Option<i64> = eval("(-9223372036854775808i64).checked_abs()");
+	assert_eq!(out, None);
 }

@@ -32,31 +32,31 @@ use crate::SourceId;
 /// not fully consumed by the parser.
 pub fn parse_all<T>(source: &str, source_id: SourceId, shebang: bool) -> compile::Result<T>
 where
-    T: Parse,
+	T: Parse,
 {
-    let mut parser = Parser::new(source, source_id, shebang);
-    let ast = parser.parse::<T>()?;
-    parser.eof()?;
-    Ok(ast)
+	let mut parser = Parser::new(source, source_id, shebang);
+	let ast = parser.parse::<T>()?;
+	parser.eof()?;
+	Ok(ast)
 }
 
 /// Test if the given string is a valid identifier.
 pub(crate) fn is_ident(ident: &str) -> bool {
-    let mut chars = ident.chars();
+	let mut chars = ident.chars();
 
-    let Some(c) = chars.next() else {
-        return false;
-    };
+	let Some(c) = chars.next() else {
+		return false;
+	};
 
-    if !(c == '_' || is_xid_start(c)) {
-        return false;
-    }
+	if !(c == '_' || is_xid_start(c)) {
+		return false;
+	}
 
-    for c in chars {
-        if !is_xid_continue(c) {
-            return false;
-        }
-    }
+	for c in chars {
+		if !is_xid_continue(c) {
+			return false;
+		}
+	}
 
-    true
+	true
 }

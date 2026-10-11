@@ -23,11 +23,11 @@ use rune_alloc::callable::Callable;
 /// [budgeted]: self
 #[pin_project]
 pub struct Budget<T> {
-    /// Instruction budget.
-    budget: usize,
-    /// The thing being budgeted.
-    #[pin]
-    value: T,
+	/// Instruction budget.
+	budget: usize,
+	/// The thing being budgeted.
+	#[pin]
+	value: T,
 }
 
 /// Wrap the given value with a budget.
@@ -83,15 +83,15 @@ pub struct Budget<T> {
 /// assert_eq!(f.call(), Marker);
 /// ```
 pub fn with<T>(budget: usize, value: T) -> Budget<T> {
-    tracing::trace!(?budget);
-    Budget { budget, value }
+	tracing::trace!(?budget);
+	Budget { budget, value }
 }
 
 /// Replace the current budget returning a guard that will restore the one which
 /// was in effect when it is dropped.
 #[inline(never)]
 pub fn replace(budget: usize) -> BudgetGuard {
-    BudgetGuard(self::no_std::rune_budget_replace(budget))
+	BudgetGuard(self::no_std::rune_budget_replace(budget))
 }
 
 /// Acquire the current budget, leaving no budget in effect for the duration of
@@ -105,7 +105,7 @@ pub fn replace(budget: usize) -> BudgetGuard {
 /// wanted.
 #[inline(never)]
 pub fn acquire() -> BudgetGuard {
-    BudgetGuard(self::no_std::rune_budget_replace(usize::MAX))
+	BudgetGuard(self::no_std::rune_budget_replace(usize::MAX))
 }
 
 /// Take a single permit from the ambient budget, if one is set.
@@ -132,19 +132,19 @@ pub fn acquire() -> BudgetGuard {
 /// ```
 #[inline]
 pub fn take() -> bool {
-    let budget = self::no_std::rune_budget_get();
+	let budget = self::no_std::rune_budget_get();
 
-    // No budget is in effect.
-    if budget == usize::MAX {
-        return true;
-    }
+	// No budget is in effect.
+	if budget == usize::MAX {
+		return true;
+	}
 
-    if budget == 0 {
-        return false;
-    }
+	if budget == 0 {
+		return false;
+	}
 
-    self::no_std::rune_budget_replace(budget - 1);
-    true
+	self::no_std::rune_budget_replace(budget - 1);
+	true
 }
 
 /// Take a permit from the ambient budget on behalf of a natively driven loop.
@@ -159,15 +159,15 @@ pub fn take() -> bool {
 /// budget runs out, so a host sees one shape either way.
 #[inline]
 pub(crate) fn permit() -> Result<(), crate::runtime::VmError> {
-    use crate::runtime::{VmError, VmErrorKind, VmHaltInfo};
+	use crate::runtime::{VmError, VmErrorKind, VmHaltInfo};
 
-    if !take() {
-        return Err(VmError::new(VmErrorKind::Halted {
-            halt: VmHaltInfo::Limited,
-        }));
-    }
+	if !take() {
+		return Err(VmError::new(VmErrorKind::Halted {
+			halt: VmHaltInfo::Limited,
+		}));
+	}
 
-    Ok(())
+	Ok(())
 }
 
 /// A locally acquired budget.
@@ -179,66 +179,66 @@ pub(crate) fn permit() -> Result<(), crate::runtime::VmError> {
 pub struct BudgetGuard(usize);
 
 impl BudgetGuard {
-    /// Take a ticker from the budget.
-    #[inline]
-    pub fn take(&mut self) -> bool {
-        if self.0 == usize::MAX {
-            return true;
-        }
+	/// Take a ticker from the budget.
+	#[inline]
+	pub fn take(&mut self) -> bool {
+		if self.0 == usize::MAX {
+			return true;
+		}
 
-        if self.0 == 0 {
-            return false;
-        }
+		if self.0 == 0 {
+			return false;
+		}
 
-        self.0 -= 1;
-        true
-    }
+		self.0 -= 1;
+		true
+	}
 }
 
 impl Drop for BudgetGuard {
-    #[inline]
-    fn drop(&mut self) {
-        let _ = self::no_std::rune_budget_replace(self.0);
-    }
+	#[inline]
+	fn drop(&mut self) {
+		let _ = self::no_std::rune_budget_replace(self.0);
+	}
 }
 
 impl<T> Budget<T>
 where
-    T: Callable,
+	T: Callable,
 {
-    /// Call the budgeted function.
-    #[inline]
-    pub fn call(self) -> T::Output {
-        Callable::call(self)
-    }
+	/// Call the budgeted function.
+	#[inline]
+	pub fn call(self) -> T::Output {
+		Callable::call(self)
+	}
 }
 
 impl<T> Callable for Budget<T>
 where
-    T: Callable,
+	T: Callable,
 {
-    type Output = T::Output;
+	type Output = T::Output;
 
-    #[inline]
-    fn call(self) -> Self::Output {
-        let _guard = BudgetGuard(self::no_std::rune_budget_replace(self.budget));
-        self.value.call()
-    }
+	#[inline]
+	fn call(self) -> Self::Output {
+		let _guard = BudgetGuard(self::no_std::rune_budget_replace(self.budget));
+		self.value.call()
+	}
 }
 
 impl<T> Future for Budget<T>
 where
-    T: Future,
+	T: Future,
 {
-    type Output = T::Output;
+	type Output = T::Output;
 
-    #[inline]
-    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-        let this = self.project();
+	#[inline]
+	fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
+		let this = self.project();
 
-        let _guard = BudgetGuard(self::no_std::rune_budget_replace(*this.budget));
-        let poll = this.value.poll(cx);
-        *this.budget = self::no_std::rune_budget_get();
-        poll
-    }
+		let _guard = BudgetGuard(self::no_std::rune_budget_replace(*this.budget));
+		let poll = this.value.poll(cx);
+		*this.budget = self::no_std::rune_budget_get();
+		poll
+	}
 }

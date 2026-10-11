@@ -51,5 +51,5 @@ use rune::Any;
 #[derive(Any)]
 #[rune(item = ::rand)]
 pub(super) struct StdRng {
-    pub(super) inner: rand::rngs::StdRng,
+	pub(super) inner: rand::rngs::StdRng,
 }

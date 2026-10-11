@@ -11,9 +11,9 @@ use crate::alloc::prelude::*;
 use crate::alloc::string::FromUtf8Error;
 use crate::compile::Named;
 use crate::runtime::{
-    Bytes, Dismantle, Formatter, FromValue, Function, Handover, Hasher, Inline, MaybeTypeOf, Range,
-    RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive, Ref, Repr, ToValue, TypeOf,
-    Value, VmError, VmErrorKind,
+	Bytes, Dismantle, Formatter, FromValue, Function, Handover, Hasher, Inline, MaybeTypeOf, Range,
+	RangeFrom, RangeFull, RangeInclusive, RangeTo, RangeToInclusive, Ref, Repr, ToValue, TypeOf,
+	Value, VmError, VmErrorKind,
 };
 use crate::{Any, ContextError, Module, TypeHash};
 
@@ -31,86 +31,86 @@ use crate::{Any, ContextError, Module, TypeHash};
 /// ```
 #[rune::module(::std::string)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
+	let mut m = Module::from_meta(self::module__meta)?;
 
-    m.ty::<String>()?;
+	m.ty::<String>()?;
 
-    m.function_meta(string_from)?;
-    m.function_meta(string_from_str)?;
-    m.function_meta(string_new)?;
-    m.function_meta(string_with_capacity)?;
-    m.function_meta(len)?;
-    m.function_meta(starts_with)?;
-    m.function_meta(ends_with)?;
-    m.function_meta(capacity)?;
-    m.function_meta(clear)?;
-    m.function_meta(contains)?;
-    m.function_meta(push)?;
-    m.function_meta(push_str)?;
-    m.function_meta(reserve)?;
-    m.function_meta(reserve_exact)?;
-    m.function_meta(from_utf8)?;
-    m.function_meta(as_bytes)?;
-    m.function_meta(into_bytes)?;
-    m.function_meta(shrink_to_fit)?;
-    m.function_meta(char_at)?;
-    m.function_meta(split)?;
-    m.function_meta(split_once)?;
-    m.associated_function("split_str", __rune_fn__split)?;
-    m.function_meta(trim)?;
-    m.function_meta(trim_end)?;
-    m.function_meta(replace)?;
-    m.function_meta(is_empty)?;
-    m.function_meta(chars)?;
-    m.function_meta(get__meta)?;
-    m.function_meta(parse_int)?;
-    m.function_meta(parse_float)?;
-    m.function_meta(parse_char)?;
-    m.function_meta(to_lowercase)?;
-    m.function_meta(to_uppercase)?;
+	m.function_meta(string_from)?;
+	m.function_meta(string_from_str)?;
+	m.function_meta(string_new)?;
+	m.function_meta(string_with_capacity)?;
+	m.function_meta(len)?;
+	m.function_meta(starts_with)?;
+	m.function_meta(ends_with)?;
+	m.function_meta(capacity)?;
+	m.function_meta(clear)?;
+	m.function_meta(contains)?;
+	m.function_meta(push)?;
+	m.function_meta(push_str)?;
+	m.function_meta(reserve)?;
+	m.function_meta(reserve_exact)?;
+	m.function_meta(from_utf8)?;
+	m.function_meta(as_bytes)?;
+	m.function_meta(into_bytes)?;
+	m.function_meta(shrink_to_fit)?;
+	m.function_meta(char_at)?;
+	m.function_meta(split)?;
+	m.function_meta(split_once)?;
+	m.associated_function("split_str", __rune_fn__split)?;
+	m.function_meta(trim)?;
+	m.function_meta(trim_end)?;
+	m.function_meta(replace)?;
+	m.function_meta(is_empty)?;
+	m.function_meta(chars)?;
+	m.function_meta(get__meta)?;
+	m.function_meta(parse_int)?;
+	m.function_meta(parse_float)?;
+	m.function_meta(parse_char)?;
+	m.function_meta(to_lowercase)?;
+	m.function_meta(to_uppercase)?;
 
-    m.function_meta(add)?;
-    m.function_meta(add_assign)?;
-    m.function_meta(index_get)?;
+	m.function_meta(add)?;
+	m.function_meta(add_assign)?;
+	m.function_meta(index_get)?;
 
-    m.function_meta(clone__meta)?;
-    m.implement_trait::<String>(rune::item!(::std::clone::Clone))?;
+	m.function_meta(clone__meta)?;
+	m.implement_trait::<String>(rune::item!(::std::clone::Clone))?;
 
-    m.function_meta(partial_eq__meta)?;
-    m.implement_trait::<String>(rune::item!(::std::cmp::PartialEq))?;
+	m.function_meta(partial_eq__meta)?;
+	m.implement_trait::<String>(rune::item!(::std::cmp::PartialEq))?;
 
-    m.function_meta(eq__meta)?;
-    m.implement_trait::<String>(rune::item!(::std::cmp::Eq))?;
+	m.function_meta(eq__meta)?;
+	m.implement_trait::<String>(rune::item!(::std::cmp::Eq))?;
 
-    m.function_meta(partial_cmp__meta)?;
-    m.implement_trait::<String>(rune::item!(::std::cmp::PartialOrd))?;
+	m.function_meta(partial_cmp__meta)?;
+	m.implement_trait::<String>(rune::item!(::std::cmp::PartialOrd))?;
 
-    m.function_meta(cmp__meta)?;
-    m.implement_trait::<String>(rune::item!(::std::cmp::Ord))?;
+	m.function_meta(cmp__meta)?;
+	m.implement_trait::<String>(rune::item!(::std::cmp::Ord))?;
 
-    m.function_meta(hash__meta)?;
+	m.function_meta(hash__meta)?;
 
-    m.function_meta(display_fmt__meta)?;
-    m.function_meta(debug_fmt__meta)?;
+	m.function_meta(display_fmt__meta)?;
+	m.function_meta(debug_fmt__meta)?;
 
-    m.ty::<Chars>()?;
-    m.function_meta(Chars::next__meta)?;
-    m.function_meta(Chars::next_back__meta)?;
-    m.implement_trait::<Chars>(rune::item!(::std::iter::Iterator))?;
-    m.implement_trait::<Chars>(rune::item!(::std::iter::DoubleEndedIterator))?;
+	m.ty::<Chars>()?;
+	m.function_meta(Chars::next__meta)?;
+	m.function_meta(Chars::next_back__meta)?;
+	m.implement_trait::<Chars>(rune::item!(::std::iter::Iterator))?;
+	m.implement_trait::<Chars>(rune::item!(::std::iter::DoubleEndedIterator))?;
 
-    macro_rules! split {
-        ($ty:ty) => {
-            m.ty::<Split<$ty>>()?;
-            m.function_meta(Split::<$ty>::next__meta)?;
-            m.implement_trait::<Split<$ty>>(rune::item!(::std::iter::Iterator))?;
-        };
-    }
+	macro_rules! split {
+		($ty:ty) => {
+			m.ty::<Split<$ty>>()?;
+			m.function_meta(Split::<$ty>::next__meta)?;
+			m.implement_trait::<Split<$ty>>(rune::item!(::std::iter::Iterator))?;
+		};
+	}
 
-    split!(Function);
-    split!(String);
-    split!(char);
-    Ok(m)
+	split!(Function);
+	split!(String);
+	split!(char);
+	Ok(m)
 }
 
 /// Converts a vector of bytes to a `String`.
@@ -165,8 +165,8 @@ pub fn module() -> Result<Module, ContextError> {
 /// [`into_bytes`]: String::into_bytes
 #[rune::function(free, path = String::from_utf8)]
 fn from_utf8(bytes: &[u8]) -> Result<Result<String, FromUtf8Error>, VmError> {
-    let vec = Vec::try_from(bytes)?;
-    Ok(String::from_utf8(vec))
+	let vec = Vec::try_from(bytes)?;
+	Ok(String::from_utf8(vec))
 }
 
 /// Returns a byte slice of this `String`'s contents.
@@ -186,7 +186,7 @@ fn from_utf8(bytes: &[u8]) -> Result<Result<String, FromUtf8Error>, VmError> {
 /// ```
 #[rune::function(instance)]
 fn as_bytes(s: &str) -> Result<Bytes, VmError> {
-    Ok(Bytes::from_vec(Vec::try_from(s.as_bytes())?))
+	Ok(Bytes::from_vec(Vec::try_from(s.as_bytes())?))
 }
 
 /// Constructs a string from another string.
@@ -201,12 +201,12 @@ fn as_bytes(s: &str) -> Result<Bytes, VmError> {
 /// ```
 #[rune::function(free, path = String::from)]
 fn string_from(value: &str) -> Result<String, VmError> {
-    Ok(String::try_from(value)?)
+	Ok(String::try_from(value)?)
 }
 
 #[rune::function(free, path = String::from_str, deprecated = "Use String::from instead")]
 fn string_from_str(value: &str) -> Result<String, VmError> {
-    Ok(String::try_from(value)?)
+	Ok(String::try_from(value)?)
 }
 
 /// Creates a new empty `String`.
@@ -228,7 +228,7 @@ fn string_from_str(value: &str) -> Result<String, VmError> {
 /// ```
 #[rune::function(free, path = String::new)]
 fn string_new() -> String {
-    String::new()
+	String::new()
 }
 
 /// Creates a new empty `String` with at least the specified capacity.
@@ -271,7 +271,7 @@ fn string_new() -> String {
 /// ```
 #[rune::function(free, path = String::with_capacity)]
 fn string_with_capacity(capacity: usize) -> Result<String, VmError> {
-    Ok(String::try_with_capacity(capacity)?)
+	Ok(String::try_with_capacity(capacity)?)
 }
 
 /// Returns the length of `self`.
@@ -294,7 +294,7 @@ fn string_with_capacity(capacity: usize) -> Result<String, VmError> {
 /// ```
 #[rune::function(instance)]
 fn len(this: &str) -> usize {
-    this.len()
+	this.len()
 }
 
 /// Returns `true` if the given pattern matches a prefix of this string slice.
@@ -319,7 +319,7 @@ fn len(this: &str) -> usize {
 /// ```
 #[rune::function(instance)]
 fn starts_with(this: &str, other: &str) -> bool {
-    this.starts_with(other)
+	this.starts_with(other)
 }
 
 /// Returns `true` if the given pattern matches a suffix of this string slice.
@@ -344,7 +344,7 @@ fn starts_with(this: &str, other: &str) -> bool {
 /// ```
 #[rune::function(instance)]
 fn ends_with(this: &str, other: &str) -> bool {
-    this.ends_with(other)
+	this.ends_with(other)
 }
 
 /// Returns this `String`'s capacity, in bytes.
@@ -360,7 +360,7 @@ fn ends_with(this: &str, other: &str) -> bool {
 /// ```
 #[rune::function(instance)]
 fn capacity(this: &String) -> usize {
-    this.capacity()
+	this.capacity()
 }
 
 /// Truncates this `String`, removing all contents.
@@ -383,7 +383,7 @@ fn capacity(this: &String) -> usize {
 /// ```
 #[rune::function(instance)]
 fn clear(this: &mut String) {
-    this.clear();
+	this.clear();
 }
 
 /// Returns `true` if the given pattern matches a sub-slice of this string
@@ -409,7 +409,7 @@ fn clear(this: &mut String) {
 /// ```
 #[rune::function(instance)]
 fn contains(this: &str, other: &str) -> bool {
-    this.contains(other)
+	this.contains(other)
 }
 
 /// Appends the given [`char`] to the end of this `String`.
@@ -429,8 +429,8 @@ fn contains(this: &str, other: &str) -> bool {
 /// ```
 #[rune::function(instance)]
 fn push(this: &mut String, c: char) -> Result<(), VmError> {
-    this.try_push(c)?;
-    Ok(())
+	this.try_push(c)?;
+	Ok(())
 }
 
 /// Appends a given string slice onto the end of this `String`.
@@ -448,8 +448,8 @@ fn push(this: &mut String, c: char) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn push_str(this: &mut String, other: &str) -> Result<(), VmError> {
-    this.try_push_str(other)?;
-    Ok(())
+	this.try_push_str(other)?;
+	Ok(())
 }
 
 /// Reserves capacity for at least `additional` bytes more than the current
@@ -494,8 +494,8 @@ fn push_str(this: &mut String, other: &str) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn reserve(this: &mut String, additional: usize) -> Result<(), VmError> {
-    this.try_reserve(additional)?;
-    Ok(())
+	this.try_reserve(additional)?;
+	Ok(())
 }
 
 /// Reserves the minimum capacity for at least `additional` bytes more than the
@@ -542,7 +542,7 @@ fn reserve(this: &mut String, additional: usize) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn reserve_exact(this: &mut String, additional: usize) -> alloc::Result<()> {
-    this.try_reserve_exact(additional)
+	this.try_reserve_exact(additional)
 }
 
 /// Returns a byte slice of this `String`'s contents while moving the string.
@@ -562,7 +562,7 @@ fn reserve_exact(this: &mut String, additional: usize) -> alloc::Result<()> {
 /// ```
 #[rune::function(instance)]
 fn into_bytes(s: String) -> Bytes {
-    Bytes::from_vec(s.into_bytes())
+	Bytes::from_vec(s.into_bytes())
 }
 
 /// Checks that `index`-th byte is the first byte in a UTF-8 code point sequence
@@ -590,7 +590,7 @@ fn into_bytes(s: String) -> Bytes {
 /// ```
 #[rune::function(instance)]
 fn is_char_boundary(s: &str, index: usize) -> bool {
-    s.is_char_boundary(index)
+	s.is_char_boundary(index)
 }
 
 /// Access the character at the given byte index.
@@ -608,11 +608,11 @@ fn is_char_boundary(s: &str, index: usize) -> bool {
 /// ```
 #[rune::function(instance)]
 fn char_at(s: &str, index: usize) -> Option<char> {
-    if !s.is_char_boundary(index) {
-        return None;
-    }
+	if !s.is_char_boundary(index) {
+		return None;
+	}
 
-    s[index..].chars().next()
+	s[index..].chars().next()
 }
 
 /// Clones the string and its underlying storage.
@@ -635,7 +635,7 @@ fn char_at(s: &str, index: usize) -> Option<char> {
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn clone(this: &String) -> alloc::Result<String> {
-    this.try_clone()
+	this.try_clone()
 }
 
 /// Test two strings for partial equality.
@@ -652,7 +652,7 @@ fn clone(this: &String) -> alloc::Result<String> {
 #[rune::function(keep, instance, protocol = PARTIAL_EQ)]
 #[inline]
 fn partial_eq(this: &str, rhs: &str) -> bool {
-    this.eq(rhs)
+	this.eq(rhs)
 }
 
 /// Test two strings for total equality.
@@ -669,7 +669,7 @@ fn partial_eq(this: &str, rhs: &str) -> bool {
 #[rune::function(keep, instance, protocol = EQ)]
 #[inline]
 fn eq(this: &str, rhs: &str) -> bool {
-    this.eq(rhs)
+	this.eq(rhs)
 }
 
 /// Perform a partial ordered comparison between two strings.
@@ -695,7 +695,7 @@ fn eq(this: &str, rhs: &str) -> bool {
 #[rune::function(keep, instance, protocol = PARTIAL_CMP)]
 #[inline]
 fn partial_cmp(this: &str, rhs: &str) -> Option<Ordering> {
-    this.partial_cmp(rhs)
+	this.partial_cmp(rhs)
 }
 
 /// Perform a totally ordered comparison between two strings.
@@ -713,7 +713,7 @@ fn partial_cmp(this: &str, rhs: &str) -> Option<Ordering> {
 #[rune::function(keep, instance, protocol = CMP)]
 #[inline]
 fn cmp(this: &str, rhs: &str) -> Ordering {
-    this.cmp(rhs)
+	this.cmp(rhs)
 }
 
 /// Hash the string.
@@ -730,7 +730,7 @@ fn cmp(this: &str, rhs: &str) -> Ordering {
 /// ```
 #[rune::function(keep, instance, protocol = HASH)]
 fn hash(this: &str, hasher: &mut Hasher) {
-    hasher.write_str(this);
+	hasher.write_str(this);
 }
 
 /// Write a display representation of a string.
@@ -743,7 +743,7 @@ fn hash(this: &str, hasher: &mut Hasher) {
 #[rune::function(keep, instance, protocol = DISPLAY_FMT)]
 #[inline]
 fn display_fmt(this: &str, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{this}")
+	write!(f, "{this}")
 }
 
 /// Write a debug representation of a string.
@@ -756,7 +756,7 @@ fn display_fmt(this: &str, f: &mut Formatter) -> alloc::Result<()> {
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 #[inline]
 fn debug_fmt(this: &str, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{this:?}")
+	write!(f, "{this:?}")
 }
 
 /// Shrinks the capacity of this `String` to match its length.
@@ -776,7 +776,7 @@ fn debug_fmt(this: &str, f: &mut Formatter) -> alloc::Result<()> {
 /// ```
 #[rune::function(instance)]
 fn shrink_to_fit(s: &mut String) -> alloc::Result<()> {
-    s.try_shrink_to_fit()
+	s.try_shrink_to_fit()
 }
 
 /// An iterator over substrings of this string slice, separated by
@@ -887,35 +887,35 @@ fn shrink_to_fit(s: &mut String) -> alloc::Result<()> {
 /// [`split_whitespace`]: str::split_whitespace
 #[rune::function(instance, deprecated = "Use String::split instead")]
 fn split(this: Ref<str>, value: Value) -> Result<Value, VmError> {
-    match value.as_ref() {
-        Repr::Inline(Inline::Char(c)) => Ok(rune::to_value(Split::new(this, *c))?),
-        Repr::Inline(value) => Err(VmError::from([
-            VmErrorKind::expected::<String>(value.type_info()),
-            VmErrorKind::bad_argument(0),
-        ])),
-        Repr::Dynamic(value) => Err(VmError::from([
-            VmErrorKind::expected::<String>(value.type_info()),
-            VmErrorKind::bad_argument(0),
-        ])),
-        Repr::Any(value) => match value.type_hash() {
-            String::HASH => {
-                let s = value.borrow_ref::<String>()?;
+	match value.as_ref() {
+		Repr::Inline(Inline::Char(c)) => Ok(rune::to_value(Split::new(this, *c))?),
+		Repr::Inline(value) => Err(VmError::from([
+			VmErrorKind::expected::<String>(value.type_info()),
+			VmErrorKind::bad_argument(0),
+		])),
+		Repr::Dynamic(value) => Err(VmError::from([
+			VmErrorKind::expected::<String>(value.type_info()),
+			VmErrorKind::bad_argument(0),
+		])),
+		Repr::Any(value) => match value.type_hash() {
+			String::HASH => {
+				let s = value.borrow_ref::<String>()?;
 
-                let split = rune::to_value(Split::new(this, String::try_from(s.as_str())?))?;
+				let split = rune::to_value(Split::new(this, String::try_from(s.as_str())?))?;
 
-                Ok(split)
-            }
-            Function::HASH => {
-                let f = value.borrow_ref::<Function>()?;
-                let split = rune::to_value(Split::new(this, f.try_clone()?))?;
-                Ok(split)
-            }
-            _ => Err(VmError::from([
-                VmErrorKind::expected::<String>(value.type_info()),
-                VmErrorKind::bad_argument(0),
-            ])),
-        },
-    }
+				Ok(split)
+			}
+			Function::HASH => {
+				let f = value.borrow_ref::<Function>()?;
+				let split = rune::to_value(Split::new(this, f.try_clone()?))?;
+				Ok(split)
+			}
+			_ => Err(VmError::from([
+				VmErrorKind::expected::<String>(value.type_info()),
+				VmErrorKind::bad_argument(0),
+			])),
+		},
+	}
 }
 
 /// Splits the string on the first occurrence of the specified delimiter and
@@ -931,60 +931,60 @@ fn split(this: Ref<str>, value: Value) -> Result<Value, VmError> {
 /// ```
 #[rune::function(instance)]
 fn split_once(this: &str, value: Value) -> Result<Option<(String, String)>, VmError> {
-    let outcome = match value.as_ref() {
-        Repr::Inline(Inline::Char(pat)) => this.split_once(*pat),
-        Repr::Inline(value) => {
-            return Err(VmError::from([
-                VmErrorKind::expected::<String>(value.type_info()),
-                VmErrorKind::bad_argument(0),
-            ]));
-        }
-        Repr::Dynamic(value) => {
-            return Err(VmError::from([
-                VmErrorKind::expected::<String>(value.type_info()),
-                VmErrorKind::bad_argument(0),
-            ]));
-        }
-        Repr::Any(value) => match value.type_hash() {
-            String::HASH => {
-                let s = value.borrow_ref::<String>()?;
-                this.split_once(s.as_str())
-            }
-            Function::HASH => {
-                let f = value.borrow_ref::<Function>()?;
-                let mut err = None;
+	let outcome = match value.as_ref() {
+		Repr::Inline(Inline::Char(pat)) => this.split_once(*pat),
+		Repr::Inline(value) => {
+			return Err(VmError::from([
+				VmErrorKind::expected::<String>(value.type_info()),
+				VmErrorKind::bad_argument(0),
+			]));
+		}
+		Repr::Dynamic(value) => {
+			return Err(VmError::from([
+				VmErrorKind::expected::<String>(value.type_info()),
+				VmErrorKind::bad_argument(0),
+			]));
+		}
+		Repr::Any(value) => match value.type_hash() {
+			String::HASH => {
+				let s = value.borrow_ref::<String>()?;
+				this.split_once(s.as_str())
+			}
+			Function::HASH => {
+				let f = value.borrow_ref::<Function>()?;
+				let mut err = None;
 
-                let outcome = this.split_once(|c: char| match f.call::<bool>((c,)) {
-                    Ok(b) => b,
-                    Err(e) => {
-                        if err.is_none() {
-                            err = Some(e);
-                        }
+				let outcome = this.split_once(|c: char| match f.call::<bool>((c,)) {
+					Ok(b) => b,
+					Err(e) => {
+						if err.is_none() {
+							err = Some(e);
+						}
 
-                        false
-                    }
-                });
+						false
+					}
+				});
 
-                if let Some(e) = err.take() {
-                    return Err(e);
-                }
+				if let Some(e) = err.take() {
+					return Err(e);
+				}
 
-                outcome
-            }
-            _ => {
-                return Err(VmError::from([
-                    VmErrorKind::expected::<String>(value.type_info()),
-                    VmErrorKind::bad_argument(0),
-                ]));
-            }
-        },
-    };
+				outcome
+			}
+			_ => {
+				return Err(VmError::from([
+					VmErrorKind::expected::<String>(value.type_info()),
+					VmErrorKind::bad_argument(0),
+				]));
+			}
+		},
+	};
 
-    let Some((a, b)) = outcome else {
-        return Ok(None);
-    };
+	let Some((a, b)) = outcome else {
+		return Ok(None);
+	};
 
-    Ok(Some((a.try_to_owned()?, b.try_to_owned()?)))
+	Ok(Some((a.try_to_owned()?, b.try_to_owned()?)))
 }
 
 /// Returns a string slice with leading and trailing whitespace removed.
@@ -1003,7 +1003,7 @@ fn split_once(this: &str, value: Value) -> Result<Option<(String, String)>, VmEr
 /// ```
 #[rune::function(instance)]
 fn trim(this: &str) -> alloc::Result<String> {
-    this.trim().try_to_owned()
+	this.trim().try_to_owned()
 }
 
 /// Returns a string slice with trailing whitespace removed.
@@ -1038,7 +1038,7 @@ fn trim(this: &str) -> alloc::Result<String> {
 /// ```
 #[rune::function(instance)]
 fn trim_end(this: &str) -> alloc::Result<String> {
-    this.trim_end().try_to_owned()
+	this.trim_end().try_to_owned()
 }
 
 /// Returns `true` if `self` has a length of zero bytes.
@@ -1056,7 +1056,7 @@ fn trim_end(this: &str) -> alloc::Result<String> {
 /// ```
 #[rune::function(instance)]
 fn is_empty(this: &str) -> bool {
-    this.is_empty()
+	this.is_empty()
 }
 
 /// Replaces all matches of a pattern with another string.
@@ -1084,7 +1084,7 @@ fn is_empty(this: &str) -> bool {
 /// ```
 #[rune::function(instance)]
 fn replace(this: &str, from: &str, to: &str) -> alloc::Result<String> {
-    alloc::str::replace(this, from, to)
+	alloc::str::replace(this, from, to)
 }
 
 /// Returns an iterator over the [`char`]s of a string slice.
@@ -1136,7 +1136,7 @@ fn replace(this: &str, from: &str, to: &str) -> alloc::Result<String> {
 /// ```
 #[rune::function(instance)]
 fn chars(s: Ref<str>) -> Chars {
-    Chars::new(s)
+	Chars::new(s)
 }
 
 /// Returns a subslice of `str`.
@@ -1160,86 +1160,86 @@ fn chars(s: Ref<str>) -> Chars {
 /// ```
 #[rune::function(keep, instance)]
 fn get(this: &str, key: Value) -> Result<Option<String>, VmError> {
-    use crate::runtime::TypeOf;
+	use crate::runtime::TypeOf;
 
-    let slice = match key.as_any() {
-        Some(value) => match value.type_hash() {
-            RangeFrom::HASH => {
-                let range = value.borrow_ref::<RangeFrom>()?;
-                let start = range.start.as_usize()?;
-                this.get(start..)
-            }
-            RangeFull::HASH => {
-                _ = value.borrow_ref::<RangeFull>()?;
-                this.get(..)
-            }
-            RangeInclusive::HASH => {
-                let range = value.borrow_ref::<RangeInclusive>()?;
-                let start = range.start.as_usize()?;
-                let end = range.end.as_usize()?;
-                this.get(start..=end)
-            }
-            RangeToInclusive::HASH => {
-                let range = value.borrow_ref::<RangeToInclusive>()?;
-                let end = range.end.as_usize()?;
-                this.get(..=end)
-            }
-            RangeTo::HASH => {
-                let range = value.borrow_ref::<RangeTo>()?;
-                let end = range.end.as_usize()?;
-                this.get(..end)
-            }
-            Range::HASH => {
-                let range = value.borrow_ref::<Range>()?;
-                let start = range.start.as_usize()?;
-                let end = range.end.as_usize()?;
-                this.get(start..end)
-            }
-            _ => {
-                return Err(VmError::from(VmErrorKind::UnsupportedIndexGet {
-                    target: String::type_info(),
-                    index: value.type_info(),
-                }))
-            }
-        },
-        _ => {
-            return Err(VmError::from(VmErrorKind::UnsupportedIndexGet {
-                target: String::type_info(),
-                index: key.type_info(),
-            }))
-        }
-    };
+	let slice = match key.as_any() {
+		Some(value) => match value.type_hash() {
+			RangeFrom::HASH => {
+				let range = value.borrow_ref::<RangeFrom>()?;
+				let start = range.start.as_usize()?;
+				this.get(start..)
+			}
+			RangeFull::HASH => {
+				_ = value.borrow_ref::<RangeFull>()?;
+				this.get(..)
+			}
+			RangeInclusive::HASH => {
+				let range = value.borrow_ref::<RangeInclusive>()?;
+				let start = range.start.as_usize()?;
+				let end = range.end.as_usize()?;
+				this.get(start..=end)
+			}
+			RangeToInclusive::HASH => {
+				let range = value.borrow_ref::<RangeToInclusive>()?;
+				let end = range.end.as_usize()?;
+				this.get(..=end)
+			}
+			RangeTo::HASH => {
+				let range = value.borrow_ref::<RangeTo>()?;
+				let end = range.end.as_usize()?;
+				this.get(..end)
+			}
+			Range::HASH => {
+				let range = value.borrow_ref::<Range>()?;
+				let start = range.start.as_usize()?;
+				let end = range.end.as_usize()?;
+				this.get(start..end)
+			}
+			_ => {
+				return Err(VmError::from(VmErrorKind::UnsupportedIndexGet {
+					target: String::type_info(),
+					index: value.type_info(),
+				}))
+			}
+		},
+		_ => {
+			return Err(VmError::from(VmErrorKind::UnsupportedIndexGet {
+				target: String::type_info(),
+				index: key.type_info(),
+			}))
+		}
+	};
 
-    let Some(slice) = slice else {
-        return Ok(None);
-    };
+	let Some(slice) = slice else {
+		return Ok(None);
+	};
 
-    Ok(Some(slice.try_to_owned()?))
+	Ok(Some(slice.try_to_owned()?))
 }
 
 /// The add operation for strings.
 #[rune::function(instance, protocol = ADD)]
 fn add(a: &str, b: &str) -> Result<String, VmError> {
-    let mut string = String::try_with_capacity(a.len() + b.len())?;
-    string.try_push_str(a)?;
-    string.try_push_str(b)?;
-    Ok(string)
+	let mut string = String::try_with_capacity(a.len() + b.len())?;
+	string.try_push_str(a)?;
+	string.try_push_str(b)?;
+	Ok(string)
 }
 
 /// The add assign operation for strings.
 #[rune::function(instance, protocol = ADD_ASSIGN)]
 fn add_assign(this: &mut String, other: &str) -> Result<(), VmError> {
-    this.try_push_str(other)?;
-    Ok(())
+	this.try_push_str(other)?;
+	Ok(())
 }
 
 /// Get a specific string index.
 #[rune::function(instance, protocol = INDEX_GET)]
 fn index_get(s: &str, key: Value) -> Result<String, VmError> {
-    match get(s, key)? {
-        Some(slice) => Ok(slice),
-        None => Err(VmError::panic("missing string slice")),
-    }
+	match get(s, key)? {
+		Some(slice) => Ok(slice),
+		None => Err(VmError::panic("missing string slice")),
+	}
 }
 
 /// Parses this string into an integer.
@@ -1259,7 +1259,7 @@ fn index_get(s: &str, key: Value) -> Result<String, VmError> {
 /// ```
 #[rune::function(instance, path = parse::<i64>)]
 fn parse_int(s: &str) -> Result<i64, ParseIntError> {
-    str::parse::<i64>(s)
+	str::parse::<i64>(s)
 }
 
 /// Parses this string into a float.
@@ -1279,7 +1279,7 @@ fn parse_int(s: &str) -> Result<i64, ParseIntError> {
 /// ```
 #[rune::function(instance, path = parse::<f64>)]
 fn parse_float(s: &str) -> Result<f64, ParseFloatError> {
-    str::parse::<f64>(s)
+	str::parse::<f64>(s)
 }
 
 /// Parses this string into a character.
@@ -1299,7 +1299,7 @@ fn parse_float(s: &str) -> Result<f64, ParseFloatError> {
 /// ```
 #[rune::function(instance, path = parse::<char>)]
 fn parse_char(s: &str) -> Result<char, char::ParseCharError> {
-    str::parse::<char>(s)
+	str::parse::<char>(s)
 }
 
 /// Returns the lowercase equivalent of this string slice, as a new [`String`].
@@ -1343,40 +1343,40 @@ fn parse_char(s: &str) -> Result<char, char::ParseCharError> {
 /// ```
 #[rune::function(instance)]
 fn to_lowercase(s: &str) -> Result<String, VmError> {
-    let mut lowercase = String::try_with_capacity(s.len())?;
+	let mut lowercase = String::try_with_capacity(s.len())?;
 
-    for (i, c) in s.char_indices() {
-        // Inlined code to from std::str to handle upper-case sigma,
-        // since it is the only Unicode character that is context-dependent
-        // See https://github.com/rust-lang/rust/issues/26035 for more context
-        if c == 'Σ' {
-            lowercase.try_push_str(map_uppercase_sigma(s, i))?;
-        } else {
-            lowercase.try_extend(c.to_lowercase())?;
-        }
-    }
+	for (i, c) in s.char_indices() {
+		// Inlined code to from std::str to handle upper-case sigma,
+		// since it is the only Unicode character that is context-dependent
+		// See https://github.com/rust-lang/rust/issues/26035 for more context
+		if c == 'Σ' {
+			lowercase.try_push_str(map_uppercase_sigma(s, i))?;
+		} else {
+			lowercase.try_extend(c.to_lowercase())?;
+		}
+	}
 
-    return Ok(lowercase);
+	return Ok(lowercase);
 
-    fn map_uppercase_sigma(from: &str, i: usize) -> &'static str {
-        // See https://www.unicode.org/versions/Unicode7.0.0/ch03.pdf#G33992
-        // for the definition of `Final_Sigma`.
-        debug_assert!('Σ'.len_utf8() == 2);
-        let is_word_final = case_ignorable_then_cased(from[..i].chars().rev())
-            && !case_ignorable_then_cased(from[i + 2..].chars());
-        if is_word_final {
-            "ς"
-        } else {
-            "σ"
-        }
-    }
+	fn map_uppercase_sigma(from: &str, i: usize) -> &'static str {
+		// See https://www.unicode.org/versions/Unicode7.0.0/ch03.pdf#G33992
+		// for the definition of `Final_Sigma`.
+		debug_assert!('Σ'.len_utf8() == 2);
+		let is_word_final = case_ignorable_then_cased(from[..i].chars().rev())
+			&& !case_ignorable_then_cased(from[i + 2..].chars());
+		if is_word_final {
+			"ς"
+		} else {
+			"σ"
+		}
+	}
 
-    fn case_ignorable_then_cased<I: core::iter::Iterator<Item = char>>(mut iter: I) -> bool {
-        match iter.find(|&c| !unicode::case_ignorable::lookup(c)) {
-            Some(c) => unicode::cased::lookup(c),
-            None => false,
-        }
-    }
+	fn case_ignorable_then_cased<I: core::iter::Iterator<Item = char>>(mut iter: I) -> bool {
+		match iter.find(|&c| !unicode::case_ignorable::lookup(c)) {
+			Some(c) => unicode::cased::lookup(c),
+			None => false,
+		}
+	}
 }
 
 /// Returns the uppercase equivalent of this string slice, as a new [`String`].
@@ -1414,248 +1414,248 @@ fn to_lowercase(s: &str) -> Result<String, VmError> {
 /// ```
 #[rune::function(instance)]
 fn to_uppercase(s: &str) -> Result<String, VmError> {
-    let mut uppercase = String::try_with_capacity(s.len())?;
-    uppercase.try_extend(s.chars().flat_map(|c| c.to_uppercase()))?;
-    Ok(uppercase)
+	let mut uppercase = String::try_with_capacity(s.len())?;
+	uppercase.try_extend(s.chars().flat_map(|c| c.to_uppercase()))?;
+	Ok(uppercase)
 }
 
 #[derive(Any)]
 #[rune(item = ::std::string)]
 struct Chars {
-    string: Ref<str>,
-    start: usize,
-    end: usize,
+	string: Ref<str>,
+	start: usize,
+	end: usize,
 }
 
 impl Chars {
-    fn new(string: Ref<str>) -> Self {
-        let end = string.len();
-        Self {
-            string,
-            start: 0,
-            end,
-        }
-    }
+	fn new(string: Ref<str>) -> Self {
+		let end = string.len();
+		Self {
+			string,
+			start: 0,
+			end,
+		}
+	}
 
-    #[rune::function(keep, protocol = NEXT)]
-    fn next(&mut self) -> Option<char> {
-        let string = self.string.get(self.start..self.end)?;
-        let c = string.chars().next()?;
-        self.start += c.len_utf8();
-        Some(c)
-    }
+	#[rune::function(keep, protocol = NEXT)]
+	fn next(&mut self) -> Option<char> {
+		let string = self.string.get(self.start..self.end)?;
+		let c = string.chars().next()?;
+		self.start += c.len_utf8();
+		Some(c)
+	}
 
-    #[rune::function(keep, protocol = NEXT_BACK)]
-    fn next_back(&mut self) -> Option<char> {
-        let string = self.string.get(self.start..self.end)?;
-        let c = string.chars().next_back()?;
-        self.end -= c.len_utf8();
-        Some(c)
-    }
+	#[rune::function(keep, protocol = NEXT_BACK)]
+	fn next_back(&mut self) -> Option<char> {
+		let string = self.string.get(self.start..self.end)?;
+		let c = string.chars().next_back()?;
+		self.end -= c.len_utf8();
+		Some(c)
+	}
 }
 
 pub(crate) trait Pattern:
-    'static + TryClone + Named + FromValue + ToValue + MaybeTypeOf + TypeOf
+	'static + TryClone + Named + FromValue + ToValue + MaybeTypeOf + TypeOf
 {
-    fn test(&self, tail: &str) -> Result<(bool, usize), VmError>;
+	fn test(&self, tail: &str) -> Result<(bool, usize), VmError>;
 
-    fn is_empty(&self) -> bool;
+	fn is_empty(&self) -> bool;
 
-    /// Hand over the values the pattern is made of, if it is made of any.
-    ///
-    /// A pattern which is a function carries what the closure captured, and a
-    /// script can nest one split inside the next by capturing it, so what a
-    /// pattern holds has to be handed over rather than dropped in place.
-    fn dismantle(&mut self, _: &mut Handover<'_>) {}
+	/// Hand over the values the pattern is made of, if it is made of any.
+	///
+	/// A pattern which is a function carries what the closure captured, and a
+	/// script can nest one split inside the next by capturing it, so what a
+	/// pattern holds has to be handed over rather than dropped in place.
+	fn dismantle(&mut self, _: &mut Handover<'_>) {}
 }
 
 impl Pattern for String {
-    fn test(&self, tail: &str) -> Result<(bool, usize), VmError> {
-        if tail.starts_with(self.as_str()) {
-            Ok((true, self.len()))
-        } else {
-            let Some(c) = tail.chars().next() else {
-                return Ok((false, 0));
-            };
+	fn test(&self, tail: &str) -> Result<(bool, usize), VmError> {
+		if tail.starts_with(self.as_str()) {
+			Ok((true, self.len()))
+		} else {
+			let Some(c) = tail.chars().next() else {
+				return Ok((false, 0));
+			};
 
-            Ok((false, c.len_utf8()))
-        }
-    }
+			Ok((false, c.len_utf8()))
+		}
+	}
 
-    #[inline]
-    fn is_empty(&self) -> bool {
-        String::is_empty(self)
-    }
+	#[inline]
+	fn is_empty(&self) -> bool {
+		String::is_empty(self)
+	}
 }
 
 impl Pattern for char {
-    fn test(&self, tail: &str) -> Result<(bool, usize), VmError> {
-        let Some(c) = tail.chars().next() else {
-            return Ok((false, 0));
-        };
+	fn test(&self, tail: &str) -> Result<(bool, usize), VmError> {
+		let Some(c) = tail.chars().next() else {
+			return Ok((false, 0));
+		};
 
-        Ok((c == *self, c.len_utf8()))
-    }
+		Ok((c == *self, c.len_utf8()))
+	}
 
-    #[inline]
-    fn is_empty(&self) -> bool {
-        false
-    }
+	#[inline]
+	fn is_empty(&self) -> bool {
+		false
+	}
 }
 
 impl Pattern for Function {
-    fn dismantle(&mut self, out: &mut Handover<'_>) {
-        Dismantle::dismantle(self, out)
-    }
+	fn dismantle(&mut self, out: &mut Handover<'_>) {
+		Dismantle::dismantle(self, out)
+	}
 
-    fn test(&self, tail: &str) -> Result<(bool, usize), VmError> {
-        let Some(c) = tail.chars().next() else {
-            return Ok((false, 0));
-        };
+	fn test(&self, tail: &str) -> Result<(bool, usize), VmError> {
+		let Some(c) = tail.chars().next() else {
+			return Ok((false, 0));
+		};
 
-        Ok((self.call((c,))?, c.len_utf8()))
-    }
+		Ok((self.call((c,))?, c.len_utf8()))
+	}
 
-    #[inline]
-    fn is_empty(&self) -> bool {
-        false
-    }
+	#[inline]
+	fn is_empty(&self) -> bool {
+		false
+	}
 }
 
 #[derive(Any)]
 #[rune(item = ::std::string, dismantle)]
 pub(crate) struct Split<T>
 where
-    T: Pattern,
+	T: Pattern,
 {
-    string: Option<Ref<str>>,
-    pattern: T,
-    from: usize,
-    to: usize,
+	string: Option<Ref<str>>,
+	pattern: T,
+	from: usize,
+	to: usize,
 }
 
 impl<T> Split<T>
 where
-    T: Pattern,
+	T: Pattern,
 {
-    fn new(string: Ref<str>, pattern: T) -> Self {
-        Self {
-            string: Some(string),
-            pattern,
-            from: 0,
-            to: 0,
-        }
-    }
+	fn new(string: Ref<str>, pattern: T) -> Self {
+		Self {
+			string: Some(string),
+			pattern,
+			from: 0,
+			to: 0,
+		}
+	}
 
-    #[rune::function(keep, protocol = NEXT)]
-    fn next(&mut self) -> Result<Option<String>, VmError> {
-        let Some(string) = &self.string else {
-            return Ok(None);
-        };
+	#[rune::function(keep, protocol = NEXT)]
+	fn next(&mut self) -> Result<Option<String>, VmError> {
+		let Some(string) = &self.string else {
+			return Ok(None);
+		};
 
-        if self.from == string.len() && self.from == self.to {
-            self.string = None;
-            let out = "".try_to_owned()?;
-            return Ok(Some(out));
-        }
+		if self.from == string.len() && self.from == self.to {
+			self.string = None;
+			let out = "".try_to_owned()?;
+			return Ok(Some(out));
+		}
 
-        while self.to < string.len() {
-            let Some(tail) = string.get(self.to..) else {
-                return Ok(None);
-            };
+		while self.to < string.len() {
+			let Some(tail) = string.get(self.to..) else {
+				return Ok(None);
+			};
 
-            let (m, len) = self.pattern.test(tail)?;
+			let (m, len) = self.pattern.test(tail)?;
 
-            if m {
-                let head = string.get(self.from..self.to).unwrap_or_default();
-                let out = head.try_to_owned()?;
+			if m {
+				let head = string.get(self.from..self.to).unwrap_or_default();
+				let out = head.try_to_owned()?;
 
-                if len == 0 {
-                    self.from = self.to;
-                    self.to += tail.chars().next().map_or(0, |c| c.len_utf8());
-                } else {
-                    self.to += len;
-                    self.from = self.to;
-                }
+				if len == 0 {
+					self.from = self.to;
+					self.to += tail.chars().next().map_or(0, |c| c.len_utf8());
+				} else {
+					self.to += len;
+					self.from = self.to;
+				}
 
-                return Ok(Some(out));
-            } else {
-                self.to += len;
-            }
-        }
+				return Ok(Some(out));
+			} else {
+				self.to += len;
+			}
+		}
 
-        let tail = string.get(self.from..self.to).unwrap_or_default();
-        self.from = self.to;
-        let out = tail.try_to_owned()?;
+		let tail = string.get(self.from..self.to).unwrap_or_default();
+		self.from = self.to;
+		let out = tail.try_to_owned()?;
 
-        if !self.pattern.is_empty() {
-            self.string = None;
-        }
+		if !self.pattern.is_empty() {
+			self.string = None;
+		}
 
-        Ok(Some(out))
-    }
+		Ok(Some(out))
+	}
 
-    #[rune::function(keep, protocol = INTO_ITER)]
-    fn into_iter(self) -> Self {
-        self
-    }
+	#[rune::function(keep, protocol = INTO_ITER)]
+	fn into_iter(self) -> Self {
+		self
+	}
 }
 
 // Inlined code from core::unicode, since using it directly is marked as using an
 // unstable library feature
 mod unicode {
-    fn decode_prefix_sum(short_offset_run_header: u32) -> u32 {
-        short_offset_run_header & ((1 << 21) - 1)
-    }
+	fn decode_prefix_sum(short_offset_run_header: u32) -> u32 {
+		short_offset_run_header & ((1 << 21) - 1)
+	}
 
-    fn decode_length(short_offset_run_header: u32) -> usize {
-        (short_offset_run_header >> 21) as usize
-    }
+	fn decode_length(short_offset_run_header: u32) -> usize {
+		(short_offset_run_header >> 21) as usize
+	}
 
-    #[inline(always)]
-    fn skip_search<const SOR: usize, const OFFSETS: usize>(
-        needle: u32,
-        short_offset_runs: &[u32; SOR],
-        offsets: &[u8; OFFSETS],
-    ) -> bool {
-        // Note that this *cannot* be past the end of the array, as the last
-        // element is greater than std::char::MAX (the largest possible needle).
-        //
-        // So, we cannot have found it (i.e. Ok(idx) + 1 != length) and the correct
-        // location cannot be past it, so Err(idx) != length either.
-        //
-        // This means that we can avoid bounds checking for the accesses below, too.
-        let last_idx =
-            match short_offset_runs.binary_search_by_key(&(needle << 11), |header| header << 11) {
-                Ok(idx) => idx + 1,
-                Err(idx) => idx,
-            };
+	#[inline(always)]
+	fn skip_search<const SOR: usize, const OFFSETS: usize>(
+		needle: u32,
+		short_offset_runs: &[u32; SOR],
+		offsets: &[u8; OFFSETS],
+	) -> bool {
+		// Note that this *cannot* be past the end of the array, as the last
+		// element is greater than std::char::MAX (the largest possible needle).
+		//
+		// So, we cannot have found it (i.e. Ok(idx) + 1 != length) and the correct
+		// location cannot be past it, so Err(idx) != length either.
+		//
+		// This means that we can avoid bounds checking for the accesses below, too.
+		let last_idx =
+			match short_offset_runs.binary_search_by_key(&(needle << 11), |header| header << 11) {
+				Ok(idx) => idx + 1,
+				Err(idx) => idx,
+			};
 
-        let mut offset_idx = decode_length(short_offset_runs[last_idx]);
-        let length = if let Some(next) = short_offset_runs.get(last_idx + 1) {
-            decode_length(*next) - offset_idx
-        } else {
-            offsets.len() - offset_idx
-        };
-        let prev = last_idx
-            .checked_sub(1)
-            .map(|prev| decode_prefix_sum(short_offset_runs[prev]))
-            .unwrap_or(0);
+		let mut offset_idx = decode_length(short_offset_runs[last_idx]);
+		let length = if let Some(next) = short_offset_runs.get(last_idx + 1) {
+			decode_length(*next) - offset_idx
+		} else {
+			offsets.len() - offset_idx
+		};
+		let prev = last_idx
+			.checked_sub(1)
+			.map(|prev| decode_prefix_sum(short_offset_runs[prev]))
+			.unwrap_or(0);
 
-        let total = needle - prev;
-        let mut prefix_sum = 0;
-        for _ in 0..(length - 1) {
-            let offset = offsets[offset_idx];
-            prefix_sum += offset as u32;
-            if prefix_sum > total {
-                break;
-            }
-            offset_idx += 1;
-        }
-        offset_idx % 2 == 1
-    }
+		let total = needle - prev;
+		let mut prefix_sum = 0;
+		for _ in 0..(length - 1) {
+			let offset = offsets[offset_idx];
+			prefix_sum += offset as u32;
+			if prefix_sum > total {
+				break;
+			}
+			offset_idx += 1;
+		}
+		offset_idx % 2 == 1
+	}
 
-    #[rustfmt::skip]
+	#[rustfmt::skip]
     pub mod case_ignorable {
         static SHORT_OFFSET_RUNS: [u32; 35] = [
             688, 44045149, 572528402, 576724925, 807414908, 878718981, 903913493, 929080568, 933275148,
@@ -1707,7 +1707,7 @@ mod unicode {
         }
     }
 
-    #[rustfmt::skip]
+	#[rustfmt::skip]
     pub mod cased {
         static SHORT_OFFSET_RUNS: [u32; 22] = [
             4256, 115348384, 136322176, 144711446, 163587254, 320875520, 325101120, 350268208,
@@ -1743,9 +1743,9 @@ mod unicode {
 /// place.
 impl<T> Dismantle for Split<T>
 where
-    T: Pattern,
+	T: Pattern,
 {
-    fn dismantle(&mut self, out: &mut Handover<'_>) {
-        Pattern::dismantle(&mut self.pattern, out)
-    }
+	fn dismantle(&mut self, out: &mut Handover<'_>) {
+		Pattern::dismantle(&mut self.pattern, out)
+	}
 }

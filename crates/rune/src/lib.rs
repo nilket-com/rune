@@ -169,12 +169,12 @@ extern crate alloc as rust_alloc;
 #[macro_export]
 #[doc(hidden)]
 macro_rules! span {
-    ($start:expr, $end:expr) => {
-        $crate::ast::Span {
-            start: $crate::ast::ByteIndex($start),
-            end: $crate::ast::ByteIndex($end),
-        }
-    };
+	($start:expr, $end:expr) => {
+		$crate::ast::Span {
+			start: $crate::ast::ByteIndex($start),
+			end: $crate::ast::ByteIndex($end),
+		}
+	};
 }
 
 pub mod alloc;
@@ -263,8 +263,8 @@ pub mod runtime;
 pub mod experimental_core;
 #[doc(inline)]
 pub use self::runtime::{
-    from_const_value, from_value, to_const_value, to_value, FromConstValue, FromValue, Mut, Ref,
-    ToConstValue, ToValue, TypeHash, Unit, Value, Vm, VmError,
+	from_const_value, from_value, to_const_value, to_value, FromConstValue, FromValue, Mut, Ref,
+	ToConstValue, ToValue, TypeHash, Unit, Value, Vm, VmError,
 };
 
 mod shared;
@@ -829,75 +829,75 @@ pub(crate) mod doc;
 /// Privately exported details.
 #[doc(hidden)]
 pub mod __priv {
-    pub use crate::any::AnyMarker;
-    pub use crate::function_meta::{
-        FunctionMetaData, FunctionMetaKind, FunctionMetaStatics, MacroMetaData, MacroMetaKind,
-    };
-    pub use crate::item::{Item, ItemBuf};
-    pub use crate::module::{InstallWith, Module, ModuleMetaData};
-    pub use crate::params::Params;
-    pub use crate::runtime::{
-        AnyTypeInfo, ConstConstruct, ConstConstructImpl, ConstValue, ConstValueBuf, Dismantle,
-        FromConstValue, FromValue, Handover, MaybeTypeOf, Object, OwnedTuple, Protocol,
-        RawValueGuard, RuntimeError, ToConstValue, ToValue, Tuple, TypeHash, TypeOf, TypeValue,
-        UnsafeToMut, UnsafeToRef, UnsafeToValue, Value, ValueMutGuard, ValueRefGuard, VmError,
-    };
-    pub use core::clone::Clone;
+	pub use crate::any::AnyMarker;
+	pub use crate::function_meta::{
+		FunctionMetaData, FunctionMetaKind, FunctionMetaStatics, MacroMetaData, MacroMetaKind,
+	};
+	pub use crate::item::{Item, ItemBuf};
+	pub use crate::module::{InstallWith, Module, ModuleMetaData};
+	pub use crate::params::Params;
+	pub use crate::runtime::{
+		AnyTypeInfo, ConstConstruct, ConstConstructImpl, ConstValue, ConstValueBuf, Dismantle,
+		FromConstValue, FromValue, Handover, MaybeTypeOf, Object, OwnedTuple, Protocol,
+		RawValueGuard, RuntimeError, ToConstValue, ToValue, Tuple, TypeHash, TypeOf, TypeValue,
+		UnsafeToMut, UnsafeToRef, UnsafeToValue, Value, ValueMutGuard, ValueRefGuard, VmError,
+	};
+	pub use core::clone::Clone;
 
-    pub mod e {
-        use crate::alloc::borrow::TryToOwned;
-        use crate::runtime::{AnyTypeInfo, RuntimeError, TypeInfo, VmErrorKind};
+	pub mod e {
+		use crate::alloc::borrow::TryToOwned;
+		use crate::runtime::{AnyTypeInfo, RuntimeError, TypeInfo, VmErrorKind};
 
-        #[doc(hidden)]
-        #[inline]
-        pub fn missing_struct_field(target: &'static str, name: &'static str) -> RuntimeError {
-            RuntimeError::new(VmErrorKind::MissingStructField { target, name })
-        }
+		#[doc(hidden)]
+		#[inline]
+		pub fn missing_struct_field(target: &'static str, name: &'static str) -> RuntimeError {
+			RuntimeError::new(VmErrorKind::MissingStructField { target, name })
+		}
 
-        #[doc(hidden)]
-        #[inline]
-        pub fn missing_variant(name: &str) -> RuntimeError {
-            match name.try_to_owned() {
-                Ok(name) => RuntimeError::new(VmErrorKind::MissingVariant { name }),
-                Err(error) => RuntimeError::from(error),
-            }
-        }
+		#[doc(hidden)]
+		#[inline]
+		pub fn missing_variant(name: &str) -> RuntimeError {
+			match name.try_to_owned() {
+				Ok(name) => RuntimeError::new(VmErrorKind::MissingVariant { name }),
+				Err(error) => RuntimeError::from(error),
+			}
+		}
 
-        #[doc(hidden)]
-        #[inline]
-        pub fn expected_variant(actual: TypeInfo) -> RuntimeError {
-            RuntimeError::new(VmErrorKind::ExpectedVariant { actual })
-        }
+		#[doc(hidden)]
+		#[inline]
+		pub fn expected_variant(actual: TypeInfo) -> RuntimeError {
+			RuntimeError::new(VmErrorKind::ExpectedVariant { actual })
+		}
 
-        #[doc(hidden)]
-        #[inline]
-        pub fn missing_variant_name() -> RuntimeError {
-            RuntimeError::new(VmErrorKind::MissingVariantName)
-        }
+		#[doc(hidden)]
+		#[inline]
+		pub fn missing_variant_name() -> RuntimeError {
+			RuntimeError::new(VmErrorKind::MissingVariantName)
+		}
 
-        #[doc(hidden)]
-        #[inline]
-        pub fn missing_tuple_index(target: &'static str, index: usize) -> RuntimeError {
-            RuntimeError::new(VmErrorKind::MissingTupleIndex { target, index })
-        }
+		#[doc(hidden)]
+		#[inline]
+		pub fn missing_tuple_index(target: &'static str, index: usize) -> RuntimeError {
+			RuntimeError::new(VmErrorKind::MissingTupleIndex { target, index })
+		}
 
-        #[doc(hidden)]
-        #[inline]
-        pub fn unsupported_object_field_get(target: AnyTypeInfo) -> RuntimeError {
-            RuntimeError::new(VmErrorKind::UnsupportedObjectFieldGet {
-                target: TypeInfo::from(target),
-            })
-        }
+		#[doc(hidden)]
+		#[inline]
+		pub fn unsupported_object_field_get(target: AnyTypeInfo) -> RuntimeError {
+			RuntimeError::new(VmErrorKind::UnsupportedObjectFieldGet {
+				target: TypeInfo::from(target),
+			})
+		}
 
-        #[doc(hidden)]
-        #[inline]
-        pub fn unsupported_tuple_index_get(target: AnyTypeInfo, index: usize) -> RuntimeError {
-            RuntimeError::new(VmErrorKind::UnsupportedTupleIndexGet {
-                target: TypeInfo::from(target),
-                index,
-            })
-        }
-    }
+		#[doc(hidden)]
+		#[inline]
+		pub fn unsupported_tuple_index_get(target: AnyTypeInfo, index: usize) -> RuntimeError {
+			RuntimeError::new(VmErrorKind::UnsupportedTupleIndexGet {
+				target: TypeInfo::from(target),
+				index,
+			})
+		}
+	}
 }
 
 #[cfg(feature = "musli")]
@@ -909,100 +909,100 @@ mod serde;
 mod tests;
 
 rune_macros::binding! {
-    impl ::std::string::String for crate::alloc::String;
-    #[cfg(feature = "std")]
-    #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
-    impl ::std::io::Error for std::io::Error;
-    impl ::std::string::FromUtf8Error for crate::alloc::string::FromUtf8Error;
-    #[cfg(feature = "anyhow")]
-    impl ::std::error::Error for anyhow::Error;
-    impl ::std::fmt::Error for core::fmt::Error;
-    impl ::std::char::ParseCharError for core::char::ParseCharError;
-    impl ::std::num::ParseFloatError for core::num::ParseFloatError;
-    impl ::std::num::ParseIntError for core::num::ParseIntError;
-    impl ::std::string::Utf8Error for core::str::Utf8Error;
-    #[any]
-    #[dismantle]
-    impl ::std::option::Option for Option<Value>;
-    #[type_of]
-    impl<T> ::std::option::Option for Option<T>;
-    #[any]
-    #[dismantle]
-    impl ::std::result::Result for Result<Value, Value>;
-    #[type_of]
-    impl<T, E> ::std::result::Result for Result<T, E>;
-    #[type_of]
-    impl ::std::bool for bool;
-    #[type_of]
-    impl ::std::char for char;
-    #[type_of]
-    impl ::std::i64 for i8;
-    #[type_of]
-    impl ::std::i64 for i16;
-    #[type_of]
-    impl ::std::i64 for i32;
-    #[type_of]
-    impl ::std::i64 for i64;
-    #[type_of]
-    impl ::std::i64 for i128;
-    #[type_of]
-    impl ::std::i64 for isize;
-    #[type_of]
-    impl ::std::u64 for u8;
-    #[type_of]
-    impl ::std::u64 for u16;
-    #[type_of]
-    impl ::std::u64 for u32;
-    #[type_of]
-    impl ::std::u64 for u64;
-    #[type_of]
-    impl ::std::u64 for u128;
-    #[type_of]
-    impl ::std::u64 for usize;
-    #[type_of]
-    impl ::std::f64 for f32;
-    #[type_of]
-    impl ::std::f64 for f64;
-    #[type_of]
-    impl<C, B> ::std::ops::ControlFlow for core::ops::ControlFlow<C, B>;
-    #[type_of]
-    impl ::std::bytes::Bytes for [u8];
-    #[type_of]
-    impl ::std::cmp::Ordering for core::cmp::Ordering;
-    #[type_of]
-    impl ::std::string::String for rust_alloc::string::String;
-    #[type_of]
-    impl ::std::string::String for crate::alloc::Box<str>;
-    #[type_of]
-    impl ::std::string::String for str;
-    #[type_of]
-    impl ::std::vec::Vec for [Value];
-    #[type_of]
-    impl<T> ::std::vec::Vec for rust_alloc::vec::Vec<T>;
-    #[type_of]
-    impl<T> ::std::vec::Vec for crate::alloc::Vec<T>;
-    #[type_of]
-    impl<T, const N: usize> ::std::vec::Vec for [T; N];
-    #[type_of]
-    impl<T> ::std::vec::Vec for crate::runtime::VecTuple<T>;
-    #[type_of]
-    impl ::std::tuple::Tuple for crate::runtime::Tuple;
-    #[type_of]
-    impl<T> ::std::object::Object for crate::alloc::HashMap<rust_alloc::string::String, T>;
-    #[type_of]
-    impl<T> ::std::object::Object for crate::alloc::HashMap<alloc::String, T>;
-    #[type_of]
-    #[cfg(feature = "std")]
-    #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
-    impl<T> ::std::object::Object for std::collections::HashMap<rust_alloc::string::String, T>;
-    #[type_of]
-    #[cfg(feature = "std")]
-    #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
-    impl<T> ::std::object::Object for std::collections::HashMap<alloc::String, T>;
-    #[type_of]
-    impl ::std::any::Type for crate::runtime::Type;
-    #[type_of]
-    impl ::std::any::Hash for crate::hash::Hash;
+	impl ::std::string::String for crate::alloc::String;
+	#[cfg(feature = "std")]
+	#[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
+	impl ::std::io::Error for std::io::Error;
+	impl ::std::string::FromUtf8Error for crate::alloc::string::FromUtf8Error;
+	#[cfg(feature = "anyhow")]
+	impl ::std::error::Error for anyhow::Error;
+	impl ::std::fmt::Error for core::fmt::Error;
+	impl ::std::char::ParseCharError for core::char::ParseCharError;
+	impl ::std::num::ParseFloatError for core::num::ParseFloatError;
+	impl ::std::num::ParseIntError for core::num::ParseIntError;
+	impl ::std::string::Utf8Error for core::str::Utf8Error;
+	#[any]
+	#[dismantle]
+	impl ::std::option::Option for Option<Value>;
+	#[type_of]
+	impl<T> ::std::option::Option for Option<T>;
+	#[any]
+	#[dismantle]
+	impl ::std::result::Result for Result<Value, Value>;
+	#[type_of]
+	impl<T, E> ::std::result::Result for Result<T, E>;
+	#[type_of]
+	impl ::std::bool for bool;
+	#[type_of]
+	impl ::std::char for char;
+	#[type_of]
+	impl ::std::i64 for i8;
+	#[type_of]
+	impl ::std::i64 for i16;
+	#[type_of]
+	impl ::std::i64 for i32;
+	#[type_of]
+	impl ::std::i64 for i64;
+	#[type_of]
+	impl ::std::i64 for i128;
+	#[type_of]
+	impl ::std::i64 for isize;
+	#[type_of]
+	impl ::std::u64 for u8;
+	#[type_of]
+	impl ::std::u64 for u16;
+	#[type_of]
+	impl ::std::u64 for u32;
+	#[type_of]
+	impl ::std::u64 for u64;
+	#[type_of]
+	impl ::std::u64 for u128;
+	#[type_of]
+	impl ::std::u64 for usize;
+	#[type_of]
+	impl ::std::f64 for f32;
+	#[type_of]
+	impl ::std::f64 for f64;
+	#[type_of]
+	impl<C, B> ::std::ops::ControlFlow for core::ops::ControlFlow<C, B>;
+	#[type_of]
+	impl ::std::bytes::Bytes for [u8];
+	#[type_of]
+	impl ::std::cmp::Ordering for core::cmp::Ordering;
+	#[type_of]
+	impl ::std::string::String for rust_alloc::string::String;
+	#[type_of]
+	impl ::std::string::String for crate::alloc::Box<str>;
+	#[type_of]
+	impl ::std::string::String for str;
+	#[type_of]
+	impl ::std::vec::Vec for [Value];
+	#[type_of]
+	impl<T> ::std::vec::Vec for rust_alloc::vec::Vec<T>;
+	#[type_of]
+	impl<T> ::std::vec::Vec for crate::alloc::Vec<T>;
+	#[type_of]
+	impl<T, const N: usize> ::std::vec::Vec for [T; N];
+	#[type_of]
+	impl<T> ::std::vec::Vec for crate::runtime::VecTuple<T>;
+	#[type_of]
+	impl ::std::tuple::Tuple for crate::runtime::Tuple;
+	#[type_of]
+	impl<T> ::std::object::Object for crate::alloc::HashMap<rust_alloc::string::String, T>;
+	#[type_of]
+	impl<T> ::std::object::Object for crate::alloc::HashMap<alloc::String, T>;
+	#[type_of]
+	#[cfg(feature = "std")]
+	#[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
+	impl<T> ::std::object::Object for std::collections::HashMap<rust_alloc::string::String, T>;
+	#[type_of]
+	#[cfg(feature = "std")]
+	#[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
+	impl<T> ::std::object::Object for std::collections::HashMap<alloc::String, T>;
+	#[type_of]
+	impl ::std::any::Type for crate::runtime::Type;
+	#[type_of]
+	impl ::std::any::Hash for crate::hash::Hash;
 }
 
 vm_error!(crate::alloc::Error);

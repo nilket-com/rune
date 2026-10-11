@@ -14,17 +14,17 @@ use crate::{ContextError, Module};
 /// when a number cannot be parsed.
 #[rune::module(::std::num)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut module = Module::from_meta(self::module__meta)?;
+	let mut module = Module::from_meta(self::module__meta)?;
 
-    module.ty::<ParseFloatError>()?;
-    module.function_meta(parse_float_error_display_fmt)?;
-    module.function_meta(parse_float_error_debug_fmt)?;
+	module.ty::<ParseFloatError>()?;
+	module.function_meta(parse_float_error_display_fmt)?;
+	module.function_meta(parse_float_error_debug_fmt)?;
 
-    module.ty::<ParseIntError>()?;
-    module.function_meta(parse_int_error_display_fmt)?;
-    module.function_meta(parse_int_error_debug_fmt)?;
+	module.ty::<ParseIntError>()?;
+	module.function_meta(parse_int_error_display_fmt)?;
+	module.function_meta(parse_int_error_debug_fmt)?;
 
-    Ok(module)
+	Ok(module)
 }
 
 /// Write why a float could not be parsed.
@@ -42,7 +42,7 @@ pub fn module() -> Result<Module, ContextError> {
 /// ```
 #[rune::function(instance, protocol = DISPLAY_FMT)]
 fn parse_float_error_display_fmt(error: &ParseFloatError, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{error}")
+	write!(f, "{error}")
 }
 
 /// Write a debug representation of why a float could not be parsed.
@@ -60,7 +60,7 @@ fn parse_float_error_display_fmt(error: &ParseFloatError, f: &mut Formatter) -> 
 /// ```
 #[rune::function(instance, protocol = DEBUG_FMT)]
 fn parse_float_error_debug_fmt(error: &ParseFloatError, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{error:?}")
+	write!(f, "{error:?}")
 }
 
 /// Write why an integer could not be parsed.
@@ -78,7 +78,7 @@ fn parse_float_error_debug_fmt(error: &ParseFloatError, f: &mut Formatter) -> al
 /// ```
 #[rune::function(instance, protocol = DISPLAY_FMT)]
 fn parse_int_error_display_fmt(error: &ParseIntError, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{error}")
+	write!(f, "{error}")
 }
 
 /// Write a debug representation of why an integer could not be parsed.
@@ -96,5 +96,5 @@ fn parse_int_error_display_fmt(error: &ParseIntError, f: &mut Formatter) -> allo
 /// ```
 #[rune::function(instance, protocol = DEBUG_FMT)]
 fn parse_int_error_debug_fmt(error: &ParseIntError, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{error:?}")
+	write!(f, "{error:?}")
 }

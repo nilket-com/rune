@@ -4,5 +4,5 @@ use crate::runtime::Value;
 /// HIR interpreter.
 #[allow(unused)]
 pub(crate) struct Interpreter<'hir> {
-    variables: HashMap<&'hir str, Value>,
+	variables: HashMap<&'hir str, Value>,
 }

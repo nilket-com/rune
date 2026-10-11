@@ -17,60 +17,60 @@ use serde::{Deserialize, Serialize};
 /// A label that can be jumped to.
 #[derive(Debug, TryClone)]
 pub(crate) struct Label {
-    pub(crate) name: &'static str,
-    pub(crate) index: usize,
-    #[try_clone(with = Rc::clone)]
-    jump: Rc<Cell<Option<NonZeroUsize>>>,
+	pub(crate) name: &'static str,
+	pub(crate) index: usize,
+	#[try_clone(with = Rc::clone)]
+	jump: Rc<Cell<Option<NonZeroUsize>>>,
 }
 
 impl Label {
-    /// Construct a new label.
-    #[inline]
-    pub(crate) fn new(name: &'static str, index: usize) -> Self {
-        Self {
-            name,
-            index,
-            jump: Rc::new(Cell::new(None)),
-        }
-    }
+	/// Construct a new label.
+	#[inline]
+	pub(crate) fn new(name: &'static str, index: usize) -> Self {
+		Self {
+			name,
+			index,
+			jump: Rc::new(Cell::new(None)),
+		}
+	}
 
-    /// Get jump.
-    #[inline]
-    pub(crate) fn jump(&self) -> Option<usize> {
-        Some(self.jump.get()?.get().wrapping_sub(1))
-    }
+	/// Get jump.
+	#[inline]
+	pub(crate) fn jump(&self) -> Option<usize> {
+		Some(self.jump.get()?.get().wrapping_sub(1))
+	}
 
-    /// Set jump.
-    #[inline]
-    pub(crate) fn set_jump(&self, jump: usize) -> bool {
-        let Some(jump) = NonZeroUsize::new(jump.wrapping_add(1)) else {
-            return false;
-        };
+	/// Set jump.
+	#[inline]
+	pub(crate) fn set_jump(&self, jump: usize) -> bool {
+		let Some(jump) = NonZeroUsize::new(jump.wrapping_add(1)) else {
+			return false;
+		};
 
-        self.jump.replace(Some(jump));
-        true
-    }
+		self.jump.replace(Some(jump));
+		true
+	}
 
-    /// Convert into owned label.
-    #[inline]
-    pub(crate) fn to_debug_label(&self) -> DebugLabel {
-        DebugLabel {
-            name: self.name.into(),
-            index: self.index,
-            jump: self.jump.get(),
-        }
-    }
+	/// Convert into owned label.
+	#[inline]
+	pub(crate) fn to_debug_label(&self) -> DebugLabel {
+		DebugLabel {
+			name: self.name.into(),
+			index: self.index,
+			jump: self.jump.get(),
+		}
+	}
 }
 
 impl fmt::Display for Label {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if let Some(jump) = self.jump() {
-            write!(f, "{}_{} ({jump})", self.name, self.index)
-        } else {
-            write!(f, "{}_{}", self.name, self.index)
-        }
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		if let Some(jump) = self.jump() {
+			write!(f, "{}_{} ({jump})", self.name, self.index)
+		} else {
+			write!(f, "{}_{}", self.name, self.index)
+		}
+	}
 }
 
 /// A label that can be jumped to.
@@ -78,31 +78,31 @@ impl fmt::Display for Label {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "musli", derive(Decode, Encode), musli(crate = musli_core))]
 pub struct DebugLabel {
-    /// The name of the label.
-    name: Cow<'static, str>,
-    /// The index of the label.
-    index: usize,
-    /// The jump index of the label.
-    jump: Option<NonZeroUsize>,
+	/// The name of the label.
+	name: Cow<'static, str>,
+	/// The index of the label.
+	index: usize,
+	/// The jump index of the label.
+	jump: Option<NonZeroUsize>,
 }
 
 impl DebugLabel {
-    /// Get jump.
-    #[inline]
-    pub(crate) fn jump(&self) -> Option<usize> {
-        Some(self.jump?.get().wrapping_sub(1))
-    }
+	/// Get jump.
+	#[inline]
+	pub(crate) fn jump(&self) -> Option<usize> {
+		Some(self.jump?.get().wrapping_sub(1))
+	}
 }
 
 impl fmt::Display for DebugLabel {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}_{}", self.name, self.index)?;
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(f, "{}_{}", self.name, self.index)?;
 
-        if let Some(jump) = self.jump() {
-            write!(f, " ({jump})")?;
-        }
+		if let Some(jump) = self.jump() {
+			write!(f, " ({jump})")?;
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 }

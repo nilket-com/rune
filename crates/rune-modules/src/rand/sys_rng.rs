@@ -36,14 +36,14 @@ use rune::Any;
 #[derive(Any)]
 #[rune(item = ::rand, empty, constructor = SysRng::new)]
 pub(super) struct SysRng {
-    pub(super) inner: rand::rngs::SysRng,
+	pub(super) inner: rand::rngs::SysRng,
 }
 
 impl SysRng {
-    #[inline]
-    pub(super) fn new() -> Self {
-        Self {
-            inner: rand::rngs::SysRng,
-        }
-    }
+	#[inline]
+	pub(super) fn new() -> Self {
+		Self {
+			inner: rand::rngs::SysRng,
+		}
+	}
 }

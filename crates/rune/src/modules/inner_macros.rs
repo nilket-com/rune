@@ -1,82 +1,82 @@
 macro_rules! unsigned {
-    ($m:ident, $ty:ty) => {
-        unsigned!($m, $ty, stringify!($ty));
-    };
+	($m:ident, $ty:ty) => {
+		unsigned!($m, $ty, stringify!($ty));
+	};
 
-    ($m:ident, $ty:ty, $n:expr) => {
-        $m.function("parse", parse).build()?;
-        $m.function_meta(to_float)?;
+	($m:ident, $ty:ty, $n:expr) => {
+		$m.function("parse", parse).build()?;
+		$m.function_meta(to_float)?;
 
-        $m.function_meta(max__meta)?;
-        $m.function_meta(min__meta)?;
-        $m.function_meta(pow)?;
-        $m.function_meta(checked_pow)?;
-        $m.function_meta(wrapping_pow)?;
+		$m.function_meta(max__meta)?;
+		$m.function_meta(min__meta)?;
+		$m.function_meta(pow)?;
+		$m.function_meta(checked_pow)?;
+		$m.function_meta(wrapping_pow)?;
 
-        $m.function_meta(checked_add)?;
-        $m.function_meta(checked_sub)?;
-        $m.function_meta(checked_div)?;
-        $m.function_meta(checked_mul)?;
-        $m.function_meta(checked_rem)?;
+		$m.function_meta(checked_add)?;
+		$m.function_meta(checked_sub)?;
+		$m.function_meta(checked_div)?;
+		$m.function_meta(checked_mul)?;
+		$m.function_meta(checked_rem)?;
 
-        $m.function_meta(wrapping_add)?;
-        $m.function_meta(wrapping_sub)?;
-        $m.function_meta(wrapping_div)?;
-        $m.function_meta(wrapping_mul)?;
-        $m.function_meta(wrapping_rem)?;
+		$m.function_meta(wrapping_add)?;
+		$m.function_meta(wrapping_sub)?;
+		$m.function_meta(wrapping_div)?;
+		$m.function_meta(wrapping_mul)?;
+		$m.function_meta(wrapping_rem)?;
 
-        $m.function_meta(saturating_add)?;
-        $m.function_meta(saturating_sub)?;
-        $m.function_meta(saturating_mul)?;
-        $m.function_meta(saturating_pow)?;
+		$m.function_meta(saturating_add)?;
+		$m.function_meta(saturating_sub)?;
+		$m.function_meta(saturating_mul)?;
+		$m.function_meta(saturating_pow)?;
 
-        $m.function_meta(to_string)?;
+		$m.function_meta(to_string)?;
 
-        $m.function_meta(clone__meta)?;
-        $m.implement_trait::<$ty>(rune::item!(::std::clone::Clone))?;
+		$m.function_meta(clone__meta)?;
+		$m.implement_trait::<$ty>(rune::item!(::std::clone::Clone))?;
 
-        $m.function_meta(partial_eq__meta)?;
-        $m.implement_trait::<$ty>(rune::item!(::std::cmp::PartialEq))?;
+		$m.function_meta(partial_eq__meta)?;
+		$m.implement_trait::<$ty>(rune::item!(::std::cmp::PartialEq))?;
 
-        $m.function_meta(eq__meta)?;
-        $m.implement_trait::<$ty>(rune::item!(::std::cmp::Eq))?;
+		$m.function_meta(eq__meta)?;
+		$m.implement_trait::<$ty>(rune::item!(::std::cmp::Eq))?;
 
-        $m.function_meta(partial_cmp__meta)?;
-        $m.implement_trait::<$ty>(rune::item!(::std::cmp::PartialOrd))?;
+		$m.function_meta(partial_cmp__meta)?;
+		$m.implement_trait::<$ty>(rune::item!(::std::cmp::PartialOrd))?;
 
-        $m.function_meta(cmp__meta)?;
-        $m.implement_trait::<$ty>(rune::item!(::std::cmp::Ord))?;
+		$m.function_meta(cmp__meta)?;
+		$m.implement_trait::<$ty>(rune::item!(::std::cmp::Ord))?;
 
-        $m.constant("MIN", <$ty>::MIN)
-            .build()?
-            .docs($crate::docstring! {
-                /// The smallest value that can be represented by this integer type
-                /// (&minus;2<sup>63</sup>).
-                ///
-                /// # Examples
-                ///
-                /// Basic usage:
-                ///
-                /// ```rune
-                #[doc = concat!(" assert_eq!(", $n, "::MIN, -9223372036854775808);")]
-                /// ```
-            })?;
+		$m.constant("MIN", <$ty>::MIN)
+			.build()?
+			.docs($crate::docstring! {
+				/// The smallest value that can be represented by this integer type
+				/// (&minus;2<sup>63</sup>).
+				///
+				/// # Examples
+				///
+				/// Basic usage:
+				///
+				/// ```rune
+				#[doc = concat!(" assert_eq!(", $n, "::MIN, -9223372036854775808);")]
+				/// ```
+			})?;
 
-        $m.constant("MAX", <$ty>::MAX)
-            .build()?
-            .docs($crate::docstring! {
-                /// The largest value that can be represented by this integer type
-                /// (2<sup>63</sup> &minus; 1).
-                ///
-                /// # Examples
-                ///
-                /// Basic usage:
-                ///
-                /// ```rune
-                #[doc = concat!(" assert_eq!(", $n, "::MAX, 9223372036854775807);")]
-                /// ```
-            })?;
-    };
+		$m.constant("MAX", <$ty>::MAX)
+			.build()?
+			.docs($crate::docstring! {
+				/// The largest value that can be represented by this integer type
+				/// (2<sup>63</sup> &minus; 1).
+				///
+				/// # Examples
+				///
+				/// Basic usage:
+				///
+				/// ```rune
+				#[doc = concat!(" assert_eq!(", $n, "::MAX, 9223372036854775807);")]
+				/// ```
+			})?;
+	};
 }
 
 macro_rules! unsigned_fns {
@@ -610,17 +610,17 @@ macro_rules! unsigned_fns {
 }
 
 macro_rules! signed {
-    ($m:ident, $ty:ty) => {
-        unsigned!($m, $ty, stringify!($ty));
+	($m:ident, $ty:ty) => {
+		unsigned!($m, $ty, stringify!($ty));
 
-        $m.function_meta(abs)?;
-        $m.function_meta(checked_abs)?;
-        $m.function_meta(wrapping_abs)?;
-        $m.function_meta(saturating_abs)?;
-        $m.function_meta(signum)?;
-        $m.function_meta(is_positive)?;
-        $m.function_meta(is_negative)?;
-    };
+		$m.function_meta(abs)?;
+		$m.function_meta(checked_abs)?;
+		$m.function_meta(wrapping_abs)?;
+		$m.function_meta(saturating_abs)?;
+		$m.function_meta(signum)?;
+		$m.function_meta(is_positive)?;
+		$m.function_meta(is_negative)?;
+	};
 }
 
 macro_rules! signed_fns {

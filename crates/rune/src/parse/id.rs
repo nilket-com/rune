@@ -11,21 +11,21 @@ use crate::alloc::prelude::*;
 pub struct NonZeroId(#[try_clone(copy)] NonZeroU32);
 
 impl fmt::Display for NonZeroId {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.0.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.0.fmt(f)
+	}
 }
 
 impl fmt::Debug for NonZeroId {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.0.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.0.fmt(f)
+	}
 }
 
 impl From<NonZeroU32> for NonZeroId {
-    fn from(value: NonZeroU32) -> Self {
-        Self(value)
-    }
+	fn from(value: NonZeroU32) -> Self {
+		Self(value)
+	}
 }

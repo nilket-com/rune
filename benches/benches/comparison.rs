@@ -3,34 +3,34 @@ use rune::{BuildError, Context, Diagnostics, Options, Source, Sources, Vm};
 use std::any::Any;
 
 pub(crate) fn vm(
-    context: &Context,
-    sources: &mut Sources,
-    diagnostics: &mut Diagnostics,
+	context: &Context,
+	sources: &mut Sources,
+	diagnostics: &mut Diagnostics,
 ) -> Result<Vm, BuildError> {
-    let mut options = Options::from_default_env().expect("failed to build options");
+	let mut options = Options::from_default_env().expect("failed to build options");
 
-    options
-        .parse_option("function-body=true")
-        .expect("failed to parse option");
+	options
+		.parse_option("function-body=true")
+		.expect("failed to parse option");
 
-    let unit = rune::prepare(sources)
-        .with_context(context)
-        .with_diagnostics(diagnostics)
-        .with_options(&options)
-        .build()?;
+	let unit = rune::prepare(sources)
+		.with_context(context)
+		.with_diagnostics(diagnostics)
+		.with_options(&options)
+		.build()?;
 
-    let context = Arc::try_new(context.runtime()?)?;
-    Ok(Vm::new(context, Arc::try_new(unit)?))
+	let context = Arc::try_new(context.runtime()?)?;
+	Ok(Vm::new(context, Arc::try_new(unit)?))
 }
 
 pub(crate) fn sources(source: &str) -> Sources {
-    let mut sources = Sources::new();
+	let mut sources = Sources::new();
 
-    sources
-        .insert(Source::new("main", source).expect("Failed to construct source"))
-        .expect("Failed to insert source");
+	sources
+		.insert(Source::new("main", source).expect("Failed to construct source"))
+		.expect("Failed to insert source");
 
-    sources
+	sources
 }
 
 macro_rules! rune_vm {
@@ -52,26 +52,26 @@ macro_rules! rhai_ast {
 }
 
 pub(crate) struct RhaiRunner {
-    pub(crate) engine: crate::rhai::Engine,
-    pub(crate) ast: crate::rhai::AST,
+	pub(crate) engine: crate::rhai::Engine,
+	pub(crate) ast: crate::rhai::AST,
 }
 
 impl RhaiRunner {
-    fn eval<T: Any + Clone>(&self) -> T {
-        self.engine.eval_ast(&self.ast).unwrap()
-    }
+	fn eval<T: Any + Clone>(&self) -> T {
+		self.engine.eval_ast(&self.ast).unwrap()
+	}
 }
 
 pub(crate) mod rhai {
-    pub(crate) use ::rhai::{Engine, OptimizationLevel, AST};
+	pub(crate) use ::rhai::{Engine, OptimizationLevel, AST};
 }
 
 mod comparisons {
-    pub mod eval;
-    pub mod primes;
+	pub mod eval;
+	pub mod primes;
 }
 
 criterion::criterion_main! {
-    comparisons::primes::benches,
-    comparisons::eval::benches,
+	comparisons::primes::benches,
+	comparisons::eval::benches,
 }

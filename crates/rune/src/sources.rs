@@ -45,138 +45,138 @@ macro_rules! sources {
 /// A collection of source files.
 #[derive(Debug, Default)]
 pub struct Sources {
-    /// Sources associated.
-    sources: Vec<Source>,
+	/// Sources associated.
+	sources: Vec<Source>,
 }
 
 impl Sources {
-    /// Construct a new collection of sources.
-    #[inline]
-    pub fn new() -> Self {
-        Self {
-            sources: Vec::new(),
-        }
-    }
+	/// Construct a new collection of sources.
+	#[inline]
+	pub fn new() -> Self {
+		Self {
+			sources: Vec::new(),
+		}
+	}
 
-    /// Insert a source and return its [`SourceId`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use rune::{Sources, Source};
-    ///
-    /// let mut sources = Sources::new();
-    /// let id = sources.insert(Source::new("<memory>", "pub fn main() { 10 }")?)?;
-    /// let id2 = sources.insert(Source::new("<memory>", "pub fn main() { 10 }")?)?;
-    /// assert_ne!(id, id2);
-    /// # Ok::<_, rune::support::Error>(())
-    /// ```
-    #[inline]
-    pub fn insert(&mut self, source: Source) -> alloc::Result<SourceId> {
-        let id =
-            SourceId::try_from(self.sources.len()).expect("could not build a source identifier");
-        self.sources.try_push(source)?;
-        Ok(id)
-    }
+	/// Insert a source and return its [`SourceId`].
+	///
+	/// # Examples
+	///
+	/// ```
+	/// use rune::{Sources, Source};
+	///
+	/// let mut sources = Sources::new();
+	/// let id = sources.insert(Source::new("<memory>", "pub fn main() { 10 }")?)?;
+	/// let id2 = sources.insert(Source::new("<memory>", "pub fn main() { 10 }")?)?;
+	/// assert_ne!(id, id2);
+	/// # Ok::<_, rune::support::Error>(())
+	/// ```
+	#[inline]
+	pub fn insert(&mut self, source: Source) -> alloc::Result<SourceId> {
+		let id =
+			SourceId::try_from(self.sources.len()).expect("could not build a source identifier");
+		self.sources.try_push(source)?;
+		Ok(id)
+	}
 
-    /// Get the source matching the given source id.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use anyhow::Context;
-    /// use rune::{Sources, Source};
-    ///
-    /// let mut sources = Sources::new();
-    /// let id = sources.insert(Source::new("<memory>", "pub fn main() { 10 }")?)?;
-    ///
-    /// let source = sources.get(id).context("expected source")?;
-    ///
-    /// assert_eq!(source.name(), "<memory>");
-    /// # Ok::<_, rune::support::Error>(())
-    /// ```
-    #[inline]
-    pub fn get(&self, id: SourceId) -> Option<&Source> {
-        self.sources.get(id.into_index())
-    }
+	/// Get the source matching the given source id.
+	///
+	/// # Examples
+	///
+	/// ```
+	/// # use anyhow::Context;
+	/// use rune::{Sources, Source};
+	///
+	/// let mut sources = Sources::new();
+	/// let id = sources.insert(Source::new("<memory>", "pub fn main() { 10 }")?)?;
+	///
+	/// let source = sources.get(id).context("expected source")?;
+	///
+	/// assert_eq!(source.name(), "<memory>");
+	/// # Ok::<_, rune::support::Error>(())
+	/// ```
+	#[inline]
+	pub fn get(&self, id: SourceId) -> Option<&Source> {
+		self.sources.get(id.into_index())
+	}
 
-    /// Fetch name for the given source id.
-    #[inline]
-    pub(crate) fn name(&self, id: SourceId) -> Option<&str> {
-        let source = self.sources.get(id.into_index())?;
-        Some(source.name())
-    }
+	/// Fetch name for the given source id.
+	#[inline]
+	pub(crate) fn name(&self, id: SourceId) -> Option<&str> {
+		let source = self.sources.get(id.into_index())?;
+		Some(source.name())
+	}
 
-    /// Fetch source for the given span.
-    #[inline]
-    pub(crate) fn source(&self, id: SourceId, span: Span) -> Option<&str> {
-        let source = self.sources.get(id.into_index())?;
-        source.get(span.range())
-    }
+	/// Fetch source for the given span.
+	#[inline]
+	pub(crate) fn source(&self, id: SourceId, span: Span) -> Option<&str> {
+		let source = self.sources.get(id.into_index())?;
+		source.get(span.range())
+	}
 
-    /// Access the optional path of the given source id.
-    #[cfg(feature = "std")]
-    #[inline]
-    pub(crate) fn path(&self, id: SourceId) -> Option<&Path> {
-        let source = self.sources.get(id.into_index())?;
-        source.path()
-    }
+	/// Access the optional path of the given source id.
+	#[cfg(feature = "std")]
+	#[inline]
+	pub(crate) fn path(&self, id: SourceId) -> Option<&Path> {
+		let source = self.sources.get(id.into_index())?;
+		source.path()
+	}
 
-    /// Get all available source ids.
-    #[inline]
-    pub(crate) fn source_ids(&self) -> impl Iterator<Item = SourceId> {
-        (0..self.sources.len()).map(|index| SourceId::new(index as u32))
-    }
+	/// Get all available source ids.
+	#[inline]
+	pub(crate) fn source_ids(&self) -> impl Iterator<Item = SourceId> {
+		(0..self.sources.len()).map(|index| SourceId::new(index as u32))
+	}
 
-    /// Iterate over all registered sources.
-    #[cfg(feature = "cli")]
-    #[inline]
-    pub(crate) fn iter(&self) -> impl Iterator<Item = &Source> {
-        self.sources.iter()
-    }
+	/// Iterate over all registered sources.
+	#[cfg(feature = "cli")]
+	#[inline]
+	pub(crate) fn iter(&self) -> impl Iterator<Item = &Source> {
+		self.sources.iter()
+	}
 }
 
 #[cfg(feature = "codespan-reporting")]
 impl<'a> files::Files<'a> for Sources {
-    type FileId = SourceId;
-    type Name = &'a str;
-    type Source = &'a str;
+	type FileId = SourceId;
+	type Name = &'a str;
+	type Source = &'a str;
 
-    #[inline]
-    fn name(&'a self, file_id: SourceId) -> Result<Self::Name, files::Error> {
-        let source = self.get(file_id).ok_or(files::Error::FileMissing)?;
-        Ok(source.name())
-    }
+	#[inline]
+	fn name(&'a self, file_id: SourceId) -> Result<Self::Name, files::Error> {
+		let source = self.get(file_id).ok_or(files::Error::FileMissing)?;
+		Ok(source.name())
+	}
 
-    #[inline]
-    fn source(&'a self, file_id: SourceId) -> Result<Self::Source, files::Error> {
-        let source = self.get(file_id).ok_or(files::Error::FileMissing)?;
-        Ok(source.as_str())
-    }
+	#[inline]
+	fn source(&'a self, file_id: SourceId) -> Result<Self::Source, files::Error> {
+		let source = self.get(file_id).ok_or(files::Error::FileMissing)?;
+		Ok(source.as_str())
+	}
 
-    #[cfg(feature = "emit")]
-    #[inline]
-    fn line_index(&self, file_id: SourceId, byte_index: usize) -> Result<usize, files::Error> {
-        let source = self.get(file_id).ok_or(files::Error::FileMissing)?;
-        Ok(source.line_index(byte_index))
-    }
+	#[cfg(feature = "emit")]
+	#[inline]
+	fn line_index(&self, file_id: SourceId, byte_index: usize) -> Result<usize, files::Error> {
+		let source = self.get(file_id).ok_or(files::Error::FileMissing)?;
+		Ok(source.line_index(byte_index))
+	}
 
-    #[cfg(feature = "emit")]
-    #[inline]
-    fn line_range(
-        &self,
-        file_id: SourceId,
-        line_index: usize,
-    ) -> Result<std::ops::Range<usize>, files::Error> {
-        let source = self.get(file_id).ok_or(files::Error::FileMissing)?;
-        let range = source
-            .line_range(line_index)
-            .ok_or_else(|| files::Error::LineTooLarge {
-                given: line_index,
-                max: source.line_count(),
-            })?;
-        Ok(range)
-    }
+	#[cfg(feature = "emit")]
+	#[inline]
+	fn line_range(
+		&self,
+		file_id: SourceId,
+		line_index: usize,
+	) -> Result<std::ops::Range<usize>, files::Error> {
+		let source = self.get(file_id).ok_or(files::Error::FileMissing)?;
+		let range = source
+			.line_range(line_index)
+			.ok_or_else(|| files::Error::LineTooLarge {
+				given: line_index,
+				max: source.line_count(),
+			})?;
+		Ok(range)
+	}
 }
 
 /// The opaque identifier of a source file, as returned by
@@ -190,60 +190,60 @@ impl<'a> files::Files<'a> for Sources {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize), serde(transparent))]
 #[cfg_attr(feature = "musli", derive(Decode, Encode), musli(crate = musli_core, transparent))]
 pub struct SourceId {
-    index: u32,
+	index: u32,
 }
 
 impl SourceId {
-    /// The empty source identifier.
-    pub const EMPTY: Self = Self::empty();
+	/// The empty source identifier.
+	pub const EMPTY: Self = Self::empty();
 
-    /// Construct a source identifier from an index.
-    #[inline]
-    pub const fn new(index: u32) -> Self {
-        Self { index }
-    }
+	/// Construct a source identifier from an index.
+	#[inline]
+	pub const fn new(index: u32) -> Self {
+		Self { index }
+	}
 
-    /// Define an empty source identifier that cannot reference a source.
-    #[inline]
-    pub const fn empty() -> Self {
-        Self { index: u32::MAX }
-    }
+	/// Define an empty source identifier that cannot reference a source.
+	#[inline]
+	pub const fn empty() -> Self {
+		Self { index: u32::MAX }
+	}
 
-    /// Access the source identifier as an index.
-    #[inline]
-    pub fn into_index(self) -> usize {
-        usize::try_from(self.index).expect("source id out of bounds")
-    }
+	/// Access the source identifier as an index.
+	#[inline]
+	pub fn into_index(self) -> usize {
+		usize::try_from(self.index).expect("source id out of bounds")
+	}
 }
 
 impl fmt::Debug for SourceId {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.index.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.index.fmt(f)
+	}
 }
 
 impl fmt::Display for SourceId {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        self.index.fmt(f)
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.index.fmt(f)
+	}
 }
 
 impl Default for SourceId {
-    #[inline]
-    fn default() -> Self {
-        Self::empty()
-    }
+	#[inline]
+	fn default() -> Self {
+		Self::empty()
+	}
 }
 
 impl TryFrom<usize> for SourceId {
-    type Error = num::TryFromIntError;
+	type Error = num::TryFromIntError;
 
-    #[inline]
-    fn try_from(value: usize) -> Result<Self, Self::Error> {
-        Ok(Self {
-            index: u32::try_from(value)?,
-        })
-    }
+	#[inline]
+	fn try_from(value: usize) -> Result<Self, Self::Error> {
+		Ok(Self {
+			index: u32::try_from(value)?,
+		})
+	}
 }

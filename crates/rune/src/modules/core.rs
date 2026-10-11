@@ -12,31 +12,31 @@ use crate::{docstring, ContextError, Module};
 /// These are types and methods for which Rune as a language would not work without.
 #[rune::module(::std)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut module = Module::from_meta(self::module__meta)?.with_unique("std");
+	let mut module = Module::from_meta(self::module__meta)?.with_unique("std");
 
-    module.ty::<bool>()?.docs(docstring! {
-        /// The primitive boolean type.
-    })?;
-    module.ty::<char>()?.docs(docstring! {
-        /// The primitive character type.
-    })?;
-    module.ty::<u64>()?.docs(docstring! {
-        /// The unsigned integer type.
-    })?;
-    module.ty::<i64>()?.docs(docstring! {
-        /// The signed integer type.
-    })?;
-    module.ty::<f64>()?.docs(docstring! {
-        /// The primitive float type.
-    })?;
+	module.ty::<bool>()?.docs(docstring! {
+		/// The primitive boolean type.
+	})?;
+	module.ty::<char>()?.docs(docstring! {
+		/// The primitive character type.
+	})?;
+	module.ty::<u64>()?.docs(docstring! {
+		/// The unsigned integer type.
+	})?;
+	module.ty::<i64>()?.docs(docstring! {
+		/// The signed integer type.
+	})?;
+	module.ty::<f64>()?.docs(docstring! {
+		/// The primitive float type.
+	})?;
 
-    module.function_meta(panic)?;
-    module.function_meta(is_readable)?;
-    module.function_meta(is_writable)?;
+	module.function_meta(panic)?;
+	module.function_meta(is_readable)?;
+	module.function_meta(is_writable)?;
 
-    module.macro_meta(stringify_macro)?;
-    module.macro_meta(panic_macro)?;
-    Ok(module)
+	module.macro_meta(stringify_macro)?;
+	module.macro_meta(panic_macro)?;
+	Ok(module)
 }
 
 /// Cause a vm panic with the given `message`.
@@ -48,7 +48,7 @@ pub fn module() -> Result<Module, ContextError> {
 /// If you want to format a message, consider using the [panic!] macro.
 #[rune::function]
 fn panic(message: &str) -> Result<(), VmError> {
-    Err(VmError::panic(message.try_to_owned()?))
+	Err(VmError::panic(message.try_to_owned()?))
 }
 
 /// Test if the given `value` is readable.
@@ -70,7 +70,7 @@ fn panic(message: &str) -> Result<(), VmError> {
 /// ```
 #[rune::function]
 fn is_readable(value: Value) -> bool {
-    value.is_readable()
+	value.is_readable()
 }
 
 /// Test if the given `value` is writable.
@@ -90,7 +90,7 @@ fn is_readable(value: Value) -> bool {
 /// ```
 #[rune::function]
 fn is_writable(value: Value) -> bool {
-    value.is_writable()
+	value.is_writable()
 }
 
 /// Stringify the given argument, causing it to expand to its underlying token
@@ -100,12 +100,12 @@ fn is_writable(value: Value) -> bool {
 /// string.
 #[rune::macro_(path = stringify)]
 pub(crate) fn stringify_macro(
-    cx: &mut MacroContext<'_, '_, '_>,
-    stream: &TokenStream,
+	cx: &mut MacroContext<'_, '_, '_>,
+	stream: &TokenStream,
 ) -> compile::Result<TokenStream> {
-    let lit = cx.stringify(stream)?.try_to_string()?;
-    let lit = cx.lit(lit)?;
-    Ok(quote!(#lit).into_token_stream(cx)?)
+	let lit = cx.stringify(stream)?.try_to_string()?;
+	let lit = cx.lit(lit)?;
+	Ok(quote!(#lit).into_token_stream(cx)?)
 }
 
 /// Cause a vm panic with a formatted message.
@@ -115,10 +115,10 @@ pub(crate) fn stringify_macro(
 /// through a `VmError`.
 #[rune::macro_(path = panic)]
 pub(crate) fn panic_macro(
-    cx: &mut MacroContext<'_, '_, '_>,
-    stream: &TokenStream,
+	cx: &mut MacroContext<'_, '_, '_>,
+	stream: &TokenStream,
 ) -> compile::Result<TokenStream> {
-    let args = FormatArgs::parse(cx, stream)?;
-    let expanded = args.expand(cx)?;
-    Ok(quote!(::std::panic(#expanded)).into_token_stream(cx)?)
+	let args = FormatArgs::parse(cx, stream)?;
+	let expanded = args.expand(cx)?;
+	Ok(quote!(::std::panic(#expanded)).into_token_stream(cx)?)
 }

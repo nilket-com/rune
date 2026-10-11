@@ -7,8 +7,8 @@ use crate::alloc;
 use crate::alloc::prelude::*;
 use crate::runtime::slice::Iter;
 use crate::runtime::{
-    EnvProtocolCaller, Formatter, Function, Hasher, Ref, TypeOf, Value, Vec, VmError, VmErrorKind,
-    Worklist,
+	EnvProtocolCaller, Formatter, Function, Hasher, Ref, TypeOf, Value, Vec, VmError, VmErrorKind,
+	Worklist,
 };
 use crate::{docstring, ContextError, Module};
 
@@ -45,62 +45,62 @@ use crate::{docstring, ContextError, Module};
 /// ```
 #[rune::module(::std::vec)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
+	let mut m = Module::from_meta(self::module__meta)?;
 
-    m.ty::<Vec>()?.docs(docstring! {
-        /// A dynamic vector.
-        ///
-        /// This is the type that is constructed in rune when an array expression such as `[1, 2, 3]` is used.
-        ///
-        /// # Comparisons
-        ///
-        /// Shorter sequences are considered smaller than longer ones, and vice versa.
-        ///
-        /// ```rune
-        /// assert!([1, 2, 3] < [1, 2, 3, 4]);
-        /// assert!([1, 2, 3] < [1, 2, 4]);
-        /// assert!([1, 2, 4] > [1, 2, 3]);
-        /// ```
-    })?;
+	m.ty::<Vec>()?.docs(docstring! {
+		/// A dynamic vector.
+		///
+		/// This is the type that is constructed in rune when an array expression such as `[1, 2, 3]` is used.
+		///
+		/// # Comparisons
+		///
+		/// Shorter sequences are considered smaller than longer ones, and vice versa.
+		///
+		/// ```rune
+		/// assert!([1, 2, 3] < [1, 2, 3, 4]);
+		/// assert!([1, 2, 3] < [1, 2, 4]);
+		/// assert!([1, 2, 4] > [1, 2, 3]);
+		/// ```
+	})?;
 
-    m.function_meta(vec_new)?;
-    m.function_meta(vec_with_capacity)?;
-    m.function_meta(len)?;
-    m.function_meta(is_empty)?;
-    m.function_meta(capacity)?;
-    m.function_meta(get)?;
-    m.function_meta(clear)?;
-    m.function_meta(extend)?;
-    m.function_meta(Vec::rune_iter__meta)?;
-    m.function_meta(pop)?;
-    m.function_meta(push)?;
-    m.function_meta(remove)?;
-    m.function_meta(insert)?;
-    m.function_meta(sort_by)?;
-    m.function_meta(sort)?;
-    m.function_meta(into_iter__meta)?;
-    m.function_meta(index_get)?;
-    m.function_meta(index_set)?;
-    m.function_meta(resize)?;
-    m.function_meta(debug_fmt__meta)?;
+	m.function_meta(vec_new)?;
+	m.function_meta(vec_with_capacity)?;
+	m.function_meta(len)?;
+	m.function_meta(is_empty)?;
+	m.function_meta(capacity)?;
+	m.function_meta(get)?;
+	m.function_meta(clear)?;
+	m.function_meta(extend)?;
+	m.function_meta(Vec::rune_iter__meta)?;
+	m.function_meta(pop)?;
+	m.function_meta(push)?;
+	m.function_meta(remove)?;
+	m.function_meta(insert)?;
+	m.function_meta(sort_by)?;
+	m.function_meta(sort)?;
+	m.function_meta(into_iter__meta)?;
+	m.function_meta(index_get)?;
+	m.function_meta(index_set)?;
+	m.function_meta(resize)?;
+	m.function_meta(debug_fmt__meta)?;
 
-    m.function_meta(clone__meta)?;
-    m.implement_trait::<Vec>(rune::item!(::std::clone::Clone))?;
+	m.function_meta(clone__meta)?;
+	m.implement_trait::<Vec>(rune::item!(::std::clone::Clone))?;
 
-    m.function_meta(partial_eq__meta)?;
-    m.implement_trait::<Vec>(rune::item!(::std::cmp::PartialEq))?;
+	m.function_meta(partial_eq__meta)?;
+	m.implement_trait::<Vec>(rune::item!(::std::cmp::PartialEq))?;
 
-    m.function_meta(eq__meta)?;
-    m.implement_trait::<Vec>(rune::item!(::std::cmp::Eq))?;
+	m.function_meta(eq__meta)?;
+	m.implement_trait::<Vec>(rune::item!(::std::cmp::Eq))?;
 
-    m.function_meta(partial_cmp__meta)?;
-    m.implement_trait::<Vec>(rune::item!(::std::cmp::PartialOrd))?;
+	m.function_meta(partial_cmp__meta)?;
+	m.implement_trait::<Vec>(rune::item!(::std::cmp::PartialOrd))?;
 
-    m.function_meta(cmp__meta)?;
-    m.implement_trait::<Vec>(rune::item!(::std::cmp::Ord))?;
+	m.function_meta(cmp__meta)?;
+	m.implement_trait::<Vec>(rune::item!(::std::cmp::Ord))?;
 
-    m.function_meta(hash)?;
-    Ok(m)
+	m.function_meta(hash)?;
+	Ok(m)
 }
 
 /// Constructs a new, empty dynamic `Vec`.
@@ -114,7 +114,7 @@ pub fn module() -> Result<Module, ContextError> {
 /// ```
 #[rune::function(free, path = Vec::new)]
 fn vec_new() -> Vec {
-    Vec::new()
+	Vec::new()
 }
 
 /// Constructs a new, empty dynamic `Vec` with at least the specified capacity.
@@ -162,7 +162,7 @@ fn vec_new() -> Vec {
 /// ```
 #[rune::function(free, path = Vec::with_capacity)]
 fn vec_with_capacity(capacity: usize) -> alloc::Result<Vec> {
-    Vec::with_capacity(capacity)
+	Vec::with_capacity(capacity)
 }
 
 /// Returns the number of elements in the vector, also referred to as its
@@ -176,7 +176,7 @@ fn vec_with_capacity(capacity: usize) -> alloc::Result<Vec> {
 /// ```
 #[rune::function(instance)]
 fn len(vec: &Vec) -> usize {
-    vec.len()
+	vec.len()
 }
 
 /// Returns `true` if the vector contains no elements.
@@ -192,7 +192,7 @@ fn len(vec: &Vec) -> usize {
 /// ```
 #[rune::function(instance)]
 fn is_empty(vec: &Vec) -> bool {
-    vec.is_empty()
+	vec.is_empty()
 }
 
 /// Returns the total number of elements the vector can hold without
@@ -207,7 +207,7 @@ fn is_empty(vec: &Vec) -> bool {
 /// ```
 #[rune::function(instance)]
 fn capacity(vec: &Vec) -> usize {
-    vec.capacity()
+	vec.capacity()
 }
 
 /// Returns a reference to an element or subslice depending on the type of
@@ -233,7 +233,7 @@ fn capacity(vec: &Vec) -> usize {
 /// ```
 #[rune::function(instance)]
 fn get(this: &Vec, index: Value) -> Result<Option<Value>, VmError> {
-    Vec::index_get(this, index)
+	Vec::index_get(this, index)
 }
 
 /// Sort a vector by the specified comparator function.
@@ -248,24 +248,24 @@ fn get(this: &Vec, index: Value) -> Result<Option<Value>, VmError> {
 /// ```
 #[rune::function(instance)]
 fn sort_by(vec: &mut Vec, comparator: &Function) -> Result<(), VmError> {
-    let mut error = None;
+	let mut error = None;
 
-    vec.sort_by(|a, b| match comparator.call::<Ordering>((a, b)) {
-        Ok(ordering) => ordering,
-        Err(e) => {
-            if error.is_none() {
-                error = Some(e);
-            }
+	vec.sort_by(|a, b| match comparator.call::<Ordering>((a, b)) {
+		Ok(ordering) => ordering,
+		Err(e) => {
+			if error.is_none() {
+				error = Some(e);
+			}
 
-            Ordering::Equal
-        }
-    })?;
+			Ordering::Equal
+		}
+	})?;
 
-    if let Some(e) = error {
-        Err(e)
-    } else {
-        Ok(())
-    }
+	if let Some(e) = error {
+		Err(e)
+	} else {
+		Ok(())
+	}
 }
 
 /// Sort the vector.
@@ -305,29 +305,29 @@ fn sort_by(vec: &mut Vec, comparator: &Function) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn sort(vec: &mut Vec) -> Result<(), VmError> {
-    let mut err = None;
+	let mut err = None;
 
-    vec.sort_by(|a, b| {
-        let result: Result<Ordering, VmError> = Value::cmp(a, b);
+	vec.sort_by(|a, b| {
+		let result: Result<Ordering, VmError> = Value::cmp(a, b);
 
-        match result {
-            Ok(cmp) => cmp,
-            Err(e) => {
-                if err.is_none() {
-                    err = Some(e);
-                }
+		match result {
+			Ok(cmp) => cmp,
+			Err(e) => {
+				if err.is_none() {
+					err = Some(e);
+				}
 
-                // NB: fall back to sorting by address.
-                (a as *const _ as usize).cmp(&(b as *const _ as usize))
-            }
-        }
-    })?;
+				// NB: fall back to sorting by address.
+				(a as *const _ as usize).cmp(&(b as *const _ as usize))
+			}
+		}
+	})?;
 
-    if let Some(err) = err {
-        return Err(err);
-    }
+	if let Some(err) = err {
+		return Err(err);
+	}
 
-    Ok(())
+	Ok(())
 }
 
 /// Clears the vector, removing all values.
@@ -345,9 +345,9 @@ fn sort(vec: &mut Vec) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn clear(vec: &mut Vec) {
-    // A native function has no worklist of its own to take the values apart
-    // over, so it gets one which is empty.
-    vec.dismantle(&mut Worklist::new());
+	// A native function has no worklist of its own to take the values apart
+	// over, so it gets one which is empty.
+	vec.dismantle(&mut Worklist::new());
 }
 
 /// Extend these bytes with another collection.
@@ -361,7 +361,7 @@ fn clear(vec: &mut Vec) {
 /// ```
 #[rune::function(instance)]
 fn extend(this: &mut Vec, value: Value) -> Result<(), VmError> {
-    this.extend(value)
+	this.extend(value)
 }
 
 /// Removes the last element from a vector and returns it, or [`None`] if it is
@@ -381,7 +381,7 @@ fn extend(this: &mut Vec, value: Value) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn pop(this: &mut Vec) -> Option<Value> {
-    this.pop()
+	this.pop()
 }
 
 /// Appends an element to the back of a collection.
@@ -399,8 +399,8 @@ fn pop(this: &mut Vec) -> Option<Value> {
 /// ```
 #[rune::function(instance)]
 fn push(this: &mut Vec, value: Value) -> Result<(), VmError> {
-    this.push(value)?;
-    Ok(())
+	this.push(value)?;
+	Ok(())
 }
 
 /// Removes and returns the element at position `index` within the vector,
@@ -433,15 +433,15 @@ fn push(this: &mut Vec, value: Value) -> Result<(), VmError> {
 /// ```
 #[rune::function(instance)]
 fn remove(this: &mut Vec, index: usize) -> Result<Value, VmError> {
-    if index >= this.len() {
-        return Err(VmError::new(VmErrorKind::OutOfRange {
-            index: index.into(),
-            length: this.len().into(),
-        }));
-    }
+	if index >= this.len() {
+		return Err(VmError::new(VmErrorKind::OutOfRange {
+			index: index.into(),
+			length: this.len().into(),
+		}));
+	}
 
-    let value = this.remove(index);
-    Ok(value)
+	let value = this.remove(index);
+	Ok(value)
 }
 
 /// Inserts an element at position `index` within the vector, shifting all
@@ -462,15 +462,15 @@ fn remove(this: &mut Vec, index: usize) -> Result<Value, VmError> {
 /// ```
 #[rune::function(instance)]
 fn insert(this: &mut Vec, index: usize, value: Value) -> Result<(), VmError> {
-    if index > this.len() {
-        return Err(VmError::new(VmErrorKind::OutOfRange {
-            index: index.into(),
-            length: this.len().into(),
-        }));
-    }
+	if index > this.len() {
+		return Err(VmError::new(VmErrorKind::OutOfRange {
+			index: index.into(),
+			length: this.len().into(),
+		}));
+	}
 
-    this.insert(index, value)?;
-    Ok(())
+	this.insert(index, value)?;
+	Ok(())
 }
 
 /// Clone the vector.
@@ -488,7 +488,7 @@ fn insert(this: &mut Vec, index: usize, value: Value) -> Result<(), VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn clone(this: &Vec) -> alloc::Result<Vec> {
-    this.try_clone()
+	this.try_clone()
 }
 
 /// Construct an iterator over the tuple.
@@ -507,7 +507,7 @@ fn clone(this: &Vec) -> alloc::Result<Vec> {
 /// ```
 #[rune::function(keep, instance, protocol = INTO_ITER)]
 fn into_iter(this: Ref<Vec>) -> Iter {
-    Vec::rune_iter(this)
+	Vec::rune_iter(this)
 }
 
 /// Returns a reference to an element or subslice depending on the type of
@@ -541,13 +541,13 @@ fn into_iter(this: Ref<Vec>) -> Iter {
 /// ```
 #[rune::function(instance, protocol = INDEX_GET)]
 fn index_get(this: &Vec, index: Value) -> Result<Value, VmError> {
-    let Some(value) = Vec::index_get(this, index)? else {
-        return Err(VmError::new(VmErrorKind::MissingIndex {
-            target: Vec::type_info(),
-        }));
-    };
+	let Some(value) = Vec::index_get(this, index)? else {
+		return Err(VmError::new(VmErrorKind::MissingIndex {
+			target: Vec::type_info(),
+		}));
+	};
 
-    Ok(value)
+	Ok(value)
 }
 
 /// Inserts a value into the vector.
@@ -561,7 +561,7 @@ fn index_get(this: &Vec, index: Value) -> Result<Value, VmError> {
 /// ```
 #[rune::function(instance, protocol = INDEX_SET)]
 fn index_set(this: &mut Vec, index: usize, value: Value) -> Result<(), VmError> {
-    Vec::set(this, index, value)
+	Vec::set(this, index, value)
 }
 
 /// Resizes the `Vec` in-place so that `len` is equal to `new_len`.
@@ -602,7 +602,7 @@ fn index_set(this: &mut Vec, index: usize, value: Value) -> Result<(), VmError> 
 /// ```
 #[rune::function(instance)]
 fn resize(this: &mut Vec, new_len: usize, value: Value) -> Result<(), VmError> {
-    Vec::resize(this, new_len, value)
+	Vec::resize(this, new_len, value)
 }
 
 /// Write a debug representation to a string.
@@ -618,7 +618,7 @@ fn resize(this: &mut Vec, new_len: usize, value: Value) -> Result<(), VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 fn debug_fmt(this: &Vec, f: &mut Formatter) -> Result<(), VmError> {
-    Vec::debug_fmt_with(this, f, &mut EnvProtocolCaller)
+	Vec::debug_fmt_with(this, f, &mut EnvProtocolCaller)
 }
 
 /// Perform a partial equality check with this vector.
@@ -637,7 +637,7 @@ fn debug_fmt(this: &Vec, f: &mut Formatter) -> Result<(), VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = PARTIAL_EQ)]
 fn partial_eq(this: &Vec, other: Value) -> Result<bool, VmError> {
-    Vec::partial_eq_with(this, other, &mut EnvProtocolCaller)
+	Vec::partial_eq_with(this, other, &mut EnvProtocolCaller)
 }
 
 /// Perform a total equality check with this vector.
@@ -654,7 +654,7 @@ fn partial_eq(this: &Vec, other: Value) -> Result<bool, VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = EQ)]
 fn eq(this: &Vec, other: &Vec) -> Result<bool, VmError> {
-    Vec::eq_with(this, other, Value::eq_with, &mut EnvProtocolCaller)
+	Vec::eq_with(this, other, Value::eq_with, &mut EnvProtocolCaller)
 }
 
 /// Perform a partial comparison check with this vector.
@@ -669,7 +669,7 @@ fn eq(this: &Vec, other: &Vec) -> Result<bool, VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = PARTIAL_CMP)]
 fn partial_cmp(this: &Vec, other: &Vec) -> Result<Option<Ordering>, VmError> {
-    Vec::partial_cmp_with(this, other, &mut EnvProtocolCaller)
+	Vec::partial_cmp_with(this, other, &mut EnvProtocolCaller)
 }
 
 /// Perform a total comparison check with this vector.
@@ -687,7 +687,7 @@ fn partial_cmp(this: &Vec, other: &Vec) -> Result<Option<Ordering>, VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = CMP)]
 fn cmp(this: &Vec, other: &Vec) -> Result<Ordering, VmError> {
-    Vec::cmp_with(this, other, &mut EnvProtocolCaller)
+	Vec::cmp_with(this, other, &mut EnvProtocolCaller)
 }
 
 /// Calculate the hash of a vector.
@@ -701,5 +701,5 @@ fn cmp(this: &Vec, other: &Vec) -> Result<Ordering, VmError> {
 /// ```
 #[rune::function(instance, protocol = HASH)]
 fn hash(this: &Vec, hasher: &mut Hasher) -> Result<(), VmError> {
-    Vec::hash_with(this, hasher, &mut EnvProtocolCaller)
+	Vec::hash_with(this, hasher, &mut EnvProtocolCaller)
 }

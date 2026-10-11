@@ -33,11 +33,11 @@ use tokio::fs;
 
 /// Construct the `fs` module.
 pub fn module(_stdio: bool) -> Result<Module, ContextError> {
-    let mut module = Module::with_crate("fs")?;
-    module.function("read_to_string", read_to_string).build()?;
-    Ok(module)
+	let mut module = Module::with_crate("fs")?;
+	module.function("read_to_string", read_to_string).build()?;
+	Ok(module)
 }
 
 async fn read_to_string(path: String) -> io::Result<String> {
-    fs::read_to_string(&path).await
+	fs::read_to_string(&path).await
 }

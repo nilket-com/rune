@@ -8,8 +8,8 @@ use crate::alloc;
 use crate::compile::meta;
 use crate::hash::Hash;
 use crate::runtime::{
-    self, Address, AnyTypeInfo, FromValue, IntoReturn, MaybeTypeOf, Memory, Output, RuntimeError,
-    TypeHash, TypeOf, UnsafeToMut, UnsafeToRef, Value, VmError, VmErrorKind,
+	self, Address, AnyTypeInfo, FromValue, IntoReturn, MaybeTypeOf, Memory, Output, RuntimeError,
+	TypeHash, TypeOf, UnsafeToMut, UnsafeToRef, Value, VmError, VmErrorKind,
 };
 
 // Expand to function variable bindings.
@@ -44,8 +44,8 @@ macro_rules! access_memory {
 /// Denotes the kind of a function, allowing the [`Function`] trait to be
 /// implemented separately for plain and async functions.
 pub trait FunctionKind {
-    /// Indicates if the function is async.
-    const IS_ASYNC: bool;
+	/// Indicates if the function is async.
+	const IS_ASYNC: bool;
 }
 
 /// Marker for plain functions.
@@ -53,7 +53,7 @@ pub trait FunctionKind {
 pub struct Plain;
 
 impl FunctionKind for Plain {
-    const IS_ASYNC: bool = false;
+	const IS_ASYNC: bool = false;
 }
 
 /// Marker for async functions.
@@ -61,62 +61,62 @@ impl FunctionKind for Plain {
 pub struct Async;
 
 impl FunctionKind for Async {
-    const IS_ASYNC: bool = true;
+	const IS_ASYNC: bool = true;
 }
 
 /// Trait used to provide the [function][crate::module::Module::function]
 /// function.
 #[diagnostic::on_unimplemented(
-    label = "#[derive(Any)] could be missing on the arguments or return value of `{Self}`"
+	label = "#[derive(Any)] could be missing on the arguments or return value of `{Self}`"
 )]
 pub trait Function<A, K>: 'static + Send + Sync {
-    /// The return type of the function.
-    #[doc(hidden)]
-    type Return;
+	/// The return type of the function.
+	#[doc(hidden)]
+	type Return;
 
-    /// Get the number of arguments.
-    #[doc(hidden)]
-    const ARGS: usize;
+	/// Get the number of arguments.
+	#[doc(hidden)]
+	const ARGS: usize;
 
-    /// Perform the vm call.
-    #[doc(hidden)]
-    fn call(
-        &self,
-        memory: &mut dyn Memory,
-        addr: Address,
-        args: usize,
-        out: Output,
-    ) -> Result<(), VmError>;
+	/// Perform the vm call.
+	#[doc(hidden)]
+	fn call(
+		&self,
+		memory: &mut dyn Memory,
+		addr: Address,
+		args: usize,
+		out: Output,
+	) -> Result<(), VmError>;
 }
 
 /// Trait used to provide the [`associated_function`] function.
 ///
 /// [`associated_function`]: crate::module::Module::associated_function
 #[diagnostic::on_unimplemented(
-    label = "#[derive(Any)] could be missing on the arguments or return value of `{Self}`"
+	label = "#[derive(Any)] could be missing on the arguments or return value of `{Self}`"
 )]
 pub trait InstanceFunction<A, K>: 'static + Send + Sync {
-    /// The type of the instance.
-    #[doc(hidden)]
-    type Instance: TypeOf;
+	/// The type of the instance.
+	#[doc(hidden)]
+	type Instance: TypeOf;
 
-    /// The return type of the function.
-    #[doc(hidden)]
-    type Return;
+	/// The return type of the function.
+	#[doc(hidden)]
+	type Return;
 
-    /// Get the number of arguments.
-    #[doc(hidden)]
-    const ARGS: usize;
+	/// Get the number of arguments.
+	#[doc(hidden)]
+	const ARGS: usize;
 
-    /// Perform the vm call.
-    #[doc(hidden)]
-    fn call(
-        &self,
-        memory: &mut dyn Memory,
-        addr: Address,
-        args: usize,
-        out: Output,
-    ) -> Result<(), VmError>;
+	/// Perform the vm call.
+	#[doc(hidden)]
+	fn call(
+		&self,
+		memory: &mut dyn Memory,
+		addr: Address,
+		args: usize,
+		out: Output,
+	) -> Result<(), VmError>;
 }
 
 macro_rules! impl_instance_function_traits {
@@ -146,27 +146,27 @@ pub struct Ref<T: ?Sized>(PhantomData<T>);
 
 impl<T> MaybeTypeOf for Ref<T>
 where
-    T: ?Sized + MaybeTypeOf,
+	T: ?Sized + MaybeTypeOf,
 {
-    #[inline]
-    fn maybe_type_of() -> alloc::Result<meta::DocType> {
-        T::maybe_type_of()
-    }
+	#[inline]
+	fn maybe_type_of() -> alloc::Result<meta::DocType> {
+		T::maybe_type_of()
+	}
 }
 
 impl<T> TypeHash for Ref<T>
 where
-    T: ?Sized + TypeHash,
+	T: ?Sized + TypeHash,
 {
-    const HASH: Hash = T::HASH;
+	const HASH: Hash = T::HASH;
 }
 
 impl<T> TypeOf for Ref<T>
 where
-    T: ?Sized + TypeOf,
+	T: ?Sized + TypeOf,
 {
-    const PARAMETERS: Hash = T::PARAMETERS;
-    const STATIC_TYPE_INFO: AnyTypeInfo = T::STATIC_TYPE_INFO;
+	const PARAMETERS: Hash = T::PARAMETERS;
+	const STATIC_TYPE_INFO: AnyTypeInfo = T::STATIC_TYPE_INFO;
 }
 
 /// Zero-sized marker struct for mutable references.
@@ -174,27 +174,27 @@ pub struct Mut<T: ?Sized>(PhantomData<T>);
 
 impl<T> MaybeTypeOf for Mut<T>
 where
-    T: ?Sized + MaybeTypeOf,
+	T: ?Sized + MaybeTypeOf,
 {
-    #[inline]
-    fn maybe_type_of() -> alloc::Result<meta::DocType> {
-        T::maybe_type_of()
-    }
+	#[inline]
+	fn maybe_type_of() -> alloc::Result<meta::DocType> {
+		T::maybe_type_of()
+	}
 }
 
 impl<T> TypeHash for Mut<T>
 where
-    T: ?Sized + TypeHash,
+	T: ?Sized + TypeHash,
 {
-    const HASH: Hash = T::HASH;
+	const HASH: Hash = T::HASH;
 }
 
 impl<T> TypeOf for Mut<T>
 where
-    T: ?Sized + TypeOf,
+	T: ?Sized + TypeOf,
 {
-    const PARAMETERS: Hash = T::PARAMETERS;
-    const STATIC_TYPE_INFO: AnyTypeInfo = T::STATIC_TYPE_INFO;
+	const PARAMETERS: Hash = T::PARAMETERS;
+	const STATIC_TYPE_INFO: AnyTypeInfo = T::STATIC_TYPE_INFO;
 }
 
 // Fake guard for owned values.
@@ -203,29 +203,29 @@ struct Guard;
 #[inline(always)]
 fn from_value<T>(value: Value) -> Result<(T, Guard), RuntimeError>
 where
-    T: FromValue,
+	T: FromValue,
 {
-    Ok((T::from_value(value)?, Guard))
+	Ok((T::from_value(value)?, Guard))
 }
 
 #[inline(always)]
 fn unsafe_to_ref<'a, T>(value: Value) -> Result<(&'a T, T::Guard), RuntimeError>
 where
-    T: ?Sized + UnsafeToRef,
+	T: ?Sized + UnsafeToRef,
 {
-    // SAFETY: these are only locally used in this module, and we ensure that
-    // the guard requirement is met.
-    unsafe { T::unsafe_to_ref(value) }
+	// SAFETY: these are only locally used in this module, and we ensure that
+	// the guard requirement is met.
+	unsafe { T::unsafe_to_ref(value) }
 }
 
 #[inline(always)]
 fn unsafe_to_mut<'a, T>(value: Value) -> Result<(&'a mut T, T::Guard), RuntimeError>
 where
-    T: ?Sized + UnsafeToMut,
+	T: ?Sized + UnsafeToMut,
 {
-    // SAFETY: these are only locally used in this module, and we ensure that
-    // the guard requirement is met.
-    unsafe { T::unsafe_to_mut(value) }
+	// SAFETY: these are only locally used in this module, and we ensure that
+	// the guard requirement is met.
+	unsafe { T::unsafe_to_mut(value) }
 }
 
 macro_rules! impl_function_traits {

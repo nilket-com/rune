@@ -5,44 +5,44 @@ prelude!();
 /// simply alias the location of `dx`.
 #[test]
 fn test_pattern_binding_bug() {
-    let out: i64 = rune! {
-        fn foo(dx) {
-            let x = dx;
+	let out: i64 = rune! {
+		fn foo(dx) {
+			let x = dx;
 
-            for n in 0..10 {
-                x = (x + dx);
-            }
+			for n in 0..10 {
+				x = (x + dx);
+			}
 
-            x
-        }
+			x
+		}
 
-        foo(3)
-    };
+		foo(3)
+	};
 
-    assert_eq!(out, 3 * 11);
+	assert_eq!(out, 3 * 11);
 }
 
 /// Bug where string patterns just do not work when part of a match statement
 /// inside of an inst fn call.
 #[test]
 fn test_string_pattern_in_instance_fn_bug() {
-    let _: () = rune! {
-        enum Inst { A, Unknown }
+	let _: () = rune! {
+		enum Inst { A, Unknown }
 
-        pub fn works() {
-            let program = [];
-            let inst = match "a" { "a" => Inst::A, _ => Inst::Unknown };
-            program.push(inst);
-            assert_eq!(program, [Inst::A]);
-        }
+		pub fn works() {
+			let program = [];
+			let inst = match "a" { "a" => Inst::A, _ => Inst::Unknown };
+			program.push(inst);
+			assert_eq!(program, [Inst::A]);
+		}
 
-        pub fn broken() {
-            let program = [];
-            program.push(match "a" { "a" => Inst::A, _ => Inst::Unknown });
-            assert_eq!(program, [Inst::A]);
-        }
+		pub fn broken() {
+			let program = [];
+			program.push(match "a" { "a" => Inst::A, _ => Inst::Unknown });
+			assert_eq!(program, [Inst::A]);
+		}
 
-        works();
-        broken();
-    };
+		works();
+		broken();
+	};
 }

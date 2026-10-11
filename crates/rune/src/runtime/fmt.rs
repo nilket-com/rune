@@ -14,47 +14,47 @@ use crate::Any;
 #[derive(Any)]
 #[rune(crate, item = ::std::fmt)]
 pub struct Formatter {
-    pub(crate) out: NonNull<dyn TryWrite>,
-    pub(crate) buf: String,
+	pub(crate) out: NonNull<dyn TryWrite>,
+	pub(crate) buf: String,
 }
 
 impl Formatter {
-    /// Format onto the given trywrite.
-    pub(crate) fn format_with<E>(
-        out: &mut String,
-        f: impl FnOnce(&mut Self) -> Result<(), E>,
-    ) -> Result<(), E> {
-        // SAFETY: Call to this function ensures that the formatter does not
-        // outlive the passed in reference.
-        let mut fmt = Formatter {
-            out: NonNull::from(out),
-            buf: String::new(),
-        };
-        f(&mut fmt)
-    }
+	/// Format onto the given trywrite.
+	pub(crate) fn format_with<E>(
+		out: &mut String,
+		f: impl FnOnce(&mut Self) -> Result<(), E>,
+	) -> Result<(), E> {
+		// SAFETY: Call to this function ensures that the formatter does not
+		// outlive the passed in reference.
+		let mut fmt = Formatter {
+			out: NonNull::from(out),
+			buf: String::new(),
+		};
+		f(&mut fmt)
+	}
 
-    #[inline]
-    pub(crate) fn parts_mut(&mut self) -> (&mut dyn TryWrite, &str) {
-        // SAFETY: Formatter constrution requires `out` to be valid.
-        (unsafe { self.out.as_mut() }, &self.buf)
-    }
+	#[inline]
+	pub(crate) fn parts_mut(&mut self) -> (&mut dyn TryWrite, &str) {
+		// SAFETY: Formatter constrution requires `out` to be valid.
+		(unsafe { self.out.as_mut() }, &self.buf)
+	}
 
-    #[inline]
-    pub(crate) fn buf_mut(&mut self) -> &mut String {
-        &mut self.buf
-    }
+	#[inline]
+	pub(crate) fn buf_mut(&mut self) -> &mut String {
+		&mut self.buf
+	}
 }
 
 impl TryWrite for Formatter {
-    #[inline]
-    fn try_write_str(&mut self, s: &str) -> alloc::Result<()> {
-        // SAFETY: Formatter constrution requires `out` to be valid.
-        unsafe { self.out.as_mut().try_write_str(s) }
-    }
+	#[inline]
+	fn try_write_str(&mut self, s: &str) -> alloc::Result<()> {
+		// SAFETY: Formatter constrution requires `out` to be valid.
+		unsafe { self.out.as_mut().try_write_str(s) }
+	}
 
-    #[inline]
-    fn try_write_char(&mut self, c: char) -> alloc::Result<()> {
-        // SAFETY: Formatter constrution requires `out` to be valid.
-        unsafe { self.out.as_mut().try_write_char(c) }
-    }
+	#[inline]
+	fn try_write_char(&mut self, c: char) -> alloc::Result<()> {
+		// SAFETY: Formatter constrution requires `out` to be valid.
+		unsafe { self.out.as_mut().try_write_char(c) }
+	}
 }

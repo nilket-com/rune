@@ -9,29 +9,29 @@ use crate::error::Error;
 /// [`try_cloned`]: crate::iter::IteratorExt::try_cloned
 /// [`IteratorExt`]: crate::iter::IteratorExt
 pub struct TryCloned<I> {
-    it: I,
+	it: I,
 }
 
 impl<I> TryCloned<I> {
-    pub(in crate::iter) fn new(it: I) -> Self {
-        Self { it }
-    }
+	pub(in crate::iter) fn new(it: I) -> Self {
+		Self { it }
+	}
 }
 
 impl<'a, I, T> Iterator for TryCloned<I>
 where
-    I: Iterator<Item = &'a T>,
-    T: 'a + TryClone,
+	I: Iterator<Item = &'a T>,
+	T: 'a + TryClone,
 {
-    type Item = Result<T, Error>;
+	type Item = Result<T, Error>;
 
-    #[inline]
-    fn next(&mut self) -> Option<Self::Item> {
-        Some(self.it.next()?.try_clone())
-    }
+	#[inline]
+	fn next(&mut self) -> Option<Self::Item> {
+		Some(self.it.next()?.try_clone())
+	}
 
-    #[inline]
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        self.it.size_hint()
-    }
+	#[inline]
+	fn size_hint(&self) -> (usize, Option<usize>) {
+		self.it.size_hint()
+	}
 }

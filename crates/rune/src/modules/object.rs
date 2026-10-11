@@ -36,57 +36,57 @@ use crate::{ContextError, Module};
 /// ```
 #[rune::module(::std::object)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
+	let mut m = Module::from_meta(self::module__meta)?;
 
-    m.ty::<Object>()?;
+	m.ty::<Object>()?;
 
-    m.function_meta(Object::new__meta)?;
-    m.function_meta(Object::with_capacity__meta)?;
-    m.function_meta(Object::len__meta)?;
-    m.function_meta(Object::is_empty__meta)?;
-    m.function_meta(Object::insert__meta)?;
-    m.function_meta(remove__meta)?;
-    m.function_meta(Object::rune_clear__meta)?;
-    m.function_meta(contains_key__meta)?;
-    m.function_meta(get__meta)?;
+	m.function_meta(Object::new__meta)?;
+	m.function_meta(Object::with_capacity__meta)?;
+	m.function_meta(Object::len__meta)?;
+	m.function_meta(Object::is_empty__meta)?;
+	m.function_meta(Object::insert__meta)?;
+	m.function_meta(remove__meta)?;
+	m.function_meta(Object::rune_clear__meta)?;
+	m.function_meta(contains_key__meta)?;
+	m.function_meta(get__meta)?;
 
-    m.function_meta(partial_eq__meta)?;
-    m.implement_trait::<Object>(rune::item!(::std::cmp::PartialEq))?;
+	m.function_meta(partial_eq__meta)?;
+	m.implement_trait::<Object>(rune::item!(::std::cmp::PartialEq))?;
 
-    m.function_meta(eq__meta)?;
-    m.implement_trait::<Object>(rune::item!(::std::cmp::Eq))?;
+	m.function_meta(eq__meta)?;
+	m.implement_trait::<Object>(rune::item!(::std::cmp::Eq))?;
 
-    m.function_meta(clone__meta)?;
-    m.implement_trait::<Object>(rune::item!(::std::clone::Clone))?;
+	m.function_meta(clone__meta)?;
+	m.implement_trait::<Object>(rune::item!(::std::clone::Clone))?;
 
-    m.function_meta(debug_fmt__meta)?;
+	m.function_meta(debug_fmt__meta)?;
 
-    m.function_meta(Object::rune_iter__meta)?;
-    m.function_meta(Object::rune_keys__meta)?;
-    m.function_meta(Object::rune_values__meta)?;
-    m.associated_function(&Protocol::INTO_ITER, Object::rune_iter)?;
+	m.function_meta(Object::rune_iter__meta)?;
+	m.function_meta(Object::rune_keys__meta)?;
+	m.function_meta(Object::rune_values__meta)?;
+	m.associated_function(&Protocol::INTO_ITER, Object::rune_iter)?;
 
-    m.ty::<RuneIter>()?;
-    m.function_meta(RuneIter::next__meta)?;
-    m.function_meta(RuneIter::size_hint__meta)?;
-    m.implement_trait::<RuneIter>(rune::item!(::std::iter::Iterator))?;
-    m.function_meta(RuneIter::len__meta)?;
-    m.implement_trait::<RuneIter>(rune::item!(::std::iter::ExactSizeIterator))?;
+	m.ty::<RuneIter>()?;
+	m.function_meta(RuneIter::next__meta)?;
+	m.function_meta(RuneIter::size_hint__meta)?;
+	m.implement_trait::<RuneIter>(rune::item!(::std::iter::Iterator))?;
+	m.function_meta(RuneIter::len__meta)?;
+	m.implement_trait::<RuneIter>(rune::item!(::std::iter::ExactSizeIterator))?;
 
-    m.ty::<RuneIterKeys>()?;
-    m.function_meta(RuneIterKeys::next__meta)?;
-    m.function_meta(RuneIterKeys::size_hint__meta)?;
-    m.implement_trait::<RuneIterKeys>(rune::item!(::std::iter::Iterator))?;
-    m.function_meta(RuneIterKeys::len__meta)?;
-    m.implement_trait::<RuneIterKeys>(rune::item!(::std::iter::ExactSizeIterator))?;
+	m.ty::<RuneIterKeys>()?;
+	m.function_meta(RuneIterKeys::next__meta)?;
+	m.function_meta(RuneIterKeys::size_hint__meta)?;
+	m.implement_trait::<RuneIterKeys>(rune::item!(::std::iter::Iterator))?;
+	m.function_meta(RuneIterKeys::len__meta)?;
+	m.implement_trait::<RuneIterKeys>(rune::item!(::std::iter::ExactSizeIterator))?;
 
-    m.ty::<RuneValues>()?;
-    m.function_meta(RuneValues::next__meta)?;
-    m.function_meta(RuneValues::size_hint__meta)?;
-    m.implement_trait::<RuneValues>(rune::item!(::std::iter::Iterator))?;
-    m.function_meta(RuneValues::len__meta)?;
-    m.implement_trait::<RuneValues>(rune::item!(::std::iter::ExactSizeIterator))?;
-    Ok(m)
+	m.ty::<RuneValues>()?;
+	m.function_meta(RuneValues::next__meta)?;
+	m.function_meta(RuneValues::size_hint__meta)?;
+	m.implement_trait::<RuneValues>(rune::item!(::std::iter::Iterator))?;
+	m.function_meta(RuneValues::len__meta)?;
+	m.implement_trait::<RuneValues>(rune::item!(::std::iter::ExactSizeIterator))?;
+	Ok(m)
 }
 
 /// Returns `true` if the map contains a value for the specified key.
@@ -100,7 +100,7 @@ pub fn module() -> Result<Module, ContextError> {
 #[rune::function(keep, instance)]
 #[inline]
 fn contains_key(object: &Object, key: &str) -> bool {
-    object.contains_key(key)
+	object.contains_key(key)
 }
 
 /// Removes a key from the map, returning the value at the key if the key was
@@ -116,7 +116,7 @@ fn contains_key(object: &Object, key: &str) -> bool {
 #[rune::function(keep, instance)]
 #[inline]
 fn remove(object: &mut Object, key: &str) -> Option<Value> {
-    object.remove(key)
+	object.remove(key)
 }
 
 /// Returns a reference to the value corresponding to the key.
@@ -131,7 +131,7 @@ fn remove(object: &mut Object, key: &str) -> Option<Value> {
 #[rune::function(keep, instance)]
 #[inline]
 fn get(object: &Object, key: &str) -> Option<Value> {
-    object.get(key).cloned()
+	object.get(key).cloned()
 }
 
 /// Test two objects for partial equality.
@@ -148,7 +148,7 @@ fn get(object: &Object, key: &str) -> Option<Value> {
 /// ```
 #[rune::function(keep, instance, protocol = PARTIAL_EQ)]
 fn partial_eq(this: &Object, other: &Object) -> Result<bool, VmError> {
-    Object::partial_eq_with(this, other, &mut EnvProtocolCaller)
+	Object::partial_eq_with(this, other, &mut EnvProtocolCaller)
 }
 
 /// Test two objects for total equality.
@@ -167,7 +167,7 @@ fn partial_eq(this: &Object, other: &Object) -> Result<bool, VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = EQ)]
 fn eq(this: &Object, other: &Object) -> Result<bool, VmError> {
-    Object::eq_with(this, other, Value::eq_with, &mut EnvProtocolCaller)
+	Object::eq_with(this, other, Value::eq_with, &mut EnvProtocolCaller)
 }
 
 /// Clones an object.
@@ -184,7 +184,7 @@ fn eq(this: &Object, other: &Object) -> Result<bool, VmError> {
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn clone(this: &Object) -> alloc::Result<Object> {
-    this.try_clone()
+	this.try_clone()
 }
 
 /// Write a debug representation of an object.
@@ -199,5 +199,5 @@ fn clone(this: &Object) -> alloc::Result<Object> {
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 #[inline]
 fn debug_fmt(this: &Object, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{this:?}")
+	write!(f, "{this:?}")
 }

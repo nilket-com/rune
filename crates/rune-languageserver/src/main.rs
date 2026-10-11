@@ -26,71 +26,71 @@ use tracing_subscriber::EnvFilter;
 pub const VERSION: &str = include_str!(concat!(env!("OUT_DIR"), "/version.txt"));
 
 fn setup_logging() -> Result<()> {
-    let Ok(env_filter) = EnvFilter::try_from_env("RUNE_LOG") else {
-        return Ok(());
-    };
+	let Ok(env_filter) = EnvFilter::try_from_env("RUNE_LOG") else {
+		return Ok(());
+	};
 
-    // Set environment variable to get the language server to trace log to the
-    // given file.
-    let Some(log_path) = std::env::var_os("RUNE_LOG_FILE") else {
-        return Ok(());
-    };
+	// Set environment variable to get the language server to trace log to the
+	// given file.
+	let Some(log_path) = std::env::var_os("RUNE_LOG_FILE") else {
+		return Ok(());
+	};
 
-    let log_path = PathBuf::from(log_path);
+	let log_path = PathBuf::from(log_path);
 
-    if let Some(d) = log_path.parent() {
-        _ = std::fs::create_dir_all(d);
-    }
+	if let Some(d) = log_path.parent() {
+		_ = std::fs::create_dir_all(d);
+	}
 
-    tracing_subscriber::fmt()
-        .with_env_filter(env_filter)
-        .with_writer(File::options().append(true).create(true).open(log_path)?)
-        .try_init()
-        .map_err(|e| anyhow!("{e}"))?;
+	tracing_subscriber::fmt()
+		.with_env_filter(env_filter)
+		.with_writer(File::options().append(true).create(true).open(log_path)?)
+		.try_init()
+		.map_err(|e| anyhow!("{e}"))?;
 
-    Ok(())
+	Ok(())
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    setup_logging()?;
+	setup_logging()?;
 
-    let mut it = env::args();
-    it.next();
+	let mut it = env::args();
+	it.next();
 
-    #[allow(clippy::never_loop)]
-    for arg in it {
-        match arg.as_str() {
-            "--version" => {
-                println!("Rune language server {VERSION}");
-                return Ok(());
-            }
-            "language-server" => {
-                // ignore
-            }
-            other => {
-                bail!("Unsupported option: {}", other);
-            }
-        }
-    }
+	#[allow(clippy::never_loop)]
+	for arg in it {
+		match arg.as_str() {
+			"--version" => {
+				println!("Rune language server {VERSION}");
+				return Ok(());
+			}
+			"language-server" => {
+				// ignore
+			}
+			other => {
+				bail!("Unsupported option: {}", other);
+			}
+		}
+	}
 
-    let context = rune_modules::default_context()?;
-    let options = Options::from_default_env()?;
+	let context = rune_modules::default_context()?;
+	let options = Options::from_default_env()?;
 
-    let languageserver = languageserver::builder()
-        .with_context(context)
-        .with_options(options)
-        .with_stdio()
-        .build()?;
+	let languageserver = languageserver::builder()
+		.with_context(context)
+		.with_options(options)
+		.with_stdio()
+		.build()?;
 
-    match languageserver.run().await {
-        Ok(()) => {
-            tracing::info!("Server shutting down");
-        }
-        Err(error) => {
-            tracing::error!("Server errored: {error}");
-        }
-    }
+	match languageserver.run().await {
+		Ok(()) => {
+			tracing::info!("Server shutting down");
+		}
+		Err(error) => {
+			tracing::error!("Server errored: {error}");
+		}
+	}
 
-    Ok(())
+	Ok(())
 }

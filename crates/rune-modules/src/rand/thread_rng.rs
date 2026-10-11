@@ -22,7 +22,7 @@ use super::SysError;
 #[rune::function]
 #[cfg(feature = "thread_rng")]
 fn rng() -> ThreadRng {
-    ThreadRng { inner: rand::rng() }
+	ThreadRng { inner: rand::rng() }
 }
 
 /// A reference to the thread-local generator
@@ -82,15 +82,15 @@ fn rng() -> ThreadRng {
 #[derive(Any)]
 #[rune(item = ::rand)]
 pub(super) struct ThreadRng {
-    pub(super) inner: rand::rngs::ThreadRng,
+	pub(super) inner: rand::rngs::ThreadRng,
 }
 
 impl ThreadRng {
-    /// Immediately reseed the generator
-    ///
-    /// This discards any remaining random data in the cache.
-    #[rune::function]
-    pub(super) fn reseed(&mut self) -> Result<(), SysError> {
-        Ok(self.inner.reseed()?)
-    }
+	/// Immediately reseed the generator
+	///
+	/// This discards any remaining random data in the cache.
+	#[rune::function]
+	pub(super) fn reseed(&mut self) -> Result<(), SysError> {
+		Ok(self.inner.reseed()?)
+	}
 }

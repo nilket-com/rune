@@ -14,43 +14,43 @@ use crate::doc::Visitor;
 /// and documented nothing at all.
 #[test]
 fn a_script_leaves_its_module_a_module() {
-    let context = Context::with_default_modules().expect("Failed to build context");
+	let context = Context::with_default_modules().expect("Failed to build context");
 
-    let mut sources = crate::tests::sources("/// Documented.\npub fn f() { 1 }\n1");
-    let mut diagnostics = Diagnostics::new();
+	let mut sources = crate::tests::sources("/// Documented.\npub fn f() { 1 }\n1");
+	let mut diagnostics = Diagnostics::new();
 
-    let mut visitor = Visitor::new(["script"]).expect("Failed to build visitor");
+	let mut visitor = Visitor::new(["script"]).expect("Failed to build visitor");
 
-    let mut options = Options::default();
-    options.script(true);
+	let mut options = Options::default();
+	options.script(true);
 
-    crate::prepare(&mut sources)
-        .with_context(&context)
-        .with_diagnostics(&mut diagnostics)
-        .with_options(&options)
-        .with_visitor(&mut visitor)
-        .expect("Failed to install visitor")
-        .build()
-        .expect("Source should compile");
+	crate::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(&mut diagnostics)
+		.with_options(&options)
+		.with_visitor(&mut visitor)
+		.expect("Failed to install visitor")
+		.build()
+		.expect("Source should compile");
 
-    let data = visitor
-        .get_by_hash(Hash::type_hash(["script"]))
-        .expect("The module should have been visited");
+	let data = visitor
+		.get_by_hash(Hash::type_hash(["script"]))
+		.expect("The module should have been visited");
 
-    assert!(
-        matches!(data.kind, Some(meta::Kind::Module)),
-        "{:?}",
-        data.kind
-    );
+	assert!(
+		matches!(data.kind, Some(meta::Kind::Module)),
+		"{:?}",
+		data.kind
+	);
 
-    // What the script declared is still there to be documented.
-    let data = visitor
-        .get_by_hash(Hash::type_hash(["script", "f"]))
-        .expect("The function should have been visited");
+	// What the script declared is still there to be documented.
+	let data = visitor
+		.get_by_hash(Hash::type_hash(["script", "f"]))
+		.expect("The function should have been visited");
 
-    assert!(
-        matches!(data.kind, Some(meta::Kind::Function { .. })),
-        "{:?}",
-        data.kind
-    );
+	assert!(
+		matches!(data.kind, Some(meta::Kind::Function { .. })),
+		"{:?}",
+		data.kind
+	);
 }

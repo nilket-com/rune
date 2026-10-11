@@ -70,7 +70,7 @@ pub use rune_macros::ToValue;
 /// # Ok::<_, rune::support::Error>(())
 /// ```
 pub fn to_value(value: impl ToValue) -> Result<Value, RuntimeError> {
-    value.to_value()
+	value.to_value()
 }
 
 /// Trait for converting types into the dynamic [`Value`] container.
@@ -105,148 +105,148 @@ pub fn to_value(value: impl ToValue) -> Result<Value, RuntimeError> {
 /// # Ok::<_, rune::support::Error>(())
 /// ```
 #[diagnostic::on_unimplemented(
-    message = "ToValue is not implemented for `{Self}`",
-    label = "ToValue is not implemented for `{Self}`",
-    note = "This probably means that `{Self}` hasn't derived rune::Any"
+	message = "ToValue is not implemented for `{Self}`",
+	label = "ToValue is not implemented for `{Self}`",
+	note = "This probably means that `{Self}` hasn't derived rune::Any"
 )]
 pub trait ToValue: Sized {
-    /// Convert into a value.
-    fn to_value(self) -> Result<Value, RuntimeError>;
+	/// Convert into a value.
+	fn to_value(self) -> Result<Value, RuntimeError>;
 }
 
 /// Trait governing things that can be returned from native functions.
 pub trait IntoReturn
 where
-    Self: Sized,
+	Self: Sized,
 {
-    /// Convert something into a return value.
-    fn into_return(self) -> Result<Value, VmError>;
+	/// Convert something into a return value.
+	fn into_return(self) -> Result<Value, VmError>;
 }
 
 impl<T> IntoReturn for T
 where
-    T: ToValue,
+	T: ToValue,
 {
-    #[inline]
-    fn into_return(self) -> Result<Value, VmError> {
-        Ok(T::to_value(self)?)
-    }
+	#[inline]
+	fn into_return(self) -> Result<Value, VmError> {
+		Ok(T::to_value(self)?)
+	}
 }
 
 impl ToValue for Value {
-    #[inline]
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        Ok(self)
-    }
+	#[inline]
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		Ok(self)
+	}
 }
 
 /// Trait for converting types into values.
 pub trait UnsafeToValue: Sized {
-    /// The type used to guard the unsafe value conversion.
-    type Guard: 'static;
+	/// The type used to guard the unsafe value conversion.
+	type Guard: 'static;
 
-    /// Convert into a value.
-    ///
-    /// # Safety
-    ///
-    /// The value returned must not be used after the guard associated with it
-    /// has been dropped.
-    unsafe fn unsafe_to_value(self) -> Result<(Value, Self::Guard), RuntimeError>;
+	/// Convert into a value.
+	///
+	/// # Safety
+	///
+	/// The value returned must not be used after the guard associated with it
+	/// has been dropped.
+	unsafe fn unsafe_to_value(self) -> Result<(Value, Self::Guard), RuntimeError>;
 }
 
 impl<T> ToValue for T
 where
-    T: AnyMarker,
+	T: AnyMarker,
 {
-    #[inline]
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        Ok(Value::from(AnyObj::new(self)?))
-    }
+	#[inline]
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		Ok(Value::from(AnyObj::new(self)?))
+	}
 }
 
 impl<T> UnsafeToValue for T
 where
-    T: ToValue,
+	T: ToValue,
 {
-    type Guard = ();
+	type Guard = ();
 
-    #[inline]
-    unsafe fn unsafe_to_value(self) -> Result<(Value, Self::Guard), RuntimeError> {
-        Ok((self.to_value()?, ()))
-    }
+	#[inline]
+	unsafe fn unsafe_to_value(self) -> Result<(Value, Self::Guard), RuntimeError> {
+		Ok((self.to_value()?, ()))
+	}
 }
 
 impl ToValue for &Value {
-    #[inline]
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        Ok(self.clone())
-    }
+	#[inline]
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		Ok(self.clone())
+	}
 }
 
 // Option impls
 
 impl<T> ToValue for Option<T>
 where
-    T: ToValue,
+	T: ToValue,
 {
-    #[inline]
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        let option = match self {
-            Some(some) => Some(some.to_value()?),
-            None => None,
-        };
+	#[inline]
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		let option = match self {
+			Some(some) => Some(some.to_value()?),
+			None => None,
+		};
 
-        Ok(Value::try_from(option)?)
-    }
+		Ok(Value::try_from(option)?)
+	}
 }
 
 // String impls
 
 impl ToValue for alloc::Box<str> {
-    #[inline]
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        let this = alloc::String::from(self);
-        Ok(Value::new(this)?)
-    }
+	#[inline]
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		let this = alloc::String::from(self);
+		Ok(Value::new(this)?)
+	}
 }
 
 impl ToValue for &str {
-    #[inline]
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        let this = alloc::String::try_from(self)?;
-        Ok(Value::new(this)?)
-    }
+	#[inline]
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		let this = alloc::String::try_from(self)?;
+		Ok(Value::new(this)?)
+	}
 }
 
 impl ToValue for rust_alloc::boxed::Box<str> {
-    #[inline]
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        let this = self.try_to_string()?;
-        Ok(Value::new(this)?)
-    }
+	#[inline]
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		let this = self.try_to_string()?;
+		Ok(Value::new(this)?)
+	}
 }
 
 impl ToValue for rust_alloc::string::String {
-    #[inline]
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        let string = alloc::String::try_from(self)?;
-        Ok(Value::new(string)?)
-    }
+	#[inline]
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		let string = alloc::String::try_from(self)?;
+		Ok(Value::new(string)?)
+	}
 }
 
 impl<T, E> ToValue for Result<T, E>
 where
-    T: ToValue,
-    E: ToValue,
+	T: ToValue,
+	E: ToValue,
 {
-    fn to_value(self) -> Result<Value, RuntimeError> {
-        let result = match self {
-            Ok(ok) => Ok(ok.to_value()?),
-            Err(err) => Err(err.to_value()?),
-        };
+	fn to_value(self) -> Result<Value, RuntimeError> {
+		let result = match self {
+			Ok(ok) => Ok(ok.to_value()?),
+			Err(err) => Err(err.to_value()?),
+		};
 
-        Ok(Value::try_from(result)?)
-    }
+		Ok(Value::try_from(result)?)
+	}
 }
 
 // map impls
@@ -277,21 +277,21 @@ macro_rules! impl_map {
 }
 
 impl_map! {
-    HashMap<rust_alloc::string::String, T>
+	HashMap<rust_alloc::string::String, T>
 }
 
 impl_map! {
-    HashMap<alloc::String, T>
+	HashMap<alloc::String, T>
 }
 
 impl_map! {
-    #[cfg(feature = "std")]
-    #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
-    ::std::collections::HashMap<rust_alloc::string::String, T>
+	#[cfg(feature = "std")]
+	#[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
+	::std::collections::HashMap<rust_alloc::string::String, T>
 }
 
 impl_map! {
-    #[cfg(feature = "std")]
-    #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
-    ::std::collections::HashMap<alloc::String, T>
+	#[cfg(feature = "std")]
+	#[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
+	::std::collections::HashMap<alloc::String, T>
 }

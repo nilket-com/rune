@@ -54,274 +54,274 @@ const RUNE: &str = "rune";
 #[proc_macro]
 #[doc(hidden)]
 pub fn quote(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = proc_macro2::TokenStream::from(input);
-    let parser = crate::quote::Quote::new();
+	let input = proc_macro2::TokenStream::from(input);
+	let parser = crate::quote::Quote::new();
 
-    let output = match parser.parse(input) {
-        Ok(output) => output,
-        Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
-    };
+	let output = match parser.parse(input) {
+		Ok(output) => output,
+		Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
+	};
 
-    output.into()
+	output.into()
 }
 
 #[proc_macro_attribute]
 #[doc(hidden)]
 pub fn function(
-    attrs: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
+	attrs: proc_macro::TokenStream,
+	item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let attrs = syn::parse_macro_input!(attrs with crate::function::FunctionAttrs::parse);
-    let function = syn::parse_macro_input!(item with crate::function::Function::parse);
+	let attrs = syn::parse_macro_input!(attrs with crate::function::FunctionAttrs::parse);
+	let function = syn::parse_macro_input!(item with crate::function::Function::parse);
 
-    let output = match function.expand(attrs) {
-        Ok(output) => output,
-        Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
-    };
+	let output = match function.expand(attrs) {
+		Ok(output) => output,
+		Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
+	};
 
-    output.into()
+	output.into()
 }
 
 #[proc_macro_attribute]
 #[doc(hidden)]
 pub fn macro_(
-    attrs: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
+	attrs: proc_macro::TokenStream,
+	item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let attrs = syn::parse_macro_input!(attrs with crate::macro_::Config::parse);
-    let macro_ = syn::parse_macro_input!(item with crate::macro_::Macro::parse);
+	let attrs = syn::parse_macro_input!(attrs with crate::macro_::Config::parse);
+	let macro_ = syn::parse_macro_input!(item with crate::macro_::Macro::parse);
 
-    let output = match macro_.expand(attrs, format_ident!("function")) {
-        Ok(output) => output,
-        Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
-    };
+	let output = match macro_.expand(attrs, format_ident!("function")) {
+		Ok(output) => output,
+		Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
+	};
 
-    output.into()
+	output.into()
 }
 
 #[proc_macro_attribute]
 #[doc(hidden)]
 pub fn module(
-    attrs: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
+	attrs: proc_macro::TokenStream,
+	item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let attrs = syn::parse_macro_input!(attrs with crate::module::ModuleAttrs::parse);
-    let module = syn::parse_macro_input!(item with crate::module::Module::parse);
+	let attrs = syn::parse_macro_input!(attrs with crate::module::ModuleAttrs::parse);
+	let module = syn::parse_macro_input!(item with crate::module::Module::parse);
 
-    let output = match module.expand(attrs) {
-        Ok(output) => output,
-        Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
-    };
+	let output = match module.expand(attrs) {
+		Ok(output) => output,
+		Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
+	};
 
-    output.into()
+	output.into()
 }
 
 #[proc_macro_attribute]
 #[doc(hidden)]
 pub fn attribute_macro(
-    attrs: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
+	attrs: proc_macro::TokenStream,
+	item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let attrs = syn::parse_macro_input!(attrs with crate::macro_::Config::parse);
-    let macro_ = syn::parse_macro_input!(item with crate::macro_::Macro::parse);
+	let attrs = syn::parse_macro_input!(attrs with crate::macro_::Config::parse);
+	let macro_ = syn::parse_macro_input!(item with crate::macro_::Macro::parse);
 
-    let output = match macro_.expand(attrs, format_ident!("attribute")) {
-        Ok(output) => output,
-        Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
-    };
+	let output = match macro_.expand(attrs, format_ident!("attribute")) {
+		Ok(output) => output,
+		Err(e) => return proc_macro::TokenStream::from(e.to_compile_error()),
+	};
 
-    output.into()
+	output.into()
 }
 
 #[proc_macro_derive(ToTokens, attributes(rune))]
 #[doc(hidden)]
 pub fn to_tokens(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive = syn::parse_macro_input!(input as to_tokens::Derive);
-    Context::build(|cx| derive.expand(cx)).into()
+	let derive = syn::parse_macro_input!(input as to_tokens::Derive);
+	Context::build(|cx| derive.expand(cx)).into()
 }
 
 #[proc_macro_derive(Parse, attributes(rune))]
 #[doc(hidden)]
 pub fn parse(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive = syn::parse_macro_input!(input as parse::Derive);
-    Context::build(|cx| derive.expand(cx)).into()
+	let derive = syn::parse_macro_input!(input as parse::Derive);
+	Context::build(|cx| derive.expand(cx)).into()
 }
 
 /// Helper derive to implement `Spanned`.
 #[proc_macro_derive(Spanned, attributes(rune))]
 pub fn spanned(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive = syn::parse_macro_input!(input as spanned::Derive);
-    Context::build(|cx| derive.expand(cx, false)).into()
+	let derive = syn::parse_macro_input!(input as spanned::Derive);
+	Context::build(|cx| derive.expand(cx, false)).into()
 }
 
 #[proc_macro_derive(OptionSpanned, attributes(rune))]
 #[doc(hidden)]
 pub fn option_spanned(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive = syn::parse_macro_input!(input as spanned::Derive);
-    Context::build(|cx| derive.expand(cx, true)).into()
+	let derive = syn::parse_macro_input!(input as spanned::Derive);
+	Context::build(|cx| derive.expand(cx, true)).into()
 }
 
 #[proc_macro_derive(Opaque, attributes(rune))]
 #[doc(hidden)]
 pub fn opaque(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive = syn::parse_macro_input!(input as opaque::Derive);
-    Context::build(|cx| derive.expand(cx)).into()
+	let derive = syn::parse_macro_input!(input as opaque::Derive);
+	Context::build(|cx| derive.expand(cx)).into()
 }
 
 #[proc_macro_derive(FromValue, attributes(rune))]
 #[doc(hidden)]
 pub fn from_value(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = syn::parse_macro_input!(input as syn::DeriveInput);
-    Context::build(|cx| from_value::expand(cx, &input)).into()
+	let input = syn::parse_macro_input!(input as syn::DeriveInput);
+	Context::build(|cx| from_value::expand(cx, &input)).into()
 }
 
 #[proc_macro_derive(ToValue, attributes(rune))]
 #[doc(hidden)]
 pub fn to_value(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = syn::parse_macro_input!(input as syn::DeriveInput);
-    Context::build(|cx| to_value::expand(cx, &input)).into()
+	let input = syn::parse_macro_input!(input as syn::DeriveInput);
+	Context::build(|cx| to_value::expand(cx, &input)).into()
 }
 
 #[proc_macro_derive(Any, attributes(rune))]
 #[doc(hidden)]
 pub fn any(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive = syn::parse_macro_input!(input as any::Derive);
+	let derive = syn::parse_macro_input!(input as any::Derive);
 
-    let stream = Context::build(|cx| {
-        let attr = cx.type_attrs(&derive.input.attrs);
-        let tokens = cx.tokens_with_module(attr.module.as_ref());
-        Ok(derive.into_any_builder(cx, &attr, &tokens)?.expand())
-    });
+	let stream = Context::build(|cx| {
+		let attr = cx.type_attrs(&derive.input.attrs);
+		let tokens = cx.tokens_with_module(attr.module.as_ref());
+		Ok(derive.into_any_builder(cx, &attr, &tokens)?.expand())
+	});
 
-    stream.into()
+	stream.into()
 }
 
 #[proc_macro_derive(ToConstValue, attributes(const_value))]
 #[doc(hidden)]
 pub fn const_value(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive = syn::parse_macro_input!(input as const_value::Derive);
-    Context::build(|cx| Ok(derive.into_builder(cx)?.expand())).into()
+	let derive = syn::parse_macro_input!(input as const_value::Derive);
+	Context::build(|cx| Ok(derive.into_builder(cx)?.expand())).into()
 }
 
 #[proc_macro]
 #[doc(hidden)]
 pub fn hash(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let args = syn::parse_macro_input!(input as self::hash::Arguments);
+	let args = syn::parse_macro_input!(input as self::hash::Arguments);
 
-    let stream = Context::build(|cx| {
-        let Tokens { hash, .. } = cx.tokens_with_module(None);
-        let value = args.build_type_hash(cx)?.into_inner();
-        Ok(::quote::quote!(#hash(#value)))
-    });
+	let stream = Context::build(|cx| {
+		let Tokens { hash, .. } = cx.tokens_with_module(None);
+		let value = args.build_type_hash(cx)?.into_inner();
+		Ok(::quote::quote!(#hash(#value)))
+	});
 
-    stream.into()
+	stream.into()
 }
 
 #[proc_macro]
 #[doc(hidden)]
 pub fn hash_in(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let path_in::PathIn { in_crate, item, .. } =
-        syn::parse_macro_input!(input as path_in::PathIn<self::hash::Arguments>);
+	let path_in::PathIn { in_crate, item, .. } =
+		syn::parse_macro_input!(input as path_in::PathIn<self::hash::Arguments>);
 
-    let stream = Context::build(|cx| {
-        let value = item.build_type_hash(cx)?.into_inner();
-        Ok(::quote::quote!(#in_crate::Hash(#value)))
-    });
+	let stream = Context::build(|cx| {
+		let value = item.build_type_hash(cx)?.into_inner();
+		Ok(::quote::quote!(#in_crate::Hash(#value)))
+	});
 
-    stream.into()
+	stream.into()
 }
 
 #[proc_macro]
 #[doc(hidden)]
 pub fn item(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let path = syn::parse_macro_input!(input as syn::Path);
+	let path = syn::parse_macro_input!(input as syn::Path);
 
-    let stream = match self::item::build_item(&path) {
-        Ok(hash) => {
-            ::quote::quote!(unsafe { rune::Item::from_bytes(&#hash) })
-        }
-        Err(error) => to_compile_errors([error]),
-    };
+	let stream = match self::item::build_item(&path) {
+		Ok(hash) => {
+			::quote::quote!(unsafe { rune::Item::from_bytes(&#hash) })
+		}
+		Err(error) => to_compile_errors([error]),
+	};
 
-    stream.into()
+	stream.into()
 }
 
 #[proc_macro]
 #[doc(hidden)]
 pub fn item_in(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let path_in::PathIn { in_crate, item, .. } = syn::parse_macro_input!(input as path_in::PathIn);
+	let path_in::PathIn { in_crate, item, .. } = syn::parse_macro_input!(input as path_in::PathIn);
 
-    let stream = match self::item::build_item(&item) {
-        Ok(hash) => {
-            ::quote::quote!(unsafe { #in_crate::Item::from_bytes(&#hash) })
-        }
-        Err(error) => to_compile_errors([error]),
-    };
+	let stream = match self::item::build_item(&item) {
+		Ok(hash) => {
+			::quote::quote!(unsafe { #in_crate::Item::from_bytes(&#hash) })
+		}
+		Err(error) => to_compile_errors([error]),
+	};
 
-    stream.into()
+	stream.into()
 }
 
 #[proc_macro]
 #[doc(hidden)]
 pub fn binding(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive = syn::parse_macro_input!(input as any::InternalCall);
+	let derive = syn::parse_macro_input!(input as any::InternalCall);
 
-    let stream = Context::build_with_crate(|cx| {
-        let mut stream = TokenStream::default();
-        let tokens = cx.tokens_with_module(None);
+	let stream = Context::build_with_crate(|cx| {
+		let mut stream = TokenStream::default();
+		let tokens = cx.tokens_with_module(None);
 
-        for builder in derive.into_any_builders(cx, &tokens) {
-            stream.extend(builder.expand());
-        }
+		for builder in derive.into_any_builders(cx, &tokens) {
+			stream.extend(builder.expand());
+		}
 
-        Ok(stream)
-    });
+		Ok(stream)
+	});
 
-    stream.into()
+	stream.into()
 }
 
 #[proc_macro_attribute]
 #[doc(hidden)]
 pub fn stable(
-    _attr: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
+	_attr: proc_macro::TokenStream,
+	item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    item
+	item
 }
 
 #[proc_macro_attribute]
 #[doc(hidden)]
 pub fn unstable(
-    _attr: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
+	_attr: proc_macro::TokenStream,
+	item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    item
+	item
 }
 
 #[proc_macro_derive(InstDisplay, attributes(inst_display))]
 #[doc(hidden)]
 pub fn inst_display(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let derive = syn::parse_macro_input!(input as inst_display::Derive);
-    derive.expand().unwrap_or_else(to_compile_errors).into()
+	let derive = syn::parse_macro_input!(input as inst_display::Derive);
+	derive.expand().unwrap_or_else(to_compile_errors).into()
 }
 
 /// Adds the `path` as trait bound to each generic
 fn add_trait_bounds(generics: &mut Generics, path: &Path) {
-    for ty in &mut generics.type_params_mut() {
-        ty.bounds.push(syn::TypeParamBound::Trait(syn::TraitBound {
-            paren_token: None,
-            modifiers: syn::TraitBoundModifiers::default(),
-            lifetimes: None,
-            maybe: None,
-            path: path.clone(),
-        }));
-    }
+	for ty in &mut generics.type_params_mut() {
+		ty.bounds.push(syn::TypeParamBound::Trait(syn::TraitBound {
+			paren_token: None,
+			modifiers: syn::TraitBoundModifiers::default(),
+			lifetimes: None,
+			maybe: None,
+			path: path.clone(),
+		}));
+	}
 }
 
 fn to_compile_errors<I>(errors: I) -> proc_macro2::TokenStream
 where
-    I: IntoIterator<Item = syn::Error>,
+	I: IntoIterator<Item = syn::Error>,
 {
-    let compile_errors = errors.into_iter().map(syn::Error::into_compile_error);
-    ::quote::quote!(#(#compile_errors)*)
+	let compile_errors = errors.into_iter().map(syn::Error::into_compile_error);
+	::quote::quote!(#(#compile_errors)*)
 }

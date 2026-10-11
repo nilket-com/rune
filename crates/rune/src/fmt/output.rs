@@ -13,22 +13,22 @@ use super::{NL, NL_CHAR, TAB, WS};
 
 /// Hint for how comments may be laid out.
 pub(super) enum Comments {
-    /// Any kind of comment can be inserted and should be line-separated.
-    Line,
-    /// Comments may be inserted in a whitespace prefix position, like `(<comment>args`.
-    Prefix,
-    /// Comments may be inserted in a whitespace suffix position, like `args<comment>)`.
-    Suffix,
-    /// An infix comment hint, like `(<comment>)` where there is no preceeding
-    /// or succeeding whitespace.
-    Infix,
+	/// Any kind of comment can be inserted and should be line-separated.
+	Line,
+	/// Comments may be inserted in a whitespace prefix position, like `(<comment>args`.
+	Prefix,
+	/// Comments may be inserted in a whitespace suffix position, like `args<comment>)`.
+	Suffix,
+	/// An infix comment hint, like `(<comment>)` where there is no preceeding
+	/// or succeeding whitespace.
+	Infix,
 }
 
 #[derive(Clone, Copy, Debug)]
 struct Comment {
-    span: Span,
-    before: usize,
-    line: bool,
+	span: Span,
+	before: usize,
+	line: bool,
 }
 
 /// A source of text.
@@ -36,61 +36,61 @@ struct Comment {
 pub(super) struct Source(str);
 
 impl Source {
-    fn new(source: &str) -> &Self {
-        // Safety: Source is repr transparent over str.
-        unsafe { &*(source as *const str as *const Self) }
-    }
+	fn new(source: &str) -> &Self {
+		// Safety: Source is repr transparent over str.
+		unsafe { &*(source as *const str as *const Self) }
+	}
 
-    /// Get a checked span from the source.
-    pub(super) fn get(&self, span: Span) -> Result<&str> {
-        let Some(source) = self.0.get(span.range()) else {
-            return Err(Error::new(span, ErrorKind::BadSpan { len: self.0.len() }));
-        };
+	/// Get a checked span from the source.
+	pub(super) fn get(&self, span: Span) -> Result<&str> {
+		let Some(source) = self.0.get(span.range()) else {
+			return Err(Error::new(span, ErrorKind::BadSpan { len: self.0.len() }));
+		};
 
-        Ok(source)
-    }
+		Ok(source)
+	}
 
-    /// Perform a whitespace-insensitive count and check if it's more than
-    /// `count`.
-    ///
-    /// A comma which closes what it is in does not count. The layout writes one
-    /// there when it lays something out over several lines and leaves it out
-    /// when it does not, so counting it would make the measurement depend on
-    /// how the source had been laid out already, and laying it out again would
-    /// then lay it out differently.
-    pub(super) fn is_at_least(&self, span: Span, mut count: usize) -> Result<bool> {
-        let source = self.get(span)?;
+	/// Perform a whitespace-insensitive count and check if it's more than
+	/// `count`.
+	///
+	/// A comma which closes what it is in does not count. The layout writes one
+	/// there when it lays something out over several lines and leaves it out
+	/// when it does not, so counting it would make the measurement depend on
+	/// how the source had been laid out already, and laying it out again would
+	/// then lay it out differently.
+	pub(super) fn is_at_least(&self, span: Span, mut count: usize) -> Result<bool> {
+		let source = self.get(span)?;
 
-        // Commas which have been seen but not counted yet, since whether they
-        // count depends on what follows them.
-        let mut pending = 0usize;
+		// Commas which have been seen but not counted yet, since whether they
+		// count depends on what follows them.
+		let mut pending = 0usize;
 
-        for c in source.chars() {
-            if c.is_whitespace() {
-                continue;
-            }
+		for c in source.chars() {
+			if c.is_whitespace() {
+				continue;
+			}
 
-            if c == ',' {
-                pending += 1;
-                continue;
-            }
+			if c == ',' {
+				pending += 1;
+				continue;
+			}
 
-            if matches!(c, ')' | ']' | '}') {
-                pending = 0;
-            }
+			if matches!(c, ')' | ']' | '}') {
+				pending = 0;
+			}
 
-            let n = pending.wrapping_add(1);
-            pending = 0;
+			let n = pending.wrapping_add(1);
+			pending = 0;
 
-            let Some(c) = count.checked_sub(n) else {
-                return Ok(true);
-            };
+			let Some(c) = count.checked_sub(n) else {
+				return Ok(true);
+			};
 
-            count = c;
-        }
+			count = c;
+		}
 
-        Ok(false)
-    }
+		Ok(false)
+	}
 }
 
 /// The output buffer.
@@ -98,462 +98,462 @@ impl Source {
 pub(super) struct Buffer(String);
 
 impl Buffer {
-    fn new(output: &mut String) -> &mut Self {
-        // Safety: Source is repr transparent over str.
-        unsafe { &mut *(output as *mut String as *mut Self) }
-    }
+	fn new(output: &mut String) -> &mut Self {
+		// Safety: Source is repr transparent over str.
+		unsafe { &mut *(output as *mut String as *mut Self) }
+	}
 
-    #[inline]
-    fn is_empty(&self) -> bool {
-        self.0.is_empty()
-    }
+	#[inline]
+	fn is_empty(&self) -> bool {
+		self.0.is_empty()
+	}
 
-    /// Write `s`, keeping it from running into whatever was written before it.
-    ///
-    /// Two tokens written with nothing between them are one token when the
-    /// output is read back: `a` and `b` next to each other are the identifier
-    /// `ab`, and `.` next to `.` is a range. The layout puts whitespace where
-    /// the language calls for it, but a construct it did not understand is
-    /// written out as it was found, and there it can end up next to whatever
-    /// was written last. Silently changing what the source says is worse than
-    /// any amount of ugly, so a separator goes in wherever one is needed.
-    #[inline]
-    fn str(&mut self, s: &str) -> alloc::Result<()> {
-        if let (Some(last), Some(first)) = (self.0.chars().next_back(), s.chars().next()) {
-            if joins(last, first) {
-                self.0.try_push_str(WS)?;
-            }
-        }
+	/// Write `s`, keeping it from running into whatever was written before it.
+	///
+	/// Two tokens written with nothing between them are one token when the
+	/// output is read back: `a` and `b` next to each other are the identifier
+	/// `ab`, and `.` next to `.` is a range. The layout puts whitespace where
+	/// the language calls for it, but a construct it did not understand is
+	/// written out as it was found, and there it can end up next to whatever
+	/// was written last. Silently changing what the source says is worse than
+	/// any amount of ugly, so a separator goes in wherever one is needed.
+	#[inline]
+	fn str(&mut self, s: &str) -> alloc::Result<()> {
+		if let (Some(last), Some(first)) = (self.0.chars().next_back(), s.chars().next()) {
+			if joins(last, first) {
+				self.0.try_push_str(WS)?;
+			}
+		}
 
-        self.0.try_push_str(s)
-    }
+		self.0.try_push_str(s)
+	}
 
-    /// Drop whatever whitespace is at the end of the last line.
-    ///
-    /// Nothing is ever written for the sake of what is at the end of a line, so
-    /// anything there is left over from laying out something which then turned
-    /// out not to be written - which happens where a construct is incomplete.
-    fn trim_line_end(&mut self) {
-        while matches!(self.0.as_str().as_bytes().last(), Some(b' ' | b'\t')) {
-            self.0.pop();
-        }
-    }
+	/// Drop whatever whitespace is at the end of the last line.
+	///
+	/// Nothing is ever written for the sake of what is at the end of a line, so
+	/// anything there is left over from laying out something which then turned
+	/// out not to be written - which happens where a construct is incomplete.
+	fn trim_line_end(&mut self) {
+		while matches!(self.0.as_str().as_bytes().last(), Some(b' ' | b'\t')) {
+			self.0.pop();
+		}
+	}
 
-    fn lines(&mut self, style: IndentStyle, indent: usize, lines: usize) -> alloc::Result<()> {
-        if lines == 0 {
-            return Ok(());
-        }
+	fn lines(&mut self, style: IndentStyle, indent: usize, lines: usize) -> alloc::Result<()> {
+		if lines == 0 {
+			return Ok(());
+		}
 
-        self.trim_line_end();
+		self.trim_line_end();
 
-        for _ in 0..lines {
-            self.0.try_push_str(NL)?;
-        }
+		for _ in 0..lines {
+			self.0.try_push_str(NL)?;
+		}
 
-        for _ in 0..indent {
-            match style {
-                IndentStyle::Spaces(n) => {
-                    for _ in 0..n {
-                        self.0.try_push_str(WS)?;
-                    }
-                }
-                IndentStyle::Tabs => {
-                    self.0.try_push_str(TAB)?;
-                }
-            }
-        }
+		for _ in 0..indent {
+			match style {
+				IndentStyle::Spaces(n) => {
+					for _ in 0..n {
+						self.0.try_push_str(WS)?;
+					}
+				}
+				IndentStyle::Tabs => {
+					self.0.try_push_str(TAB)?;
+				}
+			}
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 }
 
 /// Whether `a` written immediately before `b` would read as one token rather
 /// than as two.
 fn joins(a: char, b: char) -> bool {
-    // A word runs into a word: identifiers, keywords and numbers are all made
-    // of the same characters, so any two of them next to each other are one.
-    if (a == '_' || is_xid_continue(a)) && (b == '_' || is_xid_continue(b)) {
-        return true;
-    }
+	// A word runs into a word: identifiers, keywords and numbers are all made
+	// of the same characters, so any two of them next to each other are one.
+	if (a == '_' || is_xid_continue(a)) && (b == '_' || is_xid_continue(b)) {
+		return true;
+	}
 
-    // Every pair of punctuation characters which the lexer reads as one token
-    // and the grammar does not take apart again. Longer operators are built out
-    // of these, so guarding the pairs guards them too.
-    //
-    // `>>` and `||` are left out: the grammar splits them where it has to, for
-    // the closing of nested generics and for a closure which takes nothing, and
-    // both of those are written without a space.
-    matches!(
-        (a, b),
-        ('.', '.')
-            | (':', ':')
-            | ('-', '>')
-            | ('=', '>')
-            | ('=', '=')
-            | ('!', '=')
-            | ('<', '=')
-            | ('>', '=')
-            | ('&', '&')
-            | ('<', '<')
-            | ('+', '=')
-            | ('-', '=')
-            | ('*', '=')
-            | ('/', '=')
-            | ('%', '=')
-            | ('&', '=')
-            | ('|', '=')
-            | ('^', '=')
-            | ('/', '/')
-            | ('/', '*')
-            | ('*', '/')
-    )
+	// Every pair of punctuation characters which the lexer reads as one token
+	// and the grammar does not take apart again. Longer operators are built out
+	// of these, so guarding the pairs guards them too.
+	//
+	// `>>` and `||` are left out: the grammar splits them where it has to, for
+	// the closing of nested generics and for a closure which takes nothing, and
+	// both of those are written without a space.
+	matches!(
+		(a, b),
+		('.', '.')
+			| (':', ':')
+			| ('-', '>')
+			| ('=', '>')
+			| ('=', '=')
+			| ('!', '=')
+			| ('<', '=')
+			| ('>', '=')
+			| ('&', '&')
+			| ('<', '<')
+			| ('+', '=')
+			| ('-', '=')
+			| ('*', '=')
+			| ('/', '=')
+			| ('%', '=')
+			| ('&', '=')
+			| ('|', '=')
+			| ('^', '=')
+			| ('/', '/')
+			| ('/', '*')
+			| ('*', '/')
+	)
 }
 
 /// A constructed syntax tree.
 pub(crate) struct Formatter<'a> {
-    span: Span,
-    pub(super) source: &'a Source,
-    source_id: SourceId,
-    o: &'a mut Buffer,
-    pub(super) options: &'a FmtOptions,
-    diagnostics: &'a mut Diagnostics,
-    comments: VecDeque<Comment>,
-    lines: usize,
-    use_lines: bool,
-    ws: bool,
-    indent: usize,
+	span: Span,
+	pub(super) source: &'a Source,
+	source_id: SourceId,
+	o: &'a mut Buffer,
+	pub(super) options: &'a FmtOptions,
+	diagnostics: &'a mut Diagnostics,
+	comments: VecDeque<Comment>,
+	lines: usize,
+	use_lines: bool,
+	ws: bool,
+	indent: usize,
 }
 
 impl<'a> Formatter<'a> {
-    /// Construct a new tree.
-    pub(super) fn new(
-        span: Span,
-        source: &'a str,
-        source_id: SourceId,
-        o: &'a mut String,
-        options: &'a FmtOptions,
-        diagnostics: &'a mut Diagnostics,
-    ) -> Self {
-        Self {
-            span,
-            source: Source::new(source),
-            source_id,
-            o: Buffer::new(o),
-            options,
-            diagnostics,
-            comments: VecDeque::new(),
-            lines: 0,
-            use_lines: false,
-            ws: false,
-            indent: 0,
-        }
-    }
+	/// Construct a new tree.
+	pub(super) fn new(
+		span: Span,
+		source: &'a str,
+		source_id: SourceId,
+		o: &'a mut String,
+		options: &'a FmtOptions,
+		diagnostics: &'a mut Diagnostics,
+	) -> Self {
+		Self {
+			span,
+			source: Source::new(source),
+			source_id,
+			o: Buffer::new(o),
+			options,
+			diagnostics,
+			comments: VecDeque::new(),
+			lines: 0,
+			use_lines: false,
+			ws: false,
+			indent: 0,
+		}
+	}
 
-    /// Ignore the given node.
-    pub(crate) fn ignore(&mut self, node: Node<'a>) -> Result<()> {
-        self.process_comments(node.walk_from())?;
-        Ok(())
-    }
+	/// Ignore the given node.
+	pub(crate) fn ignore(&mut self, node: Node<'a>) -> Result<()> {
+		self.process_comments(node.walk_from())?;
+		Ok(())
+	}
 
-    /// Write the give node to output.
-    pub(crate) fn write_owned(&mut self, node: Node<'a>) -> Result<()> {
-        self.flush_whitespace(false)?;
-        self.write_node(&node)?;
-        self.process_comments(node.walk_from())?;
-        Ok(())
-    }
+	/// Write the give node to output.
+	pub(crate) fn write_owned(&mut self, node: Node<'a>) -> Result<()> {
+		self.flush_whitespace(false)?;
+		self.write_node(&node)?;
+		self.process_comments(node.walk_from())?;
+		Ok(())
+	}
 
-    /// Write the given node to output as it was written.
-    ///
-    /// This is what the token stream a macro is handed is written with, and the
-    /// comments in it are part of that stream, so they are written here rather
-    /// than queued. Queueing them as well would write them a second time after
-    /// the macro call, and would do it again for every time the output was
-    /// formatted.
-    pub(crate) fn write_raw(&mut self, node: Node<'a>) -> Result<()> {
-        self.write_node(&node)?;
-        self.process_lines(node.walk_from())?;
-        Ok(())
-    }
+	/// Write the given node to output as it was written.
+	///
+	/// This is what the token stream a macro is handed is written with, and the
+	/// comments in it are part of that stream, so they are written here rather
+	/// than queued. Queueing them as well would write them a second time after
+	/// the macro call, and would do it again for every time the output was
+	/// formatted.
+	pub(crate) fn write_raw(&mut self, node: Node<'a>) -> Result<()> {
+		self.write_node(&node)?;
+		self.process_lines(node.walk_from())?;
+		Ok(())
+	}
 
-    /// Buffer literal to output.
-    pub(crate) fn lit(&mut self, s: &str) -> Result<()> {
-        // We want whitespace to be preserved *unless* it was written out, since
-        // a literal is a synthetic token.
-        self.flush_whitespace(true)?;
-        self.o.str(s).with_span(self.span)?;
-        Ok(())
-    }
+	/// Buffer literal to output.
+	pub(crate) fn lit(&mut self, s: &str) -> Result<()> {
+		// We want whitespace to be preserved *unless* it was written out, since
+		// a literal is a synthetic token.
+		self.flush_whitespace(true)?;
+		self.o.str(s).with_span(self.span)?;
+		Ok(())
+	}
 
-    /// Drop whatever whitespace is at the end of what has been written.
-    pub(super) fn trim_line_end(&mut self) {
-        self.o.trim_line_end();
-    }
+	/// Drop whatever whitespace is at the end of what has been written.
+	pub(super) fn trim_line_end(&mut self) {
+		self.o.trim_line_end();
+	}
 
-    /// Flush any remaining whitespace.
-    pub(super) fn comments(&mut self, comments: Comments) -> Result<()> {
-        if self.comments.is_empty() {
-            return Ok(());
-        }
+	/// Flush any remaining whitespace.
+	pub(super) fn comments(&mut self, comments: Comments) -> Result<()> {
+		if self.comments.is_empty() {
+			return Ok(());
+		}
 
-        match comments {
-            Comments::Line => {
-                self.comments_line(false)?;
-            }
-            Comments::Prefix | Comments::Suffix => {
-                // Confusingly, the comment hint determines the location of the
-                // comment relative to any relevant token, so it *looks* like
-                // they are flipped here. But the writer function is simply used
-                // to determine where the whitespace should be located.
-                self.comments_ws(
-                    matches!(comments, Comments::Suffix),
-                    matches!(comments, Comments::Prefix),
-                )?;
-            }
-            Comments::Infix => {
-                self.comments_ws(false, false)?;
-            }
-        }
+		match comments {
+			Comments::Line => {
+				self.comments_line(false)?;
+			}
+			Comments::Prefix | Comments::Suffix => {
+				// Confusingly, the comment hint determines the location of the
+				// comment relative to any relevant token, so it *looks* like
+				// they are flipped here. But the writer function is simply used
+				// to determine where the whitespace should be located.
+				self.comments_ws(
+					matches!(comments, Comments::Suffix),
+					matches!(comments, Comments::Prefix),
+				)?;
+			}
+			Comments::Infix => {
+				self.comments_ws(false, false)?;
+			}
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 
-    /// Indent the output.
-    pub(super) fn indent(&mut self, indent: isize) -> Result<()> {
-        if indent != 0 {
-            self.indent = self.checked_indent(indent)?;
-        }
+	/// Indent the output.
+	pub(super) fn indent(&mut self, indent: isize) -> Result<()> {
+		if indent != 0 {
+			self.indent = self.checked_indent(indent)?;
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 
-    /// Emit a line hint, indicating that the next write should be on a new line
-    /// separated by at least `nl` lines.
-    ///
-    /// The value of `nl` is clamped to the range `[0, 2]`.
-    ///
-    /// This will write any pending line comments which are on the same line as
-    /// the previously written nodes.
-    pub(crate) fn nl(&mut self, lines: usize) -> Result<()> {
-        if lines == 0 {
-            return Ok(());
-        }
+	/// Emit a line hint, indicating that the next write should be on a new line
+	/// separated by at least `nl` lines.
+	///
+	/// The value of `nl` is clamped to the range `[0, 2]`.
+	///
+	/// This will write any pending line comments which are on the same line as
+	/// the previously written nodes.
+	pub(crate) fn nl(&mut self, lines: usize) -> Result<()> {
+		if lines == 0 {
+			return Ok(());
+		}
 
-        self.comments_line(true)?;
+		self.comments_line(true)?;
 
-        // If we don't already have line heuristics, adopt the proposed one.
-        if self.lines == 0 {
-            self.lines = lines;
-        }
+		// If we don't already have line heuristics, adopt the proposed one.
+		if self.lines == 0 {
+			self.lines = lines;
+		}
 
-        // At this point, we will use lines for the next flush.
-        self.use_lines = true;
-        Ok(())
-    }
+		// At this point, we will use lines for the next flush.
+		self.use_lines = true;
+		Ok(())
+	}
 
-    /// Emit a whitespace hint, indicating that the next node write should
-    /// happen with preceeding whitespace.
-    ///
-    /// This emits a `Comments::Suffix` hint by default, since we *expect*
-    /// whitespace to be followed by tokens which will add any additional
-    /// whitespace.
-    pub(super) fn ws(&mut self) -> Result<()> {
-        self.comments_ws(true, false)?;
-        self.ws = true;
-        Ok(())
-    }
+	/// Emit a whitespace hint, indicating that the next node write should
+	/// happen with preceeding whitespace.
+	///
+	/// This emits a `Comments::Suffix` hint by default, since we *expect*
+	/// whitespace to be followed by tokens which will add any additional
+	/// whitespace.
+	pub(super) fn ws(&mut self) -> Result<()> {
+		self.comments_ws(true, false)?;
+		self.ws = true;
+		Ok(())
+	}
 
-    /// Write leading comments.
-    pub(super) fn flush_prefix_comments(&mut self, tree: &'a Tree) -> Result<()> {
-        self.process_comments(tree.walk())?;
-        self.comments(Comments::Line)?;
-        self.use_lines = self.lines > 0;
-        Ok(())
-    }
+	/// Write leading comments.
+	pub(super) fn flush_prefix_comments(&mut self, tree: &'a Tree) -> Result<()> {
+		self.process_comments(tree.walk())?;
+		self.comments(Comments::Line)?;
+		self.use_lines = self.lines > 0;
+		Ok(())
+	}
 
-    /// Smuggle in line comments when we receive a line hint.
-    fn comments_line(&mut self, same_line: bool) -> Result<()> {
-        while let Some(c) = self.comments.front() {
-            if same_line && c.before != 0 {
-                break;
-            }
+	/// Smuggle in line comments when we receive a line hint.
+	fn comments_line(&mut self, same_line: bool) -> Result<()> {
+		while let Some(c) = self.comments.front() {
+			if same_line && c.before != 0 {
+				break;
+			}
 
-            if !self.o.is_empty() {
-                if c.before == 0 {
-                    self.o.str(WS).with_span(c.span)?;
-                } else {
-                    self.o
-                        .lines(self.options.indent, self.indent, c.before.min(2))
-                        .with_span(c.span)?;
-                }
-            }
+			if !self.o.is_empty() {
+				if c.before == 0 {
+					self.o.str(WS).with_span(c.span)?;
+				} else {
+					self.o
+						.lines(self.options.indent, self.indent, c.before.min(2))
+						.with_span(c.span)?;
+				}
+			}
 
-            let source = self.source.get(c.span)?;
-            let source = if c.line { source.trim_end() } else { source };
-            self.o.str(source).with_span(c.span)?;
+			let source = self.source.get(c.span)?;
+			let source = if c.line { source.trim_end() } else { source };
+			self.o.str(source).with_span(c.span)?;
 
-            _ = self.comments.pop_front();
-        }
+			_ = self.comments.pop_front();
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 
-    /// Smuggle in whitespace comments when we receive a whitespace hint.
-    fn comments_ws(&mut self, prefix: bool, suffix: bool) -> Result<()> {
-        if self.comments.is_empty() {
-            return Ok(());
-        }
+	/// Smuggle in whitespace comments when we receive a whitespace hint.
+	fn comments_ws(&mut self, prefix: bool, suffix: bool) -> Result<()> {
+		if self.comments.is_empty() {
+			return Ok(());
+		}
 
-        let mut any = false;
+		let mut any = false;
 
-        while let Some(c) = self.comments.front() {
-            if c.line {
-                break;
-            }
+		while let Some(c) = self.comments.front() {
+			if c.line {
+				break;
+			}
 
-            if (prefix || any) && !self.o.is_empty() {
-                self.o.str(WS).with_span(c.span)?;
-            }
+			if (prefix || any) && !self.o.is_empty() {
+				self.o.str(WS).with_span(c.span)?;
+			}
 
-            let source = self.source.get(c.span)?;
-            self.o.str(source).with_span(c.span)?;
+			let source = self.source.get(c.span)?;
+			self.o.str(source).with_span(c.span)?;
 
-            any = true;
+			any = true;
 
-            _ = self.comments.pop_front();
-        }
+			_ = self.comments.pop_front();
+		}
 
-        if suffix && any {
-            self.o.str(WS).with_span(self.span)?;
-        }
+		if suffix && any {
+			self.o.str(WS).with_span(self.span)?;
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 
-    fn process_comments<I>(&mut self, iter: I) -> Result<()>
-    where
-        I: IntoIterator<Item = Node<'a>>,
-    {
-        for node in iter {
-            if !node.has_children() && !self.write_comment(node)? {
-                break;
-            }
-        }
+	fn process_comments<I>(&mut self, iter: I) -> Result<()>
+	where
+		I: IntoIterator<Item = Node<'a>>,
+	{
+		for node in iter {
+			if !node.has_children() && !self.write_comment(node)? {
+				break;
+			}
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 
-    /// Count the lines in the whitespace which follows what was just written,
-    /// without queueing the comments among it.
-    ///
-    /// This is what [`Formatter::write_raw`] uses, since what it writes was
-    /// written as it was, comments and all.
-    fn process_lines<I>(&mut self, iter: I) -> Result<()>
-    where
-        I: IntoIterator<Item = Node<'a>>,
-    {
-        for node in iter {
-            if node.has_children() {
-                continue;
-            }
+	/// Count the lines in the whitespace which follows what was just written,
+	/// without queueing the comments among it.
+	///
+	/// This is what [`Formatter::write_raw`] uses, since what it writes was
+	/// written as it was, comments and all.
+	fn process_lines<I>(&mut self, iter: I) -> Result<()>
+	where
+		I: IntoIterator<Item = Node<'a>>,
+	{
+		for node in iter {
+			if node.has_children() {
+				continue;
+			}
 
-            match node.kind() {
-                Kind::Comment | Kind::MultilineComment(..) => {}
-                Kind::Whitespace => {
-                    let span = node.span();
-                    let source = self.source.get(span)?;
-                    let count = source.chars().filter(|c| *c == NL_CHAR).count();
+			match node.kind() {
+				Kind::Comment | Kind::MultilineComment(..) => {}
+				Kind::Whitespace => {
+					let span = node.span();
+					let source = self.source.get(span)?;
+					let count = source.chars().filter(|c| *c == NL_CHAR).count();
 
-                    if self.lines == 0 {
-                        self.lines = count;
-                    }
-                }
-                _ => break,
-            }
-        }
+					if self.lines == 0 {
+						self.lines = count;
+					}
+				}
+				_ => break,
+			}
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 
-    fn write_comment(&mut self, node: Node<'a>) -> Result<bool> {
-        let span = node.span();
+	fn write_comment(&mut self, node: Node<'a>) -> Result<bool> {
+		let span = node.span();
 
-        match node.kind() {
-            Kind::Comment | Kind::MultilineComment(..) => {
-                self.comments
-                    .try_push_back(Comment {
-                        span,
-                        before: take(&mut self.lines),
-                        line: matches!(node.kind(), Kind::Comment),
-                    })
-                    .with_span(span)?;
+		match node.kind() {
+			Kind::Comment | Kind::MultilineComment(..) => {
+				self.comments
+					.try_push_back(Comment {
+						span,
+						before: take(&mut self.lines),
+						line: matches!(node.kind(), Kind::Comment),
+					})
+					.with_span(span)?;
 
-                Ok(true)
-            }
-            Kind::Whitespace => {
-                let source = self.source.get(span)?;
-                let count = source.chars().filter(|c| *c == NL_CHAR).count();
+				Ok(true)
+			}
+			Kind::Whitespace => {
+				let source = self.source.get(span)?;
+				let count = source.chars().filter(|c| *c == NL_CHAR).count();
 
-                if self.lines == 0 {
-                    self.lines = count;
-                }
+				if self.lines == 0 {
+					self.lines = count;
+				}
 
-                Ok(true)
-            }
-            _ => Ok(false),
-        }
-    }
+				Ok(true)
+			}
+			_ => Ok(false),
+		}
+	}
 
-    fn checked_indent(&mut self, level: isize) -> Result<usize> {
-        let Some(indent) = self.indent.checked_add_signed(level) else {
-            return Err(Error::new(
-                self.span,
-                ErrorKind::BadIndent {
-                    level,
-                    indent: self.indent,
-                },
-            ));
-        };
+	fn checked_indent(&mut self, level: isize) -> Result<usize> {
+		let Some(indent) = self.indent.checked_add_signed(level) else {
+			return Err(Error::new(
+				self.span,
+				ErrorKind::BadIndent {
+					level,
+					indent: self.indent,
+				},
+			));
+		};
 
-        Ok(indent)
-    }
+		Ok(indent)
+	}
 
-    fn write_node(&mut self, node: &Node<'_>) -> Result<()> {
-        let source = self.source.get(node.span())?;
-        self.span = node.span();
-        self.o.str(source).with_span(self.span)?;
-        Ok(())
-    }
+	fn write_node(&mut self, node: &Node<'_>) -> Result<()> {
+		let source = self.source.get(node.span())?;
+		self.span = node.span();
+		self.o.str(source).with_span(self.span)?;
+		Ok(())
+	}
 
-    pub(crate) fn flush_whitespace(&mut self, preserve: bool) -> Result<()> {
-        if self.use_lines && self.lines > 0 {
-            self.o
-                .lines(self.options.indent, self.indent, self.lines.min(2))?;
-            self.ws = false;
-            self.use_lines = false;
-            self.lines = 0;
-        }
+	pub(crate) fn flush_whitespace(&mut self, preserve: bool) -> Result<()> {
+		if self.use_lines && self.lines > 0 {
+			self.o
+				.lines(self.options.indent, self.indent, self.lines.min(2))?;
+			self.ws = false;
+			self.use_lines = false;
+			self.lines = 0;
+		}
 
-        if self.ws {
-            self.o.str(WS).with_span(self.span)?;
-            self.ws = false;
-        }
+		if self.ws {
+			self.o.str(WS).with_span(self.span)?;
+			self.ws = false;
+		}
 
-        if !preserve {
-            self.lines = 0;
-            self.use_lines = false;
-        }
+		if !preserve {
+			self.lines = 0;
+			self.use_lines = false;
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 }
 
 impl<'a> Ignore<'a> for Formatter<'a> {
-    fn error(&mut self, error: Error) -> alloc::Result<()> {
-        self.diagnostics.error(self.source_id, error)
-    }
+	fn error(&mut self, error: Error) -> alloc::Result<()> {
+		self.diagnostics.error(self.source_id, error)
+	}
 
-    fn ignore(&mut self, node: Node<'a>) -> Result<()> {
-        Formatter::ignore(self, node)
-    }
+	fn ignore(&mut self, node: Node<'a>) -> Result<()> {
+		Formatter::ignore(self, node)
+	}
 }

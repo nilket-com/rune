@@ -1,8 +1,8 @@
 use crate::alloc::prelude::*;
 use crate::runtime::vm_execution::VmExecutionState;
 use crate::runtime::{
-    Call, Future, Generator, Globals, Output, RuntimeContext, Stack, Stream, Unit, Value, Vm,
-    VmError, VmErrorKind, VmExecution,
+	Call, Future, Generator, Globals, Output, RuntimeContext, Stack, Stream, Unit, Value, Vm,
+	VmError, VmErrorKind, VmExecution,
 };
 use crate::sync::Arc;
 
@@ -10,91 +10,91 @@ use crate::sync::Arc;
 #[derive(Debug)]
 #[must_use = "The construction of a vm call leaves the virtual machine stack in an intermediate state, VmCall::into_execution must be called to fix it"]
 pub(crate) struct VmCall {
-    /// The calling convention to use for the call.
-    call: Call,
-    /// Is set if the context differs for the call for the current virtual machine.
-    context: Option<Arc<RuntimeContext>>,
-    /// Is set if the unit differs for the call for the current virtual machine.
-    unit: Option<Arc<Unit>>,
-    /// Is set if the static item storage differs for the call for the current
-    /// virtual machine.
-    globals: Option<Globals>,
-    /// The output to store the result of the call into.
-    out: Output,
+	/// The calling convention to use for the call.
+	call: Call,
+	/// Is set if the context differs for the call for the current virtual machine.
+	context: Option<Arc<RuntimeContext>>,
+	/// Is set if the unit differs for the call for the current virtual machine.
+	unit: Option<Arc<Unit>>,
+	/// Is set if the static item storage differs for the call for the current
+	/// virtual machine.
+	globals: Option<Globals>,
+	/// The output to store the result of the call into.
+	out: Output,
 }
 
 impl VmCall {
-    pub(crate) fn new(
-        call: Call,
-        context: Option<Arc<RuntimeContext>>,
-        unit: Option<Arc<Unit>>,
-        globals: Option<Globals>,
-        out: Output,
-    ) -> Self {
-        Self {
-            call,
-            context,
-            unit,
-            globals,
-            out,
-        }
-    }
+	pub(crate) fn new(
+		call: Call,
+		context: Option<Arc<RuntimeContext>>,
+		unit: Option<Arc<Unit>>,
+		globals: Option<Globals>,
+		out: Output,
+	) -> Self {
+		Self {
+			call,
+			context,
+			unit,
+			globals,
+			out,
+		}
+	}
 
-    /// Encode the push itno an execution.
-    #[tracing::instrument(skip_all)]
-    pub(crate) fn into_execution<T>(self, execution: &mut VmExecution<T>) -> Result<(), VmError>
-    where
-        T: AsMut<Vm>,
-    {
-        let out = self.out;
+	/// Encode the push itno an execution.
+	#[tracing::instrument(skip_all)]
+	pub(crate) fn into_execution<T>(self, execution: &mut VmExecution<T>) -> Result<(), VmError>
+	where
+		T: AsMut<Vm>,
+	{
+		let out = self.out;
 
-        let value = match self.call {
-            Call::Async => {
-                let vm = self.build_vm(execution)?;
-                Value::try_from(Future::from_execution(vm.into_execution())?)?
-            }
-            Call::Immediate => {
-                execution.push_state(VmExecutionState {
-                    context: self.context,
-                    unit: self.unit,
-                    globals: self.globals,
-                })?;
+		let value = match self.call {
+			Call::Async => {
+				let vm = self.build_vm(execution)?;
+				Value::try_from(Future::from_execution(vm.into_execution())?)?
+			}
+			Call::Immediate => {
+				execution.push_state(VmExecutionState {
+					context: self.context,
+					unit: self.unit,
+					globals: self.globals,
+				})?;
 
-                return Ok(());
-            }
-            Call::Stream => {
-                let vm = self.build_vm(execution)?;
-                Value::try_from(Stream::new(vm))?
-            }
-            Call::Generator => {
-                let vm = self.build_vm(execution)?;
-                Value::try_from(Generator::new(vm))?
-            }
-        };
+				return Ok(());
+			}
+			Call::Stream => {
+				let vm = self.build_vm(execution)?;
+				Value::try_from(Stream::new(vm))?
+			}
+			Call::Generator => {
+				let vm = self.build_vm(execution)?;
+				Value::try_from(Generator::new(vm))?
+			}
+		};
 
-        execution.vm_mut().store(out, value)?;
-        Ok(())
-    }
+		execution.vm_mut().store(out, value)?;
+		Ok(())
+	}
 
-    #[tracing::instrument(skip_all)]
-    fn build_vm<T>(self, execution: &mut VmExecution<T>) -> Result<Vm, VmError>
-    where
-        T: AsMut<Vm>,
-    {
-        let vm = execution.vm_mut();
+	#[tracing::instrument(skip_all)]
+	fn build_vm<T>(self, execution: &mut VmExecution<T>) -> Result<Vm, VmError>
+	where
+		T: AsMut<Vm>,
+	{
+		let vm = execution.vm_mut();
 
-        let new_stack = vm.stack_mut().drain().try_collect::<Stack>()?;
+		let new_stack = vm.stack_mut().drain().try_collect::<Stack>()?;
 
-        let Some(ip) = vm.pop_call_frame_from_call()? else {
-            return Err(VmError::new(VmErrorKind::MissingCallFrame));
-        };
+		let Some(ip) = vm.pop_call_frame_from_call()? else {
+			return Err(VmError::new(VmErrorKind::MissingCallFrame));
+		};
 
-        let context = self.context.unwrap_or_else(|| vm.context().clone());
-        let unit = self.unit.unwrap_or_else(|| vm.unit().clone());
-        let globals = self.globals.unwrap_or_else(|| vm.globals().clone());
+		let context = self.context.unwrap_or_else(|| vm.context().clone());
+		let unit = self.unit.unwrap_or_else(|| vm.unit().clone());
+		let globals = self.globals.unwrap_or_else(|| vm.globals().clone());
 
-        let mut vm = Vm::with_stack(context, unit, new_stack).with_globals(globals);
-        vm.set_ip(ip);
-        Ok(vm)
-    }
+		let mut vm = Vm::with_stack(context, unit, new_stack).with_globals(globals);
+		vm.set_ip(ip);
+		Ok(vm)
+	}
 }

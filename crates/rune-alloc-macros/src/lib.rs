@@ -32,17 +32,17 @@ mod try_clone;
 
 #[proc_macro_derive(TryClone, attributes(try_clone))]
 pub fn try_clone(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-    let input = syn::parse_macro_input!(input as syn::DeriveInput);
+	let input = syn::parse_macro_input!(input as syn::DeriveInput);
 
-    try_clone::expand(input)
-        .unwrap_or_else(to_compile_errors)
-        .into()
+	try_clone::expand(input)
+		.unwrap_or_else(to_compile_errors)
+		.into()
 }
 
 fn to_compile_errors<I>(errors: I) -> proc_macro2::TokenStream
 where
-    I: IntoIterator<Item = syn::Error>,
+	I: IntoIterator<Item = syn::Error>,
 {
-    let compile_errors = errors.into_iter().map(syn::Error::into_compile_error);
-    ::quote::quote!(#(#compile_errors)*)
+	let compile_errors = errors.into_iter().map(syn::Error::into_compile_error);
+	::quote::quote!(#(#compile_errors)*)
 }

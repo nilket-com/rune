@@ -18,20 +18,20 @@ const LEN: usize = 1000;
 
 /// A script which fills `v` with `LEN` elements produced by `each`.
 fn filled(each: &str) -> rust_alloc::string::String {
-    format!(
-        "use std::cmp::Ordering; \
+	format!(
+		"use std::cmp::Ordering; \
          let v = []; \
          let i = 0; \
          while i < {LEN} {{ v.push({each}); i += 1; }} "
-    )
+	)
 }
 
 /// An inconsistent comparison leaves the elements in an order which is not
 /// worth describing, and that is all it does.
 #[test]
 fn an_inconsistent_comparison_is_not_a_panic() {
-    let source = format!(
-        "{} let n = [0]; \
+	let source = format!(
+		"{} let n = [0]; \
          v.sort_by(|a, b| {{ \
              n[0] = n[0] + 1; \
              match n[0] % 3 {{ \
@@ -41,35 +41,35 @@ fn an_inconsistent_comparison_is_not_a_panic() {
              }} \
          }}); \
          v.len()",
-        filled("i % 17")
-    );
+		filled("i % 17")
+	);
 
-    let value: i64 = eval(&source);
-    assert_eq!(value, LEN as i64);
+	let value: i64 = eval(&source);
+	assert_eq!(value, LEN as i64);
 }
 
 /// A comparison which always answers the same way is inconsistent in the other
 /// direction - it never lets anything be equal or greater.
 #[test]
 fn a_constant_comparison_is_not_a_panic() {
-    let source = format!("{} v.sort_by(|a, b| Ordering::Less); v.len()", filled("i"));
+	let source = format!("{} v.sort_by(|a, b| Ordering::Less); v.len()", filled("i"));
 
-    let value: i64 = eval(&source);
-    assert_eq!(value, LEN as i64);
+	let value: i64 = eval(&source);
+	assert_eq!(value, LEN as i64);
 }
 
 /// A comparison which fails is reported rather than swallowed, and it does not
 /// take the process with it on the way out.
 #[test]
 fn a_failing_comparison_is_reported() {
-    let source = format!("{} v.sort_by(|a, b| panic!(\"no\")); v.len()", filled("i"));
+	let source = format!("{} v.sort_by(|a, b| panic!(\"no\")); v.len()", filled("i"));
 
-    let context = Context::with_default_modules().expect("Failed to build context");
+	let context = Context::with_default_modules().expect("Failed to build context");
 
-    let error = crate::tests::run::<i64>(&context, &source, (), true)
-        .expect_err("The comparison should be reported");
+	let error = crate::tests::run::<i64>(&context, &source, (), true)
+		.expect_err("The comparison should be reported");
 
-    assert!(error.to_string().contains("no"), "{error}");
+	assert!(error.to_string().contains("no"), "{error}");
 }
 
 /// Values which are not comparable make `sort` inconsistent the same way, since
@@ -77,33 +77,33 @@ fn a_failing_comparison_is_reported() {
 /// what it did for the pairs it could.
 #[test]
 fn sorting_incomparable_values_is_reported() {
-    let source = format!(
-        "{} v.push(\"not a number\"); v.sort(); v.len()",
-        filled("i")
-    );
+	let source = format!(
+		"{} v.push(\"not a number\"); v.sort(); v.len()",
+		filled("i")
+	);
 
-    let context = Context::with_default_modules().expect("Failed to build context");
+	let context = Context::with_default_modules().expect("Failed to build context");
 
-    crate::tests::run::<i64>(&context, &source, (), true)
-        .expect_err("The comparison should be reported");
+	crate::tests::run::<i64>(&context, &source, (), true)
+		.expect_err("The comparison should be reported");
 }
 
 /// Sorting still sorts, and it is stable while it does.
 #[test]
 fn sorting_is_stable() {
-    // Everything compares equal on what is being sorted by, so a stable sort
-    // leaves the elements exactly as they were.
-    let source = format!("{} v.sort_by(|a, b| (a % 1).cmp(b % 1)); v", filled("i"));
+	// Everything compares equal on what is being sorted by, so a stable sort
+	// leaves the elements exactly as they were.
+	let source = format!("{} v.sort_by(|a, b| (a % 1).cmp(b % 1)); v", filled("i"));
 
-    let value: Vec<i64> = eval(&source);
-    assert_eq!(value, (0..LEN as i64).collect::<Vec<i64>>());
+	let value: Vec<i64> = eval(&source);
+	assert_eq!(value, (0..LEN as i64).collect::<Vec<i64>>());
 }
 
 /// And it puts things in order when it is told the truth about them.
 #[test]
 fn sorting_orders() {
-    let source = format!("{} v.sort(); v", filled(&format!("{} - i", LEN - 1)));
+	let source = format!("{} v.sort(); v", filled(&format!("{} - i", LEN - 1)));
 
-    let value: Vec<i64> = eval(&source);
-    assert_eq!(value, (0..LEN as i64).collect::<Vec<i64>>());
+	let value: Vec<i64> = eval(&source);
+	assert_eq!(value, (0..LEN as i64).collect::<Vec<i64>>());
 }

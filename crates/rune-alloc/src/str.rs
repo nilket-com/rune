@@ -33,10 +33,10 @@ use crate::Result;
 #[inline]
 pub unsafe fn from_boxed_utf8_unchecked<A>(v: Box<[u8], A>) -> Box<str, A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    let (ptr, alloc) = Box::into_raw_with_allocator(v);
-    unsafe { Box::from_raw_in(ptr as *mut str, alloc) }
+	let (ptr, alloc) = Box::into_raw_with_allocator(v);
+	unsafe { Box::from_raw_in(ptr as *mut str, alloc) }
 }
 
 /// Converts a [`Box<str>`] into a [`String`] without copying or allocating.
@@ -60,11 +60,11 @@ where
 #[inline]
 pub fn into_string<A>(this: Box<str, A>) -> String<A>
 where
-    A: Allocator,
+	A: Allocator,
 {
-    let slice = Box::<[u8], A>::from(this);
-    let vec = crate::slice::into_vec(slice);
-    unsafe { String::<A>::from_utf8_unchecked(vec) }
+	let slice = Box::<[u8], A>::from(this);
+	let vec = crate::slice::into_vec(slice);
+	unsafe { String::<A>::from_utf8_unchecked(vec) }
 }
 
 /// Replaces all matches of a pattern with another string.
@@ -100,51 +100,51 @@ where
 /// # Ok::<_, rune::alloc::Error>(())
 /// ```
 pub fn replace(string: &str, from: &str, to: &str) -> Result<String> {
-    // Fast path for replacing a single ASCII character with another.
-    if let (&[from_byte], &[to_byte]) = (from.as_bytes(), to.as_bytes()) {
-        return unsafe { replace_ascii(string.as_bytes(), from_byte, to_byte) };
-    }
+	// Fast path for replacing a single ASCII character with another.
+	if let (&[from_byte], &[to_byte]) = (from.as_bytes(), to.as_bytes()) {
+		return unsafe { replace_ascii(string.as_bytes(), from_byte, to_byte) };
+	}
 
-    // Set result capacity to self.len() when from.len() <= to.len()
-    let default_capacity = if from.len() <= to.len() {
-        string.len()
-    } else {
-        0
-    };
+	// Set result capacity to self.len() when from.len() <= to.len()
+	let default_capacity = if from.len() <= to.len() {
+		string.len()
+	} else {
+		0
+	};
 
-    let mut result = String::try_with_capacity(default_capacity)?;
-    let mut last_end = 0;
+	let mut result = String::try_with_capacity(default_capacity)?;
+	let mut last_end = 0;
 
-    for (start, part) in string.match_indices(from) {
-        result.try_push_str(unsafe { string.get_unchecked(last_end..start) })?;
-        result.try_push_str(to)?;
-        last_end = start + part.len();
-    }
+	for (start, part) in string.match_indices(from) {
+		result.try_push_str(unsafe { string.get_unchecked(last_end..start) })?;
+		result.try_push_str(to)?;
+		last_end = start + part.len();
+	}
 
-    result.try_push_str(unsafe { string.get_unchecked(last_end..string.len()) })?;
-    Ok(result)
+	result.try_push_str(unsafe { string.get_unchecked(last_end..string.len()) })?;
+	Ok(result)
 }
 
 unsafe fn replace_ascii(bytes: &[u8], from: u8, to: u8) -> Result<String> {
-    let mut result = Vec::try_with_capacity(bytes.len())?;
+	let mut result = Vec::try_with_capacity(bytes.len())?;
 
-    for &b in bytes {
-        if b == from {
-            result.try_push(to)?;
-        } else {
-            result.try_push(b)?;
-        }
-    }
+	for &b in bytes {
+		if b == from {
+			result.try_push(to)?;
+		} else {
+			result.try_push(b)?;
+		}
+	}
 
-    // SAFETY: We replaced ascii with ascii on valid utf8 strings.
-    Ok(String::from_utf8_unchecked(result))
+	// SAFETY: We replaced ascii with ascii on valid utf8 strings.
+	Ok(String::from_utf8_unchecked(result))
 }
 
 impl TryToOwned for str {
-    type Owned = String<Global>;
+	type Owned = String<Global>;
 
-    #[inline]
-    fn try_to_owned(&self) -> Result<String<Global>, Error> {
-        Ok(unsafe { String::from_utf8_unchecked(self.as_bytes().try_to_owned()?) })
-    }
+	#[inline]
+	fn try_to_owned(&self) -> Result<String<Global>, Error> {
+		Ok(unsafe { String::from_utf8_unchecked(self.as_bytes().try_to_owned()?) })
+	}
 }

@@ -48,337 +48,337 @@ mod time;
 
 #[derive(Default, Serialize)]
 struct WasmPosition {
-    line: u32,
-    character: u32,
+	line: u32,
+	character: u32,
 }
 
 impl From<(usize, usize)> for WasmPosition {
-    fn from((line, col): (usize, usize)) -> Self {
-        Self {
-            line: line as u32,
-            character: col as u32,
-        }
-    }
+	fn from((line, col): (usize, usize)) -> Self {
+		Self {
+			line: line as u32,
+			character: col as u32,
+		}
+	}
 }
 
 #[derive(Deserialize)]
 struct Config {
-    /// Budget.
-    #[serde(default)]
-    budget: Option<usize>,
-    /// Compiler options.
-    #[serde(default)]
-    options: Vec<String>,
-    /// Show instructions.
-    #[serde(default)]
-    instructions: bool,
-    /// Suppress text warnings.
-    #[serde(default)]
-    suppress_text_warnings: bool,
+	/// Budget.
+	#[serde(default)]
+	budget: Option<usize>,
+	/// Compiler options.
+	#[serde(default)]
+	options: Vec<String>,
+	/// Show instructions.
+	#[serde(default)]
+	instructions: bool,
+	/// Suppress text warnings.
+	#[serde(default)]
+	suppress_text_warnings: bool,
 }
 
 #[derive(Serialize)]
 enum WasmDiagnosticKind {
-    #[serde(rename = "error")]
-    Error,
-    #[serde(rename = "warning")]
-    Warning,
+	#[serde(rename = "error")]
+	Error,
+	#[serde(rename = "warning")]
+	Warning,
 }
 
 #[derive(Serialize)]
 struct WasmDiagnostic {
-    kind: WasmDiagnosticKind,
-    start: WasmPosition,
-    end: WasmPosition,
-    message: String,
+	kind: WasmDiagnosticKind,
+	start: WasmPosition,
+	end: WasmPosition,
+	message: String,
 }
 
 #[derive(Serialize)]
 pub struct WasmCompileResult {
-    error: Option<String>,
-    diagnostics_output: Option<String>,
-    diagnostics: Vec<WasmDiagnostic>,
-    result: Option<String>,
-    output: Option<String>,
-    instructions: Option<String>,
+	error: Option<String>,
+	diagnostics_output: Option<String>,
+	diagnostics: Vec<WasmDiagnostic>,
+	result: Option<String>,
+	output: Option<String>,
+	instructions: Option<String>,
 }
 
 impl WasmCompileResult {
-    /// Construct output from compile result.
-    fn output(
-        io: &CaptureIo,
-        result: String,
-        diagnostics_output: Option<String>,
-        diagnostics: Vec<WasmDiagnostic>,
-        instructions: Option<String>,
-    ) -> Self {
-        Self {
-            error: None,
-            diagnostics_output,
-            diagnostics,
-            result: Some(result),
-            output: io.drain_utf8().ok().map(|s| s.into_std()),
-            instructions,
-        }
-    }
+	/// Construct output from compile result.
+	fn output(
+		io: &CaptureIo,
+		result: String,
+		diagnostics_output: Option<String>,
+		diagnostics: Vec<WasmDiagnostic>,
+		instructions: Option<String>,
+	) -> Self {
+		Self {
+			error: None,
+			diagnostics_output,
+			diagnostics,
+			result: Some(result),
+			output: io.drain_utf8().ok().map(|s| s.into_std()),
+			instructions,
+		}
+	}
 
-    /// Construct a result from an error.
-    fn from_error<E>(
-        io: &CaptureIo,
-        error: E,
-        diagnostics_output: Option<String>,
-        diagnostics: Vec<WasmDiagnostic>,
-        instructions: Option<String>,
-    ) -> Self
-    where
-        E: fmt::Display,
-    {
-        Self {
-            error: Some(error.to_string()),
-            diagnostics_output,
-            diagnostics,
-            result: None,
-            output: io.drain_utf8().ok().map(|s| s.into_std()),
-            instructions,
-        }
-    }
+	/// Construct a result from an error.
+	fn from_error<E>(
+		io: &CaptureIo,
+		error: E,
+		diagnostics_output: Option<String>,
+		diagnostics: Vec<WasmDiagnostic>,
+		instructions: Option<String>,
+	) -> Self
+	where
+		E: fmt::Display,
+	{
+		Self {
+			error: Some(error.to_string()),
+			diagnostics_output,
+			diagnostics,
+			result: None,
+			output: io.drain_utf8().ok().map(|s| s.into_std()),
+			instructions,
+		}
+	}
 }
 
 /// Setup a wasm-compatible context.
 fn setup_context(io: &CaptureIo) -> Result<Context, ContextError> {
-    let mut context = Context::with_config(false)?;
+	let mut context = Context::with_config(false)?;
 
-    context.install(rune::modules::capture_io::module(io)?)?;
-    context.install(time::module()?)?;
-    context.install(http::module()?)?;
-    context.install(rune_modules::json::module(false)?)?;
-    context.install(rune_modules::toml::module(false)?)?;
-    context.install(rune_modules::toml::ser::module(false)?)?;
-    context.install(rune_modules::toml::de::module(false)?)?;
-    context.install(rune_modules::rand::module(false)?)?;
+	context.install(rune::modules::capture_io::module(io)?)?;
+	context.install(time::module()?)?;
+	context.install(http::module()?)?;
+	context.install(rune_modules::json::module(false)?)?;
+	context.install(rune_modules::toml::module(false)?)?;
+	context.install(rune_modules::toml::ser::module(false)?)?;
+	context.install(rune_modules::toml::de::module(false)?)?;
+	context.install(rune_modules::rand::module(false)?)?;
 
-    Ok(context)
+	Ok(context)
 }
 
 async fn inner_compile(
-    input: String,
-    config: JsValue,
-    io: &CaptureIo,
+	input: String,
+	config: JsValue,
+	io: &CaptureIo,
 ) -> Result<WasmCompileResult> {
-    let instructions = None;
+	let instructions = None;
 
-    let config: Config = JsValueSerdeExt::into_serde(&config)?;
-    let budget = config.budget.unwrap_or(1_000_000);
+	let config: Config = JsValueSerdeExt::into_serde(&config)?;
+	let budget = config.budget.unwrap_or(1_000_000);
 
-    let source = rune::Source::new("entry", input)?;
-    let mut sources = rune::Sources::new();
-    sources.insert(source)?;
+	let source = rune::Source::new("entry", input)?;
+	let mut sources = rune::Sources::new();
+	sources.insert(source)?;
 
-    let context = setup_context(io)?;
-    let runtime = Arc::try_new(context.runtime()?)?;
+	let context = setup_context(io)?;
+	let runtime = Arc::try_new(context.runtime()?)?;
 
-    let mut options = Options::from_default_env()?;
+	let mut options = Options::from_default_env()?;
 
-    for option in &config.options {
-        options.parse_option(option)?;
-    }
+	for option in &config.options {
+		options.parse_option(option)?;
+	}
 
-    let mut d = rune::Diagnostics::new();
-    let mut diagnostics = Vec::new();
+	let mut d = rune::Diagnostics::new();
+	let mut diagnostics = Vec::new();
 
-    let result = rune::prepare(&mut sources)
-        .with_context(&context)
-        .with_diagnostics(&mut d)
-        .with_options(&options)
-        .build();
+	let result = rune::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(&mut d)
+		.with_options(&options)
+		.build();
 
-    for diagnostic in d.diagnostics() {
-        match diagnostic {
-            Diagnostic::Fatal(error) => {
-                if let Some(source) = sources.get(error.source_id()) {
-                    if let Some(error) = error.as_compile_error() {
-                        let span = error.span();
+	for diagnostic in d.diagnostics() {
+		match diagnostic {
+			Diagnostic::Fatal(error) => {
+				if let Some(source) = sources.get(error.source_id()) {
+					if let Some(error) = error.as_compile_error() {
+						let span = error.span();
 
-                        let start =
-                            WasmPosition::from(source.find_line_column(span.start.into_usize()));
-                        let end =
-                            WasmPosition::from(source.find_line_column(span.end.into_usize()));
+						let start =
+							WasmPosition::from(source.find_line_column(span.start.into_usize()));
+						let end =
+							WasmPosition::from(source.find_line_column(span.end.into_usize()));
 
-                        diagnostics.push(WasmDiagnostic {
-                            kind: WasmDiagnosticKind::Error,
-                            start,
-                            end,
-                            message: error.to_string(),
-                        });
+						diagnostics.push(WasmDiagnostic {
+							kind: WasmDiagnosticKind::Error,
+							start,
+							end,
+							message: error.to_string(),
+						});
 
-                        continue;
-                    }
+						continue;
+					}
 
-                    if let Some(error) = error.as_link_error() {
-                        match error {
-                            LinkerError::MissingFunction { hash, spans } => {
-                                for (span, _) in spans {
-                                    let start = WasmPosition::from(
-                                        source.find_line_column(span.start.into_usize()),
-                                    );
-                                    let end = WasmPosition::from(
-                                        source.find_line_column(span.end.into_usize()),
-                                    );
+					if let Some(error) = error.as_link_error() {
+						match error {
+							LinkerError::MissingFunction { hash, spans } => {
+								for (span, _) in spans {
+									let start = WasmPosition::from(
+										source.find_line_column(span.start.into_usize()),
+									);
+									let end = WasmPosition::from(
+										source.find_line_column(span.end.into_usize()),
+									);
 
-                                    diagnostics.push(WasmDiagnostic {
-                                        kind: WasmDiagnosticKind::Error,
-                                        start,
-                                        end,
-                                        message: format!("missing function (hash: {hash})"),
-                                    });
-                                }
-                            }
-                            _ => {}
-                        }
-                    }
-                }
-            }
-            Diagnostic::Warning(warning) => {
-                let span = warning.span();
+									diagnostics.push(WasmDiagnostic {
+										kind: WasmDiagnosticKind::Error,
+										start,
+										end,
+										message: format!("missing function (hash: {hash})"),
+									});
+								}
+							}
+							_ => {}
+						}
+					}
+				}
+			}
+			Diagnostic::Warning(warning) => {
+				let span = warning.span();
 
-                if let Some(source) = sources.get(warning.source_id()) {
-                    let start =
-                        WasmPosition::from(source.find_line_column(span.start.into_usize()));
-                    let end = WasmPosition::from(source.find_line_column(span.end.into_usize()));
+				if let Some(source) = sources.get(warning.source_id()) {
+					let start =
+						WasmPosition::from(source.find_line_column(span.start.into_usize()));
+					let end = WasmPosition::from(source.find_line_column(span.end.into_usize()));
 
-                    diagnostics.push(WasmDiagnostic {
-                        kind: WasmDiagnosticKind::Warning,
-                        start,
-                        end,
-                        message: warning.to_string(),
-                    });
-                }
-            }
-            _ => {}
-        }
-    }
+					diagnostics.push(WasmDiagnostic {
+						kind: WasmDiagnosticKind::Warning,
+						start,
+						end,
+						message: warning.to_string(),
+					});
+				}
+			}
+			_ => {}
+		}
+	}
 
-    let mut writer = termcolor::Buffer::no_color();
+	let mut writer = termcolor::Buffer::no_color();
 
-    if !config.suppress_text_warnings {
-        d.emit(&mut writer, &sources)
-            .context("Emitting to buffer should never fail")?;
-    }
+	if !config.suppress_text_warnings {
+		d.emit(&mut writer, &sources)
+			.context("Emitting to buffer should never fail")?;
+	}
 
-    let unit = match result {
-        Ok(unit) => Arc::try_new(unit)?,
-        Err(error) => {
-            return Ok(WasmCompileResult::from_error(
-                io,
-                error,
-                diagnostics_output(writer),
-                diagnostics,
-                instructions,
-            ));
-        }
-    };
+	let unit = match result {
+		Ok(unit) => Arc::try_new(unit)?,
+		Err(error) => {
+			return Ok(WasmCompileResult::from_error(
+				io,
+				error,
+				diagnostics_output(writer),
+				diagnostics,
+				instructions,
+			));
+		}
+	};
 
-    let instructions = if config.instructions {
-        let mut out = termcolor::Buffer::no_color();
-        unit.emit_instructions(&mut out, &sources, false)
-            .expect("dumping to string shouldn't fail");
-        Some(diagnostics_output(out).context("Converting instructions to UTF-8")?)
-    } else {
-        None
-    };
+	let instructions = if config.instructions {
+		let mut out = termcolor::Buffer::no_color();
+		unit.emit_instructions(&mut out, &sources, false)
+			.expect("dumping to string shouldn't fail");
+		Some(diagnostics_output(out).context("Converting instructions to UTF-8")?)
+	} else {
+		None
+	};
 
-    let mut vm = Vm::new(runtime, unit);
+	let mut vm = Vm::new(runtime, unit);
 
-    let mut execution = match vm.execute(["main"], ()) {
-        Ok(execution) => execution,
-        Err(error) => {
-            error
-                .emit(&mut writer, &sources)
-                .context("Emitting to buffer should never fail")?;
+	let mut execution = match vm.execute(["main"], ()) {
+		Ok(execution) => execution,
+		Err(error) => {
+			error
+				.emit(&mut writer, &sources)
+				.context("Emitting to buffer should never fail")?;
 
-            return Ok(WasmCompileResult::from_error(
-                io,
-                error,
-                diagnostics_output(writer),
-                diagnostics,
-                instructions,
-            ));
-        }
-    };
+			return Ok(WasmCompileResult::from_error(
+				io,
+				error,
+				diagnostics_output(writer),
+				diagnostics,
+				instructions,
+			));
+		}
+	};
 
-    let future = budget::with(budget, execution.async_complete());
+	let future = budget::with(budget, execution.async_complete());
 
-    let output = match future.await {
-        Ok(output) => output,
-        Err(error) => {
-            let vm = execution.vm();
+	let output = match future.await {
+		Ok(output) => output,
+		Err(error) => {
+			let vm = execution.vm();
 
-            let (unit, ip) = match error.first_location() {
-                Some(loc) => (&loc.unit, loc.ip),
-                None => (vm.unit(), vm.last_ip()),
-            };
+			let (unit, ip) = match error.first_location() {
+				Some(loc) => (&loc.unit, loc.ip),
+				None => (vm.unit(), vm.last_ip()),
+			};
 
-            // NB: emit diagnostics if debug info is available.
-            if let Some(debug) = unit.debug_info() {
-                if let Some(inst) = debug.instruction_at(ip) {
-                    if let Some(source) = sources.get(inst.source_id) {
-                        let start = WasmPosition::from(
-                            source.find_line_column(inst.span.start.into_usize()),
-                        );
+			// NB: emit diagnostics if debug info is available.
+			if let Some(debug) = unit.debug_info() {
+				if let Some(inst) = debug.instruction_at(ip) {
+					if let Some(source) = sources.get(inst.source_id) {
+						let start = WasmPosition::from(
+							source.find_line_column(inst.span.start.into_usize()),
+						);
 
-                        let end =
-                            WasmPosition::from(source.find_line_column(inst.span.end.into_usize()));
+						let end =
+							WasmPosition::from(source.find_line_column(inst.span.end.into_usize()));
 
-                        diagnostics.push(WasmDiagnostic {
-                            kind: WasmDiagnosticKind::Error,
-                            start,
-                            end,
-                            message: error.to_string(),
-                        });
-                    }
-                }
-            }
+						diagnostics.push(WasmDiagnostic {
+							kind: WasmDiagnosticKind::Error,
+							start,
+							end,
+							message: error.to_string(),
+						});
+					}
+				}
+			}
 
-            error
-                .emit(&mut writer, &sources)
-                .context("Emitting to buffer should never fail")?;
+			error
+				.emit(&mut writer, &sources)
+				.context("Emitting to buffer should never fail")?;
 
-            return Ok(WasmCompileResult::from_error(
-                io,
-                error,
-                diagnostics_output(writer),
-                diagnostics,
-                instructions,
-            ));
-        }
-    };
+			return Ok(WasmCompileResult::from_error(
+				io,
+				error,
+				diagnostics_output(writer),
+				diagnostics,
+				instructions,
+			));
+		}
+	};
 
-    let result = vm.with(|| format!("{output:?}"));
+	let result = vm.with(|| format!("{output:?}"));
 
-    Ok(WasmCompileResult::output(
-        io,
-        result,
-        diagnostics_output(writer),
-        diagnostics,
-        instructions,
-    ))
+	Ok(WasmCompileResult::output(
+		io,
+		result,
+		diagnostics_output(writer),
+		diagnostics,
+		instructions,
+	))
 }
 
 fn diagnostics_output(writer: termcolor::Buffer) -> Option<String> {
-    let mut string = String::from_utf8(writer.into_inner()).ok()?;
-    let new_len = string.trim_end().len();
-    string.truncate(new_len);
-    Some(string)
+	let mut string = String::from_utf8(writer.into_inner()).ok()?;
+	let new_len = string.trim_end().len();
+	string.truncate(new_len);
+	Some(string)
 }
 
 #[wasm_bindgen]
 pub async fn compile(input: String, config: JsValue) -> JsValue {
-    let io = CaptureIo::new();
+	let io = CaptureIo::new();
 
-    let result = match inner_compile(input, config, &io).await {
-        Ok(result) => result,
-        Err(error) => WasmCompileResult::from_error(&io, error, None, Vec::new(), None),
-    };
+	let result = match inner_compile(input, config, &io).await {
+		Ok(result) => result,
+		Err(error) => WasmCompileResult::from_error(&io, error, None, Vec::new(), None),
+	};
 
-    <JsValue as JsValueSerdeExt>::from_serde(&result).unwrap()
+	<JsValue as JsValueSerdeExt>::from_serde(&result).unwrap()
 }

@@ -40,13 +40,13 @@ macro_rules! test_case {
 
 #[test]
 fn test_fn_destructuring() {
-    test_case!((a, b), (a, b));
-    test_case!(((a, b)), ((a, b)));
-    test_case!((#{a, b}), (#{a, b}));
-    test_case!((#{a, c: b}), (#{a, c: b}));
-    test_case!((Foo { a, b }), (Foo { a, b }), struct Foo { a, b });
-    test_case!((Foo { a, c: b }), (Foo { a, c: b }), struct Foo { a, c });
-    test_case!((Foo(a, b)), (Foo(a, b)), struct Foo(a, b););
-    test_case!((Foo::Var {a, b}), (Foo::Var {a, b}), enum Foo { Var{a, b} };);
-    test_case!((Foo::Var(a, b)), (Foo::Var(a, b)), enum Foo { Var(a, b) };);
+	test_case!((a, b), (a, b));
+	test_case!(((a, b)), ((a, b)));
+	test_case!((#{a, b}), (#{a, b}));
+	test_case!((#{a, c: b}), (#{a, c: b}));
+	test_case!((Foo { a, b }), (Foo { a, b }), struct Foo { a, b });
+	test_case!((Foo { a, c: b }), (Foo { a, c: b }), struct Foo { a, c });
+	test_case!((Foo(a, b)), (Foo(a, b)), struct Foo(a, b););
+	test_case!((Foo::Var {a, b}), (Foo::Var {a, b}), enum Foo { Var{a, b} };);
+	test_case!((Foo::Var(a, b)), (Foo::Var(a, b)), enum Foo { Var(a, b) };);
 }

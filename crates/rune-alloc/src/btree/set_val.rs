@@ -9,7 +9,7 @@ use crate::error::Error;
 pub(crate) struct SetValZST;
 
 impl TryClone for SetValZST {
-    fn try_clone(&self) -> Result<Self, Error> {
-        Ok(Self)
-    }
+	fn try_clone(&self) -> Result<Self, Error> {
+		Ok(Self)
+	}
 }

@@ -5,14 +5,14 @@ use super::{Expectation, Kind, Span};
 /// Helper trait to coerce a kind into ast.
 pub(crate) trait ToAst
 where
-    Self: Sized,
+	Self: Sized,
 {
-    /// Coerce a value into ast.
-    fn to_ast(span: Span, kind: Kind) -> Result<Self>;
+	/// Coerce a value into ast.
+	fn to_ast(span: Span, kind: Kind) -> Result<Self>;
 
-    /// Test if the given ast matches.
-    fn matches(kind: &Kind) -> bool;
+	/// Test if the given ast matches.
+	fn matches(kind: &Kind) -> bool;
 
-    /// Get the expectation for this type.
-    fn into_expectation() -> Expectation;
+	/// Get the expectation for this type.
+	fn into_expectation() -> Expectation;
 }

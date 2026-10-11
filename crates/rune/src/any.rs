@@ -67,8 +67,8 @@ use crate::runtime::{AnyTypeInfo, Dismantle, TypeHash};
 /// }
 /// ```
 pub trait Any: TypeHash + Named + any::Any + Dismantle {
-    /// The compile-time type information know for the type.
-    const ANY_TYPE_INFO: AnyTypeInfo = AnyTypeInfo::new(Self::full_name, Self::HASH);
+	/// The compile-time type information know for the type.
+	const ANY_TYPE_INFO: AnyTypeInfo = AnyTypeInfo::new(Self::full_name, Self::HASH);
 }
 
 /// Trait implemented for types which can be automatically converted to a

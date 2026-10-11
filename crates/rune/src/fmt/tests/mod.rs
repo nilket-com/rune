@@ -5,8 +5,8 @@ mod macros;
 
 #[test]
 fn format_literals() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         -100;
         100;
         100.0;
@@ -18,28 +18,28 @@ fn format_literals() {
         "hello world";
         b"hello world";
         "#
-    )
+	)
 }
 
 #[test]
 fn test_layout_string() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let x = 1; let y = 2; x + y
         "#,
-        r#"
+		r#"
         let x = 1;
         let y = 2;
 
         x + y
         "#
-    );
+	);
 }
 
 #[test]
 fn fmt_comment_line() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         pub fn main() {
             // test 1
             if true {
@@ -50,62 +50,62 @@ fn fmt_comment_line() {
             // test 3
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn avoid_block_inject() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         pub fn main() {
             if true {
                 let a = 1;
             }
         }
         "#
-    );
+	);
 }
 
 /// https://github.com/rune-rs/rune/issues/684
 #[test]
 fn bug_684() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         pub fn main() {
             /*
             test
             */
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         pub fn main() {/*
             test
             */}
         "#,
-        r#"
+		r#"
         pub fn main() { /*
             test
             */
         }
         "#,
-    );
+	);
 }
 
 #[test]
 fn keep_trailing_comments() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         pub fn main() {
             let var = 42; // THIS is really important.
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         const DOVECOT_UNCHANGED = [
             //("dovecot-core", "dovecot-db.conf.ext"),
             ("dovecot-core", "dovecot-dict-auth.conf.ext"),
@@ -114,13 +114,13 @@ fn keep_trailing_comments() {
             //("dovecot-core", "dovecot.conf"),
         ];
         "#
-    );
+	);
 }
 
 #[test]
 fn fmt_block_comment_indent2() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         /* HI BOB */
 
         let a = 42;
@@ -135,10 +135,10 @@ fn fmt_block_comment_indent2() {
         /* HI BOB */
         let a = 42;
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         /* HI BOB */
 
         pub fn test() {
@@ -162,63 +162,63 @@ fn fmt_block_comment_indent2() {
                 test 5.3
         */
         "#
-    );
+	);
 }
 
 /// https://github.com/rune-rs/rune/issues/703
 #[test]
 fn bug_703() {
-    const EXPECTED: &str = r#"
+	const EXPECTED: &str = r#"
     pub fn main() {
         const TEST = 1;
     }
     "#;
 
-    assert_format!(EXPECTED, EXPECTED);
+	assert_format!(EXPECTED, EXPECTED);
 }
 
 #[test]
 fn fmt_global_static() {
-    const INPUT: &str = r#"
+	const INPUT: &str = r#"
     static TEST1 = 1;static TEST2;
     pub static TEST3 = [1, 2];
     "#;
 
-    const EXPECTED: &str = r#"
+	const EXPECTED: &str = r#"
     static TEST1 = 1;
     static TEST2;
     pub static TEST3 = [1, 2];
     "#;
 
-    assert_format!(INPUT, EXPECTED)
+	assert_format!(INPUT, EXPECTED)
 }
 
 #[test]
 fn fmt_global_const() {
-    const INPUT: &str = r#"
+	const INPUT: &str = r#"
     const TEST1 = 1;const TEST2 = 2;
     const TEST3 = 1;
     "#;
 
-    const EXPECTED: &str = r#"
+	const EXPECTED: &str = r#"
     const TEST1 = 1;
     const TEST2 = 2;
     const TEST3 = 1;
     "#;
 
-    assert_format!(INPUT, EXPECTED)
+	assert_format!(INPUT, EXPECTED)
 }
 
 /// This tests that we have "reasonable defaults" when we have something to
 /// format which contains no existing line hints.
 #[test]
 fn format_compact() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         pub fn main(){let value=0;while value<100{if value>=50{break;}value=value+1;}println!("The value is {}",value); // => The value is 50
         }
         "#,
-        r#"
+		r#"
         pub fn main() {
             let value = 0;
 
@@ -233,24 +233,24 @@ fn format_compact() {
             println!("The value is {}", value); // => The value is 50
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn format_items() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         struct    Foo
         struct    Foo    ;;;
         "#,
-        r#"
+		r#"
         struct Foo;
         struct Foo;
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let a=10;
         let b/*stuck in the middle with you*/=10;
         let c=10;
@@ -274,7 +274,7 @@ fn format_items() {
 
         // HI BOB
         "#,
-        r#"
+		r#"
         let a = 10;
         let b /*stuck in the middle with you*/ = 10;
         let c = 10;
@@ -302,15 +302,15 @@ fn format_items() {
 
         // HI BOB
         "#
-    );
+	);
 }
 
 #[test]
 fn items() {
-    assert_format!("const ITEM = 42;", "const ITEM = 42;");
+	assert_format!("const ITEM = 42;", "const ITEM = 42;");
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         enum Foo {
             Bar,
             Baz(tuple),
@@ -320,10 +320,10 @@ fn items() {
             },
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         struct Bar;
 
         struct Foo(tuple);
@@ -332,35 +332,35 @@ fn items() {
             field,
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn patterns() {
-    assert_format!("let (a,,,) = (a,,,,);", "let (a,) = (a,);");
-    assert_format!("let () = ()", "let () = ();");
-    assert_format!("let ::a::b::c = #{ foo: 42 };");
-    assert_format!(
-        "let ::   a::b   ::c = ::   a::b   ::c",
-        "let ::a::b::c = ::a::b::c;"
-    );
-    assert_format!(
-        "let ::a   ::b::<::b, ::c    ::d>::c = 42;",
-        "let ::a::b::<::b, ::c::d>::c = 42;"
-    );
-    assert_format!(
-        "for _ in 121/10..=1*2-100{}",
-        r#"
+	assert_format!("let (a,,,) = (a,,,,);", "let (a,) = (a,);");
+	assert_format!("let () = ()", "let () = ();");
+	assert_format!("let ::a::b::c = #{ foo: 42 };");
+	assert_format!(
+		"let ::   a::b   ::c = ::   a::b   ::c",
+		"let ::a::b::c = ::a::b::c;"
+	);
+	assert_format!(
+		"let ::a   ::b::<::b, ::c    ::d>::c = 42;",
+		"let ::a::b::<::b, ::c::d>::c = 42;"
+	);
+	assert_format!(
+		"for _ in 121/10..=1*2-100{}",
+		r#"
         for _ in 121 / 10..=1 * 2 - 100 {
         }
         "#
-    );
-    assert_format!("let _ = |(a,,d,),,,a| 42;", "let _ = |(a, d), a| 42;");
-    assert_format!("let _ = |    |    42    ;", "let _ = || 42;");
-    assert_format!("let _ = ||    42    ;", "let _ = || 42;");
-    assert_format!("let #[ignore] (a,) = (42,);");
-    assert_format!(
-        r#"
+	);
+	assert_format!("let _ = |(a,,d,),,,a| 42;", "let _ = |(a, d), a| 42;");
+	assert_format!("let _ = |    |    42    ;", "let _ = || 42;");
+	assert_format!("let _ = ||    42    ;", "let _ = || 42;");
+	assert_format!("let #[ignore] (a,) = (42,);");
+	assert_format!(
+		r#"
         let #{ a, b, c: d } = value;
         let #{} = value;
         let #{ a } = value;
@@ -371,26 +371,26 @@ fn patterns() {
         let Foo { a: b, .. } = value;
         let Foo { a: _, .. } = value;
         "#
-    );
+	);
 }
 
 #[test]
 fn expressions() {
-    assert_format!("let a = #{};");
-    assert_format!(
-        "let a = Foo{foo,bar,,baz:42};",
-        "let a = Foo { foo, bar, baz: 42 };"
-    );
-    assert_format!("let a = #{ foo: 42, bar };");
-    assert_format!(
-        "let a = #{   foo: 42    ,,,,  bar};",
-        "let a = #{ foo: 42, bar };"
-    );
-    assert_format!("let a=(42*20)+52/2;", "let a = (42 * 20) + 52 / 2;");
+	assert_format!("let a = #{};");
+	assert_format!(
+		"let a = Foo{foo,bar,,baz:42};",
+		"let a = Foo { foo, bar, baz: 42 };"
+	);
+	assert_format!("let a = #{ foo: 42, bar };");
+	assert_format!(
+		"let a = #{   foo: 42    ,,,,  bar};",
+		"let a = #{ foo: 42, bar };"
+	);
+	assert_format!("let a=(42*20)+52/2;", "let a = (42 * 20) + 52 / 2;");
 
-    assert_format!(
-        "if let var = 10 {20} else if true {5*1} else {20+30}",
-        r#"
+	assert_format!(
+		"if let var = 10 {20} else if true {5*1} else {20+30}",
+		r#"
         if let var = 10 {
             20
         } else if true {
@@ -399,84 +399,84 @@ fn expressions() {
             20 + 30
         }
         "#
-    );
+	);
 
-    assert_format!(
-        "while let var = 10{1+2}",
-        r#"
+	assert_format!(
+		"while let var = 10{1+2}",
+		r#"
         while let var = 10 {
             1 + 2
         }
         "#
-    );
+	);
 
-    assert_format!(
-        "loop{1+2}",
-        r#"
+	assert_format!(
+		"loop{1+2}",
+		r#"
         loop {
             1 + 2
         }
         "#
-    );
+	);
 
-    assert_format!(
-        "for(a,b)in iter {v = a + b}",
-        r#"
+	assert_format!(
+		"for(a,b)in iter {v = a + b}",
+		r#"
         for (a, b) in iter {
             v = a + b
         }
         "#
-    );
+	);
 
-    assert_format!(
-        "match foo {(1, 2)=>{true},true=>false,}",
-        r#"
+	assert_format!(
+		"match foo {(1, 2)=>{true},true=>false,}",
+		r#"
         match foo {
             (1, 2) => {
                 true
             }
             true => false,
         }"#
-    );
+	);
 
-    assert_format!("value .   field    [   42]", "value.field[42]");
+	assert_format!("value .   field    [   42]", "value.field[42]");
 
-    assert_format!(
-        "value   .   field   (1, 2, 3      ,,,,4)",
-        "value.field(1, 2, 3, 4)"
-    );
+	assert_format!(
+		"value   .   field   (1, 2, 3      ,,,,4)",
+		"value.field(1, 2, 3, 4)"
+	);
 
-    assert_format!(
-        "value   .   field   (1, 2, 3      ,,,,4)    .   await   ?",
-        "value.field(1, 2, 3, 4).await?"
-    );
+	assert_format!(
+		"value   .   field   (1, 2, 3      ,,,,4)    .   await   ?",
+		"value.field(1, 2, 3, 4).await?"
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         value   .   field   (1, 2, 3      ,,,,4);;;
         let var = 42
         "#,
-        r#"
+		r#"
         value.field(1, 2, 3, 4);
         let var = 42;
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         #[test] a.b.c(42)
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         #[test] a.b.c(#[cfg(ignore)] 42)
         "#
-    );
+	);
 
-    assert_format!(
-        "1..2 1.. .. ..1 1..=2 ..=1",
-        r#"
+	assert_format!(
+		"1..2 1.. .. ..1 1..=2 ..=1",
+		r#"
         1..2
         1..
         ..
@@ -484,10 +484,10 @@ fn expressions() {
         1..=2
         ..=1
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         1 * 2..1 * 2
         1 * 2..
         ..
@@ -495,32 +495,32 @@ fn expressions() {
         1 * 4..=2
         ..=1 * 2
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         -foo
         *foo
         &foo
         !foo
         "#,
-        r#"
+		r#"
         -foo * foo & foo
         !foo
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let c = |a| |b| |c| a + b + c;
 
         (dx * dx + dy * dy + dz * dz).sqrt();
         bj.vx = bj.vx + (dx * bm);
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let _ = #{ a, b, c: d };
         let _ = #{};
         let _ = #{ a };
@@ -529,19 +529,19 @@ fn expressions() {
         let _ = Foo {};
         let _ = Foo { a: b };
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         'label: 'label: 'label: 42
         'label: 'label: 'label: {
             1 + 2
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         return;
         return 10;
         break 'label;
@@ -553,19 +553,19 @@ fn expressions() {
         yield;
         yield 10;
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let value = match value {
             Some(value) => value,
             Some(value) => value,
         };
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let value = select {
             Some(value) = a.next() => value,
             Some(value) = b.next() => value,
@@ -578,10 +578,10 @@ fn expressions() {
             default => value,
         };
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         mod test {
             fn foo() {
                 42
@@ -590,28 +590,28 @@ fn expressions() {
 
         mod bar;
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         while path < 10 {
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         [
             // hello
             #{ a: 42 },
         ]
         "#
-    );
+	);
 
-    assert_format!(r#"`http://httpstat.us/200?sleep=${timeout}`"#);
+	assert_format!(r#"`http://httpstat.us/200?sleep=${timeout}`"#);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let _ = async {};
         let _ = async || {};
         let _ = async |a| {};
@@ -620,80 +620,80 @@ fn expressions() {
             a + b
         };
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         if values - current_joltage < 4 {
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn paths() {
-    assert_format!("foo::bar::<self, baz>");
-    assert_format!("self");
-    assert_format!("bar");
+	assert_format!("foo::bar::<self, baz>");
+	assert_format!("self");
+	assert_format!("bar");
 }
 
 #[test]
 fn superflous_commas() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         fn foo(,,,a,,,) {
         }
         "#,
-        r#"
+		r#"
         fn foo(a) {
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn use_statements() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         use foo::bar::baz;
         use foo as bar;
         use foo::{bar as baz, biz as buz};
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         use std::collections::{HashMap,,,,,,,, hash_map::*};
         use std::collections::{HashMap};
         "#,
-        r#"
+		r#"
         use std::collections::{HashMap, hash_map::*};
         use std::collections::HashMap;
         "#
-    );
+	);
 }
 
 #[test]
 fn programs() {
-    assert_format!(
-        r#"pub fn main(){println!("The value is {}",42);}"#,
-        r#"
+	assert_format!(
+		r#"pub fn main(){println!("The value is {}",42);}"#,
+		r#"
         pub fn main() {
             println!("The value is {}", 42);
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         pub fn main() {
             let var = 1;
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         use std::collections::HashMap;
 
         impl Foo::Bar::Baz {
@@ -708,10 +708,10 @@ fn programs() {
             }
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         struct Timeout;
 
         async fn request(timeout) {
@@ -737,10 +737,10 @@ fn programs() {
             }
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         fn main() {
             let x=1;let y=2;   x + y
         }
@@ -749,7 +749,7 @@ fn programs() {
             let x=1;let y=2;   x + y
         }
         "#,
-        r#"
+		r#"
         fn main() {
             let x = 1;
             let y = 2;
@@ -764,39 +764,39 @@ fn programs() {
             x + y
         }
         "#
-    );
+	);
 
-    // Test that we keep existing line hints.
-    assert_format!(
-        r#"
+	// Test that we keep existing line hints.
+	assert_format!(
+		r#"
         fn foo() {
             let x = 1;
             let y = 2;
             x + y
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         fn main() {
             foo!();
 
             1 + 2
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn disambiguate() {
-    assert_format!("path < 10");
+	assert_format!("path < 10");
 }
 
 #[test]
 fn labeled_block() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let out = 'block1: {
             'block2: {
                 if value == 0 {
@@ -807,16 +807,16 @@ fn labeled_block() {
             77
         };
         "#
-    )
+	)
 }
 
 #[test]
 fn field_generics() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let a = [1, 2].iter().collect::<Vec>();
         "#
-    )
+	)
 }
 
 /// A generic argument which is itself generic ends on `>>`, which lexes as a
@@ -827,53 +827,53 @@ fn field_generics() {
 /// missing followed by the shift it was mistaken for.
 #[test]
 fn nested_generics() {
-    assert_format!("let a = Vec::<Vec::<i64>>::new();");
-    assert_format!("let a = A::<B::<C::<D>>>::new();");
-    assert_format!("let a = A::<B::<C>, D::<E>>::new();");
+	assert_format!("let a = Vec::<Vec::<i64>>::new();");
+	assert_format!("let a = A::<B::<C::<D>>>::new();");
+	assert_format!("let a = A::<B::<C>, D::<E>>::new();");
 
-    // The closing `>` of each list may also be written apart.
-    assert_format!(
-        "let a = Vec::<Vec::<i64> >::new();",
-        "let a = Vec::<Vec::<i64>>::new();"
-    );
+	// The closing `>` of each list may also be written apart.
+	assert_format!(
+		"let a = Vec::<Vec::<i64> >::new();",
+		"let a = Vec::<Vec::<i64>>::new();"
+	);
 
-    // What is left of a split token keeps its meaning.
-    assert_format!("let a = A::<B>>= 1;", "let a = A::<B> >= 1;");
+	// What is left of a split token keeps its meaning.
+	assert_format!("let a = A::<B>>= 1;", "let a = A::<B> >= 1;");
 
-    // Shifts and comparisons which are not closing a list are untouched.
-    assert_format!("let a = 8 >> 2;");
-    assert_format!("let a = 1 << 3;");
-    assert_format!(
-        r#"
+	// Shifts and comparisons which are not closing a list are untouched.
+	assert_format!("let a = 8 >> 2;");
+	assert_format!("let a = 1 << 3;");
+	assert_format!(
+		r#"
         let a = 8;
         a >>= 2;
         let b = a >= 2;
         let c = a > 2;
         "#
-    );
+	);
 }
 
 #[test]
 fn comments() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         match foo {
             // Hello World!
             () => 10,
             // Bye!
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         //test1
         /*test2*/
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         struct Test {
             a,
             /* test1
@@ -881,21 +881,21 @@ fn comments() {
             test 3 */
         }
         "#
-    );
+	);
 
-    // https://github.com/rune-rs/rune/issues/710
-    assert_format!(
-        r#"
+	// https://github.com/rune-rs/rune/issues/710
+	assert_format!(
+		r#"
         pub fn main() {
             if true {
                 // test
             }
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         (/* a */);
         (/* a */ a /* b */);
         [/* a */] /* c */ /* d */;
@@ -910,10 +910,10 @@ fn comments() {
         struct /* a */ Struct(/* b */ /* c */) /* d */;
         struct /* a */ Struct() /* d */;
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         match self {
             // A
             Self::A => {}
@@ -924,7 +924,7 @@ fn comments() {
             // D
         }
         "#,
-        r#"
+		r#"
         match self {
             // A
             Self::A => {}
@@ -935,57 +935,57 @@ fn comments() {
             // D
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn test_macro_function_like() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         println!("Hello",42,,,100);
         "#,
-        r#"
+		r#"
         println!("Hello", 42,,, 100);
         "#,
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         println!(                  );
         "#,
-        r#"
+		r#"
         println!();
         "#,
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         println!{};
         "#
-    );
+	);
 
-    // The delimiter a macro was invoked through is preserved, since the three
-    // of them are interchangeable and picking one is up to the author.
-    assert_format!(
-        r#"
+	// The delimiter a macro was invoked through is preserved, since the three
+	// of them are interchangeable and picking one is up to the author.
+	assert_format!(
+		r#"
         println!["Hello",42,,,100];
         "#,
-        r#"
+		r#"
         println!["Hello", 42,,, 100];
         "#,
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         println![];
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         println!{1,2,3,4,};
         "#,
-        r#"
+		r#"
         println!{
             1,
             2,
@@ -993,66 +993,66 @@ fn test_macro_function_like() {
             4,
         };
         "#,
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         fn main() {
             foo!();
 
             1 + 2
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         make_function!(root_fn => {"Hello World!"});
         // NB: we put the import in the bottom to test that import resolution isn't order-dependent.
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         make_function!(root_fn => {"Hello World!"});
 
         // NB: we put the import in the bottom to test that import resolution isn't order-dependent.
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         make_function!(root_fn => {"Hello World!"});
 
 
         // NB: we put the import in the bottom to test that import resolution isn't order-dependent.
         "#,
-        r#"
+		r#"
         make_function!(root_fn => {"Hello World!"});
 
         // NB: we put the import in the bottom to test that import resolution isn't order-dependent.
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         println!{
             hello,,,, world { 1 + 2 },
         };
         "#,
-        r#"
+		r#"
         println!{
             hello,,,,
             world { 1 + 2 },
         };
         "#,
-    );
+	);
 }
 
 #[test]
 fn glued_path_token() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         if ctx.features.kdump {
             if ctx.system.hw_memory < 8 * 1024 * 1024 {
                 cmd_line_default.push("crashkernel=128M");
@@ -1061,28 +1061,28 @@ fn glued_path_token() {
             }
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn preserve_newlines() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         [
         ];
 
         [
         ];
         "#,
-        r#"
+		r#"
         [];
 
         [];
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         foo(
             [1, 2, 3, 4]
         );
@@ -1091,18 +1091,18 @@ fn preserve_newlines() {
             [1, 2, 3, 4]
         );
         "#,
-        r#"
+		r#"
         foo([1, 2, 3, 4]);
 
         foo([1, 2, 3, 4]);
         "#
-    );
+	);
 }
 
 #[test]
 fn runefmt_skip() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         #[runefmt::skip]
         let var = [
             1, 2,
@@ -1127,7 +1127,7 @@ fn runefmt_skip() {
             9, 10
         ];
         "#,
-        r#"
+		r#"
         #[runefmt::skip]
         let var = [
             1, 2,
@@ -1148,51 +1148,51 @@ fn runefmt_skip() {
             9, 10
         ];
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         #[runefmt::skip]
         struct     Struct     {
           }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         #[runefmt::skip] 1 +                       2
         "#
-    );
+	);
 }
 
 // Test that we can format syntactically invalid sequences.
 #[test]
 fn test_error_patterns() {
-    assert_format_with!({ "fmt.error-recovery=true" }, "let var = +/-=;",);
+	assert_format_with!({ "fmt.error-recovery=true" }, "let var = +/-=;",);
 
-    assert_format_with!(
-        { "fmt.error-recovery=true" },
-        r#"
+	assert_format_with!(
+		{ "fmt.error-recovery=true" },
+		r#"
         let var = +/-=;
 
         struct Foo;
         "#
-    );
+	);
 
-    assert_format_with!(
-        { "fmt.error-recovery=true" },
-        r#"
+	assert_format_with!(
+		{ "fmt.error-recovery=true" },
+		r#"
         let var = +/-=; // Hi Bob
 
         struct Foo;
         "#
-    );
+	);
 }
 
 #[test]
 fn braced_expression() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         match yield test {
             1 => 2,
             3 => 4,
@@ -1203,10 +1203,10 @@ fn braced_expression() {
             3 => 4,
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         match break test {
             1 => 2,
             3 => 4,
@@ -1217,10 +1217,10 @@ fn braced_expression() {
             3 => 4,
         }
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         match return test {
             1 => 2,
             3 => 4,
@@ -1231,13 +1231,13 @@ fn braced_expression() {
             3 => 4,
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn modifiers() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         pub(crate) mod iter {
         }
 
@@ -1259,13 +1259,13 @@ fn modifiers() {
         async mod iter {
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn associated_paths() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         struct Foo;
 
         impl Foo {
@@ -1274,13 +1274,13 @@ fn associated_paths() {
             }
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn expressions_in_group() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         (match value {});
 
         (match value {
@@ -1302,18 +1302,18 @@ fn expressions_in_group() {
         (select {
         });
         "#
-    )
+	)
 }
 
 #[test]
 fn test_expanded_chain() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let graph = HashMap::from_iter(abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd).bar(abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd);
 
         let var = 10;
         "#,
-        r#"
+		r#"
         let graph = HashMap::from_iter(
                 abcd,
                 abcd,
@@ -1347,15 +1347,15 @@ fn test_expanded_chain() {
 
         let var = 10;
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let graph = HashMap::from_iter(abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd, abcd);
 
         let var = 10;
         "#,
-        r#"
+		r#"
         let graph = HashMap::from_iter(
             abcd,
             abcd,
@@ -1374,10 +1374,10 @@ fn test_expanded_chain() {
 
         let var = 10;
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let graph = value.foo.bar.await?(
             abcd,
             abcd,
@@ -1396,10 +1396,10 @@ fn test_expanded_chain() {
 
         let var = 10;
         "#
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let graph = value
             .foo
             .bar
@@ -1422,14 +1422,14 @@ fn test_expanded_chain() {
 
         let var = 10;
         "#
-    );
+	);
 }
 
 #[test]
 fn fmt_indent_spaces() {
-    assert_format_with!(
-        { "fmt.indent=2" },
-        r#"
+	assert_format_with!(
+		{ "fmt.indent=2" },
+		r#"
         fn main() {
             if true {
                 1
@@ -1438,7 +1438,7 @@ fn fmt_indent_spaces() {
             }
         }
         "#,
-        r#"
+		r#"
         fn main() {
           if true {
             1
@@ -1447,22 +1447,22 @@ fn fmt_indent_spaces() {
           }
         }
         "#
-    );
+	);
 }
 
 #[test]
 fn fmt_indent_tabs() {
-    assert_format_with!(
-        { "fmt.indent=tab" },
-        r#"
+	assert_format_with!(
+		{ "fmt.indent=tab" },
+		r#"
         fn main() {
             if true {
                 1
             }
         }
         "#,
-        "fn main() {\n\tif true {\n\t\t1\n\t}\n}",
-    );
+		"fn main() {\n\tif true {\n\t\t1\n\t}\n}",
+	);
 }
 
 /// The token stream a macro is handed is written as it was, comments and all,
@@ -1473,26 +1473,26 @@ fn fmt_indent_tabs() {
 /// grew it without bound.
 #[test]
 fn macro_comments_are_not_repeated() {
-    assert_format!(r#"println!("{}", { /* a */ 1 });"#);
-    assert_format!(r#"println!("{}", 1, { /* a */ 2 });"#);
-    assert_format!(r#"println![{ /* a */ 1 }];"#);
-    assert_format!(r#"println!(a /* b */ c);"#);
-    assert_format!(r#"println!(a /* b */ /* c */ d);"#);
-    assert_format!(r#"dbg!({ /* a */ 1 });"#);
+	assert_format!(r#"println!("{}", { /* a */ 1 });"#);
+	assert_format!(r#"println!("{}", 1, { /* a */ 2 });"#);
+	assert_format!(r#"println![{ /* a */ 1 }];"#);
+	assert_format!(r#"println!(a /* b */ c);"#);
+	assert_format!(r#"println!(a /* b */ /* c */ d);"#);
+	assert_format!(r#"dbg!({ /* a */ 1 });"#);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         println!{
             { /* a */ 1 },
         };
         "#
-    );
+	);
 
-    // A comment at either end of the stream is not inside it, so it is picked
-    // up the way a comment anywhere else is, and stays where that puts it.
-    assert_format!(r#"println!(/* a */ 1);"#, r#"println!(1) /* a */;"#);
-    assert_format!(r#"println!(1 /* b */);"#, r#"println!(1) /* b */;"#);
-    assert_format!(r#"println!(1) /* b */;"#);
+	// A comment at either end of the stream is not inside it, so it is picked
+	// up the way a comment anywhere else is, and stays where that puts it.
+	assert_format!(r#"println!(/* a */ 1);"#, r#"println!(1) /* a */;"#);
+	assert_format!(r#"println!(1 /* b */);"#, r#"println!(1) /* b */;"#);
+	assert_format!(r#"println!(1) /* b */;"#);
 }
 
 /// Whether something is laid out over several lines is decided by how much
@@ -1501,8 +1501,8 @@ fn macro_comments_are_not_repeated() {
 /// been laid out already, so laying it out again laid it out differently.
 #[test]
 fn width_does_not_count_a_closing_comma() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         {
             struct S {
                 p,
@@ -1525,12 +1525,12 @@ fn width_does_not_count_a_closing_comma() {
             (s.p, s.q)
         }
         "#
-    );
+	);
 
-    // What is between the elements still counts, so a call which does not fit
-    // is still laid out over several lines.
-    assert_format!(
-        r#"
+	// What is between the elements still counts, so a call which does not fit
+	// is still laid out over several lines.
+	assert_format!(
+		r#"
         let graph = HashMap::from_iter(
             abcd,
             abcd,
@@ -1547,7 +1547,7 @@ fn width_does_not_count_a_closing_comma() {
             abcd,
         );
         "#
-    );
+	);
 }
 
 /// A template literal is scanned rather than parsed when formatting, since its
@@ -1562,8 +1562,8 @@ fn width_does_not_count_a_closing_comma() {
 /// somewhere else entirely.
 #[test]
 fn a_template_literal_ends_where_it_ends() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let a = `a{b`;
         let b = `a}b`;
         let c = `x\`y`;
@@ -1571,7 +1571,7 @@ fn a_template_literal_ends_where_it_ends() {
         let e = `a${`b`}c`;
         let f = `a\\`;
         "#
-    );
+	);
 }
 
 /// A literal which is never closed is reported, the way the other literals
@@ -1579,23 +1579,23 @@ fn a_template_literal_ends_where_it_ends() {
 /// file.
 #[test]
 fn an_unterminated_template_literal_is_reported() {
-    for source in ["let a = `x;\n", "let a = `a${b;\n", "let a = `x\\`;\n", "`"] {
-        let options =
-            crate::compile::Options::from_default_env().expect("constructing options from env");
+	for source in ["let a = `x;\n", "let a = `a${b;\n", "let a = `x\\`;\n", "`"] {
+		let options =
+			crate::compile::Options::from_default_env().expect("constructing options from env");
 
-        let mut diagnostics = crate::Diagnostics::new();
+		let mut diagnostics = crate::Diagnostics::new();
 
-        let error =
-            super::layout_source_with(source, crate::SourceId::EMPTY, &options, &mut diagnostics)
-                .expect_err("Should not format");
+		let error =
+			super::layout_source_with(source, crate::SourceId::EMPTY, &options, &mut diagnostics)
+				.expect_err("Should not format");
 
-        let message = rust_alloc::format!("{error}");
+		let message = rust_alloc::format!("{error}");
 
-        assert!(
-            message.contains("Unterminated template literal"),
-            "{source:?}: {message}"
-        );
-    }
+		assert!(
+			message.contains("Unterminated template literal"),
+			"{source:?}: {message}"
+		);
+	}
 }
 
 /// The layout puts whitespace where the language calls for it, but a construct
@@ -1609,36 +1609,36 @@ fn an_unterminated_template_literal_is_reported() {
 /// what it says.
 #[test]
 fn tokens_are_not_run_together() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         a
         b
         "#,
-        r#"
+		r#"
         a b
         "#,
-    );
+	);
 
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let x = a
         // c
         b;
         "#,
-        r#"
+		r#"
         let x = a b;
         // c
         "#,
-    );
+	);
 
-    // The pairs which the grammar takes apart again are still written the way
-    // they are meant to be written.
-    assert_format!(
-        r#"
+	// The pairs which the grammar takes apart again are still written the way
+	// they are meant to be written.
+	assert_format!(
+		r#"
         let a = Vec::<Vec::<i64>>::new();
         let b = || 42;
         "#
-    );
+	);
 }
 
 /// A `#` which is not the start of an attribute is skipped by statement
@@ -1654,24 +1654,24 @@ fn tokens_are_not_run_together() {
 /// A regression here shows up as this test never finishing.
 #[test]
 fn a_stray_hash_does_not_spin() {
-    for source in [
-        "# !\n",
-        "# [\n",
-        "#\n!\n",
-        "#\n[\n",
-        "# ![]\n",
-        "mod\n# !\n",
-    ] {
-        let options =
-            crate::compile::Options::from_default_env().expect("constructing options from env");
+	for source in [
+		"# !\n",
+		"# [\n",
+		"#\n!\n",
+		"#\n[\n",
+		"# ![]\n",
+		"mod\n# !\n",
+	] {
+		let options =
+			crate::compile::Options::from_default_env().expect("constructing options from env");
 
-        let mut diagnostics = crate::Diagnostics::new();
+		let mut diagnostics = crate::Diagnostics::new();
 
-        // What it makes of these is not the point; that it makes anything of
-        // them at all is.
-        let _ =
-            super::layout_source_with(source, crate::SourceId::EMPTY, &options, &mut diagnostics);
-    }
+		// What it makes of these is not the point; that it makes anything of
+		// them at all is.
+		let _ =
+			super::layout_source_with(source, crate::SourceId::EMPTY, &options, &mut diagnostics);
+	}
 }
 
 /// How much whitespace was written between two tokens is not something the
@@ -1683,27 +1683,27 @@ fn a_stray_hash_does_not_spin() {
 /// on the next line came back with the operator split over two lines.
 #[test]
 fn an_operator_is_spaced_the_way_the_layout_says() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         let a = b  is  not  c;
         let d = e is	not f;
         let g = 1  +  2;
         "#,
-        r#"
+		r#"
         let a = b is not c;
         let d = e is not f;
         let g = 1 + 2;
         "#,
-    );
+	);
 
-    // A comment between the two halves is written once and stays where it was.
-    assert_format!(
-        r#"
+	// A comment between the two halves is written once and stays where it was.
+	assert_format!(
+		r#"
         let a = b is /* x */ not c;
         let d = e /* y */ is not f;
         let g = h is not /* z */ i;
         "#
-    );
+	);
 }
 
 /// How the source it was given was spaced is not something the layout carries
@@ -1713,8 +1713,8 @@ fn an_operator_is_spaced_the_way_the_layout_says() {
 /// so is the token stream of a macro, so this is over shapes which do parse.
 #[test]
 fn spacing_is_decided_by_the_layout() {
-    assert_format!(
-        r#"
+	assert_format!(
+		r#"
         fn  f ( a ,  b )  {
             let  x  =  a  +  b ;
             let  y  =  [ 1 ,  2 ] ;
@@ -1740,7 +1740,7 @@ fn spacing_is_decided_by_the_layout() {
             }
         }
         "#,
-        r#"
+		r#"
         fn f(a, b) {
             let x = a + b;
             let y = [1, 2];
@@ -1766,5 +1766,5 @@ fn spacing_is_decided_by_the_layout() {
             }
         }
         "#,
-    );
+	);
 }

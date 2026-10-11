@@ -59,24 +59,24 @@ macro_rules! test_case {
 
 #[test]
 fn format_macros() -> Result<()> {
-    test_case!("Hello World!", {}, "Hello World!");
-    test_case!("Hello World!", {}, "Hello {}!", "World");
-    test_case!(
-        "Hello World!",
-        {
-            let pos = "Hello";
-        },
-        "{pos} {}!",
-        "World"
-    );
-    test_case!(
-        "Hello World!",
-        {
-            let pos = "Not Hello";
-        },
-        "{pos} {}!",
-        "World",
-        pos = "Hello"
-    );
-    Ok(())
+	test_case!("Hello World!", {}, "Hello World!");
+	test_case!("Hello World!", {}, "Hello {}!", "World");
+	test_case!(
+		"Hello World!",
+		{
+			let pos = "Hello";
+		},
+		"{pos} {}!",
+		"World"
+	);
+	test_case!(
+		"Hello World!",
+		{
+			let pos = "Not Hello";
+		},
+		"{pos} {}!",
+		"World",
+		pos = "Hello"
+	);
+	Ok(())
 }

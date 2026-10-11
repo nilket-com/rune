@@ -30,20 +30,20 @@ mod instrument;
 
 #[proc_macro_attribute]
 pub fn instrument_ast(
-    attr: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
+	attr: proc_macro::TokenStream,
+	item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    let attr = syn::parse_macro_input!(attr as instrument::Attr);
-    let internal_call = syn::parse_macro_input!(item as instrument::Expander);
-    internal_call.expand(&attr).into()
+	let attr = syn::parse_macro_input!(attr as instrument::Attr);
+	let internal_call = syn::parse_macro_input!(item as instrument::Expander);
+	internal_call.expand(&attr).into()
 }
 
 /// Passthrough attribute macro.
 #[proc_macro_attribute]
 #[doc(hidden)]
 pub fn passthrough(
-    _: proc_macro::TokenStream,
-    item: proc_macro::TokenStream,
+	_: proc_macro::TokenStream,
+	item: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-    item
+	item
 }

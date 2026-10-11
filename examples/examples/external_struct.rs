@@ -5,80 +5,80 @@ use rune::{Any, ContextError, Diagnostics, Module};
 
 #[derive(Default, Debug, Any, PartialEq, Eq)]
 struct Request {
-    #[rune(get, set)]
-    url: String,
+	#[rune(get, set)]
+	url: String,
 }
 
 #[derive(Default, Debug, Any, PartialEq, Eq)]
 #[rune(constructor)]
 struct Response {
-    #[rune(get, set)]
-    status_code: usize,
-    #[rune(get, set)]
-    body: String,
+	#[rune(get, set)]
+	status_code: usize,
+	#[rune(get, set)]
+	body: String,
 }
 
 fn main() -> rune::support::Result<()> {
-    let m = module()?;
+	let m = module()?;
 
-    let mut context = rune_modules::default_context()?;
-    context.install(m)?;
-    let runtime = Arc::try_new(context.runtime()?)?;
+	let mut context = rune_modules::default_context()?;
+	context.install(m)?;
+	let runtime = Arc::try_new(context.runtime()?)?;
 
-    let mut sources = rune::sources! {
-        entry => {
-            pub fn main(req) {
-                let rsp = match req.url {
-                    "/" => Response {
-                        status_code: 200,
-                        body: "ok",
-                    },
-                    _ => Response {
-                        status_code: 400,
-                        body: "not found",
-                    }
-                };
+	let mut sources = rune::sources! {
+		entry => {
+			pub fn main(req) {
+				let rsp = match req.url {
+					"/" => Response {
+						status_code: 200,
+						body: "ok",
+					},
+					_ => Response {
+						status_code: 400,
+						body: "not found",
+					}
+				};
 
-                rsp
-            }
-        }
-    };
+				rsp
+			}
+		}
+	};
 
-    let mut diagnostics = Diagnostics::new();
+	let mut diagnostics = Diagnostics::new();
 
-    let result = rune::prepare(&mut sources)
-        .with_context(&context)
-        .with_diagnostics(&mut diagnostics)
-        .build();
+	let result = rune::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(&mut diagnostics)
+		.build();
 
-    if !diagnostics.is_empty() {
-        let mut writer = StandardStream::stderr(ColorChoice::Always);
-        diagnostics.emit(&mut writer, &sources)?;
-    }
+	if !diagnostics.is_empty() {
+		let mut writer = StandardStream::stderr(ColorChoice::Always);
+		diagnostics.emit(&mut writer, &sources)?;
+	}
 
-    let unit = result?;
-    let unit = Arc::try_new(unit)?;
-    let mut vm = Vm::new(runtime, unit);
+	let unit = result?;
+	let unit = Arc::try_new(unit)?;
+	let mut vm = Vm::new(runtime, unit);
 
-    let output = vm.call(["main"], (Request { url: "/".into() },))?;
-    let output: Response = rune::from_value(output)?;
-    println!("{output:?}");
+	let output = vm.call(["main"], (Request { url: "/".into() },))?;
+	let output: Response = rune::from_value(output)?;
+	println!("{output:?}");
 
-    let output = vm.call(
-        ["main"],
-        (Request {
-            url: "/account".into(),
-        },),
-    )?;
-    let output: Response = rune::from_value(output)?;
-    println!("{output:?}");
+	let output = vm.call(
+		["main"],
+		(Request {
+			url: "/account".into(),
+		},),
+	)?;
+	let output: Response = rune::from_value(output)?;
+	println!("{output:?}");
 
-    Ok(())
+	Ok(())
 }
 
 pub fn module() -> Result<Module, ContextError> {
-    let mut module = Module::new();
-    module.ty::<Request>()?;
-    module.ty::<Response>()?;
-    Ok(module)
+	let mut module = Module::new();
+	module.ty::<Request>()?;
+	module.ty::<Response>()?;
+	Ok(module)
 }

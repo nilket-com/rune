@@ -1,44 +1,44 @@
 pub(super) use rust_alloc::vec::Vec;
 
 fn find_prefix(input: &str) -> (usize, &str) {
-    let mut prefix = 0;
-    let mut count = 0;
+	let mut prefix = 0;
+	let mut count = 0;
 
-    for c in input.chars() {
-        if c == '\n' {
-            prefix += count + c.len_utf8();
-            count = 0;
-            continue;
-        }
+	for c in input.chars() {
+		if c == '\n' {
+			prefix += count + c.len_utf8();
+			count = 0;
+			continue;
+		}
 
-        if c.is_whitespace() {
-            count += c.len_utf8();
-        } else {
-            break;
-        }
-    }
+		if c.is_whitespace() {
+			count += c.len_utf8();
+		} else {
+			break;
+		}
+	}
 
-    (prefix, &input[prefix..prefix + count])
+	(prefix, &input[prefix..prefix + count])
 }
 
 pub(super) fn lines(input: &str) -> Vec<&str> {
-    let mut out = Vec::new();
+	let mut out = Vec::new();
 
-    let (prefix, indent) = find_prefix(input);
+	let (prefix, indent) = find_prefix(input);
 
-    input[prefix..].split('\n').for_each(|line| {
-        if let Some(line) = line.get(indent.len()..) {
-            out.push(line);
-        } else {
-            out.push("");
-        }
-    });
+	input[prefix..].split('\n').for_each(|line| {
+		if let Some(line) = line.get(indent.len()..) {
+			out.push(line);
+		} else {
+			out.push("");
+		}
+	});
 
-    while matches!(out.last().copied(), Some("")) {
-        out.pop();
-    }
+	while matches!(out.last().copied(), Some("")) {
+		out.pop();
+	}
 
-    out
+	out
 }
 
 macro_rules! assert_format_with {
@@ -108,11 +108,11 @@ macro_rules! assert_format_with {
 }
 
 macro_rules! assert_format {
-    ($input:expr $(,)?) => {
-        assert_format_with!({}, $input)
-    };
+	($input:expr $(,)?) => {
+		assert_format_with!({}, $input)
+	};
 
-    ($input:expr, $expected:expr $(,)?) => {
-        assert_format_with!({}, $input, $expected)
-    };
+	($input:expr, $expected:expr $(,)?) => {
+		assert_format_with!({}, $input, $expected)
+	};
 }

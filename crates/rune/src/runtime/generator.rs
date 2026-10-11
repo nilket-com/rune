@@ -4,8 +4,8 @@ use core::iter;
 use crate as rune;
 use crate::alloc::clone::TryClone;
 use crate::runtime::{
-    Dismantle, GeneratorState, Handover, Value, Vm, VmError, VmErrorKind, VmExecution, VmHaltInfo,
-    VmOutcome,
+	Dismantle, GeneratorState, Handover, Value, Vm, VmError, VmErrorKind, VmExecution, VmHaltInfo,
+	VmOutcome,
 };
 use crate::Any;
 
@@ -30,86 +30,86 @@ use crate::Any;
 #[derive(Any)]
 #[rune(crate, item = ::std::ops::generator, dismantle)]
 pub struct Generator {
-    execution: Option<VmExecution<Vm>>,
+	execution: Option<VmExecution<Vm>>,
 }
 
 impl Generator {
-    /// Construct a generator from a virtual machine.
-    pub(crate) fn new(vm: Vm) -> Self {
-        Self {
-            execution: Some(VmExecution::new(vm)),
-        }
-    }
+	/// Construct a generator from a virtual machine.
+	pub(crate) fn new(vm: Vm) -> Self {
+		Self {
+			execution: Some(VmExecution::new(vm)),
+		}
+	}
 
-    /// Get the next value produced by this stream.
-    pub fn next(&mut self) -> Result<Option<Value>, VmError> {
-        let Some(execution) = self.execution.as_mut() else {
-            return Ok(None);
-        };
+	/// Get the next value produced by this stream.
+	pub fn next(&mut self) -> Result<Option<Value>, VmError> {
+		let Some(execution) = self.execution.as_mut() else {
+			return Ok(None);
+		};
 
-        let state = execution.resume().complete()?;
+		let state = execution.resume().complete()?;
 
-        match state {
-            VmOutcome::Complete(_) => {
-                self.execution = None;
-                Ok(None)
-            }
-            VmOutcome::Yielded(value) => Ok(Some(value)),
-            VmOutcome::Limited => Err(VmError::from(VmErrorKind::Halted {
-                halt: VmHaltInfo::Limited,
-            })),
-        }
-    }
+		match state {
+			VmOutcome::Complete(_) => {
+				self.execution = None;
+				Ok(None)
+			}
+			VmOutcome::Yielded(value) => Ok(Some(value)),
+			VmOutcome::Limited => Err(VmError::from(VmErrorKind::Halted {
+				halt: VmHaltInfo::Limited,
+			})),
+		}
+	}
 
-    /// Resume the generator with a value and get the next [`GeneratorState`].
-    pub fn resume(&mut self, value: Value) -> Result<GeneratorState, VmError> {
-        let execution = self
-            .execution
-            .as_mut()
-            .ok_or(VmErrorKind::GeneratorComplete)?;
+	/// Resume the generator with a value and get the next [`GeneratorState`].
+	pub fn resume(&mut self, value: Value) -> Result<GeneratorState, VmError> {
+		let execution = self
+			.execution
+			.as_mut()
+			.ok_or(VmErrorKind::GeneratorComplete)?;
 
-        let outcome = execution.resume().with_value(value).complete()?;
+		let outcome = execution.resume().with_value(value).complete()?;
 
-        match outcome {
-            VmOutcome::Complete(value) => {
-                self.execution = None;
-                Ok(GeneratorState::Complete(value))
-            }
-            VmOutcome::Yielded(value) => Ok(GeneratorState::Yielded(value)),
-            VmOutcome::Limited => Err(VmError::from(VmErrorKind::Halted {
-                halt: VmHaltInfo::Limited,
-            })),
-        }
-    }
+		match outcome {
+			VmOutcome::Complete(value) => {
+				self.execution = None;
+				Ok(GeneratorState::Complete(value))
+			}
+			VmOutcome::Yielded(value) => Ok(GeneratorState::Yielded(value)),
+			VmOutcome::Limited => Err(VmError::from(VmErrorKind::Halted {
+				halt: VmHaltInfo::Limited,
+			})),
+		}
+	}
 }
 
 impl Generator {
-    /// Convert into iterator
-    pub fn rune_iter(self) -> Iter {
-        self.into_iter()
-    }
+	/// Convert into iterator
+	pub fn rune_iter(self) -> Iter {
+		self.into_iter()
+	}
 }
 
 /// A suspended generator holds every value its machine was working over, so a
 /// generator which captured another one nests just like a container does.
 impl Dismantle for Generator {
-    fn dismantle(&mut self, out: &mut Handover<'_>) {
-        let Some(execution) = self.execution.as_mut() else {
-            return;
-        };
+	fn dismantle(&mut self, out: &mut Handover<'_>) {
+		let Some(execution) = self.execution.as_mut() else {
+			return;
+		};
 
-        out.consume(execution.vm_mut().stack_mut());
-    }
+		out.consume(execution.vm_mut().stack_mut());
+	}
 }
 
 impl IntoIterator for Generator {
-    type Item = Result<Value, VmError>;
-    type IntoIter = Iter;
+	type Item = Result<Value, VmError>;
+	type IntoIter = Iter;
 
-    #[inline]
-    fn into_iter(self) -> Self::IntoIter {
-        Iter { generator: self }
-    }
+	#[inline]
+	fn into_iter(self) -> Self::IntoIter {
+		Iter { generator: self }
+	}
 }
 
 /// An iterator holds the generator it drives, and a script can nest one inside
@@ -117,43 +117,43 @@ impl IntoIterator for Generator {
 #[derive(Any)]
 #[rune(item = ::std::ops::generator)]
 pub struct Iter {
-    #[rune(dismantle)]
-    generator: Generator,
+	#[rune(dismantle)]
+	generator: Generator,
 }
 
 impl Iter {
-    #[rune::function(instance, keep, protocol = NEXT)]
-    pub(crate) fn next(&mut self) -> Result<Option<Value>, VmError> {
-        self.generator.next()
-    }
+	#[rune::function(instance, keep, protocol = NEXT)]
+	pub(crate) fn next(&mut self) -> Result<Option<Value>, VmError> {
+		self.generator.next()
+	}
 }
 
 impl iter::Iterator for Iter {
-    type Item = Result<Value, VmError>;
+	type Item = Result<Value, VmError>;
 
-    #[inline]
-    fn next(&mut self) -> Option<Result<Value, VmError>> {
-        match Iter::next(self) {
-            Ok(Some(value)) => Some(Ok(value)),
-            Ok(None) => None,
-            Err(error) => Some(Err(error)),
-        }
-    }
+	#[inline]
+	fn next(&mut self) -> Option<Result<Value, VmError>> {
+		match Iter::next(self) {
+			Ok(Some(value)) => Some(Ok(value)),
+			Ok(None) => None,
+			Err(error) => Some(Err(error)),
+		}
+	}
 }
 
 impl fmt::Debug for Generator {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("Generator")
-            .field("completed", &self.execution.is_none())
-            .finish()
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		f.debug_struct("Generator")
+			.field("completed", &self.execution.is_none())
+			.finish()
+	}
 }
 
 impl TryClone for Generator {
-    #[inline]
-    fn try_clone(&self) -> Result<Self, rune_alloc::Error> {
-        Ok(Self {
-            execution: self.execution.try_clone()?,
-        })
-    }
+	#[inline]
+	fn try_clone(&self) -> Result<Self, rune_alloc::Error> {
+		Ok(Self {
+			execution: self.execution.try_clone()?,
+		})
+	}
 }

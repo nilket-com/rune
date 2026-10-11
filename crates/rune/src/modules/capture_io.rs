@@ -29,93 +29,93 @@ use crate::{ContextError, Module};
 /// I/O module capable of capturing what's been written to a buffer.
 #[rune::module(::std::io)]
 pub fn module(io: &CaptureIo) -> Result<Module, ContextError> {
-    let mut module = Module::from_meta(self::module__meta)?;
+	let mut module = Module::from_meta(self::module__meta)?;
 
-    let o = io.clone();
+	let o = io.clone();
 
-    module
-        .function("print", move |m: &str| {
-            write!(o.inner.lock(), "{m}").map_err(VmError::panic)
-        })
-        .build()?;
+	module
+		.function("print", move |m: &str| {
+			write!(o.inner.lock(), "{m}").map_err(VmError::panic)
+		})
+		.build()?;
 
-    let o = io.clone();
+	let o = io.clone();
 
-    module
-        .function("println", move |m: &str| {
-            writeln!(o.inner.lock(), "{m}").map_err(VmError::panic)
-        })
-        .build()?;
+	module
+		.function("println", move |m: &str| {
+			writeln!(o.inner.lock(), "{m}").map_err(VmError::panic)
+		})
+		.build()?;
 
-    let o = io.clone();
+	let o = io.clone();
 
-    module
-        .raw_function("dbg", move |stack, addr, args, output| {
-            let mut o = o.inner.lock();
-            dbg_impl(&mut o, stack, addr, args, output)
-        })
-        .build()?;
+	module
+		.raw_function("dbg", move |stack, addr, args, output| {
+			let mut o = o.inner.lock();
+			dbg_impl(&mut o, stack, addr, args, output)
+		})
+		.build()?;
 
-    Ok(module)
+	Ok(module)
 }
 
 /// Type which captures output from rune scripts.
 #[derive(Default, Clone)]
 pub struct CaptureIo {
-    inner: Arc<Mutex<Vec<u8>>>,
+	inner: Arc<Mutex<Vec<u8>>>,
 }
 
 impl CaptureIo {
-    /// Construct a new capture.
-    pub fn new() -> Self {
-        Self::default()
-    }
+	/// Construct a new capture.
+	pub fn new() -> Self {
+		Self::default()
+	}
 
-    /// Test if capture is empty.
-    pub fn is_empty(&self) -> bool {
-        self.inner.lock().is_empty()
-    }
+	/// Test if capture is empty.
+	pub fn is_empty(&self) -> bool {
+		self.inner.lock().is_empty()
+	}
 
-    /// Drain all captured I/O that has been written to output functions.
-    pub fn drain(&self) -> Vec<u8> {
-        let mut o = self.inner.lock();
-        take(&mut *o)
-    }
+	/// Drain all captured I/O that has been written to output functions.
+	pub fn drain(&self) -> Vec<u8> {
+		let mut o = self.inner.lock();
+		take(&mut *o)
+	}
 
-    /// Drain all captured I/O that has been written to output functions into
-    /// the given [Write].
-    ///
-    /// [Write]: std::io::Write
-    #[cfg(feature = "std")]
-    #[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
-    pub fn drain_into<O>(&self, mut out: O) -> std::io::Result<()>
-    where
-        O: std::io::Write,
-    {
-        let mut o = self.inner.lock();
-        out.write_all(o.as_slice())?;
-        o.clear();
-        Ok(())
-    }
+	/// Drain all captured I/O that has been written to output functions into
+	/// the given [Write].
+	///
+	/// [Write]: std::io::Write
+	#[cfg(feature = "std")]
+	#[cfg_attr(rune_docsrs, doc(cfg(feature = "std")))]
+	pub fn drain_into<O>(&self, mut out: O) -> std::io::Result<()>
+	where
+		O: std::io::Write,
+	{
+		let mut o = self.inner.lock();
+		out.write_all(o.as_slice())?;
+		o.clear();
+		Ok(())
+	}
 
-    /// Drain all captured I/O that has been written to output functions and try
-    /// to decode as UTF-8.
-    pub fn drain_utf8(&self) -> Result<String, FromUtf8Error> {
-        String::from_utf8(self.drain())
-    }
+	/// Drain all captured I/O that has been written to output functions and try
+	/// to decode as UTF-8.
+	pub fn drain_utf8(&self) -> Result<String, FromUtf8Error> {
+		String::from_utf8(self.drain())
+	}
 }
 
 fn dbg_impl(
-    o: &mut Vec<u8>,
-    memory: &mut dyn Memory,
-    addr: Address,
-    args: usize,
-    out: Output,
+	o: &mut Vec<u8>,
+	memory: &mut dyn Memory,
+	addr: Address,
+	args: usize,
+	out: Output,
 ) -> Result<(), VmError> {
-    for value in memory.slice_at(addr, args)? {
-        writeln!(o, "{value:?}").map_err(VmError::panic)?;
-    }
+	for value in memory.slice_at(addr, args)? {
+		writeln!(o, "{value:?}").map_err(VmError::panic)?;
+	}
 
-    memory.store(out, ())?;
-    Ok(())
+	memory.store(out, ())?;
+	Ok(())
 }

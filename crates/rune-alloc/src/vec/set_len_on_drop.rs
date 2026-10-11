@@ -4,33 +4,33 @@
 // that the optimizer will see does not alias with any stores through the Vec's data
 // pointer. This is a workaround for alias analysis issue #32155
 pub(super) struct SetLenOnDrop<'a> {
-    len: &'a mut usize,
-    local_len: usize,
+	len: &'a mut usize,
+	local_len: usize,
 }
 
 impl<'a> SetLenOnDrop<'a> {
-    #[inline]
-    pub(super) fn new(len: &'a mut usize) -> Self {
-        SetLenOnDrop {
-            local_len: *len,
-            len,
-        }
-    }
+	#[inline]
+	pub(super) fn new(len: &'a mut usize) -> Self {
+		SetLenOnDrop {
+			local_len: *len,
+			len,
+		}
+	}
 
-    #[inline]
-    pub(super) fn increment_len(&mut self, increment: usize) {
-        self.local_len += increment;
-    }
+	#[inline]
+	pub(super) fn increment_len(&mut self, increment: usize) {
+		self.local_len += increment;
+	}
 
-    #[inline]
-    pub(super) fn current_len(&self) -> usize {
-        self.local_len
-    }
+	#[inline]
+	pub(super) fn current_len(&self) -> usize {
+		self.local_len
+	}
 }
 
 impl Drop for SetLenOnDrop<'_> {
-    #[inline]
-    fn drop(&mut self) {
-        *self.len = self.local_len;
-    }
+	#[inline]
+	fn drop(&mut self) {
+		*self.len = self.local_len;
+	}
 }

@@ -4,8 +4,8 @@ use ErrorKind::*;
 
 #[test]
 fn test_closure_moved() {
-    assert_errors!(
-        r#"
+	assert_errors!(
+		r#"
         pub fn main() {
             let o = [];
             let a = move || {
@@ -17,17 +17,17 @@ fn test_closure_moved() {
             a()
         }
         "#,
-        span!(153, 154),
-        VariableMoved {
-            moved_at: span!(69, 138)
-        }
-    )
+		span!(153, 154),
+		VariableMoved {
+			moved_at: span!(69, 138)
+		}
+	)
 }
 
 #[test]
 fn test_async_moved() {
-    assert_errors!(
-        r#"
+	assert_errors!(
+		r#"
         pub async fn main() {
             let o = [];
             let a = async move {
@@ -39,9 +39,9 @@ fn test_async_moved() {
             a.await
         }
         "#,
-        span!(162, 163),
-        VariableMoved {
-            moved_at: span!(75, 147)
-        }
-    )
+		span!(162, 163),
+		VariableMoved {
+			moved_at: span!(75, 147)
+		}
+	)
 }

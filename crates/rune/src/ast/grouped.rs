@@ -6,22 +6,22 @@ use crate::ast::prelude::*;
 #[test]
 #[cfg(not(miri))]
 fn ast_parse() {
-    rt::<ast::Parenthesized<ast::Expr, T![,]>>("(1, \"two\")");
-    rt::<ast::Parenthesized<ast::Expr, T![,]>>("(1, 2,)");
-    rt::<ast::Parenthesized<ast::Expr, T![,]>>("(1, 2, foo())");
+	rt::<ast::Parenthesized<ast::Expr, T![,]>>("(1, \"two\")");
+	rt::<ast::Parenthesized<ast::Expr, T![,]>>("(1, 2,)");
+	rt::<ast::Parenthesized<ast::Expr, T![,]>>("(1, 2, foo())");
 
-    rt::<ast::Bracketed<ast::Expr, T![,]>>("[1, \"two\"]");
-    rt::<ast::Bracketed<ast::Expr, T![,]>>("[1, 2,]");
-    rt::<ast::Bracketed<ast::Expr, T![,]>>("[1, 2, foo()]");
+	rt::<ast::Bracketed<ast::Expr, T![,]>>("[1, \"two\"]");
+	rt::<ast::Bracketed<ast::Expr, T![,]>>("[1, 2,]");
+	rt::<ast::Bracketed<ast::Expr, T![,]>>("[1, 2, foo()]");
 
-    rt::<ast::Braced<ast::Expr, T![,]>>("{1, \"two\"}");
-    rt::<ast::Braced<ast::Expr, T![,]>>("{1, 2,}");
-    rt::<ast::Braced<ast::Expr, T![,]>>("{1, 2, foo()}");
+	rt::<ast::Braced<ast::Expr, T![,]>>("{1, \"two\"}");
+	rt::<ast::Braced<ast::Expr, T![,]>>("{1, 2,}");
+	rt::<ast::Braced<ast::Expr, T![,]>>("{1, 2, foo()}");
 
-    rt::<ast::AngleBracketed<ast::Path, T![,]>>("<Foo, Bar>");
-    rt::<ast::AngleBracketed<ast::PathSegmentExpr, T![,]>>("<1, \"two\">");
-    rt::<ast::AngleBracketed<ast::PathSegmentExpr, T![,]>>("<1, 2,>");
-    rt::<ast::AngleBracketed<ast::PathSegmentExpr, T![,]>>("<1, 2, foo()>");
+	rt::<ast::AngleBracketed<ast::Path, T![,]>>("<Foo, Bar>");
+	rt::<ast::AngleBracketed<ast::PathSegmentExpr, T![,]>>("<1, \"two\">");
+	rt::<ast::AngleBracketed<ast::PathSegmentExpr, T![,]>>("<1, 2,>");
+	rt::<ast::AngleBracketed<ast::PathSegmentExpr, T![,]>>("<1, 2, foo()>");
 }
 
 macro_rules! grouped {
@@ -196,21 +196,21 @@ macro_rules! grouped {
 }
 
 grouped! {
-    /// Parse something parenthesis, that is separated by `((T, S?)*)`.
-    Parenthesized { parenthesized, ast::OpenParen, ast::CloseParen }
+	/// Parse something parenthesis, that is separated by `((T, S?)*)`.
+	Parenthesized { parenthesized, ast::OpenParen, ast::CloseParen }
 }
 
 grouped! {
-    /// Parse something bracketed, that is separated by `[(T, S?)*]`.
-    Bracketed { bracketed, ast::OpenBracket, ast::CloseBracket }
+	/// Parse something bracketed, that is separated by `[(T, S?)*]`.
+	Bracketed { bracketed, ast::OpenBracket, ast::CloseBracket }
 }
 
 grouped! {
-    /// Parse something braced, that is separated by `{(T, S?)*}`.
-    Braced { braced, ast::OpenBrace, ast::CloseBrace }
+	/// Parse something braced, that is separated by `{(T, S?)*}`.
+	Braced { braced, ast::OpenBrace, ast::CloseBrace }
 }
 
 grouped! {
-    /// Parse something bracketed, that is separated by `<(T, S?)*>`.
-    AngleBracketed { angle_bracketed, ast::generated::Lt, ast::generated::Gt }
+	/// Parse something bracketed, that is separated by `<(T, S?)*>`.
+	AngleBracketed { angle_bracketed, ast::generated::Lt, ast::generated::Gt }
 }

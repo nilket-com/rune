@@ -65,59 +65,59 @@ use rune::{ContextError, Module};
 /// Construct the `rand` module.
 #[rune::module(::rand)]
 pub fn module(_stdio: bool) -> Result<Module, ContextError> {
-    #[allow(unused_mut)]
-    let mut m = Module::from_meta(module__meta)?;
+	#[allow(unused_mut)]
+	let mut m = Module::from_meta(module__meta)?;
 
-    #[cfg(any(feature = "thread_rng", feature = "sys_rng"))]
-    {
-        m.ty::<SysError>()?;
-        m.function_meta(SysError::display_fmt)?;
-    }
+	#[cfg(any(feature = "thread_rng", feature = "sys_rng"))]
+	{
+		m.ty::<SysError>()?;
+		m.function_meta(SysError::display_fmt)?;
+	}
 
-    macro_rules! call_random {
-        ($ty:ty, $example:expr) => {
-            random! {
-                m, $ty, $example,
-                (random_u64, u64),
-                (random_i64, i64),
-                (random_char, char),
-                (random_bool, bool),
-            };
+	macro_rules! call_random {
+		($ty:ty, $example:expr) => {
+			random! {
+				m, $ty, $example,
+				(random_u64, u64),
+				(random_i64, i64),
+				(random_char, char),
+				(random_bool, bool),
+			};
 
-            random_ranges! {
-                m, $ty, $example,
-                (random_range_u64, u64, Value::as_integer::<u64>, 0..100),
-                (random_range_i64, i64, Value::as_integer::<i64>, -100..100),
-                (random_range_char, char, Value::as_char, 'a'..'z'),
-            };
-        };
-    }
+			random_ranges! {
+				m, $ty, $example,
+				(random_range_u64, u64, Value::as_integer::<u64>, 0..100),
+				(random_range_i64, i64, Value::as_integer::<i64>, -100..100),
+				(random_range_char, char, Value::as_char, 'a'..'z'),
+			};
+		};
+	}
 
-    #[cfg(feature = "sys_rng")]
-    {
-        m.ty::<SysRng>()?;
-    }
+	#[cfg(feature = "sys_rng")]
+	{
+		m.ty::<SysRng>()?;
+	}
 
-    {
-        m.ty::<SmallRng>()?;
-        call_random!(SmallRng, "SmallRng::try_from_sys_rng()?");
-        seedable_rng!(m, SmallRng);
-    }
+	{
+		m.ty::<SmallRng>()?;
+		call_random!(SmallRng, "SmallRng::try_from_sys_rng()?");
+		seedable_rng!(m, SmallRng);
+	}
 
-    #[cfg(feature = "std_rng")]
-    {
-        m.ty::<StdRng>()?;
-        call_random!(StdRng, "StdRng::try_from_sys_rng()?");
-        seedable_rng!(m, StdRng);
-    }
+	#[cfg(feature = "std_rng")]
+	{
+		m.ty::<StdRng>()?;
+		call_random!(StdRng, "StdRng::try_from_sys_rng()?");
+		seedable_rng!(m, StdRng);
+	}
 
-    #[cfg(feature = "thread_rng")]
-    {
-        m.ty::<ThreadRng>()?;
-        m.function_meta(ThreadRng::reseed)?;
-        m.function_meta(rng)?;
-        call_random!(ThreadRng, "rand::rng()");
-    }
+	#[cfg(feature = "thread_rng")]
+	{
+		m.ty::<ThreadRng>()?;
+		m.function_meta(ThreadRng::reseed)?;
+		m.function_meta(rng)?;
+		call_random!(ThreadRng, "rand::rng()");
+	}
 
-    Ok(m)
+	Ok(m)
 }

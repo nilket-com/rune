@@ -11,40 +11,40 @@ use crate::{docstring, ContextError, Module};
 /// Types related to generators.
 #[rune::module(::std::ops::generator)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
+	let mut m = Module::from_meta(self::module__meta)?;
 
-    {
-        m.ty::<Generator>()?;
-        m.function_meta(generator_next__meta)?;
-        m.function_meta(generator_resume__meta)?;
-        m.function_meta(generator_iter__meta)?;
-        m.function_meta(generator_into_iter__meta)?;
-        m.function_meta(generator_debug__meta)?;
-        m.function_meta(generator_clone__meta)?;
-        m.implement_trait::<Generator>(rune::item!(::std::clone::Clone))?;
+	{
+		m.ty::<Generator>()?;
+		m.function_meta(generator_next__meta)?;
+		m.function_meta(generator_resume__meta)?;
+		m.function_meta(generator_iter__meta)?;
+		m.function_meta(generator_into_iter__meta)?;
+		m.function_meta(generator_debug__meta)?;
+		m.function_meta(generator_clone__meta)?;
+		m.implement_trait::<Generator>(rune::item!(::std::clone::Clone))?;
 
-        m.ty::<Iter>()?.docs(docstring! {
-            /// An iterator over a generator.
-        })?;
-        m.function_meta(Iter::next__meta)?;
-        m.implement_trait::<Iter>(rune::item!(::std::iter::Iterator))?;
-    }
+		m.ty::<Iter>()?.docs(docstring! {
+			/// An iterator over a generator.
+		})?;
+		m.function_meta(Iter::next__meta)?;
+		m.implement_trait::<Iter>(rune::item!(::std::iter::Iterator))?;
+	}
 
-    {
-        m.ty::<GeneratorState>()?.docs(docstring! {
-            /// Enum indicating the state of a generator.
-        })?;
+	{
+		m.ty::<GeneratorState>()?.docs(docstring! {
+			/// Enum indicating the state of a generator.
+		})?;
 
-        m.function_meta(generator_state_partial_eq__meta)?;
-        m.implement_trait::<GeneratorState>(rune::item!(::std::cmp::PartialEq))?;
-        m.function_meta(generator_state_eq__meta)?;
-        m.implement_trait::<GeneratorState>(rune::item!(::std::cmp::Eq))?;
-        m.function_meta(generator_state_debug__meta)?;
-        m.function_meta(generator_state_clone__meta)?;
-        m.implement_trait::<GeneratorState>(rune::item!(::std::clone::Clone))?;
-    }
+		m.function_meta(generator_state_partial_eq__meta)?;
+		m.implement_trait::<GeneratorState>(rune::item!(::std::cmp::PartialEq))?;
+		m.function_meta(generator_state_eq__meta)?;
+		m.implement_trait::<GeneratorState>(rune::item!(::std::cmp::Eq))?;
+		m.function_meta(generator_state_debug__meta)?;
+		m.function_meta(generator_state_clone__meta)?;
+		m.implement_trait::<GeneratorState>(rune::item!(::std::clone::Clone))?;
+	}
 
-    Ok(m)
+	Ok(m)
 }
 
 /// Advance a generator producing the next value yielded.
@@ -69,7 +69,7 @@ pub fn module() -> Result<Module, ContextError> {
 /// ```
 #[rune::function(keep, instance, path = next)]
 fn generator_next(this: &mut Generator) -> Result<Option<Value>, VmError> {
-    this.next()
+	this.next()
 }
 
 /// Resumes the execution of this generator.
@@ -116,7 +116,7 @@ fn generator_next(this: &mut Generator) -> Result<Option<Value>, VmError> {
 /// ```
 #[rune::function(keep, instance, path = resume)]
 fn generator_resume(this: &mut Generator, value: Value) -> Result<GeneratorState, VmError> {
-    this.resume(value)
+	this.resume(value)
 }
 
 /// Convert a generator into an iterator.
@@ -136,7 +136,7 @@ fn generator_resume(this: &mut Generator, value: Value) -> Result<GeneratorState
 #[rune::function(keep, instance, path = iter)]
 #[inline]
 fn generator_iter(this: Generator) -> Iter {
-    this.rune_iter()
+	this.rune_iter()
 }
 
 /// Construct an iterator over a generator.
@@ -161,7 +161,7 @@ fn generator_iter(this: Generator) -> Iter {
 #[rune::function(keep, instance, protocol = INTO_ITER)]
 #[inline]
 fn generator_into_iter(this: Generator) -> Iter {
-    this.rune_iter()
+	this.rune_iter()
 }
 
 /// Debug print this generator.
@@ -182,7 +182,7 @@ fn generator_into_iter(this: Generator) -> Iter {
 /// ```
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 fn generator_debug(this: &Generator, f: &mut Formatter) -> alloc::Result<()> {
-    write!(f, "{this:?}")
+	write!(f, "{this:?}")
 }
 
 /// Clone a generator.
@@ -212,7 +212,7 @@ fn generator_debug(this: &Generator, f: &mut Formatter) -> alloc::Result<()> {
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn generator_clone(this: &Generator) -> alloc::Result<Generator> {
-    this.try_clone()
+	this.try_clone()
 }
 
 /// Test for partial equality over a generator state.
@@ -235,10 +235,10 @@ fn generator_clone(this: &Generator) -> alloc::Result<Generator> {
 /// ```
 #[rune::function(keep, instance, protocol = PARTIAL_EQ)]
 fn generator_state_partial_eq(
-    this: &GeneratorState,
-    other: &GeneratorState,
+	this: &GeneratorState,
+	other: &GeneratorState,
 ) -> Result<bool, VmError> {
-    this.partial_eq_with(other, &mut EnvProtocolCaller)
+	this.partial_eq_with(other, &mut EnvProtocolCaller)
 }
 
 /// Test for total equality over a generator state.
@@ -262,7 +262,7 @@ fn generator_state_partial_eq(
 /// ```
 #[rune::function(keep, instance, protocol = EQ)]
 fn generator_state_eq(this: &GeneratorState, other: &GeneratorState) -> Result<bool, VmError> {
-    this.eq_with(other, &mut EnvProtocolCaller)
+	this.eq_with(other, &mut EnvProtocolCaller)
 }
 
 /// Debug print this generator state.
@@ -280,20 +280,20 @@ fn generator_state_eq(this: &GeneratorState, other: &GeneratorState) -> Result<b
 /// ```
 #[rune::function(keep, instance, protocol = DEBUG_FMT)]
 fn generator_state_debug(this: &GeneratorState, f: &mut Formatter) -> Result<(), VmError> {
-    match this {
-        GeneratorState::Yielded(value) => {
-            write!(f, "Yielded(")?;
-            value.debug_fmt_with(f, &mut EnvProtocolCaller)?;
-            write!(f, ")")?;
-        }
-        GeneratorState::Complete(value) => {
-            write!(f, "Complete(")?;
-            value.debug_fmt_with(f, &mut EnvProtocolCaller)?;
-            write!(f, ")")?;
-        }
-    }
+	match this {
+		GeneratorState::Yielded(value) => {
+			write!(f, "Yielded(")?;
+			value.debug_fmt_with(f, &mut EnvProtocolCaller)?;
+			write!(f, ")")?;
+		}
+		GeneratorState::Complete(value) => {
+			write!(f, "Complete(")?;
+			value.debug_fmt_with(f, &mut EnvProtocolCaller)?;
+			write!(f, ")")?;
+		}
+	}
 
-    Ok(())
+	Ok(())
 }
 
 /// Clone a generator state.
@@ -310,5 +310,5 @@ fn generator_state_debug(this: &GeneratorState, f: &mut Formatter) -> Result<(),
 /// ```
 #[rune::function(keep, instance, protocol = CLONE)]
 fn generator_state_clone(this: &GeneratorState) -> alloc::Result<GeneratorState> {
-    this.try_clone()
+	this.try_clone()
 }

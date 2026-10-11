@@ -21,138 +21,138 @@ use super::{Enum, EnumMut, Fields, TypeConstructor, TypeSpecification, Variant};
 /// [`Module::type_meta`]: super::Module::type_meta
 pub struct TypeMut<'a, T>
 where
-    T: ?Sized + TypeOf,
+	T: ?Sized + TypeOf,
 {
-    pub(super) docs: &'a mut Docs,
-    #[cfg(feature = "doc")]
-    pub(super) deprecated: &'a mut Option<Box<str>>,
-    pub(super) spec: &'a mut Option<TypeSpecification>,
-    pub(super) constructor: &'a mut Option<TypeConstructor>,
-    pub(super) item: &'a Item,
-    pub(super) _marker: PhantomData<T>,
+	pub(super) docs: &'a mut Docs,
+	#[cfg(feature = "doc")]
+	pub(super) deprecated: &'a mut Option<Box<str>>,
+	pub(super) spec: &'a mut Option<TypeSpecification>,
+	pub(super) constructor: &'a mut Option<TypeConstructor>,
+	pub(super) item: &'a Item,
+	pub(super) _marker: PhantomData<T>,
 }
 
 impl<'a, T> TypeMut<'a, T>
 where
-    T: ?Sized + TypeOf,
+	T: ?Sized + TypeOf,
 {
-    /// Set documentation for an inserted type.
-    ///
-    /// This completely replaces any existing documentation.
-    pub fn docs(self, docs: impl IntoIterator<Item: AsRef<str>>) -> Result<Self, ContextError> {
-        self.docs.set_docs(docs)?;
-        Ok(self)
-    }
+	/// Set documentation for an inserted type.
+	///
+	/// This completely replaces any existing documentation.
+	pub fn docs(self, docs: impl IntoIterator<Item: AsRef<str>>) -> Result<Self, ContextError> {
+		self.docs.set_docs(docs)?;
+		Ok(self)
+	}
 
-    /// Set static documentation.
-    ///
-    /// This completely replaces any existing documentation.
-    pub fn static_docs(self, docs: &'static [&'static str]) -> Result<Self, ContextError> {
-        self.docs.set_docs(docs)?;
-        Ok(self)
-    }
+	/// Set static documentation.
+	///
+	/// This completely replaces any existing documentation.
+	pub fn static_docs(self, docs: &'static [&'static str]) -> Result<Self, ContextError> {
+		self.docs.set_docs(docs)?;
+		Ok(self)
+	}
 
-    /// Mark the given type as deprecated.
-    pub fn deprecated<S>(
-        self,
-        #[cfg_attr(not(feature = "doc"), allow(unused))] deprecated: S,
-    ) -> Result<Self, ContextError>
-    where
-        S: AsRef<str>,
-    {
-        #[cfg(feature = "doc")]
-        {
-            *self.deprecated = Some(deprecated.as_ref().try_into()?);
-        }
+	/// Mark the given type as deprecated.
+	pub fn deprecated<S>(
+		self,
+		#[cfg_attr(not(feature = "doc"), allow(unused))] deprecated: S,
+	) -> Result<Self, ContextError>
+	where
+		S: AsRef<str>,
+	{
+		#[cfg(feature = "doc")]
+		{
+			*self.deprecated = Some(deprecated.as_ref().try_into()?);
+		}
 
-        Ok(self)
-    }
+		Ok(self)
+	}
 
-    /// Mark the current type as a struct with named fields.
-    pub fn make_named_struct(self, fields: &'static [&'static str]) -> Result<Self, ContextError> {
-        self.make_struct(Fields::Named(fields))
-    }
+	/// Mark the current type as a struct with named fields.
+	pub fn make_named_struct(self, fields: &'static [&'static str]) -> Result<Self, ContextError> {
+		self.make_struct(Fields::Named(fields))
+	}
 
-    /// Mark the current type as a struct with unnamed fields.
-    pub fn make_unnamed_struct(self, fields: usize) -> Result<Self, ContextError> {
-        self.make_struct(Fields::Unnamed(fields))
-    }
+	/// Mark the current type as a struct with unnamed fields.
+	pub fn make_unnamed_struct(self, fields: usize) -> Result<Self, ContextError> {
+		self.make_struct(Fields::Unnamed(fields))
+	}
 
-    /// Mark the current type as an empty struct.
-    pub fn make_empty_struct(self) -> Result<Self, ContextError> {
-        self.make_struct(Fields::Empty)
-    }
+	/// Mark the current type as an empty struct.
+	pub fn make_empty_struct(self) -> Result<Self, ContextError> {
+		self.make_struct(Fields::Empty)
+	}
 
-    /// Mark the current type as an enum.
-    pub fn make_enum(
-        self,
-        variants: &'static [&'static str],
-    ) -> Result<EnumMut<'a, T>, ContextError> {
-        let old = self.spec.replace(TypeSpecification::Enum(Enum {
-            variants: variants.iter().copied().map(Variant::new).try_collect()?,
-        }));
+	/// Mark the current type as an enum.
+	pub fn make_enum(
+		self,
+		variants: &'static [&'static str],
+	) -> Result<EnumMut<'a, T>, ContextError> {
+		let old = self.spec.replace(TypeSpecification::Enum(Enum {
+			variants: variants.iter().copied().map(Variant::new).try_collect()?,
+		}));
 
-        if old.is_some() {
-            return Err(ContextError::ConflictingTypeMeta {
-                item: self.item.try_to_owned()?,
-                type_info: T::type_info(),
-            });
-        }
+		if old.is_some() {
+			return Err(ContextError::ConflictingTypeMeta {
+				item: self.item.try_to_owned()?,
+				type_info: T::type_info(),
+			});
+		}
 
-        let Some(TypeSpecification::Enum(enum_)) = self.spec.as_mut() else {
-            panic!("Not an enum");
-        };
+		let Some(TypeSpecification::Enum(enum_)) = self.spec.as_mut() else {
+			panic!("Not an enum");
+		};
 
-        Ok(EnumMut {
-            docs: self.docs,
-            enum_,
-            _marker: PhantomData,
-        })
-    }
+		Ok(EnumMut {
+			docs: self.docs,
+			enum_,
+			_marker: PhantomData,
+		})
+	}
 
-    /// Register a constructor method for the current type.
-    pub fn constructor<F, A>(self, constructor: F) -> Result<Self, ContextError>
-    where
-        F: Function<A, Plain, Return = T>,
-    {
-        if self.constructor.is_some() {
-            return Err(ContextError::ConstructorConflict {
-                type_info: T::type_info(),
-            });
-        }
+	/// Register a constructor method for the current type.
+	pub fn constructor<F, A>(self, constructor: F) -> Result<Self, ContextError>
+	where
+		F: Function<A, Plain, Return = T>,
+	{
+		if self.constructor.is_some() {
+			return Err(ContextError::ConstructorConflict {
+				type_info: T::type_info(),
+			});
+		}
 
-        let handler: FunctionHandler = FunctionHandler::new(move |stack, addr, args, output| {
-            constructor.call(stack, addr, args, output)
-        })?;
+		let handler: FunctionHandler = FunctionHandler::new(move |stack, addr, args, output| {
+			constructor.call(stack, addr, args, output)
+		})?;
 
-        *self.constructor = Some(TypeConstructor {
-            handler,
-            args: F::ARGS,
-        });
+		*self.constructor = Some(TypeConstructor {
+			handler,
+			args: F::ARGS,
+		});
 
-        Ok(self)
-    }
+		Ok(self)
+	}
 
-    fn make_struct(self, fields: Fields) -> Result<Self, ContextError> {
-        let old = self.spec.replace(TypeSpecification::Struct(fields));
+	fn make_struct(self, fields: Fields) -> Result<Self, ContextError> {
+		let old = self.spec.replace(TypeSpecification::Struct(fields));
 
-        if old.is_some() {
-            return Err(ContextError::ConflictingTypeMeta {
-                item: self.item.try_to_owned()?,
-                type_info: T::type_info(),
-            });
-        }
+		if old.is_some() {
+			return Err(ContextError::ConflictingTypeMeta {
+				item: self.item.try_to_owned()?,
+				type_info: T::type_info(),
+			});
+		}
 
-        Ok(self)
-    }
+		Ok(self)
+	}
 }
 
 impl<T> fmt::Debug for TypeMut<'_, T>
 where
-    T: TypeOf,
+	T: TypeOf,
 {
-    #[inline]
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("TypeMut").finish_non_exhaustive()
-    }
+	#[inline]
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		f.debug_struct("TypeMut").finish_non_exhaustive()
+	}
 }

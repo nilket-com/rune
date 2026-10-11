@@ -13,60 +13,60 @@ use rune::{Any, Context, ContextError, Diagnostics, Module, Sources, Vm};
 #[rune(item = ::native_crate)]
 struct Generic<T>
 where
-    T: 'static + TryClone + Named + FromValue + ToValue + MaybeTypeOf + TypeOf,
+	T: 'static + TryClone + Named + FromValue + ToValue + MaybeTypeOf + TypeOf,
 {
-    #[rune(get, set)]
-    data: T,
+	#[rune(get, set)]
+	data: T,
 }
 
 impl<T> Generic<T>
 where
-    T: 'static + TryClone + Copy + Named + FromValue + ToValue + MaybeTypeOf + TypeOf,
+	T: 'static + TryClone + Copy + Named + FromValue + ToValue + MaybeTypeOf + TypeOf,
 {
-    fn get_value(&self) -> T {
-        self.data
-    }
+	fn get_value(&self) -> T {
+		self.data
+	}
 }
 
 fn make_native_module() -> Result<Module, ContextError> {
-    let mut module = Module::with_crate("native_crate")?;
-    module.ty::<Generic<i64>>()?;
-    module.associated_function("get_value", Generic::<i64>::get_value)?;
+	let mut module = Module::with_crate("native_crate")?;
+	module.ty::<Generic<i64>>()?;
+	module.associated_function("get_value", Generic::<i64>::get_value)?;
 
-    module.ty::<Generic<f64>>()?;
-    module.associated_function("get_value", Generic::<f64>::get_value)?;
-    Ok(module)
+	module.ty::<Generic<f64>>()?;
+	module.associated_function("get_value", Generic::<f64>::get_value)?;
+	Ok(module)
 }
 
 fn compile(mut sources: Sources) -> Result<Vm> {
-    let mut context = Context::with_default_modules()?;
-    context.install(make_native_module()?)?;
-    let runtime = Arc::try_new(context.runtime()?)?;
+	let mut context = Context::with_default_modules()?;
+	context.install(make_native_module()?)?;
+	let runtime = Arc::try_new(context.runtime()?)?;
 
-    let mut diagnostics = Diagnostics::default();
+	let mut diagnostics = Diagnostics::default();
 
-    let result = rune::prepare(&mut sources)
-        .with_context(&context)
-        .with_diagnostics(&mut diagnostics)
-        .build();
+	let result = rune::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(&mut diagnostics)
+		.build();
 
-    if !diagnostics.is_empty() {
-        let mut out = termcolor::Buffer::no_color();
-        diagnostics.emit(&mut out, &sources)?;
-        let out = String::from_utf8(out.into_inner())?;
-        bail!("{out}")
-    }
+	if !diagnostics.is_empty() {
+		let mut out = termcolor::Buffer::no_color();
+		diagnostics.emit(&mut out, &sources)?;
+		let out = String::from_utf8(out.into_inner())?;
+		bail!("{out}")
+	}
 
-    let unit = result?;
-    let unit = Arc::try_new(unit)?;
-    Ok(Vm::new(runtime, unit))
+	let unit = result?;
+	let unit = Arc::try_new(unit)?;
+	Ok(Vm::new(runtime, unit))
 }
 
 // This is similar to the generic test that existed before, but ensures that the
 // generic type can exist in multiple instances in the same Rune script.
 #[test]
 fn test_generic() -> Result<()> {
-    macro_rules! test {
+	macro_rules! test {
         ($($ty:ty, $function:ident, $function_ty:ident, $value:expr, $set:expr),+ $(,)?) => {
             let mut vm = compile(rune::sources! {
                 entry => {
@@ -113,10 +113,10 @@ fn test_generic() -> Result<()> {
         };
     }
 
-    test! {
-        i64, test_int, test_int_ty, 3, 30,
-        f64, test_float, test_float_ty, 2.0, 20.0,
-    };
+	test! {
+		i64, test_int, test_int_ty, 3, 30,
+		f64, test_float, test_float_ty, 2.0, 20.0,
+	};
 
-    Ok(())
+	Ok(())
 }

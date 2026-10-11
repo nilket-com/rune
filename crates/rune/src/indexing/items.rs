@@ -10,9 +10,9 @@ use crate::{Item, ItemBuf};
 pub(crate) struct MissingLastId;
 
 impl fmt::Display for MissingLastId {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Missing last inserted id into the items stack")
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(f, "Missing last inserted id into the items stack")
+	}
 }
 
 impl core::error::Error for MissingLastId {}
@@ -20,18 +20,18 @@ impl core::error::Error for MissingLastId {}
 #[derive(Debug)]
 #[non_exhaustive]
 pub(crate) struct GuardMismatch {
-    actual: usize,
-    expected: usize,
+	actual: usize,
+	expected: usize,
 }
 
 impl fmt::Display for GuardMismatch {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "Guard mismatch when popping items, {} (actual) != {} (expected)",
-            self.actual, self.expected
-        )
-    }
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(
+			f,
+			"Guard mismatch when popping items, {} (actual) != {} (expected)",
+			self.actual, self.expected
+		)
+	}
 }
 
 impl core::error::Error for GuardMismatch {}
@@ -44,60 +44,60 @@ pub(crate) struct Guard(usize);
 /// Manage item paths.
 #[derive(Debug)]
 pub(crate) struct Items {
-    item: ItemBuf,
-    /// How many components `item` has.
-    ///
-    /// Every component of every item allocated is hashed and copied whole, so
-    /// what this counts is what a bound on item nesting is imposed over. It is
-    /// tracked rather than counted on demand since it is consulted once per
-    /// push.
-    depth: usize,
+	item: ItemBuf,
+	/// How many components `item` has.
+	///
+	/// Every component of every item allocated is hashed and copied whole, so
+	/// what this counts is what a bound on item nesting is imposed over. It is
+	/// tracked rather than counted on demand since it is consulted once per
+	/// push.
+	depth: usize,
 }
 
 impl Items {
-    /// Construct a new items manager.
-    pub(crate) fn new(item: &Item) -> alloc::Result<Self> {
-        Ok(Self {
-            item: item.try_to_owned()?,
-            depth: item.iter().count(),
-        })
-    }
+	/// Construct a new items manager.
+	pub(crate) fn new(item: &Item) -> alloc::Result<Self> {
+		Ok(Self {
+			item: item.try_to_owned()?,
+			depth: item.iter().count(),
+		})
+	}
 
-    /// Get the item for the current state of the path.
-    pub(crate) fn item(&self) -> &Item {
-        &self.item
-    }
+	/// Get the item for the current state of the path.
+	pub(crate) fn item(&self) -> &Item {
+		&self.item
+	}
 
-    /// How many components the current path has.
-    pub(crate) fn depth(&self) -> usize {
-        self.depth
-    }
+	/// How many components the current path has.
+	pub(crate) fn depth(&self) -> usize {
+		self.depth
+	}
 
-    /// Push a component and return a guard to it.
-    pub(super) fn push_id(&mut self, id: usize) -> alloc::Result<Guard> {
-        self.item.push(ComponentRef::Id(id))?;
-        self.depth += 1;
-        Ok(Guard(self.item.as_bytes().len()))
-    }
+	/// Push a component and return a guard to it.
+	pub(super) fn push_id(&mut self, id: usize) -> alloc::Result<Guard> {
+		self.item.push(ComponentRef::Id(id))?;
+		self.depth += 1;
+		Ok(Guard(self.item.as_bytes().len()))
+	}
 
-    /// Push a component and return a guard to it.
-    pub(super) fn push_name(&mut self, name: &str) -> alloc::Result<Guard> {
-        self.item.push(name)?;
-        self.depth += 1;
-        Ok(Guard(self.item.as_bytes().len()))
-    }
+	/// Push a component and return a guard to it.
+	pub(super) fn push_name(&mut self, name: &str) -> alloc::Result<Guard> {
+		self.item.push(name)?;
+		self.depth += 1;
+		Ok(Guard(self.item.as_bytes().len()))
+	}
 
-    /// Pop the scope associated with the given guard.
-    pub(super) fn pop(&mut self, Guard(expected): Guard) -> Result<(), GuardMismatch> {
-        if self.item.as_bytes().len() != expected {
-            return Err(GuardMismatch {
-                actual: self.item.as_bytes().len(),
-                expected,
-            });
-        }
+	/// Pop the scope associated with the given guard.
+	pub(super) fn pop(&mut self, Guard(expected): Guard) -> Result<(), GuardMismatch> {
+		if self.item.as_bytes().len() != expected {
+			return Err(GuardMismatch {
+				actual: self.item.as_bytes().len(),
+				expected,
+			});
+		}
 
-        self.item.pop();
-        self.depth -= 1;
-        Ok(())
-    }
+		self.item.pop();
+		self.depth -= 1;
+		Ok(())
+	}
 }

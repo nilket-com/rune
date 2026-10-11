@@ -132,13 +132,13 @@ pub mod time;
 pub mod toml;
 
 entry! {
-    {base64, "base64"},
-    {fs, "fs"},
-    {http, "http"},
-    {json, "json"},
-    {process, "process"},
-    {rand, "rand"},
-    {signal, "signal"},
-    {time, "time"},
-    {toml, "toml", ser, de},
+	{base64, "base64"},
+	{fs, "fs"},
+	{http, "http"},
+	{json, "json"},
+	{process, "process"},
+	{rand, "rand"},
+	{signal, "signal"},
+	{time, "time"},
+	{toml, "toml", ser, de},
 }

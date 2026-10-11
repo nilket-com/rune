@@ -107,54 +107,54 @@ use super::{ProtocolCaller, Value, VmError};
 #[derive(Any, Debug, TryClone)]
 #[rune(item = ::std::ops::generator)]
 pub enum GeneratorState {
-    /// The generator yielded.
-    #[rune(constructor)]
-    Yielded(#[rune(get, set, dismantle)] Value),
-    /// The generator completed.
-    #[rune(constructor)]
-    Complete(#[rune(get, set, dismantle)] Value),
+	/// The generator yielded.
+	#[rune(constructor)]
+	Yielded(#[rune(get, set, dismantle)] Value),
+	/// The generator completed.
+	#[rune(constructor)]
+	Complete(#[rune(get, set, dismantle)] Value),
 }
 
 impl GeneratorState {
-    /// Test if the state is yielded.
-    pub fn is_yielded(&self) -> bool {
-        matches!(self, Self::Yielded(..))
-    }
+	/// Test if the state is yielded.
+	pub fn is_yielded(&self) -> bool {
+		matches!(self, Self::Yielded(..))
+	}
 
-    /// Test if the state is complete.
-    pub fn is_complete(&self) -> bool {
-        matches!(self, Self::Complete(..))
-    }
+	/// Test if the state is complete.
+	pub fn is_complete(&self) -> bool {
+		matches!(self, Self::Complete(..))
+	}
 
-    pub(crate) fn partial_eq_with(
-        &self,
-        other: &Self,
-        caller: &mut dyn ProtocolCaller,
-    ) -> Result<bool, VmError> {
-        match (self, other) {
-            (GeneratorState::Yielded(a), GeneratorState::Yielded(b)) => {
-                Value::partial_eq_with(a, b, caller)
-            }
-            (GeneratorState::Complete(a), GeneratorState::Complete(b)) => {
-                Value::partial_eq_with(a, b, caller)
-            }
-            _ => Ok(false),
-        }
-    }
+	pub(crate) fn partial_eq_with(
+		&self,
+		other: &Self,
+		caller: &mut dyn ProtocolCaller,
+	) -> Result<bool, VmError> {
+		match (self, other) {
+			(GeneratorState::Yielded(a), GeneratorState::Yielded(b)) => {
+				Value::partial_eq_with(a, b, caller)
+			}
+			(GeneratorState::Complete(a), GeneratorState::Complete(b)) => {
+				Value::partial_eq_with(a, b, caller)
+			}
+			_ => Ok(false),
+		}
+	}
 
-    pub(crate) fn eq_with(
-        &self,
-        other: &Self,
-        caller: &mut dyn ProtocolCaller,
-    ) -> Result<bool, VmError> {
-        match (self, other) {
-            (GeneratorState::Yielded(a), GeneratorState::Yielded(b)) => {
-                Value::eq_with(a, b, caller)
-            }
-            (GeneratorState::Complete(a), GeneratorState::Complete(b)) => {
-                Value::eq_with(a, b, caller)
-            }
-            _ => Ok(false),
-        }
-    }
+	pub(crate) fn eq_with(
+		&self,
+		other: &Self,
+		caller: &mut dyn ProtocolCaller,
+	) -> Result<bool, VmError> {
+		match (self, other) {
+			(GeneratorState::Yielded(a), GeneratorState::Yielded(b)) => {
+				Value::eq_with(a, b, caller)
+			}
+			(GeneratorState::Complete(a), GeneratorState::Complete(b)) => {
+				Value::eq_with(a, b, caller)
+			}
+			_ => Ok(false),
+		}
+	}
 }

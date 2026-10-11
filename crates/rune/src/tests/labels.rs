@@ -15,8 +15,8 @@ prelude!();
 /// never been closed, and the program did not compile.
 #[test]
 fn a_label_may_end_a_line() {
-    let value: i64 = eval(
-        "let n = 0;\n\
+	let value: i64 = eval(
+		"let n = 0;\n\
          'outer: loop {\n\
              n = 1;\n\
              loop {\n\
@@ -25,48 +25,48 @@ fn a_label_may_end_a_line() {
              }\n\
          }\n\
          n",
-    );
+	);
 
-    assert_eq!(value, 2);
+	assert_eq!(value, 2);
 
-    let value: i64 = eval(
-        "let n = 0;\n\
+	let value: i64 = eval(
+		"let n = 0;\n\
          'outer: for i in 0..3 {\n\
              n += 1;\n\
              continue 'outer\n\
          }\n\
          n",
-    );
+	);
 
-    assert_eq!(value, 3);
+	assert_eq!(value, 3);
 
-    // The label is the value of the block it ends, which is the shape which
-    // made this worth having.
-    let value: i64 = eval(
-        "let a = 'outer: loop {\n\
+	// The label is the value of the block it ends, which is the shape which
+	// made this worth having.
+	let value: i64 = eval(
+		"let a = 'outer: loop {\n\
              break 'outer 7\n\
          };\n\
          a",
-    );
+	);
 
-    assert_eq!(value, 7);
+	assert_eq!(value, 7);
 }
 
 /// A character literal still may not run past the end of a line.
 #[test]
 fn a_character_literal_may_not_end_a_line() {
-    let context = Context::with_default_modules().expect("Failed to build context");
-    let mut sources = crate::tests::sources("let a = '\n';\na");
-    let mut diagnostics = Diagnostics::new();
+	let context = Context::with_default_modules().expect("Failed to build context");
+	let mut sources = crate::tests::sources("let a = '\n';\na");
+	let mut diagnostics = Diagnostics::new();
 
-    let mut options = Options::default();
-    options.script(true);
+	let mut options = Options::default();
+	options.script(true);
 
-    let result = crate::prepare(&mut sources)
-        .with_context(&context)
-        .with_diagnostics(&mut diagnostics)
-        .with_options(&options)
-        .build();
+	let result = crate::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(&mut diagnostics)
+		.with_options(&options)
+		.build();
 
-    assert!(result.is_err(), "Should not compile");
+	assert!(result.is_err(), "Should not compile");
 }

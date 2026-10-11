@@ -8,7 +8,7 @@ use core::ptr;
 #[allow(dead_code)] // keep as illustration and for future use
 #[inline]
 pub(crate) fn take_mut<T, E>(v: &mut T, change: impl FnOnce(T) -> Result<T, E>) -> Result<(), E> {
-    replace(v, |value| Ok((change(value)?, ())))
+	replace(v, |value| Ok((change(value)?, ())))
 }
 
 /// This replaces the value behind the `v` unique reference by calling the
@@ -17,23 +17,23 @@ pub(crate) fn take_mut<T, E>(v: &mut T, change: impl FnOnce(T) -> Result<T, E>) 
 /// If a panic occurs in the `change` closure, the entire process will be aborted.
 #[inline]
 pub(crate) fn replace<T, R, E>(
-    v: &mut T,
-    change: impl FnOnce(T) -> Result<(T, R), E>,
+	v: &mut T,
+	change: impl FnOnce(T) -> Result<(T, R), E>,
 ) -> Result<R, E> {
-    struct PanicGuard;
+	struct PanicGuard;
 
-    impl Drop for PanicGuard {
-        fn drop(&mut self) {
-            crate::abort()
-        }
-    }
+	impl Drop for PanicGuard {
+		fn drop(&mut self) {
+			crate::abort()
+		}
+	}
 
-    let guard = PanicGuard;
-    let value = unsafe { ptr::read(v) };
-    let (new_value, ret) = change(value)?;
-    unsafe {
-        ptr::write(v, new_value);
-    }
-    mem::forget(guard);
-    Ok(ret)
+	let guard = PanicGuard;
+	let value = unsafe { ptr::read(v) };
+	let (new_value, ret) = change(value)?;
+	unsafe {
+		ptr::write(v, new_value);
+	}
+	mem::forget(guard);
+	Ok(ret)
 }

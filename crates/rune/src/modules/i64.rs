@@ -12,9 +12,9 @@ use crate::{ContextError, Module};
 /// This provides methods for computing over and parsing 64-bit signed integers.
 #[rune::module(::std::i64)]
 pub fn module() -> Result<Module, ContextError> {
-    let mut m = Module::from_meta(self::module__meta)?;
-    signed!(m, i64);
-    Ok(m)
+	let mut m = Module::from_meta(self::module__meta)?;
+	signed!(m, i64);
+	Ok(m)
 }
 
 signed_fns!(i64);

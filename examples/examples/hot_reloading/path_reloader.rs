@@ -28,200 +28,200 @@ use tokio::time::{Duration, Instant, Sleep};
 
 /// The kind of path event emitted.
 pub enum EventKind {
-    /// The specified unit has been added.
-    Added,
-    /// The specified unit has been removed.
-    Removed,
+	/// The specified unit has been added.
+	Added,
+	/// The specified unit has been removed.
+	Removed,
 }
 
 /// A path update event.
 pub struct Event {
-    /// The path that was modified.
-    #[allow(unused)]
-    pub path: PathBuf,
-    /// The unit that was constructed from the path.
-    pub unit: Arc<Unit>,
-    /// The kind of event emitted.
-    pub kind: EventKind,
+	/// The path that was modified.
+	#[allow(unused)]
+	pub path: PathBuf,
+	/// The unit that was constructed from the path.
+	pub unit: Arc<Unit>,
+	/// The kind of event emitted.
+	pub kind: EventKind,
 }
 
 impl Event {
-    fn removed(path: PathBuf, unit: Arc<Unit>) -> Self {
-        Self {
-            path,
-            unit,
-            kind: EventKind::Removed,
-        }
-    }
+	fn removed(path: PathBuf, unit: Arc<Unit>) -> Self {
+		Self {
+			path,
+			unit,
+			kind: EventKind::Removed,
+		}
+	}
 
-    fn added(path: PathBuf, unit: Arc<Unit>) -> Self {
-        Self {
-            path,
-            unit,
-            kind: EventKind::Added,
-        }
-    }
+	fn added(path: PathBuf, unit: Arc<Unit>) -> Self {
+		Self {
+			path,
+			unit,
+			kind: EventKind::Added,
+		}
+	}
 }
 
 enum Update {
-    Updated,
-    Removed,
+	Updated,
+	Removed,
 }
 
 /// A hot-reloader which watches a path for changes.
 #[pin_project]
 pub struct PathReloader<'a> {
-    inner: Inner<'a>,
-    rx: mpsc::UnboundedReceiver<notify::Result<notify::Event>>,
-    #[pin]
-    debounce: Sleep,
-    _watcher: notify::RecommendedWatcher,
+	inner: Inner<'a>,
+	rx: mpsc::UnboundedReceiver<notify::Result<notify::Event>>,
+	#[pin]
+	debounce: Sleep,
+	_watcher: notify::RecommendedWatcher,
 }
 
 impl<'a> PathReloader<'a> {
-    /// Construct a new path reloader for the specified directory.
-    pub fn new<P>(path: P, context: &'a Context) -> Result<Self>
-    where
-        P: AsRef<Path>,
-    {
-        let (tx, rx) = mpsc::unbounded_channel();
+	/// Construct a new path reloader for the specified directory.
+	pub fn new<P>(path: P, context: &'a Context) -> Result<Self>
+	where
+		P: AsRef<Path>,
+	{
+		let (tx, rx) = mpsc::unbounded_channel();
 
-        let mut watcher = notify::recommended_watcher(move |res| {
-            _ = tx.send(res);
-        })?;
+		let mut watcher = notify::recommended_watcher(move |res| {
+			_ = tx.send(res);
+		})?;
 
-        watcher.watch(path.as_ref(), notify::RecursiveMode::NonRecursive)?;
+		watcher.watch(path.as_ref(), notify::RecursiveMode::NonRecursive)?;
 
-        let mut this = Self {
-            inner: Inner {
-                context,
-                path: path.as_ref().into(),
-                scripts: Mutex::new(HashMap::new()),
-                updates: HashMap::new(),
-            },
-            rx,
-            debounce: tokio::time::sleep(Duration::from_secs(0)),
-            _watcher: watcher,
-        };
+		let mut this = Self {
+			inner: Inner {
+				context,
+				path: path.as_ref().into(),
+				scripts: Mutex::new(HashMap::new()),
+				updates: HashMap::new(),
+			},
+			rx,
+			debounce: tokio::time::sleep(Duration::from_secs(0)),
+			_watcher: watcher,
+		};
 
-        this.initialize()?;
-        Ok(this)
-    }
+		this.initialize()?;
+		Ok(this)
+	}
 
-    fn initialize(&mut self) -> Result<()> {
-        for entry in fs::read_dir(self.inner.path.as_ref())? {
-            let entry = entry?;
-            let path = entry.path();
+	fn initialize(&mut self) -> Result<()> {
+		for entry in fs::read_dir(self.inner.path.as_ref())? {
+			let entry = entry?;
+			let path = entry.path();
 
-            if path.extension().and_then(|ext| ext.to_str()) != Some("rn") {
-                continue;
-            }
+			if path.extension().and_then(|ext| ext.to_str()) != Some("rn") {
+				continue;
+			}
 
-            self.inner.updates.insert(path, Update::Updated);
-        }
+			self.inner.updates.insert(path, Update::Updated);
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 
-    /// Watch the current path for changes.
-    pub async fn watch(self: Pin<&mut Self>, events: &mut Vec<Event>) -> Result<()> {
-        let mut this = self.project();
+	/// Watch the current path for changes.
+	pub async fn watch(self: Pin<&mut Self>, events: &mut Vec<Event>) -> Result<()> {
+		let mut this = self.project();
 
-        tokio::select! {
-            _ = this.debounce.as_mut() => {
-                this.inner.reload(events)?;
-            }
-            ev = this.rx.recv() => {
-                let Some(ev) = ev.transpose()? else {
-                    return Err(anyhow!("watcher closed"));
-                };
+		tokio::select! {
+			_ = this.debounce.as_mut() => {
+				this.inner.reload(events)?;
+			}
+			ev = this.rx.recv() => {
+				let Some(ev) = ev.transpose()? else {
+					return Err(anyhow!("watcher closed"));
+				};
 
-                match ev.kind {
-                    notify::EventKind::Remove(..) => {
-                        for path in ev.paths {
-                            this.inner.updates.insert(path, Update::Removed);
-                        }
-                    }
-                    _ => {
-                        for path in ev.paths {
-                            this.inner.updates.insert(path, Update::Updated);
-                        }
-                    }
-                }
+				match ev.kind {
+					notify::EventKind::Remove(..) => {
+						for path in ev.paths {
+							this.inner.updates.insert(path, Update::Removed);
+						}
+					}
+					_ => {
+						for path in ev.paths {
+							this.inner.updates.insert(path, Update::Updated);
+						}
+					}
+				}
 
-                this.debounce.as_mut().reset(Instant::now() + Duration::from_millis(100));
-            }
-        }
+				this.debounce.as_mut().reset(Instant::now() + Duration::from_millis(100));
+			}
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 }
 
 struct Inner<'a> {
-    context: &'a Context,
-    path: Box<Path>,
-    scripts: Mutex<HashMap<PathBuf, Arc<Unit>>>,
-    updates: HashMap<PathBuf, Update>,
+	context: &'a Context,
+	path: Box<Path>,
+	scripts: Mutex<HashMap<PathBuf, Arc<Unit>>>,
+	updates: HashMap<PathBuf, Update>,
 }
 
 impl Inner<'_> {
-    fn reload(&mut self, events: &mut Vec<Event>) -> Result<()> {
-        fn compile(context: &Context, path: &Path) -> Result<Unit> {
-            let mut sources = Sources::new();
-            sources.insert(Source::from_path(path)?)?;
+	fn reload(&mut self, events: &mut Vec<Event>) -> Result<()> {
+		fn compile(context: &Context, path: &Path) -> Result<Unit> {
+			let mut sources = Sources::new();
+			sources.insert(Source::from_path(path)?)?;
 
-            let mut diagnostics = Diagnostics::new();
+			let mut diagnostics = Diagnostics::new();
 
-            let unit = rune::prepare(&mut sources)
-                .with_diagnostics(&mut diagnostics)
-                .with_context(context)
-                .build();
+			let unit = rune::prepare(&mut sources)
+				.with_diagnostics(&mut diagnostics)
+				.with_context(context)
+				.build();
 
-            if !diagnostics.is_empty() {
-                let mut writer = StandardStream::stderr(ColorChoice::Always);
-                diagnostics.emit(&mut writer, &sources)?;
-            }
+			if !diagnostics.is_empty() {
+				let mut writer = StandardStream::stderr(ColorChoice::Always);
+				diagnostics.emit(&mut writer, &sources)?;
+			}
 
-            Ok(unit?)
-        }
+			Ok(unit?)
+		}
 
-        for (path, update) in self.updates.drain() {
-            match update {
-                Update::Updated => {
-                    let unit = match compile(self.context, &path) {
-                        Ok(unit) => unit,
-                        Err(error) => {
-                            println!("{}: Failed to compile: {error}", path.display());
+		for (path, update) in self.updates.drain() {
+			match update {
+				Update::Updated => {
+					let unit = match compile(self.context, &path) {
+						Ok(unit) => unit,
+						Err(error) => {
+							println!("{}: Failed to compile: {error}", path.display());
 
-                            if let Some(old) = self.scripts.lock().unwrap().remove(&path) {
-                                events.push(Event::removed(path.clone(), old));
-                            }
+							if let Some(old) = self.scripts.lock().unwrap().remove(&path) {
+								events.push(Event::removed(path.clone(), old));
+							}
 
-                            continue;
-                        }
-                    };
+							continue;
+						}
+					};
 
-                    let new = Arc::try_new(unit)?;
+					let new = Arc::try_new(unit)?;
 
-                    if let Some(old) = self
-                        .scripts
-                        .lock()
-                        .unwrap()
-                        .insert(path.clone(), new.clone())
-                    {
-                        events.push(Event::removed(path.clone(), old));
-                    }
+					if let Some(old) = self
+						.scripts
+						.lock()
+						.unwrap()
+						.insert(path.clone(), new.clone())
+					{
+						events.push(Event::removed(path.clone(), old));
+					}
 
-                    events.push(Event::added(path, new));
-                }
-                Update::Removed => {
-                    if let Some(unit) = self.scripts.lock().unwrap().remove(&path) {
-                        events.push(Event::removed(path, unit));
-                    }
-                }
-            }
-        }
+					events.push(Event::added(path, new));
+				}
+				Update::Removed => {
+					if let Some(unit) = self.scripts.lock().unwrap().remove(&path) {
+						events.push(Event::removed(path, unit));
+					}
+				}
+			}
+		}
 
-        Ok(())
-    }
+		Ok(())
+	}
 }
