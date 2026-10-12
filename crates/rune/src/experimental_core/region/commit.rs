@@ -42,8 +42,8 @@ pub(crate) enum Refused {
 
 /// B1: the executor's capacity for one more frame of `slots` slots, computed from its frame
 /// and slot stacks with the region's window as the top frame (no physical frame growth on
-/// the inline path). `reserve_frame` fails exactly when `frames == 0` or `slots <
-/// callee.slots`.
+/// the inline path). Zero frame room or insufficient slot room refuses the region before any
+/// execution. The interpreter can then grow its buffers through transactional setup.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct Room {
 	pub(crate) frames: usize,

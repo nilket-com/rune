@@ -18,7 +18,7 @@ use super::{
 use crate::experimental_core::{
 	arithmetic::Binary,
 	code::{Code, Function, Op},
-	execute::{region_room, Executor},
+	execute::{region_room, Executor, ExecutorLimits},
 	heap::Store,
 	value::{Root, Type, Value},
 };
@@ -1755,21 +1755,27 @@ fn b1_room_refusal_changes_nothing() {
 #[test]
 fn b1_room_from_executor_geometry() {
 	assert_eq!(
-		region_room(1, 6, 6),
+		region_room(1, 6, 6, ExecutorLimits::default(), (1024, 65_536, 1024)),
 		Room {
 			frames: 1023,
 			slots: 65_530
 		}
 	);
 	assert_eq!(
-		region_room(1024, 6, 6),
+		region_room(1024, 6, 6, ExecutorLimits::default(), (1024, 65_536, 1024)),
 		Room {
 			frames: 0,
 			slots: 65_530
 		}
 	);
 	assert_eq!(
-		region_room(3, 65_536, 65_536),
+		region_room(
+			3,
+			65_536,
+			65_536,
+			ExecutorLimits::default(),
+			(1024, 65_536, 1024)
+		),
 		Room {
 			frames: 1021,
 			slots: 0
@@ -1777,14 +1783,14 @@ fn b1_room_from_executor_geometry() {
 	);
 	// The window ends below the slot stack's top: not the top frame.
 	assert_eq!(
-		region_room(2, 20, 12),
+		region_room(2, 20, 12, ExecutorLimits::default(), (1024, 65_536, 1024)),
 		Room {
 			frames: 0,
 			slots: 0
 		}
 	);
 	assert_eq!(
-		region_room(2, 20, 21),
+		region_room(2, 20, 21, ExecutorLimits::default(), (1024, 65_536, 1024)),
 		Room {
 			frames: 0,
 			slots: 0

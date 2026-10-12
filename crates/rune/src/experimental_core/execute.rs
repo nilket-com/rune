@@ -22,6 +22,39 @@ use super::{
 use crate::alloc::Vec;
 
 const MAX_FRAMES: usize = 1024;
+const INITIAL_FRAMES: usize = 8;
+const INITIAL_SLOTS: usize = 64;
+
+/// Logical invocation limits; bookkeeping grows with use. Allocator overgrowth
+/// can exceed these limits physically. Payloads and output are separate.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ExecutorLimits {
+	/// Maximum simultaneously published call frames.
+	pub frames: usize,
+	/// Maximum live value slots across all call frames.
+	pub slots: usize,
+}
+impl Default for ExecutorLimits {
+	fn default() -> Self {
+		Self {
+			frames: MAX_FRAMES,
+			slots: MAX_SLOTS,
+		}
+	}
+}
+#[derive(Debug)]
+struct CallSetupFailure {
+	error: Error,
+	cleanup_error: Option<Error>,
+}
+impl From<Error> for CallSetupFailure {
+	fn from(error: Error) -> Self {
+		Self {
+			error,
+			cleanup_error: None,
+		}
+	}
+}
 
 /// Entry arguments: host roots (owner-checked in `enter`, read in place) or
 /// crate-internal values.
@@ -30,6 +63,10 @@ enum Args<'a> {
 	Roots(&'a [&'a Root]),
 	#[cfg_attr(not(test), allow(dead_code))]
 	Values(&'a [Value]),
+	Slots {
+		base: usize,
+		indices: &'a [u32],
+	},
 }
 
 impl Args<'_> {
@@ -37,24 +74,23 @@ impl Args<'_> {
 		match self {
 			Self::Roots(roots) => roots.len(),
 			Self::Values(values) => values.len(),
+			Self::Slots { indices, .. } => indices.len(),
 		}
 	}
 
-	fn get(self, i: usize) -> Value {
+	fn get(self, slots: &[Value], i: usize) -> Value {
 		match self {
 			Self::Roots(roots) => roots[i].value,
 			Self::Values(values) => values[i],
+			Self::Slots { base, indices } => slots[base + indices[i] as usize],
 		}
 	}
 }
 
 const MAX_SLOTS: usize = 65_536;
 
-/// B1: the room for one more frame that an inlined call would reserve, from the frame and
-/// slot stacks, with the region's window as the top frame. `reserve_frame` fails exactly
-/// when `frames.len() == MAX_FRAMES` or `slots.len() + callee.slots > MAX_SLOTS`. A window
-/// that does not end at the top of the slot stack is not the top frame's: no room at all
-/// (a refusal is an exact fallback).
+/// Native room is bounded by logical limits and actual frame, slot and
+/// diagnostic capacities. Native execution and commit never grow them.
 #[cfg(feature = "fresh-core-native")]
 #[cfg_attr(
 	not(any(test, all(target_arch = "x86_64", target_os = "linux"))),
@@ -64,6 +100,8 @@ pub(crate) fn region_room(
 	frames: usize,
 	slots: usize,
 	window_end: usize,
+	limits: ExecutorLimits,
+	capacities: (usize, usize, usize),
 ) -> super::region::commit::Room {
 	if window_end != slots {
 		return super::region::commit::Room {
@@ -72,8 +110,12 @@ pub(crate) fn region_room(
 		};
 	}
 	super::region::commit::Room {
-		frames: MAX_FRAMES.saturating_sub(frames),
-		slots: MAX_SLOTS.saturating_sub(slots),
+		frames: limits
+			.frames
+			.min(capacities.0)
+			.min(capacities.2)
+			.saturating_sub(frames),
+		slots: limits.slots.min(capacities.1).saturating_sub(slots),
 	}
 }
 
@@ -117,6 +159,9 @@ pub struct Executor {
 	diagnostics: Vec<Location>,
 	cancelled: bool,
 	format_limits: FormatLimits,
+	limits: ExecutorLimits,
+	#[cfg(test)]
+	rollback_error: Option<Error>,
 	/// Test-only, per executor: when set, `Print` appends here instead of stdout.
 	#[cfg(test)]
 	pub(crate) test_output: Option<std::vec::Vec<u8>>,
@@ -142,14 +187,40 @@ fn error(kind: ErrorKind) -> Error {
 // type of `invoke`, so boxing it would change the API.
 #[allow(clippy::result_large_err)]
 impl Executor {
-	/// A new executor, with its frame, slot and call-chain buffers reserved up front.
+	/// A new executor with small initial bookkeeping buffers and default limits.
 	pub fn new() -> Result<Self> {
+		Self::with_limits(ExecutorLimits::default())
+	}
+
+	/// Configures logical limits without reserving their maxima. Initial and
+	/// subsequent allocations can fail fallibly with Allocation.
+	pub fn with_limits(limits: ExecutorLimits) -> Result<Self> {
+		if limits.frames == 0
+			|| limits.slots == 0
+			|| limits
+				.frames
+				.checked_mul(core::mem::size_of::<Frame>())
+				.is_none_or(|n| n > isize::MAX as usize)
+			|| limits
+				.frames
+				.checked_mul(core::mem::size_of::<Location>())
+				.is_none_or(|n| n > isize::MAX as usize)
+			|| limits
+				.slots
+				.checked_mul(core::mem::size_of::<Value>())
+				.is_none_or(|n| n > isize::MAX as usize)
+		{
+			return Err(error(ErrorKind::FrameCapacity));
+		}
 		Ok(Self {
-			frames: Vec::try_with_capacity(MAX_FRAMES)?,
-			slots: Vec::try_with_capacity(MAX_SLOTS)?,
-			diagnostics: Vec::try_with_capacity(MAX_FRAMES)?,
+			frames: Vec::try_with_capacity(limits.frames.min(INITIAL_FRAMES))?,
+			slots: Vec::try_with_capacity(limits.slots.min(INITIAL_SLOTS))?,
+			diagnostics: Vec::try_with_capacity(limits.frames.min(INITIAL_FRAMES))?,
 			cancelled: false,
 			format_limits: FormatLimits::default(),
+			limits,
+			#[cfg(test)]
+			rollback_error: None,
 			#[cfg(test)]
 			test_output: None,
 			#[cfg(test)]
@@ -161,6 +232,33 @@ impl Executor {
 			))]
 			no_region_code: 0,
 		})
+	}
+
+	/// Configured logical frame and slot limits.
+	pub fn limits(&self) -> &ExecutorLimits {
+		&self.limits
+	}
+
+	/// Retained executor bookkeeping, modeled from actual buffer capacities.
+	/// This excludes allocator overhead, code, store payloads, formatting scratch
+	/// and output; it is not a process peak or RSS ceiling.
+	pub fn bookkeeping_bytes(&self) -> Result<usize> {
+		let frames = self
+			.frames
+			.capacity()
+			.checked_mul(core::mem::size_of::<Frame>());
+		let slots = self
+			.slots
+			.capacity()
+			.checked_mul(core::mem::size_of::<Value>());
+		let diagnostics = self
+			.diagnostics
+			.capacity()
+			.checked_mul(core::mem::size_of::<Location>());
+		frames
+			.and_then(|n| n.checked_add(slots?))
+			.and_then(|n| n.checked_add(diagnostics?))
+			.ok_or_else(|| error(ErrorKind::Overflow))
 	}
 
 	/// Requests cancellation. The next charged instruction of this executor consumes the
@@ -262,18 +360,7 @@ impl Executor {
 		))]
 		regions: Option<&super::region::cache::ProgramRegions>,
 	) -> core::result::Result<Value, Failure> {
-		// Per-invocation setup, before any instruction runs: the call-chain buffer
-		// (moved out by a previous failure; reserving it again is
-		// the only allocation here and a failure leaves nothing to clean up).
-		if self.diagnostics.capacity() < MAX_FRAMES {
-			if let Err(e) = self.diagnostics.try_reserve(MAX_FRAMES) {
-				return Err(Failure {
-					error: Error::from(e),
-					call_chain: Vec::new(),
-					cleanup_error: None,
-				});
-			}
-		}
+		let mut setup_cleanup_error = None;
 
 		let result = (|| {
 			if store.is_closed() {
@@ -284,7 +371,10 @@ impl Executor {
 				return Err(error(ErrorKind::InvalidCode));
 			}
 
-			self.enter(code, store, function, args, None)?;
+			self.enter(code, store, function, args, None).map_err(|f| {
+				setup_cleanup_error = f.cleanup_error;
+				f.error
+			})?;
 			'frames: loop {
 				let frame = *self
 					.frames
@@ -336,7 +426,13 @@ impl Executor {
 						let resume = core::mem::take(&mut region_resume);
 						let end = frame.base + function.slots as usize;
 						if instruction.charged && !resume && !cancel_hook_armed_for_test() {
-							let room = region_room(self.frames.len(), self.slots.len(), end);
+							let room = region_room(
+								self.frames.len(),
+								self.slots.len(),
+								end,
+								self.limits,
+								self.capacities(),
+							);
 							if let Some(window) = self.slots.get_mut(frame.base..end) {
 								if let Some((next, left)) = super::region::hook::try_enter(
 									code.id(),
@@ -372,7 +468,13 @@ impl Executor {
 						if !resumed && !armed && !table.is_empty() {
 							if let Some(ready) = regions.and_then(|r| r.header(table, source_pc)) {
 								let end = frame.base + function.slots as usize;
-								let room = region_room(self.frames.len(), self.slots.len(), end);
+								let room = region_room(
+									self.frames.len(),
+									self.slots.len(),
+									end,
+									self.limits,
+									self.capacities(),
+								);
 								if let Some(window) = self.slots.get_mut(frame.base..end) {
 									match ready.enter(window, store, self.cancelled, fuel, room) {
 										Ok(Some((next, left))) => {
@@ -862,21 +964,24 @@ impl Executor {
 								.ok_or_else(|| error(ErrorKind::InvalidCode))?;
 							let source_args = &function.args
 								[args_start as usize..args_start as usize + args_len as usize];
-							let new_base = self.reserve_frame(callee_code.slots as usize)?;
-
-							for (i, &slot) in source_args.iter().enumerate() {
-								let value = self.slots[frame.base + slot as usize];
-								store.retain(value)?;
-								self.slots[new_base + i] = value;
-							}
-
-							self.frames.try_push(Frame {
-								function: callee,
-								pc: 0,
-								base: new_base,
-								out: Some(frame.base + out as usize),
-								// Lossless: source_pc < 1,048,576 by the Builder's bound.
-								callsite_pc: source_pc as u32,
+							self.push_call(
+								store,
+								callee_code.slots as usize,
+								Args::Slots {
+									base: frame.base,
+									indices: source_args,
+								},
+								Frame {
+									function: callee,
+									pc: 0,
+									base: 0,
+									out: Some(frame.base + out as usize),
+									callsite_pc: source_pc as u32,
+								},
+							)
+							.map_err(|f| {
+								setup_cleanup_error = f.cleanup_error;
+								f.error
 							})?;
 							transferred = true;
 						}
@@ -917,7 +1022,7 @@ impl Executor {
 		match result {
 			Ok(value) => Ok(value),
 			Err(failure) => {
-				let mut cleanup_error = None;
+				let mut cleanup_error = setup_cleanup_error;
 
 				// Innermost first. Only Op::Call sets a callsite, pushing the callee
 				// directly above its caller; the entry frame has none, so pairing each
@@ -938,7 +1043,7 @@ impl Executor {
 				// Includes a partially filled callee reserve if retaining an arg failed.
 				while let Some(value) = self.slots.pop() {
 					if let Err(e) = store.release(value) {
-						cleanup_error = Some(e);
+						cleanup_error.get_or_insert(e);
 					}
 				}
 
@@ -996,21 +1101,92 @@ impl Executor {
 		self.frames.is_empty() && self.slots.is_empty() && self.diagnostics.is_empty()
 	}
 
-	fn reserve_frame(&mut self, slots: usize) -> Result<usize> {
-		if self.frames.len() == MAX_FRAMES {
-			return Err(error(ErrorKind::FrameCapacity));
-		}
+	fn capacities(&self) -> (usize, usize, usize) {
+		(
+			self.frames.capacity(),
+			self.slots.capacity(),
+			self.diagnostics.capacity(),
+		)
+	}
 
+	/// Rollback covers only this helper's unpublished window, preserving the
+	/// caller and its diagnostic witnesses for the existing outer unwind.
+	fn push_call(
+		&mut self,
+		store: &mut Store,
+		slots: usize,
+		args: Args<'_>,
+		mut frame: Frame,
+	) -> core::result::Result<(), CallSetupFailure> {
+		let frames = self
+			.frames
+			.len()
+			.checked_add(1)
+			.ok_or_else(|| error(ErrorKind::FrameCapacity))?;
 		let base = self.slots.len();
 		let len = base
 			.checked_add(slots)
-			.ok_or_else(|| error(ErrorKind::Overflow))?;
-		if len > MAX_SLOTS {
-			return Err(error(ErrorKind::FrameCapacity));
+			.ok_or_else(|| error(ErrorKind::FrameCapacity))?;
+		if frames > self.limits.frames || len > self.limits.slots {
+			return Err(error(ErrorKind::FrameCapacity).into());
 		}
+		if args.len() > slots {
+			return Err(error(ErrorKind::InvalidCode).into());
+		}
+		// Reserve by additional length. No borrowed slot survives growth.
+		self.frames
+			.try_reserve(frames - self.frames.len())
+			.map_err(Error::from)?;
+		self.slots.try_reserve(len - base).map_err(Error::from)?;
+		self.diagnostics
+			.try_reserve(frames.saturating_sub(self.diagnostics.len()))
+			.map_err(Error::from)?;
+		debug_assert!(self.diagnostics.capacity() >= frames);
+		self.slots
+			.try_resize_with(len, || Value::Unit)
+			.map_err(Error::from)?;
+		for i in 0..args.len() {
+			let value = args.get(&self.slots, i);
+			if let Err(error) = store.retain(value) {
+				return Err(self.rollback_call(store, base, i, error));
+			}
+			self.slots[base + i] = value;
+		}
+		frame.base = base;
+		if self.frames.push_within_capacity(frame).is_err() {
+			return Err(self.rollback_call(
+				store,
+				base,
+				args.len(),
+				Error::new(ErrorKind::InvalidCode, "frame publication"),
+			));
+		}
+		debug_assert!(self.diagnostics.capacity() >= self.frames.len());
+		Ok(())
+	}
 
-		self.slots.try_resize_with(len, || Value::Unit)?;
-		Ok(base)
+	fn rollback_call(
+		&mut self,
+		store: &mut Store,
+		base: usize,
+		retained: usize,
+		error: Error,
+	) -> CallSetupFailure {
+		let mut cleanup_error = None;
+		for j in (base..base + retained).rev() {
+			if let Err(e) = store.release(self.slots[j]) {
+				cleanup_error.get_or_insert(e);
+			}
+		}
+		#[cfg(test)]
+		if let Some(e) = self.rollback_error.take() {
+			cleanup_error.get_or_insert(e);
+		}
+		self.slots.truncate(base);
+		CallSetupFailure {
+			error,
+			cleanup_error,
+		}
 	}
 
 	fn enter(
@@ -1020,12 +1196,12 @@ impl Executor {
 		function: u32,
 		args: Args<'_>,
 		out: Option<usize>,
-	) -> Result<()> {
+	) -> core::result::Result<(), CallSetupFailure> {
 		let f = code
 			.function(function)
 			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
 		if args.len() != f.parameters as usize {
-			return Err(error(ErrorKind::InvalidCode));
+			return Err(error(ErrorKind::InvalidCode).into());
 		}
 
 		// Host roots: every one owner-checked before any retain, no allocation.
@@ -1033,21 +1209,18 @@ impl Executor {
 			store.import_all(roots.iter().copied())?;
 		}
 
-		let base = self.reserve_frame(f.slots as usize)?;
-		for i in 0..args.len() {
-			let value = args.get(i);
-			store.retain(value)?;
-			self.slots[base + i] = value;
-		}
-
-		self.frames.try_push(Frame {
-			function,
-			pc: 0,
-			base,
-			out,
-			callsite_pc: NO_CALLSITE,
-		})?;
-		Ok(())
+		self.push_call(
+			store,
+			f.slots as usize,
+			args,
+			Frame {
+				function,
+				pc: 0,
+				base: 0,
+				out,
+				callsite_pc: NO_CALLSITE,
+			},
+		)
 	}
 
 	/// Publish only into the frame whose local pc is being executed.
@@ -1380,7 +1553,7 @@ fn binary(store: &mut Store, op: arithmetic::Binary, a: Value, b: Value) -> Resu
 // type of `invoke`, so boxing it would change the API.
 #[allow(clippy::result_large_err)]
 impl Executor {
-	/// (frames, slots, diagnostics) capacities: reserved once at construction.
+	/// Actual (frames, slots, diagnostics) capacities at this point.
 	pub(crate) fn capacities_for_test(&self) -> (usize, usize, usize) {
 		(
 			self.frames.capacity(),
@@ -1392,9 +1565,9 @@ impl Executor {
 	/// Byte sizes of the three construction reservations, in reservation order.
 	pub(crate) fn reservation_bytes_for_test() -> [usize; 3] {
 		[
-			MAX_FRAMES * core::mem::size_of::<Frame>(),
-			MAX_SLOTS * core::mem::size_of::<Value>(),
-			MAX_FRAMES * core::mem::size_of::<Location>(),
+			INITIAL_FRAMES * core::mem::size_of::<Frame>(),
+			INITIAL_SLOTS * core::mem::size_of::<Value>(),
+			INITIAL_FRAMES * core::mem::size_of::<Location>(),
 		]
 	}
 	/// The crate's own tests' direct entry: `invoke_args` with the feature off, and with the
@@ -1554,3 +1727,6 @@ mod diagnostic_enrichment_tests {
 		}
 	}
 }
+
+#[cfg(test)]
+mod growth_tests;

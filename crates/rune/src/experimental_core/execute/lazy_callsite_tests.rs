@@ -434,7 +434,7 @@ fn d14_diagnostics_exhaustion_breaks_after_the_last_pushed_site() {
 	let mut s = store();
 	let mut e = Executor::new().unwrap();
 	let capacity = e.diagnostics.capacity();
-	assert!(capacity >= MAX_FRAMES);
+	assert!(capacity >= INITIAL_FRAMES);
 
 	while e.diagnostics.len() + 1 < capacity {
 		e.diagnostics.try_push(loc(1)).unwrap();

@@ -1,5 +1,5 @@
 //! Item 9, executor side: on the five early-diagnostic programs, repeated invocation on one
-//! executor and store never grows the executor's reserved buffers and leaves the store at its
+//! executor and store, after warm-up, never grows the executor's bookkeeping buffers and leaves the store at its
 //! baseline. Local construction check over the batch A sources; not a measurement.
 
 use crate::experimental_core::{
@@ -38,7 +38,7 @@ const KERNELS: [(&str, &str); 5] = [
 	miri,
 	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
 )]
-fn repeated_invocation_never_grows_executor_buffers_or_leaves_store_state() {
+fn warmed_invocation_never_grows_executor_buffers_or_leaves_store_state() {
 	let context = Context::with_default_modules().unwrap();
 	for (name, text) in KERNELS {
 		let mut sources = Sources::new();
@@ -48,6 +48,12 @@ fn repeated_invocation_never_grows_executor_buffers_or_leaves_store_state() {
 		let main = program.function(Hash::type_hash(["main"])).unwrap();
 		let mut store = Store::new(Limits::default()).unwrap();
 		let mut executor = Executor::new().unwrap();
+		// Warm actual high-water bookkeeping before recording its capacities.
+		let unit = store.root_unit();
+		let out = executor
+			.invoke(&program, &mut store, main, &[&unit], 1_000_000_000)
+			.unwrap();
+		store.root_release(out).unwrap();
 		let capacities = executor.capacities_for_test();
 		let baseline = (
 			store.live_entries(),

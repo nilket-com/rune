@@ -1515,3 +1515,76 @@ fn child_bounds() {
 	assert_eq!((after - before) * 1024, cache::PAGE_BYTES as u64);
 	assert_eq!(cache::invalid_exits(), 0);
 }
+
+/// B3: compare native routing counters across the eager-buffer baseline and
+/// growable bookkeeping. This checks deterministic execution, not timings.
+#[test]
+#[cfg_attr(miri, ignore = "Miri: executes native code in a child process")]
+fn b3_kernel_room_gate() {
+	run_child("child_b3_kernel_room_gate");
+}
+
+#[test]
+#[ignore = "Native worker: launched by b3_kernel_room_gate"]
+fn child_b3_kernel_room_gate() {
+	require_child();
+	for (name, text) in [
+		("numeric", STAGE_NUMERIC),
+		("while", STAGE_WHILE),
+		("calls", STAGE_CALLS),
+		("fib", STAGE_FIB),
+		("shared_rows", STAGE_SHARED_ROWS),
+	] {
+		fresh();
+		let program = compile_source(text);
+		let main = program.function(Hash::type_hash(["main"])).unwrap();
+		cache::prepare(&program.code).unwrap();
+		let observed = native(&program.code, main, &[Arg::I(0)], 1_000_000_000);
+		assert!(
+			matches!(observed.outcome, Outcome::Value(_)),
+			"{observed:?}"
+		);
+		let rows: Vec<_> = cache::regions_for_test(program.code.id())
+			.unwrap_or_default()
+			.into_iter()
+			.map(|r| {
+				(
+					r.function,
+					r.header,
+					r.state,
+					r.entries,
+					r.exits,
+					[
+						r.refused_cancel,
+						r.refused_store,
+						r.refused_tag,
+						r.refused_iter,
+						r.refused_room,
+					],
+				)
+			})
+			.collect();
+		// Frozen from B2 (7c448146) with the identical counter-only driver.
+		let (fuel, header) = match name {
+			"numeric" => (999989998, Some(2)),
+			"while" => (999989998, Some(1)),
+			"calls" => (999979998, Some(5)),
+			"fib" => (999978108, None),
+			"shared_rows" => (999999992, None),
+			_ => unreachable!(),
+		};
+		assert_eq!(observed.fuel_left, Some(fuel), "{name}");
+		if let Some(header) = header {
+			assert_eq!(
+				rows,
+				vec![(0, header, State::Live, 1, [1, 0, 0, 0], [0; 5])],
+				"{name}"
+			);
+		} else {
+			assert!(rows.is_empty(), "{name}: {rows:?}");
+		}
+		println!("B3ROUTE {name} fuel={:?} rows={rows:?}", observed.fuel_left);
+	}
+	cache::clear_for_test();
+	cache::enable_for_test(false);
+}

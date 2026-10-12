@@ -132,6 +132,7 @@ fn d11_enter_checks_all_root_owners_before_reservation_or_acquisition() {
 	assert_eq!(
 		e.enter(&c, &mut s, 0, Args::Roots(&[&own, &foreign]), None)
 			.unwrap_err()
+			.error
 			.kind,
 		ErrorKind::InvalidHandle
 	);
@@ -161,6 +162,7 @@ fn d11_enter_checks_all_root_owners_before_reservation_or_acquisition() {
 		assert_eq!(
 			e.enter(&c, &mut s, 0, Args::Roots(&roots), None)
 				.unwrap_err()
+				.error
 				.kind,
 			ErrorKind::ClosedStore
 		);
