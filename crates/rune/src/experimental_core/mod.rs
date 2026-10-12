@@ -34,6 +34,25 @@
 //! ```compile_fail
 //! let _ = rune::experimental_core::nominal::intern(0, "x");
 //! ```
+//!
+//! Cancellation needs an exclusive borrow of the executor, which every invocation holds for
+//! its whole duration, so no request can arrive while an invocation runs. The
+//! `fresh-core-native` tier checks a pending request once, at region entry, and relies on
+//! this. This tripwire stops compiling (and the test fails) if cancellation ever becomes
+//! reachable through a shared borrow; the native tier's cancellation contract must then be
+//! redesigned first.
+//!
+//! ```compile_fail,E0596
+//! fn cancel_through_shared(e: &rune::experimental_core::execute::Executor) {
+//! 	e.request_cancel();
+//! }
+//! ```
+//!
+//! ```
+//! fn cancel_through_exclusive(e: &mut rune::experimental_core::execute::Executor) {
+//! 	e.request_cancel();
+//! }
+//! ```
 
 #![forbid(unsafe_code)]
 

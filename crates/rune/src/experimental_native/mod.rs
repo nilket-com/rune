@@ -1,5 +1,6 @@
-//! P0 native tier backend for fresh-core loop regions (x86-64 Linux, feature
-//! `fresh-core-native`). UNSTABLE and not wired into execution.
+//! Native tier backend for fresh-core loop regions (x86-64 Linux, feature
+//! `fresh-core-native`). UNSTABLE. Wired into execution (P2a) only through the thread-local
+//! region cache in `experimental_core::region::cache`; there is no public API.
 //!
 //! - [`lower`]: safe translation of an analysed [`Region`](crate::experimental_core::region::Region)
 //!   into Cranelift IR with the exit protocol of
@@ -9,12 +10,12 @@
 //!   trap site, a call, a relocation, a division instruction, or a memory access outside
 //!   `buf[0..n]` and the exit record is refused: the interpreter keeps it.
 //! - [`boundary`]: the only module allowed `unsafe` (executable memory ownership, the
-//!   function-pointer conversion and the call). It is compiled but never called in P0.
+//!   function-pointer conversion and the call).
 //!
 //! Everything except `boundary` is `deny(unsafe_code)`; the fresh core itself stays
 //! `forbid(unsafe_code)`.
 #![deny(unsafe_code)]
-// Not wired into execution until the execution GO.
+// Some items (listings, test diagnostics) are used by tests only.
 #![cfg_attr(not(test), allow(dead_code))]
 use std::string::String;
 
@@ -27,6 +28,12 @@ mod tests;
 
 #[cfg(test)]
 mod exec_tests;
+
+#[cfg(test)]
+mod p2_tests;
+
+#[cfg(test)]
+mod p3a_tests;
 
 /// Most machine-code bytes for one region.
 pub(crate) const MAX_REGION_CODE_BYTES: usize = 64 << 10;

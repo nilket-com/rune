@@ -91,6 +91,15 @@ pub struct Executor {
 	/// Test-only, per executor: when set, `Print` appends here instead of stdout.
 	#[cfg(test)]
 	pub(crate) test_output: Option<std::vec::Vec<u8>>,
+	/// P2a native tier: the last code id whose analysis admitted no region at all (a
+	/// property of the code alone, valid on any thread); 0 is never a code id. Plain data,
+	/// so `Executor` stays `Send`.
+	#[cfg(all(
+		feature = "fresh-core-native",
+		target_arch = "x86_64",
+		target_os = "linux"
+	))]
+	no_region_code: u32,
 }
 
 fn error(kind: ErrorKind) -> Error {
@@ -111,6 +120,12 @@ impl Executor {
 			output_bytes: 0,
 			#[cfg(test)]
 			test_output: None,
+			#[cfg(all(
+				feature = "fresh-core-native",
+				target_arch = "x86_64",
+				target_os = "linux"
+			))]
+			no_region_code: 0,
 		})
 	}
 
@@ -164,20 +179,43 @@ impl Executor {
 		args: &[&Root],
 		fuel: usize,
 	) -> core::result::Result<Root, Failure> {
+		#[cfg(not(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		)))]
 		let value = self.invoke_args(code, store, function, Args::Roots(args), fuel)?;
+		#[cfg(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		))]
+		let value = self.invoke_native(code, store, function, Args::Roots(args), fuel)?;
 		Ok(store.export(value))
 	}
 
 	// D21-derived execution logic preserved during extraction: the loops read fixed
 	// (slot, flag) pairs from the argument table.
 	#[allow(clippy::chunks_exact_to_as_chunks)]
-	fn invoke_args(
+	fn invoke_args<
+		#[cfg(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		))] const NATIVE: bool,
+	>(
 		&mut self,
 		code: &Code,
 		store: &mut Store,
 		function: u32,
 		args: Args<'_>,
 		mut fuel: usize,
+		#[cfg(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		))]
+		regions: Option<&super::region::cache::ProgramRegions>,
 	) -> core::result::Result<Value, Failure> {
 		// Per-invocation setup, before any instruction runs: the output cap and the
 		// call-chain buffer (moved out by a previous failure; reserving it again is
@@ -219,6 +257,24 @@ impl Executor {
 				// consulted at the pc an exit resumes at.
 				#[cfg(all(test, feature = "fresh-core-native"))]
 				let mut region_resume = false;
+				// P2a production tier: this frame's header table (empty in the NATIVE =
+				// false instance) and the resume pc of the last region exit, which is never
+				// a header consulted again before the next charged instruction.
+				#[cfg(all(
+					feature = "fresh-core-native",
+					target_arch = "x86_64",
+					target_os = "linux"
+				))]
+				let table: &[(u32, u32)] = match regions {
+					Some(regions) if NATIVE => regions.function(frame.function),
+					_ => &[],
+				};
+				#[cfg(all(
+					feature = "fresh-core-native",
+					target_arch = "x86_64",
+					target_os = "linux"
+				))]
+				let mut resume_pc = usize::MAX;
 
 				loop {
 					let source_pc = pc;
@@ -250,6 +306,46 @@ impl Executor {
 									fuel = left;
 									region_resume = true;
 									continue;
+								}
+							}
+						}
+					}
+					// P2a production tier: at a charged instruction it did not just resume
+					// at, before that instruction's own cancel and fuel step.
+					#[cfg(all(
+						feature = "fresh-core-native",
+						target_arch = "x86_64",
+						target_os = "linux"
+					))]
+					if NATIVE && instruction.charged {
+						let resumed = core::mem::replace(&mut resume_pc, usize::MAX) == source_pc;
+						#[cfg(test)]
+						let armed = cancel_hook_armed_for_test();
+						#[cfg(not(test))]
+						let armed = false;
+						if !resumed && !armed && !table.is_empty() {
+							if let Some(ready) = regions.and_then(|r| r.header(table, source_pc)) {
+								let end = frame.base + function.slots as usize;
+								if let Some(window) = self.slots.get_mut(frame.base..end) {
+									match ready.enter(window, store, self.cancelled, fuel) {
+										Ok(Some((next, left))) => {
+											pc = next;
+											fuel = left;
+											resume_pc = next;
+											continue;
+										}
+										Ok(None) => (),
+										Err(e) => {
+											// Unreachable by the entry proof (every released
+											// value is a scalar in an open, idle store); raised
+											// at the header like an instruction error.
+											if let Some(current) = self.frames.get_mut(frame_index)
+											{
+												current.pc = pc;
+											}
+											return Err(e.at(function.locations[source_pc]));
+										}
+									}
 								}
 							}
 						}
@@ -798,6 +894,44 @@ impl Executor {
 			}
 		}
 	}
+	/// P2a: one invocation with this thread's loaded regions of `code`, if any. The regions
+	/// are checked out of the thread-local cache for the invocation and put back after it
+	/// (also on unwind); a code with no loaded region runs the `NATIVE = false` loop, whose
+	/// body is the feature-off loop.
+	#[cfg(all(
+		feature = "fresh-core-native",
+		target_arch = "x86_64",
+		target_os = "linux"
+	))]
+	fn invoke_native(
+		&mut self,
+		code: &Code,
+		store: &mut Store,
+		function: u32,
+		args: Args<'_>,
+		fuel: usize,
+	) -> core::result::Result<Value, Failure> {
+		use super::region::cache::{self, Checkout};
+
+		if code.id() == self.no_region_code {
+			return self.invoke_args::<false>(code, store, function, args, fuel, None);
+		}
+
+		match cache::checkout(code) {
+			Checkout::Native(guard) => {
+				let result =
+					self.invoke_args::<true>(code, store, function, args, fuel, guard.regions());
+				drop(guard);
+				result
+			}
+			Checkout::Interpret { no_regions } => {
+				if no_regions {
+					self.no_region_code = code.id();
+				}
+				self.invoke_args::<false>(code, store, function, args, fuel, None)
+			}
+		}
+	}
 
 	/// Clean-state check for callers that repeat invocations: true when no
 	/// frame, slot or pending diagnostic survives the last invocation.
@@ -1005,6 +1139,30 @@ impl Executor {
 			MAX_FRAMES * core::mem::size_of::<Location>(),
 		]
 	}
+	/// The crate's own tests' direct entry: `invoke_args` with the feature off, and with the
+	/// P2a tier the same checkout path as `invoke_code` (the tier is off in tests unless a
+	/// test turns it on).
+	fn invoke_args_for_test(
+		&mut self,
+		code: &Code,
+		store: &mut Store,
+		function: u32,
+		args: Args<'_>,
+		fuel: usize,
+	) -> core::result::Result<Value, Failure> {
+		#[cfg(not(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		)))]
+		return self.invoke_args(code, store, function, args, fuel);
+		#[cfg(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		))]
+		return self.invoke_native(code, store, function, args, fuel);
+	}
 
 	/// Owner-free single-shot entry for the crate's own tests.
 	pub(crate) fn run_values(
@@ -1015,7 +1173,18 @@ impl Executor {
 		args: &[Value],
 		fuel: usize,
 	) -> core::result::Result<Value, Failure> {
-		self.invoke_args(code, store, function, Args::Values(args), fuel)
+		#[cfg(not(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		)))]
+		return self.invoke_args(code, store, function, Args::Values(args), fuel);
+		#[cfg(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		))]
+		return self.invoke_native(code, store, function, Args::Values(args), fuel);
 	}
 }
 

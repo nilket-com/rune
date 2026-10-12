@@ -1108,3 +1108,119 @@ fn p1_hook_modes_suspend_and_division_classification() {
 	assert!(hook::take_mismatch().is_none());
 	hook::uninstall();
 }
+
+// ---------------------------------- P3a safe glue: budgeted analysis (Miri-able)
+
+/// `count` sequential counted loops (`many_headers` of the P2 tests), hand-built.
+fn sequential_loops(count: u32) -> Function {
+	// slots: 0 a, 1 n, 2 c, 3 one
+	let mut f = Function::new(4, 1).unwrap();
+	for k in 0..count {
+		let h = 5 * k + 1;
+		lit(&mut f, 1, Value::I64(0), h - 1);
+		bin(&mut f, 2, Binary::Lt, 1, 0, h);
+		f.push(
+			Op::Branch {
+				condition: 2,
+				yes: h + 2,
+				no: h + 4,
+			},
+			loc(h + 1),
+		)
+		.unwrap();
+		bin(&mut f, 1, Binary::Add, 1, 3, h + 2);
+		f.push(Op::Jump { target: h }, loc(h + 3)).unwrap();
+	}
+	f.push(Op::Return { value: 1 }, loc(5 * count)).unwrap();
+	f
+}
+
+#[test]
+fn p3a_scan_headers_matches_back_edge_targets() {
+	for count in [0u32, 1, 3, 17] {
+		let code = build(vec![sequential_loops(count)]);
+		let f = code.function(0).unwrap();
+		let budget = super::budget::Budget::unlimited();
+		let headers = super::scan_headers(f, &budget).unwrap();
+		let expected: StdVec<u32> = (0..count).map(|k| 5 * k + 1).collect();
+		assert_eq!(&headers[..], &expected[..]);
+		// The bitmap (one byte per instruction) and the list (exact) were both charged.
+		assert_eq!(budget.peak(), f.len() + 4 * count as usize);
+		drop(headers);
+		assert_eq!(budget.used(), 0);
+	}
+}
+
+#[test]
+fn p3a_budgeted_analysis_equals_unbudgeted_and_refuses_cleanly() {
+	use super::budget::{Budget, Held};
+	use super::{FunctionContext, Stop, TRANSFER_FACTOR};
+
+	let code = counted(Binary::Add, Some(Value::I64(3)));
+	let f = code.function(0).unwrap();
+	let reference = regions(&code, 0);
+	let Ok(expected) = &reference[0].1 else {
+		panic!("admitted")
+	};
+
+	// Unlimited: the peak is the most this function's analysis holds at once.
+	let budget = Budget::unlimited();
+	let headers = super::scan_headers(f, &budget).unwrap();
+	let context = FunctionContext::new(f, 0, &budget, TRANSFER_FACTOR).unwrap();
+	let (region, bytes) = context.analyze_header(headers[0]).unwrap().unwrap();
+	assert_eq!((region.nodes.as_slice(), region.exits.as_slice()), (expected.nodes.as_slice(), expected.exits.as_slice()));
+	let held = Held::adopt(&budget, bytes);
+	drop((headers, context, held, region));
+	assert_eq!(budget.used(), 0, "every charge released");
+	let peak = budget.peak();
+
+	// k - 1 refuses (somewhere), k and k + 1 admit the identical region.
+	for (limit, admitted) in [(peak - 1, false), (peak, true), (peak + 1, true)] {
+		let budget = Budget::new(limit);
+		let outcome = (|| -> Result<bool, Stop> {
+			let headers = super::scan_headers(f, &budget)?;
+			let context = FunctionContext::new(f, 0, &budget, TRANSFER_FACTOR)?;
+			let found = context.analyze_header(headers[0])?;
+			let (region, bytes) = found.unwrap();
+			let _held = Held::adopt(&budget, bytes);
+			Ok(region.nodes.as_slice() == expected.nodes.as_slice())
+		})();
+		match outcome {
+			Ok(same) => assert!(admitted && same, "limit {limit}"),
+			Err(Stop::Budget) => assert!(!admitted, "limit {limit}"),
+			Err(Stop::Error(e)) => panic!("{e:?}"),
+		}
+		assert_eq!(budget.used(), 0, "limit {limit}: nothing stays charged");
+		assert!(budget.peak() <= limit);
+	}
+}
+
+#[test]
+fn p3a_transfer_cutoff_zero_slots_and_overflow() {
+	use super::{cutoff, FunctionContext, TRANSFER_FACTOR};
+
+	assert_eq!(cutoff(8, 10, 0), 80, "zero slots count as one");
+	assert_eq!(cutoff(8, 10, 3), 240);
+	assert_eq!(cutoff(0, 10, 3), 0);
+	assert_eq!(cutoff(8, usize::MAX, 2), usize::MAX, "overflow: no cutoff");
+
+	// A region that touches no slot: `x = 0; loop {}` (pc 1 jumps to itself).
+	let mut f = Function::new(1, 1).unwrap();
+	lit(&mut f, 0, Value::I64(0), 0);
+	f.push(Op::Jump { target: 1 }, loc(1)).unwrap();
+	let code = build(vec![f]);
+	let found = regions(&code, 0);
+	let Ok(region) = &found[0].1 else {
+		panic!("zero-slot region admitted")
+	};
+	assert_eq!((region.slots.len(), region.nodes.len()), (0, 1));
+
+	// Factor 0 refuses it by the cutoff; the production factor admits it.
+	let f = code.function(0).unwrap();
+	let budget = super::budget::Budget::unlimited();
+	let refused = FunctionContext::new(f, 0, &budget, 0).unwrap().analyze_header(1).unwrap();
+	assert!(matches!(refused, Err(RegionRefusal::Steps)));
+	let context = FunctionContext::new(f, 0, &budget, TRANSFER_FACTOR).unwrap();
+	assert!(context.analyze_header(1).unwrap().is_ok());
+	assert_eq!(context.max_transfers(), 1);
+}

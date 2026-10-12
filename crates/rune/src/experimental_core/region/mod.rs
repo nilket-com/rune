@@ -29,17 +29,23 @@
 //!   exit whose possibly-written slot has no single scalar type refuses the region.
 //! - **Errors** are never synthesized: a faulting op exits `Retry` and the interpreter
 //!   re-executes it, producing the identical error, location, call chain and cleanup.
-// Not wired into execution until the execution GO: only tests and the backend use it.
+// Wired into execution (P2a) through `cache` on x86-64 Linux only; the simulator and the
+// listing helpers are used by tests only.
 #![cfg_attr(not(test), allow(dead_code))]
 use super::arithmetic::Binary;
 use super::code::{self, Function, Op};
 use super::error::{Error, ErrorKind};
 use super::value::Value;
 use crate::alloc::Vec;
+use budget::{AnalysisPod, BVec, Budget, Grow};
 
 pub(crate) mod abi;
+pub(crate) mod budget;
 pub(crate) mod commit;
 pub(crate) mod simulate;
+
+#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+pub(crate) mod cache;
 
 #[cfg(test)]
 pub(crate) mod hook;
@@ -58,6 +64,15 @@ macro_rules! try_copy {
 }
 
 try_copy!(SlotState, Scalar, FTy);
+
+/// The analysis element types a budgeted vector may hold (all `Copy`, no owned heap).
+macro_rules! analysis_pod {
+	($($t:ty),*) => {$(
+		impl AnalysisPod for $t {}
+	)*};
+}
+
+analysis_pod!(SlotState, Option<Scalar>, FTy, Op, Exit, Node, EntryClass);
 
 /// Most instructions in one region (the natural loop's body).
 pub(crate) const MAX_REGION_INSTRUCTIONS: usize = 1024;
@@ -306,6 +321,10 @@ pub(crate) enum RegionRefusal {
 	Type { pc: u32 },
 	/// More than [`MAX_REGION_EXITS`] exits.
 	Exits,
+	/// The analysis transient-bytes budget refused one of this header's allocations.
+	Transient,
+	/// The region fixpoint reached the [`TRANSFER_FACTOR`] cutoff.
+	Steps,
 }
 
 fn alloc_err() -> Error {
@@ -379,38 +398,101 @@ fn successors(f: &Function, pc: usize) -> Result<[Option<usize>; 2], Error> {
 	Ok(out)
 }
 
-/// Every back-edge target of `f`, in pc order: the candidate headers.
-pub(crate) fn headers(f: &Function) -> Result<Vec<u32>, Error> {
-	let mut found = Vec::new();
-	for pc in 0..f.len() {
+/// Why an analysis step stopped early: an error of the analysis itself (allocation or
+/// invalid code), or the transient-bytes [`Budget`].
+#[derive(Debug)]
+pub(crate) enum Stop {
+	Error(Error),
+	Budget,
+}
+
+impl From<Error> for Stop {
+	fn from(error: Error) -> Self {
+		Self::Error(error)
+	}
+}
+
+impl From<Grow> for Stop {
+	fn from(grow: Grow) -> Self {
+		match grow {
+			Grow::Alloc => Self::Error(alloc_err()),
+			Grow::Budget => Self::Budget,
+			// Counted by `Budget::violations`; an analysis error like an allocation failure.
+			Grow::Invariant => Self::Error(alloc_err()),
+		}
+	}
+}
+
+/// The fixpoint transfer cutoff factor: a region fixpoint may run at most
+/// `TRANSFER_FACTOR * body * max(slots, 1)` transfers, and the function-level inference at
+/// most `TRANSFER_FACTOR * instructions * max(slots, 1)`. This is an OPERATIONAL cutoff, not
+/// a proof of the fixpoints' complexity. (A lattice-height argument suggests about
+/// `body * (1 + 6 * slots)` region transfers and `len * (1 + 2 * slots)` function
+/// transfers, below the cutoff, but that argument is not relied on.) Hitting it refuses the
+/// region (`RegionRefusal::Steps`) or abandons the function-level inference (as past
+/// [`MAX_FUNCTION_INFERENCE_CELLS`]); both fall back to the interpreter normally.
+pub(crate) const TRANSFER_FACTOR: usize = 8;
+
+fn stop_error(stop: Stop) -> Error {
+	match stop {
+		Stop::Error(error) => error,
+		Stop::Budget => alloc_err(),
+	}
+}
+
+/// `factor * a * max(b, 1)`, or no cutoff when that overflows.
+pub(crate) fn cutoff(factor: usize, a: usize, b: usize) -> usize {
+	factor
+		.checked_mul(a)
+		.and_then(|x| x.checked_mul(b.max(1)))
+		.unwrap_or(usize::MAX)
+}
+
+/// Every back-edge target of `f`, in pc order: the candidate headers. One linear pass with
+/// a bitmap; both buffers are charged to `budget` before they are allocated.
+pub(crate) fn scan_headers<'b>(f: &Function, budget: &'b Budget) -> Result<BVec<'b, u32>, Stop> {
+	let len = f.len();
+	let mut seen: BVec<'b, bool> = BVec::new(budget);
+	seen.resize(len, false)?;
+	let mut count = 0usize;
+	for pc in 0..len {
 		for target in successors(f, pc)?.into_iter().flatten() {
-			if target <= pc {
-				let target = u32::try_from(target).map_err(|_| invalid())?;
-				if !found.contains(&target) {
-					found.try_push(target).map_err(|_| alloc_err())?;
-				}
+			if target <= pc && !seen[target] {
+				seen[target] = true;
+				count += 1;
 			}
 		}
 	}
-	found.sort_unstable();
-	Ok(found)
+
+	let mut headers: BVec<'b, u32> = BVec::with_capacity(budget, count)?;
+	for (pc, &is_header) in seen.iter().enumerate() {
+		if is_header {
+			headers.push(u32::try_from(pc).map_err(|_| invalid())?)?;
+		}
+	}
+	Ok(headers)
 }
 
 /// Analyses every candidate header of function `function` (at most
-/// [`MAX_REGIONS_PER_FUNCTION`]). `Err` is an allocation or invalid-code failure of the
-/// analysis itself, which the caller treats as "no regions" (interpreter fallback).
+/// [`MAX_REGIONS_PER_FUNCTION`]) without a byte limit. `Err` is an allocation or
+/// invalid-code failure of the analysis itself, which the caller treats as "no regions"
+/// (interpreter fallback). Tests and the P1 hook use it; the production cache streams the
+/// same steps ([`scan_headers`], [`FunctionContext::new`], [`FunctionContext::analyze_header`])
+/// under its budget instead.
 pub(crate) fn analyze(
 	f: &Function,
 	function: u32,
 ) -> Result<Vec<(u32, Result<Region, RegionRefusal>)>, Error> {
-	let headers = headers(f)?;
-	let static_types = function_types(f)?;
+	let budget = Budget::unlimited();
+	let headers = scan_headers(f, &budget).map_err(stop_error)?;
+	let context = FunctionContext::new(f, function, &budget, TRANSFER_FACTOR).map_err(stop_error)?;
 	let mut out = Vec::new();
 	for &header in headers.iter().take(MAX_REGIONS_PER_FUNCTION) {
-		let at = static_types
-			.as_ref()
-			.map(|t| &t[header as usize * f.slots as usize..][..f.slots as usize]);
-		let region = analyze_header(f, function, header, at)?;
+		let region = match context.analyze_header(header) {
+			Ok(found) => found.map(|(region, _)| region),
+			Err(Stop::Budget) => Err(RegionRefusal::Transient),
+			Err(Stop::Error(error)) => return Err(error),
+		};
 		out.try_push((header, region)).map_err(|_| alloc_err())?;
 	}
 	Ok(out)
@@ -421,239 +503,323 @@ fn index_of(body: &[u32], pc: usize) -> Option<usize> {
 	body.binary_search(&pc).ok()
 }
 
-/// One candidate header. `static_at` is the function-level type state at the header, if
-/// that inference ran.
-pub(crate) fn analyze_header(
-	f: &Function,
+/// The function-level state every header of one function shares, built once per function:
+/// the sorted predecessor arcs and the function-level type inference. Both are charged to
+/// the budget for as long as the context lives.
+pub(crate) struct FunctionContext<'f, 'b> {
+	f: &'f Function,
 	function: u32,
-	header: u32,
-	static_at: Option<&[FTy]>,
-) -> Result<Result<Region, RegionRefusal>, Error> {
-	let len = f.len();
-	let h = header as usize;
-	if h >= len {
-		return Err(invalid());
-	}
-	if !f.instructions()[h].is_charged() {
-		return Ok(Err(RegionRefusal::NotCharged));
-	}
-	// Predecessor lists, flattened: (target, source) pairs sorted by target.
-	let mut edges: Vec<(u32, u32)> = Vec::new();
-	for pc in 0..len {
-		for t in successors(f, pc)?.into_iter().flatten() {
-			edges
-				.try_push((t as u32, pc as u32))
-				.map_err(|_| alloc_err())?;
-		}
-	}
-	edges.sort_unstable();
-	let preds = |pc: u32| -> &[(u32, u32)] {
-		let start = edges.partition_point(|e| e.0 < pc);
-		let end = edges.partition_point(|e| e.0 <= pc);
-		&edges[start..end]
-	};
-	// Forward reachability from the header, so the backward walk stays inside the part of
-	// the function the header can reach (a side entry is then seen at the entered node).
-	let mut forward: Vec<bool> = Vec::new();
-	forward.try_resize(len, false).map_err(|_| alloc_err())?;
-	let mut stack: Vec<u32> = Vec::new();
-	forward[h] = true;
-	stack.try_push(header).map_err(|_| alloc_err())?;
-	while let Some(pc) = stack.pop() {
-		for q in successors(f, pc as usize)?.into_iter().flatten() {
-			if !forward[q] {
-				forward[q] = true;
-				stack.try_push(q as u32).map_err(|_| alloc_err())?;
-			}
-		}
-	}
-	// Natural loop: the header plus every header-reachable instruction that reaches a
-	// back-edge source without passing through the header.
-	let mut in_body: Vec<bool> = Vec::new();
-	in_body.try_resize(len, false).map_err(|_| alloc_err())?;
-	in_body[h] = true;
-	let mut size = 1usize;
-	for &(_, source) in preds(header) {
-		if source >= header && forward[source as usize] {
-			stack.try_push(source).map_err(|_| alloc_err())?;
-		}
-	}
-	while let Some(pc) = stack.pop() {
-		if in_body[pc as usize] {
-			continue;
-		}
-		in_body[pc as usize] = true;
-		size += 1;
-		if size > MAX_REGION_INSTRUCTIONS {
-			return Ok(Err(RegionRefusal::Size));
-		}
-		for &(_, source) in preds(pc) {
-			if !in_body[source as usize] && forward[source as usize] {
-				stack.try_push(source).map_err(|_| alloc_err())?;
-			}
-		}
-	}
-	let mut body: Vec<u32> = Vec::new();
-	for pc in 0..len {
-		if in_body[pc] {
-			body.try_push(pc as u32).map_err(|_| alloc_err())?;
-		}
-	}
-	// Side entries: every non-header body instruction is entered only from the body (so
-	// the header dominates it), and the function entry (pc 0) is an entry of its own.
-	for &pc in body.iter() {
-		if pc == header {
-			continue;
-		}
-		if pc == 0 || preds(pc).iter().any(|&(_, s)| !in_body[s as usize]) {
-			return Ok(Err(RegionRefusal::SideEntry { pc }));
-		}
-	}
-	// Admission and touched slots.
-	let mut ops: Vec<Op> = Vec::new();
-	let mut slots: Vec<u32> = Vec::new();
-	for &pc in body.iter() {
-		let op = f.operation(pc as usize)?;
-		if !admitted(op) {
-			return Ok(Err(RegionRefusal::Op { pc }));
-		}
-		for slot in reads(op)
-			.into_iter()
-			.flatten()
-			.map(|(s, _)| s)
-			.chain(write(op))
-		{
-			if !slots.contains(&slot) {
-				if slots.len() >= MAX_REGION_SLOTS {
-					return Ok(Err(RegionRefusal::Slots));
-				}
-				slots.try_push(slot).map_err(|_| alloc_err())?;
-			}
-		}
-		ops.try_push(op).map_err(|_| alloc_err())?;
-	}
-	slots.sort_unstable();
-	let n = slots.len();
-	let local = |slot: u32| slots.binary_search(&slot).map_err(|_| invalid());
-	let header_index = index_of(&body, h).ok_or_else(invalid)?;
+	budget: &'b Budget,
+	/// `(target, source)` of every successor arc, sorted by target.
+	edges: BVec<'b, (u32, u32)>,
+	/// The function-level inference, `instructions * slots` cells, if it ran.
+	types: Option<BVec<'b, FTy>>,
+	factor: usize,
+	/// The most fixpoint transfers one header used (tests and receipts).
+	max_transfers: core::cell::Cell<usize>,
+}
 
-	// Forward fixpoint over (written, written type, written constant) per slot.
-	let mut states: Vec<SlotState> = Vec::new();
-	states
-		.try_resize(body.len() * n, SlotState::ENTRY)
-		.map_err(|_| alloc_err())?;
-	let mut reached: Vec<bool> = Vec::new();
-	reached
-		.try_resize(body.len(), false)
-		.map_err(|_| alloc_err())?;
-	reached[header_index] = true;
-	let mut work: Vec<usize> = Vec::new();
-	work.try_push(header_index).map_err(|_| alloc_err())?;
-	let mut scratch: Vec<SlotState> = Vec::new();
-	scratch
-		.try_resize(n, SlotState::ENTRY)
-		.map_err(|_| alloc_err())?;
-	while let Some(i) = work.pop() {
-		scratch.copy_from_slice(&states[i * n..(i + 1) * n]);
-		transfer(ops[i], &slots, &mut scratch)?;
-		for q in successors(f, body[i] as usize)?.into_iter().flatten() {
-			let Some(j) = index_of(&body, q) else {
+impl<'f, 'b> FunctionContext<'f, 'b> {
+	/// Builds the predecessor arcs (exact capacity, counted first) and runs the
+	/// function-level inference, every buffer charged before it is allocated. `factor` is
+	/// the transfer cutoff factor ([`TRANSFER_FACTOR`] in production).
+	pub(crate) fn new(f: &'f Function, function: u32, budget: &'b Budget, factor: usize) -> Result<Self, Stop> {
+		let len = f.len();
+		let mut count = 0usize;
+		for pc in 0..len {
+			count += successors(f, pc)?.into_iter().flatten().count();
+		}
+
+		let mut edges: BVec<'b, (u32, u32)> = BVec::with_capacity(budget, count)?;
+		for pc in 0..len {
+			for t in successors(f, pc)?.into_iter().flatten() {
+				edges.push((t as u32, pc as u32))?;
+			}
+		}
+		edges.sort_unstable();
+
+		let types = function_types_in(f, budget, factor)?;
+
+		Ok(Self {
+			f,
+			function,
+			budget,
+			edges,
+			types,
+			factor,
+			max_transfers: core::cell::Cell::new(0),
+		})
+	}
+
+	fn preds(&self, pc: u32) -> &[(u32, u32)] {
+		let start = self.edges.partition_point(|e| e.0 < pc);
+		let end = self.edges.partition_point(|e| e.0 <= pc);
+		&self.edges[start..end]
+	}
+
+	/// The function-level type state at `header`, if that inference ran.
+	fn static_at(&self, header: u32) -> Option<&[FTy]> {
+		let n = self.f.slots as usize;
+		self.types
+			.as_ref()
+			.map(|t| &t[header as usize * n..][..n])
+	}
+
+	/// The most fixpoint transfers any header of this context used so far.
+	pub(crate) fn max_transfers(&self) -> usize {
+		self.max_transfers.get()
+	}
+
+	/// The bytes this context itself holds charged (arcs and inference; tests).
+	#[cfg(test)]
+	pub(crate) fn charged_for_test(&self) -> usize {
+		self.edges.charged() + self.types.as_ref().map_or(0, |t| t.charged())
+	}
+
+	/// One candidate header. On success, the region and the bytes of its four vectors
+	/// (slots, entry, nodes, exits; by capacity), which stay charged to the budget: the
+	/// caller adopts them (`budget::Held::adopt`). `Err(Stop::Budget)`: the transient-bytes
+	/// budget refused an allocation (nothing of this header stays charged).
+	pub(crate) fn analyze_header(&self, header: u32) -> Result<Result<(Region, usize), RegionRefusal>, Stop> {
+		let f = self.f;
+		let budget = self.budget;
+		let function = self.function;
+		let len = f.len();
+		let h = header as usize;
+		if h >= len {
+			return Err(invalid().into());
+		}
+		if !f.instructions()[h].is_charged() {
+			return Ok(Err(RegionRefusal::NotCharged));
+		}
+
+		// Forward reachability from the header, so the backward walk stays inside the part
+		// of the function the header can reach (a side entry is then seen at the entered
+		// node).
+		let mut forward: BVec<'b, bool> = BVec::new(budget);
+		forward.resize(len, false)?;
+		let mut stack: BVec<'b, u32> = BVec::new(budget);
+		forward[h] = true;
+		stack.push(header)?;
+		while let Some(pc) = stack.pop() {
+			for q in successors(f, pc as usize)?.into_iter().flatten() {
+				if !forward[q] {
+					forward[q] = true;
+					stack.push(q as u32)?;
+				}
+			}
+		}
+
+		// Natural loop: the header plus every header-reachable instruction that reaches a
+		// back-edge source without passing through the header.
+		let mut in_body: BVec<'b, bool> = BVec::new(budget);
+		in_body.resize(len, false)?;
+		in_body[h] = true;
+		let mut size = 1usize;
+		for &(_, source) in self.preds(header) {
+			if source >= header && forward[source as usize] {
+				stack.push(source)?;
+			}
+		}
+		while let Some(pc) = stack.pop() {
+			if in_body[pc as usize] {
 				continue;
-			};
-			let target = &mut states[j * n..(j + 1) * n];
-			let changed = if reached[j] {
-				let mut changed = false;
-				for (t, s) in target.iter_mut().zip(scratch.iter()) {
-					let joined = t.join(*s);
-					changed |= joined != *t;
-					*t = joined;
-				}
-				changed
-			} else {
-				reached[j] = true;
-				target.copy_from_slice(&scratch);
-				true
-			};
-			if changed && !work.contains(&j) {
-				work.try_push(j).map_err(|_| alloc_err())?;
 			}
-		}
-	}
-
-	// Live-in demands: a read that can observe the entry value fixes that slot's guard.
-	let mut demand: Vec<Option<Scalar>> = Vec::new();
-	demand.try_resize(n, None).map_err(|_| alloc_err())?;
-	for i in (0..body.len()).filter(|&i| reached[i]) {
-		for (slot, want) in reads(ops[i]).into_iter().flatten() {
-			let l = local(slot)?;
-			if states[i * n + l].written != Written::Yes {
-				match demand[l] {
-					None => demand[l] = Some(want),
-					Some(d) if d == want => (),
-					Some(_) => return Ok(Err(RegionRefusal::LiveIn { pc: body[i], slot })),
+			in_body[pc as usize] = true;
+			size += 1;
+			if size > MAX_REGION_INSTRUCTIONS {
+				return Ok(Err(RegionRefusal::Size));
+			}
+			for &(_, source) in self.preds(pc) {
+				if !in_body[source as usize] && forward[source as usize] {
+					stack.push(source)?;
 				}
 			}
 		}
-	}
-	let entry_ty = |l: usize| demand[l].map_or(Ty::Top, Ty::of);
-	let current = |s: SlotState, l: usize| match s.written {
-		Written::No => entry_ty(l),
-		Written::Yes => s.ty,
-		Written::Maybe => entry_ty(l).join(s.ty),
-	};
-	// Every read must see exactly the demanded scalar type.
-	for i in (0..body.len()).filter(|&i| reached[i]) {
-		for (slot, want) in reads(ops[i]).into_iter().flatten() {
-			let l = local(slot)?;
-			if current(states[i * n + l], l) != Ty::of(want) {
-				return Ok(Err(RegionRefusal::Type { pc: body[i] }));
-			}
-		}
-	}
+		drop(stack);
+		drop(forward);
 
-	// Nodes (reached only) and exits.
-	let mut node_of: Vec<Option<u32>> = Vec::new();
-	node_of
-		.try_resize(body.len(), None)
-		.map_err(|_| alloc_err())?;
-	let mut count = 0u32;
-	for i in 0..body.len() {
-		if reached[i] {
-			node_of[i] = Some(count);
-			count += 1;
-		}
-	}
-	let mut exits: Vec<Exit> = Vec::new();
-	let mut nodes: Vec<Node> = Vec::new();
-	let mut push_exit = |status: Status,
-	                     pc: u32,
-	                     _at: u32,
-	                     state: &[SlotState],
-	                     restore: bool|
-	 -> Result<Result<u32, RegionRefusal>, Error> {
-		let (mut definite, mut maybe, mut bools, mut dynamic) = (0u64, 0u64, 0u64, 0u64);
-		for (l, s) in state.iter().enumerate() {
-			let bit = 1u64 << l;
-			match s.written {
-				Written::No => continue,
-				Written::Yes => definite |= bit,
-				Written::Maybe => maybe |= bit,
-			}
-			// Written values are only I64 or Bool, so Top here means "I64 on some paths,
-			// Bool on others", which the dynamic bool mask records exactly.
-			match s.ty {
-				Ty::Bool => bools |= bit,
-				Ty::I64 => (),
-				Ty::Top => dynamic |= bit,
-				Ty::Bottom => return Err(invalid()),
+		let mut body: BVec<'b, u32> = BVec::with_capacity(budget, size)?;
+		for pc in 0..len {
+			if in_body[pc] {
+				body.push(pc as u32)?;
 			}
 		}
-		if exits.len() >= MAX_REGION_EXITS {
-			return Ok(Err(RegionRefusal::Exits));
+
+		// Side entries: every non-header body instruction is entered only from the body (so
+		// the header dominates it), and the function entry (pc 0) is an entry of its own.
+		for &pc in body.iter() {
+			if pc == header {
+				continue;
+			}
+			if pc == 0 || self.preds(pc).iter().any(|&(_, s)| !in_body[s as usize]) {
+				return Ok(Err(RegionRefusal::SideEntry { pc }));
+			}
 		}
-		let id = exits.len() as u32;
-		exits
-			.try_push(Exit {
+		drop(in_body);
+
+		// Admission and touched slots.
+		let mut ops: BVec<'b, Op> = BVec::with_capacity(budget, body.len())?;
+		let mut slots: BVec<'b, u32> = BVec::new(budget);
+		for &pc in body.iter() {
+			let op = f.operation(pc as usize)?;
+			if !admitted(op) {
+				return Ok(Err(RegionRefusal::Op { pc }));
+			}
+			for slot in reads(op)
+				.into_iter()
+				.flatten()
+				.map(|(s, _)| s)
+				.chain(write(op))
+			{
+				if !slots.contains(&slot) {
+					if slots.len() >= MAX_REGION_SLOTS {
+						return Ok(Err(RegionRefusal::Slots));
+					}
+					slots.push(slot)?;
+				}
+			}
+			ops.push(op)?;
+		}
+		slots.sort_unstable();
+		let n = slots.len();
+		let local = |slot: u32| slots.binary_search(&slot).map_err(|_| invalid());
+		let header_index = index_of(&body, h).ok_or_else(invalid)?;
+
+		// Test seam: an analysis error mid-header, with the body, ops and slots buffers
+		// charged and alive. It can only produce an `Err`.
+		#[cfg(test)]
+		if take_injected_analysis_error() {
+			return Err(invalid().into());
+		}
+
+		// Forward fixpoint over (written, written type, written constant) per slot. The
+		// work list holds each body index at most once (the `in_work` bitmap), so its
+		// capacity is the body length.
+		let cells = body.len().checked_mul(n).ok_or(Stop::Budget)?;
+		let mut states: BVec<'b, SlotState> = BVec::new(budget);
+		states.resize(cells, SlotState::ENTRY)?;
+		let mut reached: BVec<'b, bool> = BVec::new(budget);
+		reached.resize(body.len(), false)?;
+		reached[header_index] = true;
+		let mut work: BVec<'b, usize> = BVec::with_capacity(budget, body.len())?;
+		let mut in_work: BVec<'b, bool> = BVec::new(budget);
+		in_work.resize(body.len(), false)?;
+		work.push(header_index)?;
+		in_work[header_index] = true;
+		let mut scratch: BVec<'b, SlotState> = BVec::new(budget);
+		scratch.resize(n, SlotState::ENTRY)?;
+		let limit = cutoff(self.factor, body.len(), n);
+		let mut transfers = 0usize;
+		while let Some(i) = work.pop() {
+			in_work[i] = false;
+			transfers += 1;
+			if transfers > limit {
+				return Ok(Err(RegionRefusal::Steps));
+			}
+			scratch.copy_from_slice(&states[i * n..(i + 1) * n]);
+			transfer(ops[i], &slots, &mut scratch)?;
+			for q in successors(f, body[i] as usize)?.into_iter().flatten() {
+				let Some(j) = index_of(&body, q) else {
+					continue;
+				};
+				let target = &mut states[j * n..(j + 1) * n];
+				let changed = if reached[j] {
+					let mut changed = false;
+					for (t, s) in target.iter_mut().zip(scratch.iter()) {
+						let joined = t.join(*s);
+						changed |= joined != *t;
+						*t = joined;
+					}
+					changed
+				} else {
+					reached[j] = true;
+					target.copy_from_slice(&scratch);
+					true
+				};
+				if changed && !in_work[j] {
+					in_work[j] = true;
+					work.push(j)?;
+				}
+			}
+		}
+		if transfers > self.max_transfers.get() {
+			self.max_transfers.set(transfers);
+		}
+		drop(work);
+		drop(in_work);
+
+		// Live-in demands: a read that can observe the entry value fixes that slot's guard.
+		let mut demand: BVec<'b, Option<Scalar>> = BVec::new(budget);
+		demand.resize(n, None)?;
+		for i in (0..body.len()).filter(|&i| reached[i]) {
+			for (slot, want) in reads(ops[i]).into_iter().flatten() {
+				let l = local(slot)?;
+				if states[i * n + l].written != Written::Yes {
+					match demand[l] {
+						None => demand[l] = Some(want),
+						Some(d) if d == want => (),
+						Some(_) => return Ok(Err(RegionRefusal::LiveIn { pc: body[i], slot })),
+					}
+				}
+			}
+		}
+		let entry_ty = |l: usize| demand[l].map_or(Ty::Top, Ty::of);
+		let current = |s: SlotState, l: usize| match s.written {
+			Written::No => entry_ty(l),
+			Written::Yes => s.ty,
+			Written::Maybe => entry_ty(l).join(s.ty),
+		};
+		// Every read must see exactly the demanded scalar type.
+		for i in (0..body.len()).filter(|&i| reached[i]) {
+			for (slot, want) in reads(ops[i]).into_iter().flatten() {
+				let l = local(slot)?;
+				if current(states[i * n + l], l) != Ty::of(want) {
+					return Ok(Err(RegionRefusal::Type { pc: body[i] }));
+				}
+			}
+		}
+
+		// Nodes (reached only) and exits.
+		let mut node_of: BVec<'b, Option<u32>> = BVec::new(budget);
+		node_of.resize(body.len(), None)?;
+		let mut count = 0u32;
+		for i in 0..body.len() {
+			if reached[i] {
+				node_of[i] = Some(count);
+				count += 1;
+			}
+		}
+		let mut exits: BVec<'b, Exit> = BVec::new(budget);
+		let mut nodes: BVec<'b, Node> = BVec::new(budget);
+		let mut push_exit = |status: Status,
+		                     pc: u32,
+		                     _at: u32,
+		                     state: &[SlotState],
+		                     restore: bool|
+		 -> Result<Result<u32, RegionRefusal>, Stop> {
+			let (mut definite, mut maybe, mut bools, mut dynamic) = (0u64, 0u64, 0u64, 0u64);
+			for (l, s) in state.iter().enumerate() {
+				let bit = 1u64 << l;
+				match s.written {
+					Written::No => continue,
+					Written::Yes => definite |= bit,
+					Written::Maybe => maybe |= bit,
+				}
+				// Written values are only I64 or Bool, so Top here means "I64 on some paths,
+				// Bool on others", which the dynamic bool mask records exactly.
+				match s.ty {
+					Ty::Bool => bools |= bit,
+					Ty::I64 => (),
+					Ty::Top => dynamic |= bit,
+					Ty::Bottom => return Err(invalid().into()),
+				}
+			}
+			if exits.len() >= MAX_REGION_EXITS {
+				return Ok(Err(RegionRefusal::Exits));
+			}
+			let id = exits.len() as u32;
+			exits.push(Exit {
 				status,
 				pc,
 				definite,
@@ -661,162 +827,229 @@ pub(crate) fn analyze_header(
 				bools,
 				dynamic,
 				restore,
-			})
-			.map_err(|_| alloc_err())?;
-		Ok(Ok(id))
-	};
-	for i in (0..body.len()).filter(|&i| reached[i]) {
-		let pc = body[i];
-		let state = &states[i * n..(i + 1) * n];
-		let charged_pc = f.instructions()[pc as usize].is_charged();
-		let charged = if charged_pc {
-			match push_exit(Status::Fuel, pc, pc, state, false)? {
-				Ok(id) => Some(id),
-				Err(refusal) => return Ok(Err(refusal)),
-			}
-		} else {
-			None
+			})?;
+			Ok(Ok(id))
 		};
-		// Arithmetic first: its Retry exit sees the state before the op.
-		let mut arith = None;
-		if let Some((out, op, lhs, rhs)) = binary_parts(ops[i]) {
-			if ARITH.contains(&op) {
-				let r = local(rhs)?;
-				// A divisor is constant only when written by an in-region literal on every
-				// path; entry values never are.
-				let rs = state[r];
-				let divisor = match (op, rs.written, rs.konst) {
-					(Binary::Div | Binary::Rem, Written::Yes, Konst::Const(c))
-						if c != 0 && c != -1 =>
-					{
-						Some(c)
+		for i in (0..body.len()).filter(|&i| reached[i]) {
+			let pc = body[i];
+			let state = &states[i * n..(i + 1) * n];
+			let charged_pc = f.instructions()[pc as usize].is_charged();
+			let charged = if charged_pc {
+				match push_exit(Status::Fuel, pc, pc, state, false)? {
+					Ok(id) => Some(id),
+					Err(refusal) => return Ok(Err(refusal)),
+				}
+			} else {
+				None
+			};
+			// Arithmetic first: its Retry exit sees the state before the op.
+			let mut arith = None;
+			if let Some((out, op, lhs, rhs)) = binary_parts(ops[i]) {
+				if ARITH.contains(&op) {
+					let r = local(rhs)?;
+					// A divisor is constant only when written by an in-region literal on
+					// every path; entry values never are.
+					let rs = state[r];
+					let divisor = match (op, rs.written, rs.konst) {
+						(Binary::Div | Binary::Rem, Written::Yes, Konst::Const(c))
+							if c != 0 && c != -1 =>
+						{
+							Some(c)
+						}
+						_ => None,
+					};
+					let retry = if divisor.is_some() {
+						None
+					} else {
+						match push_exit(Status::Retry, pc, pc, state, charged_pc)? {
+							Ok(id) => Some(id),
+							Err(refusal) => return Ok(Err(refusal)),
+						}
+					};
+					arith = Some(NodeOp::Arith {
+						out: local(out)? as u32,
+						op,
+						lhs: local(lhs)? as u32,
+						rhs: r as u32,
+						retry,
+						divisor,
+					});
+				}
+			}
+			scratch.copy_from_slice(state);
+			transfer(ops[i], &slots, &mut scratch)?;
+			let mut target = |q: usize| -> Result<Result<Target, RegionRefusal>, Stop> {
+				Ok(match index_of(&body, q) {
+					Some(j) => Ok(Target::Node(node_of[j].ok_or_else(invalid)?)),
+					None => {
+						let q = u32::try_from(q).map_err(|_| invalid())?;
+						push_exit(Status::Continue, q, pc, &scratch, false)?.map(Target::Exit)
 					}
-					_ => None,
-				};
-				let retry = if divisor.is_some() {
-					None
-				} else {
-					match push_exit(Status::Retry, pc, pc, state, charged_pc)? {
-						Ok(id) => Some(id),
+				})
+			};
+			macro_rules! target {
+				($q:expr) => {
+					match target($q)? {
+						Ok(t) => t,
 						Err(refusal) => return Ok(Err(refusal)),
 					}
 				};
-				arith = Some(NodeOp::Arith {
-					out: local(out)? as u32,
-					op,
-					lhs: local(lhs)? as u32,
-					rhs: r as u32,
-					retry,
-					divisor,
-				});
 			}
-		}
-		scratch.copy_from_slice(state);
-		transfer(ops[i], &slots, &mut scratch)?;
-		let mut target = |q: usize| -> Result<Result<Target, RegionRefusal>, Error> {
-			Ok(match index_of(&body, q) {
-				Some(j) => Ok(Target::Node(node_of[j].ok_or_else(invalid)?)),
-				None => {
-					let q = u32::try_from(q).map_err(|_| invalid())?;
-					push_exit(Status::Continue, q, pc, &scratch, false)?.map(Target::Exit)
+			let fall = pc as usize + 1;
+			let (op, next) = match ops[i] {
+				Op::Literal { out, value } => {
+					let (value, ty) = match value {
+						Value::I64(v) => (v, Scalar::I64),
+						Value::Bool(b) => (i64::from(b), Scalar::Bool),
+						_ => return Err(invalid().into()),
+					};
+					let out = local(out)? as u32;
+					(NodeOp::Literal { out, value, ty }, Some(target!(fall)))
 				}
-			})
-		};
-		macro_rules! target {
-			($q:expr) => {
-				match target($q)? {
-					Ok(t) => t,
-					Err(refusal) => return Ok(Err(refusal)),
-				}
-			};
-		}
-		let fall = pc as usize + 1;
-		let (op, next) = match ops[i] {
-			Op::Literal { out, value } => {
-				let (value, ty) = match value {
-					Value::I64(v) => (v, Scalar::I64),
-					Value::Bool(b) => (i64::from(b), Scalar::Bool),
-					_ => return Err(invalid()),
-				};
-				let out = local(out)? as u32;
-				(NodeOp::Literal { out, value, ty }, Some(target!(fall)))
-			}
-			Op::Jump { target } => (
-				NodeOp::Jump {
-					target: target!(target as usize),
-				},
-				None,
-			),
-			Op::Branch { condition, yes, no } => {
-				let yes = target!(yes as usize);
-				let no = target!(no as usize);
-				(
-					NodeOp::Branch {
-						condition: local(condition)? as u32,
-						yes,
-						no,
+				Op::Jump { target } => (
+					NodeOp::Jump {
+						target: target!(target as usize),
 					},
 					None,
-				)
-			}
-			other => {
-				let (out, op, lhs, rhs) = binary_parts(other).ok_or_else(invalid)?;
-				let next = Some(target!(fall));
-				match arith {
-					Some(node) => (node, next),
-					None => (
-						NodeOp::Compare {
-							out: local(out)? as u32,
-							op,
-							lhs: local(lhs)? as u32,
-							rhs: local(rhs)? as u32,
+				),
+				Op::Branch { condition, yes, no } => {
+					let yes = target!(yes as usize);
+					let no = target!(no as usize);
+					(
+						NodeOp::Branch {
+							condition: local(condition)? as u32,
+							yes,
+							no,
 						},
-						next,
-					),
+						None,
+					)
 				}
-			}
-		};
-		nodes
-			.try_push(Node {
+				other => {
+					let (out, op, lhs, rhs) = binary_parts(other).ok_or_else(invalid)?;
+					let next = Some(target!(fall));
+					match arith {
+						Some(node) => (node, next),
+						None => (
+							NodeOp::Compare {
+								out: local(out)? as u32,
+								op,
+								lhs: local(lhs)? as u32,
+								rhs: local(rhs)? as u32,
+							},
+							next,
+						),
+					}
+				}
+			};
+			nodes.push(Node {
 				pc,
 				charged,
 				op,
 				next,
-			})
-			.map_err(|_| alloc_err())?;
-	}
-	let mut entry: Vec<EntryClass> = Vec::new();
-	let mut proven = 0u64;
-	for l in 0..n {
-		let class = match demand[l] {
-			Some(s) => {
-				if let Some(at) = static_at {
-					let want = match s {
-						Scalar::I64 => FTy::I64,
-						Scalar::Bool => FTy::Bool,
-					};
-					if at.get(slots[l] as usize) == Some(&want) {
-						proven |= 1 << l;
+			})?;
+		}
+		let mut entry: BVec<'b, EntryClass> = BVec::new(budget);
+		let mut proven = 0u64;
+		let static_at = self.static_at(header);
+		for l in 0..n {
+			let class = match demand[l] {
+				Some(s) => {
+					if let Some(at) = static_at {
+						let want = match s {
+							Scalar::I64 => FTy::I64,
+							Scalar::Bool => FTy::Bool,
+						};
+						if at.get(slots[l] as usize) == Some(&want) {
+							proven |= 1 << l;
+						}
 					}
+					EntryClass::Guard(s)
 				}
-				EntryClass::Guard(s)
-			}
-			None => EntryClass::Scalar,
+				None => EntryClass::Scalar,
+			};
+			entry.push(class)?;
+		}
+		let tracked = exits.iter().fold(0, |m, e| m | e.dynamic);
+		let header_node = node_of[header_index].ok_or_else(invalid)?;
+
+		let (slots, slots_bytes) = slots.into_parts();
+		let (entry, entry_bytes) = entry.into_parts();
+		let (nodes, nodes_bytes) = nodes.into_parts();
+		let (exits, exits_bytes) = exits.into_parts();
+		let region = Region {
+			tracked,
+			function,
+			header,
+			header_node,
+			slots,
+			entry,
+			proven,
+			nodes,
+			exits,
 		};
-		entry.try_push(class).map_err(|_| alloc_err())?;
+		Ok(Ok((region, slots_bytes + entry_bytes + nodes_bytes + exits_bytes)))
 	}
-	let tracked = exits.iter().fold(0, |m, e| m | e.dynamic);
-	Ok(Ok(Region {
-		tracked,
-		function,
-		header,
-		header_node: node_of[header_index].ok_or_else(invalid)?,
-		slots,
-		entry,
-		proven,
-		nodes,
-		exits,
-	}))
+}
+
+#[cfg(test)]
+std::thread_local! {
+	/// Countdown to an injected analysis error: it fires in the analysis of the header after
+	/// that many headers reached the injection point.
+	static INJECT_ANALYSIS_ERROR: core::cell::Cell<Option<u32>> = const { core::cell::Cell::new(None) };
+}
+
+/// Arms an analysis error in the header analysis after `after` more headers reach the
+/// injection point (`None` disarms). Tests only.
+#[cfg(test)]
+pub(crate) fn inject_analysis_error_for_test(after: Option<u32>) {
+	INJECT_ANALYSIS_ERROR.with(|c| c.set(after));
+}
+
+#[cfg(test)]
+fn take_injected_analysis_error() -> bool {
+	INJECT_ANALYSIS_ERROR.with(|c| match c.get() {
+		Some(0) => {
+			c.set(None);
+			true
+		}
+		Some(n) => {
+			c.set(Some(n - 1));
+			false
+		}
+		None => false,
+	})
+}
+
+/// The divisor kind of a region's first fallible Div/Rem: a slot written in the region
+/// only by literals of one value is that constant, anything else is a runtime divisor.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum DivisionKind {
+	Runtime,
+	Const0,
+	ConstNeg1,
+}
+
+pub(crate) fn division_kind(region: &Region) -> Option<DivisionKind> {
+	let rhs = region.nodes.iter().find_map(|n| match n.op {
+		NodeOp::Arith {
+			op: Binary::Div | Binary::Rem,
+			rhs,
+			retry: Some(_),
+			..
+		} => Some(rhs),
+		_ => None,
+	})?;
+	let mut values = region.nodes.iter().filter_map(|n| match n.op {
+		NodeOp::Literal { out, value, .. } if out == rhs => Some(value),
+		_ => None,
+	});
+	let first = values.next();
+	let single = first.filter(|&v| values.all(|w| w == v));
+	Some(match single {
+		Some(0) => DivisionKind::Const0,
+		Some(-1) => DivisionKind::ConstNeg1,
+		_ => DivisionKind::Runtime,
+	})
 }
 
 /// Region transfer: writes set (Yes, type by op class, constant for literals). The result
@@ -882,8 +1115,23 @@ impl FTy {
 /// Whole-function forward inference from pc 0 (parameters `Top`, other slots `Unit`), over
 /// the normal successor arcs only: run-time errors end the invocation and `Try`'s error arm
 /// returns from the function, so no exceptional arc reaches another program point. Unreached
-/// points stay `Bottom`. Returns `None` past [`MAX_FUNCTION_INFERENCE_CELLS`].
+/// points stay `Bottom`. Returns `None` past [`MAX_FUNCTION_INFERENCE_CELLS`]. Unbudgeted
+/// (tests); production runs [`function_types_in`] under its budget.
 pub(crate) fn function_types(f: &Function) -> Result<Option<Vec<FTy>>, Error> {
+	let budget = Budget::unlimited();
+	let types = function_types_in(f, &budget, TRANSFER_FACTOR).map_err(stop_error)?;
+	Ok(types.map(|types| types.into_parts().0))
+}
+
+/// [`function_types`] with every buffer charged to `budget` before it is allocated. The
+/// work list holds each pc at most once (the `in_work` bitmap). Past the transfer cutoff
+/// (`factor * len * max(slots, 1)`) the inference is abandoned (`None`), as past
+/// [`MAX_FUNCTION_INFERENCE_CELLS`]: it only proves guards that are still checked.
+pub(crate) fn function_types_in<'b>(
+	f: &Function,
+	budget: &'b Budget,
+	factor: usize,
+) -> Result<Option<BVec<'b, FTy>>, Stop> {
 	let n = f.slots as usize;
 	let len = f.len();
 	if len
@@ -893,10 +1141,8 @@ pub(crate) fn function_types(f: &Function) -> Result<Option<Vec<FTy>>, Error> {
 	{
 		return Ok(None);
 	}
-	let mut states: Vec<FTy> = Vec::new();
-	states
-		.try_resize(len * n, FTy::Bottom)
-		.map_err(|_| alloc_err())?;
+	let mut states: BVec<'b, FTy> = BVec::new(budget);
+	states.resize(len * n, FTy::Bottom)?;
 	for (s, ty) in states[..n].iter_mut().enumerate() {
 		*ty = if s < f.parameters as usize {
 			FTy::Top
@@ -904,16 +1150,24 @@ pub(crate) fn function_types(f: &Function) -> Result<Option<Vec<FTy>>, Error> {
 			FTy::Unit
 		};
 	}
-	let mut work: Vec<usize> = Vec::new();
-	work.try_push(0).map_err(|_| alloc_err())?;
-	let mut scratch: Vec<FTy> = Vec::new();
-	scratch
-		.try_resize(n, FTy::Bottom)
-		.map_err(|_| alloc_err())?;
-	let mut reached: Vec<bool> = Vec::new();
-	reached.try_resize(len, false).map_err(|_| alloc_err())?;
+	let mut work: BVec<'b, usize> = BVec::with_capacity(budget, len)?;
+	let mut in_work: BVec<'b, bool> = BVec::new(budget);
+	in_work.resize(len, false)?;
+	work.push(0)?;
+	in_work[0] = true;
+	let mut scratch: BVec<'b, FTy> = BVec::new(budget);
+	scratch.resize(n, FTy::Bottom)?;
+	let mut reached: BVec<'b, bool> = BVec::new(budget);
+	reached.resize(len, false)?;
 	reached[0] = true;
+	let limit = cutoff(factor, len, n);
+	let mut transfers = 0usize;
 	while let Some(pc) = work.pop() {
+		in_work[pc] = false;
+		transfers += 1;
+		if transfers > limit {
+			return Ok(None);
+		}
 		scratch.copy_from_slice(&states[pc * n..(pc + 1) * n]);
 		function_transfer(f.operation(pc)?, &mut scratch)?;
 		for q in successors(f, pc)?.into_iter().flatten() {
@@ -925,8 +1179,9 @@ pub(crate) fn function_types(f: &Function) -> Result<Option<Vec<FTy>>, Error> {
 				changed |= joined != *t;
 				*t = joined;
 			}
-			if changed && !work.contains(&q) {
-				work.try_push(q).map_err(|_| alloc_err())?;
+			if changed && !in_work[q] {
+				in_work[q] = true;
+				work.push(q)?;
 			}
 		}
 	}

@@ -1,5 +1,6 @@
-//! THE UNSAFE BOUNDARY of the P0 native tier. Compiled, never called in P0: no code path
-//! constructs a [`NativeRegion`] or calls [`NativeRegion::call`] until the execution GO.
+//! THE UNSAFE BOUNDARY of the native tier. Since P2a the production region cache
+//! (`experimental_core::region::cache`, feature `fresh-core-native`) loads and calls it;
+//! before that only tests did.
 //!
 //! Ownership and lifetime:
 //!
@@ -41,7 +42,7 @@
 //!    which exits at fuel 0) and never unwinds: there is no call, so no panic can cross it.
 #![allow(unsafe_code)]
 #![deny(unsafe_op_in_unsafe_fn)]
-// Not wired into execution in P0.
+// Some items are used by tests only.
 #![allow(dead_code)]
 use std::prelude::rust_2021::*;
 
@@ -66,7 +67,8 @@ impl NativeRegion {
 	/// `mprotect` failure) is an interpreter fallback; memory allocated before the failure
 	/// is freed here, since nothing from it was finalized or called.
 	pub(crate) fn load(compiled: &Compiled) -> Result<Self, NativeRefusal> {
-		let isa = lower::isa()?;
+		// The thread's shared ISA (an `Arc` clone): the same flags `lower::compile` used.
+		let isa = lower::shared_isa()?;
 		let mut module = JITModule::new(JITBuilder::with_isa(isa, default_libcall_names()));
 		let result = (|| {
 			let id = module
@@ -79,6 +81,11 @@ impl NativeRegion {
 			// P1 tests only: an injected error after the code memory was allocated.
 			#[cfg(test)]
 			injected(InjectLoadError::AfterDefine)?;
+
+			// P3a tests only: an injected panic after the code memory was allocated (the
+			// module is then dropped by unwinding, which leaks its mapping).
+			#[cfg(test)]
+			injected(InjectLoadError::PanicAfterDefine)?;
 
 			module
 				.finalize_definitions()
@@ -145,6 +152,8 @@ pub(crate) enum InjectLoadError {
 	AfterDefine,
 	/// After `finalize_definitions` made it read+execute.
 	AfterFinalize,
+	/// P3a: a panic (not an error) after `define_function_bytes`.
+	PanicAfterDefine,
 }
 
 #[cfg(test)]
@@ -171,6 +180,10 @@ pub(crate) fn load_error_frees_for_test() -> usize {
 #[cfg(test)]
 fn injected(stage: InjectLoadError) -> Result<(), NativeRefusal> {
 	if INJECT_LOAD_ERROR.with(|c| c.get()) == Some(stage) {
+		if stage == InjectLoadError::PanicAfterDefine {
+			INJECT_LOAD_ERROR.with(|c| c.set(None));
+			std::panic!("injected load panic (test)");
+		}
 		return Err(NativeRefusal::Codegen("injected load error (test)".into()));
 	}
 	Ok(())

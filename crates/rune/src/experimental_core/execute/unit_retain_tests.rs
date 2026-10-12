@@ -42,7 +42,7 @@ fn code(f: Function) -> Code {
 
 fn fail(e: &mut Executor, code: &Code, store: &mut Store, args: &[Value], kind: ErrorKind) {
 	let failure = e
-		.invoke_args(code, store, 0, Args::Values(args), 1024)
+		.invoke_args_for_test(code, store, 0, Args::Values(args), 1024)
 		.unwrap_err();
 	assert_eq!(failure.error.kind, kind);
 	assert!(failure.cleanup_error.is_none());
@@ -195,7 +195,7 @@ fn d11_copy_and_successful_try_preserve_alias_and_replace_destination() {
 		));
 		let mut e = Executor::new().unwrap();
 		let result = e
-			.invoke_args(&c, &mut s, 0, Args::Values(&[variant]), 100)
+			.invoke_args_for_test(&c, &mut s, 0, Args::Values(&[variant]), 100)
 			.unwrap();
 		assert_eq!(result, payload);
 		assert_eq!(s.text(result).unwrap(), "payload");
@@ -261,7 +261,7 @@ fn d11_return_and_unsuccessful_try_transfer_or_cleanup_exact_edge() {
 		let c = code(function(1, 1, &[op, Op::Return { value: 0 }]));
 		let mut e = Executor::new().unwrap();
 		let result = e
-			.invoke_args(&c, &mut s, 0, Args::Values(&[value]), 100)
+			.invoke_args_for_test(&c, &mut s, 0, Args::Values(&[value]), 100)
 			.unwrap();
 		assert_eq!(result, value);
 		assert_eq!(s.test_strong(value), 2);
@@ -294,7 +294,7 @@ fn d11_copy_retain_failure_is_atomic() {
 	assert_eq!(s.live_entries(), 0);
 	let v = s.string("mark-success").unwrap();
 	let result = e
-		.invoke_args(&c, &mut s, 0, Args::Values(&[v]), 100)
+		.invoke_args_for_test(&c, &mut s, 0, Args::Values(&[v]), 100)
 		.unwrap();
 	assert_eq!(result, v);
 	assert_eq!(s.text(result).unwrap(), "mark-success");

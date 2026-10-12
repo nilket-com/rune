@@ -80,7 +80,7 @@ fn fails(code: &Code, arg: Value, fuel: usize, expected: Error) {
 	let mut store = store();
 	let mut executor = Executor::new().unwrap();
 	let failure = executor
-		.invoke_args(code, &mut store, 0, Args::Values(&[arg]), fuel)
+		.invoke_args_for_test(code, &mut store, 0, Args::Values(&[arg]), fuel)
 		.unwrap_err();
 	assert_eq!(failure.error, expected);
 
@@ -95,7 +95,7 @@ fn fails(code: &Code, arg: Value, fuel: usize, expected: Error) {
 	// Reuse after the failure: the executor and store still run a valid call.
 	let ok = program(3, 2, 2);
 	let value = executor
-		.invoke_args(&ok, &mut store, 0, Args::Values(&[Value::Unit]), 1024)
+		.invoke_args_for_test(&ok, &mut store, 0, Args::Values(&[Value::Unit]), 1024)
 		.unwrap();
 	assert_eq!(store.text(value).unwrap(), "ab");
 	store.release(value).unwrap();
@@ -115,7 +115,7 @@ fn d20_dynamic_call_through_a_literal_token_succeeds_and_releases() {
 
 	for _ in 0..2 {
 		let value = executor
-			.invoke_args(&code, &mut store, 0, Args::Values(&[Value::Unit]), 1024)
+			.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[Value::Unit]), 1024)
 			.unwrap();
 		// The callee returned its first argument, the heap string.
 		assert_eq!(store.text(value).unwrap(), "ab");
@@ -240,7 +240,7 @@ fn d20_charge_precedes_call_value_checks() {
 
 	// Fuel exhaustion at the charged CallValue, even though its value is not a function.
 	let failure = executor
-		.invoke_args(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 0)
+		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 0)
 		.unwrap_err();
 	assert_eq!(
 		failure.error,
@@ -252,7 +252,7 @@ fn d20_charge_precedes_call_value_checks() {
 	// A pending cancellation is consumed at the same charged CallValue.
 	executor.request_cancel();
 	let failure = executor
-		.invoke_args(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 1024)
+		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 1024)
 		.unwrap_err();
 	assert_eq!(
 		failure.error,
@@ -262,7 +262,7 @@ fn d20_charge_precedes_call_value_checks() {
 
 	// Consumed: the next invocation reaches the CallValue's own checks.
 	let failure = executor
-		.invoke_args(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 1024)
+		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 1024)
 		.unwrap_err();
 	assert_eq!(
 		failure.error,
@@ -276,7 +276,7 @@ fn d20_charge_precedes_call_value_checks() {
 	};
 
 	let value = executor
-		.invoke_args(&code, &mut store, 0, Args::Values(&[token]), 1024)
+		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[token]), 1024)
 		.unwrap();
 	assert_eq!(value, token);
 	assert!(executor.is_idle());

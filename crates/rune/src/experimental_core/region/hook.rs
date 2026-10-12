@@ -1,7 +1,8 @@
 //! Test-only executor hook: installs the regions of one `Code` for the current thread and
 //! runs them at their headers, through the exit simulator (`Mode::Simulate`) or, in the P1
-//! tests on x86-64 Linux, through the loaded native code (`Mode::Native`). There is no
-//! production wiring.
+//! tests on x86-64 Linux, through the loaded native code (`Mode::Native`), cross-checked
+//! against the simulator on every entry. The production tier (`cache`, P2a) is separate,
+//! has no simulator check, and never runs while this hook is installed on the thread.
 //!
 //! Native mode (P1, test-only):
 //!
@@ -20,8 +21,7 @@
 use super::abi::ExitRecord;
 use super::commit::{self, Refused};
 use super::simulate::simulate;
-use super::{analyze, NodeOp, Region, Status, MAX_REGION_SLOTS};
-use crate::experimental_core::arithmetic::Binary;
+use super::{analyze, Region, Status, MAX_REGION_SLOTS};
 use crate::experimental_core::code::Code;
 use crate::experimental_core::heap::Store;
 use crate::experimental_core::value::Value;
@@ -91,37 +91,7 @@ pub(crate) struct NativeInstall {
 	pub(crate) load_refused: usize,
 }
 
-/// The divisor kind of a region's first fallible Div/Rem: a slot written in the region
-/// only by literals of one value is that constant, anything else is a runtime divisor.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum DivisionKind {
-	Runtime,
-	Const0,
-	ConstNeg1,
-}
-
-pub(crate) fn division_kind(region: &Region) -> Option<DivisionKind> {
-	let rhs = region.nodes.iter().find_map(|n| match n.op {
-		NodeOp::Arith {
-			op: Binary::Div | Binary::Rem,
-			rhs,
-			retry: Some(_),
-			..
-		} => Some(rhs),
-		_ => None,
-	})?;
-	let mut values = region.nodes.iter().filter_map(|n| match n.op {
-		NodeOp::Literal { out, value, .. } if out == rhs => Some(value),
-		_ => None,
-	});
-	let first = values.next();
-	let single = first.filter(|&v| values.all(|w| w == v));
-	Some(match single {
-		Some(0) => DivisionKind::Const0,
-		Some(-1) => DivisionKind::ConstNeg1,
-		_ => DivisionKind::Runtime,
-	})
-}
+pub(crate) use super::{division_kind, DivisionKind};
 
 /// One loaded region and the identity of the analysed region it was compiled from.
 #[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
@@ -275,6 +245,11 @@ pub(crate) fn install_native(code: &Code, dump: Option<&std::path::Path>) -> Nat
 		})
 	});
 	summary
+}
+
+/// Whether this thread has an install (the P2 production tier then stays out).
+pub(crate) fn is_installed() -> bool {
+	INSTALLED.with(|i| i.borrow().is_some())
 }
 
 /// Switches how the installed regions run, keeping the installed (and loaded) regions.

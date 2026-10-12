@@ -261,8 +261,8 @@ pub mod runtime;
 /// Opt-in fresh execution core (feature `fresh-core`); unstable, no semver promise.
 #[cfg(feature = "fresh-core")]
 pub mod experimental_core;
-/// P0 Cranelift backend for fresh-core loop regions: lowering, audit and the sealed unsafe
-/// boundary (compiled, never called in P0).
+/// Cranelift backend for fresh-core loop regions: lowering, audit and the sealed unsafe
+/// boundary (called only through the fresh core's thread-local region cache).
 #[cfg(all(
 	feature = "fresh-core-native",
 	target_arch = "x86_64",

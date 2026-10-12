@@ -48,9 +48,9 @@ use std::time::{Duration, Instant};
 const CHILD_ENV: &str = "RUNE_P1_NATIVE_CHILD";
 const DEADLINE: Duration = Duration::from_secs(120);
 /// The fuel sweep bound per case: larger cases are reduced, never sampled.
-const MAX_SWEEP: usize = 20_000;
+pub(super) const MAX_SWEEP: usize = 20_000;
 /// Fuel for the reference run that measures a case's total charge.
-const BIG_FUEL: usize = 1_000_000;
+pub(super) const BIG_FUEL: usize = 1_000_000;
 
 // ------------------------------------------------------------------ process isolation
 
@@ -131,7 +131,7 @@ fn p1_native_lifecycle_and_contract() {
 
 // ---------------------------------------------------------------------------- helpers
 
-fn loc(n: u32) -> Location {
+pub(super) fn loc(n: u32) -> Location {
 	Location {
 		source: 1,
 		revision: 1,
@@ -140,7 +140,7 @@ fn loc(n: u32) -> Location {
 	}
 }
 
-fn store() -> Store {
+pub(super) fn store() -> Store {
 	Store::new(Limits {
 		entries: 256,
 		bytes: 65_536,
@@ -148,7 +148,7 @@ fn store() -> Store {
 	.unwrap()
 }
 
-fn compile_source(text: &str) -> frontend::Program {
+pub(super) fn compile_source(text: &str) -> frontend::Program {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(text).unwrap()).unwrap();
@@ -156,7 +156,7 @@ fn compile_source(text: &str) -> frontend::Program {
 	frontend::compile(&mut sources, &context, &mut diagnostics, 7).unwrap()
 }
 
-fn build(functions: Vec<Function>) -> Code {
+pub(super) fn build(functions: Vec<Function>) -> Code {
 	let mut b = Builder::default();
 	for f in functions {
 		b.push(f).unwrap();
@@ -164,24 +164,24 @@ fn build(functions: Vec<Function>) -> Code {
 	b.finish().unwrap()
 }
 
-fn lit(f: &mut Function, out: u32, value: Value, at: u32) {
+pub(super) fn lit(f: &mut Function, out: u32, value: Value, at: u32) {
 	f.push(Op::Literal { out, value }, loc(at)).unwrap();
 }
 
-fn bin(f: &mut Function, out: u32, op: Binary, lhs: u32, rhs: u32, at: u32) {
+pub(super) fn bin(f: &mut Function, out: u32, op: Binary, lhs: u32, rhs: u32, at: u32) {
 	f.push(Op::Binary { out, op, lhs, rhs }, loc(at)).unwrap();
 }
 
-fn branch(f: &mut Function, condition: u32, yes: u32, no: u32, at: u32) {
+pub(super) fn branch(f: &mut Function, condition: u32, yes: u32, no: u32, at: u32) {
 	f.push(Op::Branch { condition, yes, no }, loc(at)).unwrap();
 }
 
-fn jump(f: &mut Function, target: u32, at: u32) {
+pub(super) fn jump(f: &mut Function, target: u32, at: u32) {
 	f.push(Op::Jump { target }, loc(at)).unwrap();
 }
 
 #[derive(Clone, Copy, Debug)]
-enum Arg {
+pub(super) enum Arg {
 	I(i64),
 	U(u64),
 	F(f64),
@@ -189,7 +189,7 @@ enum Arg {
 }
 
 #[derive(Debug, PartialEq)]
-enum Outcome {
+pub(super) enum Outcome {
 	Value(Option<HostScalar>),
 	Failure {
 		error: Error,
@@ -200,15 +200,15 @@ enum Outcome {
 
 /// Everything observable about one invocation.
 #[derive(Debug, PartialEq)]
-struct Observed {
-	outcome: Outcome,
-	live_entries: usize,
-	idle: bool,
-	fuel_left: Option<usize>,
-	store_state: String,
+pub(super) struct Observed {
+	pub(super) outcome: Outcome,
+	pub(super) live_entries: usize,
+	pub(super) idle: bool,
+	pub(super) fuel_left: Option<usize>,
+	pub(super) store_state: String,
 }
 
-fn invoke(code: &Code, function: u32, args: &[Arg], fuel: usize) -> Observed {
+pub(super) fn invoke(code: &Code, function: u32, args: &[Arg], fuel: usize) -> Observed {
 	let mut s = store();
 	let roots: Vec<Root> = args
 		.iter()
@@ -262,20 +262,20 @@ fn add(total: &mut Stats, s: &Stats) {
 
 // ------------------------------------------------------------------------- the cases
 
-enum Src {
+pub(super) enum Src {
 	Program(frontend::Program),
 	Code(Code),
 }
 
 impl Src {
-	fn code(&self) -> &Code {
+	pub(super) fn code(&self) -> &Code {
 		match self {
 			Src::Program(p) => &p.code,
 			Src::Code(c) => c,
 		}
 	}
 
-	fn main(&self) -> u32 {
+	pub(super) fn main(&self) -> u32 {
 		match self {
 			Src::Program(p) => p.function(Hash::type_hash(["main"])).unwrap(),
 			Src::Code(_) => 0,
@@ -284,23 +284,23 @@ impl Src {
 }
 
 /// Expected compile refusals by kind: runtime divisor, constant 0, constant -1.
-type Refusals = [usize; 3];
+pub(super) type Refusals = [usize; 3];
 
-struct Case {
-	name: String,
-	src: Src,
-	inputs: Vec<Vec<Arg>>,
+pub(super) struct Case {
+	pub(super) name: String,
+	pub(super) src: Src,
+	pub(super) inputs: Vec<Vec<Arg>>,
 	/// Regions expected compiled, audited and loaded.
-	loaded: usize,
-	refused: Refusals,
+	pub(super) loaded: usize,
+	pub(super) refused: Refusals,
 	/// Exit kinds this case targets ("C", "F", "R"); asserted over fuel >= 1.
-	targets: &'static str,
+	pub(super) targets: &'static str,
 	/// Entry refusals (tag/store/cancel) are expected: recorded, not failures, and no
 	/// native entry is required.
-	entry_refusals: bool,
+	pub(super) entry_refusals: bool,
 }
 
-fn rune(name: &str, text: &str, inputs: Vec<Vec<Arg>>, loaded: usize, targets: &'static str) -> Case {
+pub(super) fn rune(name: &str, text: &str, inputs: Vec<Vec<Arg>>, loaded: usize, targets: &'static str) -> Case {
 	Case {
 		name: name.into(),
 		src: Src::Program(compile_source(text)),
@@ -312,7 +312,7 @@ fn rune(name: &str, text: &str, inputs: Vec<Vec<Arg>>, loaded: usize, targets: &
 	}
 }
 
-fn arithmetic_inputs() -> Vec<Vec<Arg>> {
+pub(super) fn arithmetic_inputs() -> Vec<Vec<Arg>> {
 	let max = i64::MAX;
 	let min = i64::MIN;
 	let mut inputs = Vec::new();
@@ -333,7 +333,7 @@ fn arithmetic_inputs() -> Vec<Vec<Arg>> {
 /// `fn(limit, x) { i = 0; acc = 0; while i < limit { d = D; t = x op d; acc = acc + t;
 /// one = 1; x = x - one; i = i + one } return acc }`, where `d` is the literal `divisor`
 /// written inside the loop, or (with `None`) the parameter `limit` (a runtime divisor).
-fn divided(op: Binary, divisor: Option<i64>) -> Code {
+pub(super) fn divided(op: Binary, divisor: Option<i64>) -> Code {
 	// slots: 0 limit, 1 x, 2 i, 3 cond, 4 one, 5 d, 6 t, 7 acc
 	let mut f = Function::new(8, 2).unwrap();
 	lit(&mut f, 2, Value::I64(0), 0); // 0
@@ -354,7 +354,7 @@ fn divided(op: Binary, divisor: Option<i64>) -> Code {
 	build(vec![f])
 }
 
-fn divided_inputs() -> Vec<Vec<Arg>> {
+pub(super) fn divided_inputs() -> Vec<Vec<Arg>> {
 	vec![
 		vec![Arg::I(12), Arg::I(100)],
 		vec![Arg::I(12), Arg::I(-1_000_003)],
@@ -420,13 +420,13 @@ fn heap_slot() -> Code {
 	build(vec![f])
 }
 
-fn ints(rows: &[&[i64]]) -> Vec<Vec<Arg>> {
+pub(super) fn ints(rows: &[&[i64]]) -> Vec<Vec<Arg>> {
 	rows.iter()
 		.map(|r| r.iter().map(|&v| Arg::I(v)).collect())
 		.collect()
 }
 
-fn corpus_cases() -> Vec<Case> {
+pub(super) fn corpus_cases() -> Vec<Case> {
 	let mut cases = vec![
 		rune(
 			"kernel_while",
@@ -557,7 +557,7 @@ fn corpus_cases() -> Vec<Case> {
 	cases
 }
 
-fn new_cases() -> Vec<Case> {
+pub(super) fn new_cases() -> Vec<Case> {
 	let mut cases = vec![
 		Case {
 			name: "alias_out_lhs_rhs_and_out_rhs".into(),
@@ -631,7 +631,7 @@ fn new_cases() -> Vec<Case> {
 	cases
 }
 
-fn refusal_cases() -> Vec<Case> {
+pub(super) fn refusal_cases() -> Vec<Case> {
 	let mut cases = Vec::new();
 	for (d, refused) in [(0, [0, 1, 0]), (-1, [0, 0, 1])] {
 		for op in [Binary::Div, Binary::Rem] {
@@ -923,7 +923,7 @@ const BASELINE_CYCLE: usize = 100;
 const RSS_TOLERANCE_KIB: u64 = 8 * 1024;
 const DATA_TOLERANCE_KIB: u64 = 16 * 1024;
 
-fn status_kib(field: &str) -> u64 {
+pub(super) fn status_kib(field: &str) -> u64 {
 	let status = std::fs::read_to_string("/proc/self/status").expect("/proc/self/status");
 	status
 		.lines()
@@ -1287,11 +1287,11 @@ fn child_vm_exec_screen() {
 
 // ------------------------------------------ live executable-mapping positive control
 
-fn read_maps() -> String {
+pub(super) fn read_maps() -> String {
 	std::fs::read_to_string("/proc/self/maps").expect("/proc/self/maps")
 }
 
-fn anon_exec_kib(maps: &str) -> u64 {
+pub(super) fn anon_exec_kib(maps: &str) -> u64 {
 	maps_overlapping(maps, 0, u64::MAX)
 		.iter()
 		.filter(|m| m.executable() && m.path.is_none())

@@ -58,6 +58,21 @@ pub(crate) fn isa() -> Result<OwnedTargetIsa, NativeRefusal> {
 		.map_err(|_| NativeRefusal::Isa)
 }
 
+std::thread_local! {
+	/// This thread's ISA, built once at first use and shared (an `Arc` clone) by every
+	/// compile and every loaded module on the thread. Immutable after construction.
+	static SHARED_ISA: core::cell::OnceCell<Result<OwnedTargetIsa, NativeRefusal>> =
+		const { core::cell::OnceCell::new() };
+}
+
+/// The thread's shared ISA ([`isa`] built once). During thread teardown, when the
+/// thread-local is gone, a fresh [`isa`] is built instead (same flags, same code).
+pub(crate) fn shared_isa() -> Result<OwnedTargetIsa, NativeRefusal> {
+	SHARED_ISA
+		.try_with(|cell| cell.get_or_init(isa).clone())
+		.unwrap_or_else(|_| isa())
+}
+
 /// `extern "C" fn(buf: *mut i64, record: *mut ExitRecord) -> u32`.
 pub(crate) fn signature() -> Signature {
 	let mut sig = Signature::new(CallConv::SystemV);
@@ -275,16 +290,21 @@ fn condition(op: Binary) -> Result<IntCC, NativeRefusal> {
 /// gate before and after the mid-end and the machine gate. Code outside this module can
 /// inspect a value but cannot build or change one, so a `Compiled` is evidence that every
 /// gate passed for exactly these bytes.
+///
+/// A production `Compiled` holds the bytes and two numbers only: no listing, no text. The
+/// [`Listing`] exists in test builds only (receipts and diagnostics).
 pub(crate) struct Compiled {
 	bytes: Vec<u8>,
 	/// Required code alignment (from Cranelift's function alignment).
 	alignment: u64,
 	slots: usize,
+	#[cfg(test)]
 	listing: Listing,
 }
 
 /// Textual IR before and after the mid-end, the lowered VCode listing and the machine
-/// audit report. Diagnostic only: it cannot be loaded.
+/// audit report. Diagnostic only (test builds only): it cannot be loaded.
+#[cfg(test)]
 pub(crate) struct Listing {
 	pub(crate) clif: String,
 	pub(crate) optimized: String,
@@ -305,6 +325,7 @@ impl Compiled {
 		self.slots
 	}
 
+	#[cfg(test)]
 	pub(crate) fn listing(&self) -> &Listing {
 		&self.listing
 	}
@@ -323,14 +344,23 @@ enum Gates {
 /// interpreter fallback. `program_bytes` is the code already compiled for the same program
 /// (the cache bound).
 pub(crate) fn compile(region: &Region, program_bytes: usize) -> Result<Compiled, NativeRefusal> {
+	#[cfg_attr(not(test), allow(unused_variables))]
 	let (bytes, alignment, listing) = lower(region, program_bytes, Gates::All)?;
 	Ok(Compiled {
 		bytes,
 		alignment,
 		slots: region.slots.len(),
+		#[cfg(test)]
 		listing,
 	})
 }
+
+/// What a lowering retains besides the bytes: the [`Listing`] in test builds, nothing in
+/// production.
+#[cfg(test)]
+type Diagnostics = Listing;
+#[cfg(not(test))]
+type Diagnostics = ();
 
 /// As [`compile`] without the IR gates, so tests can show what the backend itself emits for
 /// IR the gate would refuse (the machine audit still runs). It returns only the
@@ -340,31 +370,61 @@ pub(crate) fn diagnose_machine_only(region: &Region) -> Result<Listing, NativeRe
 	Ok(lower(region, 0, Gates::MachineOnly)?.2)
 }
 
+/// P3a agreement tests: every gate, with a FRESH ISA (`fresh`) or the thread's shared one.
+/// Returns the bytes, alignment and listing; never a loadable [`Compiled`].
+#[cfg(test)]
+pub(crate) fn diagnose_isa(region: &Region, fresh: bool) -> Result<(Vec<u8>, u64, Listing), NativeRefusal> {
+	let isa = if fresh { isa()? } else { shared_isa()? };
+	lower_with(region, 0, Gates::All, &isa)
+}
+
 fn lower(
 	region: &Region,
 	program_bytes: usize,
 	gates: Gates,
-) -> Result<(Vec<u8>, u64, Listing), NativeRefusal> {
+) -> Result<(Vec<u8>, u64, Diagnostics), NativeRefusal> {
+	lower_with(region, program_bytes, gates, &shared_isa()?)
+}
+
+/// Every gate runs in every build. Compiler and audit transient memory (Cranelift's
+/// compilation heap, the VCode text, the audit's temporaries) is NOT charged to the Rune
+/// analysis budget and is not bounded by Rune. The VCode text is required by the machine
+/// audit, so it is always created; it is taken out of the compiled code (no copy) and, in
+/// production, dropped right after the audit. The CLIF texts are created in test builds
+/// only.
+fn lower_with(
+	region: &Region,
+	program_bytes: usize,
+	gates: Gates,
+	isa: &OwnedTargetIsa,
+) -> Result<(Vec<u8>, u64, Diagnostics), NativeRefusal> {
 	let ir_gate = gates == Gates::All;
-	let isa = isa()?;
-	let func = build(region, &isa)?;
-	cranelift_codegen::verify_function(&func, &*isa)
+	let func = build(region, isa)?;
+	cranelift_codegen::verify_function(&func, &**isa)
 		.map_err(|e| NativeRefusal::Verifier(e.to_string()))?;
 
 	if ir_gate {
 		super::audit::ir(&func, region.slots.len()).map_err(NativeRefusal::Audit)?;
 	}
 
+	#[cfg(test)]
 	let clif = func.display().to_string();
+
 	let mut ctx = Context::for_function(func);
 	ctx.set_disasm(true);
-	let code = ctx
-		.compile(&*isa, &mut ControlPlane::default())
+	ctx.compile(&**isa, &mut ControlPlane::default())
 		.map_err(|e| NativeRefusal::Codegen(format!("{:?}", e.inner)))?;
+	let mut code = ctx
+		.take_compiled_code()
+		.ok_or_else(|| NativeRefusal::Codegen("no compiled code".into()))?;
 	let bytes = code.code_buffer().to_vec();
-	let vcode = code.vcode.clone().unwrap_or_default();
+	let vcode = code.vcode.take().unwrap_or_default();
 	let alignment = u64::from(code.buffer.alignment);
-	let report = super::audit::machine(code, &vcode).map_err(NativeRefusal::Audit)?;
+	let report = super::audit::machine(&code, &vcode).map_err(NativeRefusal::Audit)?;
+	drop(code);
+
+	#[cfg(not(test))]
+	drop((vcode, report));
 
 	// The optimized IR is audited too: the mid-end must not have introduced anything the
 	// contract forbids.
@@ -372,7 +432,10 @@ fn lower(
 		super::audit::ir(&ctx.func, region.slots.len()).map_err(NativeRefusal::Audit)?;
 	}
 
+	#[cfg(test)]
 	let optimized = ctx.func.display().to_string();
+
+	drop(ctx);
 
 	if bytes.len() > super::MAX_REGION_CODE_BYTES
 		|| program_bytes.saturating_add(bytes.len()) > super::MAX_PROGRAM_CODE_BYTES
@@ -380,14 +443,16 @@ fn lower(
 		return Err(NativeRefusal::Size);
 	}
 
-	Ok((
-		bytes,
-		alignment,
-		Listing {
-			clif,
-			optimized,
-			vcode,
-			report,
-		},
-	))
+	#[cfg(test)]
+	let diagnostics = Listing {
+		clif,
+		optimized,
+		vcode,
+		report,
+	};
+
+	#[cfg(not(test))]
+	let diagnostics = ();
+
+	Ok((bytes, alignment, diagnostics))
 }

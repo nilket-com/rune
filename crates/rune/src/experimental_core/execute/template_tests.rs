@@ -80,7 +80,7 @@ fn d18_template_formats_every_mode_in_part_order() {
 	let mut store = store();
 	let mut executor = Executor::new().unwrap();
 	let value = executor
-		.invoke_args(&code, &mut store, 0, Args::Values(&[]), 1024)
+		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[]), 1024)
 		.unwrap();
 	assert_eq!(store.text(value).unwrap(), "42'x'true()abx42");
 	assert!(executor.is_idle());
@@ -93,7 +93,7 @@ fn first_failure(parts: &[u32], expected: Error) {
 	let mut store = store();
 	let mut executor = Executor::new().unwrap();
 	let failure = executor
-		.invoke_args(&code, &mut store, 0, Args::Values(&[]), 1024)
+		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[]), 1024)
 		.unwrap_err();
 	assert_eq!(failure.error, expected);
 	assert!(failure.call_chain.is_empty());
@@ -128,7 +128,7 @@ fn d18_template_executor_is_reusable_after_a_formatting_failure() {
 	let mut store = store();
 	let mut executor = Executor::new().unwrap();
 	let failure = executor
-		.invoke_args(&failing, &mut store, 0, Args::Values(&[]), 1024)
+		.invoke_args_for_test(&failing, &mut store, 0, Args::Values(&[]), 1024)
 		.unwrap_err();
 	assert_eq!(
 		failure.error,
@@ -136,7 +136,7 @@ fn d18_template_executor_is_reusable_after_a_formatting_failure() {
 	);
 	assert!(executor.is_idle());
 	let value = executor
-		.invoke_args(&ok, &mut store, 0, Args::Values(&[]), 1024)
+		.invoke_args_for_test(&ok, &mut store, 0, Args::Values(&[]), 1024)
 		.unwrap();
 	assert_eq!(store.text(value).unwrap(), "42ab");
 	store.release(value).unwrap();
