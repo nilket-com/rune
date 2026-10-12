@@ -101,6 +101,12 @@ pub enum AdmittedMethod {
 pub enum Detail {
 	#[default]
 	None,
+	/// Stdout write failure. OS codes retain their exact message; custom errors
+	/// retain only their kind, not their allocated custom payload.
+	Io {
+		kind: std::io::ErrorKind,
+		os: Option<i32>,
+	},
 	Binary {
 		op: BinarySymbol,
 		lhs: TypeName,
@@ -384,6 +390,13 @@ impl fmt::Display for Message<'_> {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		use Detail::*;
 		match self.error.detail {
+			Io { kind, os } => {
+				let error = match os {
+					Some(os) => std::io::Error::from_raw_os_error(os),
+					Option::None => std::io::Error::from(kind),
+				};
+				write!(f, "Panicked: failed printing to stdout: {error}")
+			}
 			Binary { op, lhs, rhs } => messages::binary_unsupported(f, op, lhs, rhs),
 			Unary { op, operand } => messages::unary_unsupported(
 				f,
@@ -472,29 +485,40 @@ mod tests {
 	}
 
 	#[test]
-	fn owned_layout_stays_within_budget_including_future_io_payload() {
+	fn owned_layout_stays_within_budget_including_io_payload() {
 		use core::mem::{align_of, size_of};
-		#[allow(dead_code)]
-		enum WithIo {
-			Detail(Detail),
-			Io {
-				kind: std::io::ErrorKind,
-				os: Option<i32>,
-			},
-		}
 		assert!(size_of::<Detail>() <= 32);
 		assert!(align_of::<Detail>() <= 8);
-		assert!(size_of::<WithIo>() <= 32);
 		std::println!(
-			"Detail={} align={} Error={} Result<Value>={} Result<() >={} Failure={} Io-envelope={}",
+			"Detail={} align={} Error={} Result<Value>={} Result<()>={} Failure={}",
 			size_of::<Detail>(),
 			align_of::<Detail>(),
 			size_of::<Error>(),
 			size_of::<Result<Value>>(),
 			size_of::<Result<()>>(),
-			size_of::<Failure>(),
-			size_of::<WithIo>()
+			size_of::<Failure>()
 		);
+	}
+
+	#[test]
+	fn io_details_preserve_os_errors_and_generalize_custom_payloads() {
+		let p = program();
+		for original in [
+			std::io::Error::from_raw_os_error(32),
+			std::io::Error::other("custom payload intentionally omitted"),
+		] {
+			let os = original.raw_os_error();
+			let generic = std::io::Error::from(original.kind());
+			let expected = std::format!(
+				"Panicked: failed printing to stdout: {}",
+				if os.is_some() { &original } else { &generic }
+			);
+			let error = Error::new(ErrorKind::Output, "execute").with_detail(Detail::Io {
+				kind: original.kind(),
+				os,
+			});
+			assert_eq!(error.message(&p).to_string(), expected);
+		}
 	}
 
 	#[test]

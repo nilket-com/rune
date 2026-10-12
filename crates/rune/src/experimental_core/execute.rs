@@ -3,11 +3,10 @@
 //!
 //! # Output
 //!
-//! `println!` writes each line to the locked process stdout and flushes it at once, so
-//! output written before a later run-time error is kept. Output is capped at 128 KiB per
-//! invocation: the cap is checked before each write, and a line that would exceed it is
-//! not written and fails the invocation with [`ErrorKind::FormatLimit`]. The cap and the
-//! per-line flush are declared differences from the stock `println`, which has neither.
+//! `println!` holds the process stdout lock while writing the text and newline.
+//! There is no cumulative output cap or explicit flush; buffering follows Rust stdout.
+//! Individual formatting calls remain bounded by their formatting limits. Earlier
+//! output is not rolled back when a later write or language operation fails.
 
 use super::{
 	arithmetic,
@@ -117,10 +116,12 @@ pub struct Executor {
 	slots: Vec<Value>,
 	diagnostics: Vec<Location>,
 	cancelled: bool,
-	output_bytes: usize,
 	/// Test-only, per executor: when set, `Print` appends here instead of stdout.
 	#[cfg(test)]
 	pub(crate) test_output: Option<std::vec::Vec<u8>>,
+	/// Handshake after a successful real write, only in isolated tests.
+	#[cfg(test)]
+	pub(crate) test_after_print: Option<fn()>,
 	/// P2a native tier: the last code id whose analysis admitted no region at all (a
 	/// property of the code alone, valid on any thread); 0 is never a code id. Plain data,
 	/// so `Executor` stays `Send`.
@@ -147,9 +148,10 @@ impl Executor {
 			slots: Vec::try_with_capacity(MAX_SLOTS)?,
 			diagnostics: Vec::try_with_capacity(MAX_FRAMES)?,
 			cancelled: false,
-			output_bytes: 0,
 			#[cfg(test)]
 			test_output: None,
+			#[cfg(test)]
+			test_after_print: None,
 			#[cfg(all(
 				feature = "fresh-core-native",
 				target_arch = "x86_64",
@@ -247,10 +249,9 @@ impl Executor {
 		))]
 		regions: Option<&super::region::cache::ProgramRegions>,
 	) -> core::result::Result<Value, Failure> {
-		// Per-invocation setup, before any instruction runs: the output cap and the
-		// call-chain buffer (moved out by a previous failure; reserving it again is
+		// Per-invocation setup, before any instruction runs: the call-chain buffer
+		// (moved out by a previous failure; reserving it again is
 		// the only allocation here and a failure leaves nothing to clean up).
-		self.output_bytes = 0;
 		if self.diagnostics.capacity() < MAX_FRAMES {
 			if let Err(e) = self.diagnostics.try_reserve(MAX_FRAMES) {
 				return Err(Failure {
@@ -450,15 +451,7 @@ impl Executor {
 							Op::Print { value } => {
 								use std::io::Write;
 								let text = store.text(get(value)?)?;
-								let bytes = self
-									.output_bytes
-									.checked_add(text.len())
-									.and_then(|n| n.checked_add(1))
-									.filter(|n| *n <= 128 << 10)
-									.ok_or_else(|| error(ErrorKind::FormatLimit))?;
-								self.output_bytes = bytes;
-
-								// Test-only seam, scoped to this executor: same cap and order, no stdout.
+								// Test-only seam, scoped to this executor: same order, no stdout.
 								#[cfg(test)]
 								let captured = match self.test_output.as_mut() {
 									Some(buffer) => {
@@ -471,15 +464,22 @@ impl Executor {
 								#[cfg(not(test))]
 								let captured = false;
 
-								// Real ordered stdout, flushed now rather than returned as a
-								// result recording. Earlier output survives later failures.
+								// Hold one lock across the text and newline.
 								if !captured {
 									let stdout = std::io::stdout();
 									let mut sink = stdout.lock();
 									sink.write_all(text.as_bytes())
 										.and_then(|_| sink.write_all(b"\n"))
-										.and_then(|_| sink.flush())
-										.map_err(|_| error(ErrorKind::Output))?;
+										.map_err(|e| {
+											error(ErrorKind::Output).with_detail(Detail::Io {
+												kind: e.kind(),
+												os: e.raw_os_error(),
+											})
+										})?;
+									#[cfg(test)]
+									if let Some(hook) = self.test_after_print {
+										hook();
+									}
 								}
 							}
 

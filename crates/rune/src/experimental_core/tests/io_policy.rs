@@ -196,9 +196,8 @@ fn refusal_happens_before_any_execution_or_output() {
 	miri,
 	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
 )]
-fn output_order_cap_and_partial_output_on_failure_via_the_test_seam() {
-	// Declared difference kept for M1: 128 KiB per invocation, checked BEFORE the write;
-	// earlier lines survive a later failure. The seam is per executor (no global state).
+fn output_order_and_partial_output_on_failure_via_the_test_seam() {
+	// Earlier lines survive a later failure. The seam is per executor.
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(PRINTS).unwrap()).unwrap();
@@ -227,49 +226,44 @@ fn compile_program(text: &str) -> frontend::Program {
 	frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 7).unwrap()
 }
 
-/// Moved from the D21 dev crate (`output.rs::invocation_stdout_cap_refuses_before_the_next_write`,
-/// the `format_sink limit` fixture). The cap is checked before each write: two 64 KiB
-/// lines fill exactly 128 KiB and the third is refused unwritten. The real-stdout form
-/// is in `tests/fresh_core_stdout.rs`.
 #[test]
 #[cfg_attr(
 	miri,
-	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
+	ignore = "full default-module frontend compilation; opt in explicitly"
 )]
-fn the_output_cap_refuses_before_the_next_write() {
+fn output_has_no_cumulative_cap() {
 	let program = compile_program(
-		"pub fn main(a) { println!(\"{}\",a); println!(\"{}\",a); println!(\"{}\",a); }",
+		r#"pub fn main(a) { let i = 0; while i < 256 { println!("{}", a); i += 1; } 42 }"#,
 	);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let mut store = Store::new(Limits::default()).unwrap();
-	let arg = store.root_string(&"a".repeat(65535)).unwrap();
+	let arg = store.root_string(&"a".repeat(4095)).unwrap();
 	let mut executor = Executor::new().unwrap();
 	executor.test_output = Some(std::vec::Vec::new());
-	let failure = executor
-		.invoke(&program, &mut store, main, &[&arg], 10_000)
-		.unwrap_err();
+	let result = executor
+		.invoke(&program, &mut store, main, &[&arg], 100_000)
+		.unwrap();
 	assert_eq!(
-		failure.error.kind,
-		crate::experimental_core::error::ErrorKind::FormatLimit
+		store.root_scalar(&result).unwrap(),
+		Some(super::super::value::Scalar::I64(42))
 	);
-	let out = executor.test_output.take().unwrap();
-	assert_eq!(out.len(), 128 << 10);
-	assert_eq!(out[65535], b'\n');
-	assert_eq!(out[131071], b'\n');
+	assert_eq!(
+		executor.test_output.as_deref(),
+		Some(format!("{}\n", "a".repeat(4095)).repeat(256).as_bytes())
+	);
 	assert!(executor.is_idle());
+	store.root_release(result).unwrap();
 	store.root_release(arg).unwrap();
 	assert_eq!(store.live_entries(), 0);
 }
 
-/// Moved from the D21 dev crate (`repeat_entry.rs::the_output_cap_resets_per_invocation`,
-/// the `repeat_sink` fixture). 2^16 characters per invocation stays under the 128 KiB
-/// cap; three invocations total 192 KiB, so the cap must reset between them.
+/// Repeated invocations preserve output order and reusable executor state.
 #[test]
 #[cfg_attr(
 	miri,
 	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
 )]
-fn the_output_cap_resets_per_invocation() {
+fn repeated_output_preserves_order() {
 	let program = compile_program(
         "pub fn main(_a) { let s = \"x\"; let i = 0; while i < 16 { s += s; i += 1; } println!(\"{}\", s); }",
     );
@@ -294,5 +288,18 @@ fn the_output_cap_resets_per_invocation() {
 	assert_eq!(
 		executor.test_output.as_deref(),
 		Some(line.repeat(3).as_bytes())
+	);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn print_macro_is_refused_before_execution() {
+	let context = Context::with_default_modules().unwrap();
+	assert_eq!(
+		outcome(&context, r#"pub fn main() { print!("a"); 42 }"#),
+		Err(Some(Refusal::FrontendDiagnostic))
 	);
 }

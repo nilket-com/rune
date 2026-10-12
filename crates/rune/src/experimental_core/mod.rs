@@ -18,8 +18,9 @@
 //! - Object debug text lists fields in insertion order.
 //! - Run-time error classes ([`error::ErrorKind`](crate::experimental_core::error::ErrorKind)) are coarser than the stock error
 //!   kinds.
-//! - `println!` output is capped at 128 KiB per invocation, and each line is flushed as
-//!   it is written (see [`execute`](crate::experimental_core::execute)).
+//!
+//! `println!` follows Rust stdout buffering without a cumulative output cap or
+//! explicit flush (see [`execute`](crate::experimental_core::execute)).
 //!
 //! Internals are sealed:
 //!

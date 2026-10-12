@@ -2,7 +2,7 @@
 
 //! Real-stdout behaviour of the fresh core's `println!`.
 //!
-//! The in-crate `test_output` seam proves only the ordering and cap logic; this file
+//! The in-crate `test_output` seam proves only the ordering logic; this file
 //! checks the real stdout path. The test binary re-runs itself with an environment
 //! flag selecting a child scenario, so the parent reads the child's real stdout. No
 //! extra bin target or harness crate is needed. libtest's own lines around the child
@@ -12,7 +12,9 @@
 //! and `tests/repeat_entry.rs::repeated_real_output_is_the_single_output_repeated`
 //! (`repeat_sink`). Both bins stay outside this crate.
 
-use std::process::Command;
+use std::io::Read;
+use std::process::{Command, Stdio};
+use std::time::{Duration, Instant};
 
 use rune::experimental_core::execute::Executor;
 use rune::experimental_core::frontend;
@@ -46,8 +48,8 @@ fn child_prints_through_the_fresh_core() {
 			"pub fn main(_a) { println!(\"before\"); println!(\"{:?}\",[1,2]); 1/0 }",
 			1,
 		),
-		"limit" => (
-			"pub fn main(a) { println!(\"{}\",a); println!(\"{}\",a); println!(\"{}\",a); }",
+		"volume" => (
+			"pub fn main(a) { let i = 0; while i < 256 { println!(\"{}\",a); i += 1; } 42 }",
 			1,
 		),
 		"repeat1" | "repeat5" => (
@@ -63,8 +65,8 @@ fn child_prints_through_the_fresh_core() {
 	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 7).unwrap();
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let mut store = Store::new(Limits::default()).unwrap();
-	let arg = if mode == "limit" {
-		store.root_string(&"a".repeat(65535)).unwrap()
+	let arg = if mode == "volume" {
+		store.root_string(&"a".repeat(4095)).unwrap()
 	} else {
 		store.root_unit()
 	};
@@ -77,7 +79,7 @@ fn child_prints_through_the_fresh_core() {
 	for _ in 0..invocations {
 		match executor.invoke(&program, &mut store, main, &[&arg], 1_000_000) {
 			Ok(root) => {
-				if mode == "ok" {
+				if mode == "ok" || mode == "volume" {
 					assert_eq!(store.root_scalar(&root).unwrap(), Some(Scalar::I64(42)));
 				}
 
@@ -102,7 +104,7 @@ fn child_prints_through_the_fresh_core() {
 /// Runs one child scenario and returns exactly the bytes the fresh core wrote to the
 /// real stdout, plus the child's outcome line.
 fn child(mode: &str) -> (Vec<u8>, String) {
-	let out = Command::new(std::env::current_exe().unwrap())
+	let mut child = Command::new(std::env::current_exe().unwrap())
 		.args([
 			"--exact",
 			"child_prints_through_the_fresh_core",
@@ -110,8 +112,40 @@ fn child(mode: &str) -> (Vec<u8>, String) {
 			"--test-threads=1",
 		])
 		.env(CHILD, mode)
-		.output()
+		.stdin(Stdio::null())
+		.stdout(Stdio::piped())
+		.stderr(Stdio::piped())
+		.spawn()
 		.unwrap();
+	let mut stdout = child.stdout.take().unwrap();
+	let mut stderr = child.stderr.take().unwrap();
+	let out_reader = std::thread::spawn(move || {
+		let mut out = Vec::new();
+		stdout.read_to_end(&mut out).unwrap();
+		out
+	});
+	let err_reader = std::thread::spawn(move || {
+		let mut out = Vec::new();
+		stderr.read_to_end(&mut out).unwrap();
+		out
+	});
+	let started = Instant::now();
+	let status = loop {
+		if let Some(status) = child.try_wait().unwrap() {
+			break status;
+		}
+		if started.elapsed() > Duration::from_secs(30) {
+			let _ = child.kill();
+			let _ = child.wait();
+			panic!("child deadline: {mode}");
+		}
+		std::thread::sleep(Duration::from_millis(10));
+	};
+	let out = std::process::Output {
+		status,
+		stdout: out_reader.join().unwrap(),
+		stderr: err_reader.join().unwrap(),
+	};
 	assert!(out.status.success(), "{mode}: {out:?}");
 	let stdout = out.stdout;
 	let begin = find(&stdout, BEGIN.as_bytes()).expect("child ran") + BEGIN.len();
@@ -142,20 +176,20 @@ fn output_is_real_ordered_and_survives_failure() {
 	assert_eq!(outcome, "error:DivisionByZero invocations=1");
 }
 
-/// Declared difference from the stock `println`: a 128 KiB per-invocation cap,
-/// checked before each write, so the third 64 KiB line is refused unwritten.
+/// A MiB of output in bounded lines has no cumulative cap.
 #[test]
 #[cfg_attr(
 	miri,
 	ignore = "Miri: re-runs the test binary as a child process (current_exe + Command::output); Miri cannot spawn processes and isolation refuses current_exe; native CI only"
 )]
-fn invocation_stdout_cap_refuses_before_the_next_write() {
-	let (out, outcome) = child("limit");
-	assert_eq!(out.len(), 128 << 10);
-	assert_eq!(out[65535], b'\n');
-	assert_eq!(out[131071], b'\n');
+fn invocation_stdout_has_no_cumulative_cap() {
+	let (out, outcome) = child("volume");
+	assert_eq!(
+		out,
+		format!("{}\n", "a".repeat(4095)).repeat(256).as_bytes()
+	);
 	assert!(out.iter().all(|b| *b == b'a' || *b == b'\n'));
-	assert_eq!(outcome, "error:FormatLimit invocations=1");
+	assert_eq!(outcome, "ok invocations=1");
 }
 
 #[test]

@@ -31,7 +31,7 @@ pub enum ErrorKind {
 	InvalidCast,
 	/// An integer operand does not fit the other operand's integer type.
 	IntegerCoercion,
-	/// Formatted text or printed output exceeded its limit (128 KiB of output per invocation).
+	/// Formatted text exceeded its formatting limits.
 	FormatLimit,
 	/// Writing to stdout failed.
 	Output,

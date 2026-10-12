@@ -105,7 +105,7 @@ fn dbg_impl(
 	let mut stdout = stdout.lock();
 
 	for value in memory.slice_at(addr, args)? {
-		writeln!(stdout, "{value:?}").map_err(VmError::panic)?;
+		writeln!(stdout, "{value:?}").map_err(print_error)?;
 	}
 
 	memory.store(out, ())?;
@@ -177,7 +177,7 @@ pub(crate) fn print_macro(
 fn print_impl(m: &str) -> Result<(), VmError> {
 	let stdout = io::stdout();
 	let mut stdout = stdout.lock();
-	write!(stdout, "{m}").map_err(VmError::panic)?;
+	write!(stdout, "{m}").map_err(print_error)?;
 	Ok(())
 }
 
@@ -218,6 +218,21 @@ pub(crate) fn println_macro(
 fn println_impl(message: &str) -> Result<(), VmError> {
 	let stdout = io::stdout();
 	let mut stdout = stdout.lock();
-	writeln!(stdout, "{message}").map_err(VmError::panic)?;
+	writeln!(stdout, "{message}").map_err(print_error)?;
+	#[cfg(all(test, feature = "fresh-core", target_os = "linux"))]
+	stdout_tests::after_print();
 	Ok(())
 }
+
+/// Keep the original write error if allocating its contextual message fails.
+#[cfg(feature = "std")]
+fn print_error(error: io::Error) -> VmError {
+	match crate::alloc::fmt::try_format(format_args!("failed printing to stdout: {error}")) {
+		Ok(message) => VmError::panic(message),
+		Err(_) => VmError::panic(error),
+	}
+}
+
+#[cfg(all(test, feature = "fresh-core", target_os = "linux"))]
+#[path = "io_stdout_tests.rs"]
+pub(crate) mod stdout_tests;
