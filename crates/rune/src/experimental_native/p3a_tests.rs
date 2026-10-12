@@ -342,7 +342,7 @@ fn bounds_programs() -> Vec<(String, Src)> {
 }
 
 /// Every program of the golden, by unique name.
-fn golden_programs() -> Vec<(String, Src)> {
+pub(super) fn golden_programs() -> Vec<(String, Src)> {
 	let mut cases = corpus_cases();
 	cases.extend(new_cases());
 	cases.extend(refusal_cases());
@@ -541,24 +541,42 @@ fn child_selection_golden() {
 		return;
 	}
 
-	// B1: the current selection equals the golden re-captured at B1, line for line; that
-	// golden's delta against the P2b golden is checked by `b1_selection_golden_delta` (and
-	// again here, on this run's text). The P2b golden's own delta against the 672a4eaa
-	// golden stays checked by `p2b_selection_golden_delta`.
-	let golden = super::b1_tests::B1_GOLDEN;
-	let (new_lines, golden_lines): (Vec<&str>, Vec<&str>) = (text.lines().collect(), golden.lines().collect());
-	assert_eq!(new_lines.len(), golden_lines.len(), "B1 golden line count");
-	for (n, g) in new_lines.iter().zip(golden_lines.iter()) {
+	// FUEL: the current selection equals the golden captured once from the verified FUEL
+	// implementation (`fuel_tests::FUEL_GOLDEN`), line for line, AND its delta against the
+	// R1 golden (`r1_tests::R1_GOLDEN`) is the restricted size-only delta
+	// (`compare_w13_delta`: only COMPILE `ok bytes`, LOADED `code_bytes` and SUMMARY
+	// `code_bytes` may differ; `mapped_bytes`, metadata, admissions and every other counter
+	// equal; COMPILE, LOADED and SUMMARY consistent) in which every changed line belongs to a
+	// FUEL-selected region or to a program holding one (`fuel_tests::check_fuel_selected_only`).
+	// Its deltas against the W13 and B1 goldens stay the restricted W13 delta. The
+	// fixture-to-fixture checks: `fuel_selection_golden_delta` (FUEL against R1),
+	// `r1_selection_golden_delta` (R1 against W13), `w13_selection_golden_delta` (W13 against
+	// B1), `b1_selection_golden_delta` (B1 against P2b) and `p2b_selection_golden_delta` (P2b
+	// against the 672a4eaa golden).
+	let fuel = super::fuel_tests::FUEL_GOLDEN;
+	let (new_lines, fuel_lines): (Vec<&str>, Vec<&str>) = (text.lines().collect(), fuel.lines().collect());
+	assert_eq!(new_lines.len(), fuel_lines.len(), "FUEL golden line count");
+	for (n, g) in new_lines.iter().zip(fuel_lines.iter()) {
 		assert_eq!(n, g);
 	}
-	let (identical, delta_programs) = super::b1_tests::compare_b1_delta(super::p2b_tests::P2B_GOLDEN, &text);
+	let r1 = super::r1_tests::R1_GOLDEN;
+	let (identical_r1, changed_r1) = super::w13_tests::compare_w13_delta(r1, &text);
+	let selected = super::fuel_tests::check_fuel_selected_only(r1, &text).unwrap_or_else(|e| std::panic!("FUEL golden delta: {e}"));
+	let w13 = super::w13_tests::W13_GOLDEN;
+	let (identical, changed) = super::w13_tests::compare_w13_delta(w13, &text);
+	let b1 = super::b1_tests::B1_GOLDEN;
+	let (identical_b1, changed_b1) = super::w13_tests::compare_w13_delta(b1, &text);
 	println!(
-		"P3AGOLDEN\tcompared\tlines={}\tb1_golden_fnv={:016x}\tnew_fnv={:016x}\tp2b_golden_fnv={:016x}\tp3a_golden_fnv={:016x}\tidentical_to_p2b_golden={identical}\tb1_delta_programs={delta_programs}",
+		"P3AGOLDEN\tcompared_fuel\tlines={}\tfuel_golden_fnv={:016x}\tr1_golden_fnv={:016x}\tw13_golden_fnv={:016x}\tb1_golden_fnv={:016x}\tnew_fnv={:016x}\tp2b_golden_fnv={:016x}\tp3a_golden_fnv={:016x}\tidentical_to_r1_golden={identical_r1}\tbyte_changed_lines_vs_r1={changed_r1}\tchanged_selected_regions={}\tidentical_to_w13_golden={identical}\tbyte_changed_lines_vs_w13={changed}\tidentical_to_b1_golden={identical_b1}\tbyte_changed_lines_vs_b1={changed_b1}",
 		text.lines().count(),
-		fnv1a(golden),
+		fnv1a(fuel),
+		fnv1a(r1),
+		fnv1a(w13),
+		fnv1a(b1),
 		fnv1a(&text),
 		fnv1a(super::p2b_tests::P2B_GOLDEN),
-		fnv1a(GOLDEN)
+		fnv1a(GOLDEN),
+		selected.len()
 	);
 }
 

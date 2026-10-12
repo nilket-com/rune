@@ -41,6 +41,15 @@ mod p2b_tests;
 #[cfg(test)]
 mod b1_tests;
 
+#[cfg(test)]
+mod w13_tests;
+
+#[cfg(test)]
+mod r1_tests;
+
+#[cfg(test)]
+mod fuel_tests;
+
 /// Most machine-code bytes for one region.
 pub(crate) const MAX_REGION_CODE_BYTES: usize = 64 << 10;
 /// Most machine-code bytes for all regions of one program (the code cache bound).

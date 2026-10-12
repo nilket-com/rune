@@ -904,6 +904,11 @@ fn corpus() -> Vec<B1Case> {
 	all
 }
 
+/// The B1 corpus as (name, program) pairs (the W13 compile-only layout and edge tests).
+pub(super) fn corpus_programs() -> Vec<(String, Src)> {
+	corpus().into_iter().map(|c| (c.name, c.src)).collect()
+}
+
 // ------------------------------------------------------- 24, 25: ranges and calls
 
 #[test]
@@ -1853,6 +1858,108 @@ fn child_probe_admission() {
 		assert_eq!(s.loaded, loaded, "{name}: {s:?}");
 		assert_eq!(unexpected(&s), [0; 12], "{name}");
 	}
+}
+
+// ------------------------------------------ W13: branch-condition sources (W3 guard)
+
+/// A guarded `Bool` live-in that is also written in the loop: at the first `if c` the
+/// condition is the entry payload (unwritten, but stored at every exit as a possibly
+/// written slot), later a Compare result. `i64::MAX - 1` makes `k += 2` take its Retry
+/// exit right after the yes edge, with `c` still unwritten.
+const W13_GUARD_BOOL: &str =
+	"pub fn main(f, a, n) { let k = a; let c = f; while k < n { if c { k += 2; } else { k += 1; } c = k < 5; } k }";
+/// A `Bool` literal condition (the header Branch reads a guarded live-in first).
+const W13_LITERAL_BOOL: &str = "pub fn main(n) { let k = 0; let s = 0; while k < n { let t = if k < 2 { true } else { false }; if t { s += 1; } k += 1; } s }";
+/// A condition copied from a Compare result (P2b `Copy`).
+const W13_COPY_BOOL: &str = "pub fn main(n) { let k = 0; let s = 0; while k < n { let c = k < 3; let d = c; if d { s += 1; } k += 1; } s }";
+
+fn w13_branch_cases() -> Vec<B1Case> {
+	let b = |f: bool, a: i64, n: i64| vec![Arg::B(f), Arg::I(a), Arg::I(n)];
+	vec![
+		case(
+			"w13_guard_bool",
+			W13_GUARD_BOOL,
+			vec![
+				b(true, 0, 7),
+				b(false, 0, 4),
+				b(true, i64::MAX - 1, i64::MAX),
+				b(false, i64::MAX - 1, i64::MAX),
+			],
+			1,
+			"CFR",
+		),
+		case("w13_literal_bool", W13_LITERAL_BOOL, ints(&[&[0], &[1], &[5]]), 1, "CF"),
+		case("w13_copy_bool", W13_COPY_BOOL, ints(&[&[0], &[2], &[6]]), 1, "CF"),
+	]
+}
+
+/// The B1 corpus cases whose branch conditions are virtual locals inside an inlined callee
+/// (`callee_f_two_arms`, `checkpoint_two_arms`) or a callee's Ret-fed Bool read by the
+/// caller (`callee_lt_caller_branch`); re-run here so T5 covers them in its own counts.
+const W13_FROM_CORPUS: [&str; 3] = ["callee_f_two_arms", "checkpoint_two_arms", "callee_lt_caller_branch"];
+
+/// T5's cases: the three W13 sources, then the corpus cases above.
+fn w13_t5_cases() -> Vec<B1Case> {
+	let mut all = w13_branch_cases();
+	for name in W13_FROM_CORPUS {
+		let mut found: Vec<B1Case> = corpus().into_iter().filter(|c| c.name == name).collect();
+		assert_eq!(found.len(), 1, "{name}");
+		all.push(found.remove(0));
+	}
+	all
+}
+
+/// T5's programs as (name, program) pairs (the compile-only source census in `w13_tests`).
+pub(super) fn w13_t5_programs() -> Vec<(String, Src)> {
+	w13_t5_cases().into_iter().map(|c| (c.name, c.src)).collect()
+}
+
+/// W13 T5 (W3 guard; passes before and after the change): Branch conditions from every
+/// source a region admits (Compare, Literal, Copy, guarded live-in, unwritten at a Retry
+/// exit, a virtual local inside an inlined callee and a callee's Ret-fed Bool) in the three
+/// modes at every fuel. `w13_tests::w13_t5_branch_condition_sources` checks statically that
+/// each case's admitted region has the Branch source it is here for.
+#[test]
+#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+fn w13_branch_condition_sources_every_fuel() {
+	run_child("child_w13_branch_sources");
+}
+
+#[test]
+#[ignore = "B1 native worker: run by its parent test in a child process"]
+fn child_w13_branch_sources() {
+	require_child();
+	let cases = w13_t5_cases();
+	let covs = run_cases(&cases);
+	let (mut total, mut points) = (Stats::default(), 0);
+	for (case, c) in cases.iter().zip(&covs) {
+		// Admitted, not merely run: every case loads its one region and enters it natively.
+		assert_eq!(c.install.loaded, 1, "{}", case.name);
+		assert!(c.analysis.iter().any(|a| a.ends_with(":admitted")), "{}: {:?}", case.name, c.analysis);
+		assert!(c.native_covered.native_entries > 0, "{}", case.name);
+		assert_eq!(c.native_all.mismatches, 0, "{}", case.name);
+		// Unwritten stored cells equal the simulator's too: W3 stores the same integers.
+		assert_eq!(c.native_all.scratch_differences, 0, "{}", case.name);
+		assert_eq!(c.native_all.replay_checked, c.native_all.native_replay, "{}", case.name);
+		stats_add(&mut total, &c.native_all);
+		points += c.points;
+	}
+	println!(
+		"W13COV\tTOTAL\tcases={}\tpoints={points}\tnative_entries={}\tcontinue={}\titer_done={}\tfuel={}\tretry={}\treplay_fuel={}\treplay_fault={}\treplay_checked={}\tmismatches={}\tscratch_diffs={}\tinvalid_exits={}",
+		cases.len(),
+		total.native_entries,
+		total.native_continue,
+		total.native_iter_done,
+		total.native_fuel,
+		total.native_retry,
+		total.native_replay_fuel,
+		total.native_replay_fault,
+		total.replay_checked,
+		total.mismatches,
+		total.scratch_differences,
+		cache::invalid_exits()
+	);
+	assert_eq!(cache::invalid_exits(), 0);
 }
 
 /// The selection golden re-captured at B1 (`RUNE_P3A_GOLDEN_OUT`).

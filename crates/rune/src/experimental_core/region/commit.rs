@@ -602,3 +602,6 @@ mod tests {
 
 #[cfg(test)]
 mod b1_tests;
+
+#[cfg(test)]
+mod r1_tests;
