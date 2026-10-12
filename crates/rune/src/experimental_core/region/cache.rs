@@ -96,7 +96,7 @@
 //! those of the interpreter. The executor itself does change in non-visible ways (a code-id
 //! hint), and the cache keeps counters.
 use super::budget::{Budget, Held, Pool, Token};
-use super::commit::{self, Refused};
+use super::commit::{self, Refused, Room};
 use super::{
 	division_kind, scan_headers, DivisionKind, EntryClass, Exit, FunctionContext, Region, RegionRefusal, Stop,
 	MAX_REGIONS_PER_FUNCTION, TRANSFER_FACTOR,
@@ -320,11 +320,16 @@ pub(crate) struct RegionCounters {
 	pub(crate) header: u32,
 	pub(crate) state: State,
 	pub(crate) entries: u64,
-	/// Committed entries by exit status: Continue, Fuel, Retry.
-	pub(crate) exits: [u64; 3],
+	/// Committed entries by exit status: Continue, Fuel, Retry, Replay (B1).
+	pub(crate) exits: [u64; 4],
 	pub(crate) refused_cancel: u64,
 	pub(crate) refused_store: u64,
 	pub(crate) refused_tag: u64,
+	/// B1: the iterator entry check refused (counts toward `Cold` like a tag refusal).
+	pub(crate) refused_iter: u64,
+	/// B1: not enough frame or slot room for an inlined callee (does not count toward
+	/// `Cold`: it depends on the call depth, not on the region).
+	pub(crate) refused_room: u64,
 	pub(crate) code_bytes: u32,
 	pub(crate) compile_ns: u64,
 	pub(crate) load_ns: u64,
@@ -339,10 +344,12 @@ pub(crate) struct Ready {
 	native: NativeRegion,
 	state: Cell<State>,
 	entries: Cell<u64>,
-	exits: [Cell<u64>; 3],
+	exits: [Cell<u64>; 4],
 	refused_cancel: Cell<u64>,
 	refused_store: Cell<u64>,
 	refused_tag: Cell<u64>,
+	refused_iter: Cell<u64>,
+	refused_room: Cell<u64>,
 	consecutive: Cell<u32>,
 	code_bytes: u32,
 	compile_ns: u64,
@@ -401,8 +408,10 @@ pub(crate) fn invalid_exits() -> u64 {
 impl Ready {
 	/// Enters the region at its header (the caller checked the resume rule). `Ok(Some(_))`:
 	/// committed, resume at `pc` with `fuel`. `Ok(None)`: nothing changed, the interpreter
-	/// runs the header. `Err`: a write-back release failed (unreachable by the entry proof);
-	/// the caller raises it at the header like any instruction error.
+	/// runs the header. `Err`: a write-back failed after the commit began (an invariant
+	/// failure, unreachable by the entry proof): the region is poisoned, the invalid-exit
+	/// counter incremented, and the caller raises the error at the header; it is never
+	/// recovered as a fallback.
 	#[inline]
 	pub(crate) fn enter(
 		&self,
@@ -410,19 +419,27 @@ impl Ready {
 		store: &mut Store,
 		cancel_pending: bool,
 		fuel: usize,
+		room: Room,
 	) -> Result<Option<(usize, usize)>> {
 		if self.state.get() != State::Live {
 			return Ok(None);
 		}
 
-		let outcome = commit::enter(
+		let outcome = match commit::enter(
 			&self.region,
 			window,
 			store,
 			cancel_pending,
 			fuel,
+			room,
 			|_, buf, record| self.call(buf, record),
-		)?;
+		) {
+			Ok(outcome) => outcome,
+			Err(error) => {
+				self.invalid(Refused::InvalidExit);
+				return Err(error);
+			}
+		};
 
 		match outcome {
 			Ok(exited) => {
@@ -437,9 +454,14 @@ impl Ready {
 				self.refused_cancel.set(self.refused_cancel.get() + 1);
 				Ok(None)
 			}
-			Err(refused @ (Refused::Store | Refused::Tag { .. })) => {
+			Err(Refused::Room) => {
+				self.refused_room.set(self.refused_room.get() + 1);
+				Ok(None)
+			}
+			Err(refused @ (Refused::Store | Refused::Tag { .. } | Refused::Iter { .. })) => {
 				let counter = match refused {
 					Refused::Store => &self.refused_store,
+					Refused::Iter { .. } => &self.refused_iter,
 					_ => &self.refused_tag,
 				};
 				counter.set(counter.get() + 1);
@@ -505,10 +527,13 @@ impl Ready {
 				self.exits[0].get(),
 				self.exits[1].get(),
 				self.exits[2].get(),
+				self.exits[3].get(),
 			],
 			refused_cancel: self.refused_cancel.get(),
 			refused_store: self.refused_store.get(),
 			refused_tag: self.refused_tag.get(),
+			refused_iter: self.refused_iter.get(),
+			refused_room: self.refused_room.get(),
 			code_bytes: self.code_bytes,
 			compile_ns: self.compile_ns,
 			load_ns: self.load_ns,
@@ -1031,7 +1056,7 @@ impl Build<'_> {
 			Ok(Ok(compiled)) => compiled,
 		};
 
-		if compiled.slots() != region.slots.len() {
+		if compiled.cells() != region.cells() {
 			summary.other += 1;
 			return;
 		}
@@ -1089,8 +1114,10 @@ impl Build<'_> {
 			}
 		};
 
-		// Entry and commit never read the nodes; the transient charge ends with them.
+		// Entry and commit never read the nodes or the sites; the transient charge ends
+		// with them.
 		region.nodes = crate::alloc::Vec::new();
+		region.sites = crate::alloc::Vec::new();
 		drop(held);
 
 		self.program_bytes += bytes;
@@ -1105,10 +1132,12 @@ impl Build<'_> {
 			native,
 			state: Cell::new(State::Live),
 			entries: Cell::new(0),
-			exits: [Cell::new(0), Cell::new(0), Cell::new(0)],
+			exits: [Cell::new(0), Cell::new(0), Cell::new(0), Cell::new(0)],
 			refused_cancel: Cell::new(0),
 			refused_store: Cell::new(0),
 			refused_tag: Cell::new(0),
+			refused_iter: Cell::new(0),
+			refused_room: Cell::new(0),
 			consecutive: Cell::new(0),
 			code_bytes: bytes as u32,
 			compile_ns,
@@ -1227,7 +1256,7 @@ fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 			continue;
 		}
 
-		let context = match FunctionContext::new(f, function, &budget, limits.transfer_factor) {
+		let context = match FunctionContext::new(code, function, &budget, limits.transfer_factor) {
 			Ok(context) => context,
 			Err(Stop::Budget) => {
 				b.summary.transient += 1;
@@ -1368,6 +1397,12 @@ std::thread_local! {
 
 	/// Set when an injected invalid exit is consumed; read by `invalid`.
 	static INJECTED_INVALID_SEEN: Cell<bool> = const { Cell::new(false) };
+}
+
+/// `size_of::<Ready>()` (the B1 golden's metadata delta).
+#[cfg(test)]
+pub(crate) fn ready_bytes_for_test() -> usize {
+	core::mem::size_of::<Ready>()
 }
 
 #[cfg(test)]

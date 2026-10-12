@@ -124,12 +124,12 @@ fn counters(code: &Code) -> Vec<RegionCounters> {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-struct Totals {
-	entries: u64,
-	exits: [u64; 3],
-	cancel: u64,
-	store: u64,
-	tag: u64,
+pub(super) struct Totals {
+	pub(super) entries: u64,
+	pub(super) exits: [u64; 3],
+	pub(super) cancel: u64,
+	pub(super) store: u64,
+	pub(super) tag: u64,
 }
 
 fn totals(code: &Code) -> Totals {
@@ -186,7 +186,7 @@ fn total_charge(code: &Code, main: u32, args: &[Arg], name: &str) -> usize {
 
 /// The production path against the plain interpreter at every fuel value of every input.
 /// Returns (points, production totals over fuel >= 1, all totals).
-fn production_case(case: &Case) -> (usize, Totals, Totals) {
+pub(super) fn production_case(case: &Case) -> (usize, Totals, Totals) {
 	let code = case.src.code();
 	let main = case.src.main();
 	fresh();
@@ -278,12 +278,12 @@ fn production_case(case: &Case) -> (usize, Totals, Totals) {
 // ------------------------------------------------------------ probe kernels (v2 ports)
 
 /// The probe's v2 kernels, byte-identical to `.reviews/0184-p0-impl1/harness/kernels/*.rn`.
-const V2_WHILE: &str = "pub fn main(x) {\n\tlet n = 0;\n\twhile n < x { n += 1; }\n\tn\n}\n";
-const V2_NUMERIC: &str = "pub fn main(x) {\n\tlet n = 0;\n\tlet total = 0;\n\twhile n < x { total += n % 17; n += 1; }\n\ttotal\n}\n";
-const V2_CALLS: &str = "fn add(a, b) { a + b }\npub fn main(x) {\n\tlet total = 0;\n\tfor i in 0..x { total = add(total, i); }\n\ttotal\n}\n";
-const V2_FIB: &str =
+pub(super) const V2_WHILE: &str = "pub fn main(x) {\n\tlet n = 0;\n\twhile n < x { n += 1; }\n\tn\n}\n";
+pub(super) const V2_NUMERIC: &str = "pub fn main(x) {\n\tlet n = 0;\n\tlet total = 0;\n\twhile n < x { total += n % 17; n += 1; }\n\ttotal\n}\n";
+pub(super) const V2_CALLS: &str = "fn add(a, b) { a + b }\npub fn main(x) {\n\tlet total = 0;\n\tfor i in 0..x { total = add(total, i); }\n\ttotal\n}\n";
+pub(super) const V2_FIB: &str =
 	"fn fib(n) { if n < 2 { n } else { fib(n - 1) + fib(n - 2) } }\npub fn main(x) { fib(x) }\n";
-const V2_SHARED_ROWS: &str = "fn add(rows, key, value) {\n\tfor row in rows {\n\t\tif row[0] == key {\n\t\t\trow[1] = row[1] + value;\n\t\t\treturn;\n\t\t}\n\t}\n\trows.push([key, value]);\n}\n\npub fn main(x) {\n\tlet rows = [];\n\tadd(rows, \"a\", x % 7);\n\tadd(rows, \"b\", x % 11);\n\tadd(rows, \"a\", x % 13);\n\tlet copy = rows.clone();\n\tlet alias = copy[0];\n\talias[1] = alias[1] + 1;\n\tcopy.push([\"c\", x % 17]);\n\trows[0][1] * 1000000 + rows[1][1] * 10000 + copy[2][1] * 100 + rows.len() * 10 + copy.len()\n}\n";
+pub(super) const V2_SHARED_ROWS: &str = "fn add(rows, key, value) {\n\tfor row in rows {\n\t\tif row[0] == key {\n\t\t\trow[1] = row[1] + value;\n\t\t\treturn;\n\t\t}\n\t}\n\trows.push([key, value]);\n}\n\npub fn main(x) {\n\tlet rows = [];\n\tadd(rows, \"a\", x % 7);\n\tadd(rows, \"b\", x % 11);\n\tadd(rows, \"a\", x % 13);\n\tlet copy = rows.clone();\n\tlet alias = copy[0];\n\talias[1] = alias[1] + 1;\n\tcopy.push([\"c\", x % 17]);\n\trows[0][1] * 1000000 + rows[1][1] * 10000 + copy[2][1] * 100 + rows.len() * 10 + copy.len()\n}\n";
 
 /// The official fixed-input stage kernels, byte-identical to
 /// `rnx-bench-w-0184d/results/iteration-0184/d21-official1/stage/*.rn`.
@@ -301,7 +301,8 @@ pub(super) fn probe_kernel_cases() -> Vec<Case> {
 		rune("v2_while_tiny", V2_WHILE, ints(&[&[0], &[1], &[2], &[3]]), 1, "CF"),
 		rune("v2_numeric", V2_NUMERIC, ints(&[&[40], &[18]]), 1, "CF"),
 		rune("v2_numeric_tiny", V2_NUMERIC, ints(&[&[0], &[1], &[2], &[3]]), 1, "CF"),
-		rune("v2_calls", V2_CALLS, ints(&[&[0], &[5], &[30]]), 0, ""),
+		// B1: admitted (native IterNext, `add` inlined).
+		rune("v2_calls", V2_CALLS, ints(&[&[0], &[5], &[30]]), 1, "CF"),
 		rune("v2_fib", V2_FIB, ints(&[&[0], &[1], &[9]]), 0, ""),
 		rune("v2_shared_rows", V2_SHARED_ROWS, ints(&[&[0], &[123_456], &[999_999]]), 0, ""),
 	]
@@ -360,12 +361,12 @@ fn child_probe_kernel_admission() {
 	for (name, text, loaded) in [
 		("v2/while", V2_WHILE, 1),
 		("v2/numeric", V2_NUMERIC, 1),
-		("v2/calls", V2_CALLS, 0),
+		("v2/calls", V2_CALLS, 1),
 		("v2/fib", V2_FIB, 0),
 		("v2/shared_rows", V2_SHARED_ROWS, 0),
 		("stage/while", STAGE_WHILE, 1),
 		("stage/numeric", STAGE_NUMERIC, 1),
-		("stage/calls", STAGE_CALLS, 0),
+		("stage/calls", STAGE_CALLS, 1),
 		("stage/fib", STAGE_FIB, 0),
 		("stage/shared_rows", STAGE_SHARED_ROWS, 0),
 	] {

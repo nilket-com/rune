@@ -3,7 +3,8 @@
 //! The generated function mirrors the exit simulator node for node:
 //!
 //! - entry: load each guarded live-in from `buf[8 * i]`, zero the written-only slots, load
-//!   the entry fuel from the record, zero the written and bool masks, jump to the header;
+//!   the entry fuel from the record, zero the written, bool and (P2b) unit masks, jump to
+//!   the header;
 //! - charged node: `fuel == 0` branches to its `Fuel` exit, else `fuel -= 1`;
 //! - Add/Sub/Mul: `s{add,sub,mul}_overflow`, overflow branches to the `Retry` exit;
 //! - Div/Rem by an in-region constant outside {0, -1}: `sdiv`/`srem` by that constant
@@ -12,16 +13,31 @@
 //!   `sdiv`/`srem`, which the audit refuses because the backend still emits a trapping
 //!   divide (see the audit findings);
 //! - compare: `icmp` zero-extended to 0/1; branch: `brif` on the 0/1 value;
+//! - P2b: a `Unit` literal (also `Release`) is the constant 0 tagged Unit; a `Copy` defines
+//!   its out variable as the source variable, tagged with the source's static type;
 //! - exit block: store every possibly-written slot to `buf`, then written mask, bool mask,
-//!   fuel (0 for `Fuel`, `fuel + 1` for a `Retry` at a charged pc), status, exit id and pc
-//!   to the record, and return the status.
+//!   unit mask (only when some tracked slot can hold a Unit; otherwise the record keeps its
+//!   initial 0), fuel (0 for `Fuel`, `fuel + 1` for a `Retry` at a charged pc, the
+//!   checkpoint for a B1 `Replay`), status, exit id and pc to the record, and return the
+//!   status;
+//! - B1 (only in regions that have them, so earlier regions lower to the same IR): the
+//!   header `IterNext` over `next` (a variable loaded from `buf[n]`, stored back at every
+//!   exit) and `end` (an SSA value loaded once from `buf[n + 1]`, never stored):
+//!   `next >= end` takes the none edge, otherwise `out := next; next += 1` (no overflow
+//!   branch: `next < end`); an inlined callee runs on its own variables (virtual locals
+//!   `VIRTUAL_BASE..`), which never touch `buf`, a mask or a caller variable: `Enter` sets
+//!   the checkpoint to the fuel and zeroes them, `Arg` copies a caller variable in, `Ret`
+//!   defines the caller's `out` once.
 //!
 //! Loop-carried slots are `cranelift_frontend` variables, so they live in registers across
 //! the back edge; memory is touched only at entry and exits.
 use super::NativeRefusal;
 use crate::experimental_core::arithmetic::Binary;
 use crate::experimental_core::region::abi::ExitRecord;
-use crate::experimental_core::region::{EntryClass, NodeOp, Region, Scalar, Status, Target};
+use crate::experimental_core::region::{
+	EntryClass, NodeOp, Region, Scalar, Status, Target, MAX_INLINE_SLOTS, MAX_REGION_CELLS, MAX_REGION_NODES,
+	MAX_REGION_SLOTS, VIRTUAL_BASE,
+};
 use cranelift_codegen::control::ControlPlane;
 use cranelift_codegen::ir::{
 	self, condcodes::IntCC, types, AbiParam, Block, InstBuilder, MemFlagsData, Signature,
@@ -82,10 +98,17 @@ pub(crate) fn signature() -> Signature {
 	sig
 }
 
-/// Builds the region's IR. `Shape` if the region exceeds the ABI's slot bound.
+/// Builds the region's IR. `Shape` if the region exceeds the ABI's slot, cell or node
+/// bound (checked before anything is lowered).
 pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Function, NativeRefusal> {
 	let n = region.slots.len();
-	if n > 64 || region.entry.len() != n || region.nodes.is_empty() {
+	let cells = region.cells();
+	if n > MAX_REGION_SLOTS
+		|| cells > MAX_REGION_CELLS
+		|| region.nodes.len() > MAX_REGION_NODES
+		|| region.entry.len() != n
+		|| region.nodes.is_empty()
+	{
 		return Err(NativeRefusal::Shape);
 	}
 	let mut func =
@@ -110,6 +133,28 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 	let fuel = b.declare_var(types::I64);
 	let written = b.declare_var(types::I64);
 	let bools = b.declare_var(types::I64);
+	// P2b: the tracked slots some node writes as Unit. Only they can have a unit bit; when
+	// there are none the unit mask is the constant 0 and is neither kept nor stored (the
+	// regions P2a admitted lower to the same IR as before).
+	let unit_tracked = region.nodes.iter().fold(0u64, |m, n| match n.op {
+		NodeOp::Literal {
+			out,
+			ty: Scalar::Unit,
+			..
+		}
+		| NodeOp::Copy {
+			out,
+			ty: Scalar::Unit,
+			..
+		}
+		| NodeOp::Ret {
+			out,
+			ty: Scalar::Unit,
+			..
+		} if out < VIRTUAL_BASE => m | (1u64 << out),
+		_ => m,
+	}) & region.tracked;
+	let units = b.declare_var(types::I64);
 	for (l, class) in region.entry.iter().enumerate() {
 		let v = match class {
 			EntryClass::Guard(_) => b.ins().load(types::I64, mem, buf, slot_offset(l)),
@@ -117,11 +162,45 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 		};
 		b.def_var(vars[l], v);
 	}
+	// B1: the iterator's `next` (a variable) and `end` (one load), when there is one.
+	let iter = if region.iter.is_some() {
+		let next = b.declare_var(types::I64);
+		let v = b.ins().load(types::I64, mem, buf, slot_offset(n));
+		b.def_var(next, v);
+		let end = b.ins().load(types::I64, mem, buf, slot_offset(n + 1));
+		Some((next, end))
+	} else {
+		None
+	};
 	let f0 = b.ins().load(types::I64, mem, rec, ExitRecord::FUEL);
 	b.def_var(fuel, f0);
 	let zero = b.ins().iconst(types::I64, 0);
 	b.def_var(written, zero);
 	b.def_var(bools, zero);
+	if unit_tracked != 0 {
+		b.def_var(units, zero);
+	}
+	// B1: the virtual locals and the checkpoint, when the region inlines.
+	let inlines = region.nodes.iter().any(|n| matches!(n.op, NodeOp::Enter { .. }));
+	let (cvars, checkpoint) = if inlines {
+		let cvars: Vec<Variable> = (0..MAX_INLINE_SLOTS).map(|_| b.declare_var(types::I64)).collect();
+		for &c in &cvars {
+			b.def_var(c, zero);
+		}
+		let checkpoint = b.declare_var(types::I64);
+		b.def_var(checkpoint, zero);
+		(cvars, Some(checkpoint))
+	} else {
+		(Vec::new(), None)
+	};
+	// A caller local (`l < n`) or a virtual local of an inlined callee.
+	let var = |l: u32| -> Result<Variable, NativeRefusal> {
+		if l >= VIRTUAL_BASE {
+			cvars.get((l - VIRTUAL_BASE) as usize).copied().ok_or(NativeRefusal::Shape)
+		} else {
+			vars.get(l as usize).copied().ok_or(NativeRefusal::Shape)
+		}
+	};
 	b.ins().jump(nodes[region.header_node as usize], &[]);
 
 	for (i, node) in region.nodes.iter().enumerate() {
@@ -135,32 +214,52 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 			let f = b.ins().iadd_imm_s(f, -1);
 			b.def_var(fuel, f);
 		}
-		let define = |b: &mut FunctionBuilder<'_>, out: u32, v: ir::Value, is_bool: bool| {
-			b.def_var(vars[out as usize], v);
+		let define = |b: &mut FunctionBuilder<'_>, out: u32, v: ir::Value, ty: Scalar| -> Result<(), NativeRefusal> {
+			// A virtual local defines its variable only: no written bit, no tag, no cell.
+			if out >= VIRTUAL_BASE {
+				b.def_var(var(out)?, v);
+				return Ok(());
+			}
+			b.def_var(var(out)?, v);
 			let w = b.use_var(written);
 			let w = b.ins().bor_imm_s(w, 1i64 << out);
 			b.def_var(written, w);
 			let bit = (1u64 << out) & region.tracked;
 			if bit != 0 {
 				let t = b.use_var(bools);
-				let t = if is_bool {
+				let t = if ty == Scalar::Bool {
 					b.ins().bor_imm_s(t, bit as i64)
 				} else {
 					b.ins().band_imm_s(t, !bit as i64)
 				};
 				b.def_var(bools, t);
 			}
+			let bit = bit & unit_tracked;
+			if bit != 0 {
+				let u = b.use_var(units);
+				let u = if ty == Scalar::Unit {
+					b.ins().bor_imm_s(u, bit as i64)
+				} else {
+					b.ins().band_imm_s(u, !bit as i64)
+				};
+				b.def_var(units, u);
+			}
+			Ok(())
 		};
 		match node.op {
 			NodeOp::Literal { out, value, ty } => {
 				let v = b.ins().iconst(types::I64, value);
-				define(&mut b, out, v, ty == Scalar::Bool);
+				define(&mut b, out, v, ty)?;
+			}
+			NodeOp::Copy { out, src, ty } => {
+				let v = b.use_var(var(src)?);
+				define(&mut b, out, v, ty)?;
 			}
 			NodeOp::Compare { out, op, lhs, rhs } => {
-				let (x, y) = (b.use_var(vars[lhs as usize]), b.use_var(vars[rhs as usize]));
+				let (x, y) = (b.use_var(var(lhs)?), b.use_var(var(rhs)?));
 				let c = b.ins().icmp(condition(op)?, x, y);
 				let v = b.ins().uextend(types::I64, c);
-				define(&mut b, out, v, true);
+				define(&mut b, out, v, Scalar::Bool)?;
 			}
 			NodeOp::Arith {
 				out,
@@ -170,7 +269,7 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 				retry,
 				divisor,
 			} => {
-				let (x, y) = (b.use_var(vars[lhs as usize]), b.use_var(vars[rhs as usize]));
+				let (x, y) = (b.use_var(var(lhs)?), b.use_var(var(rhs)?));
 				let guard = |b: &mut FunctionBuilder<'_>, fault: ir::Value| {
 					let Some(e) = retry else {
 						return Err(NativeRefusal::Shape);
@@ -216,14 +315,65 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 					}
 					_ => return Err(NativeRefusal::Shape),
 				};
-				define(&mut b, out, v, false);
+				define(&mut b, out, v, Scalar::I64)?;
 			}
 			NodeOp::Branch { condition, yes, no } => {
-				let c = b.use_var(vars[condition as usize]);
+				let c = b.use_var(var(condition)?);
 				b.ins().brif(c, block(yes), &[], block(no), &[]);
 			}
 			NodeOp::Jump { target } => {
 				b.ins().jump(block(target), &[]);
+			}
+			NodeOp::IterNext { out, none } => {
+				let Some((next, end)) = iter else {
+					return Err(NativeRefusal::Shape);
+				};
+				let x = b.use_var(next);
+				let done = b.ins().icmp(IntCC::SignedGreaterThanOrEqual, x, end);
+				let some = b.create_block();
+				b.ins().brif(done, block(none), &[], some, &[]);
+				b.switch_to_block(some);
+				define(&mut b, out, x, Scalar::I64)?;
+				let after = b.ins().iadd_imm_s(x, 1);
+				b.def_var(next, after);
+			}
+			NodeOp::Enter { slots, .. } => {
+				let Some(checkpoint) = checkpoint else {
+					return Err(NativeRefusal::Shape);
+				};
+				if slots as usize > MAX_INLINE_SLOTS {
+					return Err(NativeRefusal::Shape);
+				}
+				let f = b.use_var(fuel);
+				b.def_var(checkpoint, f);
+				let zero = b.ins().iconst(types::I64, 0);
+				for &c in &cvars[..slots as usize] {
+					b.def_var(c, zero);
+				}
+			}
+			NodeOp::Arg { param, src } => {
+				if src >= VIRTUAL_BASE {
+					return Err(NativeRefusal::Shape);
+				}
+				let v = b.use_var(var(src)?);
+				b.def_var(var(VIRTUAL_BASE + param)?, v);
+			}
+			NodeOp::Ret { out, src, ty } => {
+				if out >= VIRTUAL_BASE || src < VIRTUAL_BASE {
+					return Err(NativeRefusal::Shape);
+				}
+				let v = b.use_var(var(src)?);
+				define(&mut b, out, v, ty)?;
+			}
+			// B1 test protocol: route on the checkpoint to the site's real Replay exits.
+			#[cfg(test)]
+			NodeOp::ForceReplay { zero, positive } => {
+				let Some(checkpoint) = checkpoint else {
+					return Err(NativeRefusal::Shape);
+				};
+				let c = b.use_var(checkpoint);
+				let empty = b.ins().icmp_imm_s(IntCC::Equal, c, 0);
+				b.ins().brif(empty, block(zero), &[], block(positive), &[]);
 			}
 		}
 		if let Some(next) = node.next {
@@ -240,15 +390,31 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 				b.ins().store(mem, v, buf, slot_offset(l));
 			}
 		}
+		// B1: `next` on every exit; `end` never.
+		if let Some((next, _)) = iter {
+			let v = b.use_var(next);
+			b.ins().store(mem, v, buf, slot_offset(n));
+		}
 		let w = b.use_var(written);
 		b.ins().store(mem, w, rec, ExitRecord::WRITTEN);
 		let t = b.use_var(bools);
 		b.ins().store(mem, t, rec, ExitRecord::BOOLS);
+		if unit_tracked != 0 {
+			let u = b.use_var(units);
+			b.ins().store(mem, u, rec, ExitRecord::UNITS);
+		}
 		let f = match exit.status {
 			Status::Fuel => b.ins().iconst(types::I64, 0),
 			Status::Retry if exit.restore => {
 				let f = b.use_var(fuel);
 				b.ins().iadd_imm_s(f, 1)
+			}
+			// B1: the fuel immediately before the Call.
+			Status::Replay => {
+				let Some(checkpoint) = checkpoint else {
+					return Err(NativeRefusal::Shape);
+				};
+				b.use_var(checkpoint)
 			}
 			_ => b.use_var(fuel),
 		};
@@ -267,7 +433,7 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 }
 
 fn slot_offset(l: usize) -> i32 {
-	// l < 64, so the offset is below 512.
+	// l < MAX_REGION_CELLS (66), so the offset is below 528.
 	(l * 8) as i32
 }
 
@@ -297,7 +463,8 @@ pub(crate) struct Compiled {
 	bytes: Vec<u8>,
 	/// Required code alignment (from Cranelift's function alignment).
 	alignment: u64,
-	slots: usize,
+	/// The `buf` length the code was compiled for (the region's cells).
+	cells: usize,
 	#[cfg(test)]
 	listing: Listing,
 }
@@ -321,8 +488,8 @@ impl Compiled {
 		self.alignment
 	}
 
-	pub(crate) fn slots(&self) -> usize {
-		self.slots
+	pub(crate) fn cells(&self) -> usize {
+		self.cells
 	}
 
 	#[cfg(test)]
@@ -349,7 +516,7 @@ pub(crate) fn compile(region: &Region, program_bytes: usize) -> Result<Compiled,
 	Ok(Compiled {
 		bytes,
 		alignment,
-		slots: region.slots.len(),
+		cells: region.cells(),
 		#[cfg(test)]
 		listing,
 	})
@@ -403,8 +570,9 @@ fn lower_with(
 	cranelift_codegen::verify_function(&func, &**isa)
 		.map_err(|e| NativeRefusal::Verifier(e.to_string()))?;
 
+	let map = super::audit::AccessMap::of(region);
 	if ir_gate {
-		super::audit::ir(&func, region.slots.len()).map_err(NativeRefusal::Audit)?;
+		super::audit::ir(&func, &map).map_err(NativeRefusal::Audit)?;
 	}
 
 	#[cfg(test)]
@@ -429,7 +597,7 @@ fn lower_with(
 	// The optimized IR is audited too: the mid-end must not have introduced anything the
 	// contract forbids.
 	if ir_gate {
-		super::audit::ir(&ctx.func, region.slots.len()).map_err(NativeRefusal::Audit)?;
+		super::audit::ir(&ctx.func, &map).map_err(NativeRefusal::Audit)?;
 	}
 
 	#[cfg(test)]

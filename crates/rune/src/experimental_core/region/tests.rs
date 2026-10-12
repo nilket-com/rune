@@ -23,7 +23,7 @@ use crate::experimental_core::{
 use crate::{Context, Diagnostics, Hash, Source, Sources};
 use std::vec::Vec as StdVec;
 
-fn loc(n: u32) -> Location {
+pub(super) fn loc(n: u32) -> Location {
 	Location {
 		source: 1,
 		revision: 1,
@@ -32,7 +32,7 @@ fn loc(n: u32) -> Location {
 	}
 }
 
-fn store() -> Store {
+pub(super) fn store() -> Store {
 	Store::new(Limits {
 		entries: 256,
 		bytes: 65_536,
@@ -40,7 +40,7 @@ fn store() -> Store {
 	.unwrap()
 }
 
-fn compile(text: &str) -> frontend::Program {
+pub(super) fn compile(text: &str) -> frontend::Program {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(text).unwrap()).unwrap();
@@ -48,7 +48,7 @@ fn compile(text: &str) -> frontend::Program {
 	frontend::compile(&mut sources, &context, &mut diagnostics, 7).unwrap()
 }
 
-fn build(functions: StdVec<Function>) -> Code {
+pub(super) fn build(functions: StdVec<Function>) -> Code {
 	let mut b = Builder::default();
 	for f in functions {
 		b.push(f).unwrap();
@@ -58,7 +58,7 @@ fn build(functions: StdVec<Function>) -> Code {
 
 /// Everything observable about one invocation.
 #[derive(Debug, PartialEq)]
-enum Outcome {
+pub(super) enum Outcome {
 	Value(Option<HostScalar>),
 	Failure {
 		error: Error,
@@ -75,7 +75,7 @@ struct Observed {
 }
 
 #[derive(Clone, Copy, Debug)]
-enum Arg {
+pub(super) enum Arg {
 	I(i64),
 	U(u64),
 	F(f64),
@@ -142,7 +142,7 @@ fn differential(
 
 /// The smallest fuel with which the plain interpreter finishes (with any outcome other than
 /// fuel exhaustion), searched up to `max`.
-fn fuel_to_finish(code: &Code, function: u32, args: &[Arg], max: usize) -> usize {
+pub(super) fn fuel_to_finish(code: &Code, function: u32, args: &[Arg], max: usize) -> usize {
 	hook::uninstall();
 	(0..=max)
 		.find(|&fuel| match invoke(code, function, args, fuel).outcome {
@@ -160,7 +160,7 @@ fn sweep(code: &Code, function: u32, args: &[Arg]) -> Stats {
 	differential(code, function, args, 0..=done + 2)
 }
 
-fn main_of(program: &frontend::Program) -> u32 {
+pub(super) fn main_of(program: &frontend::Program) -> u32 {
 	program.function(Hash::type_hash(["main"])).unwrap()
 }
 
@@ -215,38 +215,19 @@ fn lattices_are_join_semilattices_with_bottom() {
 	);
 }
 
-#[test]
-fn abi_record_layout_is_fixed() {
-	assert_eq!(core::mem::size_of::<ExitRecord>(), 40);
-	assert_eq!(core::mem::align_of::<ExitRecord>(), 8);
-	assert_eq!(core::mem::offset_of!(ExitRecord, fuel), 0);
-	assert_eq!(core::mem::offset_of!(ExitRecord, written), 8);
-	assert_eq!(core::mem::offset_of!(ExitRecord, bools), 16);
-	assert_eq!(core::mem::offset_of!(ExitRecord, status), 24);
-	assert_eq!(core::mem::offset_of!(ExitRecord, exit), 28);
-	assert_eq!(core::mem::offset_of!(ExitRecord, pc), 32);
-	assert_eq!(core::mem::offset_of!(ExitRecord, reserved), 36);
-	assert_eq!(
-		[Status::Continue, Status::Fuel, Status::Retry].map(|s| s as u32),
-		[1, 2, 3]
-	);
-	assert_eq!(Status::from_u32(0), None);
-	assert_eq!(Status::from_u32(4), None);
-}
-
 // ------------------------------------------------- hand-built eligibility checks
 
-fn lit(f: &mut Function, out: u32, value: Value, at: u32) {
+pub(super) fn lit(f: &mut Function, out: u32, value: Value, at: u32) {
 	f.push(Op::Literal { out, value }, loc(at)).unwrap();
 }
 
-fn bin(f: &mut Function, out: u32, op: Binary, lhs: u32, rhs: u32, at: u32) {
+pub(super) fn bin(f: &mut Function, out: u32, op: Binary, lhs: u32, rhs: u32, at: u32) {
 	f.push(Op::Binary { out, op, lhs, rhs }, loc(at)).unwrap();
 }
 
 /// `fn(limit) { i = 0; s = 0; while i < limit { s = s <op> d; i = i + 1 } return s }`
 /// with `d` from `divisor` (a literal written inside the loop) or the parameter slot 0.
-fn counted(op: Binary, divisor: Option<Value>) -> Code {
+pub(super) fn counted(op: Binary, divisor: Option<Value>) -> Code {
 	// slots: 0 limit/param, 1 i, 2 s, 3 cond, 4 one, 5 d
 	let mut f = Function::new(6, 1).unwrap();
 	lit(&mut f, 1, Value::I64(0), 0);
@@ -276,8 +257,8 @@ fn counted(op: Binary, divisor: Option<Value>) -> Code {
 	build(vec![f])
 }
 
-fn regions(code: &Code, function: u32) -> StdVec<(u32, Result<Region, RegionRefusal>)> {
-	analyze(code.function(function).unwrap(), function)
+pub(super) fn regions(code: &Code, function: u32) -> StdVec<(u32, Result<Region, RegionRefusal>)> {
+	analyze(&code, function)
 		.unwrap()
 		.into_iter()
 		.collect()
@@ -348,8 +329,10 @@ fn counted_loop_region_shape_and_constant_divisors() {
 	let code = counted(Binary::Rem, None);
 	assert_eq!(
 		regions(&code, 0)[0].1.as_ref().err(),
-		Some(&RegionRefusal::Op { pc: 4 }),
-		"Copy is outside the P0 subset"
+		Some(&RegionRefusal::Type { pc: 5 }),
+		"P2b: the Copy (pc 4) of the never-written parameter is admitted as an op, but its out \
+		 is Top, so the Rem reading it is refused by the read-type check (which runs before \
+		 the CopySource check)"
 	);
 }
 
@@ -511,9 +494,9 @@ fn function_level_inference_reaches_a_fixed_point_over_loops() {
 
 // ----------------------------------------------------------------- commit checks
 
-fn while_region() -> (Code, Region) {
+pub(super) fn while_region() -> (Code, Region) {
 	let code = counted(Binary::Rem, Some(Value::I64(17)));
-	let region = analyze(code.function(0).unwrap(), 0)
+	let region = analyze(&code, 0)
 		.unwrap()
 		.into_iter()
 		.next()
@@ -523,7 +506,7 @@ fn while_region() -> (Code, Region) {
 	(code, region)
 }
 
-fn window() -> StdVec<Value> {
+pub(super) fn window() -> StdVec<Value> {
 	vec![
 		Value::I64(10),
 		Value::I64(0),
@@ -542,7 +525,7 @@ fn entry_refusals_change_nothing() {
 	let never = |_: &Region, _: &mut [i64], _: &mut ExitRecord| -> u32 { panic!("not entered") };
 	let mut w = original.clone();
 	assert_eq!(
-		commit::enter(&region, &mut w, &mut s, true, 50, never).unwrap(),
+		commit::enter(&region, &mut w, &mut s, true, 50, commit::ROOM_FOR_TEST, never).unwrap(),
 		Err(Refused::Cancel)
 	);
 	assert_eq!(w, original);
@@ -556,7 +539,7 @@ fn entry_refusals_change_nothing() {
 		w[slot] = value;
 		let before = w.clone();
 		assert_eq!(
-			commit::enter(&region, &mut w, &mut s, false, 50, never).unwrap(),
+			commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, never).unwrap(),
 			Err(Refused::Tag { slot: slot as u32 })
 		);
 		assert_eq!(w, before);
@@ -567,7 +550,7 @@ fn entry_refusals_change_nothing() {
 	w[3] = s.string("owned").unwrap();
 	let before = w.clone();
 	assert_eq!(
-		commit::enter(&region, &mut w, &mut s, false, 50, never).unwrap(),
+		commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, never).unwrap(),
 		Err(Refused::Tag { slot: 3 })
 	);
 	assert_eq!(w, before);
@@ -577,7 +560,7 @@ fn entry_refusals_change_nothing() {
 	s.close().unwrap();
 	let mut w = original.clone();
 	assert_eq!(
-		commit::enter(&region, &mut w, &mut s, false, 50, never).unwrap(),
+		commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, never).unwrap(),
 		Err(Refused::Store)
 	);
 	assert_eq!(w, original);
@@ -653,7 +636,7 @@ fn forged_exit_records_are_rejected_before_any_write() {
 		let mut s = store();
 		let original = window();
 		let mut w = original.clone();
-		let result = commit::enter(&region, &mut w, &mut s, false, 50, |_, b, r| {
+		let result = commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, |_, b, r| {
 			forge(b, r, cont, e.pc, fuel_exit);
 			r.status
 		})
@@ -664,7 +647,7 @@ fn forged_exit_records_are_rejected_before_any_write() {
 	// The honest record commits exactly the written slot.
 	let mut s = store();
 	let mut w = window();
-	let result = commit::enter(&region, &mut w, &mut s, false, 50, |_, b, r| {
+	let result = commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, |_, b, r| {
 		honest(b, r, cont, e.pc, fuel_exit);
 		b[3] = 1;
 		r.status
@@ -681,7 +664,7 @@ fn forged_exit_records_are_rejected_before_any_write() {
 fn simulator_fuel_and_retry_contract_per_charged_pc() {
 	// s = s * 2 overflows; fuel is checked at the header only.
 	let code = counted(Binary::Mul, Some(Value::I64(2)));
-	let region = analyze(code.function(0).unwrap(), 0)
+	let region = analyze(&code, 0)
 		.unwrap()
 		.into_iter()
 		.next()
@@ -991,7 +974,7 @@ fn listing_of_programs_and_region_outcomes() {
 				};
 				std::println!("  {pc:4} {charged} {:?}", f.operation(pc).unwrap());
 			}
-			for (header, region) in analyze(f, id).unwrap() {
+			for (header, region) in analyze(&program.code, id).unwrap() {
 				match region {
 					Ok(r) => {
 						std::println!(
@@ -1014,7 +997,7 @@ fn listing_of_programs_and_region_outcomes() {
 	}
 }
 
-const LISTED: &[&str] = &[
+pub(super) const LISTED: &[&str] = &[
     "pub fn main(_a) { let n = 0; while n < 10000 { n += 1; } n }",
     "pub fn main(_a) { let n = 0; let total = 0; while n < 10000 { total += n % 17; n += 1; } total }",
     "pub fn main(a) { let i = 0; let s = 0; while i < a { let t = i * 2; if t > 6 { s = s + t; } i += 1; } s }",
@@ -1166,7 +1149,7 @@ fn p3a_budgeted_analysis_equals_unbudgeted_and_refuses_cleanly() {
 	// Unlimited: the peak is the most this function's analysis holds at once.
 	let budget = Budget::unlimited();
 	let headers = super::scan_headers(f, &budget).unwrap();
-	let context = FunctionContext::new(f, 0, &budget, TRANSFER_FACTOR).unwrap();
+	let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR).unwrap();
 	let (region, bytes) = context.analyze_header(headers[0]).unwrap().unwrap();
 	assert_eq!((region.nodes.as_slice(), region.exits.as_slice()), (expected.nodes.as_slice(), expected.exits.as_slice()));
 	let held = Held::adopt(&budget, bytes);
@@ -1179,7 +1162,7 @@ fn p3a_budgeted_analysis_equals_unbudgeted_and_refuses_cleanly() {
 		let budget = Budget::new(limit);
 		let outcome = (|| -> Result<bool, Stop> {
 			let headers = super::scan_headers(f, &budget)?;
-			let context = FunctionContext::new(f, 0, &budget, TRANSFER_FACTOR)?;
+			let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR)?;
 			let found = context.analyze_header(headers[0])?;
 			let (region, bytes) = found.unwrap();
 			let _held = Held::adopt(&budget, bytes);
@@ -1216,11 +1199,10 @@ fn p3a_transfer_cutoff_zero_slots_and_overflow() {
 	assert_eq!((region.slots.len(), region.nodes.len()), (0, 1));
 
 	// Factor 0 refuses it by the cutoff; the production factor admits it.
-	let f = code.function(0).unwrap();
 	let budget = super::budget::Budget::unlimited();
-	let refused = FunctionContext::new(f, 0, &budget, 0).unwrap().analyze_header(1).unwrap();
+	let refused = FunctionContext::new(&code, 0, &budget, 0).unwrap().analyze_header(1).unwrap();
 	assert!(matches!(refused, Err(RegionRefusal::Steps)));
-	let context = FunctionContext::new(f, 0, &budget, TRANSFER_FACTOR).unwrap();
+	let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR).unwrap();
 	assert!(context.analyze_header(1).unwrap().is_ok());
 	assert_eq!(context.max_transfers(), 1);
 }

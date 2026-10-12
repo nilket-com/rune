@@ -19,9 +19,9 @@
 //! - A `None` from `NativeRegion::call` (contract mismatch) counts as `refused_call` and
 //!   falls back to the interpreter with nothing changed.
 use super::abi::ExitRecord;
-use super::commit::{self, Refused};
-use super::simulate::simulate;
-use super::{analyze, Region, Status, MAX_REGION_SLOTS};
+use super::commit::{self, Refused, Room};
+use super::simulate::{simulate, simulate_traced};
+use super::{analyze, Node, NodeOp, Region, ReplayReason, Status, Target, MAX_REGION_CELLS};
 use crate::experimental_core::code::Code;
 use crate::experimental_core::heap::Store;
 use crate::experimental_core::value::Value;
@@ -66,6 +66,38 @@ pub(crate) struct Stats {
 	/// Native mode, informational only: unwritten buffer entries (unspecified scratch)
 	/// that differ between the native and simulated runs.
 	pub(crate) scratch_differences: usize,
+	/// P2b, committed entries: slots written back as `Unit` by their static exit tag, and
+	/// by the record's dynamic unit mask.
+	pub(crate) unit_static: usize,
+	pub(crate) unit_dynamic: usize,
+	/// B1, committed entries: Replay exits (any mode), and by reason.
+	pub(crate) replay_exits: usize,
+	pub(crate) replay_fuel: usize,
+	pub(crate) replay_fault: usize,
+	/// B1: committed Continue exits at the IterNext none edge.
+	pub(crate) iter_done_exits: usize,
+	/// B1, native mode: committed native Replay exits, by reason, and none-edge exits.
+	pub(crate) native_replay: usize,
+	pub(crate) native_replay_fuel: usize,
+	pub(crate) native_replay_fault: usize,
+	pub(crate) native_iter_done: usize,
+	/// B1: entry refusals by the iterator check and by the frame/slot room.
+	pub(crate) refused_iter: usize,
+	pub(crate) refused_room: usize,
+	/// B1: committed Replays whose checkpoint was compared with the traced simulator's
+	/// snapshot at the site's `Enter` (equal, or a mismatch is recorded).
+	pub(crate) replay_checked: usize,
+}
+
+/// P2b: how many slots a committed (so validated) record wrote back as `Unit`, by static
+/// tag and by dynamic tag.
+fn unit_writebacks(region: &Region, record: &ExitRecord) -> (usize, usize) {
+	let Some(e) = region.exits.get(record.exit as usize) else {
+		return (0, 0);
+	};
+	let by_static = record.written & e.units & !e.dynamic;
+	let by_dynamic = record.written & e.dynamic & record.units;
+	(by_static.count_ones() as usize, by_dynamic.count_ones() as usize)
 }
 
 /// Compile and load outcomes of one `install_native`.
@@ -119,6 +151,9 @@ std::thread_local! {
 	/// An install set aside by `suspend`, so a plain-interpreter run sees no install at all.
 	static SUSPENDED: RefCell<Option<Installed>> = const { RefCell::new(None) };
 
+	/// B1 test protocol: a transform applied to every analysed region at install.
+	static TRANSFORM: Cell<Option<fn(&mut Region)>> = const { Cell::new(None) };
+
 	/// The first native/simulator mismatch since the last `take_mismatch`.
 	static MISMATCH: RefCell<Option<String>> = const { RefCell::new(None) };
 
@@ -128,15 +163,53 @@ std::thread_local! {
 
 fn analysed(code: &Code) -> StdVec<Region> {
 	let mut regions = StdVec::new();
+	let transform = TRANSFORM.with(|t| t.get());
 	for id in 0..code.functions() as u32 {
-		let f = code.function(id).expect("function");
-		for (_, region) in analyze(f, id).expect("analysis") {
-			if let Ok(region) = region {
+		for (_, region) in analyze(code, id).expect("analysis") {
+			if let Ok(mut region) = region {
+				if let Some(transform) = transform {
+					transform(&mut region);
+				}
 				regions.push(region);
 			}
 		}
 	}
 	regions
+}
+
+/// B1 test protocol: installs a transform applied after analysis to every region of the
+/// next installs on this thread (`None` removes it). Test-only hook; production analysis
+/// never sees it.
+pub(crate) fn set_region_transform_for_test(transform: Option<fn(&mut Region)>) {
+	TRANSFORM.with(|t| t.set(transform));
+}
+
+/// B1 forced-Replay protocol (B1-42): after every `Enter`, a `ForceReplay` node routes a
+/// zero checkpoint to the site's REAL CalleeFuel exit and a positive one to the site's
+/// REAL CalleeFault exit, when the site has one (a pure, infallible callee has none, and
+/// none is invented: its calls are then forced only at checkpoint 0). Both exits obey the
+/// production fuel rules: no reason and no rule is added or relaxed.
+pub(crate) fn force_replay(region: &mut Region) {
+	for k in 0..region.sites.len() {
+		let site = region.sites[k];
+		let enter = site.enter as usize;
+		let continue_to = region.nodes[enter].next.expect("Enter has a successor");
+		let positive = site.fault_exit.map_or(continue_to, Target::Exit);
+		let node = region.nodes.len() as u32;
+		region
+			.nodes
+			.try_push(Node {
+				pc: site.pc,
+				charged: None,
+				op: NodeOp::ForceReplay {
+					zero: Target::Exit(site.fuel_exit),
+					positive,
+				},
+				next: None,
+			})
+			.expect("push");
+		region.nodes[enter].next = Some(Target::Node(node));
+	}
 }
 
 /// Analyses every function of `code` and installs its admitted regions for this thread,
@@ -199,7 +272,7 @@ pub(crate) fn install_native(code: &Code, dump: Option<&std::path::Path>) -> Nat
 			}
 		};
 
-		assert_eq!(compiled.slots(), region.slots.len(), "compiled for another region");
+		assert_eq!(compiled.cells(), region.cells(), "compiled for another region");
 		program_bytes += compiled.bytes().len();
 
 		if let Some(dir) = dump {
@@ -220,7 +293,7 @@ pub(crate) fn install_native(code: &Code, dump: Option<&std::path::Path>) -> Nat
 					code: code.id(),
 					function: region.function,
 					header: region.header,
-					slots: region.slots.len(),
+					slots: region.cells(),
 					native: loaded,
 				}));
 			}
@@ -312,6 +385,7 @@ pub(crate) fn take_final_fuel() -> Option<usize> {
 
 /// Called by the executor at a charged instruction it did not just resume at, before the
 /// instruction's own cancel/fuel step. `Some((pc, fuel))`: the region ran and committed.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn try_enter(
 	code: u32,
 	function: u32,
@@ -320,6 +394,7 @@ pub(crate) fn try_enter(
 	store: &mut Store,
 	cancel_pending: bool,
 	fuel: usize,
+	room: Room,
 ) -> Option<(usize, usize)> {
 	INSTALLED.with(|i| {
 		let mut installed = i.borrow_mut();
@@ -333,6 +408,8 @@ pub(crate) fn try_enter(
 			.iter()
 			.position(|r| r.function == function && r.header as usize == pc)?;
 
+		let mut seen = None;
+		let mut traced = None;
 		let (outcome, native) = match installed.mode {
 			Mode::Off => return None,
 			Mode::Simulate => (
@@ -342,14 +419,25 @@ pub(crate) fn try_enter(
 					store,
 					cancel_pending,
 					fuel,
-					simulate,
+					room,
+					|region, buf, record| {
+						let mut pre = [0i64; MAX_REGION_CELLS];
+						pre[..buf.len()].copy_from_slice(buf);
+						let pre_record = *record;
+						let status = simulate(region, buf, record);
+						seen = Some(*record);
+						traced = Some(trace_check(region, &pre[..buf.len()], pre_record, buf, record));
+						status
+					},
 				),
 				false,
 			),
-			Mode::Native => (
-				enter_native(installed, index, window, store, cancel_pending, fuel)?,
-				true,
-			),
+			Mode::Native => {
+				let (outcome, record, check) = enter_native(installed, index, window, store, cancel_pending, fuel, room)?;
+				seen = record;
+				traced = check;
+				(outcome, true)
+			}
 		};
 
 		let outcome = outcome.expect("commit cannot fail after a successful entry check");
@@ -357,10 +445,35 @@ pub(crate) fn try_enter(
 		match outcome {
 			Ok(exited) => {
 				stats.entries += 1;
+				let region = &installed.regions[index];
+				let exit = seen.and_then(|record| region.exits.get(record.exit as usize).copied());
+				if let Some(record) = seen {
+					let (by_static, by_dynamic) = unit_writebacks(region, &record);
+					stats.unit_static += by_static;
+					stats.unit_dynamic += by_dynamic;
+				}
+				let iter_done = exit.is_some_and(|e| e.iter_done);
+				let reason = exit.and_then(|e| e.replay);
 				match exited.status {
 					Status::Continue => stats.continue_exits += 1,
 					Status::Fuel => stats.fuel_exits += 1,
 					Status::Retry => stats.retry_exits += 1,
+					Status::Replay => stats.replay_exits += 1,
+				}
+				stats.iter_done_exits += usize::from(iter_done);
+				stats.replay_fuel += usize::from(reason == Some(ReplayReason::CalleeFuel));
+				stats.replay_fault += usize::from(reason == Some(ReplayReason::CalleeFault));
+				if exited.status == Status::Replay {
+					match traced {
+						Some(Ok(())) => stats.replay_checked += 1,
+						Some(Err(text)) => {
+							stats.mismatches += 1;
+							MISMATCH.with(|m| {
+								m.borrow_mut().get_or_insert(text);
+							});
+						}
+						None => (),
+					}
 				}
 				if native {
 					stats.native_entries += 1;
@@ -368,7 +481,11 @@ pub(crate) fn try_enter(
 						Status::Continue => stats.native_continue += 1,
 						Status::Fuel => stats.native_fuel += 1,
 						Status::Retry => stats.native_retry += 1,
+						Status::Replay => stats.native_replay += 1,
 					}
+					stats.native_iter_done += usize::from(iter_done);
+					stats.native_replay_fuel += usize::from(reason == Some(ReplayReason::CalleeFuel));
+					stats.native_replay_fault += usize::from(reason == Some(ReplayReason::CalleeFault));
 				}
 				Some((exited.pc, exited.fuel))
 			}
@@ -377,6 +494,8 @@ pub(crate) fn try_enter(
 					Refused::Cancel => stats.refused_cancel += 1,
 					Refused::Store => stats.refused_store += 1,
 					Refused::Tag { .. } => stats.refused_tag += 1,
+					Refused::Iter { .. } => stats.refused_iter += 1,
+					Refused::Room => stats.refused_room += 1,
 					Refused::Window | Refused::InvalidExit => {
 						let region = &installed.regions[index];
 						panic!(
@@ -393,9 +512,61 @@ pub(crate) fn try_enter(
 
 type Entered = crate::experimental_core::error::Result<core::result::Result<commit::Exited, Refused>>;
 
+/// B1 (B1-41): the traced simulator run from the same pre-entry buffer and record. Its
+/// status and record must equal the run's; at a Replay exit the committed checkpoint must
+/// equal the snapshot at the last `Enter` (written, bools, units, fuel, the slot values
+/// under `written`, `next`), and every completed call wrote its result exactly once (one
+/// `Ret` per `Enter`, but the last when the exit is a Replay).
+fn trace_check(region: &Region, pre: &[i64], pre_record: ExitRecord, buf: &[i64], record: &ExitRecord) -> Result<(), String> {
+	let mut tbuf = [0i64; MAX_REGION_CELLS];
+	let cells = pre.len();
+	tbuf[..cells].copy_from_slice(pre);
+	let mut trecord = pre_record;
+	let (status, trace) = simulate_traced(region, &mut tbuf[..cells], &mut trecord);
+	let n = region.slots.len();
+	let describe = |what: &str| {
+		std::format!(
+			"region f{} h{}: {what}\n  pre {:?} {:?}\n  run record {:?} buf {:?}\n  traced status {status} record {:?} buf {:?} trace {:?}",
+			region.function,
+			region.header,
+			pre,
+			pre_record,
+			record,
+			buf,
+			trecord,
+			&tbuf[..cells],
+			trace
+		)
+	};
+	if status != record.status || trecord != *record {
+		return Err(describe("traced simulator differs from the run"));
+	}
+	let replay = region.exits.get(record.exit as usize).is_some_and(|e| e.status == Status::Replay);
+	let completed = trace.enters - usize::from(replay);
+	if trace.rets != completed {
+		return Err(describe("a completed call did not write its result exactly once"));
+	}
+	if replay {
+		let Some(snap) = trace.snapshots.last() else {
+			return Err(describe("Replay without an Enter"));
+		};
+		let values_ok = (0..n).filter(|&l| record.written & (1 << l) != 0).all(|l| buf[l] == snap.cells[l]);
+		let next_ok = region.iter.is_none() || buf[n] == snap.cells[n];
+		if (record.written, record.bools, record.units, record.fuel) != (snap.written, snap.bools, snap.units, snap.fuel)
+			|| !values_ok
+			|| !next_ok
+		{
+			return Err(describe("committed checkpoint differs from the pre-Call snapshot"));
+		}
+	}
+	Ok(())
+}
+
 /// Native mode entry. `None`: the region has no loaded code (its compile or load was
-/// refused) or the call refused its arguments; the interpreter runs the instruction.
+/// refused) or the call refused its arguments; the interpreter runs the instruction. With
+/// the outcome, the native record the commit validated.
 #[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+#[allow(clippy::too_many_arguments)]
 fn enter_native(
 	installed: &mut Installed,
 	index: usize,
@@ -403,14 +574,15 @@ fn enter_native(
 	store: &mut Store,
 	cancel_pending: bool,
 	fuel: usize,
-) -> Option<Entered> {
+	room: Room,
+) -> Option<(Entered, Option<ExitRecord>, Option<Result<(), String>>)> {
 	let region = &installed.regions[index];
 	let loaded = installed.native.get(index)?.as_ref()?;
 	assert!(
 		loaded.code == installed.code
 			&& loaded.function == region.function
 			&& loaded.header == region.header
-			&& loaded.slots == region.slots.len(),
+			&& loaded.slots == region.cells(),
 		"loaded artifact does not belong to region f{} h{}",
 		region.function,
 		region.header
@@ -418,15 +590,25 @@ fn enter_native(
 
 	let mut call_refused = false;
 	let mut mismatch = None;
-	let outcome = commit::enter(region, window, store, cancel_pending, fuel, |region, buf, record| {
-		native_run(
+	let mut seen = None;
+	let mut traced = None;
+	let outcome = commit::enter(region, window, store, cancel_pending, fuel, room, |region, buf, record| {
+		let mut pre = [0i64; MAX_REGION_CELLS];
+		pre[..buf.len()].copy_from_slice(buf);
+		let pre_record = *record;
+		let status = native_run(
 			region,
 			&loaded.native,
 			buf,
 			record,
 			&mut call_refused,
 			&mut mismatch,
-		)
+		);
+		seen = Some(*record);
+		if !call_refused {
+			traced = Some(trace_check(region, &pre[..buf.len()], pre_record, buf, record));
+		}
+		status
 	});
 
 	let stats = &mut installed.stats;
@@ -445,10 +627,11 @@ fn enter_native(
 		stats.refused_call += 1;
 		return None;
 	}
-	Some(outcome)
+	Some((outcome, seen, traced))
 }
 
 #[cfg(not(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux")))]
+#[allow(clippy::too_many_arguments)]
 fn enter_native(
 	_: &mut Installed,
 	_: usize,
@@ -456,7 +639,8 @@ fn enter_native(
 	_: &mut Store,
 	_: bool,
 	_: usize,
-) -> Option<Entered> {
+	_: Room,
+) -> Option<(Entered, Option<ExitRecord>, Option<Result<(), String>>)> {
 	None
 }
 
@@ -472,8 +656,10 @@ fn native_run(
 	call_refused: &mut bool,
 	mismatch: &mut Option<(String, usize)>,
 ) -> u32 {
+	// B1: `buf` is the region's cells: the slots, then `next` and `end` with an iterator.
 	let n = buf.len();
-	let mut pre = [0i64; MAX_REGION_SLOTS];
+	let slots = region.slots.len();
+	let mut pre = [0i64; MAX_REGION_CELLS];
 	pre[..n].copy_from_slice(buf);
 	let pre_record = *record;
 
@@ -488,10 +674,13 @@ fn native_run(
 	let mut sim_record = pre_record;
 	let sim_status = simulate(region, &mut sim[..n], &mut sim_record);
 
-	let written_differs = (0..n)
+	let written_differs = (0..slots)
 		.filter(|&l| (record.written | sim_record.written) & (1 << l) != 0)
 		.any(|l| buf[l] != sim[l]);
-	if status != sim_status || *record != sim_record || written_differs {
+	// B1: `next` equal on every exit, `end` unchanged in both runs.
+	let iter_differs = region.iter.is_some()
+		&& (n != slots + 2 || buf[slots] != sim[slots] || buf[slots + 1] != pre[slots + 1] || sim[slots + 1] != pre[slots + 1]);
+	if status != sim_status || *record != sim_record || written_differs || iter_differs {
 		*mismatch = Some((
 			std::format!(
 				"region f{} h{}: pre-entry buf {:?} record {:?}\n  native status {} record {:?} buf {:?}\n  simulator status {} record {:?} buf {:?}",
@@ -509,7 +698,7 @@ fn native_run(
 			0,
 		));
 	} else {
-		let scratch = (0..n)
+		let scratch = (0..slots)
 			.filter(|&l| record.written & (1 << l) == 0)
 			.filter(|&l| buf[l] != sim[l])
 			.count();

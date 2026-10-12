@@ -242,7 +242,7 @@ pub(super) fn invoke(code: &Code, function: u32, args: &[Arg], fuel: usize) -> O
 	}
 }
 
-fn add(total: &mut Stats, s: &Stats) {
+pub(super) fn add(total: &mut Stats, s: &Stats) {
 	total.entries += s.entries;
 	total.continue_exits += s.continue_exits;
 	total.fuel_exits += s.fuel_exits;
@@ -258,6 +258,19 @@ fn add(total: &mut Stats, s: &Stats) {
 	total.refused_call += s.refused_call;
 	total.mismatches += s.mismatches;
 	total.scratch_differences += s.scratch_differences;
+	total.unit_static += s.unit_static;
+	total.unit_dynamic += s.unit_dynamic;
+	total.replay_exits += s.replay_exits;
+	total.replay_fuel += s.replay_fuel;
+	total.replay_fault += s.replay_fault;
+	total.iter_done_exits += s.iter_done_exits;
+	total.native_replay += s.native_replay;
+	total.native_replay_fuel += s.native_replay_fuel;
+	total.native_replay_fault += s.native_replay_fault;
+	total.native_iter_done += s.native_iter_done;
+	total.refused_iter += s.refused_iter;
+	total.refused_room += s.refused_room;
+	total.replay_checked += s.replay_checked;
 }
 
 // ------------------------------------------------------------------------- the cases
@@ -688,7 +701,8 @@ fn has(targets: &str, c: char) -> bool {
 	targets.contains(c)
 }
 
-fn run_case(case: &Case) {
+/// Returns the native-mode statistics over the whole sweep and over its fuel >= 1 part.
+pub(super) fn run_case(case: &Case) -> (Stats, Stats) {
 	let code = case.src.code();
 	let main = case.src.main();
 	let dump = dump_dir(&case.name);
@@ -839,6 +853,7 @@ fn run_case(case: &Case) {
 	if has(case.targets, 'R') {
 		assert!(covered.native_retry > 0, "{}: no retry exit", case.name);
 	}
+	(all, covered)
 }
 
 #[test]
@@ -884,7 +899,7 @@ fn p1_case_expectations_compile_only() {
 		let mut loaded = 0;
 		let mut refused = [0usize; 3];
 		for id in 0..code.functions() as u32 {
-			for (_, region) in analyze(code.function(id).unwrap(), id).unwrap() {
+			for (_, region) in analyze(&code, id).unwrap() {
 				let Ok(region) = region else { continue };
 				match compile_region(&region, 0) {
 					Ok(_) => loaded += 1,
@@ -970,7 +985,7 @@ fn lifecycle_region() -> Region {
 		"pub fn main(a) { let n = 0; let total = 0; while n < a { total += n % 17; n += 1; } total }",
 	);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
-	let mut found = analyze(program.code.function(main).unwrap(), main)
+	let mut found = analyze(&program.code, main)
 		.unwrap()
 		.into_iter();
 	found.next().unwrap().1.unwrap()

@@ -23,7 +23,7 @@ fn regions(text: &str) -> Vec<Region> {
 	let program = frontend::compile(&mut sources, &context, &mut diagnostics, 7).unwrap();
 	let mut out = Vec::new();
 	for id in 0..program.code.functions() as u32 {
-		for (_, region) in analyze(program.code.function(id).unwrap(), id).unwrap() {
+		for (_, region) in analyze(&program.code, id).unwrap() {
 			if let Ok(region) = region {
 				out.push(region);
 			}
@@ -57,7 +57,7 @@ fn kernel_regions_compile_and_pass_the_audit() {
 		let compiled = compile(&found[0], 0).unwrap();
 		dump(name, &compiled);
 		assert_eq!(compiled.listing().report.code_bytes, compiled.bytes().len());
-		assert_eq!(compiled.slots(), found[0].slots.len());
+		assert_eq!(compiled.cells(), found[0].cells());
 		assert!(compiled.alignment().is_power_of_two());
 		assert!(
 			compiled.bytes().len() < 4096,
@@ -182,7 +182,7 @@ fn code_cache_bound_refuses_without_publishing() {
 }
 
 /// A hand-built function with one extra instruction, for the IR audit's negative cases.
-fn with_extra(extra: impl FnOnce(&mut FunctionBuilder<'_>, ir::Value, ir::Value)) -> ir::Function {
+pub(super) fn with_extra(extra: impl FnOnce(&mut FunctionBuilder<'_>, ir::Value, ir::Value)) -> ir::Function {
 	let mut func = ir::Function::with_name_signature(UserFuncName::user(0, 0), lower::signature());
 	let mut fctx = FunctionBuilderContext::new();
 	let mut b = FunctionBuilder::new(&mut func, &mut fctx);
@@ -209,7 +209,7 @@ fn ir_audit_negative_cases() {
 		let s = b.ins().iconst(types::I32, 1);
 		b.ins().store(mem, s, rec, ExitRecord::PC);
 	});
-	assert_eq!(audit::ir(&ok, 2), Ok(()));
+	assert_eq!(audit::ir(&ok, &audit::AccessMap::uniform_for_test(2)), Ok(()));
 	// buf[2] of 2 slots, a negative offset, a record overrun, and a derived address.
 	for case in [
 		with_extra(|b, buf, _| {
@@ -223,7 +223,8 @@ fn ir_audit_negative_cases() {
 		with_extra(|b, _, rec| {
 			let mem = trusted(b);
 			let v = b.ins().iconst(types::I64, 0);
-			b.ins().store(mem, v, rec, 36);
+			// 44 + 8 overruns the record under both the 40-byte (P0) and 48-byte (P2b) layouts.
+			b.ins().store(mem, v, rec, 44);
 		}),
 		with_extra(|b, buf, _| {
 			let mem = trusted(b);
@@ -237,7 +238,7 @@ fn ir_audit_negative_cases() {
 		}),
 	] {
 		assert!(
-			matches!(audit::ir(&case, 2), Err(Finding::Memory(_))),
+			matches!(audit::ir(&case, &audit::AccessMap::uniform_for_test(2)), Err(Finding::Memory(_))),
 			"{}",
 			case.display()
 		);
@@ -248,10 +249,10 @@ fn ir_audit_negative_cases() {
 		let next = b.create_block();
 		b.switch_to_block(next);
 	});
-	assert!(matches!(audit::ir(&trap, 2), Err(Finding::Opcode(_))));
+	assert!(matches!(audit::ir(&trap, &audit::AccessMap::uniform_for_test(2)), Err(Finding::Opcode(_))));
 	let global = with_extra(|b, _, _| {
 		let fp = b.ins().get_frame_pointer(types::I64);
 		let _ = fp;
 	});
-	assert!(matches!(audit::ir(&global, 2), Err(Finding::Opcode(_))));
+	assert!(matches!(audit::ir(&global, &audit::AccessMap::uniform_for_test(2)), Err(Finding::Opcode(_))));
 }

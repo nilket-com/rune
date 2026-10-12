@@ -7,7 +7,8 @@
 //! (which raises #DE on those inputs) and to Cranelift trap sites, so a region with a
 //! runtime divisor is refused even though its branches make those paths unreachable.
 use crate::experimental_core::region::abi::ExitRecord;
-use cranelift_codegen::ir::{self, InstructionData, Opcode};
+use crate::experimental_core::region::{EntryClass, Region, MAX_REGION_CELLS};
+use cranelift_codegen::ir::{self, types, InstructionData, Opcode};
 use cranelift_codegen::CompiledCode;
 use std::format;
 use std::prelude::rust_2021::*;
@@ -17,8 +18,9 @@ use std::prelude::rust_2021::*;
 pub(crate) enum Finding {
 	/// An IR opcode outside the P0 allowlist (calls, traps, global values, atomics, ...).
 	Opcode(String),
-	/// A load or store whose address is not a function parameter plus an in-bounds
-	/// constant offset.
+	/// A load or store whose address is not a function parameter plus a constant offset
+	/// naming exactly one permitted `buf` cell or record field (B1: per-cell and per-field
+	/// permissions).
 	Memory(String),
 	/// An integer division or remainder survived to the IR given to the backend with a
 	/// divisor that is not a constant outside {0, -1}.
@@ -45,11 +47,90 @@ pub(crate) struct Report {
 	pub(crate) stack: usize,
 }
 
+/// A load and a store permission.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct Perm {
+	pub(crate) load: bool,
+	pub(crate) store: bool,
+}
+
+const NONE: Perm = Perm {
+	load: false,
+	store: false,
+};
+
+/// B1: the per-cell permissions of `buf` (cell `i` is bytes `[8i, 8i + 8)`), derived from
+/// the region alone, the same region `lower::build` lowers. A slot cell is loadable iff it
+/// is a guarded live-in (the entry block loads only those), storable iff some exit may
+/// have written it (the exit blocks store only those); a guarded live-in that is also
+/// written has both (the union). `next` is load and store; `end` is load only.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct AccessMap {
+	buf: [Perm; MAX_REGION_CELLS],
+	cells: usize,
+}
+
+impl AccessMap {
+	pub(crate) fn of(region: &Region) -> Self {
+		let n = region.slots.len().min(MAX_REGION_CELLS);
+		let stored = region.exits.iter().fold(0u64, |m, e| m | e.definite | e.maybe);
+		let mut buf = [NONE; MAX_REGION_CELLS];
+		for (l, cell) in buf.iter_mut().enumerate().take(n) {
+			*cell = Perm {
+				load: matches!(region.entry.get(l), Some(EntryClass::Guard(_))),
+				store: l < 64 && stored & (1u64 << l) != 0,
+			};
+		}
+		let mut cells = n;
+		if region.iter.is_some() && n + 2 <= MAX_REGION_CELLS {
+			buf[n] = Perm { load: true, store: true };
+			buf[n + 1] = Perm { load: true, store: false };
+			cells = n + 2;
+		}
+		Self { buf, cells }
+	}
+
+	/// The permission of cell `i` (none past the cells).
+	pub(crate) fn cell(&self, i: usize) -> Perm {
+		if i < self.cells {
+			self.buf[i]
+		} else {
+			NONE
+		}
+	}
+
+	/// Tests: `cells` cells with load and store each.
+	#[cfg(test)]
+	pub(crate) fn uniform_for_test(cells: usize) -> Self {
+		let mut buf = [NONE; MAX_REGION_CELLS];
+		for cell in buf.iter_mut().take(cells) {
+			*cell = Perm { load: true, store: true };
+		}
+		Self { buf, cells }
+	}
+}
+
+/// The record fields: (offset, bytes, load, store). Native code loads only `fuel` and
+/// stores every out field; `reserved` (36..40) is neither, and nothing else exists.
+const RECORD: [(i64, i64, bool, bool); 7] = [
+	(ExitRecord::FUEL as i64, 8, true, true),
+	(ExitRecord::WRITTEN as i64, 8, false, true),
+	(ExitRecord::BOOLS as i64, 8, false, true),
+	(ExitRecord::STATUS as i64, 4, false, true),
+	(ExitRecord::EXIT as i64, 4, false, true),
+	(ExitRecord::PC as i64, 4, false, true),
+	(ExitRecord::UNITS as i64, 8, false, true),
+];
+
 /// IR audit: opcodes from a fixed allowlist; every load/store addresses parameter 0
-/// (`buf`, `n` 8-byte slots) or parameter 1 (the record) at a constant offset that keeps
-/// the whole access in bounds; any `sdiv`/`srem`/`udiv`/`urem` must have a constant
-/// divisor outside {0, -1}.
-pub(crate) fn ir(func: &ir::Function, slots: usize) -> Result<(), Finding> {
+/// (`buf`) or parameter 1 (the record, [`ExitRecord::SIZE`] = 48 bytes since P2b) at a
+/// constant offset. B1: a `buf` access is exactly one whole, aligned, 8-byte `I64` cell
+/// with the opcode's permission in `map`; a record access is exactly one whole field (its
+/// own width: 8 bytes for fuel and the masks, 4 for status, exit and pc) with the opcode's
+/// permission; anything else (partial, unaligned, cross-cell, reserved or padding bytes,
+/// past the end) is refused. Any `sdiv`/`srem`/`udiv`/`urem` must have a constant divisor
+/// outside {0, -1}.
+pub(crate) fn ir(func: &ir::Function, map: &AccessMap) -> Result<(), Finding> {
 	let entry = func
 		.layout
 		.entry_block()
@@ -142,14 +223,30 @@ pub(crate) fn ir(func: &ir::Function, slots: usize) -> Result<(), Finding> {
 					}
 					let base = func.dfg.resolve_aliases(base);
 					let size = i64::from(ty.bytes());
-					let limit = if base == buf {
-						(slots * 8) as i64
+					let is_store = opcode == Opcode::Store;
+					let allowed = if base == buf {
+						// Exactly one whole, aligned 8-byte cell, with the opcode's permission.
+						offset >= 0
+							&& offset % 8 == 0
+							&& size == 8
+							&& ty == types::I64
+							&& usize::try_from(offset / 8).is_ok_and(|i| {
+								let p = map.cell(i);
+								if is_store {
+									p.store
+								} else {
+									p.load
+								}
+							})
 					} else if base == rec {
-						ExitRecord::SIZE as i64
+						// Exactly one whole field, with the opcode's permission.
+						RECORD.iter().any(|&(o, bytes, load, store)| {
+							offset == o && size == bytes && if is_store { store } else { load }
+						})
 					} else {
-						-1
+						false
 					};
-					if offset < 0 || offset + size > limit {
+					if !allowed {
 						return Err(Finding::Memory(format!("{}", func.dfg.display_inst(inst))));
 					}
 				}

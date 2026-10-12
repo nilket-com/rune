@@ -2,8 +2,11 @@
 //!
 //! The selection golden (`fixtures/p3a_selection_golden.txt`) was captured at 672a4eaa,
 //! before the streaming refactor, by `child_selection_golden` with
-//! `RUNE_P3A_GOLDEN_OUT` set (only test files differed from 672a4eaa then). For every
-//! program of the corpus it pins:
+//! `RUNE_P3A_GOLDEN_OUT` set (only test files differed from 672a4eaa then). P2b re-captured
+//! it as `fixtures/p2b_selection_golden.txt` the same way; `child_selection_golden` now
+//! compares against that one line for line, and `p2b_tests::compare_p2b_delta` checks the
+//! delta between the two (the P3a differences, the forced `Exit` growth and the
+//! enumerated P2b admissions). For every program of the corpus each golden pins:
 //!
 //! - `SUMMARY`: every counter of the build summary that existed at 672a4eaa, except the
 //!   timings (production `cache::prepare`);
@@ -28,7 +31,7 @@ use crate::experimental_core::{
 	region::{
 		analyze,
 		cache::{self, Checkout, Limits, NativeSummary},
-		division_kind, hook, inject_analysis_error_for_test, DivisionKind, Region,
+		division_kind, hook, inject_analysis_error_for_test, DivisionKind, Exit, Region,
 	},
 	value::Value,
 };
@@ -43,7 +46,7 @@ use std::time::{Duration, Instant};
 const CHILD_ENV: &str = "RUNE_P3A_NATIVE_CHILD";
 const DEADLINE: Duration = Duration::from_secs(900);
 
-/// The selection golden captured at 672a4eaa.
+/// The selection golden captured at 672a4eaa (the P2b delta's base).
 const GOLDEN: &str = include_str!("fixtures/p3a_selection_golden.txt");
 
 // ------------------------------------------------------------------ process isolation
@@ -247,7 +250,7 @@ fn copies(count: usize, make: impl Fn() -> Function) -> Code {
 
 /// The one admitted region of function 0 of `code`.
 fn region_of(code: &Code) -> Region {
-	analyze(code.function(0).unwrap(), 0)
+	analyze(&code, 0)
 		.unwrap()
 		.into_iter()
 		.find_map(|(_, r)| r.ok())
@@ -369,10 +372,39 @@ fn fnv1a(text: &str) -> u64 {
 	hash
 }
 
-/// Every field of an admitted region, in a fixed textual form.
+/// One exit in a fixed textual form. P2b added `Exit::units`: an exit with `units == 0`
+/// prints exactly its pre-P2b `Debug` text (so the fingerprints of regions without Unit
+/// writes are unchanged), any other exit its P2b `Debug` text, `units` included. B1 added
+/// `replay` and `iter_done`: an exit with neither prints exactly its P2b text; any other
+/// exit its full `Debug` text. The form is injective in every case.
+fn exit_text(e: &Exit) -> String {
+	if e.replay.is_some() || e.iter_done {
+		format!("{e:?}")
+	} else if e.units == 0 {
+		format!(
+			"Exit {{ status: {:?}, pc: {}, definite: {}, maybe: {}, bools: {}, dynamic: {}, restore: {} }}",
+			e.status, e.pc, e.definite, e.maybe, e.bools, e.dynamic, e.restore
+		)
+	} else {
+		format!(
+			"Exit {{ status: {:?}, pc: {}, definite: {}, maybe: {}, bools: {}, dynamic: {}, restore: {}, units: {} }}",
+			e.status, e.pc, e.definite, e.maybe, e.bools, e.dynamic, e.restore, e.units
+		)
+	}
+}
+
+/// Every field of an admitted region, in a fixed textual form. B1's fields (`iter`,
+/// `callee_slots`, `sites`) are appended only when the region has an iterator or a site,
+/// so the text of every earlier region is unchanged.
 pub(super) fn region_text(r: &Region) -> String {
+	let exits: Vec<String> = r.exits.iter().map(exit_text).collect();
+	let b1 = if r.iter.is_some() || !r.sites.is_empty() {
+		format!(" iter={:?} callee_slots={} sites={:?}", r.iter, r.callee_slots, r.sites.as_slice())
+	} else {
+		String::new()
+	};
 	format!(
-		"function={} header={} header_node={} tracked={:#x} proven={:#x} slots={:?} entry={:?} nodes={:?} exits={:?}",
+		"function={} header={} header_node={} tracked={:#x} proven={:#x} slots={:?} entry={:?} nodes={:?} exits=[{}]{b1}",
 		r.function,
 		r.header,
 		r.header_node,
@@ -381,7 +413,7 @@ pub(super) fn region_text(r: &Region) -> String {
 		r.slots.as_slice(),
 		r.entry.as_slice(),
 		r.nodes.as_slice(),
-		r.exits.as_slice()
+		exits.join(", ")
 	)
 }
 
@@ -449,8 +481,7 @@ fn golden_of(name: &str, code: &Code) -> (String, NativeSummary) {
 	cache::clear_for_test();
 
 	for id in 0..code.functions() as u32 {
-		let f = code.function(id).unwrap();
-		match analyze(f, id) {
+		match analyze(code, id) {
 			Ok(found) => {
 				for (header, region) in found {
 					match region {
@@ -474,75 +505,6 @@ fn golden_of(name: &str, code: &Code) -> (String, NativeSummary) {
 		}
 	}
 	(out, summary)
-}
-
-fn field(line: &str, key: &str) -> u64 {
-	let prefix = format!("{key}=");
-	line.split(|c| c == ' ' || c == '\t')
-		.find_map(|f| f.strip_prefix(prefix.as_str()))
-		.unwrap_or_else(|| std::panic!("{key} in {line}"))
-		.parse()
-		.unwrap()
-}
-
-fn without(line: &str, keys: &[&str]) -> String {
-	line.split(' ')
-		.filter(|f| !keys.iter().any(|k| f.starts_with(&format!("{k}="))))
-		.collect::<Vec<_>>()
-		.join(" ")
-}
-
-/// The golden comparison, with exactly two documented differences:
-///
-/// - `metadata_bytes` grows by `size_of::<Token>()` per loaded region: `Ready` now owns its
-///   process reservation token (and `region_metadata` charges `size_of::<Ready>()`);
-/// - in a program that reaches the region or compile cap, the regions after the cap are
-///   no longer analysed: `analysed_functions` and `candidates` may drop, `regions` drops by
-///   exactly the old cap refusals, and `region_cap`/`compile_cap` become a flag (1).
-///
-/// Every other SUMMARY counter, and every LOADED, ANALYSIS and COMPILE line, is identical.
-fn compare_golden(new: &str) -> (usize, usize) {
-	let token = core::mem::size_of::<crate::experimental_core::region::budget::Token<'static>>() as u64;
-	let old: Vec<&str> = GOLDEN.lines().collect();
-	let new: Vec<&str> = new.lines().collect();
-	assert_eq!(old.len(), new.len(), "golden line count");
-	let mut exact = 0;
-	let mut capped = 0;
-	for (o, n) in old.iter().zip(new.iter()) {
-		if !o.starts_with("SUMMARY\t") {
-			assert_eq!(o, n);
-			exact += 1;
-			continue;
-		}
-		let loaded = field(o, "loaded");
-		assert_eq!(field(n, "loaded"), loaded, "{n}");
-		assert_eq!(field(n, "metadata_bytes"), field(o, "metadata_bytes") + loaded * token, "{n}");
-		let cap_flag = field(n, "region_cap") + field(n, "compile_cap");
-		if cap_flag == 0 {
-			assert_eq!(without(o, &["metadata_bytes"]), without(n, &["metadata_bytes"]));
-			exact += 1;
-		} else {
-			assert_eq!(cap_flag, 1, "{n}");
-			let keys = [
-				"metadata_bytes",
-				"analysed_functions",
-				"candidates",
-				"regions",
-				"region_cap",
-				"compile_cap",
-			];
-			assert_eq!(without(o, &keys), without(n, &keys));
-			assert!(field(n, "analysed_functions") <= field(o, "analysed_functions"), "{n}");
-			assert_eq!(
-				field(n, "regions"),
-				field(o, "regions") - field(o, "region_cap") - field(o, "compile_cap"),
-				"{n}"
-			);
-			assert!(field(n, "candidates") <= field(o, "candidates"), "{n}");
-			capped += 1;
-		}
-	}
-	(exact, capped)
 }
 
 #[test]
@@ -579,14 +541,25 @@ fn child_selection_golden() {
 		return;
 	}
 
-	let (exact, capped) = compare_golden(&text);
+	// B1: the current selection equals the golden re-captured at B1, line for line; that
+	// golden's delta against the P2b golden is checked by `b1_selection_golden_delta` (and
+	// again here, on this run's text). The P2b golden's own delta against the 672a4eaa
+	// golden stays checked by `p2b_selection_golden_delta`.
+	let golden = super::b1_tests::B1_GOLDEN;
+	let (new_lines, golden_lines): (Vec<&str>, Vec<&str>) = (text.lines().collect(), golden.lines().collect());
+	assert_eq!(new_lines.len(), golden_lines.len(), "B1 golden line count");
+	for (n, g) in new_lines.iter().zip(golden_lines.iter()) {
+		assert_eq!(n, g);
+	}
+	let (identical, delta_programs) = super::b1_tests::compare_b1_delta(super::p2b_tests::P2B_GOLDEN, &text);
 	println!(
-		"P3AGOLDEN\tcompared\tlines={}\tgolden_fnv={:016x}\tnew_fnv={:016x}\tidentical_or_metadata_token_only={exact}\tcapped_programs={capped}",
+		"P3AGOLDEN\tcompared\tlines={}\tb1_golden_fnv={:016x}\tnew_fnv={:016x}\tp2b_golden_fnv={:016x}\tp3a_golden_fnv={:016x}\tidentical_to_p2b_golden={identical}\tb1_delta_programs={delta_programs}",
 		text.lines().count(),
-		fnv1a(GOLDEN),
-		fnv1a(&text)
+		fnv1a(golden),
+		fnv1a(&text),
+		fnv1a(super::p2b_tests::P2B_GOLDEN),
+		fnv1a(GOLDEN)
 	);
-	assert_eq!(capped, 1, "only bounds_program_regions reaches a cap");
 }
 
 // ----------------------------------------------- A2/A3: streaming and work charging
@@ -1329,7 +1302,7 @@ fn p3a_shared_isa_matches_fresh_isa() {
 			if code.function(id).unwrap().len() > cache::MAX_ANALYSED_FUNCTION_LEN {
 				continue;
 			}
-			for (header, region) in analyze(code.function(id).unwrap(), id).unwrap() {
+			for (header, region) in analyze(&code, id).unwrap() {
 				let Ok(region) = region else { continue };
 				let fresh = lower::diagnose_isa(&region, true);
 				let shared = lower::diagnose_isa(&region, false);

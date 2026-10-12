@@ -48,6 +48,33 @@ impl Args<'_> {
 
 const MAX_SLOTS: usize = 65_536;
 
+/// B1: the room for one more frame that an inlined call would reserve, from the frame and
+/// slot stacks, with the region's window as the top frame. `reserve_frame` fails exactly
+/// when `frames.len() == MAX_FRAMES` or `slots.len() + callee.slots > MAX_SLOTS`. A window
+/// that does not end at the top of the slot stack is not the top frame's: no room at all
+/// (a refusal is an exact fallback).
+#[cfg(feature = "fresh-core-native")]
+#[cfg_attr(
+	not(any(test, all(target_arch = "x86_64", target_os = "linux"))),
+	allow(dead_code)
+)]
+pub(crate) fn region_room(
+	frames: usize,
+	slots: usize,
+	window_end: usize,
+) -> super::region::commit::Room {
+	if window_end != slots {
+		return super::region::commit::Room {
+			frames: 0,
+			slots: 0,
+		};
+	}
+	super::region::commit::Room {
+		frames: MAX_FRAMES.saturating_sub(frames),
+		slots: MAX_SLOTS.saturating_sub(slots),
+	}
+}
+
 /// D14: a frame records only its callsite's pc in the caller; the Location is
 /// derived on failure from the frame below it. `u32::MAX` is never a valid pc:
 /// the Builder assigns pcs with `u32::try_from` and caps a function at
@@ -292,6 +319,7 @@ impl Executor {
 						let resume = core::mem::take(&mut region_resume);
 						let end = frame.base + function.slots as usize;
 						if instruction.charged && !resume && !cancel_hook_armed_for_test() {
+							let room = region_room(self.frames.len(), self.slots.len(), end);
 							if let Some(window) = self.slots.get_mut(frame.base..end) {
 								if let Some((next, left)) = super::region::hook::try_enter(
 									code.id(),
@@ -301,6 +329,7 @@ impl Executor {
 									store,
 									self.cancelled,
 									fuel,
+									room,
 								) {
 									pc = next;
 									fuel = left;
@@ -326,8 +355,9 @@ impl Executor {
 						if !resumed && !armed && !table.is_empty() {
 							if let Some(ready) = regions.and_then(|r| r.header(table, source_pc)) {
 								let end = frame.base + function.slots as usize;
+								let room = region_room(self.frames.len(), self.slots.len(), end);
 								if let Some(window) = self.slots.get_mut(frame.base..end) {
-									match ready.enter(window, store, self.cancelled, fuel) {
+									match ready.enter(window, store, self.cancelled, fuel, room) {
 										Ok(Some((next, left))) => {
 											pc = next;
 											fuel = left;
