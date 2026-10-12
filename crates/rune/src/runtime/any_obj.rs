@@ -746,10 +746,13 @@ impl fmt::Display for AnyObjError {
 		match &self.kind {
 			AnyObjErrorKind::Alloc(error) => error.fmt(f),
 			AnyObjErrorKind::Cast(expected, actual) => {
+				let expected = super::messages::DiagnosticType(expected);
+				let actual = super::messages::DiagnosticType(actual);
 				write!(f, "Failed to cast `{actual}` to `{expected}`")
 			}
 			AnyObjErrorKind::AccessError(error) => error.fmt(f),
 			AnyObjErrorKind::NotOwned(type_info) => {
+				let type_info = super::messages::DiagnosticType(type_info);
 				write!(f, "Cannot use owned operations for {type_info}")
 			}
 		}

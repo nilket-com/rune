@@ -38,7 +38,7 @@ fn a_missing_field_is_named() {
 	let out = emitted("let a = #{}; a.x");
 
 	assert!(
-		out.contains("Missing field `x` on `::std::object::Object`"),
+		out.contains("Missing field `x` on `std::object::Object`"),
 		"{out}"
 	);
 
@@ -53,10 +53,7 @@ fn a_missing_field_is_named() {
 fn a_missing_instance_function_is_named() {
 	let out = emitted("let a = 1; a.nope()");
 
-	assert!(
-		out.contains("`::std::i64::nope` instance function"),
-		"{out}"
-	);
+	assert!(out.contains("`std::i64::nope` instance function"), "{out}");
 }
 
 /// What `as` cannot do says what it can, rather than naming a hash.

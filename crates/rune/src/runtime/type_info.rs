@@ -75,7 +75,6 @@ impl TypeInfo {
 		Self::new(TypeInfoKind::Runtime(rtti))
 	}
 
-	#[cfg(feature = "emit")]
 	pub(crate) fn type_hash(&self) -> Hash {
 		match &self.kind {
 			TypeInfoKind::Any(ty) => ty.hash,

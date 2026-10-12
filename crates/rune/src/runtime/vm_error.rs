@@ -37,7 +37,45 @@ pub struct VmError {
 	inner: Box<VmErrorInner>,
 }
 
+/// Structured information about a missing instance function at the root failure.
+///
+/// Identity is independent of the rendered diagnostic text.
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MissingInstanceFunction<'a> {
+	/// The hash of the missing instance function.
+	pub hash: Hash,
+	/// The receiver's type hash, for identity checks.
+	pub instance: Hash,
+	receiver: &'a TypeInfo,
+}
+
+impl MissingInstanceFunction<'_> {
+	/// Display the receiver's name for a diagnostic.
+	///
+	/// This is presentation only and may change. Use [`Self::instance`] for
+	/// identity checks rather than parsing this name.
+	pub fn instance_name(&self) -> impl fmt::Display + '_ {
+		super::messages::DiagnosticType(self.receiver)
+	}
+}
+
 impl VmError {
+	/// Inspect a missing instance function at the root failure without parsing text.
+	///
+	/// Auxiliary errors are not searched. A panic quoting a missing-function
+	/// diagnostic therefore does not acquire that diagnostic's identity.
+	pub fn missing_instance_function(&self) -> Option<MissingInstanceFunction<'_>> {
+		let VmErrorKind::MissingInstanceFunction { hash, instance } = &self.inner.error.kind else {
+			return None;
+		};
+		Some(MissingInstanceFunction {
+			hash: *hash,
+			instance: instance.type_hash(),
+			receiver: instance,
+		})
+	}
+
 	#[inline]
 	pub(crate) fn new<E>(error: E) -> Self
 	where
@@ -793,12 +831,15 @@ impl fmt::Display for VmErrorKind {
 				write!(f, "Missing context function with hash `{hash}`")
 			}
 			VmErrorKind::NotOwned { type_info } => {
+				let type_info = super::messages::DiagnosticType(type_info);
 				write!(f, "Cannot use owned operations for {type_info}")
 			}
 			VmErrorKind::MissingProtocolFunction { protocol, instance } => {
+				let instance = super::messages::DiagnosticType(instance);
 				write!(f, "Missing protocol function `{protocol}` for `{instance}`")
 			}
 			VmErrorKind::MissingInstanceFunction { hash, instance } => {
+				let instance = super::messages::DiagnosticType(instance);
 				write!(f, "Missing instance function `{hash}` for `{instance}`")
 			}
 			VmErrorKind::IpOutOfBounds { ip, length } => write!(
@@ -806,9 +847,12 @@ impl fmt::Display for VmErrorKind {
 				"Instruction pointer `{ip}` is out-of-bounds `0-{length}`",
 			),
 			VmErrorKind::UnsupportedBinaryOperation { op, lhs, rhs } => {
+				let lhs = super::messages::DiagnosticType(lhs);
+				let rhs = super::messages::DiagnosticType(rhs);
 				super::messages::binary_unsupported(f, op, lhs, rhs)
 			}
 			VmErrorKind::UnsupportedUnaryOperation { op, operand } => {
+				let operand = super::messages::DiagnosticType(operand);
 				super::messages::unary_unsupported(f, op, operand)
 			}
 			VmErrorKind::MissingStaticString { slot } => {
@@ -868,73 +912,114 @@ impl fmt::Display for VmErrorKind {
 				target,
 				index,
 				value,
-			} => super::messages::index_set(f, target, index, value),
+			} => {
+				let target = super::messages::DiagnosticType(target);
+				let index = super::messages::DiagnosticType(index);
+				let value = super::messages::DiagnosticType(value);
+				super::messages::index_set(f, target, index, value)
+			}
 			VmErrorKind::UnsupportedIndexGet { target, index } => {
+				let target = super::messages::DiagnosticType(target);
+				let index = super::messages::DiagnosticType(index);
 				super::messages::index_get(f, target, index)
 			}
 			VmErrorKind::UnsupportedTupleIndexGet { target, index } => {
+				let target = super::messages::DiagnosticType(target);
 				super::messages::tuple_get(f, target, index)
 			}
 			VmErrorKind::UnsupportedTupleIndexSet { target } => {
+				let target = super::messages::DiagnosticType(target);
 				super::messages::tuple_set(f, target)
 			}
 			VmErrorKind::UnsupportedObjectSlotIndexGet { target, field } => {
+				let target = super::messages::DiagnosticType(target);
 				super::messages::field_get(f, target, field)
 			}
 			VmErrorKind::UnsupportedObjectSlotIndexSet { target, field } => {
+				let target = super::messages::DiagnosticType(target);
 				write!(f, "Field `{field}` not available to set on `{target}`")
 			}
 			VmErrorKind::UnsupportedIs { value, test_type } => {
+				let value = super::messages::DiagnosticType(value);
+				let test_type = super::messages::DiagnosticType(test_type);
 				write!(f, "Operation `{value} is {test_type}` is not supported")
 			}
-			VmErrorKind::UnsupportedAs { value } => super::messages::cast_source(f, value),
+			VmErrorKind::UnsupportedAs { value } => {
+				let value = super::messages::DiagnosticType(value);
+				super::messages::cast_source(f, value)
+			}
 			// The type being converted to is not something the machine can name
 			// - all it has is a hash, which tells whoever wrote it nothing the
 			// source in front of them does not already say. What `as` can
 			// convert to is the half which is worth saying.
-			VmErrorKind::UnsupportedAsTarget { value } => super::messages::cast_target(f, value),
-			VmErrorKind::UnsupportedCallFn { actual } => super::messages::not_callable(f, actual),
+			VmErrorKind::UnsupportedAsTarget { value } => {
+				let value = super::messages::DiagnosticType(value);
+				super::messages::cast_target(f, value)
+			}
+			VmErrorKind::UnsupportedCallFn { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
+				super::messages::not_callable(f, actual)
+			}
 			VmErrorKind::MissingIndex { target } => {
+				let target = super::messages::DiagnosticType(target);
 				write!(f, "Type `{target}` missing index")
 			}
 			VmErrorKind::MissingIndexInteger { target, index } => {
+				let target = super::messages::DiagnosticType(target);
 				write!(f, "Type `{target}` missing integer index `{index}`")
 			}
 			VmErrorKind::MissingIndexKey { target } => {
+				let target = super::messages::DiagnosticType(target);
 				write!(f, "Type `{target}` missing index")
 			}
 			VmErrorKind::OutOfRange { index, length } => {
 				super::messages::out_of_range(f, index, length)
 			}
 			VmErrorKind::UnsupportedTryOperand { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
 				super::messages::try_operand(f, actual)
 			}
 			VmErrorKind::UnsupportedIterRangeInclusive { start, end } => {
+				let start = super::messages::DiagnosticType(start);
+				let end = super::messages::DiagnosticType(end);
 				write!(f, "Cannot build an iterator out of {start}..={end}")
 			}
 			VmErrorKind::UnsupportedIterRangeFrom { start } => {
+				let start = super::messages::DiagnosticType(start);
 				write!(f, "Cannot build an iterator out of {start}..")
 			}
 			VmErrorKind::UnsupportedIterRange { start, end } => {
+				let start = super::messages::DiagnosticType(start);
+				let end = super::messages::DiagnosticType(end);
 				write!(f, "Cannot build an iterator out of {start}..{end}")
 			}
 			VmErrorKind::UnsupportedIterNextOperand { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
 				write!(f, "Type `{actual}` is not supported as iter-next operand")
 			}
 			VmErrorKind::ExpectedType { expected, actual } => {
+				let expected = super::messages::DiagnosticType(expected);
+				let actual = super::messages::DiagnosticType(actual);
 				super::messages::expected_type(f, expected, actual)
 			}
 			VmErrorKind::ExpectedAny { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
 				write!(f, "Expected `Any` type, but found `{actual}`")
 			}
-			VmErrorKind::ExpectedNumber { actual } => super::messages::expected_number(f, actual),
+			VmErrorKind::ExpectedNumber { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
+				super::messages::expected_number(f, actual)
+			}
 			VmErrorKind::ExpectedEmpty { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
 				write!(f, "Expected empty, but found `{actual}`")
 			}
 			VmErrorKind::ExpectedTuple { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
 				write!(f, "Expected tuple, but found `{actual}`")
 			}
 			VmErrorKind::ExpectedStruct { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
 				write!(f, "Expected struct, but found `{actual}`")
 			}
 			VmErrorKind::MissingConstantConstructor { hash } => {
@@ -955,6 +1040,7 @@ impl fmt::Display for VmErrorKind {
 				"Expected a vector of length `{expected}`, but found one with length `{actual}`",
 			),
 			VmErrorKind::ConstNotSupported { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
 				write!(f, "Type `{actual}` can't be converted to a constant value")
 			}
 			VmErrorKind::MissingInterfaceEnvironment => {
@@ -969,6 +1055,7 @@ impl fmt::Display for VmErrorKind {
 			VmErrorKind::FutureCompleted => write!(f, "Future already completed"),
 			VmErrorKind::MissingVariant { name } => write!(f, "No variant matching `{name}`"),
 			VmErrorKind::MissingField { target, field } => {
+				let target = super::messages::DiagnosticType(target);
 				super::messages::missing_field(f, target, field)
 			}
 			VmErrorKind::MissingVariantName => {
@@ -983,12 +1070,16 @@ impl fmt::Display for VmErrorKind {
 				"missing dynamic index #{index} in tuple struct `{target}`",
 			),
 			VmErrorKind::ExpectedVariant { actual } => {
+				let actual = super::messages::DiagnosticType(actual);
 				write!(f, "Expected an enum variant, but got `{actual}`")
 			}
-			VmErrorKind::UnsupportedObjectFieldGet { target } => write!(
-				f,
-				"The object field get operation is not supported on `{target}`",
-			),
+			VmErrorKind::UnsupportedObjectFieldGet { target } => {
+				let target = super::messages::DiagnosticType(target);
+				write!(
+					f,
+					"The object field get operation is not supported on `{target}`",
+				)
+			}
 			VmErrorKind::IllegalFloatComparison { lhs, rhs } => {
 				write!(
 					f,

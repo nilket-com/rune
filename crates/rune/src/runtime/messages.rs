@@ -1,5 +1,54 @@
 //! Allocation-free diagnostic text shared by the stock and fresh executors.
-use core::fmt::{self, Display};
+use core::fmt::{self, Display, Write};
+
+/// Shorten type paths only when presenting a runtime diagnostic.
+///
+/// The public type and item displays retain their rooted identities. This
+/// adapter also handles generic arguments split across formatting writes.
+pub(crate) struct DiagnosticType<'a, T: ?Sized + Display>(pub(crate) &'a T);
+
+impl<T: ?Sized + Display> Display for DiagnosticType<'_, T> {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		let mut writer = TypeWriter {
+			out: f,
+			at_start: true,
+			pending_colon: false,
+		};
+		fmt::write(&mut writer, format_args!("{}", self.0))?;
+		if writer.pending_colon {
+			writer.out.write_char(':')?;
+		}
+		Ok(())
+	}
+}
+
+struct TypeWriter<'a, 'b> {
+	out: &'a mut fmt::Formatter<'b>,
+	at_start: bool,
+	pending_colon: bool,
+}
+
+impl Write for TypeWriter<'_, '_> {
+	fn write_str(&mut self, text: &str) -> fmt::Result {
+		for c in text.chars() {
+			if self.pending_colon {
+				self.pending_colon = false;
+				self.at_start = false;
+				if c == ':' {
+					continue;
+				}
+				self.out.write_char(':')?;
+			}
+			if self.at_start && c == ':' {
+				self.pending_colon = true;
+				continue;
+			}
+			self.out.write_char(c)?;
+			self.at_start = matches!(c, '<' | '(' | '[' | ',' | ' ');
+		}
+		Ok(())
+	}
+}
 
 pub(crate) fn binary_unsupported(
 	f: &mut fmt::Formatter<'_>,
@@ -134,4 +183,141 @@ pub(crate) fn cast_source(f: &mut fmt::Formatter<'_>, value: impl Display) -> fm
 
 pub(crate) fn cast_target(f: &mut fmt::Formatter<'_>, value: impl Display) -> fmt::Result {
 	write!(f, "Type `{value}` cannot be converted with `as` to that type, which only converts to `i64`, `u64` or `f64`")
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate as rune;
+	use crate::runtime::{AnyObjError, AnyObjErrorKind, TypeInfo, TypeOf, VmErrorKind};
+	use crate::Hash;
+	use std::string::ToString;
+
+	struct Chunks<'a>(&'a str, usize);
+
+	impl Display for Chunks<'_> {
+		fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+			f.write_str(&self.0[..self.1])?;
+			f.write_str("")?;
+			f.write_str(&self.0[self.1..])
+		}
+	}
+
+	#[test]
+	fn diagnostic_paths_stream_across_utf8_boundaries() {
+		for (input, expected) in [
+			("::std::i64", "std::i64"),
+			(
+				"::std::ops::RangeIter<::std::i64>",
+				"std::ops::RangeIter<std::i64>",
+			),
+			("::a::B<::c::D, ::e::F<::g::H>>", "a::B<c::D, e::F<g::H>>"),
+			("(::a::B, [::c::D])", "(a::B, [c::D])"),
+			("::été::名<::λ::β>", "été::名<λ::β>"),
+			("a::b", "a::b"),
+			("P", "P"),
+			(":", ":"),
+			(":x", ":x"),
+			("::x:", "x:"),
+			("::::x", "::x"),
+			("::x::::y", "x::::y"),
+		] {
+			for split in (0..=input.len()).filter(|&i| input.is_char_boundary(i)) {
+				assert_eq!(DiagnosticType(&Chunks(input, split)).to_string(), expected);
+			}
+		}
+	}
+
+	#[test]
+	fn diagnostic_paths_propagate_inner_and_sink_failures() {
+		struct InnerFailure;
+		impl Display for InnerFailure {
+			fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+				f.write_str("::std::")?;
+				Err(fmt::Error)
+			}
+		}
+		let mut text = std::string::String::new();
+		assert!(fmt::write(&mut text, format_args!("{}", DiagnosticType(&InnerFailure))).is_err());
+
+		struct SinkFailure;
+		impl Write for SinkFailure {
+			fn write_str(&mut self, _: &str) -> fmt::Result {
+				Err(fmt::Error)
+			}
+		}
+		// The second case fails while flushing the final pending colon.
+		for input in ["::std::i64", ":"] {
+			assert!(
+				fmt::write(&mut SinkFailure, format_args!("{}", DiagnosticType(input))).is_err()
+			);
+		}
+	}
+
+	#[test]
+	fn diagnostic_paths_leave_public_type_and_item_identities_rooted() {
+		let ty = TypeInfo::named::<i64>();
+		let item = crate::item!(::std::i64);
+		assert_eq!(ty.to_string(), "::std::i64");
+		assert_eq!(item.to_string(), "::std::i64");
+		assert_eq!(ty.type_hash(), Hash::type_hash(item));
+		assert_eq!(DiagnosticType(&ty).to_string(), "std::i64");
+		assert_eq!(ty.to_string(), "::std::i64");
+	}
+
+	#[test]
+	fn diagnostic_paths_only_shorten_type_operands() {
+		let field = crate::alloc::String::try_from("::std::user::field").unwrap();
+		let error = VmErrorKind::MissingField {
+			target: TypeInfo::any::<crate::runtime::Object>(),
+			field,
+		};
+		assert_eq!(
+			error.to_string(),
+			"Missing field `::std::user::field` on `std::object::Object`"
+		);
+		let hash = Hash::new(42);
+		let error = VmErrorKind::MissingInstanceFunction {
+			hash,
+			instance: TypeInfo::named::<i64>(),
+		};
+		assert_eq!(
+			error.to_string(),
+			std::format!("Missing instance function `{hash}` for `std::i64`")
+		);
+		let error = AnyObjError::new(AnyObjErrorKind::Cast(
+			<bool as TypeOf>::STATIC_TYPE_INFO,
+			TypeInfo::named::<i64>(),
+		));
+		assert_eq!(
+			error.to_string(),
+			"Failed to cast `std::i64` to `std::bool`"
+		);
+		let error = AnyObjError::new(AnyObjErrorKind::NotOwned(TypeInfo::named::<i64>()));
+		assert_eq!(
+			error.to_string(),
+			"Cannot use owned operations for std::i64"
+		);
+	}
+	#[test]
+	fn missing_instance_identity_comes_only_from_the_root_kind() {
+		use crate::runtime::VmError;
+		let instance = || TypeInfo::any::<crate::runtime::Vec>();
+		let hash = Hash::associated_function(instance().type_hash(), "frobnicate");
+		let missing = || VmErrorKind::MissingInstanceFunction {
+			hash,
+			instance: instance(),
+		};
+		let error = VmError::new(missing());
+		let info = error.missing_instance_function().unwrap();
+		assert_eq!(info.hash, hash);
+		assert_eq!(info.instance, instance().type_hash());
+		assert_eq!(info.instance_name().to_string(), "std::vec::Vec");
+		let quoted = error.to_string();
+		assert!(VmError::panic(quoted).missing_instance_function().is_none());
+		assert!(VmError::panic("outer")
+			.with_error(missing())
+			.missing_instance_function()
+			.is_none());
+	}
 }

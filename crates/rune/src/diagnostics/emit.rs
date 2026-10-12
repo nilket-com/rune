@@ -261,6 +261,7 @@ impl VmError {
 				}) = get(at)
 				{
 					let instance_hash = Hash::associated_function(instance.type_hash(), *hash);
+					let instance = crate::runtime::messages::DiagnosticType(instance);
 
 					if let Some(ident) = get_ident(at, instance_hash) {
 						labels.push(d::Label::secondary(source_id, span.range()).with_message(

@@ -11,6 +11,19 @@ fn fail(body: &str) -> VmError {
 }
 
 #[test]
+fn missing_instance_identity_survives_real_source_execution() {
+	let error = fail("[1].frobnicate()");
+	let info = error.missing_instance_function().unwrap();
+	let instance = <crate::runtime::Vec as crate::TypeHash>::HASH;
+	assert_eq!(info.instance, instance);
+	assert_eq!(
+		info.hash,
+		crate::Hash::associated_function(instance, "frobnicate")
+	);
+	assert_eq!(info.instance_name().to_string(), "std::vec::Vec");
+}
+
+#[test]
 fn source_operator_symbols_and_inline_mismatches() {
 	for symbol in ["+", "-", "*", "/", "%", "&", "|", "^", "<<", ">>"] {
 		for (lhs, expected_lhs) in [
@@ -48,7 +61,11 @@ fn source_operator_symbols_and_inline_mismatches() {
 					assert_eq!(*rhs, expected_rhs, "{body}");
 					assert_eq!(
 						error.to_string(),
-						format!("Unsupported binary operation `{op}` on `{lhs}` and `{rhs}`"),
+						format!(
+							"Unsupported binary operation `{op}` on `{}` and `{}`",
+							crate::runtime::messages::DiagnosticType(lhs),
+							crate::runtime::messages::DiagnosticType(rhs)
+						),
 						"{body}"
 					);
 				}
@@ -62,14 +79,12 @@ fn source_operator_symbols_and_inline_mismatches() {
 		);
 		assert_eq!(
 			error.to_string(),
-			format!(
-				"Unsupported binary operation `{op}` on `::std::i64` and `::std::string::String`"
-			)
+			format!("Unsupported binary operation `{op}` on `std::i64` and `std::string::String`")
 		);
 	}
 	for (body, op, ty) in [
-		("-(true)", "-", "::std::bool"),
-		("!\"a\"", "!", "::std::string::String"),
+		("-(true)", "-", "std::bool"),
+		("!\"a\"", "!", "std::string::String"),
 	] {
 		let error = fail(body);
 		assert!(
@@ -91,7 +106,7 @@ fn fields_report_names_and_sequence_bounds_report_lengths() {
 		);
 		assert_eq!(
 			error.to_string(),
-			"Missing field `b` on `::std::object::Object`"
+			"Missing field `b` on `std::object::Object`"
 		);
 	}
 	for (body, length, index) in [
@@ -125,14 +140,14 @@ fn coercion_and_library_errors_keep_their_contract() {
 		),
 		("1 << -1", "Failed to convert value `-1` to integer `u32`"),
 		("[1][-1]", "Failed to convert value `-1` to integer `usize`"),
-		("[1,2][1.5]", "Expected number type, but found `::std::f64`"),
+		("[1,2][1.5]", "Expected number type, but found `std::f64`"),
 		(
 			"Some(1).1",
-			"Type `::std::option::Option` missing integer index `1`",
+			"Type `std::option::Option` missing integer index `1`",
 		),
 		(
 			"\"a\" + 1",
-			"Expected type `::std::string::String` but found `::std::i64`",
+			"Expected type `std::string::String` but found `std::i64`",
 		),
 	] {
 		assert_eq!(fail(body).to_string(), text, "{body}");
@@ -195,7 +210,13 @@ fn compound_targets_and_heap_rhs_keep_source_symbols() {
 				matches!(error.error().kind(), VmErrorKind::UnsupportedBinaryOperation { op: actual, .. } if *actual == op),
 				"{body}: {error}"
 			);
-			assert_eq!(error.to_string(), format!("Unsupported binary operation `{op}` on `::std::i64` and `::std::string::String`"), "{body}");
+			assert_eq!(
+				error.to_string(),
+				format!(
+					"Unsupported binary operation `{op}` on `std::i64` and `std::string::String`"
+				),
+				"{body}"
+			);
 		}
 	}
 }

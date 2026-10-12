@@ -254,21 +254,17 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 	let context = Context::with_default_modules().unwrap();
 	// Retained: no stock wording change for the instance-function hash or DISPLAY_FMT.
 	for (id, body, expected) in [
-		("iter", "for i in 1 {}", "Type `::std::i64` is not iterable"),
-		(
-			"len",
-			"let x = 1; x.len()",
-			"no method `len` on `::std::i64`",
-		),
+		("iter", "for i in 1 {}", "Type `std::i64` is not iterable"),
+		("len", "let x = 1; x.len()", "no method `len` on `std::i64`"),
 		(
 			"push",
 			"let x = 1; x.push(2)",
-			"no method `push` on `::std::i64`",
+			"no method `push` on `std::i64`",
 		),
 		(
 			"display",
 			"format!(\"{}\", [1])",
-			"Missing protocol function `DISPLAY_FMT` for `::std::vec::Vec`",
+			"Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",
 		),
 	] {
 		let source = std::format!("pub fn target() {{\n\n{body}\n}}");
@@ -300,10 +296,10 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 			"{id}"
 		);
 		let (stock_text, stock_span, fresh_span, reason) = match id {
-			"iter" => ("Missing instance function `0x57a2b2f073daaf28` for `::std::i64`",28..29,19..32,"stock points at iterable; fresh points at the for expression; hash wording retained"),
-			"len" => ("Missing instance function `0x201f597bd58fafa8` for `::std::i64`",30..37,30..37,"stock instance-function hash is retained"),
-			"push" => ("Missing instance function `0x3fd16e7ebc3afb1a` for `::std::i64`",30..39,30..39,"stock instance-function hash is retained"),
-			"display" => ("Missing protocol function `DISPLAY_FMT` for `::std::vec::Vec`",0..36,19..37,"stock macro expansion maps to its enclosing item; fresh maps to the invocation"),
+			"iter" => ("Missing instance function `0x57a2b2f073daaf28` for `std::i64`",28..29,19..32,"stock points at iterable; fresh points at the for expression; hash wording retained"),
+			"len" => ("Missing instance function `0x201f597bd58fafa8` for `std::i64`",30..37,30..37,"stock instance-function hash is retained"),
+			"push" => ("Missing instance function `0x3fd16e7ebc3afb1a` for `std::i64`",30..39,30..39,"stock instance-function hash is retained"),
+			"display" => ("Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",0..36,19..37,"stock macro expansion maps to its enclosing item; fresh maps to the invocation"),
 			_ => unreachable!(),
 		};
 		assert!(!reason.is_empty());
@@ -314,43 +310,45 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 		assert_eq!((at.source, at.revision), (0, 73));
 	}
 	// S: stock succeeds; fresh's current semantic gap stays visible until S lands.
-	for (id,body,expected) in [
+	for (id, body, expected) in [
 		(
 			"object-index",
 			"let o = #{a:1}; o[\"a\"]",
-			"The index get operation `::std::object::Object[::std::string::String]` is not supported",
+			"The index get operation `std::object::Object[std::string::String]` is not supported",
 		),
 		(
 			"object-insert",
 			"let o = #{a:1}; o.b = 2; o",
-			"Missing field `b` on `::std::object::Object`",
+			"Missing field `b` on `std::object::Object`",
 		),
 		(
 			"option-iter",
 			"for i in Some(1) {}",
-			"Type `::std::option::Option` is not iterable",
+			"Type `std::option::Option` is not iterable",
 		),
 		(
 			"vec-tuple-get",
 			"let v = [1]; v.0",
-			"The tuple index get 0 operation is not supported on `::std::vec::Vec`",
+			"The tuple index get 0 operation is not supported on `std::vec::Vec`",
 		),
 		(
 			"vec-tuple-set",
 			"let v = [1]; v.0 = 2; v",
-			"The tuple index set operation is not supported on `::std::vec::Vec`",
+			"The tuple index set operation is not supported on `std::vec::Vec`",
 		),
 		(
 			"function-clone",
 			"let f = g; f.clone()",
-			"no method `clone` on `::std::ops::Function`",
+			"no method `clone` on `std::ops::Function`",
 		),
 	] {
 		let source = std::format!("pub fn target() {{\n\n{body}\n}}\nfn g(a) {{ a }}");
-		let (mut stock,program) = compile(&context,&source);
+		let (mut stock, program) = compile(&context, &source);
 		let stock_value = stock.call(["target"], ()).unwrap();
 		match id {
-			"object-index" | "vec-tuple-get" => assert_eq!(crate::from_value::<i64>(stock_value).unwrap(), 1),
+			"object-index" | "vec-tuple-get" => {
+				assert_eq!(crate::from_value::<i64>(stock_value).unwrap(), 1)
+			}
 			"object-insert" => {
 				let object = stock_value.borrow_ref::<crate::runtime::Object>().unwrap();
 				assert_eq!(object.len(), 2);
@@ -363,22 +361,45 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 				assert_eq!(vec.len(), 1);
 				assert_eq!(vec.get_value::<i64>(0).unwrap(), Some(2));
 			}
-			"function-clone" => assert_eq!(stock_value.type_info().to_string(), "::std::ops::Function"),
+			"function-clone" => {
+				assert_eq!(stock_value.type_info().to_string(), "::std::ops::Function")
+			}
 			_ => unreachable!(),
 		}
 		let mut store = Store::new(Limits::default()).unwrap();
-		let failure = Executor::new().unwrap().invoke(&program,&mut store,program.function(Hash::type_hash(["target"])).unwrap(),&[],100_000).unwrap_err();
-		assert_eq!(failure.error.message(&program).to_string(),expected,"S {id}");
+		let failure = Executor::new()
+			.unwrap()
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["target"])).unwrap(),
+				&[],
+				100_000,
+			)
+			.unwrap_err();
+		assert_eq!(
+			failure.error.message(&program).to_string(),
+			expected,
+			"S {id}"
+		);
 		let expression = match id {
-			"object-index" => "o[\"a\"]", "object-insert" => "o.b = 2",
-			"option-iter" => "for i in Some(1) {}", "vec-tuple-get" => "v.0",
-			"vec-tuple-set" => "v.0 = 2", "function-clone" => "f.clone()", _ => unreachable!(),
+			"object-index" => "o[\"a\"]",
+			"object-insert" => "o.b = 2",
+			"option-iter" => "for i in Some(1) {}",
+			"vec-tuple-get" => "v.0",
+			"vec-tuple-set" => "v.0 = 2",
+			"function-clone" => "f.clone()",
+			_ => unreachable!(),
 		};
 		let start = source.find(expression).unwrap();
 		let at = failure.error.location.unwrap();
-		assert_eq!(at.start as usize..at.end as usize, start..start+expression.len(), "S span: {id}");
+		assert_eq!(
+			at.start as usize..at.end as usize,
+			start..start + expression.len(),
+			"S span: {id}"
+		);
 		assert_eq!((at.source, at.revision), (0, 73));
-		assert_eq!(store.live_entries(),0,"{id}");
+		assert_eq!(store.live_entries(), 0, "{id}");
 	}
 }
 
@@ -537,7 +558,7 @@ fn compile_time_refusals_are_catalogued_before_execution() {
 				.with_context(&context)
 				.build_vm()
 				.unwrap();
-			assert_eq!(stock.call(["target"],()).unwrap_err().into_kind().to_string(),"Unsupported binary operation `+` on `::std::ops::RangeIter<::std::i64>` and `::std::i64`");
+			assert_eq!(stock.call(["target"],()).unwrap_err().into_kind().to_string(),"Unsupported binary operation `+` on `std::ops::RangeIter<std::i64>` and `std::i64`");
 		}
 		let mut sources = Sources::new();
 		sources.insert(Source::memory(source).unwrap()).unwrap();
@@ -622,7 +643,7 @@ fn all_assignment_symbols_are_preserved_in_owned_details() {
 			.span
 			.range();
 		let expected =
-			std::format!("Unsupported binary operation `{op}` on `::std::i64` and `::std::bool`");
+			std::format!("Unsupported binary operation `{op}` on `std::i64` and `std::bool`");
 		assert_eq!(error.into_kind().to_string(), expected);
 		let mut store = Store::new(Limits::default()).unwrap();
 		let failure = Executor::new()

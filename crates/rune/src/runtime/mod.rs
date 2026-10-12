@@ -212,7 +212,7 @@ mod vm_error;
 pub(crate) use self::vm_error::VmErrorAt;
 #[allow(deprecated)]
 pub use self::vm_error::VmResult;
-pub use self::vm_error::{ExpectedType, RuntimeError, VmError};
+pub use self::vm_error::{ExpectedType, MissingInstanceFunction, RuntimeError, VmError};
 pub(crate) use self::vm_error::{VmErrorKind, VmIntegerRepr};
 
 mod vm_execution;

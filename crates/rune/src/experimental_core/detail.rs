@@ -223,29 +223,30 @@ impl TypeName {
 impl fmt::Display for TypeName {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		f.write_str(match self {
-			Self::Unit => "::std::tuple::Tuple",
-			Self::Bool => "::std::bool",
-			Self::I64 => "::std::i64",
-			Self::U64 => "::std::u64",
-			Self::F64 => "::std::f64",
-			Self::Char => "::std::char",
-			Self::String => "::std::string::String",
-			Self::Vec => "::std::vec::Vec",
-			Self::Tuple => "::std::tuple::Tuple",
-			Self::Object => "::std::object::Object",
-			Self::Option => "::std::option::Option",
-			Self::Result => "::std::result::Result",
-			Self::Range => "::std::ops::Range",
-			Self::RangeInclusive => "::std::ops::RangeInclusive",
-			Self::VecIter => "::std::slice::Iter",
-			Self::RangeIter => "::std::ops::RangeIter<::std::i64>",
-			Self::Function => "::std::ops::Function",
-			Self::Type => "::std::any::Type",
+			Self::Unit => "std::tuple::Tuple",
+			Self::Bool => "std::bool",
+			Self::I64 => "std::i64",
+			Self::U64 => "std::u64",
+			Self::F64 => "std::f64",
+			Self::Char => "std::char",
+			Self::String => "std::string::String",
+			Self::Vec => "std::vec::Vec",
+			Self::Tuple => "std::tuple::Tuple",
+			Self::Object => "std::object::Object",
+			Self::Option => "std::option::Option",
+			Self::Result => "std::result::Result",
+			Self::Range => "std::ops::Range",
+			Self::RangeInclusive => "std::ops::RangeInclusive",
+			Self::VecIter => "std::slice::Iter",
+			Self::RangeIter => "std::ops::RangeIter<std::i64>",
+			Self::Function => "std::ops::Function",
+			Self::Type => "std::any::Type",
 			Self::Struct(n) => {
 				let mut buffer = [0; 256];
 				return match super::nominal::name_copy(*n, &mut buffer) {
 					Some(len) => {
-						f.write_str(core::str::from_utf8(&buffer[..len]).map_err(|_| fmt::Error)?)
+						let name = core::str::from_utf8(&buffer[..len]).map_err(|_| fmt::Error)?;
+						crate::runtime::messages::DiagnosticType(name).fmt(f)
 					}
 					None => f.write_str("<struct>"),
 				};
@@ -512,11 +513,11 @@ mod tests {
 			});
 		assert_eq!(
 			error.message(&p).to_string(),
-			"Missing field `missing\nkey` on `::std::object::Object`"
+			"Missing field `missing\nkey` on `std::object::Object`"
 		);
 		assert_eq!(
 			error.message(&other).to_string(),
-			"Missing field on `::std::object::Object`"
+			"Missing field on `std::object::Object`"
 		);
 		for field in [
 			FieldRef {
@@ -534,7 +535,7 @@ mod tests {
 			});
 			assert_eq!(
 				e.message(&p).to_string(),
-				"Missing field on `::std::object::Object`"
+				"Missing field on `std::object::Object`"
 			);
 		}
 	}
@@ -582,11 +583,17 @@ mod tests {
 		use super::super::heap::{Limits, Store};
 		assert_eq!(
 			TypeName::RangeIter.to_string(),
-			crate::runtime::TypeInfo::any::<crate::runtime::range::RangeIter<i64>>().to_string()
+			crate::runtime::messages::DiagnosticType(&crate::runtime::TypeInfo::any::<
+				crate::runtime::range::RangeIter<i64>,
+			>())
+			.to_string()
 		);
 		assert_eq!(
 			TypeName::VecIter.to_string(),
-			crate::runtime::TypeInfo::any::<crate::runtime::slice::Iter>().to_string()
+			crate::runtime::messages::DiagnosticType(&crate::runtime::TypeInfo::any::<
+				crate::runtime::slice::Iter,
+			>())
+			.to_string()
 		);
 		let mut store = Store::new(Limits {
 			entries: 8,
@@ -601,5 +608,14 @@ mod tests {
 		let value = store.string("stale").unwrap();
 		store.release(value).unwrap();
 		assert_eq!(store.diagnostic_type(value), None);
+	}
+	#[test]
+	fn nominal_diagnostic_names_shorten_only_the_presentation() {
+		let rooted = "::display_d3::P";
+		let nominal = super::super::nominal::intern(0xd3d3_0185_0000_0001, rooted).unwrap();
+		assert_eq!(TypeName::Struct(nominal).to_string(), "display_d3::P");
+		let mut buffer = [0; 256];
+		let len = super::super::nominal::name_copy(nominal, &mut buffer).unwrap();
+		assert_eq!(&buffer[..len], rooted.as_bytes());
 	}
 }
