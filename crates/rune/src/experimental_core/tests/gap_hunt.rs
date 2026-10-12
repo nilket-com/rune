@@ -722,3 +722,412 @@ fn entry_hash(entry: &str) -> Hash {
 	let parts: Vec<_> = entry.split("::").collect();
 	Hash::type_hash(parts.as_slice())
 }
+
+/// Ordered pairs are deliberate: coercion and protocol dispatch need not be symmetric.
+fn comparison_cases() -> Vec<(String, String)> {
+	let values = [
+		("unit", "()"),
+		("false", "false"),
+		("true", "true"),
+		("char", "'a'"),
+		("signed", "1"),
+		("unsigned", "1u64"),
+		("negative", "-1"),
+		("float", "1.0"),
+		("nan", "f64::NAN"),
+		("string", "\"a\""),
+		("vec", "[1]"),
+		("tuple", "(1,)"),
+		("object", "#{k:1}"),
+		("none", "None"),
+		("some", "Some(1)"),
+		("ok", "Ok(1)"),
+		("err", "Err(1)"),
+		("p", "P{x:1}"),
+		("q", "Q{x:1}"),
+		("function", "g"),
+		("type", "i64"),
+		("empty-vec", "[]"),
+		("empty-object", "#{}"),
+	];
+	let operators = [
+		("eq", "=="),
+		("ne", "!="),
+		("lt", "<"),
+		("le", "<="),
+		("gt", ">"),
+		("ge", ">="),
+	];
+	let mut cases = Vec::new();
+	for (left, a) in values {
+		for (right, b) in values {
+			for (name, op) in operators {
+				cases.push((
+					format!("pair/{left}/{right}/{name}"),
+					format!("let a = {a}; let b = {b}; a {op} b"),
+				));
+			}
+		}
+	}
+	for (id, setup) in [
+		("vec-length", "let a = [1]; let b = [1,2];"),
+		("vec-length-reverse", "let a = [1,2]; let b = [1];"),
+		("tuple-length", "let a = (1,); let b = (1,2);"),
+		("tuple-length-reverse", "let a = (1,2); let b = (1,);"),
+		("vec-early-false", "let a = [1,\"a\"]; let b = [2,3];"),
+		("vec-late-error", "let a = [1,\"a\"]; let b = [1,3];"),
+		("tuple-early-false", "let a = (1,\"a\"); let b = (2,3);"),
+		("tuple-late-error", "let a = (1,\"a\"); let b = (1,3);"),
+		("vec-int-uint", "let a = [1]; let b = [1u64];"),
+		("vec-int-float", "let a = [1]; let b = [1.0];"),
+		("vec-nan-self", "let a = [f64::NAN]; let b = a;"),
+		("tuple-nan-self", "let a = (f64::NAN,); let b = a;"),
+		("object-nan-self", "let a = #{k:f64::NAN}; let b = a;"),
+		("option-nan-self", "let a = Some(f64::NAN); let b = a;"),
+		("result-nan-self", "let a = Ok(f64::NAN); let b = a;"),
+		("struct-nan-self", "let a = P{x:f64::NAN}; let b = a;"),
+		("vec-cycle", "let a = []; a.push(a); let b = a;"),
+		("object-cycle", "let a = #{}; a.x = a; let b = a;"),
+		("object-key-mismatch", "let a = #{a:1}; let b = #{b:1};"),
+		(
+			"object-key-permutation",
+			"let a = #{a:1,b:2}; let b = #{b:2,a:1};",
+		),
+		(
+			"variant-tag-before-error",
+			"let a = Ok(\"a\"); let b = Err(1);",
+		),
+		("option-child-type", "let a = Some(\"a\"); let b = Some(1);"),
+		(
+			"shared-dag",
+			"let x = [1]; let a = [x,x]; let b = [[1],[1]];",
+		),
+	] {
+		for (name, op) in operators {
+			cases.push((format!("edge/{id}/{name}"), format!("{setup} a {op} b")));
+		}
+	}
+	for depth in [62, 63, 64, 65] {
+		for (kind, wrapper) in [
+			("vec", "[a]"),
+			("tuple", "(a,)"),
+			("option", "Some(a)"),
+			("result", "Ok(a)"),
+			("struct", "P{x:a}"),
+		] {
+			for (name, op) in operators {
+				cases.push((
+					format!("depth/{kind}/{depth}/{name}"),
+					format!(
+						"let a = 1; for _ in 0..{depth} {{ a = {wrapper}; }} let b = a; a {op} b"
+					),
+				));
+			}
+		}
+	}
+	cases
+		.into_iter()
+		.map(|(id, body)| {
+			(
+				id,
+				format!(
+					"struct P {{ x }} struct Q {{ x }} fn g() {{ 1 }} pub fn main() {{ {body} }}"
+				),
+			)
+		})
+		.collect()
+}
+
+#[test]
+#[ignore = "explicit bounded stock comparison contract study; requires new GAP_OUT"]
+fn stock_comparison_probe() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("GAP_OUT required"));
+	fs::create_dir(&out).expect("GAP_OUT must be new");
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-eq-probe-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let supplementary = std::env::var_os("GAP_SUPPLEMENT").is_some();
+	let cases = if supplementary {
+		comparison_supplement()
+	} else {
+		comparison_cases()
+	};
+	assert_eq!(cases.len(), if supplementary { 162 } else { 3432 });
+	let mut table = String::from("case\tsource_hex\tstock_observation_hex\n");
+	let mut counts = BTreeMap::new();
+	for (n, (label, source)) in cases.iter().enumerate() {
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, source).unwrap();
+		let run = launch(&path, &path, "main", "stock", &scratch.0, &out, &id);
+		assert!(
+			run.complete,
+			"incomplete stock case {label}: {}",
+			run.record
+		);
+		let phase = run.record.split('\t').next().unwrap();
+		assert!(
+			matches!(phase, "value" | "error"),
+			"stock probe admission {label}: {}",
+			run.record
+		);
+		*counts.entry(phase.to_owned()).or_insert(0usize) += 1;
+		table.push_str(&format!(
+			"{label}\t{}\t{}\n",
+			hex(source.as_bytes()),
+			hex(run.record.as_bytes())
+		));
+		fs::write(out.join("stock-comparisons.tsv"), &table).unwrap();
+		if n.is_multiple_of(100) {
+			println!("stock comparison probe {n}/{}", cases.len());
+		}
+	}
+	fs::write(out.join("summary.txt"),format!("{} cases: {counts:?}\nPrimary:23x23 pairs x6,23 edges x6,4 depths x5 containers x6. Supplement selected via GAP_SUPPLEMENT. Every case is its own bounded stock child.\n",cases.len())).unwrap();
+}
+
+fn comparison_supplement() -> Vec<(String, String)> {
+	let setups = vec![
+		("range/vec-range", "let a=[1]; let b=1..2;"),
+		("range/range-vec", "let a=1..2; let b=[1];"),
+		("range/tuple-range", "let a=(1,); let b=1..2;"),
+		("range/range-tuple", "let a=1..2; let b=(1,);"),
+		("range/range-self", "let a=1..2; let b=1..2;"),
+		("range/empty-vec-range", "let a=[]; let b=0..0;"),
+		(
+			"length/vec-error-before-surplus",
+			"let a=[1,\"a\"]; let b=[1,3,4];",
+		),
+		(
+			"length/vec-error-before-shortage",
+			"let a=[1,\"a\",4]; let b=[1,3];",
+		),
+		(
+			"length/tuple-error-before-surplus",
+			"let a=(1,\"a\"); let b=(1,3,4);",
+		),
+		(
+			"length/tuple-error-before-shortage",
+			"let a=(1,\"a\",4); let b=(1,3);",
+		),
+		("nested/unsupported-leaf", "let a=[()]; let b=[1];"),
+		("nested/cross-nominal", "let a=[P{x:1}]; let b=[Q{x:1}];"),
+		("nested/string-integer", "let a=[\"a\"]; let b=[1];"),
+		("nested/integer-string", "let a=[1]; let b=[\"a\"];"),
+		("nested/object-vector", "let a=[#{k:1}]; let b=[[1]];"),
+		("nested/variant-mismatch", "let a=[Some(1)]; let b=[[1]];"),
+		(
+			"nested/depth-child-error",
+			"let a=Some([1.0]); let b=Some([1]);",
+		),
+		(
+			"nested/depth-child-error-reverse",
+			"let a=Some([1]); let b=Some([1.0]);",
+		),
+		(
+			"object-sequence/one-vec",
+			"let a=[(\"a\",1)]; let b=#{a:1};",
+		),
+		(
+			"object-sequence/one-tuple",
+			"let a=((\"a\",1),); let b=#{a:1};",
+		),
+		(
+			"unspecified/object-sequence/multiple",
+			"let a=[(\"a\",1),(\"b\",2)]; let b=#{a:1,b:2};",
+		),
+		(
+			"unspecified/object-missing-and-error",
+			"let a=#{a:1,b:\"a\"}; let b=#{c:2,b:3};",
+		),
+		(
+			"unspecified/object-two-errors",
+			"let a=#{a:1,b:\"a\"}; let b=#{a:1.0,b:3};",
+		),
+	];
+	let mut cases = Vec::new();
+	for (id, body) in setups {
+		for (name, op) in [
+			("eq", "=="),
+			("ne", "!="),
+			("lt", "<"),
+			("le", "<="),
+			("gt", ">"),
+			("ge", ">="),
+		] {
+			cases.push((
+				format!("{id}/{name}"),
+				format!("struct P {{ x }} struct Q {{ x }} pub fn main() {{ {body} a {op} b }}"),
+			));
+		}
+	}
+	for (id, a, b) in [
+		("aa", "#{a:1,b:\"a\"}", "#{a:2,b:3}"),
+		("ab", "#{a:1,b:\"a\"}", "#{b:3,a:2}"),
+		("ba", "#{b:\"a\",a:1}", "#{a:2,b:3}"),
+		("bb", "#{b:\"a\",a:1}", "#{b:3,a:2}"),
+	] {
+		for (name, op) in [
+			("eq", "=="),
+			("ne", "!="),
+			("lt", "<"),
+			("le", "<="),
+			("gt", ">"),
+			("ge", ">="),
+		] {
+			cases.push((
+				format!("unspecified/object-false-and-error/{id}/{name}"),
+				format!("pub fn main() {{ let a={a}; let b={b}; a {op} b }}"),
+			));
+		}
+	}
+	cases
+}
+
+fn unhex(text: &str) -> String {
+	assert!(text.len().is_multiple_of(2));
+	let bytes: Vec<_> = (0..text.len())
+		.step_by(2)
+		.map(|n| u8::from_str_radix(&text[n..n + 2], 16).unwrap())
+		.collect();
+	String::from_utf8(bytes).unwrap()
+}
+
+fn order_policy_allows(policy: &str, phase: &str, class: &str, message: &str, value: &str) -> bool {
+	let string_error = "Expected type `std::string::String` but found `std::i64`";
+	let number_error = "Expected number type, but found `std::f64`";
+	let is_bool = phase == "value" && class.is_empty() && message.is_empty();
+	let is_type = phase == "error" && class == "Type" && value.is_empty();
+	match policy {
+		"object-sequence-bool" => is_bool && matches!(value, "bool:true:true" | "bool:false:false"),
+		"object-two-type-messages" => {
+			is_type && matches!(message,m if m==string_error || m==number_error)
+		}
+		"object-false-or-string-error" => {
+			(is_bool && value == "bool:false:false") || (is_type && message == string_error)
+		}
+		"object-true-or-string-error" => {
+			(is_bool && value == "bool:true:true") || (is_type && message == string_error)
+		}
+		_ => false,
+	}
+}
+
+#[test]
+#[ignore = "explicit full frozen comparison contract; bounded children, not ordinary CI"]
+fn comparison_contract() {
+	let engine = std::env::var("GAP_COMPARE_ENGINE").unwrap_or_else(|_| "stock".into());
+	assert!(matches!(engine.as_str(), "stock" | "fresh"));
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).unwrap();
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-eq-contract-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let mut sources: BTreeMap<_, _> = comparison_cases()
+		.into_iter()
+		.chain(comparison_supplement())
+		.collect();
+	let mut rows = include_str!("comparison_stock.tsv").lines();
+	assert_eq!(
+		rows.next(),
+		Some("case\tpolicy\tphase\tclass\tmessage\tvalue")
+	);
+	let mut count = 0;
+	for (n, line) in rows.enumerate() {
+		let fields: Vec<_> = line.split('\t').collect();
+		assert_eq!(fields.len(), 6);
+		let [id, policy, phase, class, message, value] = fields.as_slice() else {
+			unreachable!()
+		};
+		let source = sources
+			.remove(*id)
+			.unwrap_or_else(|| panic!("duplicate/unknown {id}"));
+		let path = out.join(format!("{n:05}.source.rn"));
+		fs::write(&path, source).unwrap();
+		let run = launch(
+			&path,
+			&path,
+			"main",
+			&engine,
+			&scratch.0,
+			&out,
+			&format!("{n:05}"),
+		);
+		assert!(run.complete, "{id}: child gap {}", run.record);
+		let actual: Vec<_> = run.record.split('\t').collect();
+		assert_eq!(actual.len(), 5);
+		let actual_message = unhex(actual[3]);
+		let actual_value = unhex(actual[4]);
+		if *policy == "exact" {
+			// Only these stock resource/coercion classes have explicit fresh names.
+			let expected_class = if engine == "fresh" && class.starts_with("stock:MaxValueDepth ") {
+				"ValueDepth"
+			} else if engine == "fresh" && class.starts_with("stock:ValueToIntegerCoercionError ") {
+				"IntegerCoercion"
+			} else {
+				*class
+			};
+			assert_eq!(
+				(
+					actual[0],
+					actual[1],
+					actual_message.as_str(),
+					actual_value.as_str()
+				),
+				(*phase, expected_class, *message, *value),
+				"{id}"
+			);
+		} else {
+			assert!(
+				order_policy_allows(policy, actual[0], actual[1], &actual_message, &actual_value),
+				"{id}: policy {policy}, actual {}",
+				run.record
+			);
+		}
+		count += 1;
+	}
+	assert_eq!(count, 3594);
+	assert!(sources.is_empty());
+}
+
+#[test]
+fn comparison_order_metadata_never_admits_resource_or_unrelated_errors() {
+	for policy in [
+		"object-sequence-bool",
+		"object-two-type-messages",
+		"object-false-or-string-error",
+		"object-true-or-string-error",
+	] {
+		for class in [
+			"Allocation",
+			"StoreCapacity",
+			"ValueDepth",
+			"InvalidHandle",
+			"AccessConflict",
+			"FuelExhausted",
+			"Type",
+		] {
+			assert!(!order_policy_allows(
+				policy,
+				"error",
+				class,
+				"unrelated error",
+				""
+			));
+		}
+		assert!(!order_policy_allows(policy, "value", "", "", "i64:0:0"));
+	}
+	assert!(order_policy_allows(
+		"object-sequence-bool",
+		"value",
+		"",
+		"",
+		"bool:false:false"
+	));
+	assert!(order_policy_allows(
+		"object-false-or-string-error",
+		"error",
+		"Type",
+		"Expected type `std::string::String` but found `std::i64`",
+		""
+	));
+}
