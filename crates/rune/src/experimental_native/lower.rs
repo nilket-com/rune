@@ -1,0 +1,393 @@
+//! Region to Cranelift IR, then to machine code. Safe Rust only.
+//!
+//! The generated function mirrors the exit simulator node for node:
+//!
+//! - entry: load each guarded live-in from `buf[8 * i]`, zero the written-only slots, load
+//!   the entry fuel from the record, zero the written and bool masks, jump to the header;
+//! - charged node: `fuel == 0` branches to its `Fuel` exit, else `fuel -= 1`;
+//! - Add/Sub/Mul: `s{add,sub,mul}_overflow`, overflow branches to the `Retry` exit;
+//! - Div/Rem by an in-region constant outside {0, -1}: `sdiv`/`srem` by that constant
+//!   (the mid-end turns these into multiply/shift sequences; the audit checks it did);
+//! - Div/Rem by anything else: explicit zero and `MIN / -1` branches to `Retry`, then
+//!   `sdiv`/`srem`, which the audit refuses because the backend still emits a trapping
+//!   divide (see the audit findings);
+//! - compare: `icmp` zero-extended to 0/1; branch: `brif` on the 0/1 value;
+//! - exit block: store every possibly-written slot to `buf`, then written mask, bool mask,
+//!   fuel (0 for `Fuel`, `fuel + 1` for a `Retry` at a charged pc), status, exit id and pc
+//!   to the record, and return the status.
+//!
+//! Loop-carried slots are `cranelift_frontend` variables, so they live in registers across
+//! the back edge; memory is touched only at entry and exits.
+use super::NativeRefusal;
+use crate::experimental_core::arithmetic::Binary;
+use crate::experimental_core::region::abi::ExitRecord;
+use crate::experimental_core::region::{EntryClass, NodeOp, Region, Scalar, Status, Target};
+use cranelift_codegen::control::ControlPlane;
+use cranelift_codegen::ir::{
+	self, condcodes::IntCC, types, AbiParam, Block, InstBuilder, MemFlagsData, Signature,
+	UserFuncName,
+};
+
+use cranelift_codegen::isa::{self, CallConv, OwnedTargetIsa};
+use cranelift_codegen::settings::{self, Configurable};
+use cranelift_codegen::Context;
+use cranelift_frontend::{FunctionBuilder, FunctionBuilderContext, Variable};
+use std::format;
+use std::prelude::rust_2021::*;
+
+/// The fixed P0 target: baseline x86-64 System V, no host CPU feature detection, so the
+/// audited code is the same on every x86-64 host.
+pub(crate) const TRIPLE: &str = "x86_64-unknown-linux-gnu";
+
+/// The shared flags of every P0 compile (and of the boundary's JIT module).
+pub(crate) fn isa() -> Result<OwnedTargetIsa, NativeRefusal> {
+	let mut flags = settings::builder();
+	for (name, value) in [
+		("opt_level", "speed"),
+		("enable_verifier", "true"),
+		("is_pic", "false"),
+		("enable_probestack", "false"),
+		("unwind_info", "false"),
+		("preserve_frame_pointers", "false"),
+	] {
+		flags.set(name, value).map_err(|_| NativeRefusal::Isa)?;
+	}
+	isa::lookup_by_name(TRIPLE)
+		.map_err(|_| NativeRefusal::Isa)?
+		.finish(settings::Flags::new(flags))
+		.map_err(|_| NativeRefusal::Isa)
+}
+
+/// `extern "C" fn(buf: *mut i64, record: *mut ExitRecord) -> u32`.
+pub(crate) fn signature() -> Signature {
+	let mut sig = Signature::new(CallConv::SystemV);
+	sig.params.push(AbiParam::new(types::I64));
+	sig.params.push(AbiParam::new(types::I64));
+	sig.returns.push(AbiParam::new(types::I32));
+	sig
+}
+
+/// Builds the region's IR. `Shape` if the region exceeds the ABI's slot bound.
+pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Function, NativeRefusal> {
+	let n = region.slots.len();
+	if n > 64 || region.entry.len() != n || region.nodes.is_empty() {
+		return Err(NativeRefusal::Shape);
+	}
+	let mut func =
+		ir::Function::with_name_signature(UserFuncName::user(0, region.header), signature());
+	let mut fctx = FunctionBuilderContext::new();
+	let mut b = FunctionBuilder::new(&mut func, &mut fctx);
+	// Aligned and non-trapping: the audit requires every access to carry no trap code.
+	let mem = MemFlagsData::trusted();
+	let entry = b.create_block();
+	b.append_block_params_for_function_params(entry);
+	let nodes: Vec<Block> = region.nodes.iter().map(|_| b.create_block()).collect();
+	let exits: Vec<Block> = region.exits.iter().map(|_| b.create_block()).collect();
+	let block = |t: Target| match t {
+		Target::Node(i) => nodes[i as usize],
+		Target::Exit(e) => exits[e as usize],
+	};
+
+	b.switch_to_block(entry);
+	let buf = b.block_params(entry)[0];
+	let rec = b.block_params(entry)[1];
+	let vars: Vec<Variable> = (0..n).map(|_| b.declare_var(types::I64)).collect();
+	let fuel = b.declare_var(types::I64);
+	let written = b.declare_var(types::I64);
+	let bools = b.declare_var(types::I64);
+	for (l, class) in region.entry.iter().enumerate() {
+		let v = match class {
+			EntryClass::Guard(_) => b.ins().load(types::I64, mem, buf, slot_offset(l)),
+			EntryClass::Scalar => b.ins().iconst(types::I64, 0),
+		};
+		b.def_var(vars[l], v);
+	}
+	let f0 = b.ins().load(types::I64, mem, rec, ExitRecord::FUEL);
+	b.def_var(fuel, f0);
+	let zero = b.ins().iconst(types::I64, 0);
+	b.def_var(written, zero);
+	b.def_var(bools, zero);
+	b.ins().jump(nodes[region.header_node as usize], &[]);
+
+	for (i, node) in region.nodes.iter().enumerate() {
+		b.switch_to_block(nodes[i]);
+		if let Some(e) = node.charged {
+			let f = b.use_var(fuel);
+			let empty = b.ins().icmp_imm_s(IntCC::Equal, f, 0);
+			let charged = b.create_block();
+			b.ins().brif(empty, exits[e as usize], &[], charged, &[]);
+			b.switch_to_block(charged);
+			let f = b.ins().iadd_imm_s(f, -1);
+			b.def_var(fuel, f);
+		}
+		let define = |b: &mut FunctionBuilder<'_>, out: u32, v: ir::Value, is_bool: bool| {
+			b.def_var(vars[out as usize], v);
+			let w = b.use_var(written);
+			let w = b.ins().bor_imm_s(w, 1i64 << out);
+			b.def_var(written, w);
+			let bit = (1u64 << out) & region.tracked;
+			if bit != 0 {
+				let t = b.use_var(bools);
+				let t = if is_bool {
+					b.ins().bor_imm_s(t, bit as i64)
+				} else {
+					b.ins().band_imm_s(t, !bit as i64)
+				};
+				b.def_var(bools, t);
+			}
+		};
+		match node.op {
+			NodeOp::Literal { out, value, ty } => {
+				let v = b.ins().iconst(types::I64, value);
+				define(&mut b, out, v, ty == Scalar::Bool);
+			}
+			NodeOp::Compare { out, op, lhs, rhs } => {
+				let (x, y) = (b.use_var(vars[lhs as usize]), b.use_var(vars[rhs as usize]));
+				let c = b.ins().icmp(condition(op)?, x, y);
+				let v = b.ins().uextend(types::I64, c);
+				define(&mut b, out, v, true);
+			}
+			NodeOp::Arith {
+				out,
+				op,
+				lhs,
+				rhs,
+				retry,
+				divisor,
+			} => {
+				let (x, y) = (b.use_var(vars[lhs as usize]), b.use_var(vars[rhs as usize]));
+				let guard = |b: &mut FunctionBuilder<'_>, fault: ir::Value| {
+					let Some(e) = retry else {
+						return Err(NativeRefusal::Shape);
+					};
+					let ok = b.create_block();
+					b.ins().brif(fault, exits[e as usize], &[], ok, &[]);
+					b.switch_to_block(ok);
+					Ok(())
+				};
+				let v = match (op, divisor) {
+					(Binary::Add | Binary::Sub | Binary::Mul, _) => {
+						let (v, of) = match op {
+							Binary::Add => b.ins().sadd_overflow(x, y),
+							Binary::Sub => b.ins().ssub_overflow(x, y),
+							_ => b.ins().smul_overflow(x, y),
+						};
+						guard(&mut b, of)?;
+						v
+					}
+					(Binary::Div | Binary::Rem, Some(c)) => {
+						if c == 0 || c == -1 || retry.is_some() {
+							return Err(NativeRefusal::Shape);
+						}
+						let d = b.ins().iconst(types::I64, c);
+						if op == Binary::Div {
+							b.ins().sdiv(x, d)
+						} else {
+							b.ins().srem(x, d)
+						}
+					}
+					(Binary::Div | Binary::Rem, None) => {
+						let zero = b.ins().icmp_imm_s(IntCC::Equal, y, 0);
+						guard(&mut b, zero)?;
+						let minus_one = b.ins().icmp_imm_s(IntCC::Equal, y, -1);
+						let min = b.ins().icmp_imm_s(IntCC::Equal, x, i64::MIN);
+						let overflow = b.ins().band(minus_one, min);
+						guard(&mut b, overflow)?;
+						if op == Binary::Div {
+							b.ins().sdiv(x, y)
+						} else {
+							b.ins().srem(x, y)
+						}
+					}
+					_ => return Err(NativeRefusal::Shape),
+				};
+				define(&mut b, out, v, false);
+			}
+			NodeOp::Branch { condition, yes, no } => {
+				let c = b.use_var(vars[condition as usize]);
+				b.ins().brif(c, block(yes), &[], block(no), &[]);
+			}
+			NodeOp::Jump { target } => {
+				b.ins().jump(block(target), &[]);
+			}
+		}
+		if let Some(next) = node.next {
+			b.ins().jump(block(next), &[]);
+		}
+	}
+
+	for (e, exit) in region.exits.iter().enumerate() {
+		b.switch_to_block(exits[e]);
+		let possibly = exit.definite | exit.maybe;
+		for (l, &var) in vars.iter().enumerate() {
+			if possibly & (1 << l) != 0 {
+				let v = b.use_var(var);
+				b.ins().store(mem, v, buf, slot_offset(l));
+			}
+		}
+		let w = b.use_var(written);
+		b.ins().store(mem, w, rec, ExitRecord::WRITTEN);
+		let t = b.use_var(bools);
+		b.ins().store(mem, t, rec, ExitRecord::BOOLS);
+		let f = match exit.status {
+			Status::Fuel => b.ins().iconst(types::I64, 0),
+			Status::Retry if exit.restore => {
+				let f = b.use_var(fuel);
+				b.ins().iadd_imm_s(f, 1)
+			}
+			_ => b.use_var(fuel),
+		};
+		b.ins().store(mem, f, rec, ExitRecord::FUEL);
+		let status = b.ins().iconst(types::I32, exit.status as u32 as i64);
+		b.ins().store(mem, status, rec, ExitRecord::STATUS);
+		let id = b.ins().iconst(types::I32, e as i64);
+		b.ins().store(mem, id, rec, ExitRecord::EXIT);
+		let pc = b.ins().iconst(types::I32, i64::from(exit.pc));
+		b.ins().store(mem, pc, rec, ExitRecord::PC);
+		b.ins().return_(&[status]);
+	}
+	b.seal_all_blocks();
+	b.finalize(isa.frontend_config());
+	Ok(func)
+}
+
+fn slot_offset(l: usize) -> i32 {
+	// l < 64, so the offset is below 512.
+	(l * 8) as i32
+}
+
+fn condition(op: Binary) -> Result<IntCC, NativeRefusal> {
+	Ok(match op {
+		Binary::Eq => IntCC::Equal,
+		Binary::Ne => IntCC::NotEqual,
+		Binary::Lt => IntCC::SignedLessThan,
+		Binary::Le => IntCC::SignedLessThanOrEqual,
+		Binary::Gt => IntCC::SignedGreaterThan,
+		Binary::Ge => IntCC::SignedGreaterThanOrEqual,
+		_ => return Err(NativeRefusal::Shape),
+	})
+}
+
+/// The compiled and audited machine code of one region: the only input
+/// [`NativeRegion::load`](super::boundary::NativeRegion::load) accepts.
+///
+/// The fields are private and the only constructor is [`compile`], which always runs the IR
+/// gate before and after the mid-end and the machine gate. Code outside this module can
+/// inspect a value but cannot build or change one, so a `Compiled` is evidence that every
+/// gate passed for exactly these bytes.
+pub(crate) struct Compiled {
+	bytes: Vec<u8>,
+	/// Required code alignment (from Cranelift's function alignment).
+	alignment: u64,
+	slots: usize,
+	listing: Listing,
+}
+
+/// Textual IR before and after the mid-end, the lowered VCode listing and the machine
+/// audit report. Diagnostic only: it cannot be loaded.
+pub(crate) struct Listing {
+	pub(crate) clif: String,
+	pub(crate) optimized: String,
+	pub(crate) vcode: String,
+	pub(crate) report: super::audit::Report,
+}
+
+impl Compiled {
+	pub(crate) fn bytes(&self) -> &[u8] {
+		&self.bytes
+	}
+
+	pub(crate) fn alignment(&self) -> u64 {
+		self.alignment
+	}
+
+	pub(crate) fn slots(&self) -> usize {
+		self.slots
+	}
+
+	pub(crate) fn listing(&self) -> &Listing {
+		&self.listing
+	}
+}
+
+/// Which gates a lowering runs. Only [`Gates::All`] can yield a loadable [`Compiled`].
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Gates {
+	All,
+	/// Test diagnostics: the machine gate only.
+	#[cfg(test)]
+	MachineOnly,
+}
+
+/// Builds, verifies, compiles and audits `region` with every gate. Any `Err` is an
+/// interpreter fallback. `program_bytes` is the code already compiled for the same program
+/// (the cache bound).
+pub(crate) fn compile(region: &Region, program_bytes: usize) -> Result<Compiled, NativeRefusal> {
+	let (bytes, alignment, listing) = lower(region, program_bytes, Gates::All)?;
+	Ok(Compiled {
+		bytes,
+		alignment,
+		slots: region.slots.len(),
+		listing,
+	})
+}
+
+/// As [`compile`] without the IR gates, so tests can show what the backend itself emits for
+/// IR the gate would refuse (the machine audit still runs). It returns only the
+/// non-loadable [`Listing`].
+#[cfg(test)]
+pub(crate) fn diagnose_machine_only(region: &Region) -> Result<Listing, NativeRefusal> {
+	Ok(lower(region, 0, Gates::MachineOnly)?.2)
+}
+
+fn lower(
+	region: &Region,
+	program_bytes: usize,
+	gates: Gates,
+) -> Result<(Vec<u8>, u64, Listing), NativeRefusal> {
+	let ir_gate = gates == Gates::All;
+	let isa = isa()?;
+	let func = build(region, &isa)?;
+	cranelift_codegen::verify_function(&func, &*isa)
+		.map_err(|e| NativeRefusal::Verifier(e.to_string()))?;
+
+	if ir_gate {
+		super::audit::ir(&func, region.slots.len()).map_err(NativeRefusal::Audit)?;
+	}
+
+	let clif = func.display().to_string();
+	let mut ctx = Context::for_function(func);
+	ctx.set_disasm(true);
+	let code = ctx
+		.compile(&*isa, &mut ControlPlane::default())
+		.map_err(|e| NativeRefusal::Codegen(format!("{:?}", e.inner)))?;
+	let bytes = code.code_buffer().to_vec();
+	let vcode = code.vcode.clone().unwrap_or_default();
+	let alignment = u64::from(code.buffer.alignment);
+	let report = super::audit::machine(code, &vcode).map_err(NativeRefusal::Audit)?;
+
+	// The optimized IR is audited too: the mid-end must not have introduced anything the
+	// contract forbids.
+	if ir_gate {
+		super::audit::ir(&ctx.func, region.slots.len()).map_err(NativeRefusal::Audit)?;
+	}
+
+	let optimized = ctx.func.display().to_string();
+
+	if bytes.len() > super::MAX_REGION_CODE_BYTES
+		|| program_bytes.saturating_add(bytes.len()) > super::MAX_PROGRAM_CODE_BYTES
+	{
+		return Err(NativeRefusal::Size);
+	}
+
+	Ok((
+		bytes,
+		alignment,
+		Listing {
+			clif,
+			optimized,
+			vcode,
+			report,
+		},
+	))
+}

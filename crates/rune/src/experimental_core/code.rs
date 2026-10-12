@@ -845,7 +845,7 @@ impl Builder {
 	}
 }
 
-fn successors(f: &Function, pc: usize, out: &mut [Option<usize>; 2]) -> Result<()> {
+pub(crate) fn successors(f: &Function, pc: usize, out: &mut [Option<usize>; 2]) -> Result<()> {
 	let instruction = f.operation(pc)?;
 	*out = match instruction {
 		Op::Return { .. } => [None, None],

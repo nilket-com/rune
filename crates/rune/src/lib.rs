@@ -261,6 +261,14 @@ pub mod runtime;
 /// Opt-in fresh execution core (feature `fresh-core`); unstable, no semver promise.
 #[cfg(feature = "fresh-core")]
 pub mod experimental_core;
+/// P0 Cranelift backend for fresh-core loop regions: lowering, audit and the sealed unsafe
+/// boundary (compiled, never called in P0).
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
+pub(crate) mod experimental_native;
 #[doc(inline)]
 pub use self::runtime::{
 	from_const_value, from_value, to_const_value, to_value, FromConstValue, FromValue, Mut, Ref,

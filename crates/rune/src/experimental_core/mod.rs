@@ -51,5 +51,8 @@ pub mod frontend;
 
 pub(crate) mod constants;
 
+#[cfg(feature = "fresh-core-native")]
+pub(crate) mod region;
+
 #[cfg(test)]
 mod tests;

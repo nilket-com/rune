@@ -215,6 +215,10 @@ impl Executor {
 				// No borrowed frame/slot reference crosses those mutations.
 				let frame_index = self.frames.len() - 1;
 				let mut pc = frame.pc;
+				// P0 region simulator hook (tests with `fresh-core-native` only): never
+				// consulted at the pc an exit resumes at.
+				#[cfg(all(test, feature = "fresh-core-native"))]
+				let mut region_resume = false;
 
 				loop {
 					let source_pc = pc;
@@ -227,6 +231,29 @@ impl Executor {
 							return Err(error(ErrorKind::InvalidCode));
 						}
 					};
+					#[cfg(all(test, feature = "fresh-core-native"))]
+					{
+						let resume = core::mem::take(&mut region_resume);
+						let end = frame.base + function.slots as usize;
+						if instruction.charged && !resume && !cancel_hook_armed_for_test() {
+							if let Some(window) = self.slots.get_mut(frame.base..end) {
+								if let Some((next, left)) = super::region::hook::try_enter(
+									code.id(),
+									frame.function,
+									source_pc,
+									window,
+									store,
+									self.cancelled,
+									fuel,
+								) {
+									pc = next;
+									fuel = left;
+									region_resume = true;
+									continue;
+								}
+							}
+						}
+					}
 
 					let mut transferred = false;
 					let result = (|| {
@@ -730,6 +757,10 @@ impl Executor {
 				}
 			}
 		})();
+		// P1 tests only: the remaining fuel, compared across engines.
+		#[cfg(all(test, feature = "fresh-core-native"))]
+		super::region::hook::record_final_fuel(fuel);
+
 		match result {
 			Ok(value) => Ok(value),
 			Err(failure) => {
@@ -1019,6 +1050,12 @@ std::thread_local! {
 #[cfg(test)]
 pub(crate) fn cancel_at_charge_for_test(n: Option<usize>) {
 	CANCEL_AT_CHARGE.with(|c| c.set(n));
+}
+/// Whether the D14 cancel-at-charge test hook is armed: a region would skip its ticks, so
+/// the region hook stays out while it is.
+#[cfg(all(test, feature = "fresh-core-native"))]
+pub(crate) fn cancel_hook_armed_for_test() -> bool {
+	CANCEL_AT_CHARGE.with(|c| c.get().is_some())
 }
 
 #[cfg(test)]
