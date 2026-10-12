@@ -220,6 +220,13 @@ fn run(mode: &str) -> (Vec<u8>, String) {
 		let mut ack = [0];
 		control.read_exact(&mut ack).unwrap();
 		assert_eq!(&ack, b"1");
+		// A concurrently forked child may briefly retain this descriptor until exec.
+		// Shutdown closes the socket endpoint for every copy before releasing the barrier.
+		reader
+			.as_ref()
+			.unwrap()
+			.shutdown(std::net::Shutdown::Both)
+			.unwrap();
 		drop(reader.take());
 		control.write_all(b"g").unwrap();
 	} else if let Some(reader) = reader.as_mut() {
