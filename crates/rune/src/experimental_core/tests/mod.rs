@@ -45,6 +45,8 @@ mod dispatch_state;
 mod executor;
 mod formatting;
 mod frontend;
+#[cfg(all(feature = "std", not(miri)))]
+mod gap_hunt;
 mod io_policy;
 mod lowering_shape;
 mod macro_certification;
