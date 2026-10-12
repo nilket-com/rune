@@ -3,7 +3,7 @@
 //! borrow of the store prevents mutation between the two passes.
 
 use super::{Payload, Store};
-use crate::alloc::String;
+use crate::alloc::{String, Vec};
 use crate::experimental_core::{
 	error::{Error, ErrorKind, Result},
 	value::{Type, Value},
@@ -171,8 +171,19 @@ impl Store {
 					tag: Type::Object,
 					fields,
 				} if debug => {
+					// Every field needs at least one more node. Refuse before sorting
+					// scratch is allocated, keeping it bounded by the existing work cap.
+					if fields.len() > MAX_NODES - sink.nodes {
+						return Err(limit());
+					}
+					let mut order = Vec::try_with_capacity(fields.len())?;
+					for index in 0..fields.len() {
+						order.try_push(index)?;
+					}
+					order.sort_unstable_by(|a, b| fields[*a].0.as_str().cmp(fields[*b].0.as_str()));
 					sink.push("{")?;
-					for (i, (key, value)) in fields.iter().enumerate() {
+					for (i, index) in order.into_iter().enumerate() {
+						let (key, value) = &fields[index];
 						if i != 0 {
 							sink.push(", ")?;
 						}

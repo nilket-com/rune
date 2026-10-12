@@ -719,7 +719,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			};
 
 			let condition = self.operand(*id)?;
-			let test = self.emit(Op::Jump { target: 0 }, span)?;
+			let test = self.emit(Op::Jump { target: 0 }, self.exprs.get(*id).span)?;
 			let yes = self.pc();
 
 			match out {
@@ -764,7 +764,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			};
 
 			let value = self.operand(*id)?;
-			let pc = self.emit(Op::Jump { target: 0 }, span)?;
+			let pc = self.emit(Op::Jump { target: 0 }, self.exprs.get(*id).span)?;
 			Some((value, pc))
 		} else {
 			None
@@ -1198,7 +1198,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			// `out` holds the left value while the right side is decided. It is a
 			// fresh slot, so the right side cannot observe it through a local.
 			self.expr_into(binary.lhs, out)?;
-			let branch = self.emit(Op::Jump { target: 0 }, span)?;
+			let branch = self.emit(Op::Jump { target: 0 }, self.exprs.get(binary.lhs).span)?;
 			let rhs_pc = self.pc();
 			let mark = self.next;
 			let rhs = self.operand(binary.rhs)?;
@@ -1210,7 +1210,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					yes: 0,
 					no: 0,
 				},
-				span,
+				self.exprs.get(binary.rhs).span,
 			)?;
 			let copy = self.pc();
 			self.emit(Op::Copy { out, value: rhs }, span)?;

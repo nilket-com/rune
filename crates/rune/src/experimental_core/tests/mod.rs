@@ -50,4 +50,5 @@ mod macro_certification;
 mod predecode;
 mod semantics;
 mod store_integrity;
+mod strict_conditions;
 mod values;

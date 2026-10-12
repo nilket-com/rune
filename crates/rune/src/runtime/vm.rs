@@ -1418,11 +1418,14 @@ impl Vm {
 	#[cfg_attr(feature = "bench", inline(never))]
 	#[cfg_attr(not(feature = "bench"), inline)]
 	fn op_jump_if(&mut self, cond: Address, jump: usize) -> Result<(), VmErrorKind> {
-		if matches!(
-			self.stack.at(cond).as_ref(),
-			Repr::Inline(Inline::Bool(true))
-		) {
-			self.ip = self.unit.translate(jump)?;
+		match self.stack.at(cond).as_ref() {
+			Repr::Inline(Inline::Bool(true)) => self.ip = self.unit.translate(jump)?,
+			Repr::Inline(Inline::Bool(_)) => (),
+			_ => {
+				return Err(VmErrorKind::expected::<bool>(
+					self.stack.at(cond).type_info(),
+				))
+			}
 		}
 
 		Ok(())
@@ -1431,11 +1434,14 @@ impl Vm {
 	/// pop-and-jump-if-not instruction.
 	#[cfg_attr(feature = "bench", inline(never))]
 	fn op_jump_if_not(&mut self, cond: Address, jump: usize) -> Result<(), VmErrorKind> {
-		if matches!(
-			self.stack.at(cond).as_ref(),
-			Repr::Inline(Inline::Bool(false))
-		) {
-			self.ip = self.unit.translate(jump)?;
+		match self.stack.at(cond).as_ref() {
+			Repr::Inline(Inline::Bool(false)) => self.ip = self.unit.translate(jump)?,
+			Repr::Inline(Inline::Bool(_)) => (),
+			_ => {
+				return Err(VmErrorKind::expected::<bool>(
+					self.stack.at(cond).type_info(),
+				))
+			}
 		}
 
 		Ok(())

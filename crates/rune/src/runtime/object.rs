@@ -469,7 +469,12 @@ impl IntoIterator for Object {
 impl fmt::Debug for Object {
 	#[inline]
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		f.debug_map().entries(self.inner.iter()).finish()
+		let mut entries = alloc::Vec::try_with_capacity(self.len()).map_err(|_| fmt::Error)?;
+		for entry in &self.inner {
+			entries.try_push(entry).map_err(|_| fmt::Error)?;
+		}
+		entries.sort_unstable_by(|a, b| a.0.cmp(b.0));
+		f.debug_map().entries(entries).finish()
 	}
 }
 

@@ -1441,6 +1441,11 @@ enum Step<'a, 'hir> {
 		a: Any<'a, 'hir>,
 		b: Any<'a, 'hir>,
 	},
+	/// Supply a temporary for a conditional expression whose result is discarded.
+	ConditionalDiscard {
+		span: &'hir dyn Spanned,
+		value: Any<'a, 'hir>,
+	},
 	/// `<lhs> && <rhs>` or `<lhs> || <rhs>`, waiting for the left-hand side.
 	///
 	/// Conditional operators assemble both of their operands into the needs of
@@ -1453,6 +1458,8 @@ enum Step<'a, 'hir> {
 	/// `<lhs> && <rhs>` or `<lhs> || <rhs>`, waiting for the right-hand side.
 	ConditionalRhs {
 		span: &'hir dyn Spanned,
+		rhs_span: &'hir dyn Spanned,
+		addr: inst::Address,
 		end_label: Label,
 	},
 }
@@ -1481,6 +1488,7 @@ struct StepFor<'a, 'hir> {
 struct StepMatchGuard<'a, 'hir> {
 	hir: &'hir hir::ExprMatch<'hir>,
 	span: &'hir dyn Spanned,
+	guard_span: &'hir dyn Spanned,
 	value: Address<'a, 'hir>,
 	end_label: Label,
 	linear: Linear<'a, 'hir>,
@@ -1530,6 +1538,7 @@ impl<'a, 'hir> Step<'a, 'hir> {
 			| Step::FieldAccess { addr, .. } => addr,
 			Step::IndexTarget { target, .. } => target,
 			Step::IndexIndex { index, .. } => index,
+			Step::ConditionalDiscard { value, .. } => value,
 			Step::BinaryLhs { a, .. } => a,
 			Step::BinaryRhs { b, .. } => b,
 			Step::ConditionalLhs { .. } | Step::ConditionalRhs { .. } | Step::Format { .. } => {
@@ -1576,6 +1585,7 @@ impl<'a, 'hir> Step<'a, 'hir> {
 				index.free()?;
 				target.free()
 			}
+			Step::ConditionalDiscard { value, .. } => value.free(),
 			Step::BinaryLhs { a, b, .. } | Step::BinaryRhs { a, b, .. } => {
 				a.free()?;
 				b.free()
@@ -2549,7 +2559,10 @@ where
 					// variable over rather than writing anything, so leaving it
 					// to the sides would have the other one write into whichever
 					// variable this one named.
-					needs.try_alloc_output()?;
+					if needs.try_alloc_output()?.is_none() {
+						let value = cx.scopes.alloc_any(span)?;
+						descend!(Step::ConditionalDiscard { span, value }, current_expr);
+					}
 					descend!(Step::ConditionalLhs { hir, span }, cx.exprs.get(hir.lhs));
 				}
 				hir::ExprKind::Binary(hir) => {
@@ -3281,6 +3294,7 @@ where
 					Step::MatchGuard(Box::try_new(StepMatchGuard {
 						hir,
 						span,
+						guard_span: condition,
 						value,
 						end_label,
 						linear,
@@ -3978,9 +3992,9 @@ where
 				false
 			} else {
 				match *condition_hir {
-					hir::Condition::Expr(_, _) => {
+					hir::Condition::Expr(_, id) => {
 						let addr = value.into_addr()?;
-						cx.asm.jump_if(addr.addr(), &then_label, span)?;
+						cx.asm.jump_if(addr.addr(), &then_label, cx.exprs.get(id))?;
 						addr.free()?;
 						true
 					}
@@ -4092,8 +4106,8 @@ where
 				let addr = value.into_addr()?;
 
 				let pat = match *branch.condition {
-					hir::Condition::Expr(..) => {
-						cx.asm.jump_if(addr.addr(), &then_label, branch)?;
+					hir::Condition::Expr(_, id) => {
+						cx.asm.jump_if(addr.addr(), &then_label, cx.exprs.get(id))?;
 						addr.free()?;
 						Some(Pattern::Irrefutable)
 					}
@@ -4251,6 +4265,7 @@ where
 			let StepMatchGuard {
 				hir,
 				span,
+				guard_span,
 				value,
 				end_label,
 				linear,
@@ -4276,7 +4291,7 @@ where
 				cx.scopes.pop(span, pattern_scope)?;
 			} else {
 				let cond = cond.into_addr()?;
-				cx.asm.jump_if_not(cond.addr(), &match_false, span)?;
+				cx.asm.jump_if_not(cond.addr(), &match_false, guard_span)?;
 				cx.asm.jump(&branch_label, span)?;
 				cond.free()?;
 				cx.scopes.pop(span, scope)?;
@@ -5062,6 +5077,14 @@ where
 			b.free()?;
 			Asm::new(span, ())
 		}
+		Step::ConditionalDiscard { span, value } => {
+			value.free()?;
+			if diverging {
+				Asm::diverge(span)
+			} else {
+				Asm::new(span, ())
+			}
+		}
 		Step::ConditionalLhs { hir, span } => {
 			if diverging {
 				return Ok(Completed::Done(Asm::diverge(span)));
@@ -5088,11 +5111,25 @@ where
 			}
 
 			return Ok(Completed::Next(
-				Step::ConditionalRhs { span, end_label },
+				Step::ConditionalRhs {
+					span,
+					rhs_span: cx.exprs.get(hir.rhs),
+					addr,
+					end_label,
+				},
 				Current::Expr(cx.exprs.get(hir.rhs)),
 			));
 		}
-		Step::ConditionalRhs { span, end_label } => {
+		Step::ConditionalRhs {
+			span,
+			rhs_span,
+			addr,
+			end_label,
+		} => {
+			if !diverging {
+				// Both successors are the next instruction; the branch validates bool.
+				cx.asm.jump_if_not(addr, &end_label, rhs_span)?;
+			}
 			// The right-hand side is only evaluated for its effect on control
 			// flow, so it diverging says nothing about the expression as a
 			// whole - the left-hand side may still have short-circuited past

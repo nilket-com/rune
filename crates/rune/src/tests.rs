@@ -531,6 +531,7 @@ mod literals;
 mod macros;
 #[cfg(not(miri))]
 mod moved;
+mod object_debug_order;
 #[cfg(not(miri))]
 mod option;
 #[cfg(not(miri))]
@@ -551,6 +552,7 @@ mod scripts;
 mod static_typing;
 #[cfg(not(miri))]
 mod statics;
+mod strict_conditions;
 #[cfg(not(miri))]
 mod tuple;
 #[cfg(not(miri))]

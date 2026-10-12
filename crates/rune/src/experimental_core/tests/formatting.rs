@@ -15,7 +15,7 @@ fn store() -> Store {
 }
 
 #[test]
-fn scalar_reference_shapes_and_container_insertion_order() {
+fn scalar_reference_shapes_and_sorted_object_debug() {
 	let mut store = store();
 	for (n, text) in [
 		(0.0, "0.0"),
@@ -53,7 +53,7 @@ fn scalar_reference_shapes_and_container_insertion_order() {
 		.unwrap();
 	assert_eq!(
 		store.format_value(object, true).unwrap(),
-		"{\"y\": 1, \"x\": 0.0}"
+		"{\"x\": 0.0, \"y\": 1}"
 	);
 	let some = store.variant(Type::Option, true, Some(string)).unwrap();
 	assert_eq!(store.format_value(some, true).unwrap(), "Some(\"é\\n\")");
@@ -107,4 +107,89 @@ fn caps_cycles_invalid_handles_and_closed_store_refuse() {
 		store.format_value(Value::I64(1), true).unwrap_err().kind,
 		ErrorKind::ClosedStore
 	);
+}
+
+#[test]
+fn sorted_objects_match_stock_debug_for_all_permutations_and_unicode_keys() {
+	let keys = ["z", "y", "x", "w"];
+	let mut checked = 0;
+	for a in 0..4 {
+		for b in 0..4 {
+			for c in 0..4 {
+				for d in 0..4 {
+					let order = [a, b, c, d];
+					if (0..4).any(|i| (i + 1..4).any(|j| order[i] == order[j])) {
+						continue;
+					}
+					let mut store = store();
+					let fields: std::vec::Vec<_> = order
+						.iter()
+						.map(|i| (keys[*i], Value::I64(*i as i64 + 1)))
+						.collect();
+					let object = store.record(Type::Object, &fields).unwrap();
+					let mut stock = crate::runtime::Object::new();
+					for i in order {
+						stock
+							.insert(
+								crate::alloc::String::try_from(keys[i]).unwrap(),
+								crate::runtime::Value::from(i as i64 + 1),
+							)
+							.unwrap();
+					}
+					assert_eq!(
+						store.format_value(object, true).unwrap().as_str(),
+						std::format!("{stock:?}").as_str()
+					);
+					checked += 1;
+				}
+			}
+		}
+	}
+	assert_eq!(checked, 24);
+	let mut store = store();
+	let object = store
+		.record(
+			Type::Object,
+			&[
+				("é", Value::I64(3)),
+				("a", Value::I64(1)),
+				("B", Value::I64(2)),
+			],
+		)
+		.unwrap();
+	assert_eq!(
+		store.format_value(object, true).unwrap(),
+		"{\"B\": 2, \"a\": 1, \"é\": 3}"
+	);
+	let inner = store
+		.record(Type::Object, &[("y", Value::I64(2)), ("x", Value::I64(1))])
+		.unwrap();
+	let list = store.list(Type::Vec, &[inner]).unwrap();
+	let outer = store
+		.record(Type::Object, &[("z", list), ("a", Value::I64(0))])
+		.unwrap();
+	assert_eq!(
+		store.format_value(outer, true).unwrap(),
+		"{\"a\": 0, \"z\": [{\"x\": 1, \"y\": 2}]}"
+	);
+	let empty = store.record(Type::Object, &[]).unwrap();
+	assert_eq!(store.format_value(empty, true).unwrap(), "{}");
+}
+
+#[test]
+fn object_sorting_respects_the_existing_node_budget_without_changing_store_usage() {
+	for count in [4095, 4096] {
+		let mut store = store();
+		let keys: std::vec::Vec<_> = (0..count).map(|i| std::format!("k{i:04}")).collect();
+		let fields: std::vec::Vec<_> = keys.iter().map(|key| (key.as_str(), Value::Unit)).collect();
+		let object = store.record(Type::Object, &fields).unwrap();
+		let before = (store.live_entries(), store.payload_bytes());
+		let result = store.format_value(object, true);
+		if count == 4095 {
+			assert!(result.is_ok(), "{result:?}");
+		} else {
+			assert_eq!(result.unwrap_err().kind, ErrorKind::FormatLimit);
+		}
+		assert_eq!((store.live_entries(), store.payload_bytes()), before);
+	}
 }

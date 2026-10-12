@@ -7,7 +7,8 @@
 //! (one unit per `pub fn` line); see [`unit_source`].
 //!
 //! Every row carries a fixed expectation for BOTH engines. For a declared difference the
-//! two expectations differ, so a stock regression fails like a fresh one. The test fails
+//! two expectations differ except the explicit F1 `CONVERGED` rows below. A stock
+//! regression still fails like a fresh one. The test fails
 //! closed:
 //! - a stock error kind without an entry in the site table for its batch and function
 //!   is reported as `unmapped` and fails the row;
@@ -47,8 +48,82 @@ const PROGRAMS: &[(&str, &str)] = &[
 const HEADER: &str = "tier\tbatch\tid\tfunction\toperands\tfresh_kind\tfresh_value\tfresh_effects\tstock_kind\tstock_value\tstock_effects\trule";
 const FULL_ROWS: usize = 675;
 const MIRI_ROWS: usize = 20;
-const INSERTION_ORDER: &str =
-	"insertion-order-object-debug (chatd 2100); stock side compared by content";
+// Only these frozen receipt rows have deliberately converged in F1. Every
+// identity and rule is checked before execution, including the Miri subset.
+const CONVERGED: &[(&str, &str, &str, &str)] = &[
+	(
+		"operators",
+		"044944",
+		"and",
+		"strict-bool-lazy (chatd 1932)",
+	),
+	(
+		"operators",
+		"044945",
+		"and",
+		"strict-bool-lazy (chatd 1932)",
+	),
+	("operators", "047753", "or", "strict-bool-lazy (chatd 1932)"),
+	("operators", "047754", "or", "strict-bool-lazy (chatd 1932)"),
+	(
+		"operators",
+		"050562",
+		"and_effect",
+		"strict-bool-lazy (chatd 1932)",
+	),
+	(
+		"operators",
+		"050563",
+		"and_effect",
+		"strict-bool-lazy (chatd 1932)",
+	),
+	(
+		"operators",
+		"053371",
+		"or_effect",
+		"strict-bool-lazy (chatd 1932)",
+	),
+	(
+		"operators",
+		"053372",
+		"or_effect",
+		"strict-bool-lazy (chatd 1932)",
+	),
+	("objfmt", "000000", "objdbg_yx", "-"),
+	(
+		"objfmt",
+		"000001",
+		"objdbg_xy",
+		"insertion-order-object-debug (chatd 2100); stock side compared by content",
+	),
+	(
+		"objfmt",
+		"000002",
+		"objdbg_six_down",
+		"insertion-order-object-debug (chatd 2100); stock side compared by content",
+	),
+	(
+		"objfmt",
+		"000003",
+		"objdbg_six_up",
+		"insertion-order-object-debug (chatd 2100); stock side compared by content",
+	),
+	("objfmt", "000005", "objdbg_insert_built", "-"),
+	("objfmt", "000006", "objdbg_overwrite", "-"),
+	("addendum", "000370", "debug_object", "-"),
+	("addendum", "000371", "debug_object", "-"),
+	("addendum", "000372", "debug_object", "-"),
+	("addendum", "000373", "debug_object", "-"),
+	("addendum", "000374", "debug_object", "-"),
+	("addendum", "000375", "debug_object", "-"),
+	("addendum", "000376", "debug_object", "-"),
+	("addendum", "000377", "debug_object", "-"),
+	("addendum", "000378", "debug_object", "-"),
+	("addendum", "000379", "debug_object", "-"),
+	("addendum", "000380", "debug_object", "-"),
+	("addendum", "000381", "debug_object", "-"),
+	("addendum", "000382", "debug_object", "-"),
+];
 
 struct Case<'a> {
 	tier: &'a str,
@@ -339,6 +414,37 @@ fn object_content(encoded: &str) -> std::collections::BTreeMap<std::string::Stri
 	out
 }
 
+/// Reorder only the exact two-field scalar shape in the frozen addendum.
+/// Ambiguous separators are refused rather than parsing arbitrary Debug syntax.
+fn sorted_scalar_object(text: &str) -> Option<std::string::String> {
+	let separator = ", \"x\": ";
+	if text.matches(separator).count() != 1 {
+		return None;
+	}
+	let inner = text.strip_prefix("{\"y\": ")?.strip_suffix('}')?;
+	let (y, x) = inner.split_once(separator)?;
+	if y.is_empty() || x.is_empty() {
+		return None;
+	}
+	Some(std::format!("{{\"x\": {x}, \"y\": {y}}}"))
+}
+
+#[test]
+fn frozen_scalar_object_transform_refuses_ambiguous_shapes() {
+	assert_eq!(
+		sorted_scalar_object("{\"y\": -0.0, \"x\": true}").unwrap(),
+		"{\"x\": true, \"y\": -0.0}"
+	);
+	for text in [
+		"{\"y\": 1}",
+		"{\"x\": 1, \"y\": 2}",
+		"{\"y\": , \"x\": 2}",
+		"{\"y\": \"a, \"x\": b\", \"x\": 1}",
+	] {
+		assert!(sorted_scalar_object(text).is_none(), "{text}");
+	}
+}
+
 /// The source of one function, compiled on its own as the reference runners did: its
 /// `pub fn` line (which carries any helper or constant it declares) plus the shared
 /// non-`pub` helper lines of the batch (the witness functions `mark` and `t`).
@@ -360,7 +466,7 @@ fn unit_source(text: &str, function: &str) -> std::string::String {
 }
 
 /// Builds one function's unit on both engines; a build failure on either side panics.
-fn compile_unit(
+pub(super) fn compile_unit(
 	context: &Context,
 	batch: &str,
 	text: &str,
@@ -390,6 +496,35 @@ fn compile_unit(
 fn run(miri_only: bool) {
 	let all = cases();
 	assert_eq!(all.len(), FULL_ROWS, "corpus rows");
+	assert_eq!(CONVERGED.len(), 27);
+	assert_eq!(
+		CONVERGED.iter().filter(|row| row.0 == "operators").count(),
+		8
+	);
+	assert_eq!(CONVERGED.iter().filter(|row| row.0 == "objfmt").count(), 6);
+	assert_eq!(
+		CONVERGED.iter().filter(|row| row.0 == "addendum").count(),
+		13
+	);
+	for &(batch, id, function, rule) in CONVERGED {
+		let rows: std::vec::Vec<_> = all
+			.iter()
+			.filter(|c| c.batch == batch && c.id == id)
+			.collect();
+		assert_eq!(rows.len(), 1, "converged identity {batch}/{id}");
+		assert_eq!((rows[0].function, rows[0].rule), (function, rule));
+	}
+	for case in &all {
+		if case.rule == "strict-bool-lazy (chatd 1932)"
+			|| case.batch == "objfmt"
+			|| (case.batch == "addendum" && case.function == "debug_object")
+		{
+			assert!(CONVERGED
+				.iter()
+				.any(|row| (row.0, row.1) == (case.batch, case.id)));
+		}
+	}
+
 	assert_eq!(
 		all.iter().filter(|c| c.tier == "miri+full").count(),
 		MIRI_ROWS,
@@ -416,6 +551,39 @@ fn run(miri_only: bool) {
 			ran += 1;
 			let at = std::format!("{} {} {}", case.batch, case.id, case.function);
 			let witness = takes_witness(text, case.function);
+			let converged = CONVERGED
+				.iter()
+				.any(|row| (row.0, row.1) == (case.batch, case.id));
+			let sorted = if converged && case.batch == "addendum" {
+				assert_eq!(case.fresh.1, case.stock.1, "{at}: frozen object content");
+				let text = hex_text(case.fresh.1.strip_prefix("s:").unwrap());
+				let sorted = sorted_scalar_object(&text)
+					.unwrap_or_else(|| panic!("{at}: ambiguous frozen object"));
+				Some(enc_str(&sorted))
+			} else if converged && case.batch == "objfmt" {
+				// Expected text comes only from the frozen content, never runtime output.
+				let content = object_content(case.fresh.1);
+				assert_eq!(content, object_content(case.stock.1));
+				let fields: std::vec::Vec<_> = content
+					.iter()
+					.map(|(k, v)| std::format!("{k:?}: {v}"))
+					.collect();
+				Some(enc_str(&std::format!("{{{}}}", fields.join(", "))))
+			} else {
+				None
+			};
+			let want_fresh = match &sorted {
+				Some(value) => ("ok", value.as_str(), case.fresh.2),
+				None => case.fresh,
+			};
+			let want_stock = if converged && case.batch == "operators" {
+				case.fresh
+			} else if let Some(value) = &sorted {
+				("ok", value.as_str(), case.stock.2)
+			} else {
+				case.stock
+			};
+
 			let (vm, program) = units
 				.entry(case.function)
 				.or_insert_with(|| compile_unit(&context, batch, text, case.function));
@@ -450,12 +618,8 @@ fn run(miri_only: bool) {
 				}
 			};
 
-			let (want_kind, want_value, want_effects) = case.stock;
-			let stock_ok = if case.rule == INSERTION_ORDER && got_stock.0 == "ok" {
-				want_kind == "ok" && object_content(&got_stock.1) == object_content(want_value)
-			} else {
-				(got_stock.0, got_stock.1.as_str()) == (want_kind, want_value)
-			};
+			let (want_kind, want_value, want_effects) = want_stock;
+			let stock_ok = (got_stock.0, got_stock.1.as_str()) == (want_kind, want_value);
 
 			if !stock_ok {
 				mismatches.push(std::format!(
@@ -505,11 +669,11 @@ fn run(miri_only: bool) {
 				Err(failure) => ("err", std::format!("{:?}", failure.error.kind)),
 			};
 
-			if (got_fresh.0, got_fresh.1.as_str()) != (case.fresh.0, case.fresh.1) {
+			if (got_fresh.0, got_fresh.1.as_str()) != (want_fresh.0, want_fresh.1) {
 				mismatches.push(std::format!(
 					"fresh {at}: got {got_fresh:?}, want ({}, {})",
-					case.fresh.0,
-					case.fresh.1
+					want_fresh.0,
+					want_fresh.1
 				));
 			}
 
@@ -525,10 +689,10 @@ fn run(miri_only: bool) {
 					store.root_release(item).unwrap();
 				}
 
-				if got != expected_witness(case.fresh.2) {
+				if got != expected_witness(want_fresh.2) {
 					mismatches.push(std::format!(
 						"fresh effects {at}: got {got:?}, want {}",
-						case.fresh.2
+						want_fresh.2
 					));
 				}
 			}

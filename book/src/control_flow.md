@@ -3,6 +3,32 @@
 Rune supports a number of control flow expressions. We will be dedicating this
 section to describe the most common ones.
 
+## Conditions are `bool`
+
+Conditions in `if`, `else if`, `while` and match guards must evaluate to a
+`bool`. Both evaluated operands of `&&` and `||` must also be `bool`.
+A different type is a runtime error at that expression; integers are not
+truth values. `assert!(1)` is an error, while `assert!(true)` succeeds.
+Assertion macro type errors currently point to the whole `assert!(...)` invocation.
+
+Short-circuiting is preserved: `false && expression` and `true || expression`
+do not evaluate or type-check the right operand. Integer `!` remains bitwise:
+`!1` is `-2`. Pattern conditions (`if let` and `while let`) keep their usual
+matching behavior.
+
+This deliberately tightens Rune 0.14.2 behavior:
+
+| Expression | Rune 0.14.2 | Current Rune |
+| --- | --- | --- |
+| `if 1 { 2 } else { 3 }` | `3` | type error at `1` |
+| `true && 5` | `5` | type error at `5` |
+| `false && 5` | `false` | `false` |
+| `match 1 { _ if 1 => 0, _ => 2 }` | `0` | type error at guard `1` |
+| `assert!(0)` | succeeds | type error |
+
+Object Debug presentation also uses sorted key order, recursively. This is a
+presentation rule; object iteration and serialization order are unchanged.
+
 ## `return` expression
 
 In the previous section we talked about functions. And one of the primary things
