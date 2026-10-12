@@ -234,7 +234,7 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 			K::ExpectedType { .. },
 		) => Some("Type"),
 		("addendum", "order_range", K::UnsupportedIterRange { .. }) => Some("Type"),
-		("supplement", "order_supp_field_read_missing", K::ObjectIndexMissing { .. }) => {
+		("supplement", "order_supp_field_read_missing", K::MissingField { .. }) => {
 			Some("IndexOutOfBounds")
 		}
 

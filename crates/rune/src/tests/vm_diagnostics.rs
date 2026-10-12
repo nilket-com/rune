@@ -32,18 +32,20 @@ fn emitted(source: &str) -> rust_alloc::string::String {
 
 /// Reaching for a field which is not there says which field it was.
 ///
-/// The error names the static slot the field name is in, which is a number and
-/// tells whoever wrote it nothing.
+/// Both objects and structs name the missing field directly.
 #[test]
 fn a_missing_field_is_named() {
 	let out = emitted("let a = #{}; a.x");
 
-	assert!(out.contains("This corresponds to the field `x`"), "{out}");
+	assert!(
+		out.contains("Missing field `x` on `::std::object::Object`"),
+		"{out}"
+	);
 
 	// The same for a field of a struct, which is reached the same way.
 	let out = emitted("struct S { a } let s = S { a: 1 }; s.b");
 
-	assert!(out.contains("This corresponds to the field `b`"), "{out}");
+	assert!(out.contains("Missing field `b` on `S`"), "{out}");
 }
 
 /// Calling an instance function which is not there says which one it was.

@@ -514,6 +514,7 @@ mod format_spec;
 // Deliberately not excluded from miri, unlike the rest of this module: passing
 // a reference into the machine goes through `UnsafeToRef`, and whether that is
 // sound is exactly what miri is here to say.
+mod diagnostics_text;
 mod function_guardedargs;
 #[cfg(not(miri))]
 mod getter_setter;

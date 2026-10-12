@@ -116,6 +116,19 @@ impl VmError {
 		self.inner.error.kind
 	}
 
+	/// Name the source operator at its instruction boundary, without relabelling
+	/// an already-located failure from a nested protocol call or auxiliary error.
+	pub(crate) fn with_operator(mut self, protocol: &'static str, symbol: &'static str) -> Self {
+		if self.inner.stacktrace.is_empty() {
+			if let VmErrorKind::UnsupportedBinaryOperation { op, .. } = &mut self.inner.error.kind {
+				if *op == protocol {
+					*op = symbol;
+				}
+			}
+		}
+		self
+	}
+
 	/// Apply the given frame to the current result.
 	pub(crate) fn with_vm<T>(result: Result<T, Self>, vm: &Vm) -> Result<T, Self> {
 		match result {
@@ -623,9 +636,6 @@ pub(crate) enum VmErrorKind {
 	UnsupportedCallFn {
 		actual: TypeInfo,
 	},
-	ObjectIndexMissing {
-		slot: usize,
-	},
 	MissingIndex {
 		target: TypeInfo,
 	},
@@ -802,7 +812,7 @@ impl fmt::Display for VmErrorKind {
                 )
             }
             VmErrorKind::UnsupportedUnaryOperation { op, operand } => {
-                write!(f, "Unsupported unary operation `{op}` on {operand}")
+                write!(f, "Unsupported unary operation `{op}` on `{operand}`")
             }
             VmErrorKind::MissingStaticString { slot } => {
                 write!(f, "Static string slot {slot} does not exist")
@@ -902,9 +912,6 @@ impl fmt::Display for VmErrorKind {
                 f,
                 "Type `{actual}` cannot be called since it's not a function",
             ),
-            VmErrorKind::ObjectIndexMissing { slot } => {
-                write!(f, "Missing index by static string slot `{slot}`")
-            }
             VmErrorKind::MissingIndex { target } => {
                 write!(f, "Type `{target}` missing index")
             }
