@@ -11,7 +11,9 @@
 //! errors compare frontend diagnostics, never VmError text.
 //! Host misuse/resources stay generic: foreign tokens have dedicated detail;
 //! InvalidCode/InvalidHandle/Allocation/capacity/fuel/cancellation are not enriched.
-//! B1 owns stdout errors; B2 owns format limits; S owns dynamic missing-key storage.
+//! B1 owns stdout errors. Formatting has local resource-first pending-budget and
+//! retained-scratch preflights: they can precede later child errors, without
+//! globally outranking earlier errors. S owns dynamic missing-key storage.
 //! Existing hand-built-code oracle tests retain all pre-D2 metadata assertions;
 //! this catalogue and pure rendering tests check the newly added detail field.
 use crate::experimental_core::{

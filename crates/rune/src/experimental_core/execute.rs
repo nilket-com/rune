@@ -16,7 +16,7 @@ use super::{
 		Location, Result, TypeName, UnarySymbol,
 	},
 	frontend::Program,
-	heap::Store,
+	heap::{FormatLimits, Store},
 	value::{Root, Value},
 };
 use crate::alloc::Vec;
@@ -116,6 +116,7 @@ pub struct Executor {
 	slots: Vec<Value>,
 	diagnostics: Vec<Location>,
 	cancelled: bool,
+	format_limits: FormatLimits,
 	/// Test-only, per executor: when set, `Print` appends here instead of stdout.
 	#[cfg(test)]
 	pub(crate) test_output: Option<std::vec::Vec<u8>>,
@@ -148,6 +149,7 @@ impl Executor {
 			slots: Vec::try_with_capacity(MAX_SLOTS)?,
 			diagnostics: Vec::try_with_capacity(MAX_FRAMES)?,
 			cancelled: false,
+			format_limits: FormatLimits::default(),
 			#[cfg(test)]
 			test_output: None,
 			#[cfg(test)]
@@ -166,6 +168,17 @@ impl Executor {
 	/// the first charged instruction leaves the request pending.
 	pub fn request_cancel(&mut self) {
 		self.cancelled = true;
+	}
+
+	/// Limits used by each complete template/println formatting call.
+	pub fn format_limits(&self) -> &FormatLimits {
+		&self.format_limits
+	}
+
+	/// Sets template formatting limits without allocating. Growth follows actual
+	/// traversal; raise bytes, nodes, depth and scratch independently as needed.
+	pub fn set_format_limits(&mut self, limits: FormatLimits) {
+		self.format_limits = limits;
 	}
 
 	/// Single-shot entry: one invocation on an executor that is then dropped.
@@ -436,14 +449,16 @@ impl Executor {
 								// into the out-of-line formatter.
 								let base = frame.base;
 								let slots = &self.slots;
-								let text =
-									store.format_parts(parts.chunks_exact(2).map(|pair| {
+								let text = store.format_template_parts(
+									parts.chunks_exact(2).map(|pair| {
 										let value = slots
 											.get(base + pair[0] as usize)
 											.copied()
 											.ok_or_else(|| error(ErrorKind::InvalidCode))?;
 										Ok((value, pair[1] != 0))
-									}))?;
+									}),
+									&self.format_limits,
+								)?;
 								let value = store.string_owned(text)?;
 								self.put(store, frame.base + out as usize, value)?;
 							}

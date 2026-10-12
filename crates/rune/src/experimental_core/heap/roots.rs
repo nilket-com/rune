@@ -57,7 +57,7 @@ impl Store {
 
 	/// Would a payload of `bytes` be admitted now? The same arithmetic as
 	/// `admit`, run before any scratch allocation.
-	fn admission_room(&self, bytes: usize) -> Result<()> {
+	pub(super) fn admission_room(&self, bytes: usize) -> Result<()> {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
 		}
@@ -285,9 +285,24 @@ impl Store {
 
 	/// The value formatted as `{}` (`debug` false) or `{:?}` (`debug` true) would format
 	/// it in a script. A value without a display form is a [`ErrorKind::Type`] error.
+	/// Uses default [`super::FormatLimits`]; the host-owned output is not charged
+	/// to the store. See [`Self::root_format_with_limits`] to raise limits explicitly.
 	pub fn root_format(&self, root: &Root, debug: bool) -> Result<String> {
 		let value = self.import(root)?;
 		self.format_value(value, debug)
+	}
+
+	/// Formats into a host-owned string using explicit limits. Its output is not
+	/// charged to this store and needs no heap entry. Traversal is read-only;
+	/// retained scratch and output are bounded separately by `limits`.
+	pub fn root_format_with_limits(
+		&self,
+		root: &Root,
+		debug: bool,
+		limits: &super::FormatLimits,
+	) -> Result<String> {
+		let value = self.import(root)?;
+		self.format_value_with_limits(value, debug, limits)
 	}
 
 	/// An independently counted owner (strong + 1 for a heap value).

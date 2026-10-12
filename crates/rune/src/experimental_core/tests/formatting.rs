@@ -194,3 +194,54 @@ fn object_sorting_respects_the_existing_node_budget_without_changing_store_usage
 		assert_eq!((store.live_entries(), store.payload_bytes()), before);
 	}
 }
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn executor_templates_use_configured_limits_and_restore_state_on_failure() {
+	use crate::experimental_core::{execute::Executor, frontend, heap::FormatLimits};
+	use crate::{Context, Diagnostics, Hash, Source, Sources};
+	let context = Context::with_default_modules().unwrap();
+	let mut sources = Sources::new();
+	sources
+		.insert(Source::memory(r#"pub fn main(a) { format!("{}{}", a, a) }"#).unwrap())
+		.unwrap();
+	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 7).unwrap();
+	let main = program.function(Hash::type_hash(["main"])).unwrap();
+	let mut store = store();
+	let arg = store.root_string(&"a".repeat(35_000)).unwrap();
+	let baseline = (store.live_entries(), store.payload_bytes());
+	let mut executor = Executor::new().unwrap();
+	assert_eq!(
+		executor
+			.invoke(&program, &mut store, main, &[&arg], 1000)
+			.unwrap_err()
+			.error
+			.kind,
+		ErrorKind::FormatLimit
+	);
+	assert!(executor.is_idle());
+	assert_eq!((store.live_entries(), store.payload_bytes()), baseline);
+	executor.set_format_limits(FormatLimits {
+		bytes: 128 << 10,
+		..FormatLimits::default()
+	});
+	assert_eq!(executor.format_limits().bytes, 128 << 10);
+	let result = executor
+		.invoke(&program, &mut store, main, &[&arg], 1000)
+		.unwrap();
+	assert_eq!(
+		store
+			.root_format_with_limits(&result, false, executor.format_limits())
+			.unwrap()
+			.as_str(),
+		"a".repeat(70_000).as_str()
+	);
+	store.root_release(result).unwrap();
+	assert_eq!((store.live_entries(), store.payload_bytes()), baseline);
+	assert!(executor.is_idle());
+	store.root_release(arg).unwrap();
+	assert_eq!(store.live_entries(), 0);
+}

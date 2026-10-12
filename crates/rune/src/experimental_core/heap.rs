@@ -12,6 +12,7 @@ use core::mem::size_of;
 use core::sync::atomic::{AtomicU64, Ordering};
 
 mod formatting;
+pub use formatting::FormatLimits;
 mod roots;
 
 #[cfg(feature = "fresh-core-native")]
@@ -168,6 +169,8 @@ pub struct Store {
 	last: Option<u32>,
 	live: usize,
 	bytes: usize,
+	#[cfg(test)]
+	format_capacity_extra: usize,
 	// The experiment is local to one runtime. No accidental cross-thread host use.
 	_local: core::marker::PhantomData<std::rc::Rc<()>>,
 }
@@ -204,6 +207,8 @@ impl Store {
 			last: None,
 			live: 0,
 			bytes: 0,
+			#[cfg(test)]
+			format_capacity_extra: 0,
 			_local: core::marker::PhantomData,
 		})
 	}
