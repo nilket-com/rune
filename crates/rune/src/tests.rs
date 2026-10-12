@@ -431,6 +431,8 @@ mod bounded_memory;
 mod bounded_natives;
 #[cfg(not(miri))]
 mod bounded_recursion;
+#[cfg(all(not(miri), feature = "std"))]
+mod budget_slices;
 #[cfg(not(miri))]
 mod bug_1021;
 #[cfg(not(miri))]
@@ -517,6 +519,8 @@ mod function_guardedargs;
 mod getter_setter;
 #[cfg(not(miri))]
 mod grammar_rejects;
+#[cfg(not(miri))]
+mod grammar_spans;
 #[cfg(not(miri))]
 mod iterator;
 #[cfg(not(miri))]

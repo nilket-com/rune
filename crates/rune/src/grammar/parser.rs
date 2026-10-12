@@ -16,6 +16,7 @@ use super::{inner_token, Flavor, InternalChildren, Node, Tree};
 #[derive(Clone)]
 pub(super) struct Checkpoint {
 	span: Span,
+	cursor: u32,
 	inner: syntree::Checkpoint<syntree::pointer::PointerUsize>,
 }
 
@@ -138,6 +139,7 @@ impl<'a> Parser<'a> {
 
 		Ok(Checkpoint {
 			span,
+			cursor: *self.tree.cursor(),
 			inner: self.tree.checkpoint().with_span(span)?,
 		})
 	}
@@ -271,7 +273,15 @@ impl<'a> Parser<'a> {
 	/// Close a node at the given checkpoint.
 	#[tracing::instrument(skip_all)]
 	pub(super) fn close_at(&mut self, c: &Checkpoint, kind: Kind) -> Result<()> {
-		self.tree.close_at(&c.inner, kind).with_span(c.span)?;
+		if *self.tree.cursor() == c.cursor && c.span.start.0 > c.cursor {
+			// Compile mode drops whitespace. An empty recovery node belongs at
+			// the next significant token, not the end of the previous one.
+			self.tree
+				.close_at_with(&c.inner, kind, syntree::Span::point(c.span.start.0))
+				.with_span(c.span)?;
+		} else {
+			self.tree.close_at(&c.inner, kind).with_span(c.span)?;
+		}
 		Ok(())
 	}
 

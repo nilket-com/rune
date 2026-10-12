@@ -543,6 +543,7 @@ where
 	// costs a native frame of its own, and a script decides how deeply it nests
 	// them, so the nesting is bounded here rather than left to overflow.
 	let _guard = async_vm_try!(env::enter_execution());
+	let yield_point = super::budget::YieldPoint::take();
 
 	if let Some(value) = init.take() {
 		let state = replace(&mut execution.state, ExecutionState::Suspended);
@@ -564,10 +565,13 @@ where
 			*awaited = None;
 		}
 
-		let result = vm.run(match diagnostics {
-			Some(ref mut value) => Some(&mut **value),
-			None => None,
-		});
+		let result = vm.run(
+			match diagnostics {
+				Some(ref mut value) => Some(&mut **value),
+				None => None,
+			},
+			yield_point.threshold(),
+		);
 
 		match async_vm_try!(VmError::with_vm(result, vm)) {
 			VmHalt::Exited(addr) => {

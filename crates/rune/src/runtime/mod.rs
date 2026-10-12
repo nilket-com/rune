@@ -252,3 +252,7 @@ pub(crate) fn new_field_hash_map_with_capacity<K, V>(
 ) -> crate::alloc::Result<FieldMap<K, V>> {
 	FieldMap::try_with_capacity(cap)
 }
+
+/// Maximum active levels in a recursive value walk, including the root and
+/// scalar leaves. Compare, hash, formatting and serialization share this bound.
+pub const MAX_VALUE_DEPTH: usize = env::MAX_VALUE_DEPTH;

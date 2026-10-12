@@ -3141,6 +3141,7 @@ impl Vm {
 	pub(crate) fn run(
 		&mut self,
 		diagnostics: Option<&mut dyn VmDiagnostics>,
+		yield_at: usize,
 	) -> Result<VmHalt, VmError> {
 		let mut vm_diagnostics_obj;
 
@@ -3162,6 +3163,9 @@ impl Vm {
 		);
 
 		loop {
+			if yield_at != 0 && budget::remaining().is_some_and(|left| left <= yield_at) {
+				return Ok(VmHalt::Limited);
+			}
 			if !budget::take() {
 				return Ok(VmHalt::Limited);
 			}

@@ -9,3 +9,9 @@ pub(super) fn rune_budget_get() -> usize {
 pub(super) fn rune_budget_replace(value: usize) -> usize {
 	BUDGET.with(|tls| tls.replace(value))
 }
+
+std::thread_local!(static YIELD_AT: Cell<usize> = const { Cell::new(0) });
+
+pub(super) fn rune_yield_replace(value: usize) -> usize {
+	YIELD_AT.with(|tls| tls.replace(value))
+}

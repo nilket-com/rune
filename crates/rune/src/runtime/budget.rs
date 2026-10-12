@@ -87,6 +87,94 @@ pub fn with<T>(budget: usize, value: T) -> Budget<T> {
 	Budget { budget, value }
 }
 
+/// Read the remaining ambient permits, or `None` when budgeting is disabled.
+#[inline]
+pub fn remaining() -> Option<usize> {
+	match self::no_std::rune_budget_get() {
+		usize::MAX => None,
+		n => Some(n),
+	}
+}
+
+/// Run a synchronous callable under a hard total and a soft VM slice.
+///
+/// Only the outer execution yields at an instruction boundary after `slice`
+/// permits have been spent. Native calls and nested executions continue drawing
+/// from `total` until they return or exhaust it; they cannot be suspended or
+/// retried. A native call may therefore delay a yield for the remaining total,
+/// and this wrapper does not promise a wall-clock cancellation bound.
+/// Read [`remaining`] inside the callable before it returns to carry the hard
+/// budget into the next slice. Both ambient settings are restored on unwind.
+/// This wrapper deliberately does not implement [`Future`].
+///
+/// # Panics
+/// Panics if `slice` is zero or `total` is the unlimited `usize::MAX` sentinel.
+#[cfg(feature = "std")]
+pub fn with_slice<T: Callable>(total: usize, slice: usize, value: T) -> Slice<T> {
+	assert!(slice > 0, "a VM slice must make progress");
+	assert!(total < usize::MAX, "a sliced total must be finite");
+	Slice {
+		total,
+		slice,
+		value,
+	}
+}
+
+/// A synchronous hard budget with a soft yield point. See [`with_slice`].
+#[cfg(feature = "std")]
+pub struct Slice<T> {
+	total: usize,
+	slice: usize,
+	value: T,
+}
+
+#[cfg(feature = "std")]
+impl<T: Callable> Slice<T> {
+	/// Call the budgeted function.
+	pub fn call(self) -> T::Output {
+		Callable::call(self)
+	}
+}
+
+#[cfg(feature = "std")]
+impl<T: Callable> Callable for Slice<T> {
+	type Output = T::Output;
+
+	fn call(self) -> Self::Output {
+		let _budget = replace(self.total);
+		let _yield = YieldPoint(self::no_std::rune_yield_replace(
+			self.total.saturating_sub(self.slice),
+		));
+		self.value.call()
+	}
+}
+
+/// Hide the outer execution's soft threshold from nested native frames.
+/// The no-std path keeps its existing host ABI and never installs a threshold.
+pub(crate) struct YieldPoint(usize);
+
+impl YieldPoint {
+	#[inline]
+	pub(crate) fn take() -> Self {
+		#[cfg(feature = "std")]
+		return Self(self::no_std::rune_yield_replace(0));
+		#[cfg(not(feature = "std"))]
+		Self(0)
+	}
+
+	#[inline]
+	pub(crate) fn threshold(&self) -> usize {
+		self.0
+	}
+}
+
+impl Drop for YieldPoint {
+	fn drop(&mut self) {
+		#[cfg(feature = "std")]
+		self::no_std::rune_yield_replace(self.0);
+	}
+}
+
 /// Replace the current budget returning a guard that will restore the one which
 /// was in effect when it is dropped.
 #[inline(never)]
@@ -221,6 +309,7 @@ where
 
 	#[inline]
 	fn call(self) -> Self::Output {
+		let _yield = YieldPoint::take();
 		let _guard = BudgetGuard(self::no_std::rune_budget_replace(self.budget));
 		self.value.call()
 	}
@@ -236,6 +325,7 @@ where
 	fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
 		let this = self.project();
 
+		let _yield = YieldPoint::take();
 		let _guard = BudgetGuard(self::no_std::rune_budget_replace(*this.budget));
 		let poll = this.value.poll(cx);
 		*this.budget = self::no_std::rune_budget_get();
