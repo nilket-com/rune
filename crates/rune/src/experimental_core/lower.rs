@@ -9,7 +9,7 @@
 //! `writes_nothing` rule allows; nothing here moves a user local.
 
 use super::arithmetic::{Binary, Unary};
-use super::code::{Function, Op};
+use super::code::{CompileTransaction, Function, Op};
 use super::error::{Error, ErrorKind, Location, Refusal, Result};
 use super::value::{Type, Value};
 use crate as rune;
@@ -25,6 +25,7 @@ pub(crate) fn function(
 	resolve: &mut dyn FnMut(Hash, Location) -> Result<u32>,
 	constants: &crate::query::QueryInner<'_>,
 	stdio_println: bool,
+	transaction: &mut CompileTransaction,
 ) -> Result<Function> {
 	let mut cx = Lower {
 		exprs,
@@ -40,6 +41,7 @@ pub(crate) fn function(
 		resolve,
 		constants,
 		stdio_println,
+		transaction,
 	};
 
 	for arg in item.args {
@@ -94,6 +96,7 @@ struct Lower<'a, 'hir> {
 	constants: &'a crate::query::QueryInner<'hir>,
 	/// The Context's `println` is the certified stdio builtin; otherwise refuse.
 	stdio_println: bool,
+	transaction: &'a mut CompileTransaction,
 }
 
 impl<'a, 'hir> Lower<'a, 'hir> {
@@ -427,9 +430,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 	}
 
-	/// `Ok(None)`: not a type this core knows. A fresh struct is interned
-	/// process-wide; interner exhaustion is the `TypeTable` refusal.
-	fn type_tag(&self, hash: Hash, span: Span) -> Result<Option<Type>> {
+	/// `Ok(None)`: not a type this core knows. A fresh struct is staged locally
+	/// until complete admission; table exhaustion is the `TypeTable` refusal.
+	fn type_tag(&mut self, hash: Hash, span: Span) -> Result<Option<Type>> {
 		if let Some(tag) = type_tag(hash) {
 			return Ok(Some(tag));
 		}
@@ -444,8 +447,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// The identity is the type hash; the name recorded with it is the hash's
 	/// text, formatted on the stack only when the hash is new (item paths are
 	/// not plumbed into the lowerer).
-	fn struct_tag(&self, hash: Hash, span: Span) -> Result<Type> {
-		match super::nominal::intern_fmt(hash.into_inner(), format_args!("{hash}")) {
+	fn struct_tag(&mut self, hash: Hash, span: Span) -> Result<Type> {
+		match self
+			.transaction
+			.stage(hash.into_inner(), format_args!("{hash}"))
+		{
 			Ok(nominal) => Ok(Type::Struct(nominal)),
 			Err(e) => Err(e.at(self.location(span))),
 		}

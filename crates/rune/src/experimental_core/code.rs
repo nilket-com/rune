@@ -463,7 +463,6 @@ impl Function {
 		self.cached.get(pc)
 	}
 
-	#[cfg(test)]
 	pub(crate) fn audit_cached(&self, pc: usize, cached: CachedInstruction) -> Result<()> {
 		let encoded = *self.code.get(pc).ok_or_else(invalid)?;
 		if encoded.is_charged() != cached.charged || !same_op(self.decode(encoded)?, cached.op) {
@@ -713,7 +712,12 @@ impl Builder {
 		Ok(id)
 	}
 
-	pub fn finish(mut self) -> Result<Code> {
+	#[cfg_attr(not(test), allow(dead_code))]
+	pub fn finish(self) -> Result<Code> {
+		self.finish_validated(&nominal_valid)
+	}
+
+	fn finish_validated(mut self, valid: &dyn Fn(Type) -> bool) -> Result<Code> {
 		let total = self
 			.functions
 			.iter()
@@ -772,7 +776,7 @@ impl Builder {
 		}
 
 		for i in 0..self.functions.len() {
-			validate_operands(&self.functions[i], &self.functions, id)?;
+			validate_operands(&self.functions[i], &self.functions, id, valid)?;
 			let f = &mut self.functions[i];
 			f.code.first_mut().ok_or_else(invalid)?.charge();
 
@@ -845,6 +849,96 @@ impl Builder {
 	}
 }
 
+/// A compile owns both its builder and provisional identities from first lowering
+/// through publication. Neither field escapes, and no API pairs a Builder with a
+/// separately supplied Staging. The public Builder seal remains strict.
+#[derive(Default)]
+pub(crate) struct CompileTransaction {
+	builder: Builder,
+	staging: nominal::Staging,
+}
+
+impl CompileTransaction {
+	pub(crate) fn stage(
+		&mut self,
+		hash: u64,
+		name: core::fmt::Arguments<'_>,
+	) -> Result<super::value::Nominal> {
+		self.staging.stage(hash, name)
+	}
+
+	pub(crate) fn push(&mut self, function: Function) -> Result<u32> {
+		self.builder.push(function)
+	}
+
+	pub(crate) fn finish(self) -> Result<Code> {
+		let mut code = self
+			.builder
+			.finish_validated(&|tag| tag.nominal().is_none_or(|n| self.staging.valid(n)))?;
+		// All validation, decoded allocation, audit and remap allocation precede
+		// global publication. No Result-returning operation follows publication.
+		for f in &code.functions {
+			for (pc, &cached) in f.cached.iter().enumerate() {
+				f.audit_cached(pc, cached)?;
+			}
+		}
+		let mut remap = self.staging.prepare_remap()?;
+		self.staging.commit(&mut remap)?;
+		code.for_each_type_mut(&mut |tag| {
+			if let Type::Struct(n) = tag {
+				if n.0 & nominal::PROVISIONAL != 0 {
+					*n = remap[(n.0 & !nominal::PROVISIONAL) as usize];
+				}
+			}
+		});
+		#[cfg(debug_assertions)]
+		{
+			code.for_each_type_mut(&mut |tag| {
+				debug_assert!(tag
+					.nominal()
+					.is_none_or(|n| n.0 & nominal::PROVISIONAL == 0));
+			});
+			for f in &code.functions {
+				for (pc, &cached) in f.cached.iter().enumerate() {
+					debug_assert!(f.audit_cached(pc, cached).is_ok());
+				}
+			}
+		}
+		Ok(code)
+	}
+}
+
+impl Code {
+	/// Encoded instructions reference these pools. Only the eager decoded cache
+	/// duplicates tags; native region caches are built later, during invocation.
+	fn for_each_type_mut(&mut self, f: &mut dyn FnMut(&mut Type)) {
+		for function in &mut self.functions {
+			for tag in &mut function.types {
+				f(tag);
+			}
+			for value in &mut function.constants {
+				if let Value::Type(tag) = value {
+					f(tag);
+				}
+			}
+			for cached in &mut function.cached {
+				match &mut cached.op {
+					Op::Record { tag, .. }
+					| Op::List { tag, .. }
+					| Op::Variant { tag, .. }
+					| Op::Cast { tag, .. }
+					| Op::Is { tag, .. } => f(tag),
+					Op::Literal {
+						value: Value::Type(tag),
+						..
+					} => f(tag),
+					_ => (),
+				}
+			}
+		}
+	}
+}
+
 pub(crate) fn successors(f: &Function, pc: usize, out: &mut [Option<usize>; 2]) -> Result<()> {
 	let instruction = f.operation(pc)?;
 	*out = match instruction {
@@ -867,10 +961,15 @@ pub(crate) fn successors(f: &Function, pc: usize, out: &mut [Option<usize>; 2]) 
 
 // D21-derived validation logic preserved during extraction: argument tables hold fixed pairs.
 #[allow(clippy::chunks_exact_to_as_chunks)]
-fn validate_operands(f: &Function, functions: &[Function], code_id: u32) -> Result<()> {
+fn validate_operands(
+	f: &Function,
+	functions: &[Function],
+	code_id: u32,
+	valid: &dyn Fn(Type) -> bool,
+) -> Result<()> {
 	// Every tag operand (Is, Cast, Record, List, Variant) is drawn from this
 	// pool, so one pass checks every Struct nominal the function names.
-	if !f.types.iter().all(|&tag| nominal_valid(tag)) {
+	if !f.types.iter().all(|&tag| valid(tag)) {
 		return Err(invalid());
 	}
 
@@ -930,7 +1029,7 @@ fn validate_operands(f: &Function, functions: &[Function], code_id: u32) -> Resu
 					{
 						return Err(invalid());
 					}
-					Value::Type(tag) if !nominal_valid(tag) => return Err(invalid()),
+					Value::Type(tag) if !valid(tag) => return Err(invalid()),
 					_ => (),
 				}
 			}
@@ -1089,6 +1188,7 @@ fn validate_operands(f: &Function, functions: &[Function], code_id: u32) -> Resu
 }
 
 /// A `Struct` tag must name an interned nominal; other tags carry no index.
+#[cfg_attr(not(test), allow(dead_code))]
 fn nominal_valid(tag: Type) -> bool {
 	tag.nominal().is_none_or(nominal::contains)
 }
@@ -1133,7 +1233,6 @@ fn binary_code(code: u32) -> Result<Binary> {
 	})
 }
 
-#[cfg(test)]
 fn same_op(a: Op, b: Op) -> bool {
 	match a {
 		Op::Template {
@@ -1527,7 +1626,6 @@ fn same_op(a: Op, b: Op) -> bool {
 	}
 }
 
-#[cfg(test)]
 fn same_literal(a: Value, b: Value) -> bool {
 	match (a, b) {
 		(Value::F64(a), Value::F64(b)) => a.to_bits() == b.to_bits(),
@@ -1707,5 +1805,97 @@ mod predecode_tests {
 			f.audit_cached(2, bad).unwrap_err().kind,
 			ErrorKind::InvalidCode
 		);
+	}
+}
+
+#[cfg(test)]
+pub(super) mod transaction_tests {
+	use super::super::value::Nominal;
+	use super::*;
+
+	fn location() -> Location {
+		Location {
+			source: 0,
+			revision: 0,
+			start: 0,
+			end: 1,
+		}
+	}
+
+	fn function(tag: Type) -> Function {
+		let mut f = Function::new(2, 0).unwrap();
+		f.push(
+			Op::Literal {
+				out: 0,
+				value: Value::Type(tag),
+			},
+			location(),
+		)
+		.unwrap();
+		f.push(
+			Op::Is {
+				out: 1,
+				value: 0,
+				tag,
+				negate: false,
+			},
+			location(),
+		)
+		.unwrap();
+		f.push(Op::Return { value: 1 }, location()).unwrap();
+		f
+	}
+
+	#[test]
+	fn strict_seal_and_staged_range_checks() {
+		let tag = Type::Struct(Nominal(nominal::PROVISIONAL));
+		let mut public = Builder::default();
+		public.push(function(tag)).unwrap();
+		assert_eq!(public.finish().err().unwrap().kind, ErrorKind::InvalidCode);
+		let mut tx = CompileTransaction::default();
+		tx.stage(0xc001, format_args!("Local")).unwrap();
+		tx.push(function(Type::Struct(Nominal(nominal::PROVISIONAL | 1))))
+			.unwrap();
+		assert_eq!(tx.finish().err().unwrap().kind, ErrorKind::InvalidCode);
+	}
+
+	#[test]
+	fn remap_covers_pool_constants_and_eager_cache() {
+		let mut tx = CompileTransaction::default();
+		let n = tx.stage(0xc002, format_args!("Remapped")).unwrap();
+		tx.push(function(Type::Struct(n))).unwrap();
+		let mut code = tx.finish().unwrap();
+		let mut visited = 0;
+		code.for_each_type_mut(&mut |tag| {
+			if let Some(n) = tag.nominal() {
+				assert!(nominal::contains(n));
+				visited += 1;
+			}
+		});
+		assert_eq!(visited, 4, "pool, constant, cached literal, cached Is");
+		for f in &code.functions {
+			for (pc, &cached) in f.cached.iter().enumerate() {
+				f.audit_cached(pc, cached).unwrap();
+			}
+		}
+	}
+
+	pub(crate) fn allocation_refusals_publish_nothing() {
+		let mut tx = CompileTransaction::default();
+		let tag = Type::Struct(tx.stage(0xc003, format_args!("FinishFailure")).unwrap());
+		tx.push(function(tag)).unwrap();
+		rune_alloc::limit::with(0, || {
+			assert_eq!(tx.finish().err().unwrap().kind, ErrorKind::Allocation);
+		})
+		.call();
+		assert_eq!(nominal::lookup(0xc003).unwrap(), None);
+		// Empty code needs no cache allocation: the first allocation is remap.
+		let mut tx = CompileTransaction::default();
+		tx.stage(0xc004, format_args!("RemapFailure")).unwrap();
+		rune_alloc::limit::with(0, || {
+			assert_eq!(tx.finish().err().unwrap().kind, ErrorKind::Allocation);
+		})
+		.call();
+		assert_eq!(nominal::lookup(0xc004).unwrap(), None);
 	}
 }

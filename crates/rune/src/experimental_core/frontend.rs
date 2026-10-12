@@ -4,7 +4,7 @@
 //! function is then lowered to fresh-core code. The legacy `UnitBuilder` is metadata
 //! scratch only: no function is assembled into a legacy unit.
 
-use super::code::{Builder, Code, Function};
+use super::code::{Code, CompileTransaction, Function};
 use super::error::{Error, ErrorKind, Location, Refusal, Result};
 use crate::alloc::{String, Vec};
 use crate::ast::Spanned;
@@ -67,6 +67,7 @@ impl Program {
 pub(crate) struct Collector {
 	revision: u64,
 	entries: Vec<(Hash, Option<Function>, Option<Location>)>,
+	transaction: CompileTransaction,
 	pub(crate) failure: Option<Error>,
 }
 
@@ -76,17 +77,7 @@ impl Collector {
 	}
 
 	pub(crate) fn reserve(&mut self, hash: Hash) -> Result<u32> {
-		if let Some(id) = self.entries.iter().position(|(h, _, _)| *h == hash) {
-			return Ok(id as u32);
-		}
-
-		if self.entries.len() >= 65_536 {
-			return Err(Error::new(ErrorKind::FrameCapacity, "function registry"));
-		}
-
-		let id = self.entries.len() as u32;
-		self.entries.try_push((hash, None, None))?;
-		Ok(id)
+		reserve(&mut self.entries, hash)
 	}
 
 	pub(crate) fn lower(
@@ -105,6 +96,7 @@ impl Collector {
 		}
 
 		let revision = self.revision;
+		let entries = &mut self.entries;
 		let result = super::lower::function(
 			exprs,
 			item,
@@ -119,12 +111,13 @@ impl Collector {
 					return Err(Error::refused(Refusal::Native).at(at));
 				}
 
-				let id = self.reserve(hash)?;
-				self.entries[id as usize].2.get_or_insert(at);
+				let id = reserve(entries, hash)?;
+				entries[id as usize].2.get_or_insert(at);
 				Ok(id)
 			},
 			constants,
 			context.fresh_stdio_println(),
+			&mut self.transaction,
 		);
 		let function = match result {
 			Ok(function) => function,
@@ -138,8 +131,7 @@ impl Collector {
 		Ok(())
 	}
 
-	fn finish(self) -> Result<Program> {
-		let mut builder = Builder::default();
+	fn finish(mut self) -> Result<Program> {
 		let mut functions = Vec::new();
 
 		for (hash, function, location) in self.entries {
@@ -149,15 +141,32 @@ impl Collector {
 				error
 			})?;
 			functions.try_push(hash)?;
-			builder.push(function)?;
+			self.transaction.push(function)?;
 		}
 
 		Ok(Program {
-			code: builder.finish()?,
+			code: self.transaction.finish()?,
 			functions,
 			sources: Vec::new(),
 		})
 	}
+}
+
+fn reserve(
+	entries: &mut Vec<(Hash, Option<Function>, Option<Location>)>,
+	hash: Hash,
+) -> Result<u32> {
+	if let Some(id) = entries.iter().position(|(h, _, _)| *h == hash) {
+		return Ok(id as u32);
+	}
+
+	if entries.len() >= 65_536 {
+		return Err(Error::new(ErrorKind::FrameCapacity, "function registry"));
+	}
+
+	let id = entries.len() as u32;
+	entries.try_push((hash, None, None))?;
+	Ok(id)
 }
 
 /// Compiles `sources` against `context` for the fresh core.
@@ -217,6 +226,7 @@ pub fn compile(
 	let mut collector = Collector {
 		revision,
 		entries: Vec::new(),
+		transaction: CompileTransaction::default(),
 		failure: None,
 	};
 
