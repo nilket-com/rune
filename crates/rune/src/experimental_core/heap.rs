@@ -1,8 +1,8 @@
 //! The fresh-core heap: a bounded, generational [`Store`].
 //!
 //! Values inside a store refer to each other by handle, never by Rust-owned child trees.
-//! Cleanup uses storage reserved up front; reference cycles stay charged until the store
-//! is closed or dropped. Hosts reach the store only through [`Root`](super::value::Root)s
+//! Cleanup uses storage reserved before child edges are published, and never grows
+//! bookkeeping itself. Reference cycles stay charged until the store is closed or dropped. Hosts reach the store only through [`Root`](super::value::Root)s
 //! (see the `root_*` methods).
 
 use super::error::{Error, ErrorKind, Result};
@@ -21,31 +21,38 @@ pub(crate) mod native;
 #[cfg(test)]
 mod allocation_tests;
 #[cfg(test)]
+mod growth_tests;
+#[cfg(test)]
 mod retain_inline_tests;
 #[cfg(test)]
 mod scalar_release_tests;
 
 static NEXT_STORE: AtomicU64 = AtomicU64::new(1);
 
-const MAX_ENTRIES: usize = 65_536;
-const MAX_BYTES: usize = 16 << 20;
+const DEFAULT_ENTRIES: usize = 65_536;
+const MAX_ENTRIES: usize = (u32::MAX - 1) as usize;
+const INITIAL_ENTRIES: usize = 64;
+const INITIAL_WORK: usize = 64;
+const DEFAULT_BYTES: usize = 16 << 20;
+const MAX_BYTES: usize = isize::MAX as usize;
 
 /// Capacity limits of a [`Store`].
 ///
-/// The default is the maximum: 65,536 entries and 16 MiB of payload.
+/// Defaults are 65,536 entries and 16 MiB of payload. Bookkeeping is
+/// separate and grows with use; limits never cause proportional preallocation.
 #[derive(Clone, Copy, Debug)]
 pub struct Limits {
-	/// The maximum number of live heap entries (1 to 65,536).
+	/// Maximum entry slots, including permanently retired generations (1..=u32::MAX-1).
 	pub entries: usize,
-	/// The maximum payload bytes charged to live entries (at most 16 MiB).
+	/// Maximum payload bytes charged to live entries (at most isize::MAX).
 	pub bytes: usize,
 }
 
 impl Default for Limits {
 	fn default() -> Self {
 		Self {
-			entries: MAX_ENTRIES,
-			bytes: MAX_BYTES,
+			entries: DEFAULT_ENTRIES,
+			bytes: DEFAULT_BYTES,
 		}
 	}
 }
@@ -165,6 +172,8 @@ pub struct Store {
 	slots: Vec<Slot>,
 	free: Vec<u32>,
 	work: Vec<Value>,
+	/// Heap child edges held by all admitted payloads (scalars do not count).
+	edges: usize,
 	first: Option<u32>,
 	last: Option<u32>,
 	live: usize,
@@ -180,29 +189,36 @@ fn err(kind: ErrorKind) -> Error {
 }
 
 impl Store {
-	/// A new, empty store. Reserves its bookkeeping for `limits` up front; limits of zero
-	/// entries or above the maximum are refused with [`ErrorKind::StoreCapacity`].
+	/// A new, empty store with small initial bookkeeping reservations. Logical
+	/// limits are validated without allocating their maxima; any reservation can
+	/// fail with Allocation. Payload bytes exclude metadata and allocator overhead.
 	pub fn new(limits: Limits) -> Result<Self> {
-		if limits.entries == 0 || limits.entries > MAX_ENTRIES || limits.bytes > MAX_BYTES {
+		if limits.entries == 0
+			|| limits.entries > MAX_ENTRIES
+			|| limits.bytes > MAX_BYTES
+			|| limits
+				.entries
+				.checked_mul(size_of::<Slot>())
+				.is_none_or(|n| n > isize::MAX as usize)
+			|| limits
+				.entries
+				.checked_mul(size_of::<u32>())
+				.is_none_or(|n| n > isize::MAX as usize)
+		{
 			return Err(err(ErrorKind::StoreCapacity));
 		}
 
 		let id = NEXT_STORE
 			.try_update(Ordering::Relaxed, Ordering::Relaxed, |n| n.checked_add(1))
 			.map_err(|_| err(ErrorKind::StoreCapacity))?;
-		// Every pending release came from an admitted edge, plus the initial root.
-		// Reserve this maximum before any payload exists, so destruction cannot grow it.
-		let edges = limits.bytes / size_of::<Value>();
-		let work_capacity = edges
-			.checked_add(1)
-			.ok_or_else(|| err(ErrorKind::Overflow))?;
 		Ok(Self {
 			id,
 			closed: false,
 			limits,
-			slots: Vec::try_with_capacity(limits.entries)?,
-			free: Vec::try_with_capacity(limits.entries)?,
-			work: Vec::try_with_capacity(work_capacity)?,
+			slots: Vec::try_with_capacity(limits.entries.min(INITIAL_ENTRIES))?,
+			free: Vec::try_with_capacity(limits.entries.min(INITIAL_ENTRIES))?,
+			work: Vec::try_with_capacity(INITIAL_WORK)?,
+			edges: 0,
 			first: None,
 			last: None,
 			live: 0,
@@ -228,11 +244,68 @@ impl Store {
 		self.bytes
 	}
 
+	/// Retained store bookkeeping modeled from actual capacities. Payload bytes,
+	/// allocator overhead, executor buffers and formatting are separate. This
+	/// is not a transient allocation peak or RSS ceiling.
+	pub fn bookkeeping_bytes(&self) -> Result<usize> {
+		self.slots
+			.capacity()
+			.checked_mul(size_of::<Slot>())
+			.and_then(|n| n.checked_add(self.free.capacity().checked_mul(size_of::<u32>())?))
+			.and_then(|n| n.checked_add(self.work.capacity().checked_mul(size_of::<Value>())?))
+			.ok_or_else(|| err(ErrorKind::Overflow))
+	}
+
 	#[cfg_attr(not(test), allow(dead_code))]
 	pub(crate) fn reserved_metadata_bytes(&self) -> usize {
 		self.slots.capacity() * size_of::<Slot>()
 			+ self.free.capacity() * size_of::<u32>()
 			+ self.work.capacity() * size_of::<Value>()
+	}
+
+	fn heap_edge(value: Value) -> usize {
+		usize::from(matches!(value, Value::Heap(_)))
+	}
+
+	fn payload_edges(payload: &Payload) -> usize {
+		payload
+			.children()
+			.filter(|v| matches!(v, Value::Heap(_)))
+			.count()
+	}
+
+	/// Reserve conservative peak ownership before retaining/publishing anything.
+	/// W: work.capacity >= pending releases + live child edges + one root.
+	fn reserve_work(&mut self, new_edges: usize, queued: usize) -> Result<()> {
+		let needed = self
+			.edges
+			.checked_add(new_edges)
+			.and_then(|n| n.checked_add(self.work.len()))
+			.and_then(|n| n.checked_add(queued))
+			.and_then(|n| n.checked_add(1))
+			.ok_or_else(|| err(ErrorKind::Overflow))?;
+		self.work.try_reserve(needed - self.work.len())?;
+		self.assert_work();
+		Ok(())
+	}
+
+	fn assert_work(&self) {
+		debug_assert!(self
+			.edges
+			.checked_add(self.work.len())
+			.and_then(|n| n.checked_add(1))
+			.is_some_and(|n| n <= self.work.capacity()));
+		debug_assert!(self.free.capacity() >= self.slots.len());
+	}
+
+	fn replacement_edges(&mut self, old: Value, new: Value) -> Result<usize> {
+		let next = self
+			.edges
+			.checked_sub(Self::heap_edge(old))
+			.and_then(|n| n.checked_add(Self::heap_edge(new)))
+			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+		self.reserve_work(Self::heap_edge(new), Self::heap_edge(old))?;
+		Ok(next)
 	}
 
 	fn slot(&self, h: Handle) -> Result<&Slot> {
@@ -341,6 +414,21 @@ impl Store {
 			None
 		};
 
+		let added_edges = Self::payload_edges(&payload);
+		let edges = self
+			.edges
+			.checked_add(added_edges)
+			.ok_or_else(|| err(ErrorKind::Overflow))?;
+		self.reserve_work(added_edges, 0)?;
+		if self.free.is_empty() {
+			let needed = self
+				.slots
+				.len()
+				.checked_add(1)
+				.ok_or_else(|| err(ErrorKind::StoreCapacity))?;
+			self.free.try_reserve(needed - self.free.len())?;
+			self.slots.try_reserve(1)?;
+		}
 		let reused = self.free.last().copied();
 		let index = if let Some(index) = reused {
 			if self
@@ -411,6 +499,8 @@ impl Store {
 		self.last = Some(index);
 		self.live += 1;
 		self.bytes = bytes;
+		self.edges = edges;
+		self.assert_work();
 		Ok(Value::Heap(Handle {
 			slot: index,
 			generation: self.slots[index as usize].generation,
@@ -537,12 +627,16 @@ impl Store {
 			.iter()
 			.position(|(name, _)| name.as_str() == key)
 			.ok_or_else(|| err(ErrorKind::IndexOutOfBounds))?;
+		let old = fields[index].1;
+		let edges = self.replacement_edges(old, new)?;
 		self.retain(new)?;
 		let Payload::Record { fields, .. } = self.mutable(handle)? else {
 			unreachable!()
 		};
 
 		let old = core::mem::replace(&mut fields[index].1, new);
+		self.edges = edges;
+		self.assert_work();
 		self.release(old)
 	}
 
@@ -760,18 +854,21 @@ impl Store {
 			return Err(err(ErrorKind::Type));
 		};
 
-		match self.mutable(h)? {
-			Payload::List { values, .. } if index < values.len() => (),
+		let old = match self.mutable(h)? {
+			Payload::List { values, .. } if index < values.len() => values[index],
 			Payload::List { .. } => return Err(err(ErrorKind::IndexOutOfBounds)),
 			_ => return Err(err(ErrorKind::Type)),
 		};
 
+		let edges = self.replacement_edges(old, new)?;
 		self.retain(new)?;
 		let old = match self.mutable(h)? {
 			Payload::List { values, .. } => core::mem::replace(&mut values[index], new),
 			_ => unreachable!(),
 		};
 
+		self.edges = edges;
+		self.assert_work();
 		self.release(old)
 	}
 
@@ -787,6 +884,12 @@ impl Store {
 			} => (values.len(), values.capacity()),
 			_ => return Err(err(ErrorKind::Type)),
 		};
+
+		let edges = self
+			.edges
+			.checked_add(Self::heap_edge(new))
+			.ok_or_else(|| err(ErrorKind::Overflow))?;
+		self.reserve_work(Self::heap_edge(new), 0)?;
 
 		if len == cap {
 			let next = cap
@@ -823,6 +926,8 @@ impl Store {
 			});
 			entry.charged_bytes = charged_bytes;
 			self.bytes = bytes;
+			self.edges = edges;
+			self.assert_work();
 			return Ok(());
 		}
 
@@ -832,6 +937,8 @@ impl Store {
 			_ => unreachable!(),
 		};
 
+		self.edges = edges;
+		self.assert_work();
 		Ok(())
 	}
 
@@ -989,9 +1096,9 @@ impl Store {
 			.children()
 			.filter(|v| matches!(v, Value::Heap(_)))
 			.count();
-		if count > self.work.capacity().saturating_sub(self.work.len()) {
-			// Every admitted edge paid at least sizeof(Value). Failure here is an
-			// internal invariant error, not permission to allocate during cleanup.
+		if count > self.edges || count > self.work.capacity().saturating_sub(self.work.len()) {
+			// W reserved room before these edges were admitted. Failure here is an
+			// invariant error, not permission to allocate during cleanup.
 			return Err(err(ErrorKind::InvalidCode));
 		}
 
@@ -1002,6 +1109,13 @@ impl Store {
 	/// before taking the payload. A malformed iterator lease reports an error
 	/// but must still queue its retained owner root for drainage.
 	fn enqueue_children(&mut self, payload: Payload) -> Result<()> {
+		// The detached payload no longer holds live edges. Its children become
+		// queued releases, without growing the queue or following native recursion.
+		self.edges = self
+			.edges
+			.checked_sub(Self::payload_edges(&payload))
+			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+		self.assert_work();
 		let mut failure = None;
 		if let Payload::VectorIterator(iter) = &payload {
 			let result = (|| {
@@ -1023,6 +1137,7 @@ impl Store {
 				self.work
 					.try_push(value)
 					.expect("release work was pre-reserved and checked");
+				self.assert_work();
 			}
 		}
 
@@ -1139,6 +1254,7 @@ impl Store {
 	/// edges or hide the first error behind a later one; no recursion/allocation.
 	fn drain_work(&mut self, mut failure: Option<Error>) -> Result<()> {
 		while let Some(value) = self.work.pop() {
+			self.assert_work();
 			if let Value::Heap(h) = value {
 				if let Err(error) = self.release_one(h) {
 					if failure.is_none() {
@@ -1309,17 +1425,19 @@ impl Store {
 			return Err(err(ErrorKind::ClosedStore));
 		}
 
-		if matches!(value, Value::Heap(_)) {
+		// Process the initial root directly: enqueueing it would consume W's
+		// spare root cell while still requiring that spare in the assertion.
+		// Root first, then its children, then prior work preserves LIFO order.
+		let failure = if let Value::Heap(h) = value {
 			if self.work.len() == self.work.capacity() {
-				return self.drain_work(Some(err(ErrorKind::InvalidCode)));
+				Some(err(ErrorKind::InvalidCode))
+			} else {
+				self.release_one(h).err()
 			}
-
-			self.work
-				.try_push(value)
-				.expect("initial release root fits reserved work");
-		}
-
-		self.drain_work(None)
+		} else {
+			None
+		};
+		self.drain_work(failure)
 	}
 
 	pub(crate) fn invalidate(&mut self, value: Value) -> Result<()> {
@@ -1384,6 +1502,7 @@ impl Store {
 
 		self.first = None;
 		self.work.clear();
+		self.edges = 0;
 		self.free.clear();
 		self.live = 0;
 		self.bytes = 0;

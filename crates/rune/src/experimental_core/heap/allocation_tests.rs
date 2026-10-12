@@ -28,7 +28,7 @@ fn construction_refuses_each_metadata_reservation() {
 
 	let slots = limits.entries * size_of::<Slot>();
 	let free = limits.entries * size_of::<u32>();
-	let work = (limits.bytes / size_of::<Value>() + 1) * size_of::<Value>();
+	let work = INITIAL_WORK * size_of::<Value>();
 
 	for budget in [slots - 1, slots + free - 1, slots + free + work - 1] {
 		let kind = limit::with(budget, || Store::new(limits).err().map(|e| e.kind)).call();
