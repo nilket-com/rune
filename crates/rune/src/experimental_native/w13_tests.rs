@@ -1,11 +1,11 @@
-//! W13 (rnx 0184): W1 cold exit blocks and W3 branch-edge constants. Compile-only: nothing
+//! W13: W1 cold exit blocks and W3 branch-edge constants. Compile-only: nothing
 //! here loads or calls generated code. The every-fuel differentials that execute it are the
 //! existing P1/P2/P2b/P3a/B1 suites plus `b1_tests::w13_branch_condition_sources_every_fuel`
 //! (T5), whose sources `w13_t5_branch_condition_sources` checks statically.
 //!
-//! Tests-first: `w13_exit_blocks_are_cold`, `w13_kernel_exits_emitted_after_the_loop`,
+//! `w13_exit_blocks_are_cold`, `w13_kernel_exits_emitted_after_the_loop`,
 //! `w13_branch_edges_define_the_condition_constant` and
-//! `w13_kernel_compare_feeds_the_branch_only` fail at 7b1e2b0a and pass with W1 and W3.
+//! `w13_kernel_compare_feeds_the_branch_only` fail without W1 and W3 and pass with them.
 //! `compare_w13_delta` is the restricted golden delta `p3a_tests::child_selection_golden`
 //! runs against the B1 golden; `w13_golden_comparator_controls` are its negative controls.
 use super::exec_tests::{compile_source, Src};
@@ -22,7 +22,7 @@ pub(super) fn corpus_regions() -> Vec<(String, Region)> {
 	for c in super::exec_tests::corpus_cases()
 		.into_iter()
 		.chain(super::exec_tests::new_cases())
-		.chain(super::p2_tests::probe_kernel_cases())
+		.chain(super::p2_tests::bench_kernel_cases())
 	{
 		programs.push((c.name, c.src));
 	}
@@ -40,7 +40,7 @@ pub(super) fn corpus_regions() -> Vec<(String, Region)> {
 	out
 }
 
-/// The one admitted region of a probe kernel.
+/// The one admitted region of a bench kernel.
 pub(super) fn kernel(text: &str) -> Region {
 	let program = compile_source(text);
 	let mut found = Vec::new();
@@ -61,7 +61,10 @@ const KERNELS: [(&str, &str); 2] = [
 ];
 
 fn opcodes(func: &ir::Function, block: Block) -> Vec<Opcode> {
-	func.layout.block_insts(block).map(|i| func.dfg.insts[i].opcode()).collect()
+	func.layout
+		.block_insts(block)
+		.map(|i| func.dfg.insts[i].opcode())
+		.collect()
 }
 
 fn returns(func: &ir::Function, block: Block) -> bool {
@@ -121,38 +124,65 @@ fn w13_exit_blocks_are_cold() {
 		let func = lower::build(&region, &isa).unwrap();
 		let entry = func.layout.entry_block().unwrap();
 		assert!(!func.layout.is_cold(entry), "{name}: cold entry");
-		// FUEL (Codex 8321 ruling (i)): a region the test's own selection (`fuel_tests::selected`)
+		// FUEL: a region the test's own selection (`fuel_tests::selected`)
 		// selects lowers every node and every exit twice, any other region once; the observed
 		// guard must agree, so an extra or missing guard cannot redefine the expected counts.
 		let fold = super::fuel_tests::selected(&region);
 		let copies = if fold.is_some() { 2 } else { 1 };
-		assert_eq!(super::fuel_tests::guards(&func).len(), copies - 1, "{name}: FUEL guards against the test's selection\n{}", func.display());
+		assert_eq!(
+			super::fuel_tests::guards(&func).len(),
+			copies - 1,
+			"{name}: FUEL guards against the test's selection\n{}",
+			func.display()
+		);
 		// The slow copy, from the IR: every block reachable from the guard's else-block without
 		// passing the header's block (empty for an unselected region). Block numbering
 		// (`lower::build`): the entry, one per node, one per exit, then (FUEL) one per node and
 		// one per exit of the fast copy; every later block was created while lowering.
-		let slow_copy = fold.map_or_else(Default::default, |(h, _)| super::fuel_tests::slow_copy(&func, h));
+		let slow_copy = fold.map_or_else(Default::default, |(h, _)| {
+			super::fuel_tests::slow_copy(&func, h)
+		});
 		let (n, e) = (region.nodes.len(), region.exits.len());
 		if let Some((h, _)) = fold {
 			for &blk in &slow_copy {
 				let id = blk.as_u32() as usize;
-				assert!(!(1 + n + e..1 + 2 * n + 2 * e).contains(&id), "{name}: the slow copy reaches the fast {blk}\n{}", func.display());
-				assert!(id != 1 + h as usize && id != 0, "{name}: the slow copy holds {blk}");
+				assert!(
+					!(1 + n + e..1 + 2 * n + 2 * e).contains(&id),
+					"{name}: the slow copy reaches the fast {blk}\n{}",
+					func.display()
+				);
+				assert!(
+					id != 1 + h as usize && id != 0,
+					"{name}: the slow copy holds {blk}"
+				);
 			}
 		}
 		let (mut slow_edges, mut fast_edges) = (0, 0);
 		let mut returning = 0;
 		for block in func.layout.blocks() {
 			if returns(&func, block) {
-				assert!(func.layout.is_cold(block), "{name}: exit {block} is not cold\n{}", func.display());
+				assert!(
+					func.layout.is_cold(block),
+					"{name}: exit {block} is not cold\n{}",
+					func.display()
+				);
 				returning += 1;
 			} else if func.layout.is_cold(block) {
 				let succ: Vec<Block> = func.block_successors(block).collect();
-				let edge = opcodes(&func, block) == [Opcode::Iconst, Opcode::Jump] && succ.len() == 1 && returns(&func, succ[0]);
+				let edge = opcodes(&func, block) == [Opcode::Iconst, Opcode::Jump]
+					&& succ.len() == 1
+					&& returns(&func, succ[0]);
 				if copies == 1 || !slow_copy.contains(&block) {
 					// One copy, or the fast copy of a selected region: the original W13 checks.
-					assert_eq!(opcodes(&func, block), [Opcode::Iconst, Opcode::Jump], "{name}: cold {block}");
-					assert!(succ.len() == 1 && returns(&func, succ[0]), "{name}: cold edge {block} into a non-exit");
+					assert_eq!(
+						opcodes(&func, block),
+						[Opcode::Iconst, Opcode::Jump],
+						"{name}: cold {block}"
+					);
+					assert!(
+						succ.len() == 1 && returns(&func, succ[0]),
+						"{name}: cold edge {block} into a non-exit"
+					);
 					edges += 1;
 					fast_edges += 1;
 				} else if edge {
@@ -172,9 +202,18 @@ fn w13_exit_blocks_are_cold() {
 			}
 		}
 		if copies == 2 {
-			assert_eq!(slow_edges, fast_edges, "{name}: the two copies' cold edges into exits\n{}", func.display());
+			assert_eq!(
+				slow_edges,
+				fast_edges,
+				"{name}: the two copies' cold edges into exits\n{}",
+				func.display()
+			);
 		}
-		assert_eq!(returning, copies * region.exits.len(), "{name}: one returning block per exit and copy");
+		assert_eq!(
+			returning,
+			copies * region.exits.len(),
+			"{name}: one returning block per exit and copy"
+		);
 		exits += returning;
 
 		// The cold flags survive the mid-end (the layout is what the backend orders by).
@@ -182,7 +221,10 @@ fn w13_exit_blocks_are_cold() {
 			Ok(compiled) => {
 				for (header, body) in clif_blocks(&compiled.listing().optimized) {
 					if body.iter().any(|l| l.starts_with("return")) {
-						assert!(header.ends_with(" cold:"), "{name}: optimized {header} returns but is not cold");
+						assert!(
+							header.ends_with(" cold:"),
+							"{name}: optimized {header} returns but is not cold"
+						);
 					}
 				}
 			}
@@ -195,7 +237,7 @@ fn w13_exit_blocks_are_cold() {
 	assert!(exits > 0);
 }
 
-/// W1 on the probe kernels, in the emitted order: once the first returning block is
+/// W1 on the bench kernels, in the emitted order: once the first returning block is
 /// emitted, every later block returns or is a lone jump (an empty edge), so no loop block
 /// follows an exit and the loop's exits are not in its fall-through path.
 #[test]
@@ -228,7 +270,9 @@ fn w13_branch_edges_define_the_condition_constant() {
 	let mut branches = 0;
 	for (name, region) in corpus_regions() {
 		let func = lower::build(&region, &isa).unwrap();
-		let edge = |b: Block, k: i64| opcodes(&func, b) == [Opcode::Iconst, Opcode::Jump] && first_iconst(&func, b) == Some(k);
+		let edge = |b: Block, k: i64| {
+			opcodes(&func, b) == [Opcode::Iconst, Opcode::Jump] && first_iconst(&func, b) == Some(k)
+		};
 		let shaped: Vec<Block> = func
 			.layout
 			.blocks()
@@ -239,11 +283,16 @@ fn w13_branch_edges_define_the_condition_constant() {
 				}
 			})
 			.collect();
-		// FUEL (Codex 8321 ruling (i)): a region the test's own selection selects lowers every
+		// FUEL: a region the test's own selection selects lowers every
 		// Branch once per copy; the observed guard must agree with the selection.
 		let fold = super::fuel_tests::selected(&region);
 		let copies = if fold.is_some() { 2 } else { 1 };
-		assert_eq!(super::fuel_tests::guards(&func).len(), copies - 1, "{name}: FUEL guards against the test's selection\n{}", func.display());
+		assert_eq!(
+			super::fuel_tests::guards(&func).len(),
+			copies - 1,
+			"{name}: FUEL guards against the test's selection\n{}",
+			func.display()
+		);
 		let per_copy = region
 			.nodes
 			.iter()
@@ -256,7 +305,12 @@ fn w13_branch_edges_define_the_condition_constant() {
 			// the fast copy.
 			let slow_copy = super::fuel_tests::slow_copy(&func, h);
 			let in_slow = shaped.iter().filter(|b| slow_copy.contains(b)).count();
-			assert_eq!((in_slow, shaped.len() - in_slow), (per_copy, per_copy), "{name}\n{}", func.display());
+			assert_eq!(
+				(in_slow, shaped.len() - in_slow),
+				(per_copy, per_copy),
+				"{name}\n{}",
+				func.display()
+			);
 		}
 		branches += expected;
 	}
@@ -264,7 +318,7 @@ fn w13_branch_edges_define_the_condition_constant() {
 	assert!(branches > 0);
 }
 
-/// W3 on the probe kernels: after the mid-end the compare feeds the branch only. No
+/// W3 on the bench kernels: after the mid-end the compare feeds the branch only. No
 /// `uextend` survives (the 0/1 value is never materialised), the listing has no `setl` and
 /// one `cmpq` (the duplicate compare is gone). Static listing facts only; no timing.
 #[test]
@@ -275,7 +329,11 @@ fn w13_kernel_compare_feeds_the_branch_only() {
 		let l = compiled.listing();
 		assert!(!l.optimized.contains("uextend"), "{name}\n{}", l.optimized);
 		assert!(!l.vcode.contains("setl"), "{name}\n{}", l.vcode);
-		let compares = l.vcode.lines().filter(|x| x.trim().starts_with("cmpq")).count();
+		let compares = l
+			.vcode
+			.lines()
+			.filter(|x| x.trim().starts_with("cmpq"))
+			.count();
 		assert_eq!(compares, 1, "{name}\n{}", l.vcode);
 		println!(
 			"W13\tkernel\t{name}\tcode_bytes={}\tvcode_lines={}\tcmpq={compares}",
@@ -285,8 +343,8 @@ fn w13_kernel_compare_feeds_the_branch_only() {
 	}
 }
 
-/// Kernel listings for the receipts: with `RUNE_W13_LISTING_DIR` set, the while, numeric and
-/// calls probe kernels' IR, optimized IR, VCode and machine code are written there as
+/// Kernel listings for inspection: with `RUNE_W13_LISTING_DIR` set, the while, numeric and
+/// calls bench kernels' IR, optimized IR, VCode and machine code are written there as
 /// `{kernel}.{clif,opt.clif,vcode,bin}` (for an external objdump). Always checks that the
 /// three kernels compile. Compile-only.
 #[test]
@@ -300,7 +358,11 @@ fn w13_kernel_listings() {
 	] {
 		let compiled = lower::compile(&kernel(text), 0).unwrap();
 		let l = compiled.listing();
-		println!("W13\tlisting\t{name}\tcode_bytes={}\tvcode_lines={}", compiled.bytes().len(), l.report.vcode_lines);
+		println!(
+			"W13\tlisting\t{name}\tcode_bytes={}\tvcode_lines={}",
+			compiled.bytes().len(),
+			l.report.vcode_lines
+		);
 		if let Some(dir) = &dir {
 			std::fs::create_dir_all(dir).unwrap();
 			std::fs::write(dir.join(format!("{name}.clif")), &l.clif).unwrap();
@@ -343,10 +405,22 @@ fn branch_sources(region: &Region) -> Vec<(u32, Vec<Source>)> {
 		let mut written = false;
 		for n in &region.nodes {
 			let source = match n.op {
-				NodeOp::Literal { out, ty: Scalar::Bool, .. } if out == c => Some(Source::Literal),
-				NodeOp::Copy { out, ty: Scalar::Bool, .. } if out == c => Some(Source::Copy),
+				NodeOp::Literal {
+					out,
+					ty: Scalar::Bool,
+					..
+				} if out == c => Some(Source::Literal),
+				NodeOp::Copy {
+					out,
+					ty: Scalar::Bool,
+					..
+				} if out == c => Some(Source::Copy),
 				NodeOp::Compare { out, .. } if out == c => Some(Source::Compare),
-				NodeOp::Ret { out, ty: Scalar::Bool, .. } if out == c => Some(Source::RetFed),
+				NodeOp::Ret {
+					out,
+					ty: Scalar::Bool,
+					..
+				} if out == c => Some(Source::RetFed),
 				_ => None,
 			};
 			if let Some(source) = source {
@@ -356,7 +430,10 @@ fn branch_sources(region: &Region) -> Vec<(u32, Vec<Source>)> {
 				}
 			}
 		}
-		if c < VIRTUAL_BASE && written && region.entry.get(c as usize) == Some(&EntryClass::Guard(Scalar::Bool)) {
+		if c < VIRTUAL_BASE
+			&& written
+			&& region.entry.get(c as usize) == Some(&EntryClass::Guard(Scalar::Bool))
+		{
 			sources.push(Source::GuardedLiveIn);
 		}
 		out.push((c, sources));
@@ -404,7 +481,7 @@ fn w13_t5_branch_condition_sources() {
 
 fn field(line: &str, key: &str) -> Result<u64, String> {
 	let prefix = format!("{key}=");
-	line.split(|c| c == ' ' || c == '\t')
+	line.split([' ', '\t'])
 		.find_map(|f| f.strip_prefix(prefix.as_str()))
 		.ok_or_else(|| format!("no {key} in {line}"))?
 		.parse()
@@ -427,7 +504,11 @@ fn sized(line: &str, marker: &str) -> Option<String> {
 
 /// A LOADED or COMPILE line's region key: (program, function, header).
 fn region_key(line: &str) -> String {
-	line.split('\t').skip(1).take(3).collect::<Vec<_>>().join("\t")
+	line.split('\t')
+		.skip(1)
+		.take(3)
+		.collect::<Vec<_>>()
+		.join("\t")
 }
 
 fn ensure(ok: bool, what: impl FnOnce() -> String) -> Result<(), String> {
@@ -456,8 +537,12 @@ fn check_bytes(text: &str) -> Result<(), String> {
 		if let Some(s) = summary {
 			let code: u64 = loaded.iter().sum();
 			let mapped: u64 = loaded.iter().map(|b| b.div_ceil(4096).max(1) * 4096).sum();
-			ensure(field(s, "code_bytes")? == code, || format!("SUMMARY code_bytes != sum(LOADED) {code}: {s}"))?;
-			ensure(field(s, "mapped_bytes")? == mapped, || format!("SUMMARY mapped_bytes != pages(LOADED) {mapped}: {s}"))?;
+			ensure(field(s, "code_bytes")? == code, || {
+				format!("SUMMARY code_bytes != sum(LOADED) {code}: {s}")
+			})?;
+			ensure(field(s, "mapped_bytes")? == mapped, || {
+				format!("SUMMARY mapped_bytes != pages(LOADED) {mapped}: {s}")
+			})?;
 		}
 		Ok(())
 	};
@@ -472,7 +557,10 @@ fn check_bytes(text: &str) -> Result<(), String> {
 		} else if line.starts_with("LOADED\t") {
 			let bytes = field(line, "code_bytes")?;
 			ensure(compiled.get(&region_key(line)) == Some(&bytes), || {
-				format!("LOADED {bytes} != COMPILE ok bytes {:?}: {line}", compiled.get(&region_key(line)))
+				format!(
+					"LOADED {bytes} != COMPILE ok bytes {:?}: {line}",
+					compiled.get(&region_key(line))
+				)
 			})?;
 			loaded.push(bytes);
 		}
@@ -488,7 +576,9 @@ fn check_bytes(text: &str) -> Result<(), String> {
 /// [`check_bytes`]. Returns (identical lines, the changed lines as `new<TAB>was<TAB>old`).
 pub(super) fn check_w13_delta(old: &str, new: &str) -> Result<(usize, Vec<String>), String> {
 	let (o, n): (Vec<&str>, Vec<&str>) = (old.lines().collect(), new.lines().collect());
-	ensure(o.len() == n.len(), || format!("line count {} -> {}", o.len(), n.len()))?;
+	ensure(o.len() == n.len(), || {
+		format!("line count {} -> {}", o.len(), n.len())
+	})?;
 	let (mut identical, mut changed) = (0, Vec::new());
 	for (a, b) in o.iter().zip(n.iter()) {
 		if a == b {
@@ -498,11 +588,15 @@ pub(super) fn check_w13_delta(old: &str, new: &str) -> Result<(usize, Vec<String
 		match a.split('\t').next().unwrap_or("") {
 			"COMPILE" => {
 				let (x, y) = (sized(a, "\tok bytes="), sized(b, "\tok bytes="));
-				ensure(x.is_some() && x == y, || format!("only an ok COMPILE line's bytes may change: {a} -> {b}"))?;
+				ensure(x.is_some() && x == y, || {
+					format!("only an ok COMPILE line's bytes may change: {a} -> {b}")
+				})?;
 			}
 			"LOADED" => {
 				let (x, y) = (sized(a, "\tcode_bytes="), sized(b, "\tcode_bytes="));
-				ensure(x.is_some() && x == y, || format!("only a LOADED line's code_bytes may change: {a} -> {b}"))?;
+				ensure(x.is_some() && x == y, || {
+					format!("only a LOADED line's code_bytes may change: {a} -> {b}")
+				})?;
 			}
 			"SUMMARY" => {
 				let keys = ["code_bytes"];
@@ -522,7 +616,8 @@ pub(super) fn check_w13_delta(old: &str, new: &str) -> Result<(usize, Vec<String
 /// [`check_w13_delta`] for the golden test: panics on a violation, prints every changed
 /// line as `W13GOLDEN changed`, and returns (identical, changed) line counts.
 pub(super) fn compare_w13_delta(old: &str, new: &str) -> (usize, usize) {
-	let (identical, changed) = check_w13_delta(old, new).unwrap_or_else(|e| std::panic!("W13 golden delta: {e}"));
+	let (identical, changed) =
+		check_w13_delta(old, new).unwrap_or_else(|e| std::panic!("W13 golden delta: {e}"));
 	for line in &changed {
 		println!("W13GOLDEN\tchanged\t{line}");
 	}
@@ -534,7 +629,12 @@ pub(super) fn compare_w13_delta(old: &str, new: &str) -> (usize, usize) {
 pub(super) const W13_GOLDEN: &str = include_str!("fixtures/w13_selection_golden.txt");
 
 /// The W13 fixture against the B1 fixture: exactly the restricted W13 delta.
+///
+/// Under Miri this text comparison took 208 s and executes no generated code, so it is
+/// opt-in there: `cargo +nightly miri test -p rune --all-features --lib -- --ignored --exact
+/// experimental_native::w13_tests::w13_selection_golden_delta`.
 #[test]
+#[cfg_attr(miri, ignore = "Miri: 208 s golden text comparison (opt-in)")]
 fn w13_selection_golden_delta() {
 	let (identical, changed) = compare_w13_delta(super::b1_tests::B1_GOLDEN, W13_GOLDEN);
 	println!("W13\tgolden_fixtures\tidentical={identical}\tchanged={changed}");
@@ -555,15 +655,23 @@ fn synthetic(p1: u64, p2a: u64, p2b: u64) -> String {
 	t.push_str("PROGRAM\tone\n");
 	t.push_str(&summary("one", 1, &[p1]));
 	t.push_str(&format!("LOADED\tone\tf0\th1\tcode_bytes={p1}\n"));
-	t.push_str("ANALYSIS\tone\tf0\th1\tadmitted\tfnv=00000000000000aa\tnodes=5\texits=3\tslots=4\n");
+	t.push_str(
+		"ANALYSIS\tone\tf0\th1\tadmitted\tfnv=00000000000000aa\tnodes=5\texits=3\tslots=4\n",
+	);
 	t.push_str(&format!("COMPILE\tone\tf0\th1\tok bytes={p1}\n"));
 	t.push_str("PROGRAM\ttwo\n");
 	t.push_str(&summary("two", 3, &[p2a, p2b]));
 	t.push_str(&format!("LOADED\ttwo\tf0\th2\tcode_bytes={p2a}\n"));
 	t.push_str(&format!("LOADED\ttwo\tf1\th3\tcode_bytes={p2b}\n"));
-	t.push_str("ANALYSIS\ttwo\tf0\th2\tadmitted\tfnv=00000000000000bb\tnodes=6\texits=4\tslots=5\n");
-	t.push_str("ANALYSIS\ttwo\tf1\th3\tadmitted\tfnv=00000000000000cc\tnodes=7\texits=4\tslots=5\n");
-	t.push_str("ANALYSIS\ttwo\tf1\th9\tadmitted\tfnv=00000000000000dd\tnodes=7\texits=4\tslots=5\n");
+	t.push_str(
+		"ANALYSIS\ttwo\tf0\th2\tadmitted\tfnv=00000000000000bb\tnodes=6\texits=4\tslots=5\n",
+	);
+	t.push_str(
+		"ANALYSIS\ttwo\tf1\th3\tadmitted\tfnv=00000000000000cc\tnodes=7\texits=4\tslots=5\n",
+	);
+	t.push_str(
+		"ANALYSIS\ttwo\tf1\th9\tadmitted\tfnv=00000000000000dd\tnodes=7\texits=4\tslots=5\n",
+	);
 	t.push_str(&format!("COMPILE\ttwo\tf0\th2\tok bytes={p2a}\n"));
 	t.push_str(&format!("COMPILE\ttwo\tf1\th3\tok bytes={p2b}\n"));
 	t.push_str("COMPILE\ttwo\tf1\th9\tdivision_runtime\n");
@@ -578,7 +686,10 @@ fn synthetic(p1: u64, p2a: u64, p2b: u64) -> String {
 fn w13_golden_comparator_controls() {
 	let old = synthetic(300, 576, 1041);
 	check_bytes(&old).unwrap();
-	assert_eq!(check_w13_delta(&old, &old).unwrap(), (old.lines().count(), Vec::new()));
+	assert_eq!(
+		check_w13_delta(&old, &old).unwrap(),
+		(old.lines().count(), Vec::new())
+	);
 
 	// Valid: sizes move within their pages; SUMMARY code_bytes follows.
 	let new = synthetic(290, 600, 1030);
@@ -593,23 +704,70 @@ fn w13_golden_comparator_controls() {
 		assert!(old.contains(from), "{from}");
 		old.replacen(from, to, 1)
 	};
-	fails("analysis_fnv", edit("fnv=00000000000000bb", "fnv=00000000000000be"));
-	fails("analysis_shape", edit("nodes=7\texits=4\tslots=5\nANALYSIS", "nodes=8\texits=4\tslots=5\nANALYSIS"));
+	fails(
+		"analysis_fnv",
+		edit("fnv=00000000000000bb", "fnv=00000000000000be"),
+	);
+	fails(
+		"analysis_shape",
+		edit(
+			"nodes=7\texits=4\tslots=5\nANALYSIS",
+			"nodes=8\texits=4\tslots=5\nANALYSIS",
+		),
+	);
 	fails("admission", edit("f1\th9\tadmitted", "f1\th9\trefused"));
-	fails("compile_class", edit("COMPILE\ttwo\tf1\th9\tdivision_runtime", "COMPILE\ttwo\tf1\th9\tdivision_const0"));
-	fails("compile_ok_to_refused", edit("COMPILE\tone\tf0\th1\tok bytes=300", "COMPILE\tone\tf0\th1\tsize"));
-	fails("loaded_set", edit("LOADED\ttwo\tf1\th3", "LOADED\ttwo\tf1\th4"));
-	fails("metadata_bytes", edit("metadata_bytes=1012\nLOADED\tone", "metadata_bytes=1013\nLOADED\tone"));
+	fails(
+		"compile_class",
+		edit(
+			"COMPILE\ttwo\tf1\th9\tdivision_runtime",
+			"COMPILE\ttwo\tf1\th9\tdivision_const0",
+		),
+	);
+	fails(
+		"compile_ok_to_refused",
+		edit(
+			"COMPILE\tone\tf0\th1\tok bytes=300",
+			"COMPILE\tone\tf0\th1\tsize",
+		),
+	);
+	fails(
+		"loaded_set",
+		edit("LOADED\ttwo\tf1\th3", "LOADED\ttwo\tf1\th4"),
+	);
+	fails(
+		"metadata_bytes",
+		edit(
+			"metadata_bytes=1012\nLOADED\tone",
+			"metadata_bytes=1013\nLOADED\tone",
+		),
+	);
 	fails("summary_counter", edit("regions=3", "regions=2"));
-	fails("mapped_bytes", edit("mapped_bytes=4096", "mapped_bytes=8192"));
+	fails(
+		"mapped_bytes",
+		edit("mapped_bytes=4096", "mapped_bytes=8192"),
+	);
 	fails("line_count", format!("{old}PROGRAM\tthree\n"));
 	// COMPILE and LOADED disagree (SUMMARY consistent with LOADED).
-	fails("compile_vs_loaded", edit("COMPILE\tone\tf0\th1\tok bytes=300", "COMPILE\tone\tf0\th1\tok bytes=301"));
+	fails(
+		"compile_vs_loaded",
+		edit(
+			"COMPILE\tone\tf0\th1\tok bytes=300",
+			"COMPILE\tone\tf0\th1\tok bytes=301",
+		),
+	);
 	// LOADED and COMPILE agree, SUMMARY code_bytes does not.
 	fails(
 		"summary_code_bytes",
-		old.replacen("LOADED\tone\tf0\th1\tcode_bytes=300", "LOADED\tone\tf0\th1\tcode_bytes=310", 1)
-			.replacen("COMPILE\tone\tf0\th1\tok bytes=300", "COMPILE\tone\tf0\th1\tok bytes=310", 1),
+		old.replacen(
+			"LOADED\tone\tf0\th1\tcode_bytes=300",
+			"LOADED\tone\tf0\th1\tcode_bytes=310",
+			1,
+		)
+		.replacen(
+			"COMPILE\tone\tf0\th1\tok bytes=300",
+			"COMPILE\tone\tf0\th1\tok bytes=310",
+			1,
+		),
 	);
 	// A legitimate-looking size change that crosses a page: mapped_bytes moves, refused.
 	fails("page_crossing", synthetic(300, 576, 4100));

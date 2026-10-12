@@ -1,5 +1,4 @@
-//! B1 region tests (rnx 0184; B1-SOURCE-DESIGN.md §13 unit rows plus the Codex 8034/8043
-//! additions): native IterNext over i64 ranges, inlined leaf scalar callees and the explicit
+//! B1 region tests: native IterNext over i64 ranges, inlined leaf scalar callees and the explicit
 //! Replay checkpoint, at the analysis, simulator and commit level. Safe glue only: nothing
 //! here compiles or runs native code. Tests that compile Rune source or sweep every fuel
 //! value are ignored under Miri; the hand-built analysis, entry and commit tests are not.
@@ -36,7 +35,16 @@ pub(crate) fn op(f: &mut Function, op: Op, at: u32) -> u32 {
 }
 
 pub(crate) fn binary(f: &mut Function, out: u32, op_: Binary, lhs: u32, rhs: u32, at: u32) {
-	op(f, Op::Binary { out, op: op_, lhs, rhs }, at);
+	op(
+		f,
+		Op::Binary {
+			out,
+			op: op_,
+			lhs,
+			rhs,
+		},
+		at,
+	);
 }
 
 pub(crate) fn call(f: &mut Function, out: u32, function: u32, args: &[u32], at: u32) {
@@ -61,13 +69,21 @@ pub(crate) fn add_fn() -> Function {
 	f
 }
 
-/// The calls kernel exactly as the frontend lowers it (§1): main = f0 (6 slots, 1
+/// The calls kernel exactly as the frontend lowers it: main = f0 (6 slots, 1
 /// parameter), the callee `callee` = f1.
 pub(crate) fn calls_main(callee_args: &[u32]) -> Function {
 	let mut f = Function::new(6, 1).unwrap();
 	lit(&mut f, 1, Value::I64(0), 0);
 	lit(&mut f, 3, Value::I64(0), 1);
-	op(&mut f, Op::Range { out: 2, start: 3, end: 0 }, 2);
+	op(
+		&mut f,
+		Op::Range {
+			out: 2,
+			start: 3,
+			end: 0,
+		},
+		2,
+	);
 	op(&mut f, Op::IterStart { out: 3, value: 2 }, 3);
 	op(
 		&mut f,
@@ -98,7 +114,15 @@ pub(crate) fn calls_kernel() -> Code {
 pub(crate) fn range_sum() -> Function {
 	let mut f = Function::new(6, 2).unwrap();
 	lit(&mut f, 2, Value::I64(0), 0);
-	op(&mut f, Op::Range { out: 3, start: 0, end: 1 }, 1);
+	op(
+		&mut f,
+		Op::Range {
+			out: 3,
+			start: 0,
+			end: 1,
+		},
+		1,
+	);
 	op(&mut f, Op::IterStart { out: 4, value: 3 }, 2);
 	op(&mut f, Op::Jump { target: 4 }, 3);
 	op(
@@ -132,7 +156,15 @@ pub(crate) fn range_sum() -> Function {
 pub(crate) fn range_loop(slots: u32, body: impl FnOnce(&mut Function)) -> Function {
 	let mut f = Function::new(slots, 2).unwrap();
 	lit(&mut f, 2, Value::I64(0), 0);
-	op(&mut f, Op::Range { out: 3, start: 0, end: 1 }, 1);
+	op(
+		&mut f,
+		Op::Range {
+			out: 3,
+			start: 0,
+			end: 1,
+		},
+		1,
+	);
 	op(&mut f, Op::IterStart { out: 4, value: 3 }, 2);
 	op(&mut f, Op::Jump { target: 4 }, 3);
 	let header = op(
@@ -195,12 +227,20 @@ fn refused(code: &Code, function: u32, header: u32) -> RegionRefusal {
 }
 
 fn local(region: &Region, slot: u32) -> usize {
-	region.slots.iter().position(|&s| s == slot).expect("touched slot")
+	region
+		.slots
+		.iter()
+		.position(|&s| s == slot)
+		.expect("touched slot")
 }
 
 /// The header pc of every candidate of `function`.
 fn headers(code: &Code, function: u32) -> StdVec<u32> {
-	analyze(code, function).unwrap().into_iter().map(|(h, _)| h).collect()
+	analyze(code, function)
+		.unwrap()
+		.into_iter()
+		.map(|(h, _)| h)
+		.collect()
 }
 
 pub(crate) const V2_CALLS: &str = "fn add(a, b) { a + b }\npub fn main(x) {\n\tlet total = 0;\n\tfor i in 0..x { total = add(total, i); }\n\ttotal\n}\n";
@@ -296,7 +336,11 @@ fn listing(code: &Code, function: u32) -> StdVec<String> {
 	let f = code.function(function).unwrap();
 	(0..f.len())
 		.map(|pc| {
-			let charged = if f.cached_ref(pc).unwrap().charged { "C" } else { " " };
+			let charged = if f.cached_ref(pc).unwrap().charged {
+				"C"
+			} else {
+				" "
+			};
 			format!("{pc} {charged} {:?}", f.operation(pc).unwrap())
 		})
 		.collect()
@@ -309,14 +353,25 @@ fn b1_listing_golden_calls_and_fib() {
 	let main = main_of(&program);
 	assert_eq!(main, 0);
 	let built = calls_kernel();
-	assert_eq!(listing(&program.code, 0), listing(&built, 0), "main = f0, the §1 listing");
+	assert_eq!(
+		listing(&program.code, 0),
+		listing(&built, 0),
+		"main = f0, the calls kernel listing"
+	);
 	assert_eq!(listing(&program.code, 1), listing(&built, 1), "add = f1");
-	let (m, a) = (program.code.function(0).unwrap(), program.code.function(1).unwrap());
+	let (m, a) = (
+		program.code.function(0).unwrap(),
+		program.code.function(1).unwrap(),
+	);
 	assert_eq!((m.slots, m.parameters, a.slots, a.parameters), (6, 1, 3, 2));
 	assert_eq!(&m.args[..], &[1, 4]);
 
 	// The charged pcs, from the flag the interpreter consults.
-	let charged = |f: &Function| -> StdVec<usize> { (0..f.len()).filter(|&p| f.cached_ref(p).unwrap().charged).collect() };
+	let charged = |f: &Function| -> StdVec<usize> {
+		(0..f.len())
+			.filter(|&p| f.cached_ref(p).unwrap().charged)
+			.collect()
+	};
 	assert_eq!(charged(m), vec![0, 4]);
 	assert_eq!(charged(a), vec![0]);
 
@@ -346,13 +401,24 @@ fn b1_range_header_admitted() {
 	let header = region.nodes[region.header_node as usize];
 	assert!(matches!(header.op, NodeOp::IterNext { .. }));
 	assert!(header.charged.is_some());
-	let shapes: StdVec<(Status, u32, bool)> = region.exits.iter().map(|e| (e.status, e.pc, e.iter_done)).collect();
+	let shapes: StdVec<(Status, u32, bool)> = region
+		.exits
+		.iter()
+		.map(|e| (e.status, e.pc, e.iter_done))
+		.collect();
 	assert_eq!(
 		shapes,
-		vec![(Status::Fuel, 4, false), (Status::Continue, 7, true), (Status::Retry, 5, false)]
+		vec![
+			(Status::Fuel, 4, false),
+			(Status::Continue, 7, true),
+			(Status::Retry, 5, false)
+		]
 	);
 	// No Retry exit at the header pc.
-	assert!(!region.exits.iter().any(|e| e.status == Status::Retry && e.pc == 4));
+	assert!(!region
+		.exits
+		.iter()
+		.any(|e| e.status == Status::Retry && e.pc == 4));
 	assert!(region.exits.iter().all(|e| e.replay.is_none()));
 }
 
@@ -362,15 +428,35 @@ fn b1_iternext_none_edge_does_not_write_out() {
 	let region = admitted(&code, 0, 4);
 	let i = local(&region, 5);
 	let none = region.exits.iter().find(|e| e.iter_done).unwrap();
-	assert_eq!(none.definite & (1 << i), 0, "the none edge does not write `i`");
-	assert_ne!(none.maybe & (1 << i), 0, "written on earlier iterations only");
-	let fuel = region.exits.iter().find(|e| e.status == Status::Fuel).unwrap();
+	assert_eq!(
+		none.definite & (1 << i),
+		0,
+		"the none edge does not write `i`"
+	);
+	assert_ne!(
+		none.maybe & (1 << i),
+		0,
+		"written on earlier iterations only"
+	);
+	let fuel = region
+		.exits
+		.iter()
+		.find(|e| e.status == Status::Fuel)
+		.unwrap();
 	assert_ne!(fuel.maybe & (1 << i), 0);
 
 	// Hand-built `none == pc + 1`: both states join there.
 	// Slots: 0 a, 1 flag, 2 range, 3 iterator, 4 i, 5 k.
 	let mut f = Function::new(6, 2).unwrap();
-	op(&mut f, Op::Range { out: 2, start: 0, end: 0 }, 0);
+	op(
+		&mut f,
+		Op::Range {
+			out: 2,
+			start: 0,
+			end: 0,
+		},
+		0,
+	);
 	op(&mut f, Op::IterStart { out: 3, value: 2 }, 1);
 	op(
 		&mut f,
@@ -396,7 +482,11 @@ fn b1_iternext_none_edge_does_not_write_out() {
 	let code = build(vec![f]);
 	let region = admitted(&code, 0, 2);
 	let i = local(&region, 4);
-	let out = region.exits.iter().find(|e| e.status == Status::Continue && e.pc == 6).unwrap();
+	let out = region
+		.exits
+		.iter()
+		.find(|e| e.status == Status::Continue && e.pc == 6)
+		.unwrap();
 	assert_eq!(out.definite & (1 << i), 0);
 	assert_ne!(out.maybe & (1 << i), 0, "joined Maybe at pc + 1");
 	assert!(!out.iter_done, "the none edge stays inside the body");
@@ -406,22 +496,44 @@ fn b1_iternext_none_edge_does_not_write_out() {
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source")]
 fn b1_iternext_not_header_or_second_refused() {
 	// Nested for: the outer region meets the inner loop's Range first (pc order).
-	let program = compile("pub fn main(a) { let s = 0; for i in 0..a { for j in 0..i { s += j; } } s }");
+	let program =
+		compile("pub fn main(a) { let s = 0; for i in 0..a { for j in 0..i { s += j; } } s }");
 	let code = &program.code;
 	let found = analyze(code, 0).unwrap();
-	assert_eq!(found.len(), 2, "{:?}", found.iter().map(|(h, r)| (*h, r.as_ref().err().copied())).collect::<StdVec<_>>());
+	assert_eq!(
+		found.len(),
+		2,
+		"{:?}",
+		found
+			.iter()
+			.map(|(h, r)| (*h, r.as_ref().err().copied()))
+			.collect::<StdVec<_>>()
+	);
 	let f = code.function(0).unwrap();
 	let (outer, inner) = (found[0].0, found[1].0);
 	let first_inner_range = (outer as usize..f.len())
 		.find(|&p| matches!(f.operation(p).unwrap(), Op::Range { .. }))
 		.unwrap() as u32;
-	assert_eq!(found[0].1.as_ref().err(), Some(&RegionRefusal::Op { pc: first_inner_range }));
+	assert_eq!(
+		found[0].1.as_ref().err(),
+		Some(&RegionRefusal::Op {
+			pc: first_inner_range
+		})
+	);
 	assert!(found[1].1.is_ok(), "inner {inner} admitted");
 
 	// A while loop whose body holds an IterNext: NotHeader.
 	// Slots: 0 a, 1 range, 2 it, 3 x, 4 c, 5 i.
 	let mut f = Function::new(6, 1).unwrap();
-	op(&mut f, Op::Range { out: 1, start: 0, end: 0 }, 0);
+	op(
+		&mut f,
+		Op::Range {
+			out: 1,
+			start: 0,
+			end: 0,
+		},
+		0,
+	);
 	op(&mut f, Op::IterStart { out: 2, value: 1 }, 1);
 	lit(&mut f, 3, Value::I64(0), 2);
 	binary(&mut f, 4, Binary::Lt, 3, 0, 3); // 3: header
@@ -458,7 +570,15 @@ fn b1_iternext_not_header_or_second_refused() {
 	// Two IterNexts: the header and a second one in its body.
 	// Slots: 0 a, 1 range, 2 it1, 3 it2, 4 i, 5 j.
 	let mut f = Function::new(6, 1).unwrap();
-	op(&mut f, Op::Range { out: 1, start: 0, end: 0 }, 0);
+	op(
+		&mut f,
+		Op::Range {
+			out: 1,
+			start: 0,
+			end: 0,
+		},
+		0,
+	);
 	op(&mut f, Op::IterStart { out: 2, value: 1 }, 1);
 	op(&mut f, Op::IterStart { out: 3, value: 1 }, 2);
 	op(
@@ -495,48 +615,84 @@ fn b1_iternext_not_header_or_second_refused() {
 fn b1_iter_slot_touched_refused() {
 	// Each variant names the iterator slot 4 at body pc 5.
 	let variants: StdVec<(&str, Box<dyn Fn(&mut Function)>)> = vec![
-		("copy_from_iterator", Box::new(|f: &mut Function| {
-			op(f, Op::Copy { out: 6, value: 4 }, 5);
-		})),
-		("copy_into_iterator", Box::new(|f: &mut Function| {
-			op(f, Op::Copy { out: 4, value: 5 }, 5);
-		})),
-		("release_iterator", Box::new(|f: &mut Function| {
-			op(f, Op::Release { value: 4 }, 5);
-		})),
-		("binary_reads_iterator", Box::new(|f: &mut Function| {
-			binary(f, 6, Binary::Add, 4, 5, 5);
-		})),
-		("branch_on_iterator", Box::new(|f: &mut Function| {
-			op(
-				f,
-				Op::Branch {
-					condition: 4,
-					yes: 6,
-					no: 6,
-				},
-				5,
-			);
-		})),
-		("used_call_argument", Box::new(|f: &mut Function| {
-			call(f, 6, 1, &[4, 5], 5);
-		})),
-		("unused_call_argument", Box::new(|f: &mut Function| {
-			call(f, 6, 1, &[5, 4], 5);
-		})),
-		("call_out", Box::new(|f: &mut Function| {
-			call(f, 4, 1, &[5, 5], 5);
-		})),
+		(
+			"copy_from_iterator",
+			Box::new(|f: &mut Function| {
+				op(f, Op::Copy { out: 6, value: 4 }, 5);
+			}),
+		),
+		(
+			"copy_into_iterator",
+			Box::new(|f: &mut Function| {
+				op(f, Op::Copy { out: 4, value: 5 }, 5);
+			}),
+		),
+		(
+			"release_iterator",
+			Box::new(|f: &mut Function| {
+				op(f, Op::Release { value: 4 }, 5);
+			}),
+		),
+		(
+			"binary_reads_iterator",
+			Box::new(|f: &mut Function| {
+				binary(f, 6, Binary::Add, 4, 5, 5);
+			}),
+		),
+		(
+			"branch_on_iterator",
+			Box::new(|f: &mut Function| {
+				op(
+					f,
+					Op::Branch {
+						condition: 4,
+						yes: 6,
+						no: 6,
+					},
+					5,
+				);
+			}),
+		),
+		(
+			"used_call_argument",
+			Box::new(|f: &mut Function| {
+				call(f, 6, 1, &[4, 5], 5);
+			}),
+		),
+		(
+			"unused_call_argument",
+			Box::new(|f: &mut Function| {
+				call(f, 6, 1, &[5, 4], 5);
+			}),
+		),
+		(
+			"call_out",
+			Box::new(|f: &mut Function| {
+				call(f, 4, 1, &[5, 5], 5);
+			}),
+		),
 	];
 	for (name, body) in variants {
 		let f = range_loop(8, |f| body(f));
 		let code = build(vec![f, first_plus_one()]);
-		assert_eq!(refused(&code, 0, 4), RegionRefusal::IterSlot { pc: 5 }, "{name}");
+		assert_eq!(
+			refused(&code, 0, 4),
+			RegionRefusal::IterSlot { pc: 5 },
+			"{name}"
+		);
 	}
 
 	// `out == iterator` on the header itself.
 	let mut f = Function::new(6, 2).unwrap();
-	op(&mut f, Op::Range { out: 3, start: 0, end: 1 }, 0);
+	op(
+		&mut f,
+		Op::Range {
+			out: 3,
+			start: 0,
+			end: 1,
+		},
+		0,
+	);
 	op(&mut f, Op::IterStart { out: 4, value: 3 }, 1);
 	op(
 		&mut f,
@@ -569,11 +725,15 @@ fn assert_calls_kernel_region(region: &Region, name: &str) {
 	assert_eq!(region.callee_slots, 3, "{name}");
 	assert_eq!(
 		region.entry.as_slice(),
-		&[super::EntryClass::Guard(Scalar::I64), super::EntryClass::Scalar, super::EntryClass::Scalar],
+		&[
+			super::EntryClass::Guard(Scalar::I64),
+			super::EntryClass::Scalar,
+			super::EntryClass::Scalar
+		],
 		"{name}"
 	);
 
-	// The exit table of §1.
+	// The calls kernel's exit table.
 	let maybe_header = 0b001 | 0b010 | 0b100;
 	let e = |status, pc, definite, maybe, replay, iter_done| super::Exit {
 		status,
@@ -592,15 +752,32 @@ fn assert_calls_kernel_region(region: &Region, name: &str) {
 		&[
 			e(Status::Fuel, 4, 0, maybe_header, None, false),
 			e(Status::Continue, 9, 0, maybe_header, None, true),
-			e(Status::Replay, 5, 0b010, 0b101, Some(ReplayReason::CalleeFuel), false),
-			e(Status::Replay, 5, 0b010, 0b101, Some(ReplayReason::CalleeFault), false),
+			e(
+				Status::Replay,
+				5,
+				0b010,
+				0b101,
+				Some(ReplayReason::CalleeFuel),
+				false
+			),
+			e(
+				Status::Replay,
+				5,
+				0b010,
+				0b101,
+				Some(ReplayReason::CalleeFault),
+				false
+			),
 		],
 		"{name}"
 	);
 
 	assert_eq!(region.sites.len(), 1, "{name}");
 	let site = region.sites[0];
-	assert_eq!((site.pc, site.callee, site.slots, site.parameters, site.ret), (5, 1, 3, 2, Scalar::I64));
+	assert_eq!(
+		(site.pc, site.callee, site.slots, site.parameters, site.ret),
+		(5, 1, 3, 2, Scalar::I64)
+	);
 	assert_eq!((site.fuel_exit, site.fault_exit), (2, Some(3)));
 	let enter = region.nodes[site.enter as usize];
 	assert_eq!(enter.charged, None, "{name}: the Call is uncharged");
@@ -645,7 +822,7 @@ fn b1_inline_calls_kernel_admitted_handbuilt() {
 #[test]
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source")]
 fn b1_inline_calls_kernel_admitted() {
-	// v2: exactly the §1 region.
+	// v2: exactly the hand-built calls kernel's region.
 	let program = compile(V2_CALLS);
 	let main = main_of(&program);
 	let region = admitted(&program.code, main, 4);
@@ -657,7 +834,11 @@ fn b1_inline_calls_kernel_admitted() {
 	let main = main_of(&program);
 	let h = headers(&program.code, main)[0];
 	let region = admitted(&program.code, main, h);
-	let shape: StdVec<(Status, Option<ReplayReason>, bool)> = region.exits.iter().map(|e| (e.status, e.replay, e.iter_done)).collect();
+	let shape: StdVec<(Status, Option<ReplayReason>, bool)> = region
+		.exits
+		.iter()
+		.map(|e| (e.status, e.replay, e.iter_done))
+		.collect();
 	assert_eq!(
 		shape,
 		vec![
@@ -667,7 +848,10 @@ fn b1_inline_calls_kernel_admitted() {
 			(Status::Replay, Some(ReplayReason::CalleeFault), false),
 		]
 	);
-	assert_eq!((region.callee_slots, region.sites.len(), region.cells()), (3, 1, region.slots.len() + 2));
+	assert_eq!(
+		(region.callee_slots, region.sites.len(), region.cells()),
+		(3, 1, region.slots.len() + 2)
+	);
 	assert_eq!(region.nodes[region.sites[0].enter as usize].charged, None);
 	check_expansion(&region).unwrap();
 }
@@ -789,7 +973,10 @@ fn b1_inline_refusals() {
 	lit(&mut mixed, 3, Value::I64(1), 102); // 2
 	op(&mut mixed, Op::Return { value: 3 }, 103); // 3
 	op(&mut mixed, Op::Return { value: 2 }, 104); // 4: Bool
-	assert_eq!(inline_refusal(&calling(mixed, &[5, 5])), InlineReason::ReturnType);
+	assert_eq!(
+		inline_refusal(&calling(mixed, &[5, 5])),
+		InlineReason::ReturnType
+	);
 
 	// `fn id(a) { a }`: the Return reads a parameter.
 	let mut id = Function::new(1, 1).unwrap();
@@ -821,7 +1008,10 @@ fn b1_inline_refusals() {
 	); // 0
 	binary(&mut conflict, 2, Binary::Add, 0, 1, 101); // 1
 	op(&mut conflict, Op::Return { value: 2 }, 102); // 2
-	assert_eq!(inline_refusal(&calling(conflict, &[5, 5])), InlineReason::ParamConflict);
+	assert_eq!(
+		inline_refusal(&calling(conflict, &[5, 5])),
+		InlineReason::ParamConflict
+	);
 
 	// 17 sites in one region.
 	let f = range_loop(8, |f| {
@@ -903,7 +1093,14 @@ fn b1_charged_call_refused() {
 	let at = call_at(&mut f);
 	op(&mut f, Op::Jump { target: 1 }, 400);
 	let code = build(vec![f, add_fn()]);
-	assert!(code.function(0).unwrap().cached_ref(at as usize).unwrap().charged, "gap charge");
+	assert!(
+		code.function(0)
+			.unwrap()
+			.cached_ref(at as usize)
+			.unwrap()
+			.charged,
+		"gap charge"
+	);
 	assert_eq!(
 		refused(&code, 0, 1),
 		RegionRefusal::Inline {
@@ -931,7 +1128,10 @@ fn b1_charged_call_refused() {
 fn b1_callee_charge_shape_inspects_every_flag() {
 	// (a) add: Ok.
 	let code = build(vec![add_fn()]);
-	assert_eq!(callee_charge_shape(code.function(0).unwrap()).unwrap(), Ok(()));
+	assert_eq!(
+		callee_charge_shape(code.function(0).unwrap()).unwrap(),
+		Ok(())
+	);
 
 	// (b) 300 straight-line instructions: the gap charge at 257.
 	let mut f = Function::new(1, 0).unwrap();
@@ -982,7 +1182,9 @@ fn b1_callee_charge_shape_inspects_every_flag() {
 	op(&mut f, Op::Return { value: 1 }, 2);
 	let code = build(vec![f]);
 	let callee = code.function(0).unwrap();
-	let charged: StdVec<bool> = (0..callee.len()).map(|p| callee.cached_ref(p).unwrap().charged).collect();
+	let charged: StdVec<bool> = (0..callee.len())
+		.map(|p| callee.cached_ref(p).unwrap().charged)
+		.collect();
 	assert_eq!(charged, vec![true, false, false], "flags exactly {{0}}");
 	assert_eq!(
 		callee_charge_shape(callee).unwrap(),
@@ -996,12 +1198,18 @@ fn b1_callee_charge_shape_inspects_every_flag() {
 		let before = charge_flags_inspected_for_test();
 		let region = admitted(code, 0, 4);
 		let inspected = charge_flags_inspected_for_test() - before;
-		let expected: usize = region.sites.iter().map(|s| code.function(s.callee).unwrap().len()).sum();
+		let expected: usize = region
+			.sites
+			.iter()
+			.map(|s| code.function(s.callee).unwrap().len())
+			.sum();
 		assert_eq!(inspected, expected);
 		for s in region.sites.iter() {
 			let callee = code.function(s.callee).unwrap();
 			for p in 0..callee.len() {
-				callee.audit_cached(p, *callee.cached_ref(p).unwrap()).unwrap();
+				callee
+					.audit_cached(p, *callee.cached_ref(p).unwrap())
+					.unwrap();
 			}
 		}
 	}
@@ -1020,14 +1228,20 @@ fn b1_expansion_has_exactly_one_charged_node_per_site() {
 		let region = admitted(code, 0, 4);
 		for (k, site) in region.sites.iter().enumerate() {
 			let nodes = expansion(&region, k);
-			let charged: StdVec<usize> = (0..nodes.len()).filter(|&i| nodes[i].charged.is_some()).collect();
+			let charged: StdVec<usize> = (0..nodes.len())
+				.filter(|&i| nodes[i].charged.is_some())
+				.collect();
 			assert_eq!(charged.len(), 1, "site {k}");
 			let node = nodes[charged[0]];
 			assert_eq!(node.charged, Some(site.fuel_exit));
 			// It is the callee pc 0 node: the first node after the Args.
 			assert_eq!(charged[0], site.parameters as usize);
 			assert_eq!(
-				region.nodes.iter().filter(|n| n.charged == Some(site.fuel_exit)).count(),
+				region
+					.nodes
+					.iter()
+					.filter(|n| n.charged == Some(site.fuel_exit))
+					.count(),
 				1,
 				"no other node charges the site's CalleeFuel exit"
 			);
@@ -1054,7 +1268,10 @@ fn b1_call_args_demands_and_touch() {
 	});
 	let code = build(vec![f, first_plus_one()]);
 	let region = admitted(&code, 0, 4);
-	assert_eq!(region.entry[local(&region, 2)], EntryClass::Guard(Scalar::I64));
+	assert_eq!(
+		region.entry[local(&region, 2)],
+		EntryClass::Guard(Scalar::I64)
+	);
 	assert_eq!(region.entry[local(&region, 7)], EntryClass::Scalar);
 	assert!(region.slots.contains(&7), "an unused argument is touched");
 
@@ -1076,11 +1293,13 @@ fn b1_call_args_demands_and_touch() {
 	assert_eq!(refused(&code, 0, 4), RegionRefusal::Type { pc: 5 });
 }
 
-/// The §3 interpreter footprint, encoded independently of the analysis.
+/// The interpreter footprint, encoded independently of the analysis.
 fn table_footprint(f: &Function, op: Op) -> StdVec<u32> {
 	match op {
 		Op::Literal { out, .. } => vec![out],
-		Op::Binary { out, lhs, rhs, .. } | Op::AssignBinary { out, lhs, rhs, .. } => vec![lhs, rhs, out],
+		Op::Binary { out, lhs, rhs, .. } | Op::AssignBinary { out, lhs, rhs, .. } => {
+			vec![lhs, rhs, out]
+		}
 		Op::Branch { condition, .. } => vec![condition],
 		Op::Jump { .. } => vec![],
 		Op::Copy { out, value } => vec![value, out],
@@ -1157,7 +1376,11 @@ fn b1_semantic_touched_set_covers_interpreter_footprint() {
 #[test]
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source")]
 fn b1_semantic_touched_set_over_source_corpus() {
-	for text in [V2_CALLS, STAGE_CALLS, "pub fn main(a, b) { let s = 0; for i in a..b { s += i; } s }"] {
+	for text in [
+		V2_CALLS,
+		STAGE_CALLS,
+		"pub fn main(a, b) { let s = 0; for i in a..b { s += i; } s }",
+	] {
 		let program = compile(text);
 		let main = main_of(&program);
 		for (_, region) in analyze(&program.code, main).unwrap() {
@@ -1280,18 +1503,30 @@ fn b1_virtual_confinement_and_single_ret() {
 				let (reads, write) = node_rw(node.op);
 				match node.op {
 					NodeOp::Arg { .. } => {
-						assert!(reads.iter().all(|&r| r < n), "{name}: Arg reads a caller local");
+						assert!(
+							reads.iter().all(|&r| r < n),
+							"{name}: Arg reads a caller local"
+						);
 						assert!(write.unwrap() >= VIRTUAL_BASE);
 					}
 					NodeOp::Ret { .. } => {
 						rets += 1;
 						assert!(reads.iter().all(|&r| r >= VIRTUAL_BASE), "{name}");
 						assert!(write.unwrap() < n, "{name}: Ret writes one caller local");
-						assert!(!matches!(node.next, Some(Target::Node(t)) if range.contains(&t)), "{name}: Ret leaves the expansion");
+						assert!(
+							!matches!(node.next, Some(Target::Node(t)) if range.contains(&t)),
+							"{name}: Ret leaves the expansion"
+						);
 					}
 					_ => {
-						assert!(reads.iter().all(|&r| r >= VIRTUAL_BASE), "{name}: callee reads virtual only");
-						assert!(write.is_none_or(|w| w >= VIRTUAL_BASE), "{name}: callee writes virtual only");
+						assert!(
+							reads.iter().all(|&r| r >= VIRTUAL_BASE),
+							"{name}: callee reads virtual only"
+						);
+						assert!(
+							write.is_none_or(|w| w >= VIRTUAL_BASE),
+							"{name}: callee writes virtual only"
+						);
 					}
 				}
 			}
@@ -1357,7 +1592,14 @@ const ROOM: Room = Room {
 fn calls_window(s: &mut Store, total: i64, start: i64, end: i64) -> StdVec<Value> {
 	let range = s.range(start, end).unwrap();
 	let it = s.iterator(range).unwrap();
-	vec![Value::I64(end), Value::I64(total), range, it, Value::Unit, Value::Unit]
+	vec![
+		Value::I64(end),
+		Value::I64(total),
+		range,
+		it,
+		Value::Unit,
+		Value::Unit,
+	]
 }
 
 #[test]
@@ -1436,9 +1678,18 @@ fn b1_room_refusal_changes_nothing() {
 	let region = admitted(&calls_kernel(), 0, 4);
 	assert_eq!(region.callee_slots, 3);
 	for room in [
-		Room { frames: 0, slots: 65_536 },
-		Room { frames: 1024, slots: 2 },
-		Room { frames: 0, slots: 0 },
+		Room {
+			frames: 0,
+			slots: 65_536,
+		},
+		Room {
+			frames: 1024,
+			slots: 2,
+		},
+		Room {
+			frames: 0,
+			slots: 0,
+		},
 	] {
 		let mut s = store();
 		let mut w = calls_window(&mut s, 0, 0, 10);
@@ -1452,9 +1703,20 @@ fn b1_room_refusal_changes_nothing() {
 	}
 	let mut s = store();
 	let mut w = calls_window(&mut s, 0, 0, 10);
-	let exited = commit::enter(&region, &mut w, &mut s, false, 50, Room { frames: 1, slots: 3 }, simulate)
-		.unwrap()
-		.expect("enters with exactly the room");
+	let exited = commit::enter(
+		&region,
+		&mut w,
+		&mut s,
+		false,
+		50,
+		Room {
+			frames: 1,
+			slots: 3,
+		},
+		simulate,
+	)
+	.unwrap()
+	.expect("enters with exactly the room");
 	assert_eq!(exited.status, Status::Continue);
 	assert_eq!(w[1], Value::I64(45));
 
@@ -1464,22 +1726,70 @@ fn b1_room_refusal_changes_nothing() {
 	let mut s = store();
 	let r = s.range(0, 4).unwrap();
 	let it = s.iterator(r).unwrap();
-	let mut w = vec![Value::I64(0), Value::I64(4), Value::I64(0), r, it, Value::Unit];
-	assert!(commit::enter(&range, &mut w, &mut s, false, 50, Room { frames: 0, slots: 0 }, simulate)
-		.unwrap()
-		.is_ok());
+	let mut w = vec![
+		Value::I64(0),
+		Value::I64(4),
+		Value::I64(0),
+		r,
+		it,
+		Value::Unit,
+	];
+	assert!(commit::enter(
+		&range,
+		&mut w,
+		&mut s,
+		false,
+		50,
+		Room {
+			frames: 0,
+			slots: 0
+		},
+		simulate
+	)
+	.unwrap()
+	.is_ok());
 }
 
-/// Codex 8034: the room the executor reports includes the caller frame geometry: a window
+/// The room the executor reports includes the caller frame geometry: a window
 /// that is not the top frame's whole slot range gets no room at all.
 #[test]
 fn b1_room_from_executor_geometry() {
-	assert_eq!(region_room(1, 6, 6), Room { frames: 1023, slots: 65_530 });
-	assert_eq!(region_room(1024, 6, 6), Room { frames: 0, slots: 65_530 });
-	assert_eq!(region_room(3, 65_536, 65_536), Room { frames: 1021, slots: 0 });
+	assert_eq!(
+		region_room(1, 6, 6),
+		Room {
+			frames: 1023,
+			slots: 65_530
+		}
+	);
+	assert_eq!(
+		region_room(1024, 6, 6),
+		Room {
+			frames: 0,
+			slots: 65_530
+		}
+	);
+	assert_eq!(
+		region_room(3, 65_536, 65_536),
+		Room {
+			frames: 1021,
+			slots: 0
+		}
+	);
 	// The window ends below the slot stack's top: not the top frame.
-	assert_eq!(region_room(2, 20, 12), Room { frames: 0, slots: 0 });
-	assert_eq!(region_room(2, 20, 21), Room { frames: 0, slots: 0 });
+	assert_eq!(
+		region_room(2, 20, 12),
+		Room {
+			frames: 0,
+			slots: 0
+		}
+	);
+	assert_eq!(
+		region_room(2, 20, 21),
+		Room {
+			frames: 0,
+			slots: 0
+		}
+	);
 }
 
 // -------------------------------------------------------- B1-23: inline temporaries
@@ -1510,14 +1820,17 @@ fn b1_inline_temporaries_charged_before_allocation() {
 	assert_eq!(budget.used(), 0);
 	let peak = budget.peak();
 
-	// The §5.7 formula, with R = 2 * body + 16 * 16.
+	// The analysis memory formula, with R = 2 * body + 16 * 16.
 	let body = code.function(0).unwrap().len();
 	let formula = core::mem::size_of::<super::Site>() * 16
 		+ core::mem::size_of::<SlotStateAlias>() * 256
 		+ 16 * (core::mem::size_of::<bool>() + core::mem::size_of::<Option<Scalar>>())
 		+ core::mem::size_of::<super::Node>() * 16 * 32
 		+ core::mem::size_of::<(u32, u32, Option<Scalar>)>() * (2 * body + 16 * 16);
-	assert!(inline_peak > 0 && inline_peak <= formula, "inline peak {inline_peak} vs {formula}");
+	assert!(
+		inline_peak > 0 && inline_peak <= formula,
+		"inline peak {inline_peak} vs {formula}"
+	);
 
 	// One byte below the peak: Transient, nothing left charged, no accounting violation.
 	let budget = Budget::new(peak - 1);
@@ -1571,10 +1884,18 @@ fn b1_no_store_access_inside_region() {
 	for k in 0..entries {
 		let before = s.state_for_test();
 		let mut ran = false;
-		let exited = commit::enter(&region, &mut w, &mut s, false, 3 + (k % 7), ROOM, |r, b, rec| {
-			ran = true;
-			simulate(r, b, rec)
-		})
+		let exited = commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			false,
+			3 + (k % 7),
+			ROOM,
+			|r, b, rec| {
+				ran = true;
+				simulate(r, b, rec)
+			},
+		)
 		.unwrap()
 		.unwrap();
 		assert!(ran);
@@ -1596,7 +1917,7 @@ fn b1_no_store_access_inside_region() {
 	assert!(steps > 0);
 }
 
-// ---------------------------------------------- Codex 8034/8043: masks, bounds, cfg
+// ------------------------------------------------------------- masks, bounds, cfg
 
 /// A range loop touching exactly 64 caller slots with an inlined call: the callee's
 /// virtual locals (64..) never set a bit of the caller's 64-bit masks.
@@ -1679,7 +2000,7 @@ fn b1_cells_bound_checked_before_allocation() {
 	assert_eq!(VIRTUAL_BASE as usize, MAX_REGION_SLOTS);
 }
 
-/// Codex 8034: the forced-Replay test node exists only in test builds. Every mention of it
+/// The forced-Replay test node exists only in test builds. Every mention of it
 /// in the production modules is directly under a `#[cfg(test)]` attribute.
 #[test]
 fn b1_force_replay_absent_outside_test_cfg() {
@@ -1687,8 +2008,14 @@ fn b1_force_replay_absent_outside_test_cfg() {
 		("region/mod.rs", include_str!("mod.rs")),
 		("region/simulate.rs", include_str!("simulate.rs")),
 		("region/hook.rs", include_str!("hook.rs")),
-		("experimental_native/lower.rs", include_str!("../../experimental_native/lower.rs")),
-		("experimental_native/audit.rs", include_str!("../../experimental_native/audit.rs")),
+		(
+			"experimental_native/lower.rs",
+			include_str!("../../experimental_native/lower.rs"),
+		),
+		(
+			"experimental_native/audit.rs",
+			include_str!("../../experimental_native/audit.rs"),
+		),
 		("region/commit.rs", include_str!("commit.rs")),
 		("region/cache.rs", include_str!("cache.rs")),
 	] {
@@ -1701,7 +2028,11 @@ fn b1_force_replay_absent_outside_test_cfg() {
 			if name == "region/hook.rs" {
 				continue;
 			}
-			let above = lines[..i].iter().rev().find(|l| !l.trim().is_empty()).unwrap_or(&"");
+			let above = lines[..i]
+				.iter()
+				.rev()
+				.find(|l| !l.trim().is_empty())
+				.unwrap_or(&"");
 			assert!(
 				above.contains("#[cfg(test)]"),
 				"{name}:{}: `{}` is not directly under #[cfg(test)]",
@@ -1725,7 +2056,12 @@ fn b1_simulator_every_fuel_handbuilt() {
 		(
 			"calls_kernel",
 			calls_kernel(),
-			vec![vec![Arg::I(0)], vec![Arg::I(1)], vec![Arg::I(5)], vec![Arg::I(12)]],
+			vec![
+				vec![Arg::I(0)],
+				vec![Arg::I(1)],
+				vec![Arg::I(5)],
+				vec![Arg::I(12)],
+			],
 		),
 		(
 			"range_sum",
@@ -1739,10 +2075,26 @@ fn b1_simulator_every_fuel_handbuilt() {
 				vec![Arg::I(i64::MIN), Arg::I(i64::MIN + 3)],
 			],
 		),
-		("two_arm", calling(two_arm(), &[5, 2]), vec![vec![Arg::I(0), Arg::I(6)], vec![Arg::I(-3), Arg::I(3)]]),
-		("early_return", calling(early_return(), &[5]), vec![vec![Arg::I(0), Arg::I(7)]]),
-		("three_returns", calling(three_returns(), &[5]), vec![vec![Arg::I(-2), Arg::I(3)]]),
-		("unused_argument", calling(first_plus_one(), &[5, 7]), vec![vec![Arg::I(0), Arg::I(4)]]),
+		(
+			"two_arm",
+			calling(two_arm(), &[5, 2]),
+			vec![vec![Arg::I(0), Arg::I(6)], vec![Arg::I(-3), Arg::I(3)]],
+		),
+		(
+			"early_return",
+			calling(early_return(), &[5]),
+			vec![vec![Arg::I(0), Arg::I(7)]],
+		),
+		(
+			"three_returns",
+			calling(three_returns(), &[5]),
+			vec![vec![Arg::I(-2), Arg::I(3)]],
+		),
+		(
+			"unused_argument",
+			calling(first_plus_one(), &[5, 7]),
+			vec![vec![Arg::I(0), Arg::I(4)]],
+		),
 	];
 	for (name, code, inputs) in &cases {
 		for args in inputs {
@@ -1760,5 +2112,8 @@ fn b1_simulator_every_fuel_handbuilt() {
 		}
 	}
 	assert!(covered.entries > 0 && covered.replay_exits > 0);
-	assert_eq!(covered.replay_exits, covered.replay_checked, "every Replay traced");
+	assert_eq!(
+		covered.replay_exits, covered.replay_checked,
+		"every Replay traced"
+	);
 }

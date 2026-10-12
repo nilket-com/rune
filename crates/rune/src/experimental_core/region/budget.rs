@@ -10,7 +10,7 @@
 //!   The pre-allocation guarantee rests on one pinned invariant of `rune_alloc`: an exact
 //!   reservation (`Vec::try_reserve_exact`, `RawVec::grow_exact`) that succeeds sets the
 //!   capacity to exactly `len + additional`, whatever block the allocator returned
-//!   (receipts: RAWVEC-INVARIANT.md, with the source lines). `BVec` checks that invariant
+//!   (`rune_alloc`'s `RawVec` growth path). `BVec` checks that invariant
 //!   after every growth. Should it ever fail, the check is AFTER the allocation (it cannot
 //!   be anything else): the oversized buffer is freed at once, every charge of this vector
 //!   is released, the failure is counted ([`Budget::violations`]) and the growth returns
@@ -173,7 +173,10 @@ pub(crate) struct BVec<'b, T: AnalysisPod> {
 impl<'b, T: AnalysisPod> BVec<'b, T> {
 	pub(crate) fn new(budget: &'b Budget) -> Self {
 		const {
-			assert!(core::mem::size_of::<T>() != 0, "BVec elements are not zero-sized");
+			assert!(
+				core::mem::size_of::<T>() != 0,
+				"BVec elements are not zero-sized"
+			);
 		}
 
 		Self {
@@ -217,8 +220,11 @@ impl<'b, T: AnalysisPod> BVec<'b, T> {
 		if self.vec.capacity() != capacity {
 			self.vec = Vec::new();
 			self.budget.release(bytes);
-			self.budget.release(core::mem::replace(&mut self.charged, 0));
-			self.budget.violations.set(self.budget.violations.get().saturating_add(1));
+			self.budget
+				.release(core::mem::replace(&mut self.charged, 0));
+			self.budget
+				.violations
+				.set(self.budget.violations.get().saturating_add(1));
 			return Err(Grow::Invariant);
 		}
 
@@ -334,7 +340,12 @@ impl Pool {
 	/// refused reservation holds nothing. Another thread may observe the count briefly
 	/// raised by a reservation that is then rolled back; it is then refused spuriously,
 	/// never admitted past a bound.
-	pub(crate) fn reserve(&self, bytes: usize, max_count: usize, max_bytes: usize) -> Option<Token<'_>> {
+	pub(crate) fn reserve(
+		&self,
+		bytes: usize,
+		max_count: usize,
+		max_bytes: usize,
+	) -> Option<Token<'_>> {
 		if !add_within(&self.count, 1, max_count) {
 			return None;
 		}
@@ -349,7 +360,10 @@ impl Pool {
 
 	/// `(mappings, bytes)` currently reserved.
 	pub(crate) fn current(&self) -> (usize, usize) {
-		(self.count.load(Ordering::Acquire), self.bytes.load(Ordering::Acquire))
+		(
+			self.count.load(Ordering::Acquire),
+			self.bytes.load(Ordering::Acquire),
+		)
 	}
 }
 
@@ -465,7 +479,10 @@ mod tests {
 		let mut v: BVec<'_, u32> = BVec::new(&budget);
 		v.resize(5, 7).unwrap();
 		let (inner, bytes) = v.into_parts();
-		assert_eq!((inner.len(), inner.capacity(), bytes, budget.used()), (5, 5, 20, 20));
+		assert_eq!(
+			(inner.len(), inner.capacity(), bytes, budget.used()),
+			(5, 5, 20, 20)
+		);
 		let held = Held::adopt(&budget, bytes);
 		assert_eq!(held.bytes(), 20);
 		drop(held);
@@ -491,7 +508,11 @@ mod tests {
 			b.push(i % 2 == 0).unwrap();
 			c.resize(i as usize + 1, (1, 2)).unwrap();
 			assert!(exact(&a) && exact(&b) && exact(&c), "step {i}");
-			assert_eq!(budget.used(), a.charged() + b.charged() + c.charged(), "step {i}");
+			assert_eq!(
+				budget.used(),
+				a.charged() + b.charged() + c.charged(),
+				"step {i}"
+			);
 		}
 
 		// A refused growth changes nothing.
@@ -517,7 +538,10 @@ mod tests {
 
 		// The same through `with_capacity` (nothing charged before).
 		inject_extra_capacity_for_test(1);
-		assert_eq!(BVec::<u32>::with_capacity(&budget, 7).err(), Some(Grow::Invariant));
+		assert_eq!(
+			BVec::<u32>::with_capacity(&budget, 7).err(),
+			Some(Grow::Invariant)
+		);
 		assert_eq!((budget.used(), budget.violations()), (before, 2));
 
 		// The vector stays usable and exact afterwards.
@@ -551,9 +575,15 @@ mod tests {
 		assert_eq!(pool.current(), (2, 8192));
 		assert!(pool.reserve(1, 2, usize::MAX).is_none(), "count bound");
 		drop(b);
-		assert!(pool.reserve(8192, 3, 8192).is_none(), "bytes bound rolls the count back");
+		assert!(
+			pool.reserve(8192, 3, 8192).is_none(),
+			"bytes bound rolls the count back"
+		);
 		assert_eq!(pool.current(), (1, 4096));
-		assert!(pool.reserve(usize::MAX, 3, usize::MAX).is_none(), "checked add");
+		assert!(
+			pool.reserve(usize::MAX, 3, usize::MAX).is_none(),
+			"checked add"
+		);
 		assert_eq!(pool.current(), (1, 4096));
 		drop(a);
 		assert_eq!(pool.current(), (0, 0));

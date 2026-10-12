@@ -43,15 +43,13 @@
 //! redesigned first.
 //!
 //! ```compile_fail,E0596
-//! fn cancel_through_shared(e: &rune::experimental_core::execute::Executor) {
-//! 	e.request_cancel();
-//! }
+//! use rune::experimental_core::execute::Executor;
+//! fn cancel_through_shared(e: &Executor) { e.request_cancel(); }
 //! ```
 //!
 //! ```
-//! fn cancel_through_exclusive(e: &mut rune::experimental_core::execute::Executor) {
-//! 	e.request_cancel();
-//! }
+//! use rune::experimental_core::execute::Executor;
+//! fn cancel_through_exclusive(e: &mut Executor) { e.request_cancel(); }
 //! ```
 
 #![forbid(unsafe_code)]

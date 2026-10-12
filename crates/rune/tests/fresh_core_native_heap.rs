@@ -15,7 +15,13 @@
 //! fragmentation) and NOT RSS. A per-region figure from this one configuration is an
 //! estimate for that configuration, not a bound for other modules, signatures, ISAs or
 //! compiler versions, and no hard memory guarantee is derived from it.
-#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+// Not under Miri: it measures the native tier, which Miri refuses, from child processes.
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux",
+	not(miri)
+))]
 mod heap {
 	use rune::experimental_core::execute::Executor;
 	use rune::experimental_core::frontend::{self, Program};
@@ -59,7 +65,9 @@ mod heap {
 	fn loops(count: usize, tag: &str) -> String {
 		let mut text = String::new();
 		for k in 0..count {
-			text.push_str(&format!("fn {tag}{k}(a) {{ let n = 0; while n < a {{ n += 1; }} n }}\n"));
+			text.push_str(&format!(
+				"fn {tag}{k}(a) {{ let n = 0; while n < a {{ n += 1; }} n }}\n"
+			));
 		}
 		text.push_str(&format!("pub fn main(a) {{ {tag}0(a) }}"));
 		text
@@ -85,7 +93,9 @@ mod heap {
 	fn run(program: &Program, store: &mut Store, executor: &mut Executor, x: i64) {
 		let main = program.function(Hash::type_hash(["main"])).unwrap();
 		let arg = store.root_i64(x);
-		let out = executor.invoke(program, store, main, &[&arg], 1_000_000).unwrap();
+		let out = executor
+			.invoke(program, store, main, &[&arg], 1_000_000)
+			.unwrap();
 		store.root_release(out).unwrap();
 		store.root_release(arg).unwrap();
 	}
@@ -95,7 +105,9 @@ mod heap {
 		let warm = compile(&context, &loops(1, "w"));
 		let program = compile(&context, &loops(REGIONS as usize, "f"));
 		let large = compile(&context, &big());
-		let cycle: Vec<Program> = (0..17).map(|k| compile(&context, &loops(1, &format!("c{k}_")))).collect();
+		let cycle: Vec<Program> = (0..17)
+			.map(|k| compile(&context, &loops(1, &format!("c{k}_"))))
+			.collect();
 		let mut store = Store::new(Limits::default()).unwrap();
 		let mut executor = Executor::new().unwrap();
 
@@ -213,11 +225,25 @@ mod heap {
 		}
 
 		// Checks of THIS configuration only (not universal bounds).
-		assert!(module > 0 && module <= MODULE_RESERVE_BYTES, "module estimate {module}");
-		assert!(thread_first <= ISA_RESERVE_BYTES, "thread first-build estimate {thread_first}");
+		assert!(
+			module > 0 && module <= MODULE_RESERVE_BYTES,
+			"module estimate {module}"
+		);
+		assert!(
+			thread_first <= ISA_RESERVE_BYTES,
+			"thread first-build estimate {thread_first}"
+		);
 		for mode in ["on", "off"] {
-			assert_eq!(field(&out, mode, "thread_exit_returned_to_baseline_delta"), 0, "{mode}: thread exit frees everything");
-			assert_eq!(field(&out, mode, "drift_cycle100_to_1000"), 0, "{mode}: no drift");
+			assert_eq!(
+				field(&out, mode, "thread_exit_returned_to_baseline_delta"),
+				0,
+				"{mode}: thread exit frees everything"
+			);
+			assert_eq!(
+				field(&out, mode, "drift_cycle100_to_1000"),
+				0,
+				"{mode}: no drift"
+			);
 		}
 		println!("P3AHEAPSUM\tok");
 	}
@@ -231,6 +257,11 @@ mod heap {
 }
 
 fn main() {
-	#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+	#[cfg(all(
+		feature = "fresh-core-native",
+		target_arch = "x86_64",
+		target_os = "linux",
+		not(miri)
+	))]
 	heap::main();
 }

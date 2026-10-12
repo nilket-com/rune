@@ -13,9 +13,9 @@
 use super::abi::ExitRecord;
 use super::{EntryClass, Region, ReplayReason, Scalar, Status, MAX_REGION_CELLS, MAX_REGION_SLOTS};
 use crate::experimental_core::error::{Error, ErrorKind, Result};
+use crate::experimental_core::heap::native::{range_next_reachable, RangeCommitRefused};
 use crate::experimental_core::heap::Store;
 use crate::experimental_core::value::Value;
-use crate::experimental_core::heap::native::{range_next_reachable, RangeCommitRefused};
 
 /// Why an entry fell back to the interpreter.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -87,7 +87,15 @@ pub(crate) fn enter(
 	run: impl FnOnce(&Region, &mut [i64], &mut ExitRecord) -> u32,
 ) -> Result<core::result::Result<Exited, Refused>> {
 	let mut storage = [0i64; MAX_REGION_CELLS];
-	let (entry_fuel, iter) = match unbox(region, window, store, cancel_pending, fuel, room, &mut storage) {
+	let (entry_fuel, iter) = match unbox(
+		region,
+		window,
+		store,
+		cancel_pending,
+		fuel,
+		room,
+		&mut storage,
+	) {
 		Ok(entered) => entered,
 		Err(refused) => return Ok(Err(refused)),
 	};
@@ -96,7 +104,9 @@ pub(crate) fn enter(
 	let returned = run(region, buf, &mut record);
 
 	// Validation (no mutation), then the write-back of exactly what was validated.
-	let plan = match validate(region, window, store, entry_fuel, iter, buf, &record, returned) {
+	let plan = match validate(
+		region, window, store, entry_fuel, iter, buf, &record, returned,
+	) {
 		Ok(plan) => plan,
 		Err(refused) => return Ok(Err(refused)),
 	};
@@ -170,7 +180,12 @@ fn range_iterator(store: &Store, value: Value) -> Option<(i64, i64)> {
 /// increments never exceed the fuel this entry consumed. Computed in i128/u128: an i64
 /// difference such as `i64::MAX - i64::MIN` (2^64 - 1) overflows i64 and must not wrap.
 /// `record_fuel <= entry_fuel` is checked before the subtraction.
-pub(crate) fn iter_progress_ok(entry_next: i64, next: i64, entry_fuel: u64, record_fuel: u64) -> bool {
+pub(crate) fn iter_progress_ok(
+	entry_next: i64,
+	next: i64,
+	entry_fuel: u64,
+	record_fuel: u64,
+) -> bool {
 	let Some(progress) = i128::from(next).checked_sub(i128::from(entry_next)) else {
 		return false;
 	};
@@ -294,7 +309,8 @@ fn validate<'r>(
 	// A tracked slot that is static at this exit: the path-exact dynamic masks must agree
 	// with its static tag.
 	let agreed = written & region.tracked & !exit.dynamic;
-	let agree_ok = record.bools & agreed == exit.bools & agreed && record.units & agreed == exit.units & agreed;
+	let agree_ok = record.bools & agreed == exit.bools & agreed
+		&& record.units & agreed == exit.units & agreed;
 	let payloads_ok = (0..n).all(|l| {
 		let bit = 1u64 << l;
 		if bools & bit != 0 {
@@ -356,12 +372,17 @@ fn validate<'r>(
 		(Some(spec), Some(entry)) => {
 			let next = buf[n];
 			let unchanged_handle = window.get(spec.slot as usize) == Some(&entry.value);
-			let unchanged_payload = range_iterator(store, entry.value) == Some((entry.next, entry.end));
+			let unchanged_payload =
+				range_iterator(store, entry.value) == Some((entry.next, entry.end));
 			let end_ok = buf[n + 1] == entry.end;
 			let reachable = range_next_reachable((entry.next, entry.end), next);
 			let done_ok = !exit.iter_done || next == entry.next.max(entry.end);
 			let progress_ok = iter_progress_ok(entry.next, next, entry_fuel, record.fuel);
-			if !(unchanged_handle && unchanged_payload && end_ok && reachable && done_ok && progress_ok) {
+			if !(unchanged_handle
+				&& unchanged_payload
+				&& end_ok && reachable
+				&& done_ok && progress_ok)
+			{
 				return Err(Refused::InvalidExit);
 			}
 			Some(IterCommit {
@@ -429,8 +450,12 @@ fn write_back_invariant() -> Error {
 /// mutation: exactly the interpreter's last `put` per slot. An M2 failure anyway is an
 /// invariant failure, surfaced as an `Err`. Refuses (`InvalidExit`, nothing written) a
 /// window or store other than the ones `validate` checked.
-fn apply(plan: Plan<'_>, window: &mut [Value], store: &mut Store) -> Result<core::result::Result<Exited, Refused>> {
-	if plan.window != (window.as_ptr() as *const Value, window.len())
+fn apply(
+	plan: Plan<'_>,
+	window: &mut [Value],
+	store: &mut Store,
+) -> Result<core::result::Result<Exited, Refused>> {
+	if plan.window != (window.as_ptr(), window.len())
 		|| !core::ptr::eq(plan.store, store as *const Store)
 	{
 		return Ok(Err(Refused::InvalidExit));
@@ -552,14 +577,23 @@ mod tests {
 		assert_eq!((plan.units() | plan.bools()) & !plan.written(), 0);
 		let state = s.state_for_test();
 		let exited = apply(plan, &mut w, &mut s).unwrap().unwrap();
-		assert_eq!((exited.pc, exited.fuel), (record.pc as usize, record.fuel as usize));
+		assert_eq!(
+			(exited.pc, exited.fuel),
+			(record.pc as usize, record.fuel as usize)
+		);
 		assert_eq!(s.state_for_test(), state);
 		for (l, &slot) in region.slots.iter().enumerate() {
 			if record.written & (1 << l) == 0 {
-				assert_eq!(w[slot as usize], original[slot as usize], "untouched local {l}");
+				assert_eq!(
+					w[slot as usize], original[slot as usize],
+					"untouched local {l}"
+				);
 			} else {
 				assert!(
-					matches!(w[slot as usize], Value::I64(_) | Value::Bool(_) | Value::Unit),
+					matches!(
+						w[slot as usize],
+						Value::I64(_) | Value::Bool(_) | Value::Unit
+					),
 					"local {l}: {:?}",
 					w[slot as usize]
 				);

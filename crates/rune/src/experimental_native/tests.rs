@@ -2,7 +2,7 @@
 //! Nothing here loads code into executable memory or calls it.
 //!
 //! With `RUNE_P0_AUDIT_DIR` set, each compiled region's IR, optimized IR, VCode listing and
-//! raw machine code are written there for an external disassembly of the audit receipts.
+//! raw machine code are written there for an external disassembly.
 use super::audit::{self, Finding};
 use super::lower::{self, compile, diagnose_machine_only};
 use super::{NativeRefusal, MAX_PROGRAM_CODE_BYTES};
@@ -39,14 +39,18 @@ fn dump(name: &str, compiled: &lower::Compiled) {
 	let dir = std::path::PathBuf::from(dir);
 	std::fs::create_dir_all(&dir).unwrap();
 	std::fs::write(dir.join(format!("{name}.clif")), &compiled.listing().clif).unwrap();
-	std::fs::write(dir.join(format!("{name}.opt.clif")), &compiled.listing().optimized).unwrap();
+	std::fs::write(
+		dir.join(format!("{name}.opt.clif")),
+		&compiled.listing().optimized,
+	)
+	.unwrap();
 	std::fs::write(dir.join(format!("{name}.vcode")), &compiled.listing().vcode).unwrap();
 	std::fs::write(dir.join(format!("{name}.bin")), compiled.bytes()).unwrap();
 }
 
 const WHILE: &str = "pub fn main(_a) { let n = 0; while n < 10000 { n += 1; } n }";
 const NUMERIC: &str =
-    "pub fn main(_a) { let n = 0; let total = 0; while n < 10000 { total += n % 17; n += 1; } total }";
+	"pub fn main(_a) { let n = 0; let total = 0; while n < 10000 { total += n % 17; n += 1; } total }";
 
 #[test]
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source and runs Cranelift")]
@@ -79,9 +83,19 @@ fn kernel_regions_compile_and_pass_the_audit() {
 				"{}",
 				compiled.listing().optimized
 			);
-			assert_eq!(compiled.listing().report.rip_relative, 1, "{}", compiled.listing().vcode);
+			assert_eq!(
+				compiled.listing().report.rip_relative,
+				1,
+				"{}",
+				compiled.listing().vcode
+			);
 		} else {
-			assert_eq!(compiled.listing().report.rip_relative, 0, "{}", compiled.listing().vcode);
+			assert_eq!(
+				compiled.listing().report.rip_relative,
+				0,
+				"{}",
+				compiled.listing().vcode
+			);
 		}
 	}
 }
@@ -144,17 +158,17 @@ fn runtime_divisors_are_refused_by_the_ir_gate_and_lower_to_trapping_divides() {
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source and runs Cranelift")]
 fn every_region_of_the_test_programs_compiles_or_is_refused_by_the_audit() {
 	let programs = [
-        WHILE,
-        NUMERIC,
-        "pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x *= b; i += 1; } x }",
-        "pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x -= b; i += 1; } x }",
-        "pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x += x; i += b; } x }",
-        "pub fn main(a) { let i = 0; let s = 0; while i < a { if i % 3 == 0 { s += i; } else { s -= 1; } i += 1; } s }",
-        "pub fn main(a, flag) { let i = 0; let s = 0; while i < a { if flag { s += 2; } else { s += 1; } i += 1; } s }",
-        "pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j -= j; while j < i { s += j; j += 1; } i += 1; } s }",
-        "pub fn main(a) { let i = 0; let s = 0; while i < a { if i > 3 { if i < 9 { s += 1; } } i += 1; } s }",
-        "pub fn main(a) { let n = 0; let q = 0; while n < a { q += n / 7; n += 1; } q }",
-    ];
+		WHILE,
+		NUMERIC,
+		"pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x *= b; i += 1; } x }",
+		"pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x -= b; i += 1; } x }",
+		"pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x += x; i += b; } x }",
+		"pub fn main(a) { let i = 0; let s = 0; while i < a { if i % 3 == 0 { s += i; } else { s -= 1; } i += 1; } s }",
+		"pub fn main(a, flag) { let i = 0; let s = 0; while i < a { if flag { s += 2; } else { s += 1; } i += 1; } s }",
+		"pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j -= j; while j < i { s += j; j += 1; } i += 1; } s }",
+		"pub fn main(a) { let i = 0; let s = 0; while i < a { if i > 3 { if i < 9 { s += 1; } } i += 1; } s }",
+		"pub fn main(a) { let n = 0; let q = 0; while n < a { q += n / 7; n += 1; } q }",
+	];
 	let mut compiled = 0;
 	for (p, src) in programs.iter().enumerate() {
 		for (r, region) in regions(src).iter().enumerate() {
@@ -182,7 +196,9 @@ fn code_cache_bound_refuses_without_publishing() {
 }
 
 /// A hand-built function with one extra instruction, for the IR audit's negative cases.
-pub(super) fn with_extra(extra: impl FnOnce(&mut FunctionBuilder<'_>, ir::Value, ir::Value)) -> ir::Function {
+pub(super) fn with_extra(
+	extra: impl FnOnce(&mut FunctionBuilder<'_>, ir::Value, ir::Value),
+) -> ir::Function {
 	let mut func = ir::Function::with_name_signature(UserFuncName::user(0, 0), lower::signature());
 	let mut fctx = FunctionBuilderContext::new();
 	let mut b = FunctionBuilder::new(&mut func, &mut fctx);
@@ -209,7 +225,10 @@ fn ir_audit_negative_cases() {
 		let s = b.ins().iconst(types::I32, 1);
 		b.ins().store(mem, s, rec, ExitRecord::PC);
 	});
-	assert_eq!(audit::ir(&ok, &audit::AccessMap::uniform_for_test(2)), Ok(()));
+	assert_eq!(
+		audit::ir(&ok, &audit::AccessMap::uniform_for_test(2)),
+		Ok(())
+	);
 	// buf[2] of 2 slots, a negative offset, a record overrun, and a derived address.
 	for case in [
 		with_extra(|b, buf, _| {
@@ -238,7 +257,10 @@ fn ir_audit_negative_cases() {
 		}),
 	] {
 		assert!(
-			matches!(audit::ir(&case, &audit::AccessMap::uniform_for_test(2)), Err(Finding::Memory(_))),
+			matches!(
+				audit::ir(&case, &audit::AccessMap::uniform_for_test(2)),
+				Err(Finding::Memory(_))
+			),
 			"{}",
 			case.display()
 		);
@@ -249,10 +271,16 @@ fn ir_audit_negative_cases() {
 		let next = b.create_block();
 		b.switch_to_block(next);
 	});
-	assert!(matches!(audit::ir(&trap, &audit::AccessMap::uniform_for_test(2)), Err(Finding::Opcode(_))));
+	assert!(matches!(
+		audit::ir(&trap, &audit::AccessMap::uniform_for_test(2)),
+		Err(Finding::Opcode(_))
+	));
 	let global = with_extra(|b, _, _| {
 		let fp = b.ins().get_frame_pointer(types::I64);
 		let _ = fp;
 	});
-	assert!(matches!(audit::ir(&global, &audit::AccessMap::uniform_for_test(2)), Err(Finding::Opcode(_))));
+	assert!(matches!(
+		audit::ir(&global, &audit::AccessMap::uniform_for_test(2)),
+		Err(Finding::Opcode(_))
+	));
 }

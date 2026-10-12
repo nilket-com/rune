@@ -1,14 +1,15 @@
 //! P3a: resource bounds of the production native tier (test-only).
 //!
-//! The selection golden (`fixtures/p3a_selection_golden.txt`) was captured at 672a4eaa,
-//! before the streaming refactor, by `child_selection_golden` with
-//! `RUNE_P3A_GOLDEN_OUT` set (only test files differed from 672a4eaa then). P2b re-captured
+//! The selection golden (`fixtures/p3a_selection_golden.txt`, sha256
+//! 2f95b026f6426603c9baf156e39ca78893d3f059d409c40a04bf815bd64d8c9c) was captured from the
+//! batch build, before the streaming refactor, by `child_selection_golden` with
+//! `RUNE_P3A_GOLDEN_OUT` set. P2b re-captured
 //! it as `fixtures/p2b_selection_golden.txt` the same way; `child_selection_golden` now
 //! compares against that one line for line, and `p2b_tests::compare_p2b_delta` checks the
 //! delta between the two (the P3a differences, the forced `Exit` growth and the
 //! enumerated P2b admissions). For every program of the corpus each golden pins:
 //!
-//! - `SUMMARY`: every counter of the build summary that existed at 672a4eaa, except the
+//! - `SUMMARY`: every counter of the batch build's summary, except the
 //!   timings (production `cache::prepare`);
 //! - `LOADED`: the loaded regions in load order, `(function, header, code bytes)`;
 //! - `ANALYSIS`: the outcome of every analysed candidate header from `region::analyze`, an
@@ -17,12 +18,14 @@
 //!   `lower::compile(region, 0)`.
 //!
 //! Every test that loads or executes generated code runs in a child process, as in P2.
-//! Output lines prefixed `P3A` are receipt rows.
+//! Output lines prefixed `P3A` are machine-readable report rows.
 use super::exec_tests::{
-	anon_exec_kib, bin, branch, build, compile_source, corpus_cases, invoke, jump, lit, loc, new_cases,
-	read_maps, refusal_cases, Arg, Observed, Src, BIG_FUEL,
+	anon_exec_kib, bin, branch, build, compile_source, corpus_cases, invoke, jump, lit, loc,
+	new_cases, read_maps, refusal_cases, Arg, Observed, Src, BIG_FUEL,
 };
-use super::p2_tests::{many_headers, padded_loop, partial_refusal_case, probe_kernel_cases, straight};
+use super::p2_tests::{
+	bench_kernel_cases, many_headers, padded_loop, partial_refusal_case, straight,
+};
 use super::{audit::Finding, boundary, lower, NativeRefusal, MAX_PROGRAM_CODE_BYTES};
 use crate::experimental_core::{
 	arithmetic::Binary,
@@ -46,7 +49,7 @@ use std::time::{Duration, Instant};
 const CHILD_ENV: &str = "RUNE_P3A_NATIVE_CHILD";
 const DEADLINE: Duration = Duration::from_secs(900);
 
-/// The selection golden captured at 672a4eaa (the P2b delta's base).
+/// The selection golden captured from the batch build (the P2b delta's base).
 const GOLDEN: &str = include_str!("fixtures/p3a_selection_golden.txt");
 
 // ------------------------------------------------------------------ process isolation
@@ -133,10 +136,18 @@ fn native(code: &Code, main: u32, args: &[Arg], fuel: usize) -> Observed {
 /// Native equals plain at full fuel and at a mid fuel (the caps never change outcomes).
 fn same(code: &Code, main: u32, args: &[Arg], name: &str) {
 	let reference = plain(code, main, args, BIG_FUEL);
-	assert_eq!(native(code, main, args, BIG_FUEL), reference, "{name}: full fuel");
+	assert_eq!(
+		native(code, main, args, BIG_FUEL),
+		reference,
+		"{name}: full fuel"
+	);
 	let total = BIG_FUEL - reference.fuel_left.expect("final fuel");
 	let mid = total / 2;
-	assert_eq!(native(code, main, args, mid), plain(code, main, args, mid), "{name}: fuel {mid}");
+	assert_eq!(
+		native(code, main, args, mid),
+		plain(code, main, args, mid),
+		"{name}: fuel {mid}"
+	);
 	assert_eq!(cache::invalid_exits(), 0, "{name}: invalid exit");
 }
 
@@ -250,7 +261,7 @@ fn copies(count: usize, make: impl Fn() -> Function) -> Code {
 
 /// The one admitted region of function 0 of `code`.
 fn region_of(code: &Code) -> Region {
-	analyze(&code, 0)
+	analyze(code, 0)
 		.unwrap()
 		.into_iter()
 		.find_map(|(_, r)| r.ok())
@@ -271,8 +282,14 @@ fn code_bytes(writes: u32, adds: u32) -> usize {
 /// The adjacent pair with `bytes(adds - 1) <= target < bytes(adds)`, by bisection on an
 /// invariant (no monotonicity assumed): `(adds, bytes(adds - 1), bytes(adds))`.
 fn adds_crossing(writes: u32, target: usize, mut lo: u32, mut hi: u32) -> (u32, usize, usize) {
-	assert!(code_bytes(writes, lo) <= target, "fat_loop({writes}, {lo}) over {target}");
-	assert!(code_bytes(writes, hi) > target, "fat_loop({writes}, {hi}) not over {target}");
+	assert!(
+		code_bytes(writes, lo) <= target,
+		"fat_loop({writes}, {lo}) over {target}"
+	);
+	assert!(
+		code_bytes(writes, hi) > target,
+		"fat_loop({writes}, {hi}) not over {target}"
+	);
 	while hi - lo > 1 {
 		let mid = lo + (hi - lo) / 2;
 		if code_bytes(writes, mid) <= target {
@@ -313,32 +330,48 @@ const LISTED: &[&str] = &[
 fn seventy_loops() -> Program {
 	let mut text = String::new();
 	for k in 0..70 {
-		text.push_str(&format!("fn f{k}(a) {{ let n = 0; while n < a {{ n += 1; }} n }}\n"));
+		text.push_str(&format!(
+			"fn f{k}(a) {{ let n = 0; while n < a {{ n += 1; }} n }}\n"
+		));
 	}
 	text.push_str("pub fn main(a) { f0(a) }");
 	compile_source(&text)
 }
 
-/// The P2 bounds programs of `child_bounds` (c) to (g), at the constants of 672a4eaa.
+/// The P2 bounds programs of `child_bounds` (c) to (g), at the batch build's constants.
 fn bounds_programs() -> Vec<(String, Src)> {
-	let mut out = Vec::new();
-	out.push(("bounds_program_regions".into(), Src::Program(seventy_loops())));
-	out.push(("bounds_function_length_over".into(), Src::Code(build(vec![padded_loop(65_536)]))));
-	out.push(("bounds_function_length_short".into(), Src::Code(build(vec![padded_loop(1_000)]))));
-	out.push(("bounds_headers_over".into(), Src::Code(build(vec![many_headers(257)]))));
-	out.push(("bounds_headers_at".into(), Src::Code(build(vec![many_headers(256)]))));
-
 	// 1,000 instructions over 64 slots: analysis_work = 1,000 + 64,000 per function.
 	let fit = ((1u64 << 24) / 65_000) as usize;
-	out.push((
-		"bounds_analysis_work".into(),
-		Src::Code(build((0..fit + 5).map(|_| straight(1_000, 64)).collect())),
-	));
-	out.push((
-		"bounds_analysed_functions".into(),
-		Src::Code(build((0..1024 + 7).map(|_| straight(2, 1)).collect())),
-	));
-	out
+	vec![
+		(
+			"bounds_program_regions".into(),
+			Src::Program(seventy_loops()),
+		),
+		(
+			"bounds_function_length_over".into(),
+			Src::Code(build(vec![padded_loop(65_536)])),
+		),
+		(
+			"bounds_function_length_short".into(),
+			Src::Code(build(vec![padded_loop(1_000)])),
+		),
+		(
+			"bounds_headers_over".into(),
+			Src::Code(build(vec![many_headers(257)])),
+		),
+		(
+			"bounds_headers_at".into(),
+			Src::Code(build(vec![many_headers(256)])),
+		),
+		(
+			"bounds_analysis_work".into(),
+			Src::Code(build((0..fit + 5).map(|_| straight(1_000, 64)).collect())),
+		),
+		(
+			"bounds_analysed_functions".into(),
+			Src::Code(build((0..1024 + 7).map(|_| straight(2, 1)).collect())),
+		),
+	]
 }
 
 /// Every program of the golden, by unique name.
@@ -346,7 +379,7 @@ pub(super) fn golden_programs() -> Vec<(String, Src)> {
 	let mut cases = corpus_cases();
 	cases.extend(new_cases());
 	cases.extend(refusal_cases());
-	cases.extend(probe_kernel_cases());
+	cases.extend(bench_kernel_cases());
 	cases.push(partial_refusal_case());
 
 	let mut out: Vec<(String, Src)> = cases.into_iter().map(|c| (c.name, c.src)).collect();
@@ -399,7 +432,12 @@ fn exit_text(e: &Exit) -> String {
 pub(super) fn region_text(r: &Region) -> String {
 	let exits: Vec<String> = r.exits.iter().map(exit_text).collect();
 	let b1 = if r.iter.is_some() || !r.sites.is_empty() {
-		format!(" iter={:?} callee_slots={} sites={:?}", r.iter, r.callee_slots, r.sites.as_slice())
+		format!(
+			" iter={:?} callee_slots={} sites={:?}",
+			r.iter,
+			r.callee_slots,
+			r.sites.as_slice()
+		)
 	} else {
 		String::new()
 	};
@@ -417,7 +455,7 @@ pub(super) fn region_text(r: &Region) -> String {
 	)
 }
 
-/// The summary counters that existed at 672a4eaa, in their declaration order, without the
+/// The batch build's summary counters, in their declaration order, without the
 /// timings.
 pub(super) fn summary_fields(s: &NativeSummary) -> String {
 	format!(
@@ -476,7 +514,10 @@ fn golden_of(name: &str, code: &Code) -> (String, NativeSummary) {
 	out.push_str(&format!("PROGRAM\t{name}\n"));
 	out.push_str(&format!("SUMMARY\t{name}\t{}\n", summary_fields(&summary)));
 	for r in cache::regions_for_test(code.id()).expect("resident") {
-		out.push_str(&format!("LOADED\t{name}\tf{}\th{}\tcode_bytes={}\n", r.function, r.header, r.code_bytes));
+		out.push_str(&format!(
+			"LOADED\t{name}\tf{}\th{}\tcode_bytes={}\n",
+			r.function, r.header, r.code_bytes
+		));
 	}
 	cache::clear_for_test();
 
@@ -493,15 +534,23 @@ fn golden_of(name: &str, code: &Code) -> (String, NativeSummary) {
 								region.exits.len(),
 								region.slots.len()
 							));
-							out.push_str(&format!("COMPILE\t{name}\tf{id}\th{header}\t{}\n", compile_class(&region)));
+							out.push_str(&format!(
+								"COMPILE\t{name}\tf{id}\th{header}\t{}\n",
+								compile_class(&region)
+							));
 						}
 						Err(refusal) => {
-							out.push_str(&format!("ANALYSIS\t{name}\tf{id}\th{header}\trefused\t{refusal:?}\n"));
+							out.push_str(&format!(
+								"ANALYSIS\t{name}\tf{id}\th{header}\trefused\t{refusal:?}\n"
+							));
 						}
 					}
 				}
 			}
-			Err(error) => out.push_str(&format!("ANALYSIS\t{name}\tf{id}\terror\t{:?}\n", error.kind)),
+			Err(error) => out.push_str(&format!(
+				"ANALYSIS\t{name}\tf{id}\terror\t{:?}\n",
+				error.kind
+			)),
 		}
 	}
 	(out, summary)
@@ -531,13 +580,21 @@ fn child_selection_golden() {
 			s.analysis_peak_bytes,
 			s.reserved_bytes
 		);
-		assert_eq!((s.transient, s.steps, s.process_bound, s.page_size), (0, 0, 0, 0), "{name}");
+		assert_eq!(
+			(s.transient, s.steps, s.process_bound, s.page_size),
+			(0, 0, 0, 0),
+			"{name}"
+		);
 	}
 	assert_eq!(cache::invalid_exits(), 0);
 
 	if let Some(path) = std::env::var_os("RUNE_P3A_GOLDEN_OUT") {
 		std::fs::write(&path, &text).expect("write golden");
-		println!("P3AGOLDEN\twritten\tlines={}\tfnv={:016x}", text.lines().count(), fnv1a(&text));
+		println!(
+			"P3AGOLDEN\twritten\tlines={}\tfnv={:016x}",
+			text.lines().count(),
+			fnv1a(&text)
+		);
 		return;
 	}
 
@@ -552,16 +609,18 @@ fn child_selection_golden() {
 	// fixture-to-fixture checks: `fuel_selection_golden_delta` (FUEL against R1),
 	// `r1_selection_golden_delta` (R1 against W13), `w13_selection_golden_delta` (W13 against
 	// B1), `b1_selection_golden_delta` (B1 against P2b) and `p2b_selection_golden_delta` (P2b
-	// against the 672a4eaa golden).
+	// against the batch build's golden).
 	let fuel = super::fuel_tests::FUEL_GOLDEN;
-	let (new_lines, fuel_lines): (Vec<&str>, Vec<&str>) = (text.lines().collect(), fuel.lines().collect());
+	let (new_lines, fuel_lines): (Vec<&str>, Vec<&str>) =
+		(text.lines().collect(), fuel.lines().collect());
 	assert_eq!(new_lines.len(), fuel_lines.len(), "FUEL golden line count");
 	for (n, g) in new_lines.iter().zip(fuel_lines.iter()) {
 		assert_eq!(n, g);
 	}
 	let r1 = super::r1_tests::R1_GOLDEN;
 	let (identical_r1, changed_r1) = super::w13_tests::compare_w13_delta(r1, &text);
-	let selected = super::fuel_tests::check_fuel_selected_only(r1, &text).unwrap_or_else(|e| std::panic!("FUEL golden delta: {e}"));
+	let selected = super::fuel_tests::check_fuel_selected_only(r1, &text)
+		.unwrap_or_else(|e| std::panic!("FUEL golden delta: {e}"));
 	let w13 = super::w13_tests::W13_GOLDEN;
 	let (identical, changed) = super::w13_tests::compare_w13_delta(w13, &text);
 	let b1 = super::b1_tests::B1_GOLDEN;
@@ -602,8 +661,14 @@ fn child_streaming() {
 	let s = cache::prepare(&program.code).unwrap();
 	row("a2_region_cap_streaming", &s);
 	assert_eq!(cache::analyzed_headers_for_test() - before, 64);
-	assert_eq!((s.loaded, s.regions, s.region_cap, s.skipped_after_caps), (64, 64, 1, 6));
-	assert_eq!(s.analysed_functions, 65, "main and f1..f64; 672a4eaa analysed all 71");
+	assert_eq!(
+		(s.loaded, s.regions, s.region_cap, s.skipped_after_caps),
+		(64, 64, 1, 6)
+	);
+	assert_eq!(
+		s.analysed_functions, 65,
+		"main and f1..f64; the batch build analysed all 71"
+	);
 	same(&program.code, main, &[Arg::I(30)], "seventy_loops");
 
 	// (b) The scan is charged before it runs: work budget 3 * L for 10 functions of
@@ -614,7 +679,10 @@ fn child_streaming() {
 	let s = prep_with(Some(scaled(|l| l.program_analysis_work = 3 * len)), &code);
 	row("a3_scan_charged_first", &s);
 	assert_eq!(cache::scans_for_test() - scans, 3, "three scans, not ten");
-	assert_eq!((s.skipped_headers, s.skipped_budget, s.attempted_functions), (3, 7, 10));
+	assert_eq!(
+		(s.skipped_headers, s.skipped_budget, s.attempted_functions),
+		(3, 7, 10)
+	);
 
 	// (c) The attempt cap counts functions every gate skips: k - 1, k, k + 1 around 8.
 	for (functions, skipped) in [(7usize, 0u32), (8, 0), (9, 1), (20, 12)] {
@@ -626,19 +694,35 @@ fn child_streaming() {
 		});
 		let s = prep_with(Some(limits), &code);
 		row(&format!("a3_attempt_cap_{functions}"), &s);
-		assert_eq!(cache::scans_for_test(), scans, "no scan of a skipped function");
 		assert_eq!(
-			(s.attempted_functions as usize, s.skipped_length as usize, s.skipped_budget),
+			cache::scans_for_test(),
+			scans,
+			"no scan of a skipped function"
+		);
+		assert_eq!(
+			(
+				s.attempted_functions as usize,
+				s.skipped_length as usize,
+				s.skipped_budget
+			),
 			(functions.min(8), functions.min(8), skipped)
 		);
 	}
 
 	// (d) The attempt cap at its real value: 4,097 tiny functions.
-	let code = copies(cache::MAX_PROGRAM_ATTEMPTED_FUNCTIONS + 1, || straight(2, 1));
+	let code = copies(cache::MAX_PROGRAM_ATTEMPTED_FUNCTIONS + 1, || {
+		straight(2, 1)
+	});
 	let s = prep_with(None, &code);
 	row("a3_attempt_cap_real_4096", &s);
-	assert_eq!(s.attempted_functions as usize, cache::MAX_PROGRAM_ATTEMPTED_FUNCTIONS);
-	assert_eq!(s.analysed_functions as usize, cache::MAX_PROGRAM_ANALYSED_FUNCTIONS);
+	assert_eq!(
+		s.attempted_functions as usize,
+		cache::MAX_PROGRAM_ATTEMPTED_FUNCTIONS
+	);
+	assert_eq!(
+		s.analysed_functions as usize,
+		cache::MAX_PROGRAM_ANALYSED_FUNCTIONS
+	);
 	assert_eq!(
 		s.skipped_budget as usize,
 		cache::MAX_PROGRAM_ATTEMPTED_FUNCTIONS - cache::MAX_PROGRAM_ANALYSED_FUNCTIONS + 1
@@ -664,14 +748,20 @@ fn child_transient() {
 
 	// (a) Scaled: the exact peak P of a program, then the limit at P - 1, P, P + 1.
 	let code = build(vec![fat_loop(40, 60), many_headers(20), fat_loop(8, 200)]);
-	let unbounded = prep_with(Some(scaled(|l| l.transient_analysis_bytes = usize::MAX)), &code);
+	let unbounded = prep_with(
+		Some(scaled(|l| l.transient_analysis_bytes = usize::MAX)),
+		&code,
+	);
 	let peak = unbounded.analysis_peak_bytes as usize;
 	row("a2_transient_unbounded", &unbounded);
 	assert_eq!(unbounded.transient, 0);
 	for (limit, refused) in [(peak - 1, true), (peak, false), (peak + 1, false)] {
 		let s = prep_with(Some(scaled(|l| l.transient_analysis_bytes = limit)), &code);
 		row(&format!("a2_transient_limit_{limit}"), &s);
-		assert!(s.analysis_peak_bytes as usize <= limit, "never charged past the limit");
+		assert!(
+			s.analysis_peak_bytes as usize <= limit,
+			"never charged past the limit"
+		);
 		assert_eq!(s.transient > 0, refused, "limit {limit} (peak {peak})");
 		if refused {
 			assert!(s.loaded < unbounded.loaded || s.regions < unbounded.regions);
@@ -720,7 +810,9 @@ fn child_transient() {
 fn shift(f: &Function, by: u32) -> Vec<Op> {
 	(0..f.len())
 		.map(|pc| match f.operation(pc).unwrap() {
-			Op::Jump { target } => Op::Jump { target: target + by },
+			Op::Jump { target } => Op::Jump {
+				target: target + by,
+			},
 			Op::Branch { condition, yes, no } => Op::Branch {
 				condition,
 				yes: yes + by,
@@ -772,7 +864,11 @@ fn child_steps() {
 	row("a2_steps_zero_slots", &s);
 	assert_eq!((s.steps, s.loaded), (0, 1));
 	for fuel in [0, 1, 2, 17] {
-		assert_eq!(native(&zero, 0, &[Arg::I(1)], fuel), plain(&zero, 0, &[Arg::I(1)], fuel), "fuel {fuel}");
+		assert_eq!(
+			native(&zero, 0, &[Arg::I(1)], fuel),
+			plain(&zero, 0, &[Arg::I(1)], fuel),
+			"fuel {fuel}"
+		);
 	}
 	println!(
 		"P3ASTEPS\tfat_loop(16,64): nodes={} slots={} transfers={transfers} cutoff={cutoff}; factor 0 refuses; zero-slot region admitted",
@@ -819,10 +915,17 @@ fn child_process_threads() {
 	let results: Vec<_> = handles.into_iter().map(|h| h.join().unwrap()).collect();
 	let loaded: u32 = results.iter().map(|r| r.0).sum();
 	let bound: u32 = results.iter().map(|r| r.1).sum();
-	println!("P3APROCESS\tthreads=4 cap=3: loaded={loaded} process_bound={bound} held_at_barrier={:?}", results.iter().map(|r| r.2).collect::<Vec<_>>());
+	println!(
+		"P3APROCESS\tthreads=4 cap=3: loaded={loaded} process_bound={bound} held_at_barrier={:?}",
+		results.iter().map(|r| r.2).collect::<Vec<_>>()
+	);
 	assert_eq!((loaded, bound), (3, 1));
 	assert!(results.iter().all(|r| r.2 == (3, 3 * cache::PAGE_BYTES)));
-	assert_eq!(cache::process_reserved_for_test(), (0, 0), "thread exit released every token");
+	assert_eq!(
+		cache::process_reserved_for_test(),
+		(0, 0),
+		"thread exit released every token"
+	);
 
 	// Concurrent reserve and drop with real loads: 8 threads, cap 5, build and evict.
 	let handles: Vec<_> = (0..8)
@@ -830,7 +933,9 @@ fn child_process_threads() {
 			std::thread::spawn(move || {
 				fresh();
 				cache::set_limits_for_test(Some(scaled(|l| l.process_mappings = 5)));
-				let codes: Vec<Code> = (0..3).map(|k| build(vec![fat_loop(1 + (t + k) % 4, 2)])).collect();
+				let codes: Vec<Code> = (0..3)
+					.map(|k| build(vec![fat_loop(1 + (t + k) % 4, 2)]))
+					.collect();
 				let (mut loaded, mut bound) = (0u32, 0u32);
 				for round in 0..40 {
 					let code = &codes[round % 3];
@@ -838,7 +943,10 @@ fn child_process_threads() {
 					loaded += s.loaded;
 					bound += s.process_bound;
 					let (count, bytes) = cache::process_reserved_for_test();
-					assert!(count <= 5 && bytes <= 5 * cache::PAGE_BYTES, "({count}, {bytes})");
+					assert!(
+						count <= 5 && bytes <= 5 * cache::PAGE_BYTES,
+						"({count}, {bytes})"
+					);
 					if round % 2 == 0 {
 						cache::evict(code.id());
 					}
@@ -870,8 +978,15 @@ fn child_process_threads() {
 			})),
 			&code,
 		);
-		assert_eq!((s.loaded, s.process_bound), (loaded, 3 - loaded), "count {count} bytes {bytes}");
-		assert_eq!(cache::process_reserved_for_test(), (loaded as usize, loaded as usize * cache::PAGE_BYTES));
+		assert_eq!(
+			(s.loaded, s.process_bound),
+			(loaded, 3 - loaded),
+			"count {count} bytes {bytes}"
+		);
+		assert_eq!(
+			cache::process_reserved_for_test(),
+			(loaded as usize, loaded as usize * cache::PAGE_BYTES)
+		);
 		same(&code, 0, &[Arg::I(4)], "process k");
 	}
 	cache::set_limits_for_test(None);
@@ -894,7 +1009,10 @@ fn child_reservation_paths() {
 	let page = cache::PAGE_BYTES;
 
 	// Injected load errors: nothing loaded, reservation released, memory freed.
-	for stage in [boundary::InjectLoadError::AfterDefine, boundary::InjectLoadError::AfterFinalize] {
+	for stage in [
+		boundary::InjectLoadError::AfterDefine,
+		boundary::InjectLoadError::AfterFinalize,
+	] {
 		let frees = boundary::load_error_frees_for_test();
 		boundary::inject_load_error_for_test(Some(stage));
 		let s = prep_with(None, &one);
@@ -902,7 +1020,11 @@ fn child_reservation_paths() {
 		assert_eq!((s.loaded, s.load_refused), (0, 1), "{stage:?}");
 		assert_eq!(boundary::load_error_frees_for_test(), frees + 1);
 		assert_eq!(cache::process_reserved_for_test(), (0, 0), "{stage:?}");
-		assert_eq!(cache::cache_state_for_test().1, 0, "thread mapped charge returned");
+		assert_eq!(
+			cache::cache_state_for_test().1,
+			0,
+			"thread mapped charge returned"
+		);
 		same(&one, 0, &[Arg::I(3)], "load error");
 	}
 
@@ -912,16 +1034,32 @@ fn child_reservation_paths() {
 	assert_eq!(cache::process_reserved_for_test(), (5, 5 * page));
 	cache::clear_for_test();
 	assert_eq!(cache::process_reserved_for_test(), (0, 0));
-	let codes: Vec<Code> = (0..cache::MAX_CACHED_PROGRAMS as u32 + 1).map(|k| build(vec![fat_loop(1 + k % 50, 1)])).collect();
+	let codes: Vec<Code> = (0..cache::MAX_CACHED_PROGRAMS as u32 + 1)
+		.map(|k| build(vec![fat_loop(1 + k % 50, 1)]))
+		.collect();
 	for (k, code) in codes.iter().enumerate() {
 		cache::prepare(code).unwrap();
 		let expected = (k + 1).min(cache::MAX_CACHED_PROGRAMS);
-		assert_eq!(cache::process_reserved_for_test(), (expected, expected * page), "after {k}");
+		assert_eq!(
+			cache::process_reserved_for_test(),
+			(expected, expected * page),
+			"after {k}"
+		);
 	}
-	assert!(!cache::resident_for_test(codes[0].id()), "LRU evicted the first");
-	assert_eq!(cache::entry_capacity_for_test(), cache::MAX_CACHED_PROGRAMS, "exact entry table");
+	assert!(
+		!cache::resident_for_test(codes[0].id()),
+		"LRU evicted the first"
+	);
+	assert_eq!(
+		cache::entry_capacity_for_test(),
+		cache::MAX_CACHED_PROGRAMS,
+		"exact entry table"
+	);
 	assert!(cache::evict(codes[1].id()));
-	assert_eq!(cache::process_reserved_for_test().0, cache::MAX_CACHED_PROGRAMS - 1);
+	assert_eq!(
+		cache::process_reserved_for_test().0,
+		cache::MAX_CACHED_PROGRAMS - 1
+	);
 	cache::clear_for_test();
 	assert_eq!(cache::process_reserved_for_test(), (0, 0));
 
@@ -967,8 +1105,16 @@ fn child_reservation_paths() {
 	let s = prep_with(None, &one);
 	boundary::inject_load_error_for_test(None);
 	assert_eq!((s.loaded, s.load_panicked), (0, 1));
-	assert_eq!(cache::process_reserved_for_test(), (1, page), "leaked with its mapping");
-	assert_eq!(cache::cache_state_for_test().1, 0, "the thread charge is returned");
+	assert_eq!(
+		cache::process_reserved_for_test(),
+		(1, page),
+		"leaked with its mapping"
+	);
+	assert_eq!(
+		cache::cache_state_for_test().1,
+		0,
+		"the thread charge is returned"
+	);
 	same(&one, 0, &[Arg::I(3)], "load panic");
 	println!("P3ARESERVE\tload error x2 released; eviction/LRU released; build panic released; checked-out panic kept; thread exit released; load panic leaked with its mapping (1, {page})");
 }
@@ -1019,7 +1165,10 @@ fn child_mapped_exact() {
 	let page = cache::PAGE_BYTES;
 	let (a1, b1lo, b1hi) = adds_crossing(16, page, 1, 16);
 	let (a2, b2lo, b2hi) = adds_crossing(16, 2 * page, a1, 32);
-	println!("P3AMAP\tcrossings: adds {} -> {b1lo}/{b1hi} bytes; adds {} -> {b2lo}/{b2hi} bytes", a1, a2);
+	println!(
+		"P3AMAP\tcrossings: adds {} -> {b1lo}/{b1hi} bytes; adds {} -> {b2lo}/{b2hi} bytes",
+		a1, a2
+	);
 	for adds in [a1 - 1, a1, a2 - 1, a2] {
 		cache::clear_for_test();
 		let code = build(vec![fat_loop(16, adds)]);
@@ -1083,7 +1232,10 @@ fn child_compile_cap() {
 		let main = program.function(Hash::type_hash(["main"])).unwrap();
 		let s = prep_with(None, &program.code);
 		row(&format!("a5_compile_cap_real_{count}"), &s);
-		assert_eq!((s.division_runtime as usize, s.compile_cap, s.loaded), (count.min(128), cap, 0));
+		assert_eq!(
+			(s.division_runtime as usize, s.compile_cap, s.loaded),
+			(count.min(128), cap, 0)
+		);
 		same(&program.code, main, &[Arg::I(7), Arg::I(2)], "compile cap");
 	}
 
@@ -1096,8 +1248,16 @@ fn child_compile_cap() {
 	let s = prep_with(Some(scaled(|l| l.program_compiles = 4)), &program.code);
 	cache::inject_compile_panic_for_test(None);
 	row("a5_compile_cap_scaled_4", &s);
-	assert_eq!((s.division_runtime, s.panicked, s.loaded, s.compile_cap), (2, 1, 1, 1));
-	same(&program.code, main, &[Arg::I(7), Arg::I(2)], "compile cap scaled");
+	assert_eq!(
+		(s.division_runtime, s.panicked, s.loaded, s.compile_cap),
+		(2, 1, 1, 1)
+	);
+	same(
+		&program.code,
+		main,
+		&[Arg::I(7), Arg::I(2)],
+		"compile cap scaled",
+	);
 	cache::set_limits_for_test(None);
 }
 
@@ -1122,7 +1282,10 @@ fn child_program_code() {
 		let code = copies(count, fat);
 		let s = prep_with(None, &code);
 		row(&format!("a5_program_code_real_{count}"), &s);
-		assert_eq!((s.loaded as usize, s.size as usize), (loaded, count - loaded));
+		assert_eq!(
+			(s.loaded as usize, s.size as usize),
+			(loaded, count - loaded)
+		);
 		assert!(s.code_bytes as usize <= MAX_PROGRAM_CODE_BYTES);
 		if count == fit + 2 {
 			same(&code, 0, &[Arg::I(3)], "program code real");
@@ -1164,19 +1327,33 @@ fn child_program_metadata() {
 	let heavy = || fat_loop(1, 129);
 	let m = charged_metadata(heavy);
 	let fit = cache::MAX_PROGRAM_METADATA_BYTES / m;
-	assert!(fit * code_bytes(1, 129) <= MAX_PROGRAM_CODE_BYTES, "the code bound does not bind first");
-	assert!(fit < cache::MAX_PROGRAM_REGIONS, "metadata binds before the region cap");
+	assert!(
+		fit * code_bytes(1, 129) <= MAX_PROGRAM_CODE_BYTES,
+		"the code bound does not bind first"
+	);
+	assert!(
+		fit < cache::MAX_PROGRAM_REGIONS,
+		"metadata binds before the region cap"
+	);
 	for (count, loaded) in [(fit, fit), (fit + 1, fit)] {
 		let code = copies(count, heavy);
 		let s = prep_with(None, &code);
 		row(&format!("a5_program_metadata_real_{count}"), &s);
-		assert_eq!((s.loaded as usize, s.metadata as usize, s.size), (loaded, count - loaded, 0));
-		assert!((s.metadata_bytes + s.reserved_bytes) as usize <= cache::MAX_PROGRAM_METADATA_BYTES);
+		assert_eq!(
+			(s.loaded as usize, s.metadata as usize, s.size),
+			(loaded, count - loaded, 0)
+		);
+		assert!(
+			(s.metadata_bytes + s.reserved_bytes) as usize <= cache::MAX_PROGRAM_METADATA_BYTES
+		);
 		if count == fit + 1 {
 			same(&code, 0, &[Arg::I(3)], "program metadata real");
 		}
 	}
-	println!("P3AMETA\tprogram: region metadata {m} bytes (incl. module estimate): {fit} fit in {}", cache::MAX_PROGRAM_METADATA_BYTES);
+	println!(
+		"P3AMETA\tprogram: region metadata {m} bytes (incl. module estimate): {fit} fit in {}",
+		cache::MAX_PROGRAM_METADATA_BYTES
+	);
 
 	// Scaled: three regions, limit 2m - 1, 2m, 2m + 1.
 	let small = || fat_loop(2, 2);
@@ -1218,7 +1395,10 @@ fn child_thread_metadata() {
 		assert_eq!((s.loaded as usize, s.thread_bound), (per, 0));
 		assert!(metadata + base <= cache::MAX_THREAD_METADATA_BYTES);
 	}
-	assert!(!cache::resident_for_test(codes[0].id()), "the least recently used program was evicted");
+	assert!(
+		!cache::resident_for_test(codes[0].id()),
+		"the least recently used program was evicted"
+	);
 	assert!(codes[1..].iter().all(|c| cache::resident_for_test(c.id())));
 	same(&codes[fit], 0, &[Arg::I(3)], "thread metadata real");
 	println!("P3ATMETA\tthread: base {base} + {fit} programs of {per} regions x {m} bytes fit in {}; program {} evicts the first", cache::MAX_THREAD_METADATA_BYTES, fit + 1);
@@ -1234,7 +1414,11 @@ fn child_thread_metadata() {
 		for code in &codes {
 			assert_eq!(cache::prepare(code).unwrap().loaded, 1);
 		}
-		assert_eq!(!cache::resident_for_test(codes[0].id()), evicted, "extra {extra}");
+		assert_eq!(
+			!cache::resident_for_test(codes[0].id()),
+			evicted,
+			"extra {extra}"
+		);
 	}
 	cache::set_limits_for_test(None);
 	cache::clear_for_test();
@@ -1281,14 +1465,22 @@ fn child_thread_mapped() {
 
 	// Scaled: limit 3 pages +/- 1 byte, one-page programs; then the test-only seam of
 	// holding checkouts (in-flight entries are never evicted) makes thread_bound reachable.
-	for (limit, evicted) in [(3 * page - 1, true), (3 * page, false), (3 * page + 1, false)] {
+	for (limit, evicted) in [
+		(3 * page - 1, true),
+		(3 * page, false),
+		(3 * page + 1, false),
+	] {
 		cache::set_limits_for_test(Some(scaled(|l| l.thread_mapped_bytes = limit)));
 		cache::clear_for_test();
 		let codes: Vec<Code> = (0..3).map(|k| build(vec![fat_loop(2 + k, 2)])).collect();
 		for code in &codes {
 			assert_eq!(cache::prepare(code).unwrap().loaded, 1);
 		}
-		assert_eq!(!cache::resident_for_test(codes[0].id()), evicted, "limit {limit}");
+		assert_eq!(
+			!cache::resident_for_test(codes[0].id()),
+			evicted,
+			"limit {limit}"
+		);
 	}
 	cache::set_limits_for_test(Some(scaled(|l| l.thread_mapped_bytes = 3 * page)));
 	cache::clear_for_test();
@@ -1320,7 +1512,7 @@ fn p3a_shared_isa_matches_fresh_isa() {
 			if code.function(id).unwrap().len() > cache::MAX_ANALYSED_FUNCTION_LEN {
 				continue;
 			}
-			for (header, region) in analyze(&code, id).unwrap() {
+			for (header, region) in analyze(code, id).unwrap() {
 				let Ok(region) = region else { continue };
 				let fresh = lower::diagnose_isa(&region, true);
 				let shared = lower::diagnose_isa(&region, false);
@@ -1353,10 +1545,18 @@ pub fn main(a) { let s = 0; let i = 0; while i < a { s += i; i += 1; } let j = 0
 /// full observed outcome, including the remaining fuel.
 fn same_every_fuel(code: &Code, main: u32, args: &[Arg], name: &str) -> usize {
 	let reference = plain(code, main, args, BIG_FUEL);
-	assert_eq!(native(code, main, args, BIG_FUEL), reference, "{name}: full fuel");
+	assert_eq!(
+		native(code, main, args, BIG_FUEL),
+		reference,
+		"{name}: full fuel"
+	);
 	let total = BIG_FUEL - reference.fuel_left.expect("final fuel");
 	for fuel in 0..=total + 1 {
-		assert_eq!(native(code, main, args, fuel), plain(code, main, args, fuel), "{name}: fuel {fuel}");
+		assert_eq!(
+			native(code, main, args, fuel),
+			plain(code, main, args, fuel),
+			"{name}: fuel {fuel}"
+		);
 	}
 	assert_eq!(cache::invalid_exits(), 0, "{name}: invalid exit");
 	total
@@ -1385,17 +1585,30 @@ fn child_partial_analysis() {
 	let clean = cache::prepare(code).unwrap();
 	row("follow1_partial_clean", &clean);
 	assert_eq!(
-		(clean.candidates, clean.regions, clean.loaded, clean.analysis_errors),
+		(
+			clean.candidates,
+			clean.regions,
+			clean.loaded,
+			clean.analysis_errors
+		),
 		(4, 4, 4, 0)
 	);
 	let clean_regions = cache::regions_for_test(code.id()).unwrap();
-	let main_headers: Vec<u32> = clean_regions.iter().filter(|r| r.function == main).map(|r| r.header).collect();
+	let main_headers: Vec<u32> = clean_regions
+		.iter()
+		.filter(|r| r.function == main)
+		.map(|r| r.header)
+		.collect();
 	assert_eq!(main_headers.len(), 3);
 	let second = clean_regions
 		.iter()
 		.position(|r| r.function == main && r.header == main_headers[1])
 		.unwrap();
-	assert_eq!(cache::budget_used_for_test(), (None, Some(0)), "clean build: no error, nothing left charged");
+	assert_eq!(
+		cache::budget_used_for_test(),
+		(None, Some(0)),
+		"clean build: no error, nothing left charged"
+	);
 	cache::clear_for_test();
 	assert_eq!(cache::process_reserved_for_test(), (0, 0));
 
@@ -1409,13 +1622,23 @@ fn child_partial_analysis() {
 
 	// Later affected work refuses cleanly: `main`'s third header is never analysed, the
 	// failed header admits nothing; `g` (another function) is unaffected.
-	assert_eq!(cache::analyzed_headers_for_test() - analysed, 3, "main h1, main h2 (failed), g");
+	assert_eq!(
+		cache::analyzed_headers_for_test() - analysed,
+		3,
+		"main h1, main h2 (failed), g"
+	);
 	assert_eq!((s.analysis_errors, s.accounting_invariant), (1, 0));
 	assert_eq!((s.candidates, s.regions, s.loaded), (3, 2, 2));
 	let regions = cache::regions_for_test(code.id()).unwrap();
 	let kept: Vec<(u32, u32)> = regions.iter().map(|r| (r.function, r.header)).collect();
-	assert!(kept.contains(&(main, main_headers[0])), "the earlier region stays: {kept:?}");
-	assert!(!kept.iter().any(|&(f, h)| f == main && h != main_headers[0]), "{kept:?}");
+	assert!(
+		kept.contains(&(main, main_headers[0])),
+		"the earlier region stays: {kept:?}"
+	);
+	assert!(
+		!kept.iter().any(|&(f, h)| f == main && h != main_headers[0]),
+		"{kept:?}"
+	);
 	assert_eq!(kept.len(), 2);
 
 	// No incomplete analysis products: at the error the budget held exactly the scan list
@@ -1452,13 +1675,20 @@ fn child_partial_analysis() {
 		let s = cache::prepare(&program.code).unwrap();
 		inject_analysis_error_for_test(None);
 		assert_eq!((s.analysis_errors, s.loaded), (1, 2));
-		assert_eq!(cache::process_reserved_for_test(), (2, s.mapped_bytes as usize));
+		assert_eq!(
+			cache::process_reserved_for_test(),
+			(2, s.mapped_bytes as usize)
+		);
 		same(&program.code, main, &[Arg::I(7)], "partial thread");
 		s.mapped_bytes
 	})
 	.join()
 	.unwrap();
-	assert_eq!(cache::process_reserved_for_test(), (0, 0), "thread exit released every token");
+	assert_eq!(
+		cache::process_reserved_for_test(),
+		(0, 0),
+		"thread exit released every token"
+	);
 
 	println!(
 		"P3APARTIAL\tmain h{} loaded, h{} injected error (charged {used} == scan+context {expected}), h{} not analysed; g loaded; loaded=2 mapped={mapped} (thread run {source}); native == interpreter at every fuel 0..={}; evict and thread exit -> (0, 0)",

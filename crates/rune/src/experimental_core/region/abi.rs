@@ -1,5 +1,5 @@
-//! The exit record shared by the native region function and safe Rust (DESIGN; the native
-//! side is compiled but never called in P0).
+//! The exit record shared by the native region function and safe Rust. The native side
+//! is called only through the region cache (`cache`), which validates every record.
 //!
 //! Native signature (x86-64 System V): `unsafe extern "C" fn(buf: *mut i64, record: *mut
 //! ExitRecord) -> u32`.

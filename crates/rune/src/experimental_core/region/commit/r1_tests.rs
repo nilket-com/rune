@@ -1,4 +1,4 @@
-//! R1 (rnx 0184): the canonical-entry contract R1 relies on, from the REAL entry fill.
+//! R1: the canonical-entry contract R1 relies on, from the REAL entry fill.
 //!
 //! R1 stores the header IterNext's `out` at an exit as `select(written & bit, next - 1, 0)`.
 //! Where the bit is clear that is 0, which is exactly the cell's entry value only because
@@ -52,10 +52,23 @@ fn originals() -> [Value; 7] {
 
 /// calls' main frame at its header over `start..end` (x, total, range, iterator, i,
 /// temporary), with `original` in every `Scalar` slot.
-fn calls_window(s: &mut Store, region: &Region, original: Value, start: i64, end: i64) -> StdVec<Value> {
+fn calls_window(
+	s: &mut Store,
+	region: &Region,
+	original: Value,
+	start: i64,
+	end: i64,
+) -> StdVec<Value> {
 	let range = s.range(start, end).unwrap();
 	let it = s.iterator(range).unwrap();
-	let mut w = vec![Value::I64(end), Value::I64(7), range, it, Value::Unit, Value::Unit];
+	let mut w = vec![
+		Value::I64(end),
+		Value::I64(7),
+		range,
+		it,
+		Value::Unit,
+		Value::Unit,
+	];
 	for (l, class) in region.entry.iter().enumerate() {
 		if *class == EntryClass::Scalar {
 			w[slot(region, l)] = original;
@@ -66,10 +79,23 @@ fn calls_window(s: &mut Store, region: &Region, original: Value, start: i64, end
 
 /// range_sum's frame at its header over `start..end` (a, b, s, range, iterator, i), with
 /// `original` in every `Scalar` slot.
-fn range_window(s: &mut Store, region: &Region, original: Value, start: i64, end: i64) -> StdVec<Value> {
+fn range_window(
+	s: &mut Store,
+	region: &Region,
+	original: Value,
+	start: i64,
+	end: i64,
+) -> StdVec<Value> {
 	let range = s.range(start, end).unwrap();
 	let it = s.iterator(range).unwrap();
-	let mut w = vec![Value::I64(start), Value::I64(end), Value::I64(3), range, it, Value::Unit];
+	let mut w = vec![
+		Value::I64(start),
+		Value::I64(end),
+		Value::I64(3),
+		range,
+		it,
+		Value::Unit,
+	];
 	for (l, class) in region.entry.iter().enumerate() {
 		if *class == EntryClass::Scalar {
 			w[slot(region, l)] = original;
@@ -95,8 +121,16 @@ fn assert_scalar_cells_zero(region: &Region, buf: &[i64], what: &str) {
 fn r1_entry_fill_zeroes_the_iter_out_cell() {
 	type Window = fn(&mut Store, &Region, Value, i64, i64) -> StdVec<Value>;
 	let cases: [(&str, Region, Window); 2] = [
-		("calls", outcome(&calls_kernel(), 0, 4).unwrap(), calls_window),
-		("range_sum", outcome(&build(vec![range_sum()]), 0, 4).unwrap(), range_window),
+		(
+			"calls",
+			outcome(&calls_kernel(), 0, 4).unwrap(),
+			calls_window,
+		),
+		(
+			"range_sum",
+			outcome(&build(vec![range_sum()]), 0, 4).unwrap(),
+			range_window,
+		),
 	];
 	let mut fills = 0;
 	for (name, region, window) in &cases {
@@ -106,7 +140,11 @@ fn r1_entry_fill_zeroes_the_iter_out_cell() {
 			let what = format!("{name} original={original:?}");
 			let mut s = store();
 			let w = window(&mut s, region, original, 3, 9);
-			assert_eq!(w[slot(region, out)], original, "{what}: the out slot holds the original value");
+			assert_eq!(
+				w[slot(region, out)],
+				original,
+				"{what}: the out slot holds the original value"
+			);
 
 			// Dirty storage: a sentinel in every cell.
 			let mut storage = [0x5a5a_5a5a_5a5a_5a5a_i64; MAX_REGION_CELLS];
@@ -121,10 +159,16 @@ fn r1_entry_fill_zeroes_the_iter_out_cell() {
 			let mut record = ExitRecord::new(fuel);
 			let status = simulate(region, &mut storage[..cells], &mut record);
 			assert_eq!(status, Status::Continue as u32, "{what}");
-			assert_eq!(storage[out], 8, "{what}: the run left the last i in the out cell");
+			assert_eq!(
+				storage[out], 8,
+				"{what}: the run left the last i in the out cell"
+			);
 			let (_, _) = unbox(region, &w, &s, false, 10_000, ROOM, &mut storage).unwrap();
 			assert_scalar_cells_zero(region, &storage[..cells], &what);
-			assert_eq!(storage[out], 0, "{what}: out cell after refilling reused storage");
+			assert_eq!(
+				storage[out], 0,
+				"{what}: out cell after refilling reused storage"
+			);
 			fills += 1;
 		}
 	}

@@ -1,4 +1,4 @@
-//! FUEL (rnx 0184, from R1): in a calls-shaped region (one inlined site whose callee's pc-0
+//! FUEL (on top of R1): in a calls-shaped region (one inlined site whose callee's pc-0
 //! node `c` is reached from the header `h` only along the header's some edge, through an
 //! uncharged `Enter`/`Arg` chain, and no other charged node), the header's block holds a
 //! guard `fuel >= 2` (unsigned). Fuel 0 and 1 continue into the existing lowering of every
@@ -6,9 +6,9 @@
 //! copy) whose two charges decrement without a check. No exit, stored byte, mask, tag,
 //! status, pc, fuel or checkpoint changes.
 //!
-//! Tests-first: `fuel_selected_regions_guard_both_charges` and
-//! `fuel_selection_matches_the_lowering` fail at e1e1f30b (the header block ends in the
-//! existing `fuel == 0` check; there is no guard and no cold node block). The compile-only
+//! `fuel_selected_regions_guard_both_charges` and `fuel_selection_matches_the_lowering`
+//! fail without the guard (the header block then ends in the existing `fuel == 0` check,
+//! with no guard and no cold node block). The compile-only
 //! controls (`fuel_controls_keep_the_existing_checks`), the executing whole-buffer
 //! differential (`fuel_full_buffer_byte_equal_every_fuel`, child process), the machine-byte
 //! census against the R1 lowering (`fuel_unselected_regions_keep_r1_machine_bytes`) and the
@@ -33,7 +33,8 @@ use super::r1_tests::{canonical_entry, PAYLOADS, RANGES};
 use super::w13_tests::{corpus_regions, kernel};
 use super::{lower, NativeRefusal};
 use crate::experimental_core::region::{
-	abi::ExitRecord, analyze, hook, simulate::simulate, EntryClass, NodeOp, Region, Status, Target, VIRTUAL_BASE,
+	abi::ExitRecord, analyze, hook, simulate::simulate, EntryClass, NodeOp, Region, Status, Target,
+	VIRTUAL_BASE,
 };
 use cranelift_codegen::flowgraph::ControlFlowGraph;
 use cranelift_codegen::ir::{self, condcodes::IntCC, InstructionData, Opcode};
@@ -158,11 +159,23 @@ pub(super) fn selected(region: &Region) -> Option<(u32, u32)> {
 	let h = region.header_node;
 	let header = region.nodes.get(h as usize)?;
 	header.charged?;
-	if !matches!(header.op, NodeOp::IterNext { none: Target::Exit(_), .. }) {
+	if !matches!(
+		header.op,
+		NodeOp::IterNext {
+			none: Target::Exit(_),
+			..
+		}
+	) {
 		return None;
 	}
 	let mut want = Vec::new();
-	want.push((site.enter, NodeOp::Enter { site: 0, slots: site.slots }));
+	want.push((
+		site.enter,
+		NodeOp::Enter {
+			site: 0,
+			slots: site.slots,
+		},
+	));
 	for p in 0..site.parameters {
 		let at = site.first + p;
 		let NodeOp::Arg { src, .. } = region.nodes.get(at as usize)?.op else {
@@ -222,7 +235,10 @@ fn fast_exit_block(region: &Region, e: u32) -> ir::Block {
 }
 
 fn def(func: &ir::Function, v: ir::Value) -> Option<InstructionData> {
-	func.dfg.value_def(func.dfg.resolve_aliases(v)).inst().map(|i| func.dfg.insts[i])
+	func.dfg
+		.value_def(func.dfg.resolve_aliases(v))
+		.inst()
+		.map(|i| func.dfg.insts[i])
 }
 
 fn iconst(func: &ir::Function, v: ir::Value) -> Option<i64> {
@@ -237,7 +253,10 @@ fn iconst(func: &ir::Function, v: ir::Value) -> Option<i64> {
 
 /// `block`'s terminator when it is a `brif` on an `icmp`: (condition code, the icmp's
 /// constant right operand if any, then-block, else-block).
-fn brif_icmp(func: &ir::Function, block: ir::Block) -> Option<(IntCC, Option<i64>, ir::Block, ir::Block)> {
+fn brif_icmp(
+	func: &ir::Function,
+	block: ir::Block,
+) -> Option<(IntCC, Option<i64>, ir::Block, ir::Block)> {
 	let last = func.layout.last_inst(block)?;
 	let InstructionData::Brif { arg, blocks, .. } = func.dfg.insts[last] else {
 		return None;
@@ -251,7 +270,12 @@ fn brif_icmp(func: &ir::Function, block: ir::Block) -> Option<(IntCC, Option<i64
 		return None;
 	};
 	let pool = &func.dfg.value_lists;
-	Some((cond, iconst(func, args[1]), blocks[0].block(pool), blocks[1].block(pool)))
+	Some((
+		cond,
+		iconst(func, args[1]),
+		blocks[0].block(pool),
+		blocks[1].block(pool),
+	))
 }
 
 /// The blocks of `func` whose terminator is the existing charge check `brif(icmp eq f, 0)`
@@ -259,7 +283,9 @@ fn brif_icmp(func: &ir::Function, block: ir::Block) -> Option<(IntCC, Option<i64
 fn checks_into(func: &ir::Function, target: ir::Block) -> Vec<ir::Block> {
 	func.layout
 		.blocks()
-		.filter(|&b| matches!(brif_icmp(func, b), Some((IntCC::Equal, Some(0), t, _)) if t == target))
+		.filter(
+			|&b| matches!(brif_icmp(func, b), Some((IntCC::Equal, Some(0), t, _)) if t == target),
+		)
 		.collect()
 }
 
@@ -267,7 +293,12 @@ fn checks_into(func: &ir::Function, target: ir::Block) -> Vec<ir::Block> {
 pub(super) fn guards(func: &ir::Function) -> Vec<ir::Block> {
 	func.layout
 		.blocks()
-		.filter(|&b| matches!(brif_icmp(func, b), Some((IntCC::UnsignedGreaterThanOrEqual, Some(2), _, _))))
+		.filter(|&b| {
+			matches!(
+				brif_icmp(func, b),
+				Some((IntCC::UnsignedGreaterThanOrEqual, Some(2), _, _))
+			)
+		})
 		.collect()
 }
 
@@ -276,7 +307,9 @@ pub(super) fn guards(func: &ir::Function) -> Vec<ir::Block> {
 /// header's block again. Empty when the header's block does not end in a guard.
 pub(super) fn slow_copy(func: &ir::Function, h: u32) -> BTreeSet<ir::Block> {
 	let mut seen = BTreeSet::new();
-	let Some((IntCC::UnsignedGreaterThanOrEqual, Some(2), _, slow)) = brif_icmp(func, node_block(h)) else {
+	let Some((IntCC::UnsignedGreaterThanOrEqual, Some(2), _, slow)) =
+		brif_icmp(func, node_block(h))
+	else {
 		return seen;
 	};
 	let mut work = vec![slow];
@@ -305,13 +338,17 @@ fn all_regions() -> Vec<(String, Region)> {
 /// and every predecessor of an exit block is cold (only the slow copy reaches them); the
 /// header's Fuel exit and the site's CalleeFuel exit are each reached by exactly one
 /// existing check `brif(icmp eq f, 0)`, and their fast copies by nothing (the fast copy
-/// has no check). FAILS at e1e1f30b: the header's block ends in the existing check.
+/// has no check). Without the guard this fails: the header's block ends in the existing
+/// check.
 #[test]
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source and runs Cranelift")]
 fn fuel_selected_regions_guard_both_charges() {
 	let isa = lower::shared_isa().unwrap();
 	let regions = all_regions();
-	assert!(selected(&regions[0].1).is_some(), "the calls kernel is selected");
+	assert!(
+		selected(&regions[0].1).is_some(),
+		"the calls kernel is selected"
+	);
 	let mut checked = 0;
 	for (name, region) in &regions {
 		let Some((h, c)) = selected(region) else {
@@ -320,28 +357,71 @@ fn fuel_selected_regions_guard_both_charges() {
 		let func = lower::build(region, &isa).unwrap();
 		let shown = || format!("{name}\n{}", func.display());
 		let Some((cond, k, fast, slow)) = brif_icmp(&func, node_block(h)) else {
-			std::panic!("{name}: the header block does not end in a brif on an icmp\n{}", shown());
+			std::panic!(
+				"{name}: the header block does not end in a brif on an icmp\n{}",
+				shown()
+			);
 		};
-		assert_eq!((cond, k), (IntCC::UnsignedGreaterThanOrEqual, Some(2)), "{}", shown());
+		assert_eq!(
+			(cond, k),
+			(IntCC::UnsignedGreaterThanOrEqual, Some(2)),
+			"{}",
+			shown()
+		);
 		assert_eq!(fast, fast_node_block(region, h), "{}", shown());
-		assert!(!func.layout.is_cold(fast), "the fast copy is cold: {}", shown());
-		assert!(func.layout.is_cold(slow), "the slow copy is not cold: {}", shown());
+		assert!(
+			!func.layout.is_cold(fast),
+			"the fast copy is cold: {}",
+			shown()
+		);
+		assert!(
+			func.layout.is_cold(slow),
+			"the slow copy is not cold: {}",
+			shown()
+		);
 		assert_eq!(guards(&func).len(), 1, "{}", shown());
 		let site = region.sites[0];
 		let header_exit = region.nodes[h as usize].charged.unwrap();
 		let cfg = ControlFlowGraph::with_function(&func);
 		for e in [header_exit, site.fuel_exit] {
-			assert_eq!(checks_into(&func, exit_block(region, e)).len(), 1, "exit {e}: {}", shown());
-			assert_eq!(cfg.pred_iter(fast_exit_block(region, e)).count(), 0, "fast exit {e}: {}", shown());
+			assert_eq!(
+				checks_into(&func, exit_block(region, e)).len(),
+				1,
+				"exit {e}: {}",
+				shown()
+			);
+			assert_eq!(
+				cfg.pred_iter(fast_exit_block(region, e)).count(),
+				0,
+				"fast exit {e}: {}",
+				shown()
+			);
 		}
 		for e in 0..region.exits.len() as u32 {
 			let exit = exit_block(region, e);
-			assert!(func.layout.is_cold(exit) && func.layout.is_cold(fast_exit_block(region, e)), "exit {e}: {}", shown());
-			assert!(cfg.pred_iter(exit).all(|p| func.layout.is_cold(p.block)), "exit {e}: {}", shown());
+			assert!(
+				func.layout.is_cold(exit) && func.layout.is_cold(fast_exit_block(region, e)),
+				"exit {e}: {}",
+				shown()
+			);
+			assert!(
+				cfg.pred_iter(exit).all(|p| func.layout.is_cold(p.block)),
+				"exit {e}: {}",
+				shown()
+			);
 		}
 		for i in 0..region.nodes.len() as u32 {
-			assert_eq!(func.layout.is_cold(node_block(i)), i != h, "node {i} (c = {c}): {}", shown());
-			assert!(!func.layout.is_cold(fast_node_block(region, i)), "fast node {i}: {}", shown());
+			assert_eq!(
+				func.layout.is_cold(node_block(i)),
+				i != h,
+				"node {i} (c = {c}): {}",
+				shown()
+			);
+			assert!(
+				!func.layout.is_cold(fast_node_block(region, i)),
+				"fast node {i}: {}",
+				shown()
+			);
 		}
 		checked += 1;
 	}
@@ -349,15 +429,19 @@ fn fuel_selected_regions_guard_both_charges() {
 	assert!(checked > 0);
 }
 
-/// The census regions, the probe kernels and the controls: the lowering holds the guard
-/// exactly when the test's own selection holds. FAILS at e1e1f30b for every selected region
-/// (no guard).
+/// The census regions, the bench kernels and the controls: the lowering holds the guard
+/// exactly when the test's own selection holds. Without the guard this fails for every
+/// selected region.
 #[test]
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source and runs Cranelift")]
 fn fuel_selection_matches_the_lowering() {
 	let isa = lower::shared_isa().unwrap();
 	let mut regions = census_regions();
-	regions.extend(controls().into_iter().map(|(what, r)| (format!("control {what}"), r)));
+	regions.extend(
+		controls()
+			.into_iter()
+			.map(|(what, r)| (format!("control {what}"), r)),
+	);
 	let mut counts: BTreeMap<&str, usize> = BTreeMap::new();
 	for (name, region) in &regions {
 		// A region the builder refuses (none expected) is reported, not hidden.
@@ -370,8 +454,15 @@ fn fuel_selection_matches_the_lowering() {
 			}
 		};
 		let guarded = !guards(&func).is_empty();
-		assert_eq!(guarded, selected(region).is_some(), "{name}\n{}", func.display());
-		*counts.entry(if guarded { "selected" } else { "unselected" }).or_default() += 1;
+		assert_eq!(
+			guarded,
+			selected(region).is_some(),
+			"{name}\n{}",
+			func.display()
+		);
+		*counts
+			.entry(if guarded { "selected" } else { "unselected" })
+			.or_default() += 1;
 	}
 	println!("FUEL\tselection\tregions={}\t{counts:?}", regions.len());
 	assert!(counts.contains_key("selected") && counts.contains_key("unselected"));
@@ -400,13 +491,33 @@ fn controls() -> Vec<(&'static str, Region)> {
 	let back = base
 		.nodes
 		.iter()
-		.position(|n| n.op == NodeOp::Jump { target: Target::Node(h) })
+		.position(|n| {
+			n.op == NodeOp::Jump {
+				target: Target::Node(h),
+			}
+		})
 		.expect("the back edge");
 	vec![
-		("forced_replay", with(&|r: &mut Region| hook::force_replay(r))),
-		("third_charge", with(&|r: &mut Region| r.nodes[third].charged = Some(header_exit))),
-		("uncharged_callee", with(&|r: &mut Region| r.nodes[c as usize].charged = None)),
-		("side_entry", with(&|r: &mut Region| r.nodes[back].op = NodeOp::Jump { target: Target::Node(site.enter) })),
+		(
+			"forced_replay",
+			with(&|r: &mut Region| hook::force_replay(r)),
+		),
+		(
+			"third_charge",
+			with(&|r: &mut Region| r.nodes[third].charged = Some(header_exit)),
+		),
+		(
+			"uncharged_callee",
+			with(&|r: &mut Region| r.nodes[c as usize].charged = None),
+		),
+		(
+			"side_entry",
+			with(&|r: &mut Region| {
+				r.nodes[back].op = NodeOp::Jump {
+					target: Target::Node(site.enter),
+				}
+			}),
+		),
 		(
 			"second_site",
 			with(&|r: &mut Region| {
@@ -433,7 +544,10 @@ fn controls() -> Vec<(&'static str, Region)> {
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source and runs Cranelift")]
 fn fuel_controls_keep_the_existing_checks() {
 	let isa = lower::shared_isa().unwrap();
-	let mut regions: Vec<(String, Region)> = controls().into_iter().map(|(w, r)| (String::from(w), r)).collect();
+	let mut regions: Vec<(String, Region)> = controls()
+		.into_iter()
+		.map(|(w, r)| (String::from(w), r))
+		.collect();
 	for (name, text) in [("while kernel", V2_WHILE), ("numeric kernel", V2_NUMERIC)] {
 		regions.push((String::from(name), kernel(text)));
 	}
@@ -443,12 +557,24 @@ fn fuel_controls_keep_the_existing_checks() {
 		let h = region.header_node;
 		let header_exit = region.nodes[h as usize].charged.unwrap();
 		let Some((cond, k, then, _)) = brif_icmp(&func, node_block(h)) else {
-			std::panic!("{what}: the header block does not end in a brif on an icmp\n{}", func.display());
+			std::panic!(
+				"{what}: the header block does not end in a brif on an icmp\n{}",
+				func.display()
+			);
 		};
-		assert_eq!((cond, k, then), (IntCC::Equal, Some(0), exit_block(region, header_exit)), "{what}\n{}", func.display());
+		assert_eq!(
+			(cond, k, then),
+			(IntCC::Equal, Some(0), exit_block(region, header_exit)),
+			"{what}\n{}",
+			func.display()
+		);
 		assert!(guards(&func).is_empty(), "{what}\n{}", func.display());
 		for i in 0..region.nodes.len() as u32 {
-			assert!(!func.layout.is_cold(node_block(i)), "{what}: node {i} is cold\n{}", func.display());
+			assert!(
+				!func.layout.is_cold(node_block(i)),
+				"{what}: node {i} is cold\n{}",
+				func.display()
+			);
 		}
 		println!("FUEL\tcontrol\t{what}\texisting_checks_kept");
 	}
@@ -525,7 +651,15 @@ struct Cov {
 /// The fuels of every first entry: 0..=64, 4096, 2^20, and the unsigned-guard boundaries.
 fn fuels() -> Vec<u64> {
 	(0..=64)
-		.chain([4096, 1 << 20, (1 << 63) - 1, 1 << 63, (1 << 63) + 1, u64::MAX - 1, u64::MAX])
+		.chain([
+			4096,
+			1 << 20,
+			(1 << 63) - 1,
+			1 << 63,
+			(1 << 63) + 1,
+			u64::MAX - 1,
+			u64::MAX,
+		])
 		.collect()
 }
 
@@ -577,34 +711,58 @@ fn compare(
 	let site = region.sites[0];
 	let header = region.nodes[h as usize];
 	let header_exit = header.charged.unwrap();
-	let NodeOp::IterNext { none: Target::Exit(done), .. } = header.op else {
+	let NodeOp::IterNext {
+		none: Target::Exit(done),
+		..
+	} = header.op
+	else {
 		unreachable!()
 	};
 	let exit = record.exit;
 	// Completed `next` advances in this run (non-negative and small: bounded ranges).
-	let progress = u64::try_from(i128::from(buf[n]) - i128::from(entry[n])).expect("next never moves back");
+	let progress =
+		u64::try_from(i128::from(buf[n]) - i128::from(entry[n])).expect("next never moves back");
 	match fuel {
 		0 => {
-			assert_eq!((exit, record.pc, record.fuel), (header_exit, header.pc, 0), "{at}: fuel 0");
+			assert_eq!(
+				(exit, record.pc, record.fuel),
+				(header_exit, header.pc, 0),
+				"{at}: fuel 0"
+			);
 			cov.fuel0_header += 1;
 		}
 		1 if exit == done => {
-			assert_eq!((record.pc, record.fuel), (region.exits[done as usize].pc, 0), "{at}: fuel 1 exhausted");
+			assert_eq!(
+				(record.pc, record.fuel),
+				(region.exits[done as usize].pc, 0),
+				"{at}: fuel 1 exhausted"
+			);
 			cov.fuel1_exhausted += 1;
 		}
 		1 => {
-			assert_eq!((exit, record.pc, record.fuel), (site.fuel_exit, site.pc, 0), "{at}: fuel 1 callee charge");
+			assert_eq!(
+				(exit, record.pc, record.fuel),
+				(site.fuel_exit, site.pc, 0),
+				"{at}: fuel 1 callee charge"
+			);
 			cov.fuel1_callee_fuel += 1;
 		}
 		_ if exit == done => {
 			// Each completed iteration advanced `next` once and took both charges; the
 			// exhausted one took the header's only.
 			let taken = progress.checked_mul(2).and_then(|t| t.checked_add(1));
-			assert_eq!(Some(record.fuel), taken.and_then(|t| fuel.checked_sub(t)), "{at}: exhausted");
+			assert_eq!(
+				Some(record.fuel),
+				taken.and_then(|t| fuel.checked_sub(t)),
+				"{at}: exhausted"
+			);
 			cov.fast_exhausted += 1;
 		}
 		_ if exit == header_exit || exit == site.fuel_exit => {
-			assert_eq!(record.fuel, 0, "{at}: Fuel or CalleeFuel after fast iterations");
+			assert_eq!(
+				record.fuel, 0,
+				"{at}: Fuel or CalleeFuel after fast iterations"
+			);
 			cov.fast_then_slow += 1;
 		}
 		_ => {}
@@ -612,9 +770,19 @@ fn compare(
 	if Some(exit) == site.fault_exit {
 		// The checkpoint is the fuel before the Call: the faulting iteration (the last
 		// `next` advance) has taken the header's charge only.
-		let taken = progress.checked_sub(1).and_then(|k| k.checked_mul(2)).and_then(|t| t.checked_add(1));
-		assert_eq!(Some(record.fuel), taken.and_then(|t| fuel.checked_sub(t)), "{at}: fault checkpoint");
-		assert_eq!(record.pc, site.pc, "{at}: the fault Replay resumes at the Call");
+		let taken = progress
+			.checked_sub(1)
+			.and_then(|k| k.checked_mul(2))
+			.and_then(|t| t.checked_add(1));
+		assert_eq!(
+			Some(record.fuel),
+			taken.and_then(|t| fuel.checked_sub(t)),
+			"{at}: fault checkpoint"
+		);
+		assert_eq!(
+			record.pc, site.pc,
+			"{at}: the fault Replay resumes at the Call"
+		);
 		match total.map(|l| buf[l].signum()) {
 			Some(1) => cov.fault_positive += 1,
 			Some(-1) => cov.fault_negative += 1,
@@ -632,7 +800,10 @@ fn compare(
 /// of re-entries from every resumable exit (Fuel, Replay, Retry), canonically refilled, at
 /// fuels 1..=6. Passes before and after FUEL.
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn fuel_full_buffer_byte_equal_every_fuel() {
 	run_child("child_full_buffer");
 }
@@ -661,7 +832,11 @@ fn child_full_buffer() {
 		let native = NativeRegion::load(&compiled).unwrap();
 		regions += 1;
 		let total = fold.and_then(|(_, c)| total_cell(&region, c));
-		let cov = if name == "calls kernel" { &mut calls } else { &mut corpus };
+		let cov = if name == "calls kernel" {
+			&mut calls
+		} else {
+			&mut corpus
+		};
 		for &range in &RANGES {
 			for &payload in &PAYLOADS {
 				let entry = canonical_entry(&region, payload, Some(range));
@@ -679,8 +854,11 @@ fn child_full_buffer() {
 					let mut entry = entry.clone();
 					let mut after = None;
 					for step in 0..64 {
-						let at = format!("{name} range={range:?} payload={payload} fuel={fuel} chain={step}");
-						let (status, buf, record) = compare(&native, &region, &entry, fuel, fold, total, &at, cov);
+						let at = format!(
+							"{name} range={range:?} payload={payload} fuel={fuel} chain={step}"
+						);
+						let (status, buf, record) =
+							compare(&native, &region, &entry, fuel, fold, total, &at, cov);
 						if let Some(prev) = after {
 							*cov.chained_after.entry(prev).or_default() += 1;
 						}
@@ -727,25 +905,38 @@ fn child_full_buffer() {
 			c.chained_after
 		);
 	}
-	println!("FUEL\tfull_buffer\tTOTAL\tregions={regions}\tpoints={}\tdivision_refused={division}", calls.points + corpus.points);
+	println!(
+		"FUEL\tfull_buffer\tTOTAL\tregions={regions}\tpoints={}\tdivision_refused={division}",
+		calls.points + corpus.points
+	);
 	let c = &calls;
 	assert!(regions > 0);
-	assert!(c.fuel0_header > 0 && c.fuel1_exhausted > 0 && c.fuel1_callee_fuel > 0, "fuel 0 and both fuel-1 paths");
-	assert!(c.fast_exhausted > 0 && c.fast_then_slow > 0, "fast exits and fast-then-slow exits");
-	assert!(c.fault_positive > 0 && c.fault_negative > 0, "both overflow directions reach the fault Replay");
+	assert!(
+		c.fuel0_header > 0 && c.fuel1_exhausted > 0 && c.fuel1_callee_fuel > 0,
+		"fuel 0 and both fuel-1 paths"
+	);
+	assert!(
+		c.fast_exhausted > 0 && c.fast_then_slow > 0,
+		"fast exits and fast-then-slow exits"
+	);
+	assert!(
+		c.fault_positive > 0 && c.fault_negative > 0,
+		"both overflow directions reach the fault Replay"
+	);
 	assert!(c.reversed > 0 && c.empty > 0 && c.min_or_max > 0 && c.huge_fuel > 0);
 	for s in [Status::Fuel, Status::Replay] {
-		assert!(c.chained_after.contains_key(&(s as u32)), "re-entry after {s:?}");
+		assert!(
+			c.chained_after.contains_key(&(s as u32)),
+			"re-entry after {s:?}"
+		);
 	}
 }
 
 // ------------------------------------------------------- census and R1 machine bytes
 
 /// The machine-code listing of every census region (each admitted region of every
-/// selection-golden program, every corpus region, the three probe kernels), captured from
-/// the R1 lowering (lower.rs unchanged at e1e1f30b): lines 1..=336 of the fixture R2's
-/// tests-first run captured there (`.reviews/0184-r2-impl1`, sha256 d72f8ddf…870f), the
-/// same 336 lines R3's census used (sha256 6765203e…1648). Data only: no R2 or R3 code.
+/// selection-golden program, every corpus region, the three bench kernels), captured from
+/// the R1 lowering: 336 lines (sha256 6765203e…1648). Data only.
 const R1_BYTES: &str = include_str!("fixtures/r1_region_bytes.txt");
 
 fn fnv1a(bytes: &[u8]) -> u64 {
@@ -775,7 +966,11 @@ fn census_regions() -> Vec<(String, Region)> {
 	for (name, region) in corpus_regions() {
 		out.push((format!("corpus {name}"), region));
 	}
-	for (name, text) in [("while", V2_WHILE), ("numeric", V2_NUMERIC), ("calls", V2_CALLS)] {
+	for (name, text) in [
+		("while", V2_WHILE),
+		("numeric", V2_NUMERIC),
+		("calls", V2_CALLS),
+	] {
 		out.push((format!("kernel {name}"), kernel(text)));
 	}
 	out
@@ -784,7 +979,10 @@ fn census_regions() -> Vec<(String, Region)> {
 /// A region's compile outcome: its machine code's size and FNV-1a 64, or its refusal.
 fn compile_line(region: &Region) -> (String, Option<Vec<u8>>) {
 	match lower::compile(region, 0) {
-		Ok(c) => (format!("ok len={} fnv={:016x}", c.bytes().len(), fnv1a(c.bytes())), Some(c.bytes().to_vec())),
+		Ok(c) => (
+			format!("ok len={} fnv={:016x}", c.bytes().len(), fnv1a(c.bytes())),
+			Some(c.bytes().to_vec()),
+		),
 		Err(NativeRefusal::Audit(Finding::Division(_))) => (String::from("refused division"), None),
 		Err(NativeRefusal::Size) => (String::from("refused size"), None),
 		Err(NativeRefusal::Codegen(_)) => (String::from("refused codegen"), None),
@@ -818,22 +1016,41 @@ fn fuel_unselected_regions_keep_r1_machine_bytes() {
 		let index: String = now
 			.iter()
 			.enumerate()
-			.map(|(i, (name, line, s))| format!("{i:04}\t{name}\tselected={}\t{line}\n", u8::from(*s)))
+			.map(|(i, (name, line, s))| {
+				format!("{i:04}\t{name}\tselected={}\t{line}\n", u8::from(*s))
+			})
 			.collect();
 		std::fs::write(dir.join("INDEX.txt"), index).unwrap();
 	}
 	let r1: Vec<&str> = R1_BYTES.lines().collect();
-	assert_eq!(r1.len(), now.len(), "census region count against the R1 listing");
+	assert_eq!(
+		r1.len(),
+		now.len(),
+		"census region count against the R1 listing"
+	);
 	let mut counts: BTreeMap<&str, usize> = BTreeMap::new();
 	for ((name, line, sel), old) in now.iter().zip(&r1) {
 		let (old_name, old_line) = old.split_once('\t').unwrap();
 		assert_eq!(name, old_name, "census order");
 		let kind = |l: &str| l.split(' ').next().unwrap_or("").to_owned();
 		if !sel {
-			assert_eq!(line, old_line, "{name}: an UNSELECTED region's machine code differs from R1's");
-			*counts.entry(if line.starts_with("ok") { "unselected_identical" } else { "unselected_refused_same" }).or_default() += 1;
+			assert_eq!(
+				line, old_line,
+				"{name}: an UNSELECTED region's machine code differs from R1's"
+			);
+			*counts
+				.entry(if line.starts_with("ok") {
+					"unselected_identical"
+				} else {
+					"unselected_refused_same"
+				})
+				.or_default() += 1;
 		} else {
-			assert_eq!(kind(line), kind(old_line), "{name}: a selected region's outcome kind changed");
+			assert_eq!(
+				kind(line),
+				kind(old_line),
+				"{name}: a selected region's outcome kind changed"
+			);
 			let key = match (line.starts_with("ok"), line == old_line) {
 				(true, true) => "selected_unchanged",
 				(true, false) => "selected_changed",
@@ -902,7 +1119,9 @@ pub(super) fn check_fuel_selected_only(old: &str, new: &str) -> Result<BTreeSet<
 			}
 			"SUMMARY" => {
 				if !programs.contains(fields[1]) {
-					return Err(format!("a SUMMARY of a program without a selected region changed: {a} -> {b}"));
+					return Err(format!(
+						"a SUMMARY of a program without a selected region changed: {a} -> {b}"
+					));
 				}
 			}
 			kind => return Err(format!("a {kind} line changed: {a} -> {b}")),
@@ -933,10 +1152,15 @@ pub(super) const FUEL_GOLDEN: &str = include_str!("fixtures/fuel_selection_golde
 fn fuel_selection_golden_delta() {
 	let r1 = super::r1_tests::R1_GOLDEN;
 	let (identical, changed) = super::w13_tests::compare_w13_delta(r1, FUEL_GOLDEN);
-	let regions = check_fuel_selected_only(r1, FUEL_GOLDEN).unwrap_or_else(|e| std::panic!("FUEL golden delta: {e}"));
+	let regions = check_fuel_selected_only(r1, FUEL_GOLDEN)
+		.unwrap_or_else(|e| std::panic!("FUEL golden delta: {e}"));
 	println!("FUEL\tgolden_fixtures\tidentical={identical}\tchanged={changed}\tchanged_regions={regions:?}");
 	assert_eq!(identical + changed, FUEL_GOLDEN.lines().count());
-	assert_eq!((changed, regions.len()), (6, 2), "COMPILE, LOADED and SUMMARY of v2_calls f0 h4 and listed_9 f0 h5");
+	assert_eq!(
+		(changed, regions.len()),
+		(6, 2),
+		"COMPILE, LOADED and SUMMARY of v2_calls f0 h4 and listed_9 f0 h5"
+	);
 }
 
 /// Controls of the restricted golden rule on the R1 golden text: a byte change of an
@@ -954,7 +1178,9 @@ fn fuel_selected_only_controls() {
 	assert!(!regions.is_empty(), "the golden has FUEL-selected regions");
 	let number = |l: &str, marker: &str| -> (usize, usize, u64) {
 		let at = l.find(marker).unwrap() + marker.len();
-		let end = l[at..].find(|c: char| !c.is_ascii_digit()).map_or(l.len(), |e| at + e);
+		let end = l[at..]
+			.find(|c: char| !c.is_ascii_digit())
+			.map_or(l.len(), |e| at + e);
 		(at, end, l[at..end].parse().unwrap())
 	};
 	let set = |l: &str, marker: &str, v: u64| -> String {
@@ -968,21 +1194,58 @@ fn fuel_selected_only_controls() {
 	let key = |l: &str| l.split('\t').skip(1).take(3).collect::<Vec<_>>().join("\t");
 	let program = |l: &str| l.split('\t').nth(1).unwrap_or("").to_owned();
 	let cases: [(&str, Option<String>, bool); 4] = [
-		("unselected_compile", edit(&|l| l.starts_with("COMPILE\t") && !regions.contains(&key(l)), "\tok bytes="), false),
-		("unselected_loaded", edit(&|l| l.starts_with("LOADED\t") && !regions.contains(&key(l)), "\tcode_bytes="), false),
-		("unselected_summary", edit(&|l| l.starts_with("SUMMARY\t") && !programs.contains(&program(l)), " code_bytes="), false),
-		("selected_compile", edit(&|l| l.starts_with("COMPILE\t") && regions.contains(&key(l)), "\tok bytes="), true),
+		(
+			"unselected_compile",
+			edit(
+				&|l| l.starts_with("COMPILE\t") && !regions.contains(&key(l)),
+				"\tok bytes=",
+			),
+			false,
+		),
+		(
+			"unselected_loaded",
+			edit(
+				&|l| l.starts_with("LOADED\t") && !regions.contains(&key(l)),
+				"\tcode_bytes=",
+			),
+			false,
+		),
+		(
+			"unselected_summary",
+			edit(
+				&|l| l.starts_with("SUMMARY\t") && !programs.contains(&program(l)),
+				" code_bytes=",
+			),
+			false,
+		),
+		(
+			"selected_compile",
+			edit(
+				&|l| l.starts_with("COMPILE\t") && regions.contains(&key(l)),
+				"\tok bytes=",
+			),
+			true,
+		),
 	];
 	for (what, new, accepted) in cases {
 		let new = new.unwrap_or_else(|| std::panic!("{what}: no such line"));
 		let result = check_fuel_selected_only(old, &new);
-		println!("FUEL\tselected_only_control\t{what}\t{}", if result.is_ok() { "accepted" } else { "refused" });
+		println!(
+			"FUEL\tselected_only_control\t{what}\t{}",
+			if result.is_ok() {
+				"accepted"
+			} else {
+				"refused"
+			}
+		);
 		assert_eq!(result.is_ok(), accepted, "{what}: {result:?}");
 	}
 
 	let compile = old
 		.lines()
-		.find(|l| l.starts_with("COMPILE\t") && l.contains("\tok bytes=") && regions.contains(&key(l)))
+		.find(|l| {
+			l.starts_with("COMPILE\t") && l.contains("\tok bytes=") && regions.contains(&key(l))
+		})
 		.unwrap();
 	let k = key(compile);
 	let was = number(compile, "\tok bytes=").2;
@@ -997,7 +1260,11 @@ fn fuel_selected_only_controls() {
 			} else if l.starts_with("SUMMARY\t") && program(l) == program(compile) {
 				let moved = set(l, " code_bytes=", number(l, " code_bytes=").2 + 4100 - was);
 				if mapped_follows {
-					set(&moved, " mapped_bytes=", number(l, " mapped_bytes=").2 + 4096)
+					set(
+						&moved,
+						" mapped_bytes=",
+						number(l, " mapped_bytes=").2 + 4096,
+					)
 				} else {
 					moved
 				}
@@ -1009,9 +1276,15 @@ fn fuel_selected_only_controls() {
 		}
 		out
 	};
-	for (what, mapped_follows) in [("selected_page_crossing", true), ("selected_page_crossing_mapped_stale", false)] {
+	for (what, mapped_follows) in [
+		("selected_page_crossing", true),
+		("selected_page_crossing_mapped_stale", false),
+	] {
 		let new = crossing(mapped_follows);
-		assert!(check_fuel_selected_only(old, &new).is_ok(), "{what}: the selected-only rule alone accepts it");
+		assert!(
+			check_fuel_selected_only(old, &new).is_ok(),
+			"{what}: the selected-only rule alone accepts it"
+		);
 		let e = super::w13_tests::check_w13_delta(old, &new).expect_err(what);
 		println!("FUEL\tselected_only_control\t{what}\tsize_only_refused\t{e}");
 	}

@@ -12,11 +12,12 @@
 //! entries, the store's whole state and the remaining fuel, at every fuel value from 0 to
 //! the case's total charge + 1.
 //!
-//! Output lines prefixed `P2TABLE`, `P2LIMIT`, `P2MAP` and `P2RSS` are receipt rows.
+//! Output lines prefixed `P2TABLE`, `P2LIMIT`, `P2MAP` and `P2RSS` are machine-readable
+//! report rows.
 use super::exec_tests::{
-	anon_exec_kib, bin, branch, build, compile_source, corpus_cases,
-	ints, invoke, jump, lit, loc, new_cases, read_maps, refusal_cases, rune, status_kib, store,
-	Arg, Case, Observed, Outcome, BIG_FUEL, MAX_SWEEP,
+	anon_exec_kib, bin, branch, build, compile_source, corpus_cases, ints, invoke, jump, lit, loc,
+	new_cases, read_maps, refusal_cases, rune, status_kib, store, Arg, Case, Observed, Outcome,
+	BIG_FUEL, MAX_SWEEP,
 };
 use crate::experimental_core::{
 	arithmetic::Binary,
@@ -149,7 +150,11 @@ fn totals(code: &Code) -> Totals {
 fn minus(a: Totals, b: Totals) -> Totals {
 	Totals {
 		entries: a.entries - b.entries,
-		exits: [a.exits[0] - b.exits[0], a.exits[1] - b.exits[1], a.exits[2] - b.exits[2]],
+		exits: [
+			a.exits[0] - b.exits[0],
+			a.exits[1] - b.exits[1],
+			a.exits[2] - b.exits[2],
+		],
 		cancel: a.cancel - b.cancel,
 		store: a.store - b.store,
 		tag: a.tag - b.tag,
@@ -180,7 +185,10 @@ fn total_charge(code: &Code, main: u32, args: &[Arg], name: &str) -> usize {
 		assert_ne!(error.kind, ErrorKind::FuelExhausted, "{name}: {args:?}");
 	}
 	let total = BIG_FUEL - reference.fuel_left.expect("final fuel");
-	assert!(total < MAX_SWEEP, "{name}: {args:?} charges {total}: reduce the case");
+	assert!(
+		total < MAX_SWEEP,
+		"{name}: {args:?} charges {total}: reduce the case"
+	);
 	total
 }
 
@@ -197,9 +205,18 @@ pub(super) fn production_case(case: &Case) -> (usize, Totals, Totals) {
 		summary.division_const0 as usize,
 		summary.division_constneg1 as usize,
 	];
-	assert_eq!(summary.loaded as usize, case.loaded, "{}: loaded {summary:?}", case.name);
+	assert_eq!(
+		summary.loaded as usize, case.loaded,
+		"{}: loaded {summary:?}",
+		case.name
+	);
 	assert_eq!(refused, case.refused, "{}: refusals {summary:?}", case.name);
-	assert_eq!(unexpected_refusals(&summary), [0; 12], "{}: {summary:?}", case.name);
+	assert_eq!(
+		unexpected_refusals(&summary),
+		[0; 12],
+		"{}: {summary:?}",
+		case.name
+	);
 
 	let mut points = 0usize;
 	let mut covered = Totals::default();
@@ -275,18 +292,18 @@ pub(super) fn production_case(case: &Case) -> (usize, Totals, Totals) {
 	(points, covered, all)
 }
 
-// ------------------------------------------------------------ probe kernels (v2 ports)
+// ------------------------------------------------------------ bench kernels (v2 ports)
 
-/// The probe's v2 kernels, byte-identical to `.reviews/0184-p0-impl1/harness/kernels/*.rn`.
-pub(super) const V2_WHILE: &str = "pub fn main(x) {\n\tlet n = 0;\n\twhile n < x { n += 1; }\n\tn\n}\n";
+/// The v2 bench kernels (while, numeric, calls, fib, shared_rows), as Rune source.
+pub(super) const V2_WHILE: &str =
+	"pub fn main(x) {\n\tlet n = 0;\n\twhile n < x { n += 1; }\n\tn\n}\n";
 pub(super) const V2_NUMERIC: &str = "pub fn main(x) {\n\tlet n = 0;\n\tlet total = 0;\n\twhile n < x { total += n % 17; n += 1; }\n\ttotal\n}\n";
 pub(super) const V2_CALLS: &str = "fn add(a, b) { a + b }\npub fn main(x) {\n\tlet total = 0;\n\tfor i in 0..x { total = add(total, i); }\n\ttotal\n}\n";
 pub(super) const V2_FIB: &str =
 	"fn fib(n) { if n < 2 { n } else { fib(n - 1) + fib(n - 2) } }\npub fn main(x) { fib(x) }\n";
 pub(super) const V2_SHARED_ROWS: &str = "fn add(rows, key, value) {\n\tfor row in rows {\n\t\tif row[0] == key {\n\t\t\trow[1] = row[1] + value;\n\t\t\treturn;\n\t\t}\n\t}\n\trows.push([key, value]);\n}\n\npub fn main(x) {\n\tlet rows = [];\n\tadd(rows, \"a\", x % 7);\n\tadd(rows, \"b\", x % 11);\n\tadd(rows, \"a\", x % 13);\n\tlet copy = rows.clone();\n\tlet alias = copy[0];\n\talias[1] = alias[1] + 1;\n\tcopy.push([\"c\", x % 17]);\n\trows[0][1] * 1000000 + rows[1][1] * 10000 + copy[2][1] * 100 + rows.len() * 10 + copy.len()\n}\n";
 
-/// The official fixed-input stage kernels, byte-identical to
-/// `rnx-bench-w-0184d/results/iteration-0184/d21-official1/stage/*.rn`.
+/// The official fixed-input stage kernels, as Rune source.
 const STAGE_NUMERIC: &str = "pub fn main(_a) {\n\tlet n = 0;\n\tlet total = 0;\n\twhile n < 10000 { total += n % 17; n += 1; }\n\tprintln!(\"{}\", total);\n}\n";
 const STAGE_WHILE: &str =
 	"pub fn main(_a) {\n\tlet n = 0;\n\twhile n < 10000 { n += 1; }\n\tprintln!(\"{}\", n);\n}\n";
@@ -295,16 +312,34 @@ const STAGE_FIB: &str =
 	"fn fib(n) { if n < 2 { n } else { fib(n - 1) + fib(n - 2) } }\npub fn main(_a) { println!(\"{}\", fib(20)); }\n";
 const STAGE_SHARED_ROWS: &str = "fn add(rows, key, value) {\n\tfor row in rows {\n\t\tif row[0] == key {\n\t\t\trow[1] = row[1] + value;\n\t\t\treturn;\n\t\t}\n\t}\n\trows.push([key, value]);\n}\n\npub fn main(_a) {\n\tlet rows = [];\n\tadd(rows, \"a\", 2);\n\tadd(rows, \"b\", 3);\n\tadd(rows, \"a\", 5);\n\tprintln!(\"rows {} {}\", rows[0][1], rows[1][1]);\n\tlet copy = rows.clone();\n\tlet alias = copy[0];\n\talias[1] = alias[1] + 1;\n\tcopy.push([\"c\", 9]);\n\tprintln!(\"nested {} {} {}\", rows[0][1], rows.len(), copy.len());\n}\n";
 
-pub(super) fn probe_kernel_cases() -> Vec<Case> {
+pub(super) fn bench_kernel_cases() -> Vec<Case> {
 	vec![
 		rune("v2_while", V2_WHILE, ints(&[&[25], &[1], &[7]]), 1, "CF"),
-		rune("v2_while_tiny", V2_WHILE, ints(&[&[0], &[1], &[2], &[3]]), 1, "CF"),
+		rune(
+			"v2_while_tiny",
+			V2_WHILE,
+			ints(&[&[0], &[1], &[2], &[3]]),
+			1,
+			"CF",
+		),
 		rune("v2_numeric", V2_NUMERIC, ints(&[&[40], &[18]]), 1, "CF"),
-		rune("v2_numeric_tiny", V2_NUMERIC, ints(&[&[0], &[1], &[2], &[3]]), 1, "CF"),
+		rune(
+			"v2_numeric_tiny",
+			V2_NUMERIC,
+			ints(&[&[0], &[1], &[2], &[3]]),
+			1,
+			"CF",
+		),
 		// B1: admitted (native IterNext, `add` inlined).
 		rune("v2_calls", V2_CALLS, ints(&[&[0], &[5], &[30]]), 1, "CF"),
 		rune("v2_fib", V2_FIB, ints(&[&[0], &[1], &[9]]), 0, ""),
-		rune("v2_shared_rows", V2_SHARED_ROWS, ints(&[&[0], &[123_456], &[999_999]]), 0, ""),
+		rune(
+			"v2_shared_rows",
+			V2_SHARED_ROWS,
+			ints(&[&[0], &[123_456], &[999_999]]),
+			0,
+			"",
+		),
 	]
 }
 
@@ -324,7 +359,10 @@ pub(super) fn partial_refusal_case() -> Case {
 // ------------------------------------------------------------------------ 1. corpus
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_production_matches_interpreter_every_fuel() {
 	run_child("child_production_every_fuel");
 }
@@ -336,27 +374,31 @@ fn child_production_every_fuel() {
 	let mut cases = corpus_cases();
 	cases.extend(new_cases());
 	cases.extend(refusal_cases());
-	cases.extend(probe_kernel_cases());
+	cases.extend(bench_kernel_cases());
 	cases.push(partial_refusal_case());
 	let mut points = 0;
 	for case in &cases {
 		points += production_case(case).0;
 	}
-	println!("P2TABLE\tTOTAL\tcases={}\tpoints={points}\tinvalid_exits={}", cases.len(), cache::invalid_exits());
+	println!(
+		"P2TABLE\tTOTAL\tcases={}\tpoints={points}\tinvalid_exits={}",
+		cases.len(),
+		cache::invalid_exits()
+	);
 	assert_eq!(cache::invalid_exits(), 0);
 }
 
-// ----------------------------------------------------------- probe step 0 admission
+// -------------------------------------------------------- bench kernel admission
 
 #[test]
 #[cfg_attr(miri, ignore = "Miri: loads generated machine code in a child process")]
-fn p2_probe_kernel_admission() {
-	run_child("child_probe_kernel_admission");
+fn p2_bench_kernel_admission() {
+	run_child("child_bench_kernel_admission");
 }
 
 #[test]
 #[ignore = "P2 native worker: run by its parent test in a child process"]
-fn child_probe_kernel_admission() {
+fn child_bench_kernel_admission() {
 	require_child();
 	for (name, text, loaded) in [
 		("v2/while", V2_WHILE, 1),
@@ -400,13 +442,19 @@ fn child_probe_kernel_admission() {
 	fresh();
 	let program = compile_source(V2_NUMERIC);
 	let s = cache::prepare(&program.code).unwrap();
-	assert_eq!((s.division_runtime, s.division_const0, s.division_constneg1), (0, 0, 0));
+	assert_eq!(
+		(s.division_runtime, s.division_const0, s.division_constneg1),
+		(0, 0, 0)
+	);
 }
 
 // ---------------------------------------------------- 2. P1 hook mutual exclusion
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: compiles and runs generated code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: compiles and runs generated code in a child process"
+)]
 fn p2_production_never_runs_with_test_hook_installed() {
 	run_child("child_hook_exclusion");
 }
@@ -430,8 +478,15 @@ fn child_hook_exclusion() {
 	let stats = hook::take_stats().unwrap();
 	assert_eq!(observed, reference);
 	assert!(stats.entries > 0, "the P1 hook ran");
-	assert_eq!(cache::counters_for_test().1, builds, "production did not build");
-	assert!(!cache::resident_for_test(program.code.id()), "production cached nothing");
+	assert_eq!(
+		cache::counters_for_test().1,
+		builds,
+		"production did not build"
+	);
+	assert!(
+		!cache::resident_for_test(program.code.id()),
+		"production cached nothing"
+	);
 
 	// Uninstalled: only production runs.
 	hook::uninstall();
@@ -439,7 +494,10 @@ fn child_hook_exclusion() {
 	assert_eq!(observed, reference);
 	assert_eq!(cache::counters_for_test().1, builds + 1);
 	assert_eq!(totals(&program.code).entries, 1);
-	println!("P2HOOK\tinstalled: hook entries {} production builds 0; uninstalled: production entries 1", stats.entries);
+	println!(
+		"P2HOOK\tinstalled: hook entries {} production builds 0; uninstalled: production entries 1",
+		stats.entries
+	);
 }
 
 // -------------------------------------------------- 3. Send additivity, thread-local
@@ -480,7 +538,10 @@ fn p2_types_stay_send_and_regions_stay_thread_bound() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_cache_is_thread_local() {
 	run_child("child_thread_local");
 }
@@ -516,7 +577,10 @@ fn child_thread_local() {
 		assert!(!resident_elsewhere);
 		results.push(observed);
 	}
-	assert!(!cache::resident_for_test(id), "the main thread built nothing");
+	assert!(
+		!cache::resident_for_test(id),
+		"the main thread built nothing"
+	);
 	assert_eq!(results[0], results[1]);
 	println!("P2THREAD\ttwo threads: one build and one native entry each, equal results; main thread none");
 }
@@ -524,7 +588,10 @@ fn child_thread_local() {
 // ------------------------------------------------------------- 4. partial refusal
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_partial_refusal_keeps_other_regions() {
 	run_child("child_partial_refusal");
 }
@@ -574,9 +641,17 @@ fn child_prepare_pure() {
 		pub fn main(a) { let t = 0; let k = 0; while k < a { t += inner(k); k += 1; } t }",
 	);
 	let s = store();
-	let before = (snapshot(&program.code), s.state_for_test(), s.live_entries());
+	let before = (
+		snapshot(&program.code),
+		s.state_for_test(),
+		s.live_entries(),
+	);
 	let summary = cache::prepare(&program.code).unwrap();
-	let after = (snapshot(&program.code), s.state_for_test(), s.live_entries());
+	let after = (
+		snapshot(&program.code),
+		s.state_for_test(),
+		s.live_entries(),
+	);
 	assert!(summary.loaded >= 1, "{summary:?}");
 	assert_eq!(before, after);
 	// `prepare` takes only `&Code`: it has no Context, Sources or Store to run the frontend
@@ -591,7 +666,10 @@ fn child_prepare_pure() {
 // ------------------------------------------------------- 6. invalid exit, poisoned
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_invalid_exit_poisons_region_and_falls_back() {
 	run_child("child_invalid_exit");
 }
@@ -619,7 +697,10 @@ fn child_invalid_exit() {
 
 	// Never entered again; still the interpreter's result.
 	for fuel in [0, 3, 10, BIG_FUEL] {
-		assert_eq!(native(code, main, &args, fuel), plain(code, main, &args, fuel));
+		assert_eq!(
+			native(code, main, &args, fuel),
+			plain(code, main, &args, fuel)
+		);
 	}
 	let r = counters(code);
 	assert_eq!((r[0].state, r[0].entries), (State::Poisoned, 0));
@@ -663,7 +744,10 @@ fn on(executor: &mut Executor, code: &Code, args: &[i64]) -> (String, bool, usiz
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_cancel_pending_at_header_pc0_is_consumed_by_interpreter() {
 	run_child("child_cancel_pc0");
 }
@@ -693,17 +777,35 @@ fn child_cancel_pc0() {
 	let d = minus(totals(&code), before);
 
 	assert_eq!(observed, reference);
-	assert!(observed.0 .0.starts_with("Cancelled at"), "{}", observed.0 .0);
-	assert!(observed.0 .0.contains(&format!("{:?}", loc(0))), "{}", observed.0 .0);
+	assert!(
+		observed.0 .0.starts_with("Cancelled at"),
+		"{}",
+		observed.0 .0
+	);
+	assert!(
+		observed.0 .0.contains(&format!("{:?}", loc(0))),
+		"{}",
+		observed.0 .0
+	);
 	assert!(observed.0 .1 && observed.1 .1, "executor idle");
-	assert_eq!((d.cancel, d.entries), (1, 1), "refused once (pending), then entered");
-	println!("P2CANCEL\theader pc 0: {} ; refused_cancel=1 then native entry=1, executor idle", observed.0 .0);
+	assert_eq!(
+		(d.cancel, d.entries),
+		(1, 1),
+		"refused once (pending), then entered"
+	);
+	println!(
+		"P2CANCEL\theader pc 0: {} ; refused_cancel=1 then native entry=1, executor idle",
+		observed.0 .0
+	);
 }
 
 // ------------------------------------------------- 8. armed test tick: no entry
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_cancel_tick_armed_disables_production_entry() {
 	run_child("child_cancel_tick");
 }
@@ -725,7 +827,11 @@ fn child_cancel_tick() {
 		let o = native(code, main, &[Arg::I(25)], BIG_FUEL);
 		cancel_at_charge_for_test(None);
 		assert_eq!(o, p, "tick {n}");
-		assert_eq!(minus(totals(code), before), Totals::default(), "tick {n}: no entry while armed");
+		assert_eq!(
+			minus(totals(code), before),
+			Totals::default(),
+			"tick {n}: no entry while armed"
+		);
 	}
 	// Disarmed, it enters.
 	let o = native(code, main, &[Arg::I(25)], BIG_FUEL);
@@ -736,7 +842,10 @@ fn child_cancel_tick() {
 // ---------------------------------------- 10. resume rule: equal to the P1 hook entries
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_resume_rule_matches_p1_hook_entry_counts() {
 	run_child("child_resume_rule");
 }
@@ -804,7 +913,10 @@ fn child_resume_rule() {
 // ------------------------------------------------------ 11. repeated refusal: Cold
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_repeated_tag_refusal_marks_region_cold() {
 	run_child("child_cold");
 }
@@ -835,7 +947,10 @@ fn child_cold() {
 	fresh();
 	assert_eq!(cache::prepare(code).unwrap().loaded, 1);
 	let big = [Arg::I(100), Arg::F(1.5)];
-	assert_eq!(native(code, main, &big, BIG_FUEL), plain(code, main, &big, BIG_FUEL));
+	assert_eq!(
+		native(code, main, &big, BIG_FUEL),
+		plain(code, main, &big, BIG_FUEL)
+	);
 	let r = counters(code);
 	assert_eq!(r.len(), 1);
 	assert_eq!(
@@ -845,10 +960,16 @@ fn child_cold() {
 	);
 	// Cold stays cold and stops trying; results unchanged, also for inputs it could enter.
 	for args in [big, [Arg::I(100), Arg::I(2)]] {
-		assert_eq!(native(code, main, &args, BIG_FUEL), plain(code, main, &args, BIG_FUEL));
+		assert_eq!(
+			native(code, main, &args, BIG_FUEL),
+			plain(code, main, &args, BIG_FUEL)
+		);
 	}
 	let r = counters(code);
-	assert_eq!((r[0].state, r[0].refused_tag, r[0].entries), (State::Cold, cache::COLD_AFTER_REFUSALS as u64, 0));
+	assert_eq!(
+		(r[0].state, r[0].refused_tag, r[0].entries),
+		(State::Cold, cache::COLD_AFTER_REFUSALS as u64, 0)
+	);
 	println!(
 		"P2COLD\t101 arrivals: {} consecutive tag refusals then Cold; no further attempts (also for an enterable input)",
 		cache::COLD_AFTER_REFUSALS
@@ -865,7 +986,10 @@ const LRU_DATA_TOLERANCE_KIB: i64 = 16 * 1024;
 const LRU_EXEC_TOLERANCE_KIB: i64 = 1024;
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_lru_eviction_frees_code() {
 	run_child("child_lru");
 }
@@ -876,7 +1000,11 @@ fn child_lru() {
 	require_child();
 	fresh();
 	let programs: Vec<frontend::Program> = (0..LRU_PROGRAMS)
-		.map(|k| compile_source(&format!("pub fn main(a) {{ let n = {k}; while n < a {{ n += 1; }} n }}")))
+		.map(|k| {
+			compile_source(&format!(
+				"pub fn main(a) {{ let n = {k}; while n < a {{ n += 1; }} n }}"
+			))
+		})
 		.collect();
 	let mains: Vec<u32> = programs
 		.iter()
@@ -892,7 +1020,10 @@ fn child_lru() {
 	// bounded: the first 16 programs, each building one region.
 	for (p, &main) in programs.iter().zip(&mains).take(cache::MAX_CACHED_PROGRAMS) {
 		let o = native(&p.code, main, &[Arg::I(80)], BIG_FUEL);
-		assert_eq!(o.outcome, Outcome::Value(Some(crate::experimental_core::value::Scalar::I64(80))));
+		assert_eq!(
+			o.outcome,
+			Outcome::Value(Some(crate::experimental_core::value::Scalar::I64(80)))
+		);
 	}
 	let (entries, mapped, metadata, in_flight) = cache::cache_state_for_test();
 	let exec16 = anon_exec_kib(&read_maps()) as i64;
@@ -908,7 +1039,11 @@ fn child_lru() {
 	assert_eq!(entries, 16);
 	assert_eq!(mapped, 16 * cache::PAGE_BYTES);
 	assert_eq!(in_flight, 0);
-	assert_eq!(exec16 - exec0, (16 * cache::PAGE_BYTES / 1024) as i64, "one page per region");
+	assert_eq!(
+		exec16 - exec0,
+		(16 * cache::PAGE_BYTES / 1024) as i64,
+		"one page per region"
+	);
 
 	let mut baseline = None;
 	let mut end = None;
@@ -917,7 +1052,11 @@ fn child_lru() {
 		let x = (cycle % 97) as i64;
 		let o = native(&programs[k].code, mains[k], &[Arg::I(x)], BIG_FUEL);
 		let want = x.max(k as i64);
-		assert_eq!(o.outcome, Outcome::Value(Some(crate::experimental_core::value::Scalar::I64(want))), "cycle {cycle}");
+		assert_eq!(
+			o.outcome,
+			Outcome::Value(Some(crate::experimental_core::value::Scalar::I64(want))),
+			"cycle {cycle}"
+		);
 		let (entries, mapped, _, in_flight) = cache::cache_state_for_test();
 		assert!(entries <= cache::MAX_CACHED_PROGRAMS && in_flight == 0);
 		assert!(mapped <= cache::MAX_CACHED_PROGRAMS * cache::PAGE_BYTES);
@@ -927,7 +1066,10 @@ fn child_lru() {
 				status_kib("VmData:") as i64,
 				anon_exec_kib(&read_maps()) as i64,
 			);
-			println!("P2RSS\tcycle={cycle}\tVmRSS={} kB\tVmData={} kB\tanon_exec={} kB", now.0, now.1, now.2);
+			println!(
+				"P2RSS\tcycle={cycle}\tVmRSS={} kB\tVmData={} kB\tanon_exec={} kB",
+				now.0, now.1, now.2
+			);
 			if cycle == LRU_BASELINE {
 				baseline = Some(now);
 			}
@@ -948,7 +1090,11 @@ fn child_lru() {
 
 	// Clearing the cache frees every mapping.
 	cache::clear_for_test();
-	assert_eq!(anon_exec_kib(&read_maps()) as i64, exec0, "all region code freed");
+	assert_eq!(
+		anon_exec_kib(&read_maps()) as i64,
+		exec0,
+		"all region code freed"
+	);
 	assert_eq!(cache::invalid_exits(), 0);
 }
 
@@ -961,7 +1107,10 @@ fn p2_perf_buildid_dir_refuses_native() {
 	std::fs::create_dir_all(&dir).unwrap();
 	run_child_with("child_perf_env", &[("PERF_BUILDID_DIR", dir.as_os_str())]);
 	let left: Vec<_> = std::fs::read_dir(&dir).unwrap().collect();
-	assert!(left.is_empty(), "the tier wrote into PERF_BUILDID_DIR: {left:?}");
+	assert!(
+		left.is_empty(),
+		"the tier wrote into PERF_BUILDID_DIR: {left:?}"
+	);
 	std::fs::remove_dir(&dir).unwrap();
 }
 
@@ -969,7 +1118,10 @@ fn p2_perf_buildid_dir_refuses_native() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_perf_env() {
 	require_child();
-	assert!(std::env::var_os("PERF_BUILDID_DIR").is_some(), "the parent sets it");
+	assert!(
+		std::env::var_os("PERF_BUILDID_DIR").is_some(),
+		"the parent sets it"
+	);
 	fresh();
 	let program = compile_source(V2_WHILE);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
@@ -984,14 +1136,21 @@ fn child_perf_env() {
 	}
 	let map = std::path::PathBuf::from(format!("/tmp/perf-{}.map", std::process::id()));
 	assert!(!map.exists(), "{map:?} was written");
-	assert_eq!(anon_exec_kib(&read_maps()), exec_before, "no executable mapping");
+	assert_eq!(
+		anon_exec_kib(&read_maps()),
+		exec_before,
+		"no executable mapping"
+	);
 	println!("P2PERF\tPERF_BUILDID_DIR set: regions=1 loaded=0 environment=1, no {map:?}");
 }
 
 // -------------------------------------------------------- 14. compile panic caught
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2_catch_unwind_maps_compile_panic() {
 	run_child("child_compile_panic");
 }
@@ -1014,7 +1173,10 @@ fn child_compile_panic() {
 	assert_eq!((entries, in_flight), (1, 0));
 	let total = total_charge(code, main, &[Arg::I(6)], "compile_panic");
 	for fuel in 0..=total + 1 {
-		assert_eq!(native(code, main, &[Arg::I(6)], fuel), plain(code, main, &[Arg::I(6)], fuel));
+		assert_eq!(
+			native(code, main, &[Arg::I(6)], fuel),
+			plain(code, main, &[Arg::I(6)], fuel)
+		);
 	}
 	assert!(totals(code).entries > 0, "the other region runs natively");
 
@@ -1046,7 +1208,10 @@ fn child_in_flight() {
 	let (_, b0) = cache::counters_for_test();
 	let outer = cache::checkout(code);
 	assert!(matches!(outer, Checkout::Native(_)));
-	assert!(matches!(cache::checkout(code), Checkout::Interpret { no_regions: false }));
+	assert!(matches!(
+		cache::checkout(code),
+		Checkout::Interpret { no_regions: false }
+	));
 	// An invocation inside that window is interpreted and equal.
 	let nested = native(code, main, &[Arg::I(9)], BIG_FUEL);
 	assert_eq!(nested, plain(code, main, &[Arg::I(9)], BIG_FUEL));
@@ -1064,8 +1229,15 @@ fn child_in_flight() {
 		let _ = cache::checkout(code);
 	});
 	assert!(unwound.is_err());
-	assert_eq!(cache::cache_state_for_test(), (0, 0, 0, 0), "no marker, no charge left");
-	assert!(matches!(cache::checkout(code), Checkout::Native(_)), "rebuilt");
+	assert_eq!(
+		cache::cache_state_for_test(),
+		(0, 0, 0, 0),
+		"no marker, no charge left"
+	);
+	assert!(
+		matches!(cache::checkout(code), Checkout::Native(_)),
+		"rebuilt"
+	);
 
 	// (c) A panic while checked out puts the entry back.
 	let unwound = std::panic::catch_unwind(|| {
@@ -1077,8 +1249,15 @@ fn child_in_flight() {
 	assert!(cache::resident_for_test(code.id()));
 	assert_eq!(cache::cache_state_for_test().3, 0);
 	let (_, builds) = cache::counters_for_test();
-	assert_eq!(native(code, main, &[Arg::I(9)], BIG_FUEL), plain(code, main, &[Arg::I(9)], BIG_FUEL));
-	assert_eq!(cache::counters_for_test().1, builds, "no rebuild after the put-back");
+	assert_eq!(
+		native(code, main, &[Arg::I(9)], BIG_FUEL),
+		plain(code, main, &[Arg::I(9)], BIG_FUEL)
+	);
+	assert_eq!(
+		cache::counters_for_test().1,
+		builds,
+		"no rebuild after the put-back"
+	);
 	println!("P2INFLIGHT\tnested checkout interpreted (1 build); build panic leaves no marker; panic while checked out puts back");
 }
 
@@ -1088,7 +1267,12 @@ fn child_in_flight() {
 pub(super) fn straight(len: usize, slots: u32) -> Function {
 	let mut f = Function::new(slots, 0).unwrap();
 	for pc in 0..len - 1 {
-		lit(&mut f, (pc % slots as usize) as u32, Value::I64(1), pc as u32);
+		lit(
+			&mut f,
+			(pc % slots as usize) as u32,
+			Value::I64(1),
+			pc as u32,
+		);
 	}
 	f.push(Op::Return { value: 0 }, loc(len as u32)).unwrap();
 	f
@@ -1162,7 +1346,11 @@ fn limit_row(name: &str, s: &NativeSummary) {
 fn p2_analysis_work_estimate() {
 	assert_eq!(cache::analysis_work(10, 0, 4), 10 + 40);
 	assert_eq!(cache::analysis_work(10, 3, 4), 40 + 40);
-	assert_eq!(cache::analysis_work(10, 1000, 4), 10 * 65 + 40, "headers capped at 64");
+	assert_eq!(
+		cache::analysis_work(10, 1000, 4),
+		10 * 65 + 40,
+		"headers capped at 64"
+	);
 	// Past the inference bound the function-level cells are not run, so not charged.
 	assert_eq!(cache::analysis_work(1 << 16, 0, 1 << 7), 1 << 16);
 }
@@ -1186,13 +1374,27 @@ fn child_bounds() {
 	let arg = s.root_i64(4);
 	let mut executor = Executor::new().unwrap();
 	let (c0, b0) = cache::counters_for_test();
-	executor.invoke(&program, &mut s, main, &[&arg], BIG_FUEL).unwrap();
-	executor.invoke(&program, &mut s, main, &[&arg], BIG_FUEL).unwrap();
+	executor
+		.invoke(&program, &mut s, main, &[&arg], BIG_FUEL)
+		.unwrap();
+	executor
+		.invoke(&program, &mut s, main, &[&arg], BIG_FUEL)
+		.unwrap();
 	let (c1, b1) = cache::counters_for_test();
-	assert_eq!((c1 - c0, b1 - b0), (1, 1), "second invocation skipped the cache (hint)");
+	assert_eq!(
+		(c1 - c0, b1 - b0),
+		(1, 1),
+		"second invocation skipped the cache (hint)"
+	);
 	let mut other = Executor::new().unwrap();
-	other.invoke(&program, &mut s, main, &[&arg], BIG_FUEL).unwrap();
-	assert_eq!(cache::counters_for_test(), (c1 + 1, b1), "new executor: Empty entry, no rebuild");
+	other
+		.invoke(&program, &mut s, main, &[&arg], BIG_FUEL)
+		.unwrap();
+	assert_eq!(
+		cache::counters_for_test(),
+		(c1 + 1, b1),
+		"new executor: Empty entry, no rebuild"
+	);
 	assert_eq!(cache::regions_for_test(program.code.id()), Some(Vec::new()));
 
 	// (b) Every region refused: a negative entry; rebuilt only after eviction.
@@ -1204,28 +1406,47 @@ fn child_bounds() {
 	for _ in 0..3 {
 		native(&refused.code, rmain, &[Arg::I(7), Arg::I(2)], BIG_FUEL);
 	}
-	assert_eq!(cache::counters_for_test().1, b0 + 1, "refusals remembered while resident");
-	assert_eq!(cache::summary(refused.code.id()).unwrap().division_runtime, 1);
+	assert_eq!(
+		cache::counters_for_test().1,
+		b0 + 1,
+		"refusals remembered while resident"
+	);
+	assert_eq!(
+		cache::summary(refused.code.id()).unwrap().division_runtime,
+		1
+	);
 	assert!(cache::evict(refused.code.id()));
 	native(&refused.code, rmain, &[Arg::I(7), Arg::I(2)], BIG_FUEL);
-	assert_eq!(cache::counters_for_test().1, b0 + 2, "retried after eviction");
+	assert_eq!(
+		cache::counters_for_test().1,
+		b0 + 2,
+		"retried after eviction"
+	);
 
 	// (c) Loaded regions per program.
 	let mut text = String::new();
 	for k in 0..(cache::MAX_PROGRAM_REGIONS + 6) {
-		text.push_str(&format!("fn f{k}(a) {{ let n = 0; while n < a {{ n += 1; }} n }}\n"));
+		text.push_str(&format!(
+			"fn f{k}(a) {{ let n = 0; while n < a {{ n += 1; }} n }}\n"
+		));
 	}
 	text.push_str("pub fn main(a) { f0(a) }");
 	let many = compile_source(&text);
 	let s = summary_of(&many.code);
 	limit_row("program_regions", &s);
-	// P3a streaming: the six regions past the cap are no longer analysed (672a4eaa:
+	// P3a streaming: the six regions past the cap are no longer analysed (batch build:
 	// regions 70, region_cap 6); `region_cap` is now the flag that the cap stopped it.
-	assert_eq!((s.regions, s.loaded, s.region_cap, s.skipped_after_caps), (64, 64, 1, 6));
+	assert_eq!(
+		(s.regions, s.loaded, s.region_cap, s.skipped_after_caps),
+		(64, 64, 1, 6)
+	);
 	assert_eq!(s.mapped_bytes, 64 * cache::PAGE_BYTES as u64);
 	assert!(s.metadata_bytes > 0 && s.metadata_bytes <= cache::MAX_PROGRAM_METADATA_BYTES as u64);
 	let mmain = many.function(Hash::type_hash(["main"])).unwrap();
-	assert_eq!(native(&many.code, mmain, &[Arg::I(30)], BIG_FUEL), plain(&many.code, mmain, &[Arg::I(30)], BIG_FUEL));
+	assert_eq!(
+		native(&many.code, mmain, &[Arg::I(30)], BIG_FUEL),
+		plain(&many.code, mmain, &[Arg::I(30)], BIG_FUEL)
+	);
 
 	// (d) Function length.
 	let long = build(vec![padded_loop(cache::MAX_ANALYSED_FUNCTION_LEN)]);
@@ -1235,18 +1456,28 @@ fn child_bounds() {
 	let short = build(vec![padded_loop(1_000)]);
 	let s = summary_of(&short);
 	assert_eq!((s.skipped_length, s.loaded), (0, 1));
-	assert_eq!(native(&short, 0, &[Arg::I(5)], BIG_FUEL), plain(&short, 0, &[Arg::I(5)], BIG_FUEL));
+	assert_eq!(
+		native(&short, 0, &[Arg::I(5)], BIG_FUEL),
+		plain(&short, 0, &[Arg::I(5)], BIG_FUEL)
+	);
 
 	// (e) Candidate headers per function.
-	let over = build(vec![many_headers(cache::MAX_FUNCTION_CANDIDATE_HEADERS as u32 + 1)]);
+	let over = build(vec![many_headers(
+		cache::MAX_FUNCTION_CANDIDATE_HEADERS as u32 + 1,
+	)]);
 	let s = summary_of(&over);
 	limit_row("candidate_headers", &s);
 	assert_eq!((s.skipped_headers, s.candidates), (1, 0));
-	let at = build(vec![many_headers(cache::MAX_FUNCTION_CANDIDATE_HEADERS as u32)]);
+	let at = build(vec![many_headers(
+		cache::MAX_FUNCTION_CANDIDATE_HEADERS as u32,
+	)]);
 	let s = summary_of(&at);
 	limit_row("candidate_headers_at_bound", &s);
 	assert_eq!(s.skipped_headers, 0);
-	assert_eq!(s.candidates as usize, crate::experimental_core::region::MAX_REGIONS_PER_FUNCTION);
+	assert_eq!(
+		s.candidates as usize,
+		crate::experimental_core::region::MAX_REGIONS_PER_FUNCTION
+	);
 
 	// (f) The analysis-work budget: functions of 1,000 instructions over 64 slots.
 	let per = cache::analysis_work(1_000, 0, 64);
@@ -1261,7 +1492,10 @@ fn child_bounds() {
 	let functions = build((0..count).map(|_| straight(2, 1)).collect());
 	let s = summary_of(&functions);
 	limit_row("analysed_functions", &s);
-	assert_eq!((s.analysed_functions as usize, s.skipped_budget), (cache::MAX_PROGRAM_ANALYSED_FUNCTIONS, 7));
+	assert_eq!(
+		(s.analysed_functions as usize, s.skipped_budget),
+		(cache::MAX_PROGRAM_ANALYSED_FUNCTIONS, 7)
+	);
 
 	// (h) One region's mapping is one page: the summary's mapped bytes against
 	// /proc/self/maps.

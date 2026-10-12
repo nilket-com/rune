@@ -13,7 +13,7 @@
 //! compares the native and simulated status, exit record and written buffer entries from
 //! independent copies of the same pre-entry input.
 //!
-//! Output lines prefixed `TABLE` and `RSS` are the receipt rows.
+//! Output lines prefixed `TABLE` and `RSS` are machine-readable report rows.
 use super::boundary::{
 	inject_load_error_for_test, load_error_frees_for_test, maps_overlapping, parse_maps_line,
 	InjectLoadError, MapInfo, NativeRegion,
@@ -106,25 +106,37 @@ fn require_child() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p1_native_differential_corpus() {
 	run_child("child_corpus");
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p1_native_differential_new_cases() {
 	run_child("child_new_cases");
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p1_native_refusals() {
 	run_child("child_refusals");
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p1_native_lifecycle_and_contract() {
 	run_child("child_lifecycle");
 }
@@ -313,7 +325,13 @@ pub(super) struct Case {
 	pub(super) entry_refusals: bool,
 }
 
-pub(super) fn rune(name: &str, text: &str, inputs: Vec<Vec<Arg>>, loaded: usize, targets: &'static str) -> Case {
+pub(super) fn rune(
+	name: &str,
+	text: &str,
+	inputs: Vec<Vec<Arg>>,
+	loaded: usize,
+	targets: &'static str,
+) -> Case {
 	Case {
 		name: name.into(),
 		src: Src::Program(compile_source(text)),
@@ -355,7 +373,7 @@ pub(super) fn divided(op: Binary, divisor: Option<i64>) -> Code {
 	branch(&mut f, 3, 4, 11, 3); // 3
 	match divisor {
 		Some(d) => lit(&mut f, 5, Value::I64(d), 4), // 4
-		None => lit(&mut f, 4, Value::I64(1), 4),   // 4 (d unused; divide by limit)
+		None => lit(&mut f, 4, Value::I64(1), 4),    // 4 (d unused; divide by limit)
 	}
 	bin(&mut f, 6, op, 1, if divisor.is_some() { 5 } else { 0 }, 5); // 5
 	bin(&mut f, 7, Binary::Add, 7, 6, 6); // 6
@@ -715,7 +733,11 @@ pub(super) fn run_case(case: &Case) -> (Stats, Stats) {
 		install.division_constneg1,
 	];
 
-	assert_eq!(install.loaded, case.loaded, "{}: loaded regions {install:?}", case.name);
+	assert_eq!(
+		install.loaded, case.loaded,
+		"{}: loaded regions {install:?}",
+		case.name
+	);
 	assert_eq!(refused, case.refused, "{}: refusals {install:?}", case.name);
 	assert_eq!(
 		(
@@ -742,11 +764,16 @@ pub(super) fn run_case(case: &Case) -> (Stats, Stats) {
 		let reference = invoke(code, main, args, BIG_FUEL);
 		hook::resume();
 		if let Outcome::Failure { error, .. } = &reference.outcome {
-			assert_ne!(error.kind, ErrorKind::FuelExhausted, "{}: {args:?}", case.name);
+			assert_ne!(
+				error.kind,
+				ErrorKind::FuelExhausted,
+				"{}: {args:?}",
+				case.name
+			);
 		}
 		let total = BIG_FUEL - reference.fuel_left.expect("final fuel");
 		assert!(
-			total + 1 <= MAX_SWEEP,
+			total < MAX_SWEEP,
 			"{}: {args:?} charges {total}: reduce the case",
 			case.name
 		);
@@ -772,8 +799,16 @@ pub(super) fn run_case(case: &Case) -> (Stats, Stats) {
 				);
 			}
 
-			assert_eq!(plain, simulated, "{}: simulator, fuel {fuel}, {args:?}", case.name);
-			assert_eq!(plain, native, "{}: native, fuel {fuel}, {args:?}", case.name);
+			assert_eq!(
+				plain, simulated,
+				"{}: simulator, fuel {fuel}, {args:?}",
+				case.name
+			);
+			assert_eq!(
+				plain, native,
+				"{}: native, fuel {fuel}, {args:?}",
+				case.name
+			);
 			assert!(plain.idle && plain.live_entries == 0, "{}", case.name);
 
 			// The simulator and native installs enter and exit identically.
@@ -845,7 +880,11 @@ pub(super) fn run_case(case: &Case) -> (Stats, Stats) {
 		assert!(entry_refused > 0, "{}: expected entry refusals", case.name);
 	}
 	if has(case.targets, 'C') {
-		assert!(covered.native_continue > 0, "{}: no continue exit", case.name);
+		assert!(
+			covered.native_continue > 0,
+			"{}: no continue exit",
+			case.name
+		);
 	}
 	if has(case.targets, 'F') {
 		assert!(covered.native_fuel > 0, "{}: no fuel exit", case.name);
@@ -899,7 +938,7 @@ fn p1_case_expectations_compile_only() {
 		let mut loaded = 0;
 		let mut refused = [0usize; 3];
 		for id in 0..code.functions() as u32 {
-			for (_, region) in analyze(&code, id).unwrap() {
+			for (_, region) in analyze(code, id).unwrap() {
 				let Ok(region) = region else { continue };
 				match compile_region(&region, 0) {
 					Ok(_) => loaded += 1,
@@ -915,14 +954,24 @@ fn p1_case_expectations_compile_only() {
 				}
 			}
 		}
-		assert_eq!((loaded, refused), (case.loaded, case.refused), "{}", case.name);
+		assert_eq!(
+			(loaded, refused),
+			(case.loaded, case.refused),
+			"{}",
+			case.name
+		);
 
 		for args in &case.inputs {
 			let reference = invoke(code, case.src.main(), args, BIG_FUEL);
 			let total = BIG_FUEL - reference.fuel_left.expect("final fuel");
-			assert!(total + 1 <= MAX_SWEEP, "{}: {args:?} charges {total}", case.name);
+			assert!(total < MAX_SWEEP, "{}: {args:?} charges {total}", case.name);
 			if let Outcome::Failure { error, .. } = &reference.outcome {
-				assert_ne!(error.kind, ErrorKind::FuelExhausted, "{}: {args:?}", case.name);
+				assert_ne!(
+					error.kind,
+					ErrorKind::FuelExhausted,
+					"{}: {args:?}",
+					case.name
+				);
 			}
 		}
 	}
@@ -948,7 +997,7 @@ pub(super) fn status_kib(field: &str) -> u64 {
 }
 
 fn sample_cycle(cycle: usize) -> bool {
-	cycle == 0 || cycle == BASELINE_CYCLE || cycle % 1000 == 0 || cycle == CYCLES
+	cycle == 0 || cycle == BASELINE_CYCLE || cycle.is_multiple_of(1000) || cycle == CYCLES
 }
 
 /// Runs `step` for cycles 1..=CYCLES, sampling VmRSS/VmData, and applies the screen.
@@ -956,13 +1005,19 @@ fn screened(phase: &str, mut step: impl FnMut(usize)) {
 	let mut baseline = None;
 	let mut end = (0, 0);
 	let first = (status_kib("VmRSS:"), status_kib("VmData:"));
-	println!("RSS\t{phase}\tcycle=0\tVmRSS={} kB\tVmData={} kB", first.0, first.1);
+	println!(
+		"RSS\t{phase}\tcycle=0\tVmRSS={} kB\tVmData={} kB",
+		first.0, first.1
+	);
 
 	for cycle in 1..=CYCLES {
 		step(cycle);
 		if sample_cycle(cycle) {
 			let now = (status_kib("VmRSS:"), status_kib("VmData:"));
-			println!("RSS\t{phase}\tcycle={cycle}\tVmRSS={} kB\tVmData={} kB", now.0, now.1);
+			println!(
+				"RSS\t{phase}\tcycle={cycle}\tVmRSS={} kB\tVmData={} kB",
+				now.0, now.1
+			);
 			if cycle == BASELINE_CYCLE {
 				baseline = Some(now);
 			}
@@ -976,8 +1031,14 @@ fn screened(phase: &str, mut step: impl FnMut(usize)) {
 	println!(
 		"RSS\t{phase}\tgrowth cycle {BASELINE_CYCLE}..{CYCLES}: VmRSS {rss:+} kB (tolerance {RSS_TOLERANCE_KIB}), VmData {data:+} kB (tolerance {DATA_TOLERANCE_KIB})"
 	);
-	assert!(rss <= RSS_TOLERANCE_KIB as i64, "{phase}: VmRSS grew {rss} kB");
-	assert!(data <= DATA_TOLERANCE_KIB as i64, "{phase}: VmData grew {data} kB");
+	assert!(
+		rss <= RSS_TOLERANCE_KIB as i64,
+		"{phase}: VmRSS grew {rss} kB"
+	);
+	assert!(
+		data <= DATA_TOLERANCE_KIB as i64,
+		"{phase}: VmData grew {data} kB"
+	);
 }
 
 fn lifecycle_region() -> Region {
@@ -985,9 +1046,7 @@ fn lifecycle_region() -> Region {
 		"pub fn main(a) { let n = 0; let total = 0; while n < a { total += n % 17; n += 1; } total }",
 	);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
-	let mut found = analyze(&program.code, main)
-		.unwrap()
-		.into_iter();
+	let mut found = analyze(&program.code, main).unwrap().into_iter();
 	found.next().unwrap().1.unwrap()
 }
 
@@ -1028,7 +1087,9 @@ fn child_lifecycle() {
 			assert_eq!(native.call(&mut buf, &mut record), None, "len {len}");
 			assert_eq!(record, before);
 			assert!(buf.iter().all(|&v| v == 0x5a5a_5a5a));
-			println!("CONTRACT\tbuffer length {len} (slots {n}): None, record and buffer unchanged");
+			println!(
+				"CONTRACT\tbuffer length {len} (slots {n}): None, record and buffer unchanged"
+			);
 		}
 
 		let mut buf = entry_buffer(&region, 30);
@@ -1104,7 +1165,10 @@ fn child_lifecycle() {
 	let native = NativeRegion::load(&compiled).unwrap();
 	let mut buf = entry_buffer(&region, 3);
 	let mut record = ExitRecord::new(100);
-	assert_eq!(native.call(&mut buf, &mut record), Some(Status::Continue as u32));
+	assert_eq!(
+		native.call(&mut buf, &mut record),
+		Some(Status::Continue as u32)
+	);
 }
 
 // ------------------------------------- VmSize and executable-mapping lifecycle screen
@@ -1223,13 +1287,22 @@ fn vm_screened(phase: &str, mut step: impl FnMut(usize)) {
 	println!(
 		"VM\t{phase}\tgrowth cycle {BASELINE_CYCLE}..{CYCLES}: VmSize {size:+} kB (tolerance {VM_SIZE_TOLERANCE_KIB}), exec {exec:+} kB (tolerance {EXEC_TOLERANCE_KIB}), maps {maps:+} (tolerance {MAPS_TOLERANCE}), VmRSS {rss:+} kB, VmData {data:+} kB (recorded only)"
 	);
-	assert!(size <= VM_SIZE_TOLERANCE_KIB, "{phase}: VmSize grew {size} kB");
-	assert!(exec <= EXEC_TOLERANCE_KIB, "{phase}: executable mappings grew {exec} kB");
+	assert!(
+		size <= VM_SIZE_TOLERANCE_KIB,
+		"{phase}: VmSize grew {size} kB"
+	);
+	assert!(
+		exec <= EXEC_TOLERANCE_KIB,
+		"{phase}: executable mappings grew {exec} kB"
+	);
 	assert!(maps <= MAPS_TOLERANCE, "{phase}: mapping count grew {maps}");
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p1_native_vm_exec_screen() {
 	run_child("child_vm_exec_screen");
 }
@@ -1297,7 +1370,10 @@ fn child_vm_exec_screen() {
 	let native = NativeRegion::load(&compiled).unwrap();
 	let mut buf = entry_buffer(&region, 3);
 	let mut record = ExitRecord::new(100);
-	assert_eq!(native.call(&mut buf, &mut record), Some(Status::Continue as u32));
+	assert_eq!(
+		native.call(&mut buf, &mut record),
+		Some(Status::Continue as u32)
+	);
 }
 
 // ------------------------------------------ live executable-mapping positive control
@@ -1366,7 +1442,10 @@ fn child_live_mapping() {
 	// The region still runs from that mapping while sampled.
 	let mut buf = entry_buffer(&region, 3);
 	let mut record = ExitRecord::new(100);
-	assert_eq!(native.call(&mut buf, &mut record), Some(Status::Continue as u32));
+	assert_eq!(
+		native.call(&mut buf, &mut record),
+		Some(Status::Continue as u32)
+	);
 
 	drop(native);
 	let after = read_maps();
@@ -1378,7 +1457,11 @@ fn child_live_mapping() {
 	print_located("alive", &live);
 	print_located("after_drop", &freed);
 
-	let (b, a, d) = (anon_exec_kib(&baseline), anon_exec_kib(&alive), anon_exec_kib(&after));
+	let (b, a, d) = (
+		anon_exec_kib(&baseline),
+		anon_exec_kib(&alive),
+		anon_exec_kib(&after),
+	);
 	println!(
 		"P1C\tanon_exec KiB (corroboration only): baseline={b} alive={a} after_drop={d} delta_alive={:+} delta_after_drop={:+}",
 		a as i64 - b as i64,
@@ -1386,11 +1469,23 @@ fn child_live_mapping() {
 	);
 	println!(
 		"P1C\tafter_drop: range {start:x}-{end:x} {}",
-		if freed.is_empty() { "unmapped" } else { "still (partly) mapped" }
+		if freed.is_empty() {
+			"unmapped"
+		} else {
+			"still (partly) mapped"
+		}
 	);
 
-	assert!(mapping.executable(), "alive: entry mapping not executable: {}", mapping.line);
-	assert!(!mapping.writable(), "alive: entry mapping writable (W^X): {}", mapping.line);
+	assert!(
+		mapping.executable(),
+		"alive: entry mapping not executable: {}",
+		mapping.line
+	);
+	assert!(
+		!mapping.writable(),
+		"alive: entry mapping writable (W^X): {}",
+		mapping.line
+	);
 	assert!(
 		before.iter().all(|m| !m.executable()),
 		"baseline: an executable mapping already overlapped {start:x}-{end:x}"
@@ -1406,7 +1501,10 @@ fn child_live_mapping() {
 fn p1c_maps_parser_synthetic_lines() {
 	let anon = parse_maps_line("7f1c2a400000-7f1c2a401000 r-xp 00000000 00:00 0").unwrap();
 	assert_eq!((anon.start, anon.end), (0x7f1c2a400000, 0x7f1c2a401000));
-	assert_eq!((anon.perms.as_str(), anon.offset, anon.path.as_deref()), ("r-xp", 0, None));
+	assert_eq!(
+		(anon.perms.as_str(), anon.offset, anon.path.as_deref()),
+		("r-xp", 0, None)
+	);
 	assert!(anon.executable() && !anon.writable());
 
 	let heap = parse_maps_line(
@@ -1418,7 +1516,10 @@ fn p1c_maps_parser_synthetic_lines() {
 
 	let spaced = "7f1c2b000000-7f1c2b022000 r-xp 0001a000 fd:01 1234567                    /home/u/dir with spaces/lib x.so (deleted)";
 	let spaced = parse_maps_line(spaced).unwrap();
-	assert_eq!(spaced.path.as_deref(), Some("/home/u/dir with spaces/lib x.so (deleted)"));
+	assert_eq!(
+		spaced.path.as_deref(),
+		Some("/home/u/dir with spaces/lib x.so (deleted)")
+	);
 	assert_eq!((spaced.offset, spaced.perms.as_str()), (0x1a000, "r-xp"));
 
 	let wx = parse_maps_line("7f0000000000-7f0000002000 rwxp 00000000 00:00 0").unwrap();
@@ -1435,7 +1536,10 @@ fn p1c_maps_parser_synthetic_lines() {
 	}
 
 	let text = "1000-3000 r-xp 00000000 00:00 0\n3000-4000 rw-p 00000000 00:00 0\n8000-9000 r--p 00000000 fd:01 7 /lib/a b";
-	let hit: Vec<u64> = maps_overlapping(text, 0x2fff, 0x3001).iter().map(|m| m.start).collect();
+	let hit: Vec<u64> = maps_overlapping(text, 0x2fff, 0x3001)
+		.iter()
+		.map(|m| m.start)
+		.collect();
 	assert_eq!(hit, [0x1000, 0x3000]);
 	assert!(maps_overlapping(text, 0x4000, 0x8000).is_empty());
 	assert_eq!(maps_overlapping(text, 0, u64::MAX).len(), 3);

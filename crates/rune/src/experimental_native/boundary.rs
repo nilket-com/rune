@@ -284,6 +284,8 @@ impl NativeRegion {
 	pub(crate) fn entry_mapping(&self, maps: &str) -> Option<MapInfo> {
 		self.module.as_ref()?;
 		let address = self.entry as usize as u64;
-		maps_overlapping(maps, address, address + 1).into_iter().next()
+		maps_overlapping(maps, address, address + 1)
+			.into_iter()
+			.next()
 	}
 }

@@ -5,18 +5,22 @@
 //! plain interpreter with the full observation (value or error, call chain, cleanup error,
 //! live entries, idle state, remaining fuel and the store's whole state).
 //!
-//! Tests that compile Rune source are ignored under Miri; the hand-built ones are not.
+//! Tests that compile Rune source are ignored under Miri, and so are the hand-built simulator
+//! and every-fuel sweeps (an opt-in deep Miri run: `cargo miri test -p rune --all-features
+//! --lib -- --ignored experimental_core::region::p2b_tests`); the hand-built lattice,
+//! transfer, record-layout and refusal tests are not, except the exhaustive transfer
+//! monotonicity sweep, which took 208.5 s under Miri.
 use super::abi::ExitRecord;
 use super::commit::{self, Refused};
 use super::hook::{self, Stats};
 use super::simulate::simulate;
 use super::tests::{
-	bin, build, compile, fuel_to_finish, lit, loc, main_of, regions, store, while_region, window, Arg,
-	Outcome, LISTED,
+	bin, build, compile, fuel_to_finish, lit, loc, main_of, regions, store, while_region, window,
+	Arg, Outcome, LISTED,
 };
 use super::{
-	transfer, EntryClass, Exit, Konst, NodeOp, Region, RegionRefusal, Scalar, SlotState, Status, Ty,
-	Written,
+	transfer, EntryClass, Exit, Konst, NodeOp, Region, RegionRefusal, Scalar, SlotState, Status,
+	Ty, Written,
 };
 
 use crate::experimental_core::{
@@ -48,7 +52,8 @@ fn release(f: &mut Function, value: u32, at: u32) {
 }
 
 fn assign(f: &mut Function, out: u32, op: Binary, lhs: u32, rhs: u32, at: u32) {
-	f.push(Op::AssignBinary { out, op, lhs, rhs }, loc(at)).unwrap();
+	f.push(Op::AssignBinary { out, op, lhs, rhs }, loc(at))
+		.unwrap();
 }
 
 fn ret(f: &mut Function, value: u32, at: u32) {
@@ -79,7 +84,11 @@ fn refusal(code: &Code, function: u32, header: u32) -> RegionRefusal {
 
 /// The local index of frame slot `slot` in `region`.
 fn local(region: &Region, slot: u32) -> u32 {
-	region.slots.iter().position(|&s| s == slot).expect("touched slot") as u32
+	region
+		.slots
+		.iter()
+		.position(|&s| s == slot)
+		.expect("touched slot") as u32
 }
 
 /// Everything observable about one invocation, as in the native harness.
@@ -151,7 +160,10 @@ fn sweep_full(code: &Code, function: u32, args: &[Arg]) -> Stats {
 		let simulated = invoke_full(code, function, args, fuel);
 		let stats = hook::uninstall().unwrap();
 		assert_eq!(plain, simulated, "fuel {fuel}, args {args:?}");
-		assert!(plain.idle && plain.live_entries == 0, "fuel {fuel}, args {args:?}");
+		assert!(
+			plain.idle && plain.live_entries == 0,
+			"fuel {fuel}, args {args:?}"
+		);
 		add(&mut total, &stats);
 	}
 	total
@@ -369,7 +381,7 @@ pub(crate) fn sixty_four(limit: i64, ret_slot: u32) -> Function {
 	f
 }
 
-/// Every overlapping-slot case of the P2b design table in one loop, with a fallible Add
+/// Every overlapping-slot case in one loop, with a fallible Add
 /// before and an AssignBinary `x = x + x` after the Copy into the guarded live-in `x`.
 /// Slots: 0 a, 1 b, 2 i, 3 c, 4 x, 5 y, 6 z, 7 one, 8 four.
 pub(crate) fn overlapping() -> Function {
@@ -425,8 +437,8 @@ pub(crate) fn heap_at_entry(kind: u32) -> Function {
 	branch(&mut f, 2, 4, 10, 3); // 3
 	lit(&mut f, 3, Value::I64(1), 4); // 4
 	match kind {
-		0 => copy(&mut f, 4, 3, 5),    // 5: owned is a Copy out
-		1 => release(&mut f, 4, 5),    // 5: owned is a Release target
+		0 => copy(&mut f, 4, 3, 5),            // 5: owned is a Copy out
+		1 => release(&mut f, 4, 5),            // 5: owned is a Release target
 		_ => lit(&mut f, 5, Value::I64(2), 5), // 5: v is overwritten ...
 	}
 	if kind == 2 {
@@ -465,11 +477,14 @@ pub(crate) fn untouched_scalars_at_entry() -> Function {
 	f
 }
 
-pub(crate) const AND_AND: &str = "pub fn main(a, b) { let i = 0; let s = 0; while i < a && i < b { s += i; i += 1; } s }";
+pub(crate) const AND_AND: &str =
+	"pub fn main(a, b) { let i = 0; let s = 0; while i < a && i < b { s += i; i += 1; } s }";
 pub(crate) const UNIT_BOOL_I64_REUSE: &str = "pub fn main(a) { let i = 0; let s = 0; while i < a { let t = i > 2; if t { s += 1; } let u = i * 3; s += u; i += 1; } s }";
-pub(crate) const COPY_OVERFLOW_RETRY: &str = "pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x = x + b; i += 1; } x }";
+pub(crate) const COPY_OVERFLOW_RETRY: &str =
+	"pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x = x + b; i += 1; } x }";
 pub(crate) const COPY_NOT_A_DIVISOR: &str = "pub fn main(a) { let n = 0; let t = 0; while n < a { let d = 17; let e = d; t += n % e; n += 1; } t }";
-pub(crate) const COPY_OF_LOOP_VARIABLE: &str = "pub fn main(a) { let i = 0; let s = 0; while i < a { let y = i; s += y; i += 1; } s }";
+pub(crate) const COPY_OF_LOOP_VARIABLE: &str =
+	"pub fn main(a) { let i = 0; let s = 0; while i < a { let y = i; s += y; i += 1; } s }";
 
 // ------------------------------------------------------------- 1, 2: lattice and ABI
 
@@ -540,6 +555,7 @@ fn leq(a: SlotState, b: SlotState) -> bool {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: 208.5 s measured sweep (opt-in deep run)")]
 fn p2b_transfer_is_monotone_with_unit_and_copy() {
 	// Two touched slots: 3 (source) and 5 (out). The Copy transfer reads the source state
 	// and writes the out state; Literal Unit and Release write a constant state.
@@ -629,6 +645,7 @@ fn p2b_exit_record_layout_appends_units_at_40() {
 // ------------------------------------------------------- 3 to 13: admission and maps
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_literal_unit_admitted_with_static_unit_tag() {
 	let code = build(vec![unit_and_release(4)]);
 	let region = admitted(&code, 0, 1);
@@ -662,7 +679,10 @@ fn p2b_literal_unit_admitted_with_static_unit_tag() {
 	buf[local(&region, 1) as usize] = 7;
 	buf[u as usize] = 99;
 	let mut record = ExitRecord::new(5);
-	assert_eq!(simulate(&region, &mut buf, &mut record), Status::Continue as u32);
+	assert_eq!(
+		simulate(&region, &mut buf, &mut record),
+		Status::Continue as u32
+	);
 	assert_eq!(record.pc, 12);
 	assert_eq!(record.written & (1 << u | 1 << r), 1 << u | 1 << r);
 	assert_eq!((buf[u as usize], buf[r as usize]), (0, 0));
@@ -678,9 +698,17 @@ fn p2b_literal_unit_admitted_with_static_unit_tag() {
 		Value::F64(2.5),
 		Value::Type(Type::I64),
 	];
-	let exited = commit::enter(&region, &mut w, &mut s, false, 5, commit::ROOM_FOR_TEST, simulate)
-		.unwrap()
-		.unwrap();
+	let exited = commit::enter(
+		&region,
+		&mut w,
+		&mut s,
+		false,
+		5,
+		commit::ROOM_FOR_TEST,
+		simulate,
+	)
+	.unwrap()
+	.unwrap();
 	assert_eq!((exited.status, exited.pc), (Status::Continue, 12));
 	assert_eq!((w[4], w[5]), (Value::Unit, Value::Unit));
 	assert_eq!((w[0], w[1]), (Value::I64(10), Value::I64(7)));
@@ -693,6 +721,7 @@ fn p2b_literal_unit_admitted_with_static_unit_tag() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_release_writes_unit_and_commit_writes_value_unit() {
 	let code = build(vec![unit_and_release(5)]);
 	let region = admitted(&code, 0, 1);
@@ -715,7 +744,13 @@ fn p2b_release_writes_unit_and_commit_writes_value_unit() {
 	assert_eq!(brk.pc, 12);
 
 	// The window holds Value::Unit after commit, whatever scalar r held at entry.
-	for old in [Value::I64(3), Value::Bool(true), Value::Unit, Value::F64(-0.0), Value::Char('q')] {
+	for old in [
+		Value::I64(3),
+		Value::Bool(true),
+		Value::Unit,
+		Value::F64(-0.0),
+		Value::Char('q'),
+	] {
 		let mut s = store();
 		let mut w = vec![
 			Value::I64(10),
@@ -725,14 +760,23 @@ fn p2b_release_writes_unit_and_commit_writes_value_unit() {
 			Value::Unit,
 			old,
 		];
-		commit::enter(&region, &mut w, &mut s, false, 5, commit::ROOM_FOR_TEST, simulate)
-			.unwrap()
-			.unwrap();
+		commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			false,
+			5,
+			commit::ROOM_FOR_TEST,
+			simulate,
+		)
+		.unwrap()
+		.unwrap();
 		assert_eq!(w[5], Value::Unit, "{old:?}");
 	}
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_copy_from_in_region_scalar_types_out_like_source() {
 	for (value, scalar, ty) in [
 		(Value::I64(3), Scalar::I64, Ty::I64),
@@ -763,10 +807,13 @@ fn p2b_copy_from_in_region_scalar_types_out_like_source() {
 	let program = compile(LISTED[3]);
 	let main = main_of(&program);
 	let region = admitted(&program.code, main, 2);
-	assert!(region
-		.nodes
-		.iter()
-		.any(|n| matches!(n.op, NodeOp::Copy { ty: Scalar::I64, .. })));
+	assert!(region.nodes.iter().any(|n| matches!(
+		n.op,
+		NodeOp::Copy {
+			ty: Scalar::I64,
+			..
+		}
+	)));
 }
 
 #[test]
@@ -873,14 +920,21 @@ fn p2b_copy_does_not_make_a_constant_divisor() {
 		.expect("Rem node");
 	assert!(rem.0.is_some(), "a runtime divisor keeps its Retry exit");
 	assert_eq!(rem.1, None, "no constant through Copy");
-	assert_eq!(super::division_kind(region), Some(super::DivisionKind::Runtime));
+	assert_eq!(
+		super::division_kind(region),
+		Some(super::DivisionKind::Runtime)
+	);
 
-	// DESIGN DEVIATION (P2B-8 expected `Audit(Division)`): the region keeps its Retry exit
+	// Not `Audit(Division)`, although the divisor is a Copy: the region keeps its Retry exit
 	// and explicit zero / MIN-by--1 branches, but Cranelift's SSA builder resolves the
 	// Copy's out variable to the literal's `iconst 17`, so the IR gate sees a constant
 	// divisor outside {0, -1}, the mid-end turns the `srem` into a multiply, and every gate
 	// passes. That is exact (`e` is 17 on every path); the Retry exit is unreachable.
-	#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+	#[cfg(all(
+		feature = "fresh-core-native",
+		target_arch = "x86_64",
+		target_os = "linux"
+	))]
 	{
 		use crate::experimental_native::lower;
 		let compiled = lower::compile(region, 0).expect("every gate passes");
@@ -891,6 +945,7 @@ fn p2b_copy_does_not_make_a_constant_divisor() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_self_copy_admitted_and_identity() {
 	let code = build(vec![self_copy()]);
 	let region = admitted(&code, 0, 1);
@@ -907,7 +962,10 @@ fn p2b_self_copy_admitted_and_identity() {
 	buf[local(&region, 0) as usize] = 10;
 	buf[local(&region, 1) as usize] = 5;
 	let mut record = ExitRecord::new(1);
-	assert_eq!(simulate(&region, &mut buf, &mut record), Status::Fuel as u32);
+	assert_eq!(
+		simulate(&region, &mut buf, &mut record),
+		Status::Fuel as u32
+	);
 	assert_eq!(buf[k as usize], 8);
 	assert_ne!(record.written & (1 << k), 0);
 	let stats = sweep_inputs(&code, 0, &ints(&[&[0], &[1], &[3]]));
@@ -946,7 +1004,10 @@ fn p2b_unit_i64_bool_temp_reuse_uses_dynamic_units_mask() {
 		buf[local(&region, 1) as usize] = i;
 		buf[local(&region, 2) as usize] = 100;
 		let mut record = ExitRecord::new(1);
-		assert_eq!(simulate(&region, &mut buf, &mut record), Status::Fuel as u32);
+		assert_eq!(
+			simulate(&region, &mut buf, &mut record),
+			Status::Fuel as u32
+		);
 		assert_ne!(record.written & (1 << t), 0);
 		assert_eq!(record.units & (1 << t) != 0, unit, "i = {i}");
 		assert_eq!(record.bools & (1 << t), 0);
@@ -957,6 +1018,7 @@ fn p2b_unit_i64_bool_temp_reuse_uses_dynamic_units_mask() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_transition_masks_i64_bool_unit_i64_across_paths_and_iterations() {
 	let code = build(vec![transitions()]);
 	let region = admitted(&code, 0, 1);
@@ -971,9 +1033,17 @@ fn p2b_transition_masks_i64_bool_unit_i64_across_paths_and_iterations() {
 	assert!(!header_exits.is_empty());
 	for e in &header_exits {
 		assert_ne!(e.dynamic & bit, 0, "t is dynamic at the header: {e:?}");
-		assert_eq!((e.units | e.bools) & bit, 0, "static masks exclude dynamic slots");
+		assert_eq!(
+			(e.units | e.bools) & bit,
+			0,
+			"static masks exclude dynamic slots"
+		);
 	}
-	let brk = region.exits.iter().find(|e| e.pc == 28).expect("break exit");
+	let brk = region
+		.exits
+		.iter()
+		.find(|e| e.pc == 28)
+		.expect("break exit");
 	assert_eq!(brk.dynamic & bit, 0, "statically Unit at the break");
 	assert_ne!(brk.units & bit, 0);
 	assert_ne!(brk.definite & bit, 0);
@@ -985,9 +1055,16 @@ fn p2b_transition_masks_i64_bool_unit_i64_across_paths_and_iterations() {
 		let mut buf = vec![0i64; n];
 		buf[local(&region, 0) as usize] = 100;
 		let mut record = ExitRecord::new(f);
-		assert_eq!(simulate(&region, &mut buf, &mut record), Status::Fuel as u32);
+		assert_eq!(
+			simulate(&region, &mut buf, &mut record),
+			Status::Fuel as u32
+		);
 		assert_eq!(record.fuel, 0);
-		assert_eq!((record.bools, record.units), (bools, units), "{f} iterations");
+		assert_eq!(
+			(record.bools, record.units),
+			(bools, units),
+			"{f} iterations"
+		);
 		assert_ne!(record.written & bit, 0);
 		assert_eq!(record.bools & record.units, 0);
 	}
@@ -996,7 +1073,10 @@ fn p2b_transition_masks_i64_bool_unit_i64_across_paths_and_iterations() {
 	buf[local(&region, 0) as usize] = 100;
 	buf[local(&region, 1) as usize] = 6;
 	let mut record = ExitRecord::new(3);
-	assert_eq!(simulate(&region, &mut buf, &mut record), Status::Continue as u32);
+	assert_eq!(
+		simulate(&region, &mut buf, &mut record),
+		Status::Continue as u32
+	);
 	assert_eq!(record.pc, 28);
 	assert_eq!(record.units, bit);
 	assert_eq!(buf[t as usize], 0);
@@ -1011,7 +1091,10 @@ fn p2b_transition_masks_i64_bool_unit_i64_across_paths_and_iterations() {
 		0,
 		&ints(&[&[0], &[1], &[2], &[3], &[4], &[5], &[6], &[7], &[9]]),
 	);
-	assert!(stats.entries > 0 && stats.unit_static > 0 && stats.unit_dynamic > 0, "{stats:?}");
+	assert!(
+		stats.entries > 0 && stats.unit_static > 0 && stats.unit_dynamic > 0,
+		"{stats:?}"
+	);
 }
 
 #[test]
@@ -1038,7 +1121,10 @@ fn p2b_listing_programs_now_admitted() {
 	let main = main_of(&program);
 	let found = regions(&program.code, main);
 	assert_eq!(found[0].0, 5);
-	assert!(found[0].1.as_ref().is_ok_and(|r| r.iter.is_some() && r.sites.len() == 1));
+	assert!(found[0]
+		.1
+		.as_ref()
+		.is_ok_and(|r| r.iter.is_some() && r.sites.len() == 1));
 }
 
 // ----------------------------------------------------- 14: forged records, both masks
@@ -1048,16 +1134,30 @@ type Forge = fn(&Region, &mut [i64], &mut ExitRecord);
 
 /// Runs `commit::enter` with the simulator and then `forge`, and asserts InvalidExit with
 /// the window and the whole store state unchanged.
-fn assert_forged_rejected(region: &Region, window: &[Value], fuel: usize, name: &str, forge: Forge) {
+fn assert_forged_rejected(
+	region: &Region,
+	window: &[Value],
+	fuel: usize,
+	name: &str,
+	forge: Forge,
+) {
 	let mut s = store();
 	let keep = s.string("keep").unwrap();
 	let mut w = window.to_vec();
 	let before = (w.clone(), s.state_for_test());
-	let result = commit::enter(region, &mut w, &mut s, false, fuel, commit::ROOM_FOR_TEST, |r, b, rec| {
-		simulate(r, b, rec);
-		forge(r, b, rec);
-		rec.status
-	})
+	let result = commit::enter(
+		region,
+		&mut w,
+		&mut s,
+		false,
+		fuel,
+		commit::ROOM_FOR_TEST,
+		|r, b, rec| {
+			simulate(r, b, rec);
+			forge(r, b, rec);
+			rec.status
+		},
+	)
 	.unwrap();
 	assert_eq!(result, Err(Refused::InvalidExit), "{name}");
 	assert_eq!((w, s.state_for_test()), before, "{name}: nothing mutated");
@@ -1065,6 +1165,7 @@ fn assert_forged_rejected(region: &Region, window: &[Value], fuel: usize, name: 
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_forged_records_with_units_rejected_before_any_write() {
 	// The ten P0 forgeries again, now also checking the whole store state.
 	let (_code, region) = while_region();
@@ -1096,7 +1197,9 @@ fn p2b_forged_records_with_units_rejected_before_any_write() {
 		("written outside map", |_, r, _, _, _| r.written |= 1 << 40),
 		("definite not written", |_, r, _, _, _| r.written = 0),
 		("bool not 0/1", |b, _, _, _, _| b[3] = 2),
-		("untracked dynamic bool bit", |_, r, _, _, _| r.bools = 1 << 3),
+		("untracked dynamic bool bit", |_, r, _, _, _| {
+			r.bools = 1 << 3
+		}),
 		("fuel grew", |_, r, _, _, _| r.fuel = 51),
 		("fuel exit with fuel", |_, r, _, _, f| {
 			r.status = 2;
@@ -1111,12 +1214,20 @@ fn p2b_forged_records_with_units_rejected_before_any_write() {
 		let original = window();
 		let mut w = original.clone();
 		let state = s.state_for_test();
-		let result = commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, |_, b, r| {
-			honest(r);
-			b[3] = 1;
-			forge(b, r, cont, pc, fuel_exit);
-			r.status
-		})
+		let result = commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			false,
+			50,
+			commit::ROOM_FOR_TEST,
+			|_, b, r| {
+				honest(r);
+				b[3] = 1;
+				forge(b, r, cont, pc, fuel_exit);
+				r.status
+			},
+		)
 		.unwrap();
 		assert_eq!(result, Err(Refused::InvalidExit), "{name}");
 		assert_eq!(w, original, "{name}");
@@ -1126,12 +1237,20 @@ fn p2b_forged_records_with_units_rejected_before_any_write() {
 	// A units bit outside `tracked` on the P0 region (tracked = 0).
 	let mut s = store();
 	let mut w = window();
-	let result = commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, |_, b, r| {
-		honest(r);
-		b[3] = 1;
-		r.units = 1 << 3;
-		r.status
-	})
+	let result = commit::enter(
+		&region,
+		&mut w,
+		&mut s,
+		false,
+		50,
+		commit::ROOM_FOR_TEST,
+		|_, b, r| {
+			honest(r);
+			b[3] = 1;
+			r.units = 1 << 3;
+			r.status
+		},
+	)
 	.unwrap();
 	assert_eq!(result, Err(Refused::InvalidExit), "units outside tracked");
 	assert_eq!(w, window());
@@ -1157,18 +1276,24 @@ fn p2b_forged_records_with_units_rejected_before_any_write() {
 	let mut bool_entry = entry.clone();
 	bool_entry[1] = Value::I64(5);
 	let unit_cases: [(&str, Forge); 4] = [
-		("units and bools on the same static Unit slot", |r, _, rec| {
-			rec.bools |= 1 << local(r, 5);
-		}),
+		(
+			"units and bools on the same static Unit slot",
+			|r, _, rec| {
+				rec.bools |= 1 << local(r, 5);
+			},
+		),
 		("units bit outside tracked", |r, _, rec| {
 			rec.units |= 1 << local(r, 4);
 		}),
 		("Unit-tagged written payload 1", |r, b, _| {
 			b[local(r, 5) as usize] = 1;
 		}),
-		("static Unit slot without its dynamic units bit", |r, _, rec| {
-			rec.units &= !(1 << local(r, 5));
-		}),
+		(
+			"static Unit slot without its dynamic units bit",
+			|r, _, rec| {
+				rec.units &= !(1 << local(r, 5));
+			},
+		),
 	];
 	for (name, forge) in unit_cases {
 		assert_forged_rejected(&region, &entry, 3, name, forge);
@@ -1180,9 +1305,12 @@ fn p2b_forged_records_with_units_rejected_before_any_write() {
 		("dynamic Bool payload 2", |r, b, _| {
 			b[local(r, 5) as usize] = 2;
 		}),
-		("bools bit on a slot this path did not write", |r, _, rec| {
-			rec.written &= !(1 << local(r, 5));
-		}),
+		(
+			"bools bit on a slot this path did not write",
+			|r, _, rec| {
+				rec.written &= !(1 << local(r, 5));
+			},
+		),
 	];
 	for (name, forge) in bool_cases {
 		assert_forged_rejected(&region, &bool_entry, 1, name, forge);
@@ -1202,29 +1330,50 @@ fn p2b_forged_records_with_units_rejected_before_any_write() {
 	// The honest runs commit: Unit at the break, Bool at the header exit.
 	let mut s = store();
 	let mut w = entry.clone();
-	commit::enter(&region, &mut w, &mut s, false, 3, commit::ROOM_FOR_TEST, simulate)
-		.unwrap()
-		.unwrap();
+	commit::enter(
+		&region,
+		&mut w,
+		&mut s,
+		false,
+		3,
+		commit::ROOM_FOR_TEST,
+		simulate,
+	)
+	.unwrap()
+	.unwrap();
 	assert_eq!(w[t], Value::Unit);
 	let mut w = bool_entry.clone();
-	commit::enter(&region, &mut w, &mut s, false, 1, commit::ROOM_FOR_TEST, simulate)
-		.unwrap()
-		.unwrap();
+	commit::enter(
+		&region,
+		&mut w,
+		&mut s,
+		false,
+		1,
+		commit::ROOM_FOR_TEST,
+		simulate,
+	)
+	.unwrap()
+	.unwrap();
 	assert_eq!(w[t], Value::Bool(true));
 }
 
 // ------------------------------------------------- 15 to 18: heap, scalars, the store
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_heap_in_copy_target_refuses_entry_and_matches_interpreter() {
 	let code = build(vec![heap_at_entry(0)]);
 	admitted(&code, 0, 2);
 	let stats = sweep_inputs(&code, 0, &ints(&[&[0], &[1], &[5]]));
-	assert!(stats.refused_tag > 0, "the first arrival is refused: {stats:?}");
+	assert!(
+		stats.refused_tag > 0,
+		"the first arrival is refused: {stats:?}"
+	);
 	assert!(stats.entries > 0, "a later arrival enters");
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_heap_in_release_target_refuses_entry_and_matches_interpreter() {
 	let code = build(vec![heap_at_entry(1)]);
 	admitted(&code, 0, 2);
@@ -1234,6 +1383,7 @@ fn p2b_heap_in_release_target_refuses_entry_and_matches_interpreter() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_heap_in_copy_source_slot_at_entry_refuses_entry() {
 	let code = build(vec![heap_at_entry(2)]);
 	let region = admitted(&code, 0, 2);
@@ -1244,11 +1394,15 @@ fn p2b_heap_in_copy_source_slot_at_entry_refuses_entry() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_untouched_scalars_at_entry_are_released_and_never_produced() {
 	let code = build(vec![untouched_scalars_at_entry()]);
 	let region = admitted(&code, 0, 5);
 	for slot in [4, 5, 6, 7] {
-		assert_eq!(region.entry[local(&region, slot) as usize], EntryClass::Scalar);
+		assert_eq!(
+			region.entry[local(&region, slot) as usize],
+			EntryClass::Scalar
+		);
 	}
 	// F64, Type, Char and Function at entry are accepted old values; the region writes only
 	// Unit, Bool or I64 over them.
@@ -1261,11 +1415,22 @@ fn p2b_untouched_scalars_at_entry_are_released_and_never_produced() {
 		Value::F64(2.5),
 		Value::Type(Type::I64),
 		Value::Char('x'),
-		Value::Function { code: code.id(), id: 0 },
+		Value::Function {
+			code: code.id(),
+			id: 0,
+		},
 	];
-	commit::enter(&region, &mut w, &mut s, false, 1, commit::ROOM_FOR_TEST, simulate)
-		.unwrap()
-		.unwrap();
+	commit::enter(
+		&region,
+		&mut w,
+		&mut s,
+		false,
+		1,
+		commit::ROOM_FOR_TEST,
+		simulate,
+	)
+	.unwrap()
+	.unwrap();
 	assert_eq!(
 		(w[4], w[5], w[6], w[7]),
 		(Value::Unit, Value::Unit, Value::I64(1), Value::Bool(true))
@@ -1291,11 +1456,16 @@ fn p2b_untouched_scalars_at_entry_are_released_and_never_produced() {
 		jump(&mut f, 1, 6); // 6
 		ret(&mut f, 1, 7); // 7
 		let code = build(vec![f]);
-		assert_eq!(refusal(&code, 0, 1), RegionRefusal::Op { pc: 3 }, "{value:?}");
+		assert_eq!(
+			refusal(&code, 0, 1),
+			RegionRefusal::Op { pc: 3 },
+			"{value:?}"
+		);
 	}
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_copy_and_release_never_touch_the_store() {
 	let code = build(vec![transitions()]);
 	let region = admitted(&code, 0, 1);
@@ -1320,7 +1490,16 @@ fn p2b_copy_and_release_never_touch_the_store() {
 			Value::Unit,
 		];
 		let before = s.state_for_test();
-		let result = commit::enter(&region, &mut w, &mut s, false, (k % 9) as usize, commit::ROOM_FOR_TEST, simulate).unwrap();
+		let result = commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			false,
+			(k % 9) as usize,
+			commit::ROOM_FOR_TEST,
+			simulate,
+		)
+		.unwrap();
 		assert!(result.is_ok(), "{k}: {result:?}");
 		assert_eq!(s.state_for_test(), before, "entry {k}");
 		entries += 1;
@@ -1332,16 +1511,26 @@ fn p2b_copy_and_release_never_touch_the_store() {
 // ------------------------------------------------------- 20 to 22: fuel and overlaps
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: per-pc fuel contract over a 263-instruction loop")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: per-pc fuel contract over a 263-instruction loop"
+)]
 fn p2b_simulator_fuel_and_retry_contract_with_copy_release() {
 	let code = build(vec![charged_copy()]);
 	let f = code.function(0).unwrap();
-	assert!(f.instructions()[258].is_charged(), "the Copy is charged by the gap rule");
+	assert!(
+		f.instructions()[258].is_charged(),
+		"the Copy is charged by the gap rule"
+	);
 	assert!(!f.instructions()[257].is_charged());
 	let region = admitted(&code, 0, 1);
 	let copy_exits: StdVec<&Exit> = region.exits.iter().filter(|e| e.pc == 258).collect();
 	assert_eq!(copy_exits.len(), 1, "one exit at the Copy");
-	assert_eq!(copy_exits[0].status, Status::Fuel, "a Fuel exit, never a Retry");
+	assert_eq!(
+		copy_exits[0].status,
+		Status::Fuel,
+		"a Fuel exit, never a Retry"
+	);
 	// The only Retry exit is the `i += 1` Add's.
 	assert!(region
 		.exits
@@ -1366,6 +1555,7 @@ fn p2b_simulator_fuel_and_retry_contract_with_copy_release() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_overlapping_slots_every_fuel() {
 	let code = build(vec![overlapping()]);
 	let region = admitted(&code, 0, 2);
@@ -1373,10 +1563,26 @@ fn p2b_overlapping_slots_every_fuel() {
 	// z = z (pc 9) copies a released, Unit slot; z = y (pc 11) copies the released y.
 	for pc in [9, 11] {
 		let node = region.nodes.iter().find(|n| n.pc == pc).unwrap();
-		assert!(matches!(node.op, NodeOp::Copy { ty: Scalar::Unit, .. }), "{node:?}");
+		assert!(
+			matches!(
+				node.op,
+				NodeOp::Copy {
+					ty: Scalar::Unit,
+					..
+				}
+			),
+			"{node:?}"
+		);
 	}
 	let node = region.nodes.iter().find(|n| n.pc == 6).unwrap();
-	assert_eq!(node.op, NodeOp::Copy { out: z, src: y, ty: Scalar::I64 });
+	assert_eq!(
+		node.op,
+		NodeOp::Copy {
+			out: z,
+			src: y,
+			ty: Scalar::I64
+		}
+	);
 	let stats = sweep_inputs(&code, 0, &overflow_inputs());
 	assert!(stats.entries > 0 && stats.retry_exits > 0, "{stats:?}");
 
@@ -1386,6 +1592,7 @@ fn p2b_overlapping_slots_every_fuel() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p2b_sixty_four_slots_bit_0_and_bit_63() {
 	let code = build(vec![
 		sixty_four(5, 0),
@@ -1395,13 +1602,20 @@ fn p2b_sixty_four_slots_bit_0_and_bit_63() {
 	]);
 	let region = admitted(&code, 0, 1);
 	assert_eq!(region.slots.len(), 64);
-	assert_eq!(region.tracked, 1 | 1 << 63, "bit 0 and bit 63 are the dynamic slots");
+	assert_eq!(
+		region.tracked,
+		1 | 1 << 63,
+		"bit 0 and bit 63 are the dynamic slots"
+	);
 	// Two iterations then the header's fuel exit: i = 0 (even: slot 0 Unit, slot 63 I64),
 	// i = 1 (odd: slot 0 I64, slot 63 Unit).
 	for (fuel, units) in [(1u64, 1u64), (2, 1 << 63)] {
 		let mut buf = vec![0i64; 64];
 		let mut record = ExitRecord::new(fuel);
-		assert_eq!(simulate(&region, &mut buf, &mut record), Status::Fuel as u32);
+		assert_eq!(
+			simulate(&region, &mut buf, &mut record),
+			Status::Fuel as u32
+		);
 		assert_eq!(record.units, units, "fuel {fuel}");
 		assert_eq!(record.bools, 0);
 		assert_eq!(record.written & (1 | 1 << 63), 1 | 1 << 63);
@@ -1409,9 +1623,17 @@ fn p2b_sixty_four_slots_bit_0_and_bit_63() {
 		let mut s = store();
 		let mut w = vec![Value::Unit; 64];
 		w[1] = Value::I64(0);
-		commit::enter(&region, &mut w, &mut s, false, fuel as usize, commit::ROOM_FOR_TEST, simulate)
-			.unwrap()
-			.unwrap();
+		commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			false,
+			fuel as usize,
+			commit::ROOM_FOR_TEST,
+			simulate,
+		)
+		.unwrap()
+		.unwrap();
 		let (unit, int) = if units == 1 { (0, 63) } else { (63, 0) };
 		assert_eq!(w[unit], Value::Unit, "fuel {fuel}");
 		assert!(matches!(w[int], Value::I64(_)), "fuel {fuel}: {:?}", w[int]);
@@ -1423,7 +1645,10 @@ fn p2b_sixty_four_slots_bit_0_and_bit_63() {
 	}
 	for function in 0..4 {
 		let stats = sweep_full(&code, function, &[]);
-		assert!(stats.entries > 0 && stats.unit_dynamic > 0, "{function}: {stats:?}");
+		assert!(
+			stats.entries > 0 && stats.unit_dynamic > 0,
+			"{function}: {stats:?}"
+		);
 	}
 }
 

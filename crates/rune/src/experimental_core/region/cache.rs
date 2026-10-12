@@ -30,13 +30,13 @@
 //!   executable memory). An evicted code is rebuilt from scratch at its next invocation:
 //!   refusals are remembered only while the entry is resident.
 //!
-//! # Bounds (P3a; every value is one field of [`Limits`], see the receipts' LIMITS.md)
+//! # Bounds (P3a; every value is one field of [`Limits`])
 //!
 //! - **Build is streamed per function.** Each function is scanned, analysed header by
 //!   header, and every admitted region is compiled, audited and loaded before the next
 //!   header is analysed. Once the per-program region or compile cap is reached nothing
 //!   further is analysed (`skipped_after_caps`). Below the caps the loaded set and every
-//!   refusal count equal the batch build of 672a4eaa (the selection golden).
+//!   refusal count equal the earlier batch build (the selection golden).
 //! - **Per program:** functions attempted (every function reaching the gates is charged,
 //!   [`MAX_PROGRAM_ATTEMPTED_FUNCTIONS`]), functions analysed, function length, candidate
 //!   headers per function, an analysis-work ESTIMATE (the header scan's `len` is charged
@@ -73,6 +73,9 @@
 //! - **Page size:** the mapping arithmetic assumes 4 KiB pages. The system page size is
 //!   queried once per process (`region::page::size`); any other value disables the tier
 //!   (`page_size`).
+//! - **Miri:** Miri can neither map generated code executable nor run it. Under `cfg(miri)`
+//!   [`checkout`] refuses before it touches this thread's cache: no environment or page-size
+//!   query, no analysis, no Cranelift compile and no mapping. The interpreter runs.
 //!
 //! No listing or diagnostic text is retained: refusal strings are dropped after
 //! classification, and a production `Compiled` carries no listing at all (the CLIF texts
@@ -86,8 +89,8 @@
 //! interpreter with the original state (validation precedes every write), the region is
 //! poisoned (never entered again while resident), the thread's invalid-exit counter is
 //! incremented, and one line is written to stderr. Debug builds additionally panic (a
-//! `debug_assert!`); release builds do not. The probe treats any stderr output as an invalid
-//! sample, so such an event can never be counted as a success.
+//! `debug_assert!`); release builds do not. A measurement harness can treat any stderr output
+//! as an invalid sample, so such an event is never counted as a success.
 //!
 //! # What is promised
 //!
@@ -98,8 +101,8 @@
 use super::budget::{Budget, Held, Pool, Token};
 use super::commit::{self, Refused, Room};
 use super::{
-	division_kind, scan_headers, DivisionKind, EntryClass, Exit, FunctionContext, Region, RegionRefusal, Stop,
-	MAX_REGIONS_PER_FUNCTION, TRANSFER_FACTOR,
+	division_kind, scan_headers, DivisionKind, EntryClass, Exit, FunctionContext, Region,
+	RegionRefusal, Stop, MAX_REGIONS_PER_FUNCTION, TRANSFER_FACTOR,
 };
 use crate::experimental_core::code::Code;
 use crate::experimental_core::error::Result;
@@ -153,7 +156,7 @@ pub(crate) const PAGE_BYTES: usize = 4096;
 /// ESTIMATE of the heap one loaded region's `JITModule` retains outside our metadata (its
 /// declarations, memory provider and compiled-function table; the ISA is shared). Charged
 /// to the program and thread metadata bounds per loaded region. Derived from one measured
-/// configuration (receipts: heap measurement) with a margin; NOT a proven upper bound.
+/// configuration (a heap measurement) with a margin; NOT a proven upper bound.
 pub(crate) const MODULE_RESERVE_BYTES: usize = 4096;
 /// ESTIMATE of the heap of one thread's shared ISA (`lower::shared_isa`), charged once per
 /// thread to the thread metadata bound. NOT a proven upper bound.
@@ -259,7 +262,7 @@ pub(crate) struct NativeSummary {
 	pub(crate) load_refused: u32,
 	/// Refused by the per-program metadata bound.
 	pub(crate) metadata: u32,
-	/// 672a4eaa: regions refused by [`MAX_PROGRAM_REGIONS`]. P3a (streamed): 1 when the
+	/// Batch build: regions refused by [`MAX_PROGRAM_REGIONS`]. P3a (streamed): 1 when the
 	/// region cap stopped the build with work left (`skipped_after_caps`), else 0.
 	pub(crate) region_cap: u32,
 	/// As `region_cap`, for [`MAX_PROGRAM_COMPILES`].
@@ -377,7 +380,9 @@ impl ProgramRegions {
 		match self.functions.binary_search_by_key(&function, |e| e.0) {
 			Ok(i) => {
 				let (_, start, end) = self.functions[i];
-				self.headers.get(start as usize..end as usize).unwrap_or(&[])
+				self.headers
+					.get(start as usize..end as usize)
+					.unwrap_or(&[])
 			}
 			Err(_) => &[],
 		}
@@ -512,8 +517,7 @@ impl Ready {
 		debug_assert!(
 			injected,
 			"invalid native region exit ({refused:?}) in function {} at header pc {}",
-			self.region.function,
-			self.region.header
+			self.region.function, self.region.header
 		);
 	}
 
@@ -689,7 +693,9 @@ impl Cache {
 	}
 }
 
-/// What one invocation runs with.
+/// What one invocation runs with. A short-lived value returned once per invocation:
+/// boxing `Guard` would add an allocation to every native invocation.
+#[allow(clippy::large_enum_variant)]
 pub(crate) enum Checkout {
 	/// At least one loaded region: run the native-aware loop with these regions.
 	Native(Guard),
@@ -766,6 +772,8 @@ impl Drop for BuildGuard {
 
 /// Checks out the regions of `code` for one invocation on this thread, building them at
 /// the first invocation.
+// The cache closure returns the final `Checkout` as its `Err` (see `Checkout`).
+#[allow(clippy::result_large_err)]
 pub(crate) fn checkout(code: &Code) -> Checkout {
 	#[cfg(test)]
 	{
@@ -774,6 +782,12 @@ pub(crate) fn checkout(code: &Code) -> Checkout {
 		if !PRODUCTION_FOR_TEST.with(|c| c.get()) || super::hook::is_installed() {
 			return Checkout::Interpret { no_regions: false };
 		}
+	}
+
+	// Miri: refuse here, before `Cache::enabled` queries the environment and the page size
+	// and before any analysis, compile or mapping (module docs, "Miri").
+	if cfg!(miri) {
+		return Checkout::Interpret { no_regions: false };
 	}
 
 	let id = code.id();
@@ -978,7 +992,7 @@ impl Build<'_> {
 		false
 	}
 
-	/// Compile, audit and load one admitted region; the 672a4eaa second-loop body. `held`
+	/// Compile, audit and load one admitted region; the batch build's second-loop body. `held`
 	/// is the region's transient charge. It is released only after the buffers it stands
 	/// for are freed: on success after the nodes are dropped (the retained slots, entry
 	/// classes and exits are charged to metadata instead), on every other return after the
@@ -1020,7 +1034,8 @@ impl Build<'_> {
 		self.compiles += 1;
 		// `lower::compile` enforces the P0 program code bound at MAX_PROGRAM_CODE_BYTES; a
 		// lower limit (tests) is applied by offsetting the bytes already compiled.
-		let offset = MAX_PROGRAM_CODE_BYTES - self.limits.program_code_bytes.min(MAX_PROGRAM_CODE_BYTES);
+		let offset =
+			MAX_PROGRAM_CODE_BYTES - self.limits.program_code_bytes.min(MAX_PROGRAM_CODE_BYTES);
 		let program_bytes = self.program_bytes.saturating_add(offset);
 		let started = Instant::now();
 		let compiled = std::panic::catch_unwind(core::panic::AssertUnwindSafe(|| {
@@ -1089,7 +1104,9 @@ impl Build<'_> {
 		};
 
 		let started = Instant::now();
-		let loaded = std::panic::catch_unwind(core::panic::AssertUnwindSafe(|| NativeRegion::load(&compiled)));
+		let loaded = std::panic::catch_unwind(core::panic::AssertUnwindSafe(|| {
+			NativeRegion::load(&compiled)
+		}));
 		let load_ns = elapsed_ns(started);
 		summary.load_ns += load_ns;
 		drop(compiled);
@@ -1165,12 +1182,12 @@ fn unreserve(id: u32, mapped: usize, metadata: usize) {
 /// is checked before the work it bounds, and every limit hit is an interpreter fallback.
 /// Touches no store, no frontend and no `Program`.
 ///
-/// Below the caps this equals the 672a4eaa batch build (analysis of every function, then
+/// Below the caps this equals the earlier batch build (analysis of every function, then
 /// every admitted region in order): the order of compile attempts is function ascending,
 /// then header ascending, in both. Differences, by design: (1) once a cap is reached the
 /// rest is not analysed (`skipped_after_caps`; `region_cap`/`compile_cap` become flags);
 /// (2) an analysis error in a header stops that function's later headers but keeps the
-/// regions already loaded from it (672a4eaa dropped the whole function's regions; both are
+/// regions already loaded from it (the batch build dropped the whole function's regions; both are
 /// fallbacks, and such errors are allocation failures or invalid code).
 fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 	let functions = code.functions();
@@ -1296,7 +1313,10 @@ fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 
 					#[cfg(test)]
 					TEST_COUNTERS.with(|c| {
-						c.header_error_used.set(Some((budget.used(), headers.charged() + context.charged_for_test())))
+						c.header_error_used.set(Some((
+							budget.used(),
+							headers.charged() + context.charged_for_test(),
+						)))
 					});
 
 					break;
@@ -1307,7 +1327,8 @@ fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 
 			#[cfg(test)]
 			TEST_COUNTERS.with(|c| {
-				c.max_transfers.set(c.max_transfers.get().max(context.max_transfers()))
+				c.max_transfers
+					.set(c.max_transfers.get().max(context.max_transfers()))
 			});
 
 			b.load(held, region);
@@ -1413,6 +1434,13 @@ pub(crate) fn enable_for_test(on: bool) {
 #[cfg(test)]
 pub(crate) fn counters_for_test() -> (u64, u64) {
 	TEST_COUNTERS.with(|c| (c.checkouts.get(), c.builds.get()))
+}
+
+/// Whether this thread's tier has queried the environment and the page size (decided
+/// `Enabled`) since the last `clear_for_test`.
+#[cfg(test)]
+pub(crate) fn enabled_decided_for_test() -> bool {
+	CACHE.with(|cache| cache.borrow().enabled.is_some())
 }
 
 #[cfg(test)]
@@ -1562,9 +1590,12 @@ pub(crate) fn cache_state_for_test() -> (usize, usize, usize, usize) {
 pub(crate) fn resident_for_test(code: u32) -> bool {
 	CACHE.with(|cache| {
 		let cache = cache.borrow();
-		cache
-			.position(code)
-			.is_some_and(|i| matches!(cache.entries[i].resident, Resident::Ready(_) | Resident::Empty(_)))
+		cache.position(code).is_some_and(|i| {
+			matches!(
+				cache.entries[i].resident,
+				Resident::Ready(_) | Resident::Empty(_)
+			)
+		})
 	})
 }
 
@@ -1580,3 +1611,6 @@ pub(crate) fn clear_for_test() {
 	});
 	drop(entries);
 }
+
+#[cfg(test)]
+mod miri_fallback_tests;

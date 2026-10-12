@@ -35,7 +35,7 @@ pub(crate) enum Finding {
 	Mnemonic(String),
 }
 
-/// What a passing audit saw (reported in receipts). Backend-inserted memory operands are
+/// What a passing audit saw (reported in diagnostics). Backend-inserted memory operands are
 /// counted, not hidden: `rip_relative` are reads of the function's own read-only constant
 /// pool (for example the magic multiplier of a division by a constant), `stack` are the
 /// callee-saved register spills and reloads of the function's own frame.
@@ -73,7 +73,10 @@ pub(crate) struct AccessMap {
 impl AccessMap {
 	pub(crate) fn of(region: &Region) -> Self {
 		let n = region.slots.len().min(MAX_REGION_CELLS);
-		let stored = region.exits.iter().fold(0u64, |m, e| m | e.definite | e.maybe);
+		let stored = region
+			.exits
+			.iter()
+			.fold(0u64, |m, e| m | e.definite | e.maybe);
 		let mut buf = [NONE; MAX_REGION_CELLS];
 		for (l, cell) in buf.iter_mut().enumerate().take(n) {
 			*cell = Perm {
@@ -83,8 +86,14 @@ impl AccessMap {
 		}
 		let mut cells = n;
 		if region.iter.is_some() && n + 2 <= MAX_REGION_CELLS {
-			buf[n] = Perm { load: true, store: true };
-			buf[n + 1] = Perm { load: true, store: false };
+			buf[n] = Perm {
+				load: true,
+				store: true,
+			};
+			buf[n + 1] = Perm {
+				load: true,
+				store: false,
+			};
 			cells = n + 2;
 		}
 		Self { buf, cells }
@@ -104,7 +113,10 @@ impl AccessMap {
 	pub(crate) fn uniform_for_test(cells: usize) -> Self {
 		let mut buf = [NONE; MAX_REGION_CELLS];
 		for cell in buf.iter_mut().take(cells) {
-			*cell = Perm { load: true, store: true };
+			*cell = Perm {
+				load: true,
+				store: true,
+			};
 		}
 		Self { buf, cells }
 	}
@@ -227,17 +239,15 @@ pub(crate) fn ir(func: &ir::Function, map: &AccessMap) -> Result<(), Finding> {
 					let allowed = if base == buf {
 						// Exactly one whole, aligned 8-byte cell, with the opcode's permission.
 						offset >= 0
-							&& offset % 8 == 0
-							&& size == 8
-							&& ty == types::I64
-							&& usize::try_from(offset / 8).is_ok_and(|i| {
-								let p = map.cell(i);
-								if is_store {
-									p.store
-								} else {
-									p.load
-								}
-							})
+							&& offset % 8 == 0 && size == 8
+							&& ty == types::I64 && usize::try_from(offset / 8).is_ok_and(|i| {
+							let p = map.cell(i);
+							if is_store {
+								p.store
+							} else {
+								p.load
+							}
+						})
 					} else if base == rec {
 						// Exactly one whole field, with the opcode's permission.
 						RECORD.iter().any(|&(o, bytes, load, store)| {

@@ -12,7 +12,7 @@
 //! - Production, every fuel value: the region cache against the plain interpreter
 //!   (`p2_tests::production_case`).
 //!
-//! Output lines prefixed `P2BCASE`, `P2BCOV` and `P2BGOLDEN` are receipt rows (with the
+//! Output lines prefixed `P2BCASE`, `P2BCOV` and `P2BGOLDEN` are report rows (with the
 //! `TABLE` and `P2TABLE` rows of the reused harnesses).
 use super::exec_tests::{
 	add, arithmetic_inputs, compile_source, ints, run_case, rune, Arg, Case, Src,
@@ -24,11 +24,9 @@ use crate::experimental_core::{
 	code::{Builder, Code, Function},
 	region::{
 		abi::ExitRecord,
-		analyze,
-		cache,
+		analyze, cache,
 		hook::{self, Stats},
-		p2b_tests as built,
-		Exit,
+		p2b_tests as built, Exit,
 	},
 	value::Value,
 };
@@ -105,7 +103,13 @@ fn code(functions: Vec<Function>) -> Code {
 	b.finish().unwrap()
 }
 
-fn built_case(name: &str, f: Function, inputs: Vec<Vec<Arg>>, loaded: usize, targets: &'static str) -> Case {
+fn built_case(
+	name: &str,
+	f: Function,
+	inputs: Vec<Vec<Arg>>,
+	loaded: usize,
+	targets: &'static str,
+) -> Case {
 	Case {
 		name: name.into(),
 		src: Src::Code(code(vec![f])),
@@ -117,7 +121,7 @@ fn built_case(name: &str, f: Function, inputs: Vec<Vec<Arg>>, loaded: usize, tar
 	}
 }
 
-/// The P2b design's overflow boundary inputs of a 4-iteration loop.
+/// The overflow boundary inputs of a 4-iteration loop.
 fn overflow_inputs() -> Vec<Vec<Arg>> {
 	let max = i64::MAX;
 	let min = i64::MIN;
@@ -135,17 +139,42 @@ fn overflow_inputs() -> Vec<Vec<Arg>> {
 
 /// The region-test listing programs (`region/tests.rs` `LISTED`), verbatim.
 const LISTED_3: &str = "pub fn main(a) { let i = 0; let s = 0; while i < a { let t = i * 2; if t > 6 { s = s + t; } i += 1; } s }";
-const LISTED_4: &str = "pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x = x + x; i += b; } x }";
+const LISTED_4: &str =
+	"pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x = x + x; i += b; } x }";
 const LISTED_6: &str = "pub fn main(a) { let i = 0; let s = 0; while i < a { let j = 0; while j < i { s += j; j += 1; } i += 1; } s }";
 const LISTED_7: &str = "pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j = 0; while j < i { s += j; j += 1; } i += 1; } s }";
 
 /// Every case P2b admits and executes natively.
 fn admitted_cases() -> Vec<Case> {
 	let mut cases = vec![
-		rune("p2b_listed_3_let_t", LISTED_3, ints(&[&[0], &[5], &[9]]), 1, "CF"),
-		rune("p2b_listed_4_x_plus_x", LISTED_4, overflow_inputs(), 1, "CFR"),
-		rune("p2b_listed_6_nested_let_j", LISTED_6, ints(&[&[0], &[3], &[6]]), 2, "CF"),
-		rune("p2b_listed_7_j_reset", LISTED_7, ints(&[&[0], &[3], &[6]]), 2, "CF"),
+		rune(
+			"p2b_listed_3_let_t",
+			LISTED_3,
+			ints(&[&[0], &[5], &[9]]),
+			1,
+			"CF",
+		),
+		rune(
+			"p2b_listed_4_x_plus_x",
+			LISTED_4,
+			overflow_inputs(),
+			1,
+			"CFR",
+		),
+		rune(
+			"p2b_listed_6_nested_let_j",
+			LISTED_6,
+			ints(&[&[0], &[3], &[6]]),
+			2,
+			"CF",
+		),
+		rune(
+			"p2b_listed_7_j_reset",
+			LISTED_7,
+			ints(&[&[0], &[3], &[6]]),
+			2,
+			"CF",
+		),
 		rune(
 			"p2b_and_and",
 			built::AND_AND,
@@ -160,9 +189,21 @@ fn admitted_cases() -> Vec<Case> {
 			1,
 			"CF",
 		),
-		rune("p2b_copy_overflow_retry", built::COPY_OVERFLOW_RETRY, arithmetic_inputs(), 1, "CFR"),
+		rune(
+			"p2b_copy_overflow_retry",
+			built::COPY_OVERFLOW_RETRY,
+			arithmetic_inputs(),
+			1,
+			"CFR",
+		),
 		// The Rem's Retry exit is unreachable here: Cranelift sees the copied constant 17.
-		rune("p2b_copied_constant_divisor", built::COPY_NOT_A_DIVISOR, ints(&[&[0], &[5], &[40]]), 1, "CF"),
+		rune(
+			"p2b_copied_constant_divisor",
+			built::COPY_NOT_A_DIVISOR,
+			ints(&[&[0], &[5], &[40]]),
+			1,
+			"CF",
+		),
 		built_case(
 			"p2b_transitions_i64_bool_unit_i64",
 			built::transitions(),
@@ -170,14 +211,62 @@ fn admitted_cases() -> Vec<Case> {
 			1,
 			"CF",
 		),
-		built_case("p2b_overlapping_slots", built::overlapping(), overflow_inputs(), 1, "CFR"),
-		built_case("p2b_self_copy", built::self_copy(), ints(&[&[0], &[1], &[3]]), 1, "CF"),
-		built_case("p2b_literal_unit_ret_u", built::unit_and_release(4), ints(&[&[0], &[1], &[3], &[9]]), 1, "CF"),
-		built_case("p2b_release_ret_r", built::unit_and_release(5), ints(&[&[0], &[1], &[3], &[9]]), 1, "CF"),
-		built_case("p2b_copy_i64", built::copy_loop(Value::I64(3)), ints(&[&[0], &[1], &[4]]), 1, "CF"),
-		built_case("p2b_copy_bool", built::copy_loop(Value::Bool(true)), ints(&[&[0], &[1], &[4]]), 1, "CF"),
-		built_case("p2b_copy_unit", built::copy_loop(Value::Unit), ints(&[&[0], &[1], &[4]]), 1, "CF"),
-		built_case("p2b_charged_copy_gap", built::charged_copy(), ints(&[&[0], &[1], &[3]]), 1, "CF"),
+		built_case(
+			"p2b_overlapping_slots",
+			built::overlapping(),
+			overflow_inputs(),
+			1,
+			"CFR",
+		),
+		built_case(
+			"p2b_self_copy",
+			built::self_copy(),
+			ints(&[&[0], &[1], &[3]]),
+			1,
+			"CF",
+		),
+		built_case(
+			"p2b_literal_unit_ret_u",
+			built::unit_and_release(4),
+			ints(&[&[0], &[1], &[3], &[9]]),
+			1,
+			"CF",
+		),
+		built_case(
+			"p2b_release_ret_r",
+			built::unit_and_release(5),
+			ints(&[&[0], &[1], &[3], &[9]]),
+			1,
+			"CF",
+		),
+		built_case(
+			"p2b_copy_i64",
+			built::copy_loop(Value::I64(3)),
+			ints(&[&[0], &[1], &[4]]),
+			1,
+			"CF",
+		),
+		built_case(
+			"p2b_copy_bool",
+			built::copy_loop(Value::Bool(true)),
+			ints(&[&[0], &[1], &[4]]),
+			1,
+			"CF",
+		),
+		built_case(
+			"p2b_copy_unit",
+			built::copy_loop(Value::Unit),
+			ints(&[&[0], &[1], &[4]]),
+			1,
+			"CF",
+		),
+		built_case(
+			"p2b_charged_copy_gap",
+			built::charged_copy(),
+			ints(&[&[0], &[1], &[3]]),
+			1,
+			"CF",
+		),
 		built_case(
 			"p2b_untouched_f64_type_char_function_at_entry",
 			built::untouched_scalars_at_entry(),
@@ -195,7 +284,11 @@ fn admitted_cases() -> Vec<Case> {
 			"CF",
 		));
 	}
-	for (kind, name) in [(0, "copy_target"), (1, "release_target"), (2, "copy_source")] {
+	for (kind, name) in [
+		(0, "copy_target"),
+		(1, "release_target"),
+		(2, "copy_source"),
+	] {
 		let mut case = built_case(
 			&format!("p2b_heap_in_{name}_at_entry"),
 			built::heap_at_entry(kind),
@@ -214,27 +307,63 @@ fn admitted_cases() -> Vec<Case> {
 fn refused_cases() -> Vec<(Case, Vec<Option<&'static str>>)> {
 	vec![
 		(
-			rune("p2b_copy_of_loop_variable", built::COPY_OF_LOOP_VARIABLE, ints(&[&[0], &[4]]), 0, ""),
+			rune(
+				"p2b_copy_of_loop_variable",
+				built::COPY_OF_LOOP_VARIABLE,
+				ints(&[&[0], &[4]]),
+				0,
+				"",
+			),
 			vec![Some("Type")],
 		),
 		(
-			built_case("p2b_copy_from_parameter", built::copy_from_live_in(0), ints(&[&[0], &[3]]), 0, ""),
+			built_case(
+				"p2b_copy_from_parameter",
+				built::copy_from_live_in(0),
+				ints(&[&[0], &[3]]),
+				0,
+				"",
+			),
 			vec![Some("CopySource")],
 		),
 		(
-			built_case("p2b_copy_from_maybe_written", built::copy_from_live_in(1), ints(&[&[0], &[3]]), 0, ""),
+			built_case(
+				"p2b_copy_from_maybe_written",
+				built::copy_from_live_in(1),
+				ints(&[&[0], &[3]]),
+				0,
+				"",
+			),
 			vec![Some("CopySource")],
 		),
 		(
-			built_case("p2b_copy_from_top", built::copy_from_top(), ints(&[&[0], &[3]]), 0, ""),
+			built_case(
+				"p2b_copy_from_top",
+				built::copy_from_top(),
+				ints(&[&[0], &[3]]),
+				0,
+				"",
+			),
 			vec![Some("CopySource")],
 		),
 		(
-			built_case("p2b_released_read_by_add", built::released_read(false), ints(&[&[0], &[2]]), 0, ""),
+			built_case(
+				"p2b_released_read_by_add",
+				built::released_read(false),
+				ints(&[&[0], &[2]]),
+				0,
+				"",
+			),
 			vec![Some("Type")],
 		),
 		(
-			built_case("p2b_released_branch_condition", built::released_read(true), ints(&[&[0], &[2]]), 0, ""),
+			built_case(
+				"p2b_released_branch_condition",
+				built::released_read(true),
+				ints(&[&[0], &[2]]),
+				0,
+				"",
+			),
 			vec![Some("Type")],
 		),
 		// B1: the calls kernel (refused here at its IterNext header through P2b) is admitted;
@@ -246,7 +375,7 @@ fn refused_cases() -> Vec<(Case, Vec<Option<&'static str>>)> {
 fn outcomes(code: &Code) -> Vec<String> {
 	let mut out = Vec::new();
 	for id in 0..code.functions() as u32 {
-		for (header, region) in analyze(&code, id).unwrap() {
+		for (header, region) in analyze(code, id).unwrap() {
 			out.push(match region {
 				Ok(_) => format!("f{id}h{header}:admitted"),
 				Err(refusal) => format!("f{id}h{header}:{refusal:?}"),
@@ -256,7 +385,13 @@ fn outcomes(code: &Code) -> Vec<String> {
 	out
 }
 
-fn row(kind: &str, case: &Case, outcomes: &[String], all: &Stats, production: &(usize, Totals, Totals)) {
+fn row(
+	kind: &str,
+	case: &Case,
+	outcomes: &[String],
+	all: &Stats,
+	production: &(usize, Totals, Totals),
+) {
 	println!(
 		"P2BCOV\t{}\t{kind}\tanalysis={}\tloaded={}\trefused[runtime,const0,constneg1]={:?}\tinputs={}\tp1_native_entries={}\tp1_continue={}\tp1_fuel={}\tp1_retry={}\tunit_static={}\tunit_dynamic={}\tentry_refused={}\tmismatches={}\tproduction_points={}\tproduction_entries={}\tproduction_exits[C,F,R]={:?}\tproduction_entry_refused={}",
 		case.name,
@@ -282,7 +417,10 @@ fn row(kind: &str, case: &Case, outcomes: &[String], all: &Stats, production: &(
 // --------------------------------------------- 23, 24, 25: native every-fuel differential
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn p2b_native_copy_release_differential() {
 	run_child("child_p2b_differential");
 }
@@ -305,7 +443,11 @@ fn child_p2b_differential() {
 		assert!(covered.native_entries > 0, "{}: no native entry", case.name);
 		// Production: the region cache against the plain interpreter at every fuel value.
 		let production = production_case(&case);
-		assert!(production.1.entries > 0, "{}: no production entry", case.name);
+		assert!(
+			production.1.entries > 0,
+			"{}: no production entry",
+			case.name
+		);
 		row("admitted", &case, &analysis, &all, &production);
 		add(&mut total, &all);
 		points += production.0;
@@ -331,7 +473,10 @@ fn child_p2b_differential() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: compiles and runs generated code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: compiles and runs generated code in a child process"
+)]
 fn p2b_intentionally_refused_cases_stay_interpreted() {
 	run_child("child_p2b_refused");
 }
@@ -343,7 +488,12 @@ fn child_p2b_refused() {
 	let mut cases = 0usize;
 	for (case, expected) in refused_cases() {
 		let analysis = outcomes(case.src.code());
-		assert_eq!(analysis.len(), expected.len(), "{}: {analysis:?}", case.name);
+		assert_eq!(
+			analysis.len(),
+			expected.len(),
+			"{}: {analysis:?}",
+			case.name
+		);
 		for (outcome, want) in analysis.iter().zip(&expected) {
 			match want {
 				Some(refusal) => assert!(
@@ -362,11 +512,14 @@ fn child_p2b_refused() {
 		row("refused", &case, &analysis, &all, &production);
 		cases += 1;
 	}
-	println!("P2BCOV\tTOTAL_REFUSED\tcases={cases}\tinvalid_exits={}", cache::invalid_exits());
+	println!(
+		"P2BCOV\tTOTAL_REFUSED\tcases={cases}\tinvalid_exits={}",
+		cache::invalid_exits()
+	);
 	assert_eq!(cache::invalid_exits(), 0);
 }
 
-/// The probe kernels after P2b, as in the 672a4eaa golden: while and numeric admitted, fib
+/// The bench kernels after P2b, as in the P3a golden: while and numeric admitted, fib
 /// with no loop, shared_rows refused (side entry). B1 changed one row: calls, refused at its
 /// IterNext header through P2b, is admitted (native IterNext, `add` inlined).
 #[test]
@@ -377,7 +530,11 @@ fn p2b_kernel_admission_unchanged() {
 		("v2/numeric", super::p2_tests::V2_NUMERIC, vec!["admitted"]),
 		("v2/calls", V2_CALLS, vec!["f0h4:admitted"]),
 		("v2/fib", super::p2_tests::V2_FIB, vec![]),
-		("v2/shared_rows", super::p2_tests::V2_SHARED_ROWS, vec!["f1h1:SideEntry { pc: 17 }"]),
+		(
+			"v2/shared_rows",
+			super::p2_tests::V2_SHARED_ROWS,
+			vec!["f1h1:SideEntry { pc: 17 }"],
+		),
 	] {
 		let program = compile_source(text);
 		let found = outcomes(&program.code);
@@ -410,14 +567,24 @@ fn p2b_audit_record_bound_is_48() {
 			b.ins().store(mem, v, rec, offset);
 		})
 	};
-	assert_eq!(audit::ir(&store_at(ExitRecord::UNITS), &audit::AccessMap::uniform_for_test(2)), Ok(()), "units at 40..48");
+	assert_eq!(
+		audit::ir(
+			&store_at(ExitRecord::UNITS),
+			&audit::AccessMap::uniform_for_test(2)
+		),
+		Ok(()),
+		"units at 40..48"
+	);
 	for offset in [44, 48, 56] {
 		assert!(
-			matches!(audit::ir(&store_at(offset), &audit::AccessMap::uniform_for_test(2)), Err(Finding::Memory(_))),
+			matches!(
+				audit::ir(&store_at(offset), &audit::AccessMap::uniform_for_test(2)),
+				Err(Finding::Memory(_))
+			),
 			"offset {offset}"
 		);
 	}
-	// B1 (Codex 8034: exact record field widths): a 4-byte store at 44 lies inside `units`
+	// B1 (exact record field widths): a 4-byte store at 44 lies inside `units`
 	// (40..48) and is refused since B1 (P2b's aggregate bound admitted it); at 48 it is past
 	// the record either way.
 	let store32 = |offset: i32| {
@@ -427,13 +594,20 @@ fn p2b_audit_record_bound_is_48() {
 			b.ins().store(mem, v, rec, offset);
 		})
 	};
-	assert!(matches!(audit::ir(&store32(44), &audit::AccessMap::uniform_for_test(2)), Err(Finding::Memory(_))));
-	assert!(matches!(audit::ir(&store32(48), &audit::AccessMap::uniform_for_test(2)), Err(Finding::Memory(_))));
+	assert!(matches!(
+		audit::ir(&store32(44), &audit::AccessMap::uniform_for_test(2)),
+		Err(Finding::Memory(_))
+	));
+	assert!(matches!(
+		audit::ir(&store32(48), &audit::AccessMap::uniform_for_test(2)),
+		Err(Finding::Memory(_))
+	));
 }
 
 // --------------------------------------------------- 27: the selection golden delta
 
-/// The selection golden captured at 672a4eaa (unchanged).
+/// The selection golden captured from the batch build (unchanged; sha256
+/// 2f95b026f6426603c9baf156e39ca78893d3f059d409c40a04bf815bd64d8c9c).
 const OLD_GOLDEN: &str = include_str!("fixtures/p3a_selection_golden.txt");
 /// The selection golden re-captured at P2b (`RUNE_P3A_GOLDEN_OUT`).
 pub(super) const P2B_GOLDEN: &str = include_str!("fixtures/p2b_selection_golden.txt");
@@ -473,7 +647,7 @@ fn blocks(text: &str) -> Vec<(String, Vec<&str>)> {
 
 fn field(line: &str, key: &str) -> u64 {
 	let prefix = format!("{key}=");
-	line.split(|c| c == ' ' || c == '\t')
+	line.split([' ', '\t'])
 		.find_map(|f| f.strip_prefix(prefix.as_str()))
 		.unwrap_or_else(|| std::panic!("{key} in {line}"))
 		.parse()
@@ -492,14 +666,30 @@ fn key(line: &str) -> (u32, u32, String) {
 	let mut parts = line.split('\t');
 	let _kind = parts.next();
 	let _program = parts.next();
-	let f = parts.next().unwrap().strip_prefix('f').unwrap().parse().unwrap();
-	let h = parts.next().unwrap().strip_prefix('h').unwrap().parse().unwrap();
+	let f = parts
+		.next()
+		.unwrap()
+		.strip_prefix('f')
+		.unwrap()
+		.parse()
+		.unwrap();
+	let h = parts
+		.next()
+		.unwrap()
+		.strip_prefix('h')
+		.unwrap()
+		.parse()
+		.unwrap();
 	(f, h, parts.collect::<Vec<_>>().join("\t"))
 }
 
 /// The `(function, header, rest)` of every line of `kind` in a program block.
 fn lines(block: &[&str], kind: &str) -> Vec<(u32, u32, String)> {
-	block.iter().filter(|l| l.starts_with(kind)).map(|l| key(l)).collect()
+	block
+		.iter()
+		.filter(|l| l.starts_with(kind))
+		.map(|l| key(l))
+		.collect()
 }
 
 /// The capacity `BVec::push` growth gives `len` exits (rune_alloc's amortized growth for an
@@ -517,7 +707,8 @@ fn exit_capacity(len: u64) -> u64 {
 /// `Exit` growth (`metadata_bytes` + the larger `Exit` per retained exit capacity), and
 /// exactly the enumerated `DELTA`. Returns (identical lines, programs in DELTA).
 pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
-	let token = core::mem::size_of::<crate::experimental_core::region::budget::Token<'static>>() as u64;
+	let token =
+		core::mem::size_of::<crate::experimental_core::region::budget::Token<'static>>() as u64;
 	let growth = core::mem::size_of::<Exit>() as u64 - 48;
 	assert_eq!(growth, 8, "Exit grew by one u64 (units)");
 	let old = blocks(old);
@@ -532,7 +723,7 @@ pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
 			delta_programs += 1;
 		}
 		// ANALYSIS: same headers in the same order; identical unless enumerated.
-		let (oa, na) = (lines(&o, "ANALYSIS\t"), lines(&n, "ANALYSIS\t"));
+		let (oa, na) = (lines(o, "ANALYSIS\t"), lines(n, "ANALYSIS\t"));
 		assert_eq!(oa.len(), na.len(), "{name}: analysed headers");
 		for (a, b) in oa.iter().zip(na.iter()) {
 			assert_eq!((a.0, a.1), (b.0, b.1), "{name}");
@@ -549,11 +740,14 @@ pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
 			}
 		}
 		for d in &delta {
-			assert!(oa.iter().any(|a| (a.0, a.1) == (d.1, d.2)), "{name}: enumerated header exists");
+			assert!(
+				oa.iter().any(|a| (a.0, a.1) == (d.1, d.2)),
+				"{name}: enumerated header exists"
+			);
 		}
 
 		// COMPILE: every old line unchanged; the new lines are exactly the newly admitted.
-		let (oc, nc) = (lines(&o, "COMPILE\t"), lines(&n, "COMPILE\t"));
+		let (oc, nc) = (lines(o, "COMPILE\t"), lines(n, "COMPILE\t"));
 		for c in &oc {
 			assert!(nc.contains(c), "{name}: COMPILE {c:?} kept");
 			identical += 1;
@@ -562,16 +756,22 @@ pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
 		let admitted: Vec<_> = delta.iter().filter(|d| d.4 == "admitted").collect();
 		assert_eq!(added.len(), admitted.len(), "{name}: new COMPILE lines");
 		for d in &admitted {
-			let c = added.iter().find(|c| (c.0, c.1) == (d.1, d.2)).expect("COMPILE line");
+			let c = added
+				.iter()
+				.find(|c| (c.0, c.1) == (d.1, d.2))
+				.expect("COMPILE line");
 			assert!(c.2.starts_with(d.5), "{name}: {c:?}");
 		}
 
 		// LOADED: every old line unchanged and in order; the new ones are the newly
 		// admitted regions whose compile is `ok`, with its bytes.
-		let (ol, nl) = (lines(&o, "LOADED\t"), lines(&n, "LOADED\t"));
+		let (ol, nl) = (lines(o, "LOADED\t"), lines(n, "LOADED\t"));
 		let kept: Vec<_> = nl.iter().filter(|l| ol.contains(l)).collect();
 		assert_eq!(kept.len(), ol.len(), "{name}: old LOADED lines kept");
-		assert!(kept.iter().zip(ol.iter()).all(|(a, b)| *a == b), "{name}: LOADED order");
+		assert!(
+			kept.iter().zip(ol.iter()).all(|(a, b)| *a == b),
+			"{name}: LOADED order"
+		);
 		identical += ol.len();
 		let new_loaded: Vec<_> = nl.iter().filter(|l| !ol.contains(l)).collect();
 		let ok: Vec<_> = admitted.iter().filter(|d| d.5 == "ok").collect();
@@ -579,7 +779,10 @@ pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
 		let mut new_bytes = 0;
 		let mut new_mapped = 0;
 		for l in &new_loaded {
-			let c = added.iter().find(|c| (c.0, c.1) == (l.0, l.1)).expect("compiled");
+			let c = added
+				.iter()
+				.find(|c| (c.0, c.1) == (l.0, l.1))
+				.expect("compiled");
 			let bytes = field(&l.2, "code_bytes");
 			assert_eq!(field(&c.2, "bytes"), bytes, "{name}: loaded bytes");
 			new_bytes += bytes;
@@ -593,7 +796,10 @@ pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
 		let exits_retained: u64 = ol
 			.iter()
 			.map(|l| {
-				let a = oa.iter().find(|a| (a.0, a.1) == (l.0, l.1)).expect("loaded was admitted");
+				let a = oa
+					.iter()
+					.find(|a| (a.0, a.1) == (l.0, l.1))
+					.expect("loaded was admitted");
 				exit_capacity(field(&a.2, "exits"))
 			})
 			.sum();
@@ -611,7 +817,8 @@ pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
 						.unwrap();
 					// The P2b-era `Ready` (B1's `Region` fields grew it; the fixtures
 					// predate B1).
-					cache::region_metadata(&region.unwrap()) as u64 - (cache::ready_bytes_for_test() as u64 - 688)
+					cache::region_metadata(&region.unwrap()) as u64
+						- (cache::ready_bytes_for_test() as u64 - 688)
 				})
 				.sum()
 		};
@@ -620,17 +827,47 @@ pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
 			field(os, "metadata_bytes") + loaded * token + growth * exits_retained + new_metadata,
 			"{name}: metadata_bytes"
 		);
-		assert_eq!(field(ns, "loaded"), loaded + new_loaded.len() as u64, "{name}");
-		assert_eq!(field(ns, "code_bytes"), field(os, "code_bytes") + new_bytes, "{name}");
-		assert_eq!(field(ns, "mapped_bytes"), field(os, "mapped_bytes") + new_mapped, "{name}");
+		assert_eq!(
+			field(ns, "loaded"),
+			loaded + new_loaded.len() as u64,
+			"{name}"
+		);
+		assert_eq!(
+			field(ns, "code_bytes"),
+			field(os, "code_bytes") + new_bytes,
+			"{name}"
+		);
+		assert_eq!(
+			field(ns, "mapped_bytes"),
+			field(os, "mapped_bytes") + new_mapped,
+			"{name}"
+		);
 		let cap_flag = field(ns, "region_cap") + field(ns, "compile_cap");
-		let mut keys = vec!["metadata_bytes", "loaded", "code_bytes", "mapped_bytes", "regions"];
+		let mut keys = vec![
+			"metadata_bytes",
+			"loaded",
+			"code_bytes",
+			"mapped_bytes",
+			"regions",
+		];
 		if cap_flag == 0 {
-			assert_eq!(field(ns, "regions"), field(os, "regions") + admitted.len() as u64, "{name}");
+			assert_eq!(
+				field(ns, "regions"),
+				field(os, "regions") + admitted.len() as u64,
+				"{name}"
+			);
 		} else {
 			assert_eq!(cap_flag, 1, "{name}");
-			assert!(delta.is_empty(), "{name}: no P2b delta in the capped program");
-			keys.extend(["analysed_functions", "candidates", "region_cap", "compile_cap"]);
+			assert!(
+				delta.is_empty(),
+				"{name}: no P2b delta in the capped program"
+			);
+			keys.extend([
+				"analysed_functions",
+				"candidates",
+				"region_cap",
+				"compile_cap",
+			]);
 			assert!(field(ns, "analysed_functions") <= field(os, "analysed_functions"));
 			assert_eq!(
 				field(ns, "regions"),
@@ -639,7 +876,11 @@ pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
 			);
 			assert!(field(ns, "candidates") <= field(os, "candidates"));
 		}
-		assert_eq!(without(os, &keys), without(ns, &keys), "{name}: other SUMMARY counters");
+		assert_eq!(
+			without(os, &keys),
+			without(ns, &keys),
+			"{name}: other SUMMARY counters"
+		);
 		if delta.is_empty() && cap_flag == 0 {
 			assert_eq!(field(ns, "regions"), field(os, "regions"));
 		}
@@ -651,7 +892,11 @@ pub(super) fn compare_p2b_delta(old: &str, new: &str) -> (usize, usize) {
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source")]
 fn p2b_selection_golden_delta() {
 	let (identical, programs) = compare_p2b_delta(OLD_GOLDEN, P2B_GOLDEN);
-	assert_eq!(programs, DELTA.len(), "one enumerated header per changed program");
+	assert_eq!(
+		programs,
+		DELTA.len(),
+		"one enumerated header per changed program"
+	);
 	println!(
 		"P2BGOLDEN\told_lines={}\tnew_lines={}\tidentical_analysis_compile_loaded={identical}\tdelta_programs={programs}\tdelta_headers={}",
 		OLD_GOLDEN.lines().count(),

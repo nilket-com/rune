@@ -1,8 +1,8 @@
-//! R1 (rnx 0184 calls study): the header IterNext's `out` is recomputed at every exit as
+//! R1: the header IterNext's `out` is recomputed at every exit as
 //! `select(written & bit, next - 1, 0)` instead of being carried around the loop.
 //!
-//! Tests-first: `r1_iter_out_exit_stores_are_recomputed` fails at 0765cce6 (every exit
-//! stores the variable, a header block parameter at the header exits) and passes with R1.
+//! `r1_iter_out_exit_stores_are_recomputed` fails without R1 (every exit then stores the
+//! variable, a header block parameter at the header exits) and passes with it.
 //! The compile-only controls (`r1_ineligible_regions_keep_the_variable_store`), the
 //! lowerer's entry value (`r1_out_entry_value_is_the_iconst_zero`) and the executing
 //! whole-buffer differential (`r1_full_buffer_byte_equal_every_fuel`, child process) pass
@@ -118,7 +118,10 @@ fn eligible(region: &Region) -> Option<u32> {
 	let NodeOp::IterNext { out, .. } = region.nodes.get(header)?.op else {
 		return None;
 	};
-	if out >= VIRTUAL_BASE || out >= 64 || region.entry.get(out as usize) != Some(&EntryClass::Scalar) {
+	if out >= VIRTUAL_BASE
+		|| out >= 64
+		|| region.entry.get(out as usize) != Some(&EntryClass::Scalar)
+	{
 		return None;
 	}
 	let other = region
@@ -131,7 +134,10 @@ fn eligible(region: &Region) -> Option<u32> {
 
 /// The defining instruction's data of `v`, if `v` is an instruction result.
 fn def(func: &ir::Function, v: ir::Value) -> Option<InstructionData> {
-	func.dfg.value_def(func.dfg.resolve_aliases(v)).inst().map(|i| func.dfg.insts[i])
+	func.dfg
+		.value_def(func.dfg.resolve_aliases(v))
+		.inst()
+		.map(|i| func.dfg.insts[i])
 }
 
 /// The constant `v` is, when an `iconst` in `block` defines it.
@@ -223,7 +229,9 @@ fn entry_arg_kind(func: &ir::Function, i: usize, out: u32, n: usize) -> EntryArg
 		return EntryArg::Zero;
 	}
 	match def(func, arg) {
-		Some(InstructionData::Load { arg: base, offset, .. }) if func.dfg.resolve_aliases(base) == buf => {
+		Some(InstructionData::Load {
+			arg: base, offset, ..
+		}) if func.dfg.resolve_aliases(base) == buf => {
 			let offset = i64::from(offset);
 			if offset == 8 * i64::from(out) {
 				EntryArg::OutLoad
@@ -258,13 +266,16 @@ fn select_shape(func: &ir::Function, v: ir::Value) -> Result<i64, String> {
 	};
 	let any_block = |x: ir::Value| {
 		let x = func.dfg.resolve_aliases(x);
-		func.dfg.value_def(x).inst().and_then(|i| match func.dfg.insts[i] {
-			InstructionData::UnaryImm {
-				opcode: Opcode::Iconst,
-				imm,
-			} => Some(imm.bits()),
-			_ => None,
-		})
+		func.dfg
+			.value_def(x)
+			.inst()
+			.and_then(|i| match func.dfg.insts[i] {
+				InstructionData::UnaryImm {
+					opcode: Opcode::Iconst,
+					imm,
+				} => Some(imm.bits()),
+				_ => None,
+			})
 	};
 	let Some(bit) = any_block(band[1]) else {
 		return Err(format!("{v}: band mask is not a constant"));
@@ -299,7 +310,7 @@ fn eligible_regions() -> Vec<(String, Region, u32)> {
 
 /// R1 applies to the calls kernel and to every eligible corpus region: every exit store of
 /// `out` is R1's `select` (structurally, `select_shape`, with the bit `1 << out`), never a
-/// header block parameter. FAILS at 0765cce6.
+/// header block parameter. Fails without R1.
 #[test]
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source and runs Cranelift")]
 fn r1_iter_out_exit_stores_are_recomputed() {
@@ -308,11 +319,28 @@ fn r1_iter_out_exit_stores_are_recomputed() {
 	for (name, region, out) in eligible_regions() {
 		let func = lower::build(&region, &isa).unwrap();
 		let found = out_stores(&func, out);
-		assert!(!found.is_empty(), "{name}: no exit stores `out`\n{}", func.display());
+		assert!(
+			!found.is_empty(),
+			"{name}: no exit stores `out`\n{}",
+			func.display()
+		);
 		for s in found {
-			assert_eq!(s.header_param, None, "{name}: an exit stores header parameter {} as `out`\n{}", s.value, func.display());
-			assert_eq!(s.opcode, Some(Opcode::Select), "{name}: `out` stored from {}\n{}", s.value, func.display());
-			let bit = select_shape(&func, s.value).unwrap_or_else(|e| std::panic!("{name}: {e}\n{}", func.display()));
+			assert_eq!(
+				s.header_param,
+				None,
+				"{name}: an exit stores header parameter {} as `out`\n{}",
+				s.value,
+				func.display()
+			);
+			assert_eq!(
+				s.opcode,
+				Some(Opcode::Select),
+				"{name}: `out` stored from {}\n{}",
+				s.value,
+				func.display()
+			);
+			let bit = select_shape(&func, s.value)
+				.unwrap_or_else(|e| std::panic!("{name}: {e}\n{}", func.display()));
 			assert_eq!(bit, 1i64 << out, "{name}");
 			stores += 1;
 		}
@@ -363,7 +391,11 @@ fn controls() -> Vec<(&'static str, Region, u32)> {
 		.unwrap();
 	second.nodes[at].op = NodeOp::IterNext { out: other, none };
 
-	vec![("guard", guarded, out), ("second_writer", rewritten, out), ("second_iter_next", second, out)]
+	vec![
+		("guard", guarded, out),
+		("second_writer", rewritten, out),
+		("second_iter_next", second, out),
+	]
 }
 
 /// Negative controls (compile-only): a Guard-class `out`, a second writer of `out` and a
@@ -383,9 +415,21 @@ fn r1_ineligible_regions_keep_the_variable_store() {
 			.filter_map(|s| s.header_param.map(|i| entry_arg_kind(&func, i, out, n)))
 			.filter(|k| matches!(k, EntryArg::Zero | EntryArg::OutLoad))
 			.collect();
-		assert!(!own.is_empty(), "{what}: no exit stores `out`'s own header parameter\n{}", func.display());
-		assert!(found.iter().all(|s| s.opcode != Some(Opcode::Select)), "{what}\n{}", func.display());
-		println!("R1\tcontrol\t{what}\tvariable_store_kept\tstores={}\town_param_stores={}", found.len(), own.len());
+		assert!(
+			!own.is_empty(),
+			"{what}: no exit stores `out`'s own header parameter\n{}",
+			func.display()
+		);
+		assert!(
+			found.iter().all(|s| s.opcode != Some(Opcode::Select)),
+			"{what}\n{}",
+			func.display()
+		);
+		println!(
+			"R1\tcontrol\t{what}\tvariable_store_kept\tstores={}\town_param_stores={}",
+			found.len(),
+			own.len()
+		);
 	}
 }
 
@@ -401,8 +445,15 @@ fn r1_ineligible_regions_keep_the_variable_store() {
 fn r1_out_entry_value_is_the_iconst_zero() {
 	let isa = lower::shared_isa().unwrap();
 	let mut regions: Vec<(String, Region, u32)> = eligible_regions();
-	let second_writer = controls().into_iter().find(|c| c.0 == "second_writer").unwrap();
-	regions.push((String::from("control second_writer"), second_writer.1, second_writer.2));
+	let second_writer = controls()
+		.into_iter()
+		.find(|c| c.0 == "second_writer")
+		.unwrap();
+	regions.push((
+		String::from("control second_writer"),
+		second_writer.1,
+		second_writer.2,
+	));
 	let (mut params, mut next_params, mut selects) = (0, 0, 0);
 	for (name, region, out) in &regions {
 		let func = lower::build(region, &isa).unwrap();
@@ -410,8 +461,13 @@ fn r1_out_entry_value_is_the_iconst_zero() {
 		let buf = func.dfg.block_params(entry)[0];
 		for inst in func.layout.block_insts(entry) {
 			if let InstructionData::Load { arg, offset, .. } = func.dfg.insts[inst] {
-				let cell = func.dfg.resolve_aliases(arg) == buf && i64::from(offset) == 8 * i64::from(*out);
-				assert!(!cell, "{name}: the entry loads the out cell\n{}", func.display());
+				let cell = func.dfg.resolve_aliases(arg) == buf
+					&& i64::from(offset) == 8 * i64::from(*out);
+				assert!(
+					!cell,
+					"{name}: the entry loads the out cell\n{}",
+					func.display()
+				);
 			}
 		}
 		let n = region.slots.len();
@@ -420,10 +476,15 @@ fn r1_out_entry_value_is_the_iconst_zero() {
 				match entry_arg_kind(&func, i, *out, n) {
 					EntryArg::Zero => params += 1,
 					EntryArg::NextLoad => next_params += 1,
-					other => std::panic!("{name}: header parameter {} stored as `out` enters as {other:?}\n{}", s.value, func.display()),
+					other => std::panic!(
+						"{name}: header parameter {} stored as `out` enters as {other:?}\n{}",
+						s.value,
+						func.display()
+					),
 				}
 			} else if s.opcode == Some(Opcode::Select) {
-				select_shape(&func, s.value).unwrap_or_else(|e| std::panic!("{name}: {e}\n{}", func.display()));
+				select_shape(&func, s.value)
+					.unwrap_or_else(|e| std::panic!("{name}: {e}\n{}", func.display()));
 				selects += 1;
 			}
 		}
@@ -458,7 +519,11 @@ pub(super) const PAYLOADS: [i64; 5] = [0, 7, -9, i64::MAX - 5, i64::MIN + 5];
 
 /// A canonical entry buffer, reproducing the commit module's fill (`unbox`): a guarded
 /// live-in's payload (`Bool` as 0/1), 0 in every `Scalar` cell, then `next` and `end`.
-pub(super) fn canonical_entry(region: &Region, payload: i64, range: Option<(i64, i64)>) -> Vec<i64> {
+pub(super) fn canonical_entry(
+	region: &Region,
+	payload: i64,
+	range: Option<(i64, i64)>,
+) -> Vec<i64> {
 	let mut entry = vec![0i64; region.cells()];
 	for (l, class) in region.entry.iter().enumerate() {
 		entry[l] = match class {
@@ -523,7 +588,11 @@ fn compare(
 		let n = region.slots.len();
 		if record.written & (1u64 << out) != 0 {
 			cov.out_bit_set += 1;
-			assert_eq!(buf[out as usize], buf[n].wrapping_sub(1), "{at}: out != next - 1 with the bit set");
+			assert_eq!(
+				buf[out as usize],
+				buf[n].wrapping_sub(1),
+				"{at}: out != next - 1 with the bit set"
+			);
 		} else {
 			cov.out_bit_clear += 1;
 			assert_eq!(buf[out as usize], 0, "{at}: out != 0 with the bit clear");
@@ -545,7 +614,10 @@ fn compare(
 /// re-entries from each Fuel exit's state (canonically refilled) at small fuels. Passes
 /// before and after R1.
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn r1_full_buffer_byte_equal_every_fuel() {
 	run_child("child_full_buffer");
 }
@@ -600,8 +672,11 @@ fn child_full_buffer() {
 				for fuel in 1..=6u64 {
 					let mut entry = entry.clone();
 					for step in 0..64 {
-						let at = format!("{name} range={range:?} payload={payload} fuel={fuel} chain={step}");
-						let (status, buf, record) = compare(&native, region, &entry, fuel, &at, out, c);
+						let at = format!(
+							"{name} range={range:?} payload={payload} fuel={fuel} chain={step}"
+						);
+						let (status, buf, record) =
+							compare(&native, region, &entry, fuel, &at, out, c);
 						if step > 0 {
 							c.chained += 1;
 						}
@@ -640,9 +715,18 @@ fn child_full_buffer() {
 		);
 	}
 	let total: usize = cov.values().map(|c| c.points).sum();
-	println!("R1\tfull_buffer\tTOTAL\tregions={}\tpoints={total}\tdivision_refused={division}", regions_by.values().sum::<usize>());
+	println!(
+		"R1\tfull_buffer\tTOTAL\tregions={}\tpoints={total}\tdivision_refused={division}",
+		regions_by.values().sum::<usize>()
+	);
 	let e = &cov["eligible"];
-	assert!(e.out_bit_set > 0 && e.out_bit_clear > 0 && e.wrap_discarded > 0 && e.repeated_progress > 0 && e.chained > 0);
+	assert!(
+		e.out_bit_set > 0
+			&& e.out_bit_clear > 0
+			&& e.wrap_discarded > 0
+			&& e.repeated_progress > 0
+			&& e.chained > 0
+	);
 }
 
 /// The selection golden captured once from the verified R1 implementation
@@ -654,10 +738,19 @@ pub(super) const R1_GOLDEN: &str = include_str!("fixtures/r1_selection_golden.tx
 /// `code_bytes` may change; `mapped_bytes`, metadata, admissions and every other counter
 /// fixed; every LOADED region's size equal to its own COMPILE size). The changed regions are
 /// exactly the calls-shaped ones R1 applies to in the golden corpus.
+///
+/// Under Miri this text comparison took 170 s and executes no generated code, so it is
+/// opt-in there: `cargo +nightly miri test -p rune --all-features --lib -- --ignored --exact
+/// experimental_native::r1_tests::r1_selection_golden_delta`.
 #[test]
+#[cfg_attr(miri, ignore = "Miri: 170 s golden text comparison (opt-in)")]
 fn r1_selection_golden_delta() {
-	let (identical, changed) = super::w13_tests::compare_w13_delta(super::w13_tests::W13_GOLDEN, R1_GOLDEN);
+	let (identical, changed) =
+		super::w13_tests::compare_w13_delta(super::w13_tests::W13_GOLDEN, R1_GOLDEN);
 	println!("R1\tgolden_fixtures\tidentical={identical}\tchanged={changed}");
 	assert_eq!(identical + changed, R1_GOLDEN.lines().count());
-	assert_eq!(changed, 6, "COMPILE, LOADED and SUMMARY of v2_calls f0 h4 and listed_9 f0 h5");
+	assert_eq!(
+		changed, 6,
+		"COMPILE, LOADED and SUMMARY of v2_calls f0 h4 and listed_9 f0 h5"
+	);
 }

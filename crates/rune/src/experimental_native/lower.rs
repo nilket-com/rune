@@ -73,8 +73,8 @@ use super::NativeRefusal;
 use crate::experimental_core::arithmetic::Binary;
 use crate::experimental_core::region::abi::ExitRecord;
 use crate::experimental_core::region::{
-	EntryClass, NodeOp, Region, Scalar, Status, Target, MAX_INLINE_SLOTS, MAX_REGION_CELLS, MAX_REGION_NODES,
-	MAX_REGION_SLOTS, VIRTUAL_BASE,
+	EntryClass, NodeOp, Region, Scalar, Status, Target, MAX_INLINE_SLOTS, MAX_REGION_CELLS,
+	MAX_REGION_NODES, MAX_REGION_SLOTS, VIRTUAL_BASE,
 };
 use cranelift_codegen::control::ControlPlane;
 use cranelift_codegen::ir::{
@@ -224,9 +224,14 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 		b.def_var(units, zero);
 	}
 	// B1: the virtual locals and the checkpoint, when the region inlines.
-	let inlines = region.nodes.iter().any(|n| matches!(n.op, NodeOp::Enter { .. }));
+	let inlines = region
+		.nodes
+		.iter()
+		.any(|n| matches!(n.op, NodeOp::Enter { .. }));
 	let (cvars, checkpoint) = if inlines {
-		let cvars: Vec<Variable> = (0..MAX_INLINE_SLOTS).map(|_| b.declare_var(types::I64)).collect();
+		let cvars: Vec<Variable> = (0..MAX_INLINE_SLOTS)
+			.map(|_| b.declare_var(types::I64))
+			.collect();
 		for &c in &cvars {
 			b.def_var(c, zero);
 		}
@@ -239,7 +244,10 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 	// A caller local (`l < n`) or a virtual local of an inlined callee.
 	let var = |l: u32| -> Result<Variable, NativeRefusal> {
 		if l >= VIRTUAL_BASE {
-			cvars.get((l - VIRTUAL_BASE) as usize).copied().ok_or(NativeRefusal::Shape)
+			cvars
+				.get((l - VIRTUAL_BASE) as usize)
+				.copied()
+				.ok_or(NativeRefusal::Shape)
 		} else {
 			vars.get(l as usize).copied().ok_or(NativeRefusal::Shape)
 		}
@@ -300,13 +308,18 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 				}
 				let empty = b.ins().icmp_imm_s(IntCC::Equal, f, 0);
 				let charged = b.create_block();
-				b.ins().brif(empty, block(Target::Exit(e)), &[], charged, &[]);
+				b.ins()
+					.brif(empty, block(Target::Exit(e)), &[], charged, &[]);
 				b.switch_to_block(charged);
 				let f = b.ins().iadd_imm_s(f, -1);
 				b.def_var(fuel, f);
 			}
 		}
-		let define = |b: &mut FunctionBuilder<'_>, out: u32, v: ir::Value, ty: Scalar| -> Result<(), NativeRefusal> {
+		let define = |b: &mut FunctionBuilder<'_>,
+		              out: u32,
+		              v: ir::Value,
+		              ty: Scalar|
+		 -> Result<(), NativeRefusal> {
 			// A virtual local defines its variable only: no written bit, no tag, no cell.
 			if out >= VIRTUAL_BASE {
 				b.def_var(var(out)?, v);
@@ -585,7 +598,10 @@ fn iter_out_remat(region: &Region) -> Option<u32> {
 	let NodeOp::IterNext { out, .. } = region.nodes.get(header)?.op else {
 		return None;
 	};
-	if out >= VIRTUAL_BASE || out >= 64 || region.entry.get(out as usize) != Some(&EntryClass::Scalar) {
+	if out >= VIRTUAL_BASE
+		|| out >= 64
+		|| region.entry.get(out as usize) != Some(&EntryClass::Scalar)
+	{
 		return None;
 	}
 	let other = region
@@ -639,7 +655,8 @@ fn fuel_fold(region: &Region) -> Option<(u32, u32)> {
 	let h = region.header_node;
 	let header = region.nodes.get(h as usize)?;
 	let NodeOp::IterNext {
-		none: Target::Exit(_), ..
+		none: Target::Exit(_),
+		..
 	} = header.op
 	else {
 		return None;
@@ -648,11 +665,18 @@ fn fuel_fold(region: &Region) -> Option<(u32, u32)> {
 	// One link of the chain: node `at`, the fall-through `prev` of the link before.
 	let link = |at: u32, prev: Target| {
 		region.nodes.get(at as usize).filter(|node| {
-			prev == Target::Node(at) && node.charged.is_none() && fuel_link(&node.op) && node_refs(region, at) == 1
+			prev == Target::Node(at)
+				&& node.charged.is_none()
+				&& fuel_link(&node.op)
+				&& node_refs(region, at) == 1
 		})
 	};
 	let enter = link(site.enter, header.next?)?;
-	if enter.op != (NodeOp::Enter { site: 0, slots: site.slots }) {
+	if enter.op
+		!= (NodeOp::Enter {
+			site: 0,
+			slots: site.slots,
+		}) {
 		return None;
 	}
 	let mut prev = enter.next?;
@@ -665,7 +689,11 @@ fn fuel_fold(region: &Region) -> Option<(u32, u32)> {
 	}
 	let c = site.first.checked_add(site.parameters)?;
 	let callee = region.nodes.get(c as usize)?;
-	if prev != Target::Node(c) || c == h || callee.charged != Some(site.fuel_exit) || node_refs(region, c) != 1 {
+	if prev != Target::Node(c)
+		|| c == h
+		|| callee.charged != Some(site.fuel_exit)
+		|| node_refs(region, c) != 1
+	{
 		return None;
 	}
 	let charged = region.nodes.iter().filter(|n| n.charged.is_some()).count();
@@ -769,7 +797,7 @@ fn condition(op: Binary) -> Result<IntCC, NativeRefusal> {
 /// gate passed for exactly these bytes.
 ///
 /// A production `Compiled` holds the bytes and two numbers only: no listing, no text. The
-/// [`Listing`] exists in test builds only (receipts and diagnostics).
+/// [`Listing`] exists in test builds only (diagnostics).
 pub(crate) struct Compiled {
 	bytes: Vec<u8>,
 	/// Required code alignment (from Cranelift's function alignment).
@@ -851,7 +879,10 @@ pub(crate) fn diagnose_machine_only(region: &Region) -> Result<Listing, NativeRe
 /// P3a agreement tests: every gate, with a FRESH ISA (`fresh`) or the thread's shared one.
 /// Returns the bytes, alignment and listing; never a loadable [`Compiled`].
 #[cfg(test)]
-pub(crate) fn diagnose_isa(region: &Region, fresh: bool) -> Result<(Vec<u8>, u64, Listing), NativeRefusal> {
+pub(crate) fn diagnose_isa(
+	region: &Region,
+	fresh: bool,
+) -> Result<(Vec<u8>, u64, Listing), NativeRefusal> {
 	let isa = if fresh { isa()? } else { shared_isa()? };
 	lower_with(region, 0, Gates::All, &isa)
 }

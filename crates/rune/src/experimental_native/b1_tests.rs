@@ -1,6 +1,5 @@
-//! B1 (rnx 0184): native IterNext over i64 ranges, inlined leaf scalar callees and the
-//! explicit Replay checkpoint, EXECUTED (test-only). B1-SOURCE-DESIGN.md §13 rows 24–51 plus
-//! the Codex 8034/8043 additions.
+//! B1: native IterNext over i64 ranges, inlined leaf scalar callees and the
+//! explicit Replay checkpoint, EXECUTED (test-only).
 //!
 //! Every test that loads or executes generated code runs in a child process (this test
 //! binary re-invoked with `--exact` on an `#[ignore]`d worker that refuses to run unless
@@ -20,9 +19,11 @@
 //!
 //! Native coverage (entries, exits by kind) is reported separately from intentional
 //! refusals (Tag, Iter, Room, cancel, compile refusals). Output lines prefixed `B1COV`,
-//! `B1CASE` and `B1GOLDEN` are receipt rows.
+//! `B1CASE` and `B1GOLDEN` are machine-readable report rows.
 use super::exec_tests::{compile_source, invoke, Arg, Observed, Outcome, Src, BIG_FUEL, MAX_SWEEP};
-use super::{audit, audit::AccessMap, audit::Finding, boundary::NativeRegion, lower, NativeRefusal};
+use super::{
+	audit, audit::AccessMap, audit::Finding, boundary::NativeRegion, lower, NativeRefusal,
+};
 use crate::experimental_core::{
 	arithmetic::Binary,
 	code::{Builder, Code, Function, Op},
@@ -32,8 +33,7 @@ use crate::experimental_core::{
 	heap::{Limits, Store},
 	region::{
 		abi::ExitRecord,
-		analyze,
-		b1_tests as built,
+		analyze, b1_tests as built,
 		cache::{self, NativeSummary, State},
 		commit::{self, Refused, Room},
 		hook::{self, Mode, NativeInstall, Stats},
@@ -117,7 +117,9 @@ fn code_of(functions: Vec<Function>) -> Code {
 }
 
 fn ints(rows: &[&[i64]]) -> Vec<Vec<Arg>> {
-	rows.iter().map(|r| r.iter().map(|&v| Arg::I(v)).collect()).collect()
+	rows.iter()
+		.map(|r| r.iter().map(|&v| Arg::I(v)).collect())
+		.collect()
 }
 
 /// One B1 differential case.
@@ -140,7 +142,13 @@ struct B1Case {
 	production: bool,
 }
 
-fn case(name: &str, text: &str, inputs: Vec<Vec<Arg>>, loaded: usize, targets: &'static str) -> B1Case {
+fn case(
+	name: &str,
+	text: &str,
+	inputs: Vec<Vec<Arg>>,
+	loaded: usize,
+	targets: &'static str,
+) -> B1Case {
 	B1Case {
 		name: name.into(),
 		src: Src::Program(compile_source(text)),
@@ -154,7 +162,13 @@ fn case(name: &str, text: &str, inputs: Vec<Vec<Arg>>, loaded: usize, targets: &
 	}
 }
 
-fn built_case(name: &str, code: Code, inputs: Vec<Vec<Arg>>, loaded: usize, targets: &'static str) -> B1Case {
+fn built_case(
+	name: &str,
+	code: Code,
+	inputs: Vec<Vec<Arg>>,
+	loaded: usize,
+	targets: &'static str,
+) -> B1Case {
 	B1Case {
 		name: name.into(),
 		src: Src::Code(code),
@@ -297,11 +311,25 @@ fn three_modes(case: &B1Case) -> Cov {
 	hook::set_region_transform_for_test(case.transform);
 	let install = hook::install_native(code, None);
 	hook::set_region_transform_for_test(None);
-	let refused = [install.division_runtime, install.division_const0, install.division_constneg1];
-	assert_eq!(install.loaded, case.loaded, "{}: loaded {install:?} analysis {:?}", case.name, cov.analysis);
+	let refused = [
+		install.division_runtime,
+		install.division_const0,
+		install.division_constneg1,
+	];
+	assert_eq!(
+		install.loaded, case.loaded,
+		"{}: loaded {install:?} analysis {:?}",
+		case.name, cov.analysis
+	);
 	assert_eq!(refused, case.refused, "{}: {install:?}", case.name);
 	assert_eq!(
-		(install.size, install.codegen, install.audit_other, install.other, install.load_refused),
+		(
+			install.size,
+			install.codegen,
+			install.audit_other,
+			install.other,
+			install.load_refused
+		),
 		(0, 0, 0, 0, 0),
 		"{}: unexpected compile refusal {install:?}",
 		case.name
@@ -314,9 +342,17 @@ fn three_modes(case: &B1Case) -> Cov {
 		hook::suspend();
 		let s = cache::prepare(code).expect("summary");
 		hook::resume();
-		assert_eq!(s.loaded as usize, case.loaded, "{}: production {s:?}", case.name);
 		assert_eq!(
-			[s.division_runtime as usize, s.division_const0 as usize, s.division_constneg1 as usize],
+			s.loaded as usize, case.loaded,
+			"{}: production {s:?}",
+			case.name
+		);
+		assert_eq!(
+			[
+				s.division_runtime as usize,
+				s.division_const0 as usize,
+				s.division_constneg1 as usize
+			],
 			case.refused,
 			"{}",
 			case.name
@@ -327,10 +363,19 @@ fn three_modes(case: &B1Case) -> Cov {
 	for args in &case.inputs {
 		let reference = plain(code, main, args, BIG_FUEL);
 		if let Outcome::Failure { error, .. } = &reference.outcome {
-			assert_ne!(error.kind, ErrorKind::FuelExhausted, "{}: {args:?}", case.name);
+			assert_ne!(
+				error.kind,
+				ErrorKind::FuelExhausted,
+				"{}: {args:?}",
+				case.name
+			);
 		}
 		let total = BIG_FUEL - reference.fuel_left.expect("final fuel");
-		assert!(total + 1 <= MAX_SWEEP, "{}: {args:?} charges {total}: reduce the case", case.name);
+		assert!(
+			total < MAX_SWEEP,
+			"{}: {args:?} charges {total}: reduce the case",
+			case.name
+		);
 
 		for fuel in 0..=total + 1 {
 			let p = plain(code, main, args, fuel);
@@ -340,7 +385,10 @@ fn three_modes(case: &B1Case) -> Cov {
 			let s = invoke(code, main, args, fuel);
 			let sim = hook::take_stats().unwrap();
 			if let Some(m) = hook::take_mismatch() {
-				std::panic!("SIMULATOR TRACE MISMATCH {} fuel {fuel} {args:?}\n{m}", case.name);
+				std::panic!(
+					"SIMULATOR TRACE MISMATCH {} fuel {fuel} {args:?}\n{m}",
+					case.name
+				);
 			}
 
 			hook::set_mode(Mode::Native);
@@ -352,15 +400,33 @@ fn three_modes(case: &B1Case) -> Cov {
 
 			assert_eq!(p, s, "{}: simulator, fuel {fuel}, {args:?}", case.name);
 			assert_eq!(p, n, "{}: native, fuel {fuel}, {args:?}", case.name);
-			assert!(p.idle && p.live_entries == 0 || case.name.starts_with("host_root"), "{}", case.name);
+			assert!(
+				p.idle && p.live_entries == 0 || case.name.starts_with("host_root"),
+				"{}",
+				case.name
+			);
 			assert_eq!(nat.mismatches, 0, "{}", case.name);
-			assert_eq!(sim.replay_exits, sim.replay_checked, "{}: every simulated Replay traced", case.name);
-			assert_eq!(nat.replay_exits, nat.replay_checked, "{}: every native Replay traced", case.name);
+			assert_eq!(
+				sim.replay_exits, sim.replay_checked,
+				"{}: every simulated Replay traced",
+				case.name
+			);
+			assert_eq!(
+				nat.replay_exits, nat.replay_checked,
+				"{}: every native Replay traced",
+				case.name
+			);
 
 			// The simulator and native installs enter and exit identically.
 			if case.loaded == install.regions {
 				assert_eq!(
-					(sim.entries, sim.continue_exits, sim.fuel_exits, sim.retry_exits, sim.replay_exits),
+					(
+						sim.entries,
+						sim.continue_exits,
+						sim.fuel_exits,
+						sim.retry_exits,
+						sim.replay_exits
+					),
 					(
 						nat.native_entries,
 						nat.native_continue,
@@ -386,15 +452,7 @@ fn three_modes(case: &B1Case) -> Cov {
 				// The resume rule: production enters and exits exactly as the P1 hook.
 				if case.loaded == install.regions {
 					assert_eq!(
-						(
-							d.entries,
-							d.exits,
-							d.tag,
-							d.iter,
-							d.room,
-							d.store,
-							d.cancel
-						),
+						(d.entries, d.exits, d.tag, d.iter, d.room, d.store, d.cancel),
 						(
 							nat.native_entries as u64,
 							[
@@ -525,21 +583,99 @@ const RANGE_SUM: &str = "pub fn main(a, b) { let s = 0; for i in a..b { s += i; 
 fn break_loop(count: bool) -> Code {
 	use built::{binary, op};
 	let mut f = Function::new(9, 2).unwrap();
-	op(&mut f, Op::Literal { out: 2, value: Value::I64(0) }, 0); // 0
-	op(&mut f, Op::Range { out: 3, start: 0, end: 1 }, 1); // 1
+	op(
+		&mut f,
+		Op::Literal {
+			out: 2,
+			value: Value::I64(0),
+		},
+		0,
+	); // 0
+	op(
+		&mut f,
+		Op::Range {
+			out: 3,
+			start: 0,
+			end: 1,
+		},
+		1,
+	); // 1
 	op(&mut f, Op::IterStart { out: 4, value: 3 }, 2); // 2
-	op(&mut f, Op::Literal { out: 8, value: Value::I64(3) }, 3); // 3
-	op(&mut f, Op::IterNext { out: 5, iterator: 4, none: 10 }, 4); // 4: header
+	op(
+		&mut f,
+		Op::Literal {
+			out: 8,
+			value: Value::I64(3),
+		},
+		3,
+	); // 3
+	op(
+		&mut f,
+		Op::IterNext {
+			out: 5,
+			iterator: 4,
+			none: 10,
+		},
+		4,
+	); // 4: header
 	if count {
-		op(&mut f, Op::Literal { out: 6, value: Value::I64(1) }, 5); // 5
-		op(&mut f, Op::AssignBinary { out: 2, op: Binary::Add, lhs: 2, rhs: 6 }, 6); // 6
+		op(
+			&mut f,
+			Op::Literal {
+				out: 6,
+				value: Value::I64(1),
+			},
+			5,
+		); // 5
+		op(
+			&mut f,
+			Op::AssignBinary {
+				out: 2,
+				op: Binary::Add,
+				lhs: 2,
+				rhs: 6,
+			},
+			6,
+		); // 6
 		binary(&mut f, 7, Binary::Eq, 2, 8, 7); // 7
-		op(&mut f, Op::Branch { condition: 7, yes: 10, no: 9 }, 8); // 8: break
+		op(
+			&mut f,
+			Op::Branch {
+				condition: 7,
+				yes: 10,
+				no: 9,
+			},
+			8,
+		); // 8: break
 	} else {
-		op(&mut f, Op::Literal { out: 6, value: Value::I64(4) }, 5); // 5
+		op(
+			&mut f,
+			Op::Literal {
+				out: 6,
+				value: Value::I64(4),
+			},
+			5,
+		); // 5
 		binary(&mut f, 7, Binary::Gt, 5, 6, 6); // 6
-		op(&mut f, Op::Branch { condition: 7, yes: 10, no: 8 }, 7); // 7: break
-		op(&mut f, Op::AssignBinary { out: 2, op: Binary::Add, lhs: 2, rhs: 5 }, 8); // 8
+		op(
+			&mut f,
+			Op::Branch {
+				condition: 7,
+				yes: 10,
+				no: 8,
+			},
+			7,
+		); // 7: break
+		op(
+			&mut f,
+			Op::AssignBinary {
+				out: 2,
+				op: Binary::Add,
+				lhs: 2,
+				rhs: 5,
+			},
+			8,
+		); // 8
 	}
 	op(&mut f, Op::Jump { target: 4 }, 9); // 9
 	op(&mut f, Op::Release { value: 4 }, 10); // 10
@@ -554,12 +690,32 @@ fn range_cases() -> Vec<B1Case> {
 		case(
 			"range_sum",
 			RANGE_SUM,
-			ints(&[&[5, 2], &[0, 0], &[0, 1], &[0, 30], &[max - 3, max], &[min, min + 3], &[-5, 5]]),
+			ints(&[
+				&[5, 2],
+				&[0, 0],
+				&[0, 1],
+				&[0, 30],
+				&[max - 3, max],
+				&[min, min + 3],
+				&[-5, 5],
+			]),
 			1,
 			"CDFR",
 		),
-		built_case("range_break_min_max", break_loop(true), ints(&[&[min, max], &[0, 2]]), 1, "CDF"),
-		built_case("range_break_in_if", break_loop(false), ints(&[&[0, 10], &[0, 3], &[-3, 2]]), 1, "CDF"),
+		built_case(
+			"range_break_min_max",
+			break_loop(true),
+			ints(&[&[min, max], &[0, 2]]),
+			1,
+			"CDF",
+		),
+		built_case(
+			"range_break_in_if",
+			break_loop(false),
+			ints(&[&[0, 10], &[0, 3], &[-3, 2]]),
+			1,
+			"CDF",
+		),
 	]
 }
 
@@ -577,14 +733,22 @@ const F_SRC: &str = "fn f(a, b) { if a < b { a * b } else { a - b } } pub fn mai
 const G_SRC: &str = "fn g(a) { if a > 3 { return a * a; } a + 1 } pub fn main(n, t) { let s = 0; for i in 0..n { s = g(t + i); } s }";
 // `s = s + h(i)` would copy the live-in `s` before the call (a P2b Type refusal): the call
 // result is bound first.
-const H_SRC: &str = "fn h(a) { a % 7 } pub fn main(n) { let s = 0; for i in 0..n { let t = h(i); s += t; } s }";
-const K_SRC: &str = "fn k(a, b) { a / b } pub fn main(n, d) { let s = 0; for i in 0..n { s = k(i, d); } s }";
+const H_SRC: &str =
+	"fn h(a) { a % 7 } pub fn main(n) { let s = 0; for i in 0..n { let t = h(i); s += t; } s }";
+const K_SRC: &str =
+	"fn k(a, b) { a / b } pub fn main(n, d) { let s = 0; for i in 0..n { s = k(i, d); } s }";
 const LT_SRC: &str = "fn lt(a, b) { a < b } pub fn main(n) { let s = 0; for i in 0..n { if lt(i, 3) { s += 1; } } s }";
 const U_SRC: &str = "fn u(a) { } pub fn main(n) { let s = 0; for i in 0..n { u(i); s += 1; } s }";
 
 fn fault_cases() -> Vec<B1Case> {
 	let max = i64::MAX;
-	let mut k = case("callee_k_runtime_div", K_SRC, ints(&[&[4, 2], &[3, 0], &[3, -1]]), 0, "");
+	let mut k = case(
+		"callee_k_runtime_div",
+		K_SRC,
+		ints(&[&[4, 2], &[3, 0], &[3, -1]]),
+		0,
+		"",
+	);
 	k.refused = [1, 0, 0];
 	vec![
 		// f(i, t): MIN faults on the first iteration (0 - MIN), MAX/2 + 1 on the third
@@ -592,7 +756,13 @@ fn fault_cases() -> Vec<B1Case> {
 		case(
 			"callee_f_two_arms",
 			F_SRC,
-			ints(&[&[5, i64::MIN], &[5, max / 2 + 1], &[3, max / 2 + 1], &[4, 7], &[4, -7]]),
+			ints(&[
+				&[5, i64::MIN],
+				&[5, max / 2 + 1],
+				&[3, max / 2 + 1],
+				&[4, 7],
+				&[4, -7],
+			]),
 			1,
 			"CDFPQ",
 		),
@@ -600,29 +770,62 @@ fn fault_cases() -> Vec<B1Case> {
 		case(
 			"callee_g_early_return",
 			G_SRC,
-			ints(&[&[4, 3_037_000_500], &[4, 3_037_000_499], &[3, 3_037_000_498], &[5, -9], &[3, max - 1]]),
+			ints(&[
+				&[4, 3_037_000_500],
+				&[4, 3_037_000_499],
+				&[3, 3_037_000_498],
+				&[5, -9],
+				&[3, max - 1],
+			]),
 			1,
 			"CDFPQ",
 		),
 		case("callee_h_const_rem", H_SRC, ints(&[&[9], &[0]]), 1, "CDFP"),
 		k,
-		case("callee_lt_caller_branch", LT_SRC, ints(&[&[6], &[1]]), 1, "CDFP"),
-		case("callee_u_unit_return", U_SRC, ints(&[&[5], &[0]]), 1, "CDFP"),
+		case(
+			"callee_lt_caller_branch",
+			LT_SRC,
+			ints(&[&[6], &[1]]),
+			1,
+			"CDFP",
+		),
+		case(
+			"callee_u_unit_return",
+			U_SRC,
+			ints(&[&[5], &[0]]),
+			1,
+			"CDFP",
+		),
 	]
 }
 
-const SUB_I_S: &str = "fn sub(a, b) { a - b } pub fn main(n, t) { let s = t; for i in 0..n { s = sub(i, s); } s }";
-const SUB_S_I: &str = "fn sub(a, b) { a - b } pub fn main(n, t) { let s = t; for i in 0..n { s = sub(s, i); } s }";
+const SUB_I_S: &str =
+	"fn sub(a, b) { a - b } pub fn main(n, t) { let s = t; for i in 0..n { s = sub(i, s); } s }";
+const SUB_S_I: &str =
+	"fn sub(a, b) { a - b } pub fn main(n, t) { let s = t; for i in 0..n { s = sub(s, i); } s }";
 const ADD_I_I: &str = "fn add(a, b) { a + b } pub fn main(n) { let s = 0; for i in 0..n { let t = add(i, i); s += t; } s }";
 const PICK: &str = "fn p0(a, b, c) { a + 0 } fn p1(a, b, c) { b + 0 } fn p2(a, b, c) { c + 0 } pub fn main(n) { let s = 0; for i in 0..n { let x = p0(i, s, 7); let y = p1(i, s, 7); let z = p2(i, s, 7); s = x + y; s += z; } s }";
-const UNUSED_PARAM: &str = "fn k(a, b) { a + 1 } pub fn main(n, u) { let s = 0; for i in 0..n { s = k(s, u); } s }";
+const UNUSED_PARAM: &str =
+	"fn k(a, b) { a + 1 } pub fn main(n, u) { let s = 0; for i in 0..n { s = k(s, u); } s }";
 const UNUSED_UNIT: &str = "fn k(a, b) { a + 1 } pub fn main(n) { let u = (); let s = 0; for i in 0..n { s = k(s, u); } s }";
 
 fn argument_cases() -> Vec<B1Case> {
 	let (min, max) = (i64::MIN, i64::MAX);
 	vec![
-		case("arg_sub_i_s", SUB_I_S, ints(&[&[5, 3], &[3, min + 1], &[3, min]]), 1, "CDFPQ"),
-		case("arg_sub_s_i", SUB_S_I, ints(&[&[5, 3], &[3, min + 2]]), 1, "CDFPQ"),
+		case(
+			"arg_sub_i_s",
+			SUB_I_S,
+			ints(&[&[5, 3], &[3, min + 1], &[3, min]]),
+			1,
+			"CDFPQ",
+		),
+		case(
+			"arg_sub_s_i",
+			SUB_S_I,
+			ints(&[&[5, 3], &[3, min + 2]]),
+			1,
+			"CDFPQ",
+		),
 		case("arg_add_i_i", ADD_I_I, ints(&[&[6]]), 1, "CDFP"),
 		case("arg_pick_each_parameter", PICK, ints(&[&[5]]), 1, "CDFP"),
 		case(
@@ -646,7 +849,13 @@ fn alias_cases() -> Vec<B1Case> {
 	use built::{add_fn, call, op, range_loop};
 	let inputs = || ints(&[&[0, 6], &[1, 4], &[i64::MAX - 3, i64::MAX]]);
 	let mk = |name: &str, body: fn(&mut Function)| {
-		built_case(name, code_of(vec![range_loop(8, body), add_fn()]), inputs(), 1, "CDFPQ")
+		built_case(
+			name,
+			code_of(vec![range_loop(8, body), add_fn()]),
+			inputs(),
+			1,
+			"CDFPQ",
+		)
 	};
 	vec![
 		mk("alias_out_is_arg0", |f| call(f, 2, 1, &[2, 5], 5)),
@@ -654,7 +863,16 @@ fn alias_cases() -> Vec<B1Case> {
 		mk("alias_out_is_both_duplicated_args", |f| {
 			call(f, 2, 1, &[2, 2], 5);
 			// s + i keeps s non-zero so the doubling can overflow.
-			op(f, Op::AssignBinary { out: 2, op: Binary::Add, lhs: 2, rhs: 5 }, 6);
+			op(
+				f,
+				Op::AssignBinary {
+					out: 2,
+					op: Binary::Add,
+					lhs: 2,
+					rhs: 5,
+				},
+				6,
+			);
 		}),
 		mk("alias_out_is_iternext_binding", |f| {
 			call(f, 5, 1, &[2, 5], 5);
@@ -674,12 +892,26 @@ fn return_release_cases() -> Vec<B1Case> {
 	// Releases its first parameter, returns the second plus 0. Slots 0 a, 1 b, 2 r, 3 z.
 	let mut releases = Function::new(4, 2).unwrap();
 	op(&mut releases, Op::Release { value: 0 }, 100);
-	op(&mut releases, Op::Literal { out: 3, value: Value::I64(0) }, 101);
+	op(
+		&mut releases,
+		Op::Literal {
+			out: 3,
+			value: Value::I64(0),
+		},
+		101,
+	);
 	binary(&mut releases, 2, Binary::Add, 1, 3, 102);
 	op(&mut releases, Op::Return { value: 2 }, 103);
 	// Returns a written non-parameter Unit.
 	let mut unit = Function::new(3, 2).unwrap();
-	op(&mut unit, Op::Literal { out: 2, value: Value::Unit }, 100);
+	op(
+		&mut unit,
+		Op::Literal {
+			out: 2,
+			value: Value::Unit,
+		},
+		100,
+	);
 	op(&mut unit, Op::Return { value: 2 }, 101);
 	let inputs = || ints(&[&[0, 5], &[i64::MAX - 2, i64::MAX]]);
 	vec![
@@ -701,7 +933,14 @@ fn return_release_cases() -> Vec<B1Case> {
 			code_of(vec![
 				range_loop(8, |f| {
 					call(f, 6, 1, &[2, 5], 5);
-					op(f, Op::Literal { out: 7, value: Value::I64(1) }, 6);
+					op(
+						f,
+						Op::Literal {
+							out: 7,
+							value: Value::I64(1),
+						},
+						6,
+					);
 					binary(f, 2, Binary::Add, 2, 7, 7);
 				}),
 				unit,
@@ -755,7 +994,13 @@ const IGNORE_HEAP: &str =
 	"fn ignore(a, b) { a + 1 } pub fn main(n) { let t = 0; let s = \"x\"; for i in 0..n { t = ignore(t, s); } t }";
 
 fn heap_argument_cases() -> Vec<B1Case> {
-	let mut c = case("heap_unused_argument", IGNORE_HEAP, ints(&[&[4], &[0]]), 1, "");
+	let mut c = case(
+		"heap_unused_argument",
+		IGNORE_HEAP,
+		ints(&[&[4], &[0]]),
+		1,
+		"",
+	);
 	c.entry = "T";
 	vec![c]
 }
@@ -766,8 +1011,23 @@ fn heap_argument_cases() -> Vec<B1Case> {
 fn alias_untouched(kind: &str) -> Code {
 	use built::{binary, op};
 	let mut f = Function::new(12, 2).unwrap();
-	op(&mut f, Op::Literal { out: 2, value: Value::I64(0) }, 0); // 0
-	op(&mut f, Op::Range { out: 3, start: 0, end: 1 }, 1); // 1
+	op(
+		&mut f,
+		Op::Literal {
+			out: 2,
+			value: Value::I64(0),
+		},
+		0,
+	); // 0
+	op(
+		&mut f,
+		Op::Range {
+			out: 3,
+			start: 0,
+			end: 1,
+		},
+		1,
+	); // 1
 	op(&mut f, Op::IterStart { out: 4, value: 3 }, 2); // 2
 	match kind {
 		"frame_slot" => {
@@ -787,22 +1047,68 @@ fn alias_untouched(kind: &str) -> Code {
 			); // 3
 		}
 	}
-	op(&mut f, Op::Literal { out: 9, value: Value::I64(3) }, 4); // 4
-	op(&mut f, Op::IterNext { out: 5, iterator: 4, none: 10 }, 5); // 5: header
+	op(
+		&mut f,
+		Op::Literal {
+			out: 9,
+			value: Value::I64(3),
+		},
+		4,
+	); // 4
+	op(
+		&mut f,
+		Op::IterNext {
+			out: 5,
+			iterator: 4,
+			none: 10,
+		},
+		5,
+	); // 5: header
 	binary(&mut f, 2, Binary::Add, 2, 5, 6); // 6
 	binary(&mut f, 8, Binary::Eq, 5, 9, 7); // 7
-	op(&mut f, Op::Branch { condition: 8, yes: 10, no: 9 }, 8); // 8: break
+	op(
+		&mut f,
+		Op::Branch {
+			condition: 8,
+			yes: 10,
+			no: 9,
+		},
+		8,
+	); // 8: break
 	op(&mut f, Op::Jump { target: 5 }, 9); // 9
 	if kind != "frame_slot" {
-		op(&mut f, Op::Literal { out: 11, value: Value::I64(0) }, 10); // 10
-		op(&mut f, Op::Get { out: 7, value: 10, index: 11 }, 11); // 11
+		op(
+			&mut f,
+			Op::Literal {
+				out: 11,
+				value: Value::I64(0),
+			},
+			10,
+		); // 10
+		op(
+			&mut f,
+			Op::Get {
+				out: 7,
+				value: 10,
+				index: 11,
+			},
+			11,
+		); // 11
 		op(&mut f, Op::Jump { target: 13 }, 12); // 12
 	} else {
 		op(&mut f, Op::Jump { target: 13 }, 10); // 10
 		op(&mut f, Op::Jump { target: 13 }, 11); // 11
 		op(&mut f, Op::Jump { target: 13 }, 12); // 12
 	}
-	op(&mut f, Op::IterNext { out: 6, iterator: 7, none: 15 }, 13); // 13: through the alias
+	op(
+		&mut f,
+		Op::IterNext {
+			out: 6,
+			iterator: 7,
+			none: 15,
+		},
+		13,
+	); // 13: through the alias
 	binary(&mut f, 2, Binary::Add, 2, 6, 14); // 14
 	op(&mut f, Op::Return { value: 2 }, 15); // 15
 	code_of(vec![f])
@@ -813,20 +1119,66 @@ fn alias_in_caller_frame() -> Code {
 	use built::{binary, call, op};
 	// L(it): slots 0 it, 1 s, 2 i, 3 c, 4 three.
 	let mut l = Function::new(5, 1).unwrap();
-	op(&mut l, Op::Literal { out: 1, value: Value::I64(0) }, 100); // 0
-	op(&mut l, Op::Literal { out: 4, value: Value::I64(3) }, 101); // 1
-	op(&mut l, Op::IterNext { out: 2, iterator: 0, none: 7 }, 102); // 2: header
+	op(
+		&mut l,
+		Op::Literal {
+			out: 1,
+			value: Value::I64(0),
+		},
+		100,
+	); // 0
+	op(
+		&mut l,
+		Op::Literal {
+			out: 4,
+			value: Value::I64(3),
+		},
+		101,
+	); // 1
+	op(
+		&mut l,
+		Op::IterNext {
+			out: 2,
+			iterator: 0,
+			none: 7,
+		},
+		102,
+	); // 2: header
 	binary(&mut l, 1, Binary::Add, 1, 2, 103); // 3
 	binary(&mut l, 3, Binary::Eq, 2, 4, 104); // 4
-	op(&mut l, Op::Branch { condition: 3, yes: 7, no: 6 }, 105); // 5
+	op(
+		&mut l,
+		Op::Branch {
+			condition: 3,
+			yes: 7,
+			no: 6,
+		},
+		105,
+	); // 5
 	op(&mut l, Op::Jump { target: 2 }, 106); // 6
 	op(&mut l, Op::Return { value: 1 }, 107); // 7
-	// main(a, b): slots 0 a, 1 b, 2 range, 3 it, 4 r, 5 j.
+										   // main(a, b): slots 0 a, 1 b, 2 range, 3 it, 4 r, 5 j.
 	let mut m = Function::new(6, 2).unwrap();
-	op(&mut m, Op::Range { out: 2, start: 0, end: 1 }, 0); // 0
+	op(
+		&mut m,
+		Op::Range {
+			out: 2,
+			start: 0,
+			end: 1,
+		},
+		0,
+	); // 0
 	op(&mut m, Op::IterStart { out: 3, value: 2 }, 1); // 1
 	call(&mut m, 4, 1, &[3], 2); // 2
-	op(&mut m, Op::IterNext { out: 5, iterator: 3, none: 6 }, 3); // 3: the caller's alias
+	op(
+		&mut m,
+		Op::IterNext {
+			out: 5,
+			iterator: 3,
+			none: 6,
+		},
+		3,
+	); // 3: the caller's alias
 	binary(&mut m, 4, Binary::Add, 4, 5, 4); // 4
 	op(&mut m, Op::Return { value: 4 }, 5); // 5
 	op(&mut m, Op::Return { value: 4 }, 6); // 6
@@ -836,9 +1188,27 @@ fn alias_in_caller_frame() -> Code {
 fn alias_untouched_cases() -> Vec<B1Case> {
 	let inputs = || ints(&[&[0, 10], &[0, 2], &[5, 1], &[i64::MAX - 5, i64::MAX]]);
 	vec![
-		built_case("heap_alias_frame_slot", alias_untouched("frame_slot"), inputs(), 1, "CDF"),
-		built_case("heap_alias_list_payload", alias_untouched("list"), inputs(), 1, "CDF"),
-		built_case("heap_alias_caller_frame", alias_in_caller_frame(), inputs(), 1, "CDF"),
+		built_case(
+			"heap_alias_frame_slot",
+			alias_untouched("frame_slot"),
+			inputs(),
+			1,
+			"CDF",
+		),
+		built_case(
+			"heap_alias_list_payload",
+			alias_untouched("list"),
+			inputs(),
+			1,
+			"CDF",
+		),
+		built_case(
+			"heap_alias_caller_frame",
+			alias_in_caller_frame(),
+			inputs(),
+			1,
+			"CDF",
+		),
 	]
 }
 
@@ -849,13 +1219,28 @@ fn alias_touched_cases() -> Vec<B1Case> {
 	let mk = |name: &str, alias: u32, callee: Function, body: fn(&mut Function)| {
 		let mut f = built::range_loop(8, body);
 		// pc 3 jumps to the header; replace it with the aliasing Copy (falls through).
-		f.patch(3, Op::Copy { out: alias, value: 4 }).unwrap();
-		let mut c = built_case(name, code_of(vec![f, callee]), ints(&[&[0, 5], &[0, 0]]), 1, "");
+		f.patch(
+			3,
+			Op::Copy {
+				out: alias,
+				value: 4,
+			},
+		)
+		.unwrap();
+		let mut c = built_case(
+			name,
+			code_of(vec![f, callee]),
+			ints(&[&[0, 5], &[0, 0]]),
+			1,
+			"",
+		);
 		c.entry = "T";
 		c
 	};
 	vec![
-		mk("touched_iternext_out", 5, add_fn(), |f| call(f, 2, 1, &[2, 5], 5)),
+		mk("touched_iternext_out", 5, add_fn(), |f| {
+			call(f, 2, 1, &[2, 5], 5)
+		}),
 		mk("touched_call_out", 6, add_fn(), |f| {
 			call(f, 6, 1, &[2, 5], 5);
 			op(f, Op::Copy { out: 2, value: 6 }, 6);
@@ -866,7 +1251,14 @@ fn alias_touched_cases() -> Vec<B1Case> {
 			op(f, Op::Copy { out: 2, value: 6 }, 6);
 		}),
 		mk("touched_copy_source_overwritten_first", 7, add_fn(), |f| {
-			op(f, Op::Literal { out: 7, value: Value::I64(1) }, 5);
+			op(
+				f,
+				Op::Literal {
+					out: 7,
+					value: Value::I64(1),
+				},
+				5,
+			);
 			op(f, Op::Copy { out: 6, value: 7 }, 6);
 			call(f, 2, 1, &[2, 6], 7);
 		}),
@@ -881,9 +1273,25 @@ fn alias_touched_cases() -> Vec<B1Case> {
 fn iter_out_is_iterator() -> Code {
 	use built::op;
 	let mut f = Function::new(6, 2).unwrap();
-	op(&mut f, Op::Range { out: 3, start: 0, end: 1 }, 0);
+	op(
+		&mut f,
+		Op::Range {
+			out: 3,
+			start: 0,
+			end: 1,
+		},
+		0,
+	);
 	op(&mut f, Op::IterStart { out: 4, value: 3 }, 1);
-	op(&mut f, Op::IterNext { out: 4, iterator: 4, none: 4 }, 2);
+	op(
+		&mut f,
+		Op::IterNext {
+			out: 4,
+			iterator: 4,
+			none: 4,
+		},
+		2,
+	);
 	op(&mut f, Op::Jump { target: 2 }, 3);
 	op(&mut f, Op::Return { value: 0 }, 4);
 	code_of(vec![f])
@@ -912,7 +1320,10 @@ pub(super) fn corpus_programs() -> Vec<(String, Src)> {
 // ------------------------------------------------------- 24, 25: ranges and calls
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_range_loops_every_fuel() {
 	run_child("child_range_loops");
 }
@@ -925,7 +1336,10 @@ fn child_range_loops() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_calls_kernel_every_fuel() {
 	run_child("child_calls_kernel");
 }
@@ -935,8 +1349,11 @@ fn b1_calls_kernel_every_fuel() {
 fn child_calls_kernel() {
 	require_child();
 	let covs = run_cases(&calls_cases());
-	// Codex 8043: the calls kernel now admits and enters natively.
-	assert!(covs[0].native_all.native_entries > 0, "calls: native entries");
+	// The calls kernel admits and enters natively.
+	assert!(
+		covs[0].native_all.native_entries > 0,
+		"calls: native entries"
+	);
 	assert!(covs[0].prod_all.entries > 0, "calls: production entries");
 
 	// The stage kernel (10,000 iterations, beyond the sweep bound): admitted and loaded, and
@@ -952,7 +1369,24 @@ fn child_calls_kernel() {
 	let reference = plain(code, main, &[Arg::I(0)], BIG_FUEL);
 	let total = BIG_FUEL - reference.fuel_left.unwrap();
 	let mut points = 0;
-	for fuel in [0, 1, 2, 3, 4, 5, 6, 7, 100, 101, 10_001, total - 2, total - 1, total, total + 1, BIG_FUEL] {
+	for fuel in [
+		0,
+		1,
+		2,
+		3,
+		4,
+		5,
+		6,
+		7,
+		100,
+		101,
+		10_001,
+		total - 2,
+		total - 1,
+		total,
+		total + 1,
+		BIG_FUEL,
+	] {
 		let p = plain(code, main, &[Arg::I(0)], fuel);
 		for mode in [Mode::Simulate, Mode::Native] {
 			hook::set_mode(mode);
@@ -980,7 +1414,10 @@ fn child_calls_kernel() {
 const NESTED_CALLS: &str = "fn add(a, b) { a + b } fn mid(x) { let t = 0; for i in 0..x { t = add(t, i); } t } pub fn main(x) { mid(x) + 1 }";
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_callee_fuel_replay_location_and_chain() {
 	run_child("child_callee_fuel");
 }
@@ -989,7 +1426,10 @@ fn b1_callee_fuel_replay_location_and_chain() {
 #[ignore = "B1 native worker: run by its parent test in a child process"]
 fn child_callee_fuel() {
 	require_child();
-	for (name, text, x) in [("v2_calls", built::V2_CALLS, 5i64), ("nested", NESTED_CALLS, 5)] {
+	for (name, text, x) in [
+		("v2_calls", built::V2_CALLS, 5i64),
+		("nested", NESTED_CALLS, 5),
+	] {
 		let program = compile_source(text);
 		let code = &program.code;
 		let main = program.function(Hash::type_hash(["main"])).unwrap();
@@ -1001,7 +1441,9 @@ fn child_callee_fuel() {
 		};
 		let lf = code.function(loop_fn).unwrap();
 		let call_pc = (0..lf.len())
-			.find(|&p| matches!(lf.operation(p).unwrap(), Op::Call { function, .. } if function == add))
+			.find(
+				|&p| matches!(lf.operation(p).unwrap(), Op::Call { function, .. } if function == add),
+			)
 			.unwrap();
 		let add_loc = code.function(add).unwrap().locations[0];
 		let mut chain = vec![lf.locations[call_pc]];
@@ -1028,7 +1470,10 @@ fn child_callee_fuel() {
 			let s = hook::take_stats().unwrap();
 			assert!(hook::take_mismatch().is_none());
 			assert_eq!(n, p, "{name} fuel {fuel}");
-			if let Outcome::Failure { error, call_chain, .. } = &p.outcome {
+			if let Outcome::Failure {
+				error, call_chain, ..
+			} = &p.outcome
+			{
 				if error.kind == ErrorKind::FuelExhausted && error.location == Some(add_loc) {
 					at_callee += 1;
 					assert_eq!(call_chain, &chain, "{name} fuel {fuel}");
@@ -1049,7 +1494,10 @@ fn child_callee_fuel() {
 // --------------------------------------------------------- 27..30: inline shapes
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_callee_fault_branches_every_fuel() {
 	run_child("child_callee_faults");
 }
@@ -1066,7 +1514,10 @@ fn child_callee_faults() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_argument_retain_and_order_every_fuel() {
 	run_child("child_arguments");
 }
@@ -1079,7 +1530,10 @@ fn child_arguments() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_output_input_alias_every_fuel() {
 	run_child("child_aliases");
 }
@@ -1092,7 +1546,10 @@ fn child_aliases() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_return_release_every_fuel() {
 	run_child("child_return_release");
 }
@@ -1102,13 +1559,21 @@ fn b1_return_release_every_fuel() {
 fn child_return_release() {
 	require_child();
 	let covs = run_cases(&return_release_cases());
-	assert!(covs.iter().map(|c| c.native_all.unit_static + c.native_all.unit_dynamic).sum::<usize>() > 0);
+	assert!(
+		covs.iter()
+			.map(|c| c.native_all.unit_static + c.native_all.unit_dynamic)
+			.sum::<usize>()
+			> 0
+	);
 }
 
 // ---------------------------------------------------- 31: heap argument refusal
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_heap_argument_refuses_entry_every_fuel() {
 	run_child("child_heap_argument");
 }
@@ -1127,7 +1592,10 @@ fn child_heap_argument() {
 const DEEP: &str = "fn add(a, b) { a + b } fn lp(x) { let t = 0; for i in 0..x { t = add(t, i); } t } fn deep(d, x) { if d == 0 { lp(x) } else { deep(d - 1, x) } } pub fn main(d, x) { deep(d, x) }";
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_frame_cap_boundary() {
 	run_child("child_frame_cap");
 }
@@ -1141,21 +1609,42 @@ fn child_frame_cap() {
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let lp = program.function(Hash::type_hash(["lp"])).unwrap();
 	let lf = code.function(lp).unwrap();
-	let call_pc = (0..lf.len()).find(|&p| matches!(lf.operation(p).unwrap(), Op::Call { .. })).unwrap();
+	let call_pc = (0..lf.len())
+		.find(|&p| matches!(lf.operation(p).unwrap(), Op::Call { .. }))
+		.unwrap();
 
 	// The depth at which the interpreter's Call in `lp` hits FrameCapacity.
 	hook::uninstall();
 	let fails = |d: i64| match plain(code, main, &[Arg::I(d), Arg::I(3)], BIG_FUEL).outcome {
-		Outcome::Failure { error, .. } => error.kind == ErrorKind::FrameCapacity && error.location == Some(lf.locations[call_pc]),
+		Outcome::Failure { error, .. } => {
+			error.kind == ErrorKind::FrameCapacity && error.location == Some(lf.locations[call_pc])
+		}
 		_ => false,
 	};
-	let at = (1000..1030).find(|&d| fails(d)).expect("a FrameCapacity depth");
+	let at = (1000..1030)
+		.find(|&d| fails(d))
+		.expect("a FrameCapacity depth");
 	assert!(!fails(at - 1));
-	println!("B1CASE\tframe_cap\tFrameCapacity at lp's Call from depth {at}; depth {} succeeds", at - 1);
+	println!(
+		"B1CASE\tframe_cap\tFrameCapacity at lp's Call from depth {at}; depth {} succeeds",
+		at - 1
+	);
 
-	let mut over = case("frame_cap_over", DEEP, vec![vec![Arg::I(at), Arg::I(3)]], 1, "");
+	let mut over = case(
+		"frame_cap_over",
+		DEEP,
+		vec![vec![Arg::I(at), Arg::I(3)]],
+		1,
+		"",
+	);
 	over.entry = "M";
-	let under = case("frame_cap_under", DEEP, vec![vec![Arg::I(at - 1), Arg::I(3)]], 1, "CDFP");
+	let under = case(
+		"frame_cap_under",
+		DEEP,
+		vec![vec![Arg::I(at - 1), Arg::I(3)]],
+		1,
+		"CDFP",
+	);
 	let covs = run_cases(&[over, under]);
 	assert_eq!(covs[0].native_all.native_entries, 0);
 	assert!(covs[0].native_all.refused_room > 0 && covs[0].prod_all.room > 0);
@@ -1185,7 +1674,10 @@ fn slot_cap(slots: u32) -> Code {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_slot_cap_boundary() {
 	run_child("child_slot_cap");
 }
@@ -1197,9 +1689,21 @@ fn child_slot_cap() {
 	// When the loop runs: main's frame (`slots`) plus the loop's 6 slots are reserved, and
 	// add needs 3 more: slots + 6 + 3 <= 65,536 enters.
 	let fit = 65_536 - 6 - 3;
-	let mut over = built_case("slot_cap_over", slot_cap(fit + 1), ints(&[&[3], &[0]]), 1, "");
+	let mut over = built_case(
+		"slot_cap_over",
+		slot_cap(fit + 1),
+		ints(&[&[3], &[0]]),
+		1,
+		"",
+	);
 	over.entry = "M";
-	let under = built_case("slot_cap_exact", slot_cap(fit), ints(&[&[3], &[0]]), 1, "CDFP");
+	let under = built_case(
+		"slot_cap_exact",
+		slot_cap(fit),
+		ints(&[&[3], &[0]]),
+		1,
+		"CDFP",
+	);
 	let covs = run_cases(&[over, under]);
 	assert_eq!(covs[0].native_all.native_entries, 0);
 	assert!(covs[0].native_all.refused_room > 0);
@@ -1209,17 +1713,29 @@ fn child_slot_cap() {
 // ------------------------------------------------------------- 34: cancellation
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_cancel_pending_and_tick() {
 	run_child("child_cancel");
 }
 
 fn on(executor: &mut Executor, code: &Code, main: u32, x: i64) -> String {
-	let mut s = Store::new(Limits { entries: 256, bytes: 65_536 }).unwrap();
+	let mut s = Store::new(Limits {
+		entries: 256,
+		bytes: 65_536,
+	})
+	.unwrap();
 	let root = s.root_i64(x);
 	match executor.invoke_code(code, &mut s, main, &[&root], BIG_FUEL) {
 		Ok(root) => format!("{:?}", s.root_scalar(&root).unwrap()),
-		Err(f) => format!("{:?} at {:?} chain {:?}", f.error.kind, f.error.location, f.call_chain.iter().collect::<Vec<_>>()),
+		Err(f) => format!(
+			"{:?} at {:?} chain {:?}",
+			f.error.kind,
+			f.error.location,
+			f.call_chain.iter().collect::<Vec<_>>()
+		),
 	}
 }
 
@@ -1253,17 +1769,44 @@ fn child_cancel() {
 	let d = prod_minus(prod(code), before);
 	assert_eq!(observed, reference);
 	assert!(observed.0.starts_with("Cancelled"), "{}", observed.0);
-	assert_eq!((d.cancel, d.entries), (0, 1), "never consulted while pending; then entered");
+	assert_eq!(
+		(d.cancel, d.entries),
+		(0, 1),
+		"never consulted while pending; then entered"
+	);
 
 	// The commit refuses a pending cancel at entry (the interpreter consumes it at the header).
 	let region = analyze(code, main).unwrap().remove(0).1.unwrap();
-	let mut s = Store::new(Limits { entries: 64, bytes: 65_536 }).unwrap();
+	let mut s = Store::new(Limits {
+		entries: 64,
+		bytes: 65_536,
+	})
+	.unwrap();
 	let r = s.range(0, 3).unwrap();
 	let it = s.iterator(r).unwrap();
-	let mut w = vec![Value::I64(3), Value::I64(0), r, it, Value::Unit, Value::Unit];
-	let room = Room { frames: 1024, slots: 65_536 };
+	let mut w = vec![
+		Value::I64(3),
+		Value::I64(0),
+		r,
+		it,
+		Value::Unit,
+		Value::Unit,
+	];
+	let room = Room {
+		frames: 1024,
+		slots: 65_536,
+	};
 	assert_eq!(
-		commit::enter(&region, &mut w, &mut s, true, 50, room, |_, _, _| std::panic!("not entered")).unwrap(),
+		commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			true,
+			50,
+			room,
+			|_, _, _| std::panic!("not entered")
+		)
+		.unwrap(),
 		Err(Refused::Cancel)
 	);
 
@@ -1276,7 +1819,11 @@ fn child_cancel() {
 		let o = invoke(code, main, &[Arg::I(6)], BIG_FUEL);
 		cancel_at_charge_for_test(None);
 		assert_eq!(o, p, "tick {n}");
-		assert_eq!(prod_minus(prod(code), before), Prod::default(), "tick {n}: no entry while armed");
+		assert_eq!(
+			prod_minus(prod(code), before),
+			Prod::default(),
+			"tick {n}: no entry while armed"
+		);
 	}
 	let o = invoke(code, main, &[Arg::I(6)], BIG_FUEL);
 	assert_eq!(o, plain(code, main, &[Arg::I(6)], BIG_FUEL));
@@ -1287,15 +1834,27 @@ fn child_cancel() {
 // ------------------------------------------------------- 35..38: aliases, vectors
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_heap_alias_untouched_sees_committed_next() {
 	run_child("child_alias_untouched");
 }
 
 /// One invocation of `code`'s function 1 (`L(it)`) with the iterator handed in as a host
 /// root, which keeps an alias (strong 2) for the whole run.
-fn host_root_alias(code: &Code, start: i64, end: i64, fuel: usize) -> (Observed, Option<(i64, i64)>) {
-	let mut s = Store::new(Limits { entries: 256, bytes: 65_536 }).unwrap();
+fn host_root_alias(
+	code: &Code,
+	start: i64,
+	end: i64,
+	fuel: usize,
+) -> (Observed, Option<(i64, i64)>) {
+	let mut s = Store::new(Limits {
+		entries: 256,
+		bytes: 65_536,
+	})
+	.unwrap();
 	let range = s.range(start, end).unwrap();
 	let it = s.iterator(range).unwrap();
 	s.release(range).unwrap();
@@ -1367,7 +1926,10 @@ fn child_alias_untouched() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_heap_alias_in_touched_slot_refuses_entry() {
 	run_child("child_alias_touched");
 }
@@ -1380,7 +1942,10 @@ fn child_alias_touched() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_iter_out_equals_iterator_slot_never_compiled() {
 	run_child("child_iter_out_is_iterator");
 }
@@ -1390,8 +1955,17 @@ fn b1_iter_out_equals_iterator_slot_never_compiled() {
 fn child_iter_out_is_iterator() {
 	require_child();
 	let code = iter_out_is_iterator();
-	assert_eq!(analyze(&code, 0).unwrap()[0].1.as_ref().err(), Some(&RegionRefusal::IterSlot { pc: 2 }));
-	let c = built_case("iter_out_is_iterator", code, ints(&[&[0, 3], &[0, 0]]), 0, "");
+	assert_eq!(
+		analyze(&code, 0).unwrap()[0].1.as_ref().err(),
+		Some(&RegionRefusal::IterSlot { pc: 2 })
+	);
+	let c = built_case(
+		"iter_out_is_iterator",
+		code,
+		ints(&[&[0, 3], &[0, 0]]),
+		0,
+		"",
+	);
 	let covs = run_cases(&[c]);
 	assert_eq!(covs[0].install.regions, 0);
 }
@@ -1399,7 +1973,10 @@ fn child_iter_out_is_iterator() {
 const VECTOR_LOOP: &str = "pub fn main(n) { let s = 0; let k = 0; while k < n { for x in [1, 2, 3] { s += 1; } k += 1; } s }";
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_vector_iterator_loop_goes_cold() {
 	run_child("child_vector_cold");
 }
@@ -1427,13 +2004,19 @@ fn child_vector_cold() {
 	assert_eq!(r.state, State::Cold, "{r:?}");
 	assert_eq!(r.refused_iter, u64::from(cache::COLD_AFTER_REFUSALS));
 	assert_eq!(r.entries, 0);
-	println!("B1CASE\tvector_iterator_cold\touter_iterations={n}\trefused_iter={}\tstate={:?}", r.refused_iter, r.state);
+	println!(
+		"B1CASE\tvector_iterator_cold\touter_iterations={n}\trefused_iter={}\tstate={:?}",
+		r.refused_iter, r.state
+	);
 }
 
 // ------------------------------------------------- 39, 40: byte equality, coverage
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_native_simulator_byte_equal() {
 	run_child("child_byte_equal");
 }
@@ -1463,7 +2046,12 @@ fn child_byte_equal() {
 				if let Some(m) = hook::take_mismatch() {
 					std::panic!("NATIVE MISMATCH {} fuel {fuel} {args:?}\n{m}", case.name);
 				}
-				assert_eq!(o, plain(code, main, args, fuel), "{} fuel {fuel}", case.name);
+				assert_eq!(
+					o,
+					plain(code, main, args, fuel),
+					"{} fuel {fuel}",
+					case.name
+				);
 				stats_add(&mut total, &s);
 				points += 1;
 			}
@@ -1480,7 +2068,10 @@ fn child_byte_equal() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_exit_coverage() {
 	run_child("child_exit_coverage");
 }
@@ -1515,7 +2106,10 @@ fn child_exit_coverage() {
 		refusals,
 		cache::invalid_exits()
 	);
-	assert!(native.native_continue > native.native_iter_done && native.native_iter_done > 0, "iter_done and break");
+	assert!(
+		native.native_continue > native.native_iter_done && native.native_iter_done > 0,
+		"iter_done and break"
+	);
 	assert!(native.native_fuel > 0 && native.native_retry > 0);
 	assert!(native.native_replay_fuel > 0 && native.native_replay_fault > 0);
 	assert_eq!(cache::invalid_exits(), 0);
@@ -1544,7 +2138,13 @@ fn branch_checkpoint_cases() -> Vec<B1Case> {
 				}),
 				built::three_returns(),
 			]),
-			ints(&[&[0, 4], &[0, 2], &[-1, 3], &[i64::MAX - 3, i64::MAX], &[i64::MIN, i64::MIN + 2]]),
+			ints(&[
+				&[0, 4],
+				&[0, 2],
+				&[-1, 3],
+				&[i64::MAX - 3, i64::MAX],
+				&[i64::MIN, i64::MIN + 2],
+			]),
 			1,
 			"CDFPQ",
 		),
@@ -1552,7 +2152,10 @@ fn branch_checkpoint_cases() -> Vec<B1Case> {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_checkpoint_survives_callee_branches_every_fuel() {
 	run_child("child_checkpoint_branches");
 }
@@ -1569,7 +2172,10 @@ fn child_checkpoint_branches() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_forced_replay_protocol_every_fuel() {
 	run_child("child_forced_replay");
 }
@@ -1579,8 +2185,20 @@ fn b1_forced_replay_protocol_every_fuel() {
 fn child_forced_replay() {
 	require_child();
 	let mut cases = vec![
-		case("forced_v2_calls", built::V2_CALLS, ints(&[&[0], &[3], &[7]]), 1, "CDFPQ"),
-		case("forced_two_arms", BRANCH_CHECKPOINT, ints(&[&[4, 3]]), 1, "CDFPQ"),
+		case(
+			"forced_v2_calls",
+			built::V2_CALLS,
+			ints(&[&[0], &[3], &[7]]),
+			1,
+			"CDFPQ",
+		),
+		case(
+			"forced_two_arms",
+			BRANCH_CHECKPOINT,
+			ints(&[&[4, 3]]),
+			1,
+			"CDFPQ",
+		),
 		// No genuine CalleeFault exit (a Compare callee): forced only at checkpoint 0.
 		case("forced_lt_no_fault_exit", LT_SRC, ints(&[&[4]]), 1, "CDFP"),
 	];
@@ -1597,13 +2215,30 @@ fn child_forced_replay() {
 	let program = compile_source(built::V2_CALLS);
 	let mut region = analyze(&program.code, 0).unwrap().remove(0).1.unwrap();
 	hook::force_replay(&mut region);
-	assert!(region.nodes.iter().any(|n| matches!(n.op, NodeOp::ForceReplay { .. })));
-	let mut s = Store::new(Limits { entries: 64, bytes: 65_536 }).unwrap();
+	assert!(region
+		.nodes
+		.iter()
+		.any(|n| matches!(n.op, NodeOp::ForceReplay { .. })));
+	let mut s = Store::new(Limits {
+		entries: 64,
+		bytes: 65_536,
+	})
+	.unwrap();
 	let r = s.range(0, 3).unwrap();
 	let it = s.iterator(r).unwrap();
-	let mut w = vec![Value::I64(3), Value::I64(0), r, it, Value::Unit, Value::Unit];
+	let mut w = vec![
+		Value::I64(3),
+		Value::I64(0),
+		r,
+		it,
+		Value::Unit,
+		Value::Unit,
+	];
 	let before = (w.clone(), s.state_for_test());
-	let room = Room { frames: 1024, slots: 65_536 };
+	let room = Room {
+		frames: 1024,
+		slots: 65_536,
+	};
 	let result = commit::enter(&region, &mut w, &mut s, false, 1, room, |r, b, rec| {
 		let status = simulate(r, b, rec);
 		assert_eq!(region_exit(r, rec).replay, Some(ReplayReason::CalleeFuel));
@@ -1622,7 +2257,10 @@ fn child_forced_replay() {
 // ----------------------------------------------------------- 43: the resume rule
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_resume_rule_entry_counts() {
 	run_child("child_resume_rule");
 }
@@ -1645,8 +2283,16 @@ fn child_resume_rule() {
 			for (_, region) in analyze(code, id).unwrap() {
 				let Ok(region) = region else { continue };
 				for site in region.sites.iter() {
-					assert!(!f.cached_ref(site.pc as usize).unwrap().charged, "{}: Call pc {} charged", c.name, site.pc);
-					for e in [Some(site.fuel_exit), site.fault_exit].into_iter().flatten() {
+					assert!(
+						!f.cached_ref(site.pc as usize).unwrap().charged,
+						"{}: Call pc {} charged",
+						c.name,
+						site.pc
+					);
+					for e in [Some(site.fuel_exit), site.fault_exit]
+						.into_iter()
+						.flatten()
+					{
 						assert_eq!(region.exits[e as usize].pc, site.pc);
 					}
 				}
@@ -1662,35 +2308,59 @@ fn child_resume_rule() {
 // ----------------------------------------------------- 45..47: audit, boundary
 
 /// A hand-built function with one extra instruction (the audit's cases).
-fn with_extra(extra: impl FnOnce(&mut cranelift_frontend::FunctionBuilder<'_>, cranelift_codegen::ir::Value, cranelift_codegen::ir::Value)) -> cranelift_codegen::ir::Function {
+fn with_extra(
+	extra: impl FnOnce(
+		&mut cranelift_frontend::FunctionBuilder<'_>,
+		cranelift_codegen::ir::Value,
+		cranelift_codegen::ir::Value,
+	),
+) -> cranelift_codegen::ir::Function {
 	super::tests::with_extra(extra)
 }
 
 #[test]
 #[cfg_attr(miri, ignore = "Miri: builds Cranelift IR")]
 fn b1_audit_per_cell_permissions() {
-	let region = analyze(&built::calls_kernel(), 0).unwrap().remove(0).1.unwrap();
+	let region = analyze(&built::calls_kernel(), 0)
+		.unwrap()
+		.remove(0)
+		.1
+		.unwrap();
 	let n = region.slots.len() as i32;
 	assert_eq!(n, 3);
 	let map = AccessMap::of(&region);
 	let mem = MemFlagsData::trusted();
-	let load = |offset: i32| with_extra(move |b, buf, _| {
-		b.ins().load(types::I64, mem, buf, offset);
-	});
-	let store = |offset: i32| with_extra(move |b, buf, _| {
-		let v = b.ins().iconst(types::I64, 0);
-		b.ins().store(mem, v, buf, offset);
-	});
-	let rec_load = |offset: i32, ty: cranelift_codegen::ir::Type| with_extra(move |b, _, rec| {
-		b.ins().load(ty, mem, rec, offset);
-	});
-	let rec_store = |offset: i32, ty: cranelift_codegen::ir::Type| with_extra(move |b, _, rec| {
-		let v = b.ins().iconst(ty, 0);
-		b.ins().store(mem, v, rec, offset);
-	});
-	let ok = |f: &cranelift_codegen::ir::Function, what: &str| assert_eq!(audit::ir(f, &map), Ok(()), "{what}");
+	let load = |offset: i32| {
+		with_extra(move |b, buf, _| {
+			b.ins().load(types::I64, mem, buf, offset);
+		})
+	};
+	let store = |offset: i32| {
+		with_extra(move |b, buf, _| {
+			let v = b.ins().iconst(types::I64, 0);
+			b.ins().store(mem, v, buf, offset);
+		})
+	};
+	let rec_load = |offset: i32, ty: cranelift_codegen::ir::Type| {
+		with_extra(move |b, _, rec| {
+			b.ins().load(ty, mem, rec, offset);
+		})
+	};
+	let rec_store = |offset: i32, ty: cranelift_codegen::ir::Type| {
+		with_extra(move |b, _, rec| {
+			let v = b.ins().iconst(ty, 0);
+			b.ins().store(mem, v, rec, offset);
+		})
+	};
+	let ok = |f: &cranelift_codegen::ir::Function, what: &str| {
+		assert_eq!(audit::ir(f, &map), Ok(()), "{what}")
+	};
 	let refused = |f: &cranelift_codegen::ir::Function, what: &str| {
-		assert!(matches!(audit::ir(f, &map), Err(Finding::Memory(_))), "{what}: {}", f.display())
+		assert!(
+			matches!(audit::ir(f, &map), Err(Finding::Memory(_))),
+			"{what}: {}",
+			f.display()
+		)
 	};
 
 	// Cell 0 is slot 1 (`total`): a Guard live-in that is also written: load AND store.
@@ -1725,15 +2395,31 @@ fn b1_audit_per_cell_permissions() {
 		}),
 		"4-byte cell access",
 	);
-	refused(&rec_load(ExitRecord::WRITTEN, types::I64), "load of record written");
+	refused(
+		&rec_load(ExitRecord::WRITTEN, types::I64),
+		"load of record written",
+	);
 	refused(&rec_store(36, types::I32), "store to reserved");
-	refused(&rec_store(24, types::I64), "8-byte store spanning status and exit");
-	refused(&rec_store(ExitRecord::STATUS, types::I64), "8-byte store at the 4-byte status");
-	refused(&rec_store(ExitRecord::UNITS + 4, types::I32), "4-byte store inside units");
+	refused(
+		&rec_store(24, types::I64),
+		"8-byte store spanning status and exit",
+	);
+	refused(
+		&rec_store(ExitRecord::STATUS, types::I64),
+		"8-byte store at the 4-byte status",
+	);
+	refused(
+		&rec_store(ExitRecord::UNITS + 4, types::I32),
+		"4-byte store inside units",
+	);
 	refused(&rec_store(48, types::I64), "past the record");
 
 	// A cell that is touched but never written and not a live-in: no access at all.
-	let unused = analyze(&built_calling_unused(), 0).unwrap().remove(0).1.unwrap();
+	let unused = analyze(&built_calling_unused(), 0)
+		.unwrap()
+		.remove(0)
+		.1
+		.unwrap();
 	let l = unused.slots.iter().position(|&s| s == 7).unwrap() as i32;
 	let map2 = AccessMap::of(&unused);
 	for f in [load(8 * l), store(8 * l)] {
@@ -1761,7 +2447,7 @@ fn b1_audit_accepts_every_corpus_region() {
 	for c in super::exec_tests::corpus_cases()
 		.into_iter()
 		.chain(super::exec_tests::new_cases())
-		.chain(super::p2_tests::probe_kernel_cases())
+		.chain(super::p2_tests::bench_kernel_cases())
 	{
 		programs.push((c.name, c.src));
 	}
@@ -1782,12 +2468,18 @@ fn b1_audit_accepts_every_corpus_region() {
 			}
 		}
 	}
-	println!("B1CASE\taudit_corpus\tprograms={}\tcompiled={compiled}\tno Audit(Memory) refusal", programs.len());
+	println!(
+		"B1CASE\taudit_corpus\tprograms={}\tcompiled={compiled}\tno Audit(Memory) refusal",
+		programs.len()
+	);
 	assert!(compiled > 0);
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn b1_boundary_rejects_wrong_cell_count() {
 	run_child("child_boundary_cells");
 }
@@ -1796,7 +2488,11 @@ fn b1_boundary_rejects_wrong_cell_count() {
 #[ignore = "B1 native worker: run by its parent test in a child process"]
 fn child_boundary_cells() {
 	require_child();
-	let region = analyze(&built::calls_kernel(), 0).unwrap().remove(0).1.unwrap();
+	let region = analyze(&built::calls_kernel(), 0)
+		.unwrap()
+		.remove(0)
+		.1
+		.unwrap();
 	let compiled = lower::compile(&region, 0).unwrap();
 	assert_eq!(compiled.cells(), 5);
 	let native = NativeRegion::load(&compiled).unwrap();
@@ -1824,13 +2520,13 @@ fn child_boundary_cells() {
 
 #[test]
 #[cfg_attr(miri, ignore = "Miri: loads generated machine code in a child process")]
-fn b1_probe_kernel_admission() {
-	run_child("child_probe_admission");
+fn b1_bench_kernel_admission() {
+	run_child("child_bench_admission");
 }
 
 #[test]
 #[ignore = "B1 native worker: run by its parent test in a child process"]
-fn child_probe_admission() {
+fn child_bench_admission() {
 	require_child();
 	for (name, text, loaded) in [
 		("v2/while", super::p2_tests::V2_WHILE, 1),
@@ -1888,15 +2584,31 @@ fn w13_branch_cases() -> Vec<B1Case> {
 			1,
 			"CFR",
 		),
-		case("w13_literal_bool", W13_LITERAL_BOOL, ints(&[&[0], &[1], &[5]]), 1, "CF"),
-		case("w13_copy_bool", W13_COPY_BOOL, ints(&[&[0], &[2], &[6]]), 1, "CF"),
+		case(
+			"w13_literal_bool",
+			W13_LITERAL_BOOL,
+			ints(&[&[0], &[1], &[5]]),
+			1,
+			"CF",
+		),
+		case(
+			"w13_copy_bool",
+			W13_COPY_BOOL,
+			ints(&[&[0], &[2], &[6]]),
+			1,
+			"CF",
+		),
 	]
 }
 
 /// The B1 corpus cases whose branch conditions are virtual locals inside an inlined callee
 /// (`callee_f_two_arms`, `checkpoint_two_arms`) or a callee's Ret-fed Bool read by the
 /// caller (`callee_lt_caller_branch`); re-run here so T5 covers them in its own counts.
-const W13_FROM_CORPUS: [&str; 3] = ["callee_f_two_arms", "checkpoint_two_arms", "callee_lt_caller_branch"];
+const W13_FROM_CORPUS: [&str; 3] = [
+	"callee_f_two_arms",
+	"checkpoint_two_arms",
+	"callee_lt_caller_branch",
+];
 
 /// T5's cases: the three W13 sources, then the corpus cases above.
 fn w13_t5_cases() -> Vec<B1Case> {
@@ -1911,7 +2623,10 @@ fn w13_t5_cases() -> Vec<B1Case> {
 
 /// T5's programs as (name, program) pairs (the compile-only source census in `w13_tests`).
 pub(super) fn w13_t5_programs() -> Vec<(String, Src)> {
-	w13_t5_cases().into_iter().map(|c| (c.name, c.src)).collect()
+	w13_t5_cases()
+		.into_iter()
+		.map(|c| (c.name, c.src))
+		.collect()
 }
 
 /// W13 T5 (W3 guard; passes before and after the change): Branch conditions from every
@@ -1920,7 +2635,10 @@ pub(super) fn w13_t5_programs() -> Vec<(String, Src)> {
 /// modes at every fuel. `w13_tests::w13_t5_branch_condition_sources` checks statically that
 /// each case's admitted region has the Branch source it is here for.
 #[test]
-#[cfg_attr(miri, ignore = "Miri: executes generated machine code in a child process")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
 fn w13_branch_condition_sources_every_fuel() {
 	run_child("child_w13_branch_sources");
 }
@@ -1935,12 +2653,21 @@ fn child_w13_branch_sources() {
 	for (case, c) in cases.iter().zip(&covs) {
 		// Admitted, not merely run: every case loads its one region and enters it natively.
 		assert_eq!(c.install.loaded, 1, "{}", case.name);
-		assert!(c.analysis.iter().any(|a| a.ends_with(":admitted")), "{}: {:?}", case.name, c.analysis);
+		assert!(
+			c.analysis.iter().any(|a| a.ends_with(":admitted")),
+			"{}: {:?}",
+			case.name,
+			c.analysis
+		);
 		assert!(c.native_covered.native_entries > 0, "{}", case.name);
 		assert_eq!(c.native_all.mismatches, 0, "{}", case.name);
 		// Unwritten stored cells equal the simulator's too: W3 stores the same integers.
 		assert_eq!(c.native_all.scratch_differences, 0, "{}", case.name);
-		assert_eq!(c.native_all.replay_checked, c.native_all.native_replay, "{}", case.name);
+		assert_eq!(
+			c.native_all.replay_checked, c.native_all.native_replay,
+			"{}",
+			case.name
+		);
 		stats_add(&mut total, &c.native_all);
 		points += c.points;
 	}
@@ -1969,8 +2696,22 @@ pub(super) const B1_GOLDEN: &str = include_str!("fixtures/b1_selection_golden.tx
 /// old ANALYSIS outcome, new ANALYSIS outcome prefix, new COMPILE class or "" when the
 /// header stays refused).
 pub(super) const DELTA: &[(&str, u32, u32, &str, &str, &str)] = &[
-	("inner_loop_in_refused_outer", 0, 2, "refused\tOp { pc: 12 }", "refused\tInline { pc: 12, reason: ReturnSource { callee_pc: 0 } }", ""),
-	("region_in_function_called_from_loop", 0, 2, "refused\tOp { pc: 4 }", "refused\tInline { pc: 4, reason: Charged {", ""),
+	(
+		"inner_loop_in_refused_outer",
+		0,
+		2,
+		"refused\tOp { pc: 12 }",
+		"refused\tInline { pc: 12, reason: ReturnSource { callee_pc: 0 } }",
+		"",
+	),
+	(
+		"region_in_function_called_from_loop",
+		0,
+		2,
+		"refused\tOp { pc: 4 }",
+		"refused\tInline { pc: 4, reason: Charged {",
+		"",
+	),
 	("v2_calls", 0, 4, "refused\tOp { pc: 4 }", "admitted", "ok"),
 	("listed_9", 0, 5, "refused\tOp { pc: 5 }", "admitted", "ok"),
 ];
@@ -1998,7 +2739,7 @@ fn blocks(text: &str) -> Vec<(String, Vec<&str>)> {
 
 fn field(line: &str, key: &str) -> u64 {
 	let prefix = format!("{key}=");
-	line.split(|c| c == ' ' || c == '\t')
+	line.split([' ', '\t'])
 		.find_map(|f| f.strip_prefix(prefix.as_str()))
 		.unwrap_or_else(|| std::panic!("{key} in {line}"))
 		.parse()
@@ -2016,16 +2757,32 @@ fn key(line: &str) -> (u32, u32, String) {
 	let mut parts = line.split('\t');
 	let _kind = parts.next();
 	let _program = parts.next();
-	let f = parts.next().unwrap().strip_prefix('f').unwrap().parse().unwrap();
-	let h = parts.next().unwrap().strip_prefix('h').unwrap().parse().unwrap();
+	let f = parts
+		.next()
+		.unwrap()
+		.strip_prefix('f')
+		.unwrap()
+		.parse()
+		.unwrap();
+	let h = parts
+		.next()
+		.unwrap()
+		.strip_prefix('h')
+		.unwrap()
+		.parse()
+		.unwrap();
 	(f, h, parts.collect::<Vec<_>>().join("\t"))
 }
 
 fn lines(block: &[&str], kind: &str) -> Vec<(u32, u32, String)> {
-	block.iter().filter(|l| l.starts_with(kind)).map(|l| key(l)).collect()
+	block
+		.iter()
+		.filter(|l| l.starts_with(kind))
+		.map(|l| key(l))
+		.collect()
 }
 
-/// The size of `cache::Ready` at e3994c17 (measured: logs/base-02-sizes.log).
+/// The size of `cache::Ready` before B1 (measured on x86_64 Linux).
 const BASE_READY_BYTES: u64 = 688;
 
 /// Checks the P2b golden against the B1 golden: every ANALYSIS, COMPILE and LOADED line
@@ -2034,7 +2791,11 @@ const BASE_READY_BYTES: u64 = 688;
 /// own metadata) and the new regions' counts and bytes. Returns (identical lines, programs
 /// in DELTA).
 pub(super) fn compare_b1_delta(old: &str, new: &str) -> (usize, usize) {
-	assert_eq!(core::mem::size_of::<Exit>(), 56, "Exit keeps its P2b size (B1 fields fit its padding)");
+	assert_eq!(
+		core::mem::size_of::<Exit>(),
+		56,
+		"Exit keeps its P2b size (B1 fields fit its padding)"
+	);
 	let growth = cache::ready_bytes_for_test() as u64 - BASE_READY_BYTES;
 	let old = blocks(old);
 	let new = blocks(new);
@@ -2064,7 +2825,10 @@ pub(super) fn compare_b1_delta(old: &str, new: &str) -> (usize, usize) {
 			}
 		}
 		for d in &delta {
-			assert!(oa.iter().any(|a| (a.0, a.1) == (d.1, d.2)), "{name}: enumerated header exists");
+			assert!(
+				oa.iter().any(|a| (a.0, a.1) == (d.1, d.2)),
+				"{name}: enumerated header exists"
+			);
 		}
 
 		let (oc, nc) = (lines(o, "COMPILE\t"), lines(n, "COMPILE\t"));
@@ -2076,14 +2840,20 @@ pub(super) fn compare_b1_delta(old: &str, new: &str) -> (usize, usize) {
 		let admitted: Vec<_> = delta.iter().filter(|d| d.4 == "admitted").collect();
 		assert_eq!(added.len(), admitted.len(), "{name}: new COMPILE lines");
 		for d in &admitted {
-			let c = added.iter().find(|c| (c.0, c.1) == (d.1, d.2)).expect("COMPILE line");
+			let c = added
+				.iter()
+				.find(|c| (c.0, c.1) == (d.1, d.2))
+				.expect("COMPILE line");
 			assert!(c.2.starts_with(d.5), "{name}: {c:?}");
 		}
 
 		let (ol, nl) = (lines(o, "LOADED\t"), lines(n, "LOADED\t"));
 		let kept: Vec<_> = nl.iter().filter(|l| ol.contains(l)).collect();
 		assert_eq!(kept.len(), ol.len(), "{name}: old LOADED lines kept");
-		assert!(kept.iter().zip(ol.iter()).all(|(a, b)| *a == b), "{name}: LOADED order");
+		assert!(
+			kept.iter().zip(ol.iter()).all(|(a, b)| *a == b),
+			"{name}: LOADED order"
+		);
 		identical += ol.len();
 		let new_loaded: Vec<_> = nl.iter().filter(|l| !ol.contains(l)).collect();
 		let ok: Vec<_> = admitted.iter().filter(|d| d.5 == "ok").collect();
@@ -2091,7 +2861,10 @@ pub(super) fn compare_b1_delta(old: &str, new: &str) -> (usize, usize) {
 		let mut new_bytes = 0;
 		let mut new_mapped = 0;
 		for l in &new_loaded {
-			let c = added.iter().find(|c| (c.0, c.1) == (l.0, l.1)).expect("compiled");
+			let c = added
+				.iter()
+				.find(|c| (c.0, c.1) == (l.0, l.1))
+				.expect("compiled");
 			let bytes = field(&l.2, "code_bytes");
 			assert_eq!(field(&c.2, "bytes"), bytes, "{name}: loaded bytes");
 			new_bytes += bytes;
@@ -2108,7 +2881,11 @@ pub(super) fn compare_b1_delta(old: &str, new: &str) -> (usize, usize) {
 			new_loaded
 				.iter()
 				.map(|l| {
-					let (_, region) = analyze(&code, l.0).unwrap().into_iter().find(|(h, _)| *h == l.1).unwrap();
+					let (_, region) = analyze(&code, l.0)
+						.unwrap()
+						.into_iter()
+						.find(|(h, _)| *h == l.1)
+						.unwrap();
 					cache::region_metadata(&region.unwrap()) as u64
 				})
 				.sum()
@@ -2118,12 +2895,38 @@ pub(super) fn compare_b1_delta(old: &str, new: &str) -> (usize, usize) {
 			field(os, "metadata_bytes") + loaded * growth + new_metadata,
 			"{name}: metadata_bytes"
 		);
-		assert_eq!(field(ns, "loaded"), loaded + new_loaded.len() as u64, "{name}");
-		assert_eq!(field(ns, "code_bytes"), field(os, "code_bytes") + new_bytes, "{name}");
-		assert_eq!(field(ns, "mapped_bytes"), field(os, "mapped_bytes") + new_mapped, "{name}");
-		assert_eq!(field(ns, "regions"), field(os, "regions") + admitted.len() as u64, "{name}");
-		let keys = ["metadata_bytes", "loaded", "code_bytes", "mapped_bytes", "regions"];
-		assert_eq!(without(os, &keys), without(ns, &keys), "{name}: other SUMMARY counters");
+		assert_eq!(
+			field(ns, "loaded"),
+			loaded + new_loaded.len() as u64,
+			"{name}"
+		);
+		assert_eq!(
+			field(ns, "code_bytes"),
+			field(os, "code_bytes") + new_bytes,
+			"{name}"
+		);
+		assert_eq!(
+			field(ns, "mapped_bytes"),
+			field(os, "mapped_bytes") + new_mapped,
+			"{name}"
+		);
+		assert_eq!(
+			field(ns, "regions"),
+			field(os, "regions") + admitted.len() as u64,
+			"{name}"
+		);
+		let keys = [
+			"metadata_bytes",
+			"loaded",
+			"code_bytes",
+			"mapped_bytes",
+			"regions",
+		];
+		assert_eq!(
+			without(os, &keys),
+			without(ns, &keys),
+			"{name}: other SUMMARY counters"
+		);
 	}
 	(identical, delta_programs)
 }
@@ -2132,7 +2935,11 @@ pub(super) fn compare_b1_delta(old: &str, new: &str) -> (usize, usize) {
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source")]
 fn b1_selection_golden_delta() {
 	let (identical, programs) = compare_b1_delta(super::p2b_tests::P2B_GOLDEN, B1_GOLDEN);
-	assert_eq!(programs, DELTA.len(), "one enumerated header per changed program");
+	assert_eq!(
+		programs,
+		DELTA.len(),
+		"one enumerated header per changed program"
+	);
 	println!(
 		"B1GOLDEN\tp2b_lines={}\tb1_lines={}\tidentical_analysis_compile_loaded={identical}\tdelta_programs={programs}\tready_growth={}",
 		super::p2b_tests::P2B_GOLDEN.lines().count(),
@@ -2174,8 +2981,16 @@ fn child_partial_b1() {
 	cache::clear_for_test();
 	cache::enable_for_test(true);
 	let clean = cache::prepare(code).unwrap();
-	assert_eq!((clean.candidates, clean.regions, clean.loaded), (2, 2, 2), "{clean:?}");
-	let headers: Vec<u32> = cache::regions_for_test(code.id()).unwrap().iter().map(|r| r.header).collect();
+	assert_eq!(
+		(clean.candidates, clean.regions, clean.loaded),
+		(2, 2, 2),
+		"{clean:?}"
+	);
+	let headers: Vec<u32> = cache::regions_for_test(code.id())
+		.unwrap()
+		.iter()
+		.map(|r| r.header)
+		.collect();
 	cache::clear_for_test();
 
 	crate::experimental_core::region::inject_analysis_error_for_test(Some(1));
@@ -2183,11 +2998,18 @@ fn child_partial_b1() {
 	crate::experimental_core::region::inject_analysis_error_for_test(None);
 	assert_eq!((s.analysis_errors, s.accounting_invariant), (1, 0));
 	assert_eq!((s.candidates, s.regions, s.loaded), (2, 1, 1));
-	let kept: Vec<u32> = cache::regions_for_test(code.id()).unwrap().iter().map(|r| r.header).collect();
+	let kept: Vec<u32> = cache::regions_for_test(code.id())
+		.unwrap()
+		.iter()
+		.map(|r| r.header)
+		.collect();
 	assert_eq!(kept, vec![headers[0]], "the earlier B1 region stays usable");
 	let (at_error, at_end) = cache::budget_used_for_test();
 	let (used, expected) = at_error.expect("the injected error was seen");
-	assert_eq!(used, expected, "the failed header's inline buffers were released");
+	assert_eq!(
+		used, expected,
+		"the failed header's inline buffers were released"
+	);
 	assert_eq!(at_end, Some(0), "nothing charged after the build");
 
 	// The surviving region runs, equal to the interpreter at every fuel.

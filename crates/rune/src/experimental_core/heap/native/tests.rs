@@ -1,4 +1,4 @@
-//! B1 Store interface tests (rnx 0184; STORE-SETTER.md §9): the RangeIterator read at entry
+//! B1 Store interface tests: the RangeIterator read at entry
 //! and validation, and the native tier's one Store mutation, the commit of `next`. Safe
 //! Rust, no native code, Miri-able (safe glue only).
 use super::{range_next_reachable, RangeCommitRefused};
@@ -101,7 +101,11 @@ fn b1_store_range_read_entry_checks() {
 	for (name, s, value) in refusal_cases() {
 		let before = s.state_for_test();
 		assert_eq!(s.range_iterator_for_native(value), None, "{name}");
-		assert_eq!(s.state_for_test(), before, "{name}: the refused read mutates nothing");
+		assert_eq!(
+			s.state_for_test(),
+			before,
+			"{name}: the refused read mutates nothing"
+		);
 	}
 }
 
@@ -126,8 +130,14 @@ fn b1_store_range_setter_refusals_mutate_nothing() {
 	let mut s = store();
 	let (_, it) = range_iterator(&mut s, 0, 10);
 	let before = s.state_for_test();
-	assert_eq!(s.commit_range_next_for_native(it, (1, 10), 2), Err(RangeCommitRefused));
-	assert_eq!(s.commit_range_next_for_native(it, (0, 11), 2), Err(RangeCommitRefused));
+	assert_eq!(
+		s.commit_range_next_for_native(it, (1, 10), 2),
+		Err(RangeCommitRefused)
+	);
+	assert_eq!(
+		s.commit_range_next_for_native(it, (0, 11), 2),
+		Err(RangeCommitRefused)
+	);
 	assert_eq!(s.state_for_test(), before);
 
 	// Unreachable `new` at the boundaries (checked on fresh stores; no panic with overflow
@@ -144,7 +154,10 @@ fn b1_store_range_setter_refusals_mutate_nothing() {
 		let mut s = store();
 		let (_, it) = range_iterator(&mut s, start, end);
 		let before = s.state_for_test();
-		assert!(!range_next_reachable((start, end), new), "{start}..{end} -> {new}");
+		assert!(
+			!range_next_reachable((start, end), new),
+			"{start}..{end} -> {new}"
+		);
 		assert_eq!(
 			s.commit_range_next_for_native(it, (start, end), new),
 			Err(RangeCommitRefused),
@@ -204,10 +217,21 @@ fn b1_store_range_setter_equals_interpreter_advance() {
 			let mut b = store();
 			let (_, ib) = range_iterator(&mut b, start, end);
 			b.retain(ib).unwrap();
-			let new = if start >= end { start } else { start + i64::from(k) };
-			assert_eq!(b.commit_range_next_for_native(ib, (start, end), new), Ok(()));
+			let new = if start >= end {
+				start
+			} else {
+				start + i64::from(k)
+			};
+			assert_eq!(
+				b.commit_range_next_for_native(ib, (start, end), new),
+				Ok(())
+			);
 
-			assert_eq!(a.state_for_test(), b.state_for_test(), "{start}..{end} k={k}");
+			assert_eq!(
+				a.state_for_test(),
+				b.state_for_test(),
+				"{start}..{end} k={k}"
+			);
 			assert_eq!((a.payload_bytes(), a.live_entries()), (payload, live));
 			assert_eq!((b.payload_bytes(), b.live_entries()), (payload, live));
 			// The alias (strong 2) reads the same `next` in both.

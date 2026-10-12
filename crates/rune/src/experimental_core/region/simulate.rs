@@ -63,7 +63,11 @@ pub(crate) struct Snapshot {
 
 /// [`simulate`] that also records the [`Trace`] (tests: the Replay checkpoint check).
 #[cfg(test)]
-pub(crate) fn simulate_traced(region: &Region, buf: &mut [i64], record: &mut ExitRecord) -> (u32, Trace) {
+pub(crate) fn simulate_traced(
+	region: &Region,
+	buf: &mut [i64],
+	record: &mut ExitRecord,
+) -> (u32, Trace) {
 	let mut trace = Some(Trace::default());
 	let status = run(region, buf, record, &mut trace);
 	(status, trace.unwrap_or_default())
@@ -93,7 +97,13 @@ fn run(region: &Region, buf: &mut [i64], record: &mut ExitRecord, trace: &mut Tr
 	let mut virt = [0i64; MAX_INLINE_SLOTS];
 	let mut checkpoint = 0u64;
 	let mut node = region.header_node as usize;
-	let finish = |record: &mut ExitRecord, buf: &[i64], exit: u32, fuel: u64, written: u64, tags: (u64, u64)| -> u32 {
+	let finish = |record: &mut ExitRecord,
+	              buf: &[i64],
+	              exit: u32,
+	              fuel: u64,
+	              written: u64,
+	              tags: (u64, u64)|
+	 -> u32 {
 		let _ = buf;
 		let Some(e) = region.exits.get(exit as usize) else {
 			return 0;
@@ -213,7 +223,9 @@ fn run(region: &Region, buf: &mut [i64], record: &mut ExitRecord, trace: &mut Tr
 				write!(out, v, Scalar::Bool);
 				nd.next
 			}
-			NodeOp::Branch { condition, yes, no } => Some(if get!(condition) != 0 { yes } else { no }),
+			NodeOp::Branch { condition, yes, no } => {
+				Some(if get!(condition) != 0 { yes } else { no })
+			}
 			NodeOp::Jump { target } => Some(target),
 			NodeOp::IterNext { out, none } => {
 				if cells != n + 2 {

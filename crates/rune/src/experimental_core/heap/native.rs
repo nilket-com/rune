@@ -1,6 +1,6 @@
 //! B1: the native tier's read of a RangeIterator at region entry and validation, and its
 //! one Store mutation, the commit of `next`. Safe Rust (the fresh core is
-//! `forbid(unsafe_code)`); see STORE-SETTER.md (rnx 0184), reviewed by Codex 8034.
+//! `forbid(unsafe_code)`).
 //!
 //! Every check of the setter runs before its single write, on the same exclusive borrow
 //! of the store: a refusal mutates nothing.

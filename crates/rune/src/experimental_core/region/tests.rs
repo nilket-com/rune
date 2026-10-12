@@ -1,6 +1,11 @@
 //! P0 region tests: lattice laws, eligibility and refusals, the exit contract, and a
 //! differential of the interpreter with and without the region simulator over every fuel
 //! value and every error boundary of each program (including nested callers).
+//!
+//! Under Miri the tests that compile Rune source and the hand-built simulator and fuel
+//! sweeps are ignored (an opt-in deep Miri run: `cargo miri test -p rune --all-features
+//! --lib -- --ignored experimental_core::region::tests`); the lattice, analysis, record
+//! and budgeted-analysis tests are not.
 use super::abi::ExitRecord;
 use super::commit::{self, Refused};
 use super::hook::{self, Stats};
@@ -258,10 +263,7 @@ pub(super) fn counted(op: Binary, divisor: Option<Value>) -> Code {
 }
 
 pub(super) fn regions(code: &Code, function: u32) -> StdVec<(u32, Result<Region, RegionRefusal>)> {
-	analyze(&code, function)
-		.unwrap()
-		.into_iter()
-		.collect()
+	analyze(code, function).unwrap().into_iter().collect()
 }
 
 #[test]
@@ -337,6 +339,7 @@ fn counted_loop_region_shape_and_constant_divisors() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn refusals_side_entry_type_conflict_live_in_conflict_and_slots() {
 	// Side entry: pc 0 jumps into the middle of the loop 2..=4 headed at 2.
 	let mut f = Function::new(3, 0).unwrap();
@@ -525,7 +528,16 @@ fn entry_refusals_change_nothing() {
 	let never = |_: &Region, _: &mut [i64], _: &mut ExitRecord| -> u32 { panic!("not entered") };
 	let mut w = original.clone();
 	assert_eq!(
-		commit::enter(&region, &mut w, &mut s, true, 50, commit::ROOM_FOR_TEST, never).unwrap(),
+		commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			true,
+			50,
+			commit::ROOM_FOR_TEST,
+			never
+		)
+		.unwrap(),
 		Err(Refused::Cancel)
 	);
 	assert_eq!(w, original);
@@ -539,7 +551,16 @@ fn entry_refusals_change_nothing() {
 		w[slot] = value;
 		let before = w.clone();
 		assert_eq!(
-			commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, never).unwrap(),
+			commit::enter(
+				&region,
+				&mut w,
+				&mut s,
+				false,
+				50,
+				commit::ROOM_FOR_TEST,
+				never
+			)
+			.unwrap(),
 			Err(Refused::Tag { slot: slot as u32 })
 		);
 		assert_eq!(w, before);
@@ -550,7 +571,16 @@ fn entry_refusals_change_nothing() {
 	w[3] = s.string("owned").unwrap();
 	let before = w.clone();
 	assert_eq!(
-		commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, never).unwrap(),
+		commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			false,
+			50,
+			commit::ROOM_FOR_TEST,
+			never
+		)
+		.unwrap(),
 		Err(Refused::Tag { slot: 3 })
 	);
 	assert_eq!(w, before);
@@ -560,7 +590,16 @@ fn entry_refusals_change_nothing() {
 	s.close().unwrap();
 	let mut w = original.clone();
 	assert_eq!(
-		commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, never).unwrap(),
+		commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			false,
+			50,
+			commit::ROOM_FOR_TEST,
+			never
+		)
+		.unwrap(),
 		Err(Refused::Store)
 	);
 	assert_eq!(w, original);
@@ -636,10 +675,18 @@ fn forged_exit_records_are_rejected_before_any_write() {
 		let mut s = store();
 		let original = window();
 		let mut w = original.clone();
-		let result = commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, |_, b, r| {
-			forge(b, r, cont, e.pc, fuel_exit);
-			r.status
-		})
+		let result = commit::enter(
+			&region,
+			&mut w,
+			&mut s,
+			false,
+			50,
+			commit::ROOM_FOR_TEST,
+			|_, b, r| {
+				forge(b, r, cont, e.pc, fuel_exit);
+				r.status
+			},
+		)
 		.unwrap();
 		assert_eq!(result, Err(Refused::InvalidExit), "{name}");
 		assert_eq!(w, original, "{name}");
@@ -647,11 +694,19 @@ fn forged_exit_records_are_rejected_before_any_write() {
 	// The honest record commits exactly the written slot.
 	let mut s = store();
 	let mut w = window();
-	let result = commit::enter(&region, &mut w, &mut s, false, 50, commit::ROOM_FOR_TEST, |_, b, r| {
-		honest(b, r, cont, e.pc, fuel_exit);
-		b[3] = 1;
-		r.status
-	})
+	let result = commit::enter(
+		&region,
+		&mut w,
+		&mut s,
+		false,
+		50,
+		commit::ROOM_FOR_TEST,
+		|_, b, r| {
+			honest(b, r, cont, e.pc, fuel_exit);
+			b[3] = 1;
+			r.status
+		},
+	)
 	.unwrap()
 	.unwrap();
 	assert_eq!((result.pc, result.fuel), (9, 3));
@@ -661,6 +716,7 @@ fn forged_exit_records_are_rejected_before_any_write() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn simulator_fuel_and_retry_contract_per_charged_pc() {
 	// s = s * 2 overflows; fuel is checked at the header only.
 	let code = counted(Binary::Mul, Some(Value::I64(2)));
@@ -706,28 +762,28 @@ fn simulator_fuel_and_retry_contract_per_charged_pc() {
 #[cfg_attr(miri, ignore = "Miri: differential sweeps over compiled Rune source")]
 fn kernels_while_and_numeric_every_fuel() {
 	for (src, args, expect) in [
-        (
-            "pub fn main(a) { let n = 0; while n < a { n += 1; } n }",
-            [Arg::I(25)],
-            25,
-        ),
-        (
-            "pub fn main(a) { let n = 0; let total = 0; while n < a { total += n % 17; n += 1; } total }",
-            [Arg::I(40)],
-            (0..40).map(|n| n % 17).sum::<i64>(),
-        ),
-    ] {
-        let program = compile(src);
-        let main = main_of(&program);
-        assert_eq!(
-            invoke(&program.code, main, &args, 1_000_000).outcome,
-            Outcome::Value(Some(HostScalar::I64(expect)))
-        );
-        let stats = sweep(&program.code, main, &args);
-        assert_eq!(stats.regions, 1, "{src}");
-        assert!(stats.entries > 0 && stats.fuel_exits > 0 && stats.continue_exits > 0);
-        assert_eq!(stats.refused_tag, 0);
-    }
+		(
+			"pub fn main(a) { let n = 0; while n < a { n += 1; } n }",
+			[Arg::I(25)],
+			25,
+		),
+		(
+			"pub fn main(a) { let n = 0; let total = 0; while n < a { total += n % 17; n += 1; } total }",
+			[Arg::I(40)],
+			(0..40).map(|n| n % 17).sum::<i64>(),
+		),
+	] {
+		let program = compile(src);
+		let main = main_of(&program);
+		assert_eq!(
+			invoke(&program.code, main, &args, 1_000_000).outcome,
+			Outcome::Value(Some(HostScalar::I64(expect)))
+		);
+		let stats = sweep(&program.code, main, &args);
+		assert_eq!(stats.regions, 1, "{src}");
+		assert!(stats.entries > 0 && stats.fuel_exits > 0 && stats.continue_exits > 0);
+		assert_eq!(stats.refused_tag, 0);
+	}
 }
 
 #[test]
@@ -816,32 +872,32 @@ fn nested_callers_keep_error_locations_and_call_chains() {
 #[cfg_attr(miri, ignore = "Miri: differential sweeps over compiled Rune source")]
 fn branches_path_dependent_writes_and_bool_live_ins() {
 	for (src, args) in [
-        (
-            "pub fn main(a) { let i = 0; let s = 0; while i < a { if i % 3 == 0 { s += i; } else { s -= 1; } i += 1; } s }",
-            vec![Arg::I(20)],
-        ),
-        (
-            "pub fn main(a, flag) { let i = 0; let s = 0; while i < a { if flag { s += 2; } else { s += 1; } i += 1; } s }",
-            vec![Arg::I(9), Arg::B(true)],
-        ),
-        (
-            "pub fn main(a, flag) { let i = 0; let s = 0; while i < a { if flag { s += 2; } else { s += 1; } i += 1; } s }",
-            vec![Arg::I(9), Arg::B(false)],
-        ),
-        (
-            "pub fn main(a) { let i = 0; let s = 0; while i < a { if i * 2 > 6 { s += i * 2; } i += 1; } s }",
-            vec![Arg::I(12)],
-        ),
-        (
-            "pub fn main(a) { let i = 0; let s = 0; while i < a { if i > 3 { if i < 9 { s += 1; } } i += 1; } s }",
-            vec![Arg::I(12)],
-        ),
-    ] {
-        let program = compile(src);
-        let main = main_of(&program);
-        let stats = sweep(&program.code, main, &args);
-        assert!(stats.entries > 0, "{src}");
-    }
+		(
+			"pub fn main(a) { let i = 0; let s = 0; while i < a { if i % 3 == 0 { s += i; } else { s -= 1; } i += 1; } s }",
+			vec![Arg::I(20)],
+		),
+		(
+			"pub fn main(a, flag) { let i = 0; let s = 0; while i < a { if flag { s += 2; } else { s += 1; } i += 1; } s }",
+			vec![Arg::I(9), Arg::B(true)],
+		),
+		(
+			"pub fn main(a, flag) { let i = 0; let s = 0; while i < a { if flag { s += 2; } else { s += 1; } i += 1; } s }",
+			vec![Arg::I(9), Arg::B(false)],
+		),
+		(
+			"pub fn main(a) { let i = 0; let s = 0; while i < a { if i * 2 > 6 { s += i * 2; } i += 1; } s }",
+			vec![Arg::I(12)],
+		),
+		(
+			"pub fn main(a) { let i = 0; let s = 0; while i < a { if i > 3 { if i < 9 { s += 1; } } i += 1; } s }",
+			vec![Arg::I(12)],
+		),
+	] {
+		let program = compile(src);
+		let main = main_of(&program);
+		let stats = sweep(&program.code, main, &args);
+		assert!(stats.entries > 0, "{src}");
+	}
 }
 
 #[test]
@@ -858,8 +914,8 @@ fn wrong_live_in_tags_fall_back_to_the_interpreter() {
 	}
 	// A Bool condition passed as an I64: refused at entry, the interpreter's Type error.
 	let program = compile(
-        "pub fn main(a, flag) { let i = 0; let s = 0; while i < a { if flag { s += 2; } i += 1; } s }",
-    );
+		"pub fn main(a, flag) { let i = 0; let s = 0; while i < a { if flag { s += 2; } i += 1; } s }",
+	);
 	let stats = sweep(&program.code, main_of(&program), &[Arg::I(5), Arg::I(1)]);
 	assert_eq!(stats.entries, 0);
 	assert!(stats.refused_tag > 0);
@@ -869,21 +925,21 @@ fn wrong_live_in_tags_fall_back_to_the_interpreter() {
 #[cfg_attr(miri, ignore = "Miri: differential sweeps over compiled Rune source")]
 fn regions_re_entered_inside_a_refused_outer_loop_and_nested_admitted_loops() {
 	for (src, outer_admitted) in [
-        (
-            "fn id(x) { x } pub fn main(a) { let i = 0; let s = 0; while i < a { let j = 0; while j < 3 { s += j; j += 1; } s = id(s); i += 1; } s }",
-            false,
-        ),
-        (
-            "pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j -= j; while j < i { s += j; j += 1; } i += 1; } s }",
-            true,
-        ),
-    ] {
-        let program = compile(src);
-        let main = main_of(&program);
-        let stats = sweep(&program.code, main, &[Arg::I(6)]);
-        assert_eq!(stats.regions, if outer_admitted { 2 } else { 1 }, "{src}");
-        assert!(stats.entries > 1, "{src}");
-    }
+		(
+			"fn id(x) { x } pub fn main(a) { let i = 0; let s = 0; while i < a { let j = 0; while j < 3 { s += j; j += 1; } s = id(s); i += 1; } s }",
+			false,
+		),
+		(
+			"pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j -= j; while j < i { s += j; j += 1; } i += 1; } s }",
+			true,
+		),
+	] {
+		let program = compile(src);
+		let main = main_of(&program);
+		let stats = sweep(&program.code, main, &[Arg::I(6)]);
+		assert_eq!(stats.regions, if outer_admitted { 2 } else { 1 }, "{src}");
+		assert!(stats.entries > 1, "{src}");
+	}
 }
 
 #[test]
@@ -919,6 +975,7 @@ fn armed_cancellation_hook_and_reused_executor() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn dead_but_owned_heap_slot_refuses_entry_and_matches_the_interpreter() {
 	// slot 2 holds a live string when the loop is first reached; the loop overwrites it
 	// with an I64. The interpreter releases the string at that write; the region must not
@@ -951,7 +1008,7 @@ fn dead_but_owned_heap_slot_refuses_entry_and_matches_the_interpreter() {
 	assert!(stats.entries > 0, "a later arrival enters");
 }
 
-/// Listing for receipts (run with `--nocapture`): the decoded bytecode of each kernel-like
+/// Listing for inspection (run with `--nocapture`): the decoded bytecode of each kernel-like
 /// program and the analysis outcome of every candidate header.
 #[test]
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source")]
@@ -998,21 +1055,22 @@ fn listing_of_programs_and_region_outcomes() {
 }
 
 pub(super) const LISTED: &[&str] = &[
-    "pub fn main(_a) { let n = 0; while n < 10000 { n += 1; } n }",
-    "pub fn main(_a) { let n = 0; let total = 0; while n < 10000 { total += n % 17; n += 1; } total }",
-    "pub fn main(a) { let i = 0; let s = 0; while i < a { let t = i * 2; if t > 6 { s = s + t; } i += 1; } s }",
-    "pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x = x + x; i += b; } x }",
-    "pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x += x; i += b; } x }",
-    "pub fn main(a) { let i = 0; let s = 0; while i < a { let j = 0; while j < i { s += j; j += 1; } i += 1; } s }",
-    "pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j = 0; while j < i { s += j; j += 1; } i += 1; } s }",
-    "pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j -= j; while j < i { s += j; j += 1; } i += 1; } s }",
-    "pub fn main(a) { let i = 0; let s = 0; while i < a { if i > 3 { if i < 9 { s += 1; } } i += 1; } s }",
-    "fn add(a, b) { a + b } pub fn main(_a) { let total = 0; for i in 0..10000 { total = add(total, i); } total }",
+	"pub fn main(_a) { let n = 0; while n < 10000 { n += 1; } n }",
+	"pub fn main(_a) { let n = 0; let total = 0; while n < 10000 { total += n % 17; n += 1; } total }",
+	"pub fn main(a) { let i = 0; let s = 0; while i < a { let t = i * 2; if t > 6 { s = s + t; } i += 1; } s }",
+	"pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x = x + x; i += b; } x }",
+	"pub fn main(a, b) { let x = a; let i = 0; while i < 4 { x += x; i += b; } x }",
+	"pub fn main(a) { let i = 0; let s = 0; while i < a { let j = 0; while j < i { s += j; j += 1; } i += 1; } s }",
+	"pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j = 0; while j < i { s += j; j += 1; } i += 1; } s }",
+	"pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j -= j; while j < i { s += j; j += 1; } i += 1; } s }",
+	"pub fn main(a) { let i = 0; let s = 0; while i < a { if i > 3 { if i < 9 { s += 1; } } i += 1; } s }",
+	"fn add(a, b) { a + b } pub fn main(_a) { let total = 0; for i in 0..10000 { total = add(total, i); } total }",
 ];
 
-// ------------------------------------------ P1 safe glue (no native code; Miri-able)
+// ------------------------------------ P1 safe glue (no native code; deep Miri opt-in)
 
 #[test]
+#[cfg_attr(miri, ignore = "Miri: every-fuel / simulator sweep (opt-in deep run)")]
 fn p1_hook_modes_suspend_and_division_classification() {
 	// Division kinds of the counted loop: constant 0 and -1 keep their Retry exits and are
 	// classified; a constant outside {0, -1} has no fallible division.
@@ -1061,7 +1119,10 @@ fn p1_hook_modes_suspend_and_division_classification() {
 	f.push(Op::Return { value: 2 }, loc(12)).unwrap(); // 12
 	let code = build(vec![f]);
 	let region = regions(&code, 0).remove(0).1.unwrap();
-	assert_eq!(hook::division_kind(&region), Some(hook::DivisionKind::Runtime));
+	assert_eq!(
+		hook::division_kind(&region),
+		Some(hook::DivisionKind::Runtime)
+	);
 
 	// Mode bookkeeping and suspend/resume over the counted loop.
 	let code = counted(Binary::Rem, Some(Value::I64(17)));
@@ -1084,7 +1145,10 @@ fn p1_hook_modes_suspend_and_division_classification() {
 	assert_eq!(hook::take_stats().unwrap().entries, 0, "take_stats resets");
 
 	hook::suspend();
-	assert!(hook::take_stats().is_none(), "suspended: no install visible");
+	assert!(
+		hook::take_stats().is_none(),
+		"suspended: no install visible"
+	);
 	assert_eq!(invoke(&code, 0, &[Arg::I(6)], 1_000), plain);
 	hook::resume();
 	assert_eq!(hook::take_stats().unwrap().entries, 0);
@@ -1151,7 +1215,10 @@ fn p3a_budgeted_analysis_equals_unbudgeted_and_refuses_cleanly() {
 	let headers = super::scan_headers(f, &budget).unwrap();
 	let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR).unwrap();
 	let (region, bytes) = context.analyze_header(headers[0]).unwrap().unwrap();
-	assert_eq!((region.nodes.as_slice(), region.exits.as_slice()), (expected.nodes.as_slice(), expected.exits.as_slice()));
+	assert_eq!(
+		(region.nodes.as_slice(), region.exits.as_slice()),
+		(expected.nodes.as_slice(), expected.exits.as_slice())
+	);
 	let held = Held::adopt(&budget, bytes);
 	drop((headers, context, held, region));
 	assert_eq!(budget.used(), 0, "every charge released");
@@ -1200,7 +1267,10 @@ fn p3a_transfer_cutoff_zero_slots_and_overflow() {
 
 	// Factor 0 refuses it by the cutoff; the production factor admits it.
 	let budget = super::budget::Budget::unlimited();
-	let refused = FunctionContext::new(&code, 0, &budget, 0).unwrap().analyze_header(1).unwrap();
+	let refused = FunctionContext::new(&code, 0, &budget, 0)
+		.unwrap()
+		.analyze_header(1)
+		.unwrap();
 	assert!(matches!(refused, Err(RegionRefusal::Steps)));
 	let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR).unwrap();
 	assert!(context.analyze_header(1).unwrap().is_ok());

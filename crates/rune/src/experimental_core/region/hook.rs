@@ -29,7 +29,11 @@ use core::cell::{Cell, RefCell};
 use std::string::String;
 use std::vec::Vec as StdVec;
 
-#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
 use crate::experimental_native::{audit::Finding, boundary::NativeRegion, lower, NativeRefusal};
 
 /// How installed regions run.
@@ -97,7 +101,10 @@ fn unit_writebacks(region: &Region, record: &ExitRecord) -> (usize, usize) {
 	};
 	let by_static = record.written & e.units & !e.dynamic;
 	let by_dynamic = record.written & e.dynamic & record.units;
-	(by_static.count_ones() as usize, by_dynamic.count_ones() as usize)
+	(
+		by_static.count_ones() as usize,
+		by_dynamic.count_ones() as usize,
+	)
 }
 
 /// Compile and load outcomes of one `install_native`.
@@ -126,7 +133,11 @@ pub(crate) struct NativeInstall {
 pub(crate) use super::{division_kind, DivisionKind};
 
 /// One loaded region and the identity of the analysed region it was compiled from.
-#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
 struct Loaded {
 	code: u32,
 	function: u32,
@@ -140,7 +151,11 @@ struct Installed {
 	mode: Mode,
 	regions: StdVec<Region>,
 	/// Parallel to `regions`: `Some` for each region whose native code is loaded.
-	#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+	#[cfg(all(
+		feature = "fresh-core-native",
+		target_arch = "x86_64",
+		target_os = "linux"
+	))]
 	native: StdVec<Option<Loaded>>,
 	stats: Stats,
 }
@@ -218,7 +233,11 @@ pub(crate) fn install(code: &Code) -> usize {
 	let regions = analysed(code);
 	let count = regions.len();
 
-	#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+	#[cfg(all(
+		feature = "fresh-core-native",
+		target_arch = "x86_64",
+		target_os = "linux"
+	))]
 	let native = regions.iter().map(|_| None).collect();
 
 	INSTALLED.with(|i| {
@@ -226,7 +245,11 @@ pub(crate) fn install(code: &Code) -> usize {
 			code: code.id(),
 			mode: Mode::Simulate,
 			regions,
-			#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+			#[cfg(all(
+				feature = "fresh-core-native",
+				target_arch = "x86_64",
+				target_os = "linux"
+			))]
 			native,
 			stats: Stats {
 				regions: count,
@@ -240,7 +263,11 @@ pub(crate) fn install(code: &Code) -> usize {
 /// As [`install`], and compiles and loads every region's native code; the mode is
 /// `Native`. With `dump`, the exact loaded bytes and listings of each region are written
 /// there as `f{function}_h{header}.{bin,clif,opt.clif,vcode}`.
-#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
 pub(crate) fn install_native(code: &Code, dump: Option<&std::path::Path>) -> NativeInstall {
 	let regions = analysed(code);
 	let mut summary = NativeInstall {
@@ -272,7 +299,11 @@ pub(crate) fn install_native(code: &Code, dump: Option<&std::path::Path>) -> Nat
 			}
 		};
 
-		assert_eq!(compiled.cells(), region.cells(), "compiled for another region");
+		assert_eq!(
+			compiled.cells(),
+			region.cells(),
+			"compiled for another region"
+		);
 		program_bytes += compiled.bytes().len();
 
 		if let Some(dir) = dump {
@@ -281,8 +312,11 @@ pub(crate) fn install_native(code: &Code, dump: Option<&std::path::Path>) -> Nat
 			std::fs::create_dir_all(dir).expect("dump dir");
 			std::fs::write(dir.join(std::format!("{name}.bin")), compiled.bytes()).expect("dump");
 			std::fs::write(dir.join(std::format!("{name}.clif")), &listing.clif).expect("dump");
-			std::fs::write(dir.join(std::format!("{name}.opt.clif")), &listing.optimized)
-				.expect("dump");
+			std::fs::write(
+				dir.join(std::format!("{name}.opt.clif")),
+				&listing.optimized,
+			)
+			.expect("dump");
 			std::fs::write(dir.join(std::format!("{name}.vcode")), &listing.vcode).expect("dump");
 		}
 
@@ -426,14 +460,21 @@ pub(crate) fn try_enter(
 						let pre_record = *record;
 						let status = simulate(region, buf, record);
 						seen = Some(*record);
-						traced = Some(trace_check(region, &pre[..buf.len()], pre_record, buf, record));
+						traced = Some(trace_check(
+							region,
+							&pre[..buf.len()],
+							pre_record,
+							buf,
+							record,
+						));
 						status
 					},
 				),
 				false,
 			),
 			Mode::Native => {
-				let (outcome, record, check) = enter_native(installed, index, window, store, cancel_pending, fuel, room)?;
+				let (outcome, record, check) =
+					enter_native(installed, index, window, store, cancel_pending, fuel, room)?;
 				seen = record;
 				traced = check;
 				(outcome, true)
@@ -484,8 +525,10 @@ pub(crate) fn try_enter(
 						Status::Replay => stats.native_replay += 1,
 					}
 					stats.native_iter_done += usize::from(iter_done);
-					stats.native_replay_fuel += usize::from(reason == Some(ReplayReason::CalleeFuel));
-					stats.native_replay_fault += usize::from(reason == Some(ReplayReason::CalleeFault));
+					stats.native_replay_fuel +=
+						usize::from(reason == Some(ReplayReason::CalleeFuel));
+					stats.native_replay_fault +=
+						usize::from(reason == Some(ReplayReason::CalleeFault));
 				}
 				Some((exited.pc, exited.fuel))
 			}
@@ -510,14 +553,21 @@ pub(crate) fn try_enter(
 	})
 }
 
-type Entered = crate::experimental_core::error::Result<core::result::Result<commit::Exited, Refused>>;
+type Entered =
+	crate::experimental_core::error::Result<core::result::Result<commit::Exited, Refused>>;
 
 /// B1 (B1-41): the traced simulator run from the same pre-entry buffer and record. Its
 /// status and record must equal the run's; at a Replay exit the committed checkpoint must
 /// equal the snapshot at the last `Enter` (written, bools, units, fuel, the slot values
 /// under `written`, `next`), and every completed call wrote its result exactly once (one
 /// `Ret` per `Enter`, but the last when the exit is a Replay).
-fn trace_check(region: &Region, pre: &[i64], pre_record: ExitRecord, buf: &[i64], record: &ExitRecord) -> Result<(), String> {
+fn trace_check(
+	region: &Region,
+	pre: &[i64],
+	pre_record: ExitRecord,
+	buf: &[i64],
+	record: &ExitRecord,
+) -> Result<(), String> {
 	let mut tbuf = [0i64; MAX_REGION_CELLS];
 	let cells = pre.len();
 	tbuf[..cells].copy_from_slice(pre);
@@ -541,22 +591,32 @@ fn trace_check(region: &Region, pre: &[i64], pre_record: ExitRecord, buf: &[i64]
 	if status != record.status || trecord != *record {
 		return Err(describe("traced simulator differs from the run"));
 	}
-	let replay = region.exits.get(record.exit as usize).is_some_and(|e| e.status == Status::Replay);
+	let replay = region
+		.exits
+		.get(record.exit as usize)
+		.is_some_and(|e| e.status == Status::Replay);
 	let completed = trace.enters - usize::from(replay);
 	if trace.rets != completed {
-		return Err(describe("a completed call did not write its result exactly once"));
+		return Err(describe(
+			"a completed call did not write its result exactly once",
+		));
 	}
 	if replay {
 		let Some(snap) = trace.snapshots.last() else {
 			return Err(describe("Replay without an Enter"));
 		};
-		let values_ok = (0..n).filter(|&l| record.written & (1 << l) != 0).all(|l| buf[l] == snap.cells[l]);
+		let values_ok = (0..n)
+			.filter(|&l| record.written & (1 << l) != 0)
+			.all(|l| buf[l] == snap.cells[l]);
 		let next_ok = region.iter.is_none() || buf[n] == snap.cells[n];
-		if (record.written, record.bools, record.units, record.fuel) != (snap.written, snap.bools, snap.units, snap.fuel)
+		if (record.written, record.bools, record.units, record.fuel)
+			!= (snap.written, snap.bools, snap.units, snap.fuel)
 			|| !values_ok
 			|| !next_ok
 		{
-			return Err(describe("committed checkpoint differs from the pre-Call snapshot"));
+			return Err(describe(
+				"committed checkpoint differs from the pre-Call snapshot",
+			));
 		}
 	}
 	Ok(())
@@ -565,7 +625,11 @@ fn trace_check(region: &Region, pre: &[i64], pre_record: ExitRecord, buf: &[i64]
 /// Native mode entry. `None`: the region has no loaded code (its compile or load was
 /// refused) or the call refused its arguments; the interpreter runs the instruction. With
 /// the outcome, the native record the commit validated.
-#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
 #[allow(clippy::too_many_arguments)]
 fn enter_native(
 	installed: &mut Installed,
@@ -592,24 +656,38 @@ fn enter_native(
 	let mut mismatch = None;
 	let mut seen = None;
 	let mut traced = None;
-	let outcome = commit::enter(region, window, store, cancel_pending, fuel, room, |region, buf, record| {
-		let mut pre = [0i64; MAX_REGION_CELLS];
-		pre[..buf.len()].copy_from_slice(buf);
-		let pre_record = *record;
-		let status = native_run(
-			region,
-			&loaded.native,
-			buf,
-			record,
-			&mut call_refused,
-			&mut mismatch,
-		);
-		seen = Some(*record);
-		if !call_refused {
-			traced = Some(trace_check(region, &pre[..buf.len()], pre_record, buf, record));
-		}
-		status
-	});
+	let outcome = commit::enter(
+		region,
+		window,
+		store,
+		cancel_pending,
+		fuel,
+		room,
+		|region, buf, record| {
+			let mut pre = [0i64; MAX_REGION_CELLS];
+			pre[..buf.len()].copy_from_slice(buf);
+			let pre_record = *record;
+			let status = native_run(
+				region,
+				&loaded.native,
+				buf,
+				record,
+				&mut call_refused,
+				&mut mismatch,
+			);
+			seen = Some(*record);
+			if !call_refused {
+				traced = Some(trace_check(
+					region,
+					&pre[..buf.len()],
+					pre_record,
+					buf,
+					record,
+				));
+			}
+			status
+		},
+	);
 
 	let stats = &mut installed.stats;
 	if let Some((text, scratch)) = mismatch {
@@ -630,7 +708,11 @@ fn enter_native(
 	Some((outcome, seen, traced))
 }
 
-#[cfg(not(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux")))]
+#[cfg(not(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+)))]
 #[allow(clippy::too_many_arguments)]
 fn enter_native(
 	_: &mut Installed,
@@ -647,7 +729,11 @@ fn enter_native(
 /// The native run of one entry, checked against the simulator on an independent copy of
 /// the same pre-entry buffer and record. `mismatch` receives `(description, 0)` on a
 /// mismatch, or `("", n)` with the count of differing unwritten (unspecified) entries.
-#[cfg(all(feature = "fresh-core-native", target_arch = "x86_64", target_os = "linux"))]
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
 fn native_run(
 	region: &Region,
 	native: &NativeRegion,
@@ -679,7 +765,10 @@ fn native_run(
 		.any(|l| buf[l] != sim[l]);
 	// B1: `next` equal on every exit, `end` unchanged in both runs.
 	let iter_differs = region.iter.is_some()
-		&& (n != slots + 2 || buf[slots] != sim[slots] || buf[slots + 1] != pre[slots + 1] || sim[slots + 1] != pre[slots + 1]);
+		&& (n != slots + 2
+			|| buf[slots] != sim[slots]
+			|| buf[slots + 1] != pre[slots + 1]
+			|| sim[slots + 1] != pre[slots + 1]);
 	if status != sim_status || *record != sim_record || written_differs || iter_differs {
 		*mismatch = Some((
 			std::format!(
