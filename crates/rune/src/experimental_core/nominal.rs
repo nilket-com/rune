@@ -433,6 +433,12 @@ pub fn contains(nominal: Nominal) -> bool {
 		.unwrap_or(false)
 }
 
+/// Read the canonical hash for an admitted type value, without allocating.
+pub(crate) fn hash_copy(nominal: Nominal) -> Option<u64> {
+	let guard = GLOBAL.lock().ok()?;
+	guard.as_ref()?.hash(nominal)
+}
+
 /// Copy a diagnostic name without initializing the table or holding its lock while formatting.
 pub(crate) fn name_copy(nominal: Nominal, buffer: &mut [u8; 256]) -> Option<usize> {
 	let guard = GLOBAL.lock().ok()?;

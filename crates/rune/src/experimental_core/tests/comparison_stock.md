@@ -2,7 +2,11 @@
 
 Measured against fork c875ab03571bdd1b41553f12a5f055cb7a5a2cc5, before S-eq production changes.
 `comparison_stock.tsv` contains 3,432 primary rows plus 162 supplemental rows.
-The generators in `gap_hunt.rs` reproduce the exact sources by case id. Local raw
+The generators in `gap_hunt.rs` define the executable sources by case id.
+The original measurements used `f64::NAN` and inserted a new field to create an
+object cycle. The current sources produce NaN with `0.0 / 0.0` and precreate the
+cycle's field, avoiding unrelated fresh constant/missing-field limitations.
+A full stock replay validates the unchanged frozen expectations on these sources. Local raw
 sources, observations and streams are retained in `0185-s-eq-stock1` and
 `0185-s-eq-stock-supplement2` under the campaign review directory.
 

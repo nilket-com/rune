@@ -33,6 +33,8 @@ pub enum ErrorKind {
 	IntegerCoercion,
 	/// Formatted text exceeded its formatting limits.
 	FormatLimit,
+	/// A structural comparison exceeded the value walk depth (64, including the root).
+	ValueDepth,
 	/// Writing to stdout failed.
 	Output,
 	/// A memory reservation failed.

@@ -1545,6 +1545,17 @@ fn binary(store: &mut Store, op: arithmetic::Binary, a: Value, b: Value) -> Resu
 		}
 	}
 
+	if matches!(
+		op,
+		arithmetic::Binary::Eq
+			| arithmetic::Binary::Ne
+			| arithmetic::Binary::Lt
+			| arithmetic::Binary::Le
+			| arithmetic::Binary::Gt
+			| arithmetic::Binary::Ge
+	) {
+		return store.compare(op, a, b);
+	}
 	arithmetic::binary(op, a, b)
 }
 

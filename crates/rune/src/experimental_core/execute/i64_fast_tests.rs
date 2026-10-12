@@ -296,7 +296,17 @@ fn d5_non_i64_scalar_classes_keep_fallback_results() {
 			for (a, b) in pairs {
 				assert!(!eligible(op, a, b));
 				let mut store = store();
-				let expected = if assign && op == Binary::Add {
+				// S-eq deliberately converges inline Type comparisons with stock.
+				let expected = if matches!((a, b), (Value::Type(Type::I64), Value::Type(Type::I64)))
+					&& matches!(
+						op,
+						Binary::Eq | Binary::Ne | Binary::Lt | Binary::Le | Binary::Gt | Binary::Ge
+					) {
+					Ok(Value::Bool(matches!(
+						op,
+						Binary::Eq | Binary::Le | Binary::Ge
+					)))
+				} else if assign && op == Binary::Add {
 					match store.tag(a) {
 						Err(e) => Err(e),
 						Ok(_) => arithmetic::binary(op, a, b),

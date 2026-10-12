@@ -119,6 +119,14 @@ pub enum Detail {
 	ExpectedBool {
 		found: TypeName,
 	},
+	ValueDepth,
+	ExpectedType {
+		expected: TypeName,
+		found: TypeName,
+	},
+	ComparisonNotIterable {
+		found: TypeName,
+	},
 	StringOperand {
 		found: TypeName,
 	},
@@ -407,6 +415,11 @@ impl fmt::Display for Message<'_> {
 				operand,
 			),
 			ExpectedBool { found } => messages::expected_type(f, TypeName::Bool, found),
+			ValueDepth => f.write_str("Value is nested too deeply to walk, limit is 64"),
+			ExpectedType { expected, found } => messages::expected_type(f, expected, found),
+			ComparisonNotIterable { found } => {
+				write!(f, "Missing protocol function `INTO_ITER` for `{found}`")
+			}
 			StringOperand { found } => messages::expected_type(f, TypeName::String, found),
 			Coerce { value, to } => messages::coerce(f, value, to),
 			WriteBorrowed => f.write_str("Cannot write, the value is being read from"),

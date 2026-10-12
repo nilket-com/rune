@@ -702,3 +702,102 @@ fn a_compile_error_is_not_compared_as_a_runtime_error() {
 	assert_eq!(fresh.to_string(), fatal.to_string());
 	assert_eq!(fresh.span().unwrap(), fatal.span().unwrap());
 }
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn nested_comparison_leaf_messages_keep_the_whole_expression_span() {
+	let context = Context::with_default_modules().unwrap();
+	for (setup, expression) in [
+		("let a=[\"a\"]; let b=[1];", "a == b"),
+		("let a=[1.0]; let b=[1];", "a != b"),
+		("let a=Some([1]); let b=Some([1.0]);", "a <= b"),
+		("let a=Ok((\"a\",)); let b=Ok((1,));", "a > b"),
+		("let a=#{x:[\"a\"]}; let b=#{x:[1]};", "a == b"),
+		("let a=P{x:[1]}; let b=P{x:[1.0]};", "a >= b"),
+	] {
+		let source = std::format!("struct P {{ x }} pub fn target() {{ {setup} {expression} }}");
+		let (mut vm, program) = compile(&context, &source);
+		let stock = vm.call(["target"], ()).unwrap_err();
+		let at = stock.first_location().unwrap();
+		let span = at
+			.unit
+			.debug_info()
+			.unwrap()
+			.instruction_at(at.ip)
+			.unwrap()
+			.span;
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		let failure = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["target"])).unwrap(),
+				&[],
+				100_000,
+			)
+			.unwrap_err();
+		assert_eq!(
+			failure.error.message(&program).to_string(),
+			stock.into_kind().to_string(),
+			"{expression}"
+		);
+		let location = failure.error.location.unwrap();
+		assert_eq!(location.start as usize..location.end as usize, span.range());
+		let start = source.rfind(expression).unwrap();
+		assert_eq!(
+			location.start as usize..location.end as usize,
+			start..start + expression.len()
+		);
+		assert!(failure.cleanup_error.is_none());
+		assert!(executor.is_idle());
+		assert_eq!(store.live_entries(), 0);
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn comparison_type_values_use_stock_hash_order_including_nominals() {
+	let context = Context::with_default_modules().unwrap();
+	for (a, b) in [
+		("P", "P"),
+		("P", "Q"),
+		("Q", "P"),
+		("P", "i64"),
+		("i64", "u64"),
+		("i64", "i64"),
+	] {
+		for op in ["==", "!=", "<", "<=", ">", ">="] {
+			let text = std::format!(
+				"struct P {{ x }} struct Q {{ x }} pub fn target() {{ {a} {op} {b} }}"
+			);
+			let (mut stock, program) = compile(&context, &text);
+			let expected = stock.call(["target"], ()).unwrap().as_bool().unwrap();
+			let mut store = Store::new(Limits::default()).unwrap();
+			let mut executor = Executor::new().unwrap();
+			let root = executor
+				.invoke(
+					&program,
+					&mut store,
+					program.function(Hash::type_hash(["target"])).unwrap(),
+					&[],
+					100_000,
+				)
+				.unwrap();
+			assert_eq!(
+				store.root_scalar(&root).unwrap(),
+				Some(crate::experimental_core::value::Scalar::Bool(expected)),
+				"{text}"
+			);
+			store.root_release(root).unwrap();
+			assert!(executor.is_idle());
+			assert_eq!(store.live_entries(), 0);
+		}
+	}
+}
