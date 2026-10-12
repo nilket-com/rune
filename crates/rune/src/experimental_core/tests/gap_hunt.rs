@@ -95,6 +95,7 @@ fn stock_class(k: &crate::runtime::VmErrorKind) -> String {
 	use crate::runtime::VmErrorKind as K;
 	let class = match k {
 		K::Overflow | K::Underflow => "Overflow",
+		K::ValueToIntegerCoercionError { .. } => "IntegerCoercion",
 		K::DivideByZero => "DivisionByZero",
 		K::Halted {
 			halt: crate::runtime::VmHaltInfo::Limited,
@@ -106,6 +107,8 @@ fn stock_class(k: &crate::runtime::VmErrorKind) -> String {
 		| K::UnsupportedUnaryOperation { .. }
 		| K::UnsupportedIndexGet { .. }
 		| K::UnsupportedIndexSet { .. }
+		| K::UnsupportedTupleIndexGet { .. }
+		| K::UnsupportedTupleIndexSet { .. }
 		| K::ExpectedNumber { .. }
 		| K::ExpectedType { .. }
 		| K::MissingInstanceFunction { .. }
@@ -1130,4 +1133,197 @@ fn comparison_order_metadata_never_admits_resource_or_unrelated_errors() {
 		"Expected type `std::string::String` but found `std::i64`",
 		""
 	));
+}
+
+/// Index dispatch is ordered by the index representation for get, but by the
+/// receiver protocol for set. Keep the cartesian product, including wrong targets.
+fn index_cases() -> Vec<(String, String)> {
+	let targets = [
+		("unit", "()"),
+		("bool", "true"),
+		("char", "'a'"),
+		("signed", "7"),
+		("unsigned", "7u64"),
+		("float", "7.0"),
+		("vec", "[10,20]"),
+		("empty-vec", "[]"),
+		("tuple", "(10,20)"),
+		("empty-tuple", "()"),
+		("object", "#{x:10}"),
+		("empty-object", "#{}"),
+		("struct", "P{x:10}"),
+		("none", "None"),
+		("some", "Some(10)"),
+		("ok", "Ok(10)"),
+		("err", "Err(10)"),
+		("string", "\"ab\""),
+		("function", "g"),
+		("type", "i64"),
+		("range", "0..2"),
+	];
+	let indices = [
+		("zero", "0"),
+		("one", "1"),
+		("past", "2"),
+		("negative", "-1"),
+		("large-unsigned", "18446744073709551615u64"),
+		("present-key", "\"x\""),
+		("missing-key", "\"missing\""),
+		("float", "0.0"),
+		("bool", "true"),
+		("unit", "()"),
+		("vec", "[]"),
+		("tuple", "(0,)"),
+	];
+	let mut cases = Vec::new();
+	for (target_name, target) in targets {
+		for (index_name, index) in indices {
+			for (op, action) in [
+				("get", "x[i]"),
+				("set", "x[i] = 3; x"),
+				("add", "x[i] += 3; x"),
+			] {
+				cases.push((
+					format!("index/{target_name}/{index_name}/{op}"),
+					format!("let x={target}; let i={index}; {action}"),
+				));
+			}
+		}
+		for index in [0, 1, 2, 99] {
+			for (op, action) in [
+				("get", format!("x.{index}")),
+				("set", format!("x.{index} = 3; x")),
+				("add", format!("x.{index} += 3; x")),
+			] {
+				cases.push((
+					format!("tuple-field/{target_name}/{index}/{op}"),
+					format!("let x={target}; {action}"),
+				));
+			}
+		}
+	}
+	// Separate witnesses make operand ordering and the first failing step observable.
+	for (label, target, index, rhs) in [
+		("success", "[10]", "0", "3"),
+		("get-fails", "7", "0", "3"),
+		("conversion-fails", "7", "-1", "3"),
+		("set-fails", "(10,)", "0", "3"),
+		("binary-fails", "[10]", "0", "\"bad\""),
+		("missing-field", "#{x:10}", "\"absent\"", "3"),
+		("target-fails", "(1 / 0)", "0", "3"),
+		("index-fails", "[10]", "(1 / 0)", "3"),
+		("rhs-fails", "[10]", "0", "(1 / 0)"),
+	] {
+		for (op, action) in [
+			("get", "target()[index()]"),
+			("set", "target()[index()] = rhs(); ()"),
+			("add", "target()[index()] += rhs(); ()"),
+		] {
+			cases.push((format!("witness/{label}/{op}"), format!(
+				"fn target() {{ println!(\"target\"); {target} }} fn index() {{ println!(\"index\"); {index} }} fn rhs() {{ println!(\"rhs\"); {rhs} }} pub fn main() {{ {action} }}")));
+		}
+	}
+	cases
+		.into_iter()
+		.map(|(id, body)| {
+			if id.starts_with("witness/") {
+				(id, body)
+			} else {
+				(
+					id,
+					format!("struct P {{ x }} fn g() {{ 1 }} pub fn main() {{ {body} }}"),
+				)
+			}
+		})
+		.collect()
+}
+
+#[test]
+#[ignore = "explicit bounded stock indexing contract study; requires new GAP_OUT"]
+fn stock_index_probe() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("GAP_OUT required"));
+	fs::create_dir(&out).expect("GAP_OUT must be new");
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-index-probe-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let cases = index_cases();
+	assert_eq!(cases.len(), 1035);
+	let mut table =
+		String::from("case\tsource_hex\tstock_observation_hex\tstdout_hex\tstderr_hex\n");
+	let mut counts = BTreeMap::new();
+	for (n, (label, source)) in cases.iter().enumerate() {
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, source).unwrap();
+		let run = launch(&path, &path, "main", "stock", &scratch.0, &out, &id);
+		assert!(
+			run.complete,
+			"incomplete stock case {label}: {}",
+			run.record
+		);
+		let phase = run.record.split('\t').next().unwrap();
+		assert!(
+			matches!(phase, "value" | "error"),
+			"stock probe admission {label}: {}",
+			run.record
+		);
+		*counts.entry(phase.to_owned()).or_insert(0usize) += 1;
+		table.push_str(&format!(
+			"{label}\t{}\t{}\t{}\t{}\n",
+			hex(source.as_bytes()),
+			hex(run.record.as_bytes()),
+			hex(&run.stdout),
+			hex(&run.stderr)
+		));
+		fs::write(out.join("stock-index.tsv"), &table).unwrap();
+		if n.is_multiple_of(100) {
+			println!("stock index probe {n}/{}", cases.len());
+		}
+	}
+	fs::write(out.join("summary.txt"), format!("{} cases: {counts:?}\n21 receivers x (12 dynamic indices x3 operations +4 tuple fields x3 operations), plus27 operand-order witnesses. Full stdout/stderr retained.\n", cases.len())).unwrap();
+}
+
+#[test]
+#[ignore = "explicit full frozen indexing contract; bounded children, not ordinary CI"]
+fn index_contract() {
+	let engine = std::env::var("GAP_COMPARE_ENGINE").unwrap_or_else(|_| "stock".into());
+	assert!(matches!(engine.as_str(), "stock" | "fresh"));
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).expect("GAP_OUT must be new");
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-index-contract-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let generated = index_cases();
+	let rows: Vec<_> = include_str!("index_stock.tsv").lines().skip(1).collect();
+	assert_eq!(rows.len(), generated.len());
+	for (n, (line, (label, source))) in rows.iter().zip(&generated).enumerate() {
+		let row: Vec<_> = line.split('\t').collect();
+		assert_eq!(row.len(), 5);
+		assert_eq!(row[0], label);
+		assert_eq!(unhex(row[1]), *source, "fixture source drift: {label}");
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, source).unwrap();
+		let run = launch(&path, &path, "main", &engine, &scratch.0, &out, &id);
+		assert!(
+			run.complete,
+			"incomplete {engine} case {label}: {}",
+			run.record
+		);
+		let expected = unhex(row[2]);
+		let expected: Vec<_> = expected.split('\t').collect();
+		let actual: Vec<_> = run.record.split('\t').collect();
+		assert_eq!(actual.len(), 5);
+		// Runtime site labels are frontend-specific. Exact spans have focused tests.
+		assert_eq!(
+			(&actual[..2], &actual[3..]),
+			(&expected[..2], &expected[3..]),
+			"{engine} observation {label}"
+		);
+		assert_eq!(hex(&run.stdout), row[3], "{engine} stdout {label}");
+		assert_eq!(hex(&run.stderr), row[4], "{engine} stderr {label}");
+		if n.is_multiple_of(100) {
+			println!("{engine} index contract {n}/{}", rows.len());
+		}
+	}
 }
