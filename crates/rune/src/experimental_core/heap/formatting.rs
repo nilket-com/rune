@@ -125,7 +125,13 @@ impl Store {
 		sink.nodes += 1;
 		match value {
 			Value::Unit if debug => sink.push("()"),
-			Value::Unit => Err(Error::new(ErrorKind::Type, "missing display form")),
+			Value::Unit => Err(
+				Error::new(ErrorKind::Type, "missing display form").with_detail(
+					super::super::error::Detail::NoDisplay {
+						found: super::super::error::TypeName::Unit,
+					},
+				),
+			),
 			Value::Bool(n) => sink.push(if n { "true" } else { "false" }),
 			Value::I64(n) => sink.formatted(format_args!("{n}")),
 			Value::U64(n) => sink.formatted(format_args!("{n}")),
@@ -228,7 +234,14 @@ impl Store {
 				| Payload::Variant {
 					tag: Type::Option | Type::Result,
 					..
-				} if !debug => Err(Error::new(ErrorKind::Type, "missing display form")),
+				} if !debug => Err(
+					Error::new(ErrorKind::Type, "missing display form").with_detail(
+						self.diagnostic_type(value)
+							.map_or(super::super::error::Detail::None, |found| {
+								super::super::error::Detail::NoDisplay { found }
+							}),
+					),
+				),
 				_ => Err(unsupported()),
 			},
 

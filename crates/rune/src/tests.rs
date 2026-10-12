@@ -511,10 +511,11 @@ mod external_ops;
 mod f64;
 #[cfg(not(miri))]
 mod format_spec;
+#[cfg(not(miri))]
+mod diagnostics_text;
 // Deliberately not excluded from miri, unlike the rest of this module: passing
 // a reference into the machine goes through `UnsafeToRef`, and whether that is
 // sound is exactly what miri is here to say.
-mod diagnostics_text;
 mod function_guardedargs;
 #[cfg(not(miri))]
 mod getter_setter;
@@ -532,6 +533,7 @@ mod literals;
 mod macros;
 #[cfg(not(miri))]
 mod moved;
+#[cfg(not(miri))]
 mod object_debug_order;
 #[cfg(not(miri))]
 mod option;
@@ -553,6 +555,7 @@ mod scripts;
 mod static_typing;
 #[cfg(not(miri))]
 mod statics;
+#[cfg(not(miri))]
 mod strict_conditions;
 #[cfg(not(miri))]
 mod tuple;

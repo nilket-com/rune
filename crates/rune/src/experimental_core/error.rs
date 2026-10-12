@@ -1,8 +1,13 @@
 //! Errors of the fresh core.
 //!
 //! An [`Error`] is a small `Copy` value, so reporting an allocation failure allocates
-//! nothing. Compile-time refusals carry a [`Refusal`] category; run-time errors carry only
-//! an [`ErrorKind`] and, when known, a source [`Location`].
+//! nothing. Compile-time refusals carry a [`Refusal`] category; run-time errors carry
+//! an [`ErrorKind`], optional owned [`Detail`], and, when known, a source [`Location`].
+
+pub use super::detail::{
+	AdmittedMethod, BinarySymbol, Detail, FieldRef, IntTarget, IntValue, Message, TypeName,
+	UnarySymbol,
+};
 
 /// The class of an error.
 ///
@@ -220,6 +225,8 @@ pub struct Error {
 	pub operation: &'static str,
 	/// The refusal category; `Some` exactly for compile-time refusals.
 	pub refusal: Option<Refusal>,
+	/// Owned language-error information; absent for generic resource errors.
+	pub detail: Detail,
 }
 
 impl Error {
@@ -230,6 +237,7 @@ impl Error {
 			location: None,
 			operation,
 			refusal: None,
+			detail: Detail::None,
 		}
 	}
 
@@ -241,6 +249,21 @@ impl Error {
 			location: None,
 			operation: refusal.name(),
 			refusal: Some(refusal),
+			detail: Detail::None,
+		}
+	}
+
+	/// Attach owned detail without changing the class, operation or location.
+	pub const fn with_detail(mut self, detail: Detail) -> Self {
+		self.detail = detail;
+		self
+	}
+
+	/// Render without allocating. A foreign program never resolves constant field names.
+	pub fn message<'a>(&'a self, program: &'a super::frontend::Program) -> Message<'a> {
+		Message {
+			error: self,
+			program,
 		}
 	}
 

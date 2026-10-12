@@ -12,7 +12,10 @@
 use super::{
 	arithmetic,
 	code::{Code, Op},
-	error::{Error, ErrorKind, Location, Result},
+	error::{
+		AdmittedMethod, BinarySymbol, Detail, Error, ErrorKind, FieldRef, IntTarget, IntValue,
+		Location, Result, TypeName, UnarySymbol,
+	},
 	frontend::Program,
 	heap::Store,
 	value::{Root, Value},
@@ -877,6 +880,15 @@ impl Executor {
 								current.pc = pc;
 							}
 
+							let e = enrich_error(
+								e,
+								store,
+								&instruction.op,
+								code,
+								frame.function,
+								&self.slots,
+								frame.base,
+							);
 							return Err(e.at(function.locations[source_pc]));
 						}
 					}
@@ -1074,10 +1086,212 @@ impl Executor {
 	}
 }
 
+// Called only after an instruction fails, while its operand slots and constant pool
+// still exist. Diagnostic lookup is best-effort: it never replaces the primary error.
+fn enrich_error(
+	mut error: Error,
+	store: &Store,
+	op: &Op,
+	code: &Code,
+	function_id: u32,
+	slots: &[Value],
+	base: usize,
+) -> Error {
+	if let Op::AssignBinary { op, .. } = *op {
+		if let Detail::Binary { lhs, rhs, .. } = error.detail {
+			error.detail = Detail::Binary {
+				op: BinarySymbol::from_op(op, true),
+				lhs,
+				rhs,
+			};
+			return error;
+		}
+	}
+	if error.detail != Detail::None
+		|| !matches!(
+			error.kind,
+			ErrorKind::Type | ErrorKind::IndexOutOfBounds | ErrorKind::InvalidCast
+		) {
+		return error;
+	}
+	let detail =
+		(|| -> Option<Detail> {
+			let get = |n: u32| slots.get(base.checked_add(n as usize)?).copied();
+			let ty = |n| store.diagnostic_type(get(n)?);
+			let field = |key| FieldRef {
+				code: code.id(),
+				function: function_id,
+				string: key,
+			};
+			let bounds = |value, index| {
+				Some(Detail::OutOfRange {
+					index: index_value(get(index)?).ok()?,
+					length: store.len(get(value)?).ok()?,
+				})
+			};
+			Some(match *op {
+				Op::Binary { op, lhs, rhs, .. } | Op::AssignBinary { op, lhs, rhs, .. } => {
+					let (lhs, rhs) = (ty(lhs)?, ty(rhs)?);
+					if lhs == TypeName::String
+						&& rhs != TypeName::String
+						&& matches!(
+							op,
+							arithmetic::Binary::Add
+								| arithmetic::Binary::Eq | arithmetic::Binary::Ne
+								| arithmetic::Binary::Lt | arithmetic::Binary::Le
+								| arithmetic::Binary::Gt | arithmetic::Binary::Ge
+						) {
+						Detail::StringOperand { found: rhs }
+					} else {
+						Detail::Binary {
+							op: BinarySymbol::from_op(op, false),
+							lhs,
+							rhs,
+						}
+					}
+				}
+				Op::Unary { op, value, .. } => Detail::Unary {
+					op: match op {
+						arithmetic::Unary::Neg => UnarySymbol::Neg,
+						arithmetic::Unary::Not => UnarySymbol::Not,
+					},
+					operand: ty(value)?,
+				},
+				Op::Cast { value, tag, .. } => Detail::Cast {
+					found: ty(value)?,
+					to_numeric: matches!(
+						tag,
+						super::value::Type::I64 | super::value::Type::U64 | super::value::Type::F64
+					),
+				},
+				Op::Branch { condition, .. } => Detail::ExpectedBool {
+					found: ty(condition)?,
+				},
+				Op::CallValue {
+					value, args_len, ..
+				} => match get(value)? {
+					Value::Function { code: owner, .. } if owner != code.id() => {
+						Detail::ForeignFunction
+					}
+					Value::Function { id, .. } => Detail::Arity {
+						given: args_len,
+						expected: code.function(id)?.parameters,
+					},
+					_ => Detail::NotCallable { found: ty(value)? },
+				},
+				Op::Range { start, end, .. } => {
+					let bad = if matches!(get(start)?, Value::I64(_)) {
+						end
+					} else {
+						start
+					};
+					Detail::ExpectedNumber { found: ty(bad)? }
+				}
+				Op::IterStart { value, .. } => Detail::NotIterable { found: ty(value)? },
+				Op::Try { value, .. } => Detail::TryOperand { found: ty(value)? },
+				Op::Clone { value, .. } => Detail::NoMethod {
+					method: AdmittedMethod::Clone,
+					receiver: ty(value)?,
+				},
+				Op::Len { value, .. } => Detail::NoMethod {
+					method: AdmittedMethod::Len,
+					receiver: ty(value)?,
+				},
+				Op::Push { value, .. } => Detail::NoMethod {
+					method: AdmittedMethod::Push,
+					receiver: ty(value)?,
+				},
+				Op::Field { value, key, .. } => {
+					if error.kind == ErrorKind::IndexOutOfBounds {
+						Detail::MissingField {
+							target: ty(value)?,
+							field: field(key),
+						}
+					} else {
+						Detail::FieldOnNonRecord {
+							target: ty(value)?,
+							field: field(key),
+						}
+					}
+				}
+				Op::SetField { value, key, .. } => Detail::MissingField {
+					target: ty(value)?,
+					field: field(key),
+				},
+				Op::TupleField { value, index, .. } => {
+					if error.kind == ErrorKind::IndexOutOfBounds {
+						return bounds(value, index);
+					}
+					let index = u32::try_from(index_value(get(index)?).ok()?).ok()?;
+					Detail::TupleIndexGet {
+						target: ty(value)?,
+						index,
+					}
+				}
+				Op::SetTupleField { value, index, .. } => {
+					if error.kind == ErrorKind::IndexOutOfBounds {
+						return bounds(value, index);
+					}
+					Detail::TupleIndexSet { target: ty(value)? }
+				}
+				Op::Get { value, index, .. } => {
+					if error.kind == ErrorKind::IndexOutOfBounds {
+						return bounds(value, index);
+					}
+					let target = ty(value)?;
+					if matches!(target, TypeName::Vec | TypeName::Tuple) {
+						Detail::ExpectedNumber { found: ty(index)? }
+					} else {
+						Detail::IndexTarget {
+							target,
+							index: ty(index)?,
+						}
+					}
+				}
+				Op::Set { value, index, new } => {
+					if error.kind == ErrorKind::IndexOutOfBounds {
+						return bounds(value, index);
+					}
+					if !matches!(get(index)?, Value::I64(_) | Value::U64(_)) {
+						Detail::ExpectedNumber { found: ty(index)? }
+					} else {
+						Detail::IndexSet {
+							target: ty(value)?,
+							index: ty(index)?,
+							value: ty(new)?,
+						}
+					}
+				}
+				_ => return None,
+			})
+		})();
+	if let Some(mut detail) = detail {
+		if let (Op::AssignBinary { op, .. }, Detail::Binary { lhs, rhs, .. }) = (*op, detail) {
+			detail = Detail::Binary {
+				op: BinarySymbol::from_op(op, true),
+				lhs,
+				rhs,
+			};
+		}
+		error.detail = detail;
+	}
+	error
+}
+
 fn index_value(value: Value) -> Result<usize> {
 	match value {
-		Value::I64(n) => usize::try_from(n).map_err(|_| error(ErrorKind::IndexOutOfBounds)),
-		Value::U64(n) => usize::try_from(n).map_err(|_| error(ErrorKind::IndexOutOfBounds)),
+		Value::I64(n) => usize::try_from(n).map_err(|_| {
+			error(ErrorKind::IndexOutOfBounds).with_detail(Detail::Coerce {
+				value: IntValue::of(value).unwrap(),
+				to: IntTarget::Usize,
+			})
+		}),
+		Value::U64(n) => usize::try_from(n).map_err(|_| {
+			error(ErrorKind::IndexOutOfBounds).with_detail(Detail::Coerce {
+				value: IntValue::of(value).unwrap(),
+				to: IntTarget::Usize,
+			})
+		}),
 		_ => Err(error(ErrorKind::Type)),
 	}
 }
@@ -1096,10 +1310,9 @@ fn fast_i64(op: arithmetic::Binary, a: Value, b: Value) -> Option<Result<Value>>
 			.checked_add(b)
 			.map(Value::I64)
 			.ok_or_else(|| Error::new(ErrorKind::Overflow, "primitive operation")),
-		Binary::Sub => a
-			.checked_sub(b)
-			.map(Value::I64)
-			.ok_or_else(|| Error::new(ErrorKind::Overflow, "primitive operation")),
+		Binary::Sub => a.checked_sub(b).map(Value::I64).ok_or_else(|| {
+			Error::new(ErrorKind::Overflow, "primitive operation").with_detail(Detail::Underflow)
+		}),
 		Binary::Mul => a
 			.checked_mul(b)
 			.map(Value::I64)
@@ -1287,3 +1500,42 @@ mod call_value_tests;
 
 #[cfg(test)]
 mod binary_peek_tests;
+
+#[cfg(test)]
+mod diagnostic_enrichment_tests {
+	use super::super::{code::Builder, heap::Limits};
+	use super::*;
+	#[test]
+	fn secondary_lookup_failure_preserves_the_primary_error() {
+		let mut store = Store::new(Limits {
+			entries: 8,
+			bytes: 4096,
+		})
+		.unwrap();
+		let stale = store.string("stale").unwrap();
+		store.release(stale).unwrap();
+		let code = Builder::default().finish().unwrap();
+		let op = Op::Binary {
+			out: 2,
+			op: arithmetic::Binary::Add,
+			lhs: 0,
+			rhs: 1,
+		};
+		let slots = [stale, Value::I64(1), Value::Unit];
+		for kind in [
+			ErrorKind::Type,
+			ErrorKind::InvalidHandle,
+			ErrorKind::Allocation,
+			ErrorKind::StoreCapacity,
+			ErrorKind::Cancelled,
+		] {
+			let error = Error::new(kind, "original operation").at(Location {
+				source: 9,
+				revision: 81,
+				start: 3,
+				end: 7,
+			});
+			assert_eq!(enrich_error(error, &store, &op, &code, 0, &slots, 0), error);
+		}
+	}
+}

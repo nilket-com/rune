@@ -1,0 +1,51 @@
+id	message	start	end
+binary	Unsupported binary operation `+` on `::std::i64` and `::std::bool`	37	45
+multiline	Unsupported binary operation `+` on `::std::i64` and `::std::bool`	37	46
+binary-float	Unsupported binary operation `+` on `::std::i64` and `::std::f64`	37	44
+char	Unsupported binary operation `+` on `::std::char` and `::std::i64`	37	44
+unit	Unsupported binary operation `+` on `::std::tuple::Tuple` and `::std::i64`	37	43
+type	Unsupported binary operation `+` on `::std::any::Type` and `::std::i64`	37	44
+function	Unsupported binary operation `+` on `::std::ops::Function` and `::std::i64`	48	53
+assign	Unsupported binary operation `+=` on `::std::i64` and `::std::bool`	48	57
+assign-string	Expected type `::std::string::String` but found `::std::i64`	50	56
+string	Expected type `::std::string::String` but found `::std::i64`	37	44
+string-compare	Expected type `::std::string::String` but found `::std::i64`	37	44
+string-unsupported	Unsupported binary operation `-` on `::std::string::String` and `::std::string::String`	37	46
+overflow	Numerical overflow	66	71
+underflow	Numerical underflow	67	72
+unsigned-underflow	Numerical underflow	37	48
+divide	Division by zero	37	42
+remainder	Division by zero	37	42
+coerce-signed	Failed to convert value `18446744073709551615` to integer `i64`	37	64
+coerce-unsigned	Failed to convert value `-1` to integer `u64`	37	46
+shift-negative	Failed to convert value `-1` to integer `u32`	37	44
+shift-wide	Failed to convert value `4294967296` to integer `u32`	37	52
+shift-width	Numerical overflow	37	44
+shift-unsigned	Failed to convert value `18446744073709551615` to integer `u32`	37	65
+neg	Unsupported unary operation `-` on `::std::bool`	37	42
+not	Unsupported unary operation `!` on `::std::string::String`	37	41
+cast-source	Type `::std::bool` cannot be converted with `as`, which only converts between `i64`, `u64` and `f64`	37	48
+cast-target	Type `::std::i64` cannot be converted with `as` to that type, which only converts to `i64`, `u64` or `f64`	37	46
+condition	Expected type `::std::bool` but found `::std::i64`	40	41
+type-condition	Expected type `::std::bool` but found `::std::any::Type`	40	43
+function-condition	Expected type `::std::bool` but found `::std::ops::Function`	51	52
+negative-index	Failed to convert value `-1` to integer `usize`	37	44
+non-number-index	Expected number type, but found `::std::f64`	37	45
+bounds	Index out of bounds, the length is `2` but the index is `5`	37	46
+wide-bounds	Index out of bounds, the length is `1` but the index is `18446744073709551615`	37	65
+tuple-bounds	Index out of bounds, the length is `2` but the index is `5`	37	45
+set-bounds	Index out of bounds, the length is `1` but the index is `1`	50	58
+get-target	The index get operation `::std::i64[::std::i64]` is not supported	48	52
+set-target	The index set operation `::std::i64[::std::i64] = ::std::i64` is not supported	48	56
+compound-get	The index get operation `::std::i64[::std::i64]` is not supported	48	57
+tuple-get	The tuple index get 0 operation is not supported on `::std::i64`	48	51
+tuple-set	The tuple index set operation is not supported on `::std::i64`	48	55
+tuple-compound	The tuple index get 0 operation is not supported on `::std::i64`	48	56
+missing-field	Missing field `b` on `::std::object::Object`	53	56
+field-target	Field `b` not available on `::std::i64`	48	51
+field-set-target	Missing field `b` on `::std::i64`	48	55
+call-target	Type `::std::i64` cannot be called since it's not a function	48	51
+arity-zero	Wrong number of arguments 0, expected 1	48	51
+arity-two	Wrong number of arguments 2, expected 1	48	54
+try	Type `::std::i64` is not supported as try operand	37	39
+range	Expected number type, but found `::std::f64`	46	52

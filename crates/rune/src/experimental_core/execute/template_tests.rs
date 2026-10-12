@@ -95,7 +95,11 @@ fn first_failure(parts: &[u32], expected: Error) {
 	let failure = executor
 		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[]), 1024)
 		.unwrap_err();
-	assert_eq!(failure.error, expected);
+	// D2 adds detail; the legacy oracle still checks every pre-D2 field.
+	assert_eq!(
+		failure.error.with_detail(Detail::None),
+		expected.with_detail(Detail::None)
+	);
 	assert!(failure.call_chain.is_empty());
 	assert!(failure.cleanup_error.is_none());
 	assert!(executor.is_idle());
@@ -131,7 +135,7 @@ fn d18_template_executor_is_reusable_after_a_formatting_failure() {
 		.invoke_args_for_test(&failing, &mut store, 0, Args::Values(&[]), 1024)
 		.unwrap_err();
 	assert_eq!(
-		failure.error,
+		failure.error.with_detail(Detail::None),
 		Error::new(ErrorKind::Type, "missing display form").at(loc(60))
 	);
 	assert!(executor.is_idle());

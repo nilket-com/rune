@@ -166,7 +166,10 @@ fn run_case(assign: bool, op: Binary, a: Value, b: Value, out: u32, expected: Re
 		}
 
 		(Err(failure), Err(want)) => {
-			assert_eq!(failure.error, want.at(loc()));
+			assert_eq!(
+				failure.error.with_detail(Detail::None),
+				want.at(loc()).with_detail(Detail::None)
+			);
 			assert!(failure.cleanup_error.is_none());
 			assert!(failure.call_chain.is_empty());
 		}
@@ -597,7 +600,7 @@ fn d7_production_heap_type_errors_preserve_roots_and_release_frame() {
 					.invoke_code(&code, &mut store, 0, &[&a, &b, &destination], 100)
 					.unwrap_err();
 				assert_eq!(
-					failure.error,
+					failure.error.with_detail(Detail::None),
 					Error::new(ErrorKind::Type, "primitive operation").at(loc())
 				);
 				assert!(failure.cleanup_error.is_none() && failure.call_chain.is_empty());
@@ -692,7 +695,7 @@ fn d7_nested_failure_locations_call_chain_cleanup_and_reuse() {
 					.invoke_code(&code, &mut store, 0, &[&ar, &br], 100)
 					.unwrap_err();
 				assert_eq!(
-					failure.error,
+					failure.error.with_detail(Detail::None),
 					Error::new(kind, "primitive operation").at(loc())
 				);
 				assert_eq!(&failure.call_chain[..], &[callsite]);

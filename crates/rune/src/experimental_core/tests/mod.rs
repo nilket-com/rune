@@ -39,6 +39,7 @@
 
 mod allocation_path;
 mod boundary_internal;
+mod diagnostics;
 mod differential;
 mod dispatch_state;
 mod executor;

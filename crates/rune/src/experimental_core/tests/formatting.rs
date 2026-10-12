@@ -177,6 +177,10 @@ fn sorted_objects_match_stock_debug_for_all_permutations_and_unicode_keys() {
 }
 
 #[test]
+#[cfg_attr(
+	miri,
+	ignore = "4095/4096-field objects exceed Miri's budget; covered by the native suite"
+)]
 fn object_sorting_respects_the_existing_node_budget_without_changing_store_usage() {
 	for count in [4095, 4096] {
 		let mut store = store();

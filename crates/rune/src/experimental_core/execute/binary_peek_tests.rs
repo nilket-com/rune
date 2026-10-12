@@ -177,7 +177,11 @@ fn run(assign: bool, op: Binary, l: Class, r: Class, out: u32) {
 		}
 
 		(Err(failure), Err(want)) => {
-			assert_eq!(failure.error, want.at(loc()), "{case}");
+			assert_eq!(
+				failure.error.with_detail(Detail::None),
+				want.at(loc()).with_detail(Detail::None),
+				"{case}"
+			);
 			assert!(failure.cleanup_error.is_none(), "{case}");
 			assert!(failure.call_chain.is_empty(), "{case}");
 		}

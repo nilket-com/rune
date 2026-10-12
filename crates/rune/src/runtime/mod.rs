@@ -206,6 +206,7 @@ pub(crate) mod vm_diagnostics;
 pub use self::vm_diagnostics::VmDiagnostics;
 pub(crate) use self::vm_diagnostics::VmDiagnosticsObj;
 
+pub(crate) mod messages;
 mod vm_error;
 #[cfg(feature = "emit")]
 pub(crate) use self::vm_error::VmErrorAt;

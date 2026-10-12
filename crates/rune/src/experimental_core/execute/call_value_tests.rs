@@ -82,7 +82,11 @@ fn fails(code: &Code, arg: Value, fuel: usize, expected: Error) {
 	let failure = executor
 		.invoke_args_for_test(code, &mut store, 0, Args::Values(&[arg]), fuel)
 		.unwrap_err();
-	assert_eq!(failure.error, expected);
+	// D2 adds detail; the legacy oracle still checks every pre-D2 field.
+	assert_eq!(
+		failure.error.with_detail(Detail::None),
+		expected.with_detail(Detail::None)
+	);
 
 	// The CallValue fails in the entry frame before publishing a callee frame.
 	assert!(failure.call_chain.is_empty());
@@ -243,7 +247,7 @@ fn d20_charge_precedes_call_value_checks() {
 		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 0)
 		.unwrap_err();
 	assert_eq!(
-		failure.error,
+		failure.error.with_detail(Detail::None),
 		Error::new(ErrorKind::FuelExhausted, "execute").at(loc(40))
 	);
 	assert!(failure.call_chain.is_empty() && failure.cleanup_error.is_none());
@@ -255,7 +259,7 @@ fn d20_charge_precedes_call_value_checks() {
 		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 1024)
 		.unwrap_err();
 	assert_eq!(
-		failure.error,
+		failure.error.with_detail(Detail::None),
 		Error::new(ErrorKind::Cancelled, "execute").at(loc(40))
 	);
 	assert!(executor.is_idle());
@@ -265,7 +269,7 @@ fn d20_charge_precedes_call_value_checks() {
 		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[Value::I64(7)]), 1024)
 		.unwrap_err();
 	assert_eq!(
-		failure.error,
+		failure.error.with_detail(Detail::None),
 		Error::new(ErrorKind::Type, "execute").at(loc(40))
 	);
 

@@ -56,6 +56,7 @@
 
 pub(crate) mod arithmetic;
 pub(crate) mod code;
+mod detail;
 pub mod error;
 pub mod execute;
 pub mod heap;

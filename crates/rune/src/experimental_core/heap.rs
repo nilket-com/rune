@@ -266,7 +266,9 @@ impl Store {
 	fn mutable(&mut self, h: Handle) -> Result<&mut Payload> {
 		let e = self.entry_mut(h)?;
 		if e.readers != 0 {
-			return Err(err(ErrorKind::AccessConflict));
+			return Err(
+				err(ErrorKind::AccessConflict).with_detail(super::error::Detail::WriteBorrowed)
+			);
 		}
 
 		e.payload
@@ -696,6 +698,19 @@ impl Store {
 			Value::Heap(h) => Ok(self.payload(h)?.tag()),
 			_ => value.primitive_type().ok_or_else(|| err(ErrorKind::Type)),
 		}
+	}
+
+	/// Diagnostic classification only: never invoked on a successful execution path.
+	pub(crate) fn diagnostic_type(&self, value: Value) -> Option<super::error::TypeName> {
+		use super::error::TypeName;
+		let Value::Heap(h) = value else {
+			return TypeName::primitive(value);
+		};
+		Some(match self.payload(h).ok()? {
+			Payload::RangeIterator { .. } => TypeName::RangeIter,
+			Payload::VectorIterator(_) => TypeName::VecIter,
+			payload => TypeName::from_type(payload.tag()),
+		})
 	}
 
 	pub(crate) fn text(&self, value: Value) -> Result<&str> {

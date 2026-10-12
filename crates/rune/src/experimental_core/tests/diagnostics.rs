@@ -1,0 +1,681 @@
+//! D2 catalogue: compile both engines first, then compare owned diagnostics.
+//!
+//! Both: the 50 pinned message/span rows in diagnostics_messages.tsv, all ten
+//! assignment symbols, and the mutation/read-lease case. Runtime classes remain
+//! coarse; no source semantics or failure precedence changes here.
+//! Retained: iterator and method hashes, macro Display spans, tuple-set past-end
+//! classification, and nominal names pending C. D1b wording changes are out of scope.
+//! S: dynamic object indexing/insertion, Option iteration, Vec tuple-index access,
+//! and Function clone remain semantic gaps, prerequisite to default fresh routing.
+//! Refused: closures, explicit iterator methods, and inclusive ranges. Compile
+//! errors compare frontend diagnostics, never VmError text.
+//! Host misuse/resources stay generic: foreign tokens have dedicated detail;
+//! InvalidCode/InvalidHandle/Allocation/capacity/fuel/cancellation are not enriched.
+//! B1 owns stdout errors; B2 owns format limits; S owns dynamic missing-key storage.
+//! Existing hand-built-code oracle tests retain all pre-D2 metadata assertions;
+//! this catalogue and pure rendering tests check the newly added detail field.
+use crate::experimental_core::{
+	error::ErrorKind,
+	execute::Executor,
+	frontend,
+	heap::{Limits, Store},
+};
+use crate::{Context, Diagnostics, Hash, Source, Sources};
+use std::string::ToString;
+
+fn compile(context: &Context, text: &str) -> (crate::runtime::Vm, frontend::Program) {
+	let mut sources = Sources::new();
+	sources.insert(Source::memory(text).unwrap()).unwrap();
+	let stock = crate::prepare(&mut sources)
+		.with_context(context)
+		.build_vm()
+		.unwrap_or_else(|e| panic!("stock must compile {text}: {e:?}"));
+	let mut sources = Sources::new();
+	sources.insert(Source::memory(text).unwrap()).unwrap();
+	let fresh = frontend::compile(&mut sources, context, &mut Diagnostics::new(), 73)
+		.unwrap_or_else(|e| panic!("fresh must admit {text}: {e:?}"));
+	(stock, fresh)
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn diagnostic_catalogue_both_engines() {
+	use ErrorKind::*;
+	let context = Context::with_default_modules().unwrap();
+	// Every row below is Both: no silent stock-only or fresh-only escape hatch.
+	let rows = [
+		("binary", "1 + true", Type, "primitive operation"),
+		("multiline", "1 +\n true", Type, "primitive operation"),
+		("binary-float", "1 + 1.0", Type, "primitive operation"),
+		("char", "'a' + 1", Type, "primitive operation"),
+		("unit", "() + 1", Type, "primitive operation"),
+		("type", "i64 + 1", Type, "primitive operation"),
+		("function", "let f = g; f + 1", Type, "primitive operation"),
+		(
+			"assign",
+			"let x = 1; x += true",
+			Type,
+			"primitive operation",
+		),
+		("assign-string", "let x = \"a\"; x += 1", Type, "store"),
+		("string", "\"a\" + 1", Type, "primitive operation"),
+		("string-compare", "\"a\" < 1", Type, "primitive operation"),
+		(
+			"string-unsupported",
+			"\"a\" - \"b\"",
+			Type,
+			"primitive operation",
+		),
+		(
+			"overflow",
+			"let x = 9223372036854775807; x + 1",
+			Overflow,
+			"primitive operation",
+		),
+		(
+			"underflow",
+			"let x = -9223372036854775808; x - 1",
+			Overflow,
+			"primitive operation",
+		),
+		(
+			"unsigned-underflow",
+			"1u64 - 2u64",
+			Overflow,
+			"primitive operation",
+		),
+		("divide", "1 / 0", DivisionByZero, "primitive operation"),
+		("remainder", "1 % 0", DivisionByZero, "primitive operation"),
+		(
+			"coerce-signed",
+			"1 + 18446744073709551615u64",
+			IntegerCoercion,
+			"primitive operation",
+		),
+		(
+			"coerce-unsigned",
+			"1u64 + -1",
+			IntegerCoercion,
+			"primitive operation",
+		),
+		(
+			"shift-negative",
+			"1 << -1",
+			InvalidShift,
+			"primitive operation",
+		),
+		(
+			"shift-wide",
+			"1 << 4294967296",
+			InvalidShift,
+			"primitive operation",
+		),
+		(
+			"shift-width",
+			"1 << 64",
+			InvalidShift,
+			"primitive operation",
+		),
+		(
+			"shift-unsigned",
+			"1 << 18446744073709551615u64",
+			InvalidShift,
+			"primitive operation",
+		),
+		("neg", "-true", Type, "primitive operation"),
+		("not", "!\"a\"", Type, "primitive operation"),
+		(
+			"cast-source",
+			"true as i64",
+			InvalidCast,
+			"primitive operation",
+		),
+		(
+			"cast-target",
+			"1 as bool",
+			InvalidCast,
+			"primitive operation",
+		),
+		("condition", "if 1 {}", Type, "execute"),
+		("type-condition", "if i64 {}", Type, "execute"),
+		("function-condition", "let f = g; if f {}", Type, "execute"),
+		("negative-index", "[1][-1]", IndexOutOfBounds, "execute"),
+		("non-number-index", "[1][1.5]", Type, "execute"),
+		("bounds", "[1, 2][5]", IndexOutOfBounds, "store"),
+		(
+			"wide-bounds",
+			"[1][18446744073709551615u64]",
+			IndexOutOfBounds,
+			"store",
+		),
+		("tuple-bounds", "(1, 2).5", IndexOutOfBounds, "store"),
+		(
+			"set-bounds",
+			"let v = [1]; v[1] = 2",
+			IndexOutOfBounds,
+			"store",
+		),
+		("get-target", "let x = 1; x[0]", Type, "execute"),
+		("set-target", "let x = 1; x[0] = 2", Type, "store"),
+		("compound-get", "let x = 1; x[0] += 1", Type, "execute"),
+		("tuple-get", "let x = 1; x.0", Type, "execute"),
+		("tuple-set", "let x = 1; x.0 = 2", Type, "execute"),
+		("tuple-compound", "let x = 1; x.0 += 1", Type, "execute"),
+		(
+			"missing-field",
+			"let o = #{a:1}; o.b",
+			IndexOutOfBounds,
+			"store",
+		),
+		("field-target", "let x = 1; x.b", Type, "store"),
+		("field-set-target", "let x = 1; x.b = 2", Type, "store"),
+		("call-target", "let x = 1; x()", Type, "execute"),
+		("arity-zero", "let f = g; f()", Type, "execute"),
+		("arity-two", "let f = g; f(1,2)", Type, "execute"),
+		("try", "1?", Type, "store"),
+		("range", "for i in 0..1.5 {}", Type, "execute"),
+	];
+	let mut failures = std::vec::Vec::new();
+	for (id, body, kind, operation) in rows {
+		// Failures occur on line 3 or later. The helper also makes named-function
+		// values available without admitting closures.
+		let source =
+			std::format!("pub fn target() {{\n\tlet unused = ();\n\t{body}\n}}\nfn g(a) {{ a }}");
+		let (mut stock, program) = compile(&context, &source);
+		let stock_error = stock.call(["target"], ()).unwrap_err();
+		let at = stock_error.first_location().unwrap();
+		let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
+		let stock_span = inst.span.range();
+		let source_id = inst.source_id.into_index();
+		let text = stock_error.into_kind().to_string();
+		let pinned = include_str!("diagnostics_messages.tsv")
+			.lines()
+			.skip(1)
+			.map(|line| line.split('\t').collect::<std::vec::Vec<_>>())
+			.find(|row| row[0] == id)
+			.unwrap();
+		assert_eq!(text, pinned[1], "pinned stock text: {id}");
+		assert_eq!(
+			stock_span,
+			pinned[2].parse::<usize>().unwrap()..pinned[3].parse::<usize>().unwrap(),
+			"pinned span: {id}"
+		);
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		let failure = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["target"])).unwrap(),
+				&[],
+				100_000,
+			)
+			.unwrap_err();
+		let fresh_text = failure.error.message(&program).to_string();
+		let at = failure.error.location.unwrap();
+		if (
+			fresh_text.as_str(),
+			failure.error.kind,
+			failure.error.operation,
+			at.start as usize..at.end as usize,
+			at.source as usize,
+			at.revision,
+		) != (
+			text.as_str(),
+			kind,
+			operation,
+			stock_span.clone(),
+			source_id,
+			73,
+		) {
+			failures.push(std::format!(
+				"{id}: stock={text:?} {stock_span:?}; fresh={fresh_text:?} {:?} {at:?} op={}",
+				failure.error.kind,
+				failure.error.operation
+			));
+		}
+		assert!(failure.call_chain.is_empty(), "{id}");
+		assert!(failure.cleanup_error.is_none(), "{id}");
+		assert!(executor.is_idle(), "{id}");
+		assert_eq!(store.live_entries(), 0, "{id}");
+	}
+	assert!(failures.is_empty(), "{}", failures.join("\n"));
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn retained_diagnostics_and_semantic_gaps_are_explicit() {
+	let context = Context::with_default_modules().unwrap();
+	// Retained: no stock wording change for the instance-function hash or DISPLAY_FMT.
+	for (id, body, expected) in [
+		("iter", "for i in 1 {}", "Type `::std::i64` is not iterable"),
+		(
+			"len",
+			"let x = 1; x.len()",
+			"no method `len` on `::std::i64`",
+		),
+		(
+			"push",
+			"let x = 1; x.push(2)",
+			"no method `push` on `::std::i64`",
+		),
+		(
+			"display",
+			"format!(\"{}\", [1])",
+			"Missing protocol function `DISPLAY_FMT` for `::std::vec::Vec`",
+		),
+	] {
+		let source = std::format!("pub fn target() {{\n\n{body}\n}}");
+		let (mut stock, program) = compile(&context, &source);
+		let stock = stock.call(["target"], ()).unwrap_err();
+		let at = stock.first_location().unwrap();
+		let span = at
+			.unit
+			.debug_info()
+			.unwrap()
+			.instruction_at(at.ip)
+			.unwrap()
+			.span
+			.range();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let failure = Executor::new()
+			.unwrap()
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["target"])).unwrap(),
+				&[],
+				100_000,
+			)
+			.unwrap_err();
+		assert_eq!(
+			failure.error.message(&program).to_string(),
+			expected,
+			"{id}"
+		);
+		let (stock_text, stock_span, fresh_span, reason) = match id {
+			"iter" => ("Missing instance function `0x57a2b2f073daaf28` for `::std::i64`",28..29,19..32,"stock points at iterable; fresh points at the for expression; hash wording retained"),
+			"len" => ("Missing instance function `0x201f597bd58fafa8` for `::std::i64`",30..37,30..37,"stock instance-function hash is retained"),
+			"push" => ("Missing instance function `0x3fd16e7ebc3afb1a` for `::std::i64`",30..39,30..39,"stock instance-function hash is retained"),
+			"display" => ("Missing protocol function `DISPLAY_FMT` for `::std::vec::Vec`",0..36,19..37,"stock macro expansion maps to its enclosing item; fresh maps to the invocation"),
+			_ => unreachable!(),
+		};
+		assert!(!reason.is_empty());
+		assert_eq!(stock.into_kind().to_string(), stock_text, "{id}");
+		assert_eq!(span, stock_span, "{id}");
+		let at = failure.error.location.unwrap();
+		assert_eq!(at.start as usize..at.end as usize, fresh_span, "{id}");
+		assert_eq!((at.source, at.revision), (0, 73));
+	}
+	// S: stock succeeds; fresh's current semantic gap stays visible until S lands.
+	for (id,body,expected) in [
+		(
+			"object-index",
+			"let o = #{a:1}; o[\"a\"]",
+			"The index get operation `::std::object::Object[::std::string::String]` is not supported",
+		),
+		(
+			"object-insert",
+			"let o = #{a:1}; o.b = 2; o",
+			"Missing field `b` on `::std::object::Object`",
+		),
+		(
+			"option-iter",
+			"for i in Some(1) {}",
+			"Type `::std::option::Option` is not iterable",
+		),
+		(
+			"vec-tuple-get",
+			"let v = [1]; v.0",
+			"The tuple index get 0 operation is not supported on `::std::vec::Vec`",
+		),
+		(
+			"vec-tuple-set",
+			"let v = [1]; v.0 = 2; v",
+			"The tuple index set operation is not supported on `::std::vec::Vec`",
+		),
+		(
+			"function-clone",
+			"let f = g; f.clone()",
+			"no method `clone` on `::std::ops::Function`",
+		),
+	] {
+		let source = std::format!("pub fn target() {{\n\n{body}\n}}\nfn g(a) {{ a }}");
+		let (mut stock,program) = compile(&context,&source);
+		let stock_value = stock.call(["target"], ()).unwrap();
+		match id {
+			"object-index" | "vec-tuple-get" => assert_eq!(crate::from_value::<i64>(stock_value).unwrap(), 1),
+			"object-insert" => {
+				let object = stock_value.borrow_ref::<crate::runtime::Object>().unwrap();
+				assert_eq!(object.len(), 2);
+				assert_eq!(object.get_value::<_, i64>("a").unwrap(), Some(1));
+				assert_eq!(object.get_value::<_, i64>("b").unwrap(), Some(2));
+			}
+			"option-iter" => crate::from_value::<()>(stock_value).unwrap(),
+			"vec-tuple-set" => {
+				let vec = stock_value.borrow_ref::<crate::runtime::Vec>().unwrap();
+				assert_eq!(vec.len(), 1);
+				assert_eq!(vec.get_value::<i64>(0).unwrap(), Some(2));
+			}
+			"function-clone" => assert_eq!(stock_value.type_info().to_string(), "::std::ops::Function"),
+			_ => unreachable!(),
+		}
+		let mut store = Store::new(Limits::default()).unwrap();
+		let failure = Executor::new().unwrap().invoke(&program,&mut store,program.function(Hash::type_hash(["target"])).unwrap(),&[],100_000).unwrap_err();
+		assert_eq!(failure.error.message(&program).to_string(),expected,"S {id}");
+		let expression = match id {
+			"object-index" => "o[\"a\"]", "object-insert" => "o.b = 2",
+			"option-iter" => "for i in Some(1) {}", "vec-tuple-get" => "v.0",
+			"vec-tuple-set" => "v.0 = 2", "function-clone" => "f.clone()", _ => unreachable!(),
+		};
+		let start = source.find(expression).unwrap();
+		let at = failure.error.location.unwrap();
+		assert_eq!(at.start as usize..at.end as usize, start..start+expression.len(), "S span: {id}");
+		assert_eq!((at.source, at.revision), (0, 73));
+		assert_eq!(store.live_entries(),0,"{id}");
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn diagnostics_in_a_callee_keep_full_spans_and_call_chain_after_cleanup() {
+	let context = Context::with_default_modules().unwrap();
+	let source = "pub fn target() {\n\n outer()\n}\nfn outer() {\n inner()\n}\nfn inner() {\n let o = #{a:1};\n o.missing\n}";
+	let (mut stock, program) = compile(&context, source);
+	let error = stock.call(["target"], ()).unwrap_err();
+	let at = error.first_location().unwrap();
+	let info = at.unit.debug_info().unwrap();
+	let span = info.instruction_at(at.ip).unwrap().span.range();
+	let chain: std::vec::Vec<_> = at
+		.frames
+		.iter()
+		.rev()
+		.map(|frame| {
+			// Stock saves the RESUME IP; select the preceding actual instruction,
+			// not ip-1 (encoded instructions have variable lengths).
+			let (ip, inst) = at
+				.unit
+				.iter_instructions()
+				.take_while(|(ip, _)| *ip < frame.ip)
+				.last()
+				.unwrap();
+			assert!(matches!(
+				inst.kind,
+				crate::runtime::inst::Kind::Call { .. }
+					| crate::runtime::inst::Kind::CallFn { .. }
+					| crate::runtime::inst::Kind::CallOffset { .. }
+			));
+			info.instruction_at(ip).unwrap().span.range()
+		})
+		.collect();
+	let expected = error.into_kind().to_string();
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let failure = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["target"])).unwrap(),
+			&[],
+			100_000,
+		)
+		.unwrap_err();
+	assert_eq!(failure.error.message(&program).to_string(), expected);
+	let at = failure.error.location.unwrap();
+	assert_eq!(at.start as usize..at.end as usize, span);
+	let fresh_chain: std::vec::Vec<_> = failure
+		.call_chain
+		.iter()
+		.map(|at| {
+			assert_eq!((at.source, at.revision), (0, 73));
+			at.start as usize..at.end as usize
+		})
+		.collect();
+	assert_eq!(fresh_chain, chain);
+	assert_eq!(fresh_chain.len(), 2);
+	assert!(executor.is_idle());
+	assert_eq!(store.live_entries(), 0);
+	store.close().unwrap();
+	assert_eq!(failure.error.message(&program).to_string(), expected);
+}
+
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
+#[test]
+#[cfg_attr(miri, ignore = "native generated execution and frontend compilation")]
+fn native_replay_preserves_diagnostic_detail() {
+	use crate::experimental_core::region::cache;
+	struct Reset;
+	impl Drop for Reset {
+		fn drop(&mut self) {
+			cache::enable_for_test(false);
+		}
+	}
+	let _reset = Reset;
+	let context = Context::with_default_modules().unwrap();
+	let mut retries = 0;
+	for body in [
+		"let x = 9223372036854775807; x + i",
+		"let x = -9223372036854775808; x - i",
+		"let z = i - 1; i / z",
+		"i << 64",
+		"i + true",
+	] {
+		let source =
+			std::format!("pub fn target() {{ let i = 1; while i < 100 {{ {body}; i += 1; }} }}");
+		let (_, program) = compile(&context, &source);
+		let mut store = Store::new(Limits::default()).unwrap();
+		let f = program.function(Hash::type_hash(["target"])).unwrap();
+		cache::enable_for_test(false);
+		let interpreted = Executor::new()
+			.unwrap()
+			.invoke(&program, &mut store, f, &[], 100_000)
+			.unwrap_err();
+		cache::enable_for_test(true);
+		let native = Executor::new()
+			.unwrap()
+			.invoke(&program, &mut store, f, &[], 100_000)
+			.unwrap_err();
+		if let Some(regions) = cache::regions_for_test(program.code.id()) {
+			retries += regions.iter().map(|r| r.exits[2]).sum::<u64>();
+		}
+		assert_eq!(interpreted.error, native.error, "{body}");
+		assert_eq!(interpreted.call_chain, native.call_chain, "{body}");
+		assert_eq!(interpreted.cleanup_error, native.cleanup_error, "{body}");
+		assert_eq!(
+			native.error.message(&program).to_string(),
+			interpreted.error.message(&program).to_string()
+		);
+	}
+	assert!(
+		retries > 0,
+		"at least one real native Retry exit must be exercised"
+	);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn compile_time_refusals_are_catalogued_before_execution() {
+	use crate::experimental_core::error::Refusal;
+	let context = Context::with_default_modules().unwrap();
+	for (source, refusal) in [
+		(
+			"pub fn target() { let f = |a| a; f(1) }",
+			Refusal::CallClosure,
+		),
+		("pub fn target() { (0..2).iter() + 1 }", Refusal::Method),
+		("pub fn target() { 0..=2 }", Refusal::Range),
+	] {
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(source).unwrap()).unwrap();
+		assert!(
+			crate::prepare(&mut sources)
+				.with_context(&context)
+				.build_vm()
+				.is_ok(),
+			"stock compile: {source}"
+		);
+		if source.contains(".iter()") {
+			let mut sources = Sources::new();
+			sources.insert(Source::memory(source).unwrap()).unwrap();
+			let mut stock = crate::prepare(&mut sources)
+				.with_context(&context)
+				.build_vm()
+				.unwrap();
+			assert_eq!(stock.call(["target"],()).unwrap_err().into_kind().to_string(),"Unsupported binary operation `+` on `::std::ops::RangeIter<::std::i64>` and `::std::i64`");
+		}
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(source).unwrap()).unwrap();
+		let error = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 73)
+			.err()
+			.expect("fresh refusal");
+		assert_eq!(error.refusal, Some(refusal), "{source}");
+		assert_eq!(error.kind, ErrorKind::Unsupported);
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn access_conflict_wording_distinguishes_mutation_and_invalidated_payload() {
+	let context = Context::with_default_modules().unwrap();
+	let (mut stock, program) = compile(
+		&context,
+		"pub fn target() { let v = [1]; for x in v { v.push(2); } }",
+	);
+	let stock = stock.call(["target"], ()).unwrap_err();
+	let stock_span = stock.first_location().unwrap();
+	let stock_span = stock_span
+		.unit
+		.debug_info()
+		.unwrap()
+		.instruction_at(stock_span.ip)
+		.unwrap()
+		.span
+		.range();
+	let mut store = Store::new(Limits::default()).unwrap();
+	let failure = Executor::new()
+		.unwrap()
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["target"])).unwrap(),
+			&[],
+			100_000,
+		)
+		.unwrap_err();
+	assert_eq!(
+		failure.error.detail,
+		crate::experimental_core::error::Detail::WriteBorrowed
+	);
+	assert_eq!(
+		failure.error.message(&program).to_string(),
+		stock.into_kind().to_string()
+	);
+	let at = failure.error.location.unwrap();
+	assert_eq!(at.start as usize..at.end as usize, stock_span);
+	let value = store.string("invalidated").unwrap();
+	store.invalidate(value).unwrap();
+	let error = store.text(value).unwrap_err();
+	assert_eq!(error.kind, ErrorKind::AccessConflict);
+	assert_eq!(error.detail, crate::experimental_core::error::Detail::None);
+	assert_eq!(error.message(&program).to_string(), "store: AccessConflict");
+	store.release(value).unwrap();
+	assert_eq!(store.live_entries(), 0);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn all_assignment_symbols_are_preserved_in_owned_details() {
+	let context = Context::with_default_modules().unwrap();
+	for op in ["+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>="] {
+		let source = std::format!("pub fn target() {{\n\nlet x = 1; x {op} true\n}}");
+		let (mut stock, program) = compile(&context, &source);
+		let error = stock.call(["target"], ()).unwrap_err();
+		let at = error.first_location().unwrap();
+		let span = at
+			.unit
+			.debug_info()
+			.unwrap()
+			.instruction_at(at.ip)
+			.unwrap()
+			.span
+			.range();
+		let expected =
+			std::format!("Unsupported binary operation `{op}` on `::std::i64` and `::std::bool`");
+		assert_eq!(error.into_kind().to_string(), expected);
+		let mut store = Store::new(Limits::default()).unwrap();
+		let failure = Executor::new()
+			.unwrap()
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["target"])).unwrap(),
+				&[],
+				100_000,
+			)
+			.unwrap_err();
+		assert_eq!(failure.error.message(&program).to_string(), expected);
+		let at = failure.error.location.unwrap();
+		assert_eq!(at.start as usize..at.end as usize, span);
+		assert_eq!((at.source, at.revision), (0, 73));
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn a_compile_error_is_not_compared_as_a_runtime_error() {
+	use crate::diagnostics::Diagnostic;
+	use crate::experimental_core::error::Refusal;
+	let context = Context::with_default_modules().unwrap();
+	let source = "pub fn target() { let x = missing; x }";
+	let start = source.find("missing").unwrap();
+	let mut sources = Sources::new();
+	sources.insert(Source::memory(source).unwrap()).unwrap();
+	let mut diagnostics = Diagnostics::new();
+	assert!(crate::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(&mut diagnostics)
+		.build_vm()
+		.is_err());
+	let Diagnostic::Fatal(fatal) = &diagnostics.diagnostics()[0] else {
+		panic!("fatal compile diagnostic");
+	};
+	assert_eq!(fatal.to_string(), "No local variable `missing`");
+	assert_eq!(fatal.span().unwrap().range(), start..start + 7);
+	let mut sources = Sources::new();
+	sources.insert(Source::memory(source).unwrap()).unwrap();
+	let mut fresh_diagnostics = Diagnostics::new();
+	let error = frontend::compile(&mut sources, &context, &mut fresh_diagnostics, 73)
+		.err()
+		.expect("frontend refusal");
+	assert_eq!(error.refusal, Some(Refusal::FrontendDiagnostic));
+	let Diagnostic::Fatal(fresh) = &fresh_diagnostics.diagnostics()[0] else {
+		panic!("fresh frontend fatal");
+	};
+	assert_eq!(fresh.to_string(), fatal.to_string());
+	assert_eq!(fresh.span().unwrap(), fatal.span().unwrap());
+}

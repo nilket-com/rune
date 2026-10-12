@@ -38,6 +38,15 @@ pub struct Program {
 }
 
 impl Program {
+	#[cfg(test)]
+	pub(crate) fn for_diagnostics_test(code: Code) -> Self {
+		Self {
+			code,
+			functions: Vec::new(),
+			sources: Vec::new(),
+		}
+	}
+
 	/// Source records for rendering error locations after frontend teardown.
 	pub fn sources(&self) -> &[SourceRecord] {
 		&self.sources

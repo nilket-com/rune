@@ -60,6 +60,7 @@ fn refused_by(kind: ErrorKind, operation: &'static str) -> Error {
 		location: None,
 		operation,
 		refusal: Some(Refusal::TypeTable),
+		detail: super::error::Detail::None,
 	}
 }
 
@@ -245,6 +246,16 @@ pub(crate) fn intern_fmt(hash: u64, name: core::fmt::Arguments<'_>) -> Result<No
 /// of literals and host-supplied nominals).
 pub fn contains(nominal: Nominal) -> bool {
 	with_global(|table| Ok(table.contains(nominal))).unwrap_or(false)
+}
+
+/// Copy a diagnostic name without initializing the table or holding its lock while formatting.
+pub(crate) fn name_copy(nominal: Nominal, buffer: &mut [u8; 256]) -> Option<usize> {
+	let guard = GLOBAL.lock().ok()?;
+	let name = guard.as_ref()?.name(nominal)?;
+	buffer
+		.get_mut(..name.len())?
+		.copy_from_slice(name.as_bytes());
+	Some(name.len())
 }
 
 #[cfg(test)]
