@@ -52,4 +52,5 @@ mod predecode;
 mod semantics;
 mod store_integrity;
 mod strict_conditions;
+mod struct_names;
 mod values;

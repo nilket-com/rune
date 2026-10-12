@@ -24,6 +24,7 @@ pub(crate) fn function(
 	revision: u64,
 	resolve: &mut dyn FnMut(Hash, Location) -> Result<u32>,
 	constants: &crate::query::QueryInner<'_>,
+	pool: &crate::compile::Pool,
 	stdio_println: bool,
 	transaction: &mut CompileTransaction,
 ) -> Result<Function> {
@@ -41,6 +42,7 @@ pub(crate) fn function(
 		resolve,
 		constants,
 		stdio_println,
+		pool,
 		transaction,
 	};
 
@@ -96,6 +98,7 @@ struct Lower<'a, 'hir> {
 	constants: &'a crate::query::QueryInner<'hir>,
 	/// The Context's `println` is the certified stdio builtin; otherwise refuse.
 	stdio_println: bool,
+	pool: &'a crate::compile::Pool,
 	transaction: &'a mut CompileTransaction,
 }
 
@@ -437,24 +440,27 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Ok(Some(tag));
 		}
 
-		if !self.constants.fresh_struct_type(hash) {
+		if self.constants.fresh_struct_shape(hash).is_none() {
 			return Ok(None);
 		}
 
 		self.struct_tag(hash, span).map(Some)
 	}
 
-	/// The identity is the type hash; the name recorded with it is the hash's
-	/// text, formatted on the stack only when the hash is new (item paths are
-	/// not plumbed into the lowerer).
+	/// Identity is the type hash; presentation uses its real item path. The
+	/// append-only table keeps the first published name for that identity.
 	fn struct_tag(&mut self, hash: Hash, span: Span) -> Result<Type> {
-		match self
-			.transaction
-			.stage(hash.into_inner(), format_args!("{hash}"))
-		{
-			Ok(nominal) => Ok(Type::Struct(nominal)),
-			Err(e) => Err(e.at(self.location(span))),
-		}
+		let shape = self
+			.constants
+			.fresh_struct_shape(hash)
+			.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
+		self.transaction
+			.stage(
+				hash.into_inner(),
+				format_args!("{}", self.pool.item(shape.item)),
+			)
+			.map(Type::Struct)
+			.map_err(|e| e.at(self.location(span)))
 	}
 
 	fn field_index(&mut self, index: usize, span: Span) -> Result<u32> {
@@ -997,6 +1003,26 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 			E::Binary(binary) => self.binary(binary, out, span)?,
 			E::Object(object) => {
+				// Check the complete declared shape before staging any identity.
+				let order = if let hir::ExprObjectKind::Struct { hash } = object.kind {
+					let shape = self
+						.constants
+						.fresh_struct_shape(hash)
+						.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
+					let crate::compile::meta::Fields::Named(fields) = shape.fields else {
+						return Err(self.refused(span, Refusal::ObjectConstructor));
+					};
+					Some(
+						declaration_order(
+							&fields.fields,
+							object.assignments.iter().map(|f| f.key.1),
+						)
+						.map_err(|e| e.at(self.location(span)))?,
+					)
+				} else {
+					None
+				};
+
 				let tag = match object.kind {
 					hir::ExprObjectKind::Anonymous => Type::Object,
 					hir::ExprObjectKind::Struct { hash } => self.struct_tag(hash, span)?,
@@ -1016,9 +1042,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				let values = self.operands(&ids)?;
 				let mut fields = Vec::try_with_capacity(keys.len() * 2)?;
 
-				for (key, value) in keys.iter().zip(values.iter()) {
-					fields.try_push(*key)?;
-					fields.try_push(*value)?;
+				// operands() snapshots in SOURCE order. Only the completed slot
+				// pairs are permuted to declaration order for the record layout.
+				for position in 0..keys.len() {
+					let index = order.as_ref().map_or(position, |order| order[position]);
+					fields.try_push(keys[index])?;
+					fields.try_push(values[index])?;
 				}
 
 				let (args_start, args_len) = self.function.arguments(&fields)?;
@@ -1443,4 +1472,72 @@ fn type_tag(hash: Hash) -> Option<Type> {
 	} else {
 		return None;
 	})
+}
+
+/// Validate positions and the literal's exact key set independently of HIR.
+fn declaration_order<'a>(
+	fields: &[crate::compile::meta::FieldMeta],
+	keys: impl Iterator<Item = &'a str> + Clone,
+) -> Result<Vec<usize>> {
+	let refused = || Error::refused(Refusal::ObjectConstructor);
+	if keys.clone().count() != fields.len() {
+		return Err(refused());
+	}
+	let mut order = Vec::try_with_capacity(fields.len())?;
+	order.try_resize(fields.len(), usize::MAX)?;
+	for field in fields {
+		if field.position >= order.len() || order[field.position] != usize::MAX {
+			return Err(refused());
+		}
+		let index = keys
+			.clone()
+			.position(|key| key == field.name.as_ref())
+			.ok_or_else(refused)?;
+		if keys
+			.clone()
+			.filter(|key| *key == field.name.as_ref())
+			.count() != 1
+			|| order.contains(&index)
+		{
+			return Err(refused());
+		}
+		order[field.position] = index;
+	}
+	Ok(order)
+}
+
+#[cfg(test)]
+mod shape_tests {
+	use super::*;
+	use crate::compile::meta::FieldMeta;
+	fn field(name: &str, position: usize) -> FieldMeta {
+		FieldMeta {
+			name: crate::alloc::Box::<str>::try_from(name).unwrap(),
+			position,
+		}
+	}
+	#[test]
+	fn declaration_positions_and_exact_key_sets_are_validated() {
+		let fields = [field("x", 0), field("y", 1)];
+		assert_eq!(
+			declaration_order(&fields, ["y", "x"].into_iter()).unwrap(),
+			[1, 0]
+		);
+		for keys in [["x", "x"], ["x", "z"]] {
+			assert_eq!(
+				declaration_order(&fields, keys.into_iter())
+					.unwrap_err()
+					.refusal,
+				Some(Refusal::ObjectConstructor)
+			);
+		}
+		assert!(declaration_order(&fields, ["x"].into_iter()).is_err());
+		for fields in [
+			[field("x", 0), field("y", 0)],
+			[field("x", 0), field("y", 2)],
+			[field("x", 0), field("x", 1)],
+		] {
+			assert!(declaration_order(&fields, ["x", "y"].into_iter()).is_err());
+		}
+	}
 }

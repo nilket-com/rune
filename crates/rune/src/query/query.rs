@@ -111,20 +111,32 @@ pub(crate) struct QueryInner<'arena> {
 	pub(crate) defer_queue: VecDeque<DeferEntry>,
 }
 
+#[cfg(feature = "fresh-core")]
+pub(crate) struct StructShape<'a> {
+	pub(crate) item: ItemId,
+	pub(crate) fields: &'a meta::Fields,
+}
+
 impl QueryInner<'_> {
-	// Descriptor lookup only: never construct a legacy value or invoke a protocol.
+	// Borrowed metadata only: never constructs a legacy value or invokes a protocol.
 	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_struct_type(&self, hash: Hash) -> bool {
-		self.meta.values().any(|meta| {
-			!meta.context
-				&& meta.hash == hash
-				&& matches!(
-					meta.kind,
-					meta::Kind::Struct {
-						enum_hash: Hash::EMPTY,
-						..
-					}
-				)
+	pub(crate) fn fresh_struct_shape(&self, hash: Hash) -> Option<StructShape<'_>> {
+		self.meta.values().find_map(|m| {
+			if m.context || m.hash != hash {
+				return None;
+			}
+			let meta::Kind::Struct {
+				enum_hash: Hash::EMPTY,
+				fields,
+				..
+			} = &m.kind
+			else {
+				return None;
+			};
+			Some(StructShape {
+				item: m.item_meta.item,
+				fields,
+			})
 		})
 	}
 

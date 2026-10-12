@@ -62,8 +62,8 @@ fn unsupported() -> Error {
 }
 
 impl Store {
-	/// Display/debug on the admitted slice. Nominal struct names are not owned
-	/// yet, so nominal debug is explicitly refused rather than guessed.
+	/// Display/debug on the admitted slice. Struct names are copied from the
+	/// append-only table before formatting, so recursion never holds its lock.
 	pub(crate) fn format_value(&self, value: Value, debug: bool) -> Result<String> {
 		self.format_parts(core::iter::once(Ok((value, debug))))
 	}
@@ -198,6 +198,28 @@ impl Store {
 						self.render(*value, true, depth + 1, sink)?;
 					}
 
+					sink.push("}")
+				}
+
+				Payload::Record {
+					tag: Type::Struct(nominal),
+					fields,
+				} if debug => {
+					let mut buffer = [0; 256];
+					let invalid = || Error::new(ErrorKind::Unsupported, "struct name");
+					let len = super::super::nominal::name_copy(*nominal, &mut buffer)
+						.ok_or_else(invalid)?;
+					let name = core::str::from_utf8(&buffer[..len]).map_err(|_| invalid())?;
+					sink.push(name)?;
+					sink.push(" {")?;
+					for (i, (key, value)) in fields.iter().enumerate() {
+						if i != 0 {
+							sink.push(", ")?;
+						}
+						sink.push(key.as_str())?;
+						sink.push(": ")?;
+						self.render(*value, true, depth + 1, sink)?;
+					}
 					sink.push("}")
 				}
 

@@ -72,10 +72,7 @@ fn scalar_reference_shapes_and_sorted_object_debug() {
 
 	let tag = Type::Struct(crate::experimental_core::nominal::intern(42, "Point").unwrap());
 	let nominal = store.record(tag, &[("x", Value::I64(1))]).unwrap();
-	assert_eq!(
-		store.format_value(nominal, true).unwrap_err().kind,
-		ErrorKind::Unsupported
-	);
+	assert_eq!(store.format_value(nominal, true).unwrap(), "Point {x: 1}");
 }
 
 #[test]

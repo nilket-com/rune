@@ -331,6 +331,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 							&exprs,
 							&hir,
 							self.q.inner,
+							self.q.pool,
 							self.q.context,
 							&refused_functions,
 						)

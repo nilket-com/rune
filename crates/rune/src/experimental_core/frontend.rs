@@ -87,6 +87,7 @@ impl Collector {
 		exprs: &crate::hir::Exprs<'_>,
 		item: &crate::hir::ItemFn<'_>,
 		constants: &crate::query::QueryInner<'_>,
+		pool: &Pool,
 		context: &Context,
 		refused_functions: &[(Hash, Refusal)],
 	) -> Result<()> {
@@ -116,6 +117,7 @@ impl Collector {
 				Ok(id)
 			},
 			constants,
+			pool,
 			context.fresh_stdio_println(),
 			&mut self.transaction,
 		);

@@ -755,6 +755,20 @@ mod tests {
 				// Finish allocation and remap allocation both precede commit.
 				super::super::code::transaction_tests::allocation_refusals_publish_nothing();
 				assert_eq!(global_len(), 4);
+				let name = "N".repeat(256);
+				compile(&std::format!(
+					"struct {name} {{ x }} pub fn main() {{ {name} {{ x: 1 }} }}"
+				))
+				.unwrap();
+				assert_eq!(global_len(), 5);
+				let too_long = "L".repeat(257);
+				let error = compile(&std::format!(
+					"struct {too_long} {{ x }} pub fn main() {{ {too_long} {{ x: 1 }} }}"
+				))
+				.err()
+				.unwrap();
+				assert_eq!(error.refusal, Some(Refusal::TypeTable));
+				assert_eq!(global_len(), 5, "overlong name never publishes");
 			}
 			_ => panic!("unknown child mode"),
 		}
