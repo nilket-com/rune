@@ -203,6 +203,21 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 				}
 			}
 			Err(e) => {
+				// Assertion oracle opt-in: preserve exact stock failure metadata without
+				// changing any existing frozen observation or running the case twice.
+				if mode == "assert-main" {
+					let at = e.first_location().expect("stock error location");
+					let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
+					let range = inst.span.range();
+					let site = format!(
+						"{}:{}:{}",
+						inst.source_id.into_index(),
+						range.start,
+						range.end
+					);
+					let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
+					fs::write(result.with_extension("site"), site).unwrap();
+				}
 				let k = e.into_kind();
 				Observation::new(
 					"error",
@@ -1403,3 +1418,6 @@ fn emission_child() {
 	fs::write(result, text).unwrap();
 	std::process::exit(0);
 }
+
+#[path = "gap_hunt/assertions.rs"]
+mod assertions;

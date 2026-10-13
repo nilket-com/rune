@@ -89,6 +89,12 @@ fn all_frozen_contracts() {
 			"fresh",
 			100,
 		),
+		(
+			"assertions-stock",
+			"gap_hunt::assertions::stock_contract",
+			"stock",
+			178,
+		),
 		("s0", "gap_hunt::corpus", "both", 639),
 	];
 	for (name, test, engine, rows) in checks {
