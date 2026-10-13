@@ -346,3 +346,172 @@ fn fix5_moved_and_read_borrowed_entries_still_retain() {
 	store.release(value).unwrap();
 	assert_eq!(store.live_entries(), 0);
 }
+
+// Fix 6 freezes the existing accessor ownership contract before specialization.
+type Fix6Accessor = fn(&mut Store, Value, usize) -> Result<Value>;
+
+fn fix6_accessors() -> [Fix6Accessor; 3] {
+	[Store::get, Store::tuple_get, Store::tuple_get_mut]
+}
+
+fn fix6_fixture() -> (Store, Value, Value) {
+	let mut store = Store::new(Limits {
+		entries: 8,
+		bytes: 4096,
+	})
+	.unwrap();
+	let child = store.string("child").unwrap();
+	let parent = store.list(Type::Vec, &[child]).unwrap();
+	assert_eq!(store.test_strong(child), 2);
+	(store, parent, child)
+}
+
+fn fix6_replace_first(store: &mut Store, parent: Value, child: Value) {
+	let Value::Heap(h) = parent else {
+		panic!("heap parent expected")
+	};
+	let Some(Payload::List { values, .. }) = store.entry_mut(h).unwrap().payload.as_mut() else {
+		panic!("list parent expected")
+	};
+	values[0] = child;
+}
+
+#[test]
+fn fix6_accessor_heap_aliases_and_inline_values_keep_ownership() {
+	for accessor in fix6_accessors() {
+		let (mut store, parent, child) = fix6_fixture();
+		let returned = accessor(&mut store, parent, 0).unwrap();
+		assert_eq!(returned, child);
+		assert_eq!(store.test_strong(child), 3);
+		store.release(child).unwrap();
+		store.release(parent).unwrap();
+		assert_eq!(store.text(returned).unwrap(), "child");
+		store.release(returned).unwrap();
+		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+
+		for value in [
+			Value::Unit,
+			Value::Bool(true),
+			Value::I64(i64::MIN),
+			Value::U64(u64::MAX),
+			Value::F64(-0.0),
+			Value::Char('漢'),
+			Value::Function { code: 42, id: 7 },
+			Value::Type(Type::Vec),
+		] {
+			let parent = store.list(Type::Vec, &[value]).unwrap();
+			let before = state(&store);
+			assert_eq!(accessor(&mut store, parent, 0).unwrap(), value);
+			assert_eq!(state(&store), before);
+			store.release(parent).unwrap();
+		}
+		assert_eq!(store.live_entries(), 0);
+	}
+}
+
+#[test]
+fn fix6_accessor_overflow_preserves_full_error_source_and_count() {
+	for accessor in fix6_accessors() {
+		let (mut store, parent, child) = fix6_fixture();
+		store.test_set_strong(child, u32::MAX - 1);
+		assert_eq!(accessor(&mut store, parent, 0).unwrap(), child);
+		assert_eq!(store.test_strong(child), u32::MAX);
+		let before = state(&store);
+		assert_eq!(
+			accessor(&mut store, parent, 0),
+			Err(err(ErrorKind::Overflow))
+		);
+		assert_eq!(state(&store), before);
+		store.test_set_strong(child, 2);
+		store.release(parent).unwrap();
+		assert_eq!(store.text(child).unwrap(), "child");
+		store.release(child).unwrap();
+		assert_eq!(store.live_entries(), 0);
+	}
+}
+
+#[test]
+fn fix6_accessor_invalid_children_and_receivers_are_nonmutating() {
+	for accessor in fix6_accessors() {
+		let (mut store, parent, child) = fix6_fixture();
+		let Value::Heap(h) = child else {
+			panic!("heap child expected")
+		};
+		let stale = Value::Heap(Handle {
+			slot: h.slot,
+			generation: h.generation.wrapping_add(1),
+		});
+		fix6_replace_first(&mut store, parent, stale);
+		let before = state(&store);
+		assert_eq!(
+			accessor(&mut store, parent, 0),
+			Err(err(ErrorKind::InvalidHandle))
+		);
+		assert_eq!(state(&store), before);
+		fix6_replace_first(&mut store, parent, child);
+		let Value::Heap(h) = parent else {
+			panic!("heap parent expected")
+		};
+		let stale_parent = Value::Heap(Handle {
+			slot: h.slot,
+			generation: h.generation.wrapping_add(1),
+		});
+		let before = state(&store);
+		assert_eq!(
+			accessor(&mut store, stale_parent, 0),
+			Err(err(ErrorKind::InvalidHandle))
+		);
+		assert_eq!(state(&store), before);
+		store.close().unwrap();
+		let before = state(&store);
+		assert_eq!(
+			accessor(&mut store, parent, 0),
+			Err(err(ErrorKind::ClosedStore))
+		);
+		assert_eq!(state(&store), before);
+	}
+}
+
+#[test]
+fn fix6_accessor_borrow_precedence_and_permissive_child_retention() {
+	let (mut store, parent, child) = fix6_fixture();
+	let Value::Heap(parent_h) = parent else {
+		panic!("heap parent expected")
+	};
+	store.entry_mut(parent_h).unwrap().readers = 1;
+	store.test_set_strong(child, u32::MAX);
+	let before = state(&store);
+	assert_eq!(
+		store.tuple_get_mut(parent, 99),
+		Err(err(ErrorKind::AccessConflict).with_detail(super::super::error::Detail::WriteBorrowed))
+	);
+	assert_eq!(state(&store), before);
+	store.entry_mut(parent_h).unwrap().readers = 0;
+	store.test_set_strong(child, 2);
+	store.release(parent).unwrap();
+	store.release(child).unwrap();
+
+	for accessor in fix6_accessors() {
+		let (mut store, parent, child) = fix6_fixture();
+		let Value::Heap(child_h) = child else {
+			panic!("heap child expected")
+		};
+		store.entry_mut(child_h).unwrap().readers = 1;
+		assert_eq!(accessor(&mut store, parent, 0).unwrap(), child);
+		assert_eq!(store.test_strong(child), 3);
+		assert_eq!(store.entry(child_h).unwrap().readers, 1);
+		store.entry_mut(child_h).unwrap().readers = 0;
+		store.release(child).unwrap();
+		store.invalidate(child).unwrap();
+		assert_eq!(accessor(&mut store, parent, 0).unwrap(), child);
+		assert_eq!(store.test_strong(child), 3);
+		assert!(matches!(
+			store.entry(child_h).unwrap().payload,
+			Some(Payload::Moved(Type::String))
+		));
+		store.release(child).unwrap();
+		store.release(parent).unwrap();
+		store.release(child).unwrap();
+		assert_eq!(store.live_entries(), 0);
+	}
+}
