@@ -97,6 +97,7 @@ fn stock_class(k: &crate::runtime::VmErrorKind) -> String {
 		K::Overflow | K::Underflow => "Overflow",
 		K::ValueToIntegerCoercionError { .. } => "IntegerCoercion",
 		K::DivideByZero => "DivisionByZero",
+		K::BadArgumentCount { .. } => "ArgumentCount",
 		K::AccessError { .. } => "AccessConflict",
 		K::Halted {
 			halt: crate::runtime::VmHaltInfo::Limited,
@@ -1333,3 +1334,6 @@ fn index_contract() {
 
 #[path = "gap_hunt/field_iter.rs"]
 mod field_iter;
+
+#[path = "gap_hunt/len_clone.rs"]
+mod len_clone;
