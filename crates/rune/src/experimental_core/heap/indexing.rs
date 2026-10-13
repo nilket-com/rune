@@ -7,6 +7,22 @@ use crate::experimental_core::{
 };
 use core::mem::size_of;
 
+/// Static keys borrow the Program; dynamic keys are resolved only while the
+/// Store is immutably borrowed, before the insertion transaction mutates it.
+pub(super) enum RecordKey<'p> {
+	Static(&'p str),
+	Dynamic(Value),
+}
+
+impl RecordKey<'_> {
+	fn borrow<'a>(&'a self, store: &'a Store) -> Result<&'a str> {
+		match self {
+			Self::Static(key) => Ok(key),
+			Self::Dynamic(key) => store.text(*key),
+		}
+	}
+}
+
 // Function values had no store tag before protocol dispatch was expanded.
 // Preserve their public error operation metadata on unsupported reads/writes.
 fn unsupported(value: Value) -> Error {
@@ -260,7 +276,7 @@ impl Store {
 		if self.index_tag(index)? == Some(Type::String)
 			&& matches!(self.index_tag(value)?, Some(Type::Object | Type::Struct(_)))
 		{
-			return self.set_key(value, index, new);
+			return self.set_key(value, RecordKey::Dynamic(index), new);
 		}
 		if self.index_tag(value)? == Some(Type::Vec) {
 			let Value::Heap(h) = value else {
@@ -291,12 +307,12 @@ impl Store {
 			value: self.index_type(new)?,
 		}))
 	}
-	fn set_key(&mut self, value: Value, key: Value, new: Value) -> Result<()> {
+	pub(super) fn set_key(&mut self, value: Value, key: RecordKey<'_>, new: Value) -> Result<()> {
 		let Value::Heap(h) = value else {
 			unreachable!()
 		};
 		self.mutable(h)?;
-		let text = self.text(key)?;
+		let text = key.borrow(self)?;
 		let Payload::Record { tag, fields } = self.payload(h)? else {
 			unreachable!()
 		};

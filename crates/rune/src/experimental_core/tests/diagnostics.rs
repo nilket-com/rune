@@ -5,7 +5,7 @@
 //! coarse; no source semantics or failure precedence changes here.
 //! Retained: iterator and method hashes, macro Display spans, tuple-set past-end
 //! classification, and nominal names pending C. D1b wording changes are out of scope.
-//! S: named object insertion, Option iteration, and Function clone remain gaps.
+//! S-field converges named object insertion and Option iteration; Function clone remains a gap.
 //! S-index converges dynamic object indexing and Vec tuple-index access.
 //! Refused: closures, explicit iterator methods, and inclusive ranges. Compile
 //! errors compare frontend diagnostics, never VmError text.
@@ -174,7 +174,12 @@ fn diagnostic_catalogue_both_engines() {
 			"store",
 		),
 		("field-target", "let x = 1; x.b", Type, "store"),
-		("field-set-target", "let x = 1; x.b = 2", Type, "store"),
+		(
+			"field-set-target",
+			"let x = 1; x.b = 2",
+			IndexOutOfBounds,
+			"store",
+		),
 		("call-target", "let x = 1; x()", Type, "execute"),
 		("arity-zero", "let f = g; f()", Type, "execute"),
 		("arity-two", "let f = g; f(1,2)", Type, "execute"),
@@ -257,7 +262,6 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 	let context = Context::with_default_modules().unwrap();
 	// Retained: no stock wording change for the instance-function hash or DISPLAY_FMT.
 	for (id, body, expected) in [
-		("iter", "for i in 1 {}", "Type `std::i64` is not iterable"),
 		("len", "let x = 1; x.len()", "no method `len` on `std::i64`"),
 		(
 			"push",
@@ -312,84 +316,38 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 		assert_eq!(at.start as usize..at.end as usize, fresh_span, "{id}");
 		assert_eq!((at.source, at.revision), (0, 73));
 	}
-	// Remaining S gaps: object dynamic indexing and Vec tuple get/set are now
-	// covered as successes by the frozen 1035-row index contract.
-	for (id, body, expected) in [
-		(
-			"object-insert",
-			"let o = #{a:1}; o.b = 2; o",
-			"Missing field `b` on `std::object::Object`",
-		),
-		(
-			"option-iter",
-			"for i in Some(1) {}",
-			"Type `std::option::Option` is not iterable",
-		),
-		(
-			"function-clone",
-			"let f = g; f.clone()",
-			"no method `clone` on `std::ops::Function`",
-		),
-	] {
-		let source = std::format!("pub fn target() {{\n\n{body}\n}}\nfn g(a) {{ a }}");
-		let (mut stock, program) = compile(&context, &source);
-		let stock_value = stock.call(["target"], ()).unwrap();
-		match id {
-			"object-index" | "vec-tuple-get" => {
-				assert_eq!(crate::from_value::<i64>(stock_value).unwrap(), 1)
-			}
-			"object-insert" => {
-				let object = stock_value.borrow_ref::<crate::runtime::Object>().unwrap();
-				assert_eq!(object.len(), 2);
-				assert_eq!(object.get_value::<_, i64>("a").unwrap(), Some(1));
-				assert_eq!(object.get_value::<_, i64>("b").unwrap(), Some(2));
-			}
-			"option-iter" => crate::from_value::<()>(stock_value).unwrap(),
-			"vec-tuple-set" => {
-				let vec = stock_value.borrow_ref::<crate::runtime::Vec>().unwrap();
-				assert_eq!(vec.len(), 1);
-				assert_eq!(vec.get_value::<i64>(0).unwrap(), Some(2));
-			}
-			"function-clone" => {
-				assert_eq!(stock_value.type_info().to_string(), "::std::ops::Function")
-			}
-			_ => unreachable!(),
-		}
-		let mut store = Store::new(Limits::default()).unwrap();
-		let failure = Executor::new()
-			.unwrap()
-			.invoke(
-				&program,
-				&mut store,
-				program.function(Hash::type_hash(["target"])).unwrap(),
-				&[],
-				100_000,
-			)
-			.unwrap_err();
-		assert_eq!(
-			failure.error.message(&program).to_string(),
-			expected,
-			"S {id}"
-		);
-		let expression = match id {
-			"object-index" => "o[\"a\"]",
-			"object-insert" => "o.b = 2",
-			"option-iter" => "for i in Some(1) {}",
-			"vec-tuple-get" => "v.0",
-			"vec-tuple-set" => "v.0 = 2",
-			"function-clone" => "f.clone()",
-			_ => unreachable!(),
-		};
-		let start = source.find(expression).unwrap();
-		let at = failure.error.location.unwrap();
-		assert_eq!(
-			at.start as usize..at.end as usize,
-			start..start + expression.len(),
-			"S span: {id}"
-		);
-		assert_eq!((at.source, at.revision), (0, 73));
-		assert_eq!(store.live_entries(), 0, "{id}");
-	}
+	// The remaining Function clone gap is outside S-field.
+	let source = "pub fn target() {
+
+let f = g; f.clone()
+}
+fn g(a) { a }";
+	let (mut stock, program) = compile(&context, source);
+	let stock_value = stock.call(["target"], ()).unwrap();
+	assert_eq!(stock_value.type_info().to_string(), "::std::ops::Function");
+	let mut store = Store::new(Limits::default()).unwrap();
+	let failure = Executor::new()
+		.unwrap()
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["target"])).unwrap(),
+			&[],
+			100_000,
+		)
+		.unwrap_err();
+	assert_eq!(
+		failure.error.message(&program).to_string(),
+		"no method `clone` on `std::ops::Function`"
+	);
+	let start = source.find("f.clone()").unwrap();
+	let at = failure.error.location.unwrap();
+	assert_eq!(
+		at.start as usize..at.end as usize,
+		start..start + "f.clone()".len()
+	);
+	assert_eq!((at.source, at.revision), (0, 73));
+	assert_eq!(store.live_entries(), 0);
 }
 
 #[test]
@@ -924,6 +882,93 @@ fn vector_dynamic_set_borrows_before_converting_the_index() {
 			.unwrap_err();
 		assert_eq!(failure.error.kind, ErrorKind::AccessConflict);
 		assert_eq!(failure.message(&program).to_string(), expected);
+		assert_eq!(store.live_entries(), 0);
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "stock/fresh frontend witness; pure ownership checks cover Miri"
+)]
+fn field_compound_leased_nonrecords_and_string_alias_match_stock() {
+	let context = Context::with_default_modules().unwrap();
+	for body in [
+		"let x=(1,2); for v in x { x.f += 1; }",
+		"let x=[1,2]; for v in x { x.f += 1; }",
+	] {
+		let source = std::format!("pub fn target() {{ {body} }}");
+		let (mut stock, program) = compile(&context, &source);
+		let stock_error = stock.call(["target"], ()).unwrap_err();
+		let expected = stock_error.into_kind().to_string();
+		println!("stock {body}: {expected}");
+		assert!(expected.starts_with("Field `f` not available on `std::"));
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		let fresh = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["target"])).unwrap(),
+				&[],
+				1000,
+			)
+			.unwrap_err();
+		assert_eq!(fresh.error.kind, ErrorKind::Type);
+		assert_eq!(fresh.message(&program).to_string(), expected);
+		assert_eq!(store.live_entries(), 0);
+	}
+	let source = "pub fn target() { let x=#{f:\"a\"}; let alias=x.f; x.f += \"b\"; alias }";
+	let (mut stock, program) = compile(&context, source);
+	let expected =
+		crate::from_value::<crate::alloc::String>(stock.call(["target"], ()).unwrap()).unwrap();
+	assert_eq!(expected.as_str(), "ab");
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let root = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["target"])).unwrap(),
+			&[],
+			1000,
+		)
+		.unwrap();
+	assert_eq!(store.text(root.value).unwrap(), expected.as_str());
+	store.root_release(root).unwrap();
+	assert_eq!(store.live_entries(), 0);
+}
+
+#[test]
+#[cfg_attr(miri, ignore = "stock/fresh frontend identity witness")]
+fn iteration_nominal_and_function_hashes_match_lowered_stock_values() {
+	let context = Context::with_default_modules().unwrap();
+	for source in [
+		"struct P { x } pub fn target() { P {x:1} }",
+		"pub fn target() { target }",
+	] {
+		let (mut stock, program) = compile(&context, source);
+		let stock_value = stock.call(["target"], ()).unwrap();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		let root = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["target"])).unwrap(),
+				&[],
+				1000,
+			)
+			.unwrap();
+		let name = store.diagnostic_type(root.value).unwrap();
+		let hash = match name {
+			crate::experimental_core::error::TypeName::Struct(n) => {
+				Hash::new(crate::experimental_core::nominal::hash_copy(n).unwrap())
+			}
+			_ => name.builtin_hash().unwrap(),
+		};
+		assert_eq!(hash, stock_value.type_hash());
+		store.root_release(root).unwrap();
 		assert_eq!(store.live_entries(), 0);
 	}
 }

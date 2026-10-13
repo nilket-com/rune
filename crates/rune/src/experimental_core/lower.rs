@@ -178,6 +178,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			| Op::Clone { out, .. }
 			| Op::Get { out, .. }
 			| Op::Field { out, .. }
+			| Op::FieldGetMut { out, .. }
 			| Op::TupleField { out, .. }
 			| Op::TupleFieldGetMut { out, .. }
 			| Op::Call { out, .. }
@@ -191,6 +192,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			| Op::Return { .. }
 			| Op::Set { .. }
 			| Op::SetField { .. }
+			| Op::FieldSetMut { .. }
 			| Op::SetTupleField { .. }
 			| Op::TupleFieldSetMut { .. }
 			| Op::Push { .. }
@@ -707,7 +709,20 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 							span,
 						)?;
 					}
-					_ => self.read_field(old, target, field.expr_field, span)?,
+					hir::ExprField::Ident(key) => {
+						let key = self.function.string(key)?;
+						self.emit(
+							Op::FieldGetMut {
+								out: old,
+								value: target,
+								key,
+							},
+							span,
+						)?;
+					}
+					hir::ExprField::IdentGenerics(..) => {
+						return Err(self.refused(span, Refusal::Field))
+					}
 				}
 				self.emit(
 					Op::AssignBinary {
@@ -730,7 +745,20 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 							span,
 						)?;
 					}
-					_ => self.write_field(target, field.expr_field, old, span)?,
+					hir::ExprField::Ident(key) => {
+						let key = self.function.string(key)?;
+						self.emit(
+							Op::FieldSetMut {
+								value: target,
+								key,
+								new: old,
+							},
+							span,
+						)?;
+					}
+					hir::ExprField::IdentGenerics(..) => {
+						return Err(self.refused(span, Refusal::Field))
+					}
 				}
 			}
 

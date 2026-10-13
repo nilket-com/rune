@@ -151,7 +151,42 @@ pub struct Failure {
 	pub cleanup_error: Option<Error>,
 }
 
+/// The exact receiver and associated-function identities of a failed protocol
+/// lookup. This describes the root invocation error, never a cleanup error.
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MissingInstanceFunction {
+	/// Combined associated-function hash.
+	pub hash: crate::Hash,
+	/// Receiver type hash.
+	pub instance: crate::Hash,
+	target: TypeName,
+}
+impl MissingInstanceFunction {
+	/// Receiver display name, using the same presentation as the diagnostic.
+	pub fn instance_name(&self, _program: &Program) -> impl core::fmt::Display + '_ {
+		self.target
+	}
+}
+
 impl Failure {
+	/// Return the missing instance function from the root error, if any.
+	pub fn missing_instance_function(&self) -> Option<MissingInstanceFunction> {
+		let Detail::MissingInstanceFunction {
+			target,
+			hash,
+			instance,
+		} = self.error.detail
+		else {
+			return None;
+		};
+		Some(MissingInstanceFunction {
+			target,
+			hash,
+			instance,
+		})
+	}
+
 	/// Render the error including owned dynamic key evidence. Error::message alone
 	/// renders a missing dynamic field without its key.
 	pub fn message<'a>(&'a self, program: &'a Program) -> impl core::fmt::Display + 'a {
@@ -914,6 +949,18 @@ impl Executor {
 								self.put(store, frame.base + out as usize, value)?;
 							}
 
+							Op::FieldGetMut { out, value, key } => {
+								let value = store.field_get_mut(
+									get(value)?,
+									function.strings[key as usize].as_str(),
+								)?;
+								self.put(store, frame.base + out as usize, value)?;
+							}
+							Op::FieldSetMut { value, key, new } => store.field_set_mut(
+								get(value)?,
+								function.strings[key as usize].as_str(),
+								get(new)?,
+							)?,
 							Op::SetField { value, key, new } => store.set_field(
 								get(value)?,
 								function.strings[key as usize].as_str(),
@@ -1156,6 +1203,14 @@ impl Executor {
 		self.frames.is_empty() && self.slots.is_empty() && self.diagnostics.is_empty()
 	}
 
+	#[cfg(any(
+		test,
+		all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		)
+	))]
 	fn capacities(&self) -> (usize, usize, usize) {
 		(
 			self.frames.capacity(),
@@ -1434,7 +1489,25 @@ fn enrich_error(
 					};
 					Detail::ExpectedNumber { found: ty(bad)? }
 				}
-				Op::IterStart { value, .. } => Detail::NotIterable { found: ty(value)? },
+				Op::IterStart { value, .. } => {
+					let target = ty(value)?;
+					let instance = match target {
+						TypeName::Struct(n) => super::nominal::hash_copy(n).map(crate::Hash::new),
+						_ => target.builtin_hash(),
+					};
+					let Some(instance) = instance else {
+						error.kind = ErrorKind::InvalidCode;
+						return None;
+					};
+					Detail::MissingInstanceFunction {
+						target,
+						instance,
+						hash: crate::Hash::associated_function(
+							instance,
+							&crate::runtime::Protocol::INTO_ITER,
+						),
+					}
+				}
 				Op::Try { value, .. } => Detail::TryOperand { found: ty(value)? },
 				Op::Clone { value, .. } => Detail::NoMethod {
 					method: AdmittedMethod::Clone,
@@ -1448,7 +1521,7 @@ fn enrich_error(
 					method: AdmittedMethod::Push,
 					receiver: ty(value)?,
 				},
-				Op::Field { value, key, .. } => {
+				Op::Field { value, key, .. } | Op::FieldGetMut { value, key, .. } => {
 					if error.kind == ErrorKind::IndexOutOfBounds {
 						Detail::MissingField {
 							target: ty(value)?,
@@ -1461,10 +1534,19 @@ fn enrich_error(
 						}
 					}
 				}
-				Op::SetField { value, key, .. } => Detail::MissingField {
-					target: ty(value)?,
-					field: field(key),
-				},
+				Op::SetField { value, key, .. } | Op::FieldSetMut { value, key, .. } => {
+					if error.kind == ErrorKind::IndexOutOfBounds {
+						Detail::MissingField {
+							target: ty(value)?,
+							field: field(key),
+						}
+					} else {
+						Detail::FieldSetUnsupported {
+							target: ty(value)?,
+							field: field(key),
+						}
+					}
+				}
 				Op::TupleField { value, index, .. } => {
 					if error.kind == ErrorKind::IndexOutOfBounds {
 						return bounds(value, index);
@@ -1818,3 +1900,6 @@ mod key_diagnostic_tests {
 		assert_eq!(copy.as_ref(), text);
 	}
 }
+
+#[cfg(test)]
+mod field_tests;

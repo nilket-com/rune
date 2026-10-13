@@ -53,11 +53,38 @@ fn variant_index(op: Op) -> usize {
 		Op::Drop { .. } => 32,
 		Op::TupleFieldGetMut { .. } => 33,
 		Op::TupleFieldSetMut { .. } => 34,
+		Op::FieldGetMut { .. } => 35,
+		Op::FieldSetMut { .. } => 36,
 	}
 }
 
 fn same(a: Op, b: Op) {
 	match (a, b) {
+		(
+			Op::FieldGetMut {
+				out: ao,
+				value: av,
+				key: ak,
+			},
+			Op::FieldGetMut {
+				out: bo,
+				value: bv,
+				key: bk,
+			},
+		) => assert_eq!((ao, av, ak), (bo, bv, bk)),
+		(
+			Op::FieldSetMut {
+				value: av,
+				key: ak,
+				new: an,
+			},
+			Op::FieldSetMut {
+				value: bv,
+				key: bk,
+				new: bn,
+			},
+		) => assert_eq!((av, ak, an), (bv, bk, bn)),
+
 		(
 			Op::Template {
 				out: a_out,
@@ -743,8 +770,24 @@ fn every_encoded_variant_round_trips_fields() {
 			index: 6,
 			new: 5,
 		},
+		Op::FieldGetMut {
+			out: 5,
+			value: 2,
+			key: 0,
+		},
+		Op::AssignBinary {
+			out: 5,
+			op: Binary::Add,
+			lhs: 5,
+			rhs: 1,
+		},
+		Op::FieldSetMut {
+			value: 2,
+			key: 0,
+			new: 5,
+		},
 	];
-	let mut coverage = [false; 35];
+	let mut coverage = [false; 37];
 
 	for (n, expected) in ops.into_iter().enumerate() {
 		let index = variant_index(expected);

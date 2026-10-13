@@ -72,6 +72,9 @@ enum Payload {
 		end: i64,
 	},
 	VectorIterator(Iter),
+	OptionIterator {
+		payload: Option<Value>,
+	},
 	RangeIterator {
 		next: i64,
 		end: i64,
@@ -92,7 +95,9 @@ impl Payload {
 			Self::String(s) => Some(s.capacity()),
 			Self::Range { .. } => Some(16),
 			Self::Variant { .. } => Some(size_of::<Value>()),
-			Self::VectorIterator(..) | Self::RangeIterator { .. } => Some(size_of::<Value>()),
+			Self::VectorIterator(..) | Self::OptionIterator { .. } | Self::RangeIterator { .. } => {
+				Some(size_of::<Value>())
+			}
 			Self::List { values, .. } => values.capacity().checked_mul(size_of::<Value>()),
 			Self::Record { fields, .. } => fields
 				.capacity()
@@ -113,7 +118,9 @@ impl Payload {
 		let mut index = 0;
 		core::iter::from_fn(move || {
 			let value = match self {
-				Self::Variant { payload, .. } if index == 0 => *payload,
+				Self::Variant { payload, .. } | Self::OptionIterator { payload } if index == 0 => {
+					*payload
+				}
 				Self::VectorIterator(iter) if index == 0 => Some(Value::Heap(iter.handle)),
 				Self::Record { fields, .. } => fields.get(index).map(|(_, value)| *value),
 				Self::List { values, .. } => values.get(index).copied(),
@@ -130,7 +137,9 @@ impl Payload {
 			Self::String(_) => Type::String,
 			Self::Range { .. } => Type::Range,
 			Self::Variant { tag, .. } => *tag,
-			Self::VectorIterator(..) | Self::RangeIterator { .. } => Type::Iterator,
+			Self::VectorIterator(..) | Self::OptionIterator { .. } | Self::RangeIterator { .. } => {
+				Type::Iterator
+			}
 			Self::List { tag, .. } | Self::Record { tag, .. } => *tag,
 		}
 	}
@@ -402,7 +411,10 @@ impl Store {
 		}
 
 		let readers = if let Payload::VectorIterator(iter) = &payload {
-			if self.payload(iter.handle)?.tag() != Type::Vec {
+			if !matches!(
+				self.payload(iter.handle)?.tag(),
+				Type::Vec | Type::Tuple | Type::Object
+			) {
 				return Err(err(ErrorKind::Type));
 			}
 
@@ -616,30 +628,83 @@ impl Store {
 		Ok(value)
 	}
 
-	pub(crate) fn set_field(&mut self, value: Value, key: &str, new: Value) -> Result<()> {
+	pub(crate) fn field_get_mut(&mut self, value: Value, key: &str) -> Result<Value> {
 		let Value::Heap(handle) = value else {
+			return Err(err(if matches!(value, Value::Function { .. }) {
+				ErrorKind::Type
+			} else {
+				ErrorKind::IndexOutOfBounds
+			}));
+		};
+		if !matches!(self.payload(handle)?, Payload::Record { .. }) {
+			return Err(err(ErrorKind::Type));
+		}
+		self.mutable(handle)?;
+		let Payload::Record { tag, fields } = self.payload(handle)? else {
 			return Err(err(ErrorKind::Type));
 		};
+		let old = fields
+			.iter()
+			.find(|(name, _)| name.as_str() == key)
+			.map(|(_, value)| *value);
+		let old = old.ok_or_else(|| {
+			err(if *tag == Type::Object {
+				ErrorKind::IndexOutOfBounds
+			} else {
+				ErrorKind::Type
+			})
+		})?;
+		self.retain(old)?;
+		Ok(old)
+	}
 
+	pub(crate) fn field_set_mut(&mut self, value: Value, key: &str, new: Value) -> Result<()> {
+		let Value::Heap(handle) = value else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
 		let Payload::Record { fields, .. } = self.mutable(handle)? else {
-			return Err(err(ErrorKind::Type));
+			return Err(err(ErrorKind::InvalidCode));
 		};
-
 		let index = fields
 			.iter()
 			.position(|(name, _)| name.as_str() == key)
-			.ok_or_else(|| err(ErrorKind::IndexOutOfBounds))?;
+			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
 		let old = fields[index].1;
+		if old == new {
+			return Ok(());
+		}
 		let edges = self.replacement_edges(old, new)?;
 		self.retain(new)?;
 		let Payload::Record { fields, .. } = self.mutable(handle)? else {
 			unreachable!()
 		};
-
-		let old = core::mem::replace(&mut fields[index].1, new);
+		fields[index].1 = new;
 		self.edges = edges;
 		self.assert_work();
 		self.release(old)
+	}
+
+	pub(crate) fn set_field(&mut self, value: Value, key: &str, new: Value) -> Result<()> {
+		let Value::Heap(handle) = value else {
+			return Err(err(if matches!(value, Value::Function { .. }) {
+				ErrorKind::Type
+			} else {
+				ErrorKind::IndexOutOfBounds
+			}));
+		};
+		if !matches!(self.payload(handle)?, Payload::Record { .. }) {
+			return Err(err(ErrorKind::Type));
+		}
+		self.set_key(value, indexing::RecordKey::Static(key), new)
+			.map_err(|error| {
+				if matches!(error.detail, super::error::Detail::MissingKey { .. }) {
+					// The instruction boundary supplies the static FieldRef. This is
+					// never a dynamic missing-key diagnostic owned by Failure.
+					err(ErrorKind::IndexOutOfBounds)
+				} else {
+					error
+				}
+			})
 	}
 
 	pub(crate) fn clone_outer(&mut self, value: Value) -> Result<Value> {
@@ -809,7 +874,9 @@ impl Store {
 		};
 		Some(match self.payload(h).ok()? {
 			Payload::RangeIterator { .. } => TypeName::RangeIter,
-			Payload::VectorIterator(_) => TypeName::VecIter,
+			// Internal loop iterators cannot escape. Option/Unit snapshots need
+			// distinct diagnostic types before iterator-valued methods are admitted.
+			Payload::VectorIterator(_) | Payload::OptionIterator { .. } => TypeName::VecIter,
 			payload => TypeName::from_type(payload.tag()),
 		})
 	}
@@ -984,7 +1051,19 @@ impl Store {
 	}
 
 	pub(crate) fn iterator(&mut self, value: Value) -> Result<Value> {
+		// Unit is stock's empty tuple and has an empty iterator.
+		if value == Value::Unit {
+			return self.admit(Payload::OptionIterator { payload: None });
+		}
 		if let Value::Heap(h) = value {
+			if let Payload::Variant {
+				tag: Type::Option,
+				payload,
+				..
+			} = self.payload(h)?
+			{
+				return self.admit(Payload::OptionIterator { payload: *payload });
+			}
 			if let Payload::Range { start, end } = self.payload(h)? {
 				return self.admit(Payload::RangeIterator {
 					next: *start,
@@ -1007,6 +1086,8 @@ impl Store {
 			return Err(err(ErrorKind::Type));
 		};
 
+		// A failed advance must not allocate or consume any payload.
+		self.mutable(h)?;
 		match self.payload(h)? {
 			Payload::RangeIterator { next, end } => {
 				if next >= end {
@@ -1024,15 +1105,69 @@ impl Store {
 				Ok(Some(Value::I64(value)))
 			}
 
+			Payload::OptionIterator { payload } => {
+				let value = *payload;
+				let Payload::OptionIterator { payload } = self.mutable(h)? else {
+					unreachable!()
+				};
+				*payload = None;
+				// Transfer the snapshot's retained root to the caller, without an
+				// extra retain or a lease on the mutable Option wrapper.
+				self.edges = self
+					.edges
+					.checked_sub(value.map_or(0, Self::heap_edge))
+					.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+				self.assert_work();
+				Ok(value)
+			}
 			Payload::VectorIterator(iter) => {
 				let root = Value::Heap(iter.handle);
 				let index = iter.index;
 
-				if index == self.len(root)? {
+				let length = match self.payload(iter.handle)? {
+					Payload::Record {
+						fields,
+						tag: Type::Object,
+					} => fields.len(),
+					Payload::List { values, .. } => values.len(),
+					_ => return Err(err(ErrorKind::InvalidCode)),
+				};
+				if index == length {
 					return Ok(None);
 				}
 
-				let value = self.get(root, index)?;
+				let value = if let Payload::Record {
+					fields,
+					tag: Type::Object,
+				} = self.payload(iter.handle)?
+				{
+					let (key, child) = fields
+						.get(index)
+						.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+					let child = *child;
+					if key.len() > self.limits.bytes.saturating_sub(self.bytes) {
+						return Err(err(ErrorKind::StoreCapacity));
+					}
+					let copy = String::try_from(key.as_str())?;
+					let key = self.admit(Payload::String(copy))?;
+					let pair = self.list(Type::Tuple, &[key, child]);
+					let released = self.release(key);
+					match pair {
+						Ok(pair) => {
+							if let Err(e) = released {
+								let _ = self.release(pair);
+								return Err(e);
+							}
+							pair
+						}
+						Err(e) => {
+							released?;
+							return Err(e);
+						}
+					}
+				} else {
+					self.get(root, index)?
+				};
 				let Payload::VectorIterator(iter) = self.mutable(h)? else {
 					return Err(err(ErrorKind::Type));
 				};
@@ -1536,3 +1671,6 @@ impl Store {
 		self.entry_mut(h).unwrap().strong = count;
 	}
 }
+
+#[cfg(test)]
+mod field_iter_tests;

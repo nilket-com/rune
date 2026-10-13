@@ -46,6 +46,16 @@ pub enum Op {
 		args_start: u32,
 		args_len: u32,
 	},
+	FieldGetMut {
+		out: u32,
+		value: u32,
+		key: u32,
+	},
+	FieldSetMut {
+		value: u32,
+		key: u32,
+		new: u32,
+	},
 	Field {
 		out: u32,
 		value: u32,
@@ -333,6 +343,8 @@ impl Function {
 				Self::pool(&mut self.types, tag)?,
 				Self::pool(&mut self.ranges, (args_start, args_len))?,
 			),
+			FieldGetMut { out, value, key } => (38, out, value, key),
+			FieldSetMut { value, key, new } => (39, value, key, new),
 			Field { out, value, key } => (30, out, value, key),
 			SetField { value, key, new } => (31, value, key, new),
 			Variant {
@@ -550,6 +562,16 @@ impl Function {
 				}
 			}
 
+			38 => FieldGetMut {
+				out: a,
+				value: b,
+				key: c,
+			},
+			39 => FieldSetMut {
+				value: a,
+				key: b,
+				new: c,
+			},
 			30 => Field {
 				out: a,
 				value: b,
@@ -988,9 +1010,12 @@ fn validate_tuple_updates(f: &Function) -> Result<()> {
 	let op = |pc| f.operation(pc);
 	let interior = |target: usize| -> Result<bool> {
 		Ok(match op(target)? {
-			TupleFieldGetMut { .. } | TupleFieldSetMut { .. } => true,
+			TupleFieldGetMut { .. } | TupleFieldSetMut { .. } | FieldSetMut { .. } => true,
 			AssignBinary { .. } if target >= 1 => {
-				matches!(op(target - 1)?, TupleFieldGetMut { .. })
+				matches!(
+					op(target - 1)?,
+					TupleFieldGetMut { .. } | FieldGetMut { .. }
+				)
 			}
 			Literal { .. } if target >= 2 => matches!(op(target - 2)?, TupleFieldGetMut { .. }),
 			_ => false,
@@ -998,6 +1023,39 @@ fn validate_tuple_updates(f: &Function) -> Result<()> {
 	};
 	for pc in 0..f.code.len() {
 		match op(pc)? {
+			FieldGetMut { out, value, key } => {
+				let AssignBinary {
+					out: result,
+					lhs,
+					rhs,
+					..
+				} = op(pc + 1)?
+				else {
+					return Err(invalid());
+				};
+				let FieldSetMut {
+					value: target,
+					key: write_key,
+					new,
+				} = op(pc + 2)?
+				else {
+					return Err(invalid());
+				};
+				if out == value
+					|| out == rhs || value == rhs
+					|| result != out
+					|| lhs != out || target != value
+					|| f.strings.get(write_key as usize) != f.strings.get(key as usize)
+					|| new != out
+				{
+					return Err(invalid());
+				}
+			}
+			FieldSetMut { .. } => {
+				if pc < 2 || !matches!(op(pc - 2)?, FieldGetMut { .. }) {
+					return Err(invalid());
+				}
+			}
 			TupleFieldGetMut { out, value, index } => {
 				if pc == 0 || out == value || out == index {
 					return Err(invalid());
@@ -1220,13 +1278,13 @@ fn validate_operands(
 				}
 			}
 
-			Op::Field { out, value, key } => {
+			Op::Field { out, value, key } | Op::FieldGetMut { out, value, key } => {
 				slot(out)?;
 				slot(value)?;
 				f.strings.get(key as usize).ok_or_else(invalid)?;
 			}
 
-			Op::SetField { value, key, new } => {
+			Op::SetField { value, key, new } | Op::FieldSetMut { value, key, new } => {
 				slot(value)?;
 				slot(new)?;
 				f.strings.get(key as usize).ok_or_else(invalid)?;
@@ -1420,6 +1478,12 @@ fn same_op(a: Op, b: Op) -> bool {
 
 			_ => false,
 		},
+		Op::FieldGetMut { out, value, key } => {
+			matches!(b, Op::FieldGetMut { out: bo, value: bv, key: bk } if out == bo && value == bv && key == bk)
+		}
+		Op::FieldSetMut { value, key, new } => {
+			matches!(b, Op::FieldSetMut { value: bv, key: bk, new: bn } if value == bv && key == bk && new == bn)
+		}
 		Op::Field {
 			out: a_out,
 			value: a_value,
@@ -2185,5 +2249,97 @@ mod tuple_update_tests {
 		let mut f = function(true, 0);
 		f.patch(2, Op::Copy { out: 3, value: 0 }).unwrap();
 		assert_eq!(code(f).err().unwrap().kind, ErrorKind::InvalidCode);
+	}
+}
+
+#[cfg(test)]
+mod named_update_validation_tests {
+	use super::*;
+	#[test]
+	fn branches_cannot_enter_named_update_interior_or_skip_writeback() {
+		let loc = Location {
+			source: 0,
+			revision: 0,
+			start: 0,
+			end: 1,
+		};
+		for target in [2, 3] {
+			let mut f = Function::new(4, 1).unwrap();
+			let key = f.string("x").unwrap();
+			f.push(Op::Jump { target }, loc).unwrap();
+			f.push(
+				Op::FieldGetMut {
+					out: 2,
+					value: 0,
+					key,
+				},
+				loc,
+			)
+			.unwrap();
+			f.push(
+				Op::AssignBinary {
+					out: 2,
+					lhs: 2,
+					rhs: 1,
+					op: Binary::Add,
+				},
+				loc,
+			)
+			.unwrap();
+			f.push(
+				Op::FieldSetMut {
+					value: 0,
+					key,
+					new: 2,
+				},
+				loc,
+			)
+			.unwrap();
+			f.push(Op::Return { value: 2 }, loc).unwrap();
+			let mut b = Builder::default();
+			b.push(f).unwrap();
+			assert_eq!(b.finish().err().unwrap().kind, ErrorKind::InvalidCode);
+		}
+		for malformed in 0..4 {
+			let mut f = Function::new(4, 1).unwrap();
+			let key = f.string("x").unwrap();
+			let other = f.string("y").unwrap();
+			f.push(
+				Op::FieldGetMut {
+					out: 2,
+					value: 0,
+					key,
+				},
+				loc,
+			)
+			.unwrap();
+			f.push(
+				if malformed == 0 {
+					Op::Copy { out: 2, value: 1 }
+				} else {
+					Op::AssignBinary {
+						out: 2,
+						lhs: 2,
+						rhs: 1,
+						op: Binary::Add,
+					}
+				},
+				loc,
+			)
+			.unwrap();
+			f.push(
+				Op::FieldSetMut {
+					value: if malformed == 1 { 3 } else { 0 },
+					key: if malformed == 2 { other } else { key },
+					new: if malformed == 3 { 1 } else { 2 },
+				},
+				loc,
+			)
+			.unwrap();
+			f.push(Op::Return { value: 2 }, loc).unwrap();
+			let mut b = Builder::default();
+			b.push(f).unwrap();
+			assert_eq!(b.finish().err().unwrap().kind, ErrorKind::InvalidCode);
+		}
 	}
 }

@@ -255,13 +255,9 @@ fn keyed_record_missing_fields_caps_and_nested_cleanup() {
 		store.field(record, "missing").unwrap_err().kind,
 		ErrorKind::IndexOutOfBounds
 	);
-	assert_eq!(
-		store
-			.set_field(record, "missing", Value::I64(3))
-			.unwrap_err()
-			.kind,
-		ErrorKind::IndexOutOfBounds
-	);
+	// S-field's frozen stock contract inserts missing Object fields.
+	store.set_field(record, "missing", Value::I64(3)).unwrap();
+	assert_eq!(store.field(record, "missing").unwrap(), Value::I64(3));
 	assert_eq!(
 		store
 			.record(Type::Object, &[("x", Value::Unit), ("x", Value::Unit)])

@@ -153,6 +153,10 @@ pub enum Detail {
 		target: TypeName,
 		field: FieldRef,
 	},
+	FieldSetUnsupported {
+		target: TypeName,
+		field: FieldRef,
+	},
 	FieldOnNonRecord {
 		target: TypeName,
 		field: FieldRef,
@@ -170,6 +174,11 @@ pub enum Detail {
 		to_numeric: bool,
 	},
 	Underflow,
+	MissingInstanceFunction {
+		target: TypeName,
+		hash: crate::Hash,
+		instance: crate::Hash,
+	},
 	NotIterable {
 		found: TypeName,
 	},
@@ -213,6 +222,32 @@ use crate::runtime::messages;
 use core::fmt;
 
 impl TypeName {
+	/// Exact stock builtin type identity. Nominal identities are resolved only
+	/// on a failing protocol path through the C2 interner.
+	pub(crate) fn builtin_hash(self) -> Option<crate::Hash> {
+		use crate::runtime as rt;
+		use crate::TypeHash;
+		Some(match self {
+			Self::Unit | Self::Tuple => rt::OwnedTuple::HASH,
+			Self::Bool => bool::HASH,
+			Self::I64 => i64::HASH,
+			Self::U64 => u64::HASH,
+			Self::F64 => f64::HASH,
+			Self::Char => char::HASH,
+			Self::String => crate::alloc::String::HASH,
+			Self::Vec => rt::Vec::HASH,
+			Self::Object => rt::Object::HASH,
+			Self::Option => Option::<rt::Value>::HASH,
+			Self::Result => core::result::Result::<rt::Value, rt::Value>::HASH,
+			Self::Range => rt::Range::HASH,
+			Self::RangeInclusive => rt::RangeInclusive::HASH,
+			Self::VecIter => rt::slice::Iter::HASH,
+			Self::RangeIter => rt::range::RangeIter::<i64>::HASH,
+			Self::Function => rt::Function::HASH,
+			Self::Type => rt::Type::HASH,
+			Self::Struct(_) => return None,
+		})
+	}
 	pub(crate) fn primitive(value: Value) -> Option<Self> {
 		Some(match value {
 			Value::Function { .. } => Self::Function,
@@ -442,6 +477,10 @@ impl fmt::Display for Message<'_> {
 				Some(key) => messages::missing_field(f, target, key),
 				Option::None => write!(f, "Missing field on `{target}`"),
 			},
+			FieldSetUnsupported { target, field } => match field.resolve(self.program) {
+				Some(key) => write!(f, "Field `{key}` not available to set on `{target}`"),
+				Option::None => write!(f, "Field not available to set on `{target}`"),
+			},
 			FieldOnNonRecord { target, field } => match field.resolve(self.program) {
 				Some(key) => messages::field_get(f, target, key),
 				Option::None => write!(f, "Field not available on `{target}`"),
@@ -457,6 +496,9 @@ impl fmt::Display for Message<'_> {
 				found,
 				to_numeric: false,
 			} => messages::cast_target(f, found),
+			MissingInstanceFunction { target, hash, .. } => {
+				write!(f, "Missing instance function `{hash}` for `{target}`")
+			}
 			NotIterable { found } => write!(f, "Type `{found}` is not iterable"),
 			TryOperand { found } => messages::try_operand(f, found),
 			NoDisplay { found } => {
@@ -666,5 +708,46 @@ mod tests {
 		let mut buffer = [0; 256];
 		let len = super::super::nominal::name_copy(nominal, &mut buffer).unwrap();
 		assert_eq!(&buffer[..len], rooted.as_bytes());
+	}
+}
+
+#[cfg(test)]
+mod iteration_hash_tests {
+	use super::*;
+	use crate::runtime as rt;
+	#[test]
+	fn builtin_receiver_hashes_match_stock_values() {
+		let rows = [
+			(TypeName::Unit, rt::Value::unit()),
+			(TypeName::Bool, crate::to_value(true).unwrap()),
+			(TypeName::I64, crate::to_value(1i64).unwrap()),
+			(TypeName::U64, crate::to_value(1u64).unwrap()),
+			(TypeName::F64, crate::to_value(1f64).unwrap()),
+			(TypeName::Char, crate::to_value('x').unwrap()),
+			(
+				TypeName::String,
+				crate::to_value(crate::alloc::String::try_from("x").unwrap()).unwrap(),
+			),
+			(TypeName::Vec, rt::Value::new(rt::Vec::new()).unwrap()),
+			(TypeName::Tuple, crate::to_value((1i64,)).unwrap()),
+			(TypeName::Object, rt::Value::new(rt::Object::new()).unwrap()),
+			(TypeName::Option, crate::to_value(Some(1i64)).unwrap()),
+			(
+				TypeName::Result,
+				crate::to_value(core::result::Result::<i64, i64>::Ok(1)).unwrap(),
+			),
+			(TypeName::Range, crate::to_value(1i64..3i64).unwrap()),
+			(
+				TypeName::RangeInclusive,
+				crate::to_value(1i64..=3i64).unwrap(),
+			),
+			(
+				TypeName::Type,
+				crate::to_value(rt::Type::new(crate::Hash::EMPTY)).unwrap(),
+			),
+		];
+		for (name, stock) in rows {
+			assert_eq!(name.builtin_hash(), Some(stock.type_hash()), "{name:?}");
+		}
 	}
 }
