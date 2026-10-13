@@ -25,6 +25,8 @@ pub(crate) mod native;
 #[cfg(test)]
 mod allocation_tests;
 #[cfg(test)]
+mod children_tests;
+#[cfg(test)]
 mod growth_tests;
 #[cfg(test)]
 mod range_iterator_tests;
@@ -104,6 +106,30 @@ enum Payload {
 	},
 }
 
+// Child values are inert copies; this iterator never acquires ownership.
+// Dispatch the payload once, then walk its selected child storage.
+enum Children<'a> {
+	Empty,
+	One(Option<Value>),
+	Two(Option<Value>, Option<Value>),
+	Values(core::slice::Iter<'a, Value>),
+	Fields(core::slice::Iter<'a, (String, Value)>),
+}
+
+impl Iterator for Children<'_> {
+	type Item = Value;
+
+	fn next(&mut self) -> Option<Value> {
+		match self {
+			Self::Empty => None,
+			Self::One(value) => value.take(),
+			Self::Two(first, second) => first.take().or_else(|| second.take()),
+			Self::Values(values) => values.next().copied(),
+			Self::Fields(fields) => fields.next().map(|(_, value)| *value),
+		}
+	}
+}
+
 impl Payload {
 	fn bytes(&self) -> Result<usize> {
 		let bytes = match self {
@@ -133,25 +159,21 @@ impl Payload {
 
 	/// Inert child handles in construction order. They acquire ownership only
 	/// when admission retains them; dropping an unpublished payload owns none.
-	fn children(&self) -> impl Iterator<Item = Value> + '_ {
-		let mut index = 0;
-		core::iter::from_fn(move || {
-			let value = match self {
-				Self::Moved(_) => None,
-				Self::Variant { payload, .. } | Self::OptionIterator { payload } if index == 0 => {
-					*payload
-				}
-				Self::VectorIterator(iter) if index == 0 => Some(Value::Heap(iter.handle)),
-				Self::Record { fields, .. } => fields.get(index).map(|(_, value)| *value),
-				Self::List { values, .. } => values.get(index).copied(),
-				Self::ValueRange { start, .. } if index == 0 => Some(*start),
-				Self::ValueRange { end, .. } if index == 1 => Some(*end),
-				_ => None,
-			};
-
-			index += usize::from(value.is_some());
-			value
-		})
+	fn children(&self) -> Children<'_> {
+		match self {
+			Self::Moved(_)
+			| Self::String(_)
+			| Self::Range { .. }
+			| Self::RangeIterator { .. }
+			| Self::ValueRangeIterator { .. } => Children::Empty,
+			Self::Variant { payload, .. } | Self::OptionIterator { payload } => {
+				Children::One(*payload)
+			}
+			Self::VectorIterator(iter) => Children::One(Some(Value::Heap(iter.handle))),
+			Self::Record { fields, .. } => Children::Fields(fields.iter()),
+			Self::List { values, .. } => Children::Values(values.iter()),
+			Self::ValueRange { start, end } => Children::Two(Some(*start), Some(*end)),
+		}
 	}
 
 	fn tag(&self) -> Type {
@@ -353,10 +375,26 @@ impl Store {
 	}
 
 	fn payload_edges(payload: &Payload) -> usize {
-		payload
-			.children()
-			.filter(|v| matches!(v, Value::Heap(_)))
-			.count()
+		match payload {
+			Payload::Moved(_)
+			| Payload::String(_)
+			| Payload::Range { .. }
+			| Payload::RangeIterator { .. }
+			| Payload::ValueRangeIterator { .. } => 0,
+			Payload::Variant { payload, .. } | Payload::OptionIterator { payload } => {
+				payload.map_or(0, Self::heap_edge)
+			}
+			Payload::VectorIterator(_) => 1,
+			Payload::Record { fields, .. } => fields
+				.iter()
+				.filter(|(_, value)| matches!(value, Value::Heap(_)))
+				.count(),
+			Payload::List { values, .. } => values
+				.iter()
+				.filter(|value| matches!(value, Value::Heap(_)))
+				.count(),
+			Payload::ValueRange { start, end } => Self::heap_edge(*start) + Self::heap_edge(*end),
+		}
 	}
 
 	/// Reserve conservative peak ownership before retaining/publishing anything.
@@ -1333,10 +1371,7 @@ impl Store {
 	}
 
 	fn children_room(&self, payload: &Payload) -> Result<()> {
-		let count = payload
-			.children()
-			.filter(|v| matches!(v, Value::Heap(_)))
-			.count();
+		let count = Self::payload_edges(payload);
 		if count > self.edges || count > self.work.capacity().saturating_sub(self.work.len()) {
 			// W reserved room before these edges were admitted. Failure here is an
 			// invariant error, not permission to allocate during cleanup.

@@ -134,12 +134,30 @@ fn admission_retain_overflow_rolls_back_the_prefix_without_allocation() {
 
 	s.entry_mut(h).unwrap().strong = u32::MAX;
 	let baseline = state(&s);
-	let kind = s
-		.list(Type::Vec, &[child, child, overflowing])
-		.unwrap_err()
-		.kind;
-	assert_eq!(kind, ErrorKind::Overflow);
-	assert_eq!(state(&s), baseline);
+	let work = (s.edges, s.work.len());
+	for shape in 0..4 {
+		let result = match shape {
+			0 => s.list(Type::Vec, &[child, child, overflowing]),
+			1 => s.list(Type::Tuple, &[child, child, overflowing]),
+			2 => s.record(
+				Type::Object,
+				&[("a", child), ("b", child), ("full", overflowing)],
+			),
+			_ => s.admit(Payload::ValueRange {
+				start: child,
+				end: overflowing,
+			}),
+		};
+		assert_eq!(result.unwrap_err().kind, ErrorKind::Overflow);
+		assert_eq!(state(&s), baseline);
+		assert_eq!((s.edges, s.work.len()), work);
+		s.assert_work();
+		let Value::Heap(c) = child else {
+			unreachable!()
+		};
+		assert_eq!(s.entry(c).unwrap().strong, 1);
+		assert_eq!(s.entry(h).unwrap().strong, u32::MAX);
+	}
 	let Value::Heap(c) = child else {
 		unreachable!()
 	};
