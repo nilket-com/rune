@@ -165,6 +165,10 @@ fn fixed_case_list() {
 #[test]
 #[ignore = "bounded range-index oracle study; requires new GAP_OUT and RANGE_ENGINE"]
 fn probe() {
+	probe_cases(cases(), "range-index");
+}
+
+fn probe_cases(cases: Vec<(String, String)>, name: &str) {
 	let engine = std::env::var("RANGE_ENGINE").expect("RANGE_ENGINE");
 	assert!(matches!(engine.as_str(), "stock" | "fresh"));
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("GAP_OUT"));
@@ -174,7 +178,7 @@ fn probe() {
 	fs::create_dir(&scratch.0).unwrap();
 	let mut table =
 		String::from("case\tsource_hex\tstock_observation_hex\tstdout_hex\tstderr_hex\n");
-	for (n, (label, source)) in cases().iter().enumerate() {
+	for (n, (label, source)) in cases.iter().enumerate() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
@@ -193,7 +197,7 @@ fn probe() {
 			hex(&run.stdout),
 			hex(&run.stderr)
 		));
-		fs::write(out.join(format!("{engine}-range-index.tsv")), &table).unwrap();
+		fs::write(out.join(format!("{engine}-{name}.tsv")), &table).unwrap();
 	}
 }
 
@@ -210,16 +214,16 @@ fn fresh_contract() {
 }
 
 fn contract(engine: &str) {
+	contract_cases(engine, cases(), include_str!("../range_index_stock.tsv"));
+}
+
+fn contract_cases(engine: &str, generated: Vec<(String, String)>, table: &str) {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("GAP_OUT"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
 	let scratch =
 		Scratch(std::env::temp_dir().join(format!("rune-range-contract-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
-	let generated = cases();
-	let rows: Vec<_> = include_str!("../range_index_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
+	let rows: Vec<_> = table.lines().skip(1).collect();
 	assert_eq!(generated.len(), rows.len());
 	for (n, ((label, source), row)) in generated.iter().zip(rows).enumerate() {
 		let row: Vec<_> = row.split('\t').collect();
@@ -256,4 +260,114 @@ fn contract(engine: &str) {
 		assert_eq!(hex(&run.stdout), row[3], "stdout drift: {label}");
 		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
 	}
+}
+
+fn endpoint_cases() -> Vec<(String, String)> {
+	let mut out = Vec::new();
+	let mut add = |id: String, body: String| {
+		out.push((id, format!("pub fn main() {{{body}}}")));
+	};
+	for (kind, start, end) in [
+		("i64", "0", "3"),
+		("u64", "0u64", "3u64"),
+		("i64-u64", "0", "3u64"),
+		("u64-i64", "0u64", "3"),
+		("float", "0.0", "3.0"),
+		("char", "'a'", "'d'"),
+		("string", "\"a\"", "\"d\""),
+		("unit", "()", "()"),
+	] {
+		for (op, action) in [
+			("endpoint-debug", "(r.start,r.end)"),
+			("iter", "let a=[]; for x in r {a.push(x);} a"),
+			("eq", "r==s"),
+			("ord", "r<s"),
+			("vec-rhs", "[0,1,2]==r"),
+			("get-start", "r.start"),
+			("get-end", "r.end"),
+		] {
+			add(
+				format!("endpoint/{kind}/{op}"),
+				format!("let r={start}..{end}; let s={start}..{end}; {action}"),
+			);
+		}
+		for (op, action) in [
+			("set", "v[lo..hi]=[7,8]; ()"),
+			("add", "v[lo..hi]+=[7,8]; ()"),
+		] {
+			add(
+				format!("endpoint-literal/{kind}/{op}"),
+				format!("let v=[1,2,3]; let lo={start}; let hi={end}; {action}"),
+			);
+		}
+	}
+	for (name, body) in [
+		("heap-alias", "let a=\"a\"; let b=\"z\"; let r=a..b; a.push('b'); (r.start,r.end,a,b)"),
+		("drop-range", "let a=\"a\"; let b=\"z\"; let r=a..b; drop(r); (a,b)"),
+		("drop-start", "let a=\"a\"; let r=a..\"z\"; drop(a); r.start.len()"),
+		("drop-end", "let b=\"z\"; let r=\"a\"..b; drop(b); r.end.len()"),
+		("drop-wrapper-alias", "let r=\"a\"..\"z\"; let s=r; drop(r); s.start"),
+		("replace-start", "let a=\"a\"; let r=a..\"z\"; r.start=\"b\"; (a,r.start,r.end)"),
+		("replace-end", "let b=\"z\"; let r=\"a\"..b; r.end=\"y\"; (b,r.start,r.end)"),
+		("form-flips", "let r=0..3; r.start=0.0; let a=r.start; r.end=3.0; let b=r.end; r.start=0; r.end=3; let v=[]; for x in r {v.push(x);} (a,b,v,r.start,r.end)"),
+		("start-compound", "let r=0..3; r.start+=1; (r.start,r.end)"),
+		("end-compound", "let r=0..3; r.end+=1; (r.start,r.end)"),
+		("heap-compound-alias", "let a=\"a\"; let r=a..\"z\"; r.start+=\"b\"; (a,r.start)"),
+		("mutate-iter-start", "let r=0..3; let a=[]; for x in r {a.push(x); r.start=8;} (a,r.start)"),
+		("mutate-iter-end", "let r=0..3; let a=[]; for x in r {a.push(x); r.end=0;} (a,r.end)"),
+		("mutate-iter-kind", "let r=0..3; let a=[]; for x in r {a.push(x); r.start=0.0;} (a,r.start)"),
+		("drop-iter-range", "let r=0..3; let a=[]; for x in r {a.push(x); if x==0 {drop(r);}} a"),
+		("mixed-negative-unsigned", "let n=-1; let r=0u64..n; let a=[]; for x in r {a.push(x);} a"),
+		("mixed-overflow-signed", "let r=0..18446744073709551615u64; let a=[]; for x in r {a.push(x);} a"),
+		("unsigned-top", "let r=18446744073709551614u64..18446744073709551615u64; let a=[]; for x in r {a.push(x);} a"),
+		("char-surrogate-gap", "let r='\u{d7ff}'..'\u{e001}'; let a=[]; for x in r {a.push(x);} a"),
+		("unsigned-vec-rhs", "let r=0u64..3u64; [0u64,1u64,2u64]==r"),
+		("char-vec-rhs", "let r='a'..'d'; ['a','b','c']==r"),
+		("cross-kind-eq", "let r=0..3; let s=0u64..3u64; r==s"),
+		("cross-kind-ord", "let r=0..3; let s=0u64..3u64; r<s"),
+		("heap-range-eq", "let r=[1]..[2]; let s=[1]..[2]; r==s"),
+		("heap-range-ord", "let r=[1]..[2]; let s=[1]..[3]; r<s"),
+		("moved-range-write", "let r=0..3; let s=r; drop(s); r.start=2; ()"),
+		("moved-endpoint-replace", "let a=\"a\"; let r=a..\"z\"; drop(a); r.start=\"b\"; r.start"),
+		("moved-endpoint-debug", "let a=\"a\"; let r=a..\"z\"; drop(a); r.start.len()"),
+	] {
+		add(format!("lifecycle/{name}"),body.into());
+	}
+	assert_eq!(out.len(), 100);
+	out
+}
+
+#[test]
+fn fixed_endpoint_list() {
+	let cases = endpoint_cases();
+	let mut ids = std::collections::BTreeSet::new();
+	for (id, _) in cases {
+		assert!(ids.insert(id));
+	}
+}
+
+#[test]
+#[ignore = "bounded endpoint supplement study; requires new GAP_OUT and RANGE_ENGINE"]
+fn endpoint_probe() {
+	probe_cases(endpoint_cases(), "range-endpoint");
+}
+
+#[test]
+#[ignore = "bounded frozen stock endpoint supplement; requires new GAP_OUT"]
+fn endpoint_stock_contract() {
+	contract_cases(
+		"stock",
+		endpoint_cases(),
+		include_str!("../range_endpoint_stock.tsv"),
+	);
+}
+
+#[test]
+#[ignore = "bounded fresh endpoint supplement convergence; requires new GAP_OUT"]
+fn endpoint_fresh_contract() {
+	contract_cases(
+		"fresh",
+		endpoint_cases(),
+		include_str!("../range_endpoint_stock.tsv"),
+	);
 }

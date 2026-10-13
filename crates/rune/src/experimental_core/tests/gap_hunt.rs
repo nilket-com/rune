@@ -117,7 +117,8 @@ fn stock_class(k: &crate::runtime::VmErrorKind) -> String {
 		| K::ExpectedNumber { .. }
 		| K::ExpectedType { .. }
 		| K::MissingInstanceFunction { .. }
-		| K::MissingProtocolFunction { .. } => "Type",
+		| K::MissingProtocolFunction { .. }
+		| K::UnsupportedIterRange { .. } => "Type",
 		_ => return format!("stock:{k:?}"),
 	};
 	class.into()
