@@ -155,11 +155,23 @@ fn fresh_scalar(store: &Store, root: &super::super::value::Root) -> String {
 
 fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 	let context = Context::with_default_modules().unwrap();
+	observe_with_context(path, mode, engine, &context, None, FUEL)
+}
+
+// Test-only C2 seam: existing observations keep the default context and no input.
+fn observe_with_context(
+	path: &Path,
+	mode: &str,
+	engine: &str,
+	context: &Context,
+	float_input: Option<f64>,
+	fuel: usize,
+) -> Observation {
 	let mut sources = sources(path, mode);
 	let mut diagnostics = Diagnostics::new();
 	if engine == "stock" {
 		let vm = crate::prepare(&mut sources)
-			.with_context(&context)
+			.with_context(context)
 			.with_diagnostics(&mut diagnostics)
 			.build_vm();
 		let mut vm = match vm {
@@ -178,7 +190,11 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 			return Observation::new("compiled", "", "", String::new(), String::new());
 		}
 		let entry = mode.strip_prefix("test:").unwrap_or("main");
-		let result = crate::runtime::budget::with(FUEL, || vm.call(entry_hash(entry), ())).call();
+		let result = crate::runtime::budget::with(fuel, || match float_input {
+			Some(input) => vm.call(entry_hash(entry), (input,)),
+			None => vm.call(entry_hash(entry), ()),
+		})
+		.call();
 		return match result {
 			Ok(value) => {
 				let mut text = crate::alloc::String::new();
@@ -205,16 +221,21 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 			Err(e) => {
 				// Assertion oracle opt-in: preserve exact stock failure metadata without
 				// changing any existing frozen observation or running the case twice.
-				if mode == "assert-main" {
-					let at = e.first_location().expect("stock error location");
-					let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
-					let range = inst.span.range();
-					let site = format!(
-						"{}:{}:{}",
-						inst.source_id.into_index(),
-						range.start,
-						range.end
-					);
+				if mode == "assert-main" || mode == "output-main" {
+					let site = match e.first_location() {
+						Some(at) => {
+							let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
+							let range = inst.span.range();
+							format!(
+								"{}:{}:{}",
+								inst.source_id.into_index(),
+								range.start,
+								range.end
+							)
+						}
+						None if mode == "output-main" => "none".into(),
+						None => panic!("stock error location"),
+					};
 					let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
 					fs::write(result.with_extension("site"), site).unwrap();
 				}
@@ -230,7 +251,7 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 		};
 	}
 	assert_eq!(engine, "fresh");
-	let program = match frontend::compile(&mut sources, &context, &mut diagnostics, 1) {
+	let program = match frontend::compile(&mut sources, context, &mut diagnostics, 1) {
 		Ok(p) => p,
 		Err(e) => {
 			return Observation::new(
@@ -262,7 +283,15 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 		limits.depth = 64;
 		executor.set_format_limits(limits);
 	}
-	match executor.invoke(&program, &mut store, main, &[], FUEL) {
+	let inputs: Vec<_> = float_input.into_iter().map(|n| store.root_f64(n)).collect();
+	let result = match inputs.first() {
+		Some(input) => executor.invoke(&program, &mut store, main, &[input], fuel),
+		None => executor.invoke(&program, &mut store, main, &[], fuel),
+	};
+	for input in inputs {
+		store.root_release(input).unwrap();
+	}
+	match result {
 		Ok(value) => {
 			let observed = match store.root_format(&value, true) {
 				Ok(text) => Observation::new(
@@ -285,14 +314,14 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 			observed
 		}
 		Err(f) => {
-			if mode.starts_with("assert-main") {
-				let at = f.error.location.expect("fresh error location");
+			if mode.starts_with("assert-main") || mode == "output-main" {
+				let site = match f.error.location {
+					Some(at) => format!("{}:{}:{}", at.source, at.start, at.end),
+					None if mode == "output-main" => "none".into(),
+					None => panic!("fresh error location"),
+				};
 				let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
-				fs::write(
-					result.with_extension("site"),
-					format!("{}:{}:{}", at.source, at.start, at.end),
-				)
-				.unwrap();
+				fs::write(result.with_extension("site"), site).unwrap();
 			}
 			Observation::new(
 				"error",
@@ -314,7 +343,9 @@ fn child() {
 	if mode == "timeout-control" {
 		std::thread::sleep(Duration::from_secs(60));
 	}
-	let observation = if mode == "stack-main" {
+	let observation = if mode.starts_with("c2-") {
+		output_macros::observe_c2(Path::new(&path), &mode, &engine)
+	} else if mode == "stack-main" {
 		std::thread::Builder::new()
 			.stack_size(2 << 20)
 			.spawn(move || observe(Path::new(&path), "main", &engine))
@@ -1441,6 +1472,9 @@ fn emission_child() {
 
 #[path = "gap_hunt/assertions.rs"]
 mod assertions;
+
+#[path = "gap_hunt/output_macros.rs"]
+mod output_macros;
 
 #[test]
 fn panic_class_alias_preserves_exact_message_stream_kind_and_phase_checks() {

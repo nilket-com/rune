@@ -106,6 +106,8 @@ fn dbg_impl(
 
 	for value in memory.slice_at(addr, args)? {
 		writeln!(stdout, "{value:?}").map_err(print_error)?;
+		#[cfg(all(test, feature = "fresh-core", target_os = "linux"))]
+		stdout_tests::after_print();
 	}
 
 	memory.store(out, ())?;

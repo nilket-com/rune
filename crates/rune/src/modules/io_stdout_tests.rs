@@ -46,6 +46,7 @@ pub(crate) fn after_print() {
 unsafe extern "C" {
 	fn fcntl(fd: i32, cmd: i32, ...) -> i32;
 	fn dup2(old: i32, new: i32) -> i32;
+	fn close(fd: i32) -> i32;
 }
 
 fn inherit(fd: i32) -> std::io::Result<()> {
@@ -74,6 +75,11 @@ fn child_stdout_contract() {
 	// SAFETY: replace only this subprocess's stdout with our owned data endpoint.
 	assert_eq!(unsafe { dup2(data.as_raw_fd(), 1) }, 1);
 	drop(data);
+	if mode.ends_with("closed") {
+		// SAFETY: stdout was just installed in this isolated child. Closing only
+		// its descriptor deliberately exercises EBADF, never the parent's IO.
+		assert_eq!(unsafe { close(1) }, 0);
+	}
 	let barrier = mode.ends_with("after");
 	if barrier {
 		let fd = std::env::var("RUNE_B1_CONTROL_FD")
@@ -86,7 +92,13 @@ fn child_stdout_contract() {
 		socket.set_write_timeout(Some(DEADLINE)).unwrap();
 		BARRIER.with(|b| *b.borrow_mut() = Some((socket, 0)));
 	}
-	let source = if mode.ends_with("volume") {
+	let source = if mode.contains("c2-dbg") {
+		r#"pub fn main(a) { dbg!("first", "second"); 42 }"#
+	} else if mode.contains("c2-print") && barrier {
+		r#"pub fn main(a) { println!("first"); print!("{}", a); 42 }"#
+	} else if mode.contains("c2-print") {
+		r#"pub fn main(a) { print!("{}", a); 42 }"#
+	} else if mode.ends_with("volume") {
 		r#"pub fn main(a) { let i = 0; while i < 256 { println!("{}", a); i += 1; } 42 }"#
 	} else if mode.ends_with("partial") {
 		r#"pub fn main(a) { print!("a"); 42 }"#
@@ -152,7 +164,11 @@ fn child_stdout_contract() {
 		}
 	};
 	if let Some(span) = span {
-		let expected = if barrier {
+		let expected = if mode.contains("c2-dbg") {
+			"dbg!(\"first\", \"second\")"
+		} else if mode.contains("c2-print") {
+			"print!(\"{}\", a)"
+		} else if barrier {
 			"println!(\"second\")"
 		} else {
 			"println!(\"first\")"
@@ -213,9 +229,14 @@ fn run(mode: &str) -> (Vec<u8>, String) {
 	let started = Instant::now();
 	let mut out = Vec::new();
 	if mode.ends_with("after") {
-		let mut first = [0; 6];
+		let expected = if mode.contains("c2-dbg") {
+			&b"\"first\"\n"[..]
+		} else {
+			&b"first\n"[..]
+		};
+		let mut first = std::vec![0; expected.len()];
 		reader.as_mut().unwrap().read_exact(&mut first).unwrap();
-		assert_eq!(&first, b"first\n");
+		assert_eq!(&first, expected);
 		out.extend(first);
 		let mut ack = [0];
 		control.read_exact(&mut ack).unwrap();
@@ -292,4 +313,36 @@ fn volume_matches_stock_and_stock_partial_line_is_preserved() {
 		run("stock-partial"),
 		(b"a".to_vec(), "return:42\n".to_owned())
 	);
+}
+
+#[test]
+#[ignore = "C2 stock-only bounded descriptor oracle; explicit new GAP_OUT"]
+fn stock_c2_probe() {
+	let out = std::path::PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
+	stock_c2_at(&out);
+}
+
+pub(crate) fn stock_c2_at(out: &std::path::Path) {
+	std::fs::create_dir(out).unwrap();
+	let mut table = String::from("case\tstdout_hex\tstderr_hex\n");
+	let hex = |bytes: &[u8]| bytes.iter().map(|b| format!("{b:02x}")).collect::<String>();
+	for mode in [
+		"stock-c2-dbg-first",
+		"stock-c2-dbg-after",
+		"stock-c2-print-first",
+		"stock-c2-print-after",
+		"stock-c2-dbg-closed",
+		"stock-c2-print-closed",
+		"stock-partial",
+	] {
+		let (stdout, stderr) = run(mode);
+		std::fs::write(out.join(format!("{mode}.stdout")), &stdout).unwrap();
+		std::fs::write(out.join(format!("{mode}.stderr")), &stderr).unwrap();
+		table.push_str(&format!(
+			"{mode}\t{}\t{}\n",
+			hex(&stdout),
+			hex(stderr.as_bytes())
+		));
+		std::fs::write(out.join("stock-output-descriptors.tsv"), &table).unwrap();
+	}
 }
