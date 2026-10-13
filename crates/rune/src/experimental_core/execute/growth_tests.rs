@@ -390,3 +390,176 @@ fn configured_depth_exceeds_old_limit_and_warmed_scalar_calls_allocate_nothing()
 		e.bookkeeping_bytes().unwrap()
 	);
 }
+
+#[test]
+fn f1_fix2_caller_slot_aliases_and_unit_tail_keep_exact_owners() {
+	let mut s = store();
+	let a = s.string("a").unwrap();
+	let b = s.string("b").unwrap();
+	let mut e = caller(9);
+	// Replace the scalar callers with real owned heap arguments.
+	s.retain(a).unwrap();
+	s.retain(b).unwrap();
+	e.slots[0] = a;
+	e.slots[2] = b;
+	let before = witness(&e);
+	let metadata = (
+		s.live_entries(),
+		s.payload_bytes(),
+		s.bookkeeping_bytes().unwrap(),
+	);
+	let caps = e.capacities();
+	rune_alloc::limit::with(0, || {
+		e.push_call(
+			&mut s,
+			6,
+			Args::Slots {
+				base: 0,
+				indices: &[2, 0, 2, 1],
+			},
+			frame(),
+		)
+		.map_err(|f| (f.error.kind, f.cleanup_error.map(|e| e.kind)))
+	})
+	.call()
+	.unwrap();
+	assert_eq!(
+		&e.slots[3..],
+		&[b, a, b, Value::I64(42), Value::Unit, Value::Unit]
+	);
+	assert_eq!(e.frames.last().unwrap().base, 3);
+	assert!(e.diagnostics.capacity() >= e.frames.len());
+	assert_eq!(e.capacities(), caps);
+	assert_eq!((s.test_strong(a), s.test_strong(b)), (3, 4));
+	e.leave(&mut s).unwrap();
+	assert_eq!(witness(&e), before);
+	assert_eq!((s.test_strong(a), s.test_strong(b)), (2, 2));
+	assert_eq!(
+		(
+			s.live_entries(),
+			s.payload_bytes(),
+			s.bookkeeping_bytes().unwrap()
+		),
+		metadata
+	);
+	while !e.frames.is_empty() {
+		e.leave(&mut s).unwrap();
+	}
+	s.release(a).unwrap();
+	s.release(b).unwrap();
+	assert!(e.is_idle());
+	assert_eq!(s.live_entries(), 0);
+}
+
+#[test]
+fn f1_fix2_values_and_owner_checked_roots_publish_before_unit_tail() {
+	let mut s = store();
+	let value = s.string("root").unwrap();
+	let root = s.export(value);
+	for roots in [false, true] {
+		let mut e = caller(9);
+		let before = witness(&e);
+		let values = [value, Value::I64(9), value];
+		let scalar = s.root_i64(9);
+		let supplied = [&root, &scalar, &root];
+		let args = if roots {
+			s.import_all(supplied).unwrap();
+			Args::Roots(&supplied)
+		} else {
+			Args::Values(&values)
+		};
+		rune_alloc::limit::with(0, || {
+			e.push_call(&mut s, 5, args, frame())
+				.map_err(|f| (f.error.kind, f.cleanup_error.map(|e| e.kind)))
+		})
+		.call()
+		.unwrap();
+		assert_eq!(
+			&e.slots[3..],
+			&[value, Value::I64(9), value, Value::Unit, Value::Unit]
+		);
+		assert_eq!(s.test_strong(value), 3);
+		e.leave(&mut s).unwrap();
+		assert_eq!(s.test_strong(value), 1);
+		assert_eq!(witness(&e), before);
+		while !e.frames.is_empty() {
+			e.leave(&mut s).unwrap();
+		}
+	}
+	s.release(value).unwrap();
+	assert_eq!(s.live_entries(), 0);
+}
+
+#[test]
+fn f1_fix2_each_growth_boundary_returns_to_allocation_free_setup() {
+	for site in 0..3 {
+		let mut e = caller(site);
+		let mut s = store();
+		let before = witness(&e);
+		let caps = e.capacities();
+		assert!(caps.0 < 4 || caps.1 < 7 || caps.2 < 4);
+		let args = [Value::I64(7), Value::I64(8)];
+		let failure = rune_alloc::limit::with(0, || {
+			e.push_call(&mut s, 4, Args::Values(&args), frame())
+				.map_err(|f| (f.error.kind, f.cleanup_error.map(|e| e.kind)))
+		})
+		.call()
+		.unwrap_err();
+		assert_eq!(failure.0, ErrorKind::Allocation);
+		assert!(failure.1.is_none());
+		assert_eq!(witness(&e), before);
+		e.push_call(&mut s, 4, Args::Values(&args), frame())
+			.unwrap();
+		let grown = e.capacities();
+		assert!(grown.0 >= 4 && grown.1 >= 7 && grown.2 >= 4);
+		e.leave(&mut s).unwrap();
+		for _ in 0..3 {
+			rune_alloc::limit::with(0, || {
+				e.push_call(&mut s, 4, Args::Values(&args), frame())
+					.map_err(|f| (f.error.kind, f.cleanup_error.map(|e| e.kind)))
+			})
+			.call()
+			.unwrap();
+			assert_eq!(e.capacities(), grown);
+			assert_eq!(
+				&e.slots[3..],
+				&[Value::I64(7), Value::I64(8), Value::Unit, Value::Unit]
+			);
+			e.leave(&mut s).unwrap();
+			assert_eq!(witness(&e), before);
+		}
+		while !e.frames.is_empty() {
+			e.leave(&mut s).unwrap();
+		}
+		assert!(e.is_idle());
+	}
+}
+
+#[test]
+fn f1_fix2_limits_precede_arity_without_any_reservation() {
+	for (frames, slots, expected) in [
+		(3, 100, ErrorKind::FrameCapacity),
+		(100, 4, ErrorKind::FrameCapacity),
+		(100, 100, ErrorKind::InvalidCode),
+	] {
+		let mut e = caller(9);
+		e.limits = ExecutorLimits { frames, slots };
+		let mut s = store();
+		let before = witness(&e);
+		let caps = e.capacities();
+		let args = [Value::I64(1); 3];
+		let failure = rune_alloc::limit::with(0, || {
+			e.push_call(&mut s, 2, Args::Values(&args), frame())
+				.map_err(|f| (f.error.kind, f.cleanup_error.map(|e| e.kind)))
+		})
+		.call()
+		.unwrap_err();
+		assert_eq!(failure.0, expected);
+		assert!(failure.1.is_none());
+		assert_eq!(witness(&e), before);
+		assert_eq!(e.capacities(), caps);
+		while !e.frames.is_empty() {
+			e.leave(&mut s).unwrap();
+		}
+	}
+}

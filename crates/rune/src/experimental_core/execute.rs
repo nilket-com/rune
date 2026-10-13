@@ -1249,24 +1249,44 @@ impl Executor {
 		if args.len() > slots {
 			return Err(error(ErrorKind::InvalidCode).into());
 		}
-		// Reserve by additional length. No borrowed slot survives growth.
-		self.frames
-			.try_reserve(frames - self.frames.len())
-			.map_err(Error::from)?;
-		self.slots.try_reserve(len - base).map_err(Error::from)?;
-		self.diagnostics
-			.try_reserve(frames.saturating_sub(self.diagnostics.len()))
-			.map_err(Error::from)?;
+		// Reserve by additional length only when a physical buffer needs growth.
+		// No borrowed slot survives growth; keep the fallible reserve order exact.
+		if self.frames.len() >= self.frames.capacity()
+			|| self.slots.capacity() < len
+			|| self.diagnostics.capacity() < frames
+		{
+			self.frames
+				.try_reserve(frames - self.frames.len())
+				.map_err(Error::from)?;
+			self.slots.try_reserve(len - base).map_err(Error::from)?;
+			self.diagnostics
+				.try_reserve(frames.saturating_sub(self.diagnostics.len()))
+				.map_err(Error::from)?;
+		}
 		debug_assert!(self.diagnostics.capacity() >= frames);
-		self.slots
-			.try_resize_with(len, || Value::Unit)
-			.map_err(Error::from)?;
 		for i in 0..args.len() {
 			let value = args.get(&self.slots, i);
 			if let Err(error) = store.retain(value) {
 				return Err(self.rollback_call(store, base, i, error));
 			}
-			self.slots[base + i] = value;
+			if self.slots.push_within_capacity(value).is_err() {
+				// Reservation makes this unreachable, but the unpublished owner
+				// still precedes the published prefix in reverse-order cleanup.
+				let cleanup_error = store.release(value).err();
+				let mut failure = self.rollback_call(
+					store,
+					base,
+					i,
+					Error::new(ErrorKind::InvalidCode, "argument publication"),
+				);
+				failure.cleanup_error = cleanup_error.or(failure.cleanup_error);
+				return Err(failure);
+			}
+		}
+		// Published arguments already hold retained values. Only the unused
+		// tail needs Unit initialization, without allocating after reservation.
+		if let Err(error) = self.slots.try_resize_with(len, || Value::Unit) {
+			return Err(self.rollback_call(store, base, args.len(), Error::from(error)));
 		}
 		frame.base = base;
 		if self.frames.push_within_capacity(frame).is_err() {
