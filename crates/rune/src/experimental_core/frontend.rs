@@ -118,7 +118,7 @@ impl Collector {
 			},
 			constants,
 			pool,
-			context.fresh_stdio_println(),
+			context,
 			&mut self.transaction,
 		);
 		let function = match result {

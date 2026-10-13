@@ -144,6 +144,8 @@ pub struct Failure {
 	pub error: Error,
 	/// Full dynamic missing-field key, if its best-effort diagnostic copy succeeded.
 	pub missing_key: Option<Box<str>>,
+	/// Complete panic text, copied before cleanup and independent of Store lifetime.
+	pub panic_message: Option<Box<str>>,
 	/// The callsite locations of the active calls, innermost caller first; empty when the
 	/// failure happened in the entry function or before it ran.
 	pub call_chain: Vec<Location>,
@@ -187,8 +189,8 @@ impl Failure {
 		})
 	}
 
-	/// Render the error including owned dynamic key evidence. Error::message alone
-	/// renders a missing dynamic field without its key.
+	/// Render the error including owned dynamic key or panic text. Error::message
+	/// alone renders these failures without their dynamic payload.
 	pub fn message<'a>(&'a self, program: &'a Program) -> impl core::fmt::Display + 'a {
 		FailureMessage {
 			failure: self,
@@ -207,6 +209,12 @@ impl core::fmt::Display for FailureMessage<'_> {
 			self.failure.missing_key.as_deref(),
 		) {
 			return write!(f, "Missing field `{key}` on `{target}`");
+		}
+		if let (Detail::PanicMessage, Some(message)) = (
+			self.failure.error.detail,
+			self.failure.panic_message.as_deref(),
+		) {
+			return write!(f, "Panicked: {message}");
 		}
 		core::fmt::Display::fmt(&self.failure.error.message(self.program), f)
 	}
@@ -429,6 +437,7 @@ impl Executor {
 	) -> core::result::Result<Value, Failure> {
 		let mut setup_cleanup_error = None;
 		let mut missing_key = None;
+		let mut panic_message = None;
 
 		let result = (|| {
 			if store.is_closed() {
@@ -631,6 +640,18 @@ impl Executor {
 								)?;
 								let value = store.string_owned(text)?;
 								self.put(store, frame.base + out as usize, value)?;
+							}
+
+							Op::StringFrom { out, value } => {
+								let value = store.string_from(get(value)?)?;
+								self.put(store, frame.base + out as usize, value)?;
+							}
+							Op::Panic { value } => {
+								// Full copy is required language payload, not best-effort evidence.
+								panic_message = Some(copy_panic_message(store, get(value)?)?);
+								return Err(
+									error(ErrorKind::Panic).with_detail(Detail::PanicMessage)
+								);
 							}
 
 							Op::Print { value } => {
@@ -1158,6 +1179,7 @@ impl Executor {
 				Err(Failure {
 					error: failure,
 					missing_key,
+					panic_message,
 					call_chain: core::mem::take(&mut self.diagnostics),
 					cleanup_error,
 				})
@@ -1410,6 +1432,11 @@ impl Executor {
 	}
 }
 
+#[inline(never)]
+fn copy_panic_message(store: &Store, value: Value) -> Result<Box<str>> {
+	Ok(Box::<str>::try_from(store.text(value)?)?)
+}
+
 // Called only after an instruction fails, while its operand slots and constant pool
 // still exist. Diagnostic lookup is best-effort: it never replaces the primary error.
 fn copy_missing_key(store: &Store, value: Value) -> Option<Box<str>> {
@@ -1491,6 +1518,10 @@ fn enrich_error(
 						tag,
 						super::value::Type::I64 | super::value::Type::U64 | super::value::Type::F64
 					),
+				},
+				Op::StringFrom { value, .. } | Op::Panic { value } => Detail::ExpectedType {
+					expected: TypeName::String,
+					found: ty(value)?,
 				},
 				Op::Branch { condition, .. } => Detail::ExpectedBool {
 					found: ty(condition)?,
@@ -1944,3 +1975,6 @@ mod key_diagnostic_tests {
 
 #[cfg(test)]
 mod field_tests;
+
+#[cfg(test)]
+mod assertion_tests;

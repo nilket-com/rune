@@ -668,6 +668,19 @@ impl Store {
 		self.admit(Payload::String(s))
 	}
 
+	/// Checked String::from copy: refusal by the byte budget precedes allocation.
+	pub(crate) fn string_from(&mut self, value: Value) -> Result<Value> {
+		if self.closed {
+			return Err(err(ErrorKind::ClosedStore));
+		}
+		let text = self.text(value)?;
+		if text.len() > self.limits.bytes.saturating_sub(self.bytes) {
+			return Err(err(ErrorKind::StoreCapacity));
+		}
+		let text = String::try_from(text)?;
+		self.string_owned(text)
+	}
+
 	/// Admit the renderer's already bounded buffer without a second text copy.
 	pub(crate) fn string_owned(&mut self, text: String) -> Result<Value> {
 		self.admit(Payload::String(text))

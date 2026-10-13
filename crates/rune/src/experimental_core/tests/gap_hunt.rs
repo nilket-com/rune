@@ -257,6 +257,11 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 	};
 	let mut store = Store::new(Limits::default()).unwrap();
 	let mut executor = Executor::new().unwrap();
+	if mode == "assert-main-depth64" {
+		let mut limits = *executor.format_limits();
+		limits.depth = 64;
+		executor.set_format_limits(limits);
+	}
 	match executor.invoke(&program, &mut store, main, &[], FUEL) {
 		Ok(value) => {
 			let observed = match store.root_format(&value, true) {
@@ -279,13 +284,24 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 			assert!(executor.is_idle());
 			observed
 		}
-		Err(f) => Observation::new(
-			"error",
-			&format!("{:?}", f.error.kind),
-			f.error.operation,
-			f.message(&program).to_string(),
-			String::new(),
-		),
+		Err(f) => {
+			if mode.starts_with("assert-main") {
+				let at = f.error.location.expect("fresh error location");
+				let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
+				fs::write(
+					result.with_extension("site"),
+					format!("{}:{}:{}", at.source, at.start, at.end),
+				)
+				.unwrap();
+			}
+			Observation::new(
+				"error",
+				&format!("{:?}", f.error.kind),
+				f.error.operation,
+				f.message(&program).to_string(),
+				String::new(),
+			)
+		}
 	}
 }
 
@@ -446,7 +462,11 @@ fn compare(stock: &Run, fresh: &Run) -> &'static str {
 		return "coverage-no-entry";
 	}
 	if s[0] == f[0]
-		&& s[1] == f[1]
+		&& (s[1] == f[1]
+			|| (s[0] == "error"
+				&& f[1] == "Panic"
+				&& s[1].starts_with("stock:Panic { reason: Panic { inner: ")
+				&& s[1].ends_with(" } }")))
 		&& s[3..] == f[3..]
 		&& stock.stdout == fresh.stdout
 		&& stock.stderr == fresh.stderr
@@ -1421,3 +1441,46 @@ fn emission_child() {
 
 #[path = "gap_hunt/assertions.rs"]
 mod assertions;
+
+#[test]
+fn panic_class_alias_preserves_exact_message_stream_kind_and_phase_checks() {
+	fn row(phase: &str, class: &str, message: &str) -> Run {
+		Run {
+			record: Observation::new(phase, class, "runtime", message.into(), String::new())
+				.encode(),
+			stdout: b"before\n".to_vec(),
+			stderr: vec![],
+			complete: true,
+		}
+	}
+	let stock = row(
+		"error",
+		"stock:Panic { reason: Panic { inner: \"x\" } }",
+		"Panicked: x",
+	);
+	let fresh = row("error", "Panic", "Panicked: x");
+	assert_eq!(compare(&stock, &fresh), "equal");
+	for changed in [
+		row("error", "Panic", "Panicked: y"),
+		row("value", "Panic", "Panicked: x"),
+		row("error", "Type", "Panicked: x"),
+	] {
+		assert_eq!(compare(&stock, &changed), "divergence");
+	}
+	let mut changed = row("error", "Panic", "Panicked: x");
+	changed.stdout.push(b'x');
+	assert_eq!(compare(&stock, &changed), "divergence");
+	let mut changed = row("error", "Panic", "Panicked: x");
+	changed.stderr.push(b'x');
+	assert_eq!(compare(&stock, &changed), "divergence");
+	for class in [
+		"stock:MaxValueDepth { max: 64 }",
+		"stock:Panic-other { reason: Panic { inner: \"x\" } }",
+		"stock:Panic { reason: other }",
+	] {
+		assert_eq!(
+			compare(&row("error", class, "Panicked: x"), &fresh),
+			"divergence"
+		);
+	}
+}

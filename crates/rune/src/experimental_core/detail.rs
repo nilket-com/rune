@@ -172,6 +172,8 @@ pub enum Detail {
 		target: TypeName,
 	},
 	MissingStringSlice,
+	/// The full panic message is owned by Failure, outside this Copy payload.
+	PanicMessage,
 	UnsupportedIterRange {
 		start: TypeName,
 		end: TypeName,
@@ -511,6 +513,7 @@ impl fmt::Display for Message<'_> {
 			OutOfRange { index, length } => messages::out_of_range(f, index, length),
 			MissingIndex { target } => write!(f, "Type `{target}` missing index"),
 			MissingStringSlice => f.write_str("Panicked: missing string slice"),
+			PanicMessage => f.write_str("Panicked"),
 			UnsupportedIterRange { start, end } => {
 				write!(f, "Cannot build an iterator out of {start}..{end}")
 			}

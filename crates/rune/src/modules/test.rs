@@ -13,8 +13,14 @@ pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?.with_unique("std::test");
 
 	m.macro_meta(assert)?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_builtin_macro();
 	m.macro_meta(assert_eq)?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_builtin_macro();
 	m.macro_meta(assert_ne)?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_builtin_macro();
 
 	m.ty::<Bencher>()?.docs(docstring! {
 		/// A type to perform benchmarks.

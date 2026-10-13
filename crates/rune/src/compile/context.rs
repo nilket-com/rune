@@ -305,14 +305,20 @@ pub struct Context {
 	implemented_traits: hash::Map<Vec<Hash>>,
 	/// Registered native macro handlers.
 	macros: hash::Map<MacroHandler>,
-	/// Fresh core: certified std format macros. A hash here implies that the handler stored
+	/// Fresh core: certified std formatting and assertion macros. A hash here implies that the handler stored
 	/// in `macros` at that hash is the marked std builtin; a builtin may be absent from it
 	/// after an allocation failure (fail closed).
 	#[cfg(feature = "fresh-core")]
-	fresh_format_macros: HashSet<Hash>,
+	fresh_builtin_macros: HashSet<Hash>,
 	/// Fresh core: the handler installed at `::std::io::println` is the std stdio builtin.
 	#[cfg(feature = "fresh-core")]
 	fresh_stdio_println: bool,
+	/// Fresh core: this module/context certifies the std panic builtin.
+	#[cfg(feature = "fresh-core")]
+	fresh_panic: bool,
+	/// Fresh core: this module/context certifies String::from.
+	#[cfg(feature = "fresh-core")]
+	fresh_string_from: bool,
 	/// Handlers for realising traits.
 	traits: hash::Map<Option<TraitHandler>>,
 	/// Registered native attribute macro handlers.
@@ -466,6 +472,15 @@ impl Context {
 		tracing::trace!(items = module.items.len(), "items");
 		for item in &module.items {
 			self.install_item(item)?;
+			// Each private marker belongs to the std module registration. Certify only
+			// after this exact item was installed. Native functions are insert-once.
+			#[cfg(feature = "fresh-core")]
+			if matches!(item.kind, rune::module::ModuleItemKind::Function(..))
+				&& module.fresh_panic
+				&& item.hash == Hash::type_hash(crate::item!(::std::panic))
+			{
+				self.fresh_panic = true;
+			}
 			// Certified only after this item's handler was inserted: functions are
 			// insert-once (ConflictingFunction), so the stored handler is this one.
 			#[cfg(feature = "fresh-core")]
@@ -480,6 +495,18 @@ impl Context {
 		tracing::trace!(associated = module.associated.len(), "associated");
 		for assoc in &module.associated {
 			self.install_associated(assoc)?;
+			// String::from is registered as a named type item even with `free`.
+			// install_associated inserts its static item hash and associated hash
+			// before returning; a conflict on either leaves it uncertified.
+			#[cfg(feature = "fresh-core")]
+			if module.fresh_string_from
+				&& assoc.container == Hash::type_hash(crate::item!(::std::string::String))
+				&& assoc.name.function_parameters == Hash::EMPTY
+				&& matches!(&assoc.name.kind, meta::AssociatedKind::Instance(name) if name.as_ref() == "from")
+				&& matches!(assoc.kind, ModuleAssociatedKind::Function(..))
+			{
+				self.fresh_string_from = true;
+			}
 		}
 
 		tracing::trace!(trait_impls = module.trait_impls.len(), "trait impls");
@@ -606,10 +633,13 @@ impl Context {
 	}
 
 	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_format_macro(&self, hash: Hash) -> bool {
-		self.fresh_format_macros.contains(&hash)
+	pub(crate) fn fresh_builtin_macro(&self, hash: Hash) -> bool {
+		self.fresh_builtin_macros.contains(&hash)
 			&& (hash == Hash::type_hash(crate::item!(::std::fmt::format))
-				|| hash == Hash::type_hash(crate::item!(::std::io::println)))
+				|| hash == Hash::type_hash(crate::item!(::std::io::println))
+				|| hash == Hash::type_hash(crate::item!(::std::test::assert))
+				|| hash == Hash::type_hash(crate::item!(::std::test::assert_eq))
+				|| hash == Hash::type_hash(crate::item!(::std::test::assert_ne)))
 	}
 
 	/// Fresh core: whether `::std::io::println` resolves to the certified std
@@ -620,6 +650,22 @@ impl Context {
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::io::println)))
+	}
+
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_panic(&self) -> bool {
+		self.fresh_panic
+			&& self
+				.functions
+				.contains_key(&Hash::type_hash(crate::item!(::std::panic)))
+	}
+
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_string_from(&self) -> bool {
+		self.fresh_string_from
+			&& self
+				.functions
+				.contains_key(&Hash::type_hash(crate::item!(::std::string::String::from)))
 	}
 
 	/// Lookup the given macro handler.
@@ -1118,13 +1164,13 @@ impl Context {
 				// is not guaranteed: after an allocation failure a stored builtin may stay
 				// uncertified, which only refuses (fail closed).
 				#[cfg(feature = "fresh-core")]
-				if !macro_.fresh_format_builtin {
-					self.fresh_format_macros.remove(&m.hash);
+				if !macro_.fresh_builtin_macro {
+					self.fresh_builtin_macros.remove(&m.hash);
 				}
 				self.macros.try_insert(m.hash, macro_.handler.clone())?;
 				#[cfg(feature = "fresh-core")]
-				if macro_.fresh_format_builtin {
-					self.fresh_format_macros.try_insert(m.hash)?;
+				if macro_.fresh_builtin_macro {
+					self.fresh_builtin_macros.try_insert(m.hash)?;
 				}
 				meta::Kind::Macro
 			}

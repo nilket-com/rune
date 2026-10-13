@@ -1,7 +1,7 @@
 //! Macro certification under replacement.
 //!
-//! The fresh core admits only the two std format macros (`::std::fmt::format` and
-//! `::std::io::println`), certified when the std modules register them. A host may install
+//! The fresh core admits selected std formatting and assertion macros, certified
+//! when the std modules register their actual handlers. A host may install
 //! another module with a macro at the same path afterwards; the stock `Context` then stores
 //! the replacing handler. The fresh core must refuse such a call at compile time, before the
 //! uncertified handler can run.
@@ -222,4 +222,354 @@ fn stock_build_uses_the_replacing_custom_macro() {
 		calls.load(Ordering::SeqCst) > 0,
 		"stock build did not call it"
 	);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default module compilation; native CI covers certificates"
+)]
+fn assertion_callees_are_certified_only_as_actual_std_registrations() {
+	let context = Context::with_default_modules().unwrap();
+	assert!(context.fresh_panic());
+	assert!(context.fresh_string_from());
+}
+
+fn assertion_source(name: &str) -> std::string::String {
+	let args = match name {
+		"assert" => "true",
+		"assert_eq" => "1,1",
+		"assert_ne" => "1,2",
+		_ => unreachable!(),
+	};
+	std::format!("pub fn main() {{ ::std::test::{name}!({args}); 7 }}")
+}
+fn fresh_refusal(
+	context: &Context,
+	text: &str,
+	expected: crate::experimental_core::error::Refusal,
+) {
+	let mut sources = Sources::new();
+	sources.insert(Source::memory(text).unwrap()).unwrap();
+	let error = frontend::compile(&mut sources, context, &mut Diagnostics::new(), 1)
+		.err()
+		.expect("must refuse");
+	assert_eq!(error.refusal, Some(expected), "{error:?}");
+}
+fn builtin_assertion(name: &str) -> Module {
+	let mut m = Module::with_crate_item("std", ["test"]).unwrap();
+	match name {
+		"assert" => {
+			m.macro_meta(crate::modules::test::assert).unwrap();
+		}
+		"assert_eq" => {
+			m.macro_meta(crate::modules::test::assert_eq).unwrap();
+		}
+		"assert_ne" => {
+			m.macro_meta(crate::modules::test::assert_ne).unwrap();
+		}
+		_ => unreachable!(),
+	}
+	m.fresh_mark_builtin_macro();
+	m
+}
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default-module compiler identity matrix; native CI covers it"
+)]
+fn assertion_macro_identity_replacement_partial_install_restore_and_unique_skip() {
+	use crate::experimental_core::error::Refusal;
+	for name in ["assert", "assert_eq", "assert_ne"] {
+		let source = assertion_source(name);
+		let calls = Arc::new(AtomicUsize::new(0));
+		let mut context = Context::with_default_modules().unwrap();
+		assert!(fresh_compile(&context, &source));
+		context
+			.install(counting_macro("test", name, &calls))
+			.unwrap();
+		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		// The unique std::test module was already installed: skipping it cannot
+		// recertify the replacing callback now stored at the macro hash.
+		context
+			.install(crate::modules::test::module().unwrap())
+			.unwrap();
+		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		context.install(builtin_assertion(name)).unwrap();
+		assert!(fresh_compile(&context, &source));
+		let mut collision = Module::with_crate_item("std", ["test"]).unwrap();
+		collision.function("collision", || {}).build().unwrap();
+		context.install(collision).unwrap();
+		let mut partial = counting_macro("test", name, &calls);
+		partial.function("collision", || {}).build().unwrap();
+		assert!(context.install(partial).is_err());
+		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		assert_eq!(calls.load(Ordering::SeqCst), 0, "custom {name} executed");
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default-module compiler identity matrix; native CI covers it"
+)]
+fn insert_once_panic_custom_first_is_never_certified() {
+	use crate::experimental_core::error::Refusal;
+	let calls = Arc::new(AtomicUsize::new(0));
+	let seen = calls.clone();
+	let mut context = Context::new();
+	let mut custom = Module::with_crate("std").unwrap();
+	custom
+		.function("panic", move |_: crate::runtime::Value| {
+			seen.fetch_add(1, Ordering::SeqCst);
+		})
+		.build()
+		.unwrap();
+	context.install(custom).unwrap();
+	assert!(context
+		.install(crate::modules::core::module().unwrap())
+		.is_err());
+	context
+		.install(crate::modules::test::module().unwrap())
+		.unwrap();
+	assert!(!context.fresh_panic());
+	// The failed core installation already consumed its unique-module id.
+	// Skipping it later must not certify the custom handler that remains stored.
+	context
+		.install(crate::modules::core::module().unwrap())
+		.unwrap();
+	assert!(!context.fresh_panic());
+	fresh_refusal(&context, &assertion_source("assert"), Refusal::Native);
+	assert_eq!(calls.load(Ordering::SeqCst), 0);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default-module compiler identity matrix; native CI covers it"
+)]
+fn insert_once_panic_custom_after_builtin_preserves_builtin_identity() {
+	let calls = Arc::new(AtomicUsize::new(0));
+	let seen = calls.clone();
+	let mut context = Context::with_default_modules().unwrap();
+	let mut custom = Module::with_crate("std").unwrap();
+	custom
+		.function("panic", move |_: crate::runtime::Value| {
+			seen.fetch_add(1, Ordering::SeqCst);
+		})
+		.build()
+		.unwrap();
+	assert!(context.install(custom).is_err());
+	assert!(context.fresh_panic());
+	assert!(fresh_compile(&context, &assertion_source("assert")));
+	assert_eq!(calls.load(Ordering::SeqCst), 0);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default-module compiler; native CI covers NaN macro operand semantics"
+)]
+fn nan_assertion_operands_work_without_admitting_new_source_constants() {
+	use crate::experimental_core::{
+		error::ErrorKind,
+		execute::Executor,
+		heap::{Limits, Store},
+		value::Scalar,
+	};
+	let context = Context::with_default_modules().unwrap();
+	for name in ["assert_eq", "assert_ne"] {
+		let source = std::format!("pub fn target(a,b) {{ {name}!(a,b); 17 }}");
+		let (mut stock, program) =
+			super::differential::compile_unit(&context, "assert-nan", &source, "target");
+		let expected = stock.call(["target"], (f64::NAN, f64::NAN));
+		let mut store = Store::new(Limits::default()).unwrap();
+		let a = store.root_f64(f64::NAN);
+		let b = store.root_f64(f64::NAN);
+		let mut executor = Executor::new().unwrap();
+		let actual = executor.invoke(
+			&program,
+			&mut store,
+			program
+				.function(crate::Hash::type_hash(["target"]))
+				.unwrap(),
+			&[&a, &b],
+			100,
+		);
+		if name == "assert_eq" {
+			let expected = std::format!("{}", expected.unwrap_err().into_kind());
+			let actual = actual.unwrap_err();
+			assert_eq!(actual.error.kind, ErrorKind::Panic);
+			assert_eq!(std::format!("{}", actual.message(&program)), expected);
+		} else {
+			assert_eq!(crate::from_value::<i64>(expected.unwrap()).unwrap(), 17);
+			let actual = actual.unwrap();
+			assert_eq!(store.root_scalar(&actual).unwrap(), Some(Scalar::I64(17)));
+			store.root_release(actual).unwrap();
+		}
+		store.root_release(a).unwrap();
+		store.root_release(b).unwrap();
+		assert!(executor.is_idle());
+		assert_eq!(store.live_entries(), 0);
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default-module compiler; native CI covers source shadow resolution"
+)]
+fn source_std_spelling_never_intercepts_the_certified_crate_function() {
+	use crate::experimental_core::{
+		execute::Executor,
+		heap::{Limits, Store},
+		value::Scalar,
+	};
+	let context = Context::with_default_modules().unwrap();
+	let source =
+		"mod std { pub fn panic(message) { 9 } }\npub fn target() { std::panic(\"local\") }";
+	let (mut stock, program) =
+		super::differential::compile_unit(&context, "assert-shadow", source, "target");
+	assert_eq!(
+		crate::from_value::<i64>(stock.call(["target"], ()).unwrap()).unwrap(),
+		9
+	);
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let root = executor
+		.invoke(
+			&program,
+			&mut store,
+			program
+				.function(crate::Hash::type_hash(["target"]))
+				.unwrap(),
+			&[],
+			100,
+		)
+		.unwrap();
+	assert_eq!(store.root_scalar(&root).unwrap(), Some(Scalar::I64(9)));
+	store.root_release(root).unwrap();
+	assert_eq!(store.live_entries(), 0);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default-module compiler; native CI covers constructor identity"
+)]
+fn string_constructor_custom_after_builtin_preserves_builtin_identity() {
+	let calls = Arc::new(AtomicUsize::new(0));
+	let seen = calls.clone();
+	let mut context = Context::with_default_modules().unwrap();
+	let mut custom = Module::with_crate_item("std", ["string", "String"]).unwrap();
+	custom
+		.function("from", move |_: crate::runtime::Value| {
+			seen.fetch_add(1, Ordering::SeqCst);
+		})
+		.build()
+		.unwrap();
+	let error = context.install(custom).unwrap_err();
+	assert!(
+		matches!(error, crate::ContextError::ConflictingFunction { .. }),
+		"{error:?}"
+	);
+	assert!(context.fresh_string_from());
+	assert!(fresh_compile(&context, &assertion_source("assert_eq")));
+	assert_eq!(calls.load(Ordering::SeqCst), 0);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default-module compiler; native CI covers constructor identity"
+)]
+fn string_constructor_custom_first_failed_builtin_never_certifies() {
+	use crate::experimental_core::error::Refusal;
+	let calls = Arc::new(AtomicUsize::new(0));
+	let seen = calls.clone();
+	let mut context = Context::new();
+	context
+		.install(crate::modules::core::module().unwrap())
+		.unwrap();
+	let mut custom = Module::with_crate_item("std", ["string", "String"]).unwrap();
+	custom
+		.function("from", move |_: crate::runtime::Value| {
+			seen.fetch_add(1, Ordering::SeqCst);
+		})
+		.build()
+		.unwrap();
+	context.install(custom).unwrap();
+	let error = context
+		.install(crate::modules::string::module().unwrap())
+		.unwrap_err();
+	assert!(
+		matches!(error, crate::ContextError::ConflictingFunction { .. }),
+		"{error:?}"
+	);
+	assert!(!context.fresh_string_from());
+	fresh_refusal(
+		&context,
+		"pub fn main() { ::std::string::String::from(\"x\") }",
+		Refusal::Native,
+	);
+	assert_eq!(calls.load(Ordering::SeqCst), 0);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default-module compiler; native CI covers constructor copying"
+)]
+fn certified_string_constructor_copies_and_checks_its_argument() {
+	use crate::experimental_core::{
+		execute::Executor,
+		heap::{Limits, Store},
+	};
+	let context = Context::with_default_modules().unwrap();
+	let source = "pub fn target() { let a=\"a\"; let b=String::from(a); b+=\"b\"; (a,b) }";
+	let (mut stock, program) =
+		super::differential::compile_unit(&context, "string-copy", source, "target");
+	let expected = stock.call(["target"], ()).unwrap();
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let root = executor
+		.invoke(
+			&program,
+			&mut store,
+			program
+				.function(crate::Hash::type_hash(["target"]))
+				.unwrap(),
+			&[],
+			100,
+		)
+		.unwrap();
+	let fresh = store.root_format(&root, true).unwrap();
+	let mut text = crate::alloc::String::new();
+	stock
+		.with(|| crate::runtime::Formatter::format_with(&mut text, |f| expected.debug_fmt(f)))
+		.unwrap();
+	assert_eq!(fresh, text);
+	assert_eq!(fresh.as_str(), "(\"a\", \"ab\")");
+	store.root_release(root).unwrap();
+	assert_eq!(store.live_entries(), 0);
+	for operand in ["1", "()", "[1]"] {
+		let source = std::format!("pub fn target() {{ String::from({operand}) }}");
+		let (mut stock, program) =
+			super::differential::compile_unit(&context, "string-type", &source, "target");
+		let expected = std::format!("{}", stock.call(["target"], ()).unwrap_err().into_kind());
+		let actual = executor
+			.invoke(
+				&program,
+				&mut store,
+				program
+					.function(crate::Hash::type_hash(["target"]))
+					.unwrap(),
+				&[],
+				100,
+			)
+			.unwrap_err();
+		assert_eq!(std::format!("{}", actual.message(&program)), expected);
+		assert!(executor.is_idle());
+		assert_eq!(store.live_entries(), 0);
+	}
 }

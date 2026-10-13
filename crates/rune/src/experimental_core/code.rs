@@ -108,6 +108,13 @@ pub enum Op {
 		out: u32,
 		text: u32,
 	},
+	StringFrom {
+		out: u32,
+		value: u32,
+	},
+	Panic {
+		value: u32,
+	},
 	Clone {
 		out: u32,
 		value: u32,
@@ -337,6 +344,8 @@ impl Function {
 				0,
 			),
 			Print { value } => (35, value, 0, 0),
+			StringFrom { out, value } => (40, out, value, 0),
+			Panic { value } => (41, value, 0, 0),
 			TupleFieldGetMut { out, value, index } => (36, out, value, index),
 			TupleFieldSetMut { value, index, new } => (37, value, index, new),
 			TupleField { out, value, index } => (32, out, value, index),
@@ -576,6 +585,8 @@ impl Function {
 				value: b,
 				key: c,
 			},
+			40 => StringFrom { out: a, value: b },
+			41 => Panic { value: a },
 			39 => FieldSetMut {
 				value: a,
 				key: b,
@@ -1003,7 +1014,7 @@ impl Code {
 pub(crate) fn successors(f: &Function, pc: usize, out: &mut [Option<usize>; 2]) -> Result<()> {
 	let instruction = f.operation(pc)?;
 	*out = match instruction {
-		Op::Return { .. } => [None, None],
+		Op::Return { .. } | Op::Panic { .. } => [None, None],
 		Op::IterNext { none, .. } => [
 			Some(pc.checked_add(1).ok_or_else(invalid)?),
 			Some(none as usize),
@@ -1236,6 +1247,7 @@ fn validate_operands(
 
 			Op::IterStart { out, value }
 			| Op::Clone { out, value, .. }
+			| Op::StringFrom { out, value }
 			| Op::Copy { out, value }
 			| Op::Unary { out, value, .. }
 			| Op::Cast { out, value, .. }
@@ -1245,7 +1257,10 @@ fn validate_operands(
 				slot(value)?;
 			}
 
-			Op::Release { value } | Op::Return { value } | Op::Drop { value } => {
+			Op::Release { value }
+			| Op::Return { value }
+			| Op::Drop { value }
+			| Op::Panic { value } => {
 				slot(value)?;
 			}
 
@@ -1826,6 +1841,10 @@ fn same_op(a: Op, b: Op) -> bool {
 			_ => false,
 		},
 
+		Op::Panic { value } => matches!(b, Op::Panic { value: bv } if value == bv),
+		Op::StringFrom { out, value } => {
+			matches!(b, Op::StringFrom { out: bo, value: bv } if out == bo && value == bv)
+		}
 		Op::Drop { value: a_value } => match b {
 			Op::Drop { value: b_value } => a_value == b_value,
 			_ => false,

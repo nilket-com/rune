@@ -36,6 +36,10 @@ pub fn module() -> Result<Module, ContextError> {
 	m.ty::<String>()?;
 
 	m.function_meta(string_from)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_string_from = true;
+	}
 	m.function_meta(string_from_str)?;
 	m.function_meta(string_new)?;
 	m.function_meta(string_with_capacity)?;

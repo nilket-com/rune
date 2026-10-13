@@ -31,6 +31,10 @@ pub fn module() -> Result<Module, ContextError> {
 	})?;
 
 	module.function_meta(panic)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		module.fresh_panic = true;
+	}
 	module.function_meta(is_readable)?;
 	module.function_meta(is_writable)?;
 

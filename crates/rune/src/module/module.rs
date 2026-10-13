@@ -71,6 +71,12 @@ pub struct Module {
 	/// Fresh core: this module registers the std stdio `println` builtin.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_stdio_println: bool,
+	/// Fresh core: this module/context certifies the std panic builtin.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_panic: bool,
+	/// Fresh core: this module/context certifies String::from.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_string_from: bool,
 	/// Constant constructors.
 	pub(crate) construct: Vec<(Hash, AnyTypeInfo, ConstConstructImpl)>,
 	/// Defines construct hashes.
@@ -136,6 +142,10 @@ impl Module {
 			reexports: Vec::new(),
 			#[cfg(feature = "fresh-core")]
 			fresh_stdio_println: false,
+			#[cfg(feature = "fresh-core")]
+			fresh_panic: false,
+			#[cfg(feature = "fresh-core")]
+			fresh_string_from: false,
 			construct: Vec::new(),
 			construct_hash: HashSet::new(),
 			common: ModuleItemCommon {
@@ -514,7 +524,7 @@ impl Module {
 					kind: ModuleItemKind::Macro(ModuleMacro {
 						handler: data.handler,
 						#[cfg(feature = "fresh-core")]
-						fresh_format_builtin: false,
+						fresh_builtin_macro: false,
 					}),
 				})?;
 
@@ -605,7 +615,7 @@ impl Module {
 			kind: ModuleItemKind::Macro(ModuleMacro {
 				handler,
 				#[cfg(feature = "fresh-core")]
-				fresh_format_builtin: false,
+				fresh_builtin_macro: false,
 			}),
 		})?;
 
@@ -1370,16 +1380,16 @@ impl AsRef<Module> for Module {
 }
 
 impl Module {
-	// Called immediately after the two pinned std format macro registrations.
+	// Called immediately after a pinned std formatting or assertion macro registration.
 	// External macro registration APIs never set this marker.
 	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_mark_format_macro(&mut self) {
+	pub(crate) fn fresh_mark_builtin_macro(&mut self) {
 		if let Some(ModuleItem {
 			kind: ModuleItemKind::Macro(macro_),
 			..
 		}) = self.items.last_mut()
 		{
-			macro_.fresh_format_builtin = true;
+			macro_.fresh_builtin_macro = true;
 		}
 	}
 

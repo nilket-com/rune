@@ -118,6 +118,7 @@ fn missing_instance_accessor_is_root_only_and_detail_stays_small() {
 	let mut failure = Failure {
 		error: Error::new(ErrorKind::Type, "store").with_detail(detail),
 		missing_key: None,
+		panic_message: None,
 		call_chain: Vec::new(),
 		cleanup_error: None,
 	};

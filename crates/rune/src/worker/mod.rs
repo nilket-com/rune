@@ -514,7 +514,7 @@ impl<'a, 'arena> Worker<'a, 'arena> {
 		let hash = self.q.pool.item_type_hash(named.item);
 
 		#[cfg(feature = "fresh-core")]
-		if self.q.inner.fresh_mode && !self.q.context.fresh_format_macro(hash) {
+		if self.q.inner.fresh_mode && !self.q.context.fresh_builtin_macro(hash) {
 			return Err(compile::Error::msg(
 				this.location.span,
 				"fresh core: macro handler not admitted",

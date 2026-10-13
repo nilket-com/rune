@@ -25,7 +25,7 @@ pub(crate) fn function(
 	resolve: &mut dyn FnMut(Hash, Location) -> Result<u32>,
 	constants: &crate::query::QueryInner<'_>,
 	pool: &crate::compile::Pool,
-	stdio_println: bool,
+	context: &crate::Context,
 	transaction: &mut CompileTransaction,
 ) -> Result<Function> {
 	let mut cx = Lower {
@@ -41,7 +41,7 @@ pub(crate) fn function(
 		revision,
 		resolve,
 		constants,
-		stdio_println,
+		context,
 		pool,
 		transaction,
 	};
@@ -97,7 +97,7 @@ struct Lower<'a, 'hir> {
 	resolve: &'a mut dyn FnMut(Hash, Location) -> Result<u32>,
 	constants: &'a crate::query::QueryInner<'hir>,
 	/// The Context's `println` is the certified stdio builtin; otherwise refuse.
-	stdio_println: bool,
+	context: &'a crate::Context,
 	pool: &'a crate::compile::Pool,
 	transaction: &'a mut CompileTransaction,
 }
@@ -168,6 +168,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 			Op::Copy { out, .. }
 			| Op::String { out, .. }
+			| Op::StringFrom { out, .. }
 			| Op::List { out, .. }
 			| Op::Record { out, .. }
 			| Op::Variant { out, .. }
@@ -197,7 +198,8 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			| Op::TupleFieldSetMut { .. }
 			| Op::Push { .. }
 			| Op::Drop { .. }
-			| Op::Print { .. } => (),
+			| Op::Print { .. }
+			| Op::Panic { .. } => (),
 		}
 
 		self.function.push(op, self.location(span))
@@ -561,6 +563,17 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// Returns false (having emitted nothing) when the call is not one of them.
 	fn effect_call(&mut self, call: &hir::ExprCall<'_>, span: Span) -> Result<bool> {
 		match call.call {
+			hir::Call::Meta { hash } if hash == Hash::type_hash(crate::item!(::std::panic)) => {
+				if !self.context.fresh_panic() {
+					return Err(self.refused(span, Refusal::Native));
+				}
+				if call.args.len() != 1 {
+					return Err(self.refused(span, Refusal::Arity));
+				}
+				let value = self.operand(call.args[0])?;
+				self.emit(Op::Panic { value }, span)?;
+				Ok(true)
+			}
 			hir::Call::Associated { target, hash }
 				if hash == Hash::ident("push") && call.args.len() == 1 =>
 			{
@@ -581,7 +594,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			{
 				// The same host IO policy as the value position in `call`: a statement
 				// `println!` must not bypass it.
-				if !self.stdio_println {
+				if !self.context.fresh_stdio_println() {
 					return Err(self.refused(span, Refusal::Native));
 				}
 
@@ -1622,7 +1635,31 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 		};
 
-		if hash == Hash::type_hash(crate::item!(::std::io::println)) && !self.stdio_println {
+		if hash == Hash::type_hash(crate::item!(::std::string::String::from))
+			|| hash
+				== Hash::associated_function(
+					Hash::type_hash(crate::item!(::std::string::String)),
+					Hash::ident("from"),
+				) {
+			if !self.context.fresh_string_from() {
+				return Err(self.refused(span, Refusal::Native));
+			}
+			if call.args.len() != 1 {
+				return Err(self.refused(span, Refusal::Arity));
+			}
+			let value = self.operand(call.args[0])?;
+			self.emit(Op::StringFrom { out, value }, span)?;
+			return Ok(());
+		}
+		if hash == Hash::type_hash(crate::item!(::std::panic)) {
+			self.effect_call(call, span)?;
+			self.unit_into(out, span)?;
+			return Ok(());
+		}
+
+		if hash == Hash::type_hash(crate::item!(::std::io::println))
+			&& !self.context.fresh_stdio_println()
+		{
 			// Host IO policy (capture, disable, custom or none): explicit compile-time
 			// refusal before any fresh execution or output; the caller decides fallback.
 			return Err(self.refused(span, Refusal::Native));

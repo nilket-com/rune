@@ -2536,12 +2536,14 @@ fn function_transfer(op: Op, s: &mut [FTy]) -> Result<(), Error> {
 		| Op::IterStart { out, .. }
 		| Op::IterNext { out, .. }
 		| Op::String { out, .. }
+		| Op::StringFrom { out, .. }
 		| Op::Clone { out, .. }
 		| Op::Call { out, .. }
 		| Op::List { out, .. }
 		| Op::Get { out, .. }
 		| Op::Len { out, .. } => (out, FTy::Top),
 		Op::Print { .. }
+		| Op::Panic { .. }
 		| Op::SetTupleField { .. }
 		| Op::TupleFieldSetMut { .. }
 		| Op::SetField { .. }

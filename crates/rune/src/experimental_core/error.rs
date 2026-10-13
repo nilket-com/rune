@@ -115,7 +115,7 @@ pub enum Refusal {
 	LabelledBlock,
 	/// A `break` or `continue` outside a loop it can reach.
 	LoopControl,
-	/// A macro other than the admitted std format macros. Reserved: not currently produced; such macros are refused through [`Refusal::FrontendDiagnostic`].
+	/// A macro other than the admitted std formatting and assertion macros. Reserved: not currently produced; such macros are refused through [`Refusal::FrontendDiagnostic`].
 	Macro,
 	/// A `match` expression.
 	Match,

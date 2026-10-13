@@ -185,7 +185,7 @@ fn probe(engine: &str) {
 			"admission {label}: {}",
 			run.record
 		);
-		let site = if phase == "error" && engine == "stock" {
+		let site = if phase == "error" {
 			fs::read_to_string(site).unwrap()
 		} else {
 			String::new()
@@ -247,4 +247,201 @@ fn stock_contract() {
 		assert_eq!(actual, row[5], "site {label}");
 	}
 	super::contract_completed("stock", rows.len());
+}
+
+#[test]
+#[ignore = "explicit C1 depth64 supplement; no other FormatLimits changed"]
+fn raised_depth_probe() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).unwrap();
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-assert-depth64-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let mut table = String::from(
+		"case\tsource_hex\tstock_observation_hex\tstdout_hex\tstderr_hex\tstock_site\n",
+	);
+	for (n, (label, source)) in cases()
+		.into_iter()
+		.enumerate()
+		.filter(|(_, (label, _))| label.starts_with("depth/"))
+	{
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, &source).unwrap();
+		let site = scratch.0.join("result.site");
+		let _ = fs::remove_file(&site);
+		let run = launch(
+			&path,
+			&path,
+			"assert-main-depth64",
+			"fresh",
+			&scratch.0,
+			&out,
+			&id,
+		);
+		assert!(run.complete, "{label}");
+		let site = if run.record.starts_with("error\t") {
+			fs::read_to_string(site).unwrap()
+		} else {
+			String::new()
+		};
+		table.push_str(&format!(
+			"{label}\t{}\t{}\t{}\t{}\t{site}\n",
+			hex(source.as_bytes()),
+			hex(run.record.as_bytes()),
+			hex(&run.stdout),
+			hex(&run.stderr)
+		));
+	}
+	fs::write(out.join("fresh-depth64.tsv"), table).unwrap();
+}
+
+fn expected_record(row: &[&str]) -> Vec<String> {
+	let raw = unhex(row[2]);
+	let mut fields: Vec<String> = raw.split('\t').map(str::to_owned).collect();
+	assert_eq!(fields.len(), 5);
+	if fields[1].starts_with("stock:Panic { reason: Panic { inner: ") && fields[1].ends_with(" } }")
+	{
+		fields[1] = "Panic".into();
+	} else if fields[1] == "stock:MaxValueDepth { max: 64 }" {
+		fields[1] = "ValueDepth".into();
+	}
+	fields
+}
+fn assert_exact(label: &str, row: &[&str], run: &Run, site: &str) {
+	let actual: Vec<_> = run.record.split('\t').collect();
+	let expected = expected_record(row);
+	assert_eq!(actual.len(), 5);
+	assert_eq!(actual[0], expected[0], "phase {label}");
+	assert_eq!(actual[1], expected[1], "class {label}");
+	assert_eq!(actual[3], expected[3], "message {label}");
+	assert_eq!(actual[4], expected[4], "value {label}");
+	assert_eq!(hex(&run.stdout), row[3], "stdout {label}");
+	assert_eq!(hex(&run.stderr), row[4], "stderr {label}");
+	assert_eq!(site, row[5], "location {label}");
+}
+
+#[test]
+#[ignore = "explicit C1 fresh assertion contract and depth64 resource/semantic supplement"]
+fn fresh_contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).unwrap();
+	let scratch = Scratch(
+		std::env::temp_dir().join(format!("rune-assert-fresh-contract-{}", std::process::id())),
+	);
+	fs::create_dir(&scratch.0).unwrap();
+	let rows: Vec<_> = include_str!("../assertions_stock.tsv")
+		.lines()
+		.skip(1)
+		.collect();
+	let generated = cases();
+	assert_eq!(rows.len(), 178);
+	assert_eq!(rows.len(), generated.len());
+	let mut refused = 0;
+	let mut budget = 0;
+	let mut semantic = 0;
+	let mut retained = String::from("case\tpolicy\n");
+	for (n, (line, (label, source))) in rows.iter().zip(&generated).enumerate() {
+		let row: Vec<_> = line.split('\t').collect();
+		assert_eq!(row.len(), 6);
+		assert_eq!(row[0], label);
+		assert_eq!(unhex(row[1]), *source);
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, source).unwrap();
+		let site_path = scratch.0.join("result.site");
+		let _ = fs::remove_file(&site_path);
+		let run = launch(&path, &path, "assert-main", "fresh", &scratch.0, &out, &id);
+		assert!(run.complete, "{label}");
+		let actual: Vec<_> = run.record.split('\t').collect();
+		assert_eq!(actual.len(), 5);
+		if label.starts_with("operands/nan/") {
+			assert_eq!(
+				&actual[..2],
+				&["refused", "Some(UnresolvedConstant)"],
+				"{label}"
+			);
+			refused += 1;
+			retained.push_str(&format!("{label}\tUnresolvedConstant\n"));
+			continue;
+		}
+		let parts: Vec<_> = label.split('/').collect();
+		let deep = parts.len() == 4
+			&& parts[0] == "depth"
+			&& matches!(parts[2], "62" | "63")
+			&& parts[3] == "assert_ne";
+		let site = if actual[0] == "error" {
+			fs::read_to_string(&site_path).unwrap()
+		} else {
+			String::new()
+		};
+		if !deep {
+			assert_exact(label, &row, &run, &site);
+			continue;
+		}
+		// Existing host-configured depth32 budget is never raised for the default run.
+		assert_eq!(&actual[..2], &["error", "FormatLimit"], "{label}");
+		assert_eq!(unhex(actual[3]), "format bytes/depth/nodes: FormatLimit");
+		assert!(actual[4].is_empty());
+		let start = source.find("assert_ne!").unwrap();
+		let end = start + "assert_ne!(a,a)".len();
+		let expected_site = format!("0:{start}:{end}");
+		assert_eq!(site, expected_site, "budget site {label}");
+		assert_eq!(hex(&run.stdout), row[3]);
+		assert_eq!(hex(&run.stderr), row[4]);
+		let _ = fs::remove_file(&site_path);
+		let raised = launch(
+			&path,
+			&path,
+			"assert-main-depth64",
+			"fresh",
+			&scratch.0,
+			&out,
+			&format!("{id}-depth64"),
+		);
+		assert!(raised.complete, "{label}");
+		let raised_site = fs::read_to_string(&site_path).unwrap();
+		if parts[2] == "63" && parts[1] != "object" {
+			// Independent formatter-walk semantics gap, NOT a budget-only proof.
+			// Derive the complete depth63 message from the frozen depth62 stock
+			// representation by adding exactly one source container wrapper.
+			let lower = label.replace("/63/", "/62/");
+			let lower_row: Vec<_> = rows
+				.iter()
+				.find(|r| r.starts_with(&format!("{lower}\t")))
+				.unwrap()
+				.split('\t')
+				.collect();
+			let lower_expected = expected_record(&lower_row);
+			let message = unhex(&lower_expected[3]);
+			let (_, rest) = message.split_once("\nleft: ").unwrap();
+			let (left, right) = rest.split_once("\nright: ").unwrap();
+			let (prefix, suffix) = match parts[1] {
+				"vec" => ("[", "]"),
+				"tuple" => ("(", ")"),
+				"option" => ("Some(", ")"),
+				"result" => ("Ok(", ")"),
+				_ => unreachable!(),
+			};
+			let expected=format!("Panicked: assertion failed (left != right):\nleft: {prefix}{left}{suffix}\nright: {prefix}{right}{suffix}");
+			let fields: Vec<_> = raised.record.split('\t').collect();
+			assert_eq!(&fields[..2], &["error", "Panic"]);
+			assert_eq!(unhex(fields[3]), expected);
+			assert!(fields[4].is_empty());
+			assert_eq!(raised_site, expected_site);
+			assert_eq!(hex(&raised.stdout), row[3]);
+			assert_eq!(hex(&raised.stderr), row[4]);
+			semantic += 1;
+			retained.push_str(&format!("{label}\tRetained(formatter-depth semantics)\n"));
+		} else {
+			assert_exact(label, &row, &raised, &raised_site);
+			budget += 1;
+			retained.push_str(&format!(
+				"{label}\tRetained(format budget); exact at configured depth64\n"
+			));
+		}
+	}
+	assert_eq!((refused, budget, semantic), (4, 6, 4));
+	fs::write(out.join("RETAINED.tsv"), retained).unwrap();
+	super::contract_completed("fresh", rows.len());
 }
