@@ -53,22 +53,29 @@ pub(crate) fn compare(op: Binary, eq: bool, lt: bool, gt: bool) -> Result<Value>
 	}))
 }
 
-// Semantics, not style: `a < b` and `a > b` on two bools are the script's bool ordering
-// (false < true), as on the stock VM; they feed `compare` for `<`, `<=`, `>` and `>=`.
-#[allow(clippy::bool_comparison)]
-pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
-	binary_inner(op, a, b).map_err(|error| {
-		if error.kind == ErrorKind::Type {
-			if let (Some(lhs), Some(rhs)) = (TypeName::primitive(a), TypeName::primitive(b)) {
-				return error.with_detail(Detail::Binary {
-					op: BinarySymbol::from_op(op, false),
-					lhs,
-					rhs,
-				});
-			}
+#[cold]
+#[inline(never)]
+fn type_error(op: Binary, a: Value, b: Value) -> Error {
+	let mut error = error(ErrorKind::Type);
+	if let (Some(lhs), Some(rhs)) = (TypeName::primitive(a), TypeName::primitive(b)) {
+		error.detail = Detail::Binary {
+			op: BinarySymbol::from_op(op, false),
+			lhs,
+			rhs,
+		};
+	}
+	error
+}
+
+// Binary's type errors retain their original operands. The shared compare
+// helper also serves other callers and deliberately keeps its own contract.
+fn compare_binary(op: Binary, a: Value, b: Value, eq: bool, lt: bool, gt: bool) -> Result<Value> {
+	match op {
+		Binary::Eq | Binary::Ne | Binary::Lt | Binary::Le | Binary::Gt | Binary::Ge => {
+			compare(op, eq, lt, gt)
 		}
-		error
-	})
+		_ => Err(type_error(op, a, b)),
+	}
 }
 
 fn shift(value: Value) -> Result<u32> {
@@ -99,10 +106,13 @@ fn shift(value: Value) -> Result<u32> {
 	Ok(count)
 }
 
+// Bool ordering follows the script contract, as on the stock VM.
 #[allow(clippy::bool_comparison)]
-fn binary_inner(op: Binary, a: Value, b: Value) -> Result<Value> {
+pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 	use Binary::*;
 	use Value::*;
+	let original_a = a;
+	let original_b = b;
 
 	// Shifts convert the count to u32 independently of the left integer's tag.
 	// Other mixed integer operations convert the right operand to the left tag.
@@ -153,7 +163,7 @@ fn binary_inner(op: Binary, a: Value, b: Value) -> Result<Value> {
 				}
 			}
 
-			_ => return compare(op, a == b, a < b, a > b),
+			_ => return compare_binary(op, original_a, original_b, a == b, a < b, a > b),
 		}),
 		(U64(a), U64(b)) => Ok(match op {
 			Add => U64(checked(a.checked_add(b))?),
@@ -176,7 +186,7 @@ fn binary_inner(op: Binary, a: Value, b: Value) -> Result<Value> {
 				}
 			}
 
-			_ => return compare(op, a == b, a < b, a > b),
+			_ => return compare_binary(op, original_a, original_b, a == b, a < b, a > b),
 		}),
 		(F64(a), F64(b)) => Ok(match op {
 			Add => F64(a + b),
@@ -184,19 +194,21 @@ fn binary_inner(op: Binary, a: Value, b: Value) -> Result<Value> {
 			Mul => F64(a * b),
 			Div => F64(a / b),
 			Rem => F64(a % b),
-			_ => return compare(op, a == b, a < b, a > b),
+			_ => return compare_binary(op, original_a, original_b, a == b, a < b, a > b),
 		}),
 		(Bool(a), Bool(b)) => match op {
 			BitAnd => Ok(Bool(a & b)),
 			BitOr => Ok(Bool(a | b)),
 			BitXor => Ok(Bool(a ^ b)),
-			Eq | Ne | Lt | Le | Gt | Ge => compare(op, a == b, a < b, a > b),
-			_ => Err(error(ErrorKind::Type)),
+			Eq | Ne | Lt | Le | Gt | Ge => {
+				compare_binary(op, original_a, original_b, a == b, a < b, a > b)
+			}
+			_ => Err(type_error(op, original_a, original_b)),
 		},
 
-		(Char(a), Char(b)) => compare(op, a == b, a < b, a > b),
-		(Unit, Unit) => compare(op, true, false, false),
-		_ => Err(error(ErrorKind::Type)),
+		(Char(a), Char(b)) => compare_binary(op, original_a, original_b, a == b, a < b, a > b),
+		(Unit, Unit) => compare_binary(op, original_a, original_b, true, false, false),
+		_ => Err(type_error(op, original_a, original_b)),
 	}
 }
 
@@ -249,3 +261,6 @@ pub fn cast(value: Value, target: ValueType) -> Result<Value> {
 		}
 	})
 }
+
+#[cfg(test)]
+mod binary_tests;
