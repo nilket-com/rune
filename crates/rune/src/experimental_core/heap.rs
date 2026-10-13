@@ -16,6 +16,7 @@ mod comparison;
 mod formatting;
 mod indexing;
 pub use formatting::FormatLimits;
+mod ranges;
 mod roots;
 
 #[cfg(feature = "fresh-core-native")]
@@ -74,6 +75,10 @@ enum Payload {
 		start: i64,
 		end: i64,
 	},
+	ValueRange {
+		start: Value,
+		end: Value,
+	},
 	VectorIterator(Iter),
 	OptionIterator {
 		payload: Option<Value>,
@@ -81,6 +86,11 @@ enum Payload {
 	RangeIterator {
 		next: i64,
 		end: i64,
+	},
+	// Interpreter-only, even when mixed bounds coerce to two signed values.
+	ValueRangeIterator {
+		next: Value,
+		end: Value,
 	},
 	Record {
 		tag: Type,
@@ -98,6 +108,9 @@ impl Payload {
 			Self::Moved(_) => Some(0),
 			Self::String(s) => Some(s.capacity()),
 			Self::Range { .. } => Some(16),
+			Self::ValueRange { .. } | Self::ValueRangeIterator { .. } => {
+				Some(2 * size_of::<Value>())
+			}
 			Self::Variant { .. } => Some(size_of::<Value>()),
 			Self::VectorIterator(..) | Self::OptionIterator { .. } | Self::RangeIterator { .. } => {
 				Some(size_of::<Value>())
@@ -129,6 +142,8 @@ impl Payload {
 				Self::VectorIterator(iter) if index == 0 => Some(Value::Heap(iter.handle)),
 				Self::Record { fields, .. } => fields.get(index).map(|(_, value)| *value),
 				Self::List { values, .. } => values.get(index).copied(),
+				Self::ValueRange { start, .. } if index == 0 => Some(*start),
+				Self::ValueRange { end, .. } if index == 1 => Some(*end),
 				_ => None,
 			};
 
@@ -142,10 +157,15 @@ impl Payload {
 			Self::Moved(tag) => *tag,
 			Self::String(_) => Type::String,
 			Self::Range { .. } => Type::Range,
-			Self::Variant { tag, .. } => *tag,
-			Self::VectorIterator(..) | Self::OptionIterator { .. } | Self::RangeIterator { .. } => {
-				Type::Iterator
+			Self::ValueRange { start, end } => {
+				debug_assert!(!matches!((start, end), (Value::I64(_), Value::I64(_))));
+				Type::Range
 			}
+			Self::Variant { tag, .. } => *tag,
+			Self::VectorIterator(..)
+			| Self::OptionIterator { .. }
+			| Self::RangeIterator { .. }
+			| Self::ValueRangeIterator { .. } => Type::Iterator,
 			Self::List { tag, .. } | Self::Record { tag, .. } => *tag,
 		}
 	}
@@ -181,6 +201,7 @@ const _: () = assert!(MAX_BYTES < CLONE_PATH);
 const _: () = {
 	assert!(size_of::<Entry>() == 72);
 	assert!(size_of::<Slot>() == 80);
+	assert!(size_of::<Payload>() == 40);
 };
 impl Entry {
 	fn tag(&self) -> Result<Type> {
@@ -403,7 +424,11 @@ impl Store {
 					access: super::error::MovedAccess::Read,
 				},
 			)),
-			Some(payload) => Ok(payload),
+			Some(payload) => {
+				#[cfg(debug_assertions)]
+				payload.assert_canonical_range();
+				Ok(payload)
+			}
 			None => Err(err(ErrorKind::InvalidCode)),
 		}
 	}
@@ -421,7 +446,11 @@ impl Store {
 					access: super::error::MovedAccess::Write,
 				},
 			)),
-			Some(payload) => Ok(payload),
+			Some(payload) => {
+				#[cfg(debug_assertions)]
+				payload.assert_canonical_range();
+				Ok(payload)
+			}
 			None => Err(err(ErrorKind::InvalidCode)),
 		}
 	}
@@ -679,6 +708,9 @@ impl Store {
 			return Err(err(ErrorKind::Type));
 		};
 
+		if self.entry(handle)?.tag()? == Type::Range {
+			return self.range_field(handle, key);
+		}
 		if !matches!(self.entry(handle)?.tag()?, Type::Object | Type::Struct(_)) {
 			return Err(err(ErrorKind::Type));
 		}
@@ -759,6 +791,9 @@ impl Store {
 				ErrorKind::IndexOutOfBounds
 			}));
 		};
+		if self.entry(handle)?.tag()? == Type::Range {
+			return self.set_range_field(handle, key, new);
+		}
 		if !matches!(self.entry(handle)?.tag()?, Type::Object | Type::Struct(_)) {
 			return Err(err(ErrorKind::Type));
 		}
@@ -878,6 +913,15 @@ impl Store {
 		};
 		Some(match self.entry(h).ok()?.payload.as_ref() {
 			Some(Payload::RangeIterator { .. }) => TypeName::RangeIter,
+			Some(Payload::ValueRangeIterator {
+				next: Value::U64(_),
+				..
+			}) => TypeName::UnsignedRangeIter,
+			Some(Payload::ValueRangeIterator {
+				next: Value::Char(_),
+				..
+			}) => TypeName::CharRangeIter,
+			Some(Payload::ValueRangeIterator { .. }) => TypeName::RangeIter,
 			Some(Payload::Moved(tag)) => TypeName::from_type(*tag),
 			// Internal loop iterators cannot escape. Option/Unit snapshots need
 			// distinct diagnostic types before iterator-valued methods are admitted.
@@ -1120,6 +1164,10 @@ impl Store {
 			{
 				return self.admit(Payload::OptionIterator { payload: *payload });
 			}
+			if let Payload::ValueRange { start, end } = self.payload(h)? {
+				let (next, end) = self.range_iteration_bounds(*start, *end)?;
+				return self.admit(Payload::ValueRangeIterator { next, end });
+			}
 			if let Payload::Range { start, end } = self.payload(h)? {
 				return self.admit(Payload::RangeIterator {
 					next: *start,
@@ -1161,6 +1209,7 @@ impl Store {
 				Ok(Some(Value::I64(value)))
 			}
 
+			Payload::ValueRangeIterator { next, end } => self.value_range_next(h, *next, *end),
 			Payload::OptionIterator { payload } => {
 				let value = *payload;
 				let Payload::OptionIterator { payload } = self.mutable(h)? else {

@@ -22,9 +22,11 @@ enum Sequence<'a> {
 	Fields(&'a [(String, Value)]),
 	Pairs(&'a [(String, Value)]),
 	Range(i64, i64),
+	UnsignedRange(u64, u64),
+	CharRange(char, char),
 	One(Option<Value>),
 	Pair(&'a str, Value),
-	Bounds(i64, i64),
+	Bounds(Value, Value),
 }
 impl<'a> Sequence<'a> {
 	fn get(self, n: u64) -> Option<Item<'a>> {
@@ -43,11 +45,28 @@ impl<'a> Sequence<'a> {
 				}
 				Item::Value(Value::I64(i64::try_from(value).ok()?))
 			}
+			Self::UnsignedRange(start, end) => {
+				let value = u128::from(start) + u128::from(n);
+				if value >= u128::from(end) {
+					return None;
+				}
+				Item::Value(Value::U64(u64::try_from(value).ok()?))
+			}
+			Self::CharRange(start, end) => {
+				let mut value = u64::from(start as u32).checked_add(n)?;
+				if (start as u32) < 0xd800 && value >= 0xd800 {
+					value = value.checked_add(0x800)?;
+				}
+				if value >= u64::from(end as u32) {
+					return None;
+				}
+				Item::Value(Value::Char(char::from_u32(u32::try_from(value).ok()?)?))
+			}
 			Self::One(value) if n == 0 => Item::Value(value?),
 			Self::Pair(key, _) if n == 0 => Item::Text(key),
 			Self::Pair(_, value) if n == 1 => Item::Value(value),
-			Self::Bounds(start, _) if n == 0 => Item::Value(Value::I64(start)),
-			Self::Bounds(_, end) if n == 1 => Item::Value(Value::I64(end)),
+			Self::Bounds(start, _) if n == 0 => Item::Value(start),
+			Self::Bounds(_, end) if n == 1 => Item::Value(end),
 			_ => return None,
 		})
 	}
@@ -134,6 +153,15 @@ impl Store {
 					fields,
 				} => return Ok(Sequence::Pairs(fields)),
 				Payload::Range { start, end } => return Ok(Sequence::Range(*start, *end)),
+				Payload::ValueRange { start, end } => {
+					return Ok(match self.range_iteration_bounds(*start, *end)? {
+						(Value::I64(a), Value::I64(b)) => Sequence::Range(a, b),
+						(Value::U64(a), Value::U64(b)) => Sequence::UnsignedRange(a, b),
+						(Value::Char(a), Value::Char(b)) => Sequence::CharRange(a, b),
+						_ => return Err(error(ErrorKind::InvalidCode)),
+					});
+				}
+
 				Payload::Variant {
 					tag: Type::Option,
 					payload,
@@ -298,23 +326,26 @@ impl Store {
 									None
 								}
 							}
-							Payload::Range { start, end } => {
+							payload @ (Payload::Range { .. } | Payload::ValueRange { .. }) => {
+								let bounds = payload.range_values()?;
 								let other = match b {
 									Item::Value(Value::Heap(h)) => match self.payload(h)? {
-										Payload::Range { start, end } => Some((*start, *end)),
+										payload @ (Payload::Range { .. }
+										| Payload::ValueRange { .. }) => Some(payload.range_values()?),
 										_ => None,
 									},
 									_ => None,
 								}
 								.ok_or_else(|| self.expected_pair(lhs, b))?;
 								stack.try_push(Task::Sequence(
-									Sequence::Bounds(*start, *end),
+									Sequence::Bounds(bounds.0, bounds.1),
 									Sequence::Bounds(other.0, other.1),
 									0,
 									depth,
 								))?;
 								None
 							}
+
 							_ => return Err(self.unsupported_pair(op, a, b)),
 						}
 					} else if let (Item::Value(a_value), Item::Value(b_value)) = (a, b) {

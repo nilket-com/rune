@@ -733,12 +733,7 @@ impl Executor {
 							}
 
 							Op::Range { out, start, end } => {
-								let (Value::I64(start), Value::I64(end)) = (get(start)?, get(end)?)
-								else {
-									return Err(error(ErrorKind::Type));
-								};
-
-								let value = store.range(start, end)?;
+								let value = store.range_values(get(start)?, get(end)?)?;
 								self.put(store, frame.base + out as usize, value)?;
 							}
 

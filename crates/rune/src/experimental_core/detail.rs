@@ -21,6 +21,8 @@ pub enum TypeName {
 	RangeInclusive,
 	VecIter,
 	RangeIter,
+	UnsignedRangeIter,
+	CharRangeIter,
 	Function,
 	Struct(Nominal),
 	Type,
@@ -166,6 +168,14 @@ pub enum Detail {
 	MissingKey {
 		target: TypeName,
 	},
+	MissingIndex {
+		target: TypeName,
+	},
+	MissingStringSlice,
+	UnsupportedIterRange {
+		start: TypeName,
+		end: TypeName,
+	},
 	MissingInteger {
 		target: TypeName,
 		index: usize,
@@ -269,6 +279,8 @@ impl TypeName {
 			Self::RangeInclusive => rt::RangeInclusive::HASH,
 			Self::VecIter => rt::slice::Iter::HASH,
 			Self::RangeIter => rt::range::RangeIter::<i64>::HASH,
+			Self::UnsignedRangeIter => rt::range::RangeIter::<u64>::HASH,
+			Self::CharRangeIter => rt::range::RangeIter::<char>::HASH,
 			Self::Function => rt::Function::HASH,
 			Self::Type => rt::Type::HASH,
 			Self::Struct(_) => return None,
@@ -322,6 +334,8 @@ impl fmt::Display for TypeName {
 			Self::RangeInclusive => "std::ops::RangeInclusive",
 			Self::VecIter => "std::slice::Iter",
 			Self::RangeIter => "std::ops::RangeIter<std::i64>",
+			Self::UnsignedRangeIter => "std::ops::RangeIter<std::u64>",
+			Self::CharRangeIter => "std::ops::RangeIter<std::char>",
 			Self::Function => "std::ops::Function",
 			Self::Type => "std::any::Type",
 			Self::Struct(n) => {
@@ -495,6 +509,11 @@ impl fmt::Display for Message<'_> {
 			ShiftWidth => f.write_str("Numerical overflow"),
 			Underflow => f.write_str("Numerical underflow"),
 			OutOfRange { index, length } => messages::out_of_range(f, index, length),
+			MissingIndex { target } => write!(f, "Type `{target}` missing index"),
+			MissingStringSlice => f.write_str("Panicked: missing string slice"),
+			UnsupportedIterRange { start, end } => {
+				write!(f, "Cannot build an iterator out of {start}..{end}")
+			}
 			MissingKey { target } => write!(f, "Missing field on `{target}`"),
 			MissingInteger { target, index } => {
 				write!(f, "Type `{target}` missing integer index `{index}`")

@@ -184,7 +184,8 @@ fn diagnostic_catalogue_both_engines() {
 		("arity-zero", "let f = g; f()", Type, "execute"),
 		("arity-two", "let f = g; f(1,2)", Type, "execute"),
 		("try", "1?", Type, "store"),
-		("range", "for i in 0..1.5 {}", Type, "execute"),
+		// Endpoint validation is deferred until iteration, matching stock.
+		("range", "for i in 0..1.5 {}", Type, "store"),
 	];
 	let mut failures = std::vec::Vec::new();
 	for (id, body, kind, operation) in rows {

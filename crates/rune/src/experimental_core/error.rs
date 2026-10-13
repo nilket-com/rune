@@ -23,6 +23,8 @@ pub enum ErrorKind {
 	Overflow,
 	/// Integer division or remainder by zero.
 	DivisionByZero,
+	/// A script runtime panic, represented as an ordinary allocation-free error.
+	Panic,
 	/// An index or field is not present: out of range or a missing object field.
 	IndexOutOfBounds,
 	/// A shift count is negative or not below the operand's bit width.

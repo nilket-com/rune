@@ -198,6 +198,11 @@ impl Store {
 		self.release(old)
 	}
 	pub(crate) fn dynamic_get(&mut self, value: Value, index: Value) -> Result<Value> {
+		if self.index_tag(index)? == Some(Type::Range)
+			&& matches!(self.index_tag(value)?, Some(Type::Vec | Type::String))
+		{
+			return self.range_index(value, index);
+		}
 		if matches!(
 			index,
 			Value::Unit

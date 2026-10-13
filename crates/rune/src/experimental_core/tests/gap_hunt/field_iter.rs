@@ -285,4 +285,5 @@ fn contract() {
 		assert_eq!(hex(&run.stderr), row[4], "{engine} stderr {label}");
 	}
 	assert_eq!(coverage, if engine == "fresh" { 21 } else { 0 });
+	super::contract_completed(&engine, rows.len());
 }

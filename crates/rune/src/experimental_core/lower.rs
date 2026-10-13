@@ -886,7 +886,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				out: iterator,
 				value,
 			},
-			span,
+			self.exprs.get(for_.iter).span,
 		)?;
 		let binding = self.slot()?;
 		self.bind(&for_.binding.pat, binding)?;

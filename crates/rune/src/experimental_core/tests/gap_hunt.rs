@@ -29,6 +29,11 @@ use std::{
 	vec::Vec,
 };
 
+pub(super) fn contract_completed(engine: &str, rows: usize) {
+	println!("\nCONTRACT ENGINE {engine}");
+	println!("CONTRACT ROWS {rows}");
+}
+
 const MANIFEST: &str = include_str!("gap_corpus.tsv");
 const CHILD: &str = "experimental_core::tests::gap_hunt::child";
 const FUEL: usize = 2_000_000;
@@ -649,6 +654,7 @@ fn corpus() {
 		cases.len()
 	);
 	fs::write(out.join("summary.txt"), summary).unwrap();
+	contract_completed("both", cases.len());
 	println!(
 		"S0 complete: {} cases, {counts:?}; {}",
 		cases.len(),
@@ -1079,7 +1085,9 @@ fn comparison_contract() {
 			// Only these stock resource/coercion classes have explicit fresh names.
 			let expected_class = if engine == "fresh" && class.starts_with("stock:MaxValueDepth ") {
 				"ValueDepth"
-			} else if engine == "fresh" && class.starts_with("stock:ValueToIntegerCoercionError ") {
+			// S-index gave stock's shared classifier this same public class.
+			// Preserve the frozen Debug label and equate only its coercion rows.
+			} else if class.starts_with("stock:ValueToIntegerCoercionError ") {
 				"IntegerCoercion"
 			} else {
 				*class
@@ -1101,10 +1109,14 @@ fn comparison_contract() {
 				run.record
 			);
 		}
+		// The fixed sources print nothing; retain the raw libtest startup banner.
+		assert_eq!(run.stdout, b"\nrunning 1 test\n", "unexpected stdout: {id}");
+		assert!(run.stderr.is_empty(), "unexpected stderr: {id}");
 		count += 1;
 	}
 	assert_eq!(count, 3594);
 	assert!(sources.is_empty());
+	contract_completed(&engine, count);
 }
 
 #[test]
@@ -1341,6 +1353,7 @@ fn index_contract() {
 			println!("{engine} index contract {n}/{}", rows.len());
 		}
 	}
+	contract_completed(&engine, rows.len());
 }
 
 #[path = "gap_hunt/field_iter.rs"]
@@ -1349,6 +1362,9 @@ mod field_iter;
 #[path = "gap_hunt/len_clone.rs"]
 mod len_clone;
 mod range_index;
+
+#[path = "gap_hunt/contracts.rs"]
+mod contracts;
 
 #[test]
 #[ignore = "operator-only emission snapshot for lowering comparison; no execution"]

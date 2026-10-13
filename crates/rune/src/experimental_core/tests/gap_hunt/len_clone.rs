@@ -300,6 +300,7 @@ fn stock_contract() {
 		assert_eq!(hex(&run.stdout), row[3], "stdout drift: {label}");
 		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
 	}
+	super::contract_completed("stock", rows.len());
 }
 
 #[test]
@@ -375,6 +376,7 @@ fn fresh_contract() {
 	}
 	assert_eq!(coverage, 65);
 	assert_eq!(retained, 1);
+	super::contract_completed("fresh", rows.len());
 }
 
 #[test]
@@ -550,6 +552,7 @@ fn global_contract() {
 			assert_eq!(hex(&run.stderr), row[4]);
 		}
 	}
+	super::contract_completed("both", rows.len());
 }
 
 #[test]

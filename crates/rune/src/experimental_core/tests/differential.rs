@@ -737,6 +737,8 @@ fn run(miri_only: bool) {
 )]
 fn differential_full_corpus() {
 	run(false);
+	#[cfg(all(feature = "std", not(miri)))]
+	super::gap_hunt::contract_completed("both", FULL_ROWS);
 }
 
 #[test]
