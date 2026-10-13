@@ -2,7 +2,7 @@
 
 use crate::experimental_core::{
 	arithmetic::{Binary, Unary},
-	code::{Builder, Function, Op},
+	code::{Builder, CloneMode, Function, Op},
 	error::{ErrorKind, Location},
 	value::{Type, Value},
 };
@@ -339,14 +339,17 @@ fn same(a: Op, b: Op) {
 			Op::Clone {
 				out: a_out,
 				value: a_value,
+				mode: a_mode,
 			},
 			Op::Clone {
 				out: b_out,
 				value: b_value,
+				mode: b_mode,
 			},
 		) => {
 			assert_eq!(a_out, b_out);
 			assert_eq!(a_value, b_value);
+			assert_eq!(a_mode, b_mode);
 		}
 
 		(
@@ -679,7 +682,11 @@ fn every_encoded_variant_round_trips_fields() {
 			none: 0,
 		},
 		Op::String { out: 2, text: 0 },
-		Op::Clone { out: 2, value: 2 },
+		Op::Clone {
+			out: 2,
+			value: 2,
+			mode: CloneMode::Associated,
+		},
 		Op::AssignBinary {
 			out: 2,
 			op: Binary::Add,
@@ -979,4 +986,30 @@ fn all_non_heap_literal_kinds_survive_validation_and_pool_decode() {
 	let mut builder = Builder::default();
 	builder.push(function).unwrap();
 	assert_eq!(builder.finish().err().unwrap().kind, ErrorKind::InvalidCode);
+}
+
+#[test]
+fn both_clone_modes_round_trip_and_validate_slots() {
+	for mode in [CloneMode::Associated, CloneMode::Global] {
+		let mut f = Function::new(2, 1).unwrap();
+		let op = Op::Clone {
+			out: 1,
+			value: 0,
+			mode,
+		};
+		let pc = f.push(op, location()).unwrap();
+		same(op, f.operation(pc as usize).unwrap());
+		f.push(Op::Return { value: 1 }, location()).unwrap();
+		let mut b = Builder::default();
+		b.push(f).unwrap();
+		b.finish().unwrap();
+		for (out, value) in [(2, 0), (1, 2)] {
+			let mut f = Function::new(2, 1).unwrap();
+			f.push(Op::Clone { out, value, mode }, location()).unwrap();
+			f.push(Op::Return { value: 1 }, location()).unwrap();
+			let mut b = Builder::default();
+			b.push(f).unwrap();
+			assert_eq!(b.finish().err().unwrap().kind, ErrorKind::InvalidCode);
+		}
+	}
 }

@@ -5,7 +5,7 @@
 //! coarse; no source semantics or failure precedence changes here.
 //! Retained: iterator and method hashes, macro Display spans, tuple-set past-end
 //! classification, and nominal names pending C. D1b wording changes are out of scope.
-//! S-field converges named object insertion and Option iteration; Function clone remains a gap.
+//! S-field converges named object insertion and Option iteration; Function cloning converges; its bytecode-offset Debug observation stays Retained.
 //! S-index converges dynamic object indexing and Vec tuple-index access.
 //! Refused: closures, explicit iterator methods, and inclusive ranges. Compile
 //! errors compare frontend diagnostics, never VmError text.
@@ -260,13 +260,17 @@ fn diagnostic_catalogue_both_engines() {
 )]
 fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 	let context = Context::with_default_modules().unwrap();
-	// Retained: no stock wording change for the instance-function hash or DISPLAY_FMT.
+	// len/push wording now converges. DISPLAY_FMT macro-span differences remain explicit.
 	for (id, body, expected) in [
-		("len", "let x = 1; x.len()", "no method `len` on `std::i64`"),
+		(
+			"len",
+			"let x = 1; x.len()",
+			"Missing instance function `0x201f597bd58fafa8` for `std::i64`",
+		),
 		(
 			"push",
 			"let x = 1; x.push(2)",
-			"no method `push` on `std::i64`",
+			"Missing instance function `0x3fd16e7ebc3afb1a` for `std::i64`",
 		),
 		(
 			"display",
@@ -304,8 +308,8 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 		);
 		let (stock_text, stock_span, fresh_span, reason) = match id {
 			"iter" => ("Missing instance function `0x57a2b2f073daaf28` for `std::i64`",28..29,19..32,"stock points at iterable; fresh points at the for expression; hash wording retained"),
-			"len" => ("Missing instance function `0x201f597bd58fafa8` for `std::i64`",30..37,30..37,"stock instance-function hash is retained"),
-			"push" => ("Missing instance function `0x3fd16e7ebc3afb1a` for `std::i64`",30..39,30..39,"stock instance-function hash is retained"),
+			"len" => ("Missing instance function `0x201f597bd58fafa8` for `std::i64`",30..37,30..37,"instance-function hash converged exactly"),
+			"push" => ("Missing instance function `0x3fd16e7ebc3afb1a` for `std::i64`",30..39,30..39,"instance-function hash converged exactly"),
 			"display" => ("Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",0..36,19..37,"stock macro expansion maps to its enclosing item; fresh maps to the invocation"),
 			_ => unreachable!(),
 		};
@@ -316,18 +320,16 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 		assert_eq!(at.start as usize..at.end as usize, fresh_span, "{id}");
 		assert_eq!((at.source, at.revision), (0, 73));
 	}
-	// The remaining Function clone gap is outside S-field.
-	let source = "pub fn target() {
-
-let f = g; f.clone()
-}
-fn g(a) { a }";
+	// Function clone succeeds; stock instruction-offset Debug has no fresh equivalent.
+	let source="fn g(a) {a} pub fn target() { let f=g; f.clone() } pub fn call_clone() { let f=g.clone(); f(7) }";
 	let (mut stock, program) = compile(&context, source);
-	let stock_value = stock.call(["target"], ()).unwrap();
-	assert_eq!(stock_value.type_info().to_string(), "::std::ops::Function");
+	assert_eq!(
+		stock.call(["target"], ()).unwrap().type_info().to_string(),
+		"::std::ops::Function"
+	);
 	let mut store = Store::new(Limits::default()).unwrap();
-	let failure = Executor::new()
-		.unwrap()
+	let mut executor = Executor::new().unwrap();
+	let function = executor
 		.invoke(
 			&program,
 			&mut store,
@@ -335,18 +337,30 @@ fn g(a) { a }";
 			&[],
 			100_000,
 		)
-		.unwrap_err();
+		.unwrap();
+	assert!(matches!(
+		function.value,
+		super::super::value::Value::Function { .. }
+	));
 	assert_eq!(
-		failure.error.message(&program).to_string(),
-		"no method `clone` on `std::ops::Function`"
+		store.root_format(&function, true).unwrap_err().kind,
+		ErrorKind::Unsupported
 	);
-	let start = source.find("f.clone()").unwrap();
-	let at = failure.error.location.unwrap();
+	store.root_release(function).unwrap();
+	let answer = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["call_clone"])).unwrap(),
+			&[],
+			100_000,
+		)
+		.unwrap();
 	assert_eq!(
-		at.start as usize..at.end as usize,
-		start..start + "f.clone()".len()
+		store.root_scalar(&answer).unwrap(),
+		Some(super::super::value::Scalar::I64(7))
 	);
-	assert_eq!((at.source, at.revision), (0, 73));
+	store.root_release(answer).unwrap();
 	assert_eq!(store.live_entries(), 0);
 }
 
@@ -565,8 +579,16 @@ fn access_conflict_wording_distinguishes_mutation_and_invalidated_payload() {
 	store.invalidate(value).unwrap();
 	let error = store.text(value).unwrap_err();
 	assert_eq!(error.kind, ErrorKind::AccessConflict);
-	assert_eq!(error.detail, crate::experimental_core::error::Detail::None);
-	assert_eq!(error.message(&program).to_string(), "store: AccessConflict");
+	assert_eq!(
+		error.detail,
+		crate::experimental_core::error::Detail::Moved {
+			access: crate::experimental_core::error::MovedAccess::Read
+		}
+	);
+	assert_eq!(
+		error.message(&program).to_string(),
+		"Cannot read, the value has been moved"
+	);
 	store.release(value).unwrap();
 	assert_eq!(store.live_entries(), 0);
 }

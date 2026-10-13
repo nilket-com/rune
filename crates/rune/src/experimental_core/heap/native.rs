@@ -40,8 +40,9 @@ impl Store {
 			return None;
 		}
 
-		// A taken payload (`invalidate`) is None; only a RangeIterator is accepted.
+		// A taken payload is an inert Moved tombstone; only a live RangeIterator is accepted.
 		match entry.payload.as_ref()? {
+			Payload::Moved(_) => None,
 			Payload::RangeIterator { next, end } => Some((*next, *end)),
 			_ => None,
 		}

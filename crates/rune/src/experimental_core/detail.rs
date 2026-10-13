@@ -96,6 +96,27 @@ pub enum AdmittedMethod {
 	Clone,
 }
 
+/// The access that encountered an explicitly invalidated payload.
+#[allow(missing_docs)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum MovedAccess {
+	Read,
+	Write,
+	Take,
+}
+
+impl AdmittedMethod {
+	// Stock: hir/lowering2.rs builds Hash::ident(ident), then assemble.rs
+	// emits CallAssociated. These are literal identities, never success-path work.
+	pub(crate) fn hash(self) -> crate::Hash {
+		match self {
+			Self::Len => crate::Hash::new(0x6215b706d11e40e5),
+			Self::Push => crate::Hash::new(0x7ddb8003b8ab1457),
+			Self::Clone => crate::Hash::new(0xa4c75da413f782ae),
+		}
+	}
+}
+
 #[allow(missing_docs)]
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Detail {
@@ -169,6 +190,15 @@ pub enum Detail {
 		expected: u32,
 	},
 	ForeignFunction,
+	Moved {
+		access: MovedAccess,
+	},
+	ExpectedChar {
+		found: TypeName,
+	},
+	NoCloneProtocol {
+		found: TypeName,
+	},
 	Cast {
 		found: TypeName,
 		to_numeric: bool,
@@ -206,10 +236,6 @@ pub enum Detail {
 	},
 	TupleIndexSet {
 		target: TypeName,
-	},
-	NoMethod {
-		method: AdmittedMethod,
-		receiver: TypeName,
 	},
 }
 
@@ -487,6 +513,19 @@ impl fmt::Display for Message<'_> {
 			},
 			NotCallable { found } => messages::not_callable(f, found),
 			Arity { given, expected } => messages::arity(f, given, expected),
+			Moved { access } => write!(
+				f,
+				"Cannot {}, the value has been moved",
+				match access {
+					MovedAccess::Read => "read",
+					MovedAccess::Write => "write",
+					MovedAccess::Take => "take",
+				}
+			),
+			ExpectedChar { found } => write!(f, "Expected type `std::char` but found `{found}`"),
+			NoCloneProtocol { found } => {
+				write!(f, "Missing protocol function `CLONE` for `{found}`")
+			}
 			ForeignFunction => f.write_str("Function value belongs to another program"),
 			Cast {
 				found,
@@ -513,15 +552,6 @@ impl fmt::Display for Message<'_> {
 			} => messages::index_set(f, target, index, value),
 			TupleIndexGet { target, index } => messages::tuple_get(f, target, index),
 			TupleIndexSet { target } => messages::tuple_set(f, target),
-			NoMethod { method, receiver } => write!(
-				f,
-				"no method `{}` on `{receiver}`",
-				match method {
-					AdmittedMethod::Len => "len",
-					AdmittedMethod::Push => "push",
-					AdmittedMethod::Clone => "clone",
-				}
-			),
 			None => match self.error.kind {
 				ErrorKind::Overflow => f.write_str("Numerical overflow"),
 				ErrorKind::DivisionByZero => f.write_str("Division by zero"),

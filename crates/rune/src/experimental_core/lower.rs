@@ -9,7 +9,7 @@
 //! `writes_nothing` rule allows; nothing here moves a user local.
 
 use super::arithmetic::{Binary, Unary};
-use super::code::{CompileTransaction, Function, Op};
+use super::code::{CloneMode, CompileTransaction, Function, Op};
 use super::error::{Error, ErrorKind, Location, Refusal, Result};
 use super::value::{Type, Value};
 use crate as rune;
@@ -937,326 +937,492 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let span = expr.span;
 
 		match expr.kind {
-			E::Const(hash) => {
-				let constant = self
-					.constants
-					.get_const_value(hash)
-					.ok_or_else(|| self.refused(span, Refusal::UnresolvedConstant))?;
-				match super::constants::read(constant)? {
-					super::constants::Scalar::Primitive(value) => {
-						self.emit(Op::Literal { out, value }, span)?;
-					}
+			E::Const(..) => self.inner_const(&expr, out),
 
-					super::constants::Scalar::Text(value) => {
-						let text = self.function.string(&value)?;
-						self.emit(Op::String { out, text }, span)?;
-					}
-				}
-			}
+			E::Type(..) => self.inner_type(&expr, out),
 
-			E::Type(tag) => {
-				let value = Value::Type(
-					self.type_tag(tag.into_hash(), span)?
-						.ok_or_else(|| self.refused(span, Refusal::TypeExpr))?,
-				);
-				self.emit(Op::Literal { out, value }, span)?;
-			}
+			E::Fn(..) => self.inner_fn(&expr, out),
 
-			E::Fn(hash) => {
-				let at = self.location(span);
-				let id = (self.resolve)(hash, at)?;
+			E::Group(id) => self.expr_into(id, out),
+			E::Variable(..) => self.inner_variable(&expr, out),
 
-				// Stamped with the program identity by `Builder::finish`.
-				let value = Value::Function { code: 0, id };
-				self.emit(Op::Literal { out, value }, span)?;
-			}
+			E::Lit(..) => self.inner_lit(&expr, out),
 
-			E::Group(id) => self.expr_into(id, out)?,
-			E::Variable(variable) => {
-				let value = self.variable(variable, span)?;
-				self.emit(Op::Copy { out, value }, span)?;
-			}
+			E::Block(block) => self.block(block, Mode::Into(out)),
+			E::Range(..) => self.inner_range(&expr, out),
 
-			E::Lit(lit) => {
-				let value = match lit {
-					hir::Lit::Bool(v) => Value::Bool(v),
-					hir::Lit::Unsigned(v) => Value::U64(v),
-					hir::Lit::Signed(v) => Value::I64(v),
-					hir::Lit::Float(v) => Value::F64(v),
-					hir::Lit::Char(v) => Value::Char(v),
-					hir::Lit::Str(v) => {
-						let text = self.function.string(v)?;
-						self.emit(Op::String { out, text }, span)?;
-						return Ok(());
-					}
-					hir::Lit::ByteStr(_) => return Err(self.refused(span, Refusal::ByteStr)),
-				};
+			E::For(for_) => self.for_(for_, Some(out), span),
+			E::Loop(loop_) => self.loop_(loop_, Some(out), span),
+			E::Break(..) => self.inner_break(&expr, out),
 
-				self.emit(Op::Literal { out, value }, span)?;
-			}
+			E::Continue(..) => self.inner_continue(&expr, out),
 
-			E::Block(block) => self.block(block, Mode::Into(out))?,
-			E::Range(range) => {
-				let (start, end) = match range {
-					hir::ExprRange::Range { start, end } => (start, end),
-					hir::ExprRange::RangeFrom { .. }
-					| hir::ExprRange::RangeFull
-					| hir::ExprRange::RangeInclusive { .. }
-					| hir::ExprRange::RangeToInclusive { .. }
-					| hir::ExprRange::RangeTo { .. } => {
-						return Err(self.refused(span, Refusal::Range));
-					}
-				};
+			E::Unary(..) => self.inner_unary(&expr, out),
 
-				let slots = self.operands(&[*start, *end])?;
-				self.emit(
-					Op::Range {
-						out,
-						start: slots[0],
-						end: slots[1],
-					},
-					span,
-				)?;
-			}
+			E::Binary(binary) => self.binary(binary, out, span),
+			E::Object(..) => self.inner_object(&expr, out),
 
-			E::For(for_) => self.for_(for_, Some(out), span)?,
-			E::Loop(loop_) => self.loop_(loop_, Some(out), span)?,
-			E::Break(break_) => {
-				let index = self.loop_index(break_.label, span)?;
-				match (self.loops[index].out, break_.expr) {
-					(Some(target), Some(id)) => self.expr_into(id, target)?,
-					(Some(target), None) => self.unit_into(target, span)?,
-					(None, Some(id)) => self.statement(id)?,
-					(None, None) => (),
-				}
+			E::FieldAccess(..) => self.inner_field_access(&expr, out),
 
-				let cleanup = self.loops[index].cleanup;
-				self.release_from(cleanup, span)?;
-				let pc = self.emit(Op::Jump { target: 0 }, span)?;
-				self.loops[index].breaks.try_push(pc)?;
+			E::Assign(..) => self.inner_assign(&expr, out),
 
-				// `out` is never written: no instruction after the jump runs.
-			}
+			E::Index(..) => self.inner_index(&expr, out),
 
-			E::Continue(continue_) => {
-				let index = self.loop_index(continue_.label, span)?;
-				let target = self.loops[index].start;
-				let cleanup = self.loops[index].cleanup;
-				self.release_from(cleanup, span)?;
-				self.emit(Op::Jump { target }, span)?;
-			}
+			E::Template(..) => self.inner_template(&expr, out),
 
-			E::Unary(unary) => {
-				let op = match unary.op {
-					UnOp::Neg(..) => Unary::Neg,
-					UnOp::Not(..) => Unary::Not,
-					_ => return Err(self.refused(span, Refusal::Operator)),
-				};
+			E::Tuple(..) | E::Vec(..) => self.inner_sequence(&expr, out),
 
-				let value = self.operand(unary.expr)?;
-				self.emit(Op::Unary { out, op, value }, span)?;
-			}
+			E::Try(..) => self.inner_try(&expr, out),
 
-			E::Binary(binary) => self.binary(binary, out, span)?,
-			E::Object(object) => {
-				// Check the complete declared shape before staging any identity.
-				let order = if let hir::ExprObjectKind::Struct { hash } = object.kind {
-					let shape = self
-						.constants
-						.fresh_struct_shape(hash)
-						.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
-					let crate::compile::meta::Fields::Named(fields) = shape.fields else {
-						return Err(self.refused(span, Refusal::ObjectConstructor));
-					};
-					Some(
-						declaration_order(
-							&fields.fields,
-							object.assignments.iter().map(|f| f.key.1),
-						)
-						.map_err(|e| e.at(self.location(span)))?,
-					)
-				} else {
-					None
-				};
+			E::Return(..) => self.inner_return(&expr, out),
 
-				let tag = match object.kind {
-					hir::ExprObjectKind::Anonymous => Type::Object,
-					hir::ExprObjectKind::Struct { hash } => self.struct_tag(hash, span)?,
-					hir::ExprObjectKind::ExternalType { .. } => {
-						return Err(self.refused(span, Refusal::ObjectConstructor));
-					}
-				};
-
-				let mut keys = Vec::try_with_capacity(object.assignments.len())?;
-				let mut ids = Vec::try_with_capacity(object.assignments.len())?;
-
-				for field in object.assignments {
-					keys.try_push(self.function.string(field.key.1)?)?;
-					ids.try_push(field.assign)?;
-				}
-
-				let values = self.operands(&ids)?;
-				let mut fields = Vec::try_with_capacity(keys.len() * 2)?;
-
-				// operands() snapshots in SOURCE order. Only the completed slot
-				// pairs are permuted to declaration order for the record layout.
-				for position in 0..keys.len() {
-					let index = order.as_ref().map_or(position, |order| order[position]);
-					fields.try_push(keys[index])?;
-					fields.try_push(values[index])?;
-				}
-
-				let (args_start, args_len) = self.function.arguments(&fields)?;
-				self.emit(
-					Op::Record {
-						out,
-						tag,
-						args_start,
-						args_len,
-					},
-					span,
-				)?;
-			}
-
-			E::FieldAccess(field) => {
-				let value = self.operand(field.expr)?;
-				self.read_field(out, value, field.expr_field, span)?;
-			}
-
-			E::Assign(assign) => {
-				self.assign(assign, span)?;
-				self.unit_into(out, span)?;
-			}
-
-			E::Index(index) => {
-				// Literal slicing routes before execution; dynamic Range indices are
-				// the separately tracked S-slice semantic gap.
-				if matches!(self.exprs.get(index.index).kind, E::Range(_)) {
-					return Err(self.refused(span, Refusal::Range));
-				}
-				let slots = self.operands(&[index.target, index.index])?;
-				self.emit(
-					Op::Get {
-						out,
-						value: slots[0],
-						index: slots[1],
-					},
-					span,
-				)?;
-			}
-
-			E::Template(template) => {
-				if template.exprs.len() > 4096 {
-					return Err(self.refused(span, Refusal::FormatParts));
-				}
-
-				let mut ids = Vec::try_with_capacity(template.exprs.len())?;
-				let mut debugs = Vec::try_with_capacity(template.exprs.len())?;
-
-				for id in template.exprs {
-					let (id, debug) = match self.exprs.get(*id).kind {
-						E::Format(format) => {
-							let spec = format.spec;
-							if spec.fill.is_some()
-								|| spec.align.is_some() || spec.width.is_some()
-								|| spec.precision.is_some()
-								|| spec.flags.is_some_and(|f| !f.is_empty())
-							{
-								return Err(self.refused(span, Refusal::FormatSpec));
-							}
-
-							let debug = match spec.format_type.unwrap_or_default() {
-								crate::runtime::format::Type::Display => false,
-								crate::runtime::format::Type::Debug => true,
-								_ => return Err(self.refused(span, Refusal::FormatSpec)),
-							};
-
-							(format.value, debug)
-						}
-
-						_ => (*id, false),
-					};
-
-					ids.try_push(id)?;
-					debugs.try_push(u32::from(debug))?;
-				}
-
-				// Preserve argument effects: render only after all operands ran.
-				let values = self.operands(&ids)?;
-				let mut descriptors = Vec::try_with_capacity(ids.len() * 2)?;
-
-				for (value, debug) in values.iter().zip(debugs.iter()) {
-					descriptors.try_push(*value)?;
-					descriptors.try_push(*debug)?;
-				}
-
-				let (args_start, args_len) = self.function.arguments(&descriptors)?;
-				self.emit(
-					Op::Template {
-						out,
-						args_start,
-						args_len,
-					},
-					span,
-				)?;
-			}
-
-			E::Tuple(sequence) | E::Vec(sequence) => {
-				let tag = if matches!(expr.kind, E::Vec(..)) {
-					Type::Vec
-				} else {
-					Type::Tuple
-				};
-
-				if tag == Type::Tuple && sequence.items.is_empty() {
-					self.unit_into(out, span)?;
-					return Ok(());
-				}
-
-				let values = self.operands(sequence.items)?;
-				let (args_start, args_len) = self.function.arguments(&values)?;
-				self.emit(
-					Op::List {
-						out,
-						tag,
-						args_start,
-						args_len,
-					},
-					span,
-				)?;
-			}
-
-			E::Try(value) => {
-				let value = self.operand(value)?;
-				self.emit(Op::Try { out, value }, span)?;
-			}
-
-			E::Return(value) => {
-				let value = match value {
-					Some(id) => self.operand(id)?,
-					None => {
-						let slot = self.slot()?;
-						self.unit_into(slot, span)?;
-						slot
-					}
-				};
-
-				self.emit(Op::Return { value }, span)?;
-
-				// `out` is never written: nothing after a Return runs.
-			}
-
-			E::Call(call) => self.call(call, out, span)?,
-			E::If(conditional) => self.conditional(conditional, Some(out), span)?,
-			E::Match(_) => return Err(self.refused(span, Refusal::Match)),
-			E::AsyncBlock(_) => return Err(self.refused(span, Refusal::AsyncBlock)),
-			E::Yield(_) => return Err(self.refused(span, Refusal::Yield)),
-			E::Await(_) => return Err(self.refused(span, Refusal::Await)),
-			E::Select(_) => return Err(self.refused(span, Refusal::Select)),
-			E::CallClosure(_) => return Err(self.refused(span, Refusal::CallClosure)),
-			E::Format(_) => return Err(self.refused(span, Refusal::Format)),
-			E::Static(_) => return Err(self.refused(span, Refusal::Static)),
+			E::Call(call) => self.call(call, out, span),
+			E::If(conditional) => self.conditional(conditional, Some(out), span),
+			E::Match(_) => Err(self.refused(span, Refusal::Match)),
+			E::AsyncBlock(_) => Err(self.refused(span, Refusal::AsyncBlock)),
+			E::Yield(_) => Err(self.refused(span, Refusal::Yield)),
+			E::Await(_) => Err(self.refused(span, Refusal::Await)),
+			E::Select(_) => Err(self.refused(span, Refusal::Select)),
+			E::CallClosure(_) => Err(self.refused(span, Refusal::CallClosure)),
+			E::Format(_) => Err(self.refused(span, Refusal::Format)),
+			E::Static(_) => Err(self.refused(span, Refusal::Static)),
 		}
+	}
+
+	#[inline(never)]
+	fn inner_const(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Const(hash) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let constant = self
+			.constants
+			.get_const_value(hash)
+			.ok_or_else(|| self.refused(span, Refusal::UnresolvedConstant))?;
+		match super::constants::read(constant)? {
+			super::constants::Scalar::Primitive(value) => {
+				self.emit(Op::Literal { out, value }, span)?;
+			}
+
+			super::constants::Scalar::Text(value) => {
+				let text = self.function.string(&value)?;
+				self.emit(Op::String { out, text }, span)?;
+			}
+		}
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_type(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Type(tag) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let value = Value::Type(
+			self.type_tag(tag.into_hash(), span)?
+				.ok_or_else(|| self.refused(span, Refusal::TypeExpr))?,
+		);
+		self.emit(Op::Literal { out, value }, span)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_fn(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Fn(hash) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let at = self.location(span);
+		let id = (self.resolve)(hash, at)?;
+
+		// Stamped with the program identity by `Builder::finish`.
+		let value = Value::Function { code: 0, id };
+		self.emit(Op::Literal { out, value }, span)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_variable(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Variable(variable) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let value = self.variable(variable, span)?;
+		self.emit(Op::Copy { out, value }, span)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_lit(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Lit(lit) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let value = match lit {
+			hir::Lit::Bool(v) => Value::Bool(v),
+			hir::Lit::Unsigned(v) => Value::U64(v),
+			hir::Lit::Signed(v) => Value::I64(v),
+			hir::Lit::Float(v) => Value::F64(v),
+			hir::Lit::Char(v) => Value::Char(v),
+			hir::Lit::Str(v) => {
+				let text = self.function.string(v)?;
+				self.emit(Op::String { out, text }, span)?;
+				return Ok(());
+			}
+			hir::Lit::ByteStr(_) => return Err(self.refused(span, Refusal::ByteStr)),
+		};
+
+		self.emit(Op::Literal { out, value }, span)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_range(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Range(range) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let (start, end) = match range {
+			hir::ExprRange::Range { start, end } => (start, end),
+			hir::ExprRange::RangeFrom { .. }
+			| hir::ExprRange::RangeFull
+			| hir::ExprRange::RangeInclusive { .. }
+			| hir::ExprRange::RangeToInclusive { .. }
+			| hir::ExprRange::RangeTo { .. } => {
+				return Err(self.refused(span, Refusal::Range));
+			}
+		};
+
+		let slots = self.operands(&[*start, *end])?;
+		self.emit(
+			Op::Range {
+				out,
+				start: slots[0],
+				end: slots[1],
+			},
+			span,
+		)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_break(&mut self, expr: &hir::Expr<'hir>, _out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Break(break_) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let index = self.loop_index(break_.label, span)?;
+		match (self.loops[index].out, break_.expr) {
+			(Some(target), Some(id)) => self.expr_into(id, target)?,
+			(Some(target), None) => self.unit_into(target, span)?,
+			(None, Some(id)) => self.statement(id)?,
+			(None, None) => (),
+		}
+
+		let cleanup = self.loops[index].cleanup;
+		self.release_from(cleanup, span)?;
+		let pc = self.emit(Op::Jump { target: 0 }, span)?;
+		self.loops[index].breaks.try_push(pc)?;
+
+		// `out` is never written: no instruction after the jump runs.
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_continue(&mut self, expr: &hir::Expr<'hir>, _out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Continue(continue_) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let index = self.loop_index(continue_.label, span)?;
+		let target = self.loops[index].start;
+		let cleanup = self.loops[index].cleanup;
+		self.release_from(cleanup, span)?;
+		self.emit(Op::Jump { target }, span)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_unary(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Unary(unary) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let op = match unary.op {
+			UnOp::Neg(..) => Unary::Neg,
+			UnOp::Not(..) => Unary::Not,
+			_ => return Err(self.refused(span, Refusal::Operator)),
+		};
+
+		let value = self.operand(unary.expr)?;
+		self.emit(Op::Unary { out, op, value }, span)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_object(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Object(object) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		// Check the complete declared shape before staging any identity.
+		let order = if let hir::ExprObjectKind::Struct { hash } = object.kind {
+			let shape = self
+				.constants
+				.fresh_struct_shape(hash)
+				.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
+			let crate::compile::meta::Fields::Named(fields) = shape.fields else {
+				return Err(self.refused(span, Refusal::ObjectConstructor));
+			};
+			Some(
+				declaration_order(&fields.fields, object.assignments.iter().map(|f| f.key.1))
+					.map_err(|e| e.at(self.location(span)))?,
+			)
+		} else {
+			None
+		};
+
+		let tag = match object.kind {
+			hir::ExprObjectKind::Anonymous => Type::Object,
+			hir::ExprObjectKind::Struct { hash } => self.struct_tag(hash, span)?,
+			hir::ExprObjectKind::ExternalType { .. } => {
+				return Err(self.refused(span, Refusal::ObjectConstructor));
+			}
+		};
+
+		let mut keys = Vec::try_with_capacity(object.assignments.len())?;
+		let mut ids = Vec::try_with_capacity(object.assignments.len())?;
+
+		for field in object.assignments {
+			keys.try_push(self.function.string(field.key.1)?)?;
+			ids.try_push(field.assign)?;
+		}
+
+		let values = self.operands(&ids)?;
+		let mut fields = Vec::try_with_capacity(keys.len() * 2)?;
+
+		// operands() snapshots in SOURCE order. Only the completed slot
+		// pairs are permuted to declaration order for the record layout.
+		for position in 0..keys.len() {
+			let index = order.as_ref().map_or(position, |order| order[position]);
+			fields.try_push(keys[index])?;
+			fields.try_push(values[index])?;
+		}
+
+		let (args_start, args_len) = self.function.arguments(&fields)?;
+		self.emit(
+			Op::Record {
+				out,
+				tag,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_field_access(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::FieldAccess(field) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let value = self.operand(field.expr)?;
+		self.read_field(out, value, field.expr_field, span)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_assign(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Assign(assign) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		self.assign(assign, span)?;
+		self.unit_into(out, span)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_index(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Index(index) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		// Literal slicing routes before execution; dynamic Range indices are
+		// the separately tracked S-slice semantic gap.
+		if matches!(self.exprs.get(index.index).kind, E::Range(_)) {
+			return Err(self.refused(span, Refusal::Range));
+		}
+		let slots = self.operands(&[index.target, index.index])?;
+		self.emit(
+			Op::Get {
+				out,
+				value: slots[0],
+				index: slots[1],
+			},
+			span,
+		)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_template(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Template(template) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		if template.exprs.len() > 4096 {
+			return Err(self.refused(span, Refusal::FormatParts));
+		}
+
+		let mut ids = Vec::try_with_capacity(template.exprs.len())?;
+		let mut debugs = Vec::try_with_capacity(template.exprs.len())?;
+
+		for id in template.exprs {
+			let (id, debug) = match self.exprs.get(*id).kind {
+				E::Format(format) => {
+					let spec = format.spec;
+					if spec.fill.is_some()
+						|| spec.align.is_some()
+						|| spec.width.is_some()
+						|| spec.precision.is_some()
+						|| spec.flags.is_some_and(|f| !f.is_empty())
+					{
+						return Err(self.refused(span, Refusal::FormatSpec));
+					}
+
+					let debug = match spec.format_type.unwrap_or_default() {
+						crate::runtime::format::Type::Display => false,
+						crate::runtime::format::Type::Debug => true,
+						_ => return Err(self.refused(span, Refusal::FormatSpec)),
+					};
+
+					(format.value, debug)
+				}
+
+				_ => (*id, false),
+			};
+
+			ids.try_push(id)?;
+			debugs.try_push(u32::from(debug))?;
+		}
+
+		// Preserve argument effects: render only after all operands ran.
+		let values = self.operands(&ids)?;
+		let mut descriptors = Vec::try_with_capacity(ids.len() * 2)?;
+
+		for (value, debug) in values.iter().zip(debugs.iter()) {
+			descriptors.try_push(*value)?;
+			descriptors.try_push(*debug)?;
+		}
+
+		let (args_start, args_len) = self.function.arguments(&descriptors)?;
+		self.emit(
+			Op::Template {
+				out,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_sequence(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let (E::Tuple(sequence) | E::Vec(sequence)) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let tag = if matches!(expr.kind, E::Vec(..)) {
+			Type::Vec
+		} else {
+			Type::Tuple
+		};
+
+		if tag == Type::Tuple && sequence.items.is_empty() {
+			self.unit_into(out, span)?;
+			return Ok(());
+		}
+
+		let values = self.operands(sequence.items)?;
+		let (args_start, args_len) = self.function.arguments(&values)?;
+		self.emit(
+			Op::List {
+				out,
+				tag,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_try(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Try(value) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let value = self.operand(value)?;
+		self.emit(Op::Try { out, value }, span)?;
+
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn inner_return(&mut self, expr: &hir::Expr<'hir>, _out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::Return(value) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		let value = match value {
+			Some(id) => self.operand(id)?,
+			None => {
+				let slot = self.slot()?;
+				self.unit_into(slot, span)?;
+				slot
+			}
+		};
+
+		self.emit(Op::Return { value }, span)?;
+
+		// `out` is never written: nothing after a Return runs.
 
 		Ok(())
 	}
@@ -1357,6 +1523,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		Ok(())
 	}
 
+	#[inline(never)]
 	fn call(&mut self, call: &hir::ExprCall<'_>, out: u32, span: Span) -> Result<()> {
 		if let hir::Call::Meta { hash } = call.call {
 			let tag = if hash == Hash::type_hash(crate::item!(::std::option::Option::Some))
@@ -1398,6 +1565,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 		}
 
+		self.call_non_variant(call, out, span)
+	}
+
+	#[inline(never)]
+	fn call_non_variant(&mut self, call: &hir::ExprCall<'_>, out: u32, span: Span) -> Result<()> {
 		if let hir::Call::Var { name } = call.call {
 			// The callee token is read when the call executes, after the arguments.
 			let value = self.variable(name, span)?;
@@ -1421,7 +1593,14 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				self.emit(Op::Len { out, value }, span)?;
 			} else if hash == Hash::ident("clone") && call.args.is_empty() {
 				let value = self.operand(target)?;
-				self.emit(Op::Clone { out, value }, span)?;
+				self.emit(
+					Op::Clone {
+						out,
+						value,
+						mode: CloneMode::Associated,
+					},
+					span,
+				)?;
 			} else if hash == Hash::ident("push") && call.args.len() == 1 {
 				self.effect_call(call, span)?;
 				self.unit_into(out, span)?;
@@ -1467,7 +1646,14 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 
 			let value = self.operand(call.args[0])?;
-			self.emit(Op::Clone { out, value }, span)?;
+			self.emit(
+				Op::Clone {
+					out,
+					value,
+					mode: CloneMode::Global,
+				},
+				span,
+			)?;
 			return Ok(());
 		}
 

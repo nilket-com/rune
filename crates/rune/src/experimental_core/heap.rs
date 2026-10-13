@@ -11,6 +11,7 @@ use crate::alloc::{String, Vec};
 use core::mem::size_of;
 use core::sync::atomic::{AtomicU64, Ordering};
 
+mod cloning;
 mod comparison;
 mod formatting;
 mod indexing;
@@ -61,6 +62,8 @@ impl Default for Limits {
 
 #[derive(Debug)]
 enum Payload {
+	// Explicit drop retains dispatch identity, but no value or child storage.
+	Moved(Type),
 	String(String),
 	Variant {
 		tag: Type,
@@ -92,6 +95,7 @@ enum Payload {
 impl Payload {
 	fn bytes(&self) -> Result<usize> {
 		let bytes = match self {
+			Self::Moved(_) => Some(0),
 			Self::String(s) => Some(s.capacity()),
 			Self::Range { .. } => Some(16),
 			Self::Variant { .. } => Some(size_of::<Value>()),
@@ -118,6 +122,7 @@ impl Payload {
 		let mut index = 0;
 		core::iter::from_fn(move || {
 			let value = match self {
+				Self::Moved(_) => None,
 				Self::Variant { payload, .. } | Self::OptionIterator { payload } if index == 0 => {
 					*payload
 				}
@@ -134,6 +139,7 @@ impl Payload {
 
 	fn tag(&self) -> Type {
 		match self {
+			Self::Moved(tag) => *tag,
 			Self::String(_) => Type::String,
 			Self::Range { .. } => Type::Range,
 			Self::Variant { tag, .. } => *tag,
@@ -145,7 +151,6 @@ impl Payload {
 	}
 }
 
-#[derive(Debug)]
 struct Entry {
 	previous: Option<u32>,
 	next: Option<u32>,
@@ -155,6 +160,52 @@ struct Entry {
 	// from a payload after mutation or invalidation.
 	charged_bytes: usize,
 	payload: Option<Payload>,
+}
+
+impl core::fmt::Debug for Entry {
+	fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+		f.debug_struct("Entry")
+			.field("previous", &self.previous)
+			.field("next", &self.next)
+			.field("strong", &self.strong)
+			.field("readers", &self.readers)
+			.field("charged_bytes", &self.charged_bytes())
+			.field("payload", &self.payload)
+			.finish()
+	}
+}
+
+const CLONE_PATH: usize = 1usize << (usize::BITS - 1);
+const _: () = assert!(MAX_BYTES < CLONE_PATH);
+#[cfg(target_pointer_width = "64")]
+const _: () = {
+	assert!(size_of::<Entry>() == 72);
+	assert!(size_of::<Slot>() == 80);
+};
+impl Entry {
+	fn tag(&self) -> Result<Type> {
+		self.payload
+			.as_ref()
+			.map(Payload::tag)
+			.ok_or_else(|| err(ErrorKind::InvalidCode))
+	}
+	fn charged_bytes(&self) -> usize {
+		self.charged_bytes & !CLONE_PATH
+	}
+	fn set_charged_bytes(&mut self, bytes: usize) {
+		debug_assert!(bytes <= MAX_BYTES);
+		self.charged_bytes = (self.charged_bytes & CLONE_PATH) | bytes;
+	}
+	fn clone_path(&self) -> bool {
+		self.charged_bytes & CLONE_PATH != 0
+	}
+	fn set_clone_path(&mut self, active: bool) {
+		if active {
+			self.charged_bytes |= CLONE_PATH;
+		} else {
+			self.charged_bytes &= !CLONE_PATH;
+		}
+	}
 }
 
 #[derive(Debug)]
@@ -346,10 +397,15 @@ impl Store {
 	}
 
 	fn payload(&self, h: Handle) -> Result<&Payload> {
-		self.entry(h)?
-			.payload
-			.as_ref()
-			.ok_or_else(|| err(ErrorKind::AccessConflict))
+		match self.entry(h)?.payload.as_ref() {
+			Some(Payload::Moved(_)) => Err(err(ErrorKind::AccessConflict).with_detail(
+				super::error::Detail::Moved {
+					access: super::error::MovedAccess::Read,
+				},
+			)),
+			Some(payload) => Ok(payload),
+			None => Err(err(ErrorKind::InvalidCode)),
+		}
 	}
 
 	fn mutable(&mut self, h: Handle) -> Result<&mut Payload> {
@@ -359,10 +415,15 @@ impl Store {
 				err(ErrorKind::AccessConflict).with_detail(super::error::Detail::WriteBorrowed)
 			);
 		}
-
-		e.payload
-			.as_mut()
-			.ok_or_else(|| err(ErrorKind::AccessConflict))
+		match e.payload.as_mut() {
+			Some(Payload::Moved(_)) => Err(err(ErrorKind::AccessConflict).with_detail(
+				super::error::Detail::Moved {
+					access: super::error::MovedAccess::Write,
+				},
+			)),
+			Some(payload) => Ok(payload),
+			None => Err(err(ErrorKind::InvalidCode)),
+		}
 	}
 
 	/// Undo only references acquired for an unpublished payload. Each acquired
@@ -382,6 +443,9 @@ impl Store {
 	}
 
 	fn admit(&mut self, payload: Payload) -> Result<Value> {
+		if matches!(payload, Payload::Moved(_)) {
+			return Err(err(ErrorKind::InvalidCode));
+		}
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
 		}
@@ -615,6 +679,9 @@ impl Store {
 			return Err(err(ErrorKind::Type));
 		};
 
+		if !matches!(self.entry(handle)?.tag()?, Type::Object | Type::Struct(_)) {
+			return Err(err(ErrorKind::Type));
+		}
 		let Payload::Record { fields, .. } = self.payload(handle)? else {
 			return Err(err(ErrorKind::Type));
 		};
@@ -636,7 +703,7 @@ impl Store {
 				ErrorKind::IndexOutOfBounds
 			}));
 		};
-		if !matches!(self.payload(handle)?, Payload::Record { .. }) {
+		if !matches!(self.entry(handle)?.tag()?, Type::Object | Type::Struct(_)) {
 			return Err(err(ErrorKind::Type));
 		}
 		self.mutable(handle)?;
@@ -692,7 +759,7 @@ impl Store {
 				ErrorKind::IndexOutOfBounds
 			}));
 		};
-		if !matches!(self.payload(handle)?, Payload::Record { .. }) {
+		if !matches!(self.entry(handle)?.tag()?, Type::Object | Type::Struct(_)) {
 			return Err(err(ErrorKind::Type));
 		}
 		self.set_key(value, indexing::RecordKey::Static(key), new)
@@ -705,70 +772,6 @@ impl Store {
 					error
 				}
 			})
-	}
-
-	pub(crate) fn clone_outer(&mut self, value: Value) -> Result<Value> {
-		let Value::Heap(h) = value else {
-			self.retain(value)?;
-			return Ok(value);
-		};
-
-		match self.payload(h)? {
-			Payload::String(text) => {
-				if text.len() > self.limits.bytes.saturating_sub(self.bytes) {
-					return Err(err(ErrorKind::StoreCapacity));
-				}
-
-				let copy = String::try_from(text.as_str())?;
-				self.admit(Payload::String(copy))
-			}
-
-			Payload::Record { tag, fields } => {
-				let tag = *tag;
-				let bytes = fields
-					.len()
-					.checked_mul(size_of::<(String, Value)>())
-					.and_then(|n| {
-						fields
-							.iter()
-							.try_fold(n, |n, (key, _)| n.checked_add(key.len()))
-					})
-					.ok_or_else(|| err(ErrorKind::Overflow))?;
-				if bytes > self.limits.bytes.saturating_sub(self.bytes)
-					|| self.live == self.limits.entries
-					|| (self.free.is_empty() && self.slots.len() == self.limits.entries)
-				{
-					return Err(err(ErrorKind::StoreCapacity));
-				}
-
-				let mut keys = Vec::try_with_capacity(fields.len())?;
-				for (key, value) in fields {
-					keys.try_push((String::try_from(key.as_str())?, *value))?;
-				}
-
-				self.record_owned(tag, keys)
-			}
-
-			Payload::List { tag, values } => {
-				let tag = *tag;
-				let bytes = values
-					.len()
-					.checked_mul(size_of::<Value>())
-					.ok_or_else(|| err(ErrorKind::Overflow))?;
-				if bytes > self.limits.bytes.saturating_sub(self.bytes) {
-					return Err(err(ErrorKind::StoreCapacity));
-				}
-
-				let mut copy = Vec::try_with_capacity(values.len())?;
-				for &v in values {
-					copy.try_push(v)?;
-				}
-
-				self.list(tag, &copy)
-			}
-
-			_ => Err(err(ErrorKind::Type)),
-		}
 	}
 
 	pub(crate) fn append_string(&mut self, target: Value, rhs: Value) -> Result<()> {
@@ -798,8 +801,9 @@ impl Store {
 			let charged_bytes = replacement.capacity();
 			let bytes = self.replacement_bytes(h, charged_bytes)?;
 			let entry = self.entry_mut(h)?;
+			debug_assert_eq!(entry.tag()?, Type::String);
 			entry.payload = Some(Payload::String(replacement));
-			entry.charged_bytes = charged_bytes;
+			entry.set_charged_bytes(charged_bytes);
 			self.bytes = bytes;
 			return Ok(());
 		}
@@ -820,7 +824,7 @@ impl Store {
 	fn replacement_bytes(&self, h: Handle, charged_bytes: usize) -> Result<usize> {
 		let bytes = self
 			.bytes
-			.checked_sub(self.entry(h)?.charged_bytes)
+			.checked_sub(self.entry(h)?.charged_bytes())
 			.and_then(|n| n.checked_add(charged_bytes))
 			.ok_or_else(|| err(ErrorKind::Overflow))?;
 		if bytes > self.limits.bytes {
@@ -861,7 +865,7 @@ impl Store {
 
 	pub(crate) fn tag(&self, value: Value) -> Result<Type> {
 		match value {
-			Value::Heap(h) => Ok(self.payload(h)?.tag()),
+			Value::Heap(h) => Ok(self.entry(h)?.tag()?),
 			_ => value.primitive_type().ok_or_else(|| err(ErrorKind::Type)),
 		}
 	}
@@ -872,12 +876,13 @@ impl Store {
 		let Value::Heap(h) = value else {
 			return TypeName::primitive(value);
 		};
-		Some(match self.payload(h).ok()? {
-			Payload::RangeIterator { .. } => TypeName::RangeIter,
+		Some(match self.entry(h).ok()?.payload.as_ref() {
+			Some(Payload::RangeIterator { .. }) => TypeName::RangeIter,
+			Some(Payload::Moved(tag)) => TypeName::from_type(*tag),
 			// Internal loop iterators cannot escape. Option/Unit snapshots need
 			// distinct diagnostic types before iterator-valued methods are admitted.
-			Payload::VectorIterator(_) | Payload::OptionIterator { .. } => TypeName::VecIter,
-			payload => TypeName::from_type(payload.tag()),
+			Some(Payload::VectorIterator(_) | Payload::OptionIterator { .. }) => TypeName::VecIter,
+			_ => TypeName::from_type(self.entry(h).ok()?.tag().ok()?),
 		})
 	}
 
@@ -893,8 +898,13 @@ impl Store {
 
 	pub(crate) fn len(&self, value: Value) -> Result<usize> {
 		match value {
+			Value::Unit => Ok(0),
 			Value::Heap(h) => match self.payload(h)? {
 				Payload::String(s) => Ok(s.len()),
+				Payload::Record {
+					tag: Type::Object,
+					fields,
+				} => Ok(fields.len()),
 				Payload::List { values, .. } => Ok(values.len()),
 				_ => Err(err(ErrorKind::Type)),
 			},
@@ -941,7 +951,53 @@ impl Store {
 		self.release(old)
 	}
 
+	fn push_char(&mut self, value: Value, new: Value) -> Result<()> {
+		let Value::Heap(h) = value else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		let (len, cap) = match self.mutable(h)? {
+			Payload::String(text) => (text.len(), text.capacity()),
+			_ => return Err(err(ErrorKind::InvalidCode)),
+		};
+		let Value::Char(ch) = new else {
+			return Err(
+				err(ErrorKind::Type).with_detail(super::error::Detail::ExpectedChar {
+					found: self
+						.diagnostic_type(new)
+						.ok_or_else(|| err(ErrorKind::InvalidCode))?,
+				}),
+			);
+		};
+		let needed = len
+			.checked_add(ch.len_utf8())
+			.ok_or_else(|| err(ErrorKind::StoreCapacity))?;
+		if needed.saturating_sub(cap) > self.limits.bytes.saturating_sub(self.bytes) {
+			return Err(err(ErrorKind::StoreCapacity));
+		}
+		if needed > cap {
+			let mut text = String::try_with_capacity(needed)?;
+			text.try_push_str(self.text(value)?)?;
+			text.try_push(ch)?;
+			let charge = text.capacity();
+			let bytes = self.replacement_bytes(h, charge)?;
+			let entry = self.entry_mut(h)?;
+			debug_assert_eq!(entry.tag()?, Type::String);
+			entry.payload = Some(Payload::String(text));
+			entry.set_charged_bytes(charge);
+			self.bytes = bytes;
+		} else {
+			let Payload::String(text) = self.mutable(h)? else {
+				return Err(err(ErrorKind::InvalidCode));
+			};
+			text.try_push(ch)?;
+		}
+		Ok(())
+	}
+
 	pub(crate) fn push(&mut self, value: Value, new: Value) -> Result<()> {
+		if matches!(value, Value::Heap(_)) && self.tag(value)? == Type::String {
+			return self.push_char(value, new);
+		}
 		let Value::Heap(h) = value else {
 			return Err(err(ErrorKind::Type));
 		};
@@ -993,7 +1049,7 @@ impl Store {
 				tag: Type::Vec,
 				values: replacement,
 			});
-			entry.charged_bytes = charged_bytes;
+			entry.set_charged_bytes(charged_bytes);
 			self.bytes = bytes;
 			self.edges = edges;
 			self.assert_work();
@@ -1329,7 +1385,7 @@ impl Store {
 
 		let bytes = self
 			.bytes
-			.checked_sub(entry.charged_bytes)
+			.checked_sub(entry.charged_bytes())
 			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
 		let live = self
 			.live
@@ -1582,20 +1638,37 @@ impl Store {
 			return Ok(());
 		};
 
-		self.mutable(h)?;
 		let entry = self.entry(h)?;
-		let payload = entry
-			.payload
-			.as_ref()
-			.ok_or_else(|| err(ErrorKind::AccessConflict))?;
+		if entry.readers != 0 {
+			return Err(
+				err(ErrorKind::AccessConflict).with_detail(super::error::Detail::WriteBorrowed)
+			);
+		}
+		let entry = self.entry(h)?;
+		let payload = entry.payload.as_ref().ok_or_else(|| {
+			err(ErrorKind::AccessConflict).with_detail(super::error::Detail::Moved {
+				access: super::error::MovedAccess::Take,
+			})
+		})?;
+		if matches!(payload, Payload::Moved(_)) {
+			return Err(
+				err(ErrorKind::AccessConflict).with_detail(super::error::Detail::Moved {
+					access: super::error::MovedAccess::Take,
+				}),
+			);
+		}
 		self.children_room(payload)?;
 		let bytes = self
 			.bytes
-			.checked_sub(entry.charged_bytes)
+			.checked_sub(entry.charged_bytes())
 			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
 		let entry = self.entry_mut(h)?;
-		let payload = entry.payload.take().expect("validated live payload");
-		entry.charged_bytes = 0;
+		let tag = entry.tag()?;
+		let payload = entry
+			.payload
+			.replace(Payload::Moved(tag))
+			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+		entry.set_charged_bytes(0);
 		self.bytes = bytes;
 		let failure = self.enqueue_children(payload).err();
 		self.drain_work(failure)

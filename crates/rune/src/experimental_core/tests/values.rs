@@ -225,7 +225,7 @@ fn shared_string_append_self_and_outer_clone() {
 	let alias = a;
 	s.append_string(a, a).unwrap();
 	assert_eq!(s.text(alias).unwrap(), "abcabc");
-	let cloned = s.clone_outer(alias).unwrap();
+	let cloned = s.clone_value(alias).unwrap();
 	let suffix = s.string("!").unwrap();
 	s.append_string(a, suffix).unwrap();
 	assert_eq!(s.text(a).unwrap(), "abcabc!");

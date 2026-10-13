@@ -276,7 +276,16 @@ fn child() {
 	if mode == "timeout-control" {
 		std::thread::sleep(Duration::from_secs(60));
 	}
-	let observation = observe(Path::new(&path), &mode, &engine);
+	let observation = if mode == "stack-main" {
+		std::thread::Builder::new()
+			.stack_size(2 << 20)
+			.spawn(move || observe(Path::new(&path), "main", &engine))
+			.unwrap()
+			.join()
+			.unwrap()
+	} else {
+		observe(Path::new(&path), &mode, &engine)
+	};
 	fs::write(
 		std::env::var_os("GAP_RESULT").unwrap(),
 		observation.encode(),
@@ -1337,3 +1346,41 @@ mod field_iter;
 
 #[path = "gap_hunt/len_clone.rs"]
 mod len_clone;
+
+#[test]
+#[ignore = "operator-only emission snapshot for lowering comparison; no execution"]
+fn emission_child() {
+	let path = std::env::var_os("GAP_CASE").expect("GAP_CASE required");
+	let result = std::env::var_os("GAP_RESULT").expect("GAP_RESULT required");
+	// The old lowerer overflows a normal stack. This larger stack is solely a
+	// baseline-emission diagnostic; the production regression uses exactly2MiB.
+	let text = std::thread::Builder::new()
+		.stack_size(16 << 20)
+		.spawn(move || {
+			let context = Context::with_default_modules().unwrap();
+			let mut sources = sources(Path::new(&path), "compile");
+			let mut diagnostics = Diagnostics::new();
+			match frontend::compile(&mut sources, &context, &mut diagnostics, 1) {
+				Ok(program) => {
+					let mut text = format!("functions={}\n", program.code.functions());
+					for id in 0..program.code.functions() {
+						text.push_str(&format!(
+							"function{id}\n{}",
+							program
+								.code
+								.function(id as u32)
+								.unwrap()
+								.emission_snapshot()
+						));
+					}
+					text
+				}
+				Err(e) => format!("refused:{e:?}\n"),
+			}
+		})
+		.unwrap()
+		.join()
+		.unwrap();
+	fs::write(result, text).unwrap();
+	std::process::exit(0);
+}

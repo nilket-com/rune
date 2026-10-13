@@ -422,7 +422,12 @@ mod tests {
 		let before = s.state_for_test();
 		let e = s.compare(Binary::Eq, outer, outer).unwrap_err();
 		assert_eq!(e.kind, ErrorKind::AccessConflict);
-		assert_eq!(e.detail, Detail::None);
+		assert_eq!(
+			e.detail,
+			Detail::Moved {
+				access: crate::experimental_core::error::MovedAccess::Read
+			}
+		);
 		assert_eq!(before, s.state_for_test());
 	}
 

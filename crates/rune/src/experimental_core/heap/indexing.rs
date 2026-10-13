@@ -39,14 +39,14 @@ fn unsupported(value: Value) -> Error {
 impl Store {
 	fn index_tag(&self, value: Value) -> Result<Option<Type>> {
 		Ok(match value {
-			Value::Heap(h) => Some(self.payload(h)?.tag()),
+			Value::Heap(h) => Some(self.entry(h)?.tag()?),
 			_ => value.primitive_type(),
 		})
 	}
 
 	fn index_type(&self, value: Value) -> Result<TypeName> {
 		if let Value::Heap(h) = value {
-			self.payload(h)?;
+			self.entry(h)?;
 		}
 		self.diagnostic_type(value)
 			.ok_or_else(|| err(ErrorKind::InvalidCode))
@@ -68,23 +68,30 @@ impl Store {
 	pub(crate) fn tuple_get(&mut self, value: Value, index: usize) -> Result<Value> {
 		let old = match value {
 			Value::Unit => return Err(self.missing_integer(value, index)?),
-			Value::Heap(h) => match self.payload(h)? {
-				Payload::List { values, .. } => *values.get(index).ok_or_else(|| {
-					err(ErrorKind::IndexOutOfBounds).with_detail(Detail::OutOfRange {
-						index,
-						length: values.len(),
-					})
-				})?,
-				Payload::Variant { payload, .. } => match (index, payload) {
-					(0, Some(old)) => *old,
-					_ => return Err(self.missing_integer(value, index)?),
-				},
-				Payload::Record {
-					tag: Type::Struct(_),
-					..
-				} => return Err(self.missing_integer(value, index)?),
-				_ => return Err(self.tuple_get_error(value, index)?),
-			},
+			Value::Heap(h) => {
+				match self.entry(h)?.tag()? {
+					Type::Vec | Type::Tuple | Type::Option | Type::Result | Type::String => (),
+					Type::Struct(_) => return Err(self.missing_integer(value, index)?),
+					_ => return Err(self.tuple_get_error(value, index)?),
+				}
+				match self.payload(h)? {
+					Payload::List { values, .. } => *values.get(index).ok_or_else(|| {
+						err(ErrorKind::IndexOutOfBounds).with_detail(Detail::OutOfRange {
+							index,
+							length: values.len(),
+						})
+					})?,
+					Payload::Variant { payload, .. } => match (index, payload) {
+						(0, Some(old)) => *old,
+						_ => return Err(self.missing_integer(value, index)?),
+					},
+					Payload::Record {
+						tag: Type::Struct(_),
+						..
+					} => return Err(self.missing_integer(value, index)?),
+					_ => return Err(self.tuple_get_error(value, index)?),
+				}
+			}
 			_ => return Err(self.tuple_get_error(value, index)?),
 		};
 		self.retain(old)?;
@@ -431,7 +438,7 @@ impl Store {
 			self.release(new)?;
 			return Err(e);
 		}
-		self.entry_mut(h)?.charged_bytes = charged;
+		self.entry_mut(h)?.set_charged_bytes(charged);
 		self.bytes = bytes;
 		self.edges = edges;
 		self.assert_work();

@@ -386,6 +386,20 @@ impl Store {
 			return Err(limit());
 		}
 		sink.nodes += 1;
+		// Method/protocol selection precedes access to an invalidated payload.
+		if !debug {
+			if let Value::Heap(h) = value {
+				if matches!(
+					self.entry(h)?.tag()?,
+					Type::Vec
+						| Type::Tuple | Type::Object
+						| Type::Option | Type::Result
+						| Type::Struct(_)
+				) {
+					return Err(self.no_display(value));
+				}
+			}
+		}
 		match value {
 			Value::Unit if debug => sink.push("()")?,
 			Value::Unit => return Err(self.no_display(value)),

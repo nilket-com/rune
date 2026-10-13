@@ -301,3 +301,297 @@ fn stock_contract() {
 		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
 	}
 }
+
+#[test]
+#[ignore = "explicit fresh method/clone/invalidation contract with exact coverage refusals; bounded children"]
+fn fresh_contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).expect("new GAP_OUT required");
+	let scratch = Scratch(std::env::temp_dir().join(format!(
+		"rune-len-clone-fresh-contract-{}",
+		std::process::id()
+	)));
+	fs::create_dir(&scratch.0).unwrap();
+	let generated = cases();
+	let rows: Vec<_> = include_str!("../len_clone_stock.tsv")
+		.lines()
+		.skip(1)
+		.collect();
+	assert_eq!(rows.len(), generated.len());
+	let mut coverage = 0;
+	let mut retained = 0;
+	for (n, (line, (label, source))) in rows.iter().zip(&generated).enumerate() {
+		let row: Vec<_> = line.split('\t').collect();
+		assert_eq!(row.len(), 5);
+		assert_eq!(row[0], label);
+		assert_eq!(unhex(row[1]), *source, "source drift: {label}");
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, source).unwrap();
+		let run = launch(&path, &path, "main", "fresh", &scratch.0, &out, &id);
+		assert!(run.complete, "incomplete {label}: {}", run.record);
+		assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
+		assert_no_addresses(label, &unhex(row[2]), &[], &[]);
+		let actual: Vec<_> = run.record.split('\t').collect();
+		let pieces: Vec<_> = label.split('/').collect();
+		let refusal = if pieces[0] == "method" {
+			if pieces[1] == "bytes" {
+				Some("Some(ByteStr)")
+			} else if matches!(pieces[2], "len-extra" | "clone-extra") {
+				Some("Some(Method)")
+			} else if matches!(pieces[1], "tuple-struct" | "unit-struct") {
+				Some("Some(UnresolvedFunction)")
+			} else {
+				None
+			}
+		} else {
+			None
+		};
+		if let Some(class) = refusal {
+			assert_eq!(
+				(&actual[0], &actual[1]),
+				(&"refused", &class),
+				"coverage drift: {label}"
+			);
+			coverage += 1;
+			continue;
+		}
+		if label == "method/function/clone" {
+			assert_eq!((&actual[0], &actual[1]), (&"observation-error", &"Debug"));
+			assert_eq!(unhex(actual[3]), "value formatting form: Unsupported");
+			assert_eq!(unhex(actual[4]), "");
+			retained += 1;
+		} else {
+			let expected = unhex(row[2]);
+			let expected: Vec<_> = expected.split('\t').collect();
+			assert_eq!(
+				(&actual[..2], &actual[3..]),
+				(&expected[..2], &expected[3..]),
+				"observation drift: {label}"
+			);
+		}
+		assert_eq!(hex(&run.stdout), row[3], "stdout drift: {label}");
+		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
+	}
+	assert_eq!(coverage, 65);
+	assert_eq!(retained, 1);
+}
+
+#[test]
+#[ignore = "bounded normal-stack lowering boundary study; requires new GAP_OUT"]
+fn lowering_stack_contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).expect("new GAP_OUT required");
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-stack-contract-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let mut summary = String::new();
+	for depth in [64, 128, 129] {
+		for shape in ["some", "binary", "tuple", "call", "block"] {
+			let mut expr = String::from("1");
+			for _ in 0..depth {
+				expr = match shape {
+					"some" => format!("Some({expr})"),
+					"binary" => format!("1+({expr})"),
+					"tuple" => format!("({expr},)"),
+					"call" => format!("id({expr})"),
+					"block" => format!("{{ {expr} }}"),
+					_ => unreachable!(),
+				};
+			}
+			let source = format!("fn id(x) {{x}} pub fn main() {{ let x={expr}; () }}");
+			let id = format!("{shape}-{depth}");
+			let path = out.join(format!("{id}.source.rn"));
+			fs::write(&path, source).unwrap();
+			let run = launch(&path, &path, "compile", "fresh", &scratch.0, &out, &id);
+			assert!(run.complete, "{id}: {}", run.record);
+			let fields: Vec<_> = run.record.split('\t').collect();
+			assert!(
+				fields[0] == "compiled"
+					|| (fields[0] == "refused"
+						&& (fields[1] == "Some(DepthLimit)"
+							|| (fields[1] == "Some(FrontendDiagnostic)"
+								&& unhex(fields[3]).contains("MaxItemDepth { max: 128 }")))),
+				"{id}: {}",
+				run.record
+			);
+			if shape == "some" && depth == 64 {
+				assert_eq!(fields[0], "compiled");
+			}
+			summary.push_str(&format!("{id}	{}	{}\n", fields[0], fields[1]));
+		}
+	}
+	fs::write(out.join("summary.tsv"), summary).unwrap();
+}
+
+fn global_cases() -> Vec<(String, String)> {
+	let mut out = Vec::new();
+	for (label, value) in [
+		("unit", "()"),
+		("bool", "true"),
+		("char", "'a'"),
+		("signed", "7"),
+		("unsigned", "7u64"),
+		("float", "7.0"),
+		("vec", "[1]"),
+		("tuple", "(1,2)"),
+		("object", "#{x:1}"),
+		("string", "\"ab\""),
+		("none", "None"),
+		("some", "Some([1])"),
+		("ok", "Ok([1])"),
+		("err", "Err([1])"),
+		("type", "i64"),
+		("range", "0..2"),
+	] {
+		for (mode, call) in [
+			("global", "std::clone::clone(x)"),
+			("associated", "x.clone()"),
+		] {
+			let body = if label == "type" && mode == "global" {
+				format!("let y={call}; y==x")
+			} else {
+				call.into()
+			};
+			out.push((
+				format!("{mode}/{label}"),
+				format!("pub fn main() {{ let x={value}; {body} }}"),
+			));
+		}
+	}
+	for (label, body) in [
+		("global/struct", "let x=P{x:1}; let y=std::clone::clone(x); y.x=7; x.x"),
+		("associated/struct", "let x=P{x:1}; x.clone()"),
+		("global/function", "let x=g; let y=std::clone::clone(x); y(7)"),
+		("associated/function", "let x=g; let y=x.clone(); y(7)"),
+		("global/nested", "let x=Some((Ok([1]),)); let y=std::clone::clone(x); y.0.0.0.push(9); (x.0.0.0.len(),y.0.0.0.len())"),
+		("associated/nested", "let x=Some((Ok([1]),)); let y=x.clone(); y.0.0.0.push(9); (x.0.0.0.len(),y.0.0.0.len())"),
+		("user/clone", "clone(true)"),
+	] {
+		out.push((label.into(),format!("struct P{{x}} fn g(x){{x+1}} fn clone(x){{17}} pub fn main(){{ {body} }}")));
+	}
+	out
+}
+
+#[test]
+#[ignore = "bounded stock-first global/associated clone witnesses; requires new GAP_OUT"]
+fn global_stock_probe() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).unwrap();
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-global-clone-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let mut table =
+		String::from("case\tsource_hex\tstock_observation_hex\tstdout_hex\tstderr_hex\n");
+	for (n, (label, source)) in global_cases().iter().enumerate() {
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, source).unwrap();
+		let run = launch(&path, &path, "main", "stock", &scratch.0, &out, &id);
+		assert!(run.complete, "{label}: {}", run.record);
+		assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
+		table.push_str(&format!(
+			"{label}\t{}\t{}\t{}\t{}\n",
+			hex(source.as_bytes()),
+			hex(run.record.as_bytes()),
+			hex(&run.stdout),
+			hex(&run.stderr)
+		));
+		fs::write(out.join("global-clone-stock.tsv"), &table).unwrap();
+	}
+}
+
+#[test]
+fn clone_op_layout() {
+	assert_eq!(core::mem::size_of::<super::super::super::code::Op>(), 24);
+}
+
+#[test]
+#[ignore = "stock/fresh supplementary global clone contract; bounded children"]
+fn global_contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).unwrap();
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-global-contract-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let cases = global_cases();
+	let rows: Vec<_> = include_str!("../global_clone_stock.tsv")
+		.lines()
+		.skip(1)
+		.collect();
+	assert_eq!(rows.len(), cases.len());
+	for (n, (row, (label, source))) in rows.iter().zip(&cases).enumerate() {
+		let row: Vec<_> = row.split('\t').collect();
+		assert_eq!(row[0], label);
+		assert_eq!(unhex(row[1]), *source);
+		let path = out.join(format!("{n:05}.source.rn"));
+		fs::write(&path, source).unwrap();
+		for engine in ["stock", "fresh"] {
+			let run = launch(
+				&path,
+				&path,
+				"main",
+				engine,
+				&scratch.0,
+				&out,
+				&format!("{n:05}"),
+			);
+			assert!(run.complete, "{label}/{engine}: {}", run.record);
+			assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
+			let expected = unhex(row[2]);
+			let expected: Vec<_> = expected.split('\t').collect();
+			let actual: Vec<_> = run.record.split('\t').collect();
+			assert_eq!(
+				(&actual[..2], &actual[3..]),
+				(&expected[..2], &expected[3..]),
+				"{label}/{engine}"
+			);
+			assert_eq!(hex(&run.stdout), row[3]);
+			assert_eq!(hex(&run.stderr), row[4]);
+		}
+	}
+}
+
+#[test]
+fn lowering_runs_at_the_normal_stack_boundary() {
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-stack-regression-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let out = scratch.0.join("out");
+	fs::create_dir(&out).unwrap();
+	for shape in ["some", "binary", "tuple", "call", "block"] {
+		let last = if shape == "block" { 126 } else { 127 };
+		for depth in [last, last + 1] {
+			let mut expr = String::from("1");
+			for _ in 0..depth {
+				expr = match shape {
+					"some" => format!("Some({expr})"),
+					"binary" => format!("{expr}+1"),
+					"tuple" => format!("({expr},)"),
+					"call" => format!("id({expr})"),
+					"block" => format!("{{ {expr} }}"),
+					_ => unreachable!(),
+				};
+			}
+			let id = format!("{shape}-{depth}");
+			let path = out.join(format!("{id}.rn"));
+			fs::write(&path, format!("fn id(x){{x}} pub fn main(){{ {expr}; 1 }}")).unwrap();
+			let run = launch(&path, &path, "stack-main", "fresh", &scratch.0, &out, &id);
+			assert!(run.complete, "{id}: {}", run.record);
+			let fields: Vec<_> = run.record.split('\t').collect();
+			if depth == last {
+				assert_eq!(fields[0], "value", "{id}: {}", run.record);
+				assert_eq!(unhex(fields[4]), "i64:1:1");
+			} else {
+				assert_eq!(fields[0], "refused", "{id}: {}", run.record);
+				assert!(
+					fields[1] == "Some(DepthLimit)"
+						|| (fields[1] == "Some(FrontendDiagnostic)"
+							&& unhex(fields[3]).contains("MaxItemDepth { max: 128 }")),
+					"{id}: {}",
+					run.record
+				);
+			}
+		}
+	}
+}

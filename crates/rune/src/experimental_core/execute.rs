@@ -10,7 +10,7 @@
 
 use super::{
 	arithmetic,
-	code::{Code, Op},
+	code::{CloneMode, Code, Op},
 	error::{
 		AdmittedMethod, BinarySymbol, Detail, Error, ErrorKind, FieldRef, IntTarget, IntValue,
 		Location, Result, TypeName, UnarySymbol,
@@ -769,22 +769,22 @@ impl Executor {
 								self.put(store, frame.base + out as usize, v)?;
 							}
 
-							Op::Clone { out, value } => {
-								let tag = store.tag(get(value)?)?;
-								if !matches!(
-									tag,
-									super::value::Type::Vec
-										| super::value::Type::Tuple | super::value::Type::Object
-										| super::value::Type::Struct(_)
-										| super::value::Type::String | super::value::Type::Unit
-										| super::value::Type::I64 | super::value::Type::U64
-										| super::value::Type::F64 | super::value::Type::Bool
-										| super::value::Type::Char
-								) {
+							Op::Clone { out, value, mode } => {
+								let value = get(value)?;
+								if mode == CloneMode::Associated
+									&& !matches!(value, Value::Function { .. })
+									&& !matches!(
+										store.tag(value)?,
+										super::value::Type::Vec
+											| super::value::Type::Tuple | super::value::Type::Object
+											| super::value::Type::String | super::value::Type::Unit
+											| super::value::Type::I64 | super::value::Type::U64
+											| super::value::Type::F64 | super::value::Type::Option
+											| super::value::Type::Result
+									) {
 									return Err(error(ErrorKind::Type));
 								}
-
-								let v = store.clone_outer(get(value)?)?;
+								let v = store.clone_value(value)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
 
@@ -1018,6 +1018,7 @@ impl Executor {
 									store.tag(get(value)?)?,
 									super::value::Type::Vec
 										| super::value::Type::Tuple | super::value::Type::String
+										| super::value::Type::Object | super::value::Type::Unit
 								) {
 									return Err(error(ErrorKind::Type));
 								}
@@ -1026,7 +1027,17 @@ impl Executor {
 									.map_err(|_| error(ErrorKind::Overflow))?;
 								self.put(store, frame.base + out as usize, Value::U64(n))?;
 							}
-							Op::Push { value, new } => store.push(get(value)?, get(new)?)?,
+							Op::Push { value, new } => {
+								let value = get(value)?;
+								if !matches!(value, Value::Heap(_))
+									|| !matches!(
+										store.tag(value)?,
+										super::value::Type::Vec | super::value::Type::String
+									) {
+									return Err(error(ErrorKind::Type));
+								}
+								store.push(value, get(new)?)?;
+							}
 							Op::Drop { value } => store.invalidate(get(value)?)?,
 						}
 
@@ -1509,18 +1520,33 @@ fn enrich_error(
 					}
 				}
 				Op::Try { value, .. } => Detail::TryOperand { found: ty(value)? },
-				Op::Clone { value, .. } => Detail::NoMethod {
-					method: AdmittedMethod::Clone,
-					receiver: ty(value)?,
-				},
-				Op::Len { value, .. } => Detail::NoMethod {
-					method: AdmittedMethod::Len,
-					receiver: ty(value)?,
-				},
-				Op::Push { value, .. } => Detail::NoMethod {
-					method: AdmittedMethod::Push,
-					receiver: ty(value)?,
-				},
+				Op::Clone {
+					value,
+					mode: CloneMode::Associated,
+					..
+				}
+				| Op::Len { value, .. }
+				| Op::Push { value, .. } => {
+					let method = match *op {
+						Op::Clone { .. } => AdmittedMethod::Clone,
+						Op::Len { .. } => AdmittedMethod::Len,
+						_ => AdmittedMethod::Push,
+					};
+					let target = ty(value)?;
+					let instance = match target {
+						TypeName::Struct(n) => super::nominal::hash_copy(n).map(crate::Hash::new),
+						_ => target.builtin_hash(),
+					};
+					let Some(instance) = instance else {
+						error.kind = ErrorKind::InvalidCode;
+						return None;
+					};
+					Detail::MissingInstanceFunction {
+						target,
+						instance,
+						hash: crate::Hash::associated_function(instance, method.hash()),
+					}
+				}
 				Op::Field { value, key, .. } | Op::FieldGetMut { value, key, .. } => {
 					if error.kind == ErrorKind::IndexOutOfBounds {
 						Detail::MissingField {

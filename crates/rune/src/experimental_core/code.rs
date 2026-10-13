@@ -10,6 +10,14 @@ use core::sync::atomic::{AtomicU32, Ordering};
 const MAX_CODE_BYTES: usize = 16 << 20;
 pub const MAX_GAP: usize = 256;
 
+/// Selects builtin clone_with semantics or associated-method dispatch.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[repr(u8)]
+pub enum CloneMode {
+	Associated = 0,
+	Global = 1,
+}
+
 #[derive(Clone, Copy, Debug)]
 pub enum Op {
 	Template {
@@ -103,6 +111,7 @@ pub enum Op {
 	Clone {
 		out: u32,
 		value: u32,
+		mode: CloneMode,
 	},
 	AssignBinary {
 		out: u32,
@@ -386,7 +395,7 @@ impl Function {
 			Literal { out, value } => (0, out, Self::pool(&mut self.constants, value)?, 0),
 			String { out, text } => (1, out, text, 0),
 			Copy { out, value } => (2, out, value, 0),
-			Clone { out, value } => (3, out, value, 0),
+			Clone { out, value, mode } => (3, out, value, mode as u32),
 			Release { value } => (4, value, 0, 0),
 			Unary { out, op, value } => (5 + op as u32, out, value, 0),
 			Binary { out, op, lhs, rhs } => (100 + op as u32, out, lhs, rhs),
@@ -590,7 +599,15 @@ impl Function {
 			},
 			1 => String { out: a, text: b },
 			2 => Copy { out: a, value: b },
-			3 => Clone { out: a, value: b },
+			3 => Clone {
+				out: a,
+				value: b,
+				mode: match c {
+					0 => CloneMode::Associated,
+					1 => CloneMode::Global,
+					_ => return Err(invalid()),
+				},
+			},
 			4 => Release { value: a },
 			5 => Unary {
 				out: a,
@@ -1218,7 +1235,7 @@ fn validate_operands(
 			}
 
 			Op::IterStart { out, value }
-			| Op::Clone { out, value }
+			| Op::Clone { out, value, .. }
 			| Op::Copy { out, value }
 			| Op::Unary { out, value, .. }
 			| Op::Cast { out, value, .. }
@@ -1602,11 +1619,13 @@ fn same_op(a: Op, b: Op) -> bool {
 		Op::Clone {
 			out: a_out,
 			value: a_value,
+			mode: a_mode,
 		} => match b {
 			Op::Clone {
 				out: b_out,
 				value: b_value,
-			} => a_out == b_out && a_value == b_value,
+				mode: b_mode,
+			} => a_out == b_out && a_value == b_value && a_mode == b_mode,
 			_ => false,
 		},
 		Op::AssignBinary {
@@ -2341,5 +2360,55 @@ mod named_update_validation_tests {
 			b.push(f).unwrap();
 			assert_eq!(b.finish().err().unwrap().kind, ErrorKind::InvalidCode);
 		}
+	}
+}
+
+#[cfg(test)]
+mod clone_mode_tests {
+	use super::*;
+	#[test]
+	fn invalid_encoded_clone_modes_are_rejected() {
+		for mode in [2, 3, u32::MAX] {
+			let mut f = Function::new(2, 1).unwrap();
+			let loc = Location {
+				source: 1,
+				revision: 1,
+				start: 0,
+				end: 1,
+			};
+			f.push(
+				Op::Clone {
+					out: 1,
+					value: 0,
+					mode: CloneMode::Global,
+				},
+				loc,
+			)
+			.unwrap();
+			f.push(Op::Return { value: 1 }, loc).unwrap();
+			f.code[0].c = mode;
+			assert_eq!(f.operation(0).err().unwrap().kind, ErrorKind::InvalidCode);
+			let mut b = Builder::default();
+			b.push(f).unwrap();
+			assert_eq!(b.finish().err().unwrap().kind, ErrorKind::InvalidCode);
+		}
+	}
+}
+
+#[cfg(all(test, feature = "std", not(miri)))]
+impl Function {
+	pub(crate) fn emission_snapshot(&self) -> std::string::String {
+		use std::fmt::Write;
+		let mut text = std::format!("slots={} parameters={}\nconstants={:?}\ntypes={:?}\nranges={:?}\nstrings={:?}\nargs={:?}\nlocations={:?}\n",self.slots,self.parameters,self.constants,self.types,self.ranges,self.strings,self.args,self.locations);
+		for pc in 0..self.len() {
+			writeln!(
+				text,
+				"{pc}: charged={} {:?}",
+				self.code[pc].is_charged(),
+				self.operation(pc).unwrap()
+			)
+			.unwrap();
+		}
+		text
 	}
 }

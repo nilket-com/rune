@@ -81,15 +81,18 @@ fn payload_copy_refusals_publish_nothing_and_keep_children_owned() {
 }
 
 #[test]
-fn clone_second_copy_refusal_keeps_original_and_children() {
+fn clone_copy_refusal_keeps_original_and_children() {
 	let mut s = store();
 	let child = s.string("held").unwrap();
 	let list = s.list(Type::Vec, &[child]).unwrap();
 	s.release(child).unwrap();
 	let baseline = state(&s);
 
-	// clone_outer allocates a scratch list, then list allocates its own copy.
-	let kind = limit::with(size_of::<Value>(), || s.clone_outer(list).unwrap_err().kind).call();
+	// A shallow Vec clone allocates its new outer payload before admission.
+	let kind = limit::with(size_of::<Value>() - 1, || {
+		s.clone_value(list).unwrap_err().kind
+	})
+	.call();
 	assert_eq!(kind, ErrorKind::Allocation);
 	assert_eq!(state(&s), baseline);
 	let retained = s.get(list, 0).unwrap();
