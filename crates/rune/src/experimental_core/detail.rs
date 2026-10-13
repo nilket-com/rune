@@ -141,6 +141,14 @@ pub enum Detail {
 		index: usize,
 		length: usize,
 	},
+	/// The full dynamic key is owned by Failure, when its diagnostic copy succeeds.
+	MissingKey {
+		target: TypeName,
+	},
+	MissingInteger {
+		target: TypeName,
+		index: usize,
+	},
 	MissingField {
 		target: TypeName,
 		field: FieldRef,
@@ -185,7 +193,7 @@ pub enum Detail {
 	},
 	TupleIndexGet {
 		target: TypeName,
-		index: u32,
+		index: usize,
 	},
 	TupleIndexSet {
 		target: TypeName,
@@ -426,6 +434,10 @@ impl fmt::Display for Message<'_> {
 			ShiftWidth => f.write_str("Numerical overflow"),
 			Underflow => f.write_str("Numerical underflow"),
 			OutOfRange { index, length } => messages::out_of_range(f, index, length),
+			MissingKey { target } => write!(f, "Missing field on `{target}`"),
+			MissingInteger { target, index } => {
+				write!(f, "Type `{target}` missing integer index `{index}`")
+			}
 			MissingField { target, field } => match field.resolve(self.program) {
 				Some(key) => messages::missing_field(f, target, key),
 				Option::None => write!(f, "Missing field on `{target}`"),

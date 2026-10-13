@@ -23,13 +23,14 @@ pub enum ErrorKind {
 	Overflow,
 	/// Integer division or remainder by zero.
 	DivisionByZero,
-	/// An index or field is not present: out of range, negative, or a missing object field.
+	/// An index or field is not present: out of range or a missing object field.
 	IndexOutOfBounds,
 	/// A shift count is negative or not below the operand's bit width.
 	InvalidShift,
 	/// An `as` conversion between these types is not supported.
 	InvalidCast,
-	/// An integer operand does not fit the other operand's integer type.
+	/// An integer operand does not fit the required integer type, including an index
+	/// that cannot be represented as `usize`.
 	IntegerCoercion,
 	/// Formatted text exceeded its formatting limits.
 	FormatLimit,

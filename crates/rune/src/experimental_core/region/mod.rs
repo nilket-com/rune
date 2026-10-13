@@ -2525,6 +2525,7 @@ fn function_transfer(op: Op, s: &mut [FTy]) -> Result<(), Error> {
 		}
 		Op::Template { out, .. }
 		| Op::TupleField { out, .. }
+		| Op::TupleFieldGetMut { out, .. }
 		| Op::Record { out, .. }
 		| Op::Field { out, .. }
 		| Op::Variant { out, .. }
@@ -2541,6 +2542,7 @@ fn function_transfer(op: Op, s: &mut [FTy]) -> Result<(), Error> {
 		| Op::Len { out, .. } => (out, FTy::Top),
 		Op::Print { .. }
 		| Op::SetTupleField { .. }
+		| Op::TupleFieldSetMut { .. }
 		| Op::SetField { .. }
 		| Op::Jump { .. }
 		| Op::Branch { .. }

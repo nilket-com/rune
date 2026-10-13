@@ -38,3 +38,9 @@ Notable stock distinctions pinned here:
 The stock baseline uses the fork at d86a2075 with test-only changes. Raw
 operator logs and per-child receipts remain local under
 `.reviews/0185-s-index-stock3`; earlier attempts are retained separately.
+
+Range **indices** are outside this finite matrix (Range receivers are covered).
+Literal range-index reads are refused before execution with Refusal::Range.
+A dynamic Range index remains the explicitly tracked S-13b divergence;
+range slicing is a separate oracle-first S-slice record. This fixture does not
+certify all admitted indexing expressions.

@@ -51,6 +51,9 @@ const MIRI_ROWS: usize = 20;
 // Only these frozen receipt rows have deliberately converged in F1. Every
 // identity and rule is checked before execution, including the Miri subset.
 const CONVERGED: &[(&str, &str, &str, &str)] = &[
+	// S-index: negative-index class converged to IntegerCoercion.
+	("operators", "088710", "index_get", "-"),
+	("operators", "088725", "index_set", "-"),
 	(
 		"operators",
 		"044944",
@@ -192,12 +195,10 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 				Some("InvalidShift")
 			}
 
-			(
-				"index",
-				K::ValueToIntegerCoercionError { .. }
-				| K::MissingIndexInteger { .. }
-				| K::OutOfRange { .. },
-			) => Some("IndexOutOfBounds"),
+			("index", K::MissingIndexInteger { .. } | K::OutOfRange { .. }) => {
+				Some("IndexOutOfBounds")
+			}
+			("index", K::ValueToIntegerCoercionError { .. }) => Some("IntegerCoercion"),
 			("index", K::UnsupportedIndexGet { .. } | K::UnsupportedIndexSet { .. }) => {
 				Some("Type")
 			}
@@ -496,10 +497,10 @@ pub(super) fn compile_unit(
 fn run(miri_only: bool) {
 	let all = cases();
 	assert_eq!(all.len(), FULL_ROWS, "corpus rows");
-	assert_eq!(CONVERGED.len(), 27);
+	assert_eq!(CONVERGED.len(), 29);
 	assert_eq!(
 		CONVERGED.iter().filter(|row| row.0 == "operators").count(),
-		8
+		10
 	);
 	assert_eq!(CONVERGED.iter().filter(|row| row.0 == "objfmt").count(), 6);
 	assert_eq!(
@@ -572,11 +573,20 @@ fn run(miri_only: bool) {
 			} else {
 				None
 			};
+			let index_converged =
+				converged && case.batch == "operators" && matches!(case.id, "088710" | "088725");
+			if index_converged {
+				assert_eq!(case.fresh, ("err", "IndexOutOfBounds", "marks=0"));
+				assert_eq!(case.stock, case.fresh);
+			}
 			let want_fresh = match &sorted {
+				_ if index_converged => ("err", "IntegerCoercion", case.fresh.2),
 				Some(value) => ("ok", value.as_str(), case.fresh.2),
 				None => case.fresh,
 			};
-			let want_stock = if converged && case.batch == "operators" {
+			let want_stock = if index_converged {
+				("err", "IntegerCoercion", case.stock.2)
+			} else if converged && case.batch == "operators" {
 				case.fresh
 			} else if let Some(value) = &sorted {
 				("ok", value.as_str(), case.stock.2)

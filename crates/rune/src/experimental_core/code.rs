@@ -20,6 +20,16 @@ pub enum Op {
 	Print {
 		value: u32,
 	},
+	TupleFieldGetMut {
+		out: u32,
+		value: u32,
+		index: u32,
+	},
+	TupleFieldSetMut {
+		value: u32,
+		index: u32,
+		new: u32,
+	},
 	TupleField {
 		out: u32,
 		value: u32,
@@ -308,6 +318,8 @@ impl Function {
 				0,
 			),
 			Print { value } => (35, value, 0, 0),
+			TupleFieldGetMut { out, value, index } => (36, out, value, index),
+			TupleFieldSetMut { value, index, new } => (37, value, index, new),
 			TupleField { out, value, index } => (32, out, value, index),
 			SetTupleField { value, index, new } => (33, value, index, new),
 			Record {
@@ -506,6 +518,16 @@ impl Function {
 			}
 
 			35 => Print { value: a },
+			36 => TupleFieldGetMut {
+				out: a,
+				value: b,
+				index: c,
+			},
+			37 => TupleFieldSetMut {
+				value: a,
+				index: b,
+				new: c,
+			},
 			32 => TupleField {
 				out: a,
 				value: b,
@@ -959,6 +981,96 @@ pub(crate) fn successors(f: &Function, pc: usize, out: &mut [Option<usize>; 2]) 
 	Ok(())
 }
 
+// A compound tuple update is one uninterrupted lowering group. The literal
+// between arithmetic and writeback preserves the pre-existing sparse fuel layout.
+fn validate_tuple_updates(f: &Function) -> Result<()> {
+	use Op::*;
+	let op = |pc| f.operation(pc);
+	let interior = |target: usize| -> Result<bool> {
+		Ok(match op(target)? {
+			TupleFieldGetMut { .. } | TupleFieldSetMut { .. } => true,
+			AssignBinary { .. } if target >= 1 => {
+				matches!(op(target - 1)?, TupleFieldGetMut { .. })
+			}
+			Literal { .. } if target >= 2 => matches!(op(target - 2)?, TupleFieldGetMut { .. }),
+			_ => false,
+		})
+	};
+	for pc in 0..f.code.len() {
+		match op(pc)? {
+			TupleFieldGetMut { out, value, index } => {
+				if pc == 0 || out == value || out == index {
+					return Err(invalid());
+				}
+				let Literal {
+					out: read_index,
+					value: read_literal,
+				} = op(pc - 1)?
+				else {
+					return Err(invalid());
+				};
+				let AssignBinary {
+					out: result,
+					lhs,
+					rhs,
+					..
+				} = op(pc + 1)?
+				else {
+					return Err(invalid());
+				};
+				let Literal {
+					out: write_index,
+					value: write_literal,
+				} = op(pc + 2)?
+				else {
+					return Err(invalid());
+				};
+				let TupleFieldSetMut {
+					value: target,
+					index: write_slot,
+					new,
+				} = op(pc + 3)?
+				else {
+					return Err(invalid());
+				};
+				if index != read_index
+					|| read_literal != write_literal
+					|| !matches!(read_literal, Value::I64(n) if n>=0)
+					|| result != out
+					|| lhs != out || rhs == out
+					|| target != value
+					|| new != out || write_slot != write_index
+					|| write_index == value
+					|| write_index == out
+					|| write_index == rhs
+				{
+					return Err(invalid());
+				}
+			}
+			TupleFieldSetMut { .. } => {
+				if pc < 3 || !matches!(op(pc - 3)?, TupleFieldGetMut { .. }) {
+					return Err(invalid());
+				}
+			}
+			Jump { target } => {
+				if interior(target as usize)? {
+					return Err(invalid());
+				}
+			}
+			Branch { yes, no, .. } => {
+				if interior(yes as usize)? || interior(no as usize)? {
+					return Err(invalid());
+				}
+			}
+			IterNext { none, .. } if interior(none as usize)? => {
+				return Err(invalid());
+			}
+			_ => (),
+		}
+	}
+	Ok(())
+}
+
 // D21-derived validation logic preserved during extraction: argument tables hold fixed pairs.
 #[allow(clippy::chunks_exact_to_as_chunks)]
 fn validate_operands(
@@ -967,6 +1079,7 @@ fn validate_operands(
 	code_id: u32,
 	valid: &dyn Fn(Type) -> bool,
 ) -> Result<()> {
+	validate_tuple_updates(f)?;
 	// Every tag operand (Is, Cast, Record, List, Variant) is drawn from this
 	// pool, so one pass checks every Struct nominal the function names.
 	if !f.types.iter().all(|&tag| valid(tag)) {
@@ -1119,13 +1232,17 @@ fn validate_operands(
 				f.strings.get(key as usize).ok_or_else(invalid)?;
 			}
 
-			Op::Get { out, value, index } | Op::TupleField { out, value, index } => {
+			Op::Get { out, value, index }
+			| Op::TupleField { out, value, index }
+			| Op::TupleFieldGetMut { out, value, index } => {
 				slot(out)?;
 				slot(value)?;
 				slot(index)?;
 			}
 
-			Op::Set { value, index, new } | Op::SetTupleField { value, index, new } => {
+			Op::Set { value, index, new }
+			| Op::SetTupleField { value, index, new }
+			| Op::TupleFieldSetMut { value, index, new } => {
 				slot(value)?;
 				slot(index)?;
 				slot(new)?;
@@ -1252,6 +1369,13 @@ fn same_op(a: Op, b: Op) -> bool {
 			Op::Print { value: b_value } => a_value == b_value,
 			_ => false,
 		},
+		Op::TupleFieldGetMut { out, value, index } => {
+			matches!(b, Op::TupleFieldGetMut { out: bo, value: bv, index: bi } if out==bo && value==bv && index==bi)
+		}
+		Op::TupleFieldSetMut { value, index, new } => {
+			matches!(b, Op::TupleFieldSetMut { value: bv, index: bi, new: bn } if value==bv && index==bi && new==bn)
+		}
+
 		Op::TupleField {
 			out: a_out,
 			value: a_value,
@@ -1897,5 +2021,169 @@ pub(super) mod transaction_tests {
 		})
 		.call();
 		assert_eq!(nominal::lookup(0xc004).unwrap(), None);
+	}
+}
+
+#[cfg(test)]
+mod tuple_update_tests {
+	use super::*;
+	use crate::experimental_core::{
+		execute::Executor,
+		heap::{Limits, Store},
+	};
+	fn location() -> Location {
+		Location {
+			source: 1,
+			revision: 1,
+			start: 0,
+			end: 1,
+		}
+	}
+	fn function(mutable: bool, filler: usize) -> Function {
+		let mut f = Function::new(6, 1).unwrap();
+		f.push(
+			Op::Literal {
+				out: 1,
+				value: Value::I64(1),
+			},
+			location(),
+		)
+		.unwrap();
+		for _ in 0..filler {
+			f.push(Op::Copy { out: 5, value: 1 }, location()).unwrap();
+		}
+		f.push(
+			Op::Literal {
+				out: 2,
+				value: Value::I64(0),
+			},
+			location(),
+		)
+		.unwrap();
+		f.push(
+			if mutable {
+				Op::TupleFieldGetMut {
+					out: 3,
+					value: 0,
+					index: 2,
+				}
+			} else {
+				Op::TupleField {
+					out: 3,
+					value: 0,
+					index: 2,
+				}
+			},
+			location(),
+		)
+		.unwrap();
+		f.push(
+			Op::AssignBinary {
+				out: 3,
+				op: Binary::Add,
+				lhs: 3,
+				rhs: 1,
+			},
+			location(),
+		)
+		.unwrap();
+		f.push(
+			Op::Literal {
+				out: 4,
+				value: Value::I64(0),
+			},
+			location(),
+		)
+		.unwrap();
+		f.push(
+			if mutable {
+				Op::TupleFieldSetMut {
+					value: 0,
+					index: 4,
+					new: 3,
+				}
+			} else {
+				Op::SetTupleField {
+					value: 0,
+					index: 4,
+					new: 3,
+				}
+			},
+			location(),
+		)
+		.unwrap();
+		f.push(Op::Return { value: 0 }, location()).unwrap();
+		f
+	}
+	fn code(f: Function) -> Result<Code> {
+		let mut b = Builder::default();
+		b.push(f)?;
+		b.finish()
+	}
+	fn run(code: &Code, fuel: usize) -> (Option<Error>, Option<super::super::value::Scalar>) {
+		let mut store = Store::new(Limits::default()).unwrap();
+		let one = store.root_i64(1);
+		let tuple = store.root_list(Type::Tuple, &[&one]).unwrap();
+		let result = Executor::new()
+			.unwrap()
+			.invoke_code(code, &mut store, 0, &[&tuple], fuel);
+		let error = match result {
+			Ok(value) => {
+				store.root_release(value).unwrap();
+				None
+			}
+			Err(f) => Some(f.error),
+		};
+		let child = store.root_get(&tuple, 0).unwrap();
+		let scalar = store.root_scalar(&child).unwrap();
+		store.root_release(child).unwrap();
+		store.root_release(tuple).unwrap();
+		store.root_release(one).unwrap();
+		assert_eq!(store.live_entries(), 0);
+		(error, scalar)
+	}
+	#[test]
+	fn tuple_update_layout_charge_flags_and_each_fuel_cut_match_the_old_lowering() {
+		for filler in 250..261 {
+			let old = code(function(false, filler)).unwrap();
+			let new = code(function(true, filler)).unwrap();
+			let a = old.function(0).unwrap();
+			let b = new.function(0).unwrap();
+			assert_eq!(a.code.len(), b.code.len());
+			for (pc, (left, right)) in a.code.iter().zip(&b.code).enumerate() {
+				assert_eq!(
+					(left.a, left.b, left.c, left.is_charged()),
+					(right.a, right.b, right.c, right.is_charged())
+				);
+				let op = match b.operation(pc).unwrap() {
+					Op::TupleFieldGetMut { out, value, index } => {
+						Op::TupleField { out, value, index }
+					}
+					Op::TupleFieldSetMut { value, index, new } => {
+						Op::SetTupleField { value, index, new }
+					}
+					op => op,
+				};
+				assert!(same_op(a.operation(pc).unwrap(), op));
+			}
+			for fuel in 0..5 {
+				assert_eq!(
+					run(&old, fuel),
+					run(&new, fuel),
+					"filler {filler} fuel {fuel}"
+				);
+			}
+		}
+	}
+	#[test]
+	fn tuple_update_validation_refuses_jumps_into_the_group_or_unpaired_writeback() {
+		for offset in 1..=4 {
+			let mut f = function(true, 0);
+			f.patch(0, Op::Jump { target: offset + 1 }).unwrap();
+			assert_eq!(code(f).err().unwrap().kind, ErrorKind::InvalidCode);
+		}
+		let mut f = function(true, 0);
+		f.patch(2, Op::Copy { out: 3, value: 0 }).unwrap();
+		assert_eq!(code(f).err().unwrap().kind, ErrorKind::InvalidCode);
 	}
 }

@@ -179,6 +179,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			| Op::Get { out, .. }
 			| Op::Field { out, .. }
 			| Op::TupleField { out, .. }
+			| Op::TupleFieldGetMut { out, .. }
 			| Op::Call { out, .. }
 			| Op::CallValue { out, .. }
 			| Op::Try { out, .. } => self.raise(out),
@@ -191,6 +192,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			| Op::Set { .. }
 			| Op::SetField { .. }
 			| Op::SetTupleField { .. }
+			| Op::TupleFieldSetMut { .. }
 			| Op::Push { .. }
 			| Op::Drop { .. }
 			| Op::Print { .. } => (),
@@ -693,7 +695,20 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				let target = self.assignment_operand(field.expr, span)?;
 				let rhs = self.operand(binary.rhs)?;
 				let old = self.slot()?;
-				self.read_field(old, target, field.expr_field, span)?;
+				match field.expr_field {
+					hir::ExprField::Index(index) => {
+						let index = self.field_index(index, span)?;
+						self.emit(
+							Op::TupleFieldGetMut {
+								out: old,
+								value: target,
+								index,
+							},
+							span,
+						)?;
+					}
+					_ => self.read_field(old, target, field.expr_field, span)?,
+				}
 				self.emit(
 					Op::AssignBinary {
 						out: old,
@@ -703,7 +718,20 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					},
 					span,
 				)?;
-				self.write_field(target, field.expr_field, old, span)?;
+				match field.expr_field {
+					hir::ExprField::Index(index) => {
+						let index = self.field_index(index, span)?;
+						self.emit(
+							Op::TupleFieldSetMut {
+								value: target,
+								index,
+								new: old,
+							},
+							span,
+						)?;
+					}
+					_ => self.write_field(target, field.expr_field, old, span)?,
+				}
 			}
 
 			_ => return Err(self.refused(span, Refusal::Assignment)),
@@ -1073,6 +1101,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 
 			E::Index(index) => {
+				// Literal slicing routes before execution; dynamic Range indices are
+				// the separately tracked S-slice semantic gap.
+				if matches!(self.exprs.get(index.index).kind, E::Range(_)) {
+					return Err(self.refused(span, Refusal::Range));
+				}
 				let slots = self.operands(&[index.target, index.index])?;
 				self.emit(
 					Op::Get {

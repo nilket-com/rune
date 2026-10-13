@@ -19,7 +19,7 @@ use super::{
 	heap::{FormatLimits, Store},
 	value::{Root, Value},
 };
-use crate::alloc::Vec;
+use crate::alloc::{Box, Vec};
 
 const MAX_FRAMES: usize = 1024;
 const INITIAL_FRAMES: usize = 8;
@@ -142,11 +142,39 @@ struct Frame {
 pub struct Failure {
 	/// The error that stopped the invocation.
 	pub error: Error,
+	/// Full dynamic missing-field key, if its best-effort diagnostic copy succeeded.
+	pub missing_key: Option<Box<str>>,
 	/// The callsite locations of the active calls, innermost caller first; empty when the
 	/// failure happened in the entry function or before it ran.
 	pub call_chain: Vec<Location>,
 	/// A second error raised while unwinding the invocation's frames, if any.
 	pub cleanup_error: Option<Error>,
+}
+
+impl Failure {
+	/// Render the error including owned dynamic key evidence. Error::message alone
+	/// renders a missing dynamic field without its key.
+	pub fn message<'a>(&'a self, program: &'a Program) -> impl core::fmt::Display + 'a {
+		FailureMessage {
+			failure: self,
+			program,
+		}
+	}
+}
+struct FailureMessage<'a> {
+	failure: &'a Failure,
+	program: &'a Program,
+}
+impl core::fmt::Display for FailureMessage<'_> {
+	fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+		if let (Detail::MissingKey { target }, Some(key)) = (
+			self.failure.error.detail,
+			self.failure.missing_key.as_deref(),
+		) {
+			return write!(f, "Missing field `{key}` on `{target}`");
+		}
+		core::fmt::Display::fmt(&self.failure.error.message(self.program), f)
+	}
 }
 
 /// Runs functions of a [`Program`] against a [`Store`].
@@ -168,6 +196,8 @@ pub struct Executor {
 	/// Handshake after a successful real write, only in isolated tests.
 	#[cfg(test)]
 	pub(crate) test_after_print: Option<fn()>,
+	#[cfg(test)]
+	pub(crate) test_fail_key_copy: bool,
 	/// P2a native tier: the last code id whose analysis admitted no region at all (a
 	/// property of the code alone, valid on any thread); 0 is never a code id. Plain data,
 	/// so `Executor` stays `Send`.
@@ -225,6 +255,8 @@ impl Executor {
 			test_output: None,
 			#[cfg(test)]
 			test_after_print: None,
+			#[cfg(test)]
+			test_fail_key_copy: false,
 			#[cfg(all(
 				feature = "fresh-core-native",
 				target_arch = "x86_64",
@@ -361,6 +393,7 @@ impl Executor {
 		regions: Option<&super::region::cache::ProgramRegions>,
 	) -> core::result::Result<Value, Failure> {
 		let mut setup_cleanup_error = None;
+		let mut missing_key = None;
 
 		let result = (|| {
 			if store.is_closed() {
@@ -906,38 +939,31 @@ impl Executor {
 								self.put(store, frame.base + out as usize, value)?;
 							}
 
+							Op::TupleFieldGetMut { out, value, index } => {
+								let v =
+									store.tuple_get_mut(get(value)?, index_value(get(index)?)?)?;
+								self.put(store, frame.base + out as usize, v)?;
+							}
+							Op::TupleFieldSetMut { value, index, new } => store.tuple_set_mut(
+								get(value)?,
+								index_value(get(index)?)?,
+								get(new)?,
+							)?,
 							Op::TupleField { out, value, index } => {
-								if store.tag(get(value)?)? != super::value::Type::Tuple {
-									return Err(error(ErrorKind::Type));
-								}
-
-								let v = store.get(get(value)?, index_value(get(index)?)?)?;
+								let v = store.tuple_get(get(value)?, index_value(get(index)?)?)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
-
-							Op::SetTupleField { value, index, new } => {
-								if store.tag(get(value)?)? != super::value::Type::Tuple {
-									return Err(error(ErrorKind::Type));
-								}
-
-								store.set(get(value)?, index_value(get(index)?)?, get(new)?)?;
-							}
-
+							Op::SetTupleField { value, index, new } => store.tuple_set(
+								get(value)?,
+								index_value(get(index)?)?,
+								get(new)?,
+							)?,
 							Op::Get { out, value, index } => {
-								if !matches!(
-									store.tag(get(value)?)?,
-									super::value::Type::Vec | super::value::Type::Tuple
-								) {
-									return Err(error(ErrorKind::Type));
-								}
-
-								let i = index_value(get(index)?)?;
-								let v = store.get(get(value)?, i)?;
+								let v = store.dynamic_get(get(value)?, get(index)?)?;
 								self.put(store, frame.base + out as usize, v)?;
 							}
-
 							Op::Set { value, index, new } => {
-								store.set(get(value)?, index_value(get(index)?)?, get(new)?)?
+								store.dynamic_set(get(value)?, get(index)?, get(new)?)?
 							}
 
 							Op::Len { out, value } => {
@@ -1009,6 +1035,34 @@ impl Executor {
 								&self.slots,
 								frame.base,
 							);
+							if matches!(e.detail, Detail::MissingKey { .. }) {
+								if let Op::Get { index, .. } | Op::Set { index, .. } =
+									instruction.op
+								{
+									if let Some(value) = self.slots.get(frame.base + index as usize)
+									{
+										#[cfg(test)]
+										let fail = core::mem::take(&mut self.test_fail_key_copy);
+										#[cfg(not(test))]
+										let fail = false;
+										missing_key = if fail {
+											#[cfg(test)]
+											{
+												rune_alloc::limit::with(0, || {
+													copy_missing_key(store, *value)
+												})
+												.call()
+											}
+											#[cfg(not(test))]
+											{
+												None
+											}
+										} else {
+											copy_missing_key(store, *value)
+										};
+									}
+								}
+							}
 							return Err(e.at(function.locations[source_pc]));
 						}
 					}
@@ -1050,6 +1104,7 @@ impl Executor {
 				self.frames.clear();
 				Err(Failure {
 					error: failure,
+					missing_key,
 					call_chain: core::mem::take(&mut self.diagnostics),
 					cleanup_error,
 				})
@@ -1276,6 +1331,10 @@ impl Executor {
 
 // Called only after an instruction fails, while its operand slots and constant pool
 // still exist. Diagnostic lookup is best-effort: it never replaces the primary error.
+fn copy_missing_key(store: &Store, value: Value) -> Option<Box<str>> {
+	Box::<str>::try_from(store.text(value).ok()?).ok()
+}
+
 fn enrich_error(
 	mut error: Error,
 	store: &Store,
@@ -1410,7 +1469,7 @@ fn enrich_error(
 					if error.kind == ErrorKind::IndexOutOfBounds {
 						return bounds(value, index);
 					}
-					let index = u32::try_from(index_value(get(index)?).ok()?).ok()?;
+					let index = index_value(get(index)?).ok()?;
 					Detail::TupleIndexGet {
 						target: ty(value)?,
 						index,
@@ -1466,16 +1525,16 @@ fn enrich_error(
 	error
 }
 
-fn index_value(value: Value) -> Result<usize> {
+pub(super) fn index_value(value: Value) -> Result<usize> {
 	match value {
 		Value::I64(n) => usize::try_from(n).map_err(|_| {
-			error(ErrorKind::IndexOutOfBounds).with_detail(Detail::Coerce {
+			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
 				value: IntValue::of(value).unwrap(),
 				to: IntTarget::Usize,
 			})
 		}),
 		Value::U64(n) => usize::try_from(n).map_err(|_| {
-			error(ErrorKind::IndexOutOfBounds).with_detail(Detail::Coerce {
+			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
 				value: IntValue::of(value).unwrap(),
 				to: IntTarget::Usize,
 			})
@@ -1741,3 +1800,21 @@ mod diagnostic_enrichment_tests {
 
 #[cfg(test)]
 mod growth_tests;
+
+#[cfg(test)]
+mod key_diagnostic_tests {
+	use super::*;
+	#[test]
+	fn missing_key_copy_is_full_owned_and_allocation_failure_is_best_effort() {
+		let mut store = Store::new(super::super::heap::Limits::default()).unwrap();
+		let text = std::format!("{}終", "long-key".repeat(256));
+		let key = store.string(&text).unwrap();
+		let copy = copy_missing_key(&store, key).unwrap();
+		assert_eq!(copy.as_ref(), text);
+		assert!(rune_alloc::limit::with(0, || copy_missing_key(&store, key))
+			.call()
+			.is_none());
+		store.release(key).unwrap();
+		assert_eq!(copy.as_ref(), text);
+	}
+}

@@ -51,6 +51,8 @@ fn variant_index(op: Op) -> usize {
 		Op::Len { .. } => 30,
 		Op::Push { .. } => 31,
 		Op::Drop { .. } => 32,
+		Op::TupleFieldGetMut { .. } => 33,
+		Op::TupleFieldSetMut { .. } => 34,
 	}
 }
 
@@ -76,6 +78,31 @@ fn same(a: Op, b: Op) {
 		(Op::Print { value: a_value }, Op::Print { value: b_value }) => {
 			assert_eq!(a_value, b_value);
 		}
+
+		(
+			Op::TupleFieldGetMut {
+				out: ao,
+				value: av,
+				index: ai,
+			},
+			Op::TupleFieldGetMut {
+				out: bo,
+				value: bv,
+				index: bi,
+			},
+		) => assert_eq!((ao, av, ai), (bo, bv, bi)),
+		(
+			Op::TupleFieldSetMut {
+				value: av,
+				index: ai,
+				new: an,
+			},
+			Op::TupleFieldSetMut {
+				value: bv,
+				index: bi,
+				new: bn,
+			},
+		) => assert_eq!((av, ai, an), (bv, bi, bn)),
 
 		(
 			Op::TupleField {
@@ -692,12 +719,40 @@ fn every_encoded_variant_round_trips_fields() {
 		Op::Len { out: 2, value: 2 },
 		Op::Push { value: 2, new: 2 },
 		Op::Drop { value: 2 },
+		Op::Literal {
+			out: 4,
+			value: Value::I64(0),
+		},
+		Op::TupleFieldGetMut {
+			out: 5,
+			value: 2,
+			index: 4,
+		},
+		Op::AssignBinary {
+			out: 5,
+			op: Binary::Add,
+			lhs: 5,
+			rhs: 1,
+		},
+		Op::Literal {
+			out: 6,
+			value: Value::I64(0),
+		},
+		Op::TupleFieldSetMut {
+			value: 2,
+			index: 6,
+			new: 5,
+		},
 	];
-	let mut coverage = [false; 33];
+	let mut coverage = [false; 35];
 
-	for expected in ops {
+	for (n, expected) in ops.into_iter().enumerate() {
 		let index = variant_index(expected);
-		assert!(!coverage[index], "duplicate variant {index}");
+		assert!(
+			!coverage[index]
+				|| (n >= 33 && matches!(expected, Op::Literal { .. } | Op::AssignBinary { .. })),
+			"duplicate variant {index}"
+		);
 		coverage[index] = true;
 		let pc = function.push(expected, location()).unwrap();
 		same(expected, function.operation(pc as usize).unwrap());

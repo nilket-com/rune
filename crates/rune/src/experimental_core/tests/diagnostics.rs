@@ -5,8 +5,8 @@
 //! coarse; no source semantics or failure precedence changes here.
 //! Retained: iterator and method hashes, macro Display spans, tuple-set past-end
 //! classification, and nominal names pending C. D1b wording changes are out of scope.
-//! S: dynamic object indexing/insertion, Option iteration, Vec tuple-index access,
-//! and Function clone remain semantic gaps, prerequisite to default fresh routing.
+//! S: named object insertion, Option iteration, and Function clone remain gaps.
+//! S-index converges dynamic object indexing and Vec tuple-index access.
 //! Refused: closures, explicit iterator methods, and inclusive ranges. Compile
 //! errors compare frontend diagnostics, never VmError text.
 //! Host misuse/resources stay generic: foreign tokens have dedicated detail;
@@ -144,7 +144,8 @@ fn diagnostic_catalogue_both_engines() {
 		("condition", "if 1 {}", Type, "execute"),
 		("type-condition", "if i64 {}", Type, "execute"),
 		("function-condition", "let f = g; if f {}", Type, "execute"),
-		("negative-index", "[1][-1]", IndexOutOfBounds, "execute"),
+		// S-index: stock ValueToIntegerCoercionError remains a coercion class.
+		("negative-index", "[1][-1]", IntegerCoercion, "execute"),
 		("non-number-index", "[1][1.5]", Type, "execute"),
 		("bounds", "[1, 2][5]", IndexOutOfBounds, "store"),
 		(
@@ -311,13 +312,9 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 		assert_eq!(at.start as usize..at.end as usize, fresh_span, "{id}");
 		assert_eq!((at.source, at.revision), (0, 73));
 	}
-	// S: stock succeeds; fresh's current semantic gap stays visible until S lands.
+	// Remaining S gaps: object dynamic indexing and Vec tuple get/set are now
+	// covered as successes by the frozen 1035-row index contract.
 	for (id, body, expected) in [
-		(
-			"object-index",
-			"let o = #{a:1}; o[\"a\"]",
-			"The index get operation `std::object::Object[std::string::String]` is not supported",
-		),
 		(
 			"object-insert",
 			"let o = #{a:1}; o.b = 2; o",
@@ -327,16 +324,6 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 			"option-iter",
 			"for i in Some(1) {}",
 			"Type `std::option::Option` is not iterable",
-		),
-		(
-			"vec-tuple-get",
-			"let v = [1]; v.0",
-			"The tuple index get 0 operation is not supported on `std::vec::Vec`",
-		),
-		(
-			"vec-tuple-set",
-			"let v = [1]; v.0 = 2; v",
-			"The tuple index set operation is not supported on `std::vec::Vec`",
 		),
 		(
 			"function-clone",
@@ -543,6 +530,8 @@ fn compile_time_refusals_are_catalogued_before_execution() {
 		),
 		("pub fn target() { (0..2).iter() + 1 }", Refusal::Method),
 		("pub fn target() { 0..=2 }", Refusal::Range),
+		// Literal range indexing waits for the separate S-slice contract.
+		("pub fn target() { [10,20][0..1] }", Refusal::Range),
 	] {
 		let mut sources = Sources::new();
 		sources.insert(Source::memory(source).unwrap()).unwrap();
@@ -799,5 +788,142 @@ fn comparison_type_values_use_stock_hash_order_including_nominals() {
 			assert!(executor.is_idle());
 			assert_eq!(store.live_entries(), 0);
 		}
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn dynamic_missing_keys_are_owned_and_copy_failure_preserves_the_original_failure() {
+	use crate::experimental_core::error::Detail;
+	let context = Context::with_default_modules().unwrap();
+	for key in [
+		std::string::String::from("missing"),
+		std::format!("{}終", "key".repeat(400)),
+	] {
+		let source = std::format!("fn inner(k) {{ let x=#{{present:1}}; x[k] }} fn outer(k) {{ inner(k) }} pub fn main() {{ outer(\"{key}\") }}");
+		let (mut stock, program) = compile(&context, &source);
+		let expected = stock
+			.call(["main"], ())
+			.unwrap_err()
+			.into_kind()
+			.to_string();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		let entry = program.function(Hash::type_hash(["main"])).unwrap();
+		let full = executor
+			.invoke(&program, &mut store, entry, &[], 10_000)
+			.unwrap_err();
+		assert_eq!(full.missing_key.as_deref(), Some(key.as_str()));
+		assert_eq!(full.message(&program).to_string(), expected);
+		assert_eq!(full.call_chain.len(), 2);
+		assert_eq!(store.live_entries(), 0);
+		executor.test_fail_key_copy = true;
+		let fallback = executor
+			.invoke(&program, &mut store, entry, &[], 10_000)
+			.unwrap_err();
+		assert!(fallback.missing_key.is_none());
+		assert_eq!(fallback.error, full.error);
+		assert_eq!(fallback.call_chain, full.call_chain);
+		assert_eq!(fallback.cleanup_error, full.cleanup_error);
+		assert!(matches!(fallback.error.detail, Detail::MissingKey { .. }));
+		assert_eq!(
+			fallback.message(&program).to_string(),
+			"Missing field on `std::object::Object`"
+		);
+		assert_eq!(store.live_entries(), 0);
+		assert!(executor.is_idle());
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn compound_tuple_string_append_preserves_aliases_and_container_borrow_order() {
+	let context = Context::with_default_modules().unwrap();
+	let (mut stock, program) = compile(
+		&context,
+		"fn update(x) { x.0 += \"b\"; } pub fn main() { let s=\"a\"; let x=(s,); update(x); s }",
+	);
+	let expected = stock.call(["main"], ()).unwrap();
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let result = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["main"])).unwrap(),
+			&[],
+			10_000,
+		)
+		.unwrap();
+	assert_eq!(store.root_text(&result).unwrap(), "ab");
+	assert_eq!(
+		expected
+			.borrow_ref::<crate::alloc::String>()
+			.unwrap()
+			.as_str(),
+		"ab"
+	);
+	store.root_release(result).unwrap();
+	assert_eq!(store.live_entries(), 0);
+	let (mut stock, program) = compile(
+		&context,
+		"pub fn main() { let x=[1]; for v in x { x.0 += \"wrong\"; } }",
+	);
+	let expected = stock
+		.call(["main"], ())
+		.unwrap_err()
+		.into_kind()
+		.to_string();
+	let failure = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["main"])).unwrap(),
+			&[],
+			10_000,
+		)
+		.unwrap_err();
+	assert_eq!(failure.message(&program).to_string(), expected);
+	assert_eq!(failure.error.kind, ErrorKind::AccessConflict);
+	assert_eq!(store.live_entries(), 0);
+	assert!(executor.is_idle());
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "full default-module frontend compilation; opt in explicitly"
+)]
+fn vector_dynamic_set_borrows_before_converting_the_index() {
+	let context = Context::with_default_modules().unwrap();
+	for index in ["-1", "0.0"] {
+		let source =
+			std::format!("pub fn main() {{ let x=[1]; for v in x {{ x[{index}] = 2; }} }}");
+		let (mut stock, program) = compile(&context, &source);
+		let expected = stock
+			.call(["main"], ())
+			.unwrap_err()
+			.into_kind()
+			.to_string();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let failure = Executor::new()
+			.unwrap()
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["main"])).unwrap(),
+				&[],
+				10_000,
+			)
+			.unwrap_err();
+		assert_eq!(failure.error.kind, ErrorKind::AccessConflict);
+		assert_eq!(failure.message(&program).to_string(), expected);
+		assert_eq!(store.live_entries(), 0);
 	}
 }

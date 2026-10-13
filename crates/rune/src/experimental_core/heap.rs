@@ -13,6 +13,7 @@ use core::sync::atomic::{AtomicU64, Ordering};
 
 mod comparison;
 mod formatting;
+mod indexing;
 pub use formatting::FormatLimits;
 mod roots;
 
@@ -1315,8 +1316,8 @@ impl Store {
 
 		self.entry_mut(h).unwrap().readers = 0;
 	}
-	/// B1 test hook: set an entry's reader count (the lease `mutable` refuses).
-	#[cfg(all(test, feature = "fresh-core-native"))]
+	/// Test hook: set an entry's reader count (the lease `mutable` refuses).
+	#[cfg(test)]
 	pub(crate) fn set_readers_for_test(&mut self, value: Value, readers: u32) {
 		let Value::Heap(h) = value else {
 			panic!("heap value expected");

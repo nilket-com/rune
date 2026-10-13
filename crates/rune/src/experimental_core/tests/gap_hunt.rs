@@ -257,7 +257,7 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 			"error",
 			&format!("{:?}", f.error.kind),
 			f.error.operation,
-			f.error.message(&program).to_string(),
+			f.message(&program).to_string(),
 			String::new(),
 		),
 	}
