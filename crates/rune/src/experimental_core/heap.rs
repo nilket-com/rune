@@ -27,6 +27,8 @@ mod allocation_tests;
 #[cfg(test)]
 mod growth_tests;
 #[cfg(test)]
+mod range_iterator_tests;
+#[cfg(test)]
 mod retain_inline_tests;
 #[cfg(test)]
 mod scalar_release_tests;
@@ -1191,24 +1193,21 @@ impl Store {
 		};
 
 		// A failed advance must not allocate or consume any payload.
-		self.mutable(h)?;
-		match self.payload(h)? {
-			Payload::RangeIterator { next, end } => {
-				if next >= end {
-					return Ok(None);
-				}
-
-				let value = *next;
-				let new = value
-					.checked_add(1)
-					.ok_or_else(|| err(ErrorKind::Overflow))?;
-				let Payload::RangeIterator { next, .. } = self.mutable(h)? else {
-					return Err(err(ErrorKind::Type));
-				};
-				*next = new;
-				Ok(Some(Value::I64(value)))
+		let payload = self.mutable(h)?;
+		if let Payload::RangeIterator { next, end } = payload {
+			if *next >= *end {
+				return Ok(None);
 			}
 
+			let value = *next;
+			let new = value
+				.checked_add(1)
+				.ok_or_else(|| err(ErrorKind::Overflow))?;
+			*next = new;
+			return Ok(Some(Value::I64(value)));
+		}
+
+		match self.payload(h)? {
 			Payload::ValueRangeIterator { next, end } => self.value_range_next(h, *next, *end),
 			Payload::OptionIterator { payload } => {
 				let value = *payload;
