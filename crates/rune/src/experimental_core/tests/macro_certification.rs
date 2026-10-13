@@ -8,6 +8,7 @@
 //!
 //! Each custom macro counts its calls, so a test can tell whether the host callback ran.
 
+use crate as rune;
 use crate::alloc::prelude::*;
 use crate::experimental_core::frontend;
 use crate::{Context, Diagnostics, Module, Source, Sources};
@@ -41,6 +42,202 @@ fn fresh_compile(context: &Context, text: &str) -> bool {
 
 const FORMAT: &str = "pub fn main() { format!(\"{}\", 42) }";
 const PRINTLN: &str = "pub fn main() { println!(\"{}\", 42); 1 }";
+
+fn output_source(name: &str) -> std::string::String {
+	let path = if name == "panic" {
+		"::std"
+	} else {
+		"::std::io"
+	};
+	let args = if name == "dbg" { "1,2" } else { "\"x\"" };
+	std::format!("pub fn main() {{ {path}::{name}!({args}); 7 }}")
+}
+
+fn output_macro(name: &'static str, calls: Option<&Arc<AtomicUsize>>) -> Module {
+	let mut module = if name == "panic" {
+		Module::with_crate("std").unwrap()
+	} else {
+		Module::with_crate_item("std", ["io"]).unwrap()
+	};
+	if let Some(calls) = calls {
+		let seen = calls.clone();
+		module
+			.macro_(
+				name,
+				move |_: &mut crate::macros::MacroContext<'_, '_, '_>,
+				      input: &crate::macros::TokenStream| {
+					seen.fetch_add(1, Ordering::SeqCst);
+					Ok(input.try_clone()?)
+				},
+			)
+			.unwrap();
+	} else {
+		match name {
+			"panic" => {
+				module
+					.macro_meta(crate::modules::core::panic_macro)
+					.unwrap();
+			}
+			"print" => {
+				module.macro_meta(crate::modules::io::print_macro).unwrap();
+			}
+			"dbg" => {
+				module.macro_meta(crate::modules::io::dbg_macro).unwrap();
+			}
+			_ => unreachable!(),
+		}
+		module.fresh_mark_builtin_macro();
+	}
+	module
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "default-module compiler; native CI checks output macro identity"
+)]
+fn output_macro_replacement_restore_partial_failure_and_unique_skip() {
+	use crate::experimental_core::error::Refusal;
+	{
+		let name = "panic";
+		let calls = Arc::new(AtomicUsize::new(0));
+		let source = output_source(name);
+		let mut context = Context::with_default_modules().unwrap();
+		assert!(fresh_compile(&context, &source));
+		context.install(output_macro(name, Some(&calls))).unwrap();
+		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		if name == "panic" {
+			context
+				.install(crate::modules::core::module().unwrap())
+				.unwrap();
+		} else {
+			context
+				.install(crate::modules::io::module(true).unwrap())
+				.unwrap();
+		}
+		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		context.install(output_macro(name, None)).unwrap();
+		assert!(fresh_compile(&context, &source));
+		let mut collision = if name == "panic" {
+			Module::with_crate("std").unwrap()
+		} else {
+			Module::with_crate_item("std", ["io"]).unwrap()
+		};
+		collision.function("c2_collision", || {}).build().unwrap();
+		context.install(collision).unwrap();
+		let mut partial = output_macro(name, Some(&calls));
+		partial.function("c2_collision", || {}).build().unwrap();
+		assert!(context.install(partial).is_err());
+		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+	}
+}
+
+#[test]
+#[cfg_attr(miri, ignore = "std-module installation; native CI checks identity")]
+fn output_custom_macro_first_is_overwritten_only_by_actual_builtin() {
+	{
+		let name = "panic";
+		let calls = Arc::new(AtomicUsize::new(0));
+		let mut context = Context::new();
+		context.install(output_macro(name, Some(&calls))).unwrap();
+		let hash = if name == "panic" {
+			crate::Hash::type_hash(crate::item!(::std::panic))
+		} else if name == "print" {
+			crate::Hash::type_hash(crate::item!(::std::io::print))
+		} else {
+			crate::Hash::type_hash(crate::item!(::std::io::dbg))
+		};
+		assert!(!context.fresh_builtin_macro(hash));
+		context.install(output_macro(name, None)).unwrap();
+		assert!(context.fresh_builtin_macro(hash));
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+	}
+}
+
+fn output_callee(name: &'static str, calls: &Arc<AtomicUsize>) -> Module {
+	let mut module = if name == "panic" {
+		Module::with_crate("std").unwrap()
+	} else {
+		Module::with_crate_item("std", ["io"]).unwrap()
+	};
+	let seen = calls.clone();
+	module
+		.function(name, move |_: crate::runtime::Value| {
+			seen.fetch_add(1, Ordering::SeqCst);
+		})
+		.build()
+		.unwrap();
+	module
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "std-module compiler; native CI checks insert-once IO callees"
+)]
+fn output_callee_custom_first_and_failed_replacement_stay_identity_bound() {
+	use crate::experimental_core::error::Refusal;
+	{
+		let name = "panic";
+		let calls = Arc::new(AtomicUsize::new(0));
+		let mut first = Context::new();
+		first.install(output_callee(name, &calls)).unwrap();
+		if name == "panic" {
+			assert!(first
+				.install(crate::modules::core::module().unwrap())
+				.is_err());
+		} else {
+			assert!(first
+				.install(crate::modules::io::module(true).unwrap())
+				.is_err());
+		}
+		first.install(output_macro(name, None)).unwrap();
+		fresh_refusal(&first, &output_source(name), Refusal::Native);
+		assert!(!match name {
+			"panic" => first.fresh_panic(),
+			"print" => false,
+			_ => unreachable!(),
+		});
+		let mut after = Context::with_default_modules().unwrap();
+		assert!(after.install(output_callee(name, &calls)).is_err());
+		assert!(fresh_compile(&after, &output_source(name)));
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+	}
+}
+
+#[cfg(all(feature = "capture-io", feature = "disable-io"))]
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "std-module compiler; native CI checks alternate output contexts"
+)]
+fn output_panic_admitted_but_alternate_print_and_dbg_contexts_refuse_before_output() {
+	use crate::experimental_core::error::Refusal;
+	for disabled in [true, false] {
+		let mut context = Context::with_config(false).unwrap();
+		let capture = crate::modules::capture_io::CaptureIo::new();
+		if disabled {
+			context
+				.install(crate::modules::disable_io::module().unwrap())
+				.unwrap();
+		} else {
+			context
+				.install(crate::modules::capture_io::module(&capture).unwrap())
+				.unwrap();
+		}
+		assert!(fresh_compile(&context, &output_source("panic")));
+		for name in ["print", "dbg"] {
+			fresh_refusal(&context, &output_source(name), Refusal::FrontendDiagnostic);
+		}
+		fresh_refusal(
+			&context,
+			"pub fn main(){print!(\"before\");panic!(\"after\");}",
+			Refusal::FrontendDiagnostic,
+		);
+		assert!(capture.is_empty());
+	}
+}
 
 #[test]
 #[cfg_attr(

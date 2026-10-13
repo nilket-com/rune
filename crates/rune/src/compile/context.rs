@@ -637,6 +637,7 @@ impl Context {
 		self.fresh_builtin_macros.contains(&hash)
 			&& (hash == Hash::type_hash(crate::item!(::std::fmt::format))
 				|| hash == Hash::type_hash(crate::item!(::std::io::println))
+				|| hash == Hash::type_hash(crate::item!(::std::panic))
 				|| hash == Hash::type_hash(crate::item!(::std::test::assert))
 				|| hash == Hash::type_hash(crate::item!(::std::test::assert_eq))
 				|| hash == Hash::type_hash(crate::item!(::std::test::assert_ne)))

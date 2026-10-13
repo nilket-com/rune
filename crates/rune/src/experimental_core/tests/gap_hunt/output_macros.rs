@@ -253,7 +253,12 @@ pub(super) fn observe_c2(path: &Path, mode: &str, engine: &str) -> Observation {
 		.strip_prefix("c2-fuel-")
 		.map(|n| n.parse().unwrap())
 		.unwrap_or(FUEL);
-	let observed = observe_with_context(path, "output-main", engine, &context, input, fuel);
+	let observe_mode = if mode == "c2-depth64" {
+		"output-main-depth64"
+	} else {
+		"output-main"
+	};
+	let observed = observe_with_context(path, observe_mode, engine, &context, input, fuel);
 	SEED.with(|seed| seed.borrow_mut().take());
 	drop(lease);
 	drop(moved);
@@ -401,4 +406,244 @@ fn stock_contract() {
 	println!(
 		"C2 STOCK EXACT {exact}; ADDRESS OBSERVATIONS {observations}; Linux descriptor rows 7"
 	);
+}
+
+fn observation(record: &str) -> (&str, &str, String, String) {
+	let fields: Vec<_> = record.split('\t').collect();
+	assert_eq!(fields.len(), 5);
+	(fields[0], fields[1], unhex(fields[3]), unhex(fields[4]))
+}
+
+#[test]
+#[ignore = "C2 fresh contract with explicit retained/refusal/fuel policies; new GAP_OUT"]
+fn fresh_contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
+	fs::create_dir(&out).unwrap();
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-c2-fresh-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let expected: Vec<_> = include_str!("../output_macros_stock.tsv")
+		.lines()
+		.skip(1)
+		.collect();
+	let cases = cases();
+	assert_eq!(expected.len(), cases.len());
+	let mut policies = String::from("case\tdisposition\n");
+	let mut counts: BTreeMap<&str, usize> = BTreeMap::new();
+	for (n, (case, row)) in cases.iter().zip(&expected).enumerate() {
+		let columns: Vec<_> = row.split('\t').collect();
+		assert_eq!(columns.len(), 9);
+		assert_eq!(case.label, columns[0]);
+		assert_eq!(hex(case.source.as_bytes()), columns[2]);
+		assert_eq!(case.mode, columns[1]);
+		let path = out.join(format!("{n:05}.source.rn"));
+		fs::write(&path, &case.source).unwrap();
+		for extension in ["site", "capture"] {
+			let _ = fs::remove_file(scratch.0.join(format!("result.{extension}")));
+		}
+		let run = launch(
+			&path,
+			&path,
+			&case.mode,
+			"fresh",
+			&scratch.0,
+			&out,
+			&format!("{n:05}"),
+		);
+		assert!(run.complete, "{} {}", case.label, run.record);
+		let actual = observation(&run.record);
+		let frozen_record = unhex(columns[3]);
+		let stock = observation(&frozen_record);
+		let captured = fs::read(scratch.0.join("result.capture")).unwrap_or_default();
+		assert!(run.stderr.is_empty());
+		let site = fs::read_to_string(scratch.0.join("result.site")).unwrap_or_default();
+		let no_output = |run: &Run| {
+			assert_eq!(run.stdout, b"\nrunning 1 test\n");
+		};
+		let disposition;
+		if (case.source.contains("dbg")
+			|| case.source.contains("print!(")
+			|| case.source.contains("::std::io::print(")
+			|| case.label == "print/alias")
+			&& !case.label.starts_with("source-shadow/")
+		{
+			disposition = "print/dbg deferred: compiler or native refusal";
+			assert_eq!(actual.0, "refused", "{}", case.label);
+			assert!(matches!(
+				actual.1,
+				"Some(FrontendDiagnostic)" | "Some(Native)"
+			));
+			no_output(&run);
+		} else if case.label.starts_with("fuel/") {
+			disposition = "fresh fuel invariants (not VM fuel parity)";
+			let fuel: u32 = case.mode.strip_prefix("c2-fuel-").unwrap().parse().unwrap();
+			if fuel < 3 {
+				assert_eq!((actual.0, actual.1), ("error", "FuelExhausted"));
+				let (start, len) = if fuel == 0 {
+					(case.source.find("mark(1)").unwrap() + 5, 1)
+				} else {
+					(case.source.find("println!(\"{}\",n)").unwrap(), 16)
+				};
+				assert_eq!(site, format!("0:{start}:{}", start + len));
+				assert_eq!(
+					run.stdout,
+					if fuel == 2 {
+						&b"\nrunning 1 test\n1\n"[..]
+					} else {
+						&b"\nrunning 1 test\n"[..]
+					}
+				);
+			} else {
+				let name = case.label.split('/').nth(1).unwrap();
+				let high = expected
+					.iter()
+					.find(|r| r.starts_with(&format!("fuel/{name}/80\t")))
+					.unwrap();
+				let high: Vec<_> = high.split('\t').collect();
+				let high_record = unhex(high[3]);
+				let high_obs = observation(&high_record);
+				assert_eq!(actual.0, high_obs.0);
+				assert_eq!((&actual.2, &actual.3), (&high_obs.2, &high_obs.3));
+				assert_eq!(hex(&run.stdout), high[4]);
+				if name == "panic" {
+					assert_eq!(actual.1, "Panic");
+					assert_eq!(site, high[6]);
+				} else {
+					assert_eq!(actual.1, "");
+				}
+			}
+		} else if stock.0 == "compile-error" {
+			disposition = "existing compiler refusal";
+			assert_eq!(
+				(actual.0, actual.1),
+				("refused", "Some(FrontendDiagnostic)")
+			);
+			no_output(&run);
+		} else if case.label.starts_with("forms/")
+			&& ["width", "hex", "precision"].contains(&case.label.rsplit('/').next().unwrap())
+		{
+			disposition = "existing format-spec refusal";
+			assert_eq!((actual.0, actual.1), ("refused", "Some(FormatSpec)"));
+			no_output(&run);
+		} else if case.label.starts_with("host-fixture/")
+			|| (case.label.starts_with("context/") && !case.label.ends_with("/panic"))
+		{
+			disposition = "uncertified IO or host callee refusal";
+			assert_eq!((actual.0, actual.1), ("refused", "Some(Native)"));
+			no_output(&run);
+		} else {
+			disposition = "exact admitted behaviour";
+			assert_eq!(actual.0, stock.0, "{}", case.label);
+			if stock.1.starts_with("stock:Panic ") {
+				assert_eq!(actual.1, "Panic");
+			} else {
+				assert_eq!(actual.1, stock.1, "{}", case.label);
+			}
+			assert_eq!(
+				(&actual.2, &actual.3),
+				(&stock.2, &stock.3),
+				"{}",
+				case.label
+			);
+			assert_eq!(hex(&run.stdout), columns[4], "{} stdout", case.label);
+			assert_eq!(hex(&run.stderr), columns[5]);
+			assert_eq!(site, columns[6], "{} site", case.label);
+			assert_eq!(hex(&captured), columns[7]);
+		}
+		assert!(captured.is_empty());
+		*counts.entry(disposition).or_default() += 1;
+		policies.push_str(&format!("{}\t{disposition}\n", case.label));
+		fs::write(out.join("dispositions.tsv"), &policies).unwrap();
+	}
+	assert_eq!(
+		counts.get("fresh fuel invariants (not VM fuel parity)"),
+		Some(&81)
+	);
+	fs::write(
+		out.join("summary.txt"),
+		format!("{} C2 fresh rows; {counts:?}\n", cases.len()),
+	)
+	.unwrap();
+	direct_print_supplement(&out.join("direct-print"));
+	contract_completed("fresh", cases.len());
+}
+
+fn direct_print_supplement(out: &Path) {
+	fs::create_dir(out).unwrap();
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-c2-direct-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	for (n, (args, arity)) in [
+		("", true),
+		("1", false),
+		("()", false),
+		("[1]", false),
+		("\"a\",\"b\"", true),
+		("\"α\"", false),
+	]
+	.into_iter()
+	.enumerate()
+	{
+		let path = out.join(format!("{n}.source.rn"));
+		fs::write(
+			&path,
+			format!("pub fn main() {{ ::std::io::print({args}); 42 }}"),
+		)
+		.unwrap();
+		let stock = launch(
+			&path,
+			&path,
+			"c2-default",
+			"stock",
+			&scratch.0,
+			out,
+			&format!("{n}-stock"),
+		);
+		let fresh = launch(
+			&path,
+			&path,
+			"c2-default",
+			"fresh",
+			&scratch.0,
+			out,
+			&format!("{n}-fresh"),
+		);
+		assert!(stock.complete && fresh.complete);
+		let a = observation(&stock.record);
+		let b = observation(&fresh.record);
+		assert!(stock.stderr.is_empty() && fresh.stderr.is_empty());
+		if arity {
+			assert_eq!(a.0, "error");
+		}
+		assert_eq!((b.0, b.1), ("refused", "Some(Native)"));
+		assert_eq!(fresh.stdout, b"\nrunning 1 test\n");
+	}
+}
+
+#[test]
+#[ignore = "C2 both-engine frozen contract, both IO features; new GAP_OUT"]
+fn contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
+	fs::create_dir(&out).unwrap();
+	for (engine, test) in [("stock", "stock_contract"), ("fresh", "fresh_contract")] {
+		let result = Command::new(std::env::current_exe().unwrap())
+			.args([
+				"--exact",
+				&format!("experimental_core::tests::gap_hunt::output_macros::{test}"),
+				"--ignored",
+				"--nocapture",
+			])
+			.env("GAP_OUT", out.join(engine))
+			.output()
+			.unwrap();
+		fs::write(out.join(format!("{engine}.stdout")), &result.stdout).unwrap();
+		fs::write(out.join(format!("{engine}.stderr")), &result.stderr).unwrap();
+		assert!(
+			result.status.success(),
+			"{engine}: {}",
+			String::from_utf8_lossy(&result.stdout)
+		);
+		assert!(String::from_utf8_lossy(&result.stdout).contains("1 passed; 0 failed"));
+	}
+	contract_completed("both", 367);
 }

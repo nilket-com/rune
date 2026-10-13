@@ -102,6 +102,12 @@ fn all_frozen_contracts() {
 			178,
 		),
 		("s0", "gap_hunt::corpus", "both", 639),
+		(
+			"output-both",
+			"gap_hunt::output_macros::contract",
+			"both",
+			367,
+		),
 	];
 	for (name, test, engine, rows) in checks {
 		let full_name = std::format!("experimental_core::tests::{test}");

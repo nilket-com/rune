@@ -40,6 +40,8 @@ pub fn module() -> Result<Module, ContextError> {
 
 	module.macro_meta(stringify_macro)?;
 	module.macro_meta(panic_macro)?;
+	#[cfg(feature = "fresh-core")]
+	module.fresh_mark_builtin_macro();
 	Ok(module)
 }
 
