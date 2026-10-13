@@ -230,3 +230,119 @@ fn d9_checked_strong_overflow_is_nonmutating_and_recovery_counts() {
 	store.release(value).unwrap();
 	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 }
+
+// Fix 5 freezes full errors and the existing permissive Moved/readers behavior.
+#[test]
+fn fix5_invalid_and_free_retains_preserve_full_errors_and_state() {
+	let mut store = Store::new(Limits {
+		entries: 4,
+		bytes: 4096,
+	})
+	.unwrap();
+	let mut foreign = Store::new(Limits {
+		entries: 4,
+		bytes: 4096,
+	})
+	.unwrap();
+	let value = store.string("local").unwrap();
+	let other = foreign.string("foreign").unwrap();
+	let Value::Heap(h) = value else {
+		panic!("heap expected")
+	};
+	// Internal handles have no owner: ownership was checked at Root import.
+	// Equal raw slot/generation coordinates refer to the LOCAL entry here.
+	assert_eq!(value, other);
+	let foreign_before = state(&foreign);
+	store.retain(other).unwrap();
+	assert_eq!(store.test_strong(value), 2);
+	assert_eq!(state(&foreign), foreign_before);
+	store.release(other).unwrap();
+	assert_eq!(store.test_strong(value), 1);
+	let free = store.string("free").unwrap();
+	let Value::Heap(free_h) = free else {
+		panic!("heap expected")
+	};
+	store.release(free).unwrap();
+	// Both the old generation and the CURRENT generation of an empty slot
+	// must be refused, even though the latter passes generation comparison.
+	for bad in [
+		free,
+		Value::Heap(Handle {
+			slot: free_h.slot,
+			generation: store.slots[free_h.slot as usize].generation,
+		}),
+		Value::Heap(Handle {
+			slot: h.slot,
+			generation: h.generation.wrapping_add(1),
+		}),
+		Value::Heap(Handle {
+			slot: u32::MAX,
+			generation: 1,
+		}),
+	] {
+		let before = state(&store);
+		assert_eq!(store.retain(bad), Err(err(ErrorKind::InvalidHandle)));
+		assert_eq!(state(&store), before);
+	}
+	store.close().unwrap();
+	let before = state(&store);
+	for bad in [value, other, free] {
+		assert_eq!(store.retain(bad), Err(err(ErrorKind::ClosedStore)));
+		assert_eq!(state(&store), before);
+	}
+	foreign.release(other).unwrap();
+}
+
+#[test]
+fn fix5_strong_boundary_preserves_full_overflow_error_and_count() {
+	let mut store = Store::new(Limits {
+		entries: 4,
+		bytes: 4096,
+	})
+	.unwrap();
+	let value = store.string("count").unwrap();
+	store.test_set_strong(value, u32::MAX - 1);
+	store.retain(value).unwrap();
+	assert_eq!(store.test_strong(value), u32::MAX);
+	let before = state(&store);
+	assert_eq!(store.retain(value), Err(err(ErrorKind::Overflow)));
+	assert_eq!(state(&store), before);
+	store.test_set_strong(value, 1);
+	store.release(value).unwrap();
+	assert_eq!(store.live_entries(), 0);
+}
+
+#[test]
+fn fix5_moved_and_read_borrowed_entries_still_retain() {
+	let mut store = Store::new(Limits {
+		entries: 4,
+		bytes: 4096,
+	})
+	.unwrap();
+	let value = store.string("moved").unwrap();
+	let Value::Heap(h) = value else {
+		panic!("heap expected")
+	};
+	store.invalidate(value).unwrap();
+	assert!(matches!(
+		store.entry(h).unwrap().payload,
+		Some(Payload::Moved(Type::String))
+	));
+	store.retain(value).unwrap();
+	assert_eq!(store.test_strong(value), 2);
+	store.release(value).unwrap();
+	store.release(value).unwrap();
+	assert_eq!(store.live_entries(), 0);
+	let value = store.string("borrowed").unwrap();
+	let Value::Heap(h) = value else {
+		panic!("heap expected")
+	};
+	store.entry_mut(h).unwrap().readers = 1;
+	store.retain(value).unwrap();
+	assert_eq!(store.test_strong(value), 2);
+	assert_eq!(store.entry(h).unwrap().readers, 1);
+	store.entry_mut(h).unwrap().readers = 0;
+	store.release(value).unwrap();
+	store.release(value).unwrap();
+	assert_eq!(store.live_entries(), 0);
+}
