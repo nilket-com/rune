@@ -97,6 +97,7 @@ fn stock_class(k: &crate::runtime::VmErrorKind) -> String {
 		K::Overflow | K::Underflow => "Overflow",
 		K::ValueToIntegerCoercionError { .. } => "IntegerCoercion",
 		K::DivideByZero => "DivisionByZero",
+		K::AccessError { .. } => "AccessConflict",
 		K::Halted {
 			halt: crate::runtime::VmHaltInfo::Limited,
 		} => "FuelExhausted",
@@ -107,6 +108,8 @@ fn stock_class(k: &crate::runtime::VmErrorKind) -> String {
 		| K::UnsupportedUnaryOperation { .. }
 		| K::UnsupportedIndexGet { .. }
 		| K::UnsupportedIndexSet { .. }
+		| K::UnsupportedObjectSlotIndexGet { .. }
+		| K::UnsupportedObjectSlotIndexSet { .. }
 		| K::UnsupportedTupleIndexGet { .. }
 		| K::UnsupportedTupleIndexSet { .. }
 		| K::ExpectedNumber { .. }
@@ -1327,3 +1330,6 @@ fn index_contract() {
 		}
 	}
 }
+
+#[path = "gap_hunt/field_iter.rs"]
+mod field_iter;
