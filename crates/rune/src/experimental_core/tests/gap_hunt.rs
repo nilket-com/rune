@@ -102,9 +102,10 @@ fn stock_class(k: &crate::runtime::VmErrorKind) -> String {
 		K::Halted {
 			halt: crate::runtime::VmHaltInfo::Limited,
 		} => "FuelExhausted",
-		K::MissingField { .. } | K::MissingIndexInteger { .. } | K::OutOfRange { .. } => {
-			"IndexOutOfBounds"
-		}
+		K::MissingField { .. }
+		| K::MissingIndexInteger { .. }
+		| K::MissingIndex { .. }
+		| K::OutOfRange { .. } => "IndexOutOfBounds",
 		K::UnsupportedBinaryOperation { .. }
 		| K::UnsupportedUnaryOperation { .. }
 		| K::UnsupportedIndexGet { .. }
@@ -1346,6 +1347,7 @@ mod field_iter;
 
 #[path = "gap_hunt/len_clone.rs"]
 mod len_clone;
+mod range_index;
 
 #[test]
 #[ignore = "operator-only emission snapshot for lowering comparison; no execution"]

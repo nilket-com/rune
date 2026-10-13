@@ -187,7 +187,7 @@ fn cases() -> Vec<(String, String)> {
 
 // Reject process addresses rather than normalizing them. Function instruction
 // offsets (e.g. 0x5) are short; missing-instance-function hashes are stable IDs.
-fn assert_no_addresses(label: &str, record: &str, stdout: &[u8], stderr: &[u8]) {
+pub(super) fn assert_no_addresses(label: &str, record: &str, stdout: &[u8], stderr: &[u8]) {
 	let fields: Vec<_> = record.split('\t').collect();
 	assert_eq!(fields.len(), 5);
 	let texts = [
