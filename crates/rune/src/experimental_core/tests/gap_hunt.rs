@@ -369,7 +369,16 @@ fn child() {
 	if mode == "timeout-control" {
 		std::thread::sleep(Duration::from_secs(60));
 	}
-	let observation = if mode.starts_with("c3-") {
+	let observation = if mode.starts_with("h1-") {
+		#[cfg(feature = "emit")]
+		{
+			host_bridge::observe_h1(Path::new(&path), &mode, &engine)
+		}
+		#[cfg(not(feature = "emit"))]
+		{
+			panic!("H1 stock oracle requires emit")
+		}
+	} else if mode.starts_with("c3-") {
 		patterns::observe_patterns(Path::new(&path), &mode, &engine)
 	} else if mode.starts_with("c2-") {
 		output_macros::observe_c2(Path::new(&path), &mode, &engine)
@@ -1549,3 +1558,7 @@ fn panic_class_alias_preserves_exact_message_stream_kind_and_phase_checks() {
 
 #[path = "gap_hunt/patterns.rs"]
 mod patterns;
+
+#[cfg(feature = "emit")]
+#[path = "gap_hunt/host_bridge.rs"]
+mod host_bridge;

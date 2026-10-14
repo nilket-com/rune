@@ -288,5 +288,13 @@ macro_rules! impl_function_traits {
     };
 }
 
+// The production owned-four wrapper is needed by the H1 stock oracle.
+#[cfg(test)]
+impl_function_traits!(4,
+ {A, a, A, 0, {}, {FromValue}, from_value},
+ {B, b, B, 1, {}, {FromValue}, from_value},
+ {C, c, C, 2, {}, {FromValue}, from_value},
+ {D, d, D, 3, {}, {FromValue}, from_value}
+);
 permute!(impl_function_traits);
 repeat_macro!(impl_instance_function_traits);
