@@ -71,6 +71,8 @@ pub struct Module {
 	/// Fresh core: this module registers the std stdio `println` builtin.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_stdio_println: bool,
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_stdio_print: bool,
 	/// Fresh core: this module/context certifies the std panic builtin.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_panic: bool,
@@ -142,6 +144,8 @@ impl Module {
 			reexports: Vec::new(),
 			#[cfg(feature = "fresh-core")]
 			fresh_stdio_println: false,
+			#[cfg(feature = "fresh-core")]
+			fresh_stdio_print: false,
 			#[cfg(feature = "fresh-core")]
 			fresh_panic: false,
 			#[cfg(feature = "fresh-core")]

@@ -126,6 +126,8 @@ fn child_stdout_contract() {
 				store.root_release(root).unwrap();
 				store.root_release(arg).unwrap();
 				assert_eq!(store.live_entries(), 0);
+				// Test-host teardown only; PRINT_RAW itself does not flush.
+				std::io::stdout().flush().unwrap();
 				("return:42".to_owned(), None)
 			}
 			Err(failure) => {
@@ -344,5 +346,35 @@ pub(crate) fn stock_c2_at(out: &std::path::Path) {
 			hex(stderr.as_bytes())
 		));
 		std::fs::write(out.join("stock-output-descriptors.tsv"), &table).unwrap();
+	}
+}
+
+#[test]
+#[ignore = "C2 fresh descriptor comparison, explicit new GAP_OUT"]
+fn fresh_c2_contract() {
+	let out = std::path::PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
+	fresh_c2_at(&out);
+}
+
+pub(crate) fn fresh_c2_at(out: &std::path::Path) {
+	std::fs::create_dir(out).unwrap();
+	let rows: Vec<_> = include_str!("../experimental_core/tests/output_descriptors_stock.tsv")
+		.lines()
+		.skip(1)
+		.collect();
+	assert_eq!(rows.len(), 7);
+	let hex = |bytes: &[u8]| bytes.iter().map(|b| format!("{b:02x}")).collect::<String>();
+	for row in rows {
+		let fields: Vec<_> = row.split('\t').collect();
+		assert_eq!(fields.len(), 3);
+		if fields[0].contains("c2-dbg") {
+			continue;
+		}
+		let mode = fields[0].replacen("stock", "fresh", 1);
+		let (stdout, stderr) = run(&mode);
+		std::fs::write(out.join(format!("{mode}.stdout")), &stdout).unwrap();
+		std::fs::write(out.join(format!("{mode}.stderr")), &stderr).unwrap();
+		assert_eq!(hex(&stdout), fields[1], "{mode} stdout");
+		assert_eq!(hex(stderr.as_bytes()), fields[2], "{mode} stderr");
 	}
 }

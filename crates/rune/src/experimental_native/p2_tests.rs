@@ -1588,3 +1588,28 @@ fn child_b3_kernel_room_gate() {
 	cache::clear_for_test();
 	cache::enable_for_test(false);
 }
+
+#[test]
+#[cfg_attr(miri, ignore = "native code execution in isolated child")]
+fn raw_print_beside_a_loop_preserves_native_entry() {
+	run_child("child_raw_print_beside_loop");
+}
+
+#[test]
+#[ignore = "native worker invoked only by parent"]
+fn child_raw_print_beside_loop() {
+	require_child();
+	fresh();
+	let program = compile_source(
+		"pub fn main(n) { print!(\"\"); let i=0; while i<n { i+=1; } print!(\"\"); i }",
+	);
+	let main = program.function(Hash::type_hash(["main"])).unwrap();
+	let args = [Arg::I(20)];
+	let reference = plain(&program.code, main, &args, BIG_FUEL);
+	let observed = native(&program.code, main, &args, BIG_FUEL);
+	assert_eq!(observed, reference);
+	assert!(
+		totals(&program.code).entries > 0,
+		"the adjacent pure loop must run natively"
+	);
+}

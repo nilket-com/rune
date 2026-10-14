@@ -47,6 +47,10 @@ pub fn module(
 	#[cfg(feature = "std")]
 	if stdio {
 		m.function_meta(print_impl)?;
+		#[cfg(feature = "fresh-core")]
+		{
+			m.fresh_stdio_print = true;
+		}
 		m.function_meta(println_impl)?;
 		#[cfg(feature = "fresh-core")]
 		m.fresh_mark_stdio_println();
@@ -76,6 +80,8 @@ pub fn module(
 	// compilation error unless `::std::io::*` functions are provided somehow.
 	m.macro_meta(dbg_macro)?;
 	m.macro_meta(print_macro)?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_builtin_macro();
 	m.macro_meta(println_macro)?;
 	#[cfg(feature = "fresh-core")]
 	m.fresh_mark_builtin_macro();

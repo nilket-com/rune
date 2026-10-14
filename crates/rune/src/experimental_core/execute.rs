@@ -505,27 +505,80 @@ impl Executor {
 		Ok(())
 	}
 
-	// D1c: this lazy cold edge is never reached by an ordinary resolved Call.
+	// Only a certified shared Call miss reaches this out-of-line IO path.
 	#[cold]
 	#[inline(never)]
 	#[allow(clippy::too_many_arguments)]
 	fn intrinsic(
 		&mut self,
 		code: &Code,
-		_store: &mut Store,
-		_function: &super::code::Function,
-		_base: usize,
-		_out: u32,
+		store: &mut Store,
+		function: &super::code::Function,
+		base: usize,
+		out: u32,
 		id: u32,
-		_args_start: u32,
-		_args_len: u32,
+		args_start: u32,
+		args_len: u32,
 	) -> Result<()> {
-		// Certification precedes all operand inspection. The foundation's table
-		// is empty; even a future certificate without a handler fails closed.
-		let _certificate = code
-			.intrinsic(id)
-			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
-		Err(error(ErrorKind::InvalidCode))
+		let invalid = || error(ErrorKind::InvalidCode);
+		let certificate = code.intrinsic(id).ok_or_else(invalid)?;
+		if args_len != certificate.arity || id != super::code::PRINT_RAW {
+			return Err(invalid());
+		}
+		let end = args_start.checked_add(args_len).ok_or_else(invalid)?;
+		let args = function
+			.args
+			.get(args_start as usize..end as usize)
+			.ok_or_else(invalid)?;
+		let slot = *args.first().ok_or_else(invalid)?;
+		if slot >= function.slots || out >= function.slots {
+			return Err(invalid());
+		}
+		let index = base.checked_add(slot as usize).ok_or_else(invalid)?;
+		let value = *self.slots.get(index).ok_or_else(invalid)?;
+		let destination = base.checked_add(out as usize).ok_or_else(invalid)?;
+		if self.slots.get(destination).is_none() {
+			return Err(invalid());
+		}
+		{
+			let text = store.text(value).map_err(|mut e| {
+				if e.kind == ErrorKind::Type && e.detail == Detail::None {
+					if let Some(found) = store.diagnostic_type(value) {
+						e = e.with_detail(Detail::ExpectedType {
+							expected: TypeName::String,
+							found,
+						});
+					}
+				}
+				e
+			})?;
+			#[cfg(test)]
+			let captured = match self.test_output.as_mut() {
+				Some(buffer) => {
+					buffer.extend_from_slice(text.as_bytes());
+					true
+				}
+				None => false,
+			};
+			#[cfg(not(test))]
+			let captured = false;
+			if !captured {
+				use std::io::Write;
+				let stdout = std::io::stdout();
+				let mut sink = stdout.lock();
+				sink.write_all(text.as_bytes()).map_err(|e| {
+					error(ErrorKind::Output).with_detail(Detail::Io {
+						kind: e.kind(),
+						os: e.raw_os_error(),
+					})
+				})?;
+				#[cfg(test)]
+				if let Some(hook) = self.test_after_print {
+					hook();
+				}
+			}
+		}
+		self.put(store, destination, Value::Unit)
 	}
 
 	// D21-derived execution logic preserved during extraction: the loops read fixed
@@ -2053,3 +2106,6 @@ mod assertion_tests;
 
 #[cfg(test)]
 mod d1c_controls;
+
+#[cfg(test)]
+mod print_intrinsic_tests;

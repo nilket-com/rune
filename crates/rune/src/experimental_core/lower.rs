@@ -11,7 +11,7 @@
 mod patterns;
 
 use super::arithmetic::{Binary, Unary};
-use super::code::{CloneMode, CompileTransaction, Function, Op};
+use super::code::{CloneMode, CompileTransaction, Function, Op, PRINT_RAW};
 use super::error::{Error, ErrorKind, Location, Refusal, Result};
 use super::value::{Type, Value};
 use crate as rune;
@@ -566,6 +566,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// Returns false (having emitted nothing) when the call is not one of them.
 	fn effect_call(&mut self, call: &hir::ExprCall<'_>, span: Span) -> Result<bool> {
 		match call.call {
+			hir::Call::Meta { hash } if hash == Hash::type_hash(crate::item!(::std::io::print)) => {
+				let out = self.slot()?;
+				self.print_call(call, out, span)?;
+				Ok(true)
+			}
 			hir::Call::Meta { hash } if hash == Hash::type_hash(crate::item!(::std::panic)) => {
 				if !self.context.fresh_panic() {
 					return Err(self.refused(span, Refusal::Native));
@@ -616,6 +621,27 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 			_ => Ok(false),
 		}
+	}
+
+	fn print_call(&mut self, call: &hir::ExprCall<'_>, out: u32, span: Span) -> Result<()> {
+		if !self.context.fresh_stdio_print() {
+			return Err(self.refused(span, Refusal::Native));
+		}
+		if call.args.len() != 1 {
+			return Err(self.refused(span, Refusal::Arity));
+		}
+		let value = self.operand(call.args[0])?;
+		let (args_start, args_len) = self.function.arguments(&[value])?;
+		self.emit(
+			Op::Call {
+				out,
+				function: PRINT_RAW,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+		Ok(())
 	}
 
 	fn assign(&mut self, assign: &hir::ExprAssign, span: Span) -> Result<()> {
@@ -1663,6 +1689,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			let value = self.operand(call.args[0])?;
 			self.emit(Op::StringFrom { out, value }, span)?;
 			return Ok(());
+		}
+		if hash == Hash::type_hash(crate::item!(::std::io::print)) {
+			return self.print_call(call, out, span);
 		}
 		if hash == Hash::type_hash(crate::item!(::std::panic)) {
 			self.effect_call(call, span)?;

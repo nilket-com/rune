@@ -313,6 +313,8 @@ pub struct Context {
 	/// Fresh core: the handler installed at `::std::io::println` is the std stdio builtin.
 	#[cfg(feature = "fresh-core")]
 	fresh_stdio_println: bool,
+	#[cfg(feature = "fresh-core")]
+	fresh_stdio_print: bool,
 	/// Fresh core: this module/context certifies the std panic builtin.
 	#[cfg(feature = "fresh-core")]
 	fresh_panic: bool,
@@ -490,6 +492,13 @@ impl Context {
 			{
 				self.fresh_stdio_println = true;
 			}
+			#[cfg(feature = "fresh-core")]
+			if module.fresh_stdio_print
+				&& item.hash == Hash::type_hash(crate::item!(::std::io::print))
+				&& matches!(item.kind, rune::module::ModuleItemKind::Function(..))
+			{
+				self.fresh_stdio_print = true;
+			}
 		}
 
 		tracing::trace!(associated = module.associated.len(), "associated");
@@ -637,6 +646,7 @@ impl Context {
 		self.fresh_builtin_macros.contains(&hash)
 			&& (hash == Hash::type_hash(crate::item!(::std::fmt::format))
 				|| hash == Hash::type_hash(crate::item!(::std::io::println))
+				|| hash == Hash::type_hash(crate::item!(::std::io::print))
 				|| hash == Hash::type_hash(crate::item!(::std::panic))
 				|| hash == Hash::type_hash(crate::item!(::std::test::assert))
 				|| hash == Hash::type_hash(crate::item!(::std::test::assert_eq))
@@ -651,6 +661,14 @@ impl Context {
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::io::println)))
+	}
+
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_stdio_print(&self) -> bool {
+		self.fresh_stdio_print
+			&& self
+				.functions
+				.contains_key(&Hash::type_hash(crate::item!(::std::io::print)))
 	}
 
 	#[cfg(feature = "fresh-core")]

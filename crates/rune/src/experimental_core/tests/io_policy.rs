@@ -296,10 +296,43 @@ fn repeated_output_preserves_order() {
 	miri,
 	ignore = "full default-module frontend compilation; opt in explicitly"
 )]
-fn print_macro_is_refused_before_execution() {
+fn print_macro_admits_only_the_certified_stdio_handler() {
+	let source = r#"pub fn main() { print!("a"); 42 }"#;
 	let context = Context::with_default_modules().unwrap();
+	assert!(context.fresh_stdio_print());
+	assert_eq!(outcome(&context, source), Ok(()));
+	let mut absent = Context::with_config(false).unwrap();
+	absent
+		.install(crate::modules::io::module(true).unwrap())
+		.unwrap();
+	assert!(!absent.fresh_stdio_print());
 	assert_eq!(
-		outcome(&context, r#"pub fn main() { print!("a"); 42 }"#),
+		outcome(&absent, source),
 		Err(Some(Refusal::FrontendDiagnostic))
 	);
+	let mut module = Module::with_crate_item("std", ["io"]).unwrap();
+	module.function("print", |_: &str| {}).build().unwrap();
+	absent.install(module).unwrap();
+	assert!(!absent.fresh_stdio_print());
+	assert_eq!(outcome(&absent, source), Err(Some(Refusal::Native)));
+	#[cfg(feature = "capture-io")]
+	{
+		let capture = crate::modules::capture_io::CaptureIo::new();
+		let mut context = Context::with_config(false).unwrap();
+		context
+			.install(crate::modules::capture_io::module(&capture).unwrap())
+			.unwrap();
+		assert!(!context.fresh_stdio_print());
+		assert_eq!(outcome(&context, source), Err(Some(Refusal::Native)));
+		assert!(capture.is_empty());
+	}
+	#[cfg(feature = "disable-io")]
+	{
+		let mut context = Context::with_config(false).unwrap();
+		context
+			.install(crate::modules::disable_io::module().unwrap())
+			.unwrap();
+		assert!(!context.fresh_stdio_print());
+		assert_eq!(outcome(&context, source), Err(Some(Refusal::Native)));
+	}
 }

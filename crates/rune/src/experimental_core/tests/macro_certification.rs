@@ -98,8 +98,7 @@ fn output_macro(name: &'static str, calls: Option<&Arc<AtomicUsize>>) -> Module 
 )]
 fn output_macro_replacement_restore_partial_failure_and_unique_skip() {
 	use crate::experimental_core::error::Refusal;
-	{
-		let name = "panic";
+	for name in ["panic", "print"] {
 		let calls = Arc::new(AtomicUsize::new(0));
 		let source = output_source(name);
 		let mut context = Context::with_default_modules().unwrap();
@@ -136,8 +135,7 @@ fn output_macro_replacement_restore_partial_failure_and_unique_skip() {
 #[test]
 #[cfg_attr(miri, ignore = "std-module installation; native CI checks identity")]
 fn output_custom_macro_first_is_overwritten_only_by_actual_builtin() {
-	{
-		let name = "panic";
+	for name in ["panic", "print"] {
 		let calls = Arc::new(AtomicUsize::new(0));
 		let mut context = Context::new();
 		context.install(output_macro(name, Some(&calls))).unwrap();
@@ -178,8 +176,7 @@ fn output_callee(name: &'static str, calls: &Arc<AtomicUsize>) -> Module {
 )]
 fn output_callee_custom_first_and_failed_replacement_stay_identity_bound() {
 	use crate::experimental_core::error::Refusal;
-	{
-		let name = "panic";
+	for name in ["panic", "print"] {
 		let calls = Arc::new(AtomicUsize::new(0));
 		let mut first = Context::new();
 		first.install(output_callee(name, &calls)).unwrap();
@@ -196,7 +193,7 @@ fn output_callee_custom_first_and_failed_replacement_stay_identity_bound() {
 		fresh_refusal(&first, &output_source(name), Refusal::Native);
 		assert!(!match name {
 			"panic" => first.fresh_panic(),
-			"print" => false,
+			"print" => first.fresh_stdio_print(),
 			_ => unreachable!(),
 		});
 		let mut after = Context::with_default_modules().unwrap();
@@ -228,12 +225,20 @@ fn output_panic_admitted_but_alternate_print_and_dbg_contexts_refuse_before_outp
 		}
 		assert!(fresh_compile(&context, &output_source("panic")));
 		for name in ["print", "dbg"] {
-			fresh_refusal(&context, &output_source(name), Refusal::FrontendDiagnostic);
+			fresh_refusal(
+				&context,
+				&output_source(name),
+				if name == "print" {
+					Refusal::Native
+				} else {
+					Refusal::FrontendDiagnostic
+				},
+			);
 		}
 		fresh_refusal(
 			&context,
 			"pub fn main(){print!(\"before\");panic!(\"after\");}",
-			Refusal::FrontendDiagnostic,
+			Refusal::Native,
 		);
 		assert!(capture.is_empty());
 	}
@@ -766,6 +771,138 @@ fn certified_string_constructor_copies_and_checks_its_argument() {
 			)
 			.unwrap_err();
 		assert_eq!(std::format!("{}", actual.message(&program)), expected);
+		assert!(executor.is_idle());
+		assert_eq!(store.live_entries(), 0);
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "std-module compiler; native CI checks IO marker origin"
+)]
+fn stdio_false_module_cannot_certify_publicly_added_custom_functions() {
+	use crate::experimental_core::error::Refusal;
+	let calls = Arc::new(AtomicUsize::new(0));
+	let mut module = crate::modules::io::module(false).unwrap();
+	for name in ["print", "dbg"] {
+		let seen = calls.clone();
+		module
+			.function(name, move |_: crate::runtime::Value| {
+				seen.fetch_add(1, Ordering::SeqCst);
+			})
+			.build()
+			.unwrap();
+	}
+	let mut context = Context::new();
+	context.install(module).unwrap();
+	assert!(!context.fresh_stdio_print());
+	for name in ["print", "dbg"] {
+		fresh_refusal(
+			&context,
+			&output_source(name),
+			if name == "dbg" {
+				Refusal::FrontendDiagnostic
+			} else {
+				Refusal::Native
+			},
+		);
+	}
+	assert_eq!(calls.load(Ordering::SeqCst), 0);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "std-module compiler; native CI checks per-item partial installation"
+)]
+fn failed_dbg_install_certifies_only_the_print_handlers_already_inserted() {
+	let calls = Arc::new(AtomicUsize::new(0));
+	let mut context = Context::new();
+	context.install(output_callee("dbg", &calls)).unwrap();
+	assert!(context
+		.install(crate::modules::io::module(true).unwrap())
+		.is_err());
+	assert!(context.fresh_stdio_print());
+	assert!(context.fresh_stdio_println());
+	assert_eq!(calls.load(Ordering::SeqCst), 0);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "compiler policy witness; hand-built intrinsic tests run under Miri"
+)]
+fn print_intrinsic_value_and_statement_positions_have_one_call_and_no_unit_overwrite() {
+	use crate::experimental_core::{
+		code::{Op, PRINT_RAW},
+		execute::Executor,
+		heap::{Limits, Store},
+		value::Scalar,
+	};
+	let context = Context::with_default_modules().unwrap();
+	assert!(context.fresh_stdio_print());
+	for text in [
+		"pub fn main(){print!(\"x\");}",
+		"pub fn main(){let result=print!(\"x\");result}",
+		"pub fn main(){::std::io::print(\"x\")}",
+	] {
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(text).unwrap()).unwrap();
+		let program =
+			frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 1).unwrap();
+		let main = program.function(crate::Hash::type_hash(["main"])).unwrap();
+		let f = program.code.function(main).unwrap();
+		let calls: std::vec::Vec<_> = (0..f.len())
+			.filter_map(|pc| match f.operation(pc).unwrap() {
+				Op::Call {
+					out,
+					function,
+					args_len,
+					..
+				} if function == PRINT_RAW => Some((pc, out, args_len)),
+				_ => None,
+			})
+			.collect();
+		assert_eq!(calls.len(), 1);
+		assert_eq!(calls[0].2, 1);
+		let call_site = f.locations[calls[0].0];
+		let mut unit_writes = 0;
+		for pc in 0..f.len() {
+			if matches!(
+				f.operation(pc).unwrap(),
+				Op::Literal {
+					value: crate::experimental_core::value::Value::Unit,
+					..
+				}
+			) {
+				unit_writes += 1;
+				assert_ne!(
+					f.locations[pc], call_site,
+					"no Unit write at the print call span"
+				);
+			}
+		}
+		if text.contains("let result") || !text.contains(";}") {
+			assert_eq!(
+				unit_writes, 0,
+				"value-position intrinsic needs no Unit literal"
+			);
+		} else {
+			assert_eq!(
+				unit_writes, 1,
+				"tail-less block keeps its implicit Unit return"
+			);
+		}
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		executor.test_output = Some(std::vec::Vec::new());
+		let result = executor
+			.invoke(&program, &mut store, main, &[], 100)
+			.unwrap();
+		assert_eq!(store.root_scalar(&result).unwrap(), Some(Scalar::Unit));
+		assert_eq!(executor.test_output.as_deref(), Some(&b"x"[..]));
+		store.root_release(result).unwrap();
 		assert!(executor.is_idle());
 		assert_eq!(store.live_entries(), 0);
 	}

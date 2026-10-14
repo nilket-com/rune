@@ -759,11 +759,15 @@ fn ordinary_function_id(index: usize) -> Result<u32> {
 #[derive(Clone, Copy)]
 pub(crate) struct CertifiedIntrinsic {
 	id: u32,
-	arity: u32,
+	pub(super) arity: u32,
 }
 // Immutable policy, consulted by seal and execution. Numeric
 // membership in the partition does not certify an id. No installer API exists.
-const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[];
+pub(crate) const PRINT_RAW: u32 = FIRST_INTRINSIC_ID + 1;
+const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[CertifiedIntrinsic {
+	id: PRINT_RAW,
+	arity: 1,
+}];
 fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
 	if !reserved_intrinsic_id(id) {
 		return None;
@@ -2492,6 +2496,11 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert!(CERTIFIED_INTRINSICS.is_empty());
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 1);
+		assert_eq!(CERTIFIED_INTRINSICS[0].id, PRINT_RAW);
+		assert_eq!(CERTIFIED_INTRINSICS[0].arity, 1);
+		for id in [0, FIRST_INTRINSIC_ID, PRINT_RAW + 1, u32::MAX] {
+			assert!(certified_intrinsic(CERTIFIED_INTRINSICS, id).is_none());
+		}
 	}
 }

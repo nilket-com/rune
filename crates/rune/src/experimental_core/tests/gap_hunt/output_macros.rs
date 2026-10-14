@@ -461,19 +461,51 @@ fn fresh_contract() {
 			assert_eq!(run.stdout, b"\nrunning 1 test\n");
 		};
 		let disposition;
-		if (case.source.contains("dbg")
-			|| case.source.contains("print!(")
-			|| case.source.contains("::std::io::print(")
-			|| case.label == "print/alias")
-			&& !case.label.starts_with("source-shadow/")
-		{
-			disposition = "print/dbg deferred: compiler or native refusal";
+		if case.source.contains("dbg") && !case.label.starts_with("source-shadow/") {
+			disposition = "dbg deferred: compiler or native refusal";
 			assert_eq!(actual.0, "refused", "{}", case.label);
 			assert!(matches!(
 				actual.1,
 				"Some(FrontendDiagnostic)" | "Some(Native)"
 			));
 			no_output(&run);
+		} else if case.label.starts_with("fuel/print/") {
+			disposition = "fresh print fuel invariants (not VM fuel parity)";
+			let fuel: u32 = case.mode.strip_prefix("c2-fuel-").unwrap().parse().unwrap();
+			assert!(matches!(actual.0, "value" | "error"));
+			if actual.0 == "error" {
+				assert_eq!(actual.1, "FuelExhausted");
+				assert!(fuel < 80);
+				assert!(!site.is_empty());
+				assert!([
+					&b"\nrunning 1 test\n"[..],
+					&b"\nrunning 1 test\n1\n"[..],
+					&b"\nrunning 1 test\n1\n2\n"[..],
+					&b"\nrunning 1 test\n1\n2\n12"[..]
+				]
+				.contains(&run.stdout.as_slice()));
+			} else {
+				let high = expected
+					.iter()
+					.find(|r| r.starts_with("fuel/print/80\t"))
+					.unwrap()
+					.split('\t')
+					.nth(3)
+					.unwrap();
+				let high_record = unhex(high);
+				let high_obs = observation(&high_record);
+				assert_eq!((&actual.2, &actual.3), (&high_obs.2, &high_obs.3));
+				assert_eq!(
+					hex(&run.stdout),
+					expected
+						.iter()
+						.find(|r| r.starts_with("fuel/print/80\t"))
+						.unwrap()
+						.split('\t')
+						.nth(4)
+						.unwrap()
+				);
+			}
 		} else if case.label.starts_with("fuel/") {
 			disposition = "fresh fuel invariants (not VM fuel parity)";
 			let fuel: u32 = case.mode.strip_prefix("c2-fuel-").unwrap().parse().unwrap();
@@ -559,12 +591,18 @@ fn fresh_contract() {
 		counts.get("fresh fuel invariants (not VM fuel parity)"),
 		Some(&81)
 	);
+	assert_eq!(
+		counts.get("fresh print fuel invariants (not VM fuel parity)"),
+		Some(&81)
+	);
 	fs::write(
 		out.join("summary.txt"),
 		format!("{} C2 fresh rows; {counts:?}\n", cases.len()),
 	)
 	.unwrap();
 	direct_print_supplement(&out.join("direct-print"));
+	#[cfg(target_os = "linux")]
+	crate::modules::io::stdout_tests::fresh_c2_at(&out.join("descriptors"));
 	contract_completed("fresh", cases.len());
 }
 
@@ -615,8 +653,17 @@ fn direct_print_supplement(out: &Path) {
 		if arity {
 			assert_eq!(a.0, "error");
 		}
-		assert_eq!((b.0, b.1), ("refused", "Some(Native)"));
-		assert_eq!(fresh.stdout, b"\nrunning 1 test\n");
+		if arity {
+			assert_eq!((b.0, b.1), ("refused", "Some(Arity)"));
+			assert_eq!(fresh.stdout, b"\nrunning 1 test\n");
+		} else {
+			assert_eq!(b.0, a.0);
+			assert_eq!((&b.2, &b.3), (&a.2, &a.3));
+			assert_eq!(fresh.stdout, stock.stdout);
+			if a.0 == "error" {
+				assert_eq!(b.1, "Type");
+			}
+		}
 	}
 }
 
