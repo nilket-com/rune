@@ -412,6 +412,99 @@ impl Executor {
 		Ok(store.export(value))
 	}
 
+	#[inline(never)]
+	fn print_instruction(&mut self, store: &Store, value: Value) -> Result<()> {
+		use std::io::Write;
+		let text = store.text(value)?;
+		// Test-only seam, scoped to this executor: same order, no stdout.
+		#[cfg(test)]
+		let captured = match self.test_output.as_mut() {
+			Some(buffer) => {
+				buffer.extend_from_slice(text.as_bytes());
+				buffer.push(b'\n');
+				true
+			}
+			None => false,
+		};
+		#[cfg(not(test))]
+		let captured = false;
+
+		// Hold one lock across the text and newline.
+		if !captured {
+			let stdout = std::io::stdout();
+			let mut sink = stdout.lock();
+			sink.write_all(text.as_bytes())
+				.and_then(|_| sink.write_all(b"\n"))
+				.map_err(|e| {
+					error(ErrorKind::Output).with_detail(Detail::Io {
+						kind: e.kind(),
+						os: e.raw_os_error(),
+					})
+				})?;
+			#[cfg(test)]
+			if let Some(hook) = self.test_after_print {
+				hook();
+			}
+		}
+		Ok(())
+	}
+
+	#[inline(never)]
+	#[allow(clippy::chunks_exact_to_as_chunks)]
+	fn template_instruction(
+		&mut self,
+		store: &mut Store,
+		parts: &[u32],
+		base: usize,
+		out: u32,
+	) -> Result<()> {
+		// D18: read the parts' slots here instead of capturing `get`; the
+		// lookup and its error are identical, but `get` no longer escapes
+		// into the out-of-line formatter.
+		let slots = &self.slots;
+		let text = store.format_template_parts(
+			parts.chunks_exact(2).map(|pair| {
+				let value = slots
+					.get(base + pair[0] as usize)
+					.copied()
+					.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+				Ok((value, pair[1] != 0))
+			}),
+			&self.format_limits,
+		)?;
+		let value = store.string_owned(text)?;
+		self.put(store, base + out as usize, value)?;
+		Ok(())
+	}
+
+	#[inline(never)]
+	#[allow(clippy::chunks_exact_to_as_chunks)]
+	fn record_instruction(
+		&mut self,
+		store: &mut Store,
+		strings: &[crate::alloc::String],
+		descriptors: &[u32],
+		base: usize,
+		out: u32,
+		tag: super::value::Type,
+	) -> Result<()> {
+		let get = |n: u32| -> Result<Value> {
+			self.slots
+				.get(base + n as usize)
+				.copied()
+				.ok_or_else(|| error(ErrorKind::InvalidCode))
+		};
+		let mut fields = Vec::try_with_capacity(descriptors.len() / 2)?;
+
+		for pair in descriptors.chunks_exact(2) {
+			fields.try_push((strings[pair[0] as usize].as_str(), get(pair[1])?))?;
+		}
+
+		let value = store.record(tag, &fields)?;
+		self.put(store, base + out as usize, value)?;
+		Ok(())
+	}
+
 	// D21-derived execution logic preserved during extraction: the loops read fixed
 	// (slot, flag) pairs from the argument table.
 	#[allow(clippy::chunks_exact_to_as_chunks)]
@@ -623,23 +716,7 @@ impl Executor {
 									.args
 									.get(args_start as usize..end as usize)
 									.ok_or_else(|| error(ErrorKind::InvalidCode))?;
-								// D18: read the parts' slots here instead of capturing `get`; the
-								// lookup and its error are identical, but `get` no longer escapes
-								// into the out-of-line formatter.
-								let base = frame.base;
-								let slots = &self.slots;
-								let text = store.format_template_parts(
-									parts.chunks_exact(2).map(|pair| {
-										let value = slots
-											.get(base + pair[0] as usize)
-											.copied()
-											.ok_or_else(|| error(ErrorKind::InvalidCode))?;
-										Ok((value, pair[1] != 0))
-									}),
-									&self.format_limits,
-								)?;
-								let value = store.string_owned(text)?;
-								self.put(store, frame.base + out as usize, value)?;
+								self.template_instruction(store, parts, frame.base, out)?;
 							}
 
 							Op::StringFrom { out, value } => {
@@ -655,38 +732,8 @@ impl Executor {
 							}
 
 							Op::Print { value } => {
-								use std::io::Write;
-								let text = store.text(get(value)?)?;
-								// Test-only seam, scoped to this executor: same order, no stdout.
-								#[cfg(test)]
-								let captured = match self.test_output.as_mut() {
-									Some(buffer) => {
-										buffer.extend_from_slice(text.as_bytes());
-										buffer.push(b'\n');
-										true
-									}
-									None => false,
-								};
-								#[cfg(not(test))]
-								let captured = false;
-
-								// Hold one lock across the text and newline.
-								if !captured {
-									let stdout = std::io::stdout();
-									let mut sink = stdout.lock();
-									sink.write_all(text.as_bytes())
-										.and_then(|_| sink.write_all(b"\n"))
-										.map_err(|e| {
-											error(ErrorKind::Output).with_detail(Detail::Io {
-												kind: e.kind(),
-												os: e.raw_os_error(),
-											})
-										})?;
-									#[cfg(test)]
-									if let Some(hook) = self.test_after_print {
-										hook();
-									}
-								}
+								let value = get(value)?;
+								self.print_instruction(store, value)?;
 							}
 
 							Op::Variant {
@@ -946,17 +993,14 @@ impl Executor {
 							} => {
 								let descriptors = &function.args
 									[args_start as usize..(args_start + args_len) as usize];
-								let mut fields = Vec::try_with_capacity(descriptors.len() / 2)?;
-
-								for pair in descriptors.chunks_exact(2) {
-									fields.try_push((
-										function.strings[pair[0] as usize].as_str(),
-										get(pair[1])?,
-									))?;
-								}
-
-								let value = store.record(tag, &fields)?;
-								self.put(store, frame.base + out as usize, value)?;
+								self.record_instruction(
+									store,
+									&function.strings,
+									descriptors,
+									frame.base,
+									out,
+									tag,
+								)?;
 							}
 
 							Op::Field { out, value, key } => {
