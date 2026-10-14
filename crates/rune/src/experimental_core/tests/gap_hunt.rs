@@ -1565,3 +1565,5 @@ mod host_bridge;
 
 #[path = "gap_hunt/format_specs.rs"]
 mod format_specs;
+
+mod scalar_methods;
