@@ -1567,3 +1567,5 @@ mod host_bridge;
 mod format_specs;
 
 mod scalar_methods;
+
+mod scalar_methods_supplement;
