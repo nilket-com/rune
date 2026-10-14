@@ -213,13 +213,22 @@ impl Store {
 		debug: bool,
 		limits: &FormatLimits,
 	) -> Result<String> {
-		self.format_parts_bounded(core::iter::once(Ok((value, debug))), limits, false)
+		self.format_parts_bounded(core::iter::once(Ok((value, debug, None))), limits, false)
 	}
 
 	/// Descriptor operands are already evaluated and the iterator is repeatable.
+	#[cfg(test)]
 	pub(crate) fn format_template_parts<I>(&self, parts: I, limits: &FormatLimits) -> Result<String>
 	where
 		I: Iterator<Item = Result<(Value, bool)>> + Clone,
+	{
+		self.format_parts_bounded(parts.map(|p| p.map(|(v, d)| (v, d, None))), limits, true)
+	}
+
+	pub(crate) fn format_template_specs<I>(&self, parts: I, limits: &FormatLimits) -> Result<String>
+	where
+		I: Iterator<Item = Result<(Value, bool, Option<crate::runtime::format::FormatSpec>)>>
+			+ Clone,
 	{
 		self.format_parts_bounded(parts, limits, true)
 	}
@@ -231,15 +240,20 @@ impl Store {
 		template: bool,
 	) -> Result<String>
 	where
-		I: Iterator<Item = Result<(Value, bool)>> + Clone,
+		I: Iterator<Item = Result<(Value, bool, Option<crate::runtime::format::FormatSpec>)>>
+			+ Clone,
 	{
 		if self.is_closed() {
 			return Err(Error::new(ErrorKind::ClosedStore, "format value"));
 		}
 		let mut sink = Sink::new(limits, None);
 		for part in parts.clone() {
-			let (value, debug) = part?;
-			self.render(value, debug, &mut sink)?;
+			let (value, debug, spec) = part?;
+			if let Some(spec) = spec {
+				self.render_spec(value, spec, &mut sink)?;
+			} else {
+				self.render(value, debug, &mut sink)?;
+			}
 		}
 		let size = sink.bytes;
 		if template {
@@ -265,13 +279,183 @@ impl Store {
 		// of the counted preflight (including allocator overgrowth).
 		sink = Sink::new(limits, Some(output));
 		for part in parts {
-			let (value, debug) = part?;
-			self.render(value, debug, &mut sink)?;
+			let (value, debug, spec) = part?;
+			if let Some(spec) = spec {
+				self.render_spec(value, spec, &mut sink)?;
+			} else {
+				self.render(value, debug, &mut sink)?;
+			}
 		}
 		if sink.bytes != size {
 			return Err(Error::new(ErrorKind::InvalidCode, "format two-pass size"));
 		}
 		sink.text.ok_or_else(unsupported)
+	}
+
+	fn render_spec(
+		&self,
+		value: Value,
+		spec: crate::runtime::format::FormatSpec,
+		sink: &mut Sink<'_>,
+	) -> Result<()> {
+		use crate::alloc::fmt::TryWrite;
+		use crate::runtime::format::{Alignment, Type as FormatType};
+		let debug = matches!(spec.format_type, FormatType::Debug);
+		#[derive(Clone, Copy)]
+		enum Body {
+			Char(char),
+			Bool(bool),
+			UInt(u64),
+			Float(f64),
+			Text(crate::experimental_core::value::Handle),
+		}
+		let (body, padding) = match value {
+			Value::Bool(v) => (Body::Bool(v), spec.padding()),
+			Value::Char(v) if !debug => (Body::Char(v), spec.padding()),
+			Value::I64(v) => {
+				let (v, p) = spec.int_traits(v);
+				(Body::UInt(v), p)
+			}
+			Value::U64(v) => {
+				let (v, p) = spec.uint_traits(v);
+				(Body::UInt(v), p)
+			}
+			Value::F64(v) => {
+				let (v, p) = spec.float_traits(v);
+				(Body::Float(v), p)
+			}
+			Value::Heap(h) if !debug && matches!(self.entry(h)?.tag()?, Type::String) => {
+				// Select the scalar form without reading its payload yet.
+				(Body::Text(h), spec.padding())
+			}
+			_ => {
+				return self.render(value, debug, sink);
+			}
+		};
+		if sink
+			.nodes
+			.checked_add(sink.pending_nodes)
+			.ok_or_else(limit)?
+			>= sink.limits.nodes
+		{
+			return Err(limit());
+		}
+		sink.nodes += 1;
+		let text = match body {
+			Body::Text(handle) => {
+				// Preserve start_value's node-budget-before-payload-read ordering.
+				let Payload::String(text) = self.payload(handle)? else {
+					return Err(unsupported());
+				};
+				Some(text.as_str())
+			}
+			_ => None,
+		};
+		let write_body = |w: &mut dyn TryWrite| -> crate::alloc::Result<()> {
+			match body {
+				Body::Char(v) => w.try_write_char(v),
+				Body::Bool(v) => w.try_write_str(if v { "true" } else { "false" }),
+				Body::UInt(v) => spec.format_unsigned(w, v),
+				Body::Float(v) => spec.format_float(w, v),
+				Body::Text(_) => spec.format_str(w, text.ok_or(crate::alloc::Error::FormatError)?),
+			}
+		};
+		struct Measure {
+			bytes: usize,
+			chars: usize,
+			max: usize,
+		}
+		impl TryWrite for Measure {
+			fn try_write_str(&mut self, s: &str) -> crate::alloc::Result<()> {
+				let bytes = self
+					.bytes
+					.checked_add(s.len())
+					.ok_or(crate::alloc::Error::CapacityOverflow)?;
+				if bytes > self.max {
+					return Err(crate::alloc::Error::CapacityOverflow);
+				}
+				self.chars = self
+					.chars
+					.checked_add(s.chars().count())
+					.ok_or(crate::alloc::Error::CapacityOverflow)?;
+				self.bytes = bytes;
+				Ok(())
+			}
+		}
+		let remaining = sink
+			.limits
+			.bytes
+			.checked_sub(sink.bytes)
+			.and_then(|n| n.checked_sub(sink.pending_bytes))
+			.ok_or_else(limit)?;
+		if let Body::Float(v) = body {
+			if v.is_finite()
+				&& spec
+					.precision
+					.is_some_and(|p| p > 0 && p.checked_add(2).is_none_or(|n| n > remaining))
+			{
+				return Err(limit());
+			}
+		}
+		let mut measure = Measure {
+			bytes: 0,
+			chars: 0,
+			max: remaining,
+		};
+		write_body(&mut measure).map_err(|_| limit())?;
+		let fill = spec.padding_width(measure.chars, 0, padding.sign);
+		let extra = fill
+			.checked_mul(padding.fill.len_utf8())
+			.and_then(|n| n.checked_add(padding.sign.map_or(0, char::len_utf8)))
+			.ok_or_else(limit)?;
+		if measure
+			.bytes
+			.checked_add(extra)
+			.is_none_or(|n| n > remaining)
+		{
+			return Err(limit());
+		}
+		struct Writer<'a, 'b>(&'a mut Sink<'b>);
+		impl TryWrite for Writer<'_, '_> {
+			fn try_write_str(&mut self, s: &str) -> crate::alloc::Result<()> {
+				if self.0.failure.is_some() {
+					return Err(crate::alloc::Error::FormatError);
+				}
+				self.0.push(s).map_err(|e| {
+					self.0.failure = Some(e);
+					crate::alloc::Error::FormatError
+				})
+			}
+		}
+		let mut writer = Writer(sink);
+		let (left, right) = if padding.zero {
+			(0, 0)
+		} else {
+			match padding.align {
+				Alignment::Left => (0, fill),
+				Alignment::Center => (fill / 2, fill - fill / 2),
+				Alignment::Right => (fill, 0),
+			}
+		};
+		let result = (|| -> crate::alloc::Result<()> {
+			for _ in 0..left {
+				writer.try_write_char(padding.fill)?;
+			}
+			if let Some(sign) = padding.sign {
+				writer.try_write_char(sign)?;
+			}
+			if padding.zero {
+				for _ in 0..fill {
+					writer.try_write_char(padding.fill)?;
+				}
+			}
+			write_body(&mut writer)?;
+			for _ in 0..right {
+				writer.try_write_char(padding.fill)?;
+			}
+			Ok(())
+		})();
+		result.map_err(|_| writer.0.failure.unwrap_or_else(unsupported))
 	}
 
 	fn render(&self, value: Value, debug: bool, sink: &mut Sink<'_>) -> Result<()> {
@@ -1052,5 +1236,195 @@ mod scratch_tests {
 		store.release(list).unwrap();
 		store.release(inner).unwrap();
 		assert_eq!(store.live_entries(), 0);
+	}
+}
+
+#[cfg(test)]
+mod spec_tests {
+	use super::super::Limits;
+	use super::*;
+	use crate::runtime::format::{Alignment, Flags, FormatSpec, Type as FormatType};
+
+	fn spec(fill: char, width: usize, precision: Option<usize>) -> FormatSpec {
+		FormatSpec::new(
+			Flags::default(),
+			fill,
+			Alignment::Right,
+			core::num::NonZeroUsize::new(width),
+			precision,
+			FormatType::Display,
+		)
+	}
+
+	#[test]
+	fn moved_string_spec_and_default_share_exact_read_error() {
+		let mut store = Store::new(Limits {
+			entries: 8,
+			bytes: 1024,
+		})
+		.unwrap();
+		let value = store.string("a").unwrap();
+		store.invalidate(value).unwrap();
+		let plain = store
+			.format_template_parts(
+				core::iter::once(Ok((value, false))),
+				&FormatLimits::default(),
+			)
+			.unwrap_err();
+		let with_spec = store
+			.format_template_specs(
+				core::iter::once(Ok((value, false, Some(spec(' ', 7, None))))),
+				&FormatLimits::default(),
+			)
+			.unwrap_err();
+		assert_eq!(plain, with_spec);
+		let no_nodes = FormatLimits {
+			nodes: 0,
+			..FormatLimits::default()
+		};
+		let plain = store
+			.format_template_parts(core::iter::once(Ok((value, false))), &no_nodes)
+			.unwrap_err();
+		let with_spec = store
+			.format_template_specs(
+				core::iter::once(Ok((value, false, Some(spec(' ', 7, None))))),
+				&no_nodes,
+			)
+			.unwrap_err();
+		assert_eq!(
+			plain, with_spec,
+			"zero-node budget must precede the moved read in both paths"
+		);
+		store.release(value).unwrap();
+		assert_eq!(store.live_entries(), 0);
+	}
+
+	#[test]
+	#[cfg_attr(
+		miri,
+		ignore = "maximum-budget native witness; bounded scalar helper has a separate small Miri test"
+	)]
+	fn bounded_spec_preflight_preserves_state_and_supports_raised_limits() {
+		let mut store = Store::new(Limits {
+			entries: 8,
+			bytes: 1 << 20,
+		})
+		.unwrap();
+		let value = store.string("a").unwrap();
+		let before = store.state_for_test();
+		let parts = core::iter::once(Ok((value, false, Some(spec('😀', 65535, None)))));
+		assert_eq!(
+			store
+				.format_template_specs(parts.clone(), &FormatLimits::default())
+				.unwrap_err()
+				.kind,
+			ErrorKind::FormatLimit
+		);
+		assert_eq!(store.state_for_test(), before);
+		let raised = FormatLimits {
+			bytes: 1 << 20,
+			..FormatLimits::default()
+		};
+		let text = store.format_template_specs(parts, &raised).unwrap();
+		assert_eq!(text.len(), 262137);
+		assert!(text.ends_with('a'));
+		assert_eq!(text.chars().count(), 65535);
+		assert_eq!(store.state_for_test(), before);
+		let parts = core::iter::once(Ok((
+			Value::F64(1.25),
+			false,
+			Some(spec(' ', 0, Some(65535))),
+		)));
+		assert_eq!(
+			store
+				.format_template_specs(parts.clone(), &FormatLimits::default())
+				.unwrap_err()
+				.kind,
+			ErrorKind::FormatLimit
+		);
+		assert_eq!(
+			store.format_template_specs(parts, &raised).unwrap().len(),
+			65537
+		);
+		assert_eq!(store.state_for_test(), before);
+		store.release(value).unwrap();
+		assert_eq!(store.live_entries(), 0);
+	}
+}
+
+#[cfg(test)]
+mod small_spec_tests {
+	use super::super::Limits;
+	use super::*;
+	use crate::runtime::format::{Alignment, Flags, FormatSpec, Type as FormatType};
+	#[test]
+	fn small_unicode_float_and_fallback_specs_are_bounded_and_balanced() {
+		let mut store = Store::new(Limits {
+			entries: 8,
+			bytes: 4096,
+		})
+		.unwrap();
+		let text = store.string("αbc").unwrap();
+		let spec = FormatSpec::new(
+			Flags::default(),
+			'😀',
+			Alignment::Center,
+			core::num::NonZeroUsize::new(5),
+			Some(2),
+			FormatType::Display,
+		);
+		let parts = core::iter::once(Ok((text, false, Some(spec))));
+		assert_eq!(
+			store
+				.format_template_specs(parts.clone(), &FormatLimits::default())
+				.unwrap(),
+			"😀αb😀😀"
+		);
+		let small = FormatLimits {
+			bytes: 8,
+			..FormatLimits::default()
+		};
+		assert_eq!(
+			store.format_template_specs(parts, &small).unwrap_err().kind,
+			ErrorKind::FormatLimit
+		);
+		let spec = FormatSpec::new(
+			Flags::default(),
+			' ',
+			Alignment::Left,
+			None,
+			Some(2),
+			FormatType::Display,
+		);
+		assert_eq!(
+			store
+				.format_template_specs(
+					core::iter::once(Ok((Value::F64(1.25), false, Some(spec)))),
+					&FormatLimits::default()
+				)
+				.unwrap(),
+			"1.25"
+		);
+		let spec = FormatSpec::new(
+			Flags::default(),
+			' ',
+			Alignment::Left,
+			core::num::NonZeroUsize::new(7),
+			None,
+			FormatType::Debug,
+		);
+		let expected = store.format_value(text, true).unwrap();
+		assert_eq!(
+			store
+				.format_template_specs(
+					core::iter::once(Ok((text, true, Some(spec)))),
+					&FormatLimits::default()
+				)
+				.unwrap(),
+			expected
+		);
+		store.release(text).unwrap();
+		assert_eq!(store.live_entries(), 0);
+		assert_eq!(store.payload_bytes(), 0);
 	}
 }

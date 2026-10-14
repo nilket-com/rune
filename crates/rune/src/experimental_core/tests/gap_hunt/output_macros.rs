@@ -551,9 +551,7 @@ fn fresh_contract() {
 				("refused", "Some(FrontendDiagnostic)")
 			);
 			no_output(&run);
-		} else if case.label.starts_with("forms/")
-			&& ["width", "hex", "precision"].contains(&case.label.rsplit('/').next().unwrap())
-		{
+		} else if case.label.starts_with("forms/") && case.label.ends_with("/hex") {
 			disposition = "existing format-spec refusal";
 			assert_eq!((actual.0, actual.1), ("refused", "Some(FormatSpec)"));
 			no_output(&run);

@@ -515,21 +515,38 @@ impl Executor {
 	fn template_instruction(
 		&mut self,
 		store: &mut Store,
-		parts: &[u32],
+		function: &super::code::Function,
+		instruction: &super::code::CachedInstruction,
 		base: usize,
-		out: u32,
 	) -> Result<()> {
+		// Both references already exist at dispatch; no whole-Op temporary.
+		let Op::Template {
+			out,
+			args_start,
+			args_len,
+		} = instruction.op
+		else {
+			return Err(error(ErrorKind::InvalidCode));
+		};
+		let end = args_start
+			.checked_add(args_len)
+			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+		let parts = function
+			.args
+			.get(args_start as usize..end as usize)
+			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
 		// D18: read the parts' slots here instead of capturing `get`; the
 		// lookup and its error are identical, but `get` no longer escapes
 		// into the out-of-line formatter.
 		let slots = &self.slots;
-		let text = store.format_template_parts(
+		let text = store.format_template_specs(
 			parts.chunks_exact(2).map(|pair| {
 				let value = slots
 					.get(base + pair[0] as usize)
 					.copied()
 					.ok_or_else(|| error(ErrorKind::InvalidCode))?;
-				Ok((value, pair[1] != 0))
+				let (debug, spec) = super::format_spec::load(&function.args, pair[1])?;
+				Ok((value, debug, spec))
 			}),
 			&self.format_limits,
 		)?;
@@ -850,19 +867,13 @@ impl Executor {
 						// commit_pc and every retain/reserve/frame publication.
 						let mut call = None;
 						match instruction.op {
-							Op::Template {
-								out,
-								args_start,
-								args_len,
-							} => {
-								let end = args_start
-									.checked_add(args_len)
-									.ok_or_else(|| error(ErrorKind::InvalidCode))?;
-								let parts = function
-									.args
-									.get(args_start as usize..end as usize)
-									.ok_or_else(|| error(ErrorKind::InvalidCode))?;
-								self.template_instruction(store, parts, frame.base, out)?;
+							Op::Template { .. } => {
+								self.template_instruction(
+									store,
+									function,
+									instruction,
+									frame.base,
+								)?;
 							}
 
 							Op::StringFrom { out, value } => {

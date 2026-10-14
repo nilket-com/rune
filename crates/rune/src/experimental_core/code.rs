@@ -1248,6 +1248,67 @@ fn validate_tuple_updates(f: &Function) -> Result<()> {
 	Ok(())
 }
 
+// Locate and validate a suffix, then exclude it from every executable argument range.
+fn template_args_prefix(f: &Function) -> Result<usize> {
+	use super::format_spec::{Spec, WORDS};
+	let mut prefix = f.args.len();
+	for instruction in &f.code {
+		if let Op::Template {
+			args_start,
+			args_len,
+			..
+		} = f.decode(*instruction)?
+		{
+			if args_len % 2 != 0 || args_len > 8192 {
+				return Err(invalid());
+			}
+			let end = args_start.checked_add(args_len).ok_or_else(invalid)?;
+			let parts = f
+				.args
+				.get(args_start as usize..end as usize)
+				.ok_or_else(invalid)?;
+			for pair in parts.as_chunks::<2>().0 {
+				if pair[1] >= 2 {
+					prefix = prefix.min(pair[1].checked_sub(2).ok_or_else(invalid)? as usize);
+				}
+			}
+		}
+	}
+	if prefix > f.args.len() || !(f.args.len() - prefix).is_multiple_of(WORDS) {
+		return Err(invalid());
+	}
+	for record in f.args[prefix..].as_chunks::<WORDS>().0 {
+		Spec::from_words(record)?;
+	}
+	for instruction in &f.code {
+		if let Op::Template {
+			args_start,
+			args_len,
+			..
+		} = f.decode(*instruction)?
+		{
+			let end = args_start.checked_add(args_len).ok_or_else(invalid)? as usize;
+			if end > prefix {
+				return Err(invalid());
+			}
+			for pair in f.args[args_start as usize..end].as_chunks::<2>().0 {
+				if pair[1] >= 2 {
+					let offset = (pair[1] - 2) as usize;
+					if offset < prefix
+						|| !(offset - prefix).is_multiple_of(WORDS)
+						|| offset
+							.checked_add(WORDS)
+							.is_none_or(|end| end > f.args.len())
+					{
+						return Err(invalid());
+					}
+				}
+			}
+		}
+	}
+	Ok(prefix)
+}
+
 // D21-derived validation logic preserved during extraction: argument tables hold fixed pairs.
 #[allow(clippy::chunks_exact_to_as_chunks)]
 fn validate_operands(
@@ -1258,6 +1319,7 @@ fn validate_operands(
 	valid: &dyn Fn(Type) -> bool,
 ) -> Result<()> {
 	validate_tuple_updates(f)?;
+	let args_prefix = template_args_prefix(f)?;
 	// Every tag operand (Is, Cast, Record, List, Variant) is drawn from this
 	// pool, so one pass checks every Struct nominal the function names.
 	if !f.types.iter().all(|&tag| valid(tag)) {
@@ -1270,6 +1332,9 @@ fn validate_operands(
 			let end = (start as usize)
 				.checked_add(len as usize)
 				.ok_or_else(invalid)?;
+			if end > args_prefix {
+				return Err(invalid());
+			}
 			let values = f.args.get(start as usize..end).ok_or_else(invalid)?;
 
 			for &v in values {
@@ -1291,15 +1356,16 @@ fn validate_operands(
 				}
 
 				let end = args_start.checked_add(args_len).ok_or_else(invalid)?;
+				if end as usize > args_prefix {
+					return Err(invalid());
+				}
 				let parts = f
 					.args
 					.get(args_start as usize..end as usize)
 					.ok_or_else(invalid)?;
 				for pair in parts.chunks_exact(2) {
 					slot(pair[0])?;
-					if pair[1] > 1 {
-						return Err(invalid());
-					}
+					super::format_spec::load(&f.args, pair[1])?;
 				}
 			}
 
@@ -1385,6 +1451,9 @@ fn validate_operands(
 				}
 
 				let end = args_start.checked_add(args_len).ok_or_else(invalid)?;
+				if end as usize > args_prefix {
+					return Err(invalid());
+				}
 				let entries = f
 					.args
 					.get(args_start as usize..end as usize)
@@ -2610,5 +2679,258 @@ mod intrinsic_partition_tests {
 		for id in [0, FIRST_INTRINSIC_ID, VARIANT_SUCCESS + 1, u32::MAX] {
 			assert!(certified_intrinsic(CERTIFIED_INTRINSICS, id).is_none());
 		}
+	}
+}
+
+#[cfg(test)]
+mod template_metadata_tests {
+	use super::*;
+
+	fn location() -> Location {
+		Location {
+			source: 0,
+			revision: 0,
+			start: 0,
+			end: 1,
+		}
+	}
+
+	fn function() -> Function {
+		let mut f = Function::new(128, 1).unwrap();
+		f.string("key").unwrap();
+		// Slot + descriptor pair precedes the six-word metadata suffix.
+		f.arguments(&[0, 4, 0, ' ' as u32, 0, 12, 0, 0]).unwrap();
+		f.push(
+			Op::Template {
+				out: 1,
+				args_start: 0,
+				args_len: 2,
+			},
+			location(),
+		)
+		.unwrap();
+		f.push(Op::Return { value: 1 }, location()).unwrap();
+		f
+	}
+
+	fn rejected(f: Function) {
+		let mut b = Builder::default();
+		b.push(f).unwrap();
+		assert_eq!(b.finish().err().unwrap().kind, ErrorKind::InvalidCode);
+	}
+
+	#[test]
+	fn complete_record_is_admitted_but_overlapping_executable_ranges_are_not() {
+		let mut b = Builder::default();
+		b.push(function()).unwrap();
+		assert!(b.finish().is_ok());
+		for op in [
+			Op::Call {
+				out: 1,
+				function: 0,
+				args_start: 2,
+				args_len: 1,
+			},
+			Op::CallValue {
+				out: 1,
+				value: 0,
+				args_start: 2,
+				args_len: 1,
+			},
+			Op::List {
+				out: 1,
+				tag: Type::Vec,
+				args_start: 2,
+				args_len: 1,
+			},
+			Op::Record {
+				out: 1,
+				tag: Type::Object,
+				args_start: 2,
+				args_len: 2,
+			},
+			Op::Template {
+				out: 1,
+				args_start: 2,
+				args_len: 2,
+			},
+		] {
+			let mut f = function();
+			f.patch(1, op).unwrap();
+			f.push(Op::Return { value: 1 }, location()).unwrap();
+			rejected(f);
+		}
+	}
+
+	#[test]
+	fn rejects_truncated_misaligned_and_out_of_range_metadata() {
+		let mut f = function();
+		f.args.pop();
+		rejected(f);
+		for descriptor in [5, 100, u32::MAX] {
+			let mut f = function();
+			f.args[1] = descriptor;
+			rejected(f);
+		}
+		for (index, value) in [(2, 16), (3, 0xd800), (4, 3), (5, 65536), (6, 65537), (7, 2)] {
+			let mut f = function();
+			f.args[index] = value;
+			rejected(f);
+		}
+	}
+
+	#[test]
+	fn function_local_suffix_offsets_survive_builder_composition() {
+		let mut first = function();
+		let mut second = Function::new(128, 1).unwrap();
+		second
+			.arguments(&[0, 0, 0, 6, 0, ' ' as u32, 0, 12, 0, 0])
+			.unwrap();
+		second
+			.push(
+				Op::Template {
+					out: 1,
+					args_start: 2,
+					args_len: 2,
+				},
+				location(),
+			)
+			.unwrap();
+		second.push(Op::Return { value: 1 }, location()).unwrap();
+		assert_eq!(template_args_prefix(&first).unwrap(), 2);
+		assert_eq!(template_args_prefix(&second).unwrap(), 4);
+		first.args[1] = 0;
+		first.args.truncate(2);
+		assert_eq!(template_args_prefix(&first).unwrap(), 2);
+		let mut b = Builder::default();
+		b.push(first).unwrap();
+		b.push(second).unwrap();
+		assert!(b.finish().is_ok());
+	}
+}
+
+#[cfg(test)]
+mod template_lowering_tests {
+	use super::*;
+	use crate::{Context, Diagnostics, Source, Sources};
+
+	fn compile(text: &str) -> super::super::frontend::Program {
+		let context = Context::with_default_modules().unwrap();
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(text).unwrap()).unwrap();
+		super::super::frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 7).unwrap()
+	}
+
+	#[test]
+	#[cfg_attr(
+		miri,
+		ignore = "source compilation is covered by native tests; bounded Miri covers metadata and formatting helpers"
+	)]
+	fn lowering_appends_specs_after_later_call_list_and_record_args() {
+		let program = compile("fn id(x) { x } pub fn main() { let s=format!(\"{:>7}\", 1); let c=id(3); let v=[c]; let r=#{a:c}; s.len()+v[0]+r.a }");
+		let mut witnessed = false;
+		for id in 0..program.code.functions() {
+			let f = program.code.function(id as u32).unwrap();
+			let prefix = template_args_prefix(f).unwrap();
+			if prefix == f.args.len() {
+				continue;
+			}
+			witnessed = true;
+			assert_eq!(f.args.len() - prefix, 6);
+			let mut kinds = [false; 3];
+			for instruction in &f.code {
+				match f.decode(*instruction).unwrap() {
+					Op::Call {
+						args_start,
+						args_len,
+						..
+					} => {
+						assert!((args_start + args_len) as usize <= prefix);
+						kinds[0] = true;
+					}
+					Op::List {
+						args_start,
+						args_len,
+						..
+					} => {
+						assert!((args_start + args_len) as usize <= prefix);
+						kinds[1] = true;
+					}
+					Op::Record {
+						args_start,
+						args_len,
+						..
+					} => {
+						assert!((args_start + args_len) as usize <= prefix);
+						kinds[2] = true;
+					}
+					Op::Template {
+						args_start,
+						args_len,
+						..
+					} => {
+						for pair in f.args[args_start as usize..(args_start + args_len) as usize]
+							.as_chunks::<2>()
+							.0
+						{
+							if pair[1] >= 2 {
+								assert_eq!((pair[1] - 2) as usize, prefix);
+							}
+						}
+					}
+					_ => (),
+				}
+			}
+			assert_eq!(kinds, [true; 3]);
+		}
+		assert!(witnessed);
+	}
+
+	#[test]
+	#[cfg_attr(miri, ignore = "source compilation is covered by native tests")]
+	fn nested_function_has_its_own_spec_fixups_and_radices_stay_refused() {
+		let program =
+			compile("pub fn main() { fn nested() { format!(\"{:>7}\", 1).len() } nested() }");
+		assert!((0..program.code.functions()).any(|id| {
+			let f = program.code.function(id as u32).unwrap();
+			template_args_prefix(f).unwrap() < f.args.len()
+		}));
+		for kind in ["x", "X", "b", "p"] {
+			let context = Context::with_default_modules().unwrap();
+			let mut sources = Sources::new();
+			sources
+				.insert(
+					Source::memory(std::format!(
+						"pub fn main() {{ format!(\"{{:{kind}}}\", 1) }}"
+					))
+					.unwrap(),
+				)
+				.unwrap();
+			let failure =
+				super::super::frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 7)
+					.err()
+					.unwrap();
+			assert_eq!(
+				failure.refusal,
+				Some(super::super::error::Refusal::FormatSpec)
+			);
+		}
+	}
+}
+
+#[cfg(all(test, target_pointer_width = "64"))]
+mod template_layout_tests {
+	use super::*;
+	#[test]
+	fn c5_metadata_preserves_runtime_layouts() {
+		let sizes = [
+			core::mem::size_of::<Function>(),
+			core::mem::size_of::<Code>(),
+			core::mem::size_of::<Op>(),
+			core::mem::size_of::<Instruction>(),
+			core::mem::size_of::<CachedInstruction>(),
+		];
+		std::println!("C5 layouts Function/Code/Op/Instruction/CachedInstruction: {sizes:?}");
+		assert_eq!(sizes, [200, 56, 24, 16, 32]);
 	}
 }

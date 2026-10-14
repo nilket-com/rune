@@ -128,6 +128,18 @@ fn all_frozen_contracts() {
 			"fresh",
 			144,
 		),
+		(
+			"format-specs-stock",
+			"gap_hunt::format_specs::stock_contract",
+			"stock",
+			266,
+		),
+		(
+			"format-specs-fresh",
+			"gap_hunt::format_specs::fresh_contract",
+			"fresh",
+			266,
+		),
 		("s0", "gap_hunt::corpus", "both", 639),
 		(
 			"output-both",

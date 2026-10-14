@@ -36,6 +36,7 @@ pub(crate) fn function(
 		variables: Vec::new(),
 		loops: Vec::new(),
 		dirty: Vec::new(),
+		format_specs: Vec::new(),
 		next: 0,
 		high: 0,
 		depth: 0,
@@ -60,6 +61,18 @@ pub(crate) fn function(
 	cx.function.parameters = cx.next;
 	cx.block(&item.body, Mode::Return)?;
 	cx.function.slots = cx.high.max(1);
+	for (descriptor, words) in core::mem::take(&mut cx.format_specs) {
+		let (start, len) = cx.function.arguments(&words)?;
+		if len != 6 {
+			return Err(Error::new(ErrorKind::InvalidCode, "template fixup"));
+		}
+		*cx.function
+			.args
+			.get_mut(descriptor as usize)
+			.ok_or_else(|| Error::new(ErrorKind::InvalidCode, "template fixup"))? = start
+			.checked_add(2)
+			.ok_or_else(|| Error::new(ErrorKind::InvalidCode, "template fixup"))?;
+	}
 	Ok(cx.function)
 }
 
@@ -91,6 +104,8 @@ struct Lower<'a, 'hir> {
 	loops: Vec<Loop>,
 	/// Per slot: may currently hold a heap handle that needs a Release.
 	dirty: Vec<bool>,
+	/// Deferred descriptor fixups; all spec records are appended after executable arguments.
+	format_specs: Vec<(u32, [u32; 6])>,
 	next: u32,
 	high: u32,
 	depth: usize,
@@ -1357,47 +1372,50 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		let mut ids = Vec::try_with_capacity(template.exprs.len())?;
-		let mut debugs = Vec::try_with_capacity(template.exprs.len())?;
-
+		let mut descriptors_spec = Vec::try_with_capacity(template.exprs.len())?;
 		for id in template.exprs {
-			let (id, debug) = match self.exprs.get(*id).kind {
-				E::Format(format) => {
-					let spec = format.spec;
-					if spec.fill.is_some()
-						|| spec.align.is_some()
-						|| spec.width.is_some()
-						|| spec.precision.is_some()
-						|| spec.flags.is_some_and(|f| !f.is_empty())
-					{
-						return Err(self.refused(span, Refusal::FormatSpec));
-					}
-
-					let debug = match spec.format_type.unwrap_or_default() {
-						crate::runtime::format::Type::Display => false,
-						crate::runtime::format::Type::Debug => true,
-						_ => return Err(self.refused(span, Refusal::FormatSpec)),
-					};
-
-					(format.value, debug)
+			let (id, spec) = match self.exprs.get(*id).kind {
+				hir::ExprKind::Format(format) => {
+					let spec = template_spec(format.spec)
+						.map_err(|_| self.refused(span, Refusal::FormatSpec))?;
+					(format.value, Some(spec))
 				}
-
-				_ => (*id, false),
+				_ => (*id, None),
 			};
-
 			ids.try_push(id)?;
-			debugs.try_push(u32::from(debug))?;
+			descriptors_spec.try_push(spec)?;
 		}
 
 		// Preserve argument effects: render only after all operands ran.
 		let values = self.operands(&ids)?;
 		let mut descriptors = Vec::try_with_capacity(ids.len() * 2)?;
 
-		for (value, debug) in values.iter().zip(debugs.iter()) {
+		for (value, spec) in values.iter().zip(descriptors_spec.iter()) {
 			descriptors.try_push(*value)?;
-			descriptors.try_push(*debug)?;
+			descriptors.try_push(spec.and_then(|s| s.legacy()).unwrap_or(if spec.is_some() {
+				2
+			} else {
+				0
+			}))?;
+		}
+		let (args_start, args_len) = self.function.arguments(&descriptors)?;
+		for (i, spec) in descriptors_spec.into_iter().enumerate() {
+			if let Some(spec) = spec.filter(|s| s.legacy().is_none()) {
+				let offset = u32::try_from(
+					i.checked_mul(2)
+						.and_then(|n| n.checked_add(1))
+						.ok_or_else(|| Error::new(ErrorKind::InvalidCode, "template fixup"))?,
+				)
+				.map_err(|_| Error::new(ErrorKind::InvalidCode, "template fixup"))?;
+				self.format_specs.try_push((
+					args_start
+						.checked_add(offset)
+						.ok_or_else(|| Error::new(ErrorKind::InvalidCode, "template fixup"))?,
+					spec.0,
+				))?;
+			}
 		}
 
-		let (args_start, args_len) = self.function.arguments(&descriptors)?;
 		self.emit(
 			Op::Template {
 				out,
@@ -1883,6 +1901,52 @@ mod shape_tests {
 			[field("x", 0), field("x", 1)],
 		] {
 			assert!(declaration_order(&fields, ["x", "y"].into_iter()).is_err());
+		}
+	}
+}
+
+fn template_spec(h: hir::BuiltInFormatSpec) -> Result<super::format_spec::Spec> {
+	let runtime = crate::runtime::format::FormatSpec::new(
+		h.flags.unwrap_or_default(),
+		h.fill.unwrap_or(' '),
+		h.align.unwrap_or_default(),
+		h.width,
+		h.precision,
+		h.format_type.unwrap_or_default(),
+	);
+	super::format_spec::Spec::from_spec(runtime)
+}
+
+#[cfg(test)]
+mod spec_tests {
+	use super::*;
+
+	#[test]
+	fn hir_format_bounds_and_unknown_flags_are_rejected() {
+		let good = hir::BuiltInFormatSpec {
+			fill: None,
+			align: None,
+			width: None,
+			precision: None,
+			flags: None,
+			format_type: None,
+		};
+		assert!(template_spec(good).is_ok());
+		for spec in [
+			hir::BuiltInFormatSpec {
+				width: core::num::NonZeroUsize::new(65536),
+				..good
+			},
+			hir::BuiltInFormatSpec {
+				precision: Some(65536),
+				..good
+			},
+			hir::BuiltInFormatSpec {
+				flags: Some(crate::runtime::format::Flags::from(16)),
+				..good
+			},
+		] {
+			assert!(template_spec(spec).is_err());
 		}
 	}
 }

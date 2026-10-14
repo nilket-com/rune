@@ -76,18 +76,18 @@ pub struct FormatSpec {
 
 /// How a value is padded out to the width it was written with.
 #[derive(Clone, Copy)]
-struct Padding {
-	align: Alignment,
-	fill: char,
+pub(crate) struct Padding {
+	pub(crate) align: Alignment,
+	pub(crate) fill: char,
 	/// The sign written in front of the digits, which is written apart from
 	/// them so that zero padding can go between the two.
-	sign: Option<char>,
+	pub(crate) sign: Option<char>,
 	/// Whether the padding is what the value is written in rather than what it
 	/// is surrounded by, which is what zero padding is.
 	///
 	/// It is only ever asked for by a number: the flag which asks for it is
 	/// ignored for everything else, which pads the way it was told to.
-	zero: bool,
+	pub(crate) zero: bool,
 }
 
 impl FormatSpec {
@@ -111,7 +111,7 @@ impl FormatSpec {
 	}
 
 	/// The padding a value which is not a number is written with.
-	fn padding(&self) -> Padding {
+	pub(crate) fn padding(&self) -> Padding {
 		Padding {
 			align: self.align,
 			fill: self.fill,
@@ -131,7 +131,7 @@ impl FormatSpec {
 	}
 
 	/// get traits out of a floating point number.
-	fn float_traits(&self, n: f64) -> (f64, Padding) {
+	pub(crate) fn float_traits(&self, n: f64) -> (f64, Padding) {
 		if self.flags.test(Flag::SignAwareZeroPad) {
 			if n.is_sign_negative() {
 				(-n, self.zero_padding(Some('-')))
@@ -165,7 +165,7 @@ impl FormatSpec {
 	}
 
 	/// get traits out of an unsigned integer.
-	fn uint_traits(&self, n: u64) -> (u64, Padding) {
+	pub(crate) fn uint_traits(&self, n: u64) -> (u64, Padding) {
 		if self.flags.test(Flag::SignAwareZeroPad) {
 			(n, self.zero_padding(self.zero_pad_sign()))
 		} else if self.flags.test(Flag::SignPlus) {
@@ -186,7 +186,7 @@ impl FormatSpec {
 	/// The sign is written separately from the digits, so the magnitude is
 	/// returned rather than the number itself. It is taken as an unsigned
 	/// number because the magnitude of the smallest signed number is not one.
-	fn int_traits(&self, n: i64) -> (u64, Padding) {
+	pub(crate) fn int_traits(&self, n: i64) -> (u64, Padding) {
 		let magnitude = n.unsigned_abs();
 
 		if self.flags.test(Flag::SignAwareZeroPad) {
@@ -217,36 +217,57 @@ impl FormatSpec {
 	}
 
 	/// Format the given unsigned number.
-	fn format_unsigned(&self, buf: &mut String, n: u64) -> alloc::Result<()> {
+	pub(crate) fn format_unsigned<W: TryWrite + ?Sized>(
+		&self,
+		buf: &mut W,
+		n: u64,
+	) -> alloc::Result<()> {
 		let mut buffer = itoa::Buffer::new();
-		buf.try_push_str(buffer.format(n))?;
+		buf.try_write_str(buffer.format(n))?;
 		Ok(())
 	}
 
 	/// Write a string, which the precision cuts short.
-	fn format_str(&self, buf: &mut String, s: &str) -> alloc::Result<()> {
+	pub(crate) fn format_str<W: TryWrite + ?Sized>(
+		&self,
+		buf: &mut W,
+		s: &str,
+	) -> alloc::Result<()> {
 		let Some(precision) = self.precision else {
-			buf.try_push_str(s)?;
+			buf.try_write_str(s)?;
 			return Ok(());
 		};
 
 		for c in s.chars().take(precision) {
-			buf.try_push(c)?;
+			buf.try_write_char(c)?;
 		}
 
 		Ok(())
 	}
 
 	/// Format the given float.
-	fn format_float(&self, buf: &mut String, n: f64) -> alloc::Result<()> {
+	pub(crate) fn format_float<W: TryWrite + ?Sized>(
+		&self,
+		buf: &mut W,
+		n: f64,
+	) -> alloc::Result<()> {
 		if let Some(precision) = self.precision {
 			write!(buf, "{:.*}", precision, n)?;
 		} else {
 			let mut buffer = ryu::Buffer::new();
-			buf.try_push_str(buffer.format(n))?;
+			buf.try_write_str(buffer.format(n))?;
 		}
 
 		Ok(())
+	}
+
+	pub(crate) fn padding_width(&self, chars: usize, prefix: usize, sign: Option<char>) -> usize {
+		self.width
+			.map(|n| n.get())
+			.unwrap_or_default()
+			.saturating_sub(chars)
+			.saturating_sub(prefix)
+			.saturating_sub(sign.map_or(0, |_| 1))
 	}
 
 	/// Format fill.
@@ -276,12 +297,7 @@ impl FormatSpec {
 
 		let (f, buf) = f.parts_mut();
 
-		let mut w = self.width.map(|n| n.get()).unwrap_or_default();
-
-		w = w
-			.saturating_sub(buf.chars().count())
-			.saturating_sub(prefix.chars().count())
-			.saturating_sub(sign.map(|_| 1).unwrap_or_default());
+		let w = self.padding_width(buf.chars().count(), prefix.chars().count(), sign);
 
 		let head = |f: &mut dyn TryWrite| {
 			if let Some(sign) = sign {

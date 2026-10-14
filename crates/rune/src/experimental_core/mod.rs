@@ -11,6 +11,12 @@
 //! `println!` is admitted only when the context's `::std::io::println` is the std stdio
 //! builtin; capture, disable, custom or absent printers are refused at compile time.
 //!
+//! Constant Display and Debug template specifications admit fill, alignment,
+//! signs, zero padding, width and precision up to 65,535. Radix and pointer
+//! specifications, and dynamic precision, remain compile-time refusals.
+//! Width counts Unicode characters; formatting limits count UTF-8 bytes.
+//! The executor's formatting limits still apply before any formatted output.
+//!
 //! # Declared differences from the stock VM
 //!
 //! - `&&` and `||` require `bool` operands; a non-`bool` operand is a
@@ -18,6 +24,10 @@
 //! - Object debug text lists fields in insertion order.
 //! - Run-time error classes ([`error::ErrorKind`](crate::experimental_core::error::ErrorKind)) are coarser than the stock error
 //!   kinds.
+//!
+//! Template errors retain the source invocation's location rather than the
+//! stock compiler's generated-template prefix span. Direct Debug rendering
+//! reports a moved-value error without a native-handler argument wrapper.
 //!
 //! `println!` follows Rust stdout buffering without a cumulative output cap or
 //! explicit flush (see [`execute`](crate::experimental_core::execute)).
@@ -75,3 +85,5 @@ pub(crate) mod region;
 
 #[cfg(test)]
 mod tests;
+
+mod format_spec;
