@@ -158,6 +158,73 @@ fn rollback_cleanup_error_reaches_invocation_without_masking_original() {
 	s.release(a).unwrap();
 	s.release(bad).unwrap();
 	assert_eq!(s.live_entries(), 0);
+
+	// A successful entry can still fail retaining a callee's second argument.
+	// This reaches invoke_args' step-local setup_cleanup_error assignment.
+	let mut builder = Builder::default();
+	let mut caller = Function::new(3, 2).unwrap();
+	let (args_start, args_len) = caller.arguments(&[0, 1]).unwrap();
+	let site = Location {
+		start: 44,
+		end: 45,
+		..Location::default()
+	};
+	caller
+		.push(
+			Op::Call {
+				out: 2,
+				function: 1,
+				args_start,
+				args_len,
+			},
+			site,
+		)
+		.unwrap();
+	caller
+		.push(Op::Return { value: 2 }, Location::default())
+		.unwrap();
+	let mut callee = Function::new(2, 2).unwrap();
+	callee
+		.push(Op::Return { value: 0 }, Location::default())
+		.unwrap();
+	builder.push(caller).unwrap();
+	builder.push(callee).unwrap();
+	let code = builder.finish().unwrap();
+	let mut s = store();
+	let good = s.string("good").unwrap();
+	let bad = s.string("bad").unwrap();
+	let bytes = s.payload_bytes();
+	// Entry increments MAX-1 to MAX; only the callee's retain must fail.
+	s.test_set_strong(bad, u32::MAX - 1);
+	let mut e = Executor::new().unwrap();
+	let secondary = Error::new(ErrorKind::AccessConflict, "callee rollback injection");
+	e.rollback_error = Some(secondary);
+	let failure = e
+		.invoke_args_for_test(&code, &mut s, 0, Args::Values(&[good, bad]), 100)
+		.unwrap_err();
+	assert_eq!(failure.error.kind, ErrorKind::Overflow);
+	assert_eq!(failure.error.location, Some(site));
+	assert_eq!(failure.cleanup_error, Some(secondary));
+	assert!(failure.call_chain.is_empty()); // Failed callee was never published.
+	assert!(e.rollback_error.is_none());
+	assert!(e.is_idle());
+	assert_eq!(s.test_strong(good), 1);
+	assert_eq!(s.test_strong(bad), u32::MAX - 1);
+	assert_eq!(s.text(good).unwrap(), "good");
+	assert_eq!(s.text(bad).unwrap(), "bad");
+	assert_eq!((s.live_entries(), s.payload_bytes()), (2, bytes));
+	// The same code and executor are reusable after restoring the injected count.
+	s.test_set_strong(bad, 1);
+	let result = e
+		.invoke_args_for_test(&code, &mut s, 0, Args::Values(&[good, bad]), 100)
+		.unwrap();
+	assert_eq!(result, good);
+	s.release(result).unwrap();
+	assert!(e.is_idle());
+	assert_eq!((s.test_strong(good), s.test_strong(bad)), (1, 1));
+	s.release(good).unwrap();
+	s.release(bad).unwrap();
+	assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
 }
 
 #[test]
