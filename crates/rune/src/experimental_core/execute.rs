@@ -1978,3 +1978,6 @@ mod field_tests;
 
 #[cfg(test)]
 mod assertion_tests;
+
+#[cfg(test)]
+mod d1c_controls;
