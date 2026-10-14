@@ -8,6 +8,8 @@
 //! nothing for the others. Bare locals are read in place where the reference's
 //! `writes_nothing` rule allows; nothing here moves a user local.
 
+mod patterns;
+
 use super::arithmetic::{Binary, Unary};
 use super::code::{CloneMode, CompileTransaction, Function, Op};
 use super::error::{Error, ErrorKind, Location, Refusal, Result};
@@ -540,6 +542,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			E::Binary(binary) if binary.op.is_assign() => self.compound_assign(binary, span),
 			E::Block(block) => self.block(block, Mode::Discard),
 			E::If(conditional) => self.conditional(conditional, None, span),
+			E::Match(hir) => self.pattern_match(hir, None, span),
 			E::Loop(loop_) => self.loop_(loop_, None, span),
 			E::For(for_) => self.for_(for_, None, span),
 			E::Call(call) => {
@@ -783,10 +786,17 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 	fn conditional(
 		&mut self,
-		conditional: &hir::Conditional<'_>,
+		conditional: &hir::Conditional<'hir>,
 		out: Option<u32>,
 		span: Span,
 	) -> Result<()> {
+		if conditional
+			.branches
+			.iter()
+			.any(|branch| matches!(branch.condition, hir::Condition::ExprLet(_)))
+		{
+			return self.pattern_conditional(conditional, out, span);
+		}
 		let mut ends = Vec::new();
 
 		// Condition temporaries stay allocated until the whole conditional ends,
@@ -829,7 +839,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		self.pop_to(mark, span)
 	}
 
-	fn loop_(&mut self, loop_: &hir::ExprLoop<'_>, out: Option<u32>, span: Span) -> Result<()> {
+	fn loop_(&mut self, loop_: &hir::ExprLoop<'hir>, out: Option<u32>, span: Span) -> Result<()> {
+		if matches!(loop_.condition, Some(hir::Condition::ExprLet(_))) {
+			return self.pattern_loop(loop_, out, span);
+		}
 		if let Some(out) = out {
 			// A loop that ends without `break value` is unit.
 			self.unit_into(out, span)?;
@@ -991,7 +1004,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 			E::Call(call) => self.call(call, out, span),
 			E::If(conditional) => self.conditional(conditional, Some(out), span),
-			E::Match(_) => Err(self.refused(span, Refusal::Match)),
+			E::Match(hir) => self.pattern_match(hir, Some(out), span),
 			E::AsyncBlock(_) => Err(self.refused(span, Refusal::AsyncBlock)),
 			E::Yield(_) => Err(self.refused(span, Refusal::Yield)),
 			E::Await(_) => Err(self.refused(span, Refusal::Await)),

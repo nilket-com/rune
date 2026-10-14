@@ -304,8 +304,10 @@ fn cases() -> Vec<Case> {
 }
 
 pub(super) fn observe_patterns(path: &Path, mode: &str, engine: &str) -> Observation {
-	assert_eq!(engine, "stock", "fresh C3 admission is not implemented");
-	let fuel = if let Some(fuel) = mode.strip_prefix("c3-fuel-") {
+	assert!(matches!(engine, "stock" | "fresh"));
+	let fuel = if engine == "fresh" {
+		FUEL // Frozen stock budgets are not fresh budgets.
+	} else if let Some(fuel) = mode.strip_prefix("c3-fuel-") {
 		fuel.parse::<usize>().unwrap()
 	} else {
 		FUEL
@@ -541,4 +543,232 @@ fn supplement2_cases() -> Vec<Case> {
 #[ignore = "C3 exact six-row alias/access supplement; peer GO required, new GAP_OUT"]
 fn stock_supplement2_probe() {
 	probe(supplement2_cases(), 6);
+}
+
+#[test]
+#[ignore = "C3 development inventory only: source reviewed before final fresh contract"]
+fn fresh_inventory() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).unwrap();
+	let scratch = Scratch(
+		std::env::temp_dir().join(format!("rune-c3-fresh-inventory-{}", std::process::id())),
+	);
+	fs::create_dir(&scratch.0).unwrap();
+	let mut generated = cases();
+	generated.extend(supplement_cases());
+	generated.extend(supplement2_cases());
+	let frozen: Vec<_> = include_str!("../patterns_stock.tsv")
+		.lines()
+		.skip(1)
+		.collect();
+	assert_eq!(generated.len(), 348);
+	assert_eq!(frozen.len(), 348);
+	let mut report =
+		String::from("case\tverdict\tstock_hex\tfresh_hex\tstock_site_hex\tfresh_site_hex\n");
+	let mut counts = BTreeMap::new();
+	for (n, (case, line)) in generated.iter().zip(&frozen).enumerate() {
+		if case.label.starts_with("fuel/") {
+			continue;
+		} // Numeric budgets are NOT parity.
+		let row: Vec<_> = line.split('\t').collect();
+		assert_eq!(row[0], case.label);
+		assert_eq!(row[2], hex(case.source.as_bytes()));
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, &case.source).unwrap();
+		let previous = scratch.0.join("result.site");
+		if previous.exists() {
+			fs::remove_file(previous).unwrap();
+		}
+		let run = launch(&path, &path, &case.mode, "fresh", &scratch.0, &out, &id);
+		assert!(run.complete, "{}: {}", case.label, run.record);
+		let fresh: Vec<_> = run.record.split('\t').collect();
+		let stock = unhex(row[3]);
+		let stock: Vec<_> = stock.split('\t').collect();
+		let site = if fresh[0] == "error" {
+			fs::read(scratch.0.join("result.site")).unwrap()
+		} else {
+			Vec::new()
+		};
+		fs::write(out.join(format!("{id}.fresh.site")), &site).unwrap();
+		let verdict = if fresh[0] == "refused" {
+			"refused"
+		} else if fresh[..2] == stock[..2]
+			&& fresh[3..] == stock[3..]
+			&& hex(&run.stdout) == row[4]
+			&& hex(&run.stderr) == row[5]
+			&& hex(&site) == row[6]
+		{
+			"equal"
+		} else {
+			"divergence"
+		};
+		*counts.entry(verdict).or_insert(0usize) += 1;
+		report.push_str(&format!(
+			"{}\t{verdict}\t{}\t{}\t{}\t{}\n",
+			case.label,
+			row[3],
+			hex(run.record.as_bytes()),
+			row[6],
+			hex(&site)
+		));
+		fs::write(out.join("inventory.tsv"), &report).unwrap();
+	}
+	fs::write(
+		out.join("summary.txt"),
+		format!("{counts:?};63 stock-only fuel rows skipped (fresh invariants separate)\n"),
+	)
+	.unwrap();
+}
+
+fn expected_fresh_refusal(label: &str) -> Option<&'static str> {
+	if (label.starts_with("struct/") && (label.ends_with("/p") || label.ends_with("/q")))
+		|| label == "paths/constant-tuple"
+	{
+		Some("Some(FrontendDiagnostic)")
+	} else if label.starts_with("let/") || label.starts_with("supplement/struct-let/") {
+		Some("Some(Pattern)")
+	} else if label.starts_with("access/option/") || label == "life/W1-parent-move" {
+		Some("Some(Method)")
+	} else if label == "deferred/bytes" {
+		Some("Some(ByteStr)")
+	} else if label.starts_with("deferred/")
+		|| label.starts_with("flow/mixed-")
+		|| matches!(label, "paths/enum" | "paths/tuple-struct")
+	{
+		Some("Some(Match)")
+	} else {
+		None
+	}
+}
+
+#[test]
+#[ignore = "C3 exact fresh contract plus declared refusals; new GAP_OUT; stock budgets never reused"]
+fn fresh_contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).unwrap();
+	let scratch = Scratch(
+		std::env::temp_dir().join(format!("rune-c3-fresh-contract-{}", std::process::id())),
+	);
+	fs::create_dir(&scratch.0).unwrap();
+	let mut generated = cases();
+	generated.extend(supplement_cases());
+	generated.extend(supplement2_cases());
+	let frozen: Vec<_> = include_str!("../patterns_stock.tsv")
+		.lines()
+		.skip(1)
+		.collect();
+	assert_eq!(generated.len(), 348);
+	assert_eq!(frozen.len(), 348);
+	let mut equal = 0;
+	let mut refused = 0;
+	let mut full_budget = 0;
+	for (n, (case, line)) in generated.iter().zip(&frozen).enumerate() {
+		let row: Vec<_> = line.split('\t').collect();
+		assert_eq!(row[0], case.label);
+		assert_eq!(row[1], case.mode);
+		assert_eq!(row[2], hex(case.source.as_bytes()));
+		assert_eq!(row[8], "Exact");
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, &case.source).unwrap();
+		let old = scratch.0.join("result.site");
+		if old.exists() {
+			fs::remove_file(old).unwrap();
+		}
+		let run = launch(&path, &path, &case.mode, "fresh", &scratch.0, &out, &id);
+		assert!(run.complete, "{}: {}", case.label, run.record);
+		let actual: Vec<_> = run.record.split('\t').collect();
+		assert_eq!(actual.len(), 5);
+		if let Some(class) = expected_fresh_refusal(&case.label) {
+			assert_eq!(
+				(&actual[0], &actual[1]),
+				(&"refused", &class),
+				"C3 refusal {}",
+				case.label
+			);
+			assert_eq!(run.stdout, b"\nrunning 1 test\n");
+			assert!(run.stderr.is_empty());
+			refused += 1;
+			continue;
+		}
+		if case.label.starts_with("fuel/") {
+			// This checks the same SOURCE at full fresh fuel. Exact fresh frontiers
+			// are covered separately; the stock N is intentionally ignored here.
+			let family = case.label.split('/').nth(1).unwrap();
+			let (value, stdout) = match family {
+				"tests" => ("i64:3:3", b"\nrunning 1 test\nscrutinee\narm\n".as_slice()),
+				"guards" => ("i64:7:7", b"\nrunning 1 test\nfirst\nsecond\n".as_slice()),
+				"loop" => ("i64:7:7", b"\nrunning 1 test\nbody\n".as_slice()),
+				_ => panic!("unknown stock fuel source"),
+			};
+			assert_eq!(actual[0], "value");
+			assert_eq!(unhex(actual[4]), value);
+			assert_eq!(run.stdout, stdout);
+			assert!(run.stderr.is_empty());
+			full_budget += 1;
+			continue;
+		}
+		let expected = unhex(row[3]);
+		let expected: Vec<_> = expected.split('\t').collect();
+		assert_eq!(actual[..2], expected[..2], "C3 class {}", case.label);
+		assert_eq!(
+			actual[3..],
+			expected[3..],
+			"C3 exact message/value {}",
+			case.label
+		);
+		assert_eq!(hex(&run.stdout), row[4], "C3 stdout {}", case.label);
+		assert_eq!(hex(&run.stderr), row[5], "C3 stderr {}", case.label);
+		let site = if actual[0] == "error" {
+			fs::read(scratch.0.join("result.site")).unwrap()
+		} else {
+			Vec::new()
+		};
+		fs::write(out.join(format!("{id}.fresh.site")), &site).unwrap();
+		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
+		equal += 1;
+	}
+	assert_eq!((equal, refused, full_budget), (248, 37, 63));
+	fs::write(out.join("summary.txt"),"248 exact stock parity;37 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
+	contract_completed("fresh", 348);
+}
+
+#[test]
+#[ignore = "C3 2MiB compile-stack depth boundary; isolated bounded children, new GAP_OUT"]
+fn pattern_depth_contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
+	fs::create_dir(&out).unwrap();
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-c3-depth-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let mut summary = String::new();
+	for depth in [32, 64, 120, 126, 127, 128] {
+		let mut pattern = String::from("_");
+		for _ in 0..depth {
+			pattern = format!("({pattern},)");
+		}
+		let source = format!("pub fn main(){{let a=0;match a{{{pattern}=>11,_=>22}}}}");
+		let id = format!("depth-{depth}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, &source).unwrap();
+		let run = launch(&path, &path, "stack-main", "fresh", &scratch.0, &out, &id);
+		assert!(run.complete, "{id}: {}", run.record);
+		let fields: Vec<_> = run.record.split('\t').collect();
+		if depth <= 126 {
+			assert_eq!(fields[0], "value", "{id}: {}", run.record);
+			assert_eq!(unhex(fields[4]), "i64:22:22");
+		} else {
+			assert_eq!(fields[0], "refused", "{id}: {}", run.record);
+			assert!(
+				fields[1] == "Some(DepthLimit)"
+					|| (fields[1] == "Some(FrontendDiagnostic)"
+						&& unhex(fields[3]).contains("MaxItemDepth { max: 128 }")),
+				"{id}: {}",
+				run.record
+			);
+		}
+		summary.push_str(&format!("{depth}\t{}\t{}\n", fields[0], fields[1]));
+	}
+	fs::write(out.join("summary.tsv"), summary).unwrap();
 }

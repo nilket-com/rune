@@ -50,6 +50,7 @@ mod gap_hunt;
 mod io_policy;
 mod lowering_shape;
 mod macro_certification;
+mod patterns_safety;
 mod predecode;
 mod semantics;
 mod store_integrity;

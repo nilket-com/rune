@@ -280,7 +280,10 @@ fn observe_with_context(
 	if mode == "compile" {
 		return Observation::new("compiled", "", "", String::new(), String::new());
 	}
-	let entry = mode.strip_prefix("test:").unwrap_or("main");
+	let entry = mode
+		.strip_prefix("test:")
+		.or_else(|| mode.strip_prefix("patterns-test:"))
+		.unwrap_or("main");
 	let Some(main) = program.function(entry_hash(entry)) else {
 		return Observation::new(
 			"entry-gap",
@@ -305,7 +308,7 @@ fn observe_with_context(
 	for input in inputs {
 		store.root_release(input).unwrap();
 	}
-	match result {
+	let observed = match result {
 		Ok(value) => {
 			let observed = match store.root_format(&value, true) {
 				Ok(text) => Observation::new(
@@ -328,10 +331,13 @@ fn observe_with_context(
 			observed
 		}
 		Err(f) => {
-			if mode.starts_with("assert-main") || mode == "output-main" {
+			if mode.starts_with("assert-main")
+				|| mode == "output-main"
+				|| mode.starts_with("patterns-")
+			{
 				let site = match f.error.location {
 					Some(at) => format!("{}:{}:{}", at.source, at.start, at.end),
-					None if mode == "output-main" => "none".into(),
+					None if mode == "output-main" || mode.starts_with("patterns-") => "none".into(),
 					None => panic!("fresh error location"),
 				};
 				let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
@@ -345,7 +351,13 @@ fn observe_with_context(
 				String::new(),
 			)
 		}
+	};
+	if mode.starts_with("patterns-") {
+		assert!(executor.is_idle());
+		assert_eq!(store.live_entries(), 0, "pattern store balance");
+		assert_eq!(store.payload_bytes(), 0, "pattern payload balance");
 	}
+	observed
 }
 
 #[test]

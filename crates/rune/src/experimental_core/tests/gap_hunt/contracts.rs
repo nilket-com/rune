@@ -110,6 +110,12 @@ fn all_frozen_contracts() {
 			178,
 		),
 		PATTERNS_STOCK,
+		(
+			"patterns-fresh",
+			"gap_hunt::patterns::fresh_contract",
+			"fresh",
+			348,
+		),
 		("s0", "gap_hunt::corpus", "both", 639),
 		(
 			"output-both",
