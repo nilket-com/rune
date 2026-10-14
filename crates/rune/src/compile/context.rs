@@ -325,6 +325,8 @@ pub struct Context {
 	/// Fresh core: this module/context certifies String::from.
 	#[cfg(feature = "fresh-core")]
 	fresh_string_from: bool,
+	#[cfg(feature = "fresh-core")]
+	fresh_numeric: crate::function::fresh_numeric::State,
 	/// Handlers for realising traits.
 	traits: hash::Map<Option<TraitHandler>>,
 	/// Registered native attribute macro handlers.
@@ -458,6 +460,43 @@ impl Context {
 			}
 		}
 
+		#[cfg(feature = "fresh-core")]
+		let numeric_pending = {
+			use crate::function::fresh_numeric::{Method, Pair};
+			let mut methods = 0u8;
+			let mut pairs = 0u8;
+			for assoc in &module.associated {
+				let effective = assoc
+					.name
+					.kind
+					.hash(assoc.container)
+					.with_function_parameters(assoc.name.function_parameters);
+				for m in [Method::Abs, Method::Round, Method::Powf] {
+					if matches!(&assoc.name.kind,meta::AssociatedKind::Instance(n) if n.as_ref()==m.name())
+						|| effective
+							== Hash::associated_function(
+								assoc.container,
+								self.fresh_numeric.name_hash(m),
+							) {
+						methods |= m.bit();
+					}
+				}
+				for p in Pair::ALL {
+					if effective == p.associated() {
+						pairs |= p.bit();
+					}
+				}
+			}
+			for item in &module.items {
+				for p in Pair::ALL {
+					if item.hash == p.item() || item.hash == p.associated() {
+						pairs |= p.bit();
+						methods |= p.method().bit();
+					}
+				}
+			}
+			self.fresh_numeric.begin_module(methods, pairs)
+		};
 		if let Some(ComponentRef::Crate(name)) = module.item.first() {
 			self.crates.try_insert(name.try_into()?)?;
 		}
@@ -527,6 +566,17 @@ impl Context {
 		tracing::trace!(associated = module.associated.len(), "associated");
 		for assoc in &module.associated {
 			self.install_associated(assoc)?;
+			#[cfg(feature = "fresh-core")]
+			for pair in crate::function::fresh_numeric::Pair::ALL {
+				if module.fresh_numeric & pair.bit() != 0
+					&& assoc.container == pair.receiver()
+					&& assoc.name.function_parameters == Hash::EMPTY
+					&& matches!(&assoc.name.kind, meta::AssociatedKind::Instance(n) if n.as_ref()==pair.method().name())
+					&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_))
+				{
+					self.fresh_numeric.certify(pair);
+				}
+			}
 			// String::from is registered as a named type item even with `free`.
 			// install_associated inserts its static item hash and associated hash
 			// before returning; a conflict on either leaves it uncertified.
@@ -559,6 +609,7 @@ impl Context {
 		#[cfg(feature = "fresh-core")]
 		{
 			self.fresh_hosts = prepared_hosts;
+			self.fresh_numeric.finish_module(numeric_pending);
 		}
 		Ok(())
 	}
@@ -746,6 +797,17 @@ impl Context {
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::string::String::from)))
+	}
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_numeric_method(
+		&self,
+		method: crate::function::fresh_numeric::Method,
+	) -> bool {
+		self.fresh_numeric.method(method)
+	}
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_numeric_direct(&self, pair: crate::function::fresh_numeric::Pair) -> bool {
+		self.fresh_numeric.direct(pair)
 	}
 
 	/// Lookup the given macro handler.
@@ -1275,6 +1337,37 @@ impl Context {
 	}
 
 	fn install_associated(&mut self, assoc: &ModuleAssociated) -> Result<(), ContextError> {
+		#[cfg(feature = "fresh-core")]
+		let numeric = {
+			use crate::function::fresh_numeric::{Method, Pair};
+			let effective = assoc
+				.name
+				.kind
+				.hash(assoc.container)
+				.with_function_parameters(assoc.name.function_parameters);
+			let selected = match &assoc.name.kind {
+				meta::AssociatedKind::Instance(name) => Method::from_name(name),
+				_ => [Method::Abs, Method::Round, Method::Powf]
+					.into_iter()
+					.find(|m| {
+						effective
+							== Hash::associated_function(
+								assoc.container,
+								self.fresh_numeric.name_hash(*m),
+							)
+					}),
+			};
+			selected.map(|method| {
+				let previous = self.fresh_numeric.begin(method);
+				let pair = Pair::ALL
+					.into_iter()
+					.find(|p| p.receiver() == assoc.container && p.method() == method);
+				let valid = assoc.name.function_parameters == Hash::EMPTY
+					&& matches!(&assoc.name.kind, meta::AssociatedKind::Instance(_))
+					&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_));
+				(pair.filter(|_| valid), previous)
+			})
+		};
 		let Some(info) = self.types.get(&assoc.container).try_cloned()? else {
 			return Err(ContextError::MissingContainer {
 				container: assoc.container_type_info.try_clone()?,
@@ -1365,6 +1458,10 @@ impl Context {
 			docs: assoc.common.docs.try_clone()?,
 		})?;
 
+		#[cfg(feature = "fresh-core")]
+		if let Some((Some(pair), previous)) = numeric {
+			self.fresh_numeric.installed(pair, previous);
+		}
 		Ok(())
 	}
 
@@ -1375,6 +1472,8 @@ impl Context {
 		handler: &FunctionHandler,
 		deprecation: Option<&str>,
 	) -> Result<(), ContextError> {
+		#[cfg(feature = "fresh-core")]
+		self.fresh_numeric.invalidate_hash(hash);
 		if self.functions.contains_key(&hash) {
 			return Err(ContextError::ConflictingFunction {
 				part: display.try_to_string()?.try_into()?,
@@ -1445,3 +1544,6 @@ fn fields_to_arguments(fields: &Fields) -> alloc::Result<Box<[meta::DocArgument]
 
 #[cfg(test)]
 static_assertions::assert_impl_all!(Context: Send, Sync);
+
+#[cfg(all(test, feature = "fresh-core"))]
+mod numeric_tests;

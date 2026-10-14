@@ -129,6 +129,17 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[cfg(target_os = "linux")]
 #[ignore = "C6 frozen stock replay; explicit unique GAP_OUT, bounded children"]
 fn stock_contract() {
+	run_contract("stock");
+}
+
+#[test]
+#[cfg(target_os = "linux")]
+#[ignore = "C6 bounded fresh replay; explicit unique GAP_OUT"]
+fn fresh_contract() {
+	run_contract("fresh");
+}
+
+fn run_contract(engine: &str) {
 	let frozen = include_str!("../../scalar_methods_stock.tsv");
 	let lines = frozen.lines().skip(1).collect::<Vec<_>>();
 	assert_eq!(lines.len(), COUNT);
@@ -173,6 +184,7 @@ fn stock_contract() {
 				"--quiet",
 			])
 			.env_clear()
+			.env("C6_ENGINE", engine)
 			.env("PATH", "/usr/bin:/bin")
 			.env("LANG", "C.UTF-8")
 			.env("TZ", "UTC")
@@ -223,19 +235,39 @@ fn stock_contract() {
 		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
 		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
 		let e: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		exact_keys(
-			e.as_object().unwrap(),
-			&[
-				"schema",
-				"index",
-				"label",
-				"mode",
-				"policy",
-				"source_hex",
-				"fuel",
-				"outcome",
-			],
-		);
+		if engine == "stock" {
+			exact_keys(
+				e.as_object().unwrap(),
+				&[
+					"schema",
+					"engine",
+					"index",
+					"label",
+					"mode",
+					"policy",
+					"source_hex",
+					"fuel",
+					"outcome",
+				],
+			);
+		} else {
+			exact_keys(
+				e.as_object().unwrap(),
+				&[
+					"schema",
+					"engine",
+					"index",
+					"label",
+					"mode",
+					"policy",
+					"source_hex",
+					"fuel",
+					"outcome",
+					"fresh_audit",
+				],
+			);
+		}
+		assert_eq!(e["engine"], engine);
 		assert_eq!(e["schema"], 1);
 		assert_eq!(e["index"], i);
 		assert_eq!(e["label"], *label);
@@ -243,28 +275,116 @@ fn stock_contract() {
 		assert_eq!(e["policy"], *policy);
 		assert_eq!(e["source_hex"], c[2]);
 		assert_eq!(e["fuel"], FUEL);
-		let got = project(source, &e["outcome"]);
 		let expected: Json = serde_json::from_str(&unhex(c[3])).unwrap();
-		fs::write(
-			folder.join("compared.json"),
-			serde_json::to_vec_pretty(&got).unwrap(),
-		)
-		.unwrap();
-		assert_eq!(got, expected, "case {label}");
+		let category = if engine == "stock" {
+			let got = project(source, &e["outcome"]);
+			fs::write(
+				folder.join("compared.json"),
+				serde_json::to_vec_pretty(&got).unwrap(),
+			)
+			.unwrap();
+			assert_eq!(got, expected, "stock {label}");
+			assert_eq!(hex(&stdout), c[4], "stdout {label}");
+			assert_eq!(hex(&stderr), c[5], "stderr {label}");
+			*policy
+		} else {
+			let audit = &e["fresh_audit"];
+			exact_keys(
+				audit.as_object().unwrap(),
+				&[
+					"no_cleanup_error",
+					"clean_after_row",
+					"reuse",
+					"live_entries",
+					"payload_bytes",
+					"idle",
+					"input_f64_bits",
+					"call_chain",
+					"invoked",
+				],
+			);
+			for k in ["no_cleanup_error", "clean_after_row", "reuse", "idle"] {
+				assert_eq!(audit[k], true, "audit {label} {k}");
+			}
+			assert_eq!(audit["live_entries"], 0);
+			assert_eq!(audit["payload_bytes"], 0);
+			assert_ne!(e["outcome"]["class"], "UNMAPPED");
+			let category = match *policy {
+				"Retained-arity" => {
+					assert_eq!(expected["class"], "ArgumentCount");
+					assert_eq!(e["outcome"]["status"], "refused");
+					assert_eq!(e["outcome"]["refusal"], "Some(Arity)");
+					assert_eq!(audit["invoked"], false);
+					assert!(audit["call_chain"].as_array().unwrap().is_empty());
+					assert_eq!(&stdout, b"\nrunning 1 test\n");
+					assert!(stderr.is_empty());
+					"Retained-arity"
+				}
+				"Refused-sibling" => {
+					assert_eq!(e["outcome"]["status"], "refused");
+					assert_eq!(e["outcome"]["refusal"], "Some(Method)");
+					assert_eq!(audit["invoked"], false);
+					assert!(audit["call_chain"].as_array().unwrap().is_empty());
+					assert_eq!(&stdout, b"\nrunning 1 test\n");
+					assert!(stderr.is_empty());
+					"Refused-sibling"
+				}
+				"Exact" => {
+					assert_eq!(audit["invoked"], true);
+					let got = project(source, &e["outcome"]);
+					fs::write(
+						folder.join("compared.json"),
+						serde_json::to_vec_pretty(&got).unwrap(),
+					)
+					.unwrap();
+					let category = if *label == "nested/call-error" {
+						assert!(retained_frame_matches(
+							source,
+							&expected,
+							&got,
+							&audit["call_chain"]
+						));
+						"Retained-frame"
+					} else {
+						assert_eq!(got, expected, "fresh {label}");
+						assert!(audit["call_chain"].as_array().unwrap().is_empty());
+						"Exact"
+					};
+					assert_eq!(hex(&stdout), c[4], "stdout {label}");
+					assert_eq!(hex(&stderr), c[5], "stderr {label}");
+					category
+				}
+				_ => panic!("unknown C6 policy"),
+			};
+			category
+		};
 		assert!(
 			!has_address(&String::from_utf8_lossy(&stdout))
 				&& !has_address(&String::from_utf8_lossy(&stderr))
 		);
-		assert_eq!(hex(&stdout), c[4], "stdout {label}");
-		assert_eq!(hex(&stderr), c[5], "stderr {label}");
-		*policies.entry(*policy).or_insert(0usize) += 1;
+		*policies.entry(category).or_insert(0usize) += 1;
 	}
-	assert_eq!(policies.get("Exact"), Some(&180));
-	assert_eq!(policies.get("Retained-arity"), Some(&11));
-	assert_eq!(policies.get("Refused-sibling"), Some(&8));
+	let expected = if engine == "stock" {
+		std::collections::BTreeMap::from([
+			("Exact", 180),
+			("Retained-arity", 11),
+			("Refused-sibling", 8),
+		])
+	} else {
+		std::collections::BTreeMap::from([
+			("Exact", 179),
+			("Retained-frame", 1),
+			("Retained-arity", 11),
+			("Refused-sibling", 8),
+		])
+	};
+	assert_eq!(policies, expected);
+	contract_completed(engine, COUNT);
 	fs::write(
 		out.join("COMPLETE"),
-		"C6 stock199 exact frozen replay;180/11/8\n",
+		format!("C6 {engine} {COUNT} rows complete\n"),
 	)
 	.unwrap();
 }
+
+include!("../scalar_methods/frame_policy.rs");

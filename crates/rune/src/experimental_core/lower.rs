@@ -1639,6 +1639,70 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	}
 
 	#[inline(never)]
+	fn call_numeric_method(
+		&mut self,
+		call: &hir::ExprCall<'_>,
+		target: hir::ExprId,
+		method: crate::function::fresh_numeric::Method,
+		out: u32,
+		span: Span,
+	) -> Result<()> {
+		if !self.context.fresh_numeric_method(method)
+			|| self.constants.fresh_numeric_script & method.bit() != 0
+		{
+			return Err(self.refused(span, Refusal::Method));
+		}
+		if call.args.len() + 1 != method.arity() as usize {
+			return Err(self.refused(span, Refusal::Arity));
+		}
+		let mut ids = Vec::try_with_capacity(call.args.len() + 1)?;
+		ids.try_push(target)?;
+		for id in call.args {
+			ids.try_push(*id)?;
+		}
+		let args = self.operands(&ids)?;
+		let (args_start, args_len) = self.function.arguments(&args)?;
+		self.emit(
+			Op::Call {
+				out,
+				function: crate::function::fresh_numeric::Call::method(method).id(),
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+		Ok(())
+	}
+
+	#[inline(never)]
+	fn call_numeric_direct(
+		&mut self,
+		call: &hir::ExprCall<'_>,
+		pair: crate::function::fresh_numeric::Pair,
+		out: u32,
+		span: Span,
+	) -> Result<()> {
+		if !self.context.fresh_numeric_direct(pair) {
+			return Err(self.refused(span, Refusal::Native));
+		}
+		if call.args.len() != pair.method().arity() as usize {
+			return Err(self.refused(span, Refusal::Arity));
+		}
+		let args = self.operands(call.args)?;
+		let (args_start, args_len) = self.function.arguments(&args)?;
+		self.emit(
+			Op::Call {
+				out,
+				function: crate::function::fresh_numeric::Call::direct(pair).id(),
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+		Ok(())
+	}
+
+	#[inline(never)]
 	fn call_non_variant(&mut self, call: &hir::ExprCall<'_>, out: u32, span: Span) -> Result<()> {
 		if let hir::Call::Var { name } = call.call {
 			// The callee token is read when the call executes, after the arguments.
@@ -1658,6 +1722,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		if let hir::Call::Associated { target, hash } = call.call {
+			if let Some(method) = crate::function::fresh_numeric::Method::from_hash(hash) {
+				return self.call_numeric_method(call, target, method, out, span);
+			}
 			if hash == Hash::ident("len") && call.args.is_empty() {
 				let value = self.operand(target)?;
 				self.emit(Op::Len { out, value }, span)?;
@@ -1692,6 +1759,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 		};
 
+		if let Some(pair) = crate::function::fresh_numeric::Pair::from_item(hash) {
+			return self.call_numeric_direct(call, pair, out, span);
+		}
 		if hash == Hash::type_hash(crate::item!(::std::string::String::from))
 			|| hash
 				== Hash::associated_function(

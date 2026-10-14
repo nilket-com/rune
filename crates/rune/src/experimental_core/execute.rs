@@ -603,6 +603,12 @@ impl Executor {
 			return self.host_call(code, store, function, base, out, id, args_start, args_len);
 		}
 		let certificate = code.intrinsic(id).ok_or_else(invalid)?;
+		if let Some(call) = crate::function::fresh_numeric::Call::from_id(id) {
+			if args_len != certificate.arity {
+				return Err(invalid());
+			}
+			return self.numeric_call(store, function, base, out, call, args_start, args_len);
+		}
 		if args_len != certificate.arity
 			|| !matches!(id, super::code::PRINT_RAW | super::code::VARIANT_SUCCESS)
 		{
@@ -2203,3 +2209,11 @@ mod print_intrinsic_tests;
 mod variant_intrinsic_tests;
 
 mod host_bridge;
+
+mod numeric;
+
+#[cfg(test)]
+mod numeric_tests;
+
+#[cfg(test)]
+mod numeric_frontier_tests;

@@ -57,6 +57,9 @@ const MAX_ITEM_RECURSION: usize = 8;
 pub(crate) struct QueryInner<'arena> {
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_mode: bool,
+	/// Monotonic script-associated numeric-name collision mask, set while indexing.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_numeric_script: u8,
 	/// Scratch space for parsing numbers.
 	pub(crate) scratch: RefCell<String>,
 	/// How deeply the item being built depends on other items which have to be

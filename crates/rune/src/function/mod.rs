@@ -332,3 +332,6 @@ repeat_macro!(impl_instance_function_traits);
 
 #[cfg(feature = "fresh-core")]
 pub mod fresh_host;
+
+#[cfg(feature = "fresh-core")]
+pub(crate) mod fresh_numeric;

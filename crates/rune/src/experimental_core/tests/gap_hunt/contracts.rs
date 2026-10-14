@@ -140,6 +140,30 @@ fn all_frozen_contracts() {
 			"fresh",
 			266,
 		),
+		(
+			"scalar-methods-stock",
+			"gap_hunt::scalar_methods::stock_contract",
+			"stock",
+			199,
+		),
+		(
+			"scalar-methods-fresh",
+			"gap_hunt::scalar_methods::fresh_contract",
+			"fresh",
+			199,
+		),
+		(
+			"scalar-supplement-stock",
+			"gap_hunt::scalar_methods_supplement::stock_contract",
+			"stock",
+			7,
+		),
+		(
+			"scalar-supplement-fresh",
+			"gap_hunt::scalar_methods_supplement::fresh_contract",
+			"fresh",
+			7,
+		),
 		("s0", "gap_hunt::corpus", "both", 639),
 		(
 			"output-both",

@@ -169,6 +169,10 @@ pub fn module() -> Result<Module, ContextError> {
 		m.function_meta(sin)?;
 		m.function_meta(sqrt)?;
 		m.function_meta(tan)?;
+		#[cfg(feature = "fresh-core")]
+		{
+			m.fresh_numeric = 0b0111;
+		}
 	}
 	m.function_meta(to_integer)?;
 	m.function_meta(to_degrees)?;

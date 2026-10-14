@@ -289,3 +289,6 @@ pub fn compile(
 	program.sources = retained;
 	Ok(program)
 }
+
+#[cfg(test)]
+mod numeric_script_tests;

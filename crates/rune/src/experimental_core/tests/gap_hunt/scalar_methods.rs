@@ -88,12 +88,27 @@ fn child() {
 	let index: usize = std::env::var("C6_CASE").unwrap().parse().unwrap();
 	assert_eq!(CASES.len(), COUNT);
 	let (label, source, mode, policy) = CASES[index];
-	let observation = observe_stock(source, mode);
+	let engine = std::env::var("C6_ENGINE").unwrap_or_else(|_| "stock".into());
+	let (observation, audit) = match engine.as_str() {
+		"stock" => (observe_stock(source, mode), None),
+		"fresh" => {
+			let (o, a) = observe_fresh(source, mode);
+			(o, Some(a))
+		}
+		_ => panic!("unknown C6 engine"),
+	};
 	let output = std::env::var_os("C6_RESULT").unwrap();
-	fs::write(output, serde_json::to_vec_pretty(&json!({"schema":1,"index":index,"label":label,"mode":mode,"policy":policy,"source_hex":hex(source.as_bytes()),"fuel":FUEL,"outcome":observation})).unwrap()).unwrap();
+	let mut envelope = json!({"schema":1,"engine":engine,"index":index,"label":label,"mode":mode,"policy":policy,"source_hex":hex(source.as_bytes()),"fuel":FUEL,"outcome":observation});
+	if let Some(audit) = audit {
+		envelope["fresh_audit"] = audit;
+	}
+	// Preserve complete raw result before any policy is consulted.
+	fs::write(output, serde_json::to_vec_pretty(&envelope).unwrap()).unwrap();
 	std::io::stdout().flush().unwrap();
 	std::io::stderr().flush().unwrap();
 	std::process::exit(0);
 }
 
 include!("scalar_methods/contract.rs");
+
+include!("scalar_methods/observe_fresh.rs");

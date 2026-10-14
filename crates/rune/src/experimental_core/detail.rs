@@ -266,8 +266,38 @@ pub enum Detail {
 		cause: HostCause,
 		arg: Option<u8>,
 	},
+	/// Typed scalar builtin conversion context. Allocates only through diagnostics, never success.
+	NumericArgumentType {
+		cause: HostCause,
+		arg: u8,
+		expected: TypeName,
+		found: TypeName,
+	},
+	NumericArgumentNumber {
+		cause: HostCause,
+		arg: u8,
+		found: TypeName,
+	},
+	NumericArgumentCoerce {
+		cause: HostCause,
+		arg: u8,
+		value: IntValue,
+		to: IntTarget,
+	},
 	/// A Rust unwind contained at the synchronous host boundary.
 	HostPanicked,
+}
+
+impl Detail {
+	/// Argument index retained by a scalar builtin's typed conversion failure.
+	pub fn numeric_argument(self) -> Option<(HostCause, u8)> {
+		match self {
+			Self::NumericArgumentType { cause, arg, .. }
+			| Self::NumericArgumentNumber { cause, arg, .. }
+			| Self::NumericArgumentCoerce { cause, arg, .. } => Some((cause, arg)),
+			_ => None,
+		}
+	}
 }
 
 use super::{
@@ -521,6 +551,11 @@ impl fmt::Display for Message<'_> {
 			ExpectedBool { found } => messages::expected_type(f, TypeName::Bool, found),
 			ValueDepth => f.write_str("Value is nested too deeply to walk, limit is 64"),
 			ExpectedType { expected, found } => messages::expected_type(f, expected, found),
+			NumericArgumentType {
+				expected, found, ..
+			} => messages::expected_type(f, expected, found),
+			NumericArgumentNumber { found, .. } => messages::expected_number(f, found),
+			NumericArgumentCoerce { value, to, .. } => messages::coerce(f, value, to),
 			ComparisonNotIterable { found } => {
 				write!(f, "Missing protocol function `INTO_ITER` for `{found}`")
 			}
@@ -628,6 +663,14 @@ mod tests {
 	fn owned_layout_stays_within_budget_including_io_payload() {
 		use core::mem::{align_of, size_of};
 		assert!(size_of::<Detail>() <= 32);
+		assert_eq!(
+			[
+				size_of::<Detail>(),
+				size_of::<Error>(),
+				size_of::<Failure>()
+			],
+			[32, 88, 248]
+		);
 		assert!(align_of::<Detail>() <= 8);
 		std::println!(
 			"Detail={} align={} Error={} Result<Value>={} Result<()>={} Failure={}",

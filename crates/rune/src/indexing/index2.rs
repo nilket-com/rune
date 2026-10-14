@@ -570,6 +570,17 @@ impl<'a> Processor<'a> {
 		self.span = node.span();
 
 		let (is_instance, args) = is_instance(&node).with_span(&node)?;
+		#[cfg(feature = "fresh-core")]
+		if idx.q.inner.fresh_mode && idx.item.impl_item.is_some() {
+			if let Some(name) = name {
+				let resolved = name.resolve(resolve_context!(idx.q))?;
+				if let Some(method) = crate::function::fresh_numeric::Method::from_name(resolved) {
+					idx.q.inner.fresh_numeric_script |= method.bit();
+				}
+			} else {
+				idx.q.inner.fresh_numeric_script |= 0b111;
+			}
+		}
 		let layer = idx.scopes.pop().with_span(self.span)?;
 
 		if let (Some(const_token), Some(async_token)) = (mods.const_token, mods.async_token) {

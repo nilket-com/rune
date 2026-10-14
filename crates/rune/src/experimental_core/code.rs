@@ -790,6 +790,34 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 		id: VARIANT_SUCCESS,
 		arity: 1,
 	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_numeric::Call::MethodAbs.id(),
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_numeric::Call::MethodRound.id(),
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_numeric::Call::MethodPowf.id(),
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_numeric::Call::F64Abs.id(),
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_numeric::Call::F64Round.id(),
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_numeric::Call::F64Powf.id(),
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_numeric::Call::I64Abs.id(),
+		arity: 1,
+	},
 ];
 fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
 	if !reserved_intrinsic_id(id) {
@@ -2670,7 +2698,7 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 2);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 9);
 		assert_eq!(CERTIFIED_INTRINSICS[0].id, PRINT_RAW);
 		assert_eq!(CERTIFIED_INTRINSICS[0].arity, 1);
 		assert_eq!(CERTIFIED_INTRINSICS[1].id, VARIANT_SUCCESS);
