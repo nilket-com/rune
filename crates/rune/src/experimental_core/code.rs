@@ -745,6 +745,32 @@ impl Function {
 	}
 }
 
+// D1c: ids in the upper half are never ordinary function indices.
+pub(crate) const FIRST_INTRINSIC_ID: u32 = 0x8000_0000;
+pub(crate) fn reserved_intrinsic_id(id: u32) -> bool {
+	id >= FIRST_INTRINSIC_ID
+}
+fn ordinary_function_id(index: usize) -> Result<u32> {
+	if index >= FIRST_INTRINSIC_ID as usize {
+		return Err(invalid());
+	}
+	u32::try_from(index).map_err(|_| invalid())
+}
+#[derive(Clone, Copy)]
+pub(crate) struct CertifiedIntrinsic {
+	id: u32,
+	arity: u32,
+}
+// Immutable policy, consulted by seal and execution. Numeric
+// membership in the partition does not certify an id. No installer API exists.
+const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[];
+fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
+	if !reserved_intrinsic_id(id) {
+		return None;
+	}
+	table.iter().find(|entry| entry.id == id)
+}
+
 pub struct Code {
 	/// Process-unique, never 0 (the lowerer's "unstamped" marker), never
 	/// reused: a function token names the program it indexes by this.
@@ -779,7 +805,7 @@ impl Default for Builder {
 
 impl Builder {
 	pub fn push(&mut self, function: Function) -> Result<u32> {
-		let id = u32::try_from(self.functions.len()).map_err(|_| invalid())?;
+		let id = ordinary_function_id(self.functions.len())?;
 		self.functions.try_push(function)?;
 		Ok(id)
 	}
@@ -790,6 +816,9 @@ impl Builder {
 	}
 
 	fn finish_validated(mut self, valid: &dyn Fn(Type) -> bool) -> Result<Code> {
+		if self.functions.len() > FIRST_INTRINSIC_ID as usize {
+			return Err(invalid());
+		}
 		let total = self
 			.functions
 			.iter()
@@ -1362,10 +1391,16 @@ fn validate_operands(
 				args_len,
 			} => {
 				slot(out)?;
-				let callee = functions.get(function as usize).ok_or_else(invalid)?;
-
-				if args_len != callee.parameters {
-					return Err(invalid());
+				if let Some(callee) = functions.get(function as usize) {
+					if args_len != callee.parameters {
+						return Err(invalid());
+					}
+				} else {
+					let certificate =
+						certified_intrinsic(CERTIFIED_INTRINSICS, function).ok_or_else(invalid)?;
+					if args_len != certificate.arity {
+						return Err(invalid());
+					}
 				}
 
 				args(args_start, args_len)?;
@@ -1414,6 +1449,10 @@ impl Code {
 
 	pub fn function(&self, id: u32) -> Option<&Function> {
 		self.functions.get(id as usize)
+	}
+
+	pub(crate) fn intrinsic(&self, id: u32) -> Option<&CertifiedIntrinsic> {
+		certified_intrinsic(CERTIFIED_INTRINSICS, id)
 	}
 }
 
@@ -2429,5 +2468,30 @@ impl Function {
 			.unwrap();
 		}
 		text
+	}
+}
+
+#[cfg(test)]
+mod intrinsic_partition_tests {
+	use super::*;
+	#[test]
+	fn ordinary_id_partition_is_exact_without_large_allocation() {
+		assert_eq!(
+			ordinary_function_id(FIRST_INTRINSIC_ID as usize - 1).unwrap(),
+			FIRST_INTRINSIC_ID - 1
+		);
+		assert_eq!(
+			ordinary_function_id(FIRST_INTRINSIC_ID as usize)
+				.unwrap_err()
+				.kind,
+			ErrorKind::InvalidCode
+		);
+		assert_eq!(
+			ordinary_function_id(usize::MAX).unwrap_err().kind,
+			ErrorKind::InvalidCode
+		);
+		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
+		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
+		assert!(CERTIFIED_INTRINSICS.is_empty());
 	}
 }

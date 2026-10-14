@@ -197,3 +197,34 @@ fn existing_codec_layout_stays_fixed() {
 	}
 	std::println!("D1C CODE HEADER {}", core::mem::size_of::<Code>());
 }
+
+// Appended only with the foundation, after the baseline-compatible tests pass.
+#[test]
+fn unknown_intrinsic_has_no_operand_or_owner_side_effects() {
+	let mut b = Builder::default();
+	b.push(callee()).unwrap();
+	let code = b.finish().unwrap();
+	let caller = Function::new(1, 0).unwrap();
+	let mut s = Store::new(Limits::default()).unwrap();
+	let mut e = Executor::new().unwrap();
+	for id in [0, FIRST, PROBE, u32::MAX] {
+		let kind = rune_alloc::limit::with(0, || {
+			e.intrinsic(
+				&code,
+				&mut s,
+				&caller,
+				usize::MAX,
+				u32::MAX,
+				id,
+				u32::MAX,
+				u32::MAX,
+			)
+			.map_err(|e| e.kind)
+		})
+		.call();
+		assert_eq!(kind, Err(ErrorKind::InvalidCode));
+		assert!(e.is_idle());
+		assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
+		assert!(code.intrinsic(id).is_none());
+	}
+}

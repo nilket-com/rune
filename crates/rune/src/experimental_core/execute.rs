@@ -505,6 +505,29 @@ impl Executor {
 		Ok(())
 	}
 
+	// D1c: this lazy cold edge is never reached by an ordinary resolved Call.
+	#[cold]
+	#[inline(never)]
+	#[allow(clippy::too_many_arguments)]
+	fn intrinsic(
+		&mut self,
+		code: &Code,
+		_store: &mut Store,
+		_function: &super::code::Function,
+		_base: usize,
+		_out: u32,
+		id: u32,
+		_args_start: u32,
+		_args_len: u32,
+	) -> Result<()> {
+		// Certification precedes all operand inspection. The foundation's table
+		// is empty; even a future certificate without a handler fails closed.
+		let _certificate = code
+			.intrinsic(id)
+			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+		Err(error(ErrorKind::InvalidCode))
+	}
+
 	// D21-derived execution logic preserved during extraction: the loops read fixed
 	// (slot, flag) pairs from the argument table.
 	#[allow(clippy::chunks_exact_to_as_chunks)]
@@ -1103,31 +1126,36 @@ impl Executor {
 
 						if let Some((out, callee, args_start, args_len)) = call {
 							self.commit_pc(frame_index, pc)?;
-							let callee_code = code
-								.function(callee)
-								.ok_or_else(|| error(ErrorKind::InvalidCode))?;
-							let source_args = &function.args
-								[args_start as usize..args_start as usize + args_len as usize];
-							self.push_call(
-								store,
-								callee_code.slots as usize,
-								Args::Slots {
-									base: frame.base,
-									indices: source_args,
-								},
-								Frame {
-									function: callee,
-									pc: 0,
-									base: 0,
-									out: Some(frame.base + out as usize),
-									callsite_pc: source_pc as u32,
-								},
-							)
-							.map_err(|f| {
-								setup_cleanup_error = f.cleanup_error;
-								f.error
-							})?;
-							transferred = true;
+							match code.function(callee) {
+								Some(callee_code) => {
+									let source_args = &function.args[args_start as usize
+										..args_start as usize + args_len as usize];
+									self.push_call(
+										store,
+										callee_code.slots as usize,
+										Args::Slots {
+											base: frame.base,
+											indices: source_args,
+										},
+										Frame {
+											function: callee,
+											pc: 0,
+											base: 0,
+											out: Some(frame.base + out as usize),
+											callsite_pc: source_pc as u32,
+										},
+									)
+									.map_err(|f| {
+										setup_cleanup_error = f.cleanup_error;
+										f.error
+									})?;
+									transferred = true;
+								}
+								None => self.intrinsic(
+									code, store, function, frame.base, out, callee, args_start,
+									args_len,
+								)?,
+							}
 						}
 
 						Ok(None)

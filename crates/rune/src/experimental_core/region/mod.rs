@@ -472,6 +472,8 @@ pub(crate) enum InlineReason {
 	ChargedCall,
 	/// More than [`MAX_INLINE_SITES`] sites.
 	Sites,
+	/// Reserved calls are interpreter-only, never ordinary callee indices.
+	IntrinsicCall,
 	/// More than [`MAX_INLINE_INSTRUCTIONS`] callee instructions.
 	Size,
 	/// More than [`MAX_INLINE_SLOTS`] callee slots.
@@ -1869,6 +1871,11 @@ fn inline_summary<'b>(
 	// 2. Sites.
 	if sites >= MAX_INLINE_SITES {
 		return Ok(Err(InlineReason::Sites));
+	}
+
+	// Intrinsic calls cannot reach the ordinary-function lookup or summary.
+	if super::code::reserved_intrinsic_id(g) {
+		return Ok(Err(InlineReason::IntrinsicCall));
 	}
 
 	// 3. Size and slots (bound the cost of 4..8; not evidence for the fuel rule).
