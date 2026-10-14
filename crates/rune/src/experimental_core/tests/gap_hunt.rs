@@ -1562,3 +1562,6 @@ mod patterns;
 #[cfg(feature = "emit")]
 #[path = "gap_hunt/host_bridge.rs"]
 mod host_bridge;
+
+#[path = "gap_hunt/format_specs.rs"]
+mod format_specs;
