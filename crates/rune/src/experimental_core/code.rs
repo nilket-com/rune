@@ -764,10 +764,17 @@ pub(crate) struct CertifiedIntrinsic {
 // Immutable policy, consulted by seal and execution. Numeric
 // membership in the partition does not certify an id. No installer API exists.
 pub(crate) const PRINT_RAW: u32 = FIRST_INTRINSIC_ID + 1;
-const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[CertifiedIntrinsic {
-	id: PRINT_RAW,
-	arity: 1,
-}];
+pub(crate) const VARIANT_SUCCESS: u32 = FIRST_INTRINSIC_ID + 2;
+const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
+	CertifiedIntrinsic {
+		id: PRINT_RAW,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: VARIANT_SUCCESS,
+		arity: 1,
+	},
+];
 fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
 	if !reserved_intrinsic_id(id) {
 		return None;
@@ -2496,10 +2503,13 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 1);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 2);
 		assert_eq!(CERTIFIED_INTRINSICS[0].id, PRINT_RAW);
 		assert_eq!(CERTIFIED_INTRINSICS[0].arity, 1);
-		for id in [0, FIRST_INTRINSIC_ID, PRINT_RAW + 1, u32::MAX] {
+		assert_eq!(CERTIFIED_INTRINSICS[1].id, VARIANT_SUCCESS);
+		assert_eq!(CERTIFIED_INTRINSICS[1].arity, 1);
+		assert_ne!(PRINT_RAW, VARIANT_SUCCESS);
+		for id in [0, FIRST_INTRINSIC_ID, VARIANT_SUCCESS + 1, u32::MAX] {
 			assert!(certified_intrinsic(CERTIFIED_INTRINSICS, id).is_none());
 		}
 	}

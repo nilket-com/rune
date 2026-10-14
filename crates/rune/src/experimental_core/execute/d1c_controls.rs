@@ -53,7 +53,13 @@ fn uncertified_ids_bad_ranges_and_outputs_never_seal() {
 }
 #[test]
 fn reserved_function_literals_are_not_capabilities() {
-	for id in [FIRST, super::super::code::PRINT_RAW, PROBE, u32::MAX] {
+	for id in [
+		FIRST,
+		super::super::code::PRINT_RAW,
+		super::super::code::VARIANT_SUCCESS,
+		PROBE,
+		u32::MAX,
+	] {
 		let mut f = Function::new(1, 0).unwrap();
 		f.push(
 			Op::Literal {
@@ -99,6 +105,13 @@ fn call_value_never_routes_invalid_tokens_into_intrinsics() {
 	let mut s = Store::new(Limits::default()).unwrap();
 	let mut e = Executor::new().unwrap();
 	for (token, kind) in [
+		(
+			Value::Function {
+				code: code.id(),
+				id: super::super::code::VARIANT_SUCCESS,
+			},
+			ErrorKind::InvalidCode,
+		),
 		(
 			Value::Function {
 				code: code.id(),

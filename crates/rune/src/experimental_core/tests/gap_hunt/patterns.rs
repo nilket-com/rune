@@ -622,6 +622,12 @@ fn fresh_inventory() {
 }
 
 fn expected_fresh_refusal(label: &str) -> Option<&'static str> {
+	if matches!(
+		label,
+		"flow/mixed-result" | "deferred/result-ok" | "deferred/result-err"
+	) {
+		return None;
+	}
 	if (label.starts_with("struct/") && (label.ends_with("/p") || label.ends_with("/q")))
 		|| label == "paths/constant-tuple"
 	{
@@ -729,8 +735,8 @@ fn fresh_contract() {
 		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
 		equal += 1;
 	}
-	assert_eq!((equal, refused, full_budget), (248, 37, 63));
-	fs::write(out.join("summary.txt"),"248 exact stock parity;37 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
+	assert_eq!((equal, refused, full_budget), (251, 34, 63));
+	fs::write(out.join("summary.txt"),"251 exact stock parity;34 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
 	contract_completed("fresh", 348);
 }
 

@@ -356,3 +356,203 @@ fn replay(frozen: &str) {
 	}
 	fs::write(out.join("REPLAY.txt"),format!("{exact} exact replays; {observations} raw address observations, phase/class/site only (not exact)\n")).unwrap();
 }
+
+// Expectations are label-exact; no wildcard nominal/refusal exemption.
+fn fresh_refusal(label: &str) -> Option<&'static str> {
+	match label {
+		"c4/shape/Ok/Ok()" | "c4/shape/Err/Err()" => Some("Some(FrontendDiagnostic)"),
+		"c4/shape/Ok/Ok(x,y)" | "c4/shape/Err/Err(x,y)" => Some("Some(Match)"),
+		"c4/let/deferred/Ok/match"
+		| "c4/let/deferred/Ok/mismatch"
+		| "c4/let/deferred/Err/match"
+		| "c4/let/deferred/Err/mismatch" => Some("Some(Pattern)"),
+		"c4/nominal/shadow-type"
+		| "c4/nominal/user-enum"
+		| "c4/nominal/tuple-struct"
+		| "c4/nominal/object-pattern" => Some("Some(Match)"),
+		_ => None,
+	}
+}
+#[test]
+#[ignore = "C4 fresh supplement contract; bounded children, new GAP_OUT"]
+fn fresh_contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
+	fs::create_dir(&out).unwrap();
+	let scratch = Scratch(
+		std::env::temp_dir().join(format!("rune-c4-fresh-contract-{}", std::process::id())),
+	);
+	fs::create_dir(&scratch.0).unwrap();
+	let frozen: Vec<_> = include_str!("../../result_patterns_stock.tsv")
+		.lines()
+		.skip(1)
+		.collect();
+	assert_eq!(frozen.len(), COUNT);
+	let (mut exact, mut refused, mut full_budget) = (0, 0, 0);
+	for (n, ((label, source, mode), row)) in CASES.iter().zip(frozen).enumerate() {
+		let row: Vec<_> = row.split('\t').collect();
+		assert_eq!(row.len(), 9);
+		assert_eq!(row[0], *label);
+		assert_eq!(row[1], *mode);
+		assert_eq!(row[2], hex(source.as_bytes()));
+		assert_eq!(row[8], "Exact");
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, source).unwrap();
+		let old = scratch.0.join("result.site");
+		if old.exists() {
+			fs::remove_file(old).unwrap();
+		}
+		let run = launch(&path, &path, mode, "fresh", &scratch.0, &out, &id);
+		assert!(run.complete, "{label}: {}", run.record);
+		let actual: Vec<_> = run.record.split('\t').collect();
+		assert_eq!(actual.len(), 5);
+		if let Some(class) = fresh_refusal(label) {
+			assert_eq!((actual[0], actual[1]), ("refused", class), "{label}");
+			assert_eq!(run.stdout, b"\nrunning 1 test\n");
+			assert!(run.stderr.is_empty());
+			refused += 1;
+			continue;
+		}
+		if label.starts_with("c4/fuel/") {
+			// Stock N is deliberately not used as fresh fuel: this is full-budget source behavior.
+			let (value, stdout) = match label.split('/').nth(2).unwrap() {
+				"guards" => ("i64:7:7", b"\nrunning 1 test\nfirst\nsecond\n".as_slice()),
+				"nested" => ("i64:15:15", b"\nrunning 1 test\n".as_slice()),
+				"loop" => ("i64:1:1", b"\nrunning 1 test\n".as_slice()),
+				_ => panic!("unknown family"),
+			};
+			assert_eq!(actual[0], "value", "{label}");
+			assert_eq!(unhex(actual[4]), value, "{label}");
+			assert_eq!(run.stdout, stdout, "{label}");
+			assert!(run.stderr.is_empty());
+			full_budget += 1;
+			continue;
+		}
+		let expected = unhex(row[3]);
+		let expected: Vec<_> = expected.split('\t').collect();
+		assert_eq!(actual[..2], expected[..2], "{label}: class");
+		assert_eq!(actual[3..], expected[3..], "{label}: message/value");
+		assert_eq!(hex(&run.stdout), row[4], "{label}: stdout");
+		assert_eq!(hex(&run.stderr), row[5], "{label}: stderr");
+		let site = if actual[0] == "error" {
+			fs::read(scratch.0.join("result.site")).unwrap()
+		} else {
+			Vec::new()
+		};
+		fs::write(out.join(format!("{id}.fresh.site")), &site).unwrap();
+		assert_eq!(hex(&site), row[6], "{label}: site");
+		exact += 1;
+	}
+	assert_eq!((exact, refused, full_budget), (177, 12, 75));
+	fs::write(out.join("summary.txt"),"177 exact;12 explicit refusals;75 full-fresh-budget source checks (no numeric stock fuel parity)\n").unwrap();
+	contract_completed("fresh", COUNT);
+}
+#[test]
+#[ignore = "C4 both-engine frozen contract; bounded children, new GAP_OUT"]
+fn contract() {
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
+	fs::create_dir(&out).unwrap();
+	for (engine, test) in [("stock", "stock_contract"), ("fresh", "fresh_contract")] {
+		let result = Command::new(std::env::current_exe().unwrap())
+			.args([
+				"--exact",
+				&format!("experimental_core::tests::gap_hunt::patterns::result_supplement::{test}"),
+				"--ignored",
+				"--nocapture",
+			])
+			.env("GAP_OUT", out.join(engine))
+			.output()
+			.unwrap();
+		fs::write(out.join(format!("{engine}.stdout")), &result.stdout).unwrap();
+		fs::write(out.join(format!("{engine}.stderr")), &result.stderr).unwrap();
+		assert!(
+			result.status.success(),
+			"{engine}: {}",
+			String::from_utf8_lossy(&result.stdout)
+		);
+		let text = String::from_utf8_lossy(&result.stdout);
+		assert!(text.contains("1 passed; 0 failed"));
+		assert!(text.contains(&format!("CONTRACT ENGINE {engine}")));
+		assert!(text.contains("CONTRACT ROWS 264"));
+		assert!(result.stderr.is_empty());
+	}
+	contract_completed("both", COUNT);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: source compilation; pure intrinsic controls cover ownership"
+)]
+fn emission_uses_result_flag_before_children_and_keeps_option_recipe() {
+	use crate::experimental_core::{
+		code::{Op, VARIANT_SUCCESS},
+		frontend,
+	};
+	for (pattern, child) in [
+		("Ok", false),
+		("Ok(..)", false),
+		("Ok(x)", true),
+		("Ok(x,..)", true),
+		("Err", false),
+		("Err(..)", false),
+		("Err(x)", true),
+	] {
+		let text = format!("pub fn main(){{match Ok(7){{{pattern}=>11,_=>22}}}}");
+		let context = crate::Context::with_default_modules().unwrap();
+		let mut sources = crate::Sources::new();
+		sources
+			.insert(crate::Source::memory(&text).unwrap())
+			.unwrap();
+		let mut diagnostics = crate::Diagnostics::new();
+		let p = frontend::compile(&mut sources, &context, &mut diagnostics, 7).unwrap();
+		let f = p
+			.code
+			.function(p.function(crate::Hash::type_hash(["main"])).unwrap())
+			.unwrap();
+		let ops: Vec<_> = f
+			.instructions()
+			.iter()
+			.map(|i| f.decode(*i).unwrap())
+			.collect();
+		let flags: Vec<_> = ops
+			.iter()
+			.enumerate()
+			.filter_map(|(pc, op)| {
+				matches!(op,Op::Call{function,..} if *function==VARIANT_SUCCESS).then_some(pc)
+			})
+			.collect();
+		let bare_binding = matches!(pattern, "Ok" | "Err");
+		assert_eq!(flags.len(), usize::from(!bare_binding), "{pattern}");
+		if !bare_binding {
+			assert!(matches!(ops[flags[0] + 1], Op::Branch { .. }));
+		}
+		let fields: Vec<_> = ops
+			.iter()
+			.enumerate()
+			.filter_map(|(pc, op)| matches!(op, Op::TupleField { .. }).then_some(pc))
+			.collect();
+		assert_eq!(fields.len(), usize::from(child), "{pattern}");
+		if child {
+			assert!(fields[0] > flags[0] + 1);
+			let Op::TupleField { index, .. } = ops[fields[0]] else {
+				unreachable!()
+			};
+			assert_eq!(ops[..fields[0]].iter().filter(|op| matches!(op, Op::Literal { out, value: crate::experimental_core::value::Value::I64(0) } if *out == index)).count(), 1);
+		}
+	}
+	let context = crate::Context::with_default_modules().unwrap();
+	let mut sources = crate::Sources::new();
+	sources
+		.insert(crate::Source::memory("pub fn main(){match Some(7){Some(x)=>x,_=>22}}").unwrap())
+		.unwrap();
+	let mut diagnostics = crate::Diagnostics::new();
+	let p = frontend::compile(&mut sources, &context, &mut diagnostics, 7).unwrap();
+	let f = p
+		.code
+		.function(p.function(crate::Hash::type_hash(["main"])).unwrap())
+		.unwrap();
+	assert!(f.instructions().iter().all(
+		|i| !matches!(f.decode(*i).unwrap(),Op::Call{function,..} if function==VARIANT_SUCCESS)
+	));
+}

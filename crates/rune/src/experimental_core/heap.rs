@@ -1184,6 +1184,18 @@ impl Store {
 		})
 	}
 
+	/// Read only the variant flag, not its child value or its readability.
+	/// Moved, stale and closed parent errors retain the Store's existing domains.
+	pub(crate) fn variant_success(&self, value: Value) -> Result<bool> {
+		let Value::Heap(h) = value else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		match self.payload(h)? {
+			Payload::Variant { success, .. } => Ok(*success),
+			_ => Err(err(ErrorKind::InvalidCode)),
+		}
+	}
+
 	pub(crate) fn variant_parts(&self, value: Value) -> Result<(Type, bool, Option<Value>)> {
 		let Value::Heap(h) = value else {
 			return Err(err(ErrorKind::Type));

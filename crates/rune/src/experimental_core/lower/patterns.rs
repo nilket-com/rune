@@ -254,6 +254,27 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 						span,
 					)?;
 					self.pattern_require(condition, !some, misses, span)?;
+				} else if hash == Hash::type_hash(crate::item!(::std::result::Result)) {
+					let ok =
+						variant_hash == Hash::type_hash(crate::item!(::std::result::Result::Ok));
+					if !ok
+						&& variant_hash != Hash::type_hash(crate::item!(::std::result::Result::Err))
+					{
+						return Err(self.refused(span, Refusal::Pattern));
+					}
+					self.pattern_is(value, Type::Result, misses, span)?;
+					let condition = self.slot()?;
+					let (args_start, args_len) = self.function.arguments(&[value])?;
+					self.emit(
+						Op::Call {
+							out: condition,
+							function: super::super::code::VARIANT_SUCCESS,
+							args_start,
+							args_len,
+						},
+						span,
+					)?;
+					self.pattern_require(condition, ok, misses, span)?;
 				} else {
 					if variant_hash != Hash::EMPTY {
 						return Err(self.refused(span, Refusal::Pattern));
@@ -369,6 +390,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 							}
 						}
 						hir::PatKind::Sequence(sequence) => {
+							if matches!(sequence.kind, hir::PatSequenceKind::Type { hash, .. } if hash == Hash::type_hash(crate::item!(::std::result::Result)))
+								&& sequence.items.len() > 1
+							{
+								return Err(self.refused(pat.span, Refusal::Pattern));
+							}
 							self.pattern_kind(sequence.kind, value, &mut misses, pat.span)?;
 							for (index, child) in sequence.items.iter().enumerate().rev() {
 								work.try_push(Walk::Index(child, value, index, depth + 1))?;

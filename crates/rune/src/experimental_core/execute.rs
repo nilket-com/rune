@@ -522,7 +522,9 @@ impl Executor {
 	) -> Result<()> {
 		let invalid = || error(ErrorKind::InvalidCode);
 		let certificate = code.intrinsic(id).ok_or_else(invalid)?;
-		if args_len != certificate.arity || id != super::code::PRINT_RAW {
+		if args_len != certificate.arity
+			|| !matches!(id, super::code::PRINT_RAW | super::code::VARIANT_SUCCESS)
+		{
 			return Err(invalid());
 		}
 		let end = args_start.checked_add(args_len).ok_or_else(invalid)?;
@@ -539,6 +541,10 @@ impl Executor {
 		let destination = base.checked_add(out as usize).ok_or_else(invalid)?;
 		if self.slots.get(destination).is_none() {
 			return Err(invalid());
+		}
+		if id == super::code::VARIANT_SUCCESS {
+			let success = store.variant_success(value)?;
+			return self.put(store, destination, Value::Bool(success));
 		}
 		{
 			let text = store.text(value).map_err(|mut e| {
@@ -2109,3 +2115,6 @@ mod d1c_controls;
 
 #[cfg(test)]
 mod print_intrinsic_tests;
+
+#[cfg(test)]
+mod variant_intrinsic_tests;
