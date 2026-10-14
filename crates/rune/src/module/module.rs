@@ -88,6 +88,64 @@ pub struct Module {
 }
 
 impl Module {
+	/// Enroll an environment-free synchronous Rust Fn for the unstable fresh core.
+	/// The host promises no callbacks, stock interface-environment use or reentry.
+	/// No certificate is published until the complete Context installation succeeds.
+	/// Host duration and capture allocations are outside script fuel/store budgets.
+	/// Borrowed strings use call-local snapshots; pointer identity across calls is not promised.
+	///
+	/// The closed signature excludes owned input.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", |s: std::string::String| -> i64 { s.len() as i64 }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes mutable input.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", |s: &mut str| -> i64 { s.len() as i64 }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes aggregate input.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", |v: std::vec::Vec<i64>| -> i64 { v.len() as i64 }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes nested output.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", || -> Option<Option<i64>> { Some(Some(1)) }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes async output.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", || async { 1i64 }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes five inputs.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", |a: i64, b: i64, c: i64, d: i64, e: i64| a+b+c+d+e).unwrap();
+	/// ```
+	#[cfg(feature = "fresh-core")]
+	pub fn fresh_host_function<F, A, N>(
+		&mut self,
+		name: N,
+		f: F,
+	) -> Result<ItemFnMut<'_>, ContextError>
+	where
+		F: crate::function::fresh_host::FreshHostFunction<A, Return: MaybeTypeOf>,
+		A: FunctionArgs,
+		N: IntoComponent,
+	{
+		let signature = F::signature();
+		let mut data = FunctionData::new::<N, F, A, crate::function::Plain>(name, f)?;
+		data.fresh_host = Some(signature);
+		self.function_inner(data, Docs::EMPTY, None)
+	}
+
 	/// Create an empty module for the root path.
 	pub fn new() -> Self {
 		Self::default()
@@ -1163,6 +1221,8 @@ impl Module {
 			common: ModuleItemCommon { docs, deprecated },
 			kind: ModuleItemKind::Function(ModuleFunction {
 				handler: data.handler,
+				#[cfg(feature = "fresh-core")]
+				fresh_host: data.fresh_host,
 				trait_hash: None,
 				doc: DocFunction {
 					#[cfg(feature = "doc")]
@@ -1215,6 +1275,8 @@ impl Module {
 			name: data.associated.name,
 			common: ModuleItemCommon { docs, deprecated },
 			kind: ModuleAssociatedKind::Function(ModuleFunction {
+				#[cfg(feature = "fresh-core")]
+				fresh_host: None,
 				handler: data.handler,
 				trait_hash: None,
 				doc: DocFunction {

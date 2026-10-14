@@ -5,8 +5,8 @@
 //! an [`ErrorKind`], optional owned [`Detail`], and, when known, a source [`Location`].
 
 pub use super::detail::{
-	AdmittedMethod, BinarySymbol, Detail, FieldRef, IntTarget, IntValue, Message, MovedAccess,
-	TypeName, UnarySymbol,
+	AdmittedMethod, BinarySymbol, Detail, FieldRef, HostCause, IntTarget, IntValue, Message,
+	MovedAccess, TypeName, UnarySymbol,
 };
 
 /// The class of an error.
@@ -59,6 +59,8 @@ pub enum ErrorKind {
 	FrameCapacity,
 	/// A cancellation requested with [`Executor::request_cancel`](crate::experimental_core::execute::Executor::request_cancel) was consumed.
 	Cancelled,
+	/// A certified host failed, with cold-owned text in Failure.
+	Host,
 }
 
 /// Named compile-time refusal categories. The adapter consumes this enum,

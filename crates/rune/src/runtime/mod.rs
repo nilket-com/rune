@@ -240,6 +240,13 @@ crate::declare_dyn_fn! {
 	}
 }
 
+#[cfg(feature = "fresh-core")]
+impl FunctionHandler {
+	pub(crate) fn same_allocation(&self, other: &Self) -> bool {
+		self.ptr == other.ptr && core::ptr::eq(self.vtable, other.vtable)
+	}
+}
+
 pub(crate) type FieldMap<K, V> = crate::alloc::HashMap<K, V>;
 
 #[inline(always)]

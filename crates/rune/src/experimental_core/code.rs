@@ -765,6 +765,22 @@ pub(crate) struct CertifiedIntrinsic {
 // membership in the partition does not certify an id. No installer API exists.
 pub(crate) const PRINT_RAW: u32 = FIRST_INTRINSIC_ID + 1;
 pub(crate) const VARIANT_SUCCESS: u32 = FIRST_INTRINSIC_ID + 2;
+pub(crate) const FIRST_HOST: u32 = FIRST_INTRINSIC_ID + 0x100;
+pub(crate) const MAX_HOST_DESCRIPTORS: usize = 4096;
+fn host_id(index: usize) -> Result<u32> {
+	if index >= MAX_HOST_DESCRIPTORS {
+		return Err(invalid());
+	}
+	FIRST_HOST
+		.checked_add(u32::try_from(index).map_err(|_| invalid())?)
+		.ok_or_else(invalid)
+}
+fn host_binding(
+	hosts: &[crate::function::fresh_host::HostBinding],
+	id: u32,
+) -> Option<&crate::function::fresh_host::HostBinding> {
+	hosts.get(id.checked_sub(FIRST_HOST)? as usize)
+}
 const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 	CertifiedIntrinsic {
 		id: PRINT_RAW,
@@ -787,6 +803,7 @@ pub struct Code {
 	/// reused: a function token names the program it indexes by this.
 	id: u32,
 	functions: Vec<Function>,
+	hosts: Vec<crate::function::fresh_host::HostBinding>,
 }
 
 /// Program identities. Exhaustion refuses `finish`; the counter never wraps.
@@ -800,6 +817,7 @@ pub(crate) fn allocate_code_id(counter: &AtomicU32) -> Result<u32> {
 
 pub struct Builder {
 	functions: Vec<Function>,
+	hosts: Vec<crate::function::fresh_host::HostBinding>,
 }
 
 fn invalid() -> Error {
@@ -810,11 +828,26 @@ impl Default for Builder {
 	fn default() -> Self {
 		Self {
 			functions: Vec::new(),
+			hosts: Vec::new(),
 		}
 	}
 }
 
 impl Builder {
+	pub(crate) fn host(
+		&mut self,
+		binding: &crate::function::fresh_host::HostBinding,
+	) -> Result<u32> {
+		if !binding.signature.valid() {
+			return Err(invalid());
+		}
+		if let Some(index) = self.hosts.iter().position(|old| old.same(binding)) {
+			return host_id(index);
+		}
+		let id = host_id(self.hosts.len())?;
+		self.hosts.try_push(binding.clone())?;
+		Ok(id)
+	}
 	pub fn push(&mut self, function: Function) -> Result<u32> {
 		let id = ordinary_function_id(self.functions.len())?;
 		self.functions.try_push(function)?;
@@ -869,6 +902,17 @@ impl Builder {
 				.checked_add(f.ranges.len().checked_mul(8)?)
 			})
 			.ok_or_else(invalid)?;
+		let host_bytes = self
+			.hosts
+			.capacity()
+			.checked_mul(core::mem::size_of::<crate::function::fresh_host::HostBinding>())
+			.ok_or_else(invalid)?;
+		let total = total.checked_add(host_bytes).ok_or_else(invalid)?;
+		if self.hosts.len() > MAX_HOST_DESCRIPTORS
+			|| !self.hosts.iter().all(|host| host.signature.valid())
+		{
+			return Err(invalid());
+		}
 		if total > MAX_CODE_BYTES {
 			return Err(invalid());
 		}
@@ -888,7 +932,7 @@ impl Builder {
 		}
 
 		for i in 0..self.functions.len() {
-			validate_operands(&self.functions[i], &self.functions, id, valid)?;
+			validate_operands(&self.functions[i], &self.functions, &self.hosts, id, valid)?;
 			let f = &mut self.functions[i];
 			f.code.first_mut().ok_or_else(invalid)?.charge();
 
@@ -957,6 +1001,7 @@ impl Builder {
 		Ok(Code {
 			id,
 			functions: self.functions,
+			hosts: self.hosts,
 		})
 	}
 }
@@ -971,6 +1016,12 @@ pub(crate) struct CompileTransaction {
 }
 
 impl CompileTransaction {
+	pub(crate) fn host(
+		&mut self,
+		binding: &crate::function::fresh_host::HostBinding,
+	) -> Result<u32> {
+		self.builder.host(binding)
+	}
 	pub(crate) fn stage(
 		&mut self,
 		hash: u64,
@@ -1202,6 +1253,7 @@ fn validate_tuple_updates(f: &Function) -> Result<()> {
 fn validate_operands(
 	f: &Function,
 	functions: &[Function],
+	hosts: &[crate::function::fresh_host::HostBinding],
 	code_id: u32,
 	valid: &dyn Fn(Type) -> bool,
 ) -> Result<()> {
@@ -1407,9 +1459,17 @@ fn validate_operands(
 						return Err(invalid());
 					}
 				} else {
-					let certificate =
-						certified_intrinsic(CERTIFIED_INTRINSICS, function).ok_or_else(invalid)?;
-					if args_len != certificate.arity {
+					let arity = if let Some(host) = host_binding(hosts, function) {
+						if !host.signature.valid() {
+							return Err(invalid());
+						}
+						u32::from(host.signature.arity)
+					} else {
+						certified_intrinsic(CERTIFIED_INTRINSICS, function)
+							.ok_or_else(invalid)?
+							.arity
+					};
+					if args_len != arity {
 						return Err(invalid());
 					}
 				}
@@ -1462,8 +1522,31 @@ impl Code {
 		self.functions.get(id as usize)
 	}
 
-	pub(crate) fn intrinsic(&self, id: u32) -> Option<&CertifiedIntrinsic> {
-		certified_intrinsic(CERTIFIED_INTRINSICS, id)
+	pub(crate) fn intrinsic(&self, id: u32) -> Option<CertifiedIntrinsic> {
+		if let Some(host) = self.host(id) {
+			return Some(CertifiedIntrinsic {
+				id,
+				arity: u32::from(host.signature.arity),
+			});
+		}
+		certified_intrinsic(CERTIFIED_INTRINSICS, id).copied()
+	}
+	pub(crate) fn host(&self, id: u32) -> Option<&crate::function::fresh_host::HostBinding> {
+		host_binding(&self.hosts, id)
+	}
+	pub(crate) fn validate_hosts(
+		&self,
+		runtime: Option<&crate::runtime::RuntimeContext>,
+	) -> Result<()> {
+		for binding in &self.hosts {
+			let actual = runtime
+				.and_then(|runtime| runtime.function(&binding.hash))
+				.ok_or_else(invalid)?;
+			if !binding.signature.valid() || !binding.handler.same_allocation(actual) {
+				return Err(invalid());
+			}
+		}
+		Ok(())
 	}
 }
 
@@ -1967,7 +2050,22 @@ fn footprint(functions: &Vec<Function>) -> Result<CodeFootprint> {
 impl Code {
 	#[cfg_attr(not(test), allow(dead_code))]
 	pub fn footprint(&self) -> Result<CodeFootprint> {
-		footprint(&self.functions)
+		let mut footprint = footprint(&self.functions)?;
+		let hosts = self
+			.hosts
+			.capacity()
+			.checked_mul(core::mem::size_of::<crate::function::fresh_host::HostBinding>())
+			.ok_or_else(invalid)?;
+		footprint.original_buffers = footprint
+			.original_buffers
+			.checked_add(hosts)
+			.ok_or_else(invalid)?;
+		footprint.resident = footprint.resident.checked_add(hosts).ok_or_else(invalid)?;
+		footprint.finish_peak = footprint
+			.finish_peak
+			.checked_add(hosts)
+			.ok_or_else(invalid)?;
+		Ok(footprint)
 	}
 
 	/// Current layout sizes, for the prospective cache contract inspection.

@@ -146,6 +146,8 @@ pub struct Failure {
 	pub missing_key: Option<Box<str>>,
 	/// Complete panic text, copied before cleanup and independent of Store lifetime.
 	pub panic_message: Option<Box<str>>,
+	/// Complete native failure text, independent of stock scratch and Store lifetime.
+	pub host_message: Option<Box<str>>,
 	/// The callsite locations of the active calls, innermost caller first; empty when the
 	/// failure happened in the entry function or before it ran.
 	pub call_chain: Vec<Location>,
@@ -216,6 +218,13 @@ impl core::fmt::Display for FailureMessage<'_> {
 		) {
 			return write!(f, "Panicked: {message}");
 		}
+		if let Some(message) = self.failure.host_message.as_deref() {
+			match self.failure.error.detail {
+				Detail::HostMessage { .. } => return f.write_str(message),
+				Detail::HostPanicked => return write!(f, "host panicked: {message}"),
+				_ => (),
+			}
+		}
 		core::fmt::Display::fmt(&self.failure.error.message(self.program), f)
 	}
 }
@@ -231,6 +240,10 @@ pub struct Executor {
 	cancelled: bool,
 	format_limits: FormatLimits,
 	limits: ExecutorLimits,
+	configured_host_runtime: Option<crate::sync::Arc<crate::runtime::RuntimeContext>>,
+	active_host_runtime: Option<crate::sync::Arc<crate::runtime::RuntimeContext>>,
+	pending_host_message: Option<Box<str>>,
+	pending_host_cleanup: Option<Error>,
 	#[cfg(test)]
 	rollback_error: Option<Error>,
 	/// Test-only, per executor: when set, `Print` appends here instead of stdout.
@@ -292,6 +305,10 @@ impl Executor {
 			cancelled: false,
 			format_limits: FormatLimits::default(),
 			limits,
+			configured_host_runtime: None,
+			active_host_runtime: None,
+			pending_host_message: None,
+			pending_host_cleanup: None,
 			#[cfg(test)]
 			rollback_error: None,
 			#[cfg(test)]
@@ -334,6 +351,19 @@ impl Executor {
 			.and_then(|n| n.checked_add(slots?))
 			.and_then(|n| n.checked_add(diagnostics?))
 			.ok_or_else(|| error(ErrorKind::Overflow))
+	}
+
+	/// Replace the immutable host binding only while the executor is idle.
+	/// Clearing it does not consume a pending cancellation.
+	pub fn set_host_runtime(
+		&mut self,
+		runtime: Option<crate::sync::Arc<crate::runtime::RuntimeContext>>,
+	) -> Result<()> {
+		if !self.is_idle() || self.active_host_runtime.is_some() {
+			return Err(error(ErrorKind::InvalidCode));
+		}
+		self.configured_host_runtime = runtime;
+		Ok(())
 	}
 
 	/// Requests cancellation. The next charged instruction of this executor consumes the
@@ -397,19 +427,50 @@ impl Executor {
 		args: &[&Root],
 		fuel: usize,
 	) -> core::result::Result<Root, Failure> {
-		#[cfg(not(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		)))]
-		let value = self.invoke_args(code, store, function, Args::Roots(args), fuel)?;
-		#[cfg(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		))]
-		let value = self.invoke_native(code, store, function, Args::Roots(args), fuel)?;
-		Ok(store.export(value))
+		let admission = (|| {
+			if store.is_closed() {
+				return Err(error(ErrorKind::ClosedStore));
+			}
+			if !self.is_idle() || self.active_host_runtime.is_some() {
+				return Err(error(ErrorKind::InvalidCode));
+			}
+			let entry = code
+				.function(function)
+				.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+			if args.len() != entry.parameters as usize {
+				return Err(error(ErrorKind::InvalidCode));
+			}
+			code.validate_hosts(self.configured_host_runtime.as_deref())?;
+			Ok(())
+		})();
+		if let Err(error) = admission {
+			return Err(Failure {
+				error,
+				missing_key: None,
+				panic_message: None,
+				host_message: None,
+				call_chain: Vec::new(),
+				cleanup_error: None,
+			});
+		}
+		self.active_host_runtime = self.configured_host_runtime.clone();
+		let result = {
+			#[cfg(not(all(
+				feature = "fresh-core-native",
+				target_arch = "x86_64",
+				target_os = "linux"
+			)))]
+			let value = self.invoke_args(code, store, function, Args::Roots(args), fuel);
+			#[cfg(all(
+				feature = "fresh-core-native",
+				target_arch = "x86_64",
+				target_os = "linux"
+			))]
+			let value = self.invoke_native(code, store, function, Args::Roots(args), fuel);
+			value
+		};
+		self.active_host_runtime = None;
+		result.map(|value| store.export(value))
 	}
 
 	#[inline(never)]
@@ -521,6 +582,9 @@ impl Executor {
 		args_len: u32,
 	) -> Result<()> {
 		let invalid = || error(ErrorKind::InvalidCode);
+		if code.host(id).is_some() {
+			return self.host_call(code, store, function, base, out, id, args_start, args_len);
+		}
 		let certificate = code.intrinsic(id).ok_or_else(invalid)?;
 		if args_len != certificate.arity
 			|| !matches!(id, super::code::PRINT_RAW | super::code::VARIANT_SUCCESS)
@@ -1281,7 +1345,14 @@ impl Executor {
 		match result {
 			Ok(value) => Ok(value),
 			Err(failure) => {
-				let mut cleanup_error = setup_cleanup_error;
+				let mut cleanup_error = setup_cleanup_error.or(self.pending_host_cleanup.take());
+				let mut host_message = self.pending_host_message.take();
+				if failure.kind == ErrorKind::Panic
+					&& failure.detail == Detail::PanicMessage
+					&& panic_message.is_none()
+				{
+					panic_message = host_message.take();
+				}
 
 				// Innermost first. Only Op::Call sets a callsite, pushing the callee
 				// directly above its caller; the entry frame has none, so pairing each
@@ -1311,6 +1382,7 @@ impl Executor {
 					error: failure,
 					missing_key,
 					panic_message,
+					host_message,
 					call_chain: core::mem::take(&mut self.diagnostics),
 					cleanup_error,
 				})
@@ -2118,3 +2190,5 @@ mod print_intrinsic_tests;
 
 #[cfg(test)]
 mod variant_intrinsic_tests;
+
+mod host_bridge;

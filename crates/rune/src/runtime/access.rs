@@ -25,6 +25,10 @@ pub struct AccessError {
 }
 
 impl AccessError {
+	#[cfg(feature = "fresh-core")]
+	pub(crate) const fn fresh_moved_read() -> Self {
+		Self::new(AccessErrorKind::NotAccessibleRef(Snapshot(MOVED)))
+	}
 	#[inline]
 	const fn new(kind: AccessErrorKind) -> Self {
 		Self { kind }

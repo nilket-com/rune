@@ -122,6 +122,12 @@ fn all_frozen_contracts() {
 			"fresh",
 			348,
 		),
+		(
+			"host-fresh",
+			"gap_hunt::host_bridge::contract::fresh_contract",
+			"fresh",
+			144,
+		),
 		("s0", "gap_hunt::corpus", "both", 639),
 		(
 			"output-both",

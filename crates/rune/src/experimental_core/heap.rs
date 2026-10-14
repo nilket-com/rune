@@ -346,6 +346,55 @@ impl Store {
 		self.live
 	}
 
+	// Temporary host input copies are bounded by the configured Store byte limit,
+	// independently of live payload (they are not published Store entries).
+	// Retained identity is not payload readability. Type checks may precede reads.
+	pub(crate) fn host_tag(&self, value: Value) -> Result<(Type, bool)> {
+		match value {
+			Value::Heap(handle) => match self.entry(handle)?.payload.as_ref() {
+				Some(Payload::Moved(tag)) => Ok((*tag, false)),
+				Some(payload) => Ok((payload.tag(), true)),
+				None => Err(err(ErrorKind::InvalidCode)),
+			},
+			_ => value
+				.primitive_type()
+				.map(|tag| (tag, true))
+				.ok_or_else(|| err(ErrorKind::Type)),
+		}
+	}
+
+	pub(crate) fn host_scratch_room(&self, bytes: usize) -> Result<()> {
+		if self.closed {
+			return Err(err(ErrorKind::ClosedStore));
+		}
+		if bytes > self.limits.bytes {
+			return Err(err(ErrorKind::StoreCapacity));
+		}
+		Ok(())
+	}
+	// Both entry and payload limits precede fresh output allocation.
+	pub(crate) fn host_room(&self, bytes: usize, entries: usize) -> Result<()> {
+		if self.closed {
+			return Err(err(ErrorKind::ClosedStore));
+		}
+		let live = self
+			.live
+			.checked_add(entries)
+			.ok_or_else(|| err(ErrorKind::Overflow))?;
+		let reusable = self
+			.free
+			.len()
+			.checked_add(self.limits.entries.saturating_sub(self.slots.len()))
+			.ok_or_else(|| err(ErrorKind::Overflow))?;
+		if bytes > self.limits.bytes.saturating_sub(self.bytes)
+			|| live > self.limits.entries
+			|| entries > reusable
+		{
+			return Err(err(ErrorKind::StoreCapacity));
+		}
+		Ok(())
+	}
+
 	/// The payload bytes charged to live entries.
 	pub fn payload_bytes(&self) -> usize {
 		self.bytes
@@ -1642,6 +1691,11 @@ impl Store {
 			slot: h.slot,
 			generation,
 		})
+	}
+
+	#[cfg(test)]
+	pub(crate) fn slot_capacity_for_test(&self) -> usize {
+		self.slots.capacity()
 	}
 
 	#[cfg(test)]

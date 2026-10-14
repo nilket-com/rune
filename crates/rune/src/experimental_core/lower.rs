@@ -1736,6 +1736,25 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Ok(());
 		}
 
+		if let Some(binding) = self.context.fresh_host(hash) {
+			if call.args.len() != usize::from(binding.signature.arity) {
+				return Err(self.refused(span, Refusal::Arity));
+			}
+			let id = self.transaction.host(binding)?;
+			let args = self.operands(call.args)?;
+			let (args_start, args_len) = self.function.arguments(&args)?;
+			self.emit(
+				Op::Call {
+					out,
+					function: id,
+					args_start,
+					args_len,
+				},
+				span,
+			)?;
+			return Ok(());
+		}
+
 		let at = self.location(span);
 		let function = (self.resolve)(hash, at).map_err(|e| e.at(self.location(span)))?;
 		let args = self.operands(call.args)?;

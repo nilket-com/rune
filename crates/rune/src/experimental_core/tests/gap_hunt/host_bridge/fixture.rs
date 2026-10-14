@@ -1,4 +1,4 @@
-//! H1 stock-only host fixture, SOURCE DRAFT. No enrolment API is invoked yet.
+//! H1 shared test fixture. Stock handlers and fresh enrolled handlers share bodies.
 use crate::runtime::ProtocolCaller;
 use crate::{Context, Module};
 use std::{
@@ -33,490 +33,364 @@ impl Recorder {
 }
 // A new Recorder per child/context; no global events leak between tests.
 pub(super) fn stock_context(tape: &Recorder) -> Context {
+	fixture_context(tape, false)
+}
+
+pub(super) fn fresh_context(tape: &Recorder) -> Context {
+	fixture_context(tape, true)
+}
+
+fn fixture_context(tape: &Recorder, fresh: bool) -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = Module::with_item(["h1"]).unwrap();
+	macro_rules! enrolled {
+		($name:literal, $f:expr) => {
+			if fresh {
+				module.fresh_host_function($name, $f).unwrap();
+			} else {
+				module.function($name, $f).build().unwrap();
+			}
+		};
+	}
 	{
 		let tape = tape.clone();
-		module
-			.function("id_unit", move |v: ()| -> () {
-				tape.call("id_unit");
+		enrolled!("id_unit", move |v: ()| -> () {
+			tape.call("id_unit");
+			v
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("id_bool", move |v: bool| -> bool {
+			tape.call("id_bool");
+			v
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("id_i64", move |v: i64| -> i64 {
+			tape.call("id_i64");
+			v
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("id_u64", move |v: u64| -> u64 {
+			tape.call("id_u64");
+			v
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("id_f64", move |v: f64| -> f64 {
+			tape.call("id_f64");
+			v
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("id_char", move |v: char| -> char {
+			tape.call("id_char");
+			v
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("greet", move |v: &str| -> String {
+			tape.call("greet");
+			format!("hello:{v}")
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("unit", move || -> () {
+			tape.call("unit");
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("add", move |a: i64, b: i64| -> i64 {
+			tape.call("add");
+			a + b
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("coercion_pair", move |a: i64, b: &str| -> String {
+			tape.call("coercion_pair");
+			format!("{a}:{b}")
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("mix3", move |a: bool, b: i64, c: &str| -> String {
+			tape.call("mix3");
+			format!("{a}:{b}:{c}")
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("mix4", move |_a: (), b: u64, c: f64, d: char| -> String {
+			tape.call("mix4");
+			{
+				format!("{b}:{c}:{d}")
+			}
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("mark", move |tag: &str, v: i64| -> i64 {
+			tape.call("mark");
+			{
+				tape.event(tag);
 				v
-			})
-			.build()
-			.unwrap();
+			}
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("id_bool", move |v: bool| -> bool {
-				tape.call("id_bool");
-				v
-			})
-			.build()
-			.unwrap();
+		enrolled!("parse", move |v: &str| -> Result<i64, String> {
+			tape.call("parse");
+			v.parse::<i64>().map_err(|_| "invalid integer".to_owned())
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("id_i64", move |v: i64| -> i64 {
-				tape.call("id_i64");
-				v
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("id_u64", move |v: u64| -> u64 {
-				tape.call("id_u64");
-				v
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("id_f64", move |v: f64| -> f64 {
-				tape.call("id_f64");
-				v
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("id_char", move |v: char| -> char {
-				tape.call("id_char");
-				v
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("greet", move |v: &str| -> String {
-				tape.call("greet");
-				format!("hello:{v}")
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("unit", move || -> () {
-				tape.call("unit");
-				()
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("add", move |a: i64, b: i64| -> i64 {
-				tape.call("add");
-				a + b
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("coercion_pair", move |a: i64, b: &str| -> String {
-				tape.call("coercion_pair");
-				format!("{a}:{b}")
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("mix3", move |a: bool, b: i64, c: &str| -> String {
-				tape.call("mix3");
-				format!("{a}:{b}:{c}")
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("mix4", move |a: (), b: u64, c: f64, d: char| -> String {
-				tape.call("mix4");
-				{
-					let _ = a;
-					format!("{b}:{c}:{d}")
-				}
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("mark", move |tag: &str, v: i64| -> i64 {
-				tape.call("mark");
-				{
-					tape.event(tag);
-					v
-				}
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("parse", move |v: &str| -> Result<i64, String> {
-				tape.call("parse");
-				v.parse::<i64>().map_err(|_| "invalid integer".to_owned())
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("maybe", move |v: i64| -> Option<String> {
-				tape.call("maybe");
-				if v == 0 {
-					None
-				} else {
-					Some(format!("value:{v}"))
-				}
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("f64_bits", move |v: u64| -> f64 {
-				tape.call("f64_bits");
-				f64::from_bits(v)
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("sized_string", move |v: u64| -> String {
-				tape.call("sized_string");
-				{
-					assert!(v <= 4096);
-					"α".repeat(v as usize)
-				}
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("some_unit", move || -> Option<()> {
-				tape.call("some_unit");
-				Some(())
-			})
-			.build()
-			.unwrap();
-	}
-	{
-		let tape = tape.clone();
-		module
-			.function("none_unit", move || -> Option<()> {
-				tape.call("none_unit");
+		enrolled!("maybe", move |v: i64| -> Option<String> {
+			tape.call("maybe");
+			if v == 0 {
 				None
-			})
-			.build()
-			.unwrap();
+			} else {
+				Some(format!("value:{v}"))
+			}
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("ok_unit", move || -> Result<(), ()> {
-				tape.call("ok_unit");
-				Ok(())
-			})
-			.build()
-			.unwrap();
+		enrolled!("f64_bits", move |v: u64| -> f64 {
+			tape.call("f64_bits");
+			f64::from_bits(v)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("err_unit", move || -> Result<(), ()> {
-				tape.call("err_unit");
-				Err(())
-			})
-			.build()
-			.unwrap();
+		enrolled!("sized_string", move |v: u64| -> String {
+			tape.call("sized_string");
+			{
+				assert!(v <= 4096);
+				"α".repeat(v as usize)
+			}
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("some_bool", move || -> Option<bool> {
-				tape.call("some_bool");
-				Some(true)
-			})
-			.build()
-			.unwrap();
+		enrolled!("some_unit", move || -> Option<()> {
+			tape.call("some_unit");
+			Some(())
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("none_bool", move || -> Option<bool> {
-				tape.call("none_bool");
-				None
-			})
-			.build()
-			.unwrap();
+		enrolled!("none_unit", move || -> Option<()> {
+			tape.call("none_unit");
+			None
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("ok_bool", move || -> Result<bool, bool> {
-				tape.call("ok_bool");
-				Ok(true)
-			})
-			.build()
-			.unwrap();
+		enrolled!("ok_unit", move || -> Result<(), ()> {
+			tape.call("ok_unit");
+			Ok(())
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("err_bool", move || -> Result<bool, bool> {
-				tape.call("err_bool");
-				Err(true)
-			})
-			.build()
-			.unwrap();
+		enrolled!("err_unit", move || -> Result<(), ()> {
+			tape.call("err_unit");
+			Err(())
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("some_i64", move || -> Option<i64> {
-				tape.call("some_i64");
-				Some(-7)
-			})
-			.build()
-			.unwrap();
+		enrolled!("some_bool", move || -> Option<bool> {
+			tape.call("some_bool");
+			Some(true)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("none_i64", move || -> Option<i64> {
-				tape.call("none_i64");
-				None
-			})
-			.build()
-			.unwrap();
+		enrolled!("none_bool", move || -> Option<bool> {
+			tape.call("none_bool");
+			None
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("ok_i64", move || -> Result<i64, i64> {
-				tape.call("ok_i64");
-				Ok(-7)
-			})
-			.build()
-			.unwrap();
+		enrolled!("ok_bool", move || -> Result<bool, bool> {
+			tape.call("ok_bool");
+			Ok(true)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("err_i64", move || -> Result<i64, i64> {
-				tape.call("err_i64");
-				Err(-7)
-			})
-			.build()
-			.unwrap();
+		enrolled!("err_bool", move || -> Result<bool, bool> {
+			tape.call("err_bool");
+			Err(true)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("some_u64", move || -> Option<u64> {
-				tape.call("some_u64");
-				Some(7)
-			})
-			.build()
-			.unwrap();
+		enrolled!("some_i64", move || -> Option<i64> {
+			tape.call("some_i64");
+			Some(-7)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("none_u64", move || -> Option<u64> {
-				tape.call("none_u64");
-				None
-			})
-			.build()
-			.unwrap();
+		enrolled!("none_i64", move || -> Option<i64> {
+			tape.call("none_i64");
+			None
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("ok_u64", move || -> Result<u64, u64> {
-				tape.call("ok_u64");
-				Ok(7)
-			})
-			.build()
-			.unwrap();
+		enrolled!("ok_i64", move || -> Result<i64, i64> {
+			tape.call("ok_i64");
+			Ok(-7)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("err_u64", move || -> Result<u64, u64> {
-				tape.call("err_u64");
-				Err(7)
-			})
-			.build()
-			.unwrap();
+		enrolled!("err_i64", move || -> Result<i64, i64> {
+			tape.call("err_i64");
+			Err(-7)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("some_f64", move || -> Option<f64> {
-				tape.call("some_f64");
-				Some(1.25)
-			})
-			.build()
-			.unwrap();
+		enrolled!("some_u64", move || -> Option<u64> {
+			tape.call("some_u64");
+			Some(7)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("none_f64", move || -> Option<f64> {
-				tape.call("none_f64");
-				None
-			})
-			.build()
-			.unwrap();
+		enrolled!("none_u64", move || -> Option<u64> {
+			tape.call("none_u64");
+			None
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("ok_f64", move || -> Result<f64, f64> {
-				tape.call("ok_f64");
-				Ok(1.25)
-			})
-			.build()
-			.unwrap();
+		enrolled!("ok_u64", move || -> Result<u64, u64> {
+			tape.call("ok_u64");
+			Ok(7)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("err_f64", move || -> Result<f64, f64> {
-				tape.call("err_f64");
-				Err(1.25)
-			})
-			.build()
-			.unwrap();
+		enrolled!("err_u64", move || -> Result<u64, u64> {
+			tape.call("err_u64");
+			Err(7)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("some_char", move || -> Option<char> {
-				tape.call("some_char");
-				Some('α')
-			})
-			.build()
-			.unwrap();
+		enrolled!("some_f64", move || -> Option<f64> {
+			tape.call("some_f64");
+			Some(1.25)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("none_char", move || -> Option<char> {
-				tape.call("none_char");
-				None
-			})
-			.build()
-			.unwrap();
+		enrolled!("none_f64", move || -> Option<f64> {
+			tape.call("none_f64");
+			None
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("ok_char", move || -> Result<char, char> {
-				tape.call("ok_char");
-				Ok('α')
-			})
-			.build()
-			.unwrap();
+		enrolled!("ok_f64", move || -> Result<f64, f64> {
+			tape.call("ok_f64");
+			Ok(1.25)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("err_char", move || -> Result<char, char> {
-				tape.call("err_char");
-				Err('α')
-			})
-			.build()
-			.unwrap();
+		enrolled!("err_f64", move || -> Result<f64, f64> {
+			tape.call("err_f64");
+			Err(1.25)
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("some_string", move || -> Option<String> {
-				tape.call("some_string");
-				Some("α\0\n".to_owned())
-			})
-			.build()
-			.unwrap();
+		enrolled!("some_char", move || -> Option<char> {
+			tape.call("some_char");
+			Some('α')
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("none_string", move || -> Option<String> {
-				tape.call("none_string");
-				None
-			})
-			.build()
-			.unwrap();
+		enrolled!("none_char", move || -> Option<char> {
+			tape.call("none_char");
+			None
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("ok_string", move || -> Result<String, String> {
-				tape.call("ok_string");
-				Ok("α\0\n".to_owned())
-			})
-			.build()
-			.unwrap();
+		enrolled!("ok_char", move || -> Result<char, char> {
+			tape.call("ok_char");
+			Ok('α')
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("err_string", move || -> Result<String, String> {
-				tape.call("err_string");
-				Err("α\0\n".to_owned())
-			})
-			.build()
-			.unwrap();
+		enrolled!("err_char", move || -> Result<char, char> {
+			tape.call("err_char");
+			Err('α')
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("mixed_error", move || -> Result<String, i64> {
-				tape.call("mixed_error");
-				Err(-7)
-			})
-			.build()
-			.unwrap();
+		enrolled!("some_string", move || -> Option<String> {
+			tape.call("some_string");
+			Some("α\0\n".to_owned())
+		});
 	}
 	{
 		let tape = tape.clone();
-		module
-			.function("rust_panic", move || -> i64 {
-				tape.call("rust_panic");
-				panic!("h1 rust panic")
-			})
-			.build()
-			.unwrap();
+		enrolled!("none_string", move || -> Option<String> {
+			tape.call("none_string");
+			None
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("ok_string", move || -> Result<String, String> {
+			tape.call("ok_string");
+			Ok("α\0\n".to_owned())
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("err_string", move || -> Result<String, String> {
+			tape.call("err_string");
+			Err("α\0\n".to_owned())
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("mixed_error", move || -> Result<String, i64> {
+			tape.call("mixed_error");
+			Err(-7)
+		});
+	}
+	{
+		let tape = tape.clone();
+		enrolled!("rust_panic", move || -> i64 {
+			tape.call("rust_panic");
+			panic!("h1 rust panic")
+		});
 	}
 	{
 		let tape = tape.clone();
@@ -616,5 +490,18 @@ pub(super) fn stock_context(tape: &Recorder) -> Context {
 			.unwrap();
 	}
 	context.install(module).unwrap();
+	if fresh {
+		use crate::function::fresh_host::{HostOutput, HostSignature, HostType};
+		context
+			.fresh_host_for_test(
+				crate::Hash::type_hash(["h1", "vm_error_control"]),
+				HostSignature {
+					arity: 0,
+					arguments: [HostType::Unit; 4],
+					output: HostOutput::Scalar(HostType::I64),
+				},
+			)
+			.unwrap();
+	}
 	context
 }

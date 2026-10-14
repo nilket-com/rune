@@ -296,5 +296,39 @@ impl_function_traits!(4,
  {C, c, C, 2, {}, {FromValue}, from_value},
  {D, d, D, 3, {}, {FromValue}, from_value}
 );
+// H1 test coverage of all owned/shared arity-four signatures.
+#[cfg(test)]
+impl_function_traits!(4, {A, a, A, 0, {}, {FromValue}, from_value}, {B, b, B, 1, {}, {FromValue}, from_value}, {C, c, C, 2, {}, {FromValue}, from_value}, {D, d, Ref<D>, 3, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, A, 0, {}, {FromValue}, from_value}, {B, b, B, 1, {}, {FromValue}, from_value}, {C, c, Ref<C>, 2, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {D, d, D, 3, {}, {FromValue}, from_value});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, A, 0, {}, {FromValue}, from_value}, {B, b, B, 1, {}, {FromValue}, from_value}, {C, c, Ref<C>, 2, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {D, d, Ref<D>, 3, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, A, 0, {}, {FromValue}, from_value}, {B, b, Ref<B>, 1, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {C, c, C, 2, {}, {FromValue}, from_value}, {D, d, D, 3, {}, {FromValue}, from_value});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, A, 0, {}, {FromValue}, from_value}, {B, b, Ref<B>, 1, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {C, c, C, 2, {}, {FromValue}, from_value}, {D, d, Ref<D>, 3, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, A, 0, {}, {FromValue}, from_value}, {B, b, Ref<B>, 1, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {C, c, Ref<C>, 2, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {D, d, D, 3, {}, {FromValue}, from_value});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, A, 0, {}, {FromValue}, from_value}, {B, b, Ref<B>, 1, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {C, c, Ref<C>, 2, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {D, d, Ref<D>, 3, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, Ref<A>, 0, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {B, b, B, 1, {}, {FromValue}, from_value}, {C, c, C, 2, {}, {FromValue}, from_value}, {D, d, D, 3, {}, {FromValue}, from_value});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, Ref<A>, 0, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {B, b, B, 1, {}, {FromValue}, from_value}, {C, c, C, 2, {}, {FromValue}, from_value}, {D, d, Ref<D>, 3, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, Ref<A>, 0, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {B, b, B, 1, {}, {FromValue}, from_value}, {C, c, Ref<C>, 2, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {D, d, D, 3, {}, {FromValue}, from_value});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, Ref<A>, 0, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {B, b, B, 1, {}, {FromValue}, from_value}, {C, c, Ref<C>, 2, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {D, d, Ref<D>, 3, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, Ref<A>, 0, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {B, b, Ref<B>, 1, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {C, c, C, 2, {}, {FromValue}, from_value}, {D, d, D, 3, {}, {FromValue}, from_value});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, Ref<A>, 0, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {B, b, Ref<B>, 1, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {C, c, C, 2, {}, {FromValue}, from_value}, {D, d, Ref<D>, 3, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, Ref<A>, 0, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {B, b, Ref<B>, 1, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {C, c, Ref<C>, 2, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {D, d, D, 3, {}, {FromValue}, from_value});
+#[cfg(test)]
+impl_function_traits!(4, {A, a, Ref<A>, 0, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {B, b, Ref<B>, 1, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {C, c, Ref<C>, 2, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref}, {D, d, Ref<D>, 3, {&}, {?Sized + UnsafeToRef}, unsafe_to_ref});
 permute!(impl_function_traits);
 repeat_macro!(impl_instance_function_traits);
+
+#[cfg(feature = "fresh-core")]
+pub mod fresh_host;

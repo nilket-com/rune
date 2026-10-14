@@ -1,8 +1,14 @@
 //! H1 stock host oracle. Test-only; future identity controls are not stock probes.
 use super::*;
 use std::boxed::Box;
+#[path = "host_bridge/contract.rs"]
+mod contract;
 #[path = "host_bridge/fixture.rs"]
 mod fixture;
+#[path = "host_bridge/fresh.rs"]
+mod fresh;
+#[path = "host_bridge/identity.rs"]
+mod identity;
 struct Case {
 	label: &'static str,
 	source: &'static str,
@@ -55,7 +61,10 @@ fn typed(value: &crate::runtime::Value, depth: usize) -> String {
 }
 
 pub(super) fn observe_h1(path: &Path, mode: &str, engine: &str) -> Observation {
-	assert_eq!(engine, "stock", "H1 stock-only checkpoint");
+	if engine == "fresh" {
+		return fresh::observe(path, mode);
+	}
+	assert_eq!(engine, "stock", "H1 observer engine");
 	let mode = mode.strip_prefix("h1-").unwrap();
 	let result_path = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
 	let tape = fixture::Recorder::new();
@@ -453,4 +462,87 @@ fn precedence_run(replay: bool) {
 		fs::write(out.join("stock-precedence.tsv"), &table).unwrap();
 	}
 	contract_completed("stock", 4);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "frontend-heavy host control; native gates cover it; focused Miri uses minimal fixtures"
+)]
+fn fresh_fixture_certifies_only_closed_supported_handlers() {
+	let tape = fixture::Recorder::new();
+	let context = fixture::fresh_context(&tape);
+	for name in [
+		"id_unit",
+		"id_bool",
+		"id_i64",
+		"id_u64",
+		"id_f64",
+		"id_char",
+		"greet",
+		"unit",
+		"add",
+		"coercion_pair",
+		"mix3",
+		"mix4",
+		"mark",
+		"parse",
+		"maybe",
+		"f64_bits",
+		"sized_string",
+		"some_unit",
+		"none_unit",
+		"ok_unit",
+		"err_unit",
+		"some_bool",
+		"none_bool",
+		"ok_bool",
+		"err_bool",
+		"some_i64",
+		"none_i64",
+		"ok_i64",
+		"err_i64",
+		"some_u64",
+		"none_u64",
+		"ok_u64",
+		"err_u64",
+		"some_f64",
+		"none_f64",
+		"ok_f64",
+		"err_f64",
+		"some_char",
+		"none_char",
+		"ok_char",
+		"err_char",
+		"some_string",
+		"none_string",
+		"ok_string",
+		"err_string",
+		"mixed_error",
+		"rust_panic",
+	] {
+		let hash = Hash::type_hash(["h1", name]);
+		assert!(
+			context.fresh_host(hash).is_some(),
+			"missing enrollment {name}"
+		);
+	}
+	for name in [
+		"plain_unenrolled",
+		"owned_string",
+		"mut_str",
+		"vec_input",
+		"needs_environment",
+		"async_creation",
+		"raw_unknown",
+	] {
+		assert!(
+			context.fresh_host(Hash::type_hash(["h1", name])).is_none(),
+			"untrusted enrollment {name}"
+		);
+	}
+	assert!(context
+		.fresh_host(Hash::type_hash(["h1", "vm_error_control"]))
+		.is_some());
+	assert_eq!(tape.snapshot(), (0, Vec::new()));
 }

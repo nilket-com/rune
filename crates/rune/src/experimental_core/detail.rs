@@ -119,6 +119,18 @@ impl AdmittedMethod {
 	}
 }
 
+/// Primary native error identity for a certified host failure.
+#[allow(missing_docs)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum HostCause {
+	ExpectedNumber,
+	ExpectedType,
+	Access,
+	IntegerCoercion,
+	MissingEnvironment,
+	Other,
+}
+
 #[allow(missing_docs)]
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Detail {
@@ -249,6 +261,13 @@ pub enum Detail {
 	TupleIndexSet {
 		target: TypeName,
 	},
+	/// Typed host primary and native BadArgument index; text is owned by Failure.
+	HostMessage {
+		cause: HostCause,
+		arg: Option<u8>,
+	},
+	/// A Rust unwind contained at the synchronous host boundary.
+	HostPanicked,
 }
 
 use super::{
@@ -514,6 +533,8 @@ impl fmt::Display for Message<'_> {
 			MissingIndex { target } => write!(f, "Type `{target}` missing index"),
 			MissingStringSlice => f.write_str("Panicked: missing string slice"),
 			PanicMessage => f.write_str("Panicked"),
+			HostMessage { .. } => f.write_str("Host function failed"),
+			HostPanicked => f.write_str("host panicked"),
 			UnsupportedIterRange { start, end } => {
 				write!(f, "Cannot build an iterator out of {start}..{end}")
 			}

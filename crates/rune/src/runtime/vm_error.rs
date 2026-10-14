@@ -250,7 +250,7 @@ impl VmErrorAt {
 		self.index
 	}
 
-	#[cfg(feature = "emit")]
+	#[cfg(any(feature = "emit", feature = "fresh-core"))]
 	pub(crate) fn kind(&self) -> &VmErrorKind {
 		&self.kind
 	}

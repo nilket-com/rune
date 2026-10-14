@@ -208,7 +208,8 @@ fn existing_codec_layout_stays_fixed() {
 		16
 	);
 	if cfg!(target_pointer_width = "64") {
-		assert_eq!(core::mem::size_of::<Code>(), 32);
+		// H1 adds the 24-byte host descriptor Vec; opcode layouts stay fixed.
+		assert_eq!(core::mem::size_of::<Code>(), 56);
 		assert_eq!(core::mem::size_of::<Op>(), 24);
 		assert_eq!(
 			core::mem::size_of::<crate::experimental_core::code::CachedInstruction>(),

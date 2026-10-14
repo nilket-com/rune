@@ -194,6 +194,8 @@ impl TraitContext<'_> {
 		handler: &FunctionHandler,
 	) -> Result<(), ContextError> {
 		let function = ModuleFunction {
+			#[cfg(feature = "fresh-core")]
+			fresh_host: None,
 			handler: handler.clone(),
 			trait_hash: Some(self.trait_hash),
 			doc: DocFunction {
@@ -295,6 +297,8 @@ pub struct Context {
 	item_to_hash: HashMap<ItemBuf, BTreeSet<Hash>>,
 	/// Registered native function handlers.
 	functions: hash::Map<FunctionHandler>,
+	#[cfg(feature = "fresh-core")]
+	fresh_hosts: hash::Map<crate::function::fresh_host::HostBinding>,
 	/// Registered deprecation mesages for native functions.
 	deprecations: hash::Map<String>,
 	/// Information on associated types.
@@ -458,6 +462,25 @@ impl Context {
 			self.crates.try_insert(name.try_into()?)?;
 		}
 
+		#[cfg(feature = "fresh-core")]
+		let prepared_hosts = {
+			let mut hosts = self.fresh_hosts.try_clone()?;
+			for item in &module.items {
+				if let rune::module::ModuleItemKind::Function(function) = &item.kind {
+					if let Some(signature) = function.fresh_host {
+						hosts.try_insert(
+							item.hash,
+							crate::function::fresh_host::HostBinding {
+								hash: item.hash,
+								handler: function.handler.clone(),
+								signature,
+							},
+						)?;
+					}
+				}
+			}
+			hosts
+		};
 		tracing::trace!("module");
 		self.install_module(module)?;
 
@@ -533,6 +556,10 @@ impl Context {
 			self.install_construct(*hash, type_info, construct)?;
 		}
 
+		#[cfg(feature = "fresh-core")]
+		{
+			self.fresh_hosts = prepared_hosts;
+		}
 		Ok(())
 	}
 
@@ -612,6 +639,40 @@ impl Context {
 	/// Check if unit contains the given name by prefix.
 	pub(crate) fn contains_prefix(&self, item: &Item) -> alloc::Result<bool> {
 		self.names.contains_prefix(item)
+	}
+
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_host(
+		&self,
+		hash: Hash,
+	) -> Option<&crate::function::fresh_host::HostBinding> {
+		let binding = self.fresh_hosts.get(&hash)?;
+		let handler = self.functions.get(&hash)?;
+		binding.handler.same_allocation(handler).then_some(binding)
+	}
+
+	// Unit-test-only synthetic certificate for raw VM error controls. Never exported.
+	#[cfg(all(test, feature = "fresh-core"))]
+	pub(crate) fn fresh_host_for_test(
+		&mut self,
+		hash: Hash,
+		signature: crate::function::fresh_host::HostSignature,
+	) -> alloc::Result<()> {
+		assert!(signature.valid());
+		let handler = self
+			.functions
+			.get(&hash)
+			.expect("installed test handler")
+			.clone();
+		self.fresh_hosts.try_insert(
+			hash,
+			crate::function::fresh_host::HostBinding {
+				hash,
+				handler,
+				signature,
+			},
+		)?;
+		Ok(())
 	}
 
 	/// Lookup the given native function handler in the context.
