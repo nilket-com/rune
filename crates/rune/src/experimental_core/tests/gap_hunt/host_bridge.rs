@@ -345,3 +345,112 @@ fn stock_replay() {
 	}
 	contract_completed("stock", 140);
 }
+
+#[test]
+#[ignore = "H1 source-first precedence supplement; exactly four new stock children"]
+fn stock_precedence_supplement() {
+	precedence_run(false);
+}
+
+#[test]
+#[ignore = "ONE bounded byte-exact replay of four frozen host precedence rows"]
+fn stock_precedence_replay() {
+	precedence_run(true);
+}
+
+fn precedence_run(replay: bool) {
+	let cases = [
+		Case {
+			label: r####"h1/supplement/moved-string-to-i64"####,
+			source: r####"pub fn main(){let s="x";drop(s);h1::id_i64(s)}"####,
+			mode: "normal",
+			policy: "stock-first-pending",
+			stock: true,
+		},
+		Case {
+			label: r####"h1/supplement/moved-vec-to-str"####,
+			source: r####"pub fn main(){let v=[1];drop(v);h1::greet(v)}"####,
+			mode: "normal",
+			policy: "stock-first-pending",
+			stock: true,
+		},
+		Case {
+			label: r####"h1/supplement/early-bool-before-moved-string"####,
+			source: r####"pub fn main(){let s="x";drop(s);h1::mix3(7,8,s)}"####,
+			mode: "normal",
+			policy: "stock-first-pending",
+			stock: true,
+		},
+		Case {
+			label: "h1/supplement/coercion-before-moved-string",
+			source: r####"pub fn main(){let s="x";drop(s);h1::coercion_pair(9223372036854775808u64,s)}"####,
+			mode: "normal",
+			policy: "stock-first-pending",
+			stock: true,
+		},
+	];
+	let expected = include_str!("host_bridge/precedence.tsv");
+	let rows: Vec<_> = expected.lines().skip(1).collect();
+	assert_eq!(rows.len(), 4);
+	let baseline = if replay {
+		Some(PathBuf::from(
+			std::env::var_os("H1_BASELINE").expect("original supplement origins"),
+		))
+	} else {
+		None
+	};
+	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
+	fs::create_dir(&out).unwrap();
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-h1-supplement-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let started = Instant::now();
+	let mut table = String::from("case\tmode\tsource_hex\tstock_observation_hex\tstdout_hex\tstderr_hex\ttyped_hex\teffects_hex\tstable_error_hex\tdiagnostics_hex\tpolicy\n");
+	for (n, case) in cases.iter().enumerate() {
+		assert!(started.elapsed() < Duration::from_secs(60));
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
+		fs::write(&path, case.source).unwrap();
+		let origin = baseline
+			.as_ref()
+			.map(|p| p.join(format!("{id}.source.rn")))
+			.unwrap_or_else(|| path.clone());
+		assert_eq!(fs::read_to_string(&origin).unwrap(), case.source);
+		for ext in ["typed", "effects", "error", "diagnostics", "stable-error"] {
+			let _ = fs::remove_file(scratch.0.join(format!("result.{ext}")));
+		}
+		fs::write(out.join(format!("{id}.argv")), format!("{:?} --exact {CHILD} --ignored --nocapture --quiet\nGAP_CASE={path:?}\nGAP_ORIGIN={origin:?}\nGAP_MODE=h1-normal\nGAP_ENGINE=stock\nGAP_RESULT={:?}\nstdin=/dev/null\n", std::env::current_exe().unwrap(), scratch.0.join("result"))).unwrap();
+		let run = launch(&path, &origin, "h1-normal", "stock", &scratch.0, &out, &id);
+		assert!(run.complete, "{}: {}", case.label, run.record);
+		fs::write(out.join(format!("{id}.rc")), "0\n").unwrap();
+		let mut actual = vec![
+			case.label.to_owned(),
+			case.mode.to_owned(),
+			hex(case.source.as_bytes()),
+			hex(run.record.as_bytes()),
+			hex(&run.stdout),
+			hex(&run.stderr),
+		];
+		for ext in ["typed", "effects", "stable-error", "diagnostics"] {
+			let bytes = fs::read(scratch.0.join(format!("result.{ext}"))).unwrap_or_default();
+			assert!(bytes.len() <= CAP);
+			fs::write(out.join(format!("{id}.{ext}")), &bytes).unwrap();
+			actual.push(hex(&bytes));
+		}
+		fs::write(
+			out.join(format!("{id}.error")),
+			fs::read(scratch.0.join("result.error")).unwrap_or_default(),
+		)
+		.unwrap();
+		actual.push(case.policy.to_owned());
+		let compared = actual.join("\t");
+		fs::write(out.join(format!("{id}.compared")), &compared).unwrap();
+		if replay {
+			assert_eq!(compared, rows[n], "precedence replay {}", case.label);
+		}
+		table.push_str(&compared);
+		table.push('\n');
+		fs::write(out.join("stock-precedence.tsv"), &table).unwrap();
+	}
+	contract_completed("stock", 4);
+}

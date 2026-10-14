@@ -128,6 +128,16 @@ pub(super) fn stock_context(tape: &Recorder) -> Context {
 	{
 		let tape = tape.clone();
 		module
+			.function("coercion_pair", move |a: i64, b: &str| -> String {
+				tape.call("coercion_pair");
+				format!("{a}:{b}")
+			})
+			.build()
+			.unwrap();
+	}
+	{
+		let tape = tape.clone();
+		module
 			.function("mix3", move |a: bool, b: i64, c: &str| -> String {
 				tape.call("mix3");
 				format!("{a}:{b}:{c}")
