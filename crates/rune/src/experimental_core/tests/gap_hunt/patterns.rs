@@ -772,3 +772,6 @@ fn pattern_depth_contract() {
 	}
 	fs::write(out.join("summary.tsv"), summary).unwrap();
 }
+
+#[path = "patterns/result_supplement.rs"]
+mod result_supplement;
