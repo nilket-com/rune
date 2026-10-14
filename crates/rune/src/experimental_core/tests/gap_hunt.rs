@@ -174,6 +174,15 @@ fn observe_with_context(
 			.with_context(context)
 			.with_diagnostics(&mut diagnostics)
 			.build_vm();
+		// C3 opt-in metadata; all older contracts keep their observation path.
+		if mode.starts_with("patterns-") {
+			let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
+			fs::write(
+				result.with_extension("diagnostics"),
+				format!("{:?}", diagnostics.diagnostics()),
+			)
+			.unwrap();
+		}
 		let mut vm = match vm {
 			Ok(vm) => vm,
 			Err(e) => {
@@ -189,7 +198,10 @@ fn observe_with_context(
 		if mode == "compile" {
 			return Observation::new("compiled", "", "", String::new(), String::new());
 		}
-		let entry = mode.strip_prefix("test:").unwrap_or("main");
+		let entry = mode
+			.strip_prefix("test:")
+			.or_else(|| mode.strip_prefix("patterns-test:"))
+			.unwrap_or("main");
 		let result = crate::runtime::budget::with(fuel, || match float_input {
 			Some(input) => vm.call(entry_hash(entry), (input,)),
 			None => vm.call(entry_hash(entry), ()),
@@ -221,7 +233,7 @@ fn observe_with_context(
 			Err(e) => {
 				// Assertion oracle opt-in: preserve exact stock failure metadata without
 				// changing any existing frozen observation or running the case twice.
-				if mode == "assert-main" || mode == "output-main" {
+				if mode == "assert-main" || mode == "output-main" || mode.starts_with("patterns-") {
 					let site = match e.first_location() {
 						Some(at) => {
 							let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
@@ -233,7 +245,9 @@ fn observe_with_context(
 								range.end
 							)
 						}
-						None if mode == "output-main" => "none".into(),
+						None if mode == "output-main" || mode.starts_with("patterns-") => {
+							"none".into()
+						}
 						None => panic!("stock error location"),
 					};
 					let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
@@ -343,7 +357,9 @@ fn child() {
 	if mode == "timeout-control" {
 		std::thread::sleep(Duration::from_secs(60));
 	}
-	let observation = if mode.starts_with("c2-") {
+	let observation = if mode.starts_with("c3-") {
+		patterns::observe_patterns(Path::new(&path), &mode, &engine)
+	} else if mode.starts_with("c2-") {
 		output_macros::observe_c2(Path::new(&path), &mode, &engine)
 	} else if mode == "stack-main" {
 		std::thread::Builder::new()
@@ -1518,3 +1534,6 @@ fn panic_class_alias_preserves_exact_message_stream_kind_and_phase_checks() {
 		);
 	}
 }
+
+#[path = "gap_hunt/patterns.rs"]
+mod patterns;

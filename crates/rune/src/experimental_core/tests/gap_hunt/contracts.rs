@@ -5,6 +5,14 @@
 
 use std::{env, fs, path::PathBuf, process::Command};
 
+// One descriptor shared by the integration gate and its focused count test.
+const PATTERNS_STOCK: (&str, &str, &str, usize) = (
+	"patterns-stock",
+	"gap_hunt::patterns::stock_contract",
+	"stock",
+	348,
+);
+
 #[test]
 #[ignore = "full frozen contracts and S0: explicit operator run, requires GAP_OUT and GAP_EXTERNAL"]
 fn all_frozen_contracts() {
@@ -101,6 +109,7 @@ fn all_frozen_contracts() {
 			"fresh",
 			178,
 		),
+		PATTERNS_STOCK,
 		("s0", "gap_hunt::corpus", "both", 639),
 		(
 			"output-both",
@@ -148,4 +157,17 @@ fn all_frozen_contracts() {
 		fs::write(out.join("COMPLETED"), &completed).unwrap();
 		std::println!("PASS {name}");
 	}
+}
+
+#[test]
+fn patterns_stock_count_hook() {
+	let (name, test, engine, rows) = PATTERNS_STOCK;
+	assert_eq!(name, "patterns-stock");
+	assert_eq!(test, "gap_hunt::patterns::stock_contract");
+	assert_eq!(engine, "stock");
+	assert_eq!(rows, 348);
+	let mut frozen = include_str!("../patterns_stock.tsv").lines();
+	assert_eq!(frozen.next().unwrap().split('\t').count(), 9);
+	assert_eq!(frozen.count(), rows, "unified pattern hook/table count");
+	super::contract_completed(engine, rows);
 }
