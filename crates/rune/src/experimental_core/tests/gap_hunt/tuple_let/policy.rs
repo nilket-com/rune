@@ -36,6 +36,7 @@ fn policy_decode(text: &str) -> std::string::String {
 }
 
 #[test]
+#[cfg(not(miri))]
 fn intentional_rulings_reject_drift() {
 	let frozen = include_str!("../../tuple_let_stock.tsv");
 	let mut checked = 0;
@@ -44,6 +45,56 @@ fn intentional_rulings_reject_drift() {
 		if c[6] != "Intentional-divergence" {
 			continue;
 		}
+		let source = policy_decode(c[2]);
+		let stock: Json = serde_json::from_str(&policy_decode(c[3])).unwrap();
+		let fresh: Json = serde_json::from_str(&policy_decode(c[7])).unwrap();
+		let ruling: Json = serde_json::from_str(&policy_decode(c[8])).unwrap();
+		check_intentional(c[0], &source, &stock, &fresh, &ruling);
+		assert_ne!(stock, fresh);
+		let rejects = |label: &str, source: &str, stock: &Json, fresh: &Json, ruling: &Json| {
+			assert!(std::panic::catch_unwind(|| check_intentional(
+				label, source, stock, fresh, ruling
+			))
+			.is_err());
+		};
+		rejects(c[0], &source, &stock, &stock, &ruling);
+		rejects("unlisted", &source, &stock, &fresh, &ruling);
+		rejects(c[0], &(source.clone() + " "), &stock, &fresh, &ruling);
+		let mut bad = ruling.clone();
+		bad["message_id"] = json!("unreviewed");
+		rejects(c[0], &source, &stock, &fresh, &bad);
+		if c[0] == "syntax/duplicate-name" {
+			let mut shifted = fresh.clone();
+			shifted["start"] = json!(19);
+			rejects(c[0], &source, &stock, &shifted, &ruling);
+			let mut changed = stock.clone();
+			changed["value"] = json!("3");
+			rejects(c[0], &source, &changed, &fresh, &ruling);
+		} else {
+			let mut changed = fresh.clone();
+			changed["value"] = json!("8");
+			rejects(c[0], &source, &stock, &changed, &ruling);
+		}
+		checked += 1;
+	}
+	assert_eq!(checked, 2);
+}
+
+#[test]
+#[cfg(miri)]
+fn miri_intentional_rulings_reject_drift() {
+	let selected = ["effects/return-from-rhs", "syntax/duplicate-name"];
+	let mut checked = 0;
+	for label in selected {
+		let fixture =
+			crate::experimental_core::tests::miri_fixtures::fixture("C8-intentional", label);
+		let c = fixture
+			.as_array()
+			.unwrap()
+			.iter()
+			.map(|v| v.as_str().unwrap())
+			.collect::<Vec<_>>();
+		assert_eq!(c[0], label);
 		let source = policy_decode(c[2]);
 		let stock: Json = serde_json::from_str(&policy_decode(c[3])).unwrap();
 		let fresh: Json = serde_json::from_str(&policy_decode(c[7])).unwrap();

@@ -79,6 +79,7 @@ fn compare_c9_diagnostic_retained(
 }
 
 #[test]
+#[cfg(not(miri))]
 fn c9_frozen_diagnostics_reject_unlisted_sites_frames_and_callers() {
 	let manifest = c9_retained_manifest().unwrap();
 	assert_eq!(manifest["diagnostics"]["rows"].as_array().unwrap().len(), 6);
@@ -201,4 +202,202 @@ fn c9_frozen_diagnostics_reject_unlisted_sites_frames_and_callers() {
 		)
 		.is_err());
 	}
+}
+
+#[test]
+#[cfg(miri)]
+fn miri_c9_diagnostic_site() {
+	let manifest = c9_retained_manifest().unwrap();
+	let selected = ["format/display/Less"];
+	let mut checked = std::vec::Vec::new();
+	for label in selected {
+		let row = manifest["diagnostics"]["rows"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.find(|row| row["label"] == label)
+			.unwrap();
+		let fixture =
+			crate::experimental_core::tests::miri_fixtures::fixture("C9-diagnostics", label);
+		let counts = &fixture["counts"];
+		checked.push(label);
+		let label = row["label"].as_str().unwrap();
+		let source = pins_decode(row["source_hex"].as_str().unwrap());
+		let stock = &fixture["disposition"]["fresh_expectation"];
+		let mut actual = raw_fixture(stock);
+		actual["sites"] = row["retained"]["fresh_sites"].clone();
+		let callers = if row["category"] == "Retained-frame" {
+			row["retained"]["call_chain"].clone()
+		} else {
+			json!([])
+		};
+		assert!(
+			compare_c9_diagnostic_retained(label, &source, &actual, stock, counts, &callers)
+				.is_ok()
+		);
+		assert!(compare_c9_diagnostic_retained(
+			"unlisted", &source, &actual, stock, counts, &callers
+		)
+		.is_err());
+		let mut bad = actual.clone();
+		bad["sites"][0]["start"] = json!(bad["sites"][0]["start"].as_u64().unwrap() + 1);
+		assert!(
+			compare_c9_diagnostic_retained(label, &source, &bad, stock, counts, &callers).is_err()
+		);
+		let mut bad_stock = stock.clone();
+		bad_stock["sites"][0]["start"] = json!(1);
+		assert!(compare_c9_diagnostic_retained(
+			label, &source, &actual, &bad_stock, counts, &callers
+		)
+		.is_err());
+		let mut bad = actual.clone();
+		bad["sites"]
+			.as_array_mut()
+			.unwrap()
+			.push(actual["sites"][0].clone());
+		assert!(
+			compare_c9_diagnostic_retained(label, &source, &bad, stock, counts, &callers).is_err()
+		);
+		for field in ["kind", "typed", "display", "chain", "status"] {
+			let mut bad = actual.clone();
+			bad[field] = json!("drift");
+			assert!(
+				compare_c9_diagnostic_retained(label, &source, &bad, stock, counts, &callers)
+					.is_err()
+			);
+		}
+		let mut bad_callers = callers.clone();
+		if row["category"] == "Retained-frame" {
+			bad_callers[0]["start"] = json!(bad_callers[0]["start"].as_u64().unwrap() + 1);
+			let mut bad = actual.clone();
+			bad["sites"][0]["frames"] = json!(serde_json::to_string(&json!([callers[0]])).unwrap());
+			assert!(
+				compare_c9_diagnostic_retained(label, &source, &bad, stock, counts, &callers)
+					.is_err()
+			);
+			let mut bad_source = source.clone().into_bytes();
+			let at = callers[0]["start"].as_u64().unwrap() as usize;
+			bad_source[at] = b'x';
+			assert!(compare_c9_diagnostic_retained(
+				label,
+				std::str::from_utf8(&bad_source).unwrap(),
+				&actual,
+				stock,
+				counts,
+				&callers
+			)
+			.is_err());
+		} else {
+			bad_callers = json!([{"source":0,"start":1,"end":2}]);
+		}
+		assert!(compare_c9_diagnostic_retained(
+			label,
+			&source,
+			&actual,
+			stock,
+			counts,
+			&bad_callers
+		)
+		.is_err());
+	}
+	assert_eq!(checked, selected);
+}
+
+#[test]
+#[cfg(miri)]
+fn miri_c9_diagnostic_frame() {
+	let manifest = c9_retained_manifest().unwrap();
+	let selected = ["frames/missing"];
+	let mut checked = std::vec::Vec::new();
+	for label in selected {
+		let row = manifest["diagnostics"]["rows"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.find(|row| row["label"] == label)
+			.unwrap();
+		let fixture =
+			crate::experimental_core::tests::miri_fixtures::fixture("C9-diagnostics", label);
+		let counts = &fixture["counts"];
+		checked.push(label);
+		let label = row["label"].as_str().unwrap();
+		let source = pins_decode(row["source_hex"].as_str().unwrap());
+		let stock = &fixture["disposition"]["fresh_expectation"];
+		let mut actual = raw_fixture(stock);
+		actual["sites"] = row["retained"]["fresh_sites"].clone();
+		let callers = if row["category"] == "Retained-frame" {
+			row["retained"]["call_chain"].clone()
+		} else {
+			json!([])
+		};
+		assert!(
+			compare_c9_diagnostic_retained(label, &source, &actual, stock, counts, &callers)
+				.is_ok()
+		);
+		assert!(compare_c9_diagnostic_retained(
+			"unlisted", &source, &actual, stock, counts, &callers
+		)
+		.is_err());
+		let mut bad = actual.clone();
+		bad["sites"][0]["start"] = json!(bad["sites"][0]["start"].as_u64().unwrap() + 1);
+		assert!(
+			compare_c9_diagnostic_retained(label, &source, &bad, stock, counts, &callers).is_err()
+		);
+		let mut bad_stock = stock.clone();
+		bad_stock["sites"][0]["start"] = json!(1);
+		assert!(compare_c9_diagnostic_retained(
+			label, &source, &actual, &bad_stock, counts, &callers
+		)
+		.is_err());
+		let mut bad = actual.clone();
+		bad["sites"]
+			.as_array_mut()
+			.unwrap()
+			.push(actual["sites"][0].clone());
+		assert!(
+			compare_c9_diagnostic_retained(label, &source, &bad, stock, counts, &callers).is_err()
+		);
+		for field in ["kind", "typed", "display", "chain", "status"] {
+			let mut bad = actual.clone();
+			bad[field] = json!("drift");
+			assert!(
+				compare_c9_diagnostic_retained(label, &source, &bad, stock, counts, &callers)
+					.is_err()
+			);
+		}
+		let mut bad_callers = callers.clone();
+		if row["category"] == "Retained-frame" {
+			bad_callers[0]["start"] = json!(bad_callers[0]["start"].as_u64().unwrap() + 1);
+			let mut bad = actual.clone();
+			bad["sites"][0]["frames"] = json!(serde_json::to_string(&json!([callers[0]])).unwrap());
+			assert!(
+				compare_c9_diagnostic_retained(label, &source, &bad, stock, counts, &callers)
+					.is_err()
+			);
+			let mut bad_source = source.clone().into_bytes();
+			let at = callers[0]["start"].as_u64().unwrap() as usize;
+			bad_source[at] = b'x';
+			assert!(compare_c9_diagnostic_retained(
+				label,
+				std::str::from_utf8(&bad_source).unwrap(),
+				&actual,
+				stock,
+				counts,
+				&callers
+			)
+			.is_err());
+		} else {
+			bad_callers = json!([{"source":0,"start":1,"end":2}]);
+		}
+		assert!(compare_c9_diagnostic_retained(
+			label,
+			&source,
+			&actual,
+			stock,
+			counts,
+			&bad_callers
+		)
+		.is_err());
+	}
+	assert_eq!(checked, selected);
 }

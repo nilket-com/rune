@@ -46,6 +46,7 @@ fn compare_c9_retained(
 }
 
 #[test]
+#[cfg(not(miri))]
 fn c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 	let pin: Json = serde_json::from_str(C9_RETAINED_PIN).unwrap();
 	let dispositions: Json = serde_json::from_str(C9_PINNED_DISPOSITIONS).unwrap();
@@ -83,5 +84,51 @@ fn c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 	let mut bad_stock = stock.clone();
 	bad_stock["kind"] = json!("Other");
 	assert!(compare_c9_retained(label, source, &fresh, &bad_stock, &counts[label]).is_err());
+	// The envelope's existing lifecycle/site/frame/host checks remain outside this helper.
+}
+
+#[test]
+#[cfg(miri)]
+fn miri_c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
+	let pin: Json = serde_json::from_str(C9_RETAINED_PIN).unwrap();
+	let fixture = crate::experimental_core::tests::miri_fixtures::fixture(
+		"C9-leased",
+		"access/leased-parent-mutate",
+	);
+	let counts = &fixture["counts"];
+	let label = pin["label"].as_str().unwrap();
+	let source_bytes = (0..pin["source_hex"].as_str().unwrap().len())
+		.step_by(2)
+		.map(|i| u8::from_str_radix(&pin["source_hex"].as_str().unwrap()[i..i + 2], 16).unwrap())
+		.collect::<Vec<_>>();
+	let source = std::str::from_utf8(&source_bytes).unwrap();
+	assert_eq!(label, "access/leased-parent-mutate");
+	let stock = &fixture["disposition"]["fresh_expectation"];
+	let mut fresh = stock.clone();
+	for field in ["kind", "typed", "chain"] {
+		fresh[field] = pin["fresh"][field].clone();
+	}
+	assert!(compare_c9_retained(label, source, &fresh, stock, counts).is_ok());
+	assert!(compare_c9_retained("other", source, &fresh, stock, counts).is_err());
+	assert!(compare_c9_retained(label, "different source", &fresh, stock, counts).is_err());
+	for (path, value) in [
+		("kind", json!("Other")),
+		("typed", json!({"raw_kind":"Other"})),
+		("chain", json!([{"kind":"BadArgument { arg: 0 }"}])),
+		("class", json!("Other")),
+		("display", json!("Other")),
+		("sites", json!([])),
+		("status", json!("value")),
+	] {
+		let mut bad = fresh.clone();
+		bad[path] = value;
+		assert!(
+			compare_c9_retained(label, source, &bad, stock, counts).is_err(),
+			"{path}"
+		);
+	}
+	let mut bad_stock = stock.clone();
+	bad_stock["kind"] = json!("Other");
+	assert!(compare_c9_retained(label, source, &fresh, &bad_stock, counts).is_err());
 	// The envelope's existing lifecycle/site/frame/host checks remain outside this helper.
 }

@@ -79,6 +79,7 @@ fn retained_matches(
 }
 
 #[test]
+#[cfg(not(miri))]
 fn retained_pins_reject_drift() {
 	let pins = retained_pins().as_array().unwrap();
 	assert_eq!(pins.len(), 23);
@@ -148,4 +149,214 @@ fn retained_pins_reject_drift() {
 			("Retained-display", 1),
 		])
 	);
+}
+
+#[test]
+#[cfg(miri)]
+fn miri_retained_chain() {
+	let pins = retained_pins().as_array().unwrap();
+	let selected = ["moved/string/normal", "matrix/vec/type-change/computed/set"];
+	let mut checked = std::vec::Vec::new();
+	let mut categories = std::collections::BTreeMap::new();
+	for label in selected {
+		let pin = pins.iter().find(|pin| pin["label"] == label).unwrap();
+		checked.push(pin["label"].as_str().unwrap());
+		let label = pin["label"].as_str().unwrap();
+		let source = pin["source"].as_str().unwrap();
+		let stock = &pin["stock"];
+		let fresh = &pin["fresh"];
+		let chain = &pin["call_chain"];
+		let category = pin["category"].as_str().unwrap();
+		assert_eq!(
+			retained_matches(label, source, stock, fresh, chain),
+			Some(category)
+		);
+		*categories.entry(category).or_insert(0usize) += 1;
+		// A known diagnostic pair can never grant a rule to a different row.
+		assert!(retained_matches("unlisted/label", source, stock, fresh, chain).is_none());
+		assert!(retained_matches(label, &format!("{source} "), stock, fresh, chain).is_none());
+		let mut shifted = fresh.clone();
+		shifted["sites"][0]["start"] = json!(fresh["sites"][0]["start"].as_u64().unwrap() + 1);
+		assert!(retained_matches(label, source, stock, &shifted, chain).is_none());
+		let mut extra = fresh.clone();
+		extra["chain_displays"]
+			.as_array_mut()
+			.unwrap()
+			.push(json!("Bad argument #0"));
+		assert!(retained_matches(label, source, stock, &extra, chain).is_none());
+		let mut extra_callers = chain.clone();
+		extra_callers
+			.as_array_mut()
+			.unwrap()
+			.push(json!({"source":0,"start":0,"end":1}));
+		assert!(retained_matches(label, source, stock, fresh, &extra_callers).is_none());
+		if category == "Retained-chain" {
+			let mut missing = stock.clone();
+			missing["chain_displays"] = json!([]);
+			assert!(retained_matches(label, source, &missing, fresh, chain).is_none());
+			let mut changed_n = stock.clone();
+			let n = pin["argument"].as_u64().unwrap();
+			changed_n["chain_displays"] =
+				json!([format!("Bad argument #{}", if n == 0 { 1 } else { 0 })]);
+			assert!(retained_matches(label, source, &changed_n, fresh, chain).is_none());
+		}
+		if category != "Retained-display" {
+			let mut changed_display = fresh.clone();
+			changed_display["display"] = json!("Cannot write, the value is being read from");
+			if changed_display == *fresh {
+				changed_display["display"] = json!("unexpected display");
+			}
+			assert!(retained_matches(label, source, stock, &changed_display, chain).is_none());
+		}
+		if category == "Retained-frame" {
+			let mut removed = chain.clone();
+			removed.as_array_mut().unwrap().pop();
+			assert!(retained_matches(label, source, stock, fresh, &removed).is_none());
+			let mut changed_frames = stock.clone();
+			changed_frames["sites"][0]["frames"] = json!("[]");
+			assert!(retained_matches(label, source, &changed_frames, fresh, chain).is_none());
+		}
+	}
+	assert_eq!(checked, selected);
+	assert_eq!(categories.values().sum::<usize>(), selected.len());
+}
+
+#[test]
+#[cfg(miri)]
+fn miri_retained_frame() {
+	let pins = retained_pins().as_array().unwrap();
+	let selected = ["effects/receiver-panic", "nested/get-error"];
+	let mut checked = std::vec::Vec::new();
+	let mut categories = std::collections::BTreeMap::new();
+	for label in selected {
+		let pin = pins.iter().find(|pin| pin["label"] == label).unwrap();
+		checked.push(pin["label"].as_str().unwrap());
+		let label = pin["label"].as_str().unwrap();
+		let source = pin["source"].as_str().unwrap();
+		let stock = &pin["stock"];
+		let fresh = &pin["fresh"];
+		let chain = &pin["call_chain"];
+		let category = pin["category"].as_str().unwrap();
+		assert_eq!(
+			retained_matches(label, source, stock, fresh, chain),
+			Some(category)
+		);
+		*categories.entry(category).or_insert(0usize) += 1;
+		// A known diagnostic pair can never grant a rule to a different row.
+		assert!(retained_matches("unlisted/label", source, stock, fresh, chain).is_none());
+		assert!(retained_matches(label, &format!("{source} "), stock, fresh, chain).is_none());
+		let mut shifted = fresh.clone();
+		shifted["sites"][0]["start"] = json!(fresh["sites"][0]["start"].as_u64().unwrap() + 1);
+		assert!(retained_matches(label, source, stock, &shifted, chain).is_none());
+		let mut extra = fresh.clone();
+		extra["chain_displays"]
+			.as_array_mut()
+			.unwrap()
+			.push(json!("Bad argument #0"));
+		assert!(retained_matches(label, source, stock, &extra, chain).is_none());
+		let mut extra_callers = chain.clone();
+		extra_callers
+			.as_array_mut()
+			.unwrap()
+			.push(json!({"source":0,"start":0,"end":1}));
+		assert!(retained_matches(label, source, stock, fresh, &extra_callers).is_none());
+		if category == "Retained-chain" {
+			let mut missing = stock.clone();
+			missing["chain_displays"] = json!([]);
+			assert!(retained_matches(label, source, &missing, fresh, chain).is_none());
+			let mut changed_n = stock.clone();
+			let n = pin["argument"].as_u64().unwrap();
+			changed_n["chain_displays"] =
+				json!([format!("Bad argument #{}", if n == 0 { 1 } else { 0 })]);
+			assert!(retained_matches(label, source, &changed_n, fresh, chain).is_none());
+		}
+		if category != "Retained-display" {
+			let mut changed_display = fresh.clone();
+			changed_display["display"] = json!("Cannot write, the value is being read from");
+			if changed_display == *fresh {
+				changed_display["display"] = json!("unexpected display");
+			}
+			assert!(retained_matches(label, source, stock, &changed_display, chain).is_none());
+		}
+		if category == "Retained-frame" {
+			let mut removed = chain.clone();
+			removed.as_array_mut().unwrap().pop();
+			assert!(retained_matches(label, source, stock, fresh, &removed).is_none());
+			let mut changed_frames = stock.clone();
+			changed_frames["sites"][0]["frames"] = json!("[]");
+			assert!(retained_matches(label, source, &changed_frames, fresh, chain).is_none());
+		}
+	}
+	assert_eq!(checked, selected);
+	assert_eq!(categories.values().sum::<usize>(), selected.len());
+}
+
+#[test]
+#[cfg(miri)]
+fn miri_retained_display() {
+	let pins = retained_pins().as_array().unwrap();
+	let selected = ["effects/leased-drop"];
+	let mut checked = std::vec::Vec::new();
+	let mut categories = std::collections::BTreeMap::new();
+	for label in selected {
+		let pin = pins.iter().find(|pin| pin["label"] == label).unwrap();
+		checked.push(pin["label"].as_str().unwrap());
+		let label = pin["label"].as_str().unwrap();
+		let source = pin["source"].as_str().unwrap();
+		let stock = &pin["stock"];
+		let fresh = &pin["fresh"];
+		let chain = &pin["call_chain"];
+		let category = pin["category"].as_str().unwrap();
+		assert_eq!(
+			retained_matches(label, source, stock, fresh, chain),
+			Some(category)
+		);
+		*categories.entry(category).or_insert(0usize) += 1;
+		// A known diagnostic pair can never grant a rule to a different row.
+		assert!(retained_matches("unlisted/label", source, stock, fresh, chain).is_none());
+		assert!(retained_matches(label, &format!("{source} "), stock, fresh, chain).is_none());
+		let mut shifted = fresh.clone();
+		shifted["sites"][0]["start"] = json!(fresh["sites"][0]["start"].as_u64().unwrap() + 1);
+		assert!(retained_matches(label, source, stock, &shifted, chain).is_none());
+		let mut extra = fresh.clone();
+		extra["chain_displays"]
+			.as_array_mut()
+			.unwrap()
+			.push(json!("Bad argument #0"));
+		assert!(retained_matches(label, source, stock, &extra, chain).is_none());
+		let mut extra_callers = chain.clone();
+		extra_callers
+			.as_array_mut()
+			.unwrap()
+			.push(json!({"source":0,"start":0,"end":1}));
+		assert!(retained_matches(label, source, stock, fresh, &extra_callers).is_none());
+		if category == "Retained-chain" {
+			let mut missing = stock.clone();
+			missing["chain_displays"] = json!([]);
+			assert!(retained_matches(label, source, &missing, fresh, chain).is_none());
+			let mut changed_n = stock.clone();
+			let n = pin["argument"].as_u64().unwrap();
+			changed_n["chain_displays"] =
+				json!([format!("Bad argument #{}", if n == 0 { 1 } else { 0 })]);
+			assert!(retained_matches(label, source, &changed_n, fresh, chain).is_none());
+		}
+		if category != "Retained-display" {
+			let mut changed_display = fresh.clone();
+			changed_display["display"] = json!("Cannot write, the value is being read from");
+			if changed_display == *fresh {
+				changed_display["display"] = json!("unexpected display");
+			}
+			assert!(retained_matches(label, source, stock, &changed_display, chain).is_none());
+		}
+		if category == "Retained-frame" {
+			let mut removed = chain.clone();
+			removed.as_array_mut().unwrap().pop();
+			assert!(retained_matches(label, source, stock, fresh, &removed).is_none());
+			let mut changed_frames = stock.clone();
+			changed_frames["sites"][0]["frames"] = json!("[]");
+			assert!(retained_matches(label, source, &changed_frames, fresh, chain).is_none());
+		}
+	}
+	assert_eq!(checked, selected);
+	assert_eq!(categories.values().sum::<usize>(), selected.len());
 }
