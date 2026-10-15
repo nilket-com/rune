@@ -164,6 +164,18 @@ fn all_frozen_contracts() {
 			"fresh",
 			7,
 		),
+		(
+			"deferred-index-stock",
+			"gap_hunt::deferred_index::stock_contract",
+			"stock",
+			318,
+		),
+		(
+			"deferred-index-fresh",
+			"gap_hunt::deferred_index::fresh_contract",
+			"fresh",
+			318,
+		),
 		("s0", "gap_hunt::corpus", "both", 639),
 		(
 			"output-both",
