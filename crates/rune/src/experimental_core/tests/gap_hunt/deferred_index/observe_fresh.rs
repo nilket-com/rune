@@ -30,6 +30,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 	let mut returned_root = false;
 	let mut failure_at_get = false;
 	let mut typed_failure_kind = None;
+	let mut failure_site_ops = vec![];
 	let observation = match compiled {
 		Err(e) => {
 			json!({"status":if e.refusal.is_some() && e.refusal != Some(crate::experimental_core::error::Refusal::FrontendDiagnostic) {"refused"} else {"compile-error"},"kind":format!("{:?}",e.kind),"error":format!("{e:?}"),"refusal":e.refusal.map(|r|r.name()),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
@@ -72,19 +73,27 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 					// Verify the actual instruction at the failure location, independent
 					// of any case label, frozen expected value, or operation prose.
 					if let Some(at) = failure.error.location {
-						let mut matches = vec![];
+						let mut get_count = 0;
+						let mut only_get_and_release = true;
 						for id in 0..program.code.functions() {
 							let function = program.code.function(id as u32).unwrap();
 							for (pc, location) in function.locations.iter().enumerate() {
 								if *location == at {
-									matches.push(matches!(
-										function.operation(pc).unwrap(),
-										Op::Get { .. }
-									));
+									let op = function.operation(pc).unwrap();
+									get_count += usize::from(matches!(op, Op::Get { .. }));
+									only_get_and_release &=
+										matches!(op, Op::Get { .. } | Op::Release { .. });
+									failure_site_ops.push(
+										json!({"function":id,"pc":pc,"operation":format!("{op:?}")}),
+									);
 								}
 							}
 						}
-						failure_at_get = !matches.is_empty() && matches.iter().all(|v| *v);
+						// Lowering emits Release cleanup at the same span. Release puts
+						// Unit and releases ownership; it cannot raise StoreCapacity.
+						// A unique Get plus only Release siblings identifies the sole
+						// allocating instruction, without inventing a failure PC.
+						failure_at_get = get_count == 1 && only_get_and_release;
 					}
 					let class = match failure.error.kind {
 						ErrorKind::Type => "Type",
@@ -160,6 +169,6 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 	};
 	(
 		observation,
-		json!({"no_cleanup_error":no_cleanup_error,"clean_after_row":clean,"row_live_entries":row_live,"row_payload_bytes":row_payload,"row_idle":row_idle,"reuse":reuse,"reuse_raw":reuse_raw,"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"idle":executor.is_idle(),"call_chain":call_chain,"invoked":invoked,"returned_root":returned_root,"typed_failure_kind":typed_failure_kind,"failure_at_get":failure_at_get,"limits_entries":limits.entries,"limits_bytes":limits.bytes}),
+		json!({"no_cleanup_error":no_cleanup_error,"clean_after_row":clean,"row_live_entries":row_live,"row_payload_bytes":row_payload,"row_idle":row_idle,"reuse":reuse,"reuse_raw":reuse_raw,"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"idle":executor.is_idle(),"call_chain":call_chain,"invoked":invoked,"returned_root":returned_root,"typed_failure_kind":typed_failure_kind,"failure_at_get":failure_at_get,"failure_site_ops":failure_site_ops,"limits_entries":limits.entries,"limits_bytes":limits.bytes}),
 	)
 }

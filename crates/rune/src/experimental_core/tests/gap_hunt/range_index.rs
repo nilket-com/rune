@@ -223,6 +223,17 @@ fn contract_cases(engine: &str, generated: Vec<(String, String)>, table: &str) {
 	let scratch =
 		Scratch(std::env::temp_dir().join(format!("rune-range-contract-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
+	if engine == "fresh" && generated.len() == 522 {
+		let admitted = generated
+			.iter()
+			.filter(|(label, _)| label.starts_with("literal/") && label.ends_with("/get"))
+			.map(|(label, _)| label.as_str())
+			.collect::<Vec<_>>();
+		assert_eq!(
+			admitted,
+			["literal/vec/get", "literal/string/get", "literal/tuple/get"]
+		);
+	}
 	let rows: Vec<_> = table.lines().skip(1).collect();
 	assert_eq!(generated.len(), rows.len());
 	for (n, ((label, source), row)) in generated.iter().zip(rows).enumerate() {
@@ -238,10 +249,7 @@ fn contract_cases(engine: &str, generated: Vec<(String, String)>, table: &str) {
 		super::len_clone::assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
 		let actual: Vec<_> = run.record.split('\t').collect();
 		assert!(!actual[1].contains("0x"), "unstable class: {}", run.record);
-		if engine == "fresh"
-			&& ((label.starts_with("literal/") && label.ends_with("/get"))
-				|| label.starts_with("refusal/"))
-		{
+		if engine == "fresh" && label.starts_with("refusal/") {
 			assert_eq!(
 				&actual[..2],
 				&["refused", "Some(Range)"],

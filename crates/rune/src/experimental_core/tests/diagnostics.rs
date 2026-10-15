@@ -503,8 +503,8 @@ fn compile_time_refusals_are_catalogued_before_execution() {
 		),
 		("pub fn target() { (0..2).iter() + 1 }", Refusal::Method),
 		("pub fn target() { 0..=2 }", Refusal::Range),
-		// Literal range indexing waits for the separate S-slice contract.
-		("pub fn target() { [10,20][0..1] }", Refusal::Range),
+		// Inline inclusive range indexing remains outside the admitted subset.
+		("pub fn target() { [10,20][0..=1] }", Refusal::Range),
 	] {
 		let mut sources = Sources::new();
 		sources.insert(Source::memory(source).unwrap()).unwrap();

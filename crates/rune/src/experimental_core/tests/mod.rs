@@ -57,3 +57,16 @@ mod store_integrity;
 mod strict_conditions;
 mod struct_names;
 mod values;
+
+// The default-context corpus is excluded under Miri, but the pure pinned
+// diagnostic policy is eligible and uses the same helper and frozen fixture.
+#[cfg(miri)]
+mod deferred_index_pins {
+	use serde_json::{json, Value as Json};
+
+	fn hex(bytes: &[u8]) -> std::string::String {
+		bytes.iter().map(|b| std::format!("{b:02x}")).collect()
+	}
+
+	include!("gap_hunt/deferred_index/retained.rs");
+}

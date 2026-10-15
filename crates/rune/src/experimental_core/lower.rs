@@ -1342,17 +1342,22 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let E::Index(index) = expr.kind else {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
-		// Literal slicing routes before execution; dynamic Range indices are
-		// the separately tracked S-slice semantic gap.
-		if matches!(self.exprs.get(index.index).kind, E::Range(_)) {
-			return Err(self.refused(span, Refusal::Range));
+		// Only half-open inline ranges use the existing Range -> Get path.
+		// Keep sibling refusals anchored to the whole index expression.
+		if let E::Range(range) = self.exprs.get(index.index).kind {
+			if !matches!(range, hir::ExprRange::Range { .. }) {
+				return Err(self.refused(span, Refusal::Range));
+			}
 		}
-		let slots = self.operands(&[index.target, index.index])?;
+		// Stock defers a bare-local receiver until the index has run, as Set
+		// and compound assignment already do. Computed targets run first.
+		let target = self.assignment_operand(index.target, span)?;
+		let key = self.operand(index.index)?;
 		self.emit(
 			Op::Get {
 				out,
-				value: slots[0],
-				index: slots[1],
+				value: target,
+				index: key,
 			},
 			span,
 		)?;

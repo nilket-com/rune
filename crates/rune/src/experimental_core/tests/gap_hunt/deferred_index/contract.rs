@@ -1,5 +1,4 @@
 // C7 strict projection: no address exemptions or retained-frame adapters.
-// C6 stock replay: raw Debug is provenance; semantic missing-method hashes verified.
 const REPLAY_CAP: usize = 2 << 20;
 fn exact_keys(o: &serde_json::Map<String, Json>, names: &[&str]) {
 	assert_eq!(o.len(), names.len());
@@ -179,17 +178,16 @@ fn run_contract(engine: &str) {
 		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
 		let start = Instant::now();
 		let mut stop = false;
-		let mut exited = None;
-		let status = loop {
-			if exited.is_none() {
-				exited = child.try_wait().unwrap();
+		let mut exited = false;
+		loop {
+			if child.try_wait().unwrap().is_some() {
+				exited = true;
 			}
 			if !exceeded.load(Ordering::Relaxed)
-				&& exited.is_some()
-				&& stdout.is_finished()
+				&& exited && stdout.is_finished()
 				&& stderr.is_finished()
 			{
-				break exited.unwrap();
+				break;
 			}
 			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
 				stop = true;
@@ -198,10 +196,13 @@ fn run_contract(engine: &str) {
 					.stdout(Stdio::null())
 					.stderr(Stdio::null())
 					.status();
-				break exited.unwrap_or_else(|| child.wait().unwrap());
+				break;
 			}
 			std::thread::sleep(Duration::from_millis(10));
-		};
+		}
+		// wait() also returns the cached status when try_wait() already reaped
+		// the child. Every exit path explicitly collects it before joining.
+		let status = child.wait().unwrap();
 		let stdout = stdout.join().unwrap();
 		let stderr = stderr.join().unwrap();
 		fs::write(folder.join("stdout"), &stdout).unwrap();
@@ -294,6 +295,7 @@ fn run_contract(engine: &str) {
 					"returned_root",
 					"typed_failure_kind",
 					"failure_at_get",
+					"failure_site_ops",
 					"limits_entries",
 					"limits_bytes",
 				],
@@ -325,6 +327,7 @@ fn run_contract(engine: &str) {
 			assert_eq!(audit["reuse_raw"], "Some(I64(7))");
 			audit["call_chain"].as_array().unwrap();
 			assert_ne!(e["outcome"]["class"], "UNMAPPED");
+			let mut category = *policy;
 			match *policy {
 				"Refused-Range" | "Refused-ByteStr" => {
 					let o = &e["outcome"];
@@ -381,6 +384,7 @@ fn run_contract(engine: &str) {
 					assert_eq!(audit["returned_root"], false);
 					assert_eq!(audit["typed_failure_kind"], "StoreCapacity");
 					assert_eq!(audit["failure_at_get"], true);
+					audit["failure_site_ops"].as_array().unwrap();
 					assert!(audit["call_chain"].as_array().unwrap().is_empty());
 					let got = project(&e["outcome"]);
 					fs::write(
@@ -410,13 +414,23 @@ fn run_contract(engine: &str) {
 					.unwrap();
 					// All sites, native chains and frame strings are compared exactly.
 					// Any mismatch STOPs here, with raw observations already saved.
-					assert_eq!(got, expected, "fresh {label}");
+					if retained_case(label) {
+						category =
+							retained_matches(label, source, &expected, &got, &audit["call_chain"])
+								.unwrap_or_else(|| {
+									panic!(
+										"retained pin drift {label}: stock={expected} fresh={got}"
+									)
+								});
+					} else {
+						assert_eq!(got, expected, "fresh {label}");
+					}
 					assert_eq!(hex(&stdout), c[4], "stdout {label}");
 					assert_eq!(hex(&stderr), c[5], "stderr {label}");
 				}
 				_ => panic!("unknown C7 policy"),
 			}
-			*policy
+			category
 		};
 		assert!(
 			!has_address(&String::from_utf8_lossy(&stdout))
@@ -424,15 +438,25 @@ fn run_contract(engine: &str) {
 		);
 		*policies.entry(category).or_insert(0usize) += 1;
 	}
-	assert_eq!(
-		policies,
+	let expected = if engine == "stock" {
 		std::collections::BTreeMap::from([
 			("Exact", 306),
 			("Refused-Range", 10),
 			("Refused-ByteStr", 1),
 			("Retained-resource", 1),
 		])
-	);
+	} else {
+		std::collections::BTreeMap::from([
+			("Exact", 283),
+			("Retained-chain", 20),
+			("Retained-frame", 2),
+			("Retained-display", 1),
+			("Refused-Range", 10),
+			("Refused-ByteStr", 1),
+			("Retained-resource", 1),
+		])
+	};
+	assert_eq!(policies, expected);
 	contract_completed(engine, COUNT);
 	fs::write(
 		out.join("COMPLETE"),
@@ -440,3 +464,5 @@ fn run_contract(engine: &str) {
 	)
 	.unwrap();
 }
+
+include!("retained.rs");

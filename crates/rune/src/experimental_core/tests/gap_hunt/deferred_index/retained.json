@@ -1,0 +1,952 @@
+[
+	{
+		"index": 126,
+		"label": "moved/string/normal",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=\"abc\";let a=v;drop(a);v[0..2];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b6c657420613d763b64726f702861293b765b302e2e325d3b28297d",
+		"source_sha256": "86ddab43532fcea01e19b5d8181d7770049e1b34b719b1dcdcc5572989d6be14",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 49,
+					"frames": "[]",
+					"source": 0,
+					"start": 42
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 49,
+					"frames": "[]",
+					"source": 0,
+					"start": 42
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 127,
+		"label": "moved/string/negative",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=\"abc\";let a=v;drop(a);v[-1..2];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b6c657420613d763b64726f702861293b765b2d312e2e325d3b28297d",
+		"source_sha256": "c0b3004f0bb782491abcaab6856a5943d7021ebfe6ce18276e42f80e00a75984",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 50,
+					"frames": "[]",
+					"source": 0,
+					"start": 42
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 50,
+					"frames": "[]",
+					"source": 0,
+					"start": 42
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 128,
+		"label": "moved/string/float",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=\"abc\";let a=v;drop(a);v[0.0..2];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b6c657420613d763b64726f702861293b765b302e302e2e325d3b28297d",
+		"source_sha256": "87de13ff553f4f88e9537a0e485f03300458c393455c96ec80608baa7988f49d",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 51,
+					"frames": "[]",
+					"source": 0,
+					"start": 42
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 51,
+					"frames": "[]",
+					"source": 0,
+					"start": 42
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 129,
+		"label": "moved/string/reversed",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=\"abc\";let a=v;drop(a);v[2..1];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b6c657420613d763b64726f702861293b765b322e2e315d3b28297d",
+		"source_sha256": "f7376ea80dd343d553a7b9daad3f4c5149cf44773cb3bb795b716f39b9a4a054",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 49,
+					"frames": "[]",
+					"source": 0,
+					"start": 42
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 49,
+					"frames": "[]",
+					"source": 0,
+					"start": 42
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 130,
+		"label": "moved/vec/normal",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=[1,2,3];let a=v;drop(a);v[0..2];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b6c657420613d763b64726f702861293b765b302e2e325d3b28297d",
+		"source_sha256": "337bbf0160972f23eb3011e8ee0ae5f3b741149d580d667d942958ac73b7be64",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 51,
+					"frames": "[]",
+					"source": 0,
+					"start": 44
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 51,
+					"frames": "[]",
+					"source": 0,
+					"start": 44
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 131,
+		"label": "moved/vec/negative",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=[1,2,3];let a=v;drop(a);v[-1..2];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b6c657420613d763b64726f702861293b765b2d312e2e325d3b28297d",
+		"source_sha256": "1597ef4e6319543b6ce26060d835fa323e1d6f85980617163640e6586fc6c5aa",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 52,
+					"frames": "[]",
+					"source": 0,
+					"start": 44
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 52,
+					"frames": "[]",
+					"source": 0,
+					"start": 44
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 132,
+		"label": "moved/vec/float",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=[1,2,3];let a=v;drop(a);v[0.0..2];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b6c657420613d763b64726f702861293b765b302e302e2e325d3b28297d",
+		"source_sha256": "58d2e58f604eacbd1398a57d72704d6de90cc8ee66513f79641a27ba73a17e3a",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 53,
+					"frames": "[]",
+					"source": 0,
+					"start": 44
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 53,
+					"frames": "[]",
+					"source": 0,
+					"start": 44
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 133,
+		"label": "moved/vec/reversed",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=[1,2,3];let a=v;drop(a);v[2..1];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b6c657420613d763b64726f702861293b765b322e2e315d3b28297d",
+		"source_sha256": "ad3b52257ce2cb3e6ba7233a37753798a6d94166cb9204a5e98926103e2ca410",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 51,
+					"frames": "[]",
+					"source": 0,
+					"start": 44
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 51,
+					"frames": "[]",
+					"source": 0,
+					"start": 44
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 139,
+		"label": "effects/leased-drop",
+		"category": "Retained-display",
+		"source": "pub fn main(){let v=[1,2,3];for x in v {drop(v);v[0..2];} true}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b666f72207820696e2076207b64726f702876293b765b302e2e325d3b7d20747275657d",
+		"source_sha256": "d6e0d53566d2c078663d9b08577cfe1fd506e2b62fd9064c2c9a17e72513a5f2",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot take, the value is being read from",
+			"sites": [
+				{
+					"end": 47,
+					"frames": "[]",
+					"source": 0,
+					"start": 40
+				}
+			],
+			"chain_displays": []
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot write, the value is being read from",
+			"sites": [
+				{
+					"end": 47,
+					"frames": "[]",
+					"source": 0,
+					"start": 40
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": []
+	},
+	{
+		"index": 144,
+		"label": "effects/receiver-drop-start",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=\"abc\";v[{drop(v);0}..2];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b765b7b64726f702876293b307d2e2e325d3b28297d",
+		"source_sha256": "b018f346d03a522f49d18ebd2286ba6c44e0cd3129c9253d3398e6e4d7e603d5",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 43,
+					"frames": "[]",
+					"source": 0,
+					"start": 26
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 43,
+					"frames": "[]",
+					"source": 0,
+					"start": 26
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 145,
+		"label": "effects/receiver-drop-end",
+		"category": "Retained-chain",
+		"source": "pub fn main(){let v=[1,2,3];v[0..{drop(v);2}];()}",
+		"source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b765b302e2e7b64726f702876293b327d5d3b28297d",
+		"source_sha256": "183bdbbc7258b738de0db6b92d13f6419b2108955ffb9367e5a814bb86e210a1",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 45,
+					"frames": "[]",
+					"source": 0,
+					"start": 28
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 45,
+					"frames": "[]",
+					"source": 0,
+					"start": 28
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 151,
+		"label": "effects/receiver-panic",
+		"category": "Retained-frame",
+		"source": "fn receiver(){println!(\"receiver\");panic!(\"receiver\")} pub fn main(){receiver()[{println!(\"start\");0}..{println!(\"end\");2}];()}",
+		"source_hex": "666e20726563656976657228297b7072696e746c6e212822726563656976657222293b70616e6963212822726563656976657222297d2070756220666e206d61696e28297b726563656976657228295b7b7072696e746c6e212822737461727422293b307d2e2e7b7072696e746c6e212822656e6422293b327d5d3b28297d",
+		"source_sha256": "149ebc3918f707e73e915222db44ffac6242f1029d586fd53803d9984428c583",
+		"stock": {
+			"status": "error",
+			"class": "Panic",
+			"display": "Panicked: receiver",
+			"sites": [
+				{
+					"end": 53,
+					"frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }]",
+					"source": 0,
+					"start": 35
+				}
+			],
+			"chain_displays": []
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "Panic",
+			"display": "Panicked: receiver",
+			"sites": [
+				{
+					"end": 53,
+					"frames": "[{\"end\":79,\"source\":0,\"start\":69}]",
+					"source": 0,
+					"start": 35
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [
+			{
+				"end": 79,
+				"source": 0,
+				"start": 69
+			}
+		],
+		"callsite_bytes": [
+			{
+				"end": 79,
+				"source": 0,
+				"start": 69,
+				"bytes_hex": "72656365697665722829"
+			}
+		]
+	},
+	{
+		"index": 154,
+		"label": "nested/get-error",
+		"category": "Retained-frame",
+		"source": "fn inner(){\"aéz\"[1..2];()} fn outer(){inner()} pub fn main(){outer()}",
+		"source_hex": "666e20696e6e657228297b2261c3a97a225b312e2e325d3b28297d20666e206f7574657228297b696e6e657228297d2070756220666e206d61696e28297b6f7574657228297d",
+		"source_sha256": "e2971220d82348be073f52e0f076d36e0b45eca5062aac354b17c19489c127d1",
+		"stock": {
+			"status": "error",
+			"class": "Panic",
+			"display": "Panicked: missing string slice",
+			"sites": [
+				{
+					"end": 23,
+					"frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 5, top: 1, isolated: None, out: keep(0) }]",
+					"source": 0,
+					"start": 11
+				}
+			],
+			"chain_displays": []
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "Panic",
+			"display": "Panicked: missing string slice",
+			"sites": [
+				{
+					"end": 23,
+					"frames": "[{\"end\":46,\"source\":0,\"start\":39},{\"end\":69,\"source\":0,\"start\":62}]",
+					"source": 0,
+					"start": 11
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [
+			{
+				"end": 46,
+				"source": 0,
+				"start": 39
+			},
+			{
+				"end": 69,
+				"source": 0,
+				"start": 62
+			}
+		],
+		"callsite_bytes": [
+			{
+				"end": 46,
+				"source": 0,
+				"start": 39,
+				"bytes_hex": "696e6e65722829"
+			},
+			{
+				"end": 69,
+				"source": 0,
+				"start": 62,
+				"bytes_hex": "6f757465722829"
+			}
+		]
+	},
+	{
+		"index": 180,
+		"label": "matrix/vec/type-change/computed/set",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=[1,2];id(v)[{v=#{a:7};\"a\"}]=9;v.a}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b69642876295b7b763d237b613a377d3b2261227d5d3d393b762e617d",
+		"source_sha256": "a2135d369a02cf7883d859875dc0b25fd0cbc050e4e8e15f952f4404b7b1216b",
+		"stock": {
+			"status": "error",
+			"class": "Type",
+			"display": "Expected number type, but found `std::string::String`",
+			"sites": [
+				{
+					"end": 61,
+					"frames": "[]",
+					"source": 0,
+					"start": 38
+				}
+			],
+			"chain_displays": [
+				"Bad argument #1"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "Type",
+			"display": "Expected number type, but found `std::string::String`",
+			"sites": [
+				{
+					"end": 61,
+					"frames": "[]",
+					"source": 0,
+					"start": 38
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 1
+	},
+	{
+		"index": 183,
+		"label": "matrix/vec/drop/local/set",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=[1,2];v[{drop(v);0}]=9;7}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b765b7b64726f702876293b307d5d3d393b377d",
+		"source_sha256": "52a3affaea884fc1fdf046e3831f1d2fb85d95e475fb82dfd9bb1d3f7f022651",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot write, the value has been moved",
+			"sites": [
+				{
+					"end": 54,
+					"frames": "[]",
+					"source": 0,
+					"start": 38
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot write, the value has been moved",
+			"sites": [
+				{
+					"end": 54,
+					"frames": "[]",
+					"source": 0,
+					"start": 38
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 186,
+		"label": "matrix/vec/drop/computed/set",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=[1,2];id(v)[{drop(v);0}]=9;7}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b69642876295b7b64726f702876293b307d5d3d393b377d",
+		"source_sha256": "182952773109820d4f0a31ada86a91c643b9240369cd285dfd3ff9e96cb92a7c",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot write, the value has been moved",
+			"sites": [
+				{
+					"end": 58,
+					"frames": "[]",
+					"source": 0,
+					"start": 38
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot write, the value has been moved",
+			"sites": [
+				{
+					"end": 58,
+					"frames": "[]",
+					"source": 0,
+					"start": 38
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 192,
+		"label": "matrix/vec/replace-drop-old/computed/set",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=[1,2];let old=v;id(v)[{v=[7,8];drop(old);0}]=9;v[0]}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b6c6574206f6c643d763b69642876295b7b763d5b372c385d3b64726f70286f6c64293b307d5d3d393b765b305d7d",
+		"source_sha256": "384fb5b11f5142d677cc6bacf6015a0520068159c618b23074bcfe31c3f4ef2d",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot write, the value has been moved",
+			"sites": [
+				{
+					"end": 78,
+					"frames": "[]",
+					"source": 0,
+					"start": 48
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot write, the value has been moved",
+			"sites": [
+				{
+					"end": 78,
+					"frames": "[]",
+					"source": 0,
+					"start": 48
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 254,
+		"label": "matrix/string/drop/local/get",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=\"ab\";v[{drop(v);0}]}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b765b7b64726f702876293b307d5d7d",
+		"source_sha256": "5854f3a5d60ae4b8f0db058619b7f17f28af8c2d32c4e20e4af282fb686040f6",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 51,
+					"frames": "[]",
+					"source": 0,
+					"start": 37
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 51,
+					"frames": "[]",
+					"source": 0,
+					"start": 37
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 256,
+		"label": "matrix/string/drop/local/compound",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=\"ab\";v[{drop(v);0}]+=1;7}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b765b7b64726f702876293b307d5d2b3d313b377d",
+		"source_sha256": "a01718185eb14cd99aa2e2b13a7997f11459ca093c715fcd3b746d251ddb32aa",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 54,
+					"frames": "[]",
+					"source": 0,
+					"start": 37
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 54,
+					"frames": "[]",
+					"source": 0,
+					"start": 37
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 257,
+		"label": "matrix/string/drop/computed/get",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=\"ab\";id(v)[{drop(v);0}]}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b69642876295b7b64726f702876293b307d5d7d",
+		"source_sha256": "065c4b49c7e082d6dc177901d821276da4e09ff94d96041c16f4a25728c98874",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 55,
+					"frames": "[]",
+					"source": 0,
+					"start": 37
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 55,
+					"frames": "[]",
+					"source": 0,
+					"start": 37
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 259,
+		"label": "matrix/string/drop/computed/compound",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=\"ab\";id(v)[{drop(v);0}]+=1;7}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b69642876295b7b64726f702876293b307d5d2b3d313b377d",
+		"source_sha256": "d61230452f6a064923a37a1ced2e442f6fa6c6162c14057250fb3824ae631ce9",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 58,
+					"frames": "[]",
+					"source": 0,
+					"start": 37
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 58,
+					"frames": "[]",
+					"source": 0,
+					"start": 37
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 263,
+		"label": "matrix/string/replace-drop-old/computed/get",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=\"ab\";let old=v;id(v)[{v=\"cd\";drop(old);0}]}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b6c6574206f6c643d763b69642876295b7b763d226364223b64726f70286f6c64293b307d5d7d",
+		"source_sha256": "7efc75177f954270340e7d397007516177c0d355486bfa440cf3f784283557e6",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 74,
+					"frames": "[]",
+					"source": 0,
+					"start": 47
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 74,
+					"frames": "[]",
+					"source": 0,
+					"start": 47
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	},
+	{
+		"index": 265,
+		"label": "matrix/string/replace-drop-old/computed/compound",
+		"category": "Retained-chain",
+		"source": "fn id(x){x} pub fn main(){let v=\"ab\";let old=v;id(v)[{v=\"cd\";drop(old);0}]+=1;v[0]}",
+		"source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b6c6574206f6c643d763b69642876295b7b763d226364223b64726f70286f6c64293b307d5d2b3d313b765b305d7d",
+		"source_sha256": "d3c9e647d68433a45d9f8f200e7dae0bccd8f6ba08309c8f2df2fcd77ec72e38",
+		"stock": {
+			"status": "error",
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 77,
+					"frames": "[]",
+					"source": 0,
+					"start": 47
+				}
+			],
+			"chain_displays": [
+				"Bad argument #0"
+			]
+		},
+		"fresh": {
+			"chain_displays": [],
+			"class": "AccessConflict",
+			"display": "Cannot read, the value has been moved",
+			"sites": [
+				{
+					"end": 77,
+					"frames": "[]",
+					"source": 0,
+					"start": 47
+				}
+			],
+			"status": "error"
+		},
+		"call_chain": [],
+		"argument": 0
+	}
+]

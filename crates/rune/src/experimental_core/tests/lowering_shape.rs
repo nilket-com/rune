@@ -103,11 +103,11 @@ fn collection_and_template_operands_snapshot_before_a_writing_operand() {
 	miri,
 	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
 )]
-fn index_read_materialises_its_target_before_a_writing_index() {
-	// The read target is evaluated in source order: the original vector is read.
+fn index_read_defers_a_local_target_until_after_a_writing_index() {
+	// Stock reads a bare-local target after the index has rebound it.
 	assert_eq!(
 		int("pub fn main() { let v = [7, 8]; v[{ v = [9]; 0 }] }"),
-		7
+		9
 	);
 
 	// A bare index is read in place.
