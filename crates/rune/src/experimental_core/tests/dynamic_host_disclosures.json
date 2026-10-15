@@ -1,0 +1,70 @@
+{
+  "ruling": {
+    "seq": 14975,
+    "message_id": "01a13ffd-7244-709b-80e9-042571314865"
+  },
+  "retained_isolation": {
+    "rows": [
+      "isolation/external-host-mutation",
+      "isolation/external-script-mutation",
+      "isolation/cross-call-alias",
+      "isolation/cross-call-later-snapshot"
+    ],
+    "disclosure": "fresh imports host return values as owned snapshots; later host or script mutation is not shared across the boundary"
+  },
+  "runtime_refusals": [
+    "cycle/cycle-vec",
+    "cycle/cycle-object",
+    "cycle/cycle-two",
+    "cycle/cycle-tuple",
+    "cycle/cycle-option",
+    "cycle/cycle-result",
+    "cycle/unused-result",
+    "unsupported/unused-result",
+    "access/exclusive",
+    "access/moved",
+    "access/deep-exclusive",
+    "access/deep-moved",
+    "unsupported/empty",
+    "unsupported/type",
+    "unsupported/hash",
+    "unsupported/bytes",
+    "unsupported/bytes-empty",
+    "unsupported/custom",
+    "unsupported/function",
+    "unsupported/future",
+    "unsupported/range",
+    "unsupported/nominal",
+    "unsupported/nested-custom",
+    "depth/plain/129",
+    "depth/result/128",
+    "visits/plain/65536",
+    "visits/result/65535",
+    "frames/deep-error"
+  ],
+  "retained_arity": [
+    "argument/wrong-arity"
+  ],
+  "caps": {
+    "depth_inclusive": 128,
+    "outer_result_depth": 0,
+    "visits_inclusive": 65536,
+    "scratch_bytes_max": 4194304,
+    "scratch_rule": "min(4MiB, remaining Store budget), jointly preflighted with payload",
+    "fresh_entries_bytes": "Store configured limits; no separate node cap"
+  },
+  "inline_unsupported_hash_none": [
+    "unsupported/empty",
+    "unsupported/type",
+    "unsupported/hash"
+  ],
+  "output_access_reason": "OutputAccess (empty/moved/borrowed category); four unreadable builtin rows carry actual Vec hash",
+  "runtime_display": {
+    "Unsupported": "host returned an unsupported value",
+    "Cycle": "host returned a cyclic value",
+    "OutputAccess": "host returned an unreadable value of type <actual type hash>",
+    "DepthLimit": "host value nesting exceeds 128",
+    "VisitLimit": "host value exceeds 65536 visits"
+  },
+  "performance": "No admitted-program performance claim; counter gate remains all10 exact201/200 cells"
+}

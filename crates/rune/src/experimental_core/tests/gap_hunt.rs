@@ -1577,3 +1577,6 @@ mod tuple_let;
 
 #[cfg(feature = "emit")]
 mod cmp_ordering;
+
+#[cfg(feature = "emit")]
+mod dynamic_host;

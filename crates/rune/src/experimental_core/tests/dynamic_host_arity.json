@@ -1,0 +1,25 @@
+{
+  "argument/wrong-arity": {
+    "index": 124,
+    "source_sha256": "869001f1820a64e9e45a69efeb6bf9bb8563d25e9284bec66a746f6835900cb0",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Arity",
+      "refusal": "Arity",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 25,
+        "span_hex": "6331303a3a6d616b652829"
+      }
+    },
+    "postconditions": {
+      "cleanup_error": null,
+      "executor_idle": true,
+      "live_entries": 0,
+      "payload_bytes": 0,
+      "reuse_i64": 7
+    }
+  }
+}
