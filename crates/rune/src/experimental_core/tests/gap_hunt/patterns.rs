@@ -632,7 +632,9 @@ fn expected_fresh_refusal(label: &str) -> Option<&'static str> {
 		|| label == "paths/constant-tuple"
 	{
 		Some("Some(FrontendDiagnostic)")
-	} else if label.starts_with("let/") || label.starts_with("supplement/struct-let/") {
+	} else if (label.starts_with("let/") && label != "let/unit")
+		|| label.starts_with("supplement/struct-let/")
+	{
 		Some("Some(Pattern)")
 	} else if label.starts_with("access/option/") || label == "life/W1-parent-move" {
 		Some("Some(Method)")
@@ -735,8 +737,8 @@ fn fresh_contract() {
 		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
 		equal += 1;
 	}
-	assert_eq!((equal, refused, full_budget), (251, 34, 63));
-	fs::write(out.join("summary.txt"),"251 exact stock parity;34 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
+	assert_eq!((equal, refused, full_budget), (252, 33, 63));
+	fs::write(out.join("summary.txt"),"252 exact stock parity;33 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
 	contract_completed("fresh", 348);
 }
 

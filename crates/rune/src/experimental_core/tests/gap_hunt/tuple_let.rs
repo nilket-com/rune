@@ -97,3 +97,5 @@ include!("tuple_let/observe_fresh.rs");
 include!("tuple_let/contract.rs");
 
 include!("tuple_let/policy.rs");
+
+include!("tuple_let/retained.rs");

@@ -351,7 +351,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					}
 					match pat.kind {
 						hir::PatKind::Ignore => (),
-						hir::PatKind::Path(hir::PatPathKind::Ident(variable)) => {
+						hir::PatKind::Path(hir::PatPathKind::Ident { variable, .. }) => {
 							self.pattern_name(*variable, value, binding.names, slots, pat.span)?
 						}
 						hir::PatKind::Path(hir::PatPathKind::Kind(kind)) => {
@@ -423,6 +423,87 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	fn pattern_bindings(&mut self, binding: &hir::PatBinding<'hir>, slots: &[u32]) -> Result<()> {
 		for (name, slot) in binding.names.iter().zip(slots) {
 			self.variables.try_push((*name, *slot))?;
+		}
+		Ok(())
+	}
+
+	/// Only local closed tuple bindings gain C8 admission. The ordinary bind
+	/// entry remains unchanged for parameters and for-loop bindings.
+	#[inline(never)]
+	pub(super) fn pattern_local(
+		&mut self,
+		binding: &hir::PatBinding<'hir>,
+		root: u32,
+	) -> Result<()> {
+		if matches!(
+			binding.pat.kind,
+			hir::PatKind::Ignore | hir::PatKind::Path(hir::PatPathKind::Ident { .. })
+		) {
+			return self.bind(&binding.pat, root);
+		}
+		self.local_tuple_shape(&binding.pat)?;
+		let span = binding.pat.span;
+		let linear = self.pattern_slots(binding.names.len())?;
+		let temps = self.next;
+		let misses = self.pattern_tree(binding, root, &linear)?;
+		// Misses skip any later child extraction. Releasing a still-Unit slot
+		// is safe, so preserve the complete potential ownership set now.
+		let failure_cleanup = self.pattern_dirty(0)?;
+		self.pop_to(temps, span)?;
+		// The RHS slot is a temporary, even when initialized by a bare local.
+		// Its children have their own retained binding slots on success.
+		self.emit(Op::Release { value: root }, span)?;
+		self.dirty[root as usize] = false;
+		if !misses.is_empty() {
+			let done = self.emit(Op::Jump { target: 0 }, span)?;
+			self.pattern_patch(&misses, self.pc())?;
+			// The miss terminates this frame. Free owned handles before the
+			// existing String admission for the existing typed Panic operation.
+			// Do not alter the successful path's compiler ownership facts.
+			self.pattern_release(&failure_cleanup, span)?;
+			let message = self.slot()?;
+			let text = self.function.string("pattern did not match")?;
+			self.emit(Op::String { out: message, text }, span)?;
+			self.emit(Op::Panic { value: message }, span)?;
+			self.forget_to(temps);
+			self.function.patch(done, Op::Jump { target: self.pc() })?;
+		}
+		self.pattern_bindings(binding, &linear)
+	}
+
+	/// Validate the narrower let subset before the general match walker can
+	/// admit vectors, objects, variants, literals or trailing rest patterns.
+	#[inline(never)]
+	fn local_tuple_shape(&self, root: &hir::Pat<'hir>) -> Result<()> {
+		let mut work = Vec::new();
+		let mut names = Vec::new();
+		work.try_push((root, 0usize))?;
+		while let Some((pat, depth)) = work.pop() {
+			if self.depth + depth >= 128 {
+				return Err(self.refused(pat.span, Refusal::DepthLimit));
+			}
+			match pat.kind {
+				hir::PatKind::Ignore => (),
+				hir::PatKind::Path(hir::PatPathKind::Ident {
+					name: hir::Name::Str(name),
+					..
+				}) => {
+					if names.contains(name) {
+						return Err(self.refused(pat.span, Refusal::Pattern));
+					}
+					names.try_push(*name)?;
+				}
+				hir::PatKind::Sequence(sequence) => {
+					if !matches!(sequence.kind, hir::PatSequenceKind::Sequence { hash, is_open: false, .. } if hash == crate::runtime::OwnedTuple::HASH)
+					{
+						return Err(self.refused(pat.span, Refusal::Pattern));
+					}
+					for child in sequence.items.iter().rev() {
+						work.try_push((child, depth + 1))?;
+					}
+				}
+				_ => return Err(self.refused(pat.span, Refusal::Pattern)),
+			}
 		}
 		Ok(())
 	}

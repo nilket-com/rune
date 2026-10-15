@@ -86,7 +86,13 @@ pub(crate) struct PatBinding<'hir> {
 #[try_clone(copy)]
 pub(crate) enum PatPathKind<'hir> {
 	Kind(&'hir PatSequenceKind),
-	Ident(Variable),
+	Ident {
+		variable: Variable,
+		// Preserve the already-resolved borrowed spelling for fresh local
+		// duplicate checks, including synthetic identifiers from macros.
+		#[cfg(feature = "fresh-core")]
+		name: Name<'hir>,
+	},
 }
 
 /// The kind of a [Pat].

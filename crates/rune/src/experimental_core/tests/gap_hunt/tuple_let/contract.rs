@@ -385,7 +385,8 @@ fn run_contract(engine: &str) {
 			audit["call_chain"].as_array().unwrap();
 			audit["failure_site_ops"].as_array().unwrap();
 			assert_ne!(e["outcome"]["class"], "UNMAPPED");
-			if fresh_expected["status"] == "refused" {
+			if fresh_expected["status"] == "refused" || matches!(*label, "depth/128" | "depth/129")
+			{
 				assert_eq!(audit["invoked"], false);
 				assert_eq!(audit["returned_root"], false);
 				assert!(audit["typed_failure_kind"].is_null());
@@ -405,15 +406,27 @@ fn run_contract(engine: &str) {
 			serde_json::to_vec_pretty(&got).unwrap(),
 		)
 		.unwrap();
-		assert_eq!(
-			got,
-			if engine == "stock" {
-				stock_expected
-			} else {
-				fresh_expected
-			},
-			"C8 strict {engine} {label}"
-		);
+		let expected = if engine == "stock" {
+			stock_expected
+		} else {
+			let manifest: Json =
+				serde_json::from_str(include_str!("../../tuple_let_retained.json")).unwrap();
+			retained_expected(
+				&manifest,
+				label,
+				source,
+				&stock_expected,
+				&fresh_expected,
+				&e["fresh_audit"],
+				&e["outcome"],
+			)
+		};
+		fs::write(
+			folder.join("effective-expected.json"),
+			serde_json::to_vec_pretty(&expected).unwrap(),
+		)
+		.unwrap();
+		assert_eq!(got, expected, "C8 strict {engine} {label}");
 		assert_eq!(hex(&stdout), c[4], "stdout {label}");
 		assert_eq!(hex(&stderr), c[5], "stderr {label}");
 		assert!(

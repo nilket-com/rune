@@ -50,13 +50,17 @@ fn named_arg<'hir>(
 ) -> Result<hir::FnArg<'hir>> {
 	alloc_with!(cx, span);
 
-	let name = cx.scopes.define(hir::Name::Str(name), span)?;
-	let names = iter!([name]);
+	let variable = cx.scopes.define(hir::Name::Str(name), span)?;
+	let names = iter!([variable]);
 
 	let pat = alloc!(hir::PatBinding {
 		pat: hir::Pat {
 			span: span.span(),
-			kind: hir::PatKind::Path(alloc!(hir::PatPathKind::Ident(name))),
+			kind: hir::PatKind::Path(alloc!(hir::PatPathKind::Ident {
+				variable,
+				#[cfg(feature = "fresh-core")]
+				name: hir::Name::Str(name)
+			})),
 		},
 		names,
 	});
@@ -5204,13 +5208,21 @@ fn pat_path<'hir>(
 			Named2Kind::SelfValue(ast) if self_value => {
 				let name = cx.scopes.define(hir::Name::SelfValue, &ast)?;
 				cx.pattern_bindings.try_push(name)?;
-				break 'path hir::PatPathKind::Ident(name);
+				break 'path hir::PatPathKind::Ident {
+					variable: name,
+					#[cfg(feature = "fresh-core")]
+					name: hir::Name::SelfValue,
+				};
 			}
 			Named2Kind::Ident(ident) => {
 				let name = alloc_str!(ident.resolve(resolve_context!(cx.q))?);
-				let name = cx.scopes.define(hir::Name::Str(name), &*p)?;
-				cx.pattern_bindings.try_push(name)?;
-				break 'path hir::PatPathKind::Ident(name);
+				let variable = cx.scopes.define(hir::Name::Str(name), &*p)?;
+				cx.pattern_bindings.try_push(variable)?;
+				break 'path hir::PatPathKind::Ident {
+					variable,
+					#[cfg(feature = "fresh-core")]
+					name: hir::Name::Str(name),
+				};
 			}
 			_ => {
 				return Err(Error::new(&*p, ErrorKind::UnsupportedBinding));

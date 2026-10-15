@@ -273,7 +273,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	fn bind(&mut self, pat: &hir::Pat<'_>, slot: u32) -> Result<()> {
 		match pat.kind {
 			hir::PatKind::Ignore => Ok(()),
-			hir::PatKind::Path(hir::PatPathKind::Ident(variable)) => {
+			hir::PatKind::Path(hir::PatPathKind::Ident { variable, .. }) => {
 				self.variables.try_push((*variable, slot))?;
 				Ok(())
 			}
@@ -303,7 +303,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		Ok(())
 	}
 
-	fn block(&mut self, block: &hir::Block<'_>, mode: Mode) -> Result<()> {
+	fn block(&mut self, block: &hir::Block<'hir>, mode: Mode) -> Result<()> {
 		if block.label.is_some() {
 			return Err(self.refused(block.span, Refusal::LabelledBlock));
 		}
@@ -318,7 +318,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					// the slot before the initialiser has written it.
 					let slot = self.slot()?;
 					self.expr_into(local.expr, slot)?;
-					self.bind(&local.pat.pat, slot)?;
+					self.pattern_local(&local.pat, slot)?;
 				}
 
 				hir::Stmt::Expr(_, expr) => self.statement(*expr)?,
@@ -939,7 +939,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		self.pop_to(mark, span)
 	}
 
-	fn for_(&mut self, for_: &hir::ExprFor<'_>, out: Option<u32>, span: Span) -> Result<()> {
+	fn for_(&mut self, for_: &hir::ExprFor<'hir>, out: Option<u32>, span: Span) -> Result<()> {
 		if let Some(out) = out {
 			self.unit_into(out, span)?;
 		}

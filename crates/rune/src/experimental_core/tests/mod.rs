@@ -75,5 +75,7 @@ mod deferred_index_pins {
 #[cfg(miri)]
 mod tuple_let_pins {
 	use serde_json::{json, Value as Json};
+	use std::vec::Vec;
 	include!("gap_hunt/tuple_let/policy.rs");
+	include!("gap_hunt/tuple_let/retained.rs");
 }

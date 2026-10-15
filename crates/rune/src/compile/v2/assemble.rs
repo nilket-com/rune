@@ -792,7 +792,7 @@ fn pat_one<'a, 'hir>(
 				needs.free()?;
 				Ok(Some(Pattern::Refutable))
 			}
-			hir::PatPathKind::Ident(name) => {
+			hir::PatPathKind::Ident { variable: name, .. } => {
 				let Some(binding) = bindings.remove(&name) else {
 					return Err(compile::Error::msg(hir, format!("No binding for {name:?}")));
 				};
