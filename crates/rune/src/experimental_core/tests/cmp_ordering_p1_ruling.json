@@ -1,0 +1,6 @@
+{
+  "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+  "seq": 14523,
+  "regex": "full_name: 0x[0-9a-f]+",
+  "replacement": "full_name: <fn>"
+}

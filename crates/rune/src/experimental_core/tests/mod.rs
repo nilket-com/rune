@@ -79,3 +79,12 @@ mod tuple_let_pins {
 	include!("gap_hunt/tuple_let/policy.rs");
 	include!("gap_hunt/tuple_let/retained.rs");
 }
+
+#[cfg(miri)]
+mod cmp_ordering_pins {
+	use serde_json::{json, Value as Json};
+	use std::{string::String, vec::Vec};
+	include!("gap_hunt/cmp_ordering/p1.rs");
+	include!("gap_hunt/cmp_ordering/pins.rs");
+	include!("gap_hunt/cmp_ordering/p1_controls.rs");
+}

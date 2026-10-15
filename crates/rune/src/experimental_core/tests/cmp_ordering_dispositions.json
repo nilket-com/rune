@@ -1,0 +1,4906 @@
+{
+  "receiver/i64/less": {
+    "index": 0,
+    "label": "receiver/i64/less",
+    "source_sha256": "4af7b54c65fe61b040c36c191e9fa331bc6af52b5753a1e866ca8e2be17f540d",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/equal": {
+    "index": 1,
+    "label": "receiver/i64/equal",
+    "source_sha256": "e96228fe541effb6ca6330280f030185acd60505b8ce69e0a4fe72f9b3c97fc2",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/greater": {
+    "index": 2,
+    "label": "receiver/i64/greater",
+    "source_sha256": "f2c68fd9ba83a279e558c12d29bd5f396bbe2dbb6caec86a1de4d06eab8b6a58",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/min": {
+    "index": 3,
+    "label": "receiver/i64/min",
+    "source_sha256": "dc677118ce4d524856676845f036709c47be2dcfd224d80160e68df5f65d9e27",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/max": {
+    "index": 4,
+    "label": "receiver/i64/max",
+    "source_sha256": "8d9cecc0ba7455559b1b39b4cbb3309c52276c828c5ee3e185505808097024e6",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/cross-ok": {
+    "index": 5,
+    "label": "receiver/i64/cross-ok",
+    "source_sha256": "b9627ebff0e855e83fa119e46694c5ec45c21975f161b7a3a73cc3cba0ca4c53",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/cross-max": {
+    "index": 6,
+    "label": "receiver/i64/cross-max",
+    "source_sha256": "d7aa50065ca363ab75dbc8509dbf8c932197772b730076599f389fad32f56b28",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "IntegerCoercion",
+      "display": "Failed to convert value `18446744073709551615` to integer `i64`",
+      "kind": "ValueToIntegerCoercionError { from: Unsigned(18446744073709551615), to: \"i64\" }",
+      "sites": [
+        {
+          "end": 46,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ValueToIntegerCoercionError { from: Unsigned(18446744073709551615), to: \"i64\" }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/bool": {
+    "index": 7,
+    "label": "receiver/i64/bool",
+    "source_sha256": "30beaccf74a72bf3f39306e64af9ef9efb22c97953a921d60f2773f3970fd08e",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::bool`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 27,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/float": {
+    "index": 8,
+    "label": "receiver/i64/float",
+    "source_sha256": "a2f1707c94090f6cd313e50882ce916e7c80b67b015e8d61ee6e6b89ecba06ba",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::f64`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }) }",
+      "sites": [
+        {
+          "end": 26,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/string": {
+    "index": 9,
+    "label": "receiver/i64/string",
+    "source_sha256": "87e4fcdb567af145bca24d0a36a2bac94165cd370a03f8b551f7a503dca0e7da",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::string::String`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }) }",
+      "sites": [
+        {
+          "end": 26,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/ordering": {
+    "index": 10,
+    "label": "receiver/i64/ordering",
+    "source_sha256": "59293b1fa7d8b8181d2a5bac9012f10ef6fc1a6947477e44bdceea197d8edb29",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::cmp::Ordering`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 47,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/tuple": {
+    "index": 11,
+    "label": "receiver/i64/tuple",
+    "source_sha256": "4761e202eee1c6f12cf60c1470dd0dab759719af7863e0e8148838dac9b5ce71",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::tuple::Tuple`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xfeb65b3f4755aef0 }) }",
+      "sites": [
+        {
+          "end": 28,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xfeb65b3f4755aef0 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/less": {
+    "index": 12,
+    "label": "receiver/u64/less",
+    "source_sha256": "c06cbf7770af779a4a9886af21c93783c3c20a37dd4ca83ed73d7da31c6577c3",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/equal": {
+    "index": 13,
+    "label": "receiver/u64/equal",
+    "source_sha256": "f210f4b7333f6bf43b1499cda93ae6f79c599329fbebffb5699d49b74ecc95ae",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/greater": {
+    "index": 14,
+    "label": "receiver/u64/greater",
+    "source_sha256": "d13a29c799bc19634a9b6dac4111d73aa5c2d989d31a2488c943f1a2a75397cd",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/max": {
+    "index": 15,
+    "label": "receiver/u64/max",
+    "source_sha256": "9ca0cd18f45152bb169f38769595871a7e9100f5a1e8851775869fc1f046d2e9",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/cross-ok": {
+    "index": 16,
+    "label": "receiver/u64/cross-ok",
+    "source_sha256": "24ed11b56948704899f64b6963a94f164abaf20ed4effe3e398faa3221737861",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/cross-negative": {
+    "index": 17,
+    "label": "receiver/u64/cross-negative",
+    "source_sha256": "f65f4e5aa5ffc6e9af185683aa69df4df74ac00a0933cb745fdf5d61bacfe0b0",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "IntegerCoercion",
+      "display": "Failed to convert value `-1` to integer `u64`",
+      "kind": "ValueToIntegerCoercionError { from: Signed(-1), to: \"u64\" }",
+      "sites": [
+        {
+          "end": 28,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ValueToIntegerCoercionError { from: Signed(-1), to: \"u64\" }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/bool": {
+    "index": 18,
+    "label": "receiver/u64/bool",
+    "source_sha256": "94764d5f2038c960036cb3a6baad9bfceb0009b83e88c5337ebff0a52d8bfc56",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::bool`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 30,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/float": {
+    "index": 19,
+    "label": "receiver/u64/float",
+    "source_sha256": "f4359c1e0823185580c9a41e21a92c9f7d55c4480bc04deec54c00914633f1cd",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::f64`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }) }",
+      "sites": [
+        {
+          "end": 29,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/string": {
+    "index": 20,
+    "label": "receiver/u64/string",
+    "source_sha256": "f2ef3307755a178d9ef0c2b502cdf2adb6a1ea9d18174e583ce4e498055361bf",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::string::String`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }) }",
+      "sites": [
+        {
+          "end": 29,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/u64/ordering": {
+    "index": 21,
+    "label": "receiver/u64/ordering",
+    "source_sha256": "1feeab82c4d2de28e7560c36b4cb13fae4c91f22aef55351a6f16241a56a113e",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::cmp::Ordering`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 51,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/f64/less": {
+    "index": 22,
+    "label": "receiver/f64/less",
+    "source_sha256": "d8d1af388daf8a85a582ca0370aa7dfe442b61fb7032335102ae86672efd938c",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/f64/equal": {
+    "index": 23,
+    "label": "receiver/f64/equal",
+    "source_sha256": "eba04cc2ebee8b29e1c86def8830b46a6eef2cf27df0ce438215e96c10386af3",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/f64/greater": {
+    "index": 24,
+    "label": "receiver/f64/greater",
+    "source_sha256": "6392e2265463c4342329ba06bcd4e3460b2b3ea49271fc62473e672f78d624a2",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/f64/int": {
+    "index": 25,
+    "label": "receiver/f64/int",
+    "source_sha256": "3689846c8f69d29ac16ca9e1f6697a6bad1b11e50b0f9969a64b65c1be7fa563",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::f64` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }",
+      "sites": [
+        {
+          "end": 26,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/f64/unsigned": {
+    "index": 26,
+    "label": "receiver/f64/unsigned",
+    "source_sha256": "b9d31b10b23d49e9b2d93214242de6150a638b6d5b6c6da12978464ee82bff51",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::f64` but found `std::u64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb41669ccb4fdb76a }) }",
+      "sites": [
+        {
+          "end": 29,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb41669ccb4fdb76a }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/f64/bool": {
+    "index": 27,
+    "label": "receiver/f64/bool",
+    "source_sha256": "f2f4cbee377108e793fe9b6ca3064c557b76e8c035a2c69f017b4957c1e5928e",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::f64` but found `std::bool`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 29,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/f64/string": {
+    "index": 28,
+    "label": "receiver/f64/string",
+    "source_sha256": "1734ac8b649301484897107e7ddd193667dbd468123f0ce4c4346ff1b9b99762",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::f64` but found `std::string::String`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }) }",
+      "sites": [
+        {
+          "end": 28,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/f64/ordering": {
+    "index": 29,
+    "label": "receiver/f64/ordering",
+    "source_sha256": "a490223e824fbaa076bb8d210a7f30740a7881266829cff58ce047f1222d7198",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::f64` but found `std::cmp::Ordering`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 52,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/less": {
+    "index": 30,
+    "label": "receiver/string/less",
+    "source_sha256": "77bb8230c96dd47fe07ea0fad66eaa121c4ec08fa8fee64594ec723a3346a583",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/equal": {
+    "index": 31,
+    "label": "receiver/string/equal",
+    "source_sha256": "da9122ddbc8d5e1b9fc989380f7f204d95e8390dfe38165ab7a893ecd6b52043",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/greater": {
+    "index": 32,
+    "label": "receiver/string/greater",
+    "source_sha256": "a6d156e959576bb49e789e0178551f81fab71a75e0a2508cf61408525d0926ba",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/empty": {
+    "index": 33,
+    "label": "receiver/string/empty",
+    "source_sha256": "aca1b970b35824a74e64ccdde269e7913fed9d58d52a29b4a3b57e2dc499f59f",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/prefix": {
+    "index": 34,
+    "label": "receiver/string/prefix",
+    "source_sha256": "7ac0544c4239f08495d011c569d0124bdd68a9578cb38fa8238350f772081d09",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/nul": {
+    "index": 35,
+    "label": "receiver/string/nul",
+    "source_sha256": "bf25f218804d850530d1ac37a8cc377fa04faea22c210f46a93afe980fa006d4",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/int": {
+    "index": 36,
+    "label": "receiver/string/int",
+    "source_sha256": "d003e0d56615b926e06d7b5f85c5bac680b47716888b90dcdda885a380ac692c",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }",
+      "sites": [
+        {
+          "end": 27,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/bool": {
+    "index": 37,
+    "label": "receiver/string/bool",
+    "source_sha256": "ee460d674be17c006497eeac337d30b2a2b115bfcc4fa74adff998d5706f19b1",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::string::String` but found `std::bool`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 30,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/float": {
+    "index": 38,
+    "label": "receiver/string/float",
+    "source_sha256": "72b94aa4b564766e2444c8712dc4d3be0a66088987b63f2354789be33421ffc6",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::string::String` but found `std::f64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }) }",
+      "sites": [
+        {
+          "end": 29,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/ordering": {
+    "index": 39,
+    "label": "receiver/string/ordering",
+    "source_sha256": "4a29e03242c248d6346e962ae112e95b4b1423e0187713db95091a6466e1b389",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::string::String` but found `std::cmp::Ordering`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 50,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/string/owned": {
+    "index": 40,
+    "label": "receiver/string/owned",
+    "source_sha256": "c2459c5051cf66453488af917eba0e3fc9595244564b80522aece87ed603a018",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/negative": {
+    "index": 41,
+    "label": "receiver/i64/negative",
+    "source_sha256": "8c404968938df3da80cd91087337d21a9074c66a2d3dbb14fd19b75f132ee6dc",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/zero": {
+    "index": 42,
+    "label": "receiver/i64/zero",
+    "source_sha256": "ed79818facbc7f9388498c712759f25a5a74b6e0d9548549c04623691084f4e4",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "receiver/i64/extremes": {
+    "index": 43,
+    "label": "receiver/i64/extremes",
+    "source_sha256": "402531e14616cd5ed07437c38ba754d7137140b2782a3950c3c5246ae1220d01",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "float-bits/pos-neg-zero": {
+    "index": 44,
+    "label": "float-bits/pos-neg-zero",
+    "source_sha256": "d487b973db5c4f261600b42691ef10717568c5cf2cf76ee9247772490bd17708",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "float-bits/neg-pos-zero": {
+    "index": 45,
+    "label": "float-bits/neg-pos-zero",
+    "source_sha256": "d487b973db5c4f261600b42691ef10717568c5cf2cf76ee9247772490bd17708",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "float-bits/pos-inf": {
+    "index": 46,
+    "label": "float-bits/pos-inf",
+    "source_sha256": "d487b973db5c4f261600b42691ef10717568c5cf2cf76ee9247772490bd17708",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "float-bits/neg-inf": {
+    "index": 47,
+    "label": "float-bits/neg-inf",
+    "source_sha256": "d487b973db5c4f261600b42691ef10717568c5cf2cf76ee9247772490bd17708",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "float-bits/nan-left": {
+    "index": 48,
+    "label": "float-bits/nan-left",
+    "source_sha256": "d487b973db5c4f261600b42691ef10717568c5cf2cf76ee9247772490bd17708",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "IllegalFloatComparison",
+      "display": "Cannot perform a comparison of the floats NaN and 1",
+      "kind": "IllegalFloatComparison { lhs: NaN, rhs: 1.0 }",
+      "sites": [
+        {
+          "end": 25,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "lhs_bits": "7ff8000000000042",
+        "rhs_bits": "3ff0000000000000",
+        "tag": "IllegalFloatComparison"
+      }
+    },
+    "ruling": null
+  },
+  "float-bits/nan-right": {
+    "index": 49,
+    "label": "float-bits/nan-right",
+    "source_sha256": "d487b973db5c4f261600b42691ef10717568c5cf2cf76ee9247772490bd17708",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "IllegalFloatComparison",
+      "display": "Cannot perform a comparison of the floats 1 and NaN",
+      "kind": "IllegalFloatComparison { lhs: 1.0, rhs: NaN }",
+      "sites": [
+        {
+          "end": 25,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "lhs_bits": "3ff0000000000000",
+        "rhs_bits": "7ff8000000000042",
+        "tag": "IllegalFloatComparison"
+      }
+    },
+    "ruling": null
+  },
+  "float-bits/nan-both": {
+    "index": 50,
+    "label": "float-bits/nan-both",
+    "source_sha256": "d487b973db5c4f261600b42691ef10717568c5cf2cf76ee9247772490bd17708",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "IllegalFloatComparison",
+      "display": "Cannot perform a comparison of the floats NaN and NaN",
+      "kind": "IllegalFloatComparison { lhs: NaN, rhs: NaN }",
+      "sites": [
+        {
+          "end": 25,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "lhs_bits": "7ff8000000000042",
+        "rhs_bits": "fff8000000000043",
+        "tag": "IllegalFloatComparison"
+      }
+    },
+    "ruling": null
+  },
+  "float-bits/signal-nan": {
+    "index": 51,
+    "label": "float-bits/signal-nan",
+    "source_sha256": "d487b973db5c4f261600b42691ef10717568c5cf2cf76ee9247772490bd17708",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "IllegalFloatComparison",
+      "display": "Cannot perform a comparison of the floats NaN and 0",
+      "kind": "IllegalFloatComparison { lhs: NaN, rhs: 0.0 }",
+      "sites": [
+        {
+          "end": 25,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "lhs_bits": "7ff0000000000001",
+        "rhs_bits": "0000000000000000",
+        "tag": "IllegalFloatComparison"
+      }
+    },
+    "ruling": null
+  },
+  "float-bits/subnormal": {
+    "index": 52,
+    "label": "float-bits/subnormal",
+    "source_sha256": "d487b973db5c4f261600b42691ef10717568c5cf2cf76ee9247772490bd17708",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Less/qualified": {
+    "index": 53,
+    "label": "constructor/Less/qualified",
+    "source_sha256": "f69119db4264946c2d4df43f2164779baf7b9a5198d82794e89b641810c3b3ab",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Less/imported": {
+    "index": 54,
+    "label": "constructor/Less/imported",
+    "source_sha256": "6d9a1022bdf50f05e823c225bfdc1f06a23ea8318635cb9b242fecab233d7522",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Less/alias": {
+    "index": 55,
+    "label": "constructor/Less/alias",
+    "source_sha256": "111f4372fa978f1d4e8735c7e9ba7f9ea0dfcf18b5f57ab88cf8f6a6203dfbd3",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Less/explicit-call": {
+    "index": 56,
+    "label": "constructor/Less/explicit-call",
+    "source_sha256": "43172e514ac7962daf373da250329f32fef82220671084bfb40fa1705f8effd6",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Equal/qualified": {
+    "index": 57,
+    "label": "constructor/Equal/qualified",
+    "source_sha256": "1919ae2a50788d0a19a2c5be8b4892ae76e7d60d19442d2352d418162aeadf35",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Equal/imported": {
+    "index": 58,
+    "label": "constructor/Equal/imported",
+    "source_sha256": "c3a4d9be4001947c70bed956a6bac448c2aca94410df411bfad8d4c48157fa38",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Equal/alias": {
+    "index": 59,
+    "label": "constructor/Equal/alias",
+    "source_sha256": "e70ba9c625dfc32ade9e549a8ed6bad9fde7b3af5088c1eca37212849913321d",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Equal/explicit-call": {
+    "index": 60,
+    "label": "constructor/Equal/explicit-call",
+    "source_sha256": "e7e48867b03bf1407a8cc6904dd73fe9d2ee7d0e6b6e3e96a61911a1f2c9c62b",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Greater/qualified": {
+    "index": 61,
+    "label": "constructor/Greater/qualified",
+    "source_sha256": "acb56cf5ab6adfebcbab3aab8a3d9b234b3e52d08c7ffbf642a2d35b7f446f99",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Greater/imported": {
+    "index": 62,
+    "label": "constructor/Greater/imported",
+    "source_sha256": "ef41f4360f24ebd992502f055f922dc13849e602853311233e28488a450a2149",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Greater/alias": {
+    "index": 63,
+    "label": "constructor/Greater/alias",
+    "source_sha256": "b8237053dd305ede076ccd6e267794aceaabc3eff02d7af84d73e6556fc32c6b",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Greater/explicit-call": {
+    "index": 64,
+    "label": "constructor/Greater/explicit-call",
+    "source_sha256": "8102400dd3b9ba961d7ef5ea19e0956aa118dc3d0c7a2b87295f1b6156ed9bb5",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/eq/Less-Less": {
+    "index": 65,
+    "label": "ordering/eq/Less-Less",
+    "source_sha256": "67b7f2b54a3015c83bf8771672b313c108e44d1dc7380fe9606d75d3132db081",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/eq/Less-Equal": {
+    "index": 66,
+    "label": "ordering/eq/Less-Equal",
+    "source_sha256": "cb61e2130632962d2718c4e6d615ff00f3d0b28017a41c7cd69e00da13dea84a",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/eq/Less-Greater": {
+    "index": 67,
+    "label": "ordering/eq/Less-Greater",
+    "source_sha256": "c5a92db6c7dc59c01a99bbc5630ef249f7ea1f05607854b6e8ec34c89128e895",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/eq/Equal-Less": {
+    "index": 68,
+    "label": "ordering/eq/Equal-Less",
+    "source_sha256": "3f8c398ccf7b7724bef8de5fe4fc0757fa518278b0bb7fbc346a9be889586535",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/eq/Equal-Equal": {
+    "index": 69,
+    "label": "ordering/eq/Equal-Equal",
+    "source_sha256": "323e4693035ba9a336f00558dbe1e5d4ce349e0e7149d904cfe966998ecf7f36",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/eq/Equal-Greater": {
+    "index": 70,
+    "label": "ordering/eq/Equal-Greater",
+    "source_sha256": "6bbcf2515ec948732348a74decd73b816c61f3c4422650d1f7a2f8749e40e378",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/eq/Greater-Less": {
+    "index": 71,
+    "label": "ordering/eq/Greater-Less",
+    "source_sha256": "e97bde8c1b7a7db61d138cff29219b83aadc2e9b5ebf5a5d63d8414713aebbef",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/eq/Greater-Equal": {
+    "index": 72,
+    "label": "ordering/eq/Greater-Equal",
+    "source_sha256": "1a9e4d416eacd36f43ca20512932be5f1d4652a228f43f280fe9c178b2ac73fc",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/eq/Greater-Greater": {
+    "index": 73,
+    "label": "ordering/eq/Greater-Greater",
+    "source_sha256": "40743e5512f2a5fb568530313444876580c3858dd3ccb96b0266f6df05b67648",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ne/Less-Less": {
+    "index": 74,
+    "label": "ordering/ne/Less-Less",
+    "source_sha256": "0e1ef03bae1e27a7530eb2d469f6513843902ca65ceffac2251db2c052fe0cbf",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ne/Less-Equal": {
+    "index": 75,
+    "label": "ordering/ne/Less-Equal",
+    "source_sha256": "b025f1f76d1b5b0351f7b54c1e433d06f1101136192e354512ee75919a4a391c",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ne/Less-Greater": {
+    "index": 76,
+    "label": "ordering/ne/Less-Greater",
+    "source_sha256": "e0067481e02261e3f25a4814e933410bf104000d115dc661a355aafe116e349b",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ne/Equal-Less": {
+    "index": 77,
+    "label": "ordering/ne/Equal-Less",
+    "source_sha256": "6106d68b37a82af63f59b80c0f147a72f4a0b6b75fe3e3366d1b652f1743eef6",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ne/Equal-Equal": {
+    "index": 78,
+    "label": "ordering/ne/Equal-Equal",
+    "source_sha256": "e8e51837c4dd688cb5ecc553138f85b36493d06273391e5e9ffa6272dc5a8da0",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ne/Equal-Greater": {
+    "index": 79,
+    "label": "ordering/ne/Equal-Greater",
+    "source_sha256": "4ba3070d3fdfb20bd2f0f76f34ec7d280c029239cf4ce48e19473885a28c1c0e",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ne/Greater-Less": {
+    "index": 80,
+    "label": "ordering/ne/Greater-Less",
+    "source_sha256": "67aed33af245e90148cf00b4ed67bdbab8181ac524ce93aa68140cf20b47ceba",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ne/Greater-Equal": {
+    "index": 81,
+    "label": "ordering/ne/Greater-Equal",
+    "source_sha256": "460a5a5a06c54caabedf01ec100db9ae9c3e73bd993c91abdb56543641be260a",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ne/Greater-Greater": {
+    "index": 82,
+    "label": "ordering/ne/Greater-Greater",
+    "source_sha256": "aadd25547a5a3c1cd7b0e4f2561c56e812cd01ff6769bf602b4c50d30e043a41",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/lt/Less-Less": {
+    "index": 83,
+    "label": "ordering/lt/Less-Less",
+    "source_sha256": "745853cec376a6c573759e6b8dac2c72a982b82c4649155be56c069f86f167e9",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/lt/Less-Equal": {
+    "index": 84,
+    "label": "ordering/lt/Less-Equal",
+    "source_sha256": "d82b8034dcca7526abe9024ac1e13f15f78bc4dd4f18d584a088acf5b594b17f",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/lt/Less-Greater": {
+    "index": 85,
+    "label": "ordering/lt/Less-Greater",
+    "source_sha256": "f7f9b5bb05757d78889a066637edea4ead179a1e3494ff7eaa4a9441e7f9a5cb",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/lt/Equal-Less": {
+    "index": 86,
+    "label": "ordering/lt/Equal-Less",
+    "source_sha256": "1eda6773978b65d4a891c1471913cb6ab3e08c751cf7a1cd3b2373a2f49bc157",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/lt/Equal-Equal": {
+    "index": 87,
+    "label": "ordering/lt/Equal-Equal",
+    "source_sha256": "c60f1949e6bdf0ffcec02e3a525ccad3385a8bc6539fead478d3ef10a3154b38",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/lt/Equal-Greater": {
+    "index": 88,
+    "label": "ordering/lt/Equal-Greater",
+    "source_sha256": "4170ae637e6e4eb1e5b7f210139c8f9ec0dbb137997f2d5d9d688e7d6c3231c2",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/lt/Greater-Less": {
+    "index": 89,
+    "label": "ordering/lt/Greater-Less",
+    "source_sha256": "5d3bce1da146b9886bd65f927c60565ecb6490c3f841602d5d5e1e258c958665",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/lt/Greater-Equal": {
+    "index": 90,
+    "label": "ordering/lt/Greater-Equal",
+    "source_sha256": "e3b2b73fc890c40aaf2f6f9ef2a3ba7f6a851aa4e73f0fe85a19abeb14daf621",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/lt/Greater-Greater": {
+    "index": 91,
+    "label": "ordering/lt/Greater-Greater",
+    "source_sha256": "81354db2717e6cd10602af345d1886de6ae930536402e46795c02294e9e6d909",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/le/Less-Less": {
+    "index": 92,
+    "label": "ordering/le/Less-Less",
+    "source_sha256": "58f209840d19abe9f9d0dcc9be68ff80c2364741fa0f63b8b1f81310554788d0",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/le/Less-Equal": {
+    "index": 93,
+    "label": "ordering/le/Less-Equal",
+    "source_sha256": "2d6f79ea27fc81077204568ef29318345a1a05a00a1f723940a29d30fc09e327",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/le/Less-Greater": {
+    "index": 94,
+    "label": "ordering/le/Less-Greater",
+    "source_sha256": "97dd8dc71d0e1c3e9d2ad9754b0f12596ac651667b2343556b1b88010e63bf50",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/le/Equal-Less": {
+    "index": 95,
+    "label": "ordering/le/Equal-Less",
+    "source_sha256": "5a75f805415f1076f52a5a76846c1fe9429999dfc1e326fc657ee281218e5fb1",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/le/Equal-Equal": {
+    "index": 96,
+    "label": "ordering/le/Equal-Equal",
+    "source_sha256": "f23a08324925facb6b0bf90147947d84e39dab75ea4306fbc6ca262540cad7ab",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/le/Equal-Greater": {
+    "index": 97,
+    "label": "ordering/le/Equal-Greater",
+    "source_sha256": "bbdd857d726062bbd1b10edec5a0c53234c555e399662746fdd8ddfd8f1285a4",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/le/Greater-Less": {
+    "index": 98,
+    "label": "ordering/le/Greater-Less",
+    "source_sha256": "166a41f924257551a03998637daed3b2d6f5c530b008c3451f7daf8935f46e3f",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/le/Greater-Equal": {
+    "index": 99,
+    "label": "ordering/le/Greater-Equal",
+    "source_sha256": "9ceb0400aff6b397437570f821e7be803a249347a41e5af19017f5aa4ef7c7c5",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/le/Greater-Greater": {
+    "index": 100,
+    "label": "ordering/le/Greater-Greater",
+    "source_sha256": "37efd4f3bb69a1fb6ad4a6dad7349f1d7657dd64d5d6997c749306215f5ec644",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/gt/Less-Less": {
+    "index": 101,
+    "label": "ordering/gt/Less-Less",
+    "source_sha256": "10918dd14c035a3a8d6758a36dbd1907eb9c89a00da25ab04796a66b1786149d",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/gt/Less-Equal": {
+    "index": 102,
+    "label": "ordering/gt/Less-Equal",
+    "source_sha256": "5ecf3d2e65a1202037383451c20cdb298c7221699628800e1af7c372b2770c5d",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/gt/Less-Greater": {
+    "index": 103,
+    "label": "ordering/gt/Less-Greater",
+    "source_sha256": "b7d3f061084482759248ef2441a97ba5724ef1009c1dc24b39ff27afed7c17e8",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/gt/Equal-Less": {
+    "index": 104,
+    "label": "ordering/gt/Equal-Less",
+    "source_sha256": "9c519dc6fcba2c0e26bc5565563416d5c2cb685622d0dd91e5ddcaed02e5007e",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/gt/Equal-Equal": {
+    "index": 105,
+    "label": "ordering/gt/Equal-Equal",
+    "source_sha256": "6362aeb46a108973f1a1ef34e5dcde4a01cb61df34a9bd0dbc4925d1987e1b9e",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/gt/Equal-Greater": {
+    "index": 106,
+    "label": "ordering/gt/Equal-Greater",
+    "source_sha256": "c8e7388edb83809ce839085b85e6643be9316a2719a9192145ec15d6132bb6e7",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/gt/Greater-Less": {
+    "index": 107,
+    "label": "ordering/gt/Greater-Less",
+    "source_sha256": "a8599c6b235753dd3e6c5e44b6925b4b2f1231b0180ce5a91d88460d072043d8",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/gt/Greater-Equal": {
+    "index": 108,
+    "label": "ordering/gt/Greater-Equal",
+    "source_sha256": "9936da2b83c1ae1f0f10b1f3773d1e1136d45ee32a6049488feadfd9fa7c35b4",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/gt/Greater-Greater": {
+    "index": 109,
+    "label": "ordering/gt/Greater-Greater",
+    "source_sha256": "335f6b023477f30463a56e80007ce9189bb51ede0f089c8498e917220cf8342a",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ge/Less-Less": {
+    "index": 110,
+    "label": "ordering/ge/Less-Less",
+    "source_sha256": "1d18f58f4f1c2948e9cc3f17e7dafb0d73b8cfaf2de26630dc0e691cf1b69cc4",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ge/Less-Equal": {
+    "index": 111,
+    "label": "ordering/ge/Less-Equal",
+    "source_sha256": "17546f82f8b8abefee82f7e7b079500595f016f3b85b2882795919aa141d11eb",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ge/Less-Greater": {
+    "index": 112,
+    "label": "ordering/ge/Less-Greater",
+    "source_sha256": "8f53d5306b9fbc34f36602d2e2fe5cca3c2505789afd22e94aee033b2c67d0ce",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ge/Equal-Less": {
+    "index": 113,
+    "label": "ordering/ge/Equal-Less",
+    "source_sha256": "9308209498a1aa089faa26648228a6163fa5097a8090b6de46f146d4f43741ac",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ge/Equal-Equal": {
+    "index": 114,
+    "label": "ordering/ge/Equal-Equal",
+    "source_sha256": "a69f38fb6f42c4d500e50c4357707a27af0a7da2dd522e6d1311713f2118f8b5",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ge/Equal-Greater": {
+    "index": 115,
+    "label": "ordering/ge/Equal-Greater",
+    "source_sha256": "d8eba2dd812876ad1b3ceebb50eabf2953c74958a242d51244411cf6ea953143",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": false
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ge/Greater-Less": {
+    "index": 116,
+    "label": "ordering/ge/Greater-Less",
+    "source_sha256": "2026d44cc6c5c903313e376f1fbbddd3860ce531d62b3c6d39f336f7d72845c1",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ge/Greater-Equal": {
+    "index": 117,
+    "label": "ordering/ge/Greater-Equal",
+    "source_sha256": "ab0790b8036c7cde4b745c32abb37ae0c054cf7b2671698b4da1c604dae2af57",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "ordering/ge/Greater-Greater": {
+    "index": 118,
+    "label": "ordering/ge/Greater-Greater",
+    "source_sha256": "94b66c910e04dc393ebd6af1739dc5d4c858552f32b49461d551be205188c94d",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Bool",
+          "value": true
+        },
+        "type_hash": "0x981333df5abb043f"
+      }
+    },
+    "ruling": null
+  },
+  "format/debug/Less": {
+    "index": 119,
+    "label": "format/debug/Less",
+    "source_sha256": "2c04b144d1693a7f9cbf858fb879b348ac756c181edf2b83f895c029aa1044ca",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "hex": "4c657373",
+          "type": "String"
+        },
+        "type_hash": "0x2f4720d36d2b70c"
+      }
+    },
+    "ruling": null
+  },
+  "format/display/Less": {
+    "index": 120,
+    "label": "format/display/Less",
+    "source_sha256": "a335297156466dd086cfa6418d55554aac98fd507c89215442586ab8b49e6b53",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing protocol function `DISPLAY_FMT` for `std::cmp::Ordering`",
+      "kind": "MissingProtocolFunction { protocol: Protocol { name: \"DISPLAY_FMT\", method: None, hash: 0x811b62957ea9d9f9 }, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 51,
+          "frames": "[]",
+          "source": 0,
+          "start": 0
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "MissingProtocolFunction { protocol: Protocol { name: \"DISPLAY_FMT\", method: None, hash: 0x811b62957ea9d9f9 }, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "format/debug/Equal": {
+    "index": 121,
+    "label": "format/debug/Equal",
+    "source_sha256": "8b035e4d1f4ddcc3f16b4545076048a691f19ac69bce3ba8c31b403bd40700d4",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "hex": "457175616c",
+          "type": "String"
+        },
+        "type_hash": "0x2f4720d36d2b70c"
+      }
+    },
+    "ruling": null
+  },
+  "format/display/Equal": {
+    "index": 122,
+    "label": "format/display/Equal",
+    "source_sha256": "16f74a8939062209a5a4ed51018678a103d58dff83b7d0ccb1919b7020f898e6",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing protocol function `DISPLAY_FMT` for `std::cmp::Ordering`",
+      "kind": "MissingProtocolFunction { protocol: Protocol { name: \"DISPLAY_FMT\", method: None, hash: 0x811b62957ea9d9f9 }, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 52,
+          "frames": "[]",
+          "source": 0,
+          "start": 0
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "MissingProtocolFunction { protocol: Protocol { name: \"DISPLAY_FMT\", method: None, hash: 0x811b62957ea9d9f9 }, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "format/debug/Greater": {
+    "index": 123,
+    "label": "format/debug/Greater",
+    "source_sha256": "c38a90ce4b470bcbcc6ea1c454d5d30c50ac9ce0679eb5ff4b5f9ce1cc4edeaa",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "hex": "47726561746572",
+          "type": "String"
+        },
+        "type_hash": "0x2f4720d36d2b70c"
+      }
+    },
+    "ruling": null
+  },
+  "format/display/Greater": {
+    "index": 124,
+    "label": "format/display/Greater",
+    "source_sha256": "34b812c22aae5e484a46e853af2d1aaa6f8ae66eb2a1dbd9fe158b62fe5f586c",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing protocol function `DISPLAY_FMT` for `std::cmp::Ordering`",
+      "kind": "MissingProtocolFunction { protocol: Protocol { name: \"DISPLAY_FMT\", method: None, hash: 0x811b62957ea9d9f9 }, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 54,
+          "frames": "[]",
+          "source": 0,
+          "start": 0
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "MissingProtocolFunction { protocol: Protocol { name: \"DISPLAY_FMT\", method: None, hash: 0x811b62957ea9d9f9 }, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "format/debug-nested": {
+    "index": 125,
+    "label": "format/debug-nested",
+    "source_sha256": "cd5c6d091bc4a56a4444a2c8084b66be7d900cc067a2a6c47f4571864fba684d",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "hex": "284c6573732c205b457175616c2c20477265617465725d29",
+          "type": "String"
+        },
+        "type_hash": "0x2f4720d36d2b70c"
+      }
+    },
+    "ruling": null
+  },
+  "format/debug-width": {
+    "index": 126,
+    "label": "format/debug-width",
+    "source_sha256": "fec3b16096c44c79222e6cddcf59da807d08e5f157ee770ab55e14c0c35936ef",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "hex": "47726561746572",
+          "type": "String"
+        },
+        "type_hash": "0x2f4720d36d2b70c"
+      }
+    },
+    "ruling": null
+  },
+  "format/display-nested": {
+    "index": 127,
+    "label": "format/display-nested",
+    "source_sha256": "acf332962f2c7618ea7851b805efdad6b434c3d6e9ec36ee472aae1f7820d32a",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+      "kind": "MissingProtocolFunction { protocol: Protocol { name: \"DISPLAY_FMT\", method: None, hash: 0x811b62957ea9d9f9 }, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0xfeb65b3f4755aef0 }) }",
+      "sites": [
+        {
+          "end": 54,
+          "frames": "[]",
+          "source": 0,
+          "start": 0
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "MissingProtocolFunction { protocol: Protocol { name: \"DISPLAY_FMT\", method: None, hash: 0x811b62957ea9d9f9 }, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0xfeb65b3f4755aef0 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "mixed-ordering/ordering-int/eq": {
+    "index": 128,
+    "label": "mixed-ordering/ordering-int/eq",
+    "source_sha256": "976b19723fbb834fc7201bf6f7f1089847b880b609ad91ebb7fc2a1b5ad43d41",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Unsupported binary operation `==` on `std::cmp::Ordering` and `std::i64`",
+      "kind": "UnsupportedBinaryOperation { op: \"==\", lhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }), rhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }",
+      "sites": [
+        {
+          "end": 41,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "UnsupportedBinaryOperation { op: \"==\", lhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }), rhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "mixed-ordering/ordering-int/lt": {
+    "index": 129,
+    "label": "mixed-ordering/ordering-int/lt",
+    "source_sha256": "7ec0caffcd0c6de8ae69e54e48d5aa97565724228f4344fe4be0cff2b0f27c7b",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Unsupported binary operation `<` on `std::cmp::Ordering` and `std::i64`",
+      "kind": "UnsupportedBinaryOperation { op: \"<\", lhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }), rhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }",
+      "sites": [
+        {
+          "end": 40,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "UnsupportedBinaryOperation { op: \"<\", lhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }), rhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "mixed-ordering/int-ordering/eq": {
+    "index": 130,
+    "label": "mixed-ordering/int-ordering/eq",
+    "source_sha256": "8175ae4650edb9bee0a0e36c1d82338b3079c5e464da08efc6b7af7b6fda83f0",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Expected number type, but found `std::cmp::Ordering`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 41,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "mixed-ordering/int-ordering/lt": {
+    "index": 131,
+    "label": "mixed-ordering/int-ordering/lt",
+    "source_sha256": "932ac0e3a41d72df18535e9aa1b6c0380bccf55ba87c28680c03a57146703f5c",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Expected number type, but found `std::cmp::Ordering`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 40,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "mixed-ordering/ordering-bool/eq": {
+    "index": 132,
+    "label": "mixed-ordering/ordering-bool/eq",
+    "source_sha256": "e76a6ccb505e2024ea212c919f43983c1f27f4889746cdb2c61cd26b6c766377",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Unsupported binary operation `==` on `std::cmp::Ordering` and `std::bool`",
+      "kind": "UnsupportedBinaryOperation { op: \"==\", lhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }), rhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 46,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "UnsupportedBinaryOperation { op: \"==\", lhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }), rhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "mixed-ordering/ordering-bool/lt": {
+    "index": 133,
+    "label": "mixed-ordering/ordering-bool/lt",
+    "source_sha256": "7bf9b51267914b8d54676ea11f44730e66465dd2b05f62310f006191f7479393",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Unsupported binary operation `<` on `std::cmp::Ordering` and `std::bool`",
+      "kind": "UnsupportedBinaryOperation { op: \"<\", lhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }), rhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 45,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "UnsupportedBinaryOperation { op: \"<\", lhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }), rhs: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "match/Less": {
+    "index": 134,
+    "label": "match/Less",
+    "source_sha256": "60b687cfa36d8692f452e14d5f3b2fd712c709bc7691753c05bfe5bc237cf98b",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "I64",
+          "value": "1"
+        },
+        "type_hash": "0x1cad9186c9641c4f"
+      }
+    },
+    "ruling": null
+  },
+  "match/Equal": {
+    "index": 135,
+    "label": "match/Equal",
+    "source_sha256": "b017efd19a507f74ea1662dad12e0bf3e03ed3462fed8f5e29feae81fe2c441e",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "I64",
+          "value": "2"
+        },
+        "type_hash": "0x1cad9186c9641c4f"
+      }
+    },
+    "ruling": null
+  },
+  "match/Greater": {
+    "index": 136,
+    "label": "match/Greater",
+    "source_sha256": "a3c654a1de4c4126089b3a27f1437b96a9833cefcf6a1308c07d3d628fae5096",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "I64",
+          "value": "3"
+        },
+        "type_hash": "0x1cad9186c9641c4f"
+      }
+    },
+    "ruling": null
+  },
+  "match/wildcard": {
+    "index": 137,
+    "label": "match/wildcard",
+    "source_sha256": "b1c4be8a8d8d099b9176b7b70a1a43f1513f2eef610ccb1782904399f5f5e1a7",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "I64",
+          "value": "7"
+        },
+        "type_hash": "0x1cad9186c9641c4f"
+      }
+    },
+    "ruling": null
+  },
+  "match/if-let": {
+    "index": 138,
+    "label": "match/if-let",
+    "source_sha256": "3c7e77df608302337c4ef579b5e812c95a56579a3322ab3eabc264710938b9aa",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "I64",
+          "value": "7"
+        },
+        "type_hash": "0x1cad9186c9641c4f"
+      }
+    },
+    "ruling": null
+  },
+  "match/nested-caller": {
+    "index": 139,
+    "label": "match/nested-caller",
+    "source_sha256": "4111d25744ff2fe77cecf84f29358bcb6f842d57f6ac9a24c3b822e9bbbeeb2a",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "I64",
+          "value": "3"
+        },
+        "type_hash": "0x1cad9186c9641c4f"
+      }
+    },
+    "ruling": null
+  },
+  "match/wrong-type": {
+    "index": 140,
+    "label": "match/wrong-type",
+    "source_sha256": "a4e15ccd44db90145930b40135e24ced104f6b0ce8c5a6a4de2bc58af919cf9a",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "I64",
+          "value": "9"
+        },
+        "type_hash": "0x1cad9186c9641c4f"
+      }
+    },
+    "ruling": null
+  },
+  "missing-method/bool": {
+    "index": 141,
+    "label": "missing-method/bool",
+    "source_sha256": "a278ee38959d29694843b01117b146e36d00cf8bf99bf2f33d4241a22a54b784",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing instance function `0xe60a85ccb192f47c` for `std::bool`",
+      "kind": "MissingInstanceFunction { hash: 0xe60a85ccb192f47c, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 27,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "hash": "0xe60a85ccb192f47c",
+        "instance": "::std::bool",
+        "tag": "MissingInstanceFunction"
+      }
+    },
+    "ruling": null
+  },
+  "missing-method/char": {
+    "index": 142,
+    "label": "missing-method/char",
+    "source_sha256": "a1d2519821555ff25ad8563d2415fa50ab73a3a62dfc2515e1b3d63ee1fe21a3",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing instance function `0x5f57bd8612aae473` for `std::char`",
+      "kind": "MissingInstanceFunction { hash: 0x5f57bd8612aae473, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x214e0b95f9831430 }) }",
+      "sites": [
+        {
+          "end": 27,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "hash": "0x5f57bd8612aae473",
+        "instance": "::std::char",
+        "tag": "MissingInstanceFunction"
+      }
+    },
+    "ruling": null
+  },
+  "missing-method/ordering": {
+    "index": 143,
+    "label": "missing-method/ordering",
+    "source_sha256": "46f3a040fe84ad815f8ac439799ec9daae4aa42d6aef9b7238c23491e86b532b",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing instance function `0x4ecbfad0113a14f4` for `std::cmp::Ordering`",
+      "kind": "MissingInstanceFunction { hash: 0x4ecbfad0113a14f4, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 47,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "hash": "0x4ecbfad0113a14f4",
+        "instance": "::std::cmp::Ordering",
+        "tag": "MissingInstanceFunction"
+      }
+    },
+    "ruling": null
+  },
+  "missing-method/object": {
+    "index": 144,
+    "label": "missing-method/object",
+    "source_sha256": "6765a3f288c55cee92c6c79c8318cfc8236c78af8a443c88bcfc0435471c66f2",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing instance function `0x51459a64723d7066` for `std::object::Object`",
+      "kind": "MissingInstanceFunction { hash: 0x51459a64723d7066, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f5c2c7799148025 }) }",
+      "sites": [
+        {
+          "end": 29,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "hash": "0x51459a64723d7066",
+        "instance": "::std::object::Object",
+        "tag": "MissingInstanceFunction"
+      }
+    },
+    "ruling": null
+  },
+  "missing-method/struct": {
+    "index": 145,
+    "label": "missing-method/struct",
+    "source_sha256": "8bb554a8c4754a934ee673c8481c9a5209588290a8cd5594df2d8cda11a7bc06",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing instance function `0x70c08e22871ca57d` for `S`",
+      "kind": "MissingInstanceFunction { hash: 0x70c08e22871ca57d, instance: Runtime(Rtti { kind: Struct, hash: 0xed938316c35553e, variant_hash: 0x0, item: S, fields: {\"x\": 0} }) }",
+      "sites": [
+        {
+          "end": 40,
+          "frames": "[]",
+          "source": 0,
+          "start": 25
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "hash": "0x70c08e22871ca57d",
+        "instance": "S",
+        "tag": "MissingInstanceFunction"
+      }
+    },
+    "ruling": null
+  },
+  "runtime-refusal/tuple": {
+    "index": 146,
+    "label": "runtime-refusal/tuple",
+    "source_sha256": "c212dee55d1fd8275076c6fc6a7ef1e80d492afe72a09f763d90cd579ebb124b",
+    "policy": "Refused-runtime",
+    "fresh_expectation": {
+      "status": "runtime-unsupported",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": null,
+      "invoked": true,
+      "source": 0,
+      "start": 14,
+      "end": 32,
+      "span_hex": "2828312c3229292e636d702828312c332929",
+      "call_chain": []
+    },
+    "ruling": {
+      "message_id": "01a13df1-3458-71af-a61b-e277acc8cbbb",
+      "seq": 14483,
+      "stock_cmp_site": {
+        "end": 32,
+        "instruction": "CallAssociated { hash: 0x20bec9e826dc0341, addr: 0, args: 2, out: keep(2) }",
+        "ip": 7,
+        "source": 0,
+        "span_hex": "2828312c3229292e636d702828312c332929",
+        "start": 14
+      },
+      "postconditions": {
+        "cleanup_error": null,
+        "executor_idle": true,
+        "live_entries": 0,
+        "payload_bytes": 0,
+        "reuse_i64": 7
+      },
+      "operand_effects": "receiver then rhs before dispatch; no intrinsic mutation; preserve exact stock stdout/stderr",
+      "disclosure": "known runtime coverage gap; not Intentional-divergence"
+    }
+  },
+  "runtime-refusal/unit": {
+    "index": 147,
+    "label": "runtime-refusal/unit",
+    "source_sha256": "e1dc2835cd7db12ea3715a27e162fbdadb6ae8974f97bffbde75659a6c54a9e3",
+    "policy": "Refused-runtime",
+    "fresh_expectation": {
+      "status": "runtime-unsupported",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": null,
+      "invoked": true,
+      "source": 0,
+      "start": 14,
+      "end": 26,
+      "span_hex": "282829292e636d7028282929",
+      "call_chain": []
+    },
+    "ruling": {
+      "message_id": "01a13df1-3458-71af-a61b-e277acc8cbbb",
+      "seq": 14483,
+      "stock_cmp_site": {
+        "end": 26,
+        "instruction": "CallAssociated { hash: 0x20bec9e826dc0341, addr: 0, args: 2, out: keep(2) }",
+        "ip": 3,
+        "source": 0,
+        "span_hex": "282829292e636d7028282929",
+        "start": 14
+      },
+      "postconditions": {
+        "cleanup_error": null,
+        "executor_idle": true,
+        "live_entries": 0,
+        "payload_bytes": 0,
+        "reuse_i64": 7
+      },
+      "operand_effects": "receiver then rhs before dispatch; no intrinsic mutation; preserve exact stock stdout/stderr",
+      "disclosure": "known runtime coverage gap; not Intentional-divergence"
+    }
+  },
+  "runtime-refusal/vec": {
+    "index": 148,
+    "label": "runtime-refusal/vec",
+    "source_sha256": "46ffd0876ab333d413b5a804f618322eb996b33086d90b68e4ad42177c78b665",
+    "policy": "Refused-runtime",
+    "fresh_expectation": {
+      "status": "runtime-unsupported",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": null,
+      "invoked": true,
+      "source": 0,
+      "start": 14,
+      "end": 32,
+      "span_hex": "285b312c325d292e636d70285b312c335d29",
+      "call_chain": []
+    },
+    "ruling": {
+      "message_id": "01a13df1-3458-71af-a61b-e277acc8cbbb",
+      "seq": 14483,
+      "stock_cmp_site": {
+        "end": 32,
+        "instruction": "CallAssociated { hash: 0x20bec9e826dc0341, addr: 0, args: 2, out: keep(2) }",
+        "ip": 7,
+        "source": 0,
+        "span_hex": "285b312c325d292e636d70285b312c335d29",
+        "start": 14
+      },
+      "postconditions": {
+        "cleanup_error": null,
+        "executor_idle": true,
+        "live_entries": 0,
+        "payload_bytes": 0,
+        "reuse_i64": 7
+      },
+      "operand_effects": "receiver then rhs before dispatch; no intrinsic mutation; preserve exact stock stdout/stderr",
+      "disclosure": "known runtime coverage gap; not Intentional-divergence"
+    }
+  },
+  "runtime-refusal/option": {
+    "index": 149,
+    "label": "runtime-refusal/option",
+    "source_sha256": "83d91b5ac6de9e3e48ac44ca8a57608598a1b17ffb70a203f1ca3b74f7083723",
+    "policy": "Refused-runtime",
+    "fresh_expectation": {
+      "status": "runtime-unsupported",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": null,
+      "invoked": true,
+      "source": 0,
+      "start": 14,
+      "end": 36,
+      "span_hex": "28536f6d65283129292e636d7028536f6d6528322929",
+      "call_chain": []
+    },
+    "ruling": {
+      "message_id": "01a13df1-3458-71af-a61b-e277acc8cbbb",
+      "seq": 14483,
+      "stock_cmp_site": {
+        "end": 36,
+        "instruction": "CallAssociated { hash: 0x20bec9e826dc0341, addr: 0, args: 2, out: keep(2) }",
+        "ip": 5,
+        "source": 0,
+        "span_hex": "28536f6d65283129292e636d7028536f6d6528322929",
+        "start": 14
+      },
+      "postconditions": {
+        "cleanup_error": null,
+        "executor_idle": true,
+        "live_entries": 0,
+        "payload_bytes": 0,
+        "reuse_i64": 7
+      },
+      "operand_effects": "receiver then rhs before dispatch; no intrinsic mutation; preserve exact stock stdout/stderr",
+      "disclosure": "known runtime coverage gap; not Intentional-divergence"
+    }
+  },
+  "runtime-refusal/result": {
+    "index": 150,
+    "label": "runtime-refusal/result",
+    "source_sha256": "9d51e0dc7d5a0d326b6ddb448f5d6b53d1f370322f69ed69f557550994b1d1a5",
+    "policy": "Refused-runtime",
+    "fresh_expectation": {
+      "status": "runtime-unsupported",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": null,
+      "invoked": true,
+      "source": 0,
+      "start": 14,
+      "end": 32,
+      "span_hex": "284f6b283129292e636d70284f6b28322929",
+      "call_chain": []
+    },
+    "ruling": {
+      "message_id": "01a13df1-3458-71af-a61b-e277acc8cbbb",
+      "seq": 14483,
+      "stock_cmp_site": {
+        "end": 32,
+        "instruction": "CallAssociated { hash: 0x20bec9e826dc0341, addr: 0, args: 2, out: keep(2) }",
+        "ip": 5,
+        "source": 0,
+        "span_hex": "284f6b283129292e636d70284f6b28322929",
+        "start": 14
+      },
+      "postconditions": {
+        "cleanup_error": null,
+        "executor_idle": true,
+        "live_entries": 0,
+        "payload_bytes": 0,
+        "reuse_i64": 7
+      },
+      "operand_effects": "receiver then rhs before dispatch; no intrinsic mutation; preserve exact stock stdout/stderr",
+      "disclosure": "known runtime coverage gap; not Intentional-divergence"
+    }
+  },
+  "runtime-refusal/range": {
+    "index": 151,
+    "label": "runtime-refusal/range",
+    "source_sha256": "e766f00252429457c689845493f8a1a8fd032518eb2190ddcfeec26c990dcfd9",
+    "policy": "Refused-runtime",
+    "fresh_expectation": {
+      "status": "runtime-unsupported",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": null,
+      "invoked": true,
+      "source": 0,
+      "start": 14,
+      "end": 34,
+      "span_hex": "2828312e2e3329292e636d702828312e2e342929",
+      "call_chain": []
+    },
+    "ruling": {
+      "message_id": "01a13df1-3458-71af-a61b-e277acc8cbbb",
+      "seq": 14483,
+      "stock_cmp_site": {
+        "end": 34,
+        "instruction": "CallAssociated { hash: 0x20bec9e826dc0341, addr: 0, args: 2, out: keep(2) }",
+        "ip": 7,
+        "source": 0,
+        "span_hex": "2828312e2e3329292e636d702828312e2e342929",
+        "start": 14
+      },
+      "postconditions": {
+        "cleanup_error": null,
+        "executor_idle": true,
+        "live_entries": 0,
+        "payload_bytes": 0,
+        "reuse_i64": 7
+      },
+      "operand_effects": "receiver then rhs before dispatch; no intrinsic mutation; preserve exact stock stdout/stderr",
+      "disclosure": "known runtime coverage gap; not Intentional-divergence"
+    }
+  },
+  "arity/i64/none": {
+    "index": 152,
+    "label": "arity/i64/none",
+    "source_sha256": "bcd8d71a19d2fdeacccad556475ff0ddcce24abcc60e39ffe868aee53a8c6987",
+    "policy": "Retained-arity",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Arity",
+      "refusal": "Arity",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 23,
+      "span_hex": "2831292e636d702829"
+    },
+    "ruling": {
+      "message_id": "01a13def-b5c2-7145-922f-676af8f8d934",
+      "seq": 14473,
+      "precedent": "C6 scalar_methods/contract.rs:310-322 Retained-arity; C9 ruling1 exact arity section carries it forward",
+      "stock_argument_count": {
+        "actual": 1,
+        "expected": 2,
+        "tag": "BadArgumentCount"
+      },
+      "postconditions": {
+        "chain": [],
+        "invoked": false
+      },
+      "disclosure": "retained pre-invoke arity policy; not Intentional-divergence"
+    }
+  },
+  "arity/i64/extra": {
+    "index": 153,
+    "label": "arity/i64/extra",
+    "source_sha256": "3d4f557f2ff0a61962550dbf28789ac303eddba3b0f98dabee97baa749cfeaa2",
+    "policy": "Retained-arity",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Arity",
+      "refusal": "Arity",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 26,
+      "span_hex": "2831292e636d7028312c3229"
+    },
+    "ruling": {
+      "message_id": "01a13def-b5c2-7145-922f-676af8f8d934",
+      "seq": 14473,
+      "precedent": "C6 scalar_methods/contract.rs:310-322 Retained-arity; C9 ruling1 exact arity section carries it forward",
+      "stock_argument_count": {
+        "actual": 3,
+        "expected": 2,
+        "tag": "BadArgumentCount"
+      },
+      "postconditions": {
+        "chain": [],
+        "invoked": false
+      },
+      "disclosure": "retained pre-invoke arity policy; not Intentional-divergence"
+    }
+  },
+  "arity/u64/none": {
+    "index": 154,
+    "label": "arity/u64/none",
+    "source_sha256": "6b08a01f8c73633522d9938afdbeb78ad2031f50f525386dcec1a74676174ee7",
+    "policy": "Retained-arity",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Arity",
+      "refusal": "Arity",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 26,
+      "span_hex": "2831753634292e636d702829"
+    },
+    "ruling": {
+      "message_id": "01a13def-b5c2-7145-922f-676af8f8d934",
+      "seq": 14473,
+      "precedent": "C6 scalar_methods/contract.rs:310-322 Retained-arity; C9 ruling1 exact arity section carries it forward",
+      "stock_argument_count": {
+        "actual": 1,
+        "expected": 2,
+        "tag": "BadArgumentCount"
+      },
+      "postconditions": {
+        "chain": [],
+        "invoked": false
+      },
+      "disclosure": "retained pre-invoke arity policy; not Intentional-divergence"
+    }
+  },
+  "arity/u64/extra": {
+    "index": 155,
+    "label": "arity/u64/extra",
+    "source_sha256": "a7b3077b030dbf7d96b113ad10af48cb19ce1312fec6a52e35e14655df1dff67",
+    "policy": "Retained-arity",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Arity",
+      "refusal": "Arity",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 29,
+      "span_hex": "2831753634292e636d7028312c3229"
+    },
+    "ruling": {
+      "message_id": "01a13def-b5c2-7145-922f-676af8f8d934",
+      "seq": 14473,
+      "precedent": "C6 scalar_methods/contract.rs:310-322 Retained-arity; C9 ruling1 exact arity section carries it forward",
+      "stock_argument_count": {
+        "actual": 3,
+        "expected": 2,
+        "tag": "BadArgumentCount"
+      },
+      "postconditions": {
+        "chain": [],
+        "invoked": false
+      },
+      "disclosure": "retained pre-invoke arity policy; not Intentional-divergence"
+    }
+  },
+  "arity/f64/none": {
+    "index": 156,
+    "label": "arity/f64/none",
+    "source_sha256": "2b7f26bd86d0538d4ad7de83e4681e51c12602bb3b676eaffaefe16ae04c3caa",
+    "policy": "Retained-arity",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Arity",
+      "refusal": "Arity",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 25,
+      "span_hex": "28312e30292e636d702829"
+    },
+    "ruling": {
+      "message_id": "01a13def-b5c2-7145-922f-676af8f8d934",
+      "seq": 14473,
+      "precedent": "C6 scalar_methods/contract.rs:310-322 Retained-arity; C9 ruling1 exact arity section carries it forward",
+      "stock_argument_count": {
+        "actual": 1,
+        "expected": 2,
+        "tag": "BadArgumentCount"
+      },
+      "postconditions": {
+        "chain": [],
+        "invoked": false
+      },
+      "disclosure": "retained pre-invoke arity policy; not Intentional-divergence"
+    }
+  },
+  "arity/f64/extra": {
+    "index": 157,
+    "label": "arity/f64/extra",
+    "source_sha256": "045532ea983cbb11954e9f33b120b2e72bd7639e08875ba7963f9fb2d6b154a8",
+    "policy": "Retained-arity",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Arity",
+      "refusal": "Arity",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 28,
+      "span_hex": "28312e30292e636d7028312c3229"
+    },
+    "ruling": {
+      "message_id": "01a13def-b5c2-7145-922f-676af8f8d934",
+      "seq": 14473,
+      "precedent": "C6 scalar_methods/contract.rs:310-322 Retained-arity; C9 ruling1 exact arity section carries it forward",
+      "stock_argument_count": {
+        "actual": 3,
+        "expected": 2,
+        "tag": "BadArgumentCount"
+      },
+      "postconditions": {
+        "chain": [],
+        "invoked": false
+      },
+      "disclosure": "retained pre-invoke arity policy; not Intentional-divergence"
+    }
+  },
+  "arity/string/none": {
+    "index": 158,
+    "label": "arity/string/none",
+    "source_sha256": "f7691852cec2a647a76ecff515d717ea2ec2b6e88dd17b027e5dd20464a62663",
+    "policy": "Retained-arity",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Arity",
+      "refusal": "Arity",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 25,
+      "span_hex": "28227822292e636d702829"
+    },
+    "ruling": {
+      "message_id": "01a13def-b5c2-7145-922f-676af8f8d934",
+      "seq": 14473,
+      "precedent": "C6 scalar_methods/contract.rs:310-322 Retained-arity; C9 ruling1 exact arity section carries it forward",
+      "stock_argument_count": {
+        "actual": 1,
+        "expected": 2,
+        "tag": "BadArgumentCount"
+      },
+      "postconditions": {
+        "chain": [],
+        "invoked": false
+      },
+      "disclosure": "retained pre-invoke arity policy; not Intentional-divergence"
+    }
+  },
+  "arity/string/extra": {
+    "index": 159,
+    "label": "arity/string/extra",
+    "source_sha256": "7257eb9c9275080a0fc9ff1f3be1922503b2920505b8c27236534a854faa8482",
+    "policy": "Retained-arity",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Arity",
+      "refusal": "Arity",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 28,
+      "span_hex": "28227822292e636d7028312c3229"
+    },
+    "ruling": {
+      "message_id": "01a13def-b5c2-7145-922f-676af8f8d934",
+      "seq": 14473,
+      "precedent": "C6 scalar_methods/contract.rs:310-322 Retained-arity; C9 ruling1 exact arity section carries it forward",
+      "stock_argument_count": {
+        "actual": 3,
+        "expected": 2,
+        "tag": "BadArgumentCount"
+      },
+      "postconditions": {
+        "chain": [],
+        "invoked": false
+      },
+      "disclosure": "retained pre-invoke arity policy; not Intentional-divergence"
+    }
+  },
+  "effects/order-success": {
+    "index": 160,
+    "label": "effects/order-success",
+    "source_sha256": "5acaec4b4bd88636a53242df6c79e9379b52752618e1d6a29622f4c948c85546",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "effects/order-invalid-rhs": {
+    "index": 161,
+    "label": "effects/order-invalid-rhs",
+    "source_sha256": "7792e673fc28eefe4902bdf18eedf5aca3a191d2b80c0d476b87282ee6b668e1",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::bool`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 54,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "effects/order-missing": {
+    "index": 162,
+    "label": "effects/order-missing",
+    "source_sha256": "8e02e54a5389bccef49f10c18eab8b23d923b5ae3f09ad9d0d59771425c79de8",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing instance function `0xe60a85ccb192f47c` for `std::bool`",
+      "kind": "MissingInstanceFunction { hash: 0xe60a85ccb192f47c, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 53,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "hash": "0xe60a85ccb192f47c",
+        "instance": "::std::bool",
+        "tag": "MissingInstanceFunction"
+      }
+    },
+    "ruling": null
+  },
+  "effects/order-runtime-refusal": {
+    "index": 163,
+    "label": "effects/order-runtime-refusal",
+    "source_sha256": "afab69f238294e82b4b4ccdfdf14734b16cbdccd0987ac8f8ed44e6b4b11f188",
+    "policy": "Refused-runtime",
+    "fresh_expectation": {
+      "status": "runtime-unsupported",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": null,
+      "invoked": true,
+      "source": 0,
+      "start": 14,
+      "end": 54,
+      "span_hex": "7b7072696e742128225222293b5b315d7d2e636d70287b7072696e742128224122293b5b325d7d29",
+      "call_chain": []
+    },
+    "ruling": {
+      "message_id": "01a13df1-3458-71af-a61b-e277acc8cbbb",
+      "seq": 14483,
+      "stock_cmp_site": {
+        "end": 54,
+        "instruction": "CallAssociated { hash: 0x20bec9e826dc0341, addr: 0, args: 2, out: keep(2) }",
+        "ip": 13,
+        "source": 0,
+        "span_hex": "7b7072696e742128225222293b5b315d7d2e636d70287b7072696e742128224122293b5b325d7d29",
+        "start": 14
+      },
+      "postconditions": {
+        "cleanup_error": null,
+        "executor_idle": true,
+        "live_entries": 0,
+        "payload_bytes": 0,
+        "reuse_i64": 7
+      },
+      "operand_effects": "receiver then rhs before dispatch; no intrinsic mutation; preserve exact stock stdout/stderr",
+      "disclosure": "known runtime coverage gap; not Intentional-divergence"
+    }
+  },
+  "effects/supported-rhs-mutates-receiver": {
+    "index": 164,
+    "label": "effects/supported-rhs-mutates-receiver",
+    "source_sha256": "35c20abc63e6d2b5b77bc7918f9da481709d07632886f3dc972890ba583d78f0",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Tuple",
+          "values": [
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Less"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            },
+            {
+              "payload": {
+                "hex": "617a",
+                "type": "String"
+              },
+              "type_hash": "0x2f4720d36d2b70c"
+            }
+          ]
+        },
+        "type_hash": "0xfeb65b3f4755aef0"
+      }
+    },
+    "ruling": null
+  },
+  "effects/refused-rhs-mutates-receiver": {
+    "index": 165,
+    "label": "effects/refused-rhs-mutates-receiver",
+    "source_sha256": "4830ddc2d14ff8dffe18478e2eebe38b33e01f4f0703bddfa7b6469e45579e6d",
+    "policy": "Refused-runtime",
+    "fresh_expectation": {
+      "status": "runtime-unsupported",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": null,
+      "invoked": true,
+      "source": 0,
+      "start": 36,
+      "end": 91,
+      "span_hex": "762e636d70287b7072696e742128224122293b616c6961732e707573682832293b7072696e742128227b3a3f7d222c76293b5b335d7d29",
+      "call_chain": []
+    },
+    "ruling": {
+      "message_id": "01a13df1-3458-71af-a61b-e277acc8cbbb",
+      "seq": 14483,
+      "stock_cmp_site": {
+        "end": 91,
+        "instruction": "CallAssociated { hash: 0x20bec9e826dc0341, addr: 2, args: 2, out: keep(4) }",
+        "ip": 18,
+        "source": 0,
+        "span_hex": "762e636d70287b7072696e742128224122293b616c6961732e707573682832293b7072696e742128227b3a3f7d222c76293b5b335d7d29",
+        "start": 36
+      },
+      "postconditions": {
+        "cleanup_error": null,
+        "executor_idle": true,
+        "live_entries": 0,
+        "payload_bytes": 0,
+        "reuse_i64": 7
+      },
+      "operand_effects": "receiver then rhs before dispatch; no intrinsic mutation; preserve exact stock stdout/stderr",
+      "disclosure": "known runtime coverage gap; not Intentional-divergence"
+    }
+  },
+  "access/moved-receiver": {
+    "index": 166,
+    "label": "access/moved-receiver",
+    "source_sha256": "c669913bc17559c024c7d50a9452e5eec3e9269df767c1f381f91c49fb6c0a6a",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot read, the value has been moved",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+      "sites": [
+        {
+          "end": 58,
+          "frames": "[]",
+          "source": 0,
+          "start": 44
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      }
+    },
+    "ruling": null
+  },
+  "access/moved-rhs": {
+    "index": 167,
+    "label": "access/moved-rhs",
+    "source_sha256": "647007b1c11a2fd90e5ae517a64f3a041a8bbcb2668bf0e665d8a49da7b420fb",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot read, the value has been moved",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+      "sites": [
+        {
+          "end": 58,
+          "frames": "[]",
+          "source": 0,
+          "start": 44
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      }
+    },
+    "ruling": null
+  },
+  "access/shared-string-read": {
+    "index": 168,
+    "label": "access/shared-string-read",
+    "source_sha256": "5a237a09c35d176ceeb79a39e8092be562f4c67b3e790c45d538fa170dd94bc6",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Tuple",
+          "values": [
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Equal"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            },
+            {
+              "payload": {
+                "hex": "61",
+                "type": "String"
+              },
+              "type_hash": "0x2f4720d36d2b70c"
+            },
+            {
+              "payload": {
+                "hex": "61",
+                "type": "String"
+              },
+              "type_hash": "0x2f4720d36d2b70c"
+            }
+          ]
+        },
+        "type_hash": "0xfeb65b3f4755aef0"
+      }
+    },
+    "ruling": null
+  },
+  "access/leased-parent-string": {
+    "index": 169,
+    "label": "access/leased-parent-string",
+    "source_sha256": "58a8c33322dc9bbc0c702c391b72d6fc6a9d392cc0fba379e9bcbe4b70a7cd67",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "I64",
+          "value": "7"
+        },
+        "type_hash": "0x1cad9186c9641c4f"
+      }
+    },
+    "ruling": null
+  },
+  "access/leased-parent-mutate": {
+    "index": 170,
+    "label": "access/leased-parent-mutate",
+    "source_sha256": "ed04c37527950d21b66bfea500cac197003fc09b5c6ee69d008c32ef432a8519",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write, the value is being read from",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
+      "sites": [
+        {
+          "end": 55,
+          "frames": "[]",
+          "source": 0,
+          "start": 44
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      }
+    },
+    "ruling": null
+  },
+  "destination/rebind": {
+    "index": 171,
+    "label": "destination/rebind",
+    "source_sha256": "41d76a2af238252e892fc214084f0aae729901a01ae76e0a17586c77a191ad4f",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Tuple",
+          "values": [
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Less"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            },
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Less"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            }
+          ]
+        },
+        "type_hash": "0xfeb65b3f4755aef0"
+      }
+    },
+    "ruling": null
+  },
+  "clone/global": {
+    "index": 172,
+    "label": "clone/global",
+    "source_sha256": "f2776b0d0562c6e67d3db47871ee7728456dd527c7865cff56fab68dcf810c44",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Tuple",
+          "values": [
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Less"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            },
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Less"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            }
+          ]
+        },
+        "type_hash": "0xfeb65b3f4755aef0"
+      }
+    },
+    "ruling": null
+  },
+  "frames/missing": {
+    "index": 173,
+    "label": "frames/missing",
+    "source_sha256": "cbb65703d94e95efe5f33c566ddf3fba430c9fadfa54b9125c39fc2e0eacc676",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [],
+      "class": "Type",
+      "display": "Missing instance function `0xe60a85ccb192f47c` for `std::bool`",
+      "kind": "MissingInstanceFunction { hash: 0xe60a85ccb192f47c, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 8, top: 1, isolated: None, out: keep(0) }]",
+          "source": 0,
+          "start": 11
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "hash": "0xe60a85ccb192f47c",
+        "instance": "::std::bool",
+        "tag": "MissingInstanceFunction"
+      }
+    },
+    "ruling": null
+  },
+  "frames/invalid-rhs": {
+    "index": 174,
+    "label": "frames/invalid-rhs",
+    "source_sha256": "514a55630f58f9343156cb4e192de5bc6e2f2e28aaf1d51e6dc6e7f856ad8641",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }",
+          "typed": {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::bool`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 8, top: 1, isolated: None, out: keep(0) }]",
+          "source": 0,
+          "start": 11
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }) }"
+      }
+    },
+    "ruling": null
+  },
+  "frames/runtime-refusal": {
+    "index": 175,
+    "label": "frames/runtime-refusal",
+    "source_sha256": "fed33e353d06eb0114c5c0b94b93e93a7c9d6adcc3a7677c715a6bb3a31b8705",
+    "policy": "Refused-runtime",
+    "fresh_expectation": {
+      "status": "runtime-unsupported",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": null,
+      "invoked": true,
+      "source": 0,
+      "start": 11,
+      "end": 23,
+      "span_hex": "5b315d2e636d70285b325d29",
+      "call_chain": [
+        {
+          "source": 0,
+          "start": 35,
+          "end": 42
+        },
+        {
+          "source": 0,
+          "start": 57,
+          "end": 64
+        }
+      ]
+    },
+    "ruling": {
+      "message_id": "01a13df1-3458-71af-a61b-e277acc8cbbb",
+      "seq": 14483,
+      "stock_cmp_site": {
+        "end": 23,
+        "instruction": "CallAssociated { hash: 0x20bec9e826dc0341, addr: 0, args: 2, out: keep(2) }",
+        "ip": 14,
+        "source": 0,
+        "span_hex": "5b315d2e636d70285b325d29",
+        "start": 11
+      },
+      "postconditions": {
+        "cleanup_error": null,
+        "executor_idle": true,
+        "live_entries": 0,
+        "payload_bytes": 0,
+        "reuse_i64": 7
+      },
+      "operand_effects": "receiver then rhs before dispatch; no intrinsic mutation; preserve exact stock stdout/stderr",
+      "disclosure": "known runtime coverage gap; not Intentional-divergence"
+    }
+  },
+  "region/fallback": {
+    "index": 176,
+    "label": "region/fallback",
+    "source_sha256": "522548716d4d727a9ba6551618cc9458a3ccf5941424a3243cb61e437f99fb9f",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "I64",
+          "value": "300"
+        },
+        "type_hash": "0x1cad9186c9641c4f"
+      }
+    },
+    "ruling": null
+  },
+  "region/order-phi": {
+    "index": 177,
+    "label": "region/order-phi",
+    "source_sha256": "6a916438a3fd339f497a8f435e2f4fc20a671dc72e48b17a03e55a7eb2664abe",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "refusal/partial-cmp": {
+    "index": 178,
+    "label": "refusal/partial-cmp",
+    "source_sha256": "c80b9bee1877397817b0c8cafac20979512dbfe6fc10be430976f23c05069f8d",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 30,
+      "span_hex": "312e7061727469616c5f636d70283229"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/178/emission.txt",
+        "sha256": "62498a7b5e1feb40aa2c409cae1615b212276205d3fe95500ca2ff05895f1a6a"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/reverse": {
+    "index": 179,
+    "label": "refusal/reverse",
+    "source_sha256": "1c9137b68a71eee362d0148b5b3246e26df021c3f6713a8af9866fc83c87f80d",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 48,
+      "span_hex": "7374643a3a636d703a3a4f72646572696e673a3a4c6573732e726576657273652829"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/179/emission.txt",
+        "sha256": "ef478c48cd460b2b66d0dc6edadde56b5325459f7fc135f228feb0c8edf4daa7"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/then": {
+    "index": 180,
+    "label": "refusal/then",
+    "source_sha256": "f67b8855ab5d1de83dace4f419a414312ed74f8d3c11ecb8fa9d18cdb5cc7038",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 70,
+      "span_hex": "7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e287374643a3a636d703a3a4f72646572696e673a3a457175616c29"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/180/emission.txt",
+        "sha256": "23566b87368d8ccc9d30ce9e6655876bebc6097b90359c0a338e7f38da5fe401"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/then-with": {
+    "index": 181,
+    "label": "refusal/then-with",
+    "source_sha256": "08b66e62f48d5b34ec4b82b12cc1123705dd8f400f4c39222a55cf2d68a9e596",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 77,
+      "span_hex": "7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e5f77697468287c7c7374643a3a636d703a3a4f72646572696e673a3a457175616c29"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/181/emission.txt",
+        "sha256": "579ee140122433a8f4649f77a26fa6ff09670c20d767ba95ae28d4b6662ecfe1"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/min": {
+    "index": 182,
+    "label": "refusal/min",
+    "source_sha256": "aaea5c6883d5d8c07c88d3b0610b3d968e983611d1597dfa89bd8e878639155d",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 22,
+      "span_hex": "312e6d696e283229"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/182/emission.txt",
+        "sha256": "da83f1988f24d3b29d646a22483218eb60d6239c8b4a7511eaecbf6ca087b89e"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/max": {
+    "index": 183,
+    "label": "refusal/max",
+    "source_sha256": "2a7149bba2ed63b88cad113762b62b0c550296e2cc96c9aaccfa2833a36993e2",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 22,
+      "span_hex": "312e6d6178283229"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/183/emission.txt",
+        "sha256": "da83f1988f24d3b29d646a22483218eb60d6239c8b4a7511eaecbf6ca087b89e"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/sort": {
+    "index": 184,
+    "label": "refusal/sort",
+    "source_sha256": "f33cc34a1bddac62f629eeb79f314f9df64c9c046f09923c4eb9ebf771eb7fec",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 26,
+      "end": 34,
+      "span_hex": "612e736f72742829"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/184/emission.txt",
+        "sha256": "90755c29ad574d1a35da8ebc11f3aa07f96681b788ff59f9f7bb23b1a35b5b8f"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/sort-by": {
+    "index": 185,
+    "label": "refusal/sort-by",
+    "source_sha256": "8fd815e7ee428d20e658c36ac7de8e3f6ce52547df86a1b10548ff3326949558",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 26,
+      "end": 50,
+      "span_hex": "612e736f72745f6279287c612c627c612e636d7028622929"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/185/emission.txt",
+        "sha256": "cdd9ae66ad658a3add10fe8ef178b1a37c725d6a327547a90d0a446e0dcfa7a7"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/iter-any": {
+    "index": 186,
+    "label": "refusal/iter-any",
+    "source_sha256": "80ca27965d6c3e4406e9c97e8628aae704d446e7b62149f6b3b268b411d7b95e",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 39,
+      "span_hex": "5b312c325d2e6974657228292e616e79287c767c763d3d3129"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/186/emission.txt",
+        "sha256": "fa359cc72467e8e28d502e31d180d9377ea5932a60c5e2e608676a20ce564af2"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/cmp-function": {
+    "index": 187,
+    "label": "refusal/cmp-function",
+    "source_sha256": "305389a83d3cffe25d8da14ab32e6ad141d206b45964a0d6f5f3882cd8490e72",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Native",
+      "refusal": "Native",
+      "invoked": false,
+      "source": 0,
+      "start": 20,
+      "end": 33,
+      "span_hex": "7374643a3a6f70733a3a636d70"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/187/emission.txt",
+        "sha256": "6627319fa1bb3bc580a516919cfba1bdad4b3d3c98c2dbc88328166581a068b2"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "host-mismatch/unit": {
+    "index": 188,
+    "label": "host-mismatch/unit",
+    "source_sha256": "2fe90e8100f00f7f98df59cbd7ea57313c1597377e277d20cb6f9c62d52b62c7",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::tuple::Tuple` but found `std::cmp::Ordering`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xfeb65b3f4755aef0 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 51,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xfeb65b3f4755aef0 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "host-mismatch/bool": {
+    "index": 189,
+    "label": "host-mismatch/bool",
+    "source_sha256": "167338a78842c42ad474ffb3b89201323a99859d89b354eb513156c66c96bd91",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::bool` but found `std::cmp::Ordering`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 51,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x981333df5abb043f }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "host-mismatch/i64": {
+    "index": 190,
+    "label": "host-mismatch/i64",
+    "source_sha256": "be230db84b3189853381778f61e698c935a56881db976ea14b8f18791a8a07f3",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::cmp::Ordering`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 50,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "host-mismatch/u64": {
+    "index": 191,
+    "label": "host-mismatch/u64",
+    "source_sha256": "5eb6241d5a0bb133914c8eae0779ea0502ccb2219d8cda32cff0517b5eab2da4",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected number type, but found `std::cmp::Ordering`",
+      "kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 50,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedNumber { actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "host-mismatch/f64": {
+    "index": 192,
+    "label": "host-mismatch/f64",
+    "source_sha256": "c28ab7c60afded6a73fa863adc5b44c7945bb6c3e902f7ab0ac026eb8c16dc0f",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::f64` but found `std::cmp::Ordering`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 50,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0xb9b22c3893248f31 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "host-mismatch/char": {
+    "index": 193,
+    "label": "host-mismatch/char",
+    "source_sha256": "1edade8f6aa67017d01aa7142a15e72f0e9ce40fc79360fceb3e77a03f4515cf",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::char` but found `std::cmp::Ordering`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x214e0b95f9831430 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 51,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x214e0b95f9831430 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "host-mismatch/string": {
+    "index": 194,
+    "label": "host-mismatch/string",
+    "source_sha256": "e93a1da55f67d8426ec02516150cbbedd4f710185ce9ac3d451d55ef9f2b9cc0",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "class": "Type",
+      "display": "Expected type `std::string::String` but found `std::cmp::Ordering`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "sites": [
+        {
+          "end": 53,
+          "frames": "[]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error",
+      "typed": {
+        "raw_kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Less/bare": {
+    "index": 195,
+    "label": "constructor/Less/bare",
+    "source_sha256": "a6b984e23c0b94cc6cde78088db39f50d0bf8b6c9ef834978f347be23c2aea71",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Less"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Equal/bare": {
+    "index": 196,
+    "label": "constructor/Equal/bare",
+    "source_sha256": "80fe19754b4e701c295a8df47b597b211cb5b8ed29ec07daeffe66b83274b873",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Equal"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "constructor/Greater/bare": {
+    "index": 197,
+    "label": "constructor/Greater/bare",
+    "source_sha256": "9b5c54a243d7eac0d48bd22969545f4c38be28cdf495a5be3550e153c7cb8a7c",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "corpus/by-total/total": {
+    "index": 198,
+    "label": "corpus/by-total/total",
+    "source_sha256": "810413522ff5f107ad73e319645a69e39bbedf0c18b08aa3744ef1fe6304ac7c",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "corpus/by-total/tie": {
+    "index": 199,
+    "label": "corpus/by-total/tie",
+    "source_sha256": "9be5cf203be269f5b36fc11c1c3f5e71d96aa84b7ab2d72b13c0aa7fd34cc08d",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Ordering",
+          "variant": "Greater"
+        },
+        "type_hash": "0x30d24cc3fa13e4b7"
+      }
+    },
+    "ruling": null
+  },
+  "projection/vec": {
+    "index": 200,
+    "label": "projection/vec",
+    "source_sha256": "fd46da56df9bba475c4c11906613a4e1304dce41d1f19e34da2a848b91c942c8",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Vec",
+          "values": [
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Less"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            },
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Equal"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            },
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Greater"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            }
+          ]
+        },
+        "type_hash": "0xc11b1e769aea94f2"
+      }
+    },
+    "ruling": null
+  },
+  "projection/option": {
+    "index": 201,
+    "label": "projection/option",
+    "source_sha256": "193dec6c50d698d78357197bdee5cea06c7a3fd572b4c0f51b390ec09e625b26",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Option",
+          "value": {
+            "payload": {
+              "type": "Ordering",
+              "variant": "Less"
+            },
+            "type_hash": "0x30d24cc3fa13e4b7"
+          }
+        },
+        "type_hash": "0xc0958f246e193e78"
+      }
+    },
+    "ruling": null
+  },
+  "projection/result": {
+    "index": 202,
+    "label": "projection/result",
+    "source_sha256": "7e3ff8090a0f05891baaeff174c8df3f808937a3c7356947f4e86caf63faa899",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Result",
+          "value": {
+            "payload": {
+              "type": "Ordering",
+              "variant": "Greater"
+            },
+            "type_hash": "0x30d24cc3fa13e4b7"
+          },
+          "variant": "Ok"
+        },
+        "type_hash": "0x1978eae6b50a98ef"
+      }
+    },
+    "ruling": null
+  },
+  "projection/tuple": {
+    "index": 203,
+    "label": "projection/tuple",
+    "source_sha256": "a0aa28267fbefee76610ac89be18efa877f4febf9461dac97f3e6a0a8fda8bb2",
+    "policy": "Exact",
+    "fresh_expectation": {
+      "status": "value",
+      "value": {
+        "payload": {
+          "type": "Tuple",
+          "values": [
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Less"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            },
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Equal"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            },
+            {
+              "payload": {
+                "type": "Ordering",
+                "variant": "Greater"
+              },
+              "type_hash": "0x30d24cc3fa13e4b7"
+            }
+          ]
+        },
+        "type_hash": "0xfeb65b3f4755aef0"
+      }
+    },
+    "ruling": null
+  },
+  "refusal/direct-ops-cmp": {
+    "index": 204,
+    "label": "refusal/direct-ops-cmp",
+    "source_sha256": "6543a714aa46d70cfea436c8e356ea653e614a9dc20d320a0decb118a805254a",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Native",
+      "refusal": "Native",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 32,
+      "span_hex": "7374643a3a6f70733a3a636d7028312c3229"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/204/emission.txt",
+        "sha256": "a04daee466f7f41605dfc1cbe2c5c89a378009d84e860527fe0f64e84b768601"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/direct-provider-cmp": {
+    "index": 205,
+    "label": "refusal/direct-provider-cmp",
+    "source_sha256": "3293bd8fb91313b9a7004c9616e87ad088cf88e514efc585e3c11d0f2393c3c4",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Native",
+      "refusal": "Native",
+      "invoked": false,
+      "source": 0,
+      "start": 14,
+      "end": 32,
+      "span_hex": "7374643a3a6936343a3a636d7028312c3229"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/205/emission.txt",
+        "sha256": "a04daee466f7f41605dfc1cbe2c5c89a378009d84e860527fe0f64e84b768601"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "refusal/custom-script-cmp": {
+    "index": 206,
+    "label": "refusal/custom-script-cmp",
+    "source_sha256": "08fecd396705f529be49dbf14cc79dfc4a445916926dd729a44fb959a44bc8fa",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 53,
+      "end": 66,
+      "span_hex": "537b783a317d2e636d70283229"
+    },
+    "ruling": {
+      "message_id": "01a13dfe-020c-7170-91b8-fd296143e3cf",
+      "seq": 14523,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/206/emission.txt",
+        "sha256": "678416314f19ce60c0db22e37912865852870f9eaa301dec53df1f428b09c017"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence"
+    }
+  },
+  "shadow/other-receiver": {
+    "index": 207,
+    "label": "shadow/other-receiver",
+    "source_sha256": "a3a2e3f403c051b041b04472bd894c592ec384c620e3e1adcf07f81ecd2d832a",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 51,
+      "end": 59,
+      "span_hex": "312e636d70283229"
+    },
+    "ruling": {
+      "message_id": "01a13df7-ee8b-7584-b507-7b22c53718e3",
+      "seq": 14495,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/207/emission.txt",
+        "sha256": "070a53579e0f2f18d40c8488535d325b6b7c80dbb802e688e2ad55db13c70f8b"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence",
+      "certificate_rule": "Context certificate AND no script-defined associated cmp anywhere in the compiled unit"
+    }
+  },
+  "shadow/untyped": {
+    "index": 208,
+    "label": "shadow/untyped",
+    "source_sha256": "572dfc469a149936e0d88c1bf7214321650a985be639cd7f2088926f03832a6e",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 47,
+      "end": 55,
+      "span_hex": "612e636d70286229"
+    },
+    "ruling": {
+      "message_id": "01a13df7-ee8b-7584-b507-7b22c53718e3",
+      "seq": 14495,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/208/emission.txt",
+        "sha256": "1cb768c3d764663af7a3c5ffd5dcd9219c07161da0fa6305d3d20829862fd8f8"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence",
+      "certificate_rule": "Context certificate AND no script-defined associated cmp anywhere in the compiled unit"
+    }
+  },
+  "shadow/unused-method": {
+    "index": 209,
+    "label": "shadow/unused-method",
+    "source_sha256": "cd917489cf546584a9dd4e47f5321e6a5358e7e26e0196682689702f4c59786e",
+    "policy": "Refused-surface",
+    "fresh_expectation": {
+      "status": "refused",
+      "kind": "Unsupported",
+      "operation": "Method",
+      "refusal": "Method",
+      "invoked": false,
+      "source": 0,
+      "start": 51,
+      "end": 63,
+      "span_hex": "2261222e636d702822622229"
+    },
+    "ruling": {
+      "message_id": "01a13df7-ee8b-7584-b507-7b22c53718e3",
+      "seq": 14495,
+      "compiler_witness": {
+        "path": "/home/me/work/.reviews/0185-c9-dispositions1/compile1/209/emission.txt",
+        "sha256": "da0da972022d6761e5459596c86a04c03bcdab3fdbfa3c7bd342cd1c89ce5133"
+      },
+      "disclosure": "known compile-time coverage refusal; not Intentional-divergence",
+      "certificate_rule": "Context certificate AND no script-defined associated cmp anywhere in the compiled unit"
+    }
+  }
+}

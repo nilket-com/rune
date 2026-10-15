@@ -1,0 +1,478 @@
+{
+  "receiver/i64/less": {},
+  "receiver/i64/equal": {},
+  "receiver/i64/greater": {},
+  "receiver/i64/min": {},
+  "receiver/i64/max": {},
+  "receiver/i64/cross-ok": {},
+  "receiver/i64/cross-max": {
+    "/chain/0/kind": 0,
+    "/kind": 0,
+    "/raw": 0,
+    "/typed/raw_kind": 0
+  },
+  "receiver/i64/bool": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "receiver/i64/float": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "receiver/i64/string": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "receiver/i64/ordering": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "receiver/i64/tuple": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "receiver/u64/less": {},
+  "receiver/u64/equal": {},
+  "receiver/u64/greater": {},
+  "receiver/u64/max": {},
+  "receiver/u64/cross-ok": {},
+  "receiver/u64/cross-negative": {
+    "/chain/0/kind": 0,
+    "/kind": 0,
+    "/raw": 0,
+    "/typed/raw_kind": 0
+  },
+  "receiver/u64/bool": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "receiver/u64/float": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "receiver/u64/string": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "receiver/u64/ordering": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "receiver/f64/less": {},
+  "receiver/f64/equal": {},
+  "receiver/f64/greater": {},
+  "receiver/f64/int": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "receiver/f64/unsigned": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "receiver/f64/bool": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "receiver/f64/string": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "receiver/f64/ordering": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "receiver/string/less": {},
+  "receiver/string/equal": {},
+  "receiver/string/greater": {},
+  "receiver/string/empty": {},
+  "receiver/string/prefix": {},
+  "receiver/string/nul": {},
+  "receiver/string/int": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "receiver/string/bool": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "receiver/string/float": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "receiver/string/ordering": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "receiver/string/owned": {},
+  "receiver/i64/negative": {},
+  "receiver/i64/zero": {},
+  "receiver/i64/extremes": {},
+  "float-bits/pos-neg-zero": {},
+  "float-bits/neg-pos-zero": {},
+  "float-bits/pos-inf": {},
+  "float-bits/neg-inf": {},
+  "float-bits/nan-left": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "float-bits/nan-right": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "float-bits/nan-both": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "float-bits/signal-nan": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "float-bits/subnormal": {},
+  "constructor/Less/qualified": {},
+  "constructor/Less/imported": {},
+  "constructor/Less/alias": {},
+  "constructor/Less/explicit-call": {},
+  "constructor/Equal/qualified": {},
+  "constructor/Equal/imported": {},
+  "constructor/Equal/alias": {},
+  "constructor/Equal/explicit-call": {},
+  "constructor/Greater/qualified": {},
+  "constructor/Greater/imported": {},
+  "constructor/Greater/alias": {},
+  "constructor/Greater/explicit-call": {},
+  "ordering/eq/Less-Less": {},
+  "ordering/eq/Less-Equal": {},
+  "ordering/eq/Less-Greater": {},
+  "ordering/eq/Equal-Less": {},
+  "ordering/eq/Equal-Equal": {},
+  "ordering/eq/Equal-Greater": {},
+  "ordering/eq/Greater-Less": {},
+  "ordering/eq/Greater-Equal": {},
+  "ordering/eq/Greater-Greater": {},
+  "ordering/ne/Less-Less": {},
+  "ordering/ne/Less-Equal": {},
+  "ordering/ne/Less-Greater": {},
+  "ordering/ne/Equal-Less": {},
+  "ordering/ne/Equal-Equal": {},
+  "ordering/ne/Equal-Greater": {},
+  "ordering/ne/Greater-Less": {},
+  "ordering/ne/Greater-Equal": {},
+  "ordering/ne/Greater-Greater": {},
+  "ordering/lt/Less-Less": {},
+  "ordering/lt/Less-Equal": {},
+  "ordering/lt/Less-Greater": {},
+  "ordering/lt/Equal-Less": {},
+  "ordering/lt/Equal-Equal": {},
+  "ordering/lt/Equal-Greater": {},
+  "ordering/lt/Greater-Less": {},
+  "ordering/lt/Greater-Equal": {},
+  "ordering/lt/Greater-Greater": {},
+  "ordering/le/Less-Less": {},
+  "ordering/le/Less-Equal": {},
+  "ordering/le/Less-Greater": {},
+  "ordering/le/Equal-Less": {},
+  "ordering/le/Equal-Equal": {},
+  "ordering/le/Equal-Greater": {},
+  "ordering/le/Greater-Less": {},
+  "ordering/le/Greater-Equal": {},
+  "ordering/le/Greater-Greater": {},
+  "ordering/gt/Less-Less": {},
+  "ordering/gt/Less-Equal": {},
+  "ordering/gt/Less-Greater": {},
+  "ordering/gt/Equal-Less": {},
+  "ordering/gt/Equal-Equal": {},
+  "ordering/gt/Equal-Greater": {},
+  "ordering/gt/Greater-Less": {},
+  "ordering/gt/Greater-Equal": {},
+  "ordering/gt/Greater-Greater": {},
+  "ordering/ge/Less-Less": {},
+  "ordering/ge/Less-Equal": {},
+  "ordering/ge/Less-Greater": {},
+  "ordering/ge/Equal-Less": {},
+  "ordering/ge/Equal-Equal": {},
+  "ordering/ge/Equal-Greater": {},
+  "ordering/ge/Greater-Less": {},
+  "ordering/ge/Greater-Equal": {},
+  "ordering/ge/Greater-Greater": {},
+  "format/debug/Less": {},
+  "format/display/Less": {
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "format/debug/Equal": {},
+  "format/display/Equal": {
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "format/debug/Greater": {},
+  "format/display/Greater": {
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "format/debug-nested": {},
+  "format/debug-width": {},
+  "format/display-nested": {
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "mixed-ordering/ordering-int/eq": {
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "mixed-ordering/ordering-int/lt": {
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "mixed-ordering/int-ordering/eq": {
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "mixed-ordering/int-ordering/lt": {
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "mixed-ordering/ordering-bool/eq": {
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "mixed-ordering/ordering-bool/lt": {
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "match/Less": {},
+  "match/Equal": {},
+  "match/Greater": {},
+  "match/wildcard": {},
+  "match/if-let": {},
+  "match/nested-caller": {},
+  "match/wrong-type": {},
+  "missing-method/bool": {
+    "/kind": 1,
+    "/raw": 1
+  },
+  "missing-method/char": {
+    "/kind": 1,
+    "/raw": 1
+  },
+  "missing-method/ordering": {
+    "/kind": 1,
+    "/raw": 1
+  },
+  "missing-method/object": {
+    "/kind": 1,
+    "/raw": 1
+  },
+  "missing-method/struct": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "runtime-refusal/tuple": {},
+  "runtime-refusal/unit": {},
+  "runtime-refusal/vec": {},
+  "runtime-refusal/option": {},
+  "runtime-refusal/result": {},
+  "runtime-refusal/range": {},
+  "arity/i64/none": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "arity/i64/extra": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "arity/u64/none": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "arity/u64/extra": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "arity/f64/none": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "arity/f64/extra": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "arity/string/none": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "arity/string/extra": {
+    "/kind": 0,
+    "/raw": 0
+  },
+  "effects/order-success": {},
+  "effects/order-invalid-rhs": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "effects/order-missing": {
+    "/kind": 1,
+    "/raw": 1
+  },
+  "effects/order-runtime-refusal": {},
+  "effects/supported-rhs-mutates-receiver": {},
+  "effects/refused-rhs-mutates-receiver": {},
+  "access/moved-receiver": {
+    "/chain/0/kind": 0,
+    "/kind": 0,
+    "/raw": 0,
+    "/typed/raw_kind": 0
+  },
+  "access/moved-rhs": {
+    "/chain/0/kind": 0,
+    "/kind": 0,
+    "/raw": 0,
+    "/typed/raw_kind": 0
+  },
+  "access/shared-string-read": {},
+  "access/leased-parent-string": {},
+  "access/leased-parent-mutate": {
+    "/chain/0/kind": 0,
+    "/kind": 0,
+    "/raw": 0,
+    "/typed/raw_kind": 0
+  },
+  "destination/rebind": {},
+  "clone/global": {},
+  "frames/missing": {
+    "/kind": 1,
+    "/raw": 1
+  },
+  "frames/invalid-rhs": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "frames/runtime-refusal": {},
+  "region/fallback": {},
+  "region/order-phi": {},
+  "refusal/partial-cmp": {},
+  "refusal/reverse": {
+    "/kind": 1,
+    "/raw": 1
+  },
+  "refusal/then": {
+    "/kind": 1,
+    "/raw": 1
+  },
+  "refusal/then-with": {
+    "/kind": 1,
+    "/raw": 1
+  },
+  "refusal/min": {},
+  "refusal/max": {},
+  "refusal/sort": {},
+  "refusal/sort-by": {},
+  "refusal/iter-any": {},
+  "refusal/cmp-function": {},
+  "host-mismatch/unit": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "host-mismatch/bool": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "host-mismatch/i64": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "host-mismatch/u64": {
+    "/chain/0/kind": 0,
+    "/kind": 1,
+    "/raw": 1,
+    "/typed/raw_kind": 1
+  },
+  "host-mismatch/f64": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "host-mismatch/char": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "host-mismatch/string": {
+    "/chain/0/kind": 0,
+    "/kind": 2,
+    "/raw": 2,
+    "/typed/raw_kind": 2
+  },
+  "constructor/Less/bare": {},
+  "constructor/Equal/bare": {},
+  "constructor/Greater/bare": {},
+  "corpus/by-total/total": {},
+  "corpus/by-total/tie": {},
+  "projection/vec": {},
+  "projection/option": {},
+  "projection/result": {},
+  "projection/tuple": {},
+  "refusal/direct-ops-cmp": {},
+  "refusal/direct-provider-cmp": {},
+  "refusal/custom-script-cmp": {},
+  "shadow/other-receiver": {},
+  "shadow/untyped": {},
+  "shadow/unused-method": {}
+}

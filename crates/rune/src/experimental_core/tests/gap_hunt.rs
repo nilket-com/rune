@@ -1573,3 +1573,6 @@ mod scalar_methods_supplement;
 mod deferred_index;
 
 mod tuple_let;
+
+#[cfg(feature = "emit")]
+mod cmp_ordering;
