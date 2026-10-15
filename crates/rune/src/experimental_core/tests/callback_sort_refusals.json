@@ -1,0 +1,1341 @@
+{
+	"refused/captures-parent": {
+		"index": 90,
+		"stock_common": {
+			"outcome": {
+				"chain": [
+					{
+						"display": "Bad argument #0",
+						"kind": "BadArgument { arg: 0 }",
+						"typed": {
+							"arg": 0,
+							"tag": "BadArgument"
+						}
+					}
+				],
+				"class": "AccessConflict",
+				"display": "Cannot read, the value is being written to",
+				"kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+				"sites": [
+					{
+						"end": 85,
+						"frames": "[]",
+						"source": 0,
+						"start": 78
+					},
+					{
+						"end": 96,
+						"frames": "[]",
+						"source": 0,
+						"start": 62
+					}
+				],
+				"status": "error",
+				"typed": {
+					"raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+				}
+			},
+			"before": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"post": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"events": [],
+			"events_after_reuse": [
+				{
+					"event": "mark",
+					"hex": "7265757365"
+				}
+			],
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"invoked": true
+		},
+		"fresh_constraint": {
+			"status": "refused",
+			"kind": "Unsupported",
+			"source_sha256": "4c31b288147360803ee49fcf1fd8144120009f075723ad0895620e0c5b6d04a9",
+			"invoked": false,
+			"capturing_supported": false,
+			"operation": "CallClosure"
+		},
+		"strict_source_span": "bind to actual admitted/refused syntax in reviewed implementation observer before strict epoch; source bytes immutable"
+	},
+	"refused/captures-scalar": {
+		"index": 91,
+		"stock_common": {
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								1,
+								2,
+								3,
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"3"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"4"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"before": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"post": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					]
+				],
+				"root": 0
+			},
+			"events": [],
+			"events_after_reuse": [
+				{
+					"event": "mark",
+					"hex": "7265757365"
+				}
+			],
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"invoked": true
+		},
+		"fresh_constraint": {
+			"status": "refused",
+			"kind": "Unsupported",
+			"source_sha256": "b0ccdc5b1ff3e6bd8943fa2936d64f9832f31129bb932a17be8a666a13324e00",
+			"invoked": false,
+			"capturing_supported": false,
+			"operation": "CallClosure"
+		},
+		"strict_source_span": "bind to actual admitted/refused syntax in reviewed implementation observer before strict epoch; source bytes immutable"
+	},
+	"refused/move-capture": {
+		"index": 92,
+		"stock_common": {
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								1,
+								2,
+								3,
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"3"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"4"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"before": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"post": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"OpaqueAny",
+						"0xc11b1e769aea94f2",
+						false,
+						false
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					]
+				],
+				"root": 0
+			},
+			"events": [],
+			"events_after_reuse": [
+				{
+					"event": "mark",
+					"hex": "7265757365"
+				}
+			],
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"invoked": true
+		},
+		"fresh_constraint": {
+			"status": "refused",
+			"kind": "Unsupported",
+			"source_sha256": "e4f7e0793bcb3030b315caa36fe33a89bd82daf265dfbbebeeded05dd655b6e3",
+			"invoked": false,
+			"capturing_supported": false,
+			"operation": "CallClosure"
+		},
+		"strict_source_span": "bind to actual admitted/refused syntax in reviewed implementation observer before strict epoch; source bytes immutable"
+	},
+	"refused/captured-after-sort": {
+		"index": 93,
+		"stock_common": {
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"8"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"before": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"post": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					]
+				],
+				"root": 0
+			},
+			"events": [
+				{
+					"a": "4",
+					"b": "3",
+					"event": "compare",
+					"n": 1
+				},
+				{
+					"a": "2",
+					"b": "1",
+					"event": "compare",
+					"n": 2
+				},
+				{
+					"a": "3",
+					"b": "1",
+					"event": "compare",
+					"n": 3
+				},
+				{
+					"a": "3",
+					"b": "2",
+					"event": "compare",
+					"n": 4
+				},
+				{
+					"a": "1",
+					"b": "0",
+					"event": "compare",
+					"n": 5
+				}
+			],
+			"events_after_reuse": [
+				{
+					"a": "4",
+					"b": "3",
+					"event": "compare",
+					"n": 1
+				},
+				{
+					"a": "2",
+					"b": "1",
+					"event": "compare",
+					"n": 2
+				},
+				{
+					"a": "3",
+					"b": "1",
+					"event": "compare",
+					"n": 3
+				},
+				{
+					"a": "3",
+					"b": "2",
+					"event": "compare",
+					"n": 4
+				},
+				{
+					"a": "1",
+					"b": "0",
+					"event": "compare",
+					"n": 5
+				},
+				{
+					"event": "mark",
+					"hex": "7265757365"
+				}
+			],
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"invoked": true
+		},
+		"fresh_constraint": {
+			"status": "refused",
+			"kind": "Unsupported",
+			"source_sha256": "0e14909be9df72242c1cd8cf4cbbff19dbee9062076482ba8d3796127bf5c795",
+			"invoked": false,
+			"capturing_supported": false,
+			"operation": "CallClosure"
+		},
+		"strict_source_span": "bind to actual admitted/refused syntax in reviewed implementation observer before strict epoch; source bytes immutable"
+	},
+	"refused/any": {
+		"index": 94,
+		"stock_common": {
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Bool",
+							"0x981333df5abb043f",
+							true
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"before": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"post": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"events": [],
+			"events_after_reuse": [
+				{
+					"event": "mark",
+					"hex": "7265757365"
+				}
+			],
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"invoked": true
+		},
+		"fresh_constraint": {
+			"status": "refused",
+			"kind": "Unsupported",
+			"source_sha256": "7da36a42bb6d1d4c65dd84edc36039cfd21c391dafda67a5005e50bc574d7625",
+			"invoked": false,
+			"capturing_supported": false,
+			"operation": "Method"
+		},
+		"strict_source_span": "bind to actual admitted/refused syntax in reviewed implementation observer before strict epoch; source bytes immutable"
+	},
+	"refused/async-comparator": {
+		"index": 95,
+		"stock_common": {
+			"outcome": {
+				"chain": [],
+				"class": "Type",
+				"display": "Expected type `std::cmp::Ordering` but found `std::future::Future`",
+				"kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }), actual: Any(AnyTypeInfo { full_name: <fn>, hash: 0x157cfe667ac47042 }) }",
+				"sites": [
+					{
+						"end": 82,
+						"frames": "[]",
+						"source": 0,
+						"start": 62
+					}
+				],
+				"status": "error",
+				"typed": {
+					"actual": "::std::future::Future",
+					"actual_debug": "Any(AnyTypeInfo { full_name: <fn>, hash: 0x157cfe667ac47042 })",
+					"expected": "::std::cmp::Ordering",
+					"expected_debug": "Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 })",
+					"tag": "ExpectedType"
+				}
+			},
+			"before": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"post": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"events": [],
+			"events_after_reuse": [
+				{
+					"event": "mark",
+					"hex": "7265757365"
+				}
+			],
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"invoked": true
+		},
+		"fresh_constraint": {
+			"status": "refused",
+			"kind": "Unsupported",
+			"source_sha256": "7f2c788d42758602ca27aa012d538c3b3ad07439cbecde3630687b9cb2fcd918",
+			"invoked": false,
+			"capturing_supported": false,
+			"operation": "AsyncFunction"
+		},
+		"strict_source_span": "bind to actual admitted/refused syntax in reviewed implementation observer before strict epoch; source bytes immutable"
+	},
+	"type/non-vector": {
+		"index": 99,
+		"stock_common": {
+			"outcome": {
+				"chain": [],
+				"class": "Type",
+				"display": "Missing instance function `0xbe008198f0c7d3a2` for `std::i64`",
+				"kind": "MissingInstanceFunction { hash: 0xbe008198f0c7d3a2, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }",
+				"sites": [
+					{
+						"end": 80,
+						"frames": "[]",
+						"source": 0,
+						"start": 62
+					}
+				],
+				"status": "error",
+				"typed": {
+					"raw_kind": "MissingInstanceFunction { hash: 0xbe008198f0c7d3a2, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }"
+				}
+			},
+			"before": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"7"
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					]
+				],
+				"root": 0
+			},
+			"post": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"7"
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					]
+				],
+				"root": 0
+			},
+			"events": [],
+			"events_after_reuse": [
+				{
+					"event": "mark",
+					"hex": "7265757365"
+				}
+			],
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"invoked": true
+		},
+		"fresh_constraint": {
+			"status": "runtime-unsupported",
+			"kind": "Unsupported",
+			"source_sha256": "6c08150b4c2e3c02d258560af4d2c880e2193cd07360b1c41e49ae88959c062d",
+			"invoked": true,
+			"capturing_supported": false,
+			"operation": "Method"
+		},
+		"strict_source_span": "bind to actual admitted/refused syntax in reviewed implementation observer before strict epoch; source bytes immutable"
+	},
+	"old-c9/refusal/iter-any": {
+		"index": 130,
+		"stock_common": {
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Bool",
+							"0x981333df5abb043f",
+							true
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"before": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"post": {
+				"nodes": [
+					[
+						"Tuple",
+						"0xfeb65b3f4755aef0",
+						[
+							1,
+							2
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[
+							3,
+							4,
+							5,
+							6,
+							7
+						]
+					],
+					[
+						"Vec",
+						"0xc11b1e769aea94f2",
+						[]
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"4"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"3"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"2"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"1"
+					],
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"0"
+					]
+				],
+				"root": 0
+			},
+			"events": [],
+			"events_after_reuse": [],
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"invoked": true
+		},
+		"fresh_constraint": {
+			"status": "refused",
+			"kind": "Unsupported",
+			"source_sha256": "80ca27965d6c3e4406e9c97e8628aae704d446e7b62149f6b3b268b411d7b95e",
+			"invoked": false,
+			"capturing_supported": false,
+			"operation": "Method"
+		},
+		"strict_source_span": "bind to actual admitted/refused syntax in reviewed implementation observer before strict epoch; source bytes immutable"
+	}
+}
