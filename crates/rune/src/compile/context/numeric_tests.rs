@@ -53,6 +53,7 @@ fn source(call: Call) -> &'static str {
 		Call::F64Round => "pub fn main(){ ::std::f64::round(1.5) }",
 		Call::F64Powf => "pub fn main(){ ::std::f64::powf(2.0,3.0) }",
 		Call::I64Abs => "pub fn main(){ ::std::i64::abs(-3) }",
+		Call::MethodCmp => "pub fn main(){ (1).cmp(2) }",
 	}
 }
 fn compile(cx: &Context, call: Call, expected: Option<Refusal>) {
@@ -99,7 +100,7 @@ fn matrix(cx: &Context, methods: [bool; 3], pairs: [bool; 4]) {
 			if admit { None } else { Some(Refusal::Method) },
 		);
 	}
-	for (pair, admit) in Pair::ALL.into_iter().zip(pairs) {
+	for (pair, admit) in Pair::DIRECT.into_iter().zip(pairs) {
 		assert_eq!(cx.fresh_numeric_direct(pair), admit);
 		compile(
 			cx,
@@ -206,7 +207,7 @@ fn absent_and_partial_numeric_modules_are_not_implicitly_certified() {
 	for m in [Method::Abs, Method::Round, Method::Powf] {
 		compile(&cx, Call::method(m), Some(Refusal::Method));
 	}
-	for pair in Pair::ALL {
+	for pair in Pair::DIRECT {
 		compile(&cx, Call::direct(pair), Some(Refusal::FrontendDiagnostic));
 	}
 	cx.install(crate::modules::i64::module().unwrap()).unwrap();
@@ -217,4 +218,283 @@ fn absent_and_partial_numeric_modules_are_not_implicitly_certified() {
 	for pair in [Pair::F64Abs, Pair::F64Round, Pair::F64Powf] {
 		compile(&cx, Call::direct(pair), Some(Refusal::FrontendDiagnostic));
 	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "compiles standard Context/source; cheap runtime helpers run under Miri"
+)]
+fn cmp_requires_all_providers_and_unshadowed_handler_aliases() {
+	let cx = Context::with_default_modules().unwrap();
+	assert!(cx.fresh_numeric_method(Method::Cmp));
+	compile(&cx, Call::MethodCmp, None);
+	let mut partial = core();
+	partial
+		.install(crate::modules::i64::module().unwrap())
+		.unwrap();
+	partial
+		.install(crate::modules::u64::module().unwrap())
+		.unwrap();
+	partial
+		.install(crate::modules::f64::module().unwrap())
+		.unwrap();
+	assert!(!partial.fresh_numeric_method(Method::Cmp));
+	compile(&partial, Call::MethodCmp, Some(Refusal::Method));
+	let mut cx = Context::with_default_modules().unwrap();
+	cx.install(extra("cmp")).unwrap();
+	assert!(cx.fresh_numeric_method(Method::Cmp));
+	compile(&cx, Call::MethodCmp, None);
+	let mut cx = Context::with_default_modules().unwrap();
+	let mut m = Module::new();
+	m.associated_function(&crate::runtime::Protocol::CMP, |a: i64, b: i64| a.cmp(&b))
+		.unwrap();
+	assert!(cx.install(m).is_err());
+	assert!(!cx.fresh_numeric_method(Method::Cmp));
+	compile(&cx, Call::MethodCmp, Some(Refusal::Method));
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "compiles standard Context/source; cheap runtime helpers run under Miri"
+)]
+fn script_cmp_anywhere_in_the_unit_disables_the_intrinsic() {
+	let cx = Context::with_default_modules().unwrap();
+	for source in [
+		"struct S{x} impl S {fn cmp(self,rhs){9}} pub fn main(){(1).cmp(2)}",
+		"pub fn unused(a,b){a.cmp(b)} struct S{x} impl S {fn cmp(self,rhs){9}} pub fn main(){7}",
+	] {
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(source).unwrap()).unwrap();
+		let error = frontend::compile(&mut sources, &cx, &mut Diagnostics::new(), 7)
+			.err()
+			.unwrap();
+		assert_eq!(error.refusal, Some(Refusal::Method));
+	}
+	assert_eq!(INVOCATIONS.load(Ordering::SeqCst), 0);
+}
+
+// C9 receiver relevance: custom handlers are install-only, never invoked.
+fn cmp_forbidden_i64(_: i64, _: i64) -> core::cmp::Ordering {
+	INVOCATIONS.fetch_add(1, Ordering::SeqCst);
+	panic!("C9 i64 cmp handler must not execute")
+}
+fn cmp_forbidden_bool(_: bool, _: bool) -> core::cmp::Ordering {
+	INVOCATIONS.fetch_add(1, Ordering::SeqCst);
+	panic!("C9 bool cmp handler must not execute")
+}
+fn cmp_forbidden_ordering(_: core::cmp::Ordering, _: core::cmp::Ordering) -> core::cmp::Ordering {
+	INVOCATIONS.fetch_add(1, Ordering::SeqCst);
+	panic!("C9 Ordering cmp handler must not execute")
+}
+fn cmp_forbidden_vec(_: &crate::runtime::Vec, _: &crate::runtime::Vec) -> core::cmp::Ordering {
+	INVOCATIONS.fetch_add(1, Ordering::SeqCst);
+	panic!("C9 Vec cmp handler must not execute")
+}
+// Same dependency prefix as Context::with_config through String; then only u64/f64.
+fn cmp_without_i64_and_vec() -> Context {
+	let mut cx = Context::new();
+	cx.install(crate::modules::iter::module().unwrap()).unwrap();
+	cx.install(crate::modules::core::module().unwrap()).unwrap();
+	cx.install(crate::modules::cmp::module().unwrap()).unwrap();
+	cx.install(crate::modules::any::module().unwrap()).unwrap();
+	cx.install(crate::modules::clone::module().unwrap())
+		.unwrap();
+	cx.install(crate::modules::num::module().unwrap()).unwrap();
+	cx.install(crate::modules::hash::module().unwrap()).unwrap();
+	cx.install(crate::modules::string::module().unwrap())
+		.unwrap();
+	cx.install(crate::modules::u64::module().unwrap()).unwrap();
+	cx.install(crate::modules::f64::module().unwrap()).unwrap();
+	cx
+}
+#[derive(Clone, Copy, Debug)]
+enum CmpInstall {
+	Named,
+	Protocol,
+	Trait,
+}
+fn cmp_i64_module(kind: CmpInstall) -> Module {
+	let mut m = Module::with_item(["c9_relevance"]).unwrap();
+	match kind {
+		CmpInstall::Named => {
+			m.function("cmp", cmp_forbidden_i64)
+				.build_associated::<i64>()
+				.unwrap();
+		}
+		CmpInstall::Protocol => {
+			m.associated_function(&crate::runtime::Protocol::CMP, cmp_forbidden_i64)
+				.unwrap();
+		}
+		CmpInstall::Trait => {
+			m.define_trait(["CmpShadow"])
+				.unwrap()
+				.handler(|cx| {
+					REGISTRATIONS.fetch_add(1, Ordering::SeqCst);
+					cx.function("cmp", cmp_forbidden_i64)?;
+					Ok(())
+				})
+				.unwrap();
+			let item = m.item.join(["CmpShadow"]).unwrap();
+			m.implement_trait::<i64>(&item).unwrap();
+		}
+	}
+	m
+}
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "compiles standard Context/source; pure certificate controls run under Miri"
+)]
+fn cmp_custom_i64_named_protocol_and_trait_fail_closed_in_both_orders() {
+	for kind in [CmpInstall::Named, CmpInstall::Protocol, CmpInstall::Trait] {
+		let mut stock_first = Context::with_default_modules().unwrap();
+		assert!(stock_first.fresh_numeric_method(Method::Cmp));
+		assert!(
+			stock_first.install(cmp_i64_module(kind)).is_err(),
+			"{kind:?}"
+		);
+		assert!(!stock_first.fresh_numeric_method(Method::Cmp), "{kind:?}");
+		compile(&stock_first, Call::MethodCmp, Some(Refusal::Method));
+		let mut custom_first = cmp_without_i64_and_vec();
+		assert!(!custom_first.fresh_numeric_method(Method::Cmp)); // i64 stock provider absent.
+		custom_first.install(cmp_i64_module(kind)).unwrap();
+		assert!(!custom_first.fresh_numeric_method(Method::Cmp), "{kind:?}");
+		assert!(
+			custom_first
+				.install(crate::modules::i64::module().unwrap())
+				.is_err(),
+			"{kind:?}"
+		);
+		assert!(!custom_first.fresh_numeric_method(Method::Cmp), "{kind:?}");
+		compile(&custom_first, Call::MethodCmp, Some(Refusal::Method));
+	}
+	assert_eq!(INVOCATIONS.load(Ordering::SeqCst), 0);
+}
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "compiles standard Context/source; pure certificate controls run under Miri"
+)]
+fn cmp_missing_receivers_close_on_names_and_protocols() {
+	for protocol in [false, true] {
+		let mut cx = Context::with_default_modules().unwrap();
+		let mut m = Module::with_item(["c9_bool"]).unwrap();
+		if protocol {
+			m.associated_function(&crate::runtime::Protocol::CMP, cmp_forbidden_bool)
+				.unwrap();
+		} else {
+			m.function("cmp", cmp_forbidden_bool)
+				.build_associated::<bool>()
+				.unwrap();
+		}
+		cx.install(m).unwrap();
+		assert!(!cx.fresh_numeric_method(Method::Cmp));
+		compile(&cx, Call::MethodCmp, Some(Refusal::Method));
+		let mut cx = Context::with_default_modules().unwrap();
+		let mut m = Module::with_item(["c9_ordering"]).unwrap();
+		if protocol {
+			m.associated_function(&crate::runtime::Protocol::CMP, cmp_forbidden_ordering)
+				.unwrap();
+		} else {
+			m.function("cmp", cmp_forbidden_ordering)
+				.build_associated::<core::cmp::Ordering>()
+				.unwrap();
+		}
+		cx.install(m).unwrap();
+		assert!(!cx.fresh_numeric_method(Method::Cmp));
+		compile(&cx, Call::MethodCmp, Some(Refusal::Method));
+	}
+	assert_eq!(INVOCATIONS.load(Ordering::SeqCst), 0);
+}
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "compiles standard Context/source; pure runtime refusal helpers run under Miri"
+)]
+fn cmp_custom_vec_names_and_protocols_stay_open_and_refuse_at_runtime() {
+	use crate::experimental_core::{
+		error::ErrorKind,
+		heap::{Limits, Store},
+		value::{Type, Value},
+	};
+	for protocol in [false, true] {
+		let mut cx = cmp_without_i64_and_vec();
+		cx.install(crate::modules::i64::module().unwrap()).unwrap();
+		assert!(cx.fresh_numeric_method(Method::Cmp));
+		let mut m = Module::with_crate_item("std", ["vec"]).unwrap();
+		m.ty::<crate::runtime::Vec>().unwrap();
+		if protocol {
+			m.associated_function(&crate::runtime::Protocol::CMP, cmp_forbidden_vec)
+				.unwrap();
+		} else {
+			m.function("cmp", cmp_forbidden_vec)
+				.build_associated::<crate::runtime::Vec>()
+				.unwrap();
+		}
+		m.define_trait(["CmpPendingOther"])
+			.unwrap()
+			.handler(|cx| {
+				let pending = cx.cx.fresh_numeric.begin_module(0, 0);
+				assert_eq!(pending.0 & Method::Cmp.bit(), 0);
+				assert!(cx.cx.fresh_numeric_method(Method::Cmp));
+				cx.cx.fresh_numeric.finish_module(pending);
+				Ok(())
+			})
+			.unwrap();
+		let item = m.item.join(["CmpPendingOther"]).unwrap();
+		m.implement_trait::<crate::runtime::Vec>(&item).unwrap();
+		cx.install(m).unwrap();
+		assert!(cx.fresh_numeric_method(Method::Cmp));
+		compile(&cx, Call::MethodCmp, None);
+		let mut store = Store::new(Limits::default()).unwrap();
+		let value = store.list(Type::Vec, &[Value::I64(1)]).unwrap();
+		let before = store.state_for_test();
+		let error = store.method_cmp(value, value).unwrap_err();
+		assert_eq!(
+			(error.kind, error.operation, error.refusal),
+			(ErrorKind::Unsupported, "Method", None)
+		);
+		assert_eq!(store.state_for_test(), before);
+		store.release(value).unwrap();
+		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	}
+	assert_eq!(INVOCATIONS.load(Ordering::SeqCst), 0);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "compiles standard Context/source; pure pending-mask controls run under Miri"
+)]
+fn cmp_relevant_pending_module_is_visible_during_trait_registration() {
+	for protocol in [false, true] {
+		let mut cx = Context::with_default_modules().unwrap();
+		let mut m = Module::with_item(["c9_pending_bool"]).unwrap();
+		if protocol {
+			m.associated_function(&crate::runtime::Protocol::CMP, cmp_forbidden_bool)
+				.unwrap();
+		} else {
+			m.function("cmp", cmp_forbidden_bool)
+				.build_associated::<bool>()
+				.unwrap();
+		}
+		m.define_trait(["CmpPendingRelevant"])
+			.unwrap()
+			.handler(|cx| {
+				let pending = cx.cx.fresh_numeric.begin_module(0, 0);
+				assert_ne!(pending.0 & Method::Cmp.bit(), 0);
+				assert!(!cx.cx.fresh_numeric_method(Method::Cmp));
+				cx.cx.fresh_numeric.finish_module(pending);
+				Ok(())
+			})
+			.unwrap();
+		let item = m.item.join(["CmpPendingRelevant"]).unwrap();
+		m.implement_trait::<bool>(&item).unwrap();
+		cx.install(m).unwrap();
+		assert!(!cx.fresh_numeric_method(Method::Cmp));
+		compile(&cx, Call::MethodCmp, Some(Refusal::Method));
+	}
+	assert_eq!(INVOCATIONS.load(Ordering::SeqCst), 0);
 }

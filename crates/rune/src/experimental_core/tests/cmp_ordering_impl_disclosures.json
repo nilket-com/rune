@@ -1,0 +1,40 @@
+{
+	"D_family_follow_up": [
+		"leased-drop take (existing)",
+		"leased-parent write: actual Snapshot reader count plus native BadArgument(0) wrapper"
+	],
+	"coverage_gaps": [
+		{
+			"family": "function/type token cmp receiver and rhs",
+			"status": "authored unit controls only; not in frozen 210 oracle; no measured stock parity claim"
+		},
+		{
+			"family": "stale heap diagnostic None",
+			"status": "internal defensive helper controls; user invocation ownership validation still applies"
+		}
+	],
+	"metadata": {
+		"host_expected": "HostExpectedType{expected:Hash,actual:Hash,arg:Option<u8>} and HostExpectedNumber{actual:Hash,arg:Option<u8>} copy actual native typed error payloads in cold host_error; owned native message unchanged. No Detail/Error/Failure growth allowed.",
+		"struct": "Observer-only RTTI from actual nominal and program Record descriptor fields in declaration order; absent/inconsistent record metadata remains unmapped; no production storage expansion."
+	},
+	"oracle_unchanged_sha256": "57491aa1e653620249949b9991399f3d412d61b0fb48c3de2a37c3c8383e936e",
+	"receiver_audit": {
+		"heap": "Live validated payloads and moved payloads retain actual tags. None is possible for a stale/retired/missing/invalid heap handle, not from a legitimate user value. Defensive fallback on either operand is Unsupported/Method/refusal None, with a stale-handle helper test.",
+		"no_type_fallback": "No guessed type or InvalidCode is emitted from diagnostic None in cmp helpers.",
+		"primitive_values": "Unit, Bool, I64, U64, F64, Char, Ordering all return Some actual primitive TypeName",
+		"tokens": "Function{code,id} gives Function; Type(Type) gives Type. These do not return None. Method receiver errors are actual MissingInstanceFunction; numeric rhs errors use actual ExpectedNumber/ExpectedType metadata. New helper unit tests cover both tokens, no stock parity claim without frozen rows."
+	},
+	"retained": [
+		{
+			"kind_duplicate": "typed.raw_kind duplicates the same primary kind representation and is pinned with kind; no other typed/display/span/frame normalization",
+			"label": "access/leased-parent-mutate",
+			"policy": [
+				"Retained-kind",
+				"Retained-chain"
+			],
+			"sidecar": "cmp_ordering_retained.json"
+		}
+	],
+	"schema": 1,
+	"source_review_message": "01a13e28-562d-75dd-b7a6-87c1473e4244"
+}

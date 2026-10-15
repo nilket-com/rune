@@ -81,6 +81,7 @@ fn snapshot(store: &Store, value: Value) -> Result<stock::Value> {
 		Value::U64(v) => stock::Value::from(v),
 		Value::F64(v) => stock::Value::from(v),
 		Value::Char(v) => stock::Value::from(v),
+		Value::Ordering(v) => stock::Value::from(v),
 		Value::Heap(_) => {
 			stock::Value::try_from(crate::alloc::String::try_from(store.text(value)?)?)?
 		}
@@ -208,17 +209,18 @@ impl Executor {
 				},
 			),
 			K::Panic { .. } => (ErrorKind::Panic, Detail::PanicMessage),
-			K::ExpectedNumber { .. } => (
+			K::ExpectedNumber { actual } => (
 				ErrorKind::Host,
-				Detail::HostMessage {
-					cause: HostCause::ExpectedNumber,
+				Detail::HostExpectedNumber {
+					actual: actual.type_hash(),
 					arg,
 				},
 			),
-			K::ExpectedType { .. } => (
+			K::ExpectedType { expected, actual } => (
 				ErrorKind::Host,
-				Detail::HostMessage {
-					cause: HostCause::ExpectedType,
+				Detail::HostExpectedType {
+					expected: expected.type_hash(),
+					actual: actual.type_hash(),
 					arg,
 				},
 			),
@@ -887,13 +889,28 @@ mod tests {
 			let failure =
 				invoke_source(&context, &mut executor, &mut store, text, 1000).unwrap_err();
 			assert_eq!(failure.error.kind, ErrorKind::Host);
-			assert_eq!(
-				failure.error.detail,
-				Detail::HostMessage {
-					cause,
-					arg: Some(arg)
+			match cause {
+				HostCause::ExpectedNumber => {
+					assert!(
+						matches!(failure.error.detail,Detail::HostExpectedNumber {arg:Some(actual),..} if actual==arg)
+					);
+					assert_eq!(failure.error.detail.numeric_argument(), Some((cause, arg)));
 				}
-			);
+				HostCause::ExpectedType => {
+					assert!(
+						matches!(failure.error.detail,Detail::HostExpectedType {arg:Some(actual),..} if actual==arg)
+					);
+					assert_eq!(failure.error.detail.numeric_argument(), Some((cause, arg)));
+				}
+				HostCause::Access => assert_eq!(
+					failure.error.detail,
+					Detail::HostMessage {
+						cause,
+						arg: Some(arg)
+					}
+				),
+				_ => panic!("unlisted h1focused argument cause"),
+			}
 			assert!(failure.host_message.is_some());
 			assert!(failure.panic_message.is_none());
 			assert_eq!(store.live_entries(), 0);

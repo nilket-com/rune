@@ -544,6 +544,9 @@ fn entry_refusals_change_nothing() {
 	// A wrong live-in tag (U64 limit, F64 counter) refuses.
 	for (slot, value) in [
 		(0, Value::U64(10)),
+		(0, Value::Ordering(core::cmp::Ordering::Less)),
+		(1, Value::Ordering(core::cmp::Ordering::Equal)),
+		(2, Value::Ordering(core::cmp::Ordering::Greater)),
 		(1, Value::F64(0.0)),
 		(2, Value::Bool(true)),
 	] {

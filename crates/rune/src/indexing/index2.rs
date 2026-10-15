@@ -578,7 +578,7 @@ impl<'a> Processor<'a> {
 					idx.q.inner.fresh_numeric_script |= method.bit();
 				}
 			} else {
-				idx.q.inner.fresh_numeric_script |= 0b111;
+				idx.q.inner.fresh_numeric_script |= 0b1111;
 			}
 		}
 		let layer = idx.scopes.pop().with_span(self.span)?;

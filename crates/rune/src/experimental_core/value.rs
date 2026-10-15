@@ -44,6 +44,8 @@ pub enum Type {
 	F64,
 	/// `char`.
 	Char,
+	/// `std::cmp::Ordering`.
+	Ordering,
 	/// `String`.
 	String,
 	/// `Vec`.
@@ -77,8 +79,13 @@ pub(crate) enum Value {
 	U64(u64),
 	F64(f64),
 	Char(char),
+	/// A `std::cmp::Ordering`.
+	Ordering(core::cmp::Ordering),
 	Heap(Handle),
-	Function { code: u32, id: u32 },
+	Function {
+		code: u32,
+		id: u32,
+	},
 	Type(Type),
 }
 
@@ -92,6 +99,7 @@ impl Value {
 			Self::U64(_) => Type::U64,
 			Self::F64(_) => Type::F64,
 			Self::Char(_) => Type::Char,
+			Self::Ordering(_) => Type::Ordering,
 			_ => return None,
 		})
 	}
@@ -112,6 +120,8 @@ pub enum Scalar {
 	F64(f64),
 	/// A `char`.
 	Char(char),
+	/// A `std::cmp::Ordering`.
+	Ordering(core::cmp::Ordering),
 }
 
 /// The host's owned reference to a value of one store: the only way a value

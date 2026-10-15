@@ -765,6 +765,7 @@ pub(crate) struct CertifiedIntrinsic {
 // membership in the partition does not certify an id. No installer API exists.
 pub(crate) const PRINT_RAW: u32 = FIRST_INTRINSIC_ID + 1;
 pub(crate) const VARIANT_SUCCESS: u32 = FIRST_INTRINSIC_ID + 2;
+pub(crate) const METHOD_CMP: u32 = crate::function::fresh_numeric::Call::MethodCmp.id();
 pub(crate) const FIRST_HOST: u32 = FIRST_INTRINSIC_ID + 0x100;
 pub(crate) const MAX_HOST_DESCRIPTORS: usize = 4096;
 fn host_id(index: usize) -> Result<u32> {
@@ -817,6 +818,10 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 	CertifiedIntrinsic {
 		id: crate::function::fresh_numeric::Call::I64Abs.id(),
 		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: METHOD_CMP,
+		arity: 2,
 	},
 ];
 fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
@@ -2698,7 +2703,13 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 9);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 10);
+		assert_eq!(
+			certified_intrinsic(CERTIFIED_INTRINSICS, METHOD_CMP)
+				.unwrap()
+				.arity,
+			2
+		);
 		assert_eq!(CERTIFIED_INTRINSICS[0].id, PRINT_RAW);
 		assert_eq!(CERTIFIED_INTRINSICS[0].arity, 1);
 		assert_eq!(CERTIFIED_INTRINSICS[1].id, VARIANT_SUCCESS);

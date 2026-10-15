@@ -127,7 +127,9 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 						_ => "UNMAPPED",
 					};
 					let chain = match failure.error.detail {
-						Detail::HostMessage { arg: Some(arg), .. } => vec![
+						Detail::HostMessage { arg: Some(arg), .. }
+						| Detail::HostExpectedType { arg: Some(arg), .. }
+						| Detail::HostExpectedNumber { arg: Some(arg), .. } => vec![
 							json!({"kind":"fresh HostMessage argument","display":format!("Bad argument #{arg}")}),
 						],
 						_ => vec![],

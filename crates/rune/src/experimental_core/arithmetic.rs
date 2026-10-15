@@ -206,6 +206,9 @@ pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 			_ => Err(type_error(op, original_a, original_b)),
 		},
 
+		(Ordering(a), Ordering(b)) => {
+			compare_binary(op, original_a, original_b, a == b, a < b, a > b)
+		}
 		(Char(a), Char(b)) => compare_binary(op, original_a, original_b, a == b, a < b, a > b),
 		(Unit, Unit) => compare_binary(op, original_a, original_b, true, false, false),
 		_ => Err(type_error(op, original_a, original_b)),

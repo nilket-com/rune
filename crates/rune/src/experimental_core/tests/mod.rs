@@ -84,7 +84,13 @@ mod tuple_let_pins {
 mod cmp_ordering_pins {
 	use serde_json::{json, Value as Json};
 	use std::{string::String, vec::Vec};
+
+	fn hex(bytes: &[u8]) -> String {
+		bytes.iter().map(|b| std::format!("{b:02x}")).collect()
+	}
 	include!("gap_hunt/cmp_ordering/p1.rs");
 	include!("gap_hunt/cmp_ordering/pins.rs");
 	include!("gap_hunt/cmp_ordering/p1_controls.rs");
+	include!("gap_hunt/cmp_ordering/retained.rs");
+	include!("gap_hunt/cmp_ordering/site_enforce.rs");
 }

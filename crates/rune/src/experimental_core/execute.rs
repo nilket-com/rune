@@ -220,7 +220,9 @@ impl core::fmt::Display for FailureMessage<'_> {
 		}
 		if let Some(message) = self.failure.host_message.as_deref() {
 			match self.failure.error.detail {
-				Detail::HostMessage { .. } => return f.write_str(message),
+				Detail::HostMessage { .. }
+				| Detail::HostExpectedType { .. }
+				| Detail::HostExpectedNumber { .. } => return f.write_str(message),
 				Detail::HostPanicked => return write!(f, "host panicked: {message}"),
 				_ => (),
 			}

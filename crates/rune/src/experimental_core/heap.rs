@@ -1746,6 +1746,7 @@ impl Store {
 			| Value::U64(_)
 			| Value::F64(_)
 			| Value::Char(_)
+			| Value::Ordering(_)
 			| Value::Type(_)
 			| Value::Function { .. } => true,
 			Value::Heap(_) => false,
@@ -1763,6 +1764,7 @@ impl Store {
 			| Value::U64(_)
 			| Value::F64(_)
 			| Value::Char(_)
+			| Value::Ordering(_)
 			| Value::Type(_)
 			| Value::Function { .. } => true,
 			Value::Heap(_) => false,
@@ -1909,3 +1911,5 @@ impl Store {
 
 #[cfg(test)]
 mod field_iter_tests;
+
+mod method_cmp;

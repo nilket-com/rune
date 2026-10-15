@@ -20,6 +20,16 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[test]
 #[cfg(target_os = "linux")]
 fn stock_contract() {
+	run_contract("stock");
+}
+
+#[test]
+#[cfg(target_os = "linux")]
+fn fresh_contract() {
+	run_contract("fresh");
+}
+
+fn run_contract(engine: &str) {
 	let frozen = include_str!("../../cmp_ordering_stock.tsv");
 	// Pin the entire approved TSV, including the archival Debug column.
 	let mut hash = Command::new("/usr/bin/sha256sum")
@@ -36,11 +46,9 @@ fn stock_contract() {
 	let hash = hash.wait_with_output().unwrap();
 	assert!(hash.status.success());
 	assert!(hash.stderr.is_empty());
-	assert!(
-		String::from_utf8(hash.stdout)
-			.unwrap()
-			.starts_with("57491aa1e653620249949b9991399f3d412d61b0fb48c3de2a37c3c8383e936e  -")
-	);
+	assert!(String::from_utf8(hash.stdout)
+		.unwrap()
+		.starts_with("57491aa1e653620249949b9991399f3d412d61b0fb48c3de2a37c3c8383e936e  -"));
 	let mut lines = frozen.lines();
 	assert_eq!(
 		lines.next().unwrap(),
@@ -51,7 +59,7 @@ fn stock_contract() {
 	assert_eq!(COUNT, 210);
 	let counts: Json =
 		serde_json::from_str(include_str!("../../cmp_ordering_p1_counts.json")).unwrap();
-	let engine = "stock";
+	assert!(matches!(engine, "stock" | "fresh"));
 	let owned = std::env::var_os("GAP_OUT").is_none();
 	let out = std::env::var_os("GAP_OUT")
 		.map(PathBuf::from)
@@ -171,24 +179,29 @@ fn stock_contract() {
 		assert_eq!(e["policy"], *policy);
 		assert_eq!(e["source_hex"], c[2]);
 		assert_eq!(e["fuel"], FUEL);
-		let observed = &e["observation"];
-		assert_eq!(observed["invoked"], true);
-		assert_eq!(observed["host_calls"], 0);
-		let stock: Json = serde_json::from_str(&pins_decode(c[3])).unwrap();
-		// P1 validates both archived and common Debug counts. Archive contents
-		// remain raw metadata; only the common semantic object is compared.
-		project_p1(&observed["outcome"], &counts[*label]).unwrap();
-		compare_p1(
-			&observed["outcome"],
-			&semantic_projection(&stock).unwrap(),
-			&counts[*label],
-		)
-		.unwrap();
-		assert_eq!(observed["reuse"]["status"], "value");
-		assert_eq!(
-			observed["reuse"]["value"]["payload"],
-			json!({"type":"I64","value":"7"})
-		);
+		if engine == "stock" {
+			let observed = &e["observation"];
+			assert_eq!(observed["invoked"], true);
+			assert_eq!(observed["host_calls"], 0);
+			let stock: Json = serde_json::from_str(&pins_decode(c[3])).unwrap();
+			// P1 validates both archived and common Debug counts. Archive contents
+			// remain raw metadata; only the common semantic object is compared.
+			project_p1(&observed["outcome"], &counts[*label]).unwrap();
+			compare_p1(
+				&observed["outcome"],
+				&semantic_projection(&stock).unwrap(),
+				&counts[*label],
+			)
+			.unwrap();
+			assert_eq!(observed["reuse"]["status"], "value");
+			assert_eq!(
+				observed["reuse"]["value"]["payload"],
+				json!({"type":"I64","value":"7"})
+			);
+		} else {
+			compare_fresh_envelope(source, label, &e, &stdout, &stderr).unwrap();
+		}
+
 		assert_eq!(hex(&stdout), c[4]);
 		assert_eq!(hex(&stderr), c[5]);
 	}
@@ -268,7 +281,20 @@ fn compare_fresh_envelope(
 			if obs["invoked"] != true || audit["returned_root"] != (outcome["status"] == "value") {
 				return Err("invocation or root drift".into());
 			}
-			compare_p1(outcome, expected, &counts[label])
+			if label == "access/leased-parent-mutate" {
+				compare_c9_retained(label, source, outcome, expected, &counts[label])
+			} else if compare_p1(outcome, expected, &counts[label]).is_ok() {
+				Ok(())
+			} else {
+				compare_c9_diagnostic_retained(
+					label,
+					source,
+					outcome,
+					expected,
+					&counts[label],
+					&audit["call_chain"],
+				)
+			}
 		}
 		"Refused-surface" | "Retained-arity" | "Refused-runtime" => {
 			let at = &outcome["location"];

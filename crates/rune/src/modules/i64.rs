@@ -16,7 +16,7 @@ pub fn module() -> Result<Module, ContextError> {
 	signed!(m, i64);
 	#[cfg(feature = "fresh-core")]
 	{
-		m.fresh_numeric = 0b1000;
+		m.fresh_numeric = 0b0001_1000;
 	}
 	Ok(m)
 }

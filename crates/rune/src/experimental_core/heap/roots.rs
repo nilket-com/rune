@@ -107,6 +107,11 @@ impl Store {
 		self.export(Value::Char(value))
 	}
 
+	/// A root of a `std::cmp::Ordering`.
+	pub fn root_ordering(&self, value: core::cmp::Ordering) -> Root {
+		self.export(Value::Ordering(value))
+	}
+
 	/// `Some` for a scalar, `None` for a heap value, function or type token.
 	pub fn root_scalar(&self, root: &Root) -> Result<Option<Scalar>> {
 		Ok(Some(match self.import(root)? {
@@ -116,6 +121,7 @@ impl Store {
 			Value::U64(n) => Scalar::U64(n),
 			Value::F64(n) => Scalar::F64(n),
 			Value::Char(c) => Scalar::Char(c),
+			Value::Ordering(v) => Scalar::Ordering(v),
 			Value::Heap(_) | Value::Function { .. } | Value::Type(_) => return Ok(None),
 		}))
 	}

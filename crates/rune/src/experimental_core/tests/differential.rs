@@ -344,6 +344,7 @@ fn fresh_encode(store: &mut Store, root: &Root) -> std::string::String {
 			Some(Scalar::F64(x)) => std::format!("f:{:016x}", x.to_bits()),
 			Some(Scalar::Bool(b)) => std::format!("b:{}", b as u8),
 			Some(Scalar::Char(c)) => std::format!("c:{:x}", c as u32),
+			Some(Scalar::Ordering(v)) => std::format!("ordering:{v:?}"),
 			other => std::format!("unencodable:{tag:?}:{other:?}"),
 		},
 	}

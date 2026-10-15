@@ -13,6 +13,7 @@ fn fresh_value(store: &mut Store, value: Value, depth: usize) -> Json {
 		Value::U64(v) => Some(crate::runtime::Value::from(v)),
 		Value::F64(v) => Some(crate::runtime::Value::from(v)),
 		Value::Char(v) => Some(crate::runtime::Value::from(v)),
+		Value::Ordering(v) => Some(crate::runtime::Value::from(v)),
 		_ => None,
 	};
 	if let Some(value) = scalar {
@@ -68,11 +69,18 @@ fn fresh_value(store: &mut Store, value: Value, depth: usize) -> Json {
 }
 
 // Construct diagnostic identities only from actual typed metadata. No expected-row lookup.
-fn fresh_type_info(name: TypeName) -> Option<crate::runtime::TypeInfo> {
+fn fresh_type_info(
+	name: TypeName,
+	program: &frontend::Program,
+) -> Option<crate::runtime::TypeInfo> {
 	use crate::runtime::{self as rt, TypeInfo};
 	Some(match name {
 		TypeName::Unit | TypeName::Tuple => TypeInfo::named::<rt::OwnedTuple>(),
 		TypeName::Bool => TypeInfo::named::<bool>(),
+		TypeName::Function => TypeInfo::named::<rt::Function>(),
+		TypeName::Type => TypeInfo::named::<rt::Type>(),
+		TypeName::Struct(nominal) => return fresh_struct_info(nominal, program),
+		TypeName::Ordering => TypeInfo::named::<core::cmp::Ordering>(),
 		TypeName::I64 => TypeInfo::named::<i64>(),
 		TypeName::U64 => TypeInfo::named::<u64>(),
 		TypeName::F64 => TypeInfo::named::<f64>(),
@@ -89,15 +97,33 @@ fn fresh_type_info(name: TypeName) -> Option<crate::runtime::TypeInfo> {
 
 fn fresh_primary_kind(
 	error: &crate::experimental_core::error::Error,
+	program: &frontend::Program,
 ) -> Option<crate::runtime::VmErrorKind> {
 	use crate::runtime::VmErrorKind as K;
 	Some(match error.detail {
+		Detail::Binary { op, lhs, rhs } if error.kind == ErrorKind::Type => {
+			use crate::experimental_core::error::BinarySymbol as B;
+			let op = match op {
+				B::Eq => "==",
+				B::Ne => "!=",
+				B::Lt => "<",
+				B::Le => "<=",
+				B::Gt => ">",
+				B::Ge => ">=",
+				_ => return None,
+			};
+			K::UnsupportedBinaryOperation {
+				op,
+				lhs: fresh_type_info(lhs, program)?,
+				rhs: fresh_type_info(rhs, program)?,
+			}
+		}
 		Detail::MissingInstanceFunction {
 			target,
 			hash,
 			instance,
 		} if error.kind == ErrorKind::Type => {
-			let info = fresh_type_info(target)?;
+			let info = fresh_type_info(target, program)?;
 			if info.type_hash() != instance {
 				return None;
 			}
@@ -110,7 +136,7 @@ fn fresh_primary_kind(
 			if error.kind == ErrorKind::Type =>
 		{
 			K::ExpectedNumber {
-				actual: fresh_type_info(found)?,
+				actual: fresh_type_info(found, program)?,
 			}
 		}
 		Detail::NumericArgumentType {
@@ -120,16 +146,22 @@ fn fresh_primary_kind(
 			if error.kind == ErrorKind::Type =>
 		{
 			K::ExpectedType {
-				expected: fresh_type_info(expected)?,
-				actual: fresh_type_info(found)?,
+				expected: fresh_type_info(expected, program)?,
+				actual: fresh_type_info(found, program)?,
 			}
 		}
 		Detail::NoDisplay { found } if error.kind == ErrorKind::Type => {
 			K::MissingProtocolFunction {
 				protocol: &crate::runtime::Protocol::DISPLAY_FMT,
-				instance: fresh_type_info(found)?,
+				instance: fresh_type_info(found, program)?,
 			}
 		}
+		Detail::CmpArgumentAccess {
+			access: crate::experimental_core::error::MovedAccess::Read,
+			..
+		} if error.kind == ErrorKind::AccessConflict => K::AccessError {
+			error: crate::runtime::AccessError::fresh_moved_read(),
+		},
 		Detail::Moved {
 			access: crate::experimental_core::error::MovedAccess::Read,
 		} if error.kind == ErrorKind::AccessConflict => K::AccessError {
@@ -151,6 +183,23 @@ fn fresh_primary_kind(
 					to: "u64",
 				},
 				_ => return None,
+			}
+		}
+		Detail::FloatComparison { lhs_bits, rhs_bits } if error.kind == ErrorKind::Type => {
+			K::IllegalFloatComparison {
+				lhs: f64::from_bits(lhs_bits),
+				rhs: f64::from_bits(rhs_bits),
+			}
+		}
+		Detail::HostExpectedType {
+			expected, actual, ..
+		} if error.kind == ErrorKind::Host => K::ExpectedType {
+			expected: fresh_hash_info(expected, program)?,
+			actual: fresh_hash_info(actual, program)?,
+		},
+		Detail::HostExpectedNumber { actual, .. } if error.kind == ErrorKind::Host => {
+			K::ExpectedNumber {
+				actual: fresh_hash_info(actual, program)?,
 			}
 		}
 		Detail::None => match error.kind {
@@ -176,10 +225,38 @@ fn fresh_failure(
 	{
 		return json!({"status":"runtime-unsupported","kind":"Unsupported","operation":error.operation,"refusal":null,"location":location,"raw":format!("{failure:?}")});
 	}
-	let Some(kind) = fresh_primary_kind(error) else {
+	if error.kind == ErrorKind::AccessConflict && error.detail == Detail::WriteBorrowed {
+		let kind = format!("{:?}", error.detail);
+		let frames = if failure.call_chain.is_empty() {
+			"[]".into()
+		} else {
+			serde_json::to_string(
+				&failure
+					.call_chain
+					.iter()
+					.map(|at| json!({"source":at.source,"start":at.start,"end":at.end}))
+					.collect::<Vec<_>>(),
+			)
+			.unwrap()
+		};
+		let sites = error
+			.location
+			.iter()
+			.map(|at| json!({"source":at.source,"start":at.start,"end":at.end,"frames":frames}))
+			.collect::<Vec<_>>();
+		return json!({"status":"error","class":format!("{:?}",error.kind),"kind":kind,"typed":{"raw_kind":kind},"display":failure.message(program).to_string(),"chain":[],"sites":sites,"raw":format!("{failure:?}")});
+	}
+	let Some(kind) = fresh_primary_kind(error, program) else {
 		return json!({"status":"unmapped-error","actual_kind":format!("{:?}",error.kind),"actual_detail":format!("{:?}",error.detail),"operation":error.operation,"location":location,"raw":format!("{failure:?}")});
 	};
-	let class = stock_class(&kind);
+	let class = if matches!(
+		kind,
+		crate::runtime::VmErrorKind::IllegalFloatComparison { .. }
+	) {
+		"IllegalFloatComparison".into()
+	} else {
+		stock_class(&kind)
+	};
 	let chain = error
 		.detail
 		.numeric_argument()
@@ -222,6 +299,11 @@ fn observe_fresh(source: &str, mode: &str) -> Json {
 	})
 	.unwrap();
 	let mut executor = Executor::new().unwrap();
+	executor
+		.set_host_runtime(Some(
+			crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
+		))
+		.unwrap();
 	let mut invoked = false;
 	let mut returned_root = false;
 	let mut no_cleanup_error = true;
@@ -253,6 +335,10 @@ fn observe_fresh(source: &str, mode: &str) -> Json {
 				Ok(root) => {
 					returned_root = true;
 					let value = store.import(&root).unwrap();
+					if let Value::Ordering(v) = value {
+						assert_eq!(store.root_scalar(&root).unwrap(), Some(Scalar::Ordering(v)));
+						assert_eq!(store.root_tag(&root).unwrap(), Type::Ordering);
+					}
 					let projected = fresh_value(&mut store, value, 0);
 					store.root_release(root).unwrap();
 					if projected.get("unmapped_value").is_some() {
@@ -313,4 +399,224 @@ fn observe_fresh(source: &str, mode: &str) -> Json {
 		Err(_) => false,
 	};
 	json!({"outcome":outcome,"invoked":invoked,"host_calls":calls.load(std::sync::atomic::Ordering::SeqCst),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"fresh_audit":{"no_cleanup_error":no_cleanup_error,"returned_root":returned_root,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"row_idle":row_idle,"reuse":reuse,"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"idle":executor.is_idle(),"call_chain":call_chain,"failure_site_ops":failure_site_ops,"actual_error":actual_error}})
+}
+
+fn fresh_struct_info(
+	nominal: crate::experimental_core::value::Nominal,
+	program: &frontend::Program,
+) -> Option<crate::runtime::TypeInfo> {
+	Some(crate::runtime::TypeInfo::rtti(fresh_struct_rtti(
+		nominal, program,
+	)?))
+}
+
+fn fresh_struct_rtti(
+	nominal: crate::experimental_core::value::Nominal,
+	program: &frontend::Program,
+) -> Option<crate::sync::Arc<crate::runtime::Rtti>> {
+	use crate::experimental_core::code::Op;
+	use crate::experimental_core::nominal;
+	use crate::runtime::{Rtti, RttiKind};
+	let hash = crate::Hash::new(nominal::hash_copy(nominal)?);
+	let mut buffer = [0u8; 256];
+	let len = nominal::name_copy(nominal, &mut buffer)?;
+	let name = core::str::from_utf8(&buffer[..len]).ok()?;
+	let mut shape: Option<Vec<&str>> = None;
+	for id in 0..program.code.functions() {
+		let function = program.code.function(u32::try_from(id).ok()?)?;
+		for pc in 0..function.instructions().len() {
+			let Op::Record {
+				tag: Type::Struct(actual),
+				args_start,
+				args_len,
+				..
+			} = function.operation(pc).ok()?
+			else {
+				continue;
+			};
+			if actual != nominal {
+				continue;
+			}
+			let end = args_start.checked_add(args_len)?;
+			let descriptors = function.args.get(args_start as usize..end as usize)?;
+			if descriptors.len() % 2 != 0 {
+				return None;
+			}
+			let mut names = Vec::new();
+			for descriptor in descriptors.as_chunks::<2>().0 {
+				names.push(function.strings.get(descriptor[0] as usize)?.as_str());
+			}
+			if shape.as_ref().is_some_and(|old| *old != names) {
+				return None;
+			}
+			shape = Some(names);
+		}
+	}
+	let mut fields = crate::runtime::new_field_map();
+	for (slot, name) in shape?.into_iter().enumerate() {
+		let name: crate::alloc::Box<str> =
+			crate::alloc::String::try_from(name).ok()?.try_into().ok()?;
+		if fields.try_insert(name, slot).ok()?.is_some() {
+			return None;
+		}
+	}
+	let rtti = Rtti {
+		kind: RttiKind::Struct,
+		hash,
+		variant_hash: Hash::EMPTY,
+		item: crate::ItemBuf::with_item(name.trim_start_matches("::").split("::")).ok()?,
+		fields,
+	};
+	crate::sync::Arc::try_new(rtti).ok()
+}
+
+fn fresh_hash_info(hash: Hash, program: &frontend::Program) -> Option<crate::runtime::TypeInfo> {
+	// Known builtin hashes only. An unknown host identity remains unmapped.
+	for name in [
+		TypeName::Unit,
+		TypeName::Bool,
+		TypeName::I64,
+		TypeName::U64,
+		TypeName::F64,
+		TypeName::Char,
+		TypeName::Ordering,
+		TypeName::String,
+		TypeName::Vec,
+		TypeName::Object,
+		TypeName::Option,
+		TypeName::Result,
+		TypeName::Range,
+		TypeName::Function,
+		TypeName::Type,
+	] {
+		if name.builtin_hash() == Some(hash) {
+			return fresh_type_info(name, program);
+		}
+	}
+	None
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "compiles standard Context/source; metadata consumer runs natively"
+)]
+fn struct_diagnostic_shape_comes_from_ordered_record_descriptors() {
+	use crate::experimental_core::code::Op;
+	let mut sources = Sources::new();
+	sources
+		.insert(Source::memory("struct C9Shape{x,y} pub fn main(){C9Shape{y:2,x:1}}").unwrap())
+		.unwrap();
+	let context = Context::with_default_modules().unwrap();
+	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 17).unwrap();
+	let mut nominal = None;
+	for id in 0..program.code.functions() {
+		let f = program.code.function(id as u32).unwrap();
+		for pc in 0..f.instructions().len() {
+			if let Op::Record {
+				tag: Type::Struct(n),
+				..
+			} = f.operation(pc).unwrap()
+			{
+				nominal = Some(n);
+			}
+		}
+	}
+	let nominal = nominal.unwrap();
+	let rtti = fresh_struct_rtti(nominal, &program).unwrap();
+	assert!(matches!(rtti.kind, crate::runtime::RttiKind::Struct));
+	assert_eq!(
+		rtti.hash,
+		Hash::new(crate::experimental_core::nominal::hash_copy(nominal).unwrap())
+	);
+	assert_eq!(rtti.variant_hash, Hash::EMPTY);
+	assert_eq!(rtti.item.to_string(), "C9Shape");
+	assert_eq!(rtti.fields.get("x"), Some(&0));
+	assert_eq!(rtti.fields.get("y"), Some(&1));
+	let missing =
+		crate::experimental_core::nominal::intern(0xC901_85FF_ABCD, "NoRecordHere").unwrap();
+	assert!(fresh_struct_rtti(missing, &program).is_none());
+}
+
+#[test]
+fn binary_comparison_projection_uses_only_actual_typed_metadata() {
+	use crate::experimental_core::{
+		code::Builder,
+		error::{BinarySymbol as B, Error},
+	};
+	use crate::runtime::VmErrorKind as K;
+	use crate::TypeHash;
+	let program = frontend::Program::for_diagnostics_test(Builder::default().finish().unwrap());
+	for (symbol, expected_op) in [
+		(B::Eq, "=="),
+		(B::Ne, "!="),
+		(B::Lt, "<"),
+		(B::Le, "<="),
+		(B::Gt, ">"),
+		(B::Ge, ">="),
+	] {
+		for (rhs, expected_rhs) in [(TypeName::I64, i64::HASH), (TypeName::Bool, bool::HASH)] {
+			let error = Error::new(ErrorKind::Type, "actual typed comparison").with_detail(
+				Detail::Binary {
+					op: symbol,
+					lhs: TypeName::Ordering,
+					rhs,
+				},
+			);
+			let K::UnsupportedBinaryOperation { op, lhs, rhs } =
+				fresh_primary_kind(&error, &program).unwrap()
+			else {
+				panic!("wrong typed projection")
+			};
+			assert_eq!(op, expected_op);
+			assert_eq!(lhs.type_hash(), core::cmp::Ordering::HASH);
+			assert_eq!(rhs.type_hash(), expected_rhs);
+		}
+	}
+	for symbol in [
+		B::Add,
+		B::Sub,
+		B::Mul,
+		B::Div,
+		B::Rem,
+		B::BitAnd,
+		B::BitOr,
+		B::BitXor,
+		B::Shl,
+		B::Shr,
+		B::AddAssign,
+		B::SubAssign,
+		B::MulAssign,
+		B::DivAssign,
+		B::RemAssign,
+		B::BitAndAssign,
+		B::BitOrAssign,
+		B::BitXorAssign,
+		B::ShlAssign,
+		B::ShrAssign,
+	] {
+		let error = Error::new(ErrorKind::Type, "non-comparison").with_detail(Detail::Binary {
+			op: symbol,
+			lhs: TypeName::Ordering,
+			rhs: TypeName::I64,
+		});
+		assert!(fresh_primary_kind(&error, &program).is_none());
+	}
+	for (lhs, rhs) in [
+		(TypeName::VecIter, TypeName::I64),
+		(TypeName::Ordering, TypeName::VecIter),
+	] {
+		let error = Error::new(ErrorKind::Type, "unknown type").with_detail(Detail::Binary {
+			op: B::Eq,
+			lhs,
+			rhs,
+		});
+		assert!(fresh_primary_kind(&error, &program).is_none());
+	}
+	let error = Error::new(ErrorKind::Overflow, "wrong kind").with_detail(Detail::Binary {
+		op: B::Eq,
+		lhs: TypeName::Ordering,
+		rhs: TypeName::I64,
+	});
+	assert!(fresh_primary_kind(&error, &program).is_none());
 }

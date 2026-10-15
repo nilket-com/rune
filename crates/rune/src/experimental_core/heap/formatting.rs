@@ -594,6 +594,8 @@ impl Store {
 				let mut buffer = ryu::Buffer::new();
 				sink.push(buffer.format(n))?;
 			}
+			Value::Ordering(v) if debug => sink.formatted(format_args!("{v:?}"))?,
+			Value::Ordering(_) => return Err(self.no_display(value)),
 			Value::Char(c) if debug => sink.formatted(format_args!("{c:?}"))?,
 			Value::Char(c) => {
 				let mut bytes = [0; 4];

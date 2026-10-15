@@ -43,6 +43,11 @@ impl Executor {
 			return Err(invalid());
 		}
 		let receiver = get(0)?;
+		if call == Call::MethodCmp {
+			let rhs = get(1)?;
+			let value = store.method_cmp(receiver, rhs)?;
+			return self.put(store, destination, value);
+		}
 		if call.is_method() {
 			let admitted = matches!(receiver, Value::F64(_))
 				|| call == Call::MethodAbs && matches!(receiver, Value::I64(_));
@@ -118,6 +123,7 @@ impl Executor {
 				Method::Abs => x.abs(),
 				Method::Round => x.round(),
 				Method::Powf => x.powf(convert(get(1)?, 1)?),
+				Method::Cmp => return Err(invalid()),
 			})
 		};
 		self.put(store, destination, result)?;

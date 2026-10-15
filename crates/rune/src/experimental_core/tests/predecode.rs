@@ -961,6 +961,9 @@ fn all_non_heap_literal_kinds_survive_validation_and_pool_decode() {
 		Value::I64(i64::MIN),
 		Value::U64(u64::MAX),
 		Value::Char('\u{1F600}'),
+		Value::Ordering(core::cmp::Ordering::Less),
+		Value::Ordering(core::cmp::Ordering::Equal),
+		Value::Ordering(core::cmp::Ordering::Greater),
 		Value::Type(Type::Struct(nominal)),
 	] {
 		let mut function = Function::new(1, 0).unwrap();

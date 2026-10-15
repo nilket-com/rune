@@ -25,6 +25,7 @@ pub(crate) fn read(value: &ConstValue) -> Result<Scalar> {
 			Inline::Unit => Value::Unit,
 			Inline::Bool(v) => Value::Bool(v),
 			Inline::Char(v) => Value::Char(v),
+			Inline::Ordering(v) => Value::Ordering(v),
 			Inline::Signed(v) => Value::I64(v),
 			Inline::Unsigned(v) => Value::U64(v),
 			Inline::Float(v) => Value::F64(v),
@@ -54,6 +55,7 @@ pub(crate) fn eval(
 			Value::U64(v) => Inline::Unsigned(v),
 			Value::F64(v) => Inline::Float(v),
 			Value::Char(v) => Inline::Char(v),
+			Value::Ordering(v) => Inline::Ordering(v),
 			_ => return Err(refused()),
 		}),
 	})

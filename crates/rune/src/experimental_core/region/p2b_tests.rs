@@ -1443,6 +1443,9 @@ fn p2b_untouched_scalars_at_entry_are_released_and_never_produced() {
 		Value::F64(1.0),
 		Value::Type(Type::I64),
 		Value::Char('c'),
+		Value::Ordering(core::cmp::Ordering::Less),
+		Value::Ordering(core::cmp::Ordering::Equal),
+		Value::Ordering(core::cmp::Ordering::Greater),
 		Value::U64(1),
 		Value::Function { code: 0, id: 0 },
 	] {

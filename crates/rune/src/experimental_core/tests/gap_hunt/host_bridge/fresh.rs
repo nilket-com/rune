@@ -127,14 +127,18 @@ pub(super) fn observe(path: &Path, mode: &str) -> Observation {
 								cause: HostCause::ExpectedNumber,
 								arg,
 							},
-						) => ("ExpectedNumber", "Type", arg),
+						)
+						| (ErrorKind::Host, Detail::HostExpectedNumber { arg, .. }) => {
+							("ExpectedNumber", "Type", arg)
+						}
 						(
 							ErrorKind::Host,
 							Detail::HostMessage {
 								cause: HostCause::ExpectedType,
 								arg,
 							},
-						) => ("ExpectedType", "Type", arg),
+						)
+						| (ErrorKind::Host, Detail::HostExpectedType { arg, .. }) => ("ExpectedType", "Type", arg),
 						(
 							ErrorKind::Host,
 							Detail::HostMessage {

@@ -12,6 +12,40 @@ enum Walk<'p, 'hir> {
 }
 
 impl<'a, 'hir> Lower<'a, 'hir> {
+	#[cold]
+	#[inline(never)]
+	fn pattern_ordering_constructor(
+		&mut self,
+		value: u32,
+		variant_hash: Hash,
+		misses: &mut Vec<Miss>,
+		span: Span,
+	) -> Result<()> {
+		let ordering = ordering_constructor(variant_hash)
+			.ok_or_else(|| self.refused(span, Refusal::Pattern))?;
+		self.pattern_is(value, Type::Ordering, misses, span)?;
+		let rhs = self.slot()?;
+		self.emit(
+			Op::Literal {
+				out: rhs,
+				value: Value::Ordering(ordering),
+			},
+			span,
+		)?;
+		let condition = self.slot()?;
+		self.emit(
+			Op::Binary {
+				out: condition,
+				op: Binary::Eq,
+				lhs: value,
+				rhs,
+			},
+			span,
+		)?;
+		self.pattern_require(condition, true, misses, span)?;
+		Ok(())
+	}
+
 	fn pattern_root(&mut self, id: hir::ExprId, refusal: Refusal) -> Result<u32> {
 		use hir::ExprKind as E;
 		let mut normalized = id;
@@ -223,6 +257,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				}
 			}
 			hir::PatSequenceKind::Type { hash, variant_hash } => {
+				if hash == crate::hash_in!(crate, ::std::cmp::Ordering) {
+					return self.pattern_ordering_constructor(value, variant_hash, misses, span);
+				}
 				if hash == Hash::type_hash(crate::item!(::std::option::Option)) {
 					let some =
 						variant_hash == Hash::type_hash(crate::item!(::std::option::Option::Some));

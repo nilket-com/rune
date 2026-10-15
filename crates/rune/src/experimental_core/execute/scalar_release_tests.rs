@@ -35,6 +35,9 @@ fn scalar(kind: usize) -> Value {
 		6 => Value::Char('μ'),
 		7 => Value::Type(Type::I64),
 		8 => Value::Function { code: 0, id: 0 },
+		9 => Value::Ordering(core::cmp::Ordering::Less),
+		10 => Value::Ordering(core::cmp::Ordering::Equal),
+		11 => Value::Ordering(core::cmp::Ordering::Greater),
 		_ => unreachable!(),
 	}
 }
@@ -59,7 +62,7 @@ fn code_for(value: Value) -> Code {
 
 #[test]
 fn d4_all_scalars_pass_through_put_leave_and_explicit_release() {
-	for kind in 0..9 {
+	for kind in 0..12 {
 		let mut store = store();
 		let mut e = Executor::new().unwrap();
 		let mut value = scalar(kind);

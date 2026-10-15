@@ -149,6 +149,7 @@ fn fresh_scalar(store: &Store, root: &super::super::value::Root) -> String {
 		Some(Scalar::F64(n)) => format!("f64:{:016x}:", n.to_bits()),
 		Some(Scalar::Bool(n)) => format!("bool:{n}:"),
 		Some(Scalar::Char(n)) => format!("char:{}:", n as u32),
+		Some(Scalar::Ordering(n)) => format!("ordering:{n:?}:"),
 		_ => String::new(),
 	}
 }

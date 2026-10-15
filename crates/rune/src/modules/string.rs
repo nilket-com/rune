@@ -32,6 +32,10 @@ use crate::{Any, ContextError, Module, TypeHash};
 #[rune::module(::std::string)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_numeric = 0b1000_0000;
+	}
 
 	m.ty::<String>()?;
 

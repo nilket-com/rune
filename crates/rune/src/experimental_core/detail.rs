@@ -10,6 +10,7 @@ pub enum TypeName {
 	U64,
 	F64,
 	Char,
+	Ordering,
 	String,
 	Vec,
 	Tuple,
@@ -284,17 +285,42 @@ pub enum Detail {
 		value: IntValue,
 		to: IntTarget,
 	},
+	/// Exact type hashes copied from a native conversion error, never from its text.
+	HostExpectedType {
+		expected: crate::Hash,
+		actual: crate::Hash,
+		arg: Option<u8>,
+	},
+	HostExpectedNumber {
+		actual: crate::Hash,
+		arg: Option<u8>,
+	},
 	/// A Rust unwind contained at the synchronous host boundary.
 	HostPanicked,
+	/// IEEE operands retained without losing NaN payload or sign bits.
+	FloatComparison {
+		lhs_bits: u64,
+		rhs_bits: u64,
+	},
+	/// Native String argument read failed after the method operands were evaluated.
+	CmpArgumentAccess {
+		arg: u8,
+		access: MovedAccess,
+	},
 }
 
 impl Detail {
-	/// Argument index retained by a scalar builtin's typed conversion failure.
+	/// Native argument index retained by a scalar builtin or certified host conversion failure.
 	pub fn numeric_argument(self) -> Option<(HostCause, u8)> {
 		match self {
 			Self::NumericArgumentType { cause, arg, .. }
 			| Self::NumericArgumentNumber { cause, arg, .. }
 			| Self::NumericArgumentCoerce { cause, arg, .. } => Some((cause, arg)),
+			Self::CmpArgumentAccess { arg, .. } => Some((HostCause::Access, arg)),
+			Self::HostExpectedType { arg: Some(arg), .. } => Some((HostCause::ExpectedType, arg)),
+			Self::HostExpectedNumber { arg: Some(arg), .. } => {
+				Some((HostCause::ExpectedNumber, arg))
+			}
 			_ => None,
 		}
 	}
@@ -321,6 +347,7 @@ impl TypeName {
 			Self::U64 => u64::HASH,
 			Self::F64 => f64::HASH,
 			Self::Char => char::HASH,
+			Self::Ordering => core::cmp::Ordering::HASH,
 			Self::String => crate::alloc::String::HASH,
 			Self::Vec => rt::Vec::HASH,
 			Self::Object => rt::Object::HASH,
@@ -353,6 +380,7 @@ impl TypeName {
 			Type::U64 => Self::U64,
 			Type::F64 => Self::F64,
 			Type::Char => Self::Char,
+			Type::Ordering => Self::Ordering,
 			Type::String => Self::String,
 			Type::Vec => Self::Vec,
 			Type::Tuple => Self::Tuple,
@@ -375,6 +403,7 @@ impl fmt::Display for TypeName {
 			Self::U64 => "std::u64",
 			Self::F64 => "std::f64",
 			Self::Char => "std::char",
+			Self::Ordering => "std::cmp::Ordering",
 			Self::String => "std::string::String",
 			Self::Vec => "std::vec::Vec",
 			Self::Tuple => "std::tuple::Tuple",
@@ -568,8 +597,17 @@ impl fmt::Display for Message<'_> {
 			MissingIndex { target } => write!(f, "Type `{target}` missing index"),
 			MissingStringSlice => f.write_str("Panicked: missing string slice"),
 			PanicMessage => f.write_str("Panicked"),
-			HostMessage { .. } => f.write_str("Host function failed"),
+			HostMessage { .. } | HostExpectedType { .. } | HostExpectedNumber { .. } => {
+				f.write_str("Host function failed")
+			}
 			HostPanicked => f.write_str("host panicked"),
+			FloatComparison { lhs_bits, rhs_bits } => core::fmt::Display::fmt(
+				&crate::runtime::VmErrorKind::IllegalFloatComparison {
+					lhs: f64::from_bits(lhs_bits),
+					rhs: f64::from_bits(rhs_bits),
+				},
+				f,
+			),
 			UnsupportedIterRange { start, end } => {
 				write!(f, "Cannot build an iterator out of {start}..{end}")
 			}
@@ -591,7 +629,7 @@ impl fmt::Display for Message<'_> {
 			},
 			NotCallable { found } => messages::not_callable(f, found),
 			Arity { given, expected } => messages::arity(f, given, expected),
-			Moved { access } => write!(
+			Moved { access } | CmpArgumentAccess { access, .. } => write!(
 				f,
 				"Cannot {}, the value has been moved",
 				match access {

@@ -1601,6 +1601,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	#[inline(never)]
 	fn call(&mut self, call: &hir::ExprCall<'_>, out: u32, span: Span) -> Result<()> {
 		if let hir::Call::Meta { hash } = call.call {
+			if ordering_constructor(hash).is_some() {
+				return self.call_ordering_constructor(hash, call, out, span);
+			}
 			let tag = if hash == Hash::type_hash(crate::item!(::std::option::Option::Some))
 				|| hash == Hash::type_hash(crate::item!(::std::option::Option::None))
 			{
@@ -1641,6 +1644,30 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		self.call_non_variant(call, out, span)
+	}
+
+	#[cold]
+	#[inline(never)]
+	fn call_ordering_constructor(
+		&mut self,
+		hash: Hash,
+		call: &hir::ExprCall<'_>,
+		out: u32,
+		span: Span,
+	) -> Result<()> {
+		let value =
+			ordering_constructor(hash).ok_or_else(|| self.refused(span, Refusal::Pattern))?;
+		if !call.args.is_empty() {
+			return Err(self.refused(span, Refusal::Arity));
+		}
+		self.emit(
+			Op::Literal {
+				out,
+				value: Value::Ordering(value),
+			},
+			span,
+		)?;
+		Ok(())
 	}
 
 	#[inline(never)]
@@ -1897,6 +1924,8 @@ fn type_tag(hash: Hash) -> Option<Type> {
 		Type::F64
 	} else if hash == bool::HASH {
 		Type::Bool
+	} else if hash == core::cmp::Ordering::HASH {
+		Type::Ordering
 	} else if hash == char::HASH {
 		Type::Char
 	} else if hash == <()>::HASH {
@@ -2024,4 +2053,19 @@ mod spec_tests {
 			assert!(template_spec(spec).is_err());
 		}
 	}
+}
+
+// Fixed builtin identity, shared by constructors and empty-variant patterns.
+fn ordering_constructor(hash: Hash) -> Option<core::cmp::Ordering> {
+	Some(
+		if hash == crate::hash_in!(crate, ::std::cmp::Ordering::Less) {
+			core::cmp::Ordering::Less
+		} else if hash == crate::hash_in!(crate, ::std::cmp::Ordering::Equal) {
+			core::cmp::Ordering::Equal
+		} else if hash == crate::hash_in!(crate, ::std::cmp::Ordering::Greater) {
+			core::cmp::Ordering::Greater
+		} else {
+			return None;
+		},
+	)
 }

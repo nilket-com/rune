@@ -413,6 +413,7 @@ fn type_hash(tag: Type) -> Result<u64> {
 		Type::U64 => u64::HASH.into_inner(),
 		Type::F64 => f64::HASH.into_inner(),
 		Type::Char => char::HASH.into_inner(),
+		Type::Ordering => core::cmp::Ordering::HASH.into_inner(),
 		Type::String => String::HASH.into_inner(),
 		Type::Vec => crate::runtime::Vec::HASH.into_inner(),
 		Type::Tuple => crate::runtime::OwnedTuple::HASH.into_inner(),

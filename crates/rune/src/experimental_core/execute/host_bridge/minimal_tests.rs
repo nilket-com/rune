@@ -266,3 +266,90 @@ fn minimal_malformed_shapes_drop_outputs_and_allow_reuse() {
 		assert_eq!(calls.load(Ordering::SeqCst), 1);
 	}
 }
+
+#[test]
+fn typed_host_conversion_metadata_comes_from_the_real_native_error() {
+	use crate::TypeHash;
+	use core::cmp::Ordering;
+	let mut executor = Executor::new().unwrap();
+	let native = i64::from_value(stock::Value::from(Ordering::Less)).unwrap_err();
+	let native = stock::VmError::with_error(
+		stock::VmError::from(native),
+		stock::VmErrorKind::BadArgument { arg: 0 },
+	);
+	let error = executor.host_error(native);
+	assert_eq!(error.kind, ErrorKind::Host);
+	assert_eq!(
+		error.detail,
+		Detail::HostExpectedNumber {
+			actual: Ordering::HASH,
+			arg: Some(0)
+		}
+	);
+	assert_eq!(
+		error.detail.numeric_argument(),
+		Some((
+			crate::experimental_core::error::HostCause::ExpectedNumber,
+			0
+		))
+	);
+	let native = bool::from_value(stock::Value::from(Ordering::Greater)).unwrap_err();
+	let native = stock::VmError::with_error(
+		stock::VmError::from(native),
+		stock::VmErrorKind::BadArgument { arg: 1 },
+	);
+	let error = executor.host_error(native);
+	assert_eq!(
+		error.detail,
+		Detail::HostExpectedType {
+			expected: bool::HASH,
+			actual: Ordering::HASH,
+			arg: Some(1)
+		}
+	);
+	assert_eq!(
+		error.detail.numeric_argument(),
+		Some((crate::experimental_core::error::HostCause::ExpectedType, 1))
+	);
+	assert_eq!(core::mem::size_of::<Detail>(), 32);
+	assert_eq!(core::mem::size_of::<Error>(), 88);
+	assert_eq!(core::mem::size_of::<Failure>(), 248);
+}
+
+#[test]
+fn failure_display_keeps_native_type_and_number_conversion_messages() {
+	use crate::experimental_core::frontend::Program;
+	use std::string::ToString;
+	let mut module = Module::with_item(["tiny"]).unwrap();
+	module
+		.fresh_host_function("expect_bool", |_: bool| ())
+		.unwrap();
+	module
+		.fresh_host_function("expect_i64", |_: i64| ())
+		.unwrap();
+	let context = installed(module);
+	for (name, expected) in [
+		(
+			"expect_bool",
+			"Expected type `std::bool` but found `std::cmp::Ordering`",
+		),
+		(
+			"expect_i64",
+			"Expected number type, but found `std::cmp::Ordering`",
+		),
+	] {
+		let program = Program::for_diagnostics_test(code(&context, name, 1));
+		let mut executor = executor(&context);
+		let mut store = Store::new(Limits::default()).unwrap();
+		let input = store.root_ordering(core::cmp::Ordering::Less);
+		let failure = executor
+			.invoke_code(&program.code, &mut store, 0, &[&input], 100)
+			.unwrap_err();
+		assert_eq!(failure.host_message.as_deref(), Some(expected));
+		assert_eq!(failure.message(&program).to_string(), expected);
+		assert!(failure.cleanup_error.is_none());
+		store.root_release(input).unwrap();
+		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+		assert!(executor.is_idle());
+	}
+}

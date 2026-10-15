@@ -102,7 +102,17 @@ impl TraitContext<'_> {
 		let handler = handler.clone();
 
 		if let Some(method) = protocol.method {
+			#[cfg(feature = "fresh-core")]
+			let cmp_alias = if protocol.hash == Protocol::CMP.hash {
+				self.cx.fresh_numeric.cmp_alias(self.hash)
+			} else {
+				None
+			};
 			self.function_handler(method, &handler)?;
+			#[cfg(feature = "fresh-core")]
+			if let Some(pair) = cmp_alias {
+				self.cx.fresh_numeric.certify(pair);
+			}
 		}
 
 		Ok(handler)
@@ -466,18 +476,24 @@ impl Context {
 			let mut methods = 0u8;
 			let mut pairs = 0u8;
 			for assoc in &module.associated {
+				if matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::CMP.hash)
+					&& Method::Cmp.closes_for(assoc.container)
+				{
+					methods |= Method::Cmp.bit();
+				}
 				let effective = assoc
 					.name
 					.kind
 					.hash(assoc.container)
 					.with_function_parameters(assoc.name.function_parameters);
-				for m in [Method::Abs, Method::Round, Method::Powf] {
-					if matches!(&assoc.name.kind,meta::AssociatedKind::Instance(n) if n.as_ref()==m.name())
+				for m in [Method::Abs, Method::Round, Method::Powf, Method::Cmp] {
+					if (matches!(&assoc.name.kind,meta::AssociatedKind::Instance(n) if n.as_ref()==m.name())
 						|| effective
 							== Hash::associated_function(
 								assoc.container,
 								self.fresh_numeric.name_hash(m),
-							) {
+							)) && m.closes_for(assoc.container)
+					{
 						methods |= m.bit();
 					}
 				}
@@ -568,6 +584,15 @@ impl Context {
 			self.install_associated(assoc)?;
 			#[cfg(feature = "fresh-core")]
 			for pair in crate::function::fresh_numeric::Pair::ALL {
+				if module.fresh_numeric & pair.bit() != 0
+					&& pair.cmp_protocol().is_some()
+					&& assoc.container == pair.receiver()
+					&& assoc.name.function_parameters == Hash::EMPTY
+					&& matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::CMP.hash)
+					&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_))
+				{
+					self.fresh_numeric.certify_cmp_protocol(pair);
+				}
 				if module.fresh_numeric & pair.bit() != 0
 					&& assoc.container == pair.receiver()
 					&& assoc.name.function_parameters == Hash::EMPTY
@@ -1347,7 +1372,10 @@ impl Context {
 				.with_function_parameters(assoc.name.function_parameters);
 			let selected = match &assoc.name.kind {
 				meta::AssociatedKind::Instance(name) => Method::from_name(name),
-				_ => [Method::Abs, Method::Round, Method::Powf]
+				meta::AssociatedKind::Protocol(p) if p.hash == Protocol::CMP.hash => {
+					Some(Method::Cmp)
+				}
+				_ => [Method::Abs, Method::Round, Method::Powf, Method::Cmp]
 					.into_iter()
 					.find(|m| {
 						effective
@@ -1358,12 +1386,13 @@ impl Context {
 					}),
 			};
 			selected.map(|method| {
-				let previous = self.fresh_numeric.begin(method);
+				let previous = self.fresh_numeric.begin(method, assoc.container);
 				let pair = Pair::ALL
 					.into_iter()
 					.find(|p| p.receiver() == assoc.container && p.method() == method);
 				let valid = assoc.name.function_parameters == Hash::EMPTY
-					&& matches!(&assoc.name.kind, meta::AssociatedKind::Instance(_))
+					&& (matches!(&assoc.name.kind, meta::AssociatedKind::Instance(_))
+						|| matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if method == Method::Cmp && p.hash == Protocol::CMP.hash))
 					&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_));
 				(pair.filter(|_| valid), previous)
 			})

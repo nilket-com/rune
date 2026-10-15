@@ -191,6 +191,10 @@ pub fn module() -> Result<Module, ContextError> {
 	m.implement_trait::<f64>(rune::item!(::std::cmp::PartialOrd))?;
 
 	m.function_meta(cmp__meta)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_numeric |= 0b0100_0000;
+	}
 	m.implement_trait::<f64>(rune::item!(::std::cmp::Ord))?;
 
 	m.constant("EPSILON", f64::EPSILON)

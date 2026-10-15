@@ -164,3 +164,7 @@ include!("cmp_ordering/pins.rs");
 include!("cmp_ordering/p1_controls.rs");
 include!("cmp_ordering/observe_fresh.rs");
 include!("cmp_ordering/contract.rs");
+
+include!("cmp_ordering/retained.rs");
+
+include!("cmp_ordering/site_enforce.rs");
