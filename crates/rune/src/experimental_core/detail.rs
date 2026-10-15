@@ -132,6 +132,18 @@ pub enum HostCause {
 	Other,
 }
 
+/// Failure while importing a certified dynamic host output.
+#[allow(missing_docs)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum HostDynamicReason {
+	Unsupported,
+	Cycle,
+	OutputAccess,
+	DepthLimit,
+	VisitLimit,
+	ScratchLimit,
+}
+
 #[allow(missing_docs)]
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Detail {
@@ -297,6 +309,11 @@ pub enum Detail {
 	},
 	/// A Rust unwind contained at the synchronous host boundary.
 	HostPanicked,
+	/// No argument index: the native call succeeded and its output was rejected.
+	HostDynamic {
+		reason: HostDynamicReason,
+		type_hash: Option<crate::Hash>,
+	},
 	/// IEEE operands retained without losing NaN payload or sign bits.
 	FloatComparison {
 		lhs_bits: u64,
@@ -601,6 +618,29 @@ impl fmt::Display for Message<'_> {
 				f.write_str("Host function failed")
 			}
 			HostPanicked => f.write_str("host panicked"),
+			HostDynamic { reason, type_hash } => {
+				use HostDynamicReason as R;
+				match reason {
+					R::Unsupported => {
+						f.write_str("host returned an unsupported value")?;
+						if let Some(hash) = type_hash {
+							write!(f, " of type {hash}")?;
+						}
+						Ok(())
+					}
+					R::Cycle => f.write_str("host returned a cyclic value"),
+					R::OutputAccess => {
+						f.write_str("host returned an unreadable value")?;
+						if let Some(hash) = type_hash {
+							write!(f, " of type {hash}")?;
+						}
+						Ok(())
+					}
+					R::DepthLimit => f.write_str("host value nesting exceeds 128"),
+					R::VisitLimit => f.write_str("host value exceeds 65536 visits"),
+					R::ScratchLimit => f.write_str("host value conversion exceeds scratch limit"),
+				}
+			}
 			FloatComparison { lhs_bits, rhs_bits } => core::fmt::Display::fmt(
 				&crate::runtime::VmErrorKind::IllegalFloatComparison {
 					lhs: f64::from_bits(lhs_bits),

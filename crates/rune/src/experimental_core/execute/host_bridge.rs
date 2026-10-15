@@ -264,6 +264,18 @@ impl Executor {
 		shape: HostOutput,
 	) -> Result<Value> {
 		match shape {
+			HostOutput::Dynamic => dynamic::convert(self, store, value),
+			HostOutput::ResultDynamicString => {
+				// A malformed certificate/raw adapter is corruption, unlike a valid
+				// dynamic payload which is simply outside the runtime allowlist.
+				let outer = value
+					.borrow_ref::<core::result::Result<stock::Value, stock::Value>>()
+					.map_err(|_| error(ErrorKind::InvalidCode))?;
+				if let Err(err) = &*outer {
+					leaf_type(err, HostType::String)?;
+				}
+				dynamic::convert(self, store, value)
+			}
 			HostOutput::Scalar(kind) => {
 				let (bytes, entries) = leaf_type(value, kind)?;
 				store.host_room(bytes, entries)?;
@@ -1205,6 +1217,18 @@ mod tests {
 		assert_eq!(store.payload_bytes(), 0);
 	}
 }
+
+#[cfg(test)]
+impl Executor {
+	pub(crate) fn host_trace_begin() -> fault_tests::Trace {
+		fault_tests::Trace::start()
+	}
+}
+
+mod dynamic;
+
+#[cfg(test)]
+mod dynamic_tests;
 
 #[cfg(test)]
 mod minimal_tests;

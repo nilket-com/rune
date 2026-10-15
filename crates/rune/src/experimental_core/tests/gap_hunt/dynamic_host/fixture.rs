@@ -303,3 +303,21 @@ fn context() -> Context {
 	c.install(m).unwrap();
 	c
 }
+
+fn fresh_context() -> Context {
+	cleanup();
+	STATE.with(|s| *s.borrow_mut() = State::default());
+	let mut c = Context::with_default_modules().unwrap();
+	let mut m = crate::Module::with_item(["c10"]).unwrap();
+	m.ty::<ProtocolMarker>().unwrap();
+	m.function_meta(marker_display).unwrap();
+	m.function_meta(marker_debug).unwrap();
+	m.function_meta(marker_clone).unwrap();
+	m.fresh_host_function("make", make).unwrap();
+	m.fresh_host_function("fallible", fallible).unwrap();
+	m.fresh_host_function("parse", parse).unwrap();
+	m.fresh_host_function("mutate", mutate).unwrap();
+	m.fresh_host_function("inspect", inspect).unwrap();
+	c.install(m).unwrap();
+	c
+}

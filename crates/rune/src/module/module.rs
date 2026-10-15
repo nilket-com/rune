@@ -96,6 +96,10 @@ impl Module {
 	/// No certificate is published until the complete Context installation succeeds.
 	/// Host duration and capture allocations are outside script fuel/store budgets.
 	/// Borrowed strings use call-local snapshots; pointer identity across calls is not promised.
+	/// Dynamic Value outputs are owned snapshots of supported acyclic builtins.
+	/// Sharing within one output is preserved; external and cross-call aliases are isolated.
+	/// Cycles, unsupported payloads, unreadable values and conversion limits fail after
+	/// the single host call. No stock protocols run during the import.
 	///
 	/// The closed signature excludes owned input.
 	/// ```compile_fail,E0277
@@ -125,6 +129,54 @@ impl Module {
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
 	/// module.fresh_host_function("unsupported", || async { 1i64 }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes optional dynamic output.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", || -> Option<rune::Value> { None }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes dynamic non-String error.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", || -> Result<rune::Value, bool> { Err(false) }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes dynamic error payload.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", || -> Result<rune::Value, rune::Value> { Err(rune::Value::unit()) }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes nested dynamic output.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", || -> Result<Result<rune::Value, std::string::String>, std::string::String> { Err("no".into()) }).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes owned dynamic input.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", |_: rune::Value| ()).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes borrowed dynamic input.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", |_: &rune::Value| ()).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes mutable dynamic input.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", |_: &mut rune::Value| ()).unwrap();
+	/// ```
+	///
+	/// The closed signature excludes async dynamic output.
+	/// ```compile_fail,E0277
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function("unsupported", || async { rune::Value::unit() }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes five inputs.

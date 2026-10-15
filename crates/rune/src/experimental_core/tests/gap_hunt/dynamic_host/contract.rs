@@ -1,4 +1,4 @@
-// Green staging: stock replay only. Fresh execution lands with implementation.
+// Frozen stock replay plus the strict fresh contract; no discovery or waiver.
 const C10_TSV: &str = include_str!("../../dynamic_host_stock.tsv");
 const C10_REPLAY_CAP: usize = 64 << 20;
 fn c10_rows() -> Vec<Vec<&'static str>> {
@@ -78,6 +78,13 @@ fn c10_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 }
 #[test]
 fn stock_contract() {
+	c10_contract("stock");
+}
+#[test]
+fn fresh_contract() {
+	c10_contract("fresh");
+}
+fn c10_contract(engine: &str) {
 	c10_data_seals();
 	let owned = std::env::var_os("C10_REPLAY_OUT").is_none();
 	let out = std::env::var_os("C10_REPLAY_OUT")
@@ -127,7 +134,7 @@ fn stock_contract() {
 			.env("HOME", "/home/me")
 			.env("LANG", "C.UTF-8")
 			.env("TZ", "UTC")
-			.env("C10_ENGINE", "stock")
+			.env("C10_ENGINE", engine)
 			.env("C10_CASE", i.to_string())
 			.env("C10_RESULT", &result)
 			.current_dir(&folder)
@@ -179,7 +186,7 @@ fn stock_contract() {
 		assert!(fs::metadata(&result).unwrap().len() <= C10_REPLAY_CAP as u64);
 		let envelope: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
 		assert_eq!(envelope["schema"], 1);
-		assert_eq!(envelope["engine"], "stock");
+		assert_eq!(envelope["engine"], engine);
 		assert_eq!(envelope["index"], i);
 		assert_eq!(envelope["label"], row[0]);
 		assert_eq!(envelope["source_hex"], row[2]);
@@ -187,6 +194,19 @@ fn stock_contract() {
 		assert_eq!(envelope["fuel"], FUEL);
 		assert_eq!(hex(&stdout), row[4]);
 		assert_eq!(hex(&stderr), row[5]);
+		if engine == "fresh" {
+			c10_fresh_audit(&envelope["audit"], row[6], row[0]);
+			let expected =
+				c10_arity_expected(i, row[0], row[2], row[6], c10_decode(row[7])).unwrap();
+			c10_compare(&envelope["observation"], &expected, row[0]).unwrap_or_else(|e| {
+				panic!(
+					"strict fresh row {i} {}: {e}; raw at {}",
+					row[0],
+					folder.display()
+				)
+			});
+			continue;
+		}
 		let portable = c10_project(&envelope["observation"], i).unwrap();
 		let actual = c10_common(&portable).unwrap();
 		let stored = c10_decode(row[3]);
@@ -198,7 +218,7 @@ fn stock_contract() {
 		c10_compare(&actual, &expected, row[0])
 			.unwrap_or_else(|e| panic!("row {i} {}: {e}; raw at {}", row[0], folder.display()));
 	}
-	contract_completed("stock", COUNT);
+	contract_completed(engine, COUNT);
 	if owned {
 		fs::remove_dir_all(&out).unwrap();
 	}
@@ -223,7 +243,7 @@ const C10_DATA_SEALS: &[(&str, &[u8], &str)] = &[
 	(
 		"dynamic_host_arity.json",
 		include_bytes!("../../dynamic_host_arity.json"),
-		"4381d6589a016ce725bb55206bc4b7db8d657c0a3de4d5a22e2288dfa5812dcf",
+		"2c286b514475e48feceb919ae5c7c08fbdb4eeec86eacea614958d339d958843",
 	),
 	(
 		"dynamic_host_disclosures.json",
@@ -236,3 +256,40 @@ const C10_DATA_SEALS: &[(&str, &[u8], &str)] = &[
 		"0ebd1225cb645d6f13b8f65210c24d62925297e47b03ec75211b4783ef8c8bbc",
 	),
 ];
+
+// seq15065: one exact Retained-arity diagnostic pin, never a diagnostic filter.
+fn c10_arity_expected(
+	index: usize,
+	label: &str,
+	source_hex: &str,
+	policy: &str,
+	mut expected: Json,
+) -> Result<Json, String> {
+	if index != 124 && label != "argument/wrong-arity" {
+		return Ok(expected);
+	}
+	if index != 124 || label != "argument/wrong-arity" || policy != "Retained-arity" {
+		return Err("arity diagnostic pin row/policy mismatch".into());
+	}
+	let rules: Json = serde_json::from_str(include_str!("../../dynamic_host_arity.json")).unwrap();
+	if rules.as_object().unwrap().len() != 1 {
+		return Err("arity pin count".into());
+	}
+	let rule = &rules[label];
+	let source = c10_hex_bytes(source_hex)?;
+	if rule["index"] != index
+		|| rule["source_sha256"] != c10_sha(&source)
+		|| expected["outcome"] != rule["fresh_expectation"]
+		|| expected["diagnostics"] != "[]"
+	{
+		return Err("arity diagnostic source/frozen expectation drift".into());
+	}
+	let primary = &rule["fresh_expectation"]["primary"];
+	let start = primary["start"].as_u64().unwrap() as usize;
+	let end = primary["end"].as_u64().unwrap() as usize;
+	if source.get(start..end).map(hex).as_deref() != primary["span_hex"].as_str() {
+		return Err("arity diagnostic span bytes drift".into());
+	}
+	expected["diagnostics"] = rule["fresh_top_level_diagnostics"].clone();
+	Ok(expected)
+}

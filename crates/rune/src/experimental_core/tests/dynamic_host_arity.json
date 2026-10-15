@@ -20,6 +20,8 @@
       "live_entries": 0,
       "payload_bytes": 0,
       "reuse_i64": 7
-    }
+    },
+    "fresh_top_level_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 14:25, kind: Custom { error: \"Arity\" } }) })]",
+    "disclosure": "fresh compile refusal carries its Arity diagnostic; stock compiles and fails at runtime with BadArgumentCount"
   }
 }

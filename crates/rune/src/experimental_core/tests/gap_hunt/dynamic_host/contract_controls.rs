@@ -196,3 +196,40 @@ fn comparison_keeps_graph_identity_order_effects_and_private_raw_boundary() {
 		expected
 	);
 }
+
+#[test]
+fn arity_diagnostic_pin_rejects_other_rows_counts_and_spans() {
+	c10_data_seals();
+	let rows = c10_rows();
+	let row = &rows[124];
+	let frozen = c10_decode(row[7]);
+	let expected = c10_arity_expected(124, row[0], row[2], row[6], frozen.clone()).unwrap();
+	assert_eq!(expected["outcome"], frozen["outcome"]);
+	assert_eq!(expected["diagnostics"], "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 14:25, kind: Custom { error: \"Arity\" } }) })]");
+	c10_compare(&expected, &expected, row[0]).unwrap();
+	for diagnostic in ["[]", "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 14:24, kind: Custom { error: \"Arity\" } }) })]", "[Fatal(FatalDiagnostic { source_id: 1, kind: CompileError(Error { span: 14:25, kind: Custom { error: \"Arity\" } }) })]", "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 14:25, kind: Custom { error: \"Other\" } }) })]"] {
+		let mut changed = expected.clone(); changed["diagnostics"] = json!(diagnostic);
+		assert!(c10_compare(&changed,&expected,row[0]).is_err());
+	}
+	let mut changed = expected.clone();
+	let inner = expected["diagnostics"]
+		.as_str()
+		.unwrap()
+		.strip_prefix('[')
+		.unwrap()
+		.strip_suffix(']')
+		.unwrap();
+	changed["diagnostics"] = json!(format!("[{inner}, {inner}]"));
+	assert!(c10_compare(&changed, &expected, row[0]).is_err());
+	assert!(c10_arity_expected(123, row[0], row[2], row[6], frozen.clone()).is_err());
+	assert!(c10_arity_expected(124, rows[123][0], row[2], row[6], frozen.clone()).is_err());
+	assert!(c10_arity_expected(124, row[0], rows[123][2], row[6], frozen.clone()).is_err());
+	assert!(c10_arity_expected(124, row[0], row[2], "Exact", frozen).is_err());
+	let other = c10_decode(rows[0][7]);
+	let unchanged =
+		c10_arity_expected(0, rows[0][0], rows[0][2], rows[0][6], other.clone()).unwrap();
+	assert_eq!(unchanged, other);
+	let mut changed = unchanged.clone();
+	changed["diagnostics"] = expected["diagnostics"].clone();
+	assert!(c10_compare(&changed, &unchanged, rows[0][0]).is_err());
+}

@@ -19,13 +19,13 @@ pub(super) fn observe(boundary: &'static str) {
 		}
 	});
 }
-struct Trace;
+pub(crate) struct Trace;
 impl Trace {
-	fn start() -> Self {
+	pub(crate) fn start() -> Self {
 		TRACE.with(|trace| assert!(trace.replace(Some(std::vec::Vec::new())).is_none()));
 		Self
 	}
-	fn finish(self) -> std::vec::Vec<&'static str> {
+	pub(crate) fn finish(self) -> std::vec::Vec<&'static str> {
 		TRACE.with(|trace| trace.borrow_mut().take().unwrap())
 	}
 }

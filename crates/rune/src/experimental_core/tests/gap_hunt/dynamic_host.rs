@@ -202,9 +202,14 @@ fn child() {
 	assert_eq!(CASES.len(), COUNT);
 	let index: usize = std::env::var("C10_CASE").unwrap().parse().unwrap();
 	let (label, source, policy) = CASES[index];
-	assert_eq!(std::env::var("C10_ENGINE").unwrap(), "stock");
-	let observation = observe(source);
-	let envelope = json!({"schema":1,"engine":"stock","index":index,"label":label,"source_hex":hex(source.as_bytes()),"policy":policy,"fuel":FUEL,"observation":observation});
+	let engine = std::env::var("C10_ENGINE").unwrap();
+	let (observation, audit) = match engine.as_str() {
+		"stock" => (observe(source), Json::Null),
+		#[cfg(target_os = "linux")]
+		"fresh" => observe_dynamic_fresh(source),
+		_ => panic!("unknown C10 engine"),
+	};
+	let envelope = json!({"schema":1,"engine":engine,"audit":audit,"index":index,"label":label,"source_hex":hex(source.as_bytes()),"policy":policy,"fuel":FUEL,"observation":observation});
 	fs::write(
 		std::env::var_os("C10_RESULT").unwrap(),
 		serde_json::to_vec_pretty(&envelope).unwrap(),
@@ -216,6 +221,9 @@ fn child() {
 }
 
 include!("dynamic_host/controls.rs");
+
+#[cfg(target_os = "linux")]
+include!("dynamic_host/observe_fresh.rs");
 
 #[cfg(target_os = "linux")]
 include!("dynamic_host/projection.rs");

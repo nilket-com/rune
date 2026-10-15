@@ -363,6 +363,14 @@ impl Store {
 		}
 	}
 
+	// Dynamic planning shares the remaining byte budget with its final payload.
+	pub(crate) fn host_remaining_bytes(&self) -> Result<usize> {
+		if self.closed {
+			return Err(err(ErrorKind::ClosedStore));
+		}
+		Ok(self.limits.bytes.saturating_sub(self.bytes))
+	}
+
 	pub(crate) fn host_scratch_room(&self, bytes: usize) -> Result<()> {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
@@ -701,6 +709,17 @@ impl Store {
 			slot: index,
 			generation: self.slots[index as usize].generation,
 		}))
+	}
+
+	#[cfg(test)]
+	pub(crate) fn host_observe_fields(&self, value: Value) -> Result<&[(String, Value)]> {
+		let Value::Heap(handle) = value else {
+			return Err(err(ErrorKind::Type));
+		};
+		let Payload::Record { fields, .. } = self.payload(handle)? else {
+			return Err(err(ErrorKind::Type));
+		};
+		Ok(fields)
 	}
 
 	pub(crate) fn string(&mut self, text: &str) -> Result<Value> {

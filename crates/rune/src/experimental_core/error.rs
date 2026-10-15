@@ -5,8 +5,8 @@
 //! an [`ErrorKind`], optional owned [`Detail`], and, when known, a source [`Location`].
 
 pub use super::detail::{
-	AdmittedMethod, BinarySymbol, Detail, FieldRef, HostCause, IntTarget, IntValue, Message,
-	MovedAccess, TypeName, UnarySymbol,
+	AdmittedMethod, BinarySymbol, Detail, FieldRef, HostCause, HostDynamicReason, IntTarget,
+	IntValue, Message, MovedAccess, TypeName, UnarySymbol,
 };
 
 /// The class of an error.

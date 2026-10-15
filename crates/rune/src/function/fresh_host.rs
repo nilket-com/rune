@@ -25,13 +25,17 @@ pub enum HostType {
 	Char,
 	String,
 }
-/// Exactly one optional/result layer; nesting is not certified.
+/// Closed scalar/optional/result shapes and two concrete dynamic output certificates.
 #[doc(hidden)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum HostOutput {
 	Scalar(HostType),
 	Option(HostType),
 	Result(HostType, HostType),
+	/// Owned snapshot of the closed builtin dynamic payload graph.
+	Dynamic,
+	/// Exactly Rust Result<Value, std::string::String>.
+	ResultDynamicString,
 }
 /// Immutable signature created only by the sealed typed API.
 #[doc(hidden)]
@@ -66,7 +70,7 @@ pub trait FreshHostArgument: sealed::Argument {
 pub trait FreshHostScalar: sealed::Scalar {
 	const KIND: HostType;
 }
-/// Sealed, non-recursive return shape.
+/// Sealed return certificate; dynamic payloads use a bounded runtime import.
 #[doc(hidden)]
 pub trait FreshHostOutput: sealed::Output {
 	const SHAPE: HostOutput;
@@ -131,6 +135,16 @@ impl<T: FreshHostScalar, E: FreshHostScalar> FreshHostOutput for Result<T, E> {
 	const SHAPE: HostOutput = HostOutput::Result(T::KIND, E::KIND);
 }
 
+// These concrete certificates deliberately do not implement FreshHostScalar.
+impl sealed::Output for crate::runtime::Value {}
+impl FreshHostOutput for crate::runtime::Value {
+	const SHAPE: HostOutput = HostOutput::Dynamic;
+}
+impl sealed::Output for Result<crate::runtime::Value, std::string::String> {}
+impl FreshHostOutput for Result<crate::runtime::Value, std::string::String> {
+	const SHAPE: HostOutput = HostOutput::ResultDynamicString;
+}
+
 macro_rules! arguments {
 	($n:expr; $($a:ident : $index:expr),*) => {
 		impl<$($a: FreshHostArgument),*> sealed::Arguments for ($($a,)*) {}
@@ -188,6 +202,11 @@ impl TryClone for HostBinding {
 		Ok(self.clone())
 	}
 }
+#[cfg(target_pointer_width = "64")]
+const _: () = {
+	assert!(core::mem::size_of::<HostSignature>() == 7);
+	assert!(core::mem::size_of::<HostBinding>() == 32);
+};
 impl HostBinding {
 	pub(crate) fn same(&self, other: &Self) -> bool {
 		self.hash == other.hash
