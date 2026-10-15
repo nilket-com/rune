@@ -1571,3 +1571,5 @@ mod scalar_methods;
 mod scalar_methods_supplement;
 
 mod deferred_index;
+
+mod tuple_let;

@@ -176,6 +176,18 @@ fn all_frozen_contracts() {
 			"fresh",
 			318,
 		),
+		(
+			"tuple-let-stock",
+			"gap_hunt::tuple_let::stock_contract",
+			"stock",
+			98,
+		),
+		(
+			"tuple-let-fresh",
+			"gap_hunt::tuple_let::fresh_contract",
+			"fresh",
+			98,
+		),
 		("s0", "gap_hunt::corpus", "both", 639),
 		(
 			"output-both",

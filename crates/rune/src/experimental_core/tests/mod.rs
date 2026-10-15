@@ -70,3 +70,10 @@ mod deferred_index_pins {
 
 	include!("gap_hunt/deferred_index/retained.rs");
 }
+
+// Exercise the exact C8 policy helper under Miri as well as native tests.
+#[cfg(miri)]
+mod tuple_let_pins {
+	use serde_json::{json, Value as Json};
+	include!("gap_hunt/tuple_let/policy.rs");
+}
