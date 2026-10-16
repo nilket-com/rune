@@ -1,0 +1,298 @@
+[
+  {
+    "id": "000",
+    "label": "capture/read",
+    "source": "pub fn main(){let n=7;let f=||n;f()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "96f3bc2731d5daf8592f368ede05a6691fec807d0a0e87ccc4a9fa77187d893d",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "001",
+    "label": "capture/rebind-after-create",
+    "source": "pub fn main(){let n=7;let f=||n;n=9;f()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "1176e719d32a4580f3fd8a547ce5e2befc70027b562be3655b9377630346ded9",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "002",
+    "label": "capture/shadow-after-create",
+    "source": "pub fn main(){let n=7;let f=||n;let n=9;(f(),n)}\npub fn c11b_reuse(){7}",
+    "source_sha256": "6ed3046f82e29973bc7e4de1d2feffb3ef502b0692cbc5c9b7f8d3354146deb8",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "003",
+    "label": "capture/scalar-assign-repeated",
+    "source": "pub fn main(){let n=0;let f=||{n+=1;n};(f(),f(),n)}\npub fn c11b_reuse(){7}",
+    "source_sha256": "a4f654378db4a44cfc97819024a596a673d3485450f77422839c9063413628b8",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "004",
+    "label": "capture/heap-handle-mutation",
+    "source": "pub fn main(){let v=[];let f=||{v.push(7);v.len()};let a=f();(a,v.len(),v[0])}\npub fn c11b_reuse(){7}",
+    "source_sha256": "3719270e8f12ee0cbb44d44a04ee61bffabdc6e6904a23552b5641fb1609ac9b",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "005",
+    "label": "capture/move-scalar",
+    "source": "pub fn main(){let n=8;let f=move || n+1;f()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "56ee01721ade3ce61099b548ec2335dbbea6b8392ebcb39900f14898e787a335",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "006",
+    "label": "capture/move-heap",
+    "source": "pub fn main(){let v=[];let f=move ||{v.push(4);v.len()};(f(),f())}\npub fn c11b_reuse(){7}",
+    "source_sha256": "0d14daefdef0dec19c02f1e0b79a0caf85426a70d78d2bcd2fa4c1ff7da88565",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "007",
+    "label": "capture/nested",
+    "source": "pub fn main(){let n=5;let f=||{let m=2;||n+m};f()()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "8bd4008c2348c99867831e8e25b37468845ceb717f0c56f6f73b2f50579030a8",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "008",
+    "label": "capture/loop-environments",
+    "source": "pub fn main(){let fs=[];for n in 0..3{fs.push(||n)};(fs[0](),fs[1](),fs[2]())}\npub fn c11b_reuse(){7}",
+    "source_sha256": "4c903f0d25963e65396b2cd77183fc0348132565e8d9b40f30bf37508a4219db",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "009",
+    "label": "capture/return-escape",
+    "source": "fn make(n){||n} pub fn main(){let f=make(12);(f(),f())}\npub fn c11b_reuse(){7}",
+    "source_sha256": "36097b945f51dddc39ab942f97b0a6dba0eb0c218601627f580d53e54f2bc242",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "010",
+    "label": "capture/store-vector",
+    "source": "pub fn main(){let n=13;let fs=[||n];fs[0]()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "263c394666b35777e5685353a785881bf8ee0c0cf752438d2d2dd674bc1756c6",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "011",
+    "label": "capture/named-caller",
+    "source": "fn invoke(f,x){f(x)} pub fn main(){let n=3;invoke(|x|x+n,4)}\npub fn c11b_reuse(){7}",
+    "source_sha256": "b0ae892639cbadb076f8557c01e0fd8105b057aed271c0b8ecfef58809e05239",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "012",
+    "label": "capture/callback-any",
+    "source": "pub fn main(){let target=3;[1,2,3,4].iter().any(|x|x==target)}\npub fn c11b_reuse(){7}",
+    "source_sha256": "6a663b6c2d3629208eb9336b5bdc4f71e2958f4203bbc93a59ab9161e725521d",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "013",
+    "label": "capture/callback-sort",
+    "source": "pub fn main(){let bias=0;let v=[3,1,2];v.sort_by(|a,b|{let _=bias;a.cmp(b)});v}\npub fn c11b_reuse(){7}",
+    "source_sha256": "f3e4d056a8a09cf029c8fcd29ec3ccc8230c04305ccedc05ed9af2dbde1221e6",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "014",
+    "label": "capture/receiver-alias",
+    "source": "pub fn main(){let v=[3,1,2];v.sort_by(|a,b|{let _=v.len();a.cmp(b)});v}\npub fn c11b_reuse(){7}",
+    "source_sha256": "e4b18dbfde4bc8bd7cba16a10bf764d278da1be59975834925fda03cf802e32e",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "015",
+    "label": "error/wrong-arity",
+    "source": "pub fn main(){let n=2;let f=|x|x+n;f()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "05d196a94558c53ca69a1ffbf37ace3930245ec5f4fff5505ab70e769053ae4e",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "016",
+    "label": "error/panic-in-call",
+    "source": "pub fn main(){let n=2;let f=||{let _=n;panic!(\"capture\")};f()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "6b5a3448062adab324dbfaa316200d19db4c18ac7b9552da861bc51ee64b4286",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "017",
+    "label": "error/captured-type-at-use",
+    "source": "pub fn main(){let x=\"bad\";let f=||x+1;f()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "5c88a599e1895e3266a03857b3b8b9eecf714292000a0c4c9f44e8d7b23d8962",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "018",
+    "label": "error/fuel-in-call",
+    "source": "pub fn main(){let n=1;let f=||{let _=n;loop{}};f()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "34f78f345c1939c1f4e31ff6176837f8e2d483451697a1fb5128d321518b0c8f",
+    "fuel": 100,
+    "provisional": "observe"
+  },
+  {
+    "id": "019",
+    "label": "identity/function-value",
+    "source": "pub fn main(){let n=1;let f=||n;std::any::type_name_of_val(f)}\npub fn c11b_reuse(){7}",
+    "source_sha256": "b19f1073a2853b0d0009f20212e091864561cd9dacd04ab4a9788d9ff2713f1c",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "020",
+    "label": "capture/cycle-in-vector",
+    "source": "pub fn main(){let v=[];let f=||v.len();v.push(f);v.len()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "05edf8a01c113bb8eb94261a511eba47dfc9e76cf43785b2b7e9a3e1a0fbc5ea",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "021",
+    "label": "capture/independent-closures",
+    "source": "pub fn main(){let n=4;let a=||n; n=6; let b=||n;(a(),b())}\npub fn c11b_reuse(){7}",
+    "source_sha256": "755240d18f63f9032101aa71153492807702dde408c95123ea9c790b14accd9c",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "022",
+    "label": "capture/closure-created-in-loop-and-escape",
+    "source": "fn make(n){||n} pub fn main(){let fs=[];for n in 1..4{fs.push(make(n))}(fs[0](),fs[1](),fs[2]())}\npub fn c11b_reuse(){7}",
+    "source_sha256": "578280a4b76b41954fd1aeb09dd55b0e80eb0adaa8b22636a0c41fb4cd712369",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "023",
+    "label": "capture/create-event-order",
+    "source": "pub fn main(){let a=c11b::tap(1,4);let b=c11b::tap(2,5);let f=move || a+b;f()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "3a7a7f047c153d0ba39092a98beff7b0206d29ca70cd4b61915033a35152589a",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "024",
+    "label": "capture/call-event-order",
+    "source": "pub fn main(){let n=c11b::tap(1,8);let f=||c11b::tap(2,n);(f(),f())}\npub fn c11b_reuse(){7}",
+    "source_sha256": "efdbd9c96c49eaaaba122a32920a67eb06bec002ca3ebf77042e1a484fadba36",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "025",
+    "label": "capture/nested-event-order",
+    "source": "pub fn main(){let n=c11b::tap(1,6);let f=||{let m=c11b::tap(2,3);||c11b::tap(3,n+m)};f()()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "36d9101000e6b7a0aa916cc0964eb7214c6a8bf64bae3477b697f797c74d0538",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "026",
+    "label": "callback/any-order-short-circuit",
+    "source": "pub fn main(){let target=c11b::tap(1,2);[1,2,3].iter().any(|x|c11b::tap_bool(x,x==target))}\npub fn c11b_reuse(){7}",
+    "source_sha256": "c615cc38757de1791953de1255d952222f3509fc996454804edd1193608c10ec",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "027",
+    "label": "callback/sort-order",
+    "source": "pub fn main(){let k=c11b::tap(1,0);let v=[3,1,2];v.sort_by(|a,b|{let _=c11b::tap(2,k);a.cmp(b)});v}\npub fn c11b_reuse(){7}",
+    "source_sha256": "310812376328de39457ba80a7a887557bc8857d21e65033c2844f80458d92b1c",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "028",
+    "label": "callback/leased-parent-capture",
+    "source": "pub fn main(){let v=[3,1,2];v.sort_by(|a,b|{let _=v.len();a.cmp(b)});v}\npub fn c11b_reuse(){7}",
+    "source_sha256": "e4b18dbfde4bc8bd7cba16a10bf764d278da1be59975834925fda03cf802e32e",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "029",
+    "label": "perf/closure-create-256",
+    "source": "pub fn main(){let sum=0;for i in 0..256{let f=|x|x+i;sum+=i;}sum}\npub fn c11b_reuse(){7}",
+    "source_sha256": "804776744671947fe2caf7b09e5789958866d1c6cff594833c343edf41bbabd8",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "030",
+    "label": "perf/closure-invoke-256",
+    "source": "pub fn main(){let bias=1;let f=|x|x+bias;let sum=0;for i in 0..256{sum+=f(i)}sum}\npub fn c11b_reuse(){7}",
+    "source_sha256": "1799690fba510ba0d79988b8f4f22d10aa7515a067dafd9f2366d54ec1cd3c11",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "031",
+    "label": "perf/plain-function-256",
+    "source": "fn f(x){x+1} pub fn main(){let sum=0;for i in 0..256{sum+=f(i)}sum}\npub fn c11b_reuse(){7}",
+    "source_sha256": "793482a327ffa05b3266620fb15ef1640288aff240b4db352609065f85c9d4d7",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "032",
+    "label": "async/refused",
+    "source": "pub fn main(){let f=async |x|x+1;let _=f;7}\npub fn c11b_reuse(){7}",
+    "source_sha256": "416494cab2035c06474f930c7d99a372a29ef16336db5968cb22cbc66b196af6",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "033",
+    "label": "capture/store-object",
+    "source": "pub fn main(){let k=5;let obj=#{f:|x|x+k};let f=obj.f;f(3)}\npub fn c11b_reuse(){7}",
+    "source_sha256": "2a163242c4e00601d4793b9be381cbd0730604b899da500181f05a48b09daec6",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "034",
+    "label": "capture/closure-captures-closure",
+    "source": "fn make(k){let inner=||k;move ||inner()} pub fn main(){let f=make(4);f()}\npub fn c11b_reuse(){7}",
+    "source_sha256": "1e91dcf1908900aae8e4ecf0be0cb43610438c65e1b9065151c9d92e29b59946",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "035",
+    "label": "identity/format",
+    "source": "pub fn main(){let k=2;let f=||k;format!(\"{:?}\",f)}\npub fn c11b_reuse(){7}",
+    "source_sha256": "8c9de9d06f836b4c6744528bdcc53394d0f602989a4cbc492a9a33621d5eb01e",
+    "fuel": 200000,
+    "provisional": "observe"
+  },
+  {
+    "id": "036",
+    "label": "capture/store-object-method-call",
+    "source": "pub fn main(){let k=5;let obj=#{f:|x|x+k};obj.f(3)}\npub fn c11b_reuse(){7}",
+    "source_sha256": "64d9283554618798c4fc1e469fbcfcab6a9a26c7f986ffdfb67aa7f77d61e4f7",
+    "fuel": 200000,
+    "provisional": "observe"
+  }
+]

@@ -1586,3 +1586,6 @@ mod callback_sort;
 
 #[path = "gap_hunt/small_forms.rs"]
 mod small_forms;
+
+#[path = "gap_hunt/captures.rs"]
+mod captures;
