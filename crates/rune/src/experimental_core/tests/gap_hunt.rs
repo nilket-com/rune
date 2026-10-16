@@ -1583,3 +1583,6 @@ mod dynamic_host;
 
 #[cfg(feature = "emit")]
 mod callback_sort;
+
+#[path = "gap_hunt/small_forms.rs"]
+mod small_forms;

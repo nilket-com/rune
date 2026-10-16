@@ -1,0 +1,43 @@
+{
+  "005": {
+    "/observation/outcome/kind": 1,
+    "/observation/outcome/raw": 1
+  },
+  "010": {
+    "/observation/outcome/kind": 2,
+    "/observation/outcome/raw": 2
+  },
+  "015": {
+    "/observation/outcome/kind": 2,
+    "/observation/outcome/raw": 2
+  },
+  "020": {
+    "/observation/outcome/kind": 2,
+    "/observation/outcome/raw": 2
+  },
+  "025": {
+    "/observation/outcome/kind": 2,
+    "/observation/outcome/raw": 2
+  },
+  "030": {
+    "/observation/outcome/kind": 2,
+    "/observation/outcome/raw": 2
+  },
+  "083": {
+    "/observation/outcome/class": 2,
+    "/observation/outcome/kind": 2,
+    "/observation/outcome/raw": 2
+  },
+  "084": {
+    "/observation/outcome/kind": 1,
+    "/observation/outcome/raw": 1
+  },
+  "098": {
+    "/observation/outcome/kind": 2,
+    "/observation/outcome/raw": 2
+  },
+  "100": {
+    "/observation/outcome/kind": 1,
+    "/observation/outcome/raw": 1
+  }
+}
