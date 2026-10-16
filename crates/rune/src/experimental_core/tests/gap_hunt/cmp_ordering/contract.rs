@@ -198,6 +198,36 @@ fn run_contract(engine: &str) {
 				observed["reuse"]["value"]["payload"],
 				json!({"type":"I64","value":"7"})
 			);
+		} else if *label == "refusal/sort-by" {
+			// C11 admission: bind the unchanged C9 source/identity/streams above,
+			// and compare the actual successful outcome to its frozen STOCK value.
+			// Historical C9 refusal literals and their pure controls stay intact.
+			let observed = &e["observation"];
+			let audit = &observed["fresh_audit"];
+			let stock: Json = serde_json::from_str(&pins_decode(c[3])).unwrap();
+			assert_eq!(observed["outcome"], semantic_projection(&stock).unwrap());
+			assert_eq!(observed["outcome"]["status"], "value");
+			assert_eq!(observed["invoked"], true);
+			assert_eq!(observed["host_calls"], 0);
+			for name in [
+				"no_cleanup_error",
+				"row_idle",
+				"reuse",
+				"idle",
+				"returned_root",
+			] {
+				assert_eq!(audit[name], true);
+			}
+			for name in [
+				"row_live_entries",
+				"row_payload_bytes",
+				"live_entries",
+				"payload_bytes",
+			] {
+				assert_eq!(audit[name], 0);
+			}
+			assert_eq!(audit["call_chain"], json!([]));
+			// The fresh observer pins reuse as audit["reuse"] == true above.
 		} else {
 			compare_fresh_envelope(source, label, &e, &stdout, &stderr).unwrap();
 		}

@@ -233,6 +233,15 @@ pub(crate) struct CachedInstruction {
 	pub(crate) charged: bool,
 }
 
+// Internal debug-metadata tag: an inverted range cannot be a source expression.
+// Stored in existing locations; no Function, Code, Op or Frame layout changes.
+pub(crate) const TRANSPARENT_SORT_LOCATION: Location = Location {
+	source: u32::MAX,
+	revision: u64::MAX,
+	start: u32::MAX,
+	end: 0,
+};
+
 pub struct Function {
 	cached: Vec<CachedInstruction>,
 	pub(crate) locations: Vec<Location>,
@@ -247,6 +256,11 @@ pub struct Function {
 }
 
 impl Function {
+	#[cold]
+	#[inline(never)]
+	pub(crate) fn is_transparent_sort(&self) -> bool {
+		self.locations.first() == Some(&TRANSPARENT_SORT_LOCATION)
+	}
 	pub fn new(slots: u32, parameters: u32) -> Result<Self> {
 		if slots == 0 || slots > 65_536 || parameters > slots {
 			return Err(invalid());
@@ -765,6 +779,13 @@ pub(crate) struct CertifiedIntrinsic {
 // membership in the partition does not certify an id. No installer API exists.
 pub(crate) const PRINT_RAW: u32 = FIRST_INTRINSIC_ID + 1;
 pub(crate) const VARIANT_SUCCESS: u32 = FIRST_INTRINSIC_ID + 2;
+pub(crate) const SORT_BEGIN: u32 = FIRST_INTRINSIC_ID + 0x40;
+pub(crate) const SORT_LEN: u32 = FIRST_INTRINSIC_ID + 0x41;
+pub(crate) const SORT_LOAD: u32 = FIRST_INTRINSIC_ID + 0x42;
+pub(crate) const SORT_VALUE: u32 = FIRST_INTRINSIC_ID + 0x43;
+pub(crate) const SORT_STORE: u32 = FIRST_INTRINSIC_ID + 0x44;
+pub(crate) const SORT_COMMIT: u32 = FIRST_INTRINSIC_ID + 0x45;
+pub(crate) const SORT_ORDERING: u32 = FIRST_INTRINSIC_ID + 0x46;
 pub(crate) const METHOD_CMP: u32 = crate::function::fresh_numeric::Call::MethodCmp.id();
 pub(crate) const FIRST_HOST: u32 = FIRST_INTRINSIC_ID + 0x100;
 pub(crate) const MAX_HOST_DESCRIPTORS: usize = 4096;
@@ -822,6 +843,34 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 	CertifiedIntrinsic {
 		id: METHOD_CMP,
 		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: SORT_BEGIN,
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: SORT_LEN,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: SORT_LOAD,
+		arity: 3,
+	},
+	CertifiedIntrinsic {
+		id: SORT_VALUE,
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: SORT_STORE,
+		arity: 4,
+	},
+	CertifiedIntrinsic {
+		id: SORT_COMMIT,
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: SORT_ORDERING,
+		arity: 1,
 	},
 ];
 fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
@@ -2703,7 +2752,7 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 10);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 17);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, METHOD_CMP)
 				.unwrap()
@@ -2972,4 +3021,28 @@ mod template_layout_tests {
 		std::println!("C5 layouts Function/Code/Op/Instruction/CachedInstruction: {sizes:?}");
 		assert_eq!(sizes, [200, 56, 24, 16, 32]);
 	}
+}
+
+#[cfg(test)]
+pub(crate) fn c11_depth_metadata(program: &super::frontend::Program) -> serde_json::Value {
+	use serde_json::json;
+	let main = program.function(crate::Hash::type_hash(["main"])).unwrap();
+	let compare = program
+		.function(crate::Hash::type_hash(["compare"]))
+		.unwrap();
+	let helper = program.function(crate::Hash::EMPTY).unwrap();
+	let location = |id: u32| {
+		let f = program.code.function(id).unwrap();
+		let mut found = None;
+		for pc in 0..f.instructions().len() {
+			let op = f.operation(pc).unwrap();
+			if matches!(op,Op::Call{function,..} if function==helper) {
+				assert!(found.is_none());
+				let at = f.locations[pc];
+				found = Some(json!({"source":at.source,"start":at.start,"end":at.end}));
+			}
+		}
+		found.unwrap()
+	};
+	json!({"main_id":main,"compare_id":compare,"helper_id":helper,"main_sort_site":location(main),"compare_sort_site":location(compare),"helper_transparent":program.code.function(helper).unwrap().is_transparent_sort(),"functions":(0..program.code.functions()).map(|id|{let f=program.code.function(id as u32).unwrap();json!({"id":id,"slots":f.slots,"parameters":f.parameters})}).collect::<std::vec::Vec<_>>()})
 }

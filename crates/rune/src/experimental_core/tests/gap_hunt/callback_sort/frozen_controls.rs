@@ -161,7 +161,9 @@ fn resource_and_refusal_constraints_reject_drift() {
 	let refusals = read_json(include_str!("../../callback_sort_refusals.json"));
 	let mut resource_rows = 0;
 	for (label, row) in resources.as_object().unwrap() {
-		let stock = &row["stock_common"];
+		let (_, source, fixture, _, _, _, _) = *CASES.iter().find(|c| c.0 == label).unwrap();
+		let (complete, _) = resource_completion(label, source, fixture, &resources).unwrap();
+		let stock = &complete;
 		let kind = if label.starts_with("cancel/") {
 			"Cancelled"
 		} else {
@@ -204,6 +206,40 @@ fn resource_and_refusal_constraints_reject_drift() {
 		resource_rows += 1;
 	}
 	assert_eq!(resource_rows, 17);
+	let (_, source, fixture, _, _, _, _) = CASES[112];
+	let (complete, _) = resource_completion("fuel/16", source, fixture, &resources).unwrap();
+	assert_eq!(
+		resources["fuel/16"]["stock_common"]["events"]
+			.as_array()
+			.unwrap()
+			.len(),
+		2
+	);
+	let mut fresh = complete.clone();
+	fresh["outcome"] = json!({"status":"error","class":"FuelExhausted"});
+	fresh["post"] = complete["before"].clone();
+	let tape = &complete["events"].as_array().unwrap()[..3];
+	fresh["events"] = json!(tape);
+	let mut after = tape.to_vec();
+	after.push(json!({"event":"mark","hex":"7265757365"}));
+	fresh["events_after_reuse"] = json!(after);
+	let audit = json!({"typed_failure_kind":"FuelExhausted","cleanup_error":null,"executor_idle":true,"live_entries":0,"payload_bytes":0,"reuse_i64":7});
+	assert!(resource_valid(&complete, &fresh, &audit, "FuelExhausted")); // 3 > same-budget stock 2.
+	for events in [
+		json!([complete["events"][1], complete["events"][2]]),
+		json!([complete["events"][0], complete["events"][2]]),
+		json!([complete["events"][0],{"event":"invented"}]),
+	] {
+		let mut bad = fresh.clone();
+		let mut after = events.as_array().unwrap().clone();
+		after.push(json!({"event":"mark","hex":"7265757365"}));
+		bad["events"] = events;
+		bad["events_after_reuse"] = json!(after);
+		assert!(!resource_valid(&complete, &bad, &audit, "FuelExhausted"));
+	}
+	assert!(resource_completion("fuel/16", &format!("{source} "), fixture, &resources).is_err());
+	assert!(resource_completion("fuel/16", source, "wrong-fixture", &resources).is_err());
+
 	for (label, row) in refusals.as_object().unwrap() {
 		let source = CASES.iter().find(|c| c.0 == label).unwrap().1;
 		let mut fresh = row["fresh_constraint"].clone();

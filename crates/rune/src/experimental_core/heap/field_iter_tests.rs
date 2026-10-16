@@ -83,6 +83,9 @@ fn object_and_tuple_leases_cover_nested_readers_and_overflow() {
 		let Value::Heap(h) = object else {
 			unreachable!()
 		};
+		s.entry_mut(h).unwrap().readers = u32::MAX - 1;
+		assert_eq!(s.iterator(object).unwrap_err().kind, ErrorKind::Overflow);
+		assert_eq!(s.entry(h).unwrap().readers, u32::MAX - 1);
 		s.entry_mut(h).unwrap().readers = u32::MAX;
 		assert_eq!(s.iterator(object).unwrap_err().kind, ErrorKind::Overflow);
 		s.entry_mut(h).unwrap().readers = 0;

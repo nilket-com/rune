@@ -9,6 +9,7 @@
 //! `writes_nothing` rule allows; nothing here moves a user local.
 
 mod patterns;
+pub(super) mod sorting;
 
 use super::arithmetic::{Binary, Unary};
 use super::code::{CloneMode, CompileTransaction, Function, Op, PRINT_RAW};
@@ -24,7 +25,7 @@ pub(crate) fn function(
 	item: &hir::ItemFn<'_>,
 	source: u32,
 	revision: u64,
-	resolve: &mut dyn FnMut(Hash, Location) -> Result<u32>,
+	resolve: &mut dyn FnMut(Option<Hash>, Location) -> Result<u32>,
 	constants: &crate::query::QueryInner<'_>,
 	pool: &crate::compile::Pool,
 	context: &crate::Context,
@@ -111,7 +112,7 @@ struct Lower<'a, 'hir> {
 	depth: usize,
 	source: u32,
 	revision: u64,
-	resolve: &'a mut dyn FnMut(Hash, Location) -> Result<u32>,
+	resolve: &'a mut dyn FnMut(Option<Hash>, Location) -> Result<u32>,
 	constants: &'a crate::query::QueryInner<'hir>,
 	/// The Context's `println` is the certified stdio builtin; otherwise refuse.
 	context: &'a crate::Context,
@@ -1050,10 +1051,34 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			E::Yield(_) => Err(self.refused(span, Refusal::Yield)),
 			E::Await(_) => Err(self.refused(span, Refusal::Await)),
 			E::Select(_) => Err(self.refused(span, Refusal::Select)),
-			E::CallClosure(_) => Err(self.refused(span, Refusal::CallClosure)),
+			E::CallClosure(_) => self.inner_call_closure(&expr, out),
+
 			E::Format(_) => Err(self.refused(span, Refusal::Format)),
 			E::Static(_) => Err(self.refused(span, Refusal::Static)),
 		}
+	}
+
+	#[cold]
+	#[inline(never)]
+	fn inner_call_closure(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		use hir::ExprKind as E;
+		let span = expr.span;
+		let E::CallClosure(closure) = expr.kind else {
+			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
+		};
+		if !closure.captures.is_empty() {
+			return Err(self.refused(span, Refusal::CallClosure));
+		}
+		let at = self.location(span);
+		let id = (self.resolve)(Some(closure.hash), at)?;
+		self.emit(
+			Op::Literal {
+				out,
+				value: Value::Function { code: 0, id },
+			},
+			span,
+		)?;
+		Ok(())
 	}
 
 	#[inline(never)]
@@ -1105,7 +1130,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
 		let at = self.location(span);
-		let id = (self.resolve)(hash, at)?;
+		let id = (self.resolve)(Some(hash), at)?;
 
 		// Stamped with the program identity by `Builder::finish`.
 		let value = Value::Function { code: 0, id };
@@ -1754,6 +1779,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		if let hir::Call::Associated { target, hash } = call.call {
+			if hash == Hash::ident("sort_by") {
+				return self.call_sort_by(call, target, out, span);
+			}
 			if let Some(method) = crate::function::fresh_numeric::Method::from_hash(hash) {
 				return self.call_numeric_method(call, target, method, out, span);
 			}
@@ -1876,7 +1904,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		let at = self.location(span);
-		let function = (self.resolve)(hash, at).map_err(|e| e.at(self.location(span)))?;
+		let function = (self.resolve)(Some(hash), at).map_err(|e| e.at(self.location(span)))?;
 		let args = self.operands(call.args)?;
 		let (args_start, args_len) = self.function.arguments(&args)?;
 		self.emit(

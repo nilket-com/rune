@@ -25,6 +25,16 @@ pub struct AccessError {
 }
 
 impl AccessError {
+	#[cfg(all(test, feature = "fresh-core", not(miri)))]
+	pub(crate) const fn fresh_exclusive_for_test(mode: u8) -> Option<Self> {
+		Some(Self::new(match mode {
+			0 => AccessErrorKind::NotAccessibleRef(Snapshot(EXCLUSIVE)),
+			1 => AccessErrorKind::NotAccessibleMut(Snapshot(EXCLUSIVE)),
+			2 => AccessErrorKind::NotAccessibleTake(Snapshot(EXCLUSIVE)),
+			_ => return None,
+		}))
+	}
+
 	#[cfg(feature = "fresh-core")]
 	pub(crate) const fn fresh_moved_read() -> Self {
 		Self::new(AccessErrorKind::NotAccessibleRef(Snapshot(MOVED)))

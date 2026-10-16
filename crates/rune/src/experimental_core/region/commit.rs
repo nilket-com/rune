@@ -77,6 +77,7 @@ struct IterEntry {
 /// nothing changed; `Ok(Ok(_))` has written back the region's slots (and B1's `next`).
 /// `Err`: an invariant failure after a partial commit (unreachable by the entry proof),
 /// never a silent fallback.
+#[inline(never)]
 pub(crate) fn enter(
 	region: &Region,
 	window: &mut [Value],

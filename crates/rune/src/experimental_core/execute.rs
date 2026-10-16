@@ -605,6 +605,12 @@ impl Executor {
 			return self.host_call(code, store, function, base, out, id, args_start, args_len);
 		}
 		let certificate = code.intrinsic(id).ok_or_else(invalid)?;
+		if (super::code::SORT_BEGIN..=super::code::SORT_ORDERING).contains(&id) {
+			if args_len != certificate.arity {
+				return Err(invalid());
+			}
+			return self.sort_call(code, store, function, base, out, id, args_start, args_len);
+		}
 		if let Some(call) = crate::function::fresh_numeric::Call::from_id(id) {
 			if args_len != certificate.arity {
 				return Err(invalid());
@@ -1363,7 +1369,8 @@ impl Executor {
 
 		match result {
 			Ok(value) => Ok(value),
-			Err(failure) => {
+			Err(mut failure) => {
+				self.resolve_failure_location(code, &mut failure);
 				let mut cleanup_error = setup_cleanup_error.or(self.pending_host_cleanup.take());
 				let mut host_message = self.pending_host_message.take();
 				if failure.kind == ErrorKind::Panic
@@ -1373,21 +1380,7 @@ impl Executor {
 					panic_message = host_message.take();
 				}
 
-				// Innermost first. Only Op::Call sets a callsite, pushing the callee
-				// directly above its caller; the entry frame has none, so pairing each
-				// frame with the one below it visits exactly the frames that have one.
-				for pair in self.frames.windows(2).rev() {
-					let (caller, frame) = (pair[0], pair[1]);
-					if frame.callsite_pc != NO_CALLSITE {
-						let location = code
-							.function(caller.function)
-							.expect("a published caller frame names a validated function")
-							.locations[frame.callsite_pc as usize];
-						if self.diagnostics.try_push(location).is_err() {
-							break;
-						}
-					}
-				}
+				self.collect_failure_chain(code);
 
 				// Includes a partially filled callee reserve if retaining an arg failed.
 				while let Some(value) = self.slots.pop() {
@@ -1674,6 +1667,24 @@ fn enrich_error(
 	slots: &[Value],
 	base: usize,
 ) -> Error {
+	if matches!(error.detail, Detail::ReadExclusive | Detail::WriteExclusive)
+		&& matches!(
+			op,
+			Op::Len { .. }
+				| Op::Clone { .. }
+				| Op::Push { .. }
+				| Op::Set { .. }
+				| Op::IterStart { .. }
+				| Op::Template { .. }
+		) {
+		let access = if error.detail == Detail::ReadExclusive {
+			super::error::MovedAccess::Read
+		} else {
+			super::error::MovedAccess::Write
+		};
+		error.detail = Detail::ExclusiveArgument { access, arg: 0 };
+		return error;
+	}
 	if let Op::AssignBinary { op, .. } = *op {
 		if let Detail::Binary { lhs, rhs, .. } = error.detail {
 			error.detail = Detail::Binary {
@@ -2212,7 +2223,11 @@ mod variant_intrinsic_tests;
 
 mod host_bridge;
 
+mod diagnostic_locations;
 mod numeric;
+mod sorting;
+#[cfg(test)]
+mod sorting_tests;
 
 #[cfg(test)]
 mod numeric_tests;

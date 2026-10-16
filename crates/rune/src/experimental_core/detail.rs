@@ -185,6 +185,13 @@ pub enum Detail {
 	ShiftWidth,
 	/// A mutation was refused because iteration holds a read lease.
 	WriteBorrowed,
+	ReadExclusive,
+	WriteExclusive,
+	TakeExclusive,
+	ExclusiveArgument {
+		access: MovedAccess,
+		arg: u8,
+	},
 	OutOfRange {
 		index: usize,
 		length: usize,
@@ -333,7 +340,9 @@ impl Detail {
 			Self::NumericArgumentType { cause, arg, .. }
 			| Self::NumericArgumentNumber { cause, arg, .. }
 			| Self::NumericArgumentCoerce { cause, arg, .. } => Some((cause, arg)),
-			Self::CmpArgumentAccess { arg, .. } => Some((HostCause::Access, arg)),
+			Self::CmpArgumentAccess { arg, .. } | Self::ExclusiveArgument { arg, .. } => {
+				Some((HostCause::Access, arg))
+			}
 			Self::HostExpectedType { arg: Some(arg), .. } => Some((HostCause::ExpectedType, arg)),
 			Self::HostExpectedNumber { arg: Some(arg), .. } => {
 				Some((HostCause::ExpectedNumber, arg))
@@ -608,6 +617,14 @@ impl fmt::Display for Message<'_> {
 			StringOperand { found } => messages::expected_type(f, TypeName::String, found),
 			Coerce { value, to } => messages::coerce(f, value, to),
 			WriteBorrowed => f.write_str("Cannot write, the value is being read from"),
+			ExclusiveArgument { access, .. } => f.write_str(match access {
+				MovedAccess::Read => "Cannot read, the value is being written to",
+				MovedAccess::Write => "Cannot write, the value is being written to",
+				MovedAccess::Take => "Cannot take, the value is being written to",
+			}),
+			ReadExclusive => f.write_str("Cannot read, the value is being written to"),
+			WriteExclusive => f.write_str("Cannot write, the value is being written to"),
+			TakeExclusive => f.write_str("Cannot take, the value is being written to"),
 			ShiftWidth => f.write_str("Numerical overflow"),
 			Underflow => f.write_str("Numerical underflow"),
 			OutOfRange { index, length } => messages::out_of_range(f, index, length),

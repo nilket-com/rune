@@ -309,7 +309,12 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 					let mut refused_functions = Vec::new();
 					for build in &secondary_builds {
 						let operation = match &build.build {
-							SecondaryBuild::Closure(_) => {
+							SecondaryBuild::Closure(c) => {
+								if c.hir.captures.is_empty()
+									&& matches!(c.call, crate::runtime::Call::Immediate)
+								{
+									continue;
+								}
 								crate::experimental_core::error::Refusal::CallClosure
 							}
 							SecondaryBuild::AsyncBlock(_) => {
@@ -342,6 +347,37 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 								.unwrap_or(location.span);
 							compile::Error::msg(at, e.operation)
 						})?;
+					for build in &secondary_builds {
+						if let SecondaryBuild::Closure(c) = &build.build {
+							if c.hir.captures.is_empty()
+								&& matches!(c.call, crate::runtime::Call::Immediate)
+							{
+								let closure = hir::ItemFn {
+									span: c.hir.span,
+									args: c.hir.args,
+									body: hir::Block {
+										span: c.hir.span,
+										label: None,
+										statements: &[],
+										value: Some(c.hir.body),
+										drop: &[],
+									},
+								};
+								fresh
+									.lower(
+										self.q.pool.item_type_hash(build.item_meta.item),
+										location.source_id.into_index() as u32,
+										&exprs,
+										&closure,
+										self.q.inner,
+										self.q.pool,
+										self.q.context,
+										&refused_functions,
+									)
+									.map_err(|e| compile::Error::msg(c.hir.span, e.operation))?;
+							}
+						}
+					}
 					if !matches!(f.call, crate::runtime::Call::Immediate) {
 						let operation = if matches!(f.call, crate::runtime::Call::Async) {
 							crate::experimental_core::error::Refusal::AsyncFunction

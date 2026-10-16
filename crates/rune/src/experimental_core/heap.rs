@@ -7,7 +7,7 @@
 
 use super::error::{Error, ErrorKind, Result};
 use super::value::{Handle, Type, Value};
-use crate::alloc::{String, Vec};
+use crate::alloc::{Box, String, Vec};
 use core::mem::size_of;
 use core::sync::atomic::{AtomicU64, Ordering};
 
@@ -18,6 +18,9 @@ mod indexing;
 pub use formatting::FormatLimits;
 mod ranges;
 mod roots;
+mod sorting;
+#[cfg(test)]
+mod sorting_tests;
 
 #[cfg(feature = "fresh-core-native")]
 pub(crate) mod native;
@@ -104,6 +107,7 @@ enum Payload {
 		tag: Type,
 		values: Vec<Value>,
 	},
+	SortGuard(Box<sorting::SortState>),
 }
 
 // Child values are inert copies; this iterator never acquires ownership.
@@ -114,6 +118,7 @@ enum Children<'a> {
 	Two(Option<Value>, Option<Value>),
 	Values(core::slice::Iter<'a, Value>),
 	Fields(core::slice::Iter<'a, (String, Value)>),
+	ParentValues(Option<Value>, core::slice::Iter<'a, Value>),
 }
 
 impl Iterator for Children<'_> {
@@ -126,6 +131,7 @@ impl Iterator for Children<'_> {
 			Self::Two(first, second) => first.take().or_else(|| second.take()),
 			Self::Values(values) => values.next().copied(),
 			Self::Fields(fields) => fields.next().map(|(_, value)| *value),
+			Self::ParentValues(parent, values) => parent.take().or_else(|| values.next().copied()),
 		}
 	}
 }
@@ -134,6 +140,7 @@ impl Payload {
 	fn bytes(&self) -> Result<usize> {
 		let bytes = match self {
 			Self::Moved(_) => Some(0),
+			Self::SortGuard(state) => Some(state.bytes()?),
 			Self::String(s) => Some(s.capacity()),
 			Self::Range { .. } => Some(16),
 			Self::ValueRange { .. } | Self::ValueRangeIterator { .. } => {
@@ -170,6 +177,9 @@ impl Payload {
 				Children::One(*payload)
 			}
 			Self::VectorIterator(iter) => Children::One(Some(Value::Heap(iter.handle))),
+			Self::SortGuard(state) => {
+				Children::ParentValues(Some(Value::Heap(state.parent)), state.values.iter())
+			}
 			Self::Record { fields, .. } => Children::Fields(fields.iter()),
 			Self::List { values, .. } => Children::Values(values.iter()),
 			Self::ValueRange { start, end } => Children::Two(Some(*start), Some(*end)),
@@ -186,7 +196,8 @@ impl Payload {
 				Type::Range
 			}
 			Self::Variant { tag, .. } => *tag,
-			Self::VectorIterator(..)
+			Self::SortGuard(..)
+			| Self::VectorIterator(..)
 			| Self::OptionIterator { .. }
 			| Self::RangeIterator { .. }
 			| Self::ValueRangeIterator { .. } => Type::Iterator,
@@ -352,7 +363,9 @@ impl Store {
 	pub(crate) fn host_tag(&self, value: Value) -> Result<(Type, bool)> {
 		match value {
 			Value::Heap(handle) => match self.entry(handle)?.payload.as_ref() {
-				Some(Payload::Moved(tag)) => Ok((*tag, false)),
+				Some(Payload::Moved(tag)) => {
+					Ok((*tag, self.entry(handle)?.readers == sorting::EXCLUSIVE))
+				}
 				Some(payload) => Ok((payload.tag(), true)),
 				None => Err(err(ErrorKind::InvalidCode)),
 			},
@@ -442,6 +455,13 @@ impl Store {
 				payload.map_or(0, Self::heap_edge)
 			}
 			Payload::VectorIterator(_) => 1,
+			Payload::SortGuard(state) => {
+				1 + state
+					.values
+					.iter()
+					.filter(|v| matches!(v, Value::Heap(_)))
+					.count()
+			}
 			Payload::Record { fields, .. } => fields
 				.iter()
 				.filter(|(_, value)| matches!(value, Value::Heap(_)))
@@ -516,11 +536,9 @@ impl Store {
 
 	fn payload(&self, h: Handle) -> Result<&Payload> {
 		match self.entry(h)?.payload.as_ref() {
-			Some(Payload::Moved(_)) => Err(err(ErrorKind::AccessConflict).with_detail(
-				super::error::Detail::Moved {
-					access: super::error::MovedAccess::Read,
-				},
-			)),
+			Some(Payload::Moved(_)) => {
+				Err(sorting::conflict(sorting::Access::Read, self.entry(h)?))
+			}
 			Some(payload) => {
 				#[cfg(debug_assertions)]
 				payload.assert_canonical_range();
@@ -533,9 +551,7 @@ impl Store {
 	fn mutable(&mut self, h: Handle) -> Result<&mut Payload> {
 		let e = self.entry_mut(h)?;
 		if e.readers != 0 {
-			return Err(
-				err(ErrorKind::AccessConflict).with_detail(super::error::Detail::WriteBorrowed)
-			);
+			return Err(sorting::conflict(sorting::Access::Write, e));
 		}
 		match e.payload.as_mut() {
 			Some(Payload::Moved(_)) => Err(err(ErrorKind::AccessConflict).with_detail(
@@ -612,6 +628,7 @@ impl Store {
 				self.entry(iter.handle)?
 					.readers
 					.checked_add(1)
+					.filter(|n| *n != sorting::EXCLUSIVE)
 					.ok_or_else(|| err(ErrorKind::Overflow))?,
 			)
 		} else {
@@ -1430,6 +1447,7 @@ impl Store {
 			.entry(h)?
 			.readers
 			.checked_add(1)
+			.filter(|n| *n != sorting::EXCLUSIVE)
 			.ok_or_else(|| err(ErrorKind::Overflow))?;
 		self.retain(value)?;
 		self.entry_mut(h)?.readers = readers;
@@ -1477,7 +1495,13 @@ impl Store {
 	/// Queue every owned heap edge without allocation. The capacity was checked
 	/// before taking the payload. A malformed iterator lease reports an error
 	/// but must still queue its retained owner root for drainage.
-	fn enqueue_children(&mut self, payload: Payload) -> Result<()> {
+	fn enqueue_children(&mut self, mut payload: Payload) -> Result<()> {
+		// Transfer held values back before accounting this guard's detached edges.
+		if let Payload::SortGuard(state) = &mut payload {
+			if state.active {
+				self.sort_restore(state)?;
+			}
+		}
 		// The detached payload no longer holds live edges. Its children become
 		// queued releases, without growing the queue or following native recursion.
 		self.edges = self
@@ -1486,6 +1510,7 @@ impl Store {
 			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
 		self.assert_work();
 		let mut failure = None;
+
 		if let Payload::VectorIterator(iter) = &payload {
 			let result = (|| {
 				let entry = self.entry_mut(iter.handle)?;
@@ -1823,9 +1848,7 @@ impl Store {
 
 		let entry = self.entry(h)?;
 		if entry.readers != 0 {
-			return Err(
-				err(ErrorKind::AccessConflict).with_detail(super::error::Detail::WriteBorrowed)
-			);
+			return Err(sorting::conflict(sorting::Access::Take, entry));
 		}
 		let entry = self.entry(h)?;
 		let payload = entry.payload.as_ref().ok_or_else(|| {
@@ -1839,6 +1862,9 @@ impl Store {
 					access: super::error::MovedAccess::Take,
 				}),
 			);
+		}
+		if matches!(payload, Payload::SortGuard(_)) {
+			return Err(err(ErrorKind::InvalidCode));
 		}
 		self.children_room(payload)?;
 		let bytes = self

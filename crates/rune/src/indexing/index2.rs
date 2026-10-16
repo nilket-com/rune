@@ -574,11 +574,15 @@ impl<'a> Processor<'a> {
 		if idx.q.inner.fresh_mode && idx.item.impl_item.is_some() {
 			if let Some(name) = name {
 				let resolved = name.resolve(resolve_context!(idx.q))?;
+				if resolved == "sort_by" {
+					idx.q.inner.fresh_sort_by_script = true;
+				}
 				if let Some(method) = crate::function::fresh_numeric::Method::from_name(resolved) {
 					idx.q.inner.fresh_numeric_script |= method.bit();
 				}
 			} else {
 				idx.q.inner.fresh_numeric_script |= 0b1111;
+				idx.q.inner.fresh_sort_by_script = true;
 			}
 		}
 		let layer = idx.scopes.pop().with_span(self.span)?;

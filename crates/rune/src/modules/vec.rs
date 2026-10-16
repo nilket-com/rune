@@ -77,6 +77,10 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(remove)?;
 	m.function_meta(insert)?;
 	m.function_meta(sort_by)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_sort_by = true;
+	}
 	m.function_meta(sort)?;
 	m.function_meta(into_iter__meta)?;
 	m.function_meta(index_get)?;

@@ -68,6 +68,7 @@ pub(crate) struct Collector {
 	revision: u64,
 	entries: Vec<(Hash, Option<Function>, Option<Location>)>,
 	transaction: CompileTransaction,
+	sort_helper: Option<u32>,
 	pub(crate) failure: Option<Error>,
 }
 
@@ -98,12 +99,27 @@ impl Collector {
 
 		let revision = self.revision;
 		let entries = &mut self.entries;
+		let sort_helper = &mut self.sort_helper;
 		let result = super::lower::function(
 			exprs,
 			item,
 			source,
 			revision,
 			&mut |hash, at| {
+				let Some(hash) = hash else {
+					if let Some(id) = *sort_helper {
+						return Ok(id);
+					}
+					let id = u32::try_from(entries.len())
+						.map_err(|_| Error::new(ErrorKind::InvalidCode, "sort helper"))?;
+					entries.try_push((
+						Hash::EMPTY,
+						Some(super::lower::sorting::function(at)?),
+						None,
+					))?;
+					*sort_helper = Some(id);
+					return Ok(id);
+				};
 				if let Some((_, operation)) = refused_functions.iter().find(|(h, _)| *h == hash) {
 					return Err(Error::refused(*operation).at(at));
 				}
@@ -229,6 +245,7 @@ pub fn compile(
 		revision,
 		entries: Vec::new(),
 		transaction: CompileTransaction::default(),
+		sort_helper: None,
 		failure: None,
 	};
 

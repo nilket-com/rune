@@ -1,4 +1,4 @@
-//! C11 stock-only callback oracle. No fresh admission or implementation changes.
+//! C11 frozen stock oracle and independent fresh observer.
 use super::*;
 use serde_json::{json, Value as Json};
 include!("callback_sort/cases.rs");
@@ -91,9 +91,14 @@ fn child() {
 	assert_eq!(CASES.len(), COUNT);
 	let index: usize = std::env::var("C11_CASE").unwrap().parse().unwrap();
 	let (label, source, fixture, policy, mode, fuel, cancel) = CASES[index];
-	assert_eq!(std::env::var("C11_ENGINE").unwrap(), "stock");
-	let observation = observe(source, fixture, mode, fuel);
-	let envelope = json!({"schema":1,"engine":"stock","index":index,"label":label,"source_hex":hex(source.as_bytes()),"fixture":fixture,"policy":policy,"mode":mode,"fuel":fuel,"fresh_cancel_at_charge_proposal":cancel,"stock_cancel_armed":false,"observation":observation});
+	let engine = std::env::var("C11_ENGINE").unwrap();
+	assert!(matches!(engine.as_str(), "stock" | "fresh"));
+	let observation = if engine == "stock" {
+		observe(source, fixture, mode, fuel)
+	} else {
+		observe_fresh(source, fixture, mode, fuel, cancel)
+	};
+	let envelope = json!({"schema":1,"engine":engine,"index":index,"label":label,"source_hex":hex(source.as_bytes()),"fixture":fixture,"policy":policy,"mode":mode,"fuel":fuel,"fresh_cancel_at_charge_proposal":cancel,"stock_cancel_armed":false,"observation":observation});
 	fs::write(
 		std::env::var_os("C11_RESULT").unwrap(),
 		serde_json::to_vec_pretty(&envelope).unwrap(),
@@ -108,3 +113,10 @@ include!("callback_sort/controls.rs");
 include!("callback_sort/projection.rs");
 include!("callback_sort/frozen_controls.rs");
 include!("callback_sort/contract.rs");
+
+include!("callback_sort/fresh_graph.rs");
+include!("callback_sort/fresh_error.rs");
+include!("callback_sort/fresh.rs");
+include!("callback_sort/fresh_contract.rs");
+
+include!("callback_sort/retained_enforce.rs");

@@ -60,6 +60,8 @@ pub(crate) struct QueryInner<'arena> {
 	/// Monotonic script-associated numeric-name collision mask, set while indexing.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_numeric_script: u8,
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_sort_by_script: bool,
 	/// Scratch space for parsing numbers.
 	pub(crate) scratch: RefCell<String>,
 	/// How deeply the item being built depends on other items which have to be

@@ -82,6 +82,8 @@ pub struct Module {
 	/// Private stock numeric pair markers, never set by user registration APIs.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_numeric: u8,
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_sort_by: bool,
 	/// Constant constructors.
 	pub(crate) construct: Vec<(Hash, AnyTypeInfo, ConstConstructImpl)>,
 	/// Defines construct hashes.
@@ -265,6 +267,8 @@ impl Module {
 			fresh_string_from: false,
 			#[cfg(feature = "fresh-core")]
 			fresh_numeric: 0,
+			#[cfg(feature = "fresh-core")]
+			fresh_sort_by: false,
 			construct: Vec::new(),
 			construct_hash: HashSet::new(),
 			common: ModuleItemCommon {

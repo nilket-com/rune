@@ -24,6 +24,14 @@ use crate::runtime::{
 use crate::sync::Arc;
 use crate::{Hash, Item, ItemBuf};
 
+// Compile-time identities. Registration reuses existing effective hashes.
+#[cfg(feature = "fresh-core")]
+const FRESH_SORT_RECEIVER: Hash = crate::hash_in!(crate, ::std::vec::Vec);
+#[cfg(feature = "fresh-core")]
+const FRESH_SORT_ASSOCIATED: Hash = crate::hash_in!(crate, ::std::vec::Vec.sort_by);
+#[cfg(feature = "fresh-core")]
+const FRESH_SORT_ITEM: Hash = crate::hash_in!(crate, ::std::vec::Vec::sort_by);
+
 crate::declare_dyn_fn! {
 	struct MacroHandlerVtable;
 
@@ -337,6 +345,10 @@ pub struct Context {
 	fresh_string_from: bool,
 	#[cfg(feature = "fresh-core")]
 	fresh_numeric: crate::function::fresh_numeric::State,
+	#[cfg(feature = "fresh-core")]
+	fresh_sort_by: bool,
+	#[cfg(feature = "fresh-core")]
+	fresh_sort_by_closed: bool,
 	/// Handlers for realising traits.
 	traits: hash::Map<Option<TraitHandler>>,
 	/// Registered native attribute macro handlers.
@@ -471,10 +483,16 @@ impl Context {
 		}
 
 		#[cfg(feature = "fresh-core")]
-		let numeric_pending = {
+		let (numeric_pending, sort_builtin) = {
 			use crate::function::fresh_numeric::{Method, Pair};
 			let mut methods = 0u8;
 			let mut pairs = 0u8;
+			let sort_candidate =
+				module.fresh_sort_by && !self.fresh_sort_by_closed && !self.fresh_sort_by;
+			let mut sort_touches = false;
+			let mut sort_names = 0usize;
+			let mut sort_trusted = false;
+			let mut sort_item_collision = false;
 			for assoc in &module.associated {
 				if matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::CMP.hash)
 					&& Method::Cmp.closes_for(assoc.container)
@@ -486,6 +504,14 @@ impl Context {
 					.kind
 					.hash(assoc.container)
 					.with_function_parameters(assoc.name.function_parameters);
+				let named_sort = matches!(&assoc.name.kind, meta::AssociatedKind::Instance(n) if n.as_ref() == "sort_by");
+				sort_touches |= named_sort || effective == FRESH_SORT_ASSOCIATED;
+				if named_sort {
+					sort_names = sort_names.saturating_add(1);
+					sort_trusted |= assoc.container == FRESH_SORT_RECEIVER
+						&& assoc.name.function_parameters == Hash::EMPTY
+						&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_));
+				}
 				for m in [Method::Abs, Method::Round, Method::Powf, Method::Cmp] {
 					if (matches!(&assoc.name.kind,meta::AssociatedKind::Instance(n) if n.as_ref()==m.name())
 						|| effective
@@ -504,6 +530,8 @@ impl Context {
 				}
 			}
 			for item in &module.items {
+				sort_item_collision |=
+					item.hash == FRESH_SORT_ASSOCIATED || item.hash == FRESH_SORT_ITEM;
 				for p in Pair::ALL {
 					if item.hash == p.item() || item.hash == p.associated() {
 						pairs |= p.bit();
@@ -511,7 +539,16 @@ impl Context {
 					}
 				}
 			}
-			self.fresh_numeric.begin_module(methods, pairs)
+			if sort_touches || sort_item_collision {
+				self.fresh_sort_by = false;
+				self.fresh_sort_by_closed = true;
+			}
+			let sort_builtin =
+				sort_candidate && !sort_item_collision && sort_names == 1 && sort_trusted;
+			(
+				self.fresh_numeric.begin_module(methods, pairs),
+				sort_builtin,
+			)
 		};
 		if let Some(ComponentRef::Crate(name)) = module.item.first() {
 			self.crates.try_insert(name.try_into()?)?;
@@ -635,6 +672,10 @@ impl Context {
 		{
 			self.fresh_hosts = prepared_hosts;
 			self.fresh_numeric.finish_module(numeric_pending);
+			if sort_builtin {
+				self.fresh_sort_by = true;
+				self.fresh_sort_by_closed = false;
+			}
 		}
 		Ok(())
 	}
@@ -822,6 +863,10 @@ impl Context {
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::string::String::from)))
+	}
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_sort_by(&self) -> bool {
+		self.fresh_sort_by && !self.fresh_sort_by_closed
 	}
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_numeric_method(
@@ -1362,14 +1407,22 @@ impl Context {
 	}
 
 	fn install_associated(&mut self, assoc: &ModuleAssociated) -> Result<(), ContextError> {
+		let hash = assoc
+			.name
+			.kind
+			.hash(assoc.container)
+			.with_function_parameters(assoc.name.function_parameters);
+		#[cfg(feature = "fresh-core")]
+		if matches!(&assoc.name.kind, meta::AssociatedKind::Instance(n) if n.as_ref() == "sort_by")
+			|| hash == FRESH_SORT_ASSOCIATED
+		{
+			self.fresh_sort_by = false;
+			self.fresh_sort_by_closed = true;
+		}
 		#[cfg(feature = "fresh-core")]
 		let numeric = {
 			use crate::function::fresh_numeric::{Method, Pair};
-			let effective = assoc
-				.name
-				.kind
-				.hash(assoc.container)
-				.with_function_parameters(assoc.name.function_parameters);
+			let effective = hash;
 			let selected = match &assoc.name.kind {
 				meta::AssociatedKind::Instance(name) => Method::from_name(name),
 				meta::AssociatedKind::Protocol(p) if p.hash == Protocol::CMP.hash => {
@@ -1402,12 +1455,6 @@ impl Context {
 				container: assoc.container_type_info.try_clone()?,
 			});
 		};
-
-		let hash = assoc
-			.name
-			.kind
-			.hash(assoc.container)
-			.with_function_parameters(assoc.name.function_parameters);
 
 		// If the associated function is a named instance function - register it
 		// under the name of the item it corresponds to unless it's a field
@@ -1503,6 +1550,11 @@ impl Context {
 	) -> Result<(), ContextError> {
 		#[cfg(feature = "fresh-core")]
 		self.fresh_numeric.invalidate_hash(hash);
+		#[cfg(feature = "fresh-core")]
+		if hash == FRESH_SORT_ASSOCIATED || hash == FRESH_SORT_ITEM {
+			self.fresh_sort_by = false;
+			self.fresh_sort_by_closed = true;
+		}
 		if self.functions.contains_key(&hash) {
 			return Err(ContextError::ConflictingFunction {
 				part: display.try_to_string()?.try_into()?,
@@ -1576,3 +1628,43 @@ static_assertions::assert_impl_all!(Context: Send, Sync);
 
 #[cfg(all(test, feature = "fresh-core"))]
 mod numeric_tests;
+
+#[cfg(all(test, feature = "fresh-core"))]
+mod c11_sort_certificates {
+	use super::*;
+	#[test]
+	#[cfg_attr(miri, ignore = "default-module Context; native certificate control")]
+	fn missing_trusted_conflicting_and_unrelated_sort_names_are_closed() {
+		assert_eq!(
+			FRESH_SORT_RECEIVER,
+			Hash::type_hash(crate::item!(::std::vec::Vec))
+		);
+		assert_eq!(
+			FRESH_SORT_ASSOCIATED,
+			Hash::associated_function(FRESH_SORT_RECEIVER, Hash::ident("sort_by"))
+		);
+		assert_eq!(
+			FRESH_SORT_ITEM,
+			Hash::type_hash(crate::item!(::std::vec::Vec::sort_by))
+		);
+		assert!(!Context::new().fresh_sort_by());
+		let mut cx = Context::with_default_modules().unwrap();
+		assert!(cx.fresh_sort_by());
+		let mut conflicting = Module::new();
+		conflicting
+			.associated_function(
+				"sort_by",
+				|_: &mut crate::runtime::Vec, _: &crate::runtime::Function| {},
+			)
+			.unwrap();
+		assert!(cx.install(conflicting).is_err());
+		assert!(!cx.fresh_sort_by());
+		let mut cx = Context::with_default_modules().unwrap();
+		let mut unrelated = Module::new();
+		unrelated
+			.associated_function("sort_by", |_: i64, _: i64| {})
+			.unwrap();
+		cx.install(unrelated).unwrap();
+		assert!(!cx.fresh_sort_by());
+	}
+}

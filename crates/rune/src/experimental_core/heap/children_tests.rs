@@ -12,6 +12,7 @@ impl Payload {
 					*payload
 				}
 				Self::VectorIterator(iter) if index == 0 => Some(Value::Heap(iter.handle)),
+				Self::SortGuard(state) if index == 0 => Some(Value::Heap(state.parent)),
 				Self::Record { fields, .. } => fields.get(index).map(|(_, value)| *value),
 				Self::List { values, .. } => values.get(index).copied(),
 				Self::ValueRange { start, .. } if index == 0 => Some(*start),
@@ -47,6 +48,7 @@ fn fields(input: &[Value]) -> Vec<(String, Value)> {
 // Exhaustive on purpose: a new Payload variant must update this oracle matrix.
 fn variant(payload: &Payload) -> &'static str {
 	match payload {
+		Payload::SortGuard(_) => "SortGuard",
 		Payload::Moved(_) => "Moved",
 		Payload::String(_) => "String",
 		Payload::Variant { .. } => "Variant",

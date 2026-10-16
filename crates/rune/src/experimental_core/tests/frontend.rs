@@ -126,7 +126,7 @@ fn construction_refuses_constants_closures_and_macros() {
 	let context = Context::with_default_modules().unwrap();
 	for text in [
 		"const A = [42]; pub fn main() { A }",
-		"pub fn main() { let f = || 42; f() }",
+		"pub fn main() { let x = 42; let f = || x; f() }",
 		"pub fn main() { format!(\"{:x}\",42) }",
 	] {
 		let mut sources = Sources::new();
@@ -622,7 +622,7 @@ fn named_refusals_keep_source_revision_and_syntax_span() {
 	let context = Context::with_default_modules().unwrap();
 	for (body, operation, syntax) in [
 		("match n { Ok(#{x}) => x, _ => 0 }", "Match", "match"),
-		("let f = || 42; f()", "CallClosure", "||"),
+		("let x = 42; let f = || x; f()", "CallClosure", "||"),
 		("let f = async { 42 }; 0", "AsyncBlock", "async"),
 	] {
 		let text = format!("pub fn main(n) {{ {body} }}");

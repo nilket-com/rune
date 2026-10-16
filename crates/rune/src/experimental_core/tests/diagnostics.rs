@@ -498,7 +498,7 @@ fn compile_time_refusals_are_catalogued_before_execution() {
 	let context = Context::with_default_modules().unwrap();
 	for (source, refusal) in [
 		(
-			"pub fn target() { let f = |a| a; f(1) }",
+			"pub fn target() { let x = 1; let f = |a| a+x; f(1) }",
 			Refusal::CallClosure,
 		),
 		("pub fn target() { (0..2).iter() + 1 }", Refusal::Method),
