@@ -225,6 +225,29 @@ pub(crate) fn representable(container: Hash) -> bool {
 		|| OTHERS.contains(&container)
 }
 
+/// Installation fast path, run for every associated registration: the certified name this
+/// registration touches, if any. An instance name is matched by its bytes; a protocol or other
+/// association by its effective hash against the three named-function hashes. Every other
+/// registration skips [`State::begin_associated`] entirely.
+#[inline]
+pub(crate) fn touched_name(
+	instance: Option<&str>,
+	effective: Hash,
+	container: Hash,
+) -> Option<Name> {
+	match instance {
+		Some(name) => match name.as_bytes() {
+			b"iter" => Some(Name::Iter),
+			b"next" => Some(Name::Next),
+			b"any" => Some(Name::Any),
+			_ => None,
+		},
+		None => Name::ALL
+			.into_iter()
+			.find(|n| effective == n.associated(container)),
+	}
+}
+
 /// What an associated registration means for the certificate.
 pub(crate) struct Touch {
 	name: Name,
@@ -264,21 +287,15 @@ impl State {
 	/// protocol hash differs from `next`; the Iterator trait handler's `find` copies the
 	/// protocol handler into a separate named `next` instance function, which is the provider. A foreign registration
 	/// closes its name immediately, so a later failure cannot leave it open.
+	#[cold]
+	#[inline(never)]
 	pub(crate) fn begin_associated(
 		&mut self,
+		name: Name,
 		container: Hash,
-		instance: Option<&str>,
-		effective: Hash,
 		plain: bool,
 		trait_hash: Option<Hash>,
 	) -> Option<Touch> {
-		let name = match instance.and_then(Name::from_name) {
-			Some(name) => name,
-			None => Name::ALL
-				.into_iter()
-				.find(|n| effective == n.associated(container))?,
-		};
-
 		let provider = Provider::find(name, container).filter(|p| {
 			// Both `next` (the trait handler's named copy of NEXT) and `any` are trait-installed.
 			plain
@@ -311,23 +328,15 @@ impl State {
 		Some(Touch { name, provider })
 	}
 
-	/// After `install_associated` succeeded.
+	/// After `install_associated` succeeded. Native functions are insert-once
+	/// (`insert_native_fn` refuses an occupied hash with `ConflictingFunction`), so the handler
+	/// certified here stays installed: an earlier foreign insert at a provider hash makes this
+	/// install fail before this point (leaving the module pending, which keeps every name
+	/// uncertified), and a later one fails itself. No per-insert scan is needed.
 	pub(crate) fn associated_installed(&mut self, touch: Touch) {
 		if let Some(p) = touch.provider {
 			if self.closed & touch.name.bit() == 0 {
 				self.certified |= p.bit();
-			}
-		}
-	}
-
-	/// Any native function inserted at `hash` (`insert_native_fn`, which `install_associated`
-	/// also uses). Uncertify a matching provider; `associated_installed` re-certifies it only
-	/// for the marked registration that just inserted it. Insert-once makes any other insert at
-	/// a provider hash a `ConflictingFunction` error.
-	pub(crate) fn invalidate_hash(&mut self, hash: Hash) {
-		for p in Provider::ALL {
-			if hash == p.name().associated(p.container()) {
-				self.certified &= !p.bit();
 			}
 		}
 	}
@@ -378,7 +387,7 @@ mod tests {
 		let old = s.begin_module(marker::ITER);
 		for p in Provider::ALL.into_iter().filter(|p| p.name() == Name::Iter) {
 			let t = s
-				.begin_associated(p.container(), Some("iter"), Hash::EMPTY, true, None)
+				.begin_associated(Name::Iter, p.container(), true, None)
 				.unwrap();
 			s.associated_installed(t);
 		}
@@ -386,13 +395,7 @@ mod tests {
 		assert!(s.certified(Name::Iter));
 		// An unmarked module gives `iter` to String: fresh's missing-method promise breaks.
 		let t = s
-			.begin_associated(
-				crate::alloc::String::HASH,
-				Some("iter"),
-				Hash::EMPTY,
-				true,
-				None,
-			)
+			.begin_associated(Name::Iter, crate::alloc::String::HASH, true, None)
 			.unwrap();
 		s.associated_installed(t);
 		assert!(!s.certified(Name::Iter));
@@ -403,14 +406,14 @@ mod tests {
 		let mut s = State::default();
 		let p = Provider::VecIter;
 		let t = s
-			.begin_associated(p.container(), Some("iter"), Hash::EMPTY, true, None)
+			.begin_associated(Name::Iter, p.container(), true, None)
 			.unwrap();
 		s.associated_installed(t);
 		assert!(!s.certified(Name::Iter));
 		let mut s = State::default();
 		let old = s.begin_module(marker::ITER);
 		let t = s
-			.begin_associated(p.container(), Some("iter"), Hash::EMPTY, false, None)
+			.begin_associated(Name::Iter, p.container(), false, None)
 			.unwrap();
 		s.associated_installed(t);
 		s.finish_module(old);
@@ -423,13 +426,7 @@ mod tests {
 		let old = s.begin_module(marker::ITERATOR);
 		for p in Provider::ALL.into_iter().filter(|p| p.name() == Name::Any) {
 			let t = s
-				.begin_associated(
-					p.container(),
-					Some("any"),
-					Hash::EMPTY,
-					true,
-					Some(ITERATOR_TRAIT),
-				)
+				.begin_associated(Name::Any, p.container(), true, Some(ITERATOR_TRAIT))
 				.unwrap();
 			s.associated_installed(t);
 		}
@@ -439,47 +436,13 @@ mod tests {
 	}
 
 	#[test]
-	fn insert_at_provider_hash_uncertifies_until_reinstalled() {
-		let mut s = State::default();
-		let old = s.begin_module(marker::ITERATOR_TRAIT);
-		s.trait_installed(ITERATOR_TRAIT);
-		s.finish_module(old);
-		let old = s.begin_module(marker::ITERATOR);
-		for p in Provider::ALL.into_iter().filter(|p| p.name() == Name::Next) {
-			let t = s
-				.begin_associated(
-					p.container(),
-					Some("next"),
-					Hash::EMPTY,
-					true,
-					Some(ITERATOR_TRAIT),
-				)
-				.unwrap();
-			s.invalidate_hash(Hash::associated_function(
-				p.container(),
-				Hash::ident("next"),
-			));
-			s.associated_installed(t);
-		}
-		s.finish_module(old);
-		assert!(s.certified(Name::Next));
-		let p = Provider::SliceIterNext;
-		s.invalidate_hash(Hash::associated_function(
-			p.container(),
-			Hash::ident("next"),
-		));
-		assert!(!s.certified(Name::Next));
-	}
-
-	#[test]
 	fn foreign_next_and_any_on_char_range_from_iter_close() {
 		for (name, s) in [("next", Name::Next), ("any", Name::Any)] {
 			let mut st = State::default();
 			let t = st
 				.begin_associated(
+					Name::from_name(name).unwrap(),
 					rt::range_from::RangeFromIter::<char>::HASH,
-					Some(name),
-					Hash::EMPTY,
 					true,
 					None,
 				)
@@ -495,7 +458,7 @@ mod tests {
 		let old = s.begin_module(marker::ITER);
 		for p in Provider::ALL.into_iter().filter(|p| p.name() == Name::Iter) {
 			let t = s
-				.begin_associated(p.container(), Some("iter"), Hash::EMPTY, true, None)
+				.begin_associated(Name::Iter, p.container(), true, None)
 				.unwrap();
 			s.associated_installed(t);
 		}
@@ -512,23 +475,11 @@ mod tests {
 		let mut s = State::default();
 		let old = s.begin_module(marker::ITER | marker::ITERATOR);
 		let t = s
-			.begin_associated(
-				crate::alloc::String::HASH,
-				Some("iter"),
-				Hash::EMPTY,
-				true,
-				None,
-			)
+			.begin_associated(Name::Iter, crate::alloc::String::HASH, true, None)
 			.unwrap();
 		s.associated_installed(t);
 		let t = s
-			.begin_associated(
-				rt::Vec::HASH,
-				Some("any"),
-				Hash::EMPTY,
-				true,
-				Some(ITERATOR_TRAIT),
-			)
+			.begin_associated(Name::Any, rt::Vec::HASH, true, Some(ITERATOR_TRAIT))
 			.unwrap();
 		s.associated_installed(t);
 		s.finish_module(old);
@@ -547,9 +498,8 @@ mod tests {
 			for name in ["next", "any"] {
 				let t = s
 					.begin_associated(
+						Name::from_name(name).unwrap(),
 						container,
-						Some(name),
-						Hash::EMPTY,
 						true,
 						Some(ITERATOR_TRAIT),
 					)
@@ -559,5 +509,38 @@ mod tests {
 		}
 		s.finish_module(old);
 		assert_eq!(s.closed, 0);
+	}
+
+	#[test]
+	fn touched_name_matches_instance_bytes_and_named_hashes_only() {
+		assert_eq!(
+			touched_name(Some("iter"), Hash::EMPTY, rt::Vec::HASH),
+			Some(Name::Iter)
+		);
+		assert_eq!(
+			touched_name(Some("next"), Hash::EMPTY, rt::Vec::HASH),
+			Some(Name::Next)
+		);
+		assert_eq!(
+			touched_name(Some("any"), Hash::EMPTY, rt::Vec::HASH),
+			Some(Name::Any)
+		);
+		for other in ["it", "iters", "nex", "anyx", "len", "into_iter", ""] {
+			assert_eq!(
+				touched_name(Some(other), Hash::EMPTY, rt::Vec::HASH),
+				None,
+				"{other}"
+			);
+		}
+		for name in Name::ALL {
+			let h = Hash::associated_function(rt::slice::Iter::HASH, Hash::ident(name.as_str()));
+			assert_eq!(touched_name(None, h, rt::slice::Iter::HASH), Some(name));
+		}
+		let next_protocol =
+			Hash::associated_function(rt::slice::Iter::HASH, crate::runtime::Protocol::NEXT.hash);
+		assert_eq!(
+			touched_name(None, next_protocol, rt::slice::Iter::HASH),
+			None
+		);
 	}
 }

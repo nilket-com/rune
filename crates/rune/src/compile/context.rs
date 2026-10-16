@@ -1436,18 +1436,23 @@ impl Context {
 		}
 		#[cfg(feature = "fresh-core")]
 		let iter_touch = {
-			let (plain, trait_hash) = match &assoc.kind {
-				ModuleAssociatedKind::Function(f) => {
-					(assoc.name.function_parameters == Hash::EMPTY, f.trait_hash)
-				}
-				ModuleAssociatedKind::Constant(..) => (false, None),
-			};
 			let instance = match &assoc.name.kind {
 				meta::AssociatedKind::Instance(name) => Some(name.as_ref()),
 				_ => None,
 			};
-			self.fresh_iter
-				.begin_associated(assoc.container, instance, hash, plain, trait_hash)
+			match crate::function::fresh_iter::touched_name(instance, hash, assoc.container) {
+				None => None,
+				Some(name) => {
+					let (plain, trait_hash) = match &assoc.kind {
+						ModuleAssociatedKind::Function(f) => {
+							(assoc.name.function_parameters == Hash::EMPTY, f.trait_hash)
+						}
+						ModuleAssociatedKind::Constant(..) => (false, None),
+					};
+					self.fresh_iter
+						.begin_associated(name, assoc.container, plain, trait_hash)
+				}
+			}
 		};
 		#[cfg(feature = "fresh-core")]
 		let numeric = {
@@ -1584,8 +1589,6 @@ impl Context {
 	) -> Result<(), ContextError> {
 		#[cfg(feature = "fresh-core")]
 		self.fresh_numeric.invalidate_hash(hash);
-		#[cfg(feature = "fresh-core")]
-		self.fresh_iter.invalidate_hash(hash);
 		#[cfg(feature = "fresh-core")]
 		if hash == FRESH_SORT_ASSOCIATED || hash == FRESH_SORT_ITEM {
 			self.fresh_sort_by = false;
@@ -1750,5 +1753,16 @@ mod c12_iter_certificates {
 			.unwrap();
 		assert!(cx.install(conflicting).is_err());
 		assert!(!cx.fresh_iter_method(Name::Next));
+
+		// A conflicting `iter` on Vec after the builtin: insert-once refuses it, and its
+		// pre-insert touch closes `iter` (no per-insert provider scan is involved).
+		let mut cx = Context::with_default_modules().unwrap();
+		let mut conflicting = Module::new();
+		conflicting
+			.associated_function("iter", |_: &crate::runtime::Vec| 0i64)
+			.unwrap();
+		assert!(cx.install(conflicting).is_err());
+		assert!(!cx.fresh_iter_method(Name::Iter));
+		assert!(cx.fresh_iter_method(Name::Next));
 	}
 }
