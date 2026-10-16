@@ -9,6 +9,13 @@
 //! `writes_nothing` rule allows; nothing here moves a user local.
 
 mod patterns;
+#[derive(Clone, Copy)]
+pub(crate) enum Resolve {
+	Script(Hash),
+	Sort,
+	Any,
+}
+pub(super) mod small_forms;
 pub(super) mod sorting;
 
 use super::arithmetic::{Binary, Unary};
@@ -25,7 +32,7 @@ pub(crate) fn function(
 	item: &hir::ItemFn<'_>,
 	source: u32,
 	revision: u64,
-	resolve: &mut dyn FnMut(Option<Hash>, Location) -> Result<u32>,
+	resolve: &mut dyn FnMut(Resolve, Location) -> Result<u32>,
 	constants: &crate::query::QueryInner<'_>,
 	pool: &crate::compile::Pool,
 	context: &crate::Context,
@@ -112,7 +119,7 @@ struct Lower<'a, 'hir> {
 	depth: usize,
 	source: u32,
 	revision: u64,
-	resolve: &'a mut dyn FnMut(Option<Hash>, Location) -> Result<u32>,
+	resolve: &'a mut dyn FnMut(Resolve, Location) -> Result<u32>,
 	constants: &'a crate::query::QueryInner<'hir>,
 	/// The Context's `println` is the certified stdio builtin; otherwise refuse.
 	context: &'a crate::Context,
@@ -1070,7 +1077,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Err(self.refused(span, Refusal::CallClosure));
 		}
 		let at = self.location(span);
-		let id = (self.resolve)(Some(closure.hash), at)?;
+		let id = (self.resolve)(Resolve::Script(closure.hash), at)?;
 		self.emit(
 			Op::Literal {
 				out,
@@ -1130,7 +1137,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
 		let at = self.location(span);
-		let id = (self.resolve)(Some(hash), at)?;
+		let id = (self.resolve)(Resolve::Script(hash), at)?;
 
 		// Stamped with the program identity by `Builder::finish`.
 		let value = Value::Function { code: 0, id };
@@ -1187,13 +1194,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		};
 		let (start, end) = match range {
 			hir::ExprRange::Range { start, end } => (start, end),
-			hir::ExprRange::RangeFrom { .. }
-			| hir::ExprRange::RangeFull
-			| hir::ExprRange::RangeInclusive { .. }
-			| hir::ExprRange::RangeToInclusive { .. }
-			| hir::ExprRange::RangeTo { .. } => {
-				return Err(self.refused(span, Refusal::Range));
-			}
+			other => return self.other_range(other, out, span),
 		};
 
 		let slots = self.operands(&[*start, *end])?;
@@ -1367,13 +1368,6 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let E::Index(index) = expr.kind else {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
-		// Only half-open inline ranges use the existing Range -> Get path.
-		// Keep sibling refusals anchored to the whole index expression.
-		if let E::Range(range) = self.exprs.get(index.index).kind {
-			if !matches!(range, hir::ExprRange::Range { .. }) {
-				return Err(self.refused(span, Refusal::Range));
-			}
-		}
 		// Stock defers a bare-local receiver until the index has run, as Set
 		// and compound assignment already do. Computed targets run first.
 		let target = self.assignment_operand(index.target, span)?;
@@ -1779,6 +1773,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		if let hir::Call::Associated { target, hash } = call.call {
+			if let Some(name) = crate::function::fresh_iter::Name::ALL
+				.into_iter()
+				.find(|name| hash == name.hash())
+			{
+				return self.call_iterator_method(call, target, name, out, span);
+			}
 			if hash == Hash::ident("sort_by") {
 				return self.call_sort_by(call, target, out, span);
 			}
@@ -1904,7 +1904,8 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		let at = self.location(span);
-		let function = (self.resolve)(Some(hash), at).map_err(|e| e.at(self.location(span)))?;
+		let function =
+			(self.resolve)(Resolve::Script(hash), at).map_err(|e| e.at(self.location(span)))?;
 		let args = self.operands(call.args)?;
 		let (args_start, args_len) = self.function.arguments(&args)?;
 		self.emit(

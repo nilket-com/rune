@@ -198,8 +198,8 @@ fn run_contract(engine: &str) {
 				observed["reuse"]["value"]["payload"],
 				json!({"type":"I64","value":"7"})
 			);
-		} else if *label == "refusal/sort-by" {
-			// C11 admission: bind the unchanged C9 source/identity/streams above,
+		} else if matches!(*label, "refusal/sort-by" | "refusal/iter-any") {
+			// C11 sort_by / C12 iter-any admissions: preserve the C9 source and streams,
 			// and compare the actual successful outcome to its frozen STOCK value.
 			// Historical C9 refusal literals and their pure controls stay intact.
 			let observed = &e["observation"];

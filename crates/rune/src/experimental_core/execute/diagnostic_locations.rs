@@ -1,4 +1,4 @@
-//! Cold diagnostic resolution for transparent synthetic sort frames.
+//! Cold diagnostic resolution for transparent synthetic sort and Any frames.
 use super::*;
 impl Executor {
 	// The saved frame is passed explicitly: a failed return may have popped it.

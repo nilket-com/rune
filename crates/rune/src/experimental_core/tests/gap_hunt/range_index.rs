@@ -249,14 +249,8 @@ fn contract_cases(engine: &str, generated: Vec<(String, String)>, table: &str) {
 		super::len_clone::assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
 		let actual: Vec<_> = run.record.split('\t').collect();
 		assert!(!actual[1].contains("0x"), "unstable class: {}", run.record);
-		if engine == "fresh" && label.starts_with("refusal/") {
-			assert_eq!(
-				&actual[..2],
-				&["refused", "Some(Range)"],
-				"coverage drift: {label}"
-			);
-			continue;
-		}
+		// C12 admits all five historical range-shape refusal witnesses.
+		// Compare their complete observations and streams to frozen stock below.
 		let expected = unhex(row[2]);
 		let mut expected: Vec<_> = expected.split('\t').collect();
 		// Nine frozen string-slice rows recorded stock's Debug fallback class.

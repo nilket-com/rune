@@ -18,6 +18,13 @@ use crate::{hash_in, ContextError, Hash, Module};
 #[rune::module(::std::option)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
+
+	// Private C12 provider markers: this std module registers the builtin providers.
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_iter = crate::function::fresh_iter::marker::ITER
+			| crate::function::fresh_iter::marker::ITERATOR;
+	}
 	let mut option = m.ty::<Option<Value>>()?.make_enum(&["Some", "None"])?;
 
 	option

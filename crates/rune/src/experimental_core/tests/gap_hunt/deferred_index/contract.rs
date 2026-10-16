@@ -329,7 +329,7 @@ fn run_contract(engine: &str) {
 			assert_ne!(e["outcome"]["class"], "UNMAPPED");
 			let mut category = *policy;
 			match *policy {
-				"Refused-Range" | "Refused-ByteStr" => {
+				"Refused-ByteStr" => {
 					let o = &e["outcome"];
 					exact_keys(
 						o.as_object().unwrap(),
@@ -403,7 +403,10 @@ fn run_contract(engine: &str) {
 					assert_eq!(hex(&stdout), c[4], "stdout {label}");
 					assert_eq!(hex(&stderr), c[5], "stderr {label}");
 				}
-				"Exact" => {
+				"Exact" | "Refused-Range" => {
+					if *policy == "Refused-Range" {
+						category = "C12-admitted-range";
+					}
 					assert_eq!(audit["invoked"], true);
 					assert_eq!(audit["returned_root"], expected["status"] == "value");
 					let got = project(&e["outcome"]);
@@ -451,7 +454,7 @@ fn run_contract(engine: &str) {
 			("Retained-chain", 20),
 			("Retained-frame", 2),
 			("Retained-display", 1),
-			("Refused-Range", 10),
+			("C12-admitted-range", 10),
 			("Refused-ByteStr", 1),
 			("Retained-resource", 1),
 		])

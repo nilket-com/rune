@@ -580,9 +580,13 @@ impl<'a> Processor<'a> {
 				if let Some(method) = crate::function::fresh_numeric::Method::from_name(resolved) {
 					idx.q.inner.fresh_numeric_script |= method.bit();
 				}
+				if let Some(name) = crate::function::fresh_iter::Name::from_name(resolved) {
+					idx.q.inner.fresh_iter_script |= name.bit();
+				}
 			} else {
 				idx.q.inner.fresh_numeric_script |= 0b1111;
 				idx.q.inner.fresh_sort_by_script = true;
+				idx.q.inner.fresh_iter_script = u8::MAX;
 			}
 		}
 		let layer = idx.scopes.pop().with_span(self.span)?;

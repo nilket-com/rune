@@ -78,10 +78,10 @@ fn compare_binary(op: Binary, a: Value, b: Value, eq: bool, lt: bool, gt: bool) 
 	}
 }
 
-fn shift(value: Value) -> Result<u32> {
+fn shift(value: Value, op: Binary) -> Result<u32> {
 	let count = match value {
 		Value::I64(n) => u32::try_from(n).map_err(|_| {
-			error(ErrorKind::InvalidShift).with_detail(Detail::Coerce {
+			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
 				value: IntValue {
 					negative: n < 0,
 					magnitude: n.unsigned_abs(),
@@ -90,7 +90,7 @@ fn shift(value: Value) -> Result<u32> {
 			})
 		}),
 		Value::U64(n) => u32::try_from(n).map_err(|_| {
-			error(ErrorKind::InvalidShift).with_detail(Detail::Coerce {
+			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
 				value: IntValue {
 					negative: false,
 					magnitude: n,
@@ -101,7 +101,11 @@ fn shift(value: Value) -> Result<u32> {
 		_ => return Err(error(ErrorKind::Type)),
 	}?;
 	if count >= 64 {
-		return Err(error(ErrorKind::InvalidShift).with_detail(Detail::ShiftWidth));
+		return Err(if op == Binary::Shr {
+			error(ErrorKind::Overflow).with_detail(Detail::Underflow)
+		} else {
+			error(ErrorKind::Overflow)
+		});
 	}
 	Ok(count)
 }
@@ -117,8 +121,8 @@ pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 	// Shifts convert the count to u32 independently of the left integer's tag.
 	// Other mixed integer operations convert the right operand to the left tag.
 	let b = match (op, a, b) {
-		(Shl | Shr, I64(_), U64(_)) => I64(i64::from(shift(b)?)),
-		(Shl | Shr, U64(_), I64(_)) => U64(u64::from(shift(b)?)),
+		(Shl | Shr, I64(_), U64(_)) => I64(i64::from(shift(b, op)?)),
+		(Shl | Shr, U64(_), I64(_)) => U64(u64::from(shift(b, op)?)),
 		(_, I64(_), U64(n)) => I64(i64::try_from(n).map_err(|_| {
 			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
 				value: IntValue {
@@ -155,7 +159,7 @@ pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 			BitOr => I64(a | b),
 			BitXor => I64(a ^ b),
 			Shl | Shr => {
-				let n = shift(I64(b))?;
+				let n = shift(I64(b), op)?;
 				if op == Shl {
 					I64(a << n)
 				} else {
@@ -178,7 +182,7 @@ pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 			BitOr => U64(a | b),
 			BitXor => U64(a ^ b),
 			Shl | Shr => {
-				let n = shift(U64(b))?;
+				let n = shift(U64(b), op)?;
 				if op == Shl {
 					U64(a << n)
 				} else {

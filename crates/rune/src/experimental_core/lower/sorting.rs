@@ -22,7 +22,7 @@ impl Lower<'_, '_> {
 		let args = self.operands(&[target, call.args[0]])?;
 		let (args_start, args_len) = self.function.arguments(&args)?;
 		let at = self.location(span);
-		let function = (self.resolve)(None, at)?;
+		let function = (self.resolve)(Resolve::Sort, at)?;
 		self.emit(
 			Op::Call {
 				out,

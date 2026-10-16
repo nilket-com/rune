@@ -191,9 +191,8 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 		};
 
 		let sited = match (site, kind) {
-			("shift", K::Overflow | K::Underflow | K::ValueToIntegerCoercionError { .. }) => {
-				Some("InvalidShift")
-			}
+			("shift", K::Overflow | K::Underflow) => Some("Overflow"),
+			("shift", K::ValueToIntegerCoercionError { .. }) => Some("IntegerCoercion"),
 
 			("index", K::MissingIndexInteger { .. } | K::OutOfRange { .. }) => {
 				Some("IndexOutOfBounds")
@@ -580,12 +579,32 @@ fn run(miri_only: bool) {
 				assert_eq!(case.fresh, ("err", "IndexOutOfBounds", "marks=0"));
 				assert_eq!(case.stock, case.fresh);
 			}
+			// C12 refines eight historical coarse InvalidShift expectations.
+			// Derive the required class only from the immutable frozen operands,
+			// never from either engine's observed result. Preserve the TSV.
+			let shift_converged = case.fresh.1 == "InvalidShift" && case.stock.1 == "InvalidShift";
+			if shift_converged {
+				assert_eq!(case.batch, "operators");
+				assert!(case.function.starts_with("shl") || case.function.starts_with("shr"));
+				assert_eq!(case.operands.len(), 2);
+				let count = case.operands[1]
+					.strip_prefix("i:")
+					.unwrap()
+					.parse::<i64>()
+					.unwrap();
+				assert!(
+					count < 0,
+					"only frozen negative signed counts enter this refinement"
+				);
+				assert_eq!((case.fresh.0, case.stock.0), ("err", "err"));
+			}
 			let want_fresh = match &sorted {
+				_ if shift_converged => ("err", "IntegerCoercion", case.fresh.2),
 				_ if index_converged => ("err", "IntegerCoercion", case.fresh.2),
 				Some(value) => ("ok", value.as_str(), case.fresh.2),
 				None => case.fresh,
 			};
-			let want_stock = if index_converged {
+			let want_stock = if shift_converged || index_converged {
 				("err", "IntegerCoercion", case.stock.2)
 			} else if converged && case.batch == "operators" {
 				case.fresh

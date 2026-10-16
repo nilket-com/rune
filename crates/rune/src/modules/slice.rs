@@ -19,6 +19,12 @@ use crate::{ContextError, Module};
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 
+	// Private C12 provider markers: this std module registers the builtin providers.
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_iter = crate::function::fresh_iter::marker::ITERATOR;
+	}
+
 	m.ty::<Iter>()?;
 	m.function_meta(Iter::next__meta)?;
 	m.function_meta(Iter::size_hint__meta)?;

@@ -621,7 +621,7 @@ fn all_template_arguments_run_before_a_format_error() {
 fn named_refusals_keep_source_revision_and_syntax_span() {
 	let context = Context::with_default_modules().unwrap();
 	for (body, operation, syntax) in [
-		("match n { Ok(#{x}) => x, _ => 0 }", "Match", "match"),
+		("match n { Ok(1.0) => 1, _ => 0 }", "Match", "match"),
 		("let x = 42; let f = || x; f()", "CallClosure", "||"),
 		("let f = async { 42 }; 0", "AsyncBlock", "async"),
 	] {

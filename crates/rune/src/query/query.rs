@@ -62,6 +62,10 @@ pub(crate) struct QueryInner<'arena> {
 	pub(crate) fresh_numeric_script: u8,
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_sort_by_script: bool,
+	/// Monotonic script-associated `iter`/`next`/`any` collision mask (`fresh_iter::Name::bit`),
+	/// set while indexing.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_iter_script: u8,
 	/// Scratch space for parsing numbers.
 	pub(crate) scratch: RefCell<String>,
 	/// How deeply the item being built depends on other items which have to be

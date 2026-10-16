@@ -233,7 +233,9 @@ pub(crate) struct CachedInstruction {
 	pub(crate) charged: bool,
 }
 
-// Internal debug-metadata tag: an inverted range cannot be a source expression.
+// Internal debug-metadata tag shared by sort and Any synthetic helpers.
+// An inverted range cannot be a source expression. The historical SORT name
+// is retained; helper identity is determined separately by lower::Resolve.
 // Stored in existing locations; no Function, Code, Op or Frame layout changes.
 pub(crate) const TRANSPARENT_SORT_LOCATION: Location = Location {
 	source: u32::MAX,
@@ -787,6 +789,15 @@ pub(crate) const SORT_STORE: u32 = FIRST_INTRINSIC_ID + 0x44;
 pub(crate) const SORT_COMMIT: u32 = FIRST_INTRINSIC_ID + 0x45;
 pub(crate) const SORT_ORDERING: u32 = FIRST_INTRINSIC_ID + 0x46;
 pub(crate) const METHOD_CMP: u32 = crate::function::fresh_numeric::Call::MethodCmp.id();
+pub(crate) const RANGE_FROM: u32 = FIRST_INTRINSIC_ID + 0x50;
+pub(crate) const RANGE_FULL: u32 = FIRST_INTRINSIC_ID + 0x51;
+pub(crate) const RANGE_INCLUSIVE: u32 = FIRST_INTRINSIC_ID + 0x52;
+pub(crate) const RANGE_TO_INCLUSIVE: u32 = FIRST_INTRINSIC_ID + 0x53;
+pub(crate) const RANGE_TO: u32 = FIRST_INTRINSIC_ID + 0x54;
+pub(crate) const OBJECT_HAS_FIELD: u32 = FIRST_INTRINSIC_ID + 0x55;
+pub(crate) const ITER_METHOD: u32 = FIRST_INTRINSIC_ID + 0x56;
+pub(crate) const NEXT_METHOD: u32 = FIRST_INTRINSIC_ID + 0x57;
+pub(crate) const ANY_READY: u32 = FIRST_INTRINSIC_ID + 0x58;
 pub(crate) const FIRST_HOST: u32 = FIRST_INTRINSIC_ID + 0x100;
 pub(crate) const MAX_HOST_DESCRIPTORS: usize = 4096;
 fn host_id(index: usize) -> Result<u32> {
@@ -870,6 +881,42 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 	},
 	CertifiedIntrinsic {
 		id: SORT_ORDERING,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: ANY_READY,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: RANGE_FROM,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: RANGE_FULL,
+		arity: 0,
+	},
+	CertifiedIntrinsic {
+		id: RANGE_INCLUSIVE,
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: RANGE_TO_INCLUSIVE,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: RANGE_TO,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: OBJECT_HAS_FIELD,
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: ITER_METHOD,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: NEXT_METHOD,
 		arity: 1,
 	},
 ];
@@ -2752,7 +2799,7 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 17);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 26);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, METHOD_CMP)
 				.unwrap()

@@ -8,7 +8,7 @@ type Miss = (u32, u32, bool);
 enum Walk<'p, 'hir> {
 	Node(&'p hir::Pat<'hir>, u32, usize),
 	Index(&'p hir::Pat<'hir>, u32, usize, usize),
-	Field(&'p hir::Binding<'hir>, u32, usize),
+	Field(&'p hir::Binding<'hir>, u32, usize, bool),
 }
 
 impl<'a, 'hir> Lower<'a, 'hir> {
@@ -187,7 +187,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				is_open,
 			} => {
 				let tuple = hash == crate::runtime::OwnedTuple::HASH;
-				if !tuple && hash != crate::runtime::Vec::HASH {
+				if !tuple
+					&& hash != crate::runtime::Vec::HASH
+					&& hash != crate::runtime::Object::HASH
+				{
 					return Err(self.refused(span, Refusal::Pattern));
 				}
 				let unit = if tuple && count == 0 {
@@ -215,7 +218,13 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				};
 				self.pattern_is(
 					value,
-					if tuple { Type::Tuple } else { Type::Vec },
+					if tuple {
+						Type::Tuple
+					} else if hash == crate::runtime::Object::HASH {
+						Type::Object
+					} else {
+						Type::Vec
+					},
 					misses,
 					span,
 				)?;
@@ -355,7 +364,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					)?;
 					work.try_push(Walk::Node(pat, value, depth))?;
 				}
-				Walk::Field(field, parent, depth) => {
+				Walk::Field(field, parent, depth, anonymous) => {
 					let (span, key) = match field {
 						hir::Binding::Binding(_, key, pat) => (pat.span, *key),
 						hir::Binding::Ident(span, key, _) => (*span, *key),
@@ -364,6 +373,28 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 						return Err(self.refused(span, Refusal::DepthLimit));
 					}
 					let key = self.function.string(key)?;
+					if anonymous {
+						let text = self.slot()?;
+						self.emit(
+							Op::String {
+								out: text,
+								text: key,
+							},
+							span,
+						)?;
+						let condition = self.slot()?;
+						let (args_start, args_len) = self.function.arguments(&[parent, text])?;
+						self.emit(
+							Op::Call {
+								out: condition,
+								function: super::super::code::OBJECT_HAS_FIELD,
+								args_start,
+								args_len,
+							},
+							span,
+						)?;
+						self.pattern_require(condition, true, &mut misses, span)?;
+					}
 					let value = self.slot()?;
 					self.emit(
 						Op::Field {
@@ -438,16 +469,20 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 							}
 						}
 						hir::PatKind::Object(object) => {
-							let hir::PatSequenceKind::Type {
-								variant_hash: Hash::EMPTY,
-								..
-							} = object.kind
-							else {
+							let anonymous = matches!(object.kind, hir::PatSequenceKind::Sequence { hash, .. } if hash == crate::runtime::Object::HASH);
+							if !anonymous
+								&& !matches!(
+									object.kind,
+									hir::PatSequenceKind::Type {
+										variant_hash: Hash::EMPTY,
+										..
+									}
+								) {
 								return Err(self.refused(pat.span, Refusal::Pattern));
-							};
+							}
 							self.pattern_kind(object.kind, value, &mut misses, pat.span)?;
 							for field in object.bindings.iter().rev() {
-								work.try_push(Walk::Field(field, value, depth + 1))?;
+								work.try_push(Walk::Field(field, value, depth + 1, anonymous))?;
 							}
 						}
 					}

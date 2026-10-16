@@ -611,6 +611,12 @@ impl Executor {
 			}
 			return self.sort_call(code, store, function, base, out, id, args_start, args_len);
 		}
+		if (super::code::RANGE_FROM..=super::code::ANY_READY).contains(&id) {
+			if args_len != certificate.arity {
+				return Err(invalid());
+			}
+			return self.small_forms_call(store, function, base, out, id, args_start, args_len);
+		}
 		if let Some(call) = crate::function::fresh_numeric::Call::from_id(id) {
 			if args_len != certificate.arity {
 				return Err(invalid());
@@ -2225,6 +2231,9 @@ mod host_bridge;
 
 mod diagnostic_locations;
 mod numeric;
+mod small_forms;
+#[cfg(test)]
+mod small_forms_tests;
 mod sorting;
 #[cfg(test)]
 mod sorting_tests;

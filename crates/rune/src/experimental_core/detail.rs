@@ -18,7 +18,6 @@ pub enum TypeName {
 	Option,
 	Result,
 	Range,
-	/// Reserved for a future admitted inclusive range; currently refused by lowering.
 	RangeInclusive,
 	VecIter,
 	RangeIter,
@@ -27,6 +26,17 @@ pub enum TypeName {
 	Function,
 	Struct(Nominal),
 	Type,
+	RangeFrom,
+	RangeFull,
+	RangeToInclusive,
+	RangeTo,
+	RangeInclusiveIter,
+	UnsignedRangeInclusiveIter,
+	CharRangeInclusiveIter,
+	RangeFromIter,
+	UnsignedRangeFromIter,
+	CharRangeFromIter,
+	OptionIter,
 }
 
 #[allow(missing_docs)]
@@ -206,6 +216,13 @@ pub enum Detail {
 	MissingStringSlice,
 	/// The full panic message is owned by Failure, outside this Copy payload.
 	PanicMessage,
+	UnsupportedIterRangeInclusive {
+		start: TypeName,
+		end: TypeName,
+	},
+	UnsupportedIterRangeFrom {
+		start: TypeName,
+	},
 	UnsupportedIterRange {
 		start: TypeName,
 		end: TypeName,
@@ -380,8 +397,21 @@ impl TypeName {
 			Self::Option => Option::<rt::Value>::HASH,
 			Self::Result => core::result::Result::<rt::Value, rt::Value>::HASH,
 			Self::Range => rt::Range::HASH,
+			Self::CharRangeFromIter => rt::range_from::RangeFromIter::<char>::HASH,
+			Self::UnsignedRangeFromIter => rt::range_from::RangeFromIter::<u64>::HASH,
+			Self::RangeFromIter => rt::range_from::RangeFromIter::<i64>::HASH,
+			Self::CharRangeInclusiveIter => rt::range_inclusive::RangeInclusiveIter::<char>::HASH,
+			Self::UnsignedRangeInclusiveIter => {
+				rt::range_inclusive::RangeInclusiveIter::<u64>::HASH
+			}
+			Self::RangeInclusiveIter => rt::range_inclusive::RangeInclusiveIter::<i64>::HASH,
+			Self::RangeTo => rt::RangeTo::HASH,
+			Self::RangeToInclusive => rt::RangeToInclusive::HASH,
+			Self::RangeFull => rt::RangeFull::HASH,
+			Self::RangeFrom => rt::RangeFrom::HASH,
 			Self::RangeInclusive => rt::RangeInclusive::HASH,
 			Self::VecIter => rt::slice::Iter::HASH,
+			Self::OptionIter => crate::modules::option::Iter::HASH,
 			Self::RangeIter => rt::range::RangeIter::<i64>::HASH,
 			Self::UnsignedRangeIter => rt::range::RangeIter::<u64>::HASH,
 			Self::CharRangeIter => rt::range::RangeIter::<char>::HASH,
@@ -415,6 +445,11 @@ impl TypeName {
 			Type::Option => Self::Option,
 			Type::Result => Self::Result,
 			Type::Range => Self::Range,
+			Type::RangeTo => Self::RangeTo,
+			Type::RangeToInclusive => Self::RangeToInclusive,
+			Type::RangeInclusive => Self::RangeInclusive,
+			Type::RangeFull => Self::RangeFull,
+			Type::RangeFrom => Self::RangeFrom,
 			Type::Iterator => Self::VecIter,
 		}
 	}
@@ -437,8 +472,19 @@ impl fmt::Display for TypeName {
 			Self::Option => "std::option::Option",
 			Self::Result => "std::result::Result",
 			Self::Range => "std::ops::Range",
+			Self::CharRangeFromIter => "std::ops::RangeFromIter<std::char>",
+			Self::UnsignedRangeFromIter => "std::ops::RangeFromIter<std::u64>",
+			Self::RangeFromIter => "std::ops::RangeFromIter<std::i64>",
+			Self::CharRangeInclusiveIter => "std::ops::RangeInclusiveIter<std::char>",
+			Self::UnsignedRangeInclusiveIter => "std::ops::RangeInclusiveIter<std::u64>",
+			Self::RangeInclusiveIter => "std::ops::RangeInclusiveIter<std::i64>",
+			Self::RangeTo => "std::ops::RangeTo",
+			Self::RangeToInclusive => "std::ops::RangeToInclusive",
+			Self::RangeFull => "std::ops::RangeFull",
+			Self::RangeFrom => "std::ops::RangeFrom",
 			Self::RangeInclusive => "std::ops::RangeInclusive",
 			Self::VecIter => "std::slice::Iter",
+			Self::OptionIter => "std::option::Iter",
 			Self::RangeIter => "std::ops::RangeIter<std::i64>",
 			Self::UnsignedRangeIter => "std::ops::RangeIter<std::u64>",
 			Self::CharRangeIter => "std::ops::RangeIter<std::char>",
@@ -665,6 +711,12 @@ impl fmt::Display for Message<'_> {
 				},
 				f,
 			),
+			UnsupportedIterRangeInclusive { start, end } => {
+				write!(f, "Cannot build an iterator out of {start}..={end}")
+			}
+			UnsupportedIterRangeFrom { start } => {
+				write!(f, "Cannot build an iterator out of {start}..")
+			}
 			UnsupportedIterRange { start, end } => {
 				write!(f, "Cannot build an iterator out of {start}..{end}")
 			}
@@ -897,6 +949,17 @@ mod tests {
 			>())
 			.to_string()
 		);
+		assert_eq!(
+			TypeName::OptionIter.to_string(),
+			crate::runtime::messages::DiagnosticType(&crate::runtime::TypeInfo::any::<
+				crate::modules::option::Iter,
+			>())
+			.to_string()
+		);
+		assert_eq!(
+			TypeName::OptionIter.builtin_hash(),
+			Some(<crate::modules::option::Iter as crate::TypeHash>::HASH)
+		);
 		let mut store = Store::new(Limits {
 			entries: 8,
 			bytes: 4096,
@@ -910,6 +973,13 @@ mod tests {
 		let value = store.string("stale").unwrap();
 		store.release(value).unwrap();
 		assert_eq!(store.diagnostic_type(value), None);
+		let option = store
+			.variant(Type::Option, true, Some(Value::I64(7)))
+			.unwrap();
+		let iter = store.iterator(option).unwrap();
+		assert_eq!(store.diagnostic_type(iter), Some(TypeName::OptionIter));
+		store.release(iter).unwrap();
+		store.release(option).unwrap();
 	}
 	#[test]
 	fn nominal_diagnostic_names_shorten_only_the_presentation() {

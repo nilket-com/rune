@@ -24,8 +24,8 @@ fn binary_inner_reference(op: Binary, a: Value, b: Value) -> Result<Value> {
 	// Shifts convert the count to u32 independently of the left integer's tag.
 	// Other mixed integer operations convert the right operand to the left tag.
 	let b = match (op, a, b) {
-		(Shl | Shr, I64(_), U64(_)) => I64(i64::from(shift(b)?)),
-		(Shl | Shr, U64(_), I64(_)) => U64(u64::from(shift(b)?)),
+		(Shl | Shr, I64(_), U64(_)) => I64(i64::from(shift(b, op)?)),
+		(Shl | Shr, U64(_), I64(_)) => U64(u64::from(shift(b, op)?)),
 		(_, I64(_), U64(n)) => I64(i64::try_from(n).map_err(|_| {
 			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
 				value: IntValue {
@@ -62,7 +62,7 @@ fn binary_inner_reference(op: Binary, a: Value, b: Value) -> Result<Value> {
 			BitOr => I64(a | b),
 			BitXor => I64(a ^ b),
 			Shl | Shr => {
-				let n = shift(I64(b))?;
+				let n = shift(I64(b), op)?;
 				if op == Shl {
 					I64(a << n)
 				} else {
@@ -85,7 +85,7 @@ fn binary_inner_reference(op: Binary, a: Value, b: Value) -> Result<Value> {
 			BitOr => U64(a | b),
 			BitXor => U64(a ^ b),
 			Shl | Shr => {
-				let n = shift(U64(b))?;
+				let n = shift(U64(b), op)?;
 				if op == Shl {
 					U64(a << n)
 				} else {

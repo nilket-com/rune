@@ -64,6 +64,16 @@ pub enum Type {
 	Range,
 	/// An iterator.
 	Iterator,
+	/// An unbounded range with a start (`start..`).
+	RangeFrom,
+	/// A range without endpoints (`..`).
+	RangeFull,
+	/// A range including both endpoints (`start..=end`).
+	RangeInclusive,
+	/// An inclusive upper bound (`..=end`).
+	RangeToInclusive,
+	/// An exclusive upper bound (`..end`).
+	RangeTo,
 }
 
 /// The executor's slot value. A `Heap` variant can only be produced by a

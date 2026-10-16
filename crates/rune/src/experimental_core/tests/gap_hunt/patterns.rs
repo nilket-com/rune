@@ -624,7 +624,13 @@ fn fresh_inventory() {
 fn expected_fresh_refusal(label: &str) -> Option<&'static str> {
 	if matches!(
 		label,
-		"flow/mixed-result" | "deferred/result-ok" | "deferred/result-err"
+		"flow/mixed-result"
+			| "flow/mixed-object"
+			| "deferred/result-ok"
+			| "deferred/result-err"
+			| "deferred/object-closed"
+			| "deferred/object-open"
+			| "deferred/object-missing"
 	) {
 		return None;
 	}
@@ -737,8 +743,8 @@ fn fresh_contract() {
 		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
 		equal += 1;
 	}
-	assert_eq!((equal, refused, full_budget), (252, 33, 63));
-	fs::write(out.join("summary.txt"),"252 exact stock parity;33 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
+	assert_eq!((equal, refused, full_budget), (256, 29, 63));
+	fs::write(out.join("summary.txt"),"256 exact stock parity;29 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
 	contract_completed("fresh", 348);
 }
 

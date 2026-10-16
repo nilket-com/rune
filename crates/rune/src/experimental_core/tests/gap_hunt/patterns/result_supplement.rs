@@ -366,10 +366,9 @@ fn fresh_refusal(label: &str) -> Option<&'static str> {
 		| "c4/let/deferred/Ok/mismatch"
 		| "c4/let/deferred/Err/match"
 		| "c4/let/deferred/Err/mismatch" => Some("Some(Pattern)"),
-		"c4/nominal/shadow-type"
-		| "c4/nominal/user-enum"
-		| "c4/nominal/tuple-struct"
-		| "c4/nominal/object-pattern" => Some("Some(Match)"),
+		"c4/nominal/shadow-type" | "c4/nominal/user-enum" | "c4/nominal/tuple-struct" => {
+			Some("Some(Match)")
+		}
 		_ => None,
 	}
 }
@@ -443,8 +442,8 @@ fn fresh_contract() {
 		assert_eq!(hex(&site), row[6], "{label}: site");
 		exact += 1;
 	}
-	assert_eq!((exact, refused, full_budget), (177, 12, 75));
-	fs::write(out.join("summary.txt"),"177 exact;12 explicit refusals;75 full-fresh-budget source checks (no numeric stock fuel parity)\n").unwrap();
+	assert_eq!((exact, refused, full_budget), (178, 11, 75));
+	fs::write(out.join("summary.txt"),"178 exact;11 explicit refusals;75 full-fresh-budget source checks (no numeric stock fuel parity)\n").unwrap();
 	contract_completed("fresh", COUNT);
 }
 #[test]

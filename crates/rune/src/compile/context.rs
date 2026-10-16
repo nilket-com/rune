@@ -349,6 +349,8 @@ pub struct Context {
 	fresh_sort_by: bool,
 	#[cfg(feature = "fresh-core")]
 	fresh_sort_by_closed: bool,
+	#[cfg(feature = "fresh-core")]
+	fresh_iter: crate::function::fresh_iter::State,
 	/// Handlers for realising traits.
 	traits: hash::Map<Option<TraitHandler>>,
 	/// Registered native attribute macro handlers.
@@ -550,6 +552,8 @@ impl Context {
 				sort_builtin,
 			)
 		};
+		#[cfg(feature = "fresh-core")]
+		let iter_pending = self.fresh_iter.begin_module(module.fresh_iter);
 		if let Some(ComponentRef::Crate(name)) = module.item.first() {
 			self.crates.try_insert(name.try_into()?)?;
 		}
@@ -672,6 +676,7 @@ impl Context {
 		{
 			self.fresh_hosts = prepared_hosts;
 			self.fresh_numeric.finish_module(numeric_pending);
+			self.fresh_iter.finish_module(iter_pending);
 			if sort_builtin {
 				self.fresh_sort_by = true;
 				self.fresh_sort_by_closed = false;
@@ -867,6 +872,13 @@ impl Context {
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_sort_by(&self) -> bool {
 		self.fresh_sort_by && !self.fresh_sort_by_closed
+	}
+
+	/// Fresh core (C12): `name` resolves to the certified std providers for every receiver a
+	/// fresh value can have. Script methods of the same name are checked by the lowerer.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_iter_method(&self, name: crate::function::fresh_iter::Name) -> bool {
+		self.fresh_iter.certified(name)
 	}
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_numeric_method(
@@ -1183,6 +1195,9 @@ impl Context {
 			});
 		}
 
+		#[cfg(feature = "fresh-core")]
+		self.fresh_iter.trait_installed(t.hash);
+
 		self.install_meta(ContextMeta {
 			hash: t.hash,
 			item: Some(t.item.try_clone()?),
@@ -1420,6 +1435,21 @@ impl Context {
 			self.fresh_sort_by_closed = true;
 		}
 		#[cfg(feature = "fresh-core")]
+		let iter_touch = {
+			let (plain, trait_hash) = match &assoc.kind {
+				ModuleAssociatedKind::Function(f) => {
+					(assoc.name.function_parameters == Hash::EMPTY, f.trait_hash)
+				}
+				ModuleAssociatedKind::Constant(..) => (false, None),
+			};
+			let instance = match &assoc.name.kind {
+				meta::AssociatedKind::Instance(name) => Some(name.as_ref()),
+				_ => None,
+			};
+			self.fresh_iter
+				.begin_associated(assoc.container, instance, hash, plain, trait_hash)
+		};
+		#[cfg(feature = "fresh-core")]
 		let numeric = {
 			use crate::function::fresh_numeric::{Method, Pair};
 			let effective = hash;
@@ -1538,6 +1568,10 @@ impl Context {
 		if let Some((Some(pair), previous)) = numeric {
 			self.fresh_numeric.installed(pair, previous);
 		}
+		#[cfg(feature = "fresh-core")]
+		if let Some(touch) = iter_touch {
+			self.fresh_iter.associated_installed(touch);
+		}
 		Ok(())
 	}
 
@@ -1550,6 +1584,8 @@ impl Context {
 	) -> Result<(), ContextError> {
 		#[cfg(feature = "fresh-core")]
 		self.fresh_numeric.invalidate_hash(hash);
+		#[cfg(feature = "fresh-core")]
+		self.fresh_iter.invalidate_hash(hash);
 		#[cfg(feature = "fresh-core")]
 		if hash == FRESH_SORT_ASSOCIATED || hash == FRESH_SORT_ITEM {
 			self.fresh_sort_by = false;
@@ -1666,5 +1702,53 @@ mod c11_sort_certificates {
 			.unwrap();
 		cx.install(unrelated).unwrap();
 		assert!(!cx.fresh_sort_by());
+	}
+}
+
+#[cfg(all(test, feature = "fresh-core"))]
+mod c12_iter_certificates {
+	use super::*;
+	use crate::function::fresh_iter::Name;
+
+	#[test]
+	#[cfg_attr(miri, ignore = "default-module Context; native certificate control")]
+	fn default_modules_certify_and_foreign_names_close() {
+		let empty = Context::new();
+		for name in Name::ALL {
+			assert!(!empty.fresh_iter_method(name), "{name:?}");
+		}
+
+		let cx = Context::with_default_modules().unwrap();
+		for name in Name::ALL {
+			assert!(cx.fresh_iter_method(name), "{name:?}");
+		}
+
+		// A foreign `iter` on a representable receiver that stock leaves without one.
+		let mut cx = Context::with_default_modules().unwrap();
+		let mut foreign = Module::new();
+		foreign.associated_function("iter", |_: i64| 0i64).unwrap();
+		cx.install(foreign).unwrap();
+		assert!(!cx.fresh_iter_method(Name::Iter));
+		assert!(cx.fresh_iter_method(Name::Next));
+		assert!(cx.fresh_iter_method(Name::Any));
+
+		// A foreign `any` on Vec, which stock does not give one.
+		let mut cx = Context::with_default_modules().unwrap();
+		let mut foreign = Module::new();
+		foreign
+			.associated_function("any", |_: &crate::runtime::Vec, _: i64| false)
+			.unwrap();
+		cx.install(foreign).unwrap();
+		assert!(!cx.fresh_iter_method(Name::Any));
+		assert!(cx.fresh_iter_method(Name::Iter));
+
+		// A conflicting `next` on the slice iterator fails and leaves `next` closed.
+		let mut cx = Context::with_default_modules().unwrap();
+		let mut conflicting = Module::new();
+		conflicting
+			.associated_function("next", |_: &mut crate::runtime::slice::Iter| None::<i64>)
+			.unwrap();
+		assert!(cx.install(conflicting).is_err());
+		assert!(!cx.fresh_iter_method(Name::Next));
 	}
 }

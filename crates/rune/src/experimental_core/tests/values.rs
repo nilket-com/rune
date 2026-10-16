@@ -53,13 +53,13 @@ fn arithmetic_checked_edges() {
 		binary(Binary::Shl, Value::I64(1), Value::I64(-1))
 			.unwrap_err()
 			.kind,
-		ErrorKind::InvalidShift
+		ErrorKind::IntegerCoercion
 	);
 	assert_eq!(
 		binary(Binary::Shr, Value::U64(1), Value::U64(64))
 			.unwrap_err()
 			.kind,
-		ErrorKind::InvalidShift
+		ErrorKind::Overflow
 	);
 	assert_eq!(
 		binary(Binary::Eq, Value::I64(1), Value::U64(1)).unwrap(),
@@ -314,7 +314,7 @@ fn amended_mixed_integer_and_numeric_cast_rules() {
 		binary(Binary::Shl, Value::U64(1), Value::I64(-1))
 			.unwrap_err()
 			.kind,
-		ErrorKind::InvalidShift
+		ErrorKind::IntegerCoercion
 	);
 	assert_eq!(
 		binary(Binary::Lt, Value::Bool(false), Value::Bool(true)).unwrap(),

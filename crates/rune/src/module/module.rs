@@ -84,6 +84,10 @@ pub struct Module {
 	pub(crate) fresh_numeric: u8,
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_sort_by: bool,
+	/// Private C12 iterator provider markers (`function::fresh_iter::marker`), never set by
+	/// user registration APIs.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_iter: u8,
 	/// Constant constructors.
 	pub(crate) construct: Vec<(Hash, AnyTypeInfo, ConstConstructImpl)>,
 	/// Defines construct hashes.
@@ -269,6 +273,8 @@ impl Module {
 			fresh_numeric: 0,
 			#[cfg(feature = "fresh-core")]
 			fresh_sort_by: false,
+			#[cfg(feature = "fresh-core")]
+			fresh_iter: 0,
 			construct: Vec::new(),
 			construct_hash: HashSet::new(),
 			common: ModuleItemCommon {

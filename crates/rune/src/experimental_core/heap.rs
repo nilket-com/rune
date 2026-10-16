@@ -108,6 +108,8 @@ enum Payload {
 		values: Vec<Value>,
 	},
 	SortGuard(Box<sorting::SortState>),
+	OtherRange(Box<ranges::RangeShape>),
+	OtherRangeIterator(Box<ranges::RangeCursor>),
 }
 
 // Child values are inert copies; this iterator never acquires ownership.
@@ -141,6 +143,8 @@ impl Payload {
 		let bytes = match self {
 			Self::Moved(_) => Some(0),
 			Self::SortGuard(state) => Some(state.bytes()?),
+			Self::OtherRange(_) => Some(size_of::<ranges::RangeShape>()),
+			Self::OtherRangeIterator(_) => Some(size_of::<ranges::RangeCursor>()),
 			Self::String(s) => Some(s.capacity()),
 			Self::Range { .. } => Some(16),
 			Self::ValueRange { .. } | Self::ValueRangeIterator { .. } => {
@@ -169,6 +173,7 @@ impl Payload {
 	fn children(&self) -> Children<'_> {
 		match self {
 			Self::Moved(_)
+			| Self::OtherRangeIterator(_)
 			| Self::String(_)
 			| Self::Range { .. }
 			| Self::RangeIterator { .. }
@@ -183,6 +188,7 @@ impl Payload {
 			Self::Record { fields, .. } => Children::Fields(fields.iter()),
 			Self::List { values, .. } => Children::Values(values.iter()),
 			Self::ValueRange { start, end } => Children::Two(Some(*start), Some(*end)),
+			Self::OtherRange(shape) => Children::Two(shape.start, shape.end),
 		}
 	}
 
@@ -191,12 +197,14 @@ impl Payload {
 			Self::Moved(tag) => *tag,
 			Self::String(_) => Type::String,
 			Self::Range { .. } => Type::Range,
+			Self::OtherRange(shape) => shape.tag,
 			Self::ValueRange { start, end } => {
 				debug_assert!(!matches!((start, end), (Value::I64(_), Value::I64(_))));
 				Type::Range
 			}
 			Self::Variant { tag, .. } => *tag,
-			Self::SortGuard(..)
+			Self::OtherRangeIterator(_)
+			| Self::SortGuard(..)
 			| Self::VectorIterator(..)
 			| Self::OptionIterator { .. }
 			| Self::RangeIterator { .. }
@@ -446,13 +454,17 @@ impl Store {
 
 	fn payload_edges(payload: &Payload) -> usize {
 		match payload {
-			Payload::Moved(_)
+			Payload::OtherRangeIterator(_)
+			| Payload::Moved(_)
 			| Payload::String(_)
 			| Payload::Range { .. }
 			| Payload::RangeIterator { .. }
 			| Payload::ValueRangeIterator { .. } => 0,
 			Payload::Variant { payload, .. } | Payload::OptionIterator { payload } => {
 				payload.map_or(0, Self::heap_edge)
+			}
+			Payload::OtherRange(shape) => {
+				shape.start.map_or(0, Self::heap_edge) + shape.end.map_or(0, Self::heap_edge)
 			}
 			Payload::VectorIterator(_) => 1,
 			Payload::SortGuard(state) => {
@@ -846,11 +858,15 @@ impl Store {
 			return Err(err(ErrorKind::Type));
 		};
 
-		if self.entry(handle)?.tag()? == Type::Range {
-			return self.range_field(handle, key);
-		}
-		if !matches!(self.entry(handle)?.tag()?, Type::Object | Type::Struct(_)) {
-			return Err(err(ErrorKind::Type));
+		match self.entry(handle)?.tag()? {
+			Type::Object | Type::Struct(_) => (),
+			Type::Range => return self.range_field(handle, key),
+			Type::RangeFrom
+			| Type::RangeFull
+			| Type::RangeInclusive
+			| Type::RangeToInclusive
+			| Type::RangeTo => return self.other_range_field(handle, key),
+			_ => return Err(err(ErrorKind::Type)),
 		}
 		let Payload::Record { fields, .. } = self.payload(handle)? else {
 			return Err(err(ErrorKind::Type));
@@ -929,11 +945,15 @@ impl Store {
 				ErrorKind::IndexOutOfBounds
 			}));
 		};
-		if self.entry(handle)?.tag()? == Type::Range {
-			return self.set_range_field(handle, key, new);
-		}
-		if !matches!(self.entry(handle)?.tag()?, Type::Object | Type::Struct(_)) {
-			return Err(err(ErrorKind::Type));
+		match self.entry(handle)?.tag()? {
+			Type::Object | Type::Struct(_) => (),
+			Type::Range => return self.set_range_field(handle, key, new),
+			Type::RangeFrom
+			| Type::RangeFull
+			| Type::RangeInclusive
+			| Type::RangeToInclusive
+			| Type::RangeTo => return self.set_other_range_field(handle, key, new),
+			_ => return Err(err(ErrorKind::Type)),
 		}
 		self.set_key(value, indexing::RecordKey::Static(key), new)
 			.map_err(|error| {
@@ -1050,6 +1070,7 @@ impl Store {
 			return TypeName::primitive(value);
 		};
 		Some(match self.entry(h).ok()?.payload.as_ref() {
+			Some(Payload::OtherRangeIterator(cursor)) => cursor.diagnostic_type(),
 			Some(Payload::RangeIterator { .. }) => TypeName::RangeIter,
 			Some(Payload::ValueRangeIterator {
 				next: Value::U64(_),
@@ -1061,9 +1082,8 @@ impl Store {
 			}) => TypeName::CharRangeIter,
 			Some(Payload::ValueRangeIterator { .. }) => TypeName::RangeIter,
 			Some(Payload::Moved(tag)) => TypeName::from_type(*tag),
-			// Internal loop iterators cannot escape. Option/Unit snapshots need
-			// distinct diagnostic types before iterator-valued methods are admitted.
-			Some(Payload::VectorIterator(_) | Payload::OptionIterator { .. }) => TypeName::VecIter,
+			Some(Payload::VectorIterator(_)) => TypeName::VecIter,
+			Some(Payload::OptionIterator { .. }) => TypeName::OptionIter,
 			_ => TypeName::from_type(self.entry(h).ok()?.tag().ok()?),
 		})
 	}
@@ -1306,23 +1326,26 @@ impl Store {
 			return self.admit(Payload::OptionIterator { payload: None });
 		}
 		if let Value::Heap(h) = value {
-			if let Payload::Variant {
-				tag: Type::Option,
-				payload,
-				..
-			} = self.payload(h)?
-			{
-				return self.admit(Payload::OptionIterator { payload: *payload });
-			}
-			if let Payload::ValueRange { start, end } = self.payload(h)? {
-				let (next, end) = self.range_iteration_bounds(*start, *end)?;
-				return self.admit(Payload::ValueRangeIterator { next, end });
-			}
-			if let Payload::Range { start, end } = self.payload(h)? {
-				return self.admit(Payload::RangeIterator {
-					next: *start,
-					end: *end,
-				});
+			match self.payload(h)? {
+				Payload::Variant {
+					tag: Type::Option,
+					payload,
+					..
+				} => {
+					return self.admit(Payload::OptionIterator { payload: *payload });
+				}
+				Payload::ValueRange { start, end } => {
+					let (next, end) = self.range_iteration_bounds(*start, *end)?;
+					return self.admit(Payload::ValueRangeIterator { next, end });
+				}
+				Payload::Range { start, end } => {
+					return self.admit(Payload::RangeIterator {
+						next: *start,
+						end: *end,
+					});
+				}
+				Payload::OtherRange(shape) => return self.other_range_iterator(**shape),
+				_ => (),
 			}
 		}
 
@@ -1356,6 +1379,7 @@ impl Store {
 		}
 
 		match self.payload(h)? {
+			Payload::OtherRangeIterator(_) => self.other_range_next(h),
 			Payload::ValueRangeIterator { next, end } => self.value_range_next(h, *next, *end),
 			Payload::OptionIterator { payload } => {
 				let value = *payload;

@@ -1,4 +1,4 @@
-//! C12 stock oracle only. Fresh contract lands with implementation after freeze.
+//! C12 frozen stock oracle and independent fresh observations.
 use super::*;
 use crate::runtime::{self as stock, Value};
 use serde_json::{json, Value as Json};
@@ -95,10 +95,32 @@ fn c12_cleanup(name: &str, v: &Value) -> Json {
 #[test]
 #[ignore = "C12 stock observer child; explicit bounded external operator only"]
 fn child() {
-	assert_eq!(std::env::var("C12_ENGINE").unwrap(), "stock");
+	let engine = std::env::var("C12_ENGINE").unwrap();
+	assert!(matches!(engine.as_str(), "stock" | "fresh"));
 	let index: usize = std::env::var("C12_CASE").unwrap().parse().unwrap();
 	let cases: Vec<Json> = serde_json::from_str(C12_CASES).unwrap();
 	let row = &cases[index];
+	if engine == "fresh" {
+		let mut result = c12_observe_fresh(row);
+		result["schema"] = json!(1);
+		result["engine"] = json!("fresh");
+		result["index"] = json!(index);
+		result["label"] = row["label"].clone();
+		result["source_hex"] = json!(hex(row["source"].as_str().unwrap().as_bytes()));
+		result["source_sha256"] = row["source_sha256"].clone();
+		result["fixture"] = row["fixture"].clone();
+		result["fuel"] = row["fuel"].clone();
+		let path = std::env::var_os("C12_RESULT").unwrap();
+		use std::io::Write;
+		let mut file = std::fs::OpenOptions::new()
+			.create_new(true)
+			.write(true)
+			.open(path)
+			.unwrap();
+		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
+			.unwrap();
+		return;
+	}
 	let source = row["source"].as_str().unwrap();
 	let fixture = row["fixture"].as_str().unwrap();
 	C12_TAPE.with(|t| t.borrow_mut().clear());
@@ -194,3 +216,10 @@ fn observer_controls() {
 
 include!("small_forms/p1.rs");
 include!("small_forms/frozen.rs");
+
+include!("small_forms/fresh_graph.rs");
+include!("small_forms/fresh_error.rs");
+include!("small_forms/fresh.rs");
+include!("small_forms/fresh_contract.rs");
+
+include!("small_forms/retained.rs");

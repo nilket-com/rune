@@ -106,25 +106,20 @@ fn diagnostic_catalogue_both_engines() {
 		(
 			"shift-negative",
 			"1 << -1",
-			InvalidShift,
+			IntegerCoercion,
 			"primitive operation",
 		),
 		(
 			"shift-wide",
 			"1 << 4294967296",
-			InvalidShift,
+			IntegerCoercion,
 			"primitive operation",
 		),
-		(
-			"shift-width",
-			"1 << 64",
-			InvalidShift,
-			"primitive operation",
-		),
+		("shift-width", "1 << 64", Overflow, "primitive operation"),
 		(
 			"shift-unsigned",
 			"1 << 18446744073709551615u64",
-			InvalidShift,
+			IntegerCoercion,
 			"primitive operation",
 		),
 		("neg", "-true", Type, "primitive operation"),
@@ -496,42 +491,26 @@ fn native_replay_preserves_diagnostic_detail() {
 fn compile_time_refusals_are_catalogued_before_execution() {
 	use crate::experimental_core::error::Refusal;
 	let context = Context::with_default_modules().unwrap();
-	for (source, refusal) in [
-		(
-			"pub fn target() { let x = 1; let f = |a| a+x; f(1) }",
-			Refusal::CallClosure,
-		),
-		("pub fn target() { (0..2).iter() + 1 }", Refusal::Method),
-		("pub fn target() { 0..=2 }", Refusal::Range),
-		// Inline inclusive range indexing remains outside the admitted subset.
-		("pub fn target() { [10,20][0..=1] }", Refusal::Range),
-	] {
-		let mut sources = Sources::new();
-		sources.insert(Source::memory(source).unwrap()).unwrap();
-		assert!(
-			crate::prepare(&mut sources)
-				.with_context(&context)
-				.build_vm()
-				.is_ok(),
-			"stock compile: {source}"
-		);
-		if source.contains(".iter()") {
-			let mut sources = Sources::new();
-			sources.insert(Source::memory(source).unwrap()).unwrap();
-			let mut stock = crate::prepare(&mut sources)
-				.with_context(&context)
-				.build_vm()
-				.unwrap();
-			assert_eq!(stock.call(["target"],()).unwrap_err().into_kind().to_string(),"Unsupported binary operation `+` on `std::ops::RangeIter<std::i64>` and `std::i64`");
-		}
-		let mut sources = Sources::new();
-		sources.insert(Source::memory(source).unwrap()).unwrap();
-		let error = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 73)
-			.err()
-			.expect("fresh refusal");
-		assert_eq!(error.refusal, Some(refusal), "{source}");
-		assert_eq!(error.kind, ErrorKind::Unsupported);
-	}
+	let (source, refusal) = (
+		"pub fn target() { let x = 1; let f = |a| a+x; f(1) }",
+		Refusal::CallClosure,
+	);
+	let mut sources = Sources::new();
+	sources.insert(Source::memory(source).unwrap()).unwrap();
+	assert!(
+		crate::prepare(&mut sources)
+			.with_context(&context)
+			.build_vm()
+			.is_ok(),
+		"stock compile: {source}"
+	);
+	let mut sources = Sources::new();
+	sources.insert(Source::memory(source).unwrap()).unwrap();
+	let error = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 73)
+		.err()
+		.expect("fresh refusal");
+	assert_eq!(error.refusal, Some(refusal), "{source}");
+	assert_eq!(error.kind, ErrorKind::Unsupported);
 }
 
 #[test]

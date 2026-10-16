@@ -8,6 +8,9 @@ impl Payload {
 		core::iter::from_fn(move || {
 			let value = match self {
 				Self::Moved(_) => None,
+				Self::OtherRange(shape) => {
+					[shape.start, shape.end].into_iter().flatten().nth(index)
+				}
 				Self::Variant { payload, .. } | Self::OptionIterator { payload } if index == 0 => {
 					*payload
 				}
@@ -48,6 +51,8 @@ fn fields(input: &[Value]) -> Vec<(String, Value)> {
 // Exhaustive on purpose: a new Payload variant must update this oracle matrix.
 fn variant(payload: &Payload) -> &'static str {
 	match payload {
+		Payload::OtherRange(_) => "OtherRange",
+		Payload::OtherRangeIterator(_) => "OtherRangeIterator",
 		Payload::SortGuard(_) => "SortGuard",
 		Payload::Moved(_) => "Moved",
 		Payload::String(_) => "String",
@@ -125,6 +130,24 @@ fn every_payload_preserves_reference_sequence_edges_and_exhaustion() {
 			});
 		}
 	}
+	for (tag, start, end) in [
+		(Type::RangeFull, None, None),
+		(Type::RangeFrom, Some(heap), None),
+		(Type::RangeTo, None, Some(heap)),
+		(Type::RangeInclusive, Some(heap), Some(heap)),
+	] {
+		cases.push(Payload::OtherRange(
+			Box::try_new(ranges::RangeShape { tag, start, end }).unwrap(),
+		));
+	}
+	cases.push(Payload::OtherRangeIterator(
+		Box::try_new(ranges::RangeCursor {
+			next: Value::I64(0),
+			end: Some(Value::I64(1)),
+			done: false,
+		})
+		.unwrap(),
+	));
 	let mut seen = std::collections::BTreeSet::new();
 	let mut s = Store::new(Limits::default()).unwrap();
 	for payload in &cases {
@@ -165,7 +188,7 @@ fn every_payload_preserves_reference_sequence_edges_and_exhaustion() {
 		}
 		s.edges = 0;
 	}
-	assert_eq!(seen.len(), 11);
+	assert_eq!(seen.len(), 13);
 	assert_eq!(
 		(size_of::<Payload>(), size_of::<Entry>(), size_of::<Slot>()),
 		(40, 72, 80)

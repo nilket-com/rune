@@ -47,6 +47,12 @@ use crate::{docstring, ContextError, Module};
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 
+	// Private C12 provider markers: this std module registers the builtin providers.
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_iter = crate::function::fresh_iter::marker::ITER;
+	}
+
 	m.ty::<Vec>()?.docs(docstring! {
 		/// A dynamic vector.
 		///

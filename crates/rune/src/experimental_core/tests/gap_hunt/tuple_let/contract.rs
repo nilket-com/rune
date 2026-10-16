@@ -331,6 +331,13 @@ fn run_contract(engine: &str) {
 			}
 			_ => panic!("unreviewed C8 policy"),
 		}
+		// C12 admission: historical freeze above remains unchanged; these two
+		// former refusals now owe their exact independently frozen stock values.
+		let fresh_expected = if *policy == "Refused-Range" {
+			stock_expected.clone()
+		} else {
+			fresh_expected
+		};
 		let got = if engine == "stock" {
 			project(&e["outcome"])
 		} else {

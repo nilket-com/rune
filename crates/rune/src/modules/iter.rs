@@ -21,6 +21,12 @@ use crate::{docstring, Any, ContextError, Module, Params};
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 
+	// Private C12 provider markers: this std module registers the builtin providers.
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_iter = crate::function::fresh_iter::marker::ITERATOR_TRAIT;
+	}
+
 	m.ty::<Rev>()?;
 	m.function_meta(Rev::next__meta)?;
 	m.function_meta(Rev::next_back__meta)?;

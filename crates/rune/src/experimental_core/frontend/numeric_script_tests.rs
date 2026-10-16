@@ -39,6 +39,7 @@ fn indexed(text: &str, loader: &mut dyn compile::SourceLoader) -> (Result<Progra
 		entries: Vec::new(),
 		transaction: CompileTransaction::default(),
 		sort_helper: None,
+		any_helper: None,
 		failure: None,
 	};
 	let result = compile::compile(

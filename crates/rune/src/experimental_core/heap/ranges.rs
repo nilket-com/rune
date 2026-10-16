@@ -1,6 +1,6 @@
 //! Canonical range endpoints, snapshot iterators and transactional shallow slices.
 use super::{err, Payload, Store};
-use crate::alloc::{String, Vec};
+use crate::alloc::{Box, String, Vec};
 use crate::experimental_core::{
 	error::{Detail, ErrorKind, IntTarget, IntValue, Result, TypeName},
 	value::{Handle, Type, Value},
@@ -83,7 +83,17 @@ impl Store {
 		};
 		// Stock's protocol borrows the receiver before borrowing/converting bounds.
 		let payload = self.payload(target)?;
-		let (start, end) = self.payload(range)?.range_values()?;
+		let (start, end, inclusive) = match self.payload(range)? {
+			Payload::OtherRange(shape) => (
+				shape.start,
+				shape.end,
+				matches!(shape.tag, Type::RangeInclusive | Type::RangeToInclusive),
+			),
+			payload => {
+				let (start, end) = payload.range_values()?;
+				(Some(start), Some(end), false)
+			}
+		};
 		let bound = |value| match super::super::execute::index_value(value) {
 			Err(error) if error.detail == Detail::None => {
 				Err(error.with_detail(Detail::ExpectedNumber {
@@ -94,8 +104,35 @@ impl Store {
 			}
 			result => result,
 		};
-		let start = bound(start)?;
-		let end = bound(end)?;
+		let start = start.map(&bound).transpose()?.unwrap_or(0);
+		let len = match payload {
+			Payload::List {
+				tag: Type::Vec,
+				values,
+			} => values.len(),
+			Payload::String(text) => text.len(),
+			_ => return Err(err(ErrorKind::InvalidCode)),
+		};
+		let end = match end {
+			Some(value) => {
+				let end = bound(value)?;
+				if inclusive {
+					end.checked_add(1).ok_or_else(|| match payload {
+						Payload::List { tag: Type::Vec, .. } => err(ErrorKind::IndexOutOfBounds)
+							.with_detail(Detail::MissingIndex {
+								target: TypeName::Vec,
+							}),
+						Payload::String(_) => {
+							err(ErrorKind::Panic).with_detail(Detail::MissingStringSlice)
+						}
+						_ => err(ErrorKind::InvalidCode),
+					})?
+				} else {
+					end
+				}
+			}
+			None => len,
+		};
 		let copy = match payload {
 			Payload::List {
 				tag: Type::Vec,
@@ -372,5 +409,276 @@ mod tests {
 		s.release(it).unwrap();
 		s.release(r).unwrap();
 		assert_eq!(s.live_entries(), 0);
+	}
+}
+
+/// Cold shapes own inert endpoint handles until Store::admit retains them.
+#[derive(Clone, Copy, Debug)]
+pub(super) struct RangeShape {
+	pub(super) tag: Type,
+	pub(super) start: Option<Value>,
+	pub(super) end: Option<Value>,
+}
+
+/// Only validated inline scalars enter a cursor. An inclusive upper endpoint
+/// has a separate exhausted bit, so yielding MAX never requires MAX + 1.
+#[derive(Debug)]
+pub(super) struct RangeCursor {
+	pub(super) next: Value,
+	pub(super) end: Option<Value>,
+	pub(super) done: bool,
+}
+
+impl Store {
+	#[cold]
+	pub(crate) fn other_range(&mut self, tag: Type, args: &[Value]) -> Result<Value> {
+		let (start, end) = match (tag, args) {
+			(Type::RangeFrom, [start]) => (Some(*start), None),
+			(Type::RangeFull, []) => (None, None),
+			(Type::RangeInclusive, [start, end]) => (Some(*start), Some(*end)),
+			(Type::RangeToInclusive | Type::RangeTo, [end]) => (None, Some(*end)),
+			_ => return Err(err(ErrorKind::InvalidCode)),
+		};
+		self.admit(Payload::OtherRange(
+			Box::try_new(RangeShape { tag, start, end }).map_err(|_| err(ErrorKind::Allocation))?,
+		))
+	}
+
+	#[cold]
+	pub(super) fn other_range_iterator(&mut self, shape: RangeShape) -> Result<Value> {
+		let next = shape.start.ok_or_else(|| err(ErrorKind::Type))?;
+		let end = match shape.tag {
+			Type::RangeInclusive => {
+				let end = shape.end.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+				match self.range_iteration_bounds(next, end) {
+					Ok((_, end)) => Some(end),
+					Err(mut error) => {
+						if let Detail::UnsupportedIterRange { start, end } = error.detail {
+							error.detail = Detail::UnsupportedIterRangeInclusive { start, end };
+						}
+						return Err(error);
+					}
+				}
+			}
+			Type::RangeFrom if matches!(next, Value::I64(_) | Value::U64(_) | Value::Char(_)) => {
+				None
+			}
+			Type::RangeFrom => {
+				return Err(
+					err(ErrorKind::Type).with_detail(Detail::UnsupportedIterRangeFrom {
+						start: self
+							.diagnostic_type(next)
+							.ok_or_else(|| err(ErrorKind::InvalidCode))?,
+					}),
+				)
+			}
+			_ => return Err(err(ErrorKind::Type)),
+		};
+		self.admit(Payload::OtherRangeIterator(
+			Box::try_new(RangeCursor {
+				next,
+				end,
+				done: false,
+			})
+			.map_err(|_| err(ErrorKind::Allocation))?,
+		))
+	}
+
+	#[cold]
+	pub(super) fn other_range_next(&mut self, handle: Handle) -> Result<Option<Value>> {
+		let Payload::OtherRangeIterator(cursor) = self.mutable(handle)? else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		if cursor.done {
+			return Ok(None);
+		}
+		let value = cursor.next;
+		let (past, last) = match (value, cursor.end) {
+			(Value::I64(a), Some(Value::I64(b))) => (a > b, a == b),
+			(Value::U64(a), Some(Value::U64(b))) => (a > b, a == b),
+			(Value::Char(a), Some(Value::Char(b))) => (a > b, a == b),
+			(_, None) => (false, false),
+			_ => return Err(err(ErrorKind::InvalidCode)),
+		};
+		if past {
+			cursor.done = true;
+			return Ok(None);
+		}
+		if last {
+			cursor.done = true;
+			return Ok(Some(value));
+		}
+		let next = match value {
+			Value::I64(n) => Value::I64(n.checked_add(1).ok_or_else(|| err(ErrorKind::Overflow))?),
+			Value::U64(n) => Value::U64(n.checked_add(1).ok_or_else(|| err(ErrorKind::Overflow))?),
+			Value::Char(c) => {
+				let mut n = c as u32 + 1;
+				if n == 0xd800 {
+					n = 0xe000;
+				}
+				Value::Char(char::from_u32(n).ok_or_else(|| err(ErrorKind::Overflow))?)
+			}
+			_ => return Err(err(ErrorKind::InvalidCode)),
+		};
+		cursor.next = next;
+		Ok(Some(value))
+	}
+}
+
+impl RangeCursor {
+	pub(super) fn diagnostic_type(&self) -> TypeName {
+		match (self.end.is_some(), self.next) {
+			(true, Value::I64(_)) => TypeName::RangeInclusiveIter,
+			(true, Value::U64(_)) => TypeName::UnsignedRangeInclusiveIter,
+			(true, Value::Char(_)) => TypeName::CharRangeInclusiveIter,
+			(false, Value::I64(_)) => TypeName::RangeFromIter,
+			(false, Value::U64(_)) => TypeName::UnsignedRangeFromIter,
+			(false, Value::Char(_)) => TypeName::CharRangeFromIter,
+			_ => unreachable!("validated range cursor"),
+		}
+	}
+}
+
+impl Store {
+	#[cold]
+	pub(crate) fn object_has_field(&self, object: Value, key: Value) -> Result<bool> {
+		let Value::Heap(handle) = object else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		let key = self.text(key)?;
+		let Payload::Record {
+			tag: Type::Object,
+			fields,
+		} = self.payload(handle)?
+		else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		Ok(fields.iter().any(|(field, _)| field.as_str() == key))
+	}
+}
+
+impl Store {
+	#[cold]
+	pub(super) fn other_range_field(&mut self, handle: Handle, key: &str) -> Result<Value> {
+		let Payload::OtherRange(shape) = self.payload(handle)? else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		let value = match key {
+			"start" => shape.start,
+			"end" => shape.end,
+			_ => None,
+		}
+		.ok_or_else(|| err(ErrorKind::Type))?;
+		self.retain(value)?;
+		Ok(value)
+	}
+
+	#[cold]
+	pub(super) fn set_other_range_field(
+		&mut self,
+		handle: Handle,
+		key: &str,
+		new: Value,
+	) -> Result<()> {
+		let Payload::OtherRange(shape) = self.mutable(handle)? else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		let old = match key {
+			"start" => shape.start,
+			"end" => shape.end,
+			_ => None,
+		}
+		.ok_or_else(|| err(ErrorKind::Type))?;
+		let edges = self.replacement_edges(old, new)?;
+		self.retain(new)?;
+		let Payload::OtherRange(shape) = self.mutable(handle)? else {
+			unreachable!()
+		};
+		match key {
+			"start" => shape.start = Some(new),
+			"end" => shape.end = Some(new),
+			_ => unreachable!(),
+		}
+		self.edges = edges;
+		self.release(old)
+	}
+
+	#[cfg(test)]
+	pub(crate) fn host_observe_other_range(
+		&self,
+		value: Value,
+	) -> Result<(Type, Option<Value>, Option<Value>)> {
+		let Value::Heap(handle) = value else {
+			return Err(err(ErrorKind::Type));
+		};
+		let Payload::OtherRange(shape) = self.payload(handle)? else {
+			return Err(err(ErrorKind::Type));
+		};
+		Ok((shape.tag, shape.start, shape.end))
+	}
+}
+
+#[cfg(test)]
+mod cold_range_tests {
+	use super::super::Limits;
+	use super::*;
+
+	#[test]
+	fn inclusive_max_is_yielded_once_then_exhausted() {
+		let mut store = Store::new(Limits::default()).unwrap();
+		for (start, end) in [
+			(Value::I64(i64::MAX - 1), Value::I64(i64::MAX)),
+			(Value::U64(u64::MAX - 1), Value::U64(u64::MAX)),
+			(Value::Char('\u{d7ff}'), Value::Char('\u{e000}')),
+		] {
+			let range = store
+				.other_range(Type::RangeInclusive, &[start, end])
+				.unwrap();
+			let iter = store.iterator(range).unwrap();
+			store.release(range).unwrap();
+			assert_eq!(store.iterator_next(iter).unwrap(), Some(start));
+			assert_eq!(store.iterator_next(iter).unwrap(), Some(end));
+			assert_eq!(store.iterator_next(iter).unwrap(), None);
+			assert_eq!(store.iterator_next(iter).unwrap(), None);
+			store.release(iter).unwrap();
+		}
+		assert_eq!(store.live_entries(), 0);
+		assert_eq!(store.payload_bytes(), 0);
+	}
+
+	#[test]
+	fn cold_shape_retains_aliases_and_replacement_edges() {
+		let mut store = Store::new(Limits::default()).unwrap();
+		let child = store.list(Type::Vec, &[]).unwrap();
+		let range = store
+			.other_range(Type::RangeInclusive, &[child, child])
+			.unwrap();
+		store.release(child).unwrap();
+		let Value::Heap(handle) = range else {
+			unreachable!()
+		};
+		store
+			.set_other_range_field(handle, "start", Value::I64(1))
+			.unwrap();
+		assert_eq!(store.other_range_field(handle, "end").unwrap(), child);
+		store.release(child).unwrap();
+		store.release(range).unwrap();
+		assert_eq!(store.live_entries(), 0);
+		assert_eq!(store.payload_bytes(), 0);
+	}
+
+	#[test]
+	fn rejected_shape_admission_does_not_take_endpoint_ownership() {
+		let mut store = Store::new(Limits {
+			entries: 1,
+			bytes: 4096,
+		})
+		.unwrap();
+		let child = store.list(Type::Vec, &[]).unwrap();
+		assert!(store.other_range(Type::RangeFrom, &[child]).is_err());
+		assert_eq!(store.len(child).unwrap(), 0);
+		store.release(child).unwrap();
+		assert_eq!(store.live_entries(), 0);
+		assert_eq!(store.payload_bytes(), 0);
 	}
 }

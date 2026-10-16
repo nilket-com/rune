@@ -25,6 +25,13 @@ static STATE: OnceCell<RandomState> = OnceCell::new();
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 
+	// Private C12 provider markers: this std module registers the builtin providers.
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_iter = crate::function::fresh_iter::marker::ITER
+			| crate::function::fresh_iter::marker::ITERATOR;
+	}
+
 	macro_rules! iter {
 		($ty:ident) => {
 			m.ty::<$ty<i64>>()?;
