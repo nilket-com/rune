@@ -1596,3 +1596,7 @@ mod methods;
 #[cfg(feature = "fresh-core")]
 #[path = "gap_hunt/text_methods.rs"]
 mod text_methods;
+
+#[cfg(feature = "fresh-core")]
+#[path = "gap_hunt/text_pipeline.rs"]
+mod text_pipeline;

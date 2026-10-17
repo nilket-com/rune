@@ -1,0 +1,1487 @@
+[
+  {
+    "id": "000",
+    "label": "matrix/string-split/skip/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(\",\").skip(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "0fb174dcfcc9b9aecd30eb05f2afbff64ea3b22cadb8674928a55c7bf08405e3",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "001",
+    "label": "matrix/string-split/skip/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"a,b,c\".split(\",\").skip(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "a5746924a13ce4ad57a175f0ac7625e97d798a70c365d6e7be35f94a81a0de0d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "002",
+    "label": "matrix/string-split/skip/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(\",\").skip(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "f98ee6412c06c393461b1e1f97b2df99e3b910818fcab5d8a12b5dcb7813f283",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "003",
+    "label": "matrix/string-split/skip/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(\",\").skip(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "19d1653e295449b7b484fc6b8591ee412b1f485f581b5de849eb0b18971786f6",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "004",
+    "label": "matrix/string-split/skip/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(\",\").skip(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "bdfcf453c377afac028960d0ba7b11887b11a1c8ceff45e476952f26d2bebda4",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "005",
+    "label": "matrix/string-split/take/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(\",\").take(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "1f1c9aff643595c64699f785f07463fbdcd99fc114c7444b3b0d0799f7ac1a1e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "006",
+    "label": "matrix/string-split/take/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"a,b,c\".split(\",\").take(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "6aacbbcfe671f9042a4e7b3bdf8053a01c58fbf3a3d6ad6178dab219f453397a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "007",
+    "label": "matrix/string-split/take/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(\",\").take(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "11a43f37b53bcbd95d48f0d6555844c17566987791b255bb60947d016f6e11ac",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "008",
+    "label": "matrix/string-split/take/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(\",\").take(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b1835c21f8a869ed853f758fb08f2f25e9577b934f2dfeb113f55a20baca0a51",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "009",
+    "label": "matrix/string-split/take/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(\",\").take(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "10d680da6fbcd9b1669e6f8808ccaf0c76847e34633c8ac69b1f9716588729d7",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "010",
+    "label": "matrix/char-split/skip/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(',').skip(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "dd592f59ddb8b5b98bcbffa4ee6d5fc67b07e4db09e669cee4c4384ce18b410d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "011",
+    "label": "matrix/char-split/skip/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"a,b,c\".split(',').skip(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "f0c6f6f902500763872cafd71e3bc732d648c08eef3af2b7376d54538d8d29dd",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "012",
+    "label": "matrix/char-split/skip/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(',').skip(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "73d57218d7d70254e0c86c5a60c6ec2c071ccbdb8d13b0d0593293e151bf2e37",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "013",
+    "label": "matrix/char-split/skip/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(',').skip(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "c87034e793bf7815e6dd8628772b154eb92357beca4ff3d76f05176b6a0b6b30",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "014",
+    "label": "matrix/char-split/skip/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(',').skip(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "27bb3b8b7f2b81d06369164750a6830c005a1905c4d13cb9de2052637b3b94af",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "015",
+    "label": "matrix/char-split/take/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(',').take(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e9e7126f59f35bf17636c276f0a480828e67f8a94fee79ca81b3fb7e2c608110",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "016",
+    "label": "matrix/char-split/take/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"a,b,c\".split(',').take(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b696ea8a98c30278a1955425aa9c184353514c79572a54b3cc85b025d6c95b23",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "017",
+    "label": "matrix/char-split/take/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(',').take(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "d52ba45fe2f1fceee63de7d78f544ed4512acbb987a5a94cad6b90e16ead069e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "018",
+    "label": "matrix/char-split/take/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(',').take(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "cafa056e9efbd6bb6213287ea14932757708403efc640d810eac02d11b96aed5",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "019",
+    "label": "matrix/char-split/take/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(',').take(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "3757b2bfac8622e9ee0902a7ee026d2d6176620607d1b33c52d651ba1fc198fc",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "020",
+    "label": "matrix/chars/skip/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a🦀é\".chars().skip(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "89dde8ffaecdaf8c91a4fb47eca29eadbe179acea9b2d2f0f74adbb463090889",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "021",
+    "label": "matrix/chars/skip/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"a🦀é\".chars().skip(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "60edbf39004987352be9a60e97549bf181bb5a69ac858dfc05abb3becdb2f72c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "022",
+    "label": "matrix/chars/skip/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀é\".chars().skip(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e908746aa70ffba20d1642672f04f8a168ae671b2a99ef0136a1aa519ecc7ded",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "023",
+    "label": "matrix/chars/skip/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀é\".chars().skip(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "8e00bbf67b982a284d13a50f834a0b7263a7db2e03f6299b986d60c433d2eed7",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "024",
+    "label": "matrix/chars/skip/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀é\".chars().skip(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "daaca683848169d1586b38636291677fc3dd91b2ce22929c2682a81edcabe649",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "025",
+    "label": "matrix/chars/take/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a🦀é\".chars().take(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "fed0bce7960eba94fcef81feaff590f1f6f291fefa84b6bb86d97967a5189e37",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "026",
+    "label": "matrix/chars/take/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"a🦀é\".chars().take(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e1bb6622562e60430c70d23bbfebeac827567719a457a79c94315cbd59c227e9",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "027",
+    "label": "matrix/chars/take/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀é\".chars().take(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "143323c0874ba0d6aa5de448d0f19e89440811d5a353c820c15165acae74e647",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "028",
+    "label": "matrix/chars/take/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀é\".chars().take(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4aed6b0a49bf8e4af02b911b301466393edbfbeb4354f5b73307ed8536244455",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "029",
+    "label": "matrix/chars/take/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀é\".chars().take(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "db63da156e2eab7d8bf2545c56bbb23591f1b7098ad6e4a9534ce54c84c024d3",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "030",
+    "label": "matrix/skip/skip/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"abcd\".chars().skip(1).skip(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "a73db2c937a3331b6ea4bebc5090e21f7b67948246814b35ab573bbbfe47c350",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "031",
+    "label": "matrix/skip/skip/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"abcd\".chars().skip(1).skip(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e3fdb7ea39d8a7ec0484a43c69db03c9416a7cc4774788eb6c0004a6ccbf5f8c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "032",
+    "label": "matrix/skip/skip/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().skip(1).skip(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "5abe936d8a11a3cadd2186e37446a8f4982a77ebe806c085e3dadb5823846185",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "033",
+    "label": "matrix/skip/skip/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().skip(1).skip(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "6dfeafc20a8930bdd2819dcf8e7f84282b61c9d598394cda383490adc5b29e50",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "034",
+    "label": "matrix/skip/skip/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().skip(1).skip(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "64e408fa71eec6952926b08b9fb216728a6065c0a5ce07cc6b8100139e78b9d8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "035",
+    "label": "matrix/skip/take/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"abcd\".chars().skip(1).take(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "ceae7b39124093c6aee3dcaba1057b376c832617192f9a30d77e449136047532",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "036",
+    "label": "matrix/skip/take/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"abcd\".chars().skip(1).take(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "2137191d84514a0cd7160a37133d7cef68cb0557b510f80cabd39fe2e8c9bab8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "037",
+    "label": "matrix/skip/take/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().skip(1).take(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4b8770c505ebb94157996cad4c99ebdc88ce3fa4e714aaa2efecb7ab6f88b83c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "038",
+    "label": "matrix/skip/take/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().skip(1).take(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "9313afc457299901858caa267b7d3b55fc7fb5b62507a9254265475e3b2aca77",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "039",
+    "label": "matrix/skip/take/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().skip(1).take(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b8b1662a6824c4c3567820bd475987d6e6d1a7f34818601c31e3e47b862efc62",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "040",
+    "label": "matrix/take/skip/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"abcd\".chars().take(3).skip(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b4acd53bde107de961fae044fe3878272a54653088ec6089fa6c9783d6b908f5",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "041",
+    "label": "matrix/take/skip/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"abcd\".chars().take(3).skip(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "1f760b29c4074d2094733367ea0c1c9643bcbfca833232843742c9ee97748a52",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "042",
+    "label": "matrix/take/skip/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().take(3).skip(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "cf65036c500b8044f20264926a6dbe857ae0f17509731005902a0492decf8b11",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "043",
+    "label": "matrix/take/skip/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().take(3).skip(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "300de711b89a65bb7b9881b5f6e8b997689b48bd04c2e4dcd7b0ee003437390b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "044",
+    "label": "matrix/take/skip/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().take(3).skip(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4bdc83c8aabec01824962103bc60e242f67d0ae07138efeae75fe5bb66a66bfd",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "045",
+    "label": "matrix/take/take/next",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"abcd\".chars().take(3).take(1);(it.next(),it.next(),it.next(),it.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "ef80abd369eed0fd54dceb3e0937643297a171910778a2571da735a370cb4267",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "046",
+    "label": "matrix/take/take/for",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"abcd\".chars().take(3).take(1){out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "f7b9714df877e6aac926380712aa5e24d348230ce96d5b6e240df4163ada23d8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "047",
+    "label": "matrix/take/take/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().take(3).take(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "0aa1c732391f91e023491f1713770a3b6d239e87cd7395ac71f1224c6a12e15b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "048",
+    "label": "matrix/take/take/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().take(3).take(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "36accdb6f5372ca55bc75ffae75065879a043dd84227dae8c013b0ed8e9cbc2c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "049",
+    "label": "matrix/take/take/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().take(3).take(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "bd2fe7416c27d4680d07fdfbae9558bf1c847b61e381d97d7a9a720efb777ef0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "050",
+    "label": "base/string-split/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(\",\").count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "28642ff9a0a69920ba7ff98ff7a9c5f33bcf5241042eda625f80fb2f89fa957f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "051",
+    "label": "base/string-split/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(\",\").collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4f5edf329e06f6f8aa5e4d0c1d09cf4de2f4302f39e798899203fbec3a0dad45",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "052",
+    "label": "base/string-split/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(\",\").collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "8c84f75b1bde1d2c96b877044283bcdbfa6c29a99c1d9eaf546caaa1cd1f9eb2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "053",
+    "label": "base/char-split/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(',').count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "acaff908207318470e3de0c7544eb223fe81f1b5a586524a64046f091423538a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "054",
+    "label": "base/char-split/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(',').collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "849ab7a6badb794e485acb2a868fc9581c2a049f3977bd7256062b728ecfe69a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "055",
+    "label": "base/char-split/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b,c\".split(',').collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "a374cc13aed0d1ca93d7356c9bf5888899986a088f486f4409d975ed752d594c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "056",
+    "label": "base/chars/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀é\".chars().count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "21b024ad1e7854145e8865930d59bfc60d5224dae06711854cf1964e1c350f3c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "057",
+    "label": "base/chars/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀é\".chars().collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "2bee5367ee355b20e06e22f15e5a89f8ef762af88fa74aaba77c077cd9fed51a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "058",
+    "label": "base/chars/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀é\".chars().collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "146395fef47a196772f88a1da863d8ad2b623c2b1e6ac73f46579defa08e6f6e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "059",
+    "label": "base/skip/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().skip(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "3f1c366f13a246e33fa89d561a0deb0d5e2dec1f1681e1696a56f00e0d8f15fd",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "060",
+    "label": "base/skip/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().skip(1).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "98d254ce4ef92ee4f363a9b0b2432dd626d17e72285732b364af525a1ee80571",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "061",
+    "label": "base/skip/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().skip(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "82f5c0d0e29198ff7a5f448a8c9f0842557bd9bd93187883efd02ff79405bb2b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "062",
+    "label": "base/take/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().take(3).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "3aabd7aa1e5a596f3e9d743c61dac9ef63e205cac91d6fad88c4e15b4a2ecbe0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "063",
+    "label": "base/take/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().take(3).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e868a44ac407debe5c5f42173ba6e595ee98872243b59ce09e3d2b0455e4368a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "064",
+    "label": "base/take/vec",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abcd\".chars().take(3).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "68c700009292caa83b09e3117d4ec972e6cc505882d3aa7725d72e40603ff399",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "065",
+    "label": "alias/string-split/skip/0",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(\",\");let a=it.skip(0);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "30031aafaec08a046c771cc1f52381eb54d31658eb1d6eacd075008edd9d7d02",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "066",
+    "label": "alias/string-split/take/0",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(\",\");let a=it.take(0);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4886a268ccb2fce776a8b9c710a43e08c9ac453134d2b76c3ab63ef4aa9701f1",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "067",
+    "label": "alias/string-split/skip/1",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(\",\");let a=it.skip(1);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "bf67e9ccec243fe5f33979b82ab3ac12e63e0283a061fd74fe815c297d42b26b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "068",
+    "label": "alias/string-split/take/1",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(\",\");let a=it.take(1);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4cf140cbd7aff0e4b5ffd79e0a1a641e24897e23c1f152494e5a39f24354f7d2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "069",
+    "label": "alias/string-split/skip/20",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(\",\");let a=it.skip(20);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "42ce20da9dc211ee27a222b1f3df10645a164ee7e5c0b368fd12baa5413f80e9",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "070",
+    "label": "alias/string-split/take/20",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(\",\");let a=it.take(20);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "0ec4eddda5fc8f70e97d9218e374c754ddf205068e6b2b8435594d63270f7620",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "071",
+    "label": "alias/char-split/skip/0",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(',');let a=it.skip(0);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b61bd146397b0b15cf95b0f6124f463c7aa1713ba60120162b85a8c471e64641",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "072",
+    "label": "alias/char-split/take/0",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(',');let a=it.take(0);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "595213a20e5e65b64131a8af699130cb103842395e9a743746b7238cc74f1444",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "073",
+    "label": "alias/char-split/skip/1",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(',');let a=it.skip(1);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "8f078f863415b8f1e4d80200b190eba1686f094a1be4beb0ffe380638a44e1f0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "074",
+    "label": "alias/char-split/take/1",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(',');let a=it.take(1);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "fd48578bcceca9497a88fac30599d28862a6163437e1c7e6091663e4119ad848",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "075",
+    "label": "alias/char-split/skip/20",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(',');let a=it.skip(20);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4b866d84e1b514db337cdf80ba32cda081efa8f22f980704288d83375fba1914",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "076",
+    "label": "alias/char-split/take/20",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(',');let a=it.take(20);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4e7e9f2ff2470339336de6960e41500dcf4ac1144fedb67ecda4d02fc292674c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "077",
+    "label": "alias/chars/skip/0",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a🦀é\".chars();let a=it.skip(0);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "d88d4fb0169ea7616f575092b4dd363db7e774afc85322ab80ed674c65cb5102",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "078",
+    "label": "alias/chars/take/0",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a🦀é\".chars();let a=it.take(0);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "45f2a3d82eb9ec0c7848dbfbf5a2a55fd808eb0bc0531a3e82f55ed30e7904aa",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "079",
+    "label": "alias/chars/skip/1",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a🦀é\".chars();let a=it.skip(1);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e3546ba3a110f16eff9ed2e33ffae211d5b097ecb3387d0f4c1d32a98ddf618b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "080",
+    "label": "alias/chars/take/1",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a🦀é\".chars();let a=it.take(1);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e533359708f7aa84f254e67de81de2b8f8f7bac1a62cd491025fb8fb725c3d2f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "081",
+    "label": "alias/chars/skip/20",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a🦀é\".chars();let a=it.skip(20);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "239c8894c83f24ea902463a9a8705eecfb3fdc81771a46fb6757f57fddd7a02d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "082",
+    "label": "alias/chars/take/20",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a🦀é\".chars();let a=it.take(20);(it.next(),a.next(),it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "9a4599625a3a29728b10d9a1c7222b7ef948c10f8166a13a3da72b8ee74dda31",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "083",
+    "label": "lifecycle/nested",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a🦀bc\".chars().skip(1).take(2).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "32975207ed78800811e94d61ca4afe2ce786be08009d89648280d60f1d56be50",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "084",
+    "label": "lifecycle/nested-alias",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"abcdef\".chars();let a=it.skip(1);let b=a.take(2);(a.next(),b.next(),it.next(),b.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "561342aea0830555d13d1b6ef490d0ca35e95b7b8717aaa2322b974c257d5395",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "085",
+    "label": "lifecycle/creation-lazy",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"a,b,c\".split(\",\");let a=it.skip(2);let b=a.take(0);(it.next(),b.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "029fe774c83cdabcccb56f33e4f281e45218cdcbc6851f6b244ec55da05d6433",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "086",
+    "label": "lifecycle/adapter-alias",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"abcd\".chars().skip(1);let a=it;(it.next(),a.next(),it.next(),a.next())}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "be994c4e07d9b0dd76a731be9aec7dc26fd29bfd4ba9bd4eb7e0ae8ff3ba3ef1",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "087",
+    "label": "lifecycle/break",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let it=\"abc\".chars();for v in it.take(2){break;}it.next()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b0cdfbebb9ee4e5c0504ec0f1ebedbc646260f269f8a1d2b72c1949652ba015a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "088",
+    "label": "lifecycle/continue",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let out=[];for v in \"abc\".chars().skip(1){if v=='b'{continue;}out.push(v);}out}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "c7fcc0be40d52d1b2a974d709193424b4b4b2e38db1e555015c84a6cfa4bc51b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "089",
+    "label": "lifecycle/early-return",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let a=\"abc\".chars().skip(1);a.next();return 7;}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "5b045f8187684c12928fd0f33e2a63fee7b0c11da4cda3c90ce0f69301ee8a20",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "090",
+    "label": "lifecycle/temporary-source",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let s=\"abc\";let it=s.chars();s=\"other\";(it.collect::<String>(),s)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "2fe52ef52b2c8dec928bac50a8b10e826d7af73062f0bca0ba678345cf4047ce",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "091",
+    "label": "lifecycle/effect-order",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){text(1,\"abc\").chars().skip(tap(2,1)).take(tap(3,1)).collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4eb81c0e5461f5b1603b91b7baa08048396b91f9b5dc0932a5e9b8028bf0d776",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "092",
+    "label": "lifecycle/source-write-lease",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let s=\"abc\";let it=s.chars().take(0);s.push('x');it.next()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "3a41498c893c8dd418a7a06ddf21b9252323907d9fb1ef737df1d842abcd330c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "093",
+    "label": "lifecycle/source-drop-lease",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let s=\"abc\";{let it=s.chars().take(0);it.next();}s.push('x');s}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "2e3a30fa8ad70baff4fa6be74ce2340fdc8ca6204851f68b7a91bba4d36db9b2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "094",
+    "label": "unicode/94/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"\".chars().count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "245fb408166ac969c2895d047a99138a525c576614ee86653779c922ae10f233",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "095",
+    "label": "unicode/95/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"\".chars().collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "2c2c9de717a64f09ee9e654c929a91265f6d80849afbd8989f81e932efeb24ac",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "096",
+    "label": "unicode/96/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"🦀\".chars().count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "438fea97aee8d46ffe1949625e6d0adf9d41fa0892b8c62c16ca05ec0f66c7fe",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "097",
+    "label": "unicode/97/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"🦀\".chars().collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "8e86ca412edf626418a726b258ac7829daf8026ca6cf09b1e40613ea73e696c2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "098",
+    "label": "unicode/98/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"é\".chars().count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e06af57f3467e57db35ad143fb183cc66610ee954032869c5be7306d9303da9f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "099",
+    "label": "unicode/99/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"é\".chars().collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "15d66a7373914b60cf66bc8aa048aa2d59bac7308f8e4262e7f2288e9e044d83",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "100",
+    "label": "unicode/100/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"α🦀β\".chars().count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b6a4d44bc1e9acbdfd752c68b715eea36a6ca586995641e6285b6c94d64074b5",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "101",
+    "label": "unicode/101/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"α🦀β\".chars().collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "323c0407e7e8133120aee525da09ef288ebadcd91abe640a53260b79ce845b57",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "102",
+    "label": "unicode/102/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"\\u{0}a\".chars().count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "c97f150e422c3a45b1d7319dbce4a530013c83af10e6db53f1cdec35e6f29ac3",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "103",
+    "label": "unicode/103/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"\\u{0}a\".chars().collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e40a175b404d8bb7c5e0c05d55dcfbcd0465db707c7f72ef81376b1304f219a6",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "104",
+    "label": "unicode/104/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a\\nb\".chars().count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e3fcc8f91d2c7d15d18764cbc5ae333729f453b0003733c947fd3483e97db85e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "105",
+    "label": "unicode/105/string",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a\\nb\".chars().collect::<String>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "fe7244ae40a53b407e33432255ac60511cc114446e6d8017659d3701bd86ac6a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "106",
+    "label": "unwrap/106",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let v=Some(7);(v.unwrap_or(tap(1,9)),v)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "ad5e42b9ae9c0ed9160bbffe4b69b4d10e067c08d39ecaf72048f96575b5145f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "107",
+    "label": "unwrap/eager-error/107",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(Some(7)).unwrap_or(1/0)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "06b1c1993d48e40e7cd742c2d54cc2246c3a0175d664c8b514b2d8f12653804f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "108",
+    "label": "unwrap/108",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let v=None;(v.unwrap_or(tap(1,9)),v)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "8ed06c4eb3e1a5c66d497cbc36c13b3d0000c18e6fadcaeb1e66501b6a319285",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "109",
+    "label": "unwrap/eager-error/109",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(None).unwrap_or(1/0)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "93b8869313f7f1395c7413805d6ba54a654e97257aa64ab245031e678124c141",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "110",
+    "label": "unwrap/110",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let v=Ok(7);(v.unwrap_or(tap(1,9)),v)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "fe4e83b9b5d37bbdc72a59951561f0117b0b7db8d1c6a68c179e3fc5d7186c17",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "111",
+    "label": "unwrap/eager-error/111",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(Ok(7)).unwrap_or(1/0)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "0c66835eb4d4a040d915fc80915fec4345d3af9fe3d40155acd437f387096277",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "112",
+    "label": "unwrap/112",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let v=Err(\"x\");(v.unwrap_or(tap(1,9)),v)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "0ef9b12d65ac77dacf29bb163478a06be527b74b10b2c7bef720e314b7906eed",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "113",
+    "label": "unwrap/eager-error/113",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(Err(\"x\")).unwrap_or(1/0)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "90ab8d3c066fccfc6e04fd0ef2ab50bf24ee8def8e7bacd1f0212b078d088225",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "114",
+    "label": "unwrap/selected-alias",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let s=\"a\";let v=Some(s);let a=v.unwrap_or(\"b\");(v,s,a)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "96cb7046bc7b5039ecdc525b44d577f381fac6c466ba60b68c5181af96c9d133",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "115",
+    "label": "unwrap/default-alias",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let d=[];let v=None;let a=v.unwrap_or(d);a.push(7);(d,a,v)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "f8bd137d03e71514006eae5a1c60b87bc857dcac16bdeb49ef7ca2a297810f8e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "116",
+    "label": "unwrap/result-default-alias",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let d=[];let v=Err(\"x\");let a=v.unwrap_or(d);a.push(7);(d,a,v)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "928d779987669dd0855f5d2343bc79d891c0593c041aa28752c9e4aa9df3ad70",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "117",
+    "label": "unwrap/return-default",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let v=Some(7);v.unwrap_or({tap(1,0);return 9;})}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "38b151553ae3a6741e1a746a8bd0f67b5fa8c09f5044c14de4b84074e5494355",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "118",
+    "label": "unwrap/arity/118",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(Some(7)).unwrap_or()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "494ebf902e90993df3b6e6042bea7aa78c59391f2cba7adfab53994addee063e",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "119",
+    "label": "unwrap/arity/119",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(Some(7)).unwrap_or(tap(1,0),tap(2,0))}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "40e2a33f13099a41a017b97f91ffd2ff3122324ed6b96f5ee2372fb03449ba81",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "120",
+    "label": "unwrap/arity/120",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(None).unwrap_or()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "ed35afb0a5fd8bb80b6861cff9ac4feaf08977c752fd261d06813f79a3f44035",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "121",
+    "label": "unwrap/arity/121",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(None).unwrap_or(tap(1,0),tap(2,0))}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "7677b223901f7a714854d9a6b6c99a27a85ad9f3cd6cbbf5e27780bef1d81a4d",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "122",
+    "label": "unwrap/arity/122",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(Ok(7)).unwrap_or()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "13551ec4d2c165f226a49492de99ad0bf822643e9aafe109239ec0bc7692d226",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "123",
+    "label": "unwrap/arity/123",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(Ok(7)).unwrap_or(tap(1,0),tap(2,0))}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b38e1201e2fc137674684110c2689efc2b56231b699670d08402f1ed7cc1b1b0",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "124",
+    "label": "unwrap/arity/124",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(Err(7)).unwrap_or()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "c5c42603700d4343efe180e37c82a49c7aaac4e0c78118d28ab8e6b91f48b21c",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "125",
+    "label": "unwrap/arity/125",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(Err(7)).unwrap_or(tap(1,0),tap(2,0))}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b64f70dd1947f2a5eb9e4884060e6357f5288d348e42616b55647cd03071ae57",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "126",
+    "label": "wrong-receiver/chars",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).chars()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "71ceb65ef278d99afeb5df277990fc8119a042f9124e9e4a6885ef6a8f05158b",
+    "fuel": 200000,
+    "proposed_policy": "Receiver-audit"
+  },
+  {
+    "id": "127",
+    "label": "cert/i64-provider/chars",
+    "fixture": "i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).chars()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "71ceb65ef278d99afeb5df277990fc8119a042f9124e9e4a6885ef6a8f05158b",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "128",
+    "label": "cert/raw-i64-provider/chars",
+    "fixture": "raw-i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).chars()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "71ceb65ef278d99afeb5df277990fc8119a042f9124e9e4a6885ef6a8f05158b",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "129",
+    "label": "wrong-receiver/skip",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).skip(1)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "92a0cbe25372f2125cda7f66579003152cd5f0893385fa309fc422fa13ce3db7",
+    "fuel": 200000,
+    "proposed_policy": "Receiver-audit"
+  },
+  {
+    "id": "130",
+    "label": "cert/i64-provider/skip",
+    "fixture": "i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).skip(1)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "92a0cbe25372f2125cda7f66579003152cd5f0893385fa309fc422fa13ce3db7",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "131",
+    "label": "cert/raw-i64-provider/skip",
+    "fixture": "raw-i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).skip(1)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "92a0cbe25372f2125cda7f66579003152cd5f0893385fa309fc422fa13ce3db7",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "132",
+    "label": "wrong-receiver/take",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).take(1)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4a7549f2605ec3c44cd4bc6b25ff613cc9146f49cfb2801911f5a2b1a0d947b3",
+    "fuel": 200000,
+    "proposed_policy": "Receiver-audit"
+  },
+  {
+    "id": "133",
+    "label": "cert/i64-provider/take",
+    "fixture": "i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).take(1)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4a7549f2605ec3c44cd4bc6b25ff613cc9146f49cfb2801911f5a2b1a0d947b3",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "134",
+    "label": "cert/raw-i64-provider/take",
+    "fixture": "raw-i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).take(1)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "4a7549f2605ec3c44cd4bc6b25ff613cc9146f49cfb2801911f5a2b1a0d947b3",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "135",
+    "label": "wrong-receiver/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "c974d0548aa4f55b6804acb0011df1a26645f82835e55af96d20d696a78e8333",
+    "fuel": 200000,
+    "proposed_policy": "Receiver-audit"
+  },
+  {
+    "id": "136",
+    "label": "cert/i64-provider/count",
+    "fixture": "i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "c974d0548aa4f55b6804acb0011df1a26645f82835e55af96d20d696a78e8333",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "137",
+    "label": "cert/raw-i64-provider/count",
+    "fixture": "raw-i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "c974d0548aa4f55b6804acb0011df1a26645f82835e55af96d20d696a78e8333",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "138",
+    "label": "wrong-receiver/unwrap_or",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).unwrap_or(7)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "59eeb14e17c1cf7af780f0fcc28840c8152d496471fa137634b495beaef28bbb",
+    "fuel": 200000,
+    "proposed_policy": "Receiver-audit"
+  },
+  {
+    "id": "139",
+    "label": "cert/i64-provider/unwrap_or",
+    "fixture": "i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).unwrap_or(7)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "59eeb14e17c1cf7af780f0fcc28840c8152d496471fa137634b495beaef28bbb",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "140",
+    "label": "cert/raw-i64-provider/unwrap_or",
+    "fixture": "raw-i64-provider",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(7).unwrap_or(7)}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "59eeb14e17c1cf7af780f0fcc28840c8152d496471fa137634b495beaef28bbb",
+    "fuel": 200000,
+    "proposed_policy": "Refused-provider-candidate"
+  },
+  {
+    "id": "141",
+    "label": "refused/141",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){[1,2].iter().skip(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "d6a694a970d576a7b0b839403c22c63357b2f932815af5dd3532f8c962dfbb5d",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "142",
+    "label": "refused/142",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){(0..3).iter().take(1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "685398313d7f6228a3c4ecc06bd3cb3c89d1faafac40602970d95f8aad40fc9f",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "143",
+    "label": "refused/143",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){Some(1).iter().count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "5544aa0ed9e07144efd456a15a685bf2ba06a6d3e070e6d381475303e9fd1048",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "144",
+    "label": "refused/144",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"a,b\".split(|c|c==',').skip(1).collect::<Vec>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "2b003374818de7f76ce733adc8cc9e7ce3b667a2ccc03a867e691c5f9095e266",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "145",
+    "label": "refused/145",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().map(|c|c).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "c0f991797ee849f084d4894305d2be83ea8a3bd3ee7cc71419ff1e68f27bba6f",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "146",
+    "label": "refused/146",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().filter(|c|true).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e5e1a65a495818a6d84d97188b266febe96cb6085c681ffe23ce4bd0a27acc13",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "147",
+    "label": "refused/147",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().collect::<Object>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "b389004ef04224a0c3dd5e492103a8cc13c8d699ce920520ef68cbcf9a4cdb2b",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "148",
+    "label": "refused/148",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().collect::<Tuple>()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e2b3d49455a15fb976da29b8ac2af21e25c59dc71146448b86c96fec154e1c12",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "149",
+    "label": "argument/skip/149",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().skip(-1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "bfffb112e16ea74538ca53ee9ff83f6229f6915849a3e3bdbb17ef555c846e70",
+    "fuel": 200000,
+    "proposed_policy": "Argument-audit"
+  },
+  {
+    "id": "150",
+    "label": "argument/skip/150",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().skip(true).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "f9f9154aa7f7d68ea3f33f930b76aecb04fc23c50b62ef0bdc2bcf1f68f38747",
+    "fuel": 200000,
+    "proposed_policy": "Argument-audit"
+  },
+  {
+    "id": "151",
+    "label": "argument/skip/151",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().skip(\"1\").count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e132671a883bebf36e4f0c724558d8985770b119808eebcff057c6f13331f5e3",
+    "fuel": 200000,
+    "proposed_policy": "Argument-audit"
+  },
+  {
+    "id": "152",
+    "label": "argument/skip/152",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().skip(1.5).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "adfeab18a033f0935ddbd216c3bea00f3c3d16f0bea54a5357b70eff67839143",
+    "fuel": 200000,
+    "proposed_policy": "Argument-audit"
+  },
+  {
+    "id": "153",
+    "label": "arity/skip/153",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().skip()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "942e1ad8c2b8444fd96497afb7569db040e94ef91b8cb2c8b48800b303437a0f",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "154",
+    "label": "arity/skip/154",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().skip(tap(1,1),tap(2,2))}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "e574cff17d2cc72c648a2ca2a287ddcc21eef314c7e79d9df90c09375ba46a71",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "155",
+    "label": "argument/take/155",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().take(-1).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "0d9e6d5ea7b290df2704dbf3572d40ddec9edbc668a8b94af9e8d32398cfe235",
+    "fuel": 200000,
+    "proposed_policy": "Argument-audit"
+  },
+  {
+    "id": "156",
+    "label": "argument/take/156",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().take(true).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "ae2ad971ef6cbeb440549da89ca48fcbcf53c1b7a6b04b04139a13f0061475d6",
+    "fuel": 200000,
+    "proposed_policy": "Argument-audit"
+  },
+  {
+    "id": "157",
+    "label": "argument/take/157",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().take(\"1\").count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "a2e5fa49bda2ff7add784a1c346510a28e0a3ec90269c9112cb5bec28a6da1b6",
+    "fuel": 200000,
+    "proposed_policy": "Argument-audit"
+  },
+  {
+    "id": "158",
+    "label": "argument/take/158",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().take(1.5).count()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "cb0230e8d703c3c1bd0cfa7b972afd2bb4e545722fc71fc50d499d52a847cbc6",
+    "fuel": 200000,
+    "proposed_policy": "Argument-audit"
+  },
+  {
+    "id": "159",
+    "label": "arity/take/159",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().take()}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "491a188d5471ccd10f54e51506b720ab2e51fefc8b1ce4b4d26dd2dae90e6cea",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "160",
+    "label": "arity/take/160",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().take(tap(1,1),tap(2,2))}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "5d5124d6dcf0ac0985d2d070aea7e43acd2d12d10746f27e8f383ddbfe3f625f",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "161",
+    "label": "arity/chars",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars(tap(1,0))}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "03ebd768c89e4201b2bd3fb2ac5d4ebbab398e71f93c9d6c7fd39b65d58741de",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "162",
+    "label": "arity/count",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){\"abc\".chars().count(tap(1,0))}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "a01c169e91027be603aa7a3f19aa42e14795f6f5bacba5ffccf470de76bfd973",
+    "fuel": 200000,
+    "proposed_policy": "Refused-arity-candidate"
+  },
+  {
+    "id": "163",
+    "label": "fuel/163",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let n=0;for c in \"abcdefghijklmnopqrstuvwxyz\".chars().skip(3).take(20){n+=1;}n}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "ff236059b26c5f1176f9208c5b90137e12235d21219794eb137a6db3b064573a",
+    "fuel": 32,
+    "proposed_policy": "Resource-audit"
+  },
+  {
+    "id": "164",
+    "label": "fuel/164",
+    "fixture": "default",
+    "source": "use c14b::tap;\nfn text(tag,s){tap(tag,0);s}\n\npub fn main(){let n=0;while n<100{let s=\"a,b,c,d\".split(\",\").skip(1).collect::<String>();n+=1;}n}\npub fn c14b_reuse(){7}\n",
+    "source_sha256": "37923d84080ffb4fb05c5cae258e0553cdf746c0f255c4e0038227f0737fe306",
+    "fuel": 32,
+    "proposed_policy": "Resource-audit"
+  }
+]

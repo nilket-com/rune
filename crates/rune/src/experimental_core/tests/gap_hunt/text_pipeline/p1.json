@@ -1,0 +1,74 @@
+{
+  "126": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "129": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "132": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "135": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "138": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "147": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 2
+    }
+  ],
+  "150": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "151": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "152": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "156": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "157": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "158": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ]
+}
