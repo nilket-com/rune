@@ -1,3 +1,5 @@
+#[cfg(feature = "fresh-core")]
+use crate::TypeHash;
 use core::fmt;
 
 use crate as rune;
@@ -352,6 +354,8 @@ pub struct Context {
 	#[cfg(feature = "fresh-core")]
 	fresh_iter: crate::function::fresh_iter::State,
 	#[cfg(feature = "fresh-core")]
+	fresh_text: crate::function::fresh_text::State,
+	#[cfg(feature = "fresh-core")]
 	fresh_methods: crate::function::fresh_methods::State,
 	/// Handlers for realising traits.
 	traits: hash::Map<Option<TraitHandler>>,
@@ -556,6 +560,8 @@ impl Context {
 		};
 		#[cfg(feature = "fresh-core")]
 		let iter_pending = self.fresh_iter.begin_module(module.fresh_iter);
+		#[cfg(feature = "fresh-core")]
+		let text_pending = self.fresh_text.begin_module(module.fresh_text);
 		if let Some(ComponentRef::Crate(name)) = module.item.first() {
 			self.crates.try_insert(name.try_into()?)?;
 		}
@@ -679,6 +685,7 @@ impl Context {
 			self.fresh_hosts = prepared_hosts;
 			self.fresh_numeric.finish_module(numeric_pending);
 			self.fresh_iter.finish_module(iter_pending);
+			self.fresh_text.finish_module(text_pending);
 			if sort_builtin {
 				self.fresh_sort_by = true;
 				self.fresh_sort_by_closed = false;
@@ -883,6 +890,14 @@ impl Context {
 
 	/// Fresh core (C12): `name` resolves to the certified std providers for every receiver a
 	/// fresh value can have. Script methods of the same name are checked by the lowerer.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_text_method(&self, m: crate::function::fresh_text::Method) -> bool {
+		self.fresh_text.ready(m)
+	}
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_text_collect(&self) -> bool {
+		self.fresh_text.collect_ready()
+	}
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_iter_method(&self, name: crate::function::fresh_iter::Name) -> bool {
 		self.fresh_iter.certified(name)
@@ -1445,6 +1460,29 @@ impl Context {
 			self.fresh_sort_by_closed = true;
 		}
 		#[cfg(feature = "fresh-core")]
+		let (text_touch, text_collect) = {
+			let instance = match &assoc.name.kind {
+				meta::AssociatedKind::Instance(n) => Some(n.as_ref()),
+				_ => None,
+			};
+			let (m, collect) = match instance.map(str::as_bytes) {
+				Some(b"collect") => (None, true),
+				Some(_) => (
+					instance.and_then(crate::function::fresh_text::Method::from_name),
+					false,
+				),
+				None => (None, false),
+			};
+			(
+				m.map(|m| {
+					let plain = assoc.name.function_parameters == Hash::EMPTY
+						&& matches!(&assoc.kind,ModuleAssociatedKind::Function(f) if f.trait_hash.is_none());
+					(m, self.fresh_text.begin(m, assoc.container, plain))
+				}),
+				collect,
+			)
+		};
+		#[cfg(feature = "fresh-core")]
 		let iter_touch = {
 			let instance = match &assoc.name.kind {
 				meta::AssociatedKind::Instance(name) => Some(name.as_ref()),
@@ -1586,6 +1624,19 @@ impl Context {
 		#[cfg(feature = "fresh-core")]
 		if let Some(touch) = iter_touch {
 			self.fresh_iter.associated_installed(touch);
+		}
+		#[cfg(feature = "fresh-core")]
+		{
+			if let Some((m, true)) = text_touch {
+				self.fresh_text.installed(m);
+			}
+			if text_collect
+				&& assoc.name.function_parameters == Hash::parameters([crate::runtime::Vec::HASH])
+			{
+				let plain = matches!(&assoc.kind,ModuleAssociatedKind::Function(f) if f.trait_hash==Some(crate::hash_in!(crate,::std::iter::Iterator)))
+					&& self.fresh_iter.builtin_trait();
+				self.fresh_text.collect_installed(assoc.container, plain);
+			}
 		}
 		Ok(())
 	}

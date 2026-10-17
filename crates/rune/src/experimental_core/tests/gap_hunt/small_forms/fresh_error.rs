@@ -22,6 +22,8 @@ fn fresh_type_info(
 		TypeName::Range => TypeInfo::named::<rt::Range>(),
 		TypeName::VecIter => TypeInfo::named::<rt::slice::Iter>(),
 		TypeName::OptionIter => TypeInfo::named::<crate::modules::option::Iter>(),
+ TypeName::StringSplit=>TypeInfo::named::<crate::modules::string::Split<crate::alloc::String>>(),
+ TypeName::CharSplit=>TypeInfo::named::<crate::modules::string::Split<char>>(),
 		TypeName::RangeIter => TypeInfo::named::<rt::range::RangeIter<i64>>(),
 		TypeName::UnsignedRangeIter => TypeInfo::named::<rt::range::RangeIter<u64>>(),
 		TypeName::CharRangeIter => TypeInfo::named::<rt::range::RangeIter<char>>(),
@@ -187,6 +189,7 @@ pub(super) fn fresh_primary_kind(
 			actual: given as usize,
 			expected: expected as usize,
 		},
+		Detail::SharedArgument{readers,..}=>K::AccessError{error:stock::AccessError::fresh_shared_for_test(readers)},
 		Detail::ReadExclusive
 		| Detail::WriteExclusive
 		| Detail::TakeExclusive

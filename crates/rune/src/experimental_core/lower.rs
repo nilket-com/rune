@@ -10,6 +10,7 @@
 
 mod missing_methods;
 mod patterns;
+mod text_methods;
 #[derive(Clone, Copy)]
 pub(crate) enum Resolve {
 	Script(Hash),
@@ -44,6 +45,7 @@ pub(crate) fn function(
 		exprs,
 		function: Function::new(1, 0)?,
 		variables: Vec::new(),
+		text_bindings: Vec::new(),
 		loops: Vec::new(),
 		dirty: Vec::new(),
 		format_specs: Vec::new(),
@@ -116,6 +118,7 @@ struct Lower<'a, 'hir> {
 	exprs: &'a hir::Exprs<'hir>,
 	function: Function,
 	variables: Vec<(hir::Variable, u32)>,
+	text_bindings: Vec<(hir::Variable, hir::ExprId)>,
 	loops: Vec<Loop>,
 	/// Per slot: may currently hold a heap handle that needs a Release.
 	dirty: Vec<bool>,
@@ -334,6 +337,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					let slot = self.slot()?;
 					self.expr_into(local.expr, slot)?;
 					self.pattern_local(&local.pat, slot)?;
+					if let hir::PatKind::Path(hir::PatPathKind::Ident { variable, .. }) =
+						local.pat.pat.kind
+					{
+						self.text_bindings.try_push((*variable, local.expr))?;
+					}
 				}
 
 				hir::Stmt::Expr(_, expr) => self.statement(*expr)?,
@@ -1826,6 +1834,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			name_hash,
 		} = call.call
 		{
+			if let Some(method) = crate::function::fresh_text::Method::from_hash(hash) {
+				return self.call_text_method(call, target, method, out, span);
+			}
+			if name_hash == Hash::ident("collect") {
+				return self.call_text_collect(call, target, hash, out, span);
+			}
 			if let Some(name) = crate::function::fresh_iter::Name::ALL
 				.into_iter()
 				.find(|name| hash == name.hash())

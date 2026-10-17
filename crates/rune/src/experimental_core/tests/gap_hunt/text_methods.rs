@@ -15,6 +15,8 @@ fn tap(tag: i64, value: i64) -> i64 {
 	value
 }
 include!("text_methods/fixture.rs");
+include!("text_methods/fresh_graph.rs");
+include!("text_methods/fresh.rs");
 
 fn observed(value: &Value) -> Json {
 	let out = graph(value);
@@ -46,13 +48,33 @@ fn error(error: &stock::VmError) -> Json {
 #[ignore = "C14 stock-oracle child; explicit bounded external operator only"]
 fn child() {
 	let engine = std::env::var("C14_ENGINE").unwrap();
-	assert_eq!(engine, "stock");
+	assert!(matches!(engine.as_str(), "stock" | "fresh"));
 	let index: usize = std::env::var("C14_CASE").unwrap().parse().unwrap();
 	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	let row = &cases[index];
+	let mut row = cases[index].clone();
+	if let Ok(fuel) = std::env::var("C14_COUNTERFACTUAL_FUEL") {
+		assert_eq!(engine, "stock");
+		assert_eq!(index, 184);
+		assert_eq!(fuel, "200000");
+		row["fuel"] = json!(200000);
+	}
+	let row = &row;
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
 
+	if engine == "fresh" {
+		let result = observe_fresh(row);
+		let path = std::env::var_os("C14_RESULT").unwrap();
+		let mut file = std::fs::OpenOptions::new()
+			.create_new(true)
+			.write(true)
+			.open(path)
+			.unwrap();
+		use std::io::Write;
+		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
+			.unwrap();
+		return;
+	}
 	let context = context(row["fixture"].as_str().unwrap());
 	let mut sources = Sources::new();
 	sources
@@ -132,3 +154,6 @@ fn observer_controls() {
 		let _ = context(fixture);
 	}
 }
+
+include!("text_methods/contract.rs");
+include!("text_methods/bounded.rs");

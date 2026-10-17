@@ -1,0 +1,14 @@
+{
+  "050": {
+    "source_sha256": "763eb99ef143baa2db65a4ff11828b0be97ca5cd1a9ad8ffbbc26ba0f824e00b",
+    "reason": "C14 starts_with admission; compare complete frozen stock observation, preserving the original oracle."
+  },
+  "058": {
+    "source_sha256": "702661c25f7dd7dbf6bcdb67b2745401a450678c8829e029e2e09de901ca860b",
+    "reason": "C14 starts_with admission; compare complete frozen stock observation, preserving the original oracle."
+  },
+  "061": {
+    "source_sha256": "a029d25947379b3f46a7c8ca46c6be503c968b808f618584596f9cab6f4186db",
+    "reason": "C14 starts_with admission; compare complete frozen stock observation, preserving the original oracle."
+  }
+}

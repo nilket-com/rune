@@ -11,6 +11,7 @@ impl Payload {
 				Self::OtherRange(shape) => {
 					[shape.start, shape.end].into_iter().flatten().nth(index)
 				}
+				Self::OtherRangeIterator(state) if index == 0 => state.source.map(Value::Heap),
 				Self::Variant { payload, .. } | Self::OptionIterator { payload } if index == 0 => {
 					*payload
 				}
@@ -148,13 +149,32 @@ fn every_payload_preserves_reference_sequence_edges_and_exhaustion() {
 		));
 	}
 	cases.push(Payload::OtherRangeIterator(
-		Box::try_new(ranges::RangeCursor {
-			next: Value::I64(0),
-			end: Some(Value::I64(1)),
-			done: false,
+		Box::try_new(boxed_iterator::State {
+			source: None,
+			kind: boxed_iterator::Kind::Range(ranges::RangeCursor {
+				next: Value::I64(0),
+				end: Some(Value::I64(1)),
+				done: false,
+			}),
 		})
 		.unwrap(),
 	));
+	for source in [None, Some(h)] {
+		cases.push(Payload::OtherRangeIterator(
+			Box::try_new(boxed_iterator::State {
+				source,
+				kind: boxed_iterator::Kind::Split(
+					Box::try_new(text_methods::Split {
+						pattern: text_methods::Pattern::Char(','),
+						from: 0,
+						to: 0,
+					})
+					.unwrap(),
+				),
+			})
+			.unwrap(),
+		));
+	}
 	let mut seen = std::collections::BTreeSet::new();
 	let mut s = Store::new(Limits::default()).unwrap();
 	for payload in &cases {

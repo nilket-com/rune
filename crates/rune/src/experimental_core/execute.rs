@@ -631,6 +631,9 @@ impl Executor {
 			let destination = base.checked_add(out as usize).ok_or_else(invalid)?;
 			return self.put(store, destination, value);
 		}
+		if (0x8000_0060..=0x8000_0065).contains(&id) {
+			return self.text_call(store, function, base, out, id, args_start, args_len);
+		}
 		if id == super::code::MISSING_METHOD {
 			return self
 				.missing_method_call(code, store, function, base, out, args_start, args_len);
@@ -1888,6 +1891,21 @@ fn enrich_error(
 		error.detail = Detail::ExclusiveArgument { access, arg: 0 };
 		return error;
 	}
+	if let Op::AssignBinary { lhs, .. } = *op {
+		if error.detail == Detail::WriteBorrowed
+			&& slots
+				.get(base + lhs as usize)
+				.is_some_and(|v| store.tag(*v) == Ok(super::value::Type::String))
+		{
+			if let Some(readers) = slots
+				.get(base + lhs as usize)
+				.and_then(|v| store.shared_readers(*v))
+			{
+				error.detail = Detail::SharedArgument { arg: 0, readers };
+				return error;
+			}
+		}
+	}
 	if let Op::AssignBinary { op, .. } = *op {
 		if let Detail::Binary { lhs, rhs, .. } = error.detail {
 			error.detail = Detail::Binary {
@@ -2449,6 +2467,7 @@ mod small_forms_tests;
 mod sorting;
 #[cfg(test)]
 mod sorting_tests;
+mod text_methods;
 
 #[cfg(test)]
 mod numeric_tests;

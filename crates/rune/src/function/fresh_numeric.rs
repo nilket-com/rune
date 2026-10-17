@@ -59,9 +59,16 @@ impl Method {
 				const OBJECT: u64 = crate::hash_in!(crate, ::std::object::Object).into_inner();
 				const FUNCTION: u64 = crate::hash_in!(crate, ::std::ops::Function).into_inner();
 				const TYPE: u64 = crate::hash_in!(crate, ::std::any::Type).into_inner();
+				const SPLIT_STRING: u64 =
+					crate::function::fresh_text::split_hash(true).into_inner();
+				const SPLIT_CHAR: u64 = crate::function::fresh_text::split_hash(false).into_inner();
 				matches!(
 					receiver.into_inner(),
-					I64 | U64 | F64 | STRING | BOOL | CHAR | ORDERING | OBJECT | FUNCTION | TYPE
+					I64 | U64
+						| F64 | STRING | BOOL
+						| CHAR | ORDERING | OBJECT
+						| FUNCTION | TYPE | SPLIT_STRING
+						| SPLIT_CHAR
 				)
 			}
 			_ => true,

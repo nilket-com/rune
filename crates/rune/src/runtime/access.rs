@@ -35,6 +35,12 @@ impl AccessError {
 		}))
 	}
 
+	#[cfg(all(test, feature = "fresh-core"))]
+	pub(crate) const fn fresh_shared_for_test(readers: u32) -> Self {
+		Self::new(AccessErrorKind::NotAccessibleMut(Snapshot(
+			readers as usize,
+		)))
+	}
 	#[cfg(feature = "fresh-core")]
 	pub(crate) const fn fresh_moved_read() -> Self {
 		Self::new(AccessErrorKind::NotAccessibleRef(Snapshot(MOVED)))

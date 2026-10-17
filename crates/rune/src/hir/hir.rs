@@ -227,6 +227,11 @@ impl<'hir> Exprs<'hir> {
 		Ok(ExprId(index))
 	}
 
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_expressions(&self) -> impl Iterator<Item = &Expr<'hir>> {
+		self.exprs.iter()
+	}
+
 	/// Get the expression associated with the given identifier.
 	///
 	/// Identifiers are only ever produced by [`Exprs::insert`] on the same

@@ -28,6 +28,8 @@ receivers! {
 	SIGNED_FROM_ITER: rt::range_from::RangeFromIter<i64>,
 	UNSIGNED_FROM_ITER: rt::range_from::RangeFromIter<u64>,
 	CHAR_FROM_ITER: rt::range_from::RangeFromIter<char>,
+ SPLIT_STRING: crate::modules::string::Split<crate::alloc::String>,
+ SPLIT_CHAR: crate::modules::string::Split<char>,
 }
 
 #[derive(Default)]
@@ -62,7 +64,7 @@ mod tests {
 	use super::*;
 	#[test]
 	fn identity_and_fail_closed() {
-		assert_eq!(RECEIVERS.len(), 31);
+		assert_eq!(RECEIVERS.len(), 33);
 		for receiver in RECEIVERS {
 			assert!(represented(*receiver));
 			for name in ["unrecognized", "parse", "next_back"] {

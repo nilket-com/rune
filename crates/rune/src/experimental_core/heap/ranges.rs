@@ -475,10 +475,13 @@ impl Store {
 			_ => return Err(err(ErrorKind::Type)),
 		};
 		self.admit(Payload::OtherRangeIterator(
-			Box::try_new(RangeCursor {
-				next,
-				end,
-				done: false,
+			Box::try_new(super::boxed_iterator::State {
+				source: None,
+				kind: super::boxed_iterator::Kind::Range(RangeCursor {
+					next,
+					end,
+					done: false,
+				}),
 			})
 			.map_err(|_| err(ErrorKind::Allocation))?,
 		))
@@ -486,7 +489,13 @@ impl Store {
 
 	#[cold]
 	pub(super) fn other_range_next(&mut self, handle: Handle) -> Result<Option<Value>> {
-		let Payload::OtherRangeIterator(cursor) = self.mutable(handle)? else {
+		if matches!(self.payload(handle)?, Payload::OtherRangeIterator(state) if state.is_split()) {
+			return self.split_next(handle);
+		}
+		let Payload::OtherRangeIterator(state) = self.mutable(handle)? else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		let super::boxed_iterator::Kind::Range(cursor) = &mut state.kind else {
 			return Err(err(ErrorKind::InvalidCode));
 		};
 		if cursor.done {

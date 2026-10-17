@@ -60,3 +60,45 @@ impl Code {
 		self.absent.contains(&hash)
 	}
 }
+
+impl CompileTransaction {
+	pub(crate) fn text_method(
+		&mut self,
+		c: &Context,
+		q: &crate::query::QueryInner<'_>,
+		p: &crate::compile::Pool,
+		m: crate::function::fresh_text::Method,
+	) -> Result<()> {
+		use crate::TypeHash;
+		if self.checked_text & m.bit() != 0 {
+			return Ok(());
+		}
+		if !c.fresh_text_method(m) || q.fresh_method_script.closed(m.hash()) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		for receiver in crate::function::fresh_methods::RECEIVERS
+			.iter()
+			.copied()
+			.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
+		{
+			if receiver == crate::alloc::String::HASH
+				|| (m == crate::function::fresh_text::Method::Contains
+					&& crate::function::fresh_text::range(receiver))
+			{
+				continue;
+			}
+			let h = Hash::associated_function(receiver, m.hash());
+			if c.lookup_function(h).is_some() {
+				return Err(Error::refused(Refusal::Method));
+			}
+			if !self.builder.absent.contains(&h) {
+				if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
+					return Err(invalid());
+				}
+				self.builder.absent.try_push(h)?;
+			}
+		}
+		self.checked_text |= m.bit();
+		Ok(())
+	}
+}

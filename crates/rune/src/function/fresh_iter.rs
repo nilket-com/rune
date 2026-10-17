@@ -99,10 +99,14 @@ pub(crate) enum Provider {
 	RangeIterAny,
 	RangeInclusiveIterAny,
 	RangeFromIterAny,
+	SplitStringNext,
+	SplitCharNext,
+	SplitStringAny,
+	SplitCharAny,
 }
 
 impl Provider {
-	pub(crate) const ALL: [Self; 17] = [
+	pub(crate) const ALL: [Self; 21] = [
 		Self::VecIter,
 		Self::OptionIter,
 		Self::TupleIter,
@@ -120,6 +124,10 @@ impl Provider {
 		Self::RangeIterAny,
 		Self::RangeInclusiveIterAny,
 		Self::RangeFromIterAny,
+		Self::SplitStringNext,
+		Self::SplitCharNext,
+		Self::SplitStringAny,
+		Self::SplitCharAny,
 	];
 
 	fn bit(self) -> u32 {
@@ -128,6 +136,8 @@ impl Provider {
 
 	pub(crate) fn name(self) -> Name {
 		match self {
+			Self::SplitStringNext | Self::SplitCharNext => Name::Next,
+			Self::SplitStringAny | Self::SplitCharAny => Name::Any,
 			Self::VecIter
 			| Self::OptionIter
 			| Self::TupleIter
@@ -147,6 +157,12 @@ impl Provider {
 	/// The receiver type hash, including type parameters.
 	pub(crate) const fn container(self) -> Hash {
 		match self {
+			Self::SplitStringNext | Self::SplitStringAny => {
+				crate::function::fresh_text::split_hash(true)
+			}
+			Self::SplitCharNext | Self::SplitCharAny => {
+				crate::function::fresh_text::split_hash(false)
+			}
 			Self::VecIter => rt::Vec::HASH,
 			Self::OptionIter => Option::<rt::Value>::HASH,
 			Self::TupleIter => rt::OwnedTuple::HASH,
@@ -267,6 +283,9 @@ pub(crate) struct State {
 }
 
 impl State {
+	pub(crate) fn builtin_trait(&self) -> bool {
+		self.iterator_trait
+	}
 	pub(crate) fn begin_module(&mut self, markers: u8) -> u8 {
 		core::mem::replace(&mut self.pending, markers)
 	}

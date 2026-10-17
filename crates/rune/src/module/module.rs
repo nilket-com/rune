@@ -88,6 +88,8 @@ pub struct Module {
 	/// user registration APIs.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_iter: u8,
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_text: bool,
 	/// Constant constructors.
 	pub(crate) construct: Vec<(Hash, AnyTypeInfo, ConstConstructImpl)>,
 	/// Defines construct hashes.
@@ -275,6 +277,8 @@ impl Module {
 			fresh_sort_by: false,
 			#[cfg(feature = "fresh-core")]
 			fresh_iter: 0,
+			#[cfg(feature = "fresh-core")]
+			fresh_text: false,
 			construct: Vec::new(),
 			construct_hash: HashSet::new(),
 			common: ModuleItemCommon {

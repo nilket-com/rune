@@ -16,11 +16,13 @@ mod comparison;
 mod formatting;
 mod indexing;
 pub use formatting::FormatLimits;
+mod boxed_iterator;
 mod ranges;
 mod roots;
 mod sorting;
 #[cfg(test)]
 mod sorting_tests;
+mod text_methods;
 
 #[cfg(feature = "fresh-core-native")]
 pub(crate) mod native;
@@ -114,7 +116,7 @@ enum Payload {
 	},
 	SortGuard(Box<sorting::SortState>),
 	OtherRange(Box<ranges::RangeShape>),
-	OtherRangeIterator(Box<ranges::RangeCursor>),
+	OtherRangeIterator(Box<boxed_iterator::State>),
 }
 
 // Child values are inert copies; this iterator never acquires ownership.
@@ -149,7 +151,8 @@ impl Payload {
 			Self::Moved(_) => Some(0),
 			Self::SortGuard(state) => Some(state.bytes()?),
 			Self::OtherRange(_) => Some(size_of::<ranges::RangeShape>()),
-			Self::OtherRangeIterator(_) => Some(size_of::<ranges::RangeCursor>()),
+			// Split reserves its separately boxed state in its cold constructor.
+			Self::OtherRangeIterator(_) => Some(size_of::<boxed_iterator::State>()),
 			Self::String(s) => Some(s.capacity()),
 			Self::Range { .. } => Some(16),
 			Self::ValueRange { .. } | Self::ValueRangeIterator { .. } => {
@@ -178,8 +181,8 @@ impl Payload {
 	/// when admission retains them; dropping an unpublished payload owns none.
 	fn children(&self) -> Children<'_> {
 		match self {
+			Self::OtherRangeIterator(state) => Children::One(state.source.map(Value::Heap)),
 			Self::Moved(_)
-			| Self::OtherRangeIterator(_)
 			| Self::String(_)
 			| Self::Range { .. }
 			| Self::RangeIterator { .. }
@@ -462,8 +465,7 @@ impl Store {
 
 	fn payload_edges(payload: &Payload) -> usize {
 		match payload {
-			Payload::OtherRangeIterator(_)
-			| Payload::Moved(_)
+			Payload::Moved(_)
 			| Payload::String(_)
 			| Payload::Range { .. }
 			| Payload::RangeIterator { .. }
@@ -475,6 +477,7 @@ impl Store {
 				shape.start.map_or(0, Self::heap_edge) + shape.end.map_or(0, Self::heap_edge)
 			}
 			Payload::VectorIterator(_) => 1,
+			Payload::OtherRangeIterator(state) => usize::from(state.source.is_some()),
 			Payload::SortGuard(state) => {
 				1 + state
 					.values
@@ -1417,6 +1420,10 @@ impl Store {
 					});
 				}
 				Payload::OtherRange(shape) => return self.other_range_iterator(**shape),
+				Payload::OtherRangeIterator(state) if state.is_split() => {
+					self.retain(value)?;
+					return Ok(value);
+				}
 				_ => (),
 			}
 		}
@@ -1593,11 +1600,13 @@ impl Store {
 	/// but must still queue its retained owner root for drainage.
 	fn enqueue_children(&mut self, mut payload: Payload) -> Result<()> {
 		// Transfer held values back before accounting this guard's detached edges.
-		if let Payload::SortGuard(state) = &mut payload {
-			if state.active {
-				self.sort_restore(state)?;
+		let mut failure = match &mut payload {
+			// These adjacent cold discriminants share one cold boundary.
+			Payload::SortGuard(_) | Payload::OtherRange(_) | Payload::OtherRangeIterator(_) => {
+				self.prepare_boxed_detach(&mut payload)?
 			}
-		}
+			_ => None,
+		};
 		// The detached payload no longer holds live edges. Its children become
 		// queued releases, without growing the queue or following native recursion.
 		self.edges = self
@@ -1605,7 +1614,6 @@ impl Store {
 			.checked_sub(Self::payload_edges(&payload))
 			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
 		self.assert_work();
-		let mut failure = None;
 
 		if let Payload::VectorIterator(iter) = &payload {
 			let result = (|| {

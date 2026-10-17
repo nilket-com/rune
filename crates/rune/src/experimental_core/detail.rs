@@ -37,6 +37,8 @@ pub enum TypeName {
 	UnsignedRangeFromIter,
 	CharRangeFromIter,
 	OptionIter,
+	StringSplit,
+	CharSplit,
 }
 
 #[allow(missing_docs)]
@@ -195,6 +197,10 @@ pub enum Detail {
 	ShiftWidth,
 	/// A mutation was refused because iteration holds a read lease.
 	WriteBorrowed,
+	SharedArgument {
+		arg: u8,
+		readers: u32,
+	},
 	ReadExclusive,
 	WriteExclusive,
 	TakeExclusive,
@@ -357,9 +363,9 @@ impl Detail {
 			Self::NumericArgumentType { cause, arg, .. }
 			| Self::NumericArgumentNumber { cause, arg, .. }
 			| Self::NumericArgumentCoerce { cause, arg, .. } => Some((cause, arg)),
-			Self::CmpArgumentAccess { arg, .. } | Self::ExclusiveArgument { arg, .. } => {
-				Some((HostCause::Access, arg))
-			}
+			Self::SharedArgument { arg, .. }
+			| Self::CmpArgumentAccess { arg, .. }
+			| Self::ExclusiveArgument { arg, .. } => Some((HostCause::Access, arg)),
 			Self::HostExpectedType { arg: Some(arg), .. } => Some((HostCause::ExpectedType, arg)),
 			Self::HostExpectedNumber { arg: Some(arg), .. } => {
 				Some((HostCause::ExpectedNumber, arg))
@@ -412,6 +418,8 @@ impl TypeName {
 			Self::RangeInclusive => rt::RangeInclusive::HASH,
 			Self::VecIter => rt::slice::Iter::HASH,
 			Self::OptionIter => crate::modules::option::Iter::HASH,
+			Self::StringSplit => crate::modules::string::Split::<crate::alloc::String>::HASH,
+			Self::CharSplit => crate::modules::string::Split::<char>::HASH,
 			Self::RangeIter => rt::range::RangeIter::<i64>::HASH,
 			Self::UnsignedRangeIter => rt::range::RangeIter::<u64>::HASH,
 			Self::CharRangeIter => rt::range::RangeIter::<char>::HASH,
@@ -486,6 +494,8 @@ impl fmt::Display for TypeName {
 			Self::RangeInclusive => "std::ops::RangeInclusive",
 			Self::VecIter => "std::slice::Iter",
 			Self::OptionIter => "std::option::Iter",
+			Self::StringSplit => "std::string::Split<std::string::String>",
+			Self::CharSplit => "std::string::Split<std::char>",
 			Self::RangeIter => "std::ops::RangeIter<std::i64>",
 			Self::UnsignedRangeIter => "std::ops::RangeIter<std::u64>",
 			Self::CharRangeIter => "std::ops::RangeIter<std::char>",
@@ -663,7 +673,9 @@ impl fmt::Display for Message<'_> {
 			}
 			StringOperand { found } => messages::expected_type(f, TypeName::String, found),
 			Coerce { value, to } => messages::coerce(f, value, to),
-			WriteBorrowed => f.write_str("Cannot write, the value is being read from"),
+			WriteBorrowed | SharedArgument { .. } => {
+				f.write_str("Cannot write, the value is being read from")
+			}
 			ExclusiveArgument { access, .. } => f.write_str(match access {
 				MovedAccess::Read => "Cannot read, the value is being written to",
 				MovedAccess::Write => "Cannot write, the value is being written to",
