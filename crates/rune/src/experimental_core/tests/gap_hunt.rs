@@ -1592,3 +1592,7 @@ mod captures;
 
 #[path = "gap_hunt/methods.rs"]
 mod methods;
+
+#[cfg(feature = "fresh-core")]
+#[path = "gap_hunt/text_methods.rs"]
+mod text_methods;

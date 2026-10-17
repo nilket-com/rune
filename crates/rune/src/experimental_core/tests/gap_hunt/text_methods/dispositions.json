@@ -1,0 +1,1902 @@
+{
+  "000": {
+    "label": "split/string/0",
+    "source_sha256": "e3bf3b4ceafe5f139c7dc0b4df5b56ae294050bf83d90eb24f04dda80fd38ddc",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "154eb3bb03d2b65f290c868b22c6691e6f42a4cc27e290ee0d0df489eecf0d3e"
+  },
+  "001": {
+    "label": "split/string/1",
+    "source_sha256": "3467ea18d80564e249592b1831fd77ccfccd5f648146dc62859f520f45b3ce21",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "72c597425ff1ad7ffd0afbdec2303e59590ffde04e028bc76dd3b4a797855a44"
+  },
+  "002": {
+    "label": "split/string/2",
+    "source_sha256": "41274bf9814a5543054bb731305f731a206911d0932c4d485a5c99059e1092c5",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "1a217464b3df8e9529e9c56bb9c4e69670952c48c52af8e384df3486aa9dfd97"
+  },
+  "003": {
+    "label": "split/string/3",
+    "source_sha256": "6bf755b36525db86b5d51da2b0ba41b41fd3972ad5fe4bba4ef3d9fdd5ee3cac",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "d91320dcd1506ced63c5ddc4f880685d8157743a2a775cc655dc2199048452e6"
+  },
+  "004": {
+    "label": "split/string/4",
+    "source_sha256": "f2dcd2cab16d8e595bf50428311c77845b6e83fc29d348840bc5c8b953acb876",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "ad99b6e1c551ac7202bf4c4fcd55828db45ba0fa4893f65ace5fe9ce26027c8b"
+  },
+  "005": {
+    "label": "split/string/5",
+    "source_sha256": "9303f2f40e3ee5004598c276ef4b009ffb8bcec20167e79505bb0300cc05d68d",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "c49f957420a0768ecbb6d1eac454a8f70b6537faaa5c58b2b1ddf758a81fdb36"
+  },
+  "006": {
+    "label": "split/string/6",
+    "source_sha256": "fc0069f247c77ac7e68107be8c193e264cd25905c05b840bc5e9581396a42a3c",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "8e0d08b801541d03e64d700c0084d4c113ddf8d1fe59f025e7a7aa4e22125177"
+  },
+  "007": {
+    "label": "split/string/7",
+    "source_sha256": "eeaa3389a893b59f17f0113aaa34d5b1b858fa42c03e1c2674af2084631c8501",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "4e8822f53794460248bde0dbddb9f0640cafd3ad1c0d78f75f731f11106a7765"
+  },
+  "008": {
+    "label": "split/string/8",
+    "source_sha256": "4ec761be0e1370c2e48818c6c6273891237d208e50a3cfc8495501ff6035cac3",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "0b29464b3e0937fd46768363aa0e9eba19121c5a664ecbffe23c78b5ba5c38c4"
+  },
+  "009": {
+    "label": "split/string/9",
+    "source_sha256": "335e543a2245b7cfec8b3732d90140ca23e4882fa54bbe5c937abe275c038024",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "45cacbdef114e8b9d1fcd1edf3d0368443a5c5e7133fcc72f3f4a02697d5b58f"
+  },
+  "010": {
+    "label": "split/string/10",
+    "source_sha256": "69057fee2aceca08c96664804453d62a0c67a5d13a79db20094484ba7f27d912",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "9c7c8ee5e4c79d3f51eda43c4d0f378b967466f1bee805c56961a6aa505419c5"
+  },
+  "011": {
+    "label": "split/string/11",
+    "source_sha256": "c9dbfa14a899038716357a0d1fec37b3bdb9589d96584de8d9aac711a14174bd",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "387162082b950704c4a2276083625099fcf455c935d7b046a420b547dd659f55"
+  },
+  "012": {
+    "label": "split/char/12",
+    "source_sha256": "7a0c680d093266b10fe13b09e625633fbb5a879db46431e6a1d176b22286a2ca",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "7461f5a41539aa48d78f6ccb712f37b4644c4f2f404153996f035f4b630e93dd"
+  },
+  "013": {
+    "label": "split/char/13",
+    "source_sha256": "c9ee1f623db2aa7635f71175451e8d00bc47a3d6d02cbdf39e982e912676a72b",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "74291eb3d99acc35642141f7a709ea1ca52e0fd8278c6963ec5fc86d503c0eca"
+  },
+  "014": {
+    "label": "split/char/14",
+    "source_sha256": "6bc785d9ffddef9c68a1b1e931d1426afdf8602a7c8d74578c58aee36b124623",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "dd110bd571b9a492e3621637a1d1b950a10251b20416c9fee34b7288f890bb98"
+  },
+  "015": {
+    "label": "split/char/15",
+    "source_sha256": "7763d4fddaf43fa7b95250c7e08ce51307a8563bebe2b53ca00a1bf7543dd048",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "994cad37b3927d297aa5e31d1cc89f0e06084ba464fcf968054c88f3df6e2b86"
+  },
+  "016": {
+    "label": "split/char/16",
+    "source_sha256": "405624cb8fb4afdb893bf1847b09641cd82dab8731362b0a2961ec288a0b9d70",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "53cfaee6a126e8a897b8918eb5a74cd7f546691630a0610a88f497032d03eb1c"
+  },
+  "017": {
+    "label": "split/next-exhaustion",
+    "source_sha256": "d6498e5ddf0da99abb1c74ed95e896d075c2a21d35441ddffcf5b91196613cf1",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "6032707d36d5ccb23b649210f234158e85b6a8365e0901c27587c2021e2222be"
+  },
+  "018": {
+    "label": "split/iterator-alias",
+    "source_sha256": "c6e7acd3c84c3b369666726eb52e990c9df6ee8aa234c8d74512e0fdf5496a73",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "537c89cdbafedcd07d4eec752261880b9f0e3b00503a1392eced8d456cb166da"
+  },
+  "019": {
+    "label": "split/source-overwrite",
+    "source_sha256": "b5949a5d00c2fc3b575520ccbbd4b22d24ba0582c77164bd34d0f9723a4afefc",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "4ced5a2dc3e98e9bfab0184cfae82d8272a19a89b4c8e206c74f99ce83353465"
+  },
+  "020": {
+    "label": "split/delimiter-overwrite",
+    "source_sha256": "c6aa6bbf233268a676e83adeb1e1279d959c012f8064819d9aaeaa788c705cea",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "0fc17a5c4661072bd7d5b21c81af6de5a07e142f0a739c6d3da402deafc2e3d9"
+  },
+  "021": {
+    "label": "split/for-loop",
+    "source_sha256": "afd0d6cae944b6435ab6742e7d4212f673466e8a08b20bee948283847aa26792",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "90f7c8b38fe67c584389f341b7dd4fa8dd2df278db79bd1ff7a37ecd6473a116"
+  },
+  "022": {
+    "label": "split/break-cleanup",
+    "source_sha256": "3a00dd04f55bd2f972bbf7ff4d134d81f7307f498faf5f99306af909539c8c40",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "32fa62a9c5d5046d24b79fe235d5f6c3d71653ab6eff2355bbeb33627e2f5e4a"
+  },
+  "023": {
+    "label": "split/continue",
+    "source_sha256": "d31b82ffd268590ee57a84bbe331540625263f140e81b7bb301bb9bac969945b",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "0d10b10a4eb7a621d6e5c27570f2bf08b072ed5269d30007604accf00649a409"
+  },
+  "024": {
+    "label": "split/any",
+    "source_sha256": "7e92d54cdcd366316444518f7e16c690a2d0d149d284be7fa5365bf512311701",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "97ff6881576c055d22c6824e04a4582f349d8c7732dc0ed11491a198ab00ec0d"
+  },
+  "025": {
+    "label": "split/any-short-circuit",
+    "source_sha256": "a80d639a1112ef545345deb2cc1d3d08856d47e4909e4370879729032162e86c",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "8be9af2567810b2b2acda4bdd0a0d2287be09403ef0ee76e8a1d78b522fc556b"
+  },
+  "026": {
+    "label": "split/iter-again",
+    "source_sha256": "9810573ff081f23b4709de7630b36f578d5859024fbbec96b3f0df5d678067ff",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "19ea233fcfd2c28698787c1d9d3104cf3c389f4684e5a1a078ee37eae5ac529a"
+  },
+  "027": {
+    "label": "split/nested-for",
+    "source_sha256": "555c351e31def5d9c1c59500b2504684e586c7174772776ecca8c9b112d0c74f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "62f676aa46a2fd4f29d5fc3bcf431e56dbb11cbc0f276672752ddf787bcb3bc1"
+  },
+  "028": {
+    "label": "split/collect-len",
+    "source_sha256": "934fa9dcb89f9161e0841a4a8dbf8924384a5d81235b04142f85195f146707cb",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "d06dc7ef7bd73accea4aa784889c4af700c089b60d24487080d0dcc2cf736547"
+  },
+  "029": {
+    "label": "split/effect-order",
+    "source_sha256": "2878b13493c88393efb72867e85be1796560effe5d220f511bcb278ec50d1e78",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "computed delimiter text(...) fails accepted literal/direct-binding proof; no effects before refusal",
+    "stock_status": "value",
+    "stock_observation_sha256": "21e463bc16167f6fa937bcd04ac90ec6971cdf75e6edf4d14a95a7cd69fd506d"
+  },
+  "030": {
+    "label": "split/literal-binding",
+    "source_sha256": "ef86c6b76898039b0bc7fe7ae822252515badb440968d9ac259833e0f648ec3a",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "bcb934fafc81cffc49947f8c33f63c9d52559f4cdaae40f4bc54e5a3a8aa0eb6"
+  },
+  "031": {
+    "label": "split/char-binding",
+    "source_sha256": "71020901f7d141d3855b3497ceb9f950e49219c09e22d7d94d49b2cd55469da4",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "74da85c0c705b271ef5f349e2fee0796ba9e8ccfea35f4011febc9bd16c000f6"
+  },
+  "032": {
+    "label": "split/same-type-reassignment",
+    "source_sha256": "a48b8b73ddf825874bbb12099d28fe6cc3672aaec6d9996532335cb4e1ca3d81",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "82e0b05bbd7b3222dd1dbb1877a223097c19a396c8d26d22cbd06b4ccf99505b"
+  },
+  "033": {
+    "label": "split/shadow-binding",
+    "source_sha256": "5c38a96ca2000515dfa99c3dd5ce1d543f466e94da31b8e0f610ae3a4cdd0144",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "9821514a2bb46efd1000e751e3c073019ce95348c3a34b4096762e3572dadb62"
+  },
+  "034": {
+    "label": "split/alias-binding",
+    "source_sha256": "78add645e71314d6c5a9006c087a1eca81e7df2f1c5490054d5bdf388eaa782c",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "value",
+    "stock_observation_sha256": "7c7c5110dc66a551d0724189a3975fee77eee1ab4f1b52d56b1283aa5b6dd802"
+  },
+  "035": {
+    "label": "split/joined-binding",
+    "source_sha256": "d340a88df1417e9f89f18f6f06d7e623d5c79e84e5000a701e66a2f350c0ca25",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "value",
+    "stock_observation_sha256": "3b80365dbe45a02703030c01170a15c540fe565e90177e53719736c29d9b7ac4"
+  },
+  "036": {
+    "label": "split/computed-binding",
+    "source_sha256": "6227a446d1203eebf0943f5363134ea33ad7470f2aa164c27acfbd6ad3488ca4",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "value",
+    "stock_observation_sha256": "0368ed7957e3a780b769097be68621a11e8066c400ff23fd59051f08346e540a"
+  },
+  "037": {
+    "label": "split/type-changing-binding",
+    "source_sha256": "c42fea65bec6163996f13bfbdb2ec4785c4d113d5c541028a2f98d24fd5463de",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "1f177203d6a3b7b2a5a60f892688389c3e156bd624d0053f4f0e2c01e12651f2"
+  },
+  "038": {
+    "label": "split/mixed-join",
+    "source_sha256": "41b0ee3d7f1ae7fc780fb712f0f6fdbf2da2688698614cc55831fc2586a56b6e",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "value",
+    "stock_observation_sha256": "02632e0d5132acd44909a5b466717f019e2b179196cedbc2dfbb64219dd135b1"
+  },
+  "039": {
+    "label": "split/capture-derived",
+    "source_sha256": "56a556514f39a1edc52348fb017fbe0a99377aa8c9c9e468f6da91e866971276",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "value",
+    "stock_observation_sha256": "0cb953120bf5d792bffa41867a21019a53f7f154e07b14799c7ad58c6a533a4a"
+  },
+  "040": {
+    "label": "split/parameter-delimiter",
+    "source_sha256": "22572c67ed967f32420aeb939fca711957335863cdc1ed95681a1c8a00f34505",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "value",
+    "stock_observation_sha256": "45b74225f22e1fead1ba5e3bee7c0291fec10d46c4d7ea63e082a1e09f3b4417"
+  },
+  "041": {
+    "label": "split/function-delimiter",
+    "source_sha256": "033a08e211bdcff39a8aeda13024f70b984503df5e6f1a76342e57c73b7391d1",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "value",
+    "stock_observation_sha256": "ebf32a2db58b7e93e89b4a39fe2089abdd788d9070b5d19d28009285371573c7"
+  },
+  "042": {
+    "label": "split/capturing-delimiter",
+    "source_sha256": "cd90514c8418860edff9eab8cc3e305cedfcd69fdc7c10d567e3357201a78b47",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "value",
+    "stock_observation_sha256": "f868f8a5a3e6f5826d4441fb69dfee56b215b48ee7f8034c3a82183577cccf2c"
+  },
+  "043": {
+    "label": "split/arity-zero",
+    "source_sha256": "88989cc423fd9dcd2be87ed0882ca4e65f321772035e2d570aa49200992787d2",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "0c60fd08d394173908dcc3e1eca34457f1b8e6ef2389e6e67b37f3e972a54668"
+  },
+  "044": {
+    "label": "split/arity-two",
+    "source_sha256": "576accf4922c221233ad72fb9c4ac56a27cb4096f444d598ed6e211d4c2b8a37",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "e88bf021cdd808d36892ca9cfcd5a4ece5125a9664c203a298c69833132193ea"
+  },
+  "045": {
+    "label": "split/receiver-changes-delimiter",
+    "source_sha256": "caa07df0dda858fefff4925ba981f12c12f974cbe19a3fb23f0e7b355fedd407",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "98baeaf362c32ef0981c13416223f5c634b84d2edf57e2dad720a43693ad5511"
+  },
+  "046": {
+    "label": "split/nested-write",
+    "source_sha256": "524059920f3927ffe4f7c03c9db37db9dcd73a07b0c9da351334f94238465da7",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "aade92f03297ce19dcc45a1a0e7d595cb6da673c1e781fd41212a7aa35e6af26"
+  },
+  "047": {
+    "label": "split/delimiter-block",
+    "source_sha256": "1da71bbaf4ca6a2590a09e216a65b43e2909e6cc0a593e1da32dafd49164e939",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "value",
+    "stock_observation_sha256": "602e5eeb1789cd4e5e86a25fe4c4b701c56a9b536864d86c9206aec2926ddb04"
+  },
+  "048": {
+    "label": "split/early-return",
+    "source_sha256": "df52c9a74f15742c0fc4ad296dbf32d45fa1b7d06922d5f1c925b4889d211b22",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "fc632ea6989c16295acd7f101d4e2f0764e6da10598227ecdfcd0be4a893a4e7"
+  },
+  "049": {
+    "label": "split/wrong-delimiter/49",
+    "source_sha256": "8604d6394bec0f069887febd2e3bf1943765e8eacf89dea5d16200c01eaa9637",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "d35f1c9ac02a9fda00b1d187e7fe20873ca4e8b567aa116dcbdf62b64c0e6cc6"
+  },
+  "050": {
+    "label": "split/wrong-delimiter/50",
+    "source_sha256": "282b8f53e61f0e93a3bedf119014fdcabab2edb9191e1393268443c0cf1fe169",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "73cb2ee4dbe106311a540a2e1c35e3a387c8d4c6ce6a7506ef53ae4dacedb7a6"
+  },
+  "051": {
+    "label": "split/wrong-delimiter/51",
+    "source_sha256": "a188e991539cff17117365bc13687cb2bfe1021397eb50dc7baf0b67bb6b591e",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "74f5428f1bf4d4edab1ecc55347c25989678388d9dd378c4bb26cc21134b96b7"
+  },
+  "052": {
+    "label": "split/wrong-delimiter/52",
+    "source_sha256": "c60904176307762bdb28e76b5abeb8a3804f1c3dd088d6ba81ccaf12f1f44de0",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "a1777cf54a1d84ef3cb1aedc1ccd89d06ebf483c1c28ab85a4fbb285d983f526"
+  },
+  "053": {
+    "label": "split/wrong-delimiter/53",
+    "source_sha256": "398c4216a8e688d40127e794c4e13c6b8ed84ac22c089c872e401690d25d4700",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "213a982f9633e554e2fc041a9480a867b0c4458123df49c67e37b935a2367c72"
+  },
+  "054": {
+    "label": "split/wrong-delimiter/54",
+    "source_sha256": "0ed9fa84e7981510515dbce015ce40444cc7e41b2f694bf10e242f26f86c4b26",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "320d49aec346eab644e8cba05e9725b216f427a4f3cbe60e3bb9f67018ed8d1e"
+  },
+  "055": {
+    "label": "split/wrong-delimiter/55",
+    "source_sha256": "2697bca0c954a8aa393248e82dd02e44c3189d3045b7c89b3cdfc4f0222f966c",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "78a523e95536087ae583a52d1be39fdadd4cbd66021af28657efb4665f083694"
+  },
+  "056": {
+    "label": "split/wrong-delimiter/56",
+    "source_sha256": "4c27982b0626508e4d45d782fd236df7a8cfe1d311f13440de99d760360660c7",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "2433d9da5adf239c9b5031c0c0004a7a27470dd6467daafd1301d84c30287618"
+  },
+  "057": {
+    "label": "split/wrong-delimiter/57",
+    "source_sha256": "a88804156112a63c25aee70858f8dcbe6cd3280df2a87c0b9a23687b2a89267d",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "5ad1d73f5737c1490455c5655932bb942c76057f400b73d30287d9098d55a21d"
+  },
+  "058": {
+    "label": "split/wrong-delimiter/58",
+    "source_sha256": "961db03d773ffd79fbe22d6967e28abab61261bf54f7b081e4db7631ce4dbeb6",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "edb119a11b2005c88dc966a03eb1e8bb5a7d7445d6f563fdb1872d198a090d72"
+  },
+  "059": {
+    "label": "split/wrong-delimiter/59",
+    "source_sha256": "64ec6af1f73e38c0b3bcf864a1016c0291d71d741e1ff646b8392a67bfe73978",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-delimiter",
+    "reason": "not direct literal or resolved local direct-literal initializer with same-kind literal writes only",
+    "stock_status": "error",
+    "stock_observation_sha256": "ea01e0bad2c20ca5340b737234576d6386dfe69e952ef4befc53528210d811fd"
+  },
+  "060": {
+    "label": "split/wrong-receiver/60",
+    "source_sha256": "10c74c4fdbb2971aa79ec1e29bae27360e943050115f14cb2822a3fd95ab9ded",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "041f60b46d9a0ca02b25767b5a9c2491429e87329fdfb98026a52a5090eb481b"
+  },
+  "061": {
+    "label": "split/wrong-receiver/61",
+    "source_sha256": "8a125490396014967fce2eab76fddee4f3c1ab9b6f469ce25f74211ed2225c70",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "ac8a1f6fc30c8cbac79b41c0f3faae3bc405158e246c5b8156efa881ac2fb4d5"
+  },
+  "062": {
+    "label": "split/wrong-receiver/62",
+    "source_sha256": "96354f29148bc34423954074fd4a4a01c44ad08c3101ed43d4d0209236b3392a",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "a95db3fec38a9412197c90e024dc24bb4c6ecc2f899361eb994ad96d5778efd0"
+  },
+  "063": {
+    "label": "split/wrong-receiver/63",
+    "source_sha256": "9499cdd349c74171fdda8818abd127c9b338e83feabf60affc03e336bb6b494a",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "a8e20fb70ec8d3c5d5fe2352517d6261021be567bd56ef41326bbacd433175ba"
+  },
+  "064": {
+    "label": "split/wrong-receiver/64",
+    "source_sha256": "e887496aa17a3c4720d3f484e5bf4698871cb46754fc3e614480a73a333eb1ac",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "98f999e9cc81a0eb37ce8123c3f65133c5493ea43bbc48b21b43c48bd7abedb7"
+  },
+  "065": {
+    "label": "split/wrong-receiver/65",
+    "source_sha256": "57f5ef047863a51580f1794ae30627c01213eab8bffe9d11b69c75df6c1fae09",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "7c05549b03f0da21c780a2f8416a3dd17fa4cef9c2226def925c3fb83e55e3de"
+  },
+  "066": {
+    "label": "replace/edge/66",
+    "source_sha256": "d42c05652cfdd4ee77e227b4144e7ffba01f1fbb5302cf46a915ca3e5ba3eea6",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "7cd1ca412adfce502568f74f5eec8c581d72c37c6b6835de19afa60ae498fbcf"
+  },
+  "067": {
+    "label": "replace/edge/67",
+    "source_sha256": "f479a395464a07cd876d75476095ae8b8e1d823ba5e0932155aaaf66a2b537a5",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "08ac4a54b6c3f10c27644ffc9c00e5e87444b79ff199ad80e3a19b63d4f0d504"
+  },
+  "068": {
+    "label": "replace/edge/68",
+    "source_sha256": "d5289026a478dd4956b2a8acc5e213e7fbe5b1da4ca7433bc91233bb03068810",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "fafbd1c8d267b58f51cb72b483a3ff41c38ae28bb64ff84a370250b38522db98"
+  },
+  "069": {
+    "label": "replace/edge/69",
+    "source_sha256": "05f86f2e645681e327769014e840740faf58c416e6765924014cefde87beff5a",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "a96d586668f2e9e13ccee2f69aef5b28db53fe98f4ab325ef1c3170a80ad131f"
+  },
+  "070": {
+    "label": "replace/edge/70",
+    "source_sha256": "428182726382fcb425994698aaa7a3cb2166f333d6a6e62ba7223651fe48671e",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "ec6559252dfbab1b0da2d6e5ea3f0581885735c67771e64a9d41c0c1e9f7bdb1"
+  },
+  "071": {
+    "label": "replace/edge/71",
+    "source_sha256": "9b34cc3aafe8b1d53bd7da17c6fde48d9a56997cf9f6e66b9a16a7c6762ef08c",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "8c266dbccd93743999cecd770b253a911a084b654fb61d98d244aa2b218da9a2"
+  },
+  "072": {
+    "label": "replace/edge/72",
+    "source_sha256": "61a2343cc2a5f96ecde55e336af0d2dbbd5ae59357774e9ac7b600aec1f1ac32",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "481b495b306838d53feb9d65cbf107a73b6858e39a1debe89099bc7636757425"
+  },
+  "073": {
+    "label": "replace/edge/73",
+    "source_sha256": "c02def468dfd07fba99110ccb0b3a0e10a50717e82406dee32f5f0c6a88a1a5e",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "fa4f55df3dcb5f1cec889dbde467dacf6f122c458993c7050f4567c03665e3d4"
+  },
+  "074": {
+    "label": "replace/edge/74",
+    "source_sha256": "6f7ffc9abab69b544a50713eddab4289461603b8e25f8b86d45b4929c2366fc1",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "fc32562cd66e6a7e8820f4eb9ca8a34be6277cfd7e228201733d3101d68f9033"
+  },
+  "075": {
+    "label": "replace/edge/75",
+    "source_sha256": "d77c64d18b7c84dc64fe5742ff1c446c335f4c1817732dbe9c33849d1359a640",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "2bfa0031583d0b396202669dc44b930c125f4b3272b903587d1e807f359f74e0"
+  },
+  "076": {
+    "label": "replace/effect-order",
+    "source_sha256": "f45cd3d0a9a33e3275434d917070322044366075c0a330892392d29f1a48b2e3",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "7bc6b3b8808f8da344f588f0ffedd56d59436bc68b2fa170a5b3d56e7f93ca14"
+  },
+  "077": {
+    "label": "replace/alias",
+    "source_sha256": "da6962be6771b6b7860521e28024deebba3f82940ea681fa2e6df9b5c0cfa3f3",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "c52202203852f05db0db7d00a4371f6f756142d25f56c7a4a65a8caca6992496"
+  },
+  "078": {
+    "label": "replace/self-pattern",
+    "source_sha256": "0275ce79256917c35bb93da3c1d8d62d405a76b71e134b3783b31e6cd13eb51c",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "d684c099ea452b4fe162865a3089083edc128d02eff657de0efd1ef72d92fb88"
+  },
+  "079": {
+    "label": "replace/arity-type/79",
+    "source_sha256": "ace75237911365ac4a60c8b2add34e20fb58ffbbaabb785929c2eba52c6807e3",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "0174df9ce795fe9f884286bb69a56369b87f446a080683bac79562b1ca9e855c"
+  },
+  "080": {
+    "label": "replace/arity-type/80",
+    "source_sha256": "0d9b63383928ce70bf1c5d779ca351395c0c7f5099a9a0440af20a06d91de915",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "9022208902f7b4b273a181cef80b831d18885b7477beee2fa732da9d1c9be5e5"
+  },
+  "081": {
+    "label": "replace/arity-type/81",
+    "source_sha256": "0e0cae413cbde55b51cef2b41ed0e6a653b44a4152a2b5c46ebf4adb9bd3b9d4",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "9dd756e67a2098f30b3a6527d6d207a7d1be41d2463344d2539cbaea6cd14411"
+  },
+  "082": {
+    "label": "replace/arity-type/82",
+    "source_sha256": "77c5581ef74cb95fc94880d4af62ec49f7242d1eef3277f806b9fd4051ed6155",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "393f0a2fbb8dcf09abeb373c7cb2f403b57af4862c2a91fe386f556bb54dc0a0"
+  },
+  "083": {
+    "label": "replace/arity-type/83",
+    "source_sha256": "9815cf35d69d21a8551a70640d185b171820624f74075a299f21a8303bbe604b",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "262db8fb619c72ebf6ba43bfceb17f19b743b2d9b034e9c8e40c99b3f1cf9973"
+  },
+  "084": {
+    "label": "replace/arity-type/84",
+    "source_sha256": "6831a647ea1acb3b9a15a00ad90a2c208f700ee7a6c8fe3d8ba6529bdf4f8493",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "c36a3dba0fbaf7fcd10a789b1d98d0e16f347fcc55c694471019aa2ead56351e"
+  },
+  "085": {
+    "label": "starts_with/edge/85",
+    "source_sha256": "db29af9bc9c235b5c83c1ab2c739c76e69cc67edd44fcf52edd614ea740d46bc",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "77c18299a7c2f8adb0692f539ac579eadbbba4b59c99ca0eafb76f283b801753"
+  },
+  "086": {
+    "label": "starts_with/edge/86",
+    "source_sha256": "acf2073652287b3bea0af97a5c2b75ec492ff19723d9e3bef640b18a15e9d016",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "7c96ce6ffe9f15900dd112b8b30f87e03c0574e9748a6c1c9cd95e9ae851200c"
+  },
+  "087": {
+    "label": "starts_with/edge/87",
+    "source_sha256": "12a49d26389ffacc06a15ff9b520ae277e0809fb432858e979d5923089cfc1f9",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "527cfc63f5e2cfcbcb175bbf80d2c63c415686e782dafcc81fff359f98565caa"
+  },
+  "088": {
+    "label": "starts_with/edge/88",
+    "source_sha256": "9b76b86ec18c87fe577b289e194ad21f074a72d094d58dc8318e3fc19410ee7e",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "979b65cf67d0652132e065d5092db7cf4f4f2657ab521e8da6c41aee321f1af1"
+  },
+  "089": {
+    "label": "starts_with/edge/89",
+    "source_sha256": "e930b5cde9d24241d0b82660445101c240371b2276e3b279b88b4e0b38bba8b5",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "aee5d6a209217f1bf56306b89b45d347e3db7079003eaf4247dc7642a586ad4f"
+  },
+  "090": {
+    "label": "starts_with/edge/90",
+    "source_sha256": "5114f4b1d6fde9f17787de5e9c5bf548481fa98dad236426ea42aa7081c4e1b3",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "eacddf0b5f73adddfbd80a9831dec6f2a6ff2dd0ec01091d9cac7b4d99162096"
+  },
+  "091": {
+    "label": "starts_with/edge/91",
+    "source_sha256": "0173cd3aed5b9fbdc378d8e87f8ee52a77bb640d35b4c1f76d4ef86348dd9703",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "2a07e8c48c4b24b0b5b2ce404ce3bf3cdc4cf22f664a47458e94224853e29814"
+  },
+  "092": {
+    "label": "starts_with/edge/92",
+    "source_sha256": "a37a45ca7eeac41a19bedcf553a3ccec1a3dead3686c67c1673460c96f409023",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "be1deb6f6ad2fbe736918280378128cc8ba83bcab34ce9705986a39ca92786f7"
+  },
+  "093": {
+    "label": "starts_with/edge/93",
+    "source_sha256": "1bfa41c3dca9d97d8ede4875e8e5a643b9e513135a9496237c55b92edcc11373",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "15e08b9eb490c974d4b8baf878bad4866dc708352009fef8c6f49e92f182839b"
+  },
+  "094": {
+    "label": "starts_with/effects",
+    "source_sha256": "8d4e9f3860cfe297116f9710752c293bedc29da161545eac1201b5904bdd2125",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "3b52b4484f184116b2ca0aafd76e3f306beb0030dd0d101336b7d249292aaa74"
+  },
+  "095": {
+    "label": "starts_with/arity-type/95",
+    "source_sha256": "39fab354ac98bcc734dce32d00baabdeea2238fc16280f5b2da5cce4089aaa73",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "c93d8abaf43cfa7ad846902c62b5aa961db47718198fafdc4e37ce4b4ae09416"
+  },
+  "096": {
+    "label": "starts_with/arity-type/96",
+    "source_sha256": "4c60cb8c15f8acaa91340e6729a5939a25a99d591e4cb4816e974a40d5eb4ca6",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "aeeeaf998714786ae91fad6549db469fae265e7ca425f07aa070eda9dfb1226b"
+  },
+  "097": {
+    "label": "starts_with/arity-type/97",
+    "source_sha256": "7d1f5142e3eb6486ed23f0cae782a02ecea457187259189dd5410ca17cd56f5a",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "7d95be03d5e588554ed257b8c6a6e2eca140a7c004b90daeaeb6bdf735e90f02"
+  },
+  "098": {
+    "label": "starts_with/arity-type/98",
+    "source_sha256": "9ca8ad52da9cbf89cdf9b6808905c01143d4931631162783eef81d8b62f778d0",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "d0017760b6d1b23d48a69adf38ab4fa0cd9da89e4432daf3b282345dc1445929"
+  },
+  "099": {
+    "label": "ends_with/edge/99",
+    "source_sha256": "0e1d6a76d123f569708379fa997d15b980341a5d235971af69d9c7c2049c6580",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "ae9b14b6c3faa30a7791e8d1e4b73f7005265c39b762c5c6871e06e6139f7a83"
+  },
+  "100": {
+    "label": "ends_with/edge/100",
+    "source_sha256": "7bf4b7bf33928c4ffa7dc3afd79dc50cf64a21e1c50e367efd883723540b75fc",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "41c3c1d5913a4d97afe9dea401b0d2d3bac6f17471184eed9b852c53b0732630"
+  },
+  "101": {
+    "label": "ends_with/edge/101",
+    "source_sha256": "eb988caeced77284a43de5256925f6e5f8ca9ebc6c951dc10421722fd1d178dd",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "f50c3905b0074abac97febe9a8177bfa09ffb0ae7d82de193bea86efa80a5138"
+  },
+  "102": {
+    "label": "ends_with/edge/102",
+    "source_sha256": "5ac23ad12758761beb837eb73e0ed95a519bb3a1fe6cc6d6de665653cf54c095",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "c1a9e780ccdb708d953b9d243b46d6fc29037aa6cfe337540ad133d573d944b2"
+  },
+  "103": {
+    "label": "ends_with/edge/103",
+    "source_sha256": "eb0748ad0f8cbecede0b40ebbe7b2fb580a930682aed262615aa622572761a01",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "d155d0bc384d725ca427e844365b8240df3841e2bc2493f8830b957672413701"
+  },
+  "104": {
+    "label": "ends_with/edge/104",
+    "source_sha256": "de95caff1e8d26f96901a1342a60a0402e7c1ccdebb015be4f4a9ce930479eb2",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "ce3b478cd7ac43e472708fafaa696c5ed848e127440b0d85314193de58d36682"
+  },
+  "105": {
+    "label": "ends_with/edge/105",
+    "source_sha256": "32e747d1cdfb63161d1688c49b20427f6f245b91450b6a3762246c5ada62f89b",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "217bf0b8deccf5231de27bf2027845b0dd051112c8c81fadc0f26fa1843188cf"
+  },
+  "106": {
+    "label": "ends_with/edge/106",
+    "source_sha256": "6c397c225e6db03deea3d766c3cb410cc020913451521c2bd581c5cfb7214f89",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "cca5b5a4ee8aa1c2f61521cbae9c1e68cc3048a3b39661e9185494909cab1729"
+  },
+  "107": {
+    "label": "ends_with/edge/107",
+    "source_sha256": "edcb48ff1a301d99efe749ce72d6a7b694d4b77e874117da1797fb4862408dd5",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "7571b2118e9b353764ad1c513b512ce5e0b9a80784b9f8c5d30aa37232e4f780"
+  },
+  "108": {
+    "label": "ends_with/effects",
+    "source_sha256": "2df583c6450ee5da7f06de39307cb38e2730a346c5fc19438208701ded67dd05",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "bf7bcc436f20a60d91b5ca56a0be4b97c4830925db53660280bad4339c6190d5"
+  },
+  "109": {
+    "label": "ends_with/arity-type/109",
+    "source_sha256": "cb5b1e6cb4585af4b9de9fd5bf1adb16a1dcfbe5e26ca68f38ba9d48b662a546",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "06f6c1ec0de86e7b8bd94162ba246f55c2f893321527e25fe0e913f0a166b824"
+  },
+  "110": {
+    "label": "ends_with/arity-type/110",
+    "source_sha256": "f7481b4b5778899f5403666e5689ad0782986af21eb577fc640690bb151a0550",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "16aa35d1a8a13869934d4d041b31784aa7fccd6bcb11313b7478fbb882d0c50e"
+  },
+  "111": {
+    "label": "ends_with/arity-type/111",
+    "source_sha256": "e51aeea6f836f37461c2b8bd01208e7c6e59fb30dc8785d4c0f74a1f1dbf557f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "ba5c6a4a0a080384af728fa38158d367a322313c0299edf801e8c8a0469b6c88"
+  },
+  "112": {
+    "label": "ends_with/arity-type/112",
+    "source_sha256": "13a73205414e8dfdf1a45967f913c0e5fafbf864525174396c4e9091143621bc",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "c36ccf80fd88b7bb3cfba8e2798a6aae06a7d44d6398129ff2e0fe4132b584d1"
+  },
+  "113": {
+    "label": "contains/edge/113",
+    "source_sha256": "5b3d822093d0ad974f8957e77b847a5d061c74f95d9e335b89c93fda0c0aa613",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "5cfac89dc4e95c6b3d57cb80c7d6435c4d203d3ef2d066ac500036a92659d03d"
+  },
+  "114": {
+    "label": "contains/edge/114",
+    "source_sha256": "ddf799b1ab4f6c6a8376fcfbecab097296725571731096be7e5efa81be528fa0",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "9ae5ce641c8ba7fe092e7c716f8f97403a9bf7fecb0692eb6ed973d0796b36ad"
+  },
+  "115": {
+    "label": "contains/edge/115",
+    "source_sha256": "c5181638a7183ddc84ad51987a2a01eb5a72c2425c00f70fbfff3d8118246895",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "1e37f00a8b1c33d483a3e56e6aa348eb5a82bf6c2f38d851c61d747320a35632"
+  },
+  "116": {
+    "label": "contains/edge/116",
+    "source_sha256": "722dd5bf965524f242ff16ebfd0a840790b6e5cb20ad4e94b8bb03a92dc421b9",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "9bb96141cb636646de7a634b5775dd7fbbc9586ee727708f9dff48032b83a664"
+  },
+  "117": {
+    "label": "contains/edge/117",
+    "source_sha256": "558f51f98aabfb13fcd63d10ba4e8cef32aa8a12854f95e3e89fe96bd04f9af5",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "63a083ccd3326e7fff4323ce7b454afa404547f8ac1f379ad7770f5798ff8754"
+  },
+  "118": {
+    "label": "contains/edge/118",
+    "source_sha256": "74cc88cb0bee20e8e705a359e838d34319cfb058afa108477431e6d5b1d10957",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "3986acac18447ee25024f1a7d54b625eaf96f81fc73f08a1c1754e2f8cafd14b"
+  },
+  "119": {
+    "label": "contains/edge/119",
+    "source_sha256": "081a65a5e0f92b0cd3f7fc51b722179671ab22ca54bdf3721ecb84ce5dd2b3fa",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "0cec123f2d7db03a79cbd5804c4276feeec476fd82c2a4843733e463c12402fe"
+  },
+  "120": {
+    "label": "contains/edge/120",
+    "source_sha256": "444d31142d6c3d1418fcf037b4e2dd181c6c424126f61452ac646018ad3b79e8",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "71d4a28851dd659ba8f2e10f1fc6b6f14fe4035207d094b65b459bb63886b99c"
+  },
+  "121": {
+    "label": "contains/edge/121",
+    "source_sha256": "2b415fbee6ceaed52c136c2a845ba94a7ea44e2ba842e0db1afcd18ebbf96eee",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "d233f582fb1563028b2024a50d7b664705389e743e6adeb1b505752e0e4d1ed4"
+  },
+  "122": {
+    "label": "contains/effects",
+    "source_sha256": "ece1561e8eef4e1bcc60ff03d6de6634da8d675089472fdc23f33c2cdaf52e7e",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "f76deacea7ecf8a7db97b75783064ede197aaa5d89c3518d07ddd6a4c2a3f881"
+  },
+  "123": {
+    "label": "contains/arity-type/123",
+    "source_sha256": "662fa68217e14d9c3c7197c689e9e8476635c7b6ac61de322fd7d64dd1dcbac1",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "1ec427a24596843ada3bc6f567ad2d6dbdcf0231fd6dd634aef9c0e3c54ddddb"
+  },
+  "124": {
+    "label": "contains/arity-type/124",
+    "source_sha256": "d16d435659e99783bf12a18983a973cba643f11508adc995bdf0e35c88a1b0df",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "548d8cbbe78eb8466d2c73c596446384b0fdb9b059e8b6db7fb147893f7142a9"
+  },
+  "125": {
+    "label": "contains/arity-type/125",
+    "source_sha256": "c9d0a48b6a3dd3e5dc70730f766323119638c58733daf57a8b5ba264dbe517be",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "c58b3297442b55a7e440fc5d7029808d5acf28e153d1b14404a1a6495c5158ee"
+  },
+  "126": {
+    "label": "contains/arity-type/126",
+    "source_sha256": "61f023b99a91d3016ca060303285e317da9b0db74505b7689ddbc5f4a549611d",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "ddb3039ba4f088927889fccd8b6b9138865776453a29622dba7c2c42267d0d4b"
+  },
+  "127": {
+    "label": "trim/edge/127",
+    "source_sha256": "fd6ce560d62381a45e6b09bfd2b4ff6cc084500a5f91378fdf47da6b361d6ff0",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "47c106e33efc5b7bd7ac8e2ba89fae81b6f72817f55d3d1e72dd040ed3b8f48b"
+  },
+  "128": {
+    "label": "trim/edge/128",
+    "source_sha256": "ec10a6fc9e066be4c8d9eb9360ca3ce679bf50a78f453f515e647fbaeda74c2f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "23a969726870338d6e07fad19c4a4f982524fd6d0cceee0e4d4d81c5b64f99d1"
+  },
+  "129": {
+    "label": "trim/edge/129",
+    "source_sha256": "7545555e8f1275a6409690ebc60a7befa8bb2ec00fd3e79af24a808747acbcdc",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "d84d01cab7e2d2bfd860d2449ccb958b5f5e230d0263f15f0bb9b158da58779c"
+  },
+  "130": {
+    "label": "trim/edge/130",
+    "source_sha256": "1694b7b391d52572c3273d3e62afdfd254662e5f6b5a71c74e80bb244995001f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "056eff908f4d7bf3f040008dc3fa2eaf74583869ff870bf57bfce4c9411e967d"
+  },
+  "131": {
+    "label": "trim/edge/131",
+    "source_sha256": "bf102b3d1dfff5e9412401a9454d4e2ce4df95d377b48e0a2e0c948e7b6f48d9",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "fbb004824239cd31bbd6a77d683d2655337cbb288f868dc1c26df32ccc4ee8fa"
+  },
+  "132": {
+    "label": "trim/edge/132",
+    "source_sha256": "7a26d14c6ff71a5fc77257c4b3aea50bc50a480ff4c785722ff164de2230c0a6",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "26673b6a1f8d5a7cb87188da4508de245dd5cff54ea46c9bfce0939269884f46"
+  },
+  "133": {
+    "label": "trim/edge/133",
+    "source_sha256": "e892f5665499f824aa42a2c8fb4a07a8d69e8caf692a8cd0e70f22b3a84e0791",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "942f81c236bf528959f574420efc115d83c2e8892b9aeed769fa92a3fb79ca9d"
+  },
+  "134": {
+    "label": "trim/edge/134",
+    "source_sha256": "b77d74c7adf4b46a723b459750dd4a12537471ce5878628f0d90ca18c4f0799e",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "e8c9303675fdb7a6316a13c6bcd7de6514913c9ab3662a5dbd3410b7f3580c19"
+  },
+  "135": {
+    "label": "trim/effects",
+    "source_sha256": "bca8264d262b7e3032e08df4b360414ddb8bdbde4527511ef2ccee96e8c3afe5",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "dbe7fca898f1ff467a68e1042eb99c6c443eb450e962108c6f1f957ee897ede5"
+  },
+  "136": {
+    "label": "trim/alias",
+    "source_sha256": "f2515169d6dff8c768124a7de337f61d1b2417e4eee867e10ae9444f596fcac0",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "8befca9dbe8b97f9ed23710aaa79d4399e20887c130d7df6e06e19a42190672a"
+  },
+  "137": {
+    "label": "trim/wrong-arity",
+    "source_sha256": "372fc468885c2fa6cac85c7c4c1a9d3188db8ff9a4a092fc3a886469ef093b28",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-arity",
+    "reason": "known explicit arity mismatch; compile-time pre-effect refusal (C6-style); stock counts include receiver",
+    "stock_status": "error",
+    "stock_observation_sha256": "89e4a7ea451b1cb882183030e62d0f67d78d854969e48a18ecb8514faee38677"
+  },
+  "138": {
+    "label": "scalar/wrong-receiver/replace/138",
+    "source_sha256": "803670e576335d1ff731f7df2ec47203a094cd4c6b227e60d1cab5c4cd5cc70e",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "10f2b8bc373483dbc7b7b96de6f2115111f6e7ee8d639751105bcc103b55bef7"
+  },
+  "139": {
+    "label": "scalar/wrong-receiver/replace/139",
+    "source_sha256": "a8f3147a5b213f6fe67c643815e5261fff3ff973f5c3cd80599e03693609f0cb",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "4f5760c7bb9319d7e46fa09e974a7a51baca8a6fbf7bf2683eabefe748fc8b52"
+  },
+  "140": {
+    "label": "scalar/wrong-receiver/replace/140",
+    "source_sha256": "555e99729738758b39ee273d78c092d3bffa550493865fd8f620d33e1a6a0166",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "e068164c9bfd53e3e407c4c64334be6f13f741097c0efafe914a3a8438fa85c7"
+  },
+  "141": {
+    "label": "scalar/wrong-receiver/replace/141",
+    "source_sha256": "8802d67197b8cf9e4843633f3b915f09b4bc3a3e86c23723097356b932de74c7",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "c6ba51a5c56a5b5c1f1c1eb042fb023958274f102d490c08cafb44b507125190"
+  },
+  "142": {
+    "label": "scalar/wrong-receiver/starts_with/142",
+    "source_sha256": "b1be9464f12ded1aa80bd7c2a350ad74b8ceeee9df97e8f4f5f3c1c39a5f9d05",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "04ed8d0ecd90011c324800f61f6e589672f91f8667f335fda184dd81ac661cbc"
+  },
+  "143": {
+    "label": "scalar/wrong-receiver/starts_with/143",
+    "source_sha256": "689c7999ebd55e2b0e6da2f64f0b79826d8b1b6f179ff5b4d59cd383bc6f0f95",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "441ff4341d139b9c1d577e08c464221c647447fc697e3db23b353d0fbe55cdeb"
+  },
+  "144": {
+    "label": "scalar/wrong-receiver/starts_with/144",
+    "source_sha256": "757eb47d34a4da0f2f31fc1ded2f5fc711623322434e656208ae4d1667bff972",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "ce09cfe31fa385bc3fd02925bf834f362d244e78ae04720de2ea24af13abb77c"
+  },
+  "145": {
+    "label": "scalar/wrong-receiver/starts_with/145",
+    "source_sha256": "224ded7e065f52383b544daf638358f5492caf9f813d85c1ddbc5e14099656b1",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "01b6af3ff2922598f6a2d440ab8eaea70e9cf86372427b2ea41a0acbd980d9c6"
+  },
+  "146": {
+    "label": "scalar/wrong-receiver/ends_with/146",
+    "source_sha256": "575948a19c838caa19335651bcd9f344f130b9453342ec591c13de9dbbcef454",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "acf901c95797eb3a8e2ebf8fa4ba2b4a2c3a7effe4594c3acd166dd22ebcacd5"
+  },
+  "147": {
+    "label": "scalar/wrong-receiver/ends_with/147",
+    "source_sha256": "06e4546cd16a3d60fd2d10c3b9de95435c4f7d8fb18494d5e9e624f9854443bd",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "36a5a4eb7f2b54d2c08c352443d77ee15f0fb987348a82e85ffa738143b75ffd"
+  },
+  "148": {
+    "label": "scalar/wrong-receiver/ends_with/148",
+    "source_sha256": "6a6c51b871c61c978809b59a1a0cba1c3aa07eee92af5bb72852e0f8af4724f3",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "0aa4ee19f5716458e8d691c126607ab2dff677f53f0d9bd4df4b3a6f5eeb8d0b"
+  },
+  "149": {
+    "label": "scalar/wrong-receiver/ends_with/149",
+    "source_sha256": "5e90afe6f23a948cd988c8644ef8f3be73b4c7ecb7325655474870ae2046673f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "8d22501923d9ee761d35eaa5cb376c2324f82b5c585eb39bcb09ba6f4b0f69ee"
+  },
+  "150": {
+    "label": "scalar/wrong-receiver/contains/150",
+    "source_sha256": "e0ff687f8f6861d4b99099b8f1a564eb7c92802d9e2d1299eddd9e9861f33136",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "6dc118e41aa9cc17e65d1f67228cf8ed557257811ae4a59bb6e378b1d68db20c"
+  },
+  "151": {
+    "label": "scalar/wrong-receiver/contains/151",
+    "source_sha256": "2f7ebe6b8e07ad6995862edd6f242ac696890da0d414ff556883c39464fa88e0",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "467ad4264b9c9b0229caeac28e220f33ac5e0293e5432324104d2f7842c620c8"
+  },
+  "152": {
+    "label": "scalar/wrong-receiver/contains/152",
+    "source_sha256": "d53d9fa62ffea0c39675d0717567930466af3b13906df0e4a7fcc5d4bec9433c",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "b945978498af751f10ab8a71ad5764659fe83c2f96f9e9e21910af62a6f594a1"
+  },
+  "153": {
+    "label": "scalar/wrong-receiver/contains/153",
+    "source_sha256": "a0cb40eb1e6437aae897a604c437e26c14dc6a776e5f28355eb5f4a19194f444",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "60ea8acd5785a99d9ca6c02de810665b904458bd1f14906cd73cdbdc3f5796d3"
+  },
+  "154": {
+    "label": "scalar/wrong-receiver/trim/154",
+    "source_sha256": "88035f0d33f9e4174c888e0c09b8d0bbfffac615a2eb11fe2c365e21e87c76ba",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "36c3a65ac834e1e10af9ef56f00cfe23ae84660c492ef88a405f4d07ba6b4af3"
+  },
+  "155": {
+    "label": "scalar/wrong-receiver/trim/155",
+    "source_sha256": "d1f72993dbfaa3307312088fec9e509b4009aa361a8b8540450cefa0ce5df94f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "ed4a6f7c869d79e7f50a9118ee284cec68c961a8639476655fdcee901ca2c21f"
+  },
+  "156": {
+    "label": "scalar/wrong-receiver/trim/156",
+    "source_sha256": "c82ce6fdd7e672291c0b1f40f30e219dd2eac244a1c32b529ebf3789e2d89431",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "ed7f39d32ae3da5f145a71342f6b45e8c2aebec8751b9e61ba2d03ea846dc29b"
+  },
+  "157": {
+    "label": "scalar/wrong-receiver/trim/157",
+    "source_sha256": "5bf98860d0e4db08789390441260a178e8ea7909d3f16f832a373edae7b6398d",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "error",
+    "stock_observation_sha256": "72b228f42e12f3f561cf65015f585c749080e42382a645b99fba165f76e711c5"
+  },
+  "158": {
+    "label": "boundary/split-skip",
+    "source_sha256": "f1b61bcc02c3e3bd428b0d08668e18bb873d371708ff0b444a04097de6f72616",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-surface",
+    "reason": "C14b dependency, outside C14",
+    "stock_status": "value",
+    "stock_observation_sha256": "9575ee57e80d81eea8c4785364838dc0e25a1614320f669666f38f5a67e037d3"
+  },
+  "159": {
+    "label": "boundary/split-unwrap-or",
+    "source_sha256": "cb490be990aaa52fbf6c64afc067c280c0c6fb6b92b0518240aff54b5b4bfbea",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-surface",
+    "reason": "C14b dependency, outside C14",
+    "stock_status": "value",
+    "stock_observation_sha256": "79f29ab14ab015c12f105740742f5cf2d97d6d46161fc2029a10404f1288cbad"
+  },
+  "160": {
+    "label": "boundary/chars-take",
+    "source_sha256": "cd30374797af19e96b367e130ba3aec25123de731ca5cdc86cbfd2e8e7edb38b",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-surface",
+    "reason": "C14b dependency, outside C14",
+    "stock_status": "value",
+    "stock_observation_sha256": "e02bbdc8a0560830f1763630f4017dfc6bba6d5db07715cd8d35b417319dff9f"
+  },
+  "161": {
+    "label": "boundary/chars-count",
+    "source_sha256": "b1a72ac3d8e4551d6ff5e7ab2d002430eef9d0420b0b6da78096fc62d8f85d03",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-surface",
+    "reason": "C14b dependency, outside C14",
+    "stock_status": "value",
+    "stock_observation_sha256": "2bf536418e51b3f300a198c427ea44adcc8d5a06a5497e1b47e1b06934a63ab3"
+  },
+  "162": {
+    "label": "cert/i64-provider/split",
+    "source_sha256": "c9eaf533c791d294840ff2c75823551ce56cad9b2764a8c3d88dde20c464f3f9",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "5b2340c9a69885bf9f7f4289f331f81b9a7724d1f2bd39ce3077f5860f87dc0e"
+  },
+  "163": {
+    "label": "cert/raw-i64-provider/split",
+    "source_sha256": "c9eaf533c791d294840ff2c75823551ce56cad9b2764a8c3d88dde20c464f3f9",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "5f669c7e7e277e78c25a161209cd5010b2e0f6915b123bd269af0470f4752a6c"
+  },
+  "164": {
+    "label": "cert/script-name/split",
+    "source_sha256": "7f5f1ca5cd4b5b338d8bf2191a270a63228207181a5d015db9143ca10611a612",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "22e43ea467248db1a060c3a2c4b2602895c5604e1d1c0945257152d72f79bbf2"
+  },
+  "165": {
+    "label": "cert/i64-provider/replace",
+    "source_sha256": "290c37549f59ec1afb14cc422bd3cbf572da67699bdc6d979151a7d0b80f3ead",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "653cd01b4a818f94873531cbb2fc688708e01a045452d48e391268b8292d4ebf"
+  },
+  "166": {
+    "label": "cert/raw-i64-provider/replace",
+    "source_sha256": "290c37549f59ec1afb14cc422bd3cbf572da67699bdc6d979151a7d0b80f3ead",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "25a09771add0b35b325c9a0fcaf2c0576caca62d4dd4aba1dbc758b10365795f"
+  },
+  "167": {
+    "label": "cert/script-name/replace",
+    "source_sha256": "6f750e675138bb48d165b0c3f5c1be0b7015540f1ea741cbd5414f7b256dd9e5",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "640a0fc2aa1a4a02da42fc043da4ad90c3c78514d3a53e0e5e30f32ee0801517"
+  },
+  "168": {
+    "label": "cert/i64-provider/starts_with",
+    "source_sha256": "db29af9bc9c235b5c83c1ab2c739c76e69cc67edd44fcf52edd614ea740d46bc",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "b5e8d6c2b32871167c58ed15a1205028ece9ae39e43e1c1156df56ebcd25ea26"
+  },
+  "169": {
+    "label": "cert/raw-i64-provider/starts_with",
+    "source_sha256": "db29af9bc9c235b5c83c1ab2c739c76e69cc67edd44fcf52edd614ea740d46bc",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "eb3f7a15443d3836eccb3f22cebe4277d4def444bd3c6d5fa81a26e2b9e12e5b"
+  },
+  "170": {
+    "label": "cert/script-name/starts_with",
+    "source_sha256": "03c219c0f9d52570a957d9922859dbdf018897eb90448467dc5a6efbec7a00d2",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "b003a0293bd1fa3cfc995e40b809e0d12bda56166cb4bcdca68b1aaa3ea2e298"
+  },
+  "171": {
+    "label": "cert/i64-provider/ends_with",
+    "source_sha256": "0e1d6a76d123f569708379fa997d15b980341a5d235971af69d9c7c2049c6580",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "a33020965da3c79860f9661f16eac9daf47cc673dfc19f9a073d03e84e49a9ef"
+  },
+  "172": {
+    "label": "cert/raw-i64-provider/ends_with",
+    "source_sha256": "0e1d6a76d123f569708379fa997d15b980341a5d235971af69d9c7c2049c6580",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "acc8196bb8c5ba6177eb0ecd1c02b7a530160e52120e99b3fb70dbbc6fa3e293"
+  },
+  "173": {
+    "label": "cert/script-name/ends_with",
+    "source_sha256": "18fc223d71222cf0bf16e4ece6e1bc12d125e04b50b13263d9d20cf6857bd758",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "7a696387e9dcfe940a13af1e42cb8b732e7776f86ef49b10f63748546ef5552e"
+  },
+  "174": {
+    "label": "cert/i64-provider/contains",
+    "source_sha256": "5b3d822093d0ad974f8957e77b847a5d061c74f95d9e335b89c93fda0c0aa613",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "8a65af84224927a43087b2c22c26a9a14d8e10bde074e15c4f1cdbecbdd6fa05"
+  },
+  "175": {
+    "label": "cert/raw-i64-provider/contains",
+    "source_sha256": "5b3d822093d0ad974f8957e77b847a5d061c74f95d9e335b89c93fda0c0aa613",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "a4a139fd6775ba920e2bfb5012bbc50a6b9217608e754c6590fc649ca64ad009"
+  },
+  "176": {
+    "label": "cert/script-name/contains",
+    "source_sha256": "5320031d6b11c509de86c10aedb0d3ee6167fece8cd965803e967108f2a85f37",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "b48f5f86a72c72d5387d2267c4d2834a559c68b1eeb08a1315bd3bbe03796eea"
+  },
+  "177": {
+    "label": "cert/i64-provider/trim",
+    "source_sha256": "ec10a6fc9e066be4c8d9eb9360ca3ce679bf50a78f453f515e647fbaeda74c2f",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "bda4a22562a4db9b45bed5c952f0e3125101cec6bc8402721218ffe33368e179"
+  },
+  "178": {
+    "label": "cert/raw-i64-provider/trim",
+    "source_sha256": "ec10a6fc9e066be4c8d9eb9360ca3ce679bf50a78f453f515e647fbaeda74c2f",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "afe2ceb381c4049a4c766c68f63dafe84dd97a3be582c3b2a96825f4bd54d6b5"
+  },
+  "179": {
+    "label": "cert/script-name/trim",
+    "source_sha256": "edf7a14afeebe4fadce511f49f5b414b3fff79820a901033a0368af69d1afa44",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-provider",
+    "reason": "script same-name or untrusted actual native/raw provider closes name; no effects",
+    "stock_status": "value",
+    "stock_observation_sha256": "6c32267238e6fbd61dddfa7925e85f97cc157d6106dd20e0f991713dfe92ed6e"
+  },
+  "180": {
+    "label": "integration/words",
+    "source_sha256": "2a7b662efe36a51551607be7223f250c8ca292d86a9eefce253cdee03ff3bbab",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "efc9a73daf71fa5c4ca9900b634874d439b111900a7a3ae7c0021190b2142dcc"
+  },
+  "181": {
+    "label": "integration/paragraphs",
+    "source_sha256": "65baccd49d4093f38a14f75d5b131ac12ed5a1423b25960b02299fd64493e0fb",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "151e516a2caa7fa9def7eea5f3544be454b7098c734176af4615a746adda4e8a"
+  },
+  "182": {
+    "label": "integration/predicates",
+    "source_sha256": "0cced310b7c3c4f776bc0be6dbbb2b6cafa81109c63ee8098edecb73e98bc763",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "c2fc5930d577b6b25983e7bbaa95ce7ab7b9d561323b726f3c75aebd74ee4e54"
+  },
+  "183": {
+    "label": "integration/dynamic-receiver",
+    "source_sha256": "4d91b67b56ca3180696c13c3023c3b95bfd01fa3372da18812927b5655986736",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "all projected stock outcome/tape/reuse fields exact; wrong receiver/argument errors included",
+    "stock_status": "value",
+    "stock_observation_sha256": "bdae8be2c8f5a28a206d23d14ab83dec70ff94924a00f31a24d2bd02c3ccbe41"
+  },
+  "184": {
+    "label": "fuel/split",
+    "source_sha256": "e5e8091ab46036fe705f127ccb078f9a8a4dd9a8c6ce05c4a6c7cd414a6194c9",
+    "fixture": "default",
+    "fuel": 32,
+    "disposition": "Retained-fuel",
+    "reason": "semantic budget exhaustion only; no step parity; empty tape, cleared idle Store and reuse7; no success substitution",
+    "stock_status": "error",
+    "stock_observation_sha256": "ea2a1dddf7c67e18ad422e1699e8dd89e381e81048c251c336e4c789ec68af09"
+  },
+  "185": {
+    "label": "fuel/replace",
+    "source_sha256": "e484a7ca1fdd20bef7e7c2d4222579cbc28aa6fc7ab8bbb82babf8b159ead011",
+    "fixture": "default",
+    "fuel": 32,
+    "disposition": "Retained-fuel",
+    "reason": "semantic budget exhaustion only; no step parity; empty tape, cleared idle Store and reuse7; no success substitution",
+    "stock_status": "error",
+    "stock_observation_sha256": "3635070e1e660f55492ed70e8f5dec5589a926e23868d73b44336f44fa43e9bf"
+  },
+  "186": {
+    "label": "split/source-borrowed-append",
+    "source_sha256": "2305c0ec4d0ea6c508f481b89422320a08462196d7852b436500c1fd5c1aa947",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "approved supplemental ownership witness, exact stock source lease / delimiter copy / exhaustion / drop",
+    "stock_status": "error",
+    "stock_observation_sha256": "ca3f14e4e94a616a2111b29034522fdeb0fc21890d3d14d731fdbd09dff4d603"
+  },
+  "187": {
+    "label": "split/delimiter-snapshot-alias",
+    "source_sha256": "98a4e07efdf7e5a038fe9eec0371c5b747d0df897dc7a495b5e0a157ae2243df",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "approved supplemental ownership witness, exact stock source lease / delimiter copy / exhaustion / drop",
+    "stock_status": "value",
+    "stock_observation_sha256": "6fca864a9727e865b6c0163fc4c6b9d2a382b47a8e653bad0812dcc810090d82"
+  },
+  "188": {
+    "label": "split/release-source-on-last-yield",
+    "source_sha256": "e00d979fba86396a15b7b0cef549fe7e0307314ffffe9172106499ed70c61807",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "approved supplemental ownership witness, exact stock source lease / delimiter copy / exhaustion / drop",
+    "stock_status": "value",
+    "stock_observation_sha256": "63be28a1cdfcb175bc04c0233d02286d8a051ffe8d92a4d4ea7cd9693c37b939"
+  },
+  "189": {
+    "label": "split/drop-iterator-releases-source",
+    "source_sha256": "a8347f45066ff00d4188198d316976e73a44bff84c71f5ee37ed17d958b6fdf8",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "reason": "approved supplemental ownership witness, exact stock source lease / delimiter copy / exhaustion / drop",
+    "stock_status": "value",
+    "stock_observation_sha256": "c1fa50d12550bf3979ad291f3e54229956ab53edcae0add5eb84701b497618f2"
+  }
+}

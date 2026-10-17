@@ -1,0 +1,6981 @@
+{
+  "000": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "63"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "001": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "002": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "63"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "003": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "004": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "005": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "006": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "007": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "ceb1"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "ceb2"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "008": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "009": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "6162"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "010": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "011": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "65cc81"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "012": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "013": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "014": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "ceb1"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "ceb2"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "015": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "016": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "6161"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "017": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Tuple",
+            "0xfeb65b3f4755aef0",
+            [
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            5
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            6
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            null
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            null
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "018": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Tuple",
+            "0xfeb65b3f4755aef0",
+            [
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            5
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            6
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            7
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            null
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "63"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "019": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "020": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "021": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "022": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "023": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "024": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "025": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Tuple",
+            "0xfeb65b3f4755aef0",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            3
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "026": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xe2a1e9621b267af` for `std::string::Split<std::string::String>`",
+      "kind": "MissingInstanceFunction { hash: 0xe2a1e9621b267af, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xebf6bac43f44f6c4 }) }",
+      "missing": {
+        "hash": "0xe2a1e9621b267af",
+        "instance": "0xebf6bac43f44f6c4",
+        "instance_name": "std::string::Split<std::string::String>"
+      },
+      "sites": [
+        {
+          "end": 82,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "027": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "028": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "U64",
+            "0xb41669ccb4fdb76a",
+            "2"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "029": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "030": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "031": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "032": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "612c"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "033": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "034": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "035": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "036": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "037": {
+    "events": [],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 87,
+          "frames": "[]",
+          "source": 0,
+          "start": 73
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "038": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "039": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "040": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "041": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "042": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "043": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 1, expected 2",
+      "kind": "BadArgumentCount { actual: 1, expected: 2 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 72,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "044": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 3,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 3, expected 2",
+      "kind": "BadArgumentCount { actual: 3, expected: 2 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 103,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "045": {
+    "events": [],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 92,
+          "frames": "[]",
+          "source": 0,
+          "start": 70
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "046": {
+    "events": [],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 99,
+          "frames": "[]",
+          "source": 0,
+          "start": 85
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "047": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "048": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "049": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 81,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "050": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::u64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xb41669ccb4fdb76a }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 84,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "051": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::f64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xb9b22c3893248f31 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 83,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "052": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::bool`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x981333df5abb043f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 84,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "053": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::tuple::Tuple`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xfeb65b3f4755aef0 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 82,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "054": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::vec::Vec`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc11b1e769aea94f2 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 82,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "055": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::object::Object`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f5c2c7799148025 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 83,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "056": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::option::Option`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc0958f246e193e78 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 84,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "057": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::option::Option`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc0958f246e193e78 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 89,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "058": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::result::Result`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1978eae6b50a98ef }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 87,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "059": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::cmp::Ordering`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x30d24cc3fa13e4b7 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 104,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "060": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x4fa7c4e17a5fa0e2` for `std::i64`",
+      "kind": "MissingInstanceFunction { hash: 0x4fa7c4e17a5fa0e2, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": {
+        "hash": "0x4fa7c4e17a5fa0e2",
+        "instance": "0x1cad9186c9641c4f",
+        "instance_name": "std::i64"
+      },
+      "sites": [
+        {
+          "end": 81,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "061": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xcb1966b8e980b892` for `std::bool`",
+      "kind": "MissingInstanceFunction { hash: 0xcb1966b8e980b892, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x981333df5abb043f }) }",
+      "missing": {
+        "hash": "0xcb1966b8e980b892",
+        "instance": "0x981333df5abb043f",
+        "instance_name": "std::bool"
+      },
+      "sites": [
+        {
+          "end": 84,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "062": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xadbc0e58f46e125d` for `std::tuple::Tuple`",
+      "kind": "MissingInstanceFunction { hash: 0xadbc0e58f46e125d, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xfeb65b3f4755aef0 }) }",
+      "missing": {
+        "hash": "0xadbc0e58f46e125d",
+        "instance": "0xfeb65b3f4755aef0",
+        "instance_name": "std::tuple::Tuple"
+      },
+      "sites": [
+        {
+          "end": 82,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "063": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x92114b1129d1285f` for `std::vec::Vec`",
+      "kind": "MissingInstanceFunction { hash: 0x92114b1129d1285f, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc11b1e769aea94f2 }) }",
+      "missing": {
+        "hash": "0x92114b1129d1285f",
+        "instance": "0xc11b1e769aea94f2",
+        "instance_name": "std::vec::Vec"
+      },
+      "sites": [
+        {
+          "end": 82,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "064": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x7c5679102a2f3c88` for `std::object::Object`",
+      "kind": "MissingInstanceFunction { hash: 0x7c5679102a2f3c88, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f5c2c7799148025 }) }",
+      "missing": {
+        "hash": "0x7c5679102a2f3c88",
+        "instance": "0x2f5c2c7799148025",
+        "instance_name": "std::object::Object"
+      },
+      "sites": [
+        {
+          "end": 83,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "065": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x939fda43dd2282d5` for `std::option::Option`",
+      "kind": "MissingInstanceFunction { hash: 0x939fda43dd2282d5, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc0958f246e193e78 }) }",
+      "missing": {
+        "hash": "0x939fda43dd2282d5",
+        "instance": "0xc0958f246e193e78",
+        "instance_name": "std::option::Option"
+      },
+      "sites": [
+        {
+          "end": 84,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "066": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "58635863"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "067": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "6262"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "068": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "6261"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "069": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "2d612d622d"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "070": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "2d"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "071": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "616263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "072": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "073": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "ceb2ceb1ceb2"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "074": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "612062"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "075": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "615f62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "076": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 3,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "7862"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "077": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Tuple",
+            "0xfeb65b3f4755aef0",
+            [
+              1,
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "6162"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "7862"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "078": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Tuple",
+            "0xfeb65b3f4755aef0",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "6162"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "6162"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "079": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 1, expected 3",
+      "kind": "BadArgumentCount { actual: 1, expected: 3 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 81,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "080": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 2, expected 3",
+      "kind": "BadArgumentCount { actual: 2, expected: 3 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 84,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "081": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 4, expected 3",
+      "kind": "BadArgumentCount { actual: 4, expected: 3 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 92,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "082": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 86,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "083": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #2",
+          "kind": "BadArgument { arg: 2 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 86,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "084": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::char`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x214e0b95f9831430 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 88,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "085": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "086": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "087": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "088": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "089": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "090": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "091": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "092": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "093": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "094": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "095": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 1, expected 2",
+      "kind": "BadArgumentCount { actual: 1, expected: 2 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 86,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "096": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 87,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "097": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::char`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x214e0b95f9831430 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 89,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "098": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 3, expected 2",
+      "kind": "BadArgumentCount { actual: 3, expected: 2 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 93,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "099": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "100": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "101": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "102": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "103": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "104": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "105": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "106": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "107": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "108": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "109": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 1, expected 2",
+      "kind": "BadArgumentCount { actual: 1, expected: 2 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 84,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "110": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 85,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "111": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::char`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x214e0b95f9831430 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 87,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "112": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 3, expected 2",
+      "kind": "BadArgumentCount { actual: 3, expected: 2 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 91,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "113": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "114": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "115": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "116": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "117": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "118": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "119": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "120": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "121": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "122": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "123": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 1, expected 2",
+      "kind": "BadArgumentCount { actual: 1, expected: 2 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 83,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "124": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::i64`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 84,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "125": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #1",
+          "kind": "BadArgument { arg: 1 }"
+        }
+      ],
+      "display": "Expected type `std::string::String` but found `std::char`",
+      "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x214e0b95f9831430 }) }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 86,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "126": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 3, expected 2",
+      "kind": "BadArgumentCount { actual: 3, expected: 2 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 90,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "127": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "128": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "616263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "129": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "130": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "131": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "132": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "612062"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "133": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "e2808b2061e2808b"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "134": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "f09fa680"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "135": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "136": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Tuple",
+            "0xfeb65b3f4755aef0",
+            [
+              1,
+              2,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "206120"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "137": {
+    "events": [
+      {
+        "kind": "i64",
+        "tag": 1,
+        "value": "0"
+      },
+      {
+        "kind": "i64",
+        "tag": 2,
+        "value": "0"
+      }
+    ],
+    "outcome": {
+      "chain": [],
+      "display": "Wrong number of arguments 2, expected 1",
+      "kind": "BadArgumentCount { actual: 2, expected: 1 }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 87,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "138": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xe0f054ea4fd46d2c` for `std::i64`",
+      "kind": "MissingInstanceFunction { hash: 0xe0f054ea4fd46d2c, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": {
+        "hash": "0xe0f054ea4fd46d2c",
+        "instance": "0x1cad9186c9641c4f",
+        "instance_name": "std::i64"
+      },
+      "sites": [
+        {
+          "end": 79,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "139": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x644ef6b3dc0b755c` for `std::bool`",
+      "kind": "MissingInstanceFunction { hash: 0x644ef6b3dc0b755c, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x981333df5abb043f }) }",
+      "missing": {
+        "hash": "0x644ef6b3dc0b755c",
+        "instance": "0x981333df5abb043f",
+        "instance_name": "std::bool"
+      },
+      "sites": [
+        {
+          "end": 82,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "140": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x3d46db1a1c5ae591` for `std::vec::Vec`",
+      "kind": "MissingInstanceFunction { hash: 0x3d46db1a1c5ae591, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc11b1e769aea94f2 }) }",
+      "missing": {
+        "hash": "0x3d46db1a1c5ae591",
+        "instance": "0xc11b1e769aea94f2",
+        "instance_name": "std::vec::Vec"
+      },
+      "sites": [
+        {
+          "end": 80,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "141": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xd301e91b1fa4f146` for `std::object::Object`",
+      "kind": "MissingInstanceFunction { hash: 0xd301e91b1fa4f146, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f5c2c7799148025 }) }",
+      "missing": {
+        "hash": "0xd301e91b1fa4f146",
+        "instance": "0x2f5c2c7799148025",
+        "instance_name": "std::object::Object"
+      },
+      "sites": [
+        {
+          "end": 81,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "142": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x883cd410546588d1` for `std::i64`",
+      "kind": "MissingInstanceFunction { hash: 0x883cd410546588d1, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": {
+        "hash": "0x883cd410546588d1",
+        "instance": "0x1cad9186c9641c4f",
+        "instance_name": "std::i64"
+      },
+      "sites": [
+        {
+          "end": 79,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "143": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xc827649c7ba90a1` for `std::bool`",
+      "kind": "MissingInstanceFunction { hash: 0xc827649c7ba90a1, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x981333df5abb043f }) }",
+      "missing": {
+        "hash": "0xc827649c7ba90a1",
+        "instance": "0x981333df5abb043f",
+        "instance_name": "std::bool"
+      },
+      "sites": [
+        {
+          "end": 82,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "144": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x558a5be007eb006c` for `std::vec::Vec`",
+      "kind": "MissingInstanceFunction { hash: 0x558a5be007eb006c, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc11b1e769aea94f2 }) }",
+      "missing": {
+        "hash": "0x558a5be007eb006c",
+        "instance": "0xc11b1e769aea94f2",
+        "instance_name": "std::vec::Vec"
+      },
+      "sites": [
+        {
+          "end": 80,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "145": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xbbcd69e1041514bb` for `std::object::Object`",
+      "kind": "MissingInstanceFunction { hash: 0xbbcd69e1041514bb, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f5c2c7799148025 }) }",
+      "missing": {
+        "hash": "0xbbcd69e1041514bb",
+        "instance": "0x2f5c2c7799148025",
+        "instance_name": "std::object::Object"
+      },
+      "sites": [
+        {
+          "end": 81,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "146": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x768ee4745f444aa5` for `std::i64`",
+      "kind": "MissingInstanceFunction { hash: 0x768ee4745f444aa5, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": {
+        "hash": "0x768ee4745f444aa5",
+        "instance": "0x1cad9186c9641c4f",
+        "instance_name": "std::i64"
+      },
+      "sites": [
+        {
+          "end": 77,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "147": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xf230462dcc9b52d5` for `std::bool`",
+      "kind": "MissingInstanceFunction { hash: 0xf230462dcc9b52d5, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x981333df5abb043f }) }",
+      "missing": {
+        "hash": "0xf230462dcc9b52d5",
+        "instance": "0x981333df5abb043f",
+        "instance_name": "std::bool"
+      },
+      "sites": [
+        {
+          "end": 80,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "148": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xab386b840ccac218` for `std::vec::Vec`",
+      "kind": "MissingInstanceFunction { hash: 0xab386b840ccac218, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc11b1e769aea94f2 }) }",
+      "missing": {
+        "hash": "0xab386b840ccac218",
+        "instance": "0xc11b1e769aea94f2",
+        "instance_name": "std::vec::Vec"
+      },
+      "sites": [
+        {
+          "end": 78,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "149": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x457f59850f34d6cf` for `std::object::Object`",
+      "kind": "MissingInstanceFunction { hash: 0x457f59850f34d6cf, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f5c2c7799148025 }) }",
+      "missing": {
+        "hash": "0x457f59850f34d6cf",
+        "instance": "0x2f5c2c7799148025",
+        "instance_name": "std::object::Object"
+      },
+      "sites": [
+        {
+          "end": 79,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "150": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xa8a22638a8c8b7ec` for `std::i64`",
+      "kind": "MissingInstanceFunction { hash: 0xa8a22638a8c8b7ec, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": {
+        "hash": "0xa8a22638a8c8b7ec",
+        "instance": "0x1cad9186c9641c4f",
+        "instance_name": "std::i64"
+      },
+      "sites": [
+        {
+          "end": 76,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "151": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x2c1c84613b17af9c` for `std::bool`",
+      "kind": "MissingInstanceFunction { hash: 0x2c1c84613b17af9c, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x981333df5abb043f }) }",
+      "missing": {
+        "hash": "0x2c1c84613b17af9c",
+        "instance": "0x981333df5abb043f",
+        "instance_name": "std::bool"
+      },
+      "sites": [
+        {
+          "end": 79,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "152": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x7514a9c8fb463f51` for `std::vec::Vec`",
+      "kind": "MissingInstanceFunction { hash: 0x7514a9c8fb463f51, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc11b1e769aea94f2 }) }",
+      "missing": {
+        "hash": "0x7514a9c8fb463f51",
+        "instance": "0xc11b1e769aea94f2",
+        "instance_name": "std::vec::Vec"
+      },
+      "sites": [
+        {
+          "end": 77,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "153": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x9b539bc9f8b82b86` for `std::object::Object`",
+      "kind": "MissingInstanceFunction { hash: 0x9b539bc9f8b82b86, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f5c2c7799148025 }) }",
+      "missing": {
+        "hash": "0x9b539bc9f8b82b86",
+        "instance": "0x2f5c2c7799148025",
+        "instance_name": "std::object::Object"
+      },
+      "sites": [
+        {
+          "end": 78,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "154": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x17aa716201bb76ba` for `std::i64`",
+      "kind": "MissingInstanceFunction { hash: 0x17aa716201bb76ba, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+      "missing": {
+        "hash": "0x17aa716201bb76ba",
+        "instance": "0x1cad9186c9641c4f",
+        "instance_name": "std::i64"
+      },
+      "sites": [
+        {
+          "end": 69,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "155": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x9314d33b92646eca` for `std::bool`",
+      "kind": "MissingInstanceFunction { hash: 0x9314d33b92646eca, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x981333df5abb043f }) }",
+      "missing": {
+        "hash": "0x9314d33b92646eca",
+        "instance": "0x981333df5abb043f",
+        "instance_name": "std::bool"
+      },
+      "sites": [
+        {
+          "end": 72,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "156": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0xca1cfe925235fe07` for `std::vec::Vec`",
+      "kind": "MissingInstanceFunction { hash: 0xca1cfe925235fe07, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc11b1e769aea94f2 }) }",
+      "missing": {
+        "hash": "0xca1cfe925235fe07",
+        "instance": "0xc11b1e769aea94f2",
+        "instance_name": "std::vec::Vec"
+      },
+      "sites": [
+        {
+          "end": 70,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "157": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Missing instance function `0x245bcc9351cbead0` for `std::object::Object`",
+      "kind": "MissingInstanceFunction { hash: 0x245bcc9351cbead0, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f5c2c7799148025 }) }",
+      "missing": {
+        "hash": "0x245bcc9351cbead0",
+        "instance": "0x2f5c2c7799148025",
+        "instance_name": "std::object::Object"
+      },
+      "sites": [
+        {
+          "end": 71,
+          "frames": "[]",
+          "source": 0,
+          "start": 59
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "158": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "159": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "160": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "6162"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "161": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "U64",
+            "0xb41669ccb4fdb76a",
+            "3"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "162": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "616263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "163": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "616263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "164": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "616263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "165": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "626263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "166": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "626263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "167": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "626263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "168": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "169": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "170": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "171": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "172": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "173": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            false
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "174": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "175": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "176": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "177": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "616263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "178": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "616263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "179": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "616263"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "180": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "63"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "181": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            ""
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "182": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Tuple",
+            "0xfeb65b3f4755aef0",
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ],
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ],
+          [
+            "Bool",
+            "0x981333df5abb043f",
+            true
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "183": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "184": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Exhausted the budget it was given",
+      "kind": "Halted { halt: Limited }",
+      "missing": null,
+      "sites": [],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "185": {
+    "events": [],
+    "outcome": {
+      "chain": [],
+      "display": "Exhausted the budget it was given",
+      "kind": "Halted { halt: Limited }",
+      "missing": null,
+      "sites": [],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "186": {
+    "events": [],
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "display": "Cannot write, the value is being read from",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
+      "missing": null,
+      "sites": [
+        {
+          "end": 95,
+          "frames": "[]",
+          "source": 0,
+          "start": 89
+        }
+      ],
+      "status": "error"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "187": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Vec",
+            "0xc11b1e769aea94f2",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "62"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "188": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "Tuple",
+            "0xfeb65b3f4755aef0",
+            [
+              1,
+              2
+            ]
+          ],
+          [
+            "Option",
+            "0xc0958f246e193e78",
+            3
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "6178"
+          ],
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "61"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  },
+  "189": {
+    "events": [],
+    "outcome": {
+      "graph": {
+        "nodes": [
+          [
+            "String",
+            "0x2f4720d36d2b70c",
+            "612c6278"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    },
+    "reuse": {
+      "graph": {
+        "nodes": [
+          [
+            "I64",
+            "0x1cad9186c9641c4f",
+            "7"
+          ]
+        ],
+        "root": 0
+      },
+      "status": "value"
+    }
+  }
+}
