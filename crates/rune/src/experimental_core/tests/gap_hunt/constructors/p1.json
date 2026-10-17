@@ -1,0 +1,26 @@
+{
+  "059": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 2
+    }
+  ],
+  "107": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "109": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 2
+    }
+  ],
+  "111": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ]
+}

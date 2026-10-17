@@ -1,0 +1,1199 @@
+[
+  {
+    "id": "000",
+    "label": "forms/unit/value",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){U}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "4880f70faa810b5bfdd28c028f954988a26767affc69463e2c3fe37772c9f74e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "001",
+    "label": "forms/unit/identity",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=U;(x is U,x is U,x is T)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "22514d75c95e9f302fcc8cbdd3a76d12a329b18928a5a71c87f40fd71b2b3dc3",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "002",
+    "label": "forms/unit/type",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::Type::of_val(U)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "047298a8752d24c1e2f9fef752335a4e3b5256542b283a37366b20dc5d74b37e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "003",
+    "label": "forms/unit/type-name",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::type_name_of_val(U)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "e150f9d5b515e6f96d3e9a18305b42de96eb204c7fe97f2c72b0d40ebaaf35a4",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "004",
+    "label": "forms/unit/debug",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{:?}\",U)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "dfffa6705945eeaa80e1251cc9d7c8aa061ffb4a4d998edb4a84a24ae0e56acd",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "005",
+    "label": "forms/unit/display",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{}\",U)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "c97fc7cfeb55d271ba4d6578cdae9945ba71cdac46d3665eb1a144276a61fd01",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "006",
+    "label": "forms/unit/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=U;(x.clone(),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "00a0cbbc41c0a768b2148572ec09a5f56086fb97a10e263427affac8e74d2b47",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "007",
+    "label": "forms/unit/equal",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){U==U}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "e97947aef8d180256ad9115d60d3b27d6b73ba4c73bf5a4a95db2479316769a2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "008",
+    "label": "forms/unit/compare",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){U.cmp(U)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "0a70c9633f83fdc4fbef9aed10bc900cda7f979ef278ffb8ee7d12c101d640f0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "009",
+    "label": "forms/empty-tuple/value",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){Z()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "bf2659a20b17a682df5f8206c9e9498159e341ff35b4d37915c1de0eb2899985",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "010",
+    "label": "forms/empty-tuple/identity",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=Z();(x is Z,x is U,x is T)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "99254d3cae42e17ac11a714e46b39be68481c1a76b461eb1a4a8ac1b668b65ae",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "011",
+    "label": "forms/empty-tuple/type",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::Type::of_val(Z())}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "837b900fc96b528ecf241d5aa11cd4e3e7b7bc6daca00e530f30b622ee53c268",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "012",
+    "label": "forms/empty-tuple/type-name",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::type_name_of_val(Z())}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "afebe0e33bb891502438f856d4117df8770f28e6debf56a4a9ab280232a6988a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "013",
+    "label": "forms/empty-tuple/debug",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{:?}\",Z())}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "6a2f7c6449ef15171ef8ce649f26ddfa07051a159c0d5e64abf633c99a45ba54",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "014",
+    "label": "forms/empty-tuple/display",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{}\",Z())}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "8c080f8ab211a005842bce29e46cc1e0a9b647fc84106e2f8842808be1ce95bd",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "015",
+    "label": "forms/empty-tuple/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=Z();(x.clone(),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "57235327cbb2c6e0181eb58e897948e7950bf98564398dcfdf893173c9d8f116",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "016",
+    "label": "forms/empty-tuple/equal",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){Z()==Z()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "77cf1126440e85f7e7fd31cbae8d572adf39e8ace5db8c525c86343b16543185",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "017",
+    "label": "forms/empty-tuple/compare",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){Z().cmp(Z())}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "b2c5322332bb45e44cb0887f38a32f697ad9c6b964cec0d8415ef63198614e77",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "018",
+    "label": "forms/single/value",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){T(7)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "0d69238b56083f2bb7a3c7b8fc45c797464ccf52ea925b31d467aa3fb6b2dfad",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "019",
+    "label": "forms/single/identity",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);(x is T,x is U,x is T)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "9b10f571e512d5362b288d98d1b805d3eddb2c5c2c1924a178334eff9ef75d19",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "020",
+    "label": "forms/single/type",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::Type::of_val(T(7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "fe0078c3bbff4296ac6f68f33efeb159eb1ee76b49b7324f7a6a44a10024eafe",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "021",
+    "label": "forms/single/type-name",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::type_name_of_val(T(7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "1728a948b7d28d8abc1021ed63404bed7a5aafb210748272ec8715037387392c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "022",
+    "label": "forms/single/debug",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{:?}\",T(7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "a9230a37787222b2e9555ec1d8e4e263330cce0db232436a71ebd86b15abd37e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "023",
+    "label": "forms/single/display",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{}\",T(7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "640aed3f7f6ade02bc948b9eb7d93fe8b38961031339001355b2c5c5e6b903b8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "024",
+    "label": "forms/single/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);(x.clone(),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "e9483fd3dfcd7ce594b1d005ce8466a9a8ab2e8408ce37bf9b78f1f5caffb6cb",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "025",
+    "label": "forms/single/equal",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){T(7)==T(7)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "0af5e7b41f9fdeb2e18909f76d7d9e17b24e46d67c9e49f50bfaf05a24964850",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "026",
+    "label": "forms/single/compare",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){T(7).cmp(T(7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "5e553f1abf0e55733174c07cf536b510d036d84bab82d9052a40adc0e22969bb",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "027",
+    "label": "forms/pair/value",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){P(7,9)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "000b0303384a45b6cfd3efa0042bf693a18fb0135bdb500ebbc5580e85ed14d0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "028",
+    "label": "forms/pair/identity",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=P(7,9);(x is P,x is U,x is T)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "8690745125c46fcd207754a270fa7772a50848d42a31fda3d4810a6d7ee8bce9",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "029",
+    "label": "forms/pair/type",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::Type::of_val(P(7,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "22aed40a9f280ec9f123186a7ecac626b1dc00c25058bfcef9308a2c973fc758",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "030",
+    "label": "forms/pair/type-name",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::type_name_of_val(P(7,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "5fba0f1a2d79bf9c9ac964661d2f0764d0403d6bfb7e05572cb8992bf9f54075",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "031",
+    "label": "forms/pair/debug",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{:?}\",P(7,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "fa080d79c45c4003bbe92f126f36bd413f71458623ad387ce0d0fa23ee8474ac",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "032",
+    "label": "forms/pair/display",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{}\",P(7,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "9900c7b8eeb1138b01755d28dcc7ff417fba05515d6de5658cda15ba45d8b659",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "033",
+    "label": "forms/pair/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=P(7,9);(x.clone(),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "814867930b714d3e96cb186176c08eeb05d25166ebae1970d17974e5fe26ffb4",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "034",
+    "label": "forms/pair/equal",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){P(7,9)==P(7,9)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "6de162b9d479777c6132647ae2094cbf33d41cbfb9af8aabe4252870cf436727",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "035",
+    "label": "forms/pair/compare",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){P(7,9).cmp(P(7,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "2581e6afdb783fac6108f5a748d5d2213974349618272fa65fb160d57b601b31",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "036",
+    "label": "forms/named-control/value",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){N{x:7,y:9}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "269e68f167ef43daf909288fe515c15c2a2d5ddd49478b7aa42a022812598a91",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "037",
+    "label": "forms/named-control/identity",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=N{x:7,y:9};(x is N,x is U,x is T)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "18cfb53ae8878c4cbd2c6b929e79f8938510710dc49ab86565bca7438293bfa0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "038",
+    "label": "forms/named-control/type",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::Type::of_val(N{x:7,y:9})}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "1457f841a61f55e6fe82aa6c7d910456123f5e3d1119f5899a0b0de09967d6e1",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "039",
+    "label": "forms/named-control/type-name",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){std::any::type_name_of_val(N{x:7,y:9})}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "a39183f4079ad8c6476a47beaece3234dcb082b84ee9c0b432a9684dfa239b2d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "040",
+    "label": "forms/named-control/debug",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{:?}\",N{x:7,y:9})}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "16f006bc7abd78e96b2aba2bd40952e52da5c8b8f42ca37578f944cb820137b4",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "041",
+    "label": "forms/named-control/display",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){format!(\"{}\",N{x:7,y:9})}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "b5edaae5d503414014ac6b28ef46ee4c4be2f8384dd0466eede6decd3f1b8ee1",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "042",
+    "label": "forms/named-control/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=N{x:7,y:9};(x.clone(),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "fe6d723152241612293b53e21cb336dceff4c767193b6307dd301927044d5bda",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "043",
+    "label": "forms/named-control/equal",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){N{x:7,y:9}==N{x:7,y:9}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "96c049b71f269c943c832038718cd2798d6b4d0790c1ba12c51307109e63255e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "044",
+    "label": "forms/named-control/compare",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){N{x:7,y:9}.cmp(N{x:7,y:9})}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "4ef4cd0aa508be79659874fabd8cc168aac047c5c394907bfb550aa365194bba",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "045",
+    "label": "fields/read",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);x.0}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "0282e5d9c13ed4842da2729c11162fe7e73958dd55307b7984e7e4826564791a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "046",
+    "label": "fields/pair",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=P(7,9);(x.0,x.1)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "43ed46efd791a5d004881df359a4e9fb99906dabd8d0cd082bc82a2527e053ac",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "047",
+    "label": "fields/set",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);x.0=9;x}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "8936c768780b61d56c9db6756a3288432395bcf6260929f709a56c631007320a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "048",
+    "label": "fields/compound",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=P(7,9);x.1+=3;x}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "c656259daf298c3ff841fdbd8a89f61113f1800815be76bae335839fbc6838b0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "049",
+    "label": "fields/nested-child",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T([1]);x.0.push(2);x}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "25d1400c4e45ac726942a0c33cca96c37319ad71ee1357171adc9181d8abe9e3",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "050",
+    "label": "fields/missing-read",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);x.1}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "813d7d2ec897e199e6eaead9921c35156c679a00e13da4885b8b6ce2b460e2df",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "051",
+    "label": "fields/missing-set",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);x.1=9;x}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "8ede1e016467d2a56e74f4add267efabf5de704c71f1b2bbe232be9a1ae6a30a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "052",
+    "label": "fields/named-read",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);x.x}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "a2e657062245c0d47a5be8ceb136c0c65f3e3a0a7e6ac42e9e5909eae6a81786",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "053",
+    "label": "fields/named-set",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);x.x=9;x}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "2438256dd7301a5d5fb1da92e49c59cdbecbf3679b9701ee43ddba9b07605fd2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "054",
+    "label": "fields/unit-index",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=U;x.0}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "43b451d8f556ee80fce6c21c4bdea19b9d1589a51a61df9e42badefb5537aa4d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "055",
+    "label": "fields/zero-index",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=Z();x.0}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "6603b4479296458a8ab6ff617eade16b3180671f1ef33d58943c86a3b797abae",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "056",
+    "label": "fields/unit-name",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=U;x.x}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "522b22873bf0571820d886ea954f8573c22e6868cde86b2ec6bee7bda7947073",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "057",
+    "label": "fields/named-index",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=N{x:7,y:9};x.0}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "c058fd910ece2b0d16511d2599cbffd3984cb3a6caafdabf53a3f6cb68a7f48f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "058",
+    "label": "fields/dynamic-index",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);x[0]}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "c0012b2a54e939e70b721a0cff3496ff324a6effa86367b5147d01c84df3689e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "059",
+    "label": "fields/dynamic-set",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);x[0]=9;x}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "bd1224835fe9b575a4f83679cbf0771fef829504b67738ef08251061fc1f1edf",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "060",
+    "label": "ownership/alias",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(1);let y=x;y.0=2;(x,y)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "8f3d9864ce37abf9e9d93e7a49e8b60a46493788a1abb5e8fd21dd8293c1b7a5",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "061",
+    "label": "ownership/shallow-clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(1);let y=x.clone();y.0=2;(x,y)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "188b6e0d3dd4c2903cd7123af2e9436d6ed88067124bf1aa19939ae59d660cfe",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "062",
+    "label": "ownership/nested-clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T([1]);let y=x.clone();y.0.push(2);(x,y)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "c83c07202feae26b09f38c10ece260780652c00ca416dc9d5cf8474d20e64606",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "063",
+    "label": "ownership/distinct-equal",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(1);(x,T(1))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "91452e34bc5135edcb7c8f472f1d29087baff7e9f6437388fa6521c9a73975f8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "064",
+    "label": "ownership/cycle",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T([]);x.0.push(x);x}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "7050dd79630345e1d90e0e9520252c830ee8e4a4f1db71b27ef52a3bfc0f5755",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "065",
+    "label": "ownership/drop",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(1);drop(x);7}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "aa50f9bbfbedb0926b560163b1eb4159b5c52de9ceadc56a595822c780626e0c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "066",
+    "label": "ownership/moved",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(1);drop(x);x.0}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "a6cf70a894ff013e9433c46d2cbd0b94dd2b8a9282f8a9da962ff0c533065f52",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "067",
+    "label": "ownership/moved-alias",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(1);let y=x;drop(x);y.0}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "2cd2b4635db25da752b65dcca013142cd3ff8a6c4134e73bdb50b3d99d308bf8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "068",
+    "label": "ownership/closure-capture",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(1);let f=||x.0;f()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "045fa440c4c73b56e493f416b06be40d7fe4585aad42d56d9b4f7b6109bb4c5d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "069",
+    "label": "ownership/ownership-loop",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let out=[];for n in 0..4{out.push(T(n));}out}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "14d2225ba48b484a935b75ebeb8f70af44772e80aecd12667de2b0970a0d0b33",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "070",
+    "label": "effects/order",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=0;let t=P(tap(1,7),tap(2,9));(t,x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "3c65cc8ced4d3a6d3d0f902f31b120f658f622c3d13b054814ef33f2ac85515e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "071",
+    "label": "effects/rebind",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let n=1;let t=P(n,{n=2;n});(t,n)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "d6eec4c0f605ccd7b1c3ff014e8599219b2b82efa8abad42148a1baff28a7431",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "072",
+    "label": "effects/return",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){T({tap(1,7);return 9;})}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "f5e60fc01496e4a5b2ba7f78796c31c6ef9464f6f57a2d97d89d49e7fc592784",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "073",
+    "label": "effects/error-second",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){P(tap(1,7),1/0)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "c6e155dd6f83c7b44bd7e8b71aef2b82194975644365f509659087bab6ad2ed5",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "074",
+    "label": "effects/error-first",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){P(1/0,tap(2,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "61426d56c8c757102cdcae043cfc4e4b9c54ea42994690fc563994d8d640ee9a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "075",
+    "label": "effects/write-order",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(0);t.0={tap(1,1);9};t}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "483b20f530672ed5ad1f6bd3bdd7558aeb8e1d02166074752dfbcd33b8997f27",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "076",
+    "label": "arity/76",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){U()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "9f9921f746b6e801698e910b1a6a4e7e4d79676fa037f2ce2639555bbfc3c29c",
+    "fuel": 200000,
+    "proposed_policy": "Arity-audit"
+  },
+  {
+    "id": "077",
+    "label": "arity/77",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){U(tap(1,7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "418f94ea73be19064a6d73165a1880762fa1b5844ba727ed7f33cfa2cc80738b",
+    "fuel": 200000,
+    "proposed_policy": "Arity-audit"
+  },
+  {
+    "id": "078",
+    "label": "arity/78",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){Z(tap(1,7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "53634ac68cf8e2877531b925365beccc4bacc897358aaa7b6dd0ebf95b39440c",
+    "fuel": 200000,
+    "proposed_policy": "Arity-audit"
+  },
+  {
+    "id": "079",
+    "label": "arity/79",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){T()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "406d61f14a1d890c104a1092bafe9eb01e840546c27eb68bf06fea08db2efe6f",
+    "fuel": 200000,
+    "proposed_policy": "Arity-audit"
+  },
+  {
+    "id": "080",
+    "label": "arity/80",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){T(tap(1,7),tap(2,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "d150bdb13ee2b8d6a6a28c6c9f200adc73a9b7c5db54cefb79ce6100ce776904",
+    "fuel": 200000,
+    "proposed_policy": "Arity-audit"
+  },
+  {
+    "id": "081",
+    "label": "arity/81",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){P(tap(1,7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "a752a30eb46435840051532919372f5e8e9b2a614dfced86a15a76b1d109b086",
+    "fuel": 200000,
+    "proposed_policy": "Arity-audit"
+  },
+  {
+    "id": "082",
+    "label": "arity/82",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){P(tap(1,1),tap(2,2),tap(3,3))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "b73e574067ccbdb65e29343f1ef6d8118c2130846517a4023ffa3a7d82d15e67",
+    "fuel": 200000,
+    "proposed_policy": "Arity-audit"
+  },
+  {
+    "id": "083",
+    "label": "patterns/let-tuple",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let T(a)=T(7);a}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "fbd2325191406751b928dfe7dfe62d3c5848cc2d9f15c4aaf32d1bd693ac5fa1",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "084",
+    "label": "patterns/let-pair",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let P(a,b)=P(7,9);a+b}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "104a42e92984083d0408f7a27799764cfbd25d04450dd5a40bf140a304b3861e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "085",
+    "label": "patterns/match",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){match T(7){T(a)=>a,_=>0}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "1611485df9b1a021be8ee9a6b535f9c69535d269e4d85c326dff8148cd3af500",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "086",
+    "label": "patterns/if-let",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){if let T(a)=T(7){a}else{0}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "1e75f4d99384dabb1bf9745a4c0a5278ff5ca56ed11b8c7aca5d95686d9ce080",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "087",
+    "label": "patterns/unit",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){match U{U=>7,_=>0}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "f220dd5ea7ed8047c49569b913f9fc8635f2b7d7f53b49c233edd40d8721185e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "088",
+    "label": "patterns/zero",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){match Z(){Z()=>7,_=>0}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "4a585e344ae86317730d8cdec220b25761dce2af03fe113bc50ffd5f57dbd7a7",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "089",
+    "label": "patterns/literal-child",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){match T(7){T(8)=>0,T(a)=>a}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "a5f8a08f0e30d32fb8ad630da69dd13b52110bf703d05cfb57ae9406242a4278",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "090",
+    "label": "patterns/nested",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(P(7,9));match x{T(P(a,b))=>a+b,_=>0}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "4881a939329fc1a6d89bee5e038d1337d1f9fe3e9b15c83d39bce7a54eb92463",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "091",
+    "label": "list-boundary/len",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.len()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "34d3a40dc28832f6b4d31c72fa9c0b992c776065697f4405220f20fdc292053a",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "092",
+    "label": "list-boundary/empty",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.is_empty()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "2e35a5054ebee6124479f87db4b1ce68cb07090264e008c32ac355b38b428deb",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "093",
+    "label": "list-boundary/push",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.push(tap(1,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "8825a073a0766b752d2058dd46ed6cfd094f7e439add6c8b146b1b548f3abec5",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "094",
+    "label": "list-boundary/pop",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.pop()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "fbf0974457e4b066a95cd735dcd44edb1ba61f905ea7a91d67cddf7b95cb05fd",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "095",
+    "label": "list-boundary/first",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.first()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "db607da86a67de58de435bc647f3afcfa32a1ef110bb3649260c9c51ede695e1",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "096",
+    "label": "list-boundary/last",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.last()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "961b1b9700d001af3ec7dfa0594356f652a718fa1d92ffcd91bfc08e0ea072bb",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "097",
+    "label": "list-boundary/get",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.get(0)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "c180b064bd7c04db265e7e054773310601a5c54400d2680c48b232e1e3ca8ef6",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "098",
+    "label": "list-boundary/iter",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.iter()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "994842181340ae963111d081304e57275b4b24645b50e8f61e7039f90008ac34",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "099",
+    "label": "list-boundary/for",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);for x in t{tap(1,x);}7}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "7c0aeb1d697e43534eb06b09d197d0d025e04efc37425ccdaee05a4a15d08737",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "100",
+    "label": "list-boundary/next",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.next()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "77fc3f7b0319dc11e29b6a8f277d86ae30d49b7f32a8690013fa1dcced6fc4d5",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "101",
+    "label": "list-boundary/any",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.any(|x|true)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "3a974b6b0a83afb597e2243e2b16109170721fb89ead4c50d9d293c02453a7c3",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "102",
+    "label": "list-boundary/count",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.count()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "4f62668205c7f070c48c31ebcc175a889ee156fca6c479f1e864fd7935d3b50b",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "103",
+    "label": "list-boundary/collect-vec",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.collect::<Vec>()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "74377f3fd595d83f2730a4435e62c069285dbaf43db3cf1416c9f3f97472cee5",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "104",
+    "label": "list-boundary/collect-string",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.collect::<String>()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "c1590d740a8c896b3faed77c64e89ec1f26ccea5274fa4040280b483978ec24e",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "105",
+    "label": "list-boundary/sort",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.sort()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "49b6fbf871c19a24e6a832a43dca7b241935ef0fe0935e7fbffd9750918f9f5d",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "106",
+    "label": "list-boundary/sort-by",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.sort_by(|a,b|a.cmp(b))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "e7d9161b7d8671973cd4ff3bcd9d69dda0c8b6c90764b4fa13f634c73e7013ac",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "107",
+    "label": "list-boundary/range-index",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t[0..1]}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "e83c2180d245af1adde6553fc69ba9f8cb329c3b95bda964de8c04569724d2c3",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "108",
+    "label": "list-boundary/index",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t[0]}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "ddf67a6426d91dceda0f8568bf33ee4781072930daf31569942f11ca7e03e730",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "109",
+    "label": "list-boundary/index-set",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t[0]=9;t}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "b53a5193e3c432acd8acbd51016318e4b3e567b7499890c96089f9e32e8d421d",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "110",
+    "label": "list-boundary/missing-method",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);t.c15_missing(tap(1,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "815096e5632eb872ccc8a0a8237510046ab345ab5759dfb0b99b382ab32674aa",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "111",
+    "label": "list-boundary/collect-target",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let t=T(7);[1,2].iter().collect::<T>()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "a56897c24d8e8da6bbdd67d064a2706e010f800c4b0ec4a6ef4d7756c5dabd78",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "112",
+    "label": "cross-type/112",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){(U)==N{x:7,y:9}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "ee1cc4ad64760e9a067235bce9447e78245d857503ead431b8d5f0b6f57caef4",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "113",
+    "label": "cross-type/113",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){(Z())==N{x:7,y:9}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "477f75157d76a45af8f61a835faa7d3987d99e649a0782c163dab98e84b1b4b7",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "114",
+    "label": "cross-type/114",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){(T(7))==N{x:7,y:9}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "941ed8279c70aa5d4f8a806512e6a254e031cd21104f21115fc6369a0099a889",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "115",
+    "label": "cross-type/115",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){(P(7,9))==N{x:7,y:9}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "fdd91579d99bfbb2486e0c59f20577c808f435fb0a7fdb647b7de0ffe79df928",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "116",
+    "label": "refused/first-class",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){let f=T;f(tap(1,7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "814dd88b172891e1916e6122be88a6411c2bc80df8e3a1c63a454f319291b857",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "117",
+    "label": "refused/first-class-pair",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){let f=P;f(tap(1,7),tap(2,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "dca6b86481471a4da7d7da24dac80d65de2a39a27cc2640dc932a5f777131880",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "118",
+    "label": "refused/map-constructor",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){[1,2].iter().map(T).collect::<Vec>()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "8d150fbe1b21defda8abb81ce3c9e4691d0e2a9fac576310d2d890801f5142b8",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "119",
+    "label": "refused/enum-unit",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){E::A}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "778f3bc594a08e138f1221dc5f7982aa6654d49e14c19cd66e4f557ba636603d",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "120",
+    "label": "refused/enum-tuple",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){E::B(7)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "827d84cd533b1adad9706ba22ab5a1c28eb9efa66772ec9d3c1a11be9d334222",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "121",
+    "label": "refused/enum-named",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){E::C{x:7}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "a4b32815809209834688b143335ac0f9e2d360274bc3931563ab02db7bd849fc",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "122",
+    "label": "refused/enum-pattern",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){match E::B(7){E::B(x)=>x,_=>0}}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "5a044d873e5d4b1438fd9bfc6a31fa76b6bbbde4e27d211cfdd431bb8903f4b8",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "123",
+    "label": "scope/module",
+    "fixture": "default",
+    "source": "use c15::tap;\nmod m{pub struct T(a);}pub fn main(){m::T(7).0}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "586a75f13c72de989d18202f2af27cb1301e475c9e9f7582690db8098af6fe90",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "124",
+    "label": "scope/alias",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct T(a);use T as Renamed;pub fn main(){Renamed(7).0}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "b24eb59226d825c23f4b0d8cb49f33f14310cff04930cb1e5cbf301ab2a0e4ca",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "125",
+    "label": "fuel/construction-loop",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let n=0;while n<100{let t=T(n);tap(1,t.0);n+=1;}n}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "9ffa2c1fd0b1c9ad12d2bf6866a91b66c3d04a06de004ed2ccf8779b66dca3e2",
+    "fuel": 32,
+    "proposed_policy": "Resource-audit"
+  },
+  {
+    "id": "126",
+    "label": "clone-function/forms/unit/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=U;(std::clone::clone(x),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "dc2f6dae22b729c47e19dc2716ce105fbd0065a1c782c86d70aaf18abe605f8f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "127",
+    "label": "clone-function/forms/empty-tuple/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=Z();(std::clone::clone(x),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "c66eb36310bd51f866d738bba8fb3645aae976715b479c15e01b04a9e44a4e0f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "128",
+    "label": "clone-function/forms/single/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(7);(std::clone::clone(x),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "e558ad7703a7ade20bee63d7faab1ef254c00cfbffab501f23dce043c6e22010",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "129",
+    "label": "clone-function/forms/pair/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=P(7,9);(std::clone::clone(x),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "fa8b5fe777a180d533593f2c37fe2e6deff37da8289c461db578a9825b5ee1a9",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "130",
+    "label": "clone-function/forms/named-control/clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=N{x:7,y:9};(std::clone::clone(x),x)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "06a8b620c715f09c3df34ac91a5d42dafd2e45ae93d01e53cab205520a7018fe",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "131",
+    "label": "clone-function/ownership/shallow-clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T(1);let y=std::clone::clone(x);y.0=2;(x,y)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "526ab977249cdf9ba068e92d6bb14dd4573d9f76a15c16d07aceed24bfdeb576",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "132",
+    "label": "clone-function/ownership/nested-clone",
+    "fixture": "default",
+    "source": "use c15::tap;\nstruct U; struct Z(); struct T(a); struct P(a,b); struct N {x,y}\npub fn main(){let x=T([1]);let y=std::clone::clone(x);y.0.push(2);(x,y)}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "f218e55e9b994fdcf97e7d02cb09ef27def8db95d247cea2ba4e5e6f3d7716b2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  }
+]
