@@ -489,7 +489,12 @@ impl Store {
 
 	#[cold]
 	pub(super) fn other_range_next(&mut self, handle: Handle) -> Result<Option<Value>> {
-		if matches!(self.payload(handle)?, Payload::OtherRangeIterator(state) if state.is_split()) {
+		if matches!(self.payload(handle)?, Payload::OtherRangeIterator(state) if matches!(state.kind,super::boxed_iterator::Kind::Chars(_)))
+		{
+			return self.chars_next(handle);
+		}
+		if matches!(self.payload(handle)?, Payload::OtherRangeIterator(state) if matches!(state.kind,super::boxed_iterator::Kind::Split(_)))
+		{
 			return self.split_next(handle);
 		}
 		let Payload::OtherRangeIterator(state) = self.mutable(handle)? else {

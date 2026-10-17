@@ -631,7 +631,7 @@ impl Executor {
 			let destination = base.checked_add(out as usize).ok_or_else(invalid)?;
 			return self.put(store, destination, value);
 		}
-		if (0x8000_0060..=0x8000_0065).contains(&id) {
+		if (0x8000_0060..=0x8000_007b).contains(&id) {
 			return self.text_call(store, function, base, out, id, args_start, args_len);
 		}
 		if id == super::code::MISSING_METHOD {
@@ -1891,7 +1891,7 @@ fn enrich_error(
 		error.detail = Detail::ExclusiveArgument { access, arg: 0 };
 		return error;
 	}
-	if let Op::AssignBinary { lhs, .. } = *op {
+	if let Op::AssignBinary { lhs, .. } | Op::Push { value: lhs, .. } = *op {
 		if error.detail == Detail::WriteBorrowed
 			&& slots
 				.get(base + lhs as usize)
@@ -2212,9 +2212,9 @@ fn fast_i64(op: arithmetic::Binary, a: Value, b: Value) -> Option<Result<Value>>
 // its heap-tag checks separate from the outer heap-pair test.
 #[allow(clippy::collapsible_if)]
 fn binary(store: &mut Store, op: arithmetic::Binary, a: Value, b: Value) -> Result<Value> {
-	if matches!((a, b), (Value::Heap(_), Value::Heap(_))) {
-		if store.tag(a)? == super::value::Type::String
-			&& store.tag(b)? == super::value::Type::String
+	if let (Value::Heap(left), Value::Heap(right)) = (a, b) {
+		if store.binary_heap_tag(left)? == super::value::Type::String
+			&& store.binary_heap_tag(right)? == super::value::Type::String
 		{
 			if op == arithmetic::Binary::Add {
 				return store.concat_string(a, b);

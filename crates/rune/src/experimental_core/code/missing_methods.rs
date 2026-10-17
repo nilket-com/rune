@@ -102,3 +102,49 @@ impl CompileTransaction {
 		Ok(())
 	}
 }
+
+impl CompileTransaction {
+	pub(crate) fn pipeline_method(
+		&mut self,
+		c: &Context,
+		q: &crate::query::QueryInner<'_>,
+		p: &crate::compile::Pool,
+		m: crate::function::fresh_pipeline::Method,
+	) -> Result<()> {
+		if self.checked_pipeline & (1 << m as u8) != 0 {
+			return Ok(());
+		}
+		if !c.fresh_pipeline_method(m) || q.fresh_method_script.closed(m.hash()) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		// Non-origin registered iterator methods remain outside this new surface. For the
+		// two plain native names, close over every representable receiver before effects.
+		if matches!(
+			m,
+			crate::function::fresh_pipeline::Method::Chars
+				| crate::function::fresh_pipeline::Method::Unwrap
+		) {
+			for receiver in crate::function::fresh_methods::RECEIVERS
+				.iter()
+				.copied()
+				.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
+			{
+				if m.provider(receiver).is_some() {
+					continue;
+				}
+				let h = Hash::associated_function(receiver, m.hash());
+				if c.lookup_function(h).is_some() {
+					return Err(Error::refused(Refusal::Method));
+				}
+				if !self.builder.absent.contains(&h) {
+					if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
+						return Err(invalid());
+					}
+					self.builder.absent.try_push(h)?;
+				}
+			}
+		}
+		self.checked_pipeline |= 1 << m as u8;
+		Ok(())
+	}
+}

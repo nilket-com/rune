@@ -28,6 +28,7 @@ receivers! {
 	SIGNED_FROM_ITER: rt::range_from::RangeFromIter<i64>,
 	UNSIGNED_FROM_ITER: rt::range_from::RangeFromIter<u64>,
 	CHAR_FROM_ITER: rt::range_from::RangeFromIter<char>,
+ CHARS: crate::modules::string::Chars, SKIP:crate::modules::iter::Skip, TAKE:crate::modules::iter::Take,
  SPLIT_STRING: crate::modules::string::Split<crate::alloc::String>,
  SPLIT_CHAR: crate::modules::string::Split<char>,
 }

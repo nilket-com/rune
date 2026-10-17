@@ -11,6 +11,7 @@
 mod missing_methods;
 mod patterns;
 mod text_methods;
+mod text_pipeline;
 #[derive(Clone, Copy)]
 pub(crate) enum Resolve {
 	Script(Hash),
@@ -963,6 +964,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	}
 
 	fn for_(&mut self, for_: &hir::ExprFor<'hir>, out: Option<u32>, span: Span) -> Result<()> {
+		if self.pipeline_is_origin(for_.iter) {
+			return self.pipeline_for(for_, out, span);
+		}
 		if let Some(out) = out {
 			self.unit_into(out, span)?;
 		}
@@ -1718,6 +1722,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 		}
 
+		if let Some((target, m)) = self.pipeline_site(call) {
+			return self.call_pipeline(call, target, m, out, span);
+		}
 		self.call_non_variant(call, out, span)
 	}
 
@@ -2028,7 +2035,7 @@ fn type_tag(hash: Hash) -> Option<Type> {
 		Type::Unit
 	} else if hash == crate::alloc::String::HASH {
 		Type::String
-	} else if hash == crate::runtime::Vec::HASH {
+	} else if hash == <crate::runtime::Vec as crate::TypeHash>::HASH {
 		Type::Vec
 	} else if hash == crate::runtime::OwnedTuple::HASH {
 		Type::Tuple

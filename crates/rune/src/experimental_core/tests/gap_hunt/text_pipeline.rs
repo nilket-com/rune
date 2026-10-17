@@ -15,6 +15,8 @@ fn tap(tag: i64, value: i64) -> i64 {
 	value
 }
 include!("text_pipeline/fixture.rs");
+include!("text_pipeline/fresh_graph.rs");
+include!("text_pipeline/fresh.rs");
 
 fn observed(value: &Value) -> Json {
 	let out = graph(value);
@@ -46,11 +48,12 @@ fn error(error: &stock::VmError) -> Json {
 #[ignore = "C14B stock-oracle child; explicit bounded external operator only"]
 fn child() {
 	let engine = std::env::var("C14B_ENGINE").unwrap();
-	assert!(engine == "stock");
+	assert!(engine == "stock" || engine == "fresh");
 	let index: usize = std::env::var("C14B_CASE").unwrap().parse().unwrap();
 	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
 	let mut row = cases[index].clone();
 	if let Ok(fuel) = std::env::var("C14B_COUNTERFACTUAL_FUEL") {
+		assert_eq!(engine, "stock");
 		assert!(index == 163 || index == 164);
 		assert_eq!(fuel, "200000");
 		row["fuel"] = json!(200000);
@@ -59,6 +62,19 @@ fn child() {
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
 
+	if engine == "fresh" {
+		let result = observe_fresh(row);
+		let path = std::env::var_os("C14B_RESULT").unwrap();
+		let mut file = std::fs::OpenOptions::new()
+			.create_new(true)
+			.write(true)
+			.open(path)
+			.unwrap();
+		use std::io::Write;
+		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
+			.unwrap();
+		return;
+	}
 	let context = context(row["fixture"].as_str().unwrap());
 	let mut sources = Sources::new();
 	sources
@@ -232,5 +248,36 @@ fn stock_replay_controls() {
 			hex(r["source"].as_str().unwrap().as_bytes())
 		);
 		assert_eq!(raw[id]["observation"]["reuse"]["status"], "value");
+	}
+}
+
+include!("text_pipeline/contract.rs");
+include!("text_pipeline/bounded.rs");
+
+#[test]
+fn deep_pipeline_lowering_keeps_the_normal_stack_boundary() {
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-c14b-stack-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let out = scratch.0.join("out");
+	fs::create_dir(&out).unwrap();
+	for depth in [0usize, 32, 64, 96, 126, 127, 128] {
+		let mut expr = String::from("\"ab\".chars()");
+		for i in 0..depth {
+			expr.push_str(if i % 2 == 0 { ".take(2)" } else { ".skip(0)" });
+		}
+		let id = format!("pipeline-{depth}");
+		let path = out.join(format!("{id}.rn"));
+		fs::write(&path, format!("pub fn main(){{{expr}.count()}}")).unwrap();
+		let run = launch(&path, &path, "stack-main", "fresh", &scratch.0, &out, &id);
+		assert!(run.complete, "{id}: {}", run.record);
+		let fields: Vec<_> = run.record.split('\t').collect();
+		if depth <= 96 {
+			assert_eq!(fields[0], "value", "{id}: {}", run.record);
+			assert_eq!(unhex(fields[4]), "u64:2:2");
+		} else {
+			assert_eq!(fields[0], "refused", "{id}: {}", run.record);
+			assert!(run.record.contains("DepthLimit") || run.record.contains("Method"));
+		}
 	}
 }

@@ -17,6 +17,10 @@ use crate::{hash_in, ContextError, Hash, Module};
 #[rune::module(::std::result)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_pipeline = 4;
+	}
 
 	// Sorted for ease of finding
 	let mut result = m

@@ -18,6 +18,10 @@ use crate::{hash_in, ContextError, Hash, Module};
 #[rune::module(::std::option)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_pipeline = 2;
+	}
 
 	// Private C12 provider markers: this std module registers the builtin providers.
 	#[cfg(feature = "fresh-core")]

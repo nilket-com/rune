@@ -20,11 +20,16 @@ use crate::{docstring, Any, ContextError, Module, Params};
 #[rune::module(::std::iter)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_pipeline = 8;
+	}
 
 	// Private C12 provider markers: this std module registers the builtin providers.
 	#[cfg(feature = "fresh-core")]
 	{
-		m.fresh_iter = crate::function::fresh_iter::marker::ITERATOR_TRAIT;
+		m.fresh_iter = crate::function::fresh_iter::marker::ITERATOR_TRAIT
+			| crate::function::fresh_iter::marker::ITERATOR;
 	}
 
 	m.ty::<Rev>()?;

@@ -23,6 +23,7 @@ mod sorting;
 #[cfg(test)]
 mod sorting_tests;
 mod text_methods;
+mod text_pipeline;
 
 #[cfg(feature = "fresh-core-native")]
 pub(crate) mod native;
@@ -1131,6 +1132,12 @@ impl Store {
 		Ok(())
 	}
 
+	// The binary heap-pair branch has already matched both handles. Keep its
+	// generation-checked tag read at the callsite without changing tag() globally.
+	#[inline(always)]
+	pub(crate) fn binary_heap_tag(&self, h: Handle) -> Result<Type> {
+		self.entry(h)?.tag()
+	}
 	pub(crate) fn tag(&self, value: Value) -> Result<Type> {
 		match value {
 			Value::Heap(h) => Ok(self.entry(h)?.tag()?),

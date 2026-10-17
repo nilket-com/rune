@@ -39,6 +39,9 @@ pub enum TypeName {
 	OptionIter,
 	StringSplit,
 	CharSplit,
+	Chars,
+	Skip,
+	Take,
 }
 
 #[allow(missing_docs)]
@@ -420,6 +423,9 @@ impl TypeName {
 			Self::OptionIter => crate::modules::option::Iter::HASH,
 			Self::StringSplit => crate::modules::string::Split::<crate::alloc::String>::HASH,
 			Self::CharSplit => crate::modules::string::Split::<char>::HASH,
+			Self::Chars => crate::modules::string::Chars::HASH,
+			Self::Skip => crate::modules::iter::Skip::HASH,
+			Self::Take => crate::modules::iter::Take::HASH,
 			Self::RangeIter => rt::range::RangeIter::<i64>::HASH,
 			Self::UnsignedRangeIter => rt::range::RangeIter::<u64>::HASH,
 			Self::CharRangeIter => rt::range::RangeIter::<char>::HASH,
@@ -496,6 +502,9 @@ impl fmt::Display for TypeName {
 			Self::OptionIter => "std::option::Iter",
 			Self::StringSplit => "std::string::Split<std::string::String>",
 			Self::CharSplit => "std::string::Split<std::char>",
+			Self::Chars => "std::string::Chars",
+			Self::Skip => "std::iter::Skip",
+			Self::Take => "std::iter::Take",
 			Self::RangeIter => "std::ops::RangeIter<std::i64>",
 			Self::UnsignedRangeIter => "std::ops::RangeIter<std::u64>",
 			Self::CharRangeIter => "std::ops::RangeIter<std::char>",

@@ -4,10 +4,17 @@ fn native_body(_: Value) -> i64 {
 	41
 }
 fn context(fixture: &str) -> Context {
+	context_for(fixture, false)
+}
+fn context_for(fixture: &str, fresh: bool) -> Context {
 	use crate::TypeHash;
 	let mut context = Context::with_default_modules().unwrap();
 	let mut m = crate::Module::with_item(["c14b"]).unwrap();
-	m.function("tap", tap).build().unwrap();
+	if fresh {
+		m.fresh_host_function("tap", tap).unwrap();
+	} else {
+		m.function("tap", tap).build().unwrap();
+	}
 	m.function("native_body", native_body).build().unwrap();
 	context.install(m).unwrap();
 	match fixture {

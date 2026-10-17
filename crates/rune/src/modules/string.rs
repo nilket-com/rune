@@ -34,6 +34,10 @@ pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 	#[cfg(feature = "fresh-core")]
 	{
+		m.fresh_pipeline = 1;
+	}
+	#[cfg(feature = "fresh-core")]
+	{
 		m.fresh_text = true;
 		m.fresh_iter = crate::function::fresh_iter::marker::ITERATOR;
 	}
@@ -1434,7 +1438,7 @@ fn to_uppercase(s: &str) -> Result<String, VmError> {
 
 #[derive(Any)]
 #[rune(item = ::std::string)]
-struct Chars {
+pub(crate) struct Chars {
 	string: Ref<str>,
 	start: usize,
 	end: usize,

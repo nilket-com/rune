@@ -199,7 +199,10 @@ impl Provider {
 
 /// Builtin iterator types whose trait-installed `next`/`any` are not providers (fresh's
 /// intrinsic decides their payloads) and do not close the names.
-const AUXILIARY: [Hash; 6] = [
+const AUXILIARY: [Hash; 9] = [
+	crate::modules::string::Chars::HASH,
+	crate::modules::iter::Skip::HASH,
+	crate::modules::iter::Take::HASH,
 	rt::range::RangeIter::<u64>::HASH,
 	rt::range::RangeIter::<char>::HASH,
 	rt::range_inclusive::RangeInclusiveIter::<u64>::HASH,
@@ -214,7 +217,10 @@ const AUXILIARY: [Hash; 6] = [
 /// The list mirrors `experimental_core::detail::TypeName::builtin_hash` plus the C12 range
 /// identities; a new fresh value kind must be added here.
 pub(crate) fn representable(container: Hash) -> bool {
-	const OTHERS: [Hash; 19] = [
+	const OTHERS: [Hash; 22] = [
+		crate::modules::string::Chars::HASH,
+		crate::modules::iter::Skip::HASH,
+		crate::modules::iter::Take::HASH,
 		bool::HASH,
 		i64::HASH,
 		u64::HASH,

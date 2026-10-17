@@ -8,7 +8,7 @@ enum Origin {
 	Never,
 }
 impl Lower<'_, '_> {
-	fn text_init(&self, v: hir::Variable) -> Option<hir::ExprId> {
+	pub(super) fn text_init(&self, v: hir::Variable) -> Option<hir::ExprId> {
 		self.text_bindings
 			.iter()
 			.rev()
@@ -22,7 +22,11 @@ impl Lower<'_, '_> {
 			_ => None,
 		}
 	}
-	fn text_writes(&self, v: hir::Variable, mut accept: impl FnMut(hir::ExprId) -> bool) -> bool {
+	pub(super) fn text_writes(
+		&self,
+		v: hir::Variable,
+		mut accept: impl FnMut(hir::ExprId) -> bool,
+	) -> bool {
 		use hir::ExprKind as E;
 		self.exprs.fresh_expressions().all(|e| match e.kind {
 			E::Assign(a) if matches!(self.exprs.get(a.lhs).kind,E::Variable(x) if x==v) => {
@@ -37,7 +41,7 @@ impl Lower<'_, '_> {
 			_ => true,
 		})
 	}
-	fn delimiter(&self, id: hir::ExprId) -> Option<bool> {
+	pub(super) fn delimiter(&self, id: hir::ExprId) -> Option<bool> {
 		if let Some(k) = self.literal_kind(id) {
 			return Some(k);
 		}

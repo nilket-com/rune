@@ -955,6 +955,54 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 		id: 0x8000_0065,
 		arity: 1,
 	},
+	CertifiedIntrinsic {
+		id: 0x8000_0070,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_0071,
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_0072,
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_0073,
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_0074,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_0075,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_0076,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_0077,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_0078,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_0079,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_007a,
+		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: 0x8000_007b,
+		arity: 2,
+	},
 ];
 fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
 	if !reserved_intrinsic_id(id) {
@@ -1193,6 +1241,7 @@ pub(crate) struct CompileTransaction {
 	staging: nominal::Staging,
 	checked_absent: Vec<crate::Hash>,
 	checked_text: u8,
+	checked_pipeline: u8,
 }
 
 impl CompileTransaction {
@@ -2871,7 +2920,7 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 34);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 46);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, MISSING_METHOD)
 				.unwrap()

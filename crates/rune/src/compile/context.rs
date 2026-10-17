@@ -356,6 +356,8 @@ pub struct Context {
 	#[cfg(feature = "fresh-core")]
 	fresh_text: crate::function::fresh_text::State,
 	#[cfg(feature = "fresh-core")]
+	fresh_pipeline: crate::function::fresh_pipeline::State,
+	#[cfg(feature = "fresh-core")]
 	fresh_methods: crate::function::fresh_methods::State,
 	/// Handlers for realising traits.
 	traits: hash::Map<Option<TraitHandler>>,
@@ -562,6 +564,8 @@ impl Context {
 		let iter_pending = self.fresh_iter.begin_module(module.fresh_iter);
 		#[cfg(feature = "fresh-core")]
 		let text_pending = self.fresh_text.begin_module(module.fresh_text);
+		#[cfg(feature = "fresh-core")]
+		let pipeline_pending = self.fresh_pipeline.begin_module(module.fresh_pipeline);
 		if let Some(ComponentRef::Crate(name)) = module.item.first() {
 			self.crates.try_insert(name.try_into()?)?;
 		}
@@ -686,6 +690,7 @@ impl Context {
 			self.fresh_numeric.finish_module(numeric_pending);
 			self.fresh_iter.finish_module(iter_pending);
 			self.fresh_text.finish_module(text_pending);
+			self.fresh_pipeline.finish_module(pipeline_pending);
 			if sort_builtin {
 				self.fresh_sort_by = true;
 				self.fresh_sort_by_closed = false;
@@ -890,6 +895,10 @@ impl Context {
 
 	/// Fresh core (C12): `name` resolves to the certified std providers for every receiver a
 	/// fresh value can have. Script methods of the same name are checked by the lowerer.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_pipeline_method(&self, m: crate::function::fresh_pipeline::Method) -> bool {
+		self.fresh_pipeline.ready(m)
+	}
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_text_method(&self, m: crate::function::fresh_text::Method) -> bool {
 		self.fresh_text.ready(m)
@@ -1460,6 +1469,34 @@ impl Context {
 			self.fresh_sort_by_closed = true;
 		}
 		#[cfg(feature = "fresh-core")]
+		let pipeline_touch = {
+			let name = match &assoc.name.kind {
+				meta::AssociatedKind::Instance(n) => Some(n.as_ref()),
+				_ => None,
+			};
+			name.and_then(|n| {
+				crate::function::fresh_pipeline::Method::from_name(
+					n,
+					assoc.name.function_parameters,
+				)
+			})
+			.and_then(|m| {
+				let (plain, trait_hash) = match &assoc.kind {
+					ModuleAssociatedKind::Function(f) => (true, f.trait_hash),
+					_ => (false, None),
+				};
+				self.fresh_pipeline
+					.begin(
+						m,
+						assoc.container,
+						plain,
+						trait_hash,
+						self.fresh_iter.builtin_trait(),
+					)
+					.map(|bit| (m, bit))
+			})
+		};
+		#[cfg(feature = "fresh-core")]
 		let (text_touch, text_collect) = {
 			let instance = match &assoc.name.kind {
 				meta::AssociatedKind::Instance(n) => Some(n.as_ref()),
@@ -1627,6 +1664,9 @@ impl Context {
 		}
 		#[cfg(feature = "fresh-core")]
 		{
+			if let Some((m, bit)) = pipeline_touch {
+				self.fresh_pipeline.installed(m, bit);
+			}
 			if let Some((m, true)) = text_touch {
 				self.fresh_text.installed(m);
 			}

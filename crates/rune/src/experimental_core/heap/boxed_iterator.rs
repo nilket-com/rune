@@ -10,6 +10,9 @@ pub(super) struct State {
 pub(super) enum Kind {
 	Range(ranges::RangeCursor),
 	Split(Box<text_methods::Split>),
+	Chars(Box<text_pipeline::Chars>),
+	Skip(Box<text_pipeline::Adapter>),
+	Take(Box<text_pipeline::Adapter>),
 }
 impl State {
 	#[cold]
@@ -17,10 +20,13 @@ impl State {
 		match &self.kind {
 			Kind::Range(state) => state.diagnostic_type(),
 			Kind::Split(state) => state.kind(),
+			Kind::Chars(_) => TypeName::Chars,
+			Kind::Skip(_) => TypeName::Skip,
+			Kind::Take(_) => TypeName::Take,
 		}
 	}
 	pub(super) fn is_split(&self) -> bool {
-		matches!(self.kind, Kind::Split(_))
+		!matches!(self.kind, Kind::Range(_))
 	}
 }
 impl Store {
@@ -39,12 +45,14 @@ impl Store {
 	#[cold]
 	#[inline(never)]
 	pub(super) fn detach_boxed_lease(&mut self, state: &State) -> Result<()> {
-		if let Some(h) = state.source {
-			let entry = self.entry_mut(h)?;
-			entry.readers = entry
-				.readers
-				.checked_sub(1)
-				.ok_or_else(|| err(ErrorKind::InvalidHandle))?;
+		if matches!(state.kind, Kind::Chars(_) | Kind::Split(_)) {
+			if let Some(h) = state.source {
+				let entry = self.entry_mut(h)?;
+				entry.readers = entry
+					.readers
+					.checked_sub(1)
+					.ok_or_else(|| err(ErrorKind::InvalidHandle))?;
+			}
 		}
 		Ok(())
 	}

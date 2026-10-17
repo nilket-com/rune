@@ -1,0 +1,22 @@
+{
+  "158": {
+    "source_sha256": "f1b61bcc02c3e3bd428b0d08668e18bb873d371708ff0b444a04097de6f72616",
+    "label": "boundary/split-skip",
+    "policy": "Exact-stock-admission"
+  },
+  "159": {
+    "source_sha256": "cb490be990aaa52fbf6c64afc067c280c0c6fb6b92b0518240aff54b5b4bfbea",
+    "label": "boundary/split-unwrap-or",
+    "policy": "Exact-stock-admission"
+  },
+  "160": {
+    "source_sha256": "cd30374797af19e96b367e130ba3aec25123de731ca5cdc86cbfd2e8e7edb38b",
+    "label": "boundary/chars-take",
+    "policy": "Exact-stock-admission"
+  },
+  "161": {
+    "source_sha256": "b1a72ac3d8e4551d6ff5e7ab2d002430eef9d0420b0b6da78096fc62d8f85d03",
+    "label": "boundary/chars-count",
+    "policy": "Exact-stock-admission"
+  }
+}

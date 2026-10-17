@@ -81,10 +81,17 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	let observed = &actual["observation"];
 	assert_eq!(observed["reuse"], expected["reuse"]);
 	let receivers: Json = serde_json::from_str(include_str!("receiver_policy.json")).unwrap();
-	let refused = frozen["disposition"]
-		.as_str()
-		.unwrap()
-		.starts_with("Refused-")
+	let admissions: Json = serde_json::from_str(include_str!("c14b_admissions.json")).unwrap();
+	if let Some(rule) = admissions.get(id) {
+		assert_eq!(rule["source_sha256"], case["source_sha256"]);
+		assert_eq!(rule["label"], case["label"]);
+		assert_eq!(rule["policy"], "Exact-stock-admission");
+	}
+	let refused = admissions.get(id).is_none()
+		&& frozen["disposition"]
+			.as_str()
+			.unwrap()
+			.starts_with("Refused-")
 		|| receivers.get(id).is_some();
 	if refused {
 		if let Some(rule) = receivers.get(id) {

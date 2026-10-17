@@ -111,6 +111,13 @@ impl Lower<'_, '_> {
 		span: Span,
 	) -> Result<()> {
 		use crate::function::fresh_iter::Name;
+		if name == Name::Any
+			&& self
+				.pipeline_shape(target, 0)
+				.is_some_and(|s| s.len() > 1 || s[0] == 2)
+		{
+			return Err(self.refused(span, Refusal::Method));
+		}
 		if !self.context.fresh_iter_method(name)
 			|| self.constants.fresh_iter_script & name.bit() != 0
 		{
