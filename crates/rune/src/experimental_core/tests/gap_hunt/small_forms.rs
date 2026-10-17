@@ -5,6 +5,7 @@ use serde_json::{json, Value as Json};
 use std::cell::RefCell;
 include!("small_forms/graph.rs");
 const C12_CASES: &str = include_str!("small_forms/cases.json");
+const C12_ADMISSIONS: &str = include_str!("small_forms/admissions.json");
 thread_local! {static C12_TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
 fn tap(tag: i64, value: i64) -> i64 {
 	C12_TAPE.with(|t| {

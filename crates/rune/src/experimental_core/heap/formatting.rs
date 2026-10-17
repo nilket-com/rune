@@ -578,7 +578,7 @@ impl Store {
 					Type::Vec
 						| Type::Tuple | Type::Object
 						| Type::Option | Type::Result
-						| Type::Struct(_)
+						| Type::Struct(_) | Type::Function
 				) {
 					return Err(self.no_display(value));
 				}
@@ -619,6 +619,20 @@ impl Store {
 							values,
 							next: 0,
 							close,
+						},
+					)?;
+				}
+				Payload::Closure {
+					function, captures, ..
+				} if debug => {
+					sink.formatted(format_args!("closure (function: {function}, env:"))?;
+					sink.push("[")?;
+					sink.frame(
+						stack,
+						Frame::List {
+							values: captures,
+							next: 0,
+							close: "])",
 						},
 					)?;
 				}

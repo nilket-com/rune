@@ -147,3 +147,60 @@ fn retained_diagnostics_resources_and_depth_reject_drift() {
 	bad["rows"]["depth/511"]["outcome"]["sites"][0]["start"] = json!(0);
 	assert!(c11_check_depth_binding(&bad).is_err());
 }
+
+#[test]
+fn stale_closure_refusals_are_preserved_and_reclassified() {
+	let overlay: Json = serde_json::from_str(C11_STALE_REFUSAL_ADMISSIONS).unwrap();
+	assert_eq!(overlay["schema"], 1);
+	let rows = overlay["rows"].as_array().unwrap();
+	assert_eq!(rows.len(), 6);
+	let dispositions = read_json(include_str!("../../callback_sort_dispositions.json"));
+	let refusals = read_json(include_str!("../../callback_sort_refusals.json"));
+	let spans = read_json(include_str!("../../callback_sort_refusal_spans.json"));
+	for (row, expected_index, expected_policy, expected_operation) in [
+		(&rows[0], 90, "Retained-frame", "CallClosure"),
+		(&rows[1], 91, "Exact", "CallClosure"),
+		(&rows[2], 92, "Retained-ownership", "CallClosure"),
+		(&rows[3], 93, "Exact", "CallClosure"),
+		(&rows[4], 94, "Exact", "Method"),
+		(&rows[5], 130, "Exact", "Method"),
+	] {
+		let label = row["label"].as_str().unwrap();
+		assert_eq!(row["index"], expected_index);
+		assert_eq!(row["disposition"], expected_policy);
+		assert_eq!(row["legacy_policy"], "Refused-surface");
+		assert_eq!(dispositions[label]["policy"], "Refused-surface");
+		assert_eq!(row["legacy_operation"], expected_operation);
+		assert_eq!(
+			refusals[label]["fresh_constraint"]["operation"],
+			expected_operation
+		);
+		assert_eq!(row["legacy_refusal_span"], spans[label]);
+		assert_eq!(row["source_sha256"], dispositions[label]["source_sha256"]);
+		assert_eq!(
+			row["stock_common_sha256"],
+			digest(&canonical(&refusals[label]["stock_common"]))
+		);
+		if expected_policy == "Exact" {
+			assert_eq!(row["fresh_expectation"], refusals[label]["stock_common"]);
+		} else if expected_policy == "Retained-ownership" {
+			assert_eq!(
+				c11_json_differences(
+					&refusals[label]["stock_common"],
+					&row["fresh_expectation"],
+					"",
+					Some("/post/nodes/2")
+				),
+				vec!["/post/nodes/2"]
+			);
+			assert_eq!(row["only_allowed_difference"], "/post/nodes/2");
+		} else {
+			let frame = &row["retained_frame"];
+			assert_eq!(
+				frame["fresh_site"],
+				row["fresh_expectation"]["outcome"]["sites"][0]
+			);
+			assert_eq!(frame["categories"], json!(["Retained-frame (callback)"]));
+		}
+	}
+}

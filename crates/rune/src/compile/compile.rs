@@ -310,9 +310,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 					for build in &secondary_builds {
 						let operation = match &build.build {
 							SecondaryBuild::Closure(c) => {
-								if c.hir.captures.is_empty()
-									&& matches!(c.call, crate::runtime::Call::Immediate)
-								{
+								if matches!(c.call, crate::runtime::Call::Immediate) {
 									continue;
 								}
 								crate::experimental_core::error::Refusal::CallClosure
@@ -335,6 +333,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 							location.source_id.into_index() as u32,
 							&exprs,
 							&hir,
+							&[],
 							self.q.inner,
 							self.q.pool,
 							self.q.context,
@@ -349,9 +348,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 						})?;
 					for build in &secondary_builds {
 						if let SecondaryBuild::Closure(c) = &build.build {
-							if c.hir.captures.is_empty()
-								&& matches!(c.call, crate::runtime::Call::Immediate)
-							{
+							if matches!(c.call, crate::runtime::Call::Immediate) {
 								let closure = hir::ItemFn {
 									span: c.hir.span,
 									args: c.hir.args,
@@ -369,6 +366,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 										location.source_id.into_index() as u32,
 										&exprs,
 										&closure,
+										c.hir.captures,
 										self.q.inner,
 										self.q.pool,
 										self.q.context,

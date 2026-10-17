@@ -4,6 +4,8 @@ use serde_json::{json, Value as Json};
 include!("callback_sort/cases.rs");
 include!("callback_sort/graph.rs");
 include!("callback_sort/fixture.rs");
+const C11_STALE_REFUSAL_ADMISSIONS: &str =
+	include_str!("callback_sort/stale_refusal_admissions.json");
 
 fn typed_kind(kind: &stock::VmErrorKind) -> Json {
 	use stock::VmErrorKind as K;

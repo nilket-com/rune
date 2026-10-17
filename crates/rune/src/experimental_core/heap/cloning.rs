@@ -47,6 +47,10 @@ impl Store {
 			self.retain(value)?;
 			return Ok(value);
 		}
+		if matches!(self.payload(h)?, Payload::Closure { .. }) {
+			self.retain(value)?;
+			return Ok(value);
+		}
 		let payload = match self.payload(h)? {
 			Payload::String(text) => {
 				self.clone_room(start, scratch, text.len())?;
@@ -112,7 +116,7 @@ impl Store {
 			_ => {
 				return Err(err(ErrorKind::Type).with_detail(Detail::NoCloneProtocol {
 					found: TypeName::from_type(self.entry(h)?.tag()?),
-				}))
+				}));
 			}
 		};
 		self.admit_clone(payload, start, scratch)

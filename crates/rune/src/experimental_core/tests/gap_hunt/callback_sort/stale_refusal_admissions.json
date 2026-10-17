@@ -1,0 +1,1117 @@
+{
+  "schema": 1,
+  "note": "Supersedes stale callback and method refusal expectations only; frozen refusal and span catalogues remain unchanged as historical evidence.",
+  "rows": [
+    {
+      "index": 90,
+      "label": "refused/captures-parent",
+      "source_sha256": "4c31b288147360803ee49fcf1fd8144120009f075723ad0895620e0c5b6d04a9",
+      "legacy_policy": "Refused-surface",
+      "disposition": "Retained-frame",
+      "fresh_expectation": {
+        "outcome": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read, the value is being written to",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 85,
+              "frames": "[{\"end\":96,\"source\":0,\"start\":62}]",
+              "source": 0,
+              "start": 78
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        },
+        "before": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ]
+          ],
+          "root": 0
+        },
+        "post": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ]
+          ],
+          "root": 0
+        },
+        "events": [],
+        "events_after_reuse": [
+          {
+            "event": "mark",
+            "hex": "7265757365"
+          }
+        ],
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "invoked": true
+      },
+      "stock_common_sha256": "70b163fa81112e325494ca9b7f7f70d502cd7777ccfc964b595361d8ebe0dd48",
+      "legacy_refusal_span": {
+        "source_sha256": "4c31b288147360803ee49fcf1fd8144120009f075723ad0895620e0c5b6d04a9",
+        "source": 0,
+        "start": 72,
+        "end": 95,
+        "span_hex": "7c612c627c7b762e6c656e28293b612e636d702862297d"
+      },
+      "retained_frame": {
+        "fresh_site": {
+          "end": 85,
+          "frames": "[{\"end\":96,\"source\":0,\"start\":62}]",
+          "source": 0,
+          "start": 78
+        },
+        "call_chain": [
+          {
+            "source": 0,
+            "start": 62,
+            "end": 96
+          }
+        ],
+        "categories": [
+          "Retained-frame (callback)"
+        ]
+      },
+      "legacy_operation": "CallClosure"
+    },
+    {
+      "index": 91,
+      "label": "refused/captures-scalar",
+      "source_sha256": "b0ccdc5b1ff3e6bd8943fa2936d64f9832f31129bb932a17be8a666a13324e00",
+      "legacy_policy": "Refused-surface",
+      "disposition": "Exact",
+      "fresh_expectation": {
+        "outcome": {
+          "graph": {
+            "nodes": [
+              [
+                "Vec",
+                "0xc11b1e769aea94f2",
+                [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "0"
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "1"
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "2"
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "3"
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "4"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "before": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ]
+          ],
+          "root": 0
+        },
+        "post": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ]
+          ],
+          "root": 0
+        },
+        "events": [],
+        "events_after_reuse": [
+          {
+            "event": "mark",
+            "hex": "7265757365"
+          }
+        ],
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "invoked": true
+      },
+      "stock_common_sha256": "c687396d8a21727c22946d6d9d569d57fd4dc7fbaa184b60ae5b7a34710881f3",
+      "legacy_refusal_span": {
+        "source_sha256": "b0ccdc5b1ff3e6bd8943fa2936d64f9832f31129bb932a17be8a666a13324e00",
+        "source": 0,
+        "start": 72,
+        "end": 99,
+        "span_hex": "7c612c627c7b6c657420783d73746174653b612e636d702862297d"
+      },
+      "legacy_operation": "CallClosure"
+    },
+    {
+      "index": 92,
+      "label": "refused/move-capture",
+      "source_sha256": "e4f7e0793bcb3030b315caa36fe33a89bd82daf265dfbbebeeded05dd655b6e3",
+      "legacy_policy": "Refused-surface",
+      "disposition": "Retained-ownership",
+      "fresh_expectation": {
+        "outcome": {
+          "graph": {
+            "nodes": [
+              [
+                "Vec",
+                "0xc11b1e769aea94f2",
+                [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "0"
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "1"
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "2"
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "3"
+              ],
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "4"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "before": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ]
+          ],
+          "root": 0
+        },
+        "post": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ]
+          ],
+          "root": 0
+        },
+        "events": [],
+        "events_after_reuse": [
+          {
+            "event": "mark",
+            "hex": "7265757365"
+          }
+        ],
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "invoked": true
+      },
+      "stock_common_sha256": "318af4a401e402ddcdace4d30b607ed83f7f1dddfef67372f7a157fe02a0582e",
+      "legacy_refusal_span": {
+        "source_sha256": "e4f7e0793bcb3030b315caa36fe33a89bd82daf265dfbbebeeded05dd655b6e3",
+        "source": 0,
+        "start": 72,
+        "end": 104,
+        "span_hex": "6d6f7665207c612c627c7b6c657420783d73746174653b612e636d702862297d"
+      },
+      "only_allowed_difference": "/post/nodes/2",
+      "legacy_operation": "CallClosure"
+    },
+    {
+      "index": 93,
+      "label": "refused/captured-after-sort",
+      "source_sha256": "0e14909be9df72242c1cd8cf4cbbff19dbee9062076482ba8d3796127bf5c795",
+      "legacy_policy": "Refused-surface",
+      "disposition": "Exact",
+      "fresh_expectation": {
+        "outcome": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "8"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "before": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ]
+          ],
+          "root": 0
+        },
+        "post": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ]
+          ],
+          "root": 0
+        },
+        "events": [
+          {
+            "a": "4",
+            "b": "3",
+            "event": "compare",
+            "n": 1
+          },
+          {
+            "a": "2",
+            "b": "1",
+            "event": "compare",
+            "n": 2
+          },
+          {
+            "a": "3",
+            "b": "1",
+            "event": "compare",
+            "n": 3
+          },
+          {
+            "a": "3",
+            "b": "2",
+            "event": "compare",
+            "n": 4
+          },
+          {
+            "a": "1",
+            "b": "0",
+            "event": "compare",
+            "n": 5
+          }
+        ],
+        "events_after_reuse": [
+          {
+            "a": "4",
+            "b": "3",
+            "event": "compare",
+            "n": 1
+          },
+          {
+            "a": "2",
+            "b": "1",
+            "event": "compare",
+            "n": 2
+          },
+          {
+            "a": "3",
+            "b": "1",
+            "event": "compare",
+            "n": 3
+          },
+          {
+            "a": "3",
+            "b": "2",
+            "event": "compare",
+            "n": 4
+          },
+          {
+            "a": "1",
+            "b": "0",
+            "event": "compare",
+            "n": 5
+          },
+          {
+            "event": "mark",
+            "hex": "7265757365"
+          }
+        ],
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "invoked": true
+      },
+      "stock_common_sha256": "ce8d5ebcfa088d64f32bed8fc170af3d1bf3ecdd9a84997b793056eb74b005c9",
+      "legacy_refusal_span": {
+        "source_sha256": "0e14909be9df72242c1cd8cf4cbbff19dbee9062076482ba8d3796127bf5c795",
+        "source": 0,
+        "start": 95,
+        "end": 101,
+        "span_hex": "7c787c782b6e"
+      },
+      "legacy_operation": "CallClosure"
+    },
+    {
+      "index": 94,
+      "label": "refused/any",
+      "source_sha256": "7da36a42bb6d1d4c65dd84edc36039cfd21c391dafda67a5005e50bc574d7625",
+      "legacy_policy": "Refused-surface",
+      "legacy_operation": "Method",
+      "legacy_refusal_span": {
+        "source_sha256": "7da36a42bb6d1d4c65dd84edc36039cfd21c391dafda67a5005e50bc574d7625",
+        "source": 0,
+        "start": 62,
+        "end": 83,
+        "span_hex": "762e6974657228292e616e79287c787c783d3d3129"
+      },
+      "stock_common_sha256": "9d5dc75c306417e34689fa2dc82104932d4ed58b426f81cc1eeb5501d441d601",
+      "disposition": "Exact",
+      "fresh_expectation": {
+        "outcome": {
+          "graph": {
+            "nodes": [
+              [
+                "Bool",
+                "0x981333df5abb043f",
+                true
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "before": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ]
+          ],
+          "root": 0
+        },
+        "post": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ]
+          ],
+          "root": 0
+        },
+        "events": [],
+        "events_after_reuse": [
+          {
+            "event": "mark",
+            "hex": "7265757365"
+          }
+        ],
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "invoked": true
+      }
+    },
+    {
+      "index": 130,
+      "label": "old-c9/refusal/iter-any",
+      "source_sha256": "80ca27965d6c3e4406e9c97e8628aae704d446e7b62149f6b3b268b411d7b95e",
+      "legacy_policy": "Refused-surface",
+      "disposition": "Exact",
+      "fresh_expectation": {
+        "outcome": {
+          "graph": {
+            "nodes": [
+              [
+                "Bool",
+                "0x981333df5abb043f",
+                true
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "before": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ]
+          ],
+          "root": 0
+        },
+        "post": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              [
+                3,
+                4,
+                5,
+                6,
+                7
+              ]
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "4"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "3"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "1"
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "0"
+            ]
+          ],
+          "root": 0
+        },
+        "events": [],
+        "events_after_reuse": [],
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "invoked": true
+      },
+      "stock_common_sha256": "9854f44fd13df566b6d83675810515bd5edb0240c2c85a90270ca6fabd7386c3",
+      "legacy_refusal_span": {
+        "source_sha256": "80ca27965d6c3e4406e9c97e8628aae704d446e7b62149f6b3b268b411d7b95e",
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "5b312c325d2e6974657228292e616e79287c767c763d3d3129"
+      },
+      "legacy_operation": "Method"
+    }
+  ]
+}

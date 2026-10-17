@@ -451,6 +451,7 @@ impl TypeName {
 			Type::RangeFull => Self::RangeFull,
 			Type::RangeFrom => Self::RangeFrom,
 			Type::Iterator => Self::VecIter,
+			Type::Function => Self::Function,
 		}
 	}
 }

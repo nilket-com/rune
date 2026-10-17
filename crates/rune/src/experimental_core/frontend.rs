@@ -88,6 +88,7 @@ impl Collector {
 		source: u32,
 		exprs: &crate::hir::Exprs<'_>,
 		item: &crate::hir::ItemFn<'_>,
+		captures: &[crate::hir::Variable],
 		constants: &crate::query::QueryInner<'_>,
 		pool: &Pool,
 		context: &Context,
@@ -105,6 +106,7 @@ impl Collector {
 		let result = super::lower::function(
 			exprs,
 			item,
+			captures,
 			source,
 			revision,
 			&mut |hash, at| {

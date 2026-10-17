@@ -605,6 +605,32 @@ impl Executor {
 			return self.host_call(code, store, function, base, out, id, args_start, args_len);
 		}
 		let certificate = code.intrinsic(id).ok_or_else(invalid)?;
+		if id == super::code::CLOSURE_CREATE {
+			if args_len != certificate.arity {
+				return Err(invalid());
+			}
+			let end = args_start.checked_add(args_len).ok_or_else(invalid)?;
+			let args = function
+				.args
+				.get(args_start as usize..end as usize)
+				.ok_or_else(invalid)?;
+			let read = |slot: u32| {
+				let index = base.checked_add(slot as usize).ok_or_else(invalid)?;
+				self.slots.get(index).copied().ok_or_else(invalid)
+			};
+			let Value::U64(function_id) = read(args[0])? else {
+				return Err(invalid());
+			};
+			let function_id = u32::try_from(function_id).map_err(|_| invalid())?;
+			let env = read(args[1])?;
+			let target = code.function(function_id).ok_or_else(invalid)?;
+			if (target.parameters as usize) < store.len(env)? {
+				return Err(invalid());
+			}
+			let value = store.closure(code.id(), function_id, env)?;
+			let destination = base.checked_add(out as usize).ok_or_else(invalid)?;
+			return self.put(store, destination, value);
+		}
 		if (super::code::SORT_BEGIN..=super::code::SORT_ORDERING).contains(&id) {
 			if args_len != certificate.arity {
 				return Err(invalid());
@@ -953,28 +979,46 @@ impl Executor {
 								args_start,
 								args_len,
 							} => {
-								let Value::Function {
-									code: owner,
-									id: callee,
-								} = get(value)?
-								else {
-									return Err(error(ErrorKind::Type));
-								};
-
-								// A token from another program is a type error at the call,
-								// before any argument is retained.
-								if owner != code.id() {
-									return Err(error(ErrorKind::Type));
+								let called = get(value)?;
+								match called {
+									Value::Function {
+										code: owner,
+										id: callee,
+									} => {
+										// Keep the plain-function validation and dispatch path unchanged.
+										if owner != code.id() {
+											return Err(error(ErrorKind::Type));
+										}
+										let target = code
+											.function(callee)
+											.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+										if target.parameters != args_len {
+											return Err(error(ErrorKind::Type));
+										}
+										call = Some((out, callee, args_start, args_len));
+									}
+									Value::Heap(_) => {
+										self.call_closure(
+											code,
+											store,
+											function,
+											frame.base,
+											frame_index,
+											pc,
+											source_pc,
+											out,
+											called,
+											args_start,
+											args_len,
+										)
+										.map_err(|failure| {
+											setup_cleanup_error = failure.cleanup_error;
+											failure.error
+										})?;
+										transferred = true;
+									}
+									_ => return Err(error(ErrorKind::Type)),
 								}
-
-								let target = code
-									.function(callee)
-									.ok_or_else(|| error(ErrorKind::InvalidCode))?;
-								if target.parameters != args_len {
-									return Err(error(ErrorKind::Type));
-								}
-
-								call = Some((out, callee, args_start, args_len));
 							}
 
 							Op::Range { out, start, end } => {
@@ -1020,7 +1064,7 @@ impl Executor {
 											| super::value::Type::String | super::value::Type::Unit
 											| super::value::Type::I64 | super::value::Type::U64
 											| super::value::Type::F64 | super::value::Type::Option
-											| super::value::Type::Result
+											| super::value::Type::Result | super::value::Type::Function
 									) {
 									return Err(error(ErrorKind::Type));
 								}
@@ -1124,7 +1168,8 @@ impl Executor {
 							} => {
 								let operand = get(value)?;
 								let matches = match operand {
-									Value::Function { .. } | Value::Type(_) => false,
+									Value::Function { .. } => tag == super::value::Type::Function,
+									Value::Type(_) => false,
 									_ => store.tag(operand)? == tag,
 								};
 
@@ -1468,6 +1513,67 @@ impl Executor {
 		)
 	}
 
+	/// Validate and enter a capturing closure on the cold path. The ordinary
+	/// `CallValue` arm and its shared call setup retain their original shape.
+	#[cold]
+	#[inline(never)]
+	fn call_closure(
+		&mut self,
+		code: &super::code::Code,
+		store: &mut Store,
+		function: &super::code::Function,
+		base: usize,
+		frame_index: usize,
+		pc: usize,
+		source_pc: usize,
+		out: u32,
+		closure: Value,
+		args_start: u32,
+		args_len: u32,
+	) -> core::result::Result<(), CallSetupFailure> {
+		let (owner, callee, captures) = store.closure_parts(closure)?;
+		if owner != code.id() {
+			return Err(error(ErrorKind::Type).into());
+		}
+		let target = code
+			.function(callee)
+			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+		let capture_len = captures.len();
+		let capture_count =
+			u32::try_from(capture_len).map_err(|_| error(ErrorKind::InvalidCode))?;
+		let expected = capture_count
+			.checked_add(args_len)
+			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+		if target.parameters != expected {
+			return Err(error(ErrorKind::Type).into());
+		}
+		let end = args_start
+			.checked_add(args_len)
+			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+		let indices = function
+			.args
+			.get(args_start as usize..end as usize)
+			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+
+		self.commit_pc(frame_index, pc)
+			.map_err(CallSetupFailure::from)?;
+		self.push_closure_call(
+			store,
+			target.slots as usize,
+			closure,
+			capture_len,
+			base,
+			indices,
+			Frame {
+				function: callee,
+				pc: 0,
+				base: 0,
+				out: Some(base + out as usize),
+				callsite_pc: source_pc as u32,
+			},
+		)
+	}
+
 	/// Rollback covers only this helper's unpublished window, preserving the
 	/// caller and its diagnostic witnesses for the existing outer unwind.
 	fn push_call(
@@ -1537,6 +1643,93 @@ impl Executor {
 				store,
 				base,
 				args.len(),
+				Error::new(ErrorKind::InvalidCode, "frame publication"),
+			));
+		}
+		debug_assert!(self.diagnostics.capacity() >= self.frames.len());
+		Ok(())
+	}
+
+	/// Closure argument setup is deliberately cold: ordinary calls keep the
+	/// infallible `Args::get` loop above, with no store lookup or closure branch.
+	#[cold]
+	#[inline(never)]
+	fn push_closure_call(
+		&mut self,
+		store: &mut Store,
+		slots: usize,
+		closure: Value,
+		capture_count: usize,
+		base: usize,
+		indices: &[u32],
+		mut frame: Frame,
+	) -> core::result::Result<(), CallSetupFailure> {
+		let arg_count = capture_count
+			.checked_add(indices.len())
+			.ok_or_else(|| error(ErrorKind::FrameCapacity))?;
+		let frames = self
+			.frames
+			.len()
+			.checked_add(1)
+			.ok_or_else(|| error(ErrorKind::FrameCapacity))?;
+		let call_base = self.slots.len();
+		let len = call_base
+			.checked_add(slots)
+			.ok_or_else(|| error(ErrorKind::FrameCapacity))?;
+		if frames > self.limits.frames || len > self.limits.slots {
+			return Err(error(ErrorKind::FrameCapacity).into());
+		}
+		if arg_count > slots {
+			return Err(error(ErrorKind::InvalidCode).into());
+		}
+		if self.frames.len() >= self.frames.capacity()
+			|| self.slots.capacity() < len
+			|| self.diagnostics.capacity() < frames
+		{
+			self.frames
+				.try_reserve(frames - self.frames.len())
+				.map_err(Error::from)?;
+			self.slots
+				.try_reserve(len - call_base)
+				.map_err(Error::from)?;
+			self.diagnostics
+				.try_reserve(frames.saturating_sub(self.diagnostics.len()))
+				.map_err(Error::from)?;
+		}
+		debug_assert!(self.diagnostics.capacity() >= frames);
+		for i in 0..arg_count {
+			let value = if i < capture_count {
+				match store.closure_capture(closure, i) {
+					Ok(value) => value,
+					Err(error) => return Err(self.rollback_call(store, call_base, i, error)),
+				}
+			} else {
+				self.slots[base + indices[i - capture_count] as usize]
+			};
+			if let Err(error) = store.retain(value) {
+				return Err(self.rollback_call(store, call_base, i, error));
+			}
+			if self.slots.push_within_capacity(value).is_err() {
+				let cleanup_error = store.release(value).err();
+				let mut failure = self.rollback_call(
+					store,
+					call_base,
+					i,
+					Error::new(ErrorKind::InvalidCode, "argument publication"),
+				);
+				failure.cleanup_error = cleanup_error.or(failure.cleanup_error);
+				return Err(failure);
+			}
+		}
+		if let Err(error) = self.slots.try_resize_with(len, || Value::Unit) {
+			return Err(self.rollback_call(store, call_base, arg_count, Error::from(error)));
+		}
+		frame.base = call_base;
+		if self.frames.push_within_capacity(frame).is_err() {
+			return Err(self.rollback_call(
+				store,
+				call_base,
+				arg_count,
 				Error::new(ErrorKind::InvalidCode, "frame publication"),
 			));
 		}
@@ -1774,6 +1967,20 @@ fn enrich_error(
 					Value::Function { id, .. } => Detail::Arity {
 						given: args_len,
 						expected: code.function(id)?.parameters,
+					},
+					Value::Heap(value) => match store.closure_parts(Value::Heap(value)).ok() {
+						Some((owner, _, _)) if owner != code.id() => Detail::ForeignFunction,
+						Some((_, id, captures)) => {
+							let captured = u32::try_from(captures.len()).ok()?;
+							let expected = code.function(id)?.parameters.checked_sub(captured)?;
+							Detail::Arity {
+								given: args_len,
+								expected,
+							}
+						}
+						None => Detail::NotCallable {
+							found: store.diagnostic_type(Value::Heap(value))?,
+						},
 					},
 					_ => Detail::NotCallable { found: ty(value)? },
 				},

@@ -154,6 +154,9 @@ fn compare_fresh_row(
 	{
 		return Err("depth emitted metadata binding drift".into());
 	}
+	if c11_check_stale_refusal_admission(label, source, observation, counts, disposition)? {
+		return Ok(());
+	}
 	if matches!(policy, "Refused-surface" | "Refused-runtime") {
 		let spans = read_json(include_str!("../../callback_sort_refusal_spans.json"));
 		let expected = &spans[label];
@@ -243,6 +246,163 @@ fn compare_fresh_row(
 		return Err(format!("strict portable drift {label}"));
 	}
 	Ok(())
+}
+
+fn c11_check_stale_refusal_admission(
+	label: &str,
+	source: &str,
+	observation: &Json,
+	counts: &Json,
+	disposition: &Json,
+) -> Result<bool, String> {
+	let overlay: Json = serde_json::from_str(C11_STALE_REFUSAL_ADMISSIONS)
+		.map_err(|_| "stale refusal admissions JSON")?;
+	if overlay["schema"] != 1 {
+		return Err("stale refusal admissions schema".into());
+	}
+	let Some(row) = overlay["rows"]
+		.as_array()
+		.ok_or("stale refusal admissions rows")?
+		.iter()
+		.find(|row| row["label"] == label)
+	else {
+		return Ok(false);
+	};
+	let index = usize::try_from(row["index"].as_u64().ok_or("stale admission index")?)
+		.map_err(|_| "stale admission index overflow")?;
+	if index >= CASES.len()
+		|| CASES[index].0 != label
+		|| CASES[index].1 != source
+		|| row["source_sha256"] != digest(source.as_bytes())
+		|| row["legacy_policy"] != "Refused-surface"
+		|| disposition["policy"] != row["legacy_policy"]
+	{
+		return Err(format!("stale refusal identity drift {label}"));
+	}
+	let legacy_spans = read_json(include_str!("../../callback_sort_refusal_spans.json"));
+	if row["legacy_refusal_span"] != legacy_spans[label]
+		|| legacy_spans[label]["source_sha256"] != digest(source.as_bytes())
+	{
+		return Err(format!("stale refusal span drift {label}"));
+	}
+	let refusals = read_json(include_str!("../../callback_sort_refusals.json"));
+	let legacy = &refusals[label];
+	let legacy_operation = row["legacy_operation"]
+		.as_str()
+		.ok_or("stale refusal operation")?;
+	if !matches!(legacy_operation, "CallClosure" | "Method")
+		|| legacy["fresh_constraint"]["operation"] != legacy_operation
+		|| legacy["fresh_constraint"]["source_sha256"] != digest(source.as_bytes())
+	{
+		return Err(format!("stale refusal history drift {label}"));
+	}
+	let stock = legacy["stock_common"].clone();
+	if row["stock_common_sha256"] != digest(&canonical(&stock)) {
+		return Err(format!("stale refusal stock pin drift {label}"));
+	}
+	let actual = common(&project_p1(observation, counts)?);
+	if actual != row["fresh_expectation"] {
+		return Err(format!("stale refusal fresh pin drift {label}"));
+	}
+	match row["disposition"]
+		.as_str()
+		.ok_or("stale admission disposition")?
+	{
+		"Exact" => {
+			if actual != stock {
+				return Err(format!("stale admission not stock-exact {label}"));
+			}
+		}
+		"Retained-frame" => {
+			let frame = &row["retained_frame"];
+			let sites = actual["outcome"]["sites"]
+				.as_array()
+				.ok_or("retained frame sites")?;
+			if sites != &[frame["fresh_site"].clone()] {
+				return Err("retained frame literal drift".into());
+			}
+			let call_chain = frame["call_chain"].clone();
+			let text = sites[0]["frames"].as_str().ok_or("retained frame text")?;
+			let parsed: Json = serde_json::from_str(text).map_err(|_| "retained frame JSON")?;
+			if parsed != call_chain {
+				return Err("retained frame caller drift".into());
+			}
+			let retained = c11_retained_frame_shape(source, &actual, &stock, &call_chain)?;
+			if retained["categories"] != frame["categories"] {
+				return Err("retained frame category drift".into());
+			}
+		}
+		"Retained-ownership" => {
+			let path = row["only_allowed_difference"]
+				.as_str()
+				.ok_or("ownership difference path")?;
+			let differences = c11_json_differences(&stock, &actual, "", Some(path));
+			if differences != [path]
+				|| stock["post"]["nodes"][2][0] != "OpaqueAny"
+				|| actual["post"]["nodes"][2][0] != "Vec"
+			{
+				return Err("retained ownership boundary drift".into());
+			}
+		}
+		_ => return Err("unknown stale refusal disposition".into()),
+	}
+	Ok(true)
+}
+
+fn c11_json_differences(
+	left: &Json,
+	right: &Json,
+	path: &str,
+	atomic_path: Option<&str>,
+) -> Vec<String> {
+	if Some(path) == atomic_path {
+		return if left == right {
+			Vec::new()
+		} else {
+			vec![path.into()]
+		};
+	}
+	if let (Some(left), Some(right)) = (left.as_object(), right.as_object()) {
+		let keys = left
+			.keys()
+			.chain(right.keys())
+			.collect::<std::collections::BTreeSet<_>>();
+		return keys
+			.into_iter()
+			.flat_map(|key| {
+				let child = format!("{path}/{key}");
+				match (left.get(key), right.get(key)) {
+					(Some(left), Some(right)) => {
+						c11_json_differences(left, right, &child, atomic_path)
+					}
+					_ => vec![child],
+				}
+			})
+			.collect();
+	}
+	if let (Some(left), Some(right)) = (left.as_array(), right.as_array()) {
+		let len = left.len().max(right.len());
+		return (0..len)
+			.flat_map(|index| {
+				let child = format!("{path}/{index}");
+				match (left.get(index), right.get(index)) {
+					(Some(left), Some(right)) => {
+						c11_json_differences(left, right, &child, atomic_path)
+					}
+					_ => vec![child],
+				}
+			})
+			.collect();
+	}
+	if left == right {
+		Vec::new()
+	} else {
+		vec![if path.is_empty() {
+			"/".into()
+		} else {
+			path.into()
+		}]
+	}
 }
 
 // Validate the frozen representation shape; exact per-row pins are checked separately.
@@ -459,8 +619,7 @@ fn callback_and_c5_discovery_compose_only_independently_valid_halves() {
 	let mut site_actual = actual.clone();
 	site_actual["outcome"]["sites"][0]["frames"] = json!("[]");
 	assert_eq!(
-		c11_retained_frame_shape(source, &site_actual, &site_stock, &json!([])).unwrap()
-			["categories"],
+		c11_retained_frame_shape(source, &site_actual, &site_stock, &json!([])).unwrap()["categories"],
 		json!(["Retained-site"])
 	);
 	for (field, value) in [

@@ -417,6 +417,7 @@ fn type_hash(tag: Type) -> Result<u64> {
 		Type::String => String::HASH.into_inner(),
 		Type::Vec => crate::runtime::Vec::HASH.into_inner(),
 		Type::Tuple => crate::runtime::OwnedTuple::HASH.into_inner(),
+		Type::Function => crate::runtime::Function::HASH.into_inner(),
 		Type::Struct(nominal) => crate::experimental_core::nominal::hash_copy(nominal)
 			.ok_or_else(|| error(ErrorKind::InvalidCode))?,
 		_ => return Err(error(ErrorKind::InvalidCode)),

@@ -64,6 +64,8 @@ pub enum Type {
 	Range,
 	/// An iterator.
 	Iterator,
+	/// A capturing function value.
+	Function,
 	/// An unbounded range with a start (`start..`).
 	RangeFrom,
 	/// A range without endpoints (`..`).

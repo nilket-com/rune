@@ -18,6 +18,7 @@ impl Payload {
 				Self::SortGuard(state) if index == 0 => Some(Value::Heap(state.parent)),
 				Self::Record { fields, .. } => fields.get(index).map(|(_, value)| *value),
 				Self::List { values, .. } => values.get(index).copied(),
+				Self::Closure { captures, .. } => captures.get(index).copied(),
 				Self::ValueRange { start, .. } if index == 0 => Some(*start),
 				Self::ValueRange { end, .. } if index == 1 => Some(*end),
 				_ => None,
@@ -65,6 +66,7 @@ fn variant(payload: &Payload) -> &'static str {
 		Payload::ValueRangeIterator { .. } => "ValueRangeIterator",
 		Payload::Record { .. } => "Record",
 		Payload::List { .. } => "List",
+		Payload::Closure { .. } => "Closure",
 	}
 }
 
@@ -130,6 +132,11 @@ fn every_payload_preserves_reference_sequence_edges_and_exhaustion() {
 			});
 		}
 	}
+	cases.push(Payload::Closure {
+		code: 1,
+		function: 2,
+		captures: values(&[heap, Value::I64(7), heap]),
+	});
 	for (tag, start, end) in [
 		(Type::RangeFull, None, None),
 		(Type::RangeFrom, Some(heap), None),
@@ -188,7 +195,7 @@ fn every_payload_preserves_reference_sequence_edges_and_exhaustion() {
 		}
 		s.edges = 0;
 	}
-	assert_eq!(seen.len(), 13);
+	assert_eq!(seen.len(), 14);
 	assert_eq!(
 		(size_of::<Payload>(), size_of::<Entry>(), size_of::<Slot>()),
 		(40, 72, 80)
@@ -198,6 +205,26 @@ fn every_payload_preserves_reference_sequence_edges_and_exhaustion() {
 		cases.len(),
 		core::mem::size_of_val(&cases[0].children())
 	);
+}
+
+#[test]
+fn captured_closure_cycle_stays_charged_until_store_close() {
+	let mut store = Store::new(Limits::default()).unwrap();
+	let vector = store.list(Type::Vec, &[]).unwrap();
+	let env = store.list(Type::Tuple, &[vector]).unwrap();
+	let closure = store.closure(1, 2, env).unwrap();
+	assert_eq!(store.tag(closure).unwrap(), Type::Function);
+	store.push(vector, closure).unwrap();
+
+	store.release(env).unwrap();
+	store.release(closure).unwrap();
+	store.release(vector).unwrap();
+	assert_eq!(store.live_entries(), 2);
+	assert_eq!(store.edges, 2);
+
+	store.close().unwrap();
+	assert_eq!(store.live_entries(), 0);
+	assert_eq!(store.edges, 0);
 }
 
 #[test]

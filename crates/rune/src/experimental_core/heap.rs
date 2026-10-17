@@ -107,6 +107,11 @@ enum Payload {
 		tag: Type,
 		values: Vec<Value>,
 	},
+	Closure {
+		code: u32,
+		function: u32,
+		captures: Vec<Value>,
+	},
 	SortGuard(Box<sorting::SortState>),
 	OtherRange(Box<ranges::RangeShape>),
 	OtherRangeIterator(Box<ranges::RangeCursor>),
@@ -155,6 +160,7 @@ impl Payload {
 				Some(size_of::<Value>())
 			}
 			Self::List { values, .. } => values.capacity().checked_mul(size_of::<Value>()),
+			Self::Closure { captures, .. } => captures.capacity().checked_mul(size_of::<Value>()),
 			Self::Record { fields, .. } => fields
 				.capacity()
 				.checked_mul(size_of::<(String, Value)>())
@@ -187,6 +193,7 @@ impl Payload {
 			}
 			Self::Record { fields, .. } => Children::Fields(fields.iter()),
 			Self::List { values, .. } => Children::Values(values.iter()),
+			Self::Closure { captures, .. } => Children::Values(captures.iter()),
 			Self::ValueRange { start, end } => Children::Two(Some(*start), Some(*end)),
 			Self::OtherRange(shape) => Children::Two(shape.start, shape.end),
 		}
@@ -210,6 +217,7 @@ impl Payload {
 			| Self::RangeIterator { .. }
 			| Self::ValueRangeIterator { .. } => Type::Iterator,
 			Self::List { tag, .. } | Self::Record { tag, .. } => *tag,
+			Self::Closure { .. } => Type::Function,
 		}
 	}
 }
@@ -479,6 +487,10 @@ impl Store {
 				.filter(|(_, value)| matches!(value, Value::Heap(_)))
 				.count(),
 			Payload::List { values, .. } => values
+				.iter()
+				.filter(|value| matches!(value, Value::Heap(_)))
+				.count(),
+			Payload::Closure { captures, .. } => captures
 				.iter()
 				.filter(|value| matches!(value, Value::Heap(_)))
 				.count(),
@@ -806,6 +818,66 @@ impl Store {
 		}
 
 		self.admit(Payload::List { tag, values: copy })
+	}
+
+	/// Construct an opaque function value from a compiler-owned tuple of captures.
+	/// The tuple is only a construction operand; the closure owns its own edge list.
+	pub(crate) fn closure(&mut self, code: u32, function: u32, env: Value) -> Result<Value> {
+		if self.closed {
+			return Err(err(ErrorKind::ClosedStore));
+		}
+		let Value::Heap(handle) = env else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		let Payload::List {
+			tag: Type::Tuple,
+			values,
+		} = self.payload(handle)?
+		else {
+			return Err(err(ErrorKind::InvalidCode));
+		};
+		let bytes = values
+			.len()
+			.checked_mul(size_of::<Value>())
+			.ok_or_else(|| err(ErrorKind::Overflow))?;
+		if bytes > self.limits.bytes.saturating_sub(self.bytes) {
+			return Err(err(ErrorKind::StoreCapacity));
+		}
+		let mut captures = Vec::try_with_capacity(values.len())?;
+		for &value in values {
+			captures.try_push(value)?;
+		}
+		let payload = Payload::Closure {
+			code,
+			function,
+			captures,
+		};
+		if payload.bytes()? > self.limits.bytes.saturating_sub(self.bytes) {
+			return Err(err(ErrorKind::StoreCapacity));
+		}
+		self.admit(payload)
+	}
+
+	pub(crate) fn closure_parts(&self, value: Value) -> Result<(u32, u32, &[Value])> {
+		let Value::Heap(handle) = value else {
+			return Err(err(ErrorKind::Type));
+		};
+		match self.payload(handle)? {
+			Payload::Closure {
+				code,
+				function,
+				captures,
+			} => Ok((*code, *function, captures)),
+			_ => Err(err(ErrorKind::Type)),
+		}
+	}
+
+	pub(crate) fn closure_capture(&self, value: Value, index: usize) -> Result<Value> {
+		let (_, _, captures) = self.closure_parts(value)?;
+		captures
+			.get(index)
+			.copied()
+			.ok_or_else(|| err(ErrorKind::InvalidCode))
 	}
 
 	/// Construct only declared fields. No key insertion or implicit protocol call.

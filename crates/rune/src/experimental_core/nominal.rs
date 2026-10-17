@@ -744,7 +744,7 @@ mod tests {
 				let _p = compile("struct A { x } struct D { x } pub fn main() { let a = A { x: 1 }; let d = D { x: 2 }; a.x + d.x }").unwrap();
 				assert_eq!(global_len(), 4);
 				assert!(compile(
-					"struct Late { x } pub fn main() { let p = Late { x: 1 }; let c = || p.x; p.x }"
+					"struct Late { x } pub fn main() { let p = Late { x: 1 }; async { p.x } }"
 				)
 				.is_err());
 				assert_eq!(global_len(), 4);

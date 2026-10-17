@@ -65,6 +65,26 @@ impl Executor {
 					Value::Function { .. } => {
 						return Err(error(ErrorKind::Type).with_detail(Detail::ForeignFunction))
 					}
+					closure @ Value::Heap(_) => {
+						let (owner, id, _) = match store.closure_parts(closure) {
+							Ok(parts) => parts,
+							Err(_) => {
+								return Err(error(ErrorKind::Type).with_detail(
+									Detail::NumericArgumentType {
+										cause: super::super::error::HostCause::ExpectedType,
+										arg: 1,
+										expected: TypeName::Function,
+										found: store
+											.diagnostic_type(closure)
+											.ok_or_else(invalid)?,
+									},
+								));
+							}
+						};
+						if owner != code.id() || code.function(id).is_none() {
+							return Err(error(ErrorKind::Type).with_detail(Detail::ForeignFunction));
+						}
+					}
 					other => {
 						return Err(error(ErrorKind::Type).with_detail(
 							Detail::NumericArgumentType {

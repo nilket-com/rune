@@ -59,6 +59,11 @@ fn run_contract(engine: &str) {
 	assert_eq!(COUNT, 210);
 	let counts: Json =
 		serde_json::from_str(include_str!("../../cmp_ordering_p1_counts.json")).unwrap();
+	let stale_admissions: Json = serde_json::from_str(C9_STALE_REFUSAL_ADMISSIONS).unwrap();
+	assert_eq!(stale_admissions["schema"], 1);
+	assert_eq!(stale_admissions["rows"].as_array().unwrap().len(), 2);
+	let archived_dispositions: Json =
+		serde_json::from_str(include_str!("../../cmp_ordering_dispositions.json")).unwrap();
 	assert!(matches!(engine, "stock" | "fresh"));
 	let owned = std::env::var_os("GAP_OUT").is_none();
 	let out = std::env::var_os("GAP_OUT")
@@ -198,14 +203,34 @@ fn run_contract(engine: &str) {
 				observed["reuse"]["value"]["payload"],
 				json!({"type":"I64","value":"7"})
 			);
-		} else if matches!(*label, "refusal/sort-by" | "refusal/iter-any") {
-			// C11 sort_by / C12 iter-any admissions: preserve the C9 source and streams,
-			// and compare the actual successful outcome to its frozen STOCK value.
-			// Historical C9 refusal literals and their pure controls stay intact.
+		} else if let Some(admission) = stale_admissions["rows"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.find(|row| row["label"] == *label)
+		{
+			// C11/C12 admissions preserve the C9 source, stock observation and streams.
 			let observed = &e["observation"];
 			let audit = &observed["fresh_audit"];
 			let stock: Json = serde_json::from_str(&pins_decode(c[3])).unwrap();
+			assert_eq!(admission["index"], i);
+			assert_eq!(admission["source_hex"], c[2]);
+			assert_eq!(
+				admission["source_sha256"],
+				archived_dispositions[*label]["source_sha256"]
+			);
+			assert_eq!(admission["legacy_policy"], c[6]);
+			assert_eq!(admission["legacy_policy"], "Refused-surface");
+			assert_eq!(
+				admission["legacy_fresh_refusal"],
+				archived_dispositions[*label]["fresh_expectation"]
+			);
+			assert_eq!(admission["disposition"], "Exact");
+			assert_eq!(admission["expected"], stock);
+			assert_eq!(admission["stdout_hex"], c[4]);
+			assert_eq!(admission["stderr_hex"], c[5]);
 			assert_eq!(observed["outcome"], semantic_projection(&stock).unwrap());
+			assert_eq!(observed["outcome"], admission["expected"]);
 			assert_eq!(observed["outcome"]["status"], "value");
 			assert_eq!(observed["invoked"], true);
 			assert_eq!(observed["host_calls"], 0);

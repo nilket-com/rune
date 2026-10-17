@@ -99,6 +99,49 @@ fn source_forward_and_recursive_functions() {
 	miri,
 	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
 )]
+fn captured_closures_use_hidden_arguments_and_activation_local_scalars() {
+	assert_eq!(
+		run(
+			"pub fn main() { let n = 0; let f = || { n += 1; n }; let a = f(); let b = f(); a * 100 + b * 10 + n }",
+			&[]
+		),
+		Value::I64(110)
+	);
+	assert_eq!(
+		run(
+			"fn make(n) { || n } pub fn main() { let f = make(7); f() }",
+			&[]
+		),
+		Value::I64(7)
+	);
+	assert_eq!(
+		run(
+			"pub fn main() { let v = [1]; let f = || { v[0] += 1; v[0] }; let a = f(); let b = f(); a * 100 + b * 10 + v[0] }",
+			&[]
+		),
+		Value::I64(233)
+	);
+	assert_eq!(
+		run(
+			"pub fn main() { let year = 2024; [2023, 2024, 2025].iter().any(|y| y == year) }",
+			&[]
+		),
+		Value::Bool(true)
+	);
+	assert_eq!(
+		run(
+			"pub fn main() { let n = 1; let f = || n; if f is std::ops::Function { 1 } else { 0 } }",
+			&[]
+		),
+		Value::I64(1)
+	);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
+)]
 fn source_vector_alias_and_short_circuit() {
 	assert_eq!(
 		run(
@@ -122,11 +165,10 @@ fn source_vector_alias_and_short_circuit() {
 	miri,
 	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
 )]
-fn construction_refuses_constants_closures_and_macros() {
+fn construction_refuses_constants_and_format_but_admits_stock_closure() {
 	let context = Context::with_default_modules().unwrap();
 	for text in [
 		"const A = [42]; pub fn main() { A }",
-		"pub fn main() { let x = 42; let f = || x; f() }",
 		"pub fn main() { format!(\"{:x}\",42) }",
 	] {
 		let mut sources = Sources::new();
@@ -140,6 +182,13 @@ fn construction_refuses_constants_closures_and_macros() {
 			ErrorKind::Unsupported
 		);
 	}
+	assert_eq!(
+		run(
+			"pub fn main(){let n=7;let f=||n;f()}\npub fn c11b_reuse(){7}",
+			&[]
+		),
+		Value::I64(7)
+	);
 }
 
 #[test]
@@ -622,7 +671,6 @@ fn named_refusals_keep_source_revision_and_syntax_span() {
 	let context = Context::with_default_modules().unwrap();
 	for (body, operation, syntax) in [
 		("match n { Ok(1.0) => 1, _ => 0 }", "Match", "match"),
-		("let x = 42; let f = || x; f()", "CallClosure", "||"),
 		("let f = async { 42 }; 0", "AsyncBlock", "async"),
 	] {
 		let text = format!("pub fn main(n) {{ {body} }}");

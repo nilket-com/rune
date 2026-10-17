@@ -52,6 +52,25 @@ fn frozen_schema() {
 	assert_eq!(stock[109]["fresh_expectation"]["refusal"], "CallClosure");
 	assert_eq!(stock[110]["fresh_expectation"]["refusal"], "ByteStr");
 }
+
+#[test]
+fn stale_capture_refusals_have_stock_exact_admission_overlay() {
+	let (_, stock, _) = c12_data();
+	let overlay: Json = serde_json::from_str(C12_ADMISSIONS).unwrap();
+	assert_eq!(overlay["schema"], 1);
+	let rows = overlay["admissions"].as_array().unwrap();
+	assert_eq!(rows.len(), 2);
+	for (admission, index) in rows.iter().zip([101usize, 109]) {
+		assert_eq!(admission["id"], format!("{index:03}"));
+		assert_eq!(stock[index]["policy"], "Refused-surface");
+		assert_eq!(stock[index]["fresh_expectation"]["refusal"], "CallClosure");
+		assert_eq!(admission["from_policy"], stock[index]["policy"]);
+		assert_eq!(admission["label"], stock[index]["label"]);
+		assert_eq!(admission["source_sha256"], stock[index]["source_sha256"]);
+		assert_eq!(admission["policy"], "Exact");
+		assert_eq!(admission["expected"], stock[index]["stock"]["observation"]);
+	}
+}
 #[cfg(feature = "sha2")]
 #[test]
 fn frozen_sha256_seals() {

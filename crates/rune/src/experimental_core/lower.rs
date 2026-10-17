@@ -30,6 +30,7 @@ use crate::{hir, Hash};
 pub(crate) fn function(
 	exprs: &hir::Exprs<'_>,
 	item: &hir::ItemFn<'_>,
+	captures: &[hir::Variable],
 	source: u32,
 	revision: u64,
 	resolve: &mut dyn FnMut(Resolve, Location) -> Result<u32>,
@@ -56,6 +57,11 @@ pub(crate) fn function(
 		pool,
 		transaction,
 	};
+	for &variable in captures {
+		let slot = cx.slot()?;
+		cx.raise(slot);
+		cx.variables.try_push((variable, slot))?;
+	}
 
 	for arg in item.args {
 		let hir::FnArg::Pat(pat) = arg;
@@ -210,8 +216,8 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			| Op::Call { out, .. }
 			| Op::CallValue { out, .. }
 			| Op::Try { out, .. } => self.raise(out),
-			// Release is only emitted by pop_to and release_from; pop_to clears
-			// the flag itself, release_from deliberately does not.
+			// pop_to clears its flag, release_from deliberately does not, and a
+			// move closure clears the captured source after transferring ownership.
 			Op::Release { .. } => (),
 			Op::Jump { .. }
 			| Op::Branch { .. }
@@ -786,7 +792,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 						)?;
 					}
 					hir::ExprField::IdentGenerics(..) => {
-						return Err(self.refused(span, Refusal::Field))
+						return Err(self.refused(span, Refusal::Field));
 					}
 				}
 				self.emit(
@@ -822,7 +828,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 						)?;
 					}
 					hir::ExprField::IdentGenerics(..) => {
-						return Err(self.refused(span, Refusal::Field))
+						return Err(self.refused(span, Refusal::Field));
 					}
 				}
 			}
@@ -1073,11 +1079,52 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let E::CallClosure(closure) = expr.kind else {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
-		if !closure.captures.is_empty() {
-			return Err(self.refused(span, Refusal::CallClosure));
-		}
 		let at = self.location(span);
 		let id = (self.resolve)(Resolve::Script(closure.hash), at)?;
+		if !closure.captures.is_empty() {
+			let mut captured = Vec::try_with_capacity(closure.captures.len())?;
+			for &variable in closure.captures {
+				captured.try_push(self.variable(variable, span)?)?;
+			}
+			let (capture_start, capture_len) = self.function.arguments(&captured)?;
+			let captures = self.slot()?;
+			self.emit(
+				Op::List {
+					out: captures,
+					tag: Type::Tuple,
+					args_start: capture_start,
+					args_len: capture_len,
+				},
+				span,
+			)?;
+			let function = self.slot()?;
+			self.emit(
+				Op::Literal {
+					out: function,
+					value: Value::U64(u64::from(id)),
+				},
+				span,
+			)?;
+			let args = [function, captures];
+			let (args_start, args_len) = self.function.arguments(&args)?;
+			self.emit(
+				Op::Call {
+					out,
+					function: super::code::CLOSURE_CREATE,
+					args_start,
+					args_len,
+				},
+				span,
+			)?;
+			if closure.do_move {
+				for &variable in closure.captures {
+					let value = self.variable(variable, span)?;
+					self.emit(Op::Release { value }, span)?;
+					self.dirty[value as usize] = false;
+				}
+			}
+			return Ok(());
+		}
 		self.emit(
 			Op::Literal {
 				out,
@@ -1965,6 +2012,8 @@ fn type_tag(hash: Hash) -> Option<Type> {
 		Type::Vec
 	} else if hash == crate::runtime::OwnedTuple::HASH {
 		Type::Tuple
+	} else if hash == crate::runtime::Function::HASH {
+		Type::Function
 	} else {
 		return None;
 	})

@@ -78,6 +78,28 @@ fn c12_compare_fresh(i: usize, frozen: &Json, actual: &Json, counts: &Json) {
 		other => panic!("unreviewed policy {other}"),
 	}
 }
+
+fn c12_with_admissions(frozen: &[Json]) -> Vec<Json> {
+	let overlay: Json = serde_json::from_str(C12_ADMISSIONS).unwrap();
+	assert_eq!(overlay["schema"], 1);
+	let admissions = overlay["admissions"].as_array().unwrap();
+	let mut effective = frozen.to_vec();
+	let mut seen = std::collections::BTreeSet::new();
+	for admission in admissions {
+		let index = admission["id"].as_str().unwrap().parse::<usize>().unwrap();
+		assert!(seen.insert(index), "duplicate C12 admission {index}");
+		let row = effective.get_mut(index).expect("C12 admission row");
+		assert_eq!(row["label"], admission["label"]);
+		assert_eq!(row["source_sha256"], admission["source_sha256"]);
+		assert_eq!(row["policy"], admission["from_policy"]);
+		assert_eq!(row["policy"], "Refused-surface");
+		assert_eq!(row["stock"]["observation"], admission["expected"]);
+		row["policy"] = admission["policy"].clone();
+		row["fresh_expectation"] = admission["expected"].clone();
+	}
+	assert_eq!(seen, std::collections::BTreeSet::from([101, 109]));
+	effective
+}
 #[test]
 #[ignore = "C12 strict fresh contract; explicit new C12_FRESH_OUT, bounded children"]
 fn fresh_contract() {
@@ -90,8 +112,9 @@ fn fresh_contract() {
 	let out = PathBuf::from(std::env::var_os("C12_FRESH_OUT").expect("new C12_FRESH_OUT"));
 	fs::create_dir(&out).unwrap();
 	let (cases, frozen, counts) = c12_data();
+	let effective = c12_with_admissions(&frozen);
 	let start = Instant::now();
-	for (i, (_case, expected)) in cases.iter().zip(&frozen).enumerate() {
+	for (i, (_case, expected)) in cases.iter().zip(&effective).enumerate() {
 		assert!(start.elapsed() < Duration::from_secs(1700));
 		let dir = out.join(format!("{i:03}"));
 		fs::create_dir(&dir).unwrap();

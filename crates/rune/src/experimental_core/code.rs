@@ -798,6 +798,7 @@ pub(crate) const OBJECT_HAS_FIELD: u32 = FIRST_INTRINSIC_ID + 0x55;
 pub(crate) const ITER_METHOD: u32 = FIRST_INTRINSIC_ID + 0x56;
 pub(crate) const NEXT_METHOD: u32 = FIRST_INTRINSIC_ID + 0x57;
 pub(crate) const ANY_READY: u32 = FIRST_INTRINSIC_ID + 0x58;
+pub(crate) const CLOSURE_CREATE: u32 = FIRST_INTRINSIC_ID + 0x59;
 pub(crate) const FIRST_HOST: u32 = FIRST_INTRINSIC_ID + 0x100;
 pub(crate) const MAX_HOST_DESCRIPTORS: usize = 4096;
 fn host_id(index: usize) -> Result<u32> {
@@ -886,6 +887,10 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 	CertifiedIntrinsic {
 		id: ANY_READY,
 		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: CLOSURE_CREATE,
+		arity: 2,
 	},
 	CertifiedIntrinsic {
 		id: RANGE_FROM,
@@ -2764,7 +2769,17 @@ mod clone_mode_tests {
 impl Function {
 	pub(crate) fn emission_snapshot(&self) -> std::string::String {
 		use std::fmt::Write;
-		let mut text = std::format!("slots={} parameters={}\nconstants={:?}\ntypes={:?}\nranges={:?}\nstrings={:?}\nargs={:?}\nlocations={:?}\n",self.slots,self.parameters,self.constants,self.types,self.ranges,self.strings,self.args,self.locations);
+		let mut text = std::format!(
+			"slots={} parameters={}\nconstants={:?}\ntypes={:?}\nranges={:?}\nstrings={:?}\nargs={:?}\nlocations={:?}\n",
+			self.slots,
+			self.parameters,
+			self.constants,
+			self.types,
+			self.ranges,
+			self.strings,
+			self.args,
+			self.locations
+		);
 		for pc in 0..self.len() {
 			writeln!(
 				text,
@@ -2799,7 +2814,7 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 26);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 27);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, METHOD_CMP)
 				.unwrap()
@@ -2962,7 +2977,9 @@ mod template_lowering_tests {
 		ignore = "source compilation is covered by native tests; bounded Miri covers metadata and formatting helpers"
 	)]
 	fn lowering_appends_specs_after_later_call_list_and_record_args() {
-		let program = compile("fn id(x) { x } pub fn main() { let s=format!(\"{:>7}\", 1); let c=id(3); let v=[c]; let r=#{a:c}; s.len()+v[0]+r.a }");
+		let program = compile(
+			"fn id(x) { x } pub fn main() { let s=format!(\"{:>7}\", 1); let c=id(3); let v=[c]; let r=#{a:c}; s.len()+v[0]+r.a }",
+		);
 		let mut witnessed = false;
 		for id in 0..program.code.functions() {
 			let f = program.code.function(id as u32).unwrap();

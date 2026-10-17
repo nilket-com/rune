@@ -1,0 +1,223 @@
+{
+	"schema": 1,
+	"admissions": [
+		{
+			"id": "101",
+			"label": "any/captured-refusal",
+			"source_sha256": "3dd2c3b380072ea75c88d85554c2b1de2a9108cad7d86f0c475f79a516dfb4cb",
+			"from_policy": "Refused-surface",
+			"policy": "Exact",
+			"expected": {
+				"before": {
+					"receiver": {
+						"nodes": [
+							[
+								"Vec",
+								"0xc11b1e769aea94f2",
+								[
+									1,
+									2,
+									3,
+									4
+								]
+							],
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"1"
+							],
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"2"
+							],
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"3"
+							],
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"4"
+							]
+						],
+						"root": 0
+					},
+					"state": {
+						"nodes": [
+							[
+								"Vec",
+								"0xc11b1e769aea94f2",
+								[]
+							]
+						],
+						"root": 0
+					}
+				},
+				"cleanup": null,
+				"events": [],
+				"outcome": {
+					"graph": {
+						"nodes": [
+							[
+								"Bool",
+								"0x981333df5abb043f",
+								true
+							]
+						],
+						"root": 0
+					},
+					"status": "value"
+				},
+				"post": {
+					"receiver": {
+						"nodes": [
+							[
+								"Vec",
+								"0xc11b1e769aea94f2",
+								[
+									1,
+									2,
+									3,
+									4
+								]
+							],
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"1"
+							],
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"2"
+							],
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"3"
+							],
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"4"
+							]
+						],
+						"root": 0
+					},
+					"state": {
+						"nodes": [
+							[
+								"Vec",
+								"0xc11b1e769aea94f2",
+								[]
+							]
+						],
+						"root": 0
+					}
+				},
+				"reuse": {
+					"graph": {
+						"nodes": [
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"7"
+							]
+						],
+						"root": 0
+					},
+					"status": "value"
+				}
+			},
+			"basis": "Exact match to immutable C12 stock observation; legacy CallClosure refusal is retained in stock.json for history."
+		},
+		{
+			"id": "109",
+			"label": "any/mortgage-captured-year",
+			"source_sha256": "7c6fe9f79b9fde8076a5b5f4d059ef3521085ce96e12764c1b5fc3bc4054b2ee",
+			"from_policy": "Refused-surface",
+			"policy": "Exact",
+			"expected": {
+				"before": {
+					"receiver": {
+						"nodes": [
+							[
+								"Unit",
+								"0xfeb65b3f4755aef0"
+							]
+						],
+						"root": 0
+					},
+					"state": {
+						"nodes": [
+							[
+								"Vec",
+								"0xc11b1e769aea94f2",
+								[]
+							]
+						],
+						"root": 0
+					}
+				},
+				"cleanup": null,
+				"events": [
+					{
+						"kind": "i64",
+						"tag": 1,
+						"value": "2"
+					}
+				],
+				"outcome": {
+					"graph": {
+						"nodes": [
+							[
+								"Bool",
+								"0x981333df5abb043f",
+								false
+							]
+						],
+						"root": 0
+					},
+					"status": "value"
+				},
+				"post": {
+					"receiver": {
+						"nodes": [
+							[
+								"Unit",
+								"0xfeb65b3f4755aef0"
+							]
+						],
+						"root": 0
+					},
+					"state": {
+						"nodes": [
+							[
+								"Vec",
+								"0xc11b1e769aea94f2",
+								[]
+							]
+						],
+						"root": 0
+					}
+				},
+				"reuse": {
+					"graph": {
+						"nodes": [
+							[
+								"I64",
+								"0x1cad9186c9641c4f",
+								"7"
+							]
+						],
+						"root": 0
+					},
+					"status": "value"
+				}
+			},
+			"basis": "Exact match to immutable C12 stock observation; legacy CallClosure refusal is retained in stock.json for history."
+		}
+	]
+}

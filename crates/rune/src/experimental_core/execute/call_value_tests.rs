@@ -6,9 +6,252 @@
 
 use super::*;
 use crate::experimental_core::{
-	code::{Builder, Function},
+	arithmetic::Binary,
+	code::{Builder, Function, CLOSURE_CREATE},
 	heap::Limits,
 };
+
+/// Exercise the captured-closure call protocol without compiling Rune source or
+/// constructing the standard-module Context. The scalar is copied into each
+/// activation; the Vec remains shared. The final arity error must unwind the
+/// caller and release its closure/environment owners.
+#[test]
+fn c11b_hidden_closure_arguments_activation_and_rollback() {
+	let mut caller = Function::new(12, 1).unwrap();
+	caller
+		.push(
+			Op::Literal {
+				out: 1,
+				value: Value::I64(0),
+			},
+			loc(0),
+		)
+		.unwrap();
+	let (captures_start, captures_len) = caller.arguments(&[1, 0]).unwrap();
+	caller
+		.push(
+			Op::List {
+				out: 2,
+				tag: super::super::value::Type::Tuple,
+				args_start: captures_start,
+				args_len: captures_len,
+			},
+			loc(1),
+		)
+		.unwrap();
+	caller
+		.push(
+			Op::Literal {
+				out: 3,
+				value: Value::U64(1),
+			},
+			loc(2),
+		)
+		.unwrap();
+	let (create_start, create_len) = caller.arguments(&[3, 2]).unwrap();
+	caller
+		.push(
+			Op::Call {
+				out: 4,
+				function: CLOSURE_CREATE,
+				args_start: create_start,
+				args_len: create_len,
+			},
+			loc(3),
+		)
+		.unwrap();
+	let (no_args_start, no_args_len) = caller.arguments(&[]).unwrap();
+	caller
+		.push(
+			Op::CallValue {
+				out: 5,
+				value: 4,
+				args_start: no_args_start,
+				args_len: no_args_len,
+			},
+			loc(4),
+		)
+		.unwrap();
+	caller
+		.push(
+			Op::CallValue {
+				out: 6,
+				value: 4,
+				args_start: no_args_start,
+				args_len: no_args_len,
+			},
+			loc(5),
+		)
+		.unwrap();
+	caller
+		.push(
+			Op::Binary {
+				out: 7,
+				op: Binary::Add,
+				lhs: 5,
+				rhs: 6,
+			},
+			loc(6),
+		)
+		.unwrap();
+	caller
+		.push(
+			Op::Literal {
+				out: 8,
+				value: Value::I64(2),
+			},
+			loc(7),
+		)
+		.unwrap();
+	caller
+		.push(
+			Op::Binary {
+				out: 9,
+				op: Binary::Eq,
+				lhs: 7,
+				rhs: 8,
+			},
+			loc(8),
+		)
+		.unwrap();
+	caller
+		.push(
+			Op::Branch {
+				condition: 9,
+				yes: 10,
+				no: 13,
+			},
+			loc(9),
+		)
+		.unwrap();
+	caller
+		.push(
+			Op::Literal {
+				out: 11,
+				value: Value::I64(7),
+			},
+			loc(10),
+		)
+		.unwrap();
+	let (wrong_args_start, wrong_args_len) = caller.arguments(&[11]).unwrap();
+	caller
+		.push(
+			Op::CallValue {
+				out: 10,
+				value: 4,
+				args_start: wrong_args_start,
+				args_len: wrong_args_len,
+			},
+			loc(11),
+		)
+		.unwrap();
+	caller.push(Op::Return { value: 10 }, loc(12)).unwrap();
+	let message = caller.string("captured activation mismatch").unwrap();
+	caller
+		.push(
+			Op::String {
+				out: 10,
+				text: message,
+			},
+			loc(13),
+		)
+		.unwrap();
+	caller.push(Op::Panic { value: 10 }, loc(14)).unwrap();
+
+	let mut closure = Function::new(6, 2).unwrap();
+	closure
+		.push(
+			Op::Literal {
+				out: 2,
+				value: Value::U64(0),
+			},
+			loc(20),
+		)
+		.unwrap();
+	closure
+		.push(
+			Op::Literal {
+				out: 3,
+				value: Value::I64(1),
+			},
+			loc(21),
+		)
+		.unwrap();
+	closure
+		.push(
+			Op::Binary {
+				out: 4,
+				op: Binary::Add,
+				lhs: 0,
+				rhs: 3,
+			},
+			loc(22),
+		)
+		.unwrap();
+	closure
+		.push(Op::Copy { out: 0, value: 4 }, loc(23))
+		.unwrap();
+	closure
+		.push(
+			Op::Get {
+				out: 4,
+				value: 1,
+				index: 2,
+			},
+			loc(24),
+		)
+		.unwrap();
+	closure
+		.push(
+			Op::Binary {
+				out: 5,
+				op: Binary::Add,
+				lhs: 4,
+				rhs: 3,
+			},
+			loc(25),
+		)
+		.unwrap();
+	closure
+		.push(
+			Op::Set {
+				value: 1,
+				index: 2,
+				new: 5,
+			},
+			loc(26),
+		)
+		.unwrap();
+	closure.push(Op::Return { value: 0 }, loc(27)).unwrap();
+	let mut builder = Builder::default();
+	builder.push(caller).unwrap();
+	builder.push(closure).unwrap();
+	let code = builder.finish().unwrap();
+
+	let mut store = Store::new(Limits::default()).unwrap();
+	let vector = store
+		.list(super::super::value::Type::Vec, &[Value::I64(0)])
+		.unwrap();
+	let before = (store.live_entries(), store.payload_bytes());
+	let mut executor = Executor::new().unwrap();
+	let failure = executor
+		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[vector]), 1000)
+		.unwrap_err();
+	assert_eq!(failure.error.kind, ErrorKind::Type, "{:#?}", failure.error);
+	assert!(matches!(
+		failure.error.detail,
+		Detail::Arity {
+			given: 1,
+			expected: 0
+		}
+	));
+	assert!(failure.cleanup_error.is_none());
+	assert!(executor.is_idle());
+	assert_eq!((store.live_entries(), store.payload_bytes()), before);
+	assert_eq!(store.get(vector, 0).unwrap(), Value::I64(2));
+	store.release(vector).unwrap();
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+}
 
 fn loc(n: u32) -> Location {
 	Location {

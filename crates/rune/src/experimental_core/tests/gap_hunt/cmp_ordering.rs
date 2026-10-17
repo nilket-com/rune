@@ -1,8 +1,10 @@
-//! C9 source-only stock oracle. Production admission is unchanged.
+//! C9 frozen stock oracle and source-pinned admission overlays.
 use super::*;
 use serde_json::{json, Value as Json};
 include!("cmp_ordering/cases.rs");
 include!("cmp_ordering/fixture.rs");
+const C9_STALE_REFUSAL_ADMISSIONS: &str =
+	include_str!("cmp_ordering/stale_refusal_admissions.json");
 
 fn value_projection(value: &crate::runtime::Value, depth: usize) -> Json {
 	use crate::runtime::Inline;

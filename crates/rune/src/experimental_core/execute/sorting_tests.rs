@@ -156,6 +156,7 @@ fn named_and_noncapturing_closures_lower_without_legacy_assembly() {
 	for text in [
 		"pub fn main(){let v=[3,1,2];v.sort_by(|a,b|a.cmp(b));v[0]}",
 		"fn cmp(a,b){a.cmp(b)} pub fn main(){let v=[3,1,2];v.sort_by(cmp);v[0]}",
+		"pub fn main(){let bias=1;let v=[3,1,2];v.sort_by(|a,b|if bias==1{a.cmp(b)}else{b.cmp(a)});v[0]}",
 	] {
 		let cx = crate::Context::with_default_modules().unwrap();
 		let mut sources = crate::Sources::new();
