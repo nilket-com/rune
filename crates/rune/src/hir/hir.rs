@@ -494,6 +494,9 @@ pub(crate) enum Call {
 		target: ExprId,
 		/// Hash of the fn being called.
 		hash: Hash,
+		/// Unparameterized identifier, used only by fresh absence certification.
+		#[cfg(feature = "fresh-core")]
+		name_hash: Hash,
 	},
 	Meta {
 		/// Hash being called.

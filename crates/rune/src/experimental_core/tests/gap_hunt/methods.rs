@@ -22,6 +22,9 @@ fn tap_bool(tag: i64, value: bool) -> bool {
 	value
 }
 include!("methods/fixture.rs");
+include!("methods/fresh.rs");
+include!("methods/contract.rs");
+include!("methods/bounded.rs");
 
 fn observed(value: &Value) -> Json {
 	let out = graph(value);
@@ -52,12 +55,26 @@ fn error(error: &stock::VmError) -> Json {
 #[test]
 #[ignore = "C13 stock-oracle child; explicit bounded external operator only"]
 fn child() {
-	assert_eq!(std::env::var("C13_ENGINE").unwrap(), "stock");
+	let engine = std::env::var("C13_ENGINE").unwrap();
+	assert!(matches!(engine.as_str(), "stock" | "fresh"));
 	let index: usize = std::env::var("C13_CASE").unwrap().parse().unwrap();
 	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
 	let row = &cases[index];
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
+	if engine == "fresh" {
+		let result = observe_fresh(row);
+		let path = std::env::var_os("C13_RESULT").unwrap();
+		let mut file = std::fs::OpenOptions::new()
+			.create_new(true)
+			.write(true)
+			.open(path)
+			.unwrap();
+		use std::io::Write;
+		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
+			.unwrap();
+		return;
+	}
 	let context = context(row["fixture"].as_str().unwrap());
 	let mut sources = Sources::new();
 	sources

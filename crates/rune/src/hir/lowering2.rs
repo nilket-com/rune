@@ -3301,19 +3301,28 @@ impl<'hir> ExprInner<'hir, '_> {
 						expr_field,
 						expr: target,
 					}) => {
-						let hash = match expr_field {
-							hir::ExprField::Index(index) => Hash::index(index),
+						let (hash, _name_hash) = match expr_field {
+							hir::ExprField::Index(index) => {
+								(Hash::index(index), Hash::index(index))
+							}
 							hir::ExprField::Ident(ident) => {
 								cx.q.unit.insert_debug_ident(ident)?;
-								Hash::ident(ident)
+								let hash = Hash::ident(ident);
+								(hash, hash)
 							}
-							hir::ExprField::IdentGenerics(ident, hash) => {
+							hir::ExprField::IdentGenerics(ident, parameters) => {
 								cx.q.unit.insert_debug_ident(ident)?;
-								Hash::ident(ident).with_function_parameters(hash)
+								let name = Hash::ident(ident);
+								(name.with_function_parameters(parameters), name)
 							}
 						};
 
-						Ok(hir::Call::Associated { target, hash })
+						Ok(hir::Call::Associated {
+							target,
+							hash,
+							#[cfg(feature = "fresh-core")]
+							name_hash: _name_hash,
+						})
 					}
 					kind => Ok(hir::Call::Expr {
 						expr: expr!(hir::Expr {

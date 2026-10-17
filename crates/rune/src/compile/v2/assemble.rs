@@ -2041,7 +2041,7 @@ where
 						hir::Call::Var { name, .. } => {
 							(call_ids(call_hir, None)?, SeqTail::CallVar { name, args })
 						}
-						hir::Call::Associated { target, hash } => (
+						hir::Call::Associated { target, hash, .. } => (
 							call_ids(call_hir, Some(target))?,
 							SeqTail::CallAssociated {
 								hash,

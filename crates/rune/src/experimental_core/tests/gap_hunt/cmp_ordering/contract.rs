@@ -59,9 +59,16 @@ fn run_contract(engine: &str) {
 	assert_eq!(COUNT, 210);
 	let counts: Json =
 		serde_json::from_str(include_str!("../../cmp_ordering_p1_counts.json")).unwrap();
-	let stale_admissions: Json = serde_json::from_str(C9_STALE_REFUSAL_ADMISSIONS).unwrap();
+	let mut stale_admissions: Json = serde_json::from_str(C9_STALE_REFUSAL_ADMISSIONS).unwrap();
 	assert_eq!(stale_admissions["schema"], 1);
 	assert_eq!(stale_admissions["rows"].as_array().unwrap().len(), 2);
+	let c13: Json = serde_json::from_str(include_str!("c13_admissions.json")).unwrap();
+	assert_eq!(c13["schema"], 1);
+	assert_eq!(c13["rows"].as_array().unwrap().len(), 3);
+	stale_admissions["rows"]
+		.as_array_mut()
+		.unwrap()
+		.extend(c13["rows"].as_array().unwrap().iter().cloned());
 	let archived_dispositions: Json =
 		serde_json::from_str(include_str!("../../cmp_ordering_dispositions.json")).unwrap();
 	assert!(matches!(engine, "stock" | "fresh"));
@@ -226,21 +233,22 @@ fn run_contract(engine: &str) {
 				archived_dispositions[*label]["fresh_expectation"]
 			);
 			assert_eq!(admission["disposition"], "Exact");
-			assert_eq!(admission["expected"], stock);
+			assert_eq!(admission["expected"], semantic_projection(&stock).unwrap());
 			assert_eq!(admission["stdout_hex"], c[4]);
 			assert_eq!(admission["stderr_hex"], c[5]);
-			assert_eq!(observed["outcome"], semantic_projection(&stock).unwrap());
-			assert_eq!(observed["outcome"], admission["expected"]);
-			assert_eq!(observed["outcome"]["status"], "value");
+			compare_p1(
+				&observed["outcome"],
+				&admission["expected"],
+				&counts[*label],
+			)
+			.unwrap();
+			assert_eq!(
+				audit["returned_root"],
+				observed["outcome"]["status"] == "value"
+			);
 			assert_eq!(observed["invoked"], true);
 			assert_eq!(observed["host_calls"], 0);
-			for name in [
-				"no_cleanup_error",
-				"row_idle",
-				"reuse",
-				"idle",
-				"returned_root",
-			] {
+			for name in ["no_cleanup_error", "row_idle", "reuse", "idle"] {
 				assert_eq!(audit[name], true);
 			}
 			for name in [

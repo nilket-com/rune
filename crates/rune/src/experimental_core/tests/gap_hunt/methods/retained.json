@@ -1,0 +1,274 @@
+{
+  "000": {
+    "class": "Retained-frame",
+    "source_sha256": "8610352c464356b0b13d3942f374e40acd75de698e0df811c8475bd48899519c",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 45,
+        "source": 0,
+        "start": 40,
+        "expression": "f(42)"
+      }
+    ]
+  },
+  "001": {
+    "class": "Retained-frame",
+    "source_sha256": "80b8166f3e24a86a91cd69cef2fa8855c5e3b35c68bc4bfe043562d3278a20ef",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 48,
+        "source": 0,
+        "start": 40,
+        "expression": "f(42u64)"
+      }
+    ]
+  },
+  "002": {
+    "class": "Retained-frame",
+    "source_sha256": "65d970acdbc86bdc8f922d7267bd8dc115d2813d2d255a477cf597658ac3e760",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 47,
+        "source": 0,
+        "start": 40,
+        "expression": "f(1.25)"
+      }
+    ]
+  },
+  "003": {
+    "class": "Retained-frame",
+    "source_sha256": "5d6a3f4382b142988073754d1663dc509a24d27d27f5684ff42ebd6c15e04306",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 46,
+        "source": 0,
+        "start": 40,
+        "expression": "f('x')"
+      }
+    ]
+  },
+  "004": {
+    "class": "Retained-frame",
+    "source_sha256": "9ce69866f9c532e04b1515aacbbc01e567f49a795d818506824e53aa1c197692",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 67,
+        "source": 0,
+        "start": 40,
+        "expression": "f(std::cmp::Ordering::Less)"
+      }
+    ]
+  },
+  "005": {
+    "class": "Retained-frame",
+    "source_sha256": "fe08cf4df24f699fa9c4295649aa06291a1b8e0d2051794313031d1888f5ce27",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 49,
+        "source": 0,
+        "start": 40,
+        "expression": "f(\"text\")"
+      }
+    ]
+  },
+  "006": {
+    "class": "Retained-frame",
+    "source_sha256": "a00daf7fb5b51e2452cd8c6466975253bca286d2dee56a2cd522768e3d1469fd",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 48,
+        "source": 0,
+        "start": 40,
+        "expression": "f([1,2])"
+      }
+    ]
+  },
+  "007": {
+    "class": "Retained-frame",
+    "source_sha256": "b58bd798816f1b6eb7172538f519f2f66a3a91fc69f5078e5fe208a8977f9254",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 51,
+        "source": 0,
+        "start": 40,
+        "expression": "f((1,true))"
+      }
+    ]
+  },
+  "008": {
+    "class": "Retained-frame",
+    "source_sha256": "92067de8cd6d40590461813ca23d4f7b4d1b09cb71a2a95552281534e621a548",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 49,
+        "source": 0,
+        "start": 40,
+        "expression": "f(#{a:1})"
+      }
+    ]
+  },
+  "009": {
+    "class": "Retained-frame",
+    "source_sha256": "0919d1161687c9e89aa7c73e8f5e1ba2109c57c93a258fe328cb177610153a71",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 50,
+        "source": 0,
+        "start": 40,
+        "expression": "f(Some(1))"
+      }
+    ]
+  },
+  "010": {
+    "class": "Retained-frame",
+    "source_sha256": "73dab18cd6ba57e425aabfbf50fb02df580b51c29eb87870d785178cdd0ba3a2",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 48,
+        "source": 0,
+        "start": 40,
+        "expression": "f(Ok(1))"
+      }
+    ]
+  },
+  "011": {
+    "class": "Retained-frame",
+    "source_sha256": "e34a4071c9751dbc4ea4f00ce5ad182498c91669b14f3933dfa24f6f6be89e2f",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 49,
+        "source": 0,
+        "start": 40,
+        "expression": "f((1..3))"
+      }
+    ]
+  },
+  "012": {
+    "class": "Retained-frame",
+    "source_sha256": "40ee3f5e35b27b380d77cf830056f7df6cd998a8c4eb0fc5e37d78a1344646fc",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 48,
+        "source": 0,
+        "start": 40,
+        "expression": "f((1..))"
+      }
+    ]
+  },
+  "013": {
+    "class": "Retained-frame",
+    "source_sha256": "b0c292df05d06b1dce16bd123e12e2bede6313b0cd0eec3fabeec65bb9d77585",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 47,
+        "source": 0,
+        "start": 40,
+        "expression": "f((..))"
+      }
+    ]
+  },
+  "014": {
+    "class": "Retained-frame",
+    "source_sha256": "5cc7a5dddee07f3af6aa3e58019826e5b48905ef6c268306231eaaa7c152e80d",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 50,
+        "source": 0,
+        "start": 40,
+        "expression": "f((1..=3))"
+      }
+    ]
+  },
+  "015": {
+    "class": "Retained-frame",
+    "source_sha256": "08d113d251293d7cf3364d8c8c38d683ca6dd819b5e35b5bda489d9cbbf278b5",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 49,
+        "source": 0,
+        "start": 40,
+        "expression": "f((..=3))"
+      }
+    ]
+  },
+  "016": {
+    "class": "Retained-frame",
+    "source_sha256": "23bf4d4f5c946f48a950dace87de717730d4d28803f7f52949e4377e5f349ba5",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 48,
+        "source": 0,
+        "start": 40,
+        "expression": "f((..3))"
+      }
+    ]
+  },
+  "047": {
+    "class": "Retained-frame",
+    "source_sha256": "2e01df69558b894b5930843737159e268347ce332c2fb4860c9a8eabd6dead66",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 2,
+    "calls": [
+      {
+        "end": 50,
+        "source": 0,
+        "start": 41,
+        "expression": "inner(42)"
+      },
+      {
+        "end": 73,
+        "source": 0,
+        "start": 66,
+        "expression": "outer()"
+      }
+    ]
+  },
+  "048": {
+    "class": "Retained-frame",
+    "source_sha256": "1b97423e1048a2b7d02506e95cc48f665436e032775c0c62c6c233394920623e",
+    "path": "/outcome/sites/0/frames",
+    "stock_count": 1,
+    "calls": [
+      {
+        "end": 45,
+        "source": 0,
+        "start": 40,
+        "expression": "f(42)"
+      }
+    ]
+  }
+}

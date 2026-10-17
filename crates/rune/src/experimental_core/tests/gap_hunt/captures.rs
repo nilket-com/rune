@@ -9,11 +9,17 @@ const DISPOSITIONS: &str = include_str!("captures/dispositions.json");
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
 
 fn tap(tag: i64, value: i64) -> i64 {
-	TAPE.with(|t| t.borrow_mut().push(json!({"tag":tag,"kind":"i64","value":value.to_string()})));
+	TAPE.with(|t| {
+		t.borrow_mut()
+			.push(json!({"tag":tag,"kind":"i64","value":value.to_string()}))
+	});
 	value
 }
 fn tap_bool(tag: i64, value: bool) -> bool {
-	TAPE.with(|t| t.borrow_mut().push(json!({"tag":tag,"kind":"bool","value":value})));
+	TAPE.with(|t| {
+		t.borrow_mut()
+			.push(json!({"tag":tag,"kind":"bool","value":value}))
+	});
 	value
 }
 fn context() -> Context {
@@ -27,7 +33,10 @@ fn context() -> Context {
 fn observed(value: &Value) -> Json {
 	let out = graph(value);
 	for node in out["nodes"].as_array().unwrap() {
-		assert!(!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")), "unmapped C11b value: {node}");
+		assert!(
+			!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")),
+			"unmapped C11b value: {node}"
+		);
 	}
 	out
 }
@@ -38,7 +47,11 @@ fn error(error: &stock::VmError) -> Json {
 		let range = inst.span.range();
 		json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 	}).collect::<Vec<_>>();
-	let chain = error.chain().iter().map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()})).collect::<Vec<_>>();
+	let chain = error
+		.chain()
+		.iter()
+		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
+		.collect::<Vec<_>>();
 	json!({"status":"error","kind":format!("{kind:?}"),"display":kind.to_string(),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
@@ -53,16 +66,34 @@ fn child() {
 	TAPE.with(|t| t.borrow_mut().clear());
 	let context = context();
 	let mut sources = Sources::new();
-	sources.insert(Source::new("c11b.rn", source).unwrap()).unwrap();
+	sources
+		.insert(Source::new("c11b.rn", source).unwrap())
+		.unwrap();
 	let mut diagnostics = Diagnostics::new();
-	let built = crate::prepare(&mut sources).with_context(&context).with_diagnostics(&mut diagnostics).build_vm();
+	let built = crate::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(&mut diagnostics)
+		.build_vm();
 	let (outcome, reuse) = match built {
-		Err(e) => (json!({"status":"compile-error","error":format!("{e:?}")}), Json::Null),
+		Err(e) => (
+			json!({"status":"compile-error","error":format!("{e:?}")}),
+			Json::Null,
+		),
 		Ok(mut vm) => {
-			let result = crate::runtime::budget::with(row["fuel"].as_u64().unwrap() as usize, || vm.call(["main"], ())).call();
-			let outcome = match result { Ok(value) => json!({"status":"value","graph":observed(&value)}), Err(e) => error(&e) };
-			let reuse = match crate::runtime::budget::with(200_000, || vm.call(["c11b_reuse"], ())).call() {
-				Ok(value) => json!({"status":"value","graph":observed(&value)}), Err(e) => error(&e)
+			let result =
+				crate::runtime::budget::with(row["fuel"].as_u64().unwrap() as usize, || {
+					vm.call(["main"], ())
+				})
+				.call();
+			let outcome = match result {
+				Ok(value) => json!({"status":"value","graph":observed(&value)}),
+				Err(e) => error(&e),
+			};
+			let reuse = match crate::runtime::budget::with(200_000, || vm.call(["c11b_reuse"], ()))
+				.call()
+			{
+				Ok(value) => json!({"status":"value","graph":observed(&value)}),
+				Err(e) => error(&e),
 			};
 			(outcome, reuse)
 		}
@@ -70,9 +101,14 @@ fn child() {
 	let events = TAPE.with(|t| t.borrow().clone());
 	let result = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
 	let path = std::env::var_os("C11B_RESULT").unwrap();
-	let mut file = std::fs::OpenOptions::new().create_new(true).write(true).open(path).unwrap();
+	let mut file = std::fs::OpenOptions::new()
+		.create_new(true)
+		.write(true)
+		.open(path)
+		.unwrap();
 	use std::io::Write;
-	file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes()).unwrap();
+	file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
+		.unwrap();
 }
 
 #[test]
@@ -87,16 +123,33 @@ fn observer_controls() {
 		assert_eq!(disposition["index"].as_u64(), Some(index as u64));
 		assert_eq!(disposition["label"], case["label"]);
 		assert_eq!(disposition["source_sha256"], case["source_sha256"]);
-		assert!(disposition["stock_observation_sha256"].as_str().is_some_and(|s| s.len() == 64));
+		assert!(disposition["stock_observation_sha256"]
+			.as_str()
+			.is_some_and(|s| s.len() == 64));
 	}
-	for id in ["000", "013", "020", "027", "029", "031", "033", "034", "036"] {
+	for id in [
+		"000", "013", "020", "027", "029", "031", "033", "034", "036",
+	] {
 		assert_eq!(dispositions[id]["disposition"], "Exact");
 		assert!(dispositions[id]["fresh_expectation"].is_object());
 	}
-	for (id, expected) in [("014", "Exact-or-Retained-diag"), ("028", "Exact-or-Retained-diag"), ("018", "Retained-fuel"), ("032", "Refused-surface"), ("035", "Retained-format")] {
+	for (id, expected) in [
+		("014", "Exact-or-Retained-diag"),
+		("028", "Exact-or-Retained-diag"),
+		("018", "Retained-fuel"),
+		("032", "Refused-surface"),
+		("035", "Retained-format"),
+	] {
 		assert_eq!(dispositions[id]["disposition"], expected);
 	}
-	assert_eq!(cases.iter().map(|r| r["label"].as_str().unwrap()).collect::<std::collections::HashSet<_>>().len(), cases.len());
+	assert_eq!(
+		cases
+			.iter()
+			.map(|r| r["label"].as_str().unwrap())
+			.collect::<std::collections::HashSet<_>>()
+			.len(),
+		cases.len()
+	);
 	assert_ne!(observed(&Value::from(1i64)), observed(&Value::from(2i64)));
 	TAPE.with(|t| t.borrow_mut().clear());
 	assert_eq!(tap(1, 7), 7);

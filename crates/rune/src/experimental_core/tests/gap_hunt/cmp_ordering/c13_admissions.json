@@ -1,0 +1,132 @@
+{
+  "schema": 1,
+  "note": "C13 admits these absent-name calls with the exact frozen stock missing-method error. Frozen stock and legacy refusals remain unchanged.",
+  "rows": [
+    {
+      "index": 179,
+      "label": "refusal/reverse",
+      "source_hex": "70756220666e206d61696e28297b7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7265766572736528297d0a70756220666e2063395f726575736528297b377d",
+      "source_sha256": "1c9137b68a71eee362d0148b5b3246e26df021c3f6713a8af9866fc83c87f80d",
+      "legacy_policy": "Refused-surface",
+      "legacy_fresh_refusal": {
+        "status": "refused",
+        "kind": "Unsupported",
+        "operation": "Method",
+        "refusal": "Method",
+        "invoked": false,
+        "source": 0,
+        "start": 14,
+        "end": 48,
+        "span_hex": "7374643a3a636d703a3a4f72646572696e673a3a4c6573732e726576657273652829"
+      },
+      "disposition": "Exact",
+      "expected": {
+        "chain": [],
+        "class": "Type",
+        "display": "Missing instance function `0xcc3fb5c24fe5c3bb` for `std::cmp::Ordering`",
+        "kind": "MissingInstanceFunction { hash: 0xcc3fb5c24fe5c3bb, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+        "sites": [
+          {
+            "end": 48,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error",
+        "typed": {
+          "hash": "0xcc3fb5c24fe5c3bb",
+          "instance": "::std::cmp::Ordering",
+          "tag": "MissingInstanceFunction"
+        }
+      },
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": "",
+      "stock_observation_sha256": "6fe24c0f7d2c1c2add1c1cc1c3135972281dd9b2b4945a0390ceb3058a9ab408"
+    },
+    {
+      "index": 180,
+      "label": "refusal/then",
+      "source_hex": "70756220666e206d61696e28297b7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e287374643a3a636d703a3a4f72646572696e673a3a457175616c297d0a70756220666e2063395f726575736528297b377d",
+      "source_sha256": "f67b8855ab5d1de83dace4f419a414312ed74f8d3c11ecb8fa9d18cdb5cc7038",
+      "legacy_policy": "Refused-surface",
+      "legacy_fresh_refusal": {
+        "status": "refused",
+        "kind": "Unsupported",
+        "operation": "Method",
+        "refusal": "Method",
+        "invoked": false,
+        "source": 0,
+        "start": 14,
+        "end": 70,
+        "span_hex": "7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e287374643a3a636d703a3a4f72646572696e673a3a457175616c29"
+      },
+      "disposition": "Exact",
+      "expected": {
+        "chain": [],
+        "class": "Type",
+        "display": "Missing instance function `0x2acad8ec2699716e` for `std::cmp::Ordering`",
+        "kind": "MissingInstanceFunction { hash: 0x2acad8ec2699716e, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+        "sites": [
+          {
+            "end": 70,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error",
+        "typed": {
+          "hash": "0x2acad8ec2699716e",
+          "instance": "::std::cmp::Ordering",
+          "tag": "MissingInstanceFunction"
+        }
+      },
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": "",
+      "stock_observation_sha256": "cf627897b67061625d4e9b0892d5b232adbaeeb01cdbebe2a858bf4caa23d4f0"
+    },
+    {
+      "index": 181,
+      "label": "refusal/then-with",
+      "source_hex": "70756220666e206d61696e28297b7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e5f77697468287c7c7374643a3a636d703a3a4f72646572696e673a3a457175616c297d0a70756220666e2063395f726575736528297b377d",
+      "source_sha256": "08b66e62f48d5b34ec4b82b12cc1123705dd8f400f4c39222a55cf2d68a9e596",
+      "legacy_policy": "Refused-surface",
+      "legacy_fresh_refusal": {
+        "status": "refused",
+        "kind": "Unsupported",
+        "operation": "Method",
+        "refusal": "Method",
+        "invoked": false,
+        "source": 0,
+        "start": 14,
+        "end": 77,
+        "span_hex": "7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e5f77697468287c7c7374643a3a636d703a3a4f72646572696e673a3a457175616c29"
+      },
+      "disposition": "Exact",
+      "expected": {
+        "chain": [],
+        "class": "Type",
+        "display": "Missing instance function `0xcbf97ece669297ee` for `std::cmp::Ordering`",
+        "kind": "MissingInstanceFunction { hash: 0xcbf97ece669297ee, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
+        "sites": [
+          {
+            "end": 77,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error",
+        "typed": {
+          "hash": "0xcbf97ece669297ee",
+          "instance": "::std::cmp::Ordering",
+          "tag": "MissingInstanceFunction"
+        }
+      },
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": "",
+      "stock_observation_sha256": "09c0101cf1bd01f48e7f67dff62ec62918be9efb5bed61577479427c236a5ea8"
+    }
+  ]
+}

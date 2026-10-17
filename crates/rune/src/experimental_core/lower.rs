@@ -8,6 +8,7 @@
 //! nothing for the others. Bare locals are read in place where the reference's
 //! `writes_nothing` rule allows; nothing here moves a user local.
 
+mod missing_methods;
 mod patterns;
 #[derive(Clone, Copy)]
 pub(crate) enum Resolve {
@@ -611,7 +612,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				self.emit(Op::Panic { value }, span)?;
 				Ok(true)
 			}
-			hir::Call::Associated { target, hash }
+			hir::Call::Associated { target, hash, .. }
 				if hash == Hash::ident("push") && call.args.len() == 1 =>
 			{
 				let slots = self.operands(&[target, call.args[0]])?;
@@ -1819,7 +1820,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Ok(());
 		}
 
-		if let hir::Call::Associated { target, hash } = call.call {
+		if let hir::Call::Associated {
+			target,
+			hash,
+			name_hash,
+		} = call.call
+		{
 			if let Some(name) = crate::function::fresh_iter::Name::ALL
 				.into_iter()
 				.find(|name| hash == name.hash())
@@ -1849,7 +1855,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				self.effect_call(call, span)?;
 				self.unit_into(out, span)?;
 			} else {
-				return Err(self.refused(span, Refusal::Method));
+				return self.call_missing_method(call, target, name_hash, hash, out, span);
 			}
 
 			return Ok(());

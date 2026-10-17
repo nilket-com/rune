@@ -1018,9 +1018,10 @@
     "fixture": "default",
     "fuel": 200000,
     "stock_observation_sha256": "c566ae7bf488e97addda879a131dfbc033f8eb46bdb3f9d69d9e1b253ef28f34",
-    "disposition": "Exact",
-    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
-    "fresh_expectation": {
+    "disposition": "Refused-surface",
+    "reason": "Pre-existing unsupported constructor; C13 adds no constructor support. Stock observation is unchanged.",
+    "cleanup": "clean",
+    "stock_observation": {
       "events": [],
       "outcome": {
         "chain": [],
@@ -1055,7 +1056,16 @@
         "status": "value"
       }
     },
-    "cleanup": "clean"
+    "fresh_refusal": "UnresolvedFunction",
+    "fresh_events": [],
+    "fresh_refusal_sites": [
+      {
+        "end": 33,
+        "source": 0,
+        "start": 28,
+        "slice": "Local"
+      }
+    ]
   },
   "023": {
     "index": 23,
@@ -1064,9 +1074,10 @@
     "fixture": "default",
     "fuel": 200000,
     "stock_observation_sha256": "778b0c455a18132491f16fc62b445177b5dea3b995618109e7578ede95f995e8",
-    "disposition": "Exact",
-    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
-    "fresh_expectation": {
+    "disposition": "Refused-surface",
+    "reason": "Pre-existing unsupported constructor; C13 adds no constructor support. Stock observation is unchanged.",
+    "cleanup": "clean",
+    "stock_observation": {
       "events": [],
       "outcome": {
         "chain": [],
@@ -1101,7 +1112,16 @@
         "status": "value"
       }
     },
-    "cleanup": "clean"
+    "fresh_refusal": "UnresolvedFunction",
+    "fresh_events": [],
+    "fresh_refusal_sites": [
+      {
+        "end": 39,
+        "source": 0,
+        "start": 31,
+        "slice": "Local(7)"
+      }
+    ]
   },
   "024": {
     "index": 24,
@@ -1156,9 +1176,10 @@
     "fixture": "default",
     "fuel": 200000,
     "stock_observation_sha256": "171ea630747a6459ed18f30b63cf09258bfca920ae7cbebc794bf12ba67e1a02",
-    "disposition": "Exact",
-    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
-    "fresh_expectation": {
+    "disposition": "Refused-surface",
+    "reason": "Pre-existing unsupported constructor; C13 adds no constructor support. Stock observation is unchanged.",
+    "cleanup": "clean",
+    "stock_observation": {
       "events": [],
       "outcome": {
         "chain": [],
@@ -1193,7 +1214,16 @@
         "status": "value"
       }
     },
-    "cleanup": "clean"
+    "fresh_refusal": "UnresolvedFunction",
+    "fresh_events": [],
+    "fresh_refusal_sites": [
+      {
+        "end": 36,
+        "source": 0,
+        "start": 28,
+        "slice": "Local::A"
+      }
+    ]
   },
   "026": {
     "index": 26,
@@ -1202,9 +1232,10 @@
     "fixture": "default",
     "fuel": 200000,
     "stock_observation_sha256": "a8402a09a06a178f8a5b35b95c213a7af814630b269aaba8f179228d43d0b5bc",
-    "disposition": "Exact",
-    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
-    "fresh_expectation": {
+    "disposition": "Refused-surface",
+    "reason": "Pre-existing unsupported constructor; C13 adds no constructor support. Stock observation is unchanged.",
+    "cleanup": "clean",
+    "stock_observation": {
       "events": [],
       "outcome": {
         "chain": [],
@@ -1239,7 +1270,16 @@
         "status": "value"
       }
     },
-    "cleanup": "clean"
+    "fresh_refusal": "UnresolvedFunction",
+    "fresh_events": [],
+    "fresh_refusal_sites": [
+      {
+        "end": 42,
+        "source": 0,
+        "start": 31,
+        "slice": "Local::A(7)"
+      }
+    ]
   },
   "027": {
     "index": 27,
@@ -1248,9 +1288,10 @@
     "fixture": "default",
     "fuel": 200000,
     "stock_observation_sha256": "222c3d54fddc4481ac5c7c45b6e01f0ee8e2638a37d120c0675febc6bacc3618",
-    "disposition": "Exact",
-    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
-    "fresh_expectation": {
+    "disposition": "Refused-surface",
+    "reason": "Pre-existing unsupported constructor; C13 adds no constructor support. Stock observation is unchanged.",
+    "cleanup": "clean",
+    "stock_observation": {
       "events": [],
       "outcome": {
         "chain": [],
@@ -1285,7 +1326,16 @@
         "status": "value"
       }
     },
-    "cleanup": "clean"
+    "fresh_refusal": "ObjectConstructor",
+    "fresh_events": [],
+    "fresh_refusal_sites": [
+      {
+        "end": 44,
+        "source": 0,
+        "start": 31,
+        "slice": "Local::A{n:7}"
+      }
+    ]
   },
   "028": {
     "index": 28,

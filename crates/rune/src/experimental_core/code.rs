@@ -7,6 +7,8 @@ use super::value::{Type, Value};
 use crate::alloc::{String, Vec};
 use core::sync::atomic::{AtomicU32, Ordering};
 
+mod missing_methods;
+
 const MAX_CODE_BYTES: usize = 16 << 20;
 pub const MAX_GAP: usize = 256;
 
@@ -799,6 +801,7 @@ pub(crate) const ITER_METHOD: u32 = FIRST_INTRINSIC_ID + 0x56;
 pub(crate) const NEXT_METHOD: u32 = FIRST_INTRINSIC_ID + 0x57;
 pub(crate) const ANY_READY: u32 = FIRST_INTRINSIC_ID + 0x58;
 pub(crate) const CLOSURE_CREATE: u32 = FIRST_INTRINSIC_ID + 0x59;
+pub(crate) const MISSING_METHOD: u32 = FIRST_INTRINSIC_ID + 0x5a;
 pub(crate) const FIRST_HOST: u32 = FIRST_INTRINSIC_ID + 0x100;
 pub(crate) const MAX_HOST_DESCRIPTORS: usize = 4096;
 fn host_id(index: usize) -> Result<u32> {
@@ -924,6 +927,10 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 		id: NEXT_METHOD,
 		arity: 1,
 	},
+	CertifiedIntrinsic {
+		id: MISSING_METHOD,
+		arity: 2,
+	},
 ];
 fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
 	if !reserved_intrinsic_id(id) {
@@ -938,6 +945,7 @@ pub struct Code {
 	id: u32,
 	functions: Vec<Function>,
 	hosts: Vec<crate::function::fresh_host::HostBinding>,
+	absent: Vec<crate::Hash>,
 }
 
 /// Program identities. Exhaustion refuses `finish`; the counter never wraps.
@@ -952,6 +960,7 @@ pub(crate) fn allocate_code_id(counter: &AtomicU32) -> Result<u32> {
 pub struct Builder {
 	functions: Vec<Function>,
 	hosts: Vec<crate::function::fresh_host::HostBinding>,
+	absent: Vec<crate::Hash>,
 }
 
 fn invalid() -> Error {
@@ -963,6 +972,7 @@ impl Default for Builder {
 		Self {
 			functions: Vec::new(),
 			hosts: Vec::new(),
+			absent: Vec::new(),
 		}
 	}
 }
@@ -1041,7 +1051,16 @@ impl Builder {
 			.capacity()
 			.checked_mul(core::mem::size_of::<crate::function::fresh_host::HostBinding>())
 			.ok_or_else(invalid)?;
-		let total = total.checked_add(host_bytes).ok_or_else(invalid)?;
+		let total = total
+			.checked_add(host_bytes)
+			.and_then(|n| {
+				n.checked_add(
+					self.absent
+						.capacity()
+						.checked_mul(core::mem::size_of::<crate::Hash>())?,
+				)
+			})
+			.ok_or_else(invalid)?;
 		if self.hosts.len() > MAX_HOST_DESCRIPTORS
 			|| !self.hosts.iter().all(|host| host.signature.valid())
 		{
@@ -1136,6 +1155,7 @@ impl Builder {
 			id,
 			functions: self.functions,
 			hosts: self.hosts,
+			absent: self.absent,
 		})
 	}
 }
@@ -1147,6 +1167,7 @@ impl Builder {
 pub(crate) struct CompileTransaction {
 	builder: Builder,
 	staging: nominal::Staging,
+	checked_absent: Vec<crate::Hash>,
 }
 
 impl CompileTransaction {
@@ -1749,6 +1770,9 @@ impl Code {
 				return Err(invalid());
 			}
 		}
+		if !self.absent.is_empty() {
+			self.validate_absence(runtime)?;
+		}
 		Ok(())
 	}
 }
@@ -2258,6 +2282,14 @@ impl Code {
 			.hosts
 			.capacity()
 			.checked_mul(core::mem::size_of::<crate::function::fresh_host::HostBinding>())
+			.ok_or_else(invalid)?;
+		let hosts = hosts
+			.checked_add(
+				self.absent
+					.capacity()
+					.checked_mul(core::mem::size_of::<crate::Hash>())
+					.ok_or_else(invalid)?,
+			)
 			.ok_or_else(invalid)?;
 		footprint.original_buffers = footprint
 			.original_buffers
@@ -2814,7 +2846,13 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 27);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 28);
+		assert_eq!(
+			certified_intrinsic(CERTIFIED_INTRINSICS, MISSING_METHOD)
+				.unwrap()
+				.arity,
+			2
+		);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, METHOD_CMP)
 				.unwrap()
@@ -3083,7 +3121,8 @@ mod template_layout_tests {
 			core::mem::size_of::<CachedInstruction>(),
 		];
 		std::println!("C5 layouts Function/Code/Op/Instruction/CachedInstruction: {sizes:?}");
-		assert_eq!(sizes, [200, 56, 24, 16, 32]);
+		// C13 adds one 24-byte absence-proof Vec to Code only.
+		assert_eq!(sizes, [200, 80, 24, 16, 32]);
 	}
 }
 

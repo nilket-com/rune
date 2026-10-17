@@ -46,7 +46,7 @@ fn fresh_type_info(
 	})
 }
 
-fn fresh_primary_kind(
+pub(super) fn fresh_primary_kind(
 	error: &crate::experimental_core::error::Error,
 	program: &frontend::Program,
 ) -> Option<crate::runtime::VmErrorKind> {

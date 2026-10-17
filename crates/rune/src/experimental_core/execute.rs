@@ -631,6 +631,10 @@ impl Executor {
 			let destination = base.checked_add(out as usize).ok_or_else(invalid)?;
 			return self.put(store, destination, value);
 		}
+		if id == super::code::MISSING_METHOD {
+			return self
+				.missing_method_call(code, store, function, base, out, args_start, args_len);
+		}
 		if (super::code::SORT_BEGIN..=super::code::SORT_ORDERING).contains(&id) {
 			if args_len != certificate.arity {
 				return Err(invalid());
@@ -2435,6 +2439,7 @@ mod print_intrinsic_tests;
 mod variant_intrinsic_tests;
 
 mod host_bridge;
+mod missing_methods;
 
 mod diagnostic_locations;
 mod numeric;

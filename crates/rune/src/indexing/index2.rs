@@ -574,6 +574,10 @@ impl<'a> Processor<'a> {
 		if idx.q.inner.fresh_mode && idx.item.impl_item.is_some() {
 			if let Some(name) = name {
 				let resolved = name.resolve(resolve_context!(idx.q))?;
+				idx.q
+					.inner
+					.fresh_method_script
+					.close(crate::Hash::ident(resolved));
 				if resolved == "sort_by" {
 					idx.q.inner.fresh_sort_by_script = true;
 				}
@@ -587,6 +591,7 @@ impl<'a> Processor<'a> {
 				idx.q.inner.fresh_numeric_script |= 0b1111;
 				idx.q.inner.fresh_sort_by_script = true;
 				idx.q.inner.fresh_iter_script = u8::MAX;
+				idx.q.inner.fresh_method_script.close_all();
 			}
 		}
 		let layer = idx.scopes.pop().with_span(self.span)?;

@@ -491,10 +491,7 @@ fn native_replay_preserves_diagnostic_detail() {
 fn compile_time_refusals_are_catalogued_before_execution() {
 	use crate::experimental_core::error::Refusal;
 	let context = Context::with_default_modules().unwrap();
-	let (source, refusal) = (
-		"pub fn target() { async { 1 } }",
-		Refusal::AsyncBlock,
-	);
+	let (source, refusal) = ("pub fn target() { async { 1 } }", Refusal::AsyncBlock);
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(source).unwrap()).unwrap();
 	assert!(

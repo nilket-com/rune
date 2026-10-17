@@ -351,6 +351,8 @@ pub struct Context {
 	fresh_sort_by_closed: bool,
 	#[cfg(feature = "fresh-core")]
 	fresh_iter: crate::function::fresh_iter::State,
+	#[cfg(feature = "fresh-core")]
+	fresh_methods: crate::function::fresh_methods::State,
 	/// Handlers for realising traits.
 	traits: hash::Map<Option<TraitHandler>>,
 	/// Registered native attribute macro handlers.
@@ -795,6 +797,11 @@ impl Context {
 			},
 		)?;
 		Ok(())
+	}
+
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_method_closed(&self, name: Hash) -> bool {
+		self.fresh_methods.closed(name)
 	}
 
 	/// Lookup the given native function handler in the context.
@@ -1422,11 +1429,14 @@ impl Context {
 	}
 
 	fn install_associated(&mut self, assoc: &ModuleAssociated) -> Result<(), ContextError> {
-		let hash = assoc
-			.name
-			.kind
-			.hash(assoc.container)
-			.with_function_parameters(assoc.name.function_parameters);
+		let base = assoc.name.kind.hash(assoc.container);
+		let hash = base.with_function_parameters(assoc.name.function_parameters);
+		#[cfg(feature = "fresh-core")]
+		if matches!(&assoc.name.kind, meta::AssociatedKind::Instance(_))
+			&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_))
+		{
+			self.fresh_methods.associated(assoc.container, base);
+		}
 		#[cfg(feature = "fresh-core")]
 		if matches!(&assoc.name.kind, meta::AssociatedKind::Instance(n) if n.as_ref() == "sort_by")
 			|| hash == FRESH_SORT_ASSOCIATED
@@ -1768,7 +1778,7 @@ mod c12_iter_certificates {
 }
 
 // C13 stock-oracle raw-hash insertion fixture. Test-only; no product API.
-#[cfg(test)]
+#[cfg(all(test, feature = "fresh-core"))]
 impl Context {
 	pub(crate) fn c13_insert_raw_fixture(
 		&mut self,
