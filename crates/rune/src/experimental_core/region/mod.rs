@@ -105,7 +105,7 @@ pub(crate) const MAX_REGION_INSTRUCTIONS: usize = 1024;
 pub(crate) const MAX_REGION_SLOTS: usize = 64;
 /// Most exits of one region (bounded by 4 per instruction: fuel, retry, two edges).
 pub(crate) const MAX_REGION_EXITS: usize = 4 * MAX_REGION_INSTRUCTIONS;
-/// Most regions analysed in one function; later headers are not analysed.
+/// Most regions analyzed in one function; later headers are not analyzed.
 pub(crate) const MAX_REGIONS_PER_FUNCTION: usize = 64;
 /// Function-level inference runs only when `instructions * slots` stays below this.
 pub(crate) const MAX_FUNCTION_INFERENCE_CELLS: usize = 1 << 22;
@@ -720,7 +720,7 @@ pub(crate) fn scan_headers<'b>(f: &Function, budget: &'b Budget) -> Result<BVec<
 	Ok(headers)
 }
 
-/// Analyses every candidate header of function `function` of `code` (at most
+/// Analyzes every candidate header of function `function` of `code` (at most
 /// [`MAX_REGIONS_PER_FUNCTION`]) without a byte limit. `Err` is an allocation or
 /// invalid-code failure of the analysis itself, which the caller treats as "no regions"
 /// (interpreter fallback). Tests and the P1 hook use it; the production cache streams the
@@ -2073,7 +2073,7 @@ fn callee_typing<'b>(
 	}))
 }
 
-/// A Div/Rem divisor that is a constant written in the analysed code on every path, outside
+/// A Div/Rem divisor that is a constant written in the analyzed code on every path, outside
 /// {0, -1} (entry values never are): no fault exit.
 fn const_divisor(op: Binary, rhs: SlotState) -> Option<i64> {
 	match (op, rhs.written, rhs.konst) {

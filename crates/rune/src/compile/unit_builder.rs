@@ -403,6 +403,7 @@ impl UnitBuilder {
 		match meta.kind {
 			meta::Kind::Type { .. } => {
 				let rtti = Arc::try_new(Rtti {
+					variant_index: meta.variant_index,
 					kind: RttiKind::Empty,
 					hash: meta.hash,
 					variant_hash: Hash::EMPTY,
@@ -442,6 +443,7 @@ impl UnitBuilder {
 				);
 
 				let rtti = Arc::try_new(Rtti {
+					variant_index: meta.variant_index,
 					kind: RttiKind::Empty,
 					hash: meta.hash,
 					variant_hash: Hash::EMPTY,
@@ -492,6 +494,7 @@ impl UnitBuilder {
 				..
 			} => {
 				let rtti = Arc::try_new(Rtti {
+					variant_index: meta.variant_index,
 					kind: RttiKind::Empty,
 					hash: enum_hash,
 					variant_hash: meta.hash,
@@ -552,6 +555,7 @@ impl UnitBuilder {
 				);
 
 				let rtti = Arc::try_new(Rtti {
+					variant_index: meta.variant_index,
 					kind: RttiKind::Tuple,
 					hash: meta.hash,
 					variant_hash: Hash::EMPTY,
@@ -602,6 +606,7 @@ impl UnitBuilder {
 				..
 			} => {
 				let rtti = Arc::try_new(Rtti {
+					variant_index: meta.variant_index,
 					kind: RttiKind::Tuple,
 					hash: enum_hash,
 					variant_hash: meta.hash,
@@ -655,6 +660,7 @@ impl UnitBuilder {
 				..
 			} => {
 				let rtti = Arc::try_new(Rtti {
+					variant_index: meta.variant_index,
 					kind: RttiKind::Struct,
 					hash: meta.hash,
 					variant_hash: Hash::EMPTY,
@@ -687,6 +693,7 @@ impl UnitBuilder {
 				..
 			} => {
 				let rtti = Arc::try_new(Rtti {
+					variant_index: meta.variant_index,
 					kind: RttiKind::Struct,
 					hash: enum_hash,
 					variant_hash: meta.hash,

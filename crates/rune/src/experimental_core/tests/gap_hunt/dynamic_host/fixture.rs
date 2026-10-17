@@ -217,6 +217,7 @@ fn make(name: &str) -> Value {
 		"range" => Value::new(stock::Range::new(Value::from(1i64), Value::from(3i64))).unwrap(),
 		"nominal" => Value::empty_struct(
 			crate::sync::Arc::try_new(stock::Rtti {
+				variant_index: 0,
 				kind: stock::RttiKind::Empty,
 				hash: crate::Hash::type_hash(["c10", "Nominal"]),
 				variant_hash: crate::Hash::EMPTY,

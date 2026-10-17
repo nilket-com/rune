@@ -1,6 +1,6 @@
-//! Process-wide, append-only interner of nominal type identities (hash plus a
-//! name), indexed by [`Nominal`]. The same hash gets the same identity in
-//! every program and store for the life of the process; nothing depends on a
+//! Process-wide, append-only interner of nominal type and variant descriptors,
+//! indexed by [`Nominal`]. A descriptor includes its hash, parent enum and shape.
+//! Descriptors survive every program and store for the life of the process; nothing depends on a
 //! `Code` or `Store` lifetime.
 //!
 //! Storage is two exactly reserved buffers (entry records and one name
@@ -17,7 +17,7 @@
 use super::error::{Error, ErrorKind, Refusal, Result};
 use super::value::Nominal;
 use crate::alloc::{String, Vec};
-use core::sync::atomic::{AtomicBool, Ordering};
+use core::sync::atomic::{AtomicBool, AtomicU32, AtomicUsize, Ordering};
 use std::sync::Mutex;
 
 pub(super) const PROVISIONAL: u32 = 1 << 31;
@@ -50,13 +50,16 @@ pub(crate) enum Shape {
 #[derive(Clone, Copy)]
 struct Entry {
 	hash: u64,
+	enum_hash: u64,
 	shape: Shape,
 	start: u32,
 	len: u32,
+	ordinal: u32,
+	total_len: u32,
 }
 
-// Arity uses existing cold descriptor space; no further table-entry growth.
-const _: () = assert!(core::mem::size_of::<Entry>() == 24);
+// Variant order and persistent field names are cold metadata; heap layouts are unchanged.
+const _: () = assert!(core::mem::size_of::<Entry>() == 40);
 
 pub(crate) struct Interner {
 	limits: Limits,
@@ -148,13 +151,65 @@ impl Interner {
 	}
 
 	pub(crate) fn lookup(&self, hash: u64) -> Option<Nominal> {
-		self.lookup_shape(hash, Shape::Named)
+		self.lookup_shape(hash, Shape::Named, 0, 0)
 	}
 
-	fn lookup_shape(&self, hash: u64, shape: Shape) -> Option<Nominal> {
+	fn lookup_shape(
+		&self,
+		hash: u64,
+		shape: Shape,
+		enum_hash: u64,
+		ordinal: u32,
+	) -> Option<Nominal> {
 		self.entries
 			.iter()
-			.position(|e| e.hash == hash && e.shape == shape)
+			.position(|e| {
+				e.hash == hash
+					&& e.shape == shape
+					&& e.enum_hash == enum_hash
+					&& e.ordinal == ordinal
+			})
+			.map(|i| Nominal(i as u32))
+	}
+
+	fn fields_text(&self, e: &Entry) -> &str {
+		&self.names[e.start as usize + e.len as usize..e.start as usize + e.total_len as usize]
+	}
+	fn lookup_fields(
+		&self,
+		hash: u64,
+		shape: Shape,
+		parent: u64,
+		ordinal: u32,
+		fields: &[&str],
+	) -> Option<Nominal> {
+		self.entries
+			.iter()
+			.position(|e| {
+				e.hash == hash
+					&& e.shape == shape
+					&& e.enum_hash == parent
+					&& e.ordinal == ordinal
+					&& self
+						.fields_text(e)
+						.split('\0')
+						.skip(1)
+						.eq(fields.iter().copied())
+			})
+			.map(|i| Nominal(i as u32))
+	}
+	fn lookup_staged(&self, staging: &Staging, entry: &Entry) -> Option<Nominal> {
+		let fields = &staging.names[entry.start as usize + entry.len as usize
+			..entry.start as usize + entry.total_len as usize];
+		self.entries
+			.iter()
+			.position(|e| {
+				e.hash == entry.hash
+					&& e.shape == entry.shape
+					&& e.enum_hash == entry.enum_hash
+					&& e.ordinal == entry.ordinal
+					&& self.fields_text(e) == fields
+			})
 			.map(|i| Nominal(i as u32))
 	}
 
@@ -170,7 +225,10 @@ impl Interner {
 		}
 		let id = Nominal(self.entries.len() as u32);
 		let before = (self.entries.len(), self.names.len());
-		if self.append(hash, name, Shape::Named).is_err() {
+		if self
+			.append(hash, name, Shape::Named, 0, 0, name.len() as u32)
+			.is_err()
+		{
 			self.rollback(before);
 			debug_assert!(false, "preflighted nominal append failed");
 			return Err(refused());
@@ -198,12 +256,23 @@ impl Interner {
 	}
 
 	// Only called after the whole batch's capacity and conversion preflight.
-	fn append(&mut self, hash: u64, name: &str, shape: Shape) -> Result<()> {
+	fn append(
+		&mut self,
+		hash: u64,
+		name: &str,
+		shape: Shape,
+		enum_hash: u64,
+		ordinal: u32,
+		name_len: u32,
+	) -> Result<()> {
 		let entry = Entry {
 			hash,
+			enum_hash,
 			shape,
 			start: self.names.len() as u32,
-			len: name.len() as u32,
+			len: name_len,
+			ordinal,
+			total_len: name.len() as u32,
 		};
 		self.names.try_push_str(name).map_err(|_| refused())?;
 		self.entries
@@ -223,7 +292,7 @@ impl Interner {
 		let mut count = 0usize;
 		let mut bytes = 0usize;
 		for (i, entry) in staging.entries.iter().enumerate() {
-			if let Some(id) = self.lookup_shape(entry.hash, entry.shape) {
+			if let Some(id) = self.lookup_staged(staging, entry) {
 				remap[i] = id;
 			} else {
 				let name = staging.name(entry);
@@ -231,20 +300,29 @@ impl Interner {
 					return Err(refused());
 				}
 				count = count.checked_add(1).ok_or_else(refused)?;
-				bytes = bytes.checked_add(name.len()).ok_or_else(refused)?;
+				bytes = bytes
+					.checked_add(entry.total_len as usize)
+					.ok_or_else(refused)?;
 			}
 		}
 		self.check_room(count, bytes)?;
 		let before = (self.entries.len(), self.names.len());
 		let capacities = (self.entries.capacity(), self.names.capacity());
 		for (i, entry) in staging.entries.iter().enumerate() {
-			if let Some(id) = self.lookup_shape(entry.hash, entry.shape) {
+			if let Some(id) = self.lookup_staged(staging, entry) {
 				remap[i] = id;
 				continue;
 			}
 			remap[i] = Nominal(self.entries.len() as u32);
 			if self
-				.append(entry.hash, staging.name(entry), entry.shape)
+				.append(
+					entry.hash,
+					staging.record(entry),
+					entry.shape,
+					entry.enum_hash,
+					entry.ordinal,
+					entry.len,
+				)
 				.is_err()
 			{
 				self.rollback(before);
@@ -283,7 +361,13 @@ impl Interner {
 
 	#[cfg_attr(not(test), allow(dead_code))]
 	pub(crate) fn hash(&self, nominal: Nominal) -> Option<u64> {
-		self.entries.get(nominal.0 as usize).map(|e| e.hash)
+		self.entries.get(nominal.0 as usize).map(|e| {
+			if e.enum_hash == 0 {
+				e.hash
+			} else {
+				e.enum_hash
+			}
+		})
 	}
 
 	#[cfg_attr(not(test), allow(dead_code))]
@@ -315,6 +399,10 @@ impl Staging {
 		&self.names[entry.start as usize..entry.start as usize + entry.len as usize]
 	}
 
+	fn record(&self, entry: &Entry) -> &str {
+		&self.names[entry.start as usize..entry.start as usize + entry.total_len as usize]
+	}
+
 	#[cfg_attr(not(test), allow(dead_code))]
 	pub(super) fn stage(&mut self, hash: u64, name: core::fmt::Arguments<'_>) -> Result<Nominal> {
 		self.stage_shape(hash, name, Shape::Named)
@@ -326,18 +414,49 @@ impl Staging {
 		name: core::fmt::Arguments<'_>,
 		shape: Shape,
 	) -> Result<Nominal> {
+		self.stage_variant(hash, name, shape, 0)
+	}
+
+	pub(super) fn stage_variant(
+		&mut self,
+		hash: u64,
+		name: core::fmt::Arguments<'_>,
+		shape: Shape,
+		enum_hash: u64,
+	) -> Result<Nominal> {
+		self.stage_variant_order(hash, name, shape, enum_hash, 0, &[])
+	}
+
+	#[allow(clippy::too_many_arguments)]
+	pub(super) fn stage_variant_order(
+		&mut self,
+		hash: u64,
+		name: core::fmt::Arguments<'_>,
+		shape: Shape,
+		enum_hash: u64,
+		ordinal: u32,
+		fields: &[&str],
+	) -> Result<Nominal> {
 		let existing = {
 			let guard = GLOBAL.lock().map_err(|_| refused())?;
-			guard.as_ref().and_then(|t| t.lookup_shape(hash, shape))
+			guard
+				.as_ref()
+				.and_then(|t| t.lookup_fields(hash, shape, enum_hash, ordinal, fields))
 		};
 		if let Some(id) = existing {
 			return Ok(id);
 		}
-		if let Some(i) = self
-			.entries
-			.iter()
-			.position(|e| e.hash == hash && e.shape == shape)
-		{
+		if let Some(i) = self.entries.iter().position(|e| {
+			e.hash == hash
+				&& e.shape == shape
+				&& e.enum_hash == enum_hash
+				&& e.ordinal == ordinal
+				&& self.names
+					[e.start as usize + e.len as usize..e.start as usize + e.total_len as usize]
+					.split('\0')
+					.skip(1)
+					.eq(fields.iter().copied())
+		}) {
 			return Ok(Nominal(PROVISIONAL | i as u32));
 		}
 		let limits = Limits::default();
@@ -358,18 +477,52 @@ impl Staging {
 			return Err(refused());
 		}
 		let text = core::str::from_utf8(&buffer[..len]).map_err(|_| refused())?;
+		let mut required = len;
+		for field in fields {
+			required = required
+				.checked_add(field.len())
+				.and_then(|n| n.checked_add(1))
+				.ok_or_else(refused)?;
+		}
+		if self
+			.names
+			.len()
+			.checked_add(required)
+			.is_none_or(|n| n > limits.total_name_bytes)
+		{
+			return Err(refused());
+		}
+		let record = if fields.is_empty() {
+			None
+		} else {
+			let mut record = String::try_from(text)
+				.map_err(|_| refused_by(ErrorKind::Allocation, "staged nominal fields"))?;
+			for field in fields {
+				record.try_push('\0').map_err(|_| refused())?;
+				record.try_push_str(field).map_err(|_| refused())?;
+			}
+			Some(record)
+		};
+		let text = record.as_deref().unwrap_or(text);
+		let total_len = text.len();
+		if u32::try_from(total_len).is_err() {
+			return Err(refused());
+		}
 		// Reserve both buffers before changing either logical length.
 		self.entries
 			.try_reserve(1)
 			.map_err(|_| refused_by(ErrorKind::Allocation, "staged nominal entries"))?;
 		self.names
-			.try_reserve(len)
+			.try_reserve(total_len)
 			.map_err(|_| refused_by(ErrorKind::Allocation, "staged nominal names"))?;
 		let entry = Entry {
 			hash,
+			enum_hash,
 			shape,
 			start: self.names.len() as u32,
 			len: len as u32,
+			ordinal,
+			total_len: total_len as u32,
 		};
 		self.names.try_push_str(text).map_err(|_| refused())?;
 		self.entries
@@ -406,6 +559,35 @@ impl Staging {
 
 static GLOBAL: Mutex<Option<Interner>> = Mutex::new(None);
 static INITIALIZED: AtomicBool = AtomicBool::new(false);
+// Fixed, append-only identity publication. Readers acquire the published length;
+// all entries below it are immutable. Private interner tests never publish here.
+static PUBLISHED: AtomicUsize = AtomicUsize::new(0);
+static VARIANT_IDS: [AtomicU32; 4096] = [const { AtomicU32::new(0) }; 4096];
+
+/// Compare variant identity without the global metadata mutex or payload access.
+#[inline]
+pub(crate) fn same_variant(a: Nominal, b: Nominal) -> bool {
+	let Some(a) = VARIANT_IDS.get(a.0 as usize) else {
+		return false;
+	};
+	let Some(b) = VARIANT_IDS.get(b.0 as usize) else {
+		return false;
+	};
+	let a = a.load(Ordering::Acquire);
+	a != 0 && a == b.load(Ordering::Acquire)
+}
+
+/// Read the published, immutable variant identity; zero names a non-variant.
+#[inline]
+pub(super) fn variant_id(n: Nominal) -> u32 {
+	VARIANT_IDS
+		.get(n.0 as usize)
+		.map_or(0, |id| id.load(Ordering::Acquire))
+}
+#[inline]
+pub(super) fn same_variant_id(actual: Nominal, expected: u32) -> bool {
+	expected != 0 && variant_id(actual) == expected
+}
 
 /// The atomic flag is only a monotonic allocation hint. The mutex is authoritative.
 /// A losing candidate is dropped after the guard, including every error path.
@@ -428,7 +610,31 @@ fn with_prepared<T>(
 			*guard = candidate.take();
 			INITIALIZED.store(true, Ordering::Release);
 		}
-		f(guard.as_mut().ok_or_else(refused)?)
+		let table = guard.as_mut().ok_or_else(refused)?;
+		let before = PUBLISHED.load(Ordering::Relaxed);
+		let result = f(table);
+		if result.is_ok() {
+			for (i, slot) in VARIANT_IDS
+				.iter()
+				.enumerate()
+				.take(table.entries.len())
+				.skip(before)
+			{
+				let e = table.entries[i];
+				let id = if e.enum_hash == 0 {
+					0
+				} else {
+					table.entries[..=i]
+						.iter()
+						.position(|other| other.hash == e.hash && other.enum_hash == e.enum_hash)
+						.expect("published descriptor") as u32
+						+ 1
+				};
+				slot.store(id, Ordering::Release);
+			}
+			PUBLISHED.store(table.entries.len(), Ordering::Release);
+		}
+		result
 	};
 	drop(candidate);
 	result
@@ -488,6 +694,71 @@ pub(crate) fn name_copy(nominal: Nominal, buffer: &mut [u8; 256]) -> Option<usiz
 	Some(name.len())
 }
 
+/// Persistent declaration metadata for diagnostics and enum ordering.
+pub(crate) fn variant_info(n: Nominal) -> Option<(u64, u32)> {
+	let guard = GLOBAL.lock().ok()?;
+	let e = guard.as_ref()?.entries.get(n.0 as usize)?;
+	Some((if e.enum_hash == 0 { 0 } else { e.hash }, e.ordinal))
+}
+pub(crate) fn fields_copy(n: Nominal) -> Option<Vec<String>> {
+	let guard = GLOBAL.lock().ok()?;
+	let table = guard.as_ref()?;
+	let e = table.entries.get(n.0 as usize)?;
+	let tail = table
+		.names
+		.get(e.start as usize + e.len as usize..e.start as usize + e.total_len as usize)?;
+	let mut fields = Vec::new();
+	for name in tail.split('\0').skip(1) {
+		fields.try_push(String::try_from(name).ok()?).ok()?;
+	}
+	Some(fields)
+}
+pub(crate) fn type_name_copy(n: Nominal, buffer: &mut [u8; 256]) -> Option<usize> {
+	let guard = GLOBAL.lock().ok()?;
+	let table = guard.as_ref()?;
+	let e = table.entries.get(n.0 as usize)?;
+	let name = table.name(n)?;
+	let name = if e.enum_hash == 0 {
+		name
+	} else {
+		name.rsplit_once("::")?.0
+	};
+	buffer
+		.get_mut(..name.len())?
+		.copy_from_slice(name.as_bytes());
+	Some(name.len())
+}
+
+pub(crate) fn variant_rtti(n: Nominal) -> Option<crate::sync::Arc<crate::runtime::Rtti>> {
+	let (variant, ordinal) = variant_info(n)?;
+	if variant == 0 {
+		return None;
+	}
+	let mut buffer = [0; 256];
+	let len = name_copy(n, &mut buffer)?;
+	let name = core::str::from_utf8(&buffer[..len]).ok()?;
+	let kind = match shape_copy(n)? {
+		Shape::Empty => crate::runtime::RttiKind::Empty,
+		Shape::Tuple(_) => crate::runtime::RttiKind::Tuple,
+		Shape::Named => crate::runtime::RttiKind::Struct,
+	};
+	let mut fields = crate::runtime::new_field_map();
+	for (i, name) in fields_copy(n)?.iter().enumerate() {
+		fields
+			.try_insert(crate::alloc::Box::<str>::try_from(name.as_str()).ok()?, i)
+			.ok()?;
+	}
+	crate::sync::Arc::try_new(crate::runtime::Rtti {
+		variant_index: ordinal,
+		kind,
+		hash: crate::Hash::new(hash_copy(n)?),
+		variant_hash: crate::Hash::new(variant),
+		item: crate::ItemBuf::with_item(name.trim_start_matches("::").split("::")).ok()?,
+		fields,
+	})
+	.ok()
+}
+
 /// No allocation or compiler/query dependency at runtime.
 pub(crate) fn shape_copy(n: Nominal) -> Option<Shape> {
 	let guard = GLOBAL.lock().ok()?;
@@ -513,6 +784,64 @@ pub(crate) fn same_type(a: Nominal, b: Nominal) -> bool {
 
 #[cfg(test)]
 mod tests {
+	#[test]
+	fn variant_identity_is_lock_free_and_shape_independent() {
+		let mut staging = super::Staging::default();
+		let a = staging
+			.stage_variant(
+				0xc15b001,
+				format_args!("C15b::T"),
+				super::Shape::Tuple(1),
+				0xc15b000,
+			)
+			.unwrap();
+		let twin = staging
+			.stage_variant(
+				0xc15b001,
+				format_args!("C15b::T"),
+				super::Shape::Tuple(2),
+				0xc15b000,
+			)
+			.unwrap();
+		let miss = staging
+			.stage_variant(
+				0xc15b002,
+				format_args!("C15b::U"),
+				super::Shape::Empty,
+				0xc15b000,
+			)
+			.unwrap();
+		let foreign = staging
+			.stage_variant(
+				0xc15b001,
+				format_args!("C15bOther::T"),
+				super::Shape::Tuple(1),
+				0xc15b100,
+			)
+			.unwrap();
+		let mut remap = staging.prepare_remap().unwrap();
+		staging.commit(&mut remap).unwrap();
+		let resolve = |n: super::Nominal| {
+			if n.0 & super::PROVISIONAL == 0 {
+				n
+			} else {
+				remap[(n.0 & !super::PROVISIONAL) as usize]
+			}
+		};
+		let (a, twin, miss, foreign) = (resolve(a), resolve(twin), resolve(miss), resolve(foreign));
+		// Holding the metadata mutex proves both hits and misses avoid that mutex.
+		let _guard = super::GLOBAL.lock().unwrap();
+		assert!(super::same_variant(a, a));
+		assert!(super::same_variant(a, twin));
+		assert!(!super::same_variant(a, miss));
+		assert!(!super::same_variant(a, foreign));
+		let identity = super::variant_id(a);
+		assert!(super::same_variant_id(a, identity));
+		assert!(super::same_variant_id(twin, identity));
+		assert!(!super::same_variant_id(miss, identity));
+		assert!(!super::same_variant_id(foreign, identity));
+		assert!(!super::same_variant_id(a, 0));
+	}
 	use super::*;
 
 	fn small(entries: usize, name_bytes: usize, total_name_bytes: usize) -> Interner {
@@ -522,6 +851,36 @@ mod tests {
 			total_name_bytes,
 		})
 		.unwrap()
+	}
+
+	#[test]
+	fn variant_fields_count_toward_atomic_publication_capacity() {
+		let mut staging = Staging::default();
+		staging
+			.stage_variant_order(
+				0xc15b201,
+				format_args!("V"),
+				Shape::Named,
+				0xc15b200,
+				0,
+				&["long"],
+			)
+			.unwrap();
+		staging
+			.stage_variant_order(
+				0xc15b202,
+				format_args!("W"),
+				Shape::Named,
+				0xc15b200,
+				1,
+				&["long"],
+			)
+			.unwrap();
+		let mut table = small(4, 8, 10);
+		let mut remap = staging.prepare_remap().unwrap();
+		assert!(table.commit(&staging, &mut remap).is_err());
+		assert_eq!(table.entries.len(), 0);
+		assert_eq!(table.names.len(), 0);
 	}
 
 	#[test]

@@ -1129,6 +1129,7 @@ impl Context {
 							item: item.try_clone()?,
 							hash,
 							type_info: TypeInfo::rtti(Arc::try_new(Rtti {
+								variant_index: 0,
 								kind,
 								hash: ty.hash,
 								variant_hash: hash,

@@ -1,0 +1,23 @@
+{
+  "025": {
+    "source_sha256": "d5658e1fd0e7ce7360f9f2a165e7cbd969f33d43684c6b70cfbfec8a92f9a01f",
+    "authority": "chatd seq19017",
+    "policy": "Exact original stock observation",
+    "previous_disposition": "Refused-surface",
+    "evidence_sha256": "912d016ca4bfcb7eda9c0251fc83869a1e1b5f6cdbf9103d1de6c4c91402332d"
+  },
+  "026": {
+    "source_sha256": "308d94058f3d8d48d2c5bb7540a5c697636836684ddd654c521ff53b746f6bd0",
+    "authority": "chatd seq19017",
+    "policy": "Exact original stock observation",
+    "previous_disposition": "Refused-surface",
+    "evidence_sha256": "2e5182466132356250cef951dffa1965154264f09849094331bc77d7ea0896ab"
+  },
+  "027": {
+    "source_sha256": "6ec4f0dfada9b29e0aef01037a154099d4aae5ecfd26b095e457c496d8b26d19",
+    "authority": "chatd seq19017",
+    "policy": "Exact original stock observation",
+    "previous_disposition": "Refused-surface",
+    "evidence_sha256": "ac93528ac79ac22e103e1f911ae8b4d841d01686c2f8e9eed3901dae9eed83f4"
+  }
+}

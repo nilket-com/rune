@@ -6,7 +6,7 @@ use crate as rune;
 use crate::function::fresh_host::{HostOutput, HostSignature, HostType};
 use crate::runtime::{self as stock, FromValue};
 
-// Fresh canonical Iterator diagnostics are explicitly Retained vs stock origins.
+// Fresh core Iterator diagnostics retain the listed differences from stock VM diagnostics.
 #[derive(crate::Any)]
 #[rune(item = ::std::iter, name = Iterator)]
 struct IteratorWitness;
@@ -125,6 +125,9 @@ fn witness(tag: Type) -> Result<stock::Value> {
 		))?,
 		Type::Iterator => stock::Value::new(IteratorWitness)?,
 		Type::Struct(nominal) => {
+			if let Some(rtti) = super::super::nominal::variant_rtti(nominal) {
+				return Ok(stock::Value::empty_struct(rtti)?);
+			}
 			let mut name = [0u8; 256];
 			let len = super::super::nominal::name_copy(nominal, &mut name)
 				.ok_or_else(|| error(ErrorKind::InvalidCode))?;
@@ -143,6 +146,7 @@ fn witness(tag: Type) -> Result<stock::Value> {
 				}
 			};
 			stock::Value::empty_struct(crate::sync::Arc::try_new(stock::Rtti {
+				variant_index: 0,
 				kind,
 				hash: crate::Hash::new(hash),
 				variant_hash: crate::Hash::EMPTY,
@@ -743,7 +747,7 @@ mod tests {
 		executor.request_cancel();
 		executor.set_host_runtime(None).unwrap();
 		assert!(invoke_source(&context, &mut executor, &mut store, source, 1000).is_err());
-		assert!(executor.cancelled);
+		assert!(executor.canceled);
 		executor
 			.set_host_runtime(Some(
 				crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
@@ -751,7 +755,7 @@ mod tests {
 			.unwrap();
 		let failure = invoke_source(&context, &mut executor, &mut store, source, 1000).unwrap_err();
 		assert_eq!(failure.error.kind, ErrorKind::Cancelled);
-		assert!(!executor.cancelled);
+		assert!(!executor.canceled);
 		let root = invoke_source(&context, &mut executor, &mut store, source, 1000).unwrap();
 		assert_eq!(root.value, Value::I64(5));
 		store.root_release(root).unwrap();
@@ -1124,9 +1128,9 @@ mod tests {
 			assert!(failure.error.location.is_none());
 			assert_eq!(before, (store.live_entries(), store.payload_bytes()));
 			assert_eq!(root.value, Value::I64(9));
-			assert!(executor.cancelled);
+			assert!(executor.canceled);
 			assert!(executor.is_idle());
-			executor.cancelled = false;
+			executor.canceled = false;
 		}
 		executor.set_host_runtime(Some(runtime(&[a, b]))).unwrap();
 		let returned = executor
@@ -1271,6 +1275,7 @@ mod nominal_shape_tests {
 			.unwrap();
 		let expected = stock::TypeInfo::rtti(
 			crate::sync::Arc::try_new(stock::Rtti {
+				variant_index: 0,
 				kind: stock::RttiKind::Tuple,
 				hash: crate::Hash::new(0xc150_0000_0000_0002),
 				variant_hash: crate::Hash::EMPTY,

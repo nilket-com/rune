@@ -50,12 +50,14 @@ pub(crate) enum RttiKind {
 	Struct,
 }
 
-/// Runtime information on variant.
-#[derive(Debug)]
+/// Runtime information on a variant.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "musli", derive(Decode, Encode), musli(crate = musli_core))]
 #[non_exhaustive]
 pub struct Rtti {
+	/// Declaration position; excluded from diagnostic Debug output.
+	#[cfg_attr(feature = "serde", serde(default))]
+	pub(crate) variant_index: u32,
 	/// The kind of value.
 	pub(crate) kind: RttiKind,
 	/// The type hash of the type.
@@ -66,6 +68,18 @@ pub struct Rtti {
 	pub(crate) item: ItemBuf,
 	/// Mapping from field names to their corresponding indexes.
 	pub(crate) fields: FieldMap<Box<str>, usize>,
+}
+
+impl core::fmt::Debug for Rtti {
+	fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+		f.debug_struct("Rtti")
+			.field("kind", &self.kind)
+			.field("hash", &self.hash)
+			.field("variant_hash", &self.variant_hash)
+			.field("item", &self.item)
+			.field("fields", &self.fields)
+			.finish()
+	}
 }
 
 impl Rtti {

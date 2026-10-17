@@ -1123,6 +1123,7 @@ fn item_enum(
 
 	let mut comma = Remaining::default();
 
+	let mut variant_index = 0u32;
 	while let MaybeNode::Some(node) = p.eat(Variant) {
 		comma.at_most_one(idx)?;
 
@@ -1140,11 +1141,15 @@ fn item_enum(
 		attrs.deny_non_docs(idx)?;
 
 		let variant = indexing::Variant {
+			ordinal: variant_index,
 			enum_id: enum_item_meta.item,
 			fields,
 		};
 
 		idx.q.index_variant(item_meta, variant)?;
+		variant_index = variant_index.checked_add(1).ok_or_else(|| {
+			crate::compile::Error::msg(item_meta.location.span, "too many enum variants")
+		})?;
 
 		comma = p.remaining(idx, K![,])?;
 	}

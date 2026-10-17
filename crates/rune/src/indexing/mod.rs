@@ -107,6 +107,8 @@ pub(crate) struct Struct {
 
 #[derive(Debug, TryClone)]
 pub(crate) struct Variant {
+	/// Position in the enum declaration.
+	pub(crate) ordinal: u32,
 	/// Id of of the enum type.
 	pub(crate) enum_id: ItemId,
 	/// The fields of the variant.

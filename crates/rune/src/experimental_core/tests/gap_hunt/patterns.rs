@@ -694,7 +694,21 @@ fn fresh_contract() {
 		assert!(run.complete, "{}: {}", case.label, run.record);
 		let actual: Vec<_> = run.record.split('\t').collect();
 		assert_eq!(actual.len(), 5);
-		if let Some(class) = expected_fresh_refusal(&case.label) {
+		let admissions: serde_json::Value =
+			serde_json::from_str(include_str!("patterns/c15b_admissions.json")).unwrap();
+		let admitted = admissions.get(case.label.as_str());
+		if let Some(rule) = admitted {
+			use sha2::{Digest, Sha256};
+			assert_eq!(
+				rule["source_sha256"],
+				hex(&Sha256::digest(case.source.as_bytes()))
+			);
+			assert_eq!(
+				rule["stock_row_sha256"],
+				hex(&Sha256::digest(line.as_bytes()))
+			);
+		}
+		if let Some(class) = expected_fresh_refusal(&case.label).filter(|_| admitted.is_none()) {
 			assert_eq!(
 				(&actual[0], &actual[1]),
 				(&"refused", &class),
@@ -743,8 +757,8 @@ fn fresh_contract() {
 		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
 		equal += 1;
 	}
-	assert_eq!((equal, refused, full_budget), (257, 28, 63));
-	fs::write(out.join("summary.txt"),"257 exact stock parity;28 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
+	assert_eq!((equal, refused, full_budget), (258, 27, 63));
+	fs::write(out.join("summary.txt"),"258 exact stock parity;27 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
 	contract_completed("fresh", 348);
 }
 

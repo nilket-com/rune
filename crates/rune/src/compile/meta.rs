@@ -61,6 +61,8 @@ pub(crate) struct Doc {
 #[derive(Debug, TryClone)]
 #[non_exhaustive]
 pub(crate) struct Meta {
+	/// Declaration position for a script enum variant.
+	pub(crate) variant_index: u32,
 	/// If the meta comes from the context or not.
 	pub(crate) context: bool,
 	/// Hash of the private metadata.

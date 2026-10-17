@@ -85,7 +85,7 @@ impl FreshGraph {
 				json!([
 					"Nominal",
 					hash.to_string(),
-					"0x0",
+					crate::Hash::new(nominal::variant_info(n).unwrap().0).to_string(),
 					name,
 					kind,
 					fields,

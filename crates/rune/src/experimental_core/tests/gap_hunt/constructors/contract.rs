@@ -84,6 +84,15 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	let id = case["id"].as_str().unwrap();
 	let expected = &stock[id]["observation"];
 	let observed = &actual["observation"];
+	let admissions: Json = serde_json::from_str(include_str!("c15b_admissions.json")).unwrap();
+	if let Some(rule) = admissions.get(id) {
+		assert_eq!(rule["source_sha256"], case["source_sha256"]);
+		assert_eq!(frozen["disposition"], "Refused-surface");
+		assert_eq!(audit["invoked"], true);
+		assert_eq!(audit["reuse_used_fallback"], false);
+		assert_eq!(project_observation(observed, expected, ""), *expected);
+		return;
+	}
 	if frozen["disposition"] == "Refused-frontend-arity" {
 		assert_eq!(audit["invoked"], false);
 		assert_eq!(actual["diagnostics"], stock[id]["diagnostics"]);
@@ -103,7 +112,11 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 		let refusal = observed["outcome"]["refusal"].as_str().unwrap();
 		assert!(matches!(
 			refusal,
-			"Method" | "UnresolvedFunction" | "ObjectConstructor" | "Pattern" | "Match" | "Call" | "Native"
+			"Method"
+				| "UnresolvedFunction"
+				| "ObjectConstructor"
+				| "Pattern" | "Match"
+				| "Call" | "Native"
 		));
 		assert_eq!(observed["events"], json!([]));
 	} else {
@@ -111,18 +124,24 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 		assert_eq!(audit["reuse_used_fallback"], false);
 		if frozen["disposition"] == "Retained-fuel" {
 			let seen = observed["events"].as_array().unwrap();
-			let complete: Json = serde_json::from_str(include_str!("resource_complete.json")).unwrap();
-			let rule = complete.get(id).expect("Authorized COMPLETE stock tape required");
+			let complete: Json =
+				serde_json::from_str(include_str!("resource_complete.json")).unwrap();
+			let rule = complete
+				.get(id)
+				.expect("Authorized COMPLETE stock tape required");
 			assert_eq!(rule["source_sha256"], case["source_sha256"]);
 			assert_eq!(rule["stock_fuel"], 200000);
 			assert_eq!(rule["fresh_fuel"], case["fuel"]);
 			assert_eq!(rule["observation"]["outcome"]["status"], "value");
 			let tape = rule["observation"]["events"].as_array().unwrap();
-			assert!(seen.len() <= tape.len() && seen.iter().zip(tape).all(|(a,b)| a == b));
+			assert!(seen.len() <= tape.len() && seen.iter().zip(tape).all(|(a, b)| a == b));
 			if observed["outcome"]["class"] == "FuelExhausted" {
 				assert_eq!(observed["outcome"]["status"], "error");
 			} else {
-				assert_eq!(project_observation(observed, &rule["observation"], ""), rule["observation"]);
+				assert_eq!(
+					project_observation(observed, &rule["observation"], ""),
+					rule["observation"]
+				);
 			}
 		} else {
 			let rules: Json = serde_json::from_str(include_str!("retained_sites.json")).unwrap();

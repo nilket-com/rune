@@ -1248,7 +1248,11 @@ impl Value {
 			&Protocol::PARTIAL_CMP,
 			Inline::partial_cmp,
 			|lhs, rhs, caller| {
-				let ord = lhs.0.variant_hash.cmp(&rhs.0.variant_hash);
+				let ord = lhs
+					.0
+					.variant_index
+					.cmp(&rhs.0.variant_index)
+					.then_with(|| lhs.0.variant_hash.cmp(&rhs.0.variant_hash));
 
 				if ord != Ordering::Equal {
 					return Ok(Some(ord));
@@ -1290,7 +1294,11 @@ impl Value {
 			&Protocol::CMP,
 			Inline::cmp,
 			|lhs, rhs, caller| {
-				let ord = lhs.0.variant_hash.cmp(&rhs.0.variant_hash);
+				let ord = lhs
+					.0
+					.variant_index
+					.cmp(&rhs.0.variant_index)
+					.then_with(|| lhs.0.variant_hash.cmp(&rhs.0.variant_hash));
 
 				if ord != Ordering::Equal {
 					return Ok(ord);

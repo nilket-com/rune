@@ -394,6 +394,11 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 						fresh.failure.get_or_insert(error);
 						return Err(compile::Error::msg(span, operation.name()));
 					}
+					if !self.q.is_used(&item_meta) {
+						self.q
+							.diagnostics
+							.not_used(location.source_id, span, None)?;
+					}
 					return Ok(());
 				}
 

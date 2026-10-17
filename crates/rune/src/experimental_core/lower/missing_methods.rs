@@ -71,7 +71,10 @@ impl Lower<'_, '_> {
 				let hir::Call::Meta { hash } = call.call else {
 					return None;
 				};
-				self.constants.fresh_struct_shape(hash).map(|_| hash)
+				self.constants
+					.fresh_variant_shape(hash)
+					.map(|shape| shape.enum_hash)
+					.or_else(|| self.constants.fresh_struct_shape(hash).map(|_| hash))
 			}
 			_ => None,
 		}

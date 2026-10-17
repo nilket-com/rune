@@ -128,8 +128,57 @@ pub(crate) struct StructShape<'a> {
 	pub(crate) fields: &'a meta::Fields,
 }
 
+#[cfg(feature = "fresh-core")]
+pub(crate) struct VariantShape<'a> {
+	pub(crate) item: ItemId,
+	pub(crate) fields: &'a meta::Fields,
+	pub(crate) enum_hash: Hash,
+	pub(crate) ordinal: u32,
+}
+
 impl QueryInner<'_> {
-	// Borrowed metadata only: never constructs a legacy value or invokes a protocol.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_variant_shape(&self, hash: Hash) -> Option<VariantShape<'_>> {
+		self.meta.values().find_map(|m| {
+			if m.context || m.hash != hash {
+				return None;
+			}
+			let meta::Kind::Struct {
+				enum_hash, fields, ..
+			} = &m.kind
+			else {
+				return None;
+			};
+			if *enum_hash == Hash::EMPTY {
+				return None;
+			}
+			Some(VariantShape {
+				item: m.item_meta.item,
+				fields,
+				enum_hash: *enum_hash,
+				ordinal: m.variant_index,
+			})
+		})
+	}
+
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_value_shape(&self, hash: Hash) -> Option<StructShape<'_>> {
+		self.fresh_struct_shape(hash).or_else(|| {
+			self.fresh_variant_shape(hash).map(|v| StructShape {
+				item: v.item,
+				fields: v.fields,
+			})
+		})
+	}
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_enum_item(&self, hash: Hash) -> Option<ItemId> {
+		self.meta
+			.values()
+			.find(|m| !m.context && m.hash == hash && matches!(m.kind, meta::Kind::Enum { .. }))
+			.map(|m| m.item_meta.item)
+	}
+
+	// Borrowed metadata only: never constructs a stock VM value or invokes a protocol.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_struct_shape(&self, hash: Hash) -> Option<StructShape<'_>> {
 		self.meta.values().find_map(|m| {
@@ -514,6 +563,7 @@ impl<'a, 'arena> Query<'a, 'arena> {
 		let item = self.pool.alloc_item(item)?;
 
 		let meta = meta::Meta {
+			variant_index: 0,
 			context: true,
 			hash: meta.hash,
 			item_meta: self.context_item_meta(item, None),
@@ -762,6 +812,7 @@ impl<'a, 'arena> Query<'a, 'arena> {
 		let item_meta = self.item_for("constant function", item)?;
 
 		Ok(meta::Meta {
+			variant_index: 0,
 			context: false,
 			hash: self.pool.item_type_hash(item),
 			item_meta,
@@ -999,6 +1050,7 @@ impl<'a, 'arena> Query<'a, 'arena> {
 		};
 
 		let meta = meta::Meta {
+			variant_index: 0,
 			context: false,
 			hash: self.pool.item_type_hash(item_meta.item),
 			item_meta,
@@ -1615,6 +1667,7 @@ impl<'a, 'arena> Query<'a, 'arena> {
 					};
 
 					let meta = meta::Meta {
+						variant_index: 0,
 						context: true,
 						hash: self.pool.item_type_hash(item),
 						item_meta: self.context_item_meta(item, None),
@@ -1659,6 +1712,7 @@ impl<'a, 'arena> Query<'a, 'arena> {
 		};
 
 		let meta = meta::Meta {
+			variant_index: 0,
 			context: false,
 			hash: self.pool.item_type_hash(entry.item_meta.item),
 			item_meta: entry.item_meta,
@@ -1695,7 +1749,7 @@ impl<'a, 'arena> Query<'a, 'arena> {
 		// Building a constant needs the value of every constant it mentions, so
 		// it builds them here and now rather than queueing them, which recurses
 		// through the whole of lowering once per level. A level cost a little
-		// under 100 KiB unoptimised when this was measured, so it is bounded
+		// under 100 KiB unoptimized when this was measured, so it is bounded
 		// well under what exhausted the stack a test runs on at around twenty.
 		let max = self.options.max_depth.min(MAX_ITEM_RECURSION);
 
@@ -1748,11 +1802,13 @@ impl<'a, 'arena> Query<'a, 'arena> {
 			self.inner.used.try_insert(item_meta.item)?;
 		}
 
+		let mut variant_index = 0;
 		let kind = match indexed {
 			Indexed::Enum => meta::Kind::Enum {
 				parameters: Hash::EMPTY,
 			},
 			Indexed::Variant(variant) => {
+				variant_index = variant.ordinal;
 				let enum_ = self.item_for("variant", variant.enum_id).with_span(span)?;
 
 				// Ensure that the enum is being built and marked as used.
@@ -1995,6 +2051,7 @@ impl<'a, 'arena> Query<'a, 'arena> {
 		let source = self.source_meta(&item_meta)?;
 
 		Ok(meta::Meta {
+			variant_index,
 			context: false,
 			hash: self.pool.item_type_hash(item_meta.item),
 			item_meta,

@@ -308,6 +308,25 @@ impl Function {
 		Ok(pc)
 	}
 
+	/// Bind a private variant predicate to this function's type pool.
+	pub(super) fn variant_test(&mut self, tag: Type) -> Result<u32> {
+		if !matches!(tag, Type::Struct(_)) {
+			return Err(invalid());
+		}
+		let index = Self::pool(&mut self.types, tag)?;
+		if index > VARIANT_TEST_INDEX_MASK {
+			return Err(invalid());
+		}
+		Ok(STAGED_VARIANT_TEST_BASE | index)
+	}
+
+	pub(super) fn variant_test_tag(&self, index: u32) -> Option<super::value::Nominal> {
+		match self.types.get(index as usize)? {
+			Type::Struct(nominal) => Some(*nominal),
+			_ => None,
+		}
+	}
+
 	pub fn arguments(&mut self, args: &[u32]) -> Result<(u32, u32)> {
 		let start = u32::try_from(self.args.len()).map_err(|_| invalid())?;
 		let len = u32::try_from(args.len()).map_err(|_| invalid())?;
@@ -780,7 +799,9 @@ pub(crate) struct CertifiedIntrinsic {
 	pub(super) arity: u32,
 }
 // Immutable policy, consulted by seal and execution. Numeric
-// membership in the partition does not certify an id. No installer API exists.
+// membership in the partition does not certify an id. The parameterized
+// variant family also requires a bound Struct descriptor at seal time.
+// No installer API exists.
 pub(crate) const PRINT_RAW: u32 = FIRST_INTRINSIC_ID + 1;
 pub(crate) const VARIANT_SUCCESS: u32 = FIRST_INTRINSIC_ID + 2;
 pub(crate) const SORT_BEGIN: u32 = FIRST_INTRINSIC_ID + 0x40;
@@ -802,6 +823,22 @@ pub(crate) const NEXT_METHOD: u32 = FIRST_INTRINSIC_ID + 0x57;
 pub(crate) const ANY_READY: u32 = FIRST_INTRINSIC_ID + 0x58;
 pub(crate) const CLOSURE_CREATE: u32 = FIRST_INTRINSIC_ID + 0x59;
 pub(crate) const MISSING_METHOD: u32 = FIRST_INTRINSIC_ID + 0x5a;
+pub(crate) const MATCH_VARIANT: u32 = FIRST_INTRINSIC_ID + 0x5b;
+// Staged predicates bind a Struct descriptor in the caller's checked type pool.
+// Sealing replaces that index with the immutable canonical variant identity;
+// the final identity remains bound to a descriptor in the caller's type pool.
+const VARIANT_TEST_BASE: u32 = 0x9000_0000;
+const STAGED_VARIANT_TEST_BASE: u32 = 0xa000_0000;
+const VARIANT_TEST_INDEX_MASK: u32 = 0x0fff_ffff;
+pub(super) fn variant_test_type(id: u32) -> Option<u32> {
+	(id & !VARIANT_TEST_INDEX_MASK == STAGED_VARIANT_TEST_BASE)
+		.then_some(id & VARIANT_TEST_INDEX_MASK)
+}
+
+pub(super) fn variant_test_id(id: u32) -> Option<u32> {
+	(id & !VARIANT_TEST_INDEX_MASK == VARIANT_TEST_BASE).then_some(id & VARIANT_TEST_INDEX_MASK)
+}
+
 pub(crate) const FIRST_HOST: u32 = FIRST_INTRINSIC_ID + 0x100;
 pub(crate) const MAX_HOST_DESCRIPTORS: usize = 4096;
 fn host_id(index: usize) -> Result<u32> {
@@ -826,6 +863,10 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 	CertifiedIntrinsic {
 		id: VARIANT_SUCCESS,
 		arity: 1,
+	},
+	CertifiedIntrinsic {
+		id: MATCH_VARIANT,
+		arity: 2,
 	},
 	CertifiedIntrinsic {
 		id: crate::function::fresh_numeric::Call::MethodAbs.id(),
@@ -1083,7 +1124,9 @@ impl Builder {
 
 	#[cfg_attr(not(test), allow(dead_code))]
 	pub fn finish(self) -> Result<Code> {
-		self.finish_validated(&nominal_valid)
+		let mut code = self.finish_validated(&nominal_valid)?;
+		code.for_each_type_mut(&mut |_| {});
+		Ok(code)
 	}
 
 	fn finish_validated(mut self, valid: &dyn Fn(Type) -> bool) -> Result<Code> {
@@ -1278,6 +1321,18 @@ impl CompileTransaction {
 	) -> Result<super::value::Nominal> {
 		self.staging.stage_shape(hash, name, shape)
 	}
+	pub(super) fn stage_variant(
+		&mut self,
+		hash: u64,
+		name: core::fmt::Arguments<'_>,
+		shape: nominal::Shape,
+		enum_hash: u64,
+		ordinal: u32,
+		fields: &[&str],
+	) -> Result<super::value::Nominal> {
+		self.staging
+			.stage_variant_order(hash, name, shape, enum_hash, ordinal, fields)
+	}
 
 	pub(crate) fn push(&mut self, function: Function) -> Result<u32> {
 		self.builder.push(function)
@@ -1323,6 +1378,7 @@ impl CompileTransaction {
 impl Code {
 	/// Encoded instructions reference these pools. Only the eager decoded cache
 	/// duplicates tags; native region caches are built later, during invocation.
+	/// After remapping type pools, finish descriptor-bound variant call selectors.
 	fn for_each_type_mut(&mut self, f: &mut dyn FnMut(&mut Type)) {
 		for function in &mut self.functions {
 			for tag in &mut function.types {
@@ -1333,13 +1389,25 @@ impl Code {
 					f(tag);
 				}
 			}
-			for cached in &mut function.cached {
+			for (pc, cached) in function.cached.iter_mut().enumerate() {
 				match &mut cached.op {
 					Op::Record { tag, .. }
 					| Op::List { tag, .. }
 					| Op::Variant { tag, .. }
 					| Op::Cast { tag, .. }
 					| Op::Is { tag, .. } => f(tag),
+
+					Op::Call {
+						function: callee, ..
+					} => {
+						if let Some(index) = variant_test_type(*callee) {
+							let Type::Struct(n) = function.types[index as usize] else {
+								unreachable!("validated variant descriptor")
+							};
+							*callee = VARIANT_TEST_BASE | nominal::variant_id(n);
+							function.code[pc].b = *callee;
+						}
+					}
 					Op::Literal {
 						value: Value::Type(tag),
 						..
@@ -1772,7 +1840,15 @@ fn validate_operands(
 				args_len,
 			} => {
 				slot(out)?;
-				if let Some(callee) = functions.get(function as usize) {
+				if let Some(index) = variant_test_type(function) {
+					if args_len != 1 || f.variant_test_tag(index).is_none() {
+						return Err(invalid());
+					}
+				} else if let Some(identity) = variant_test_id(function) {
+					if args_len != 1 || !f.types.iter().any(|tag| matches!(tag, Type::Struct(n) if n.0 & nominal::PROVISIONAL == 0 && nominal::variant_id(*n) == identity)) {
+						return Err(invalid());
+					}
+				} else if let Some(callee) = functions.get(function as usize) {
 					if args_len != callee.parameters {
 						return Err(invalid());
 					}
@@ -1894,6 +1970,13 @@ fn binary_code(code: u32) -> Result<Binary> {
 	})
 }
 
+fn same_tag(a: Type, b: Type) -> bool {
+	match (a, b) {
+		(Type::Struct(a), Type::Struct(b)) => a.0 == b.0,
+		_ => a == b,
+	}
+}
+
 fn same_op(a: Op, b: Op) -> bool {
 	match a {
 		Op::Template {
@@ -1957,7 +2040,7 @@ fn same_op(a: Op, b: Op) -> bool {
 				args_len: b_args_len,
 			} => {
 				a_out == b_out
-					&& a_tag == b_tag
+					&& same_tag(a_tag, b_tag)
 					&& a_args_start == b_args_start
 					&& a_args_len == b_args_len
 			}
@@ -2006,7 +2089,10 @@ fn same_op(a: Op, b: Op) -> bool {
 				success: b_success,
 				payload: b_payload,
 			} => {
-				a_out == b_out && a_tag == b_tag && a_success == b_success && a_payload == b_payload
+				a_out == b_out
+					&& same_tag(a_tag, b_tag)
+					&& a_success == b_success
+					&& a_payload == b_payload
 			}
 
 			_ => false,
@@ -2171,7 +2257,7 @@ fn same_op(a: Op, b: Op) -> bool {
 				out: b_out,
 				value: b_value,
 				tag: b_tag,
-			} => a_out == b_out && a_value == b_value && a_tag == b_tag,
+			} => a_out == b_out && a_value == b_value && same_tag(a_tag, b_tag),
 			_ => false,
 		},
 		Op::Is {
@@ -2185,7 +2271,12 @@ fn same_op(a: Op, b: Op) -> bool {
 				value: b_value,
 				tag: b_tag,
 				negate: b_negate,
-			} => a_out == b_out && a_value == b_value && a_tag == b_tag && a_negate == b_negate,
+			} => {
+				a_out == b_out
+					&& a_value == b_value
+					&& same_tag(a_tag, b_tag)
+					&& a_negate == b_negate
+			}
 			_ => false,
 		},
 
@@ -2243,7 +2334,7 @@ fn same_op(a: Op, b: Op) -> bool {
 				args_len: b_args_len,
 			} => {
 				a_out == b_out
-					&& a_tag == b_tag
+					&& same_tag(a_tag, b_tag)
 					&& a_args_start == b_args_start
 					&& a_args_len == b_args_len
 			}
@@ -2309,6 +2400,7 @@ fn same_op(a: Op, b: Op) -> bool {
 fn same_literal(a: Value, b: Value) -> bool {
 	match (a, b) {
 		(Value::F64(a), Value::F64(b)) => a.to_bits() == b.to_bits(),
+		(Value::Type(a), Value::Type(b)) => same_tag(a, b),
 		(a, b) => a == b,
 	}
 }
@@ -2547,6 +2639,183 @@ pub(super) mod transaction_tests {
 		.unwrap();
 		f.push(Op::Return { value: 1 }, location()).unwrap();
 		f
+	}
+
+	fn variant_fixture() -> Code {
+		let mut tx = CompileTransaction::default();
+		let a = tx
+			.stage_variant(
+				0xc15b5201,
+				format_args!("C15bBound::A"),
+				nominal::Shape::Empty,
+				0xc15b5200,
+				0,
+				&[],
+			)
+			.unwrap();
+		let b = tx
+			.stage_variant(
+				0xc15b5202,
+				format_args!("C15bBound::B"),
+				nominal::Shape::Empty,
+				0xc15b5200,
+				1,
+				&[],
+			)
+			.unwrap();
+		let twin = tx
+			.stage_variant(
+				0xc15b5201,
+				format_args!("C15bBound::A"),
+				nominal::Shape::Tuple(1),
+				0xc15b5200,
+				0,
+				&[],
+			)
+			.unwrap();
+		let mut f = Function::new(2, 1).unwrap();
+		let callee = f.variant_test(Type::Struct(a)).unwrap();
+		f.variant_test(Type::Struct(b)).unwrap();
+		f.variant_test(Type::Struct(twin)).unwrap();
+		let (args_start, args_len) = f.arguments(&[0]).unwrap();
+		f.push(
+			Op::Call {
+				out: 1,
+				function: callee,
+				args_start,
+				args_len,
+			},
+			location(),
+		)
+		.unwrap();
+		f.push(Op::Return { value: 1 }, location()).unwrap();
+		tx.push(f).unwrap();
+		tx.finish().unwrap()
+	}
+
+	#[test]
+	fn variant_call_binding_is_published_and_runs_without_a_script_frame() {
+		use crate::experimental_core::{
+			execute::Executor,
+			heap::{Limits, Store},
+			value::Scalar,
+		};
+		let code = variant_fixture();
+		let f = code.function(0).unwrap();
+		let Op::Call {
+			function: callee, ..
+		} = f.cached[0].op
+		else {
+			panic!("call predicate")
+		};
+		let identity = variant_test_id(callee).unwrap();
+		assert!(identity != 0 && variant_test_type(callee).is_none());
+		assert_eq!(f.code[0].b, callee);
+		assert!(
+			code.intrinsic(callee).is_none(),
+			"caller binding never widens the fixed global policy"
+		);
+		f.audit_cached(0, f.cached[0]).unwrap();
+		assert_eq!(
+			f.types[0], f.types[1],
+			"both variants retain their parent enum type identity"
+		);
+		let mut store = Store::new(Limits::default()).unwrap();
+		let a_value = store.list(f.types[0], &[]).unwrap();
+		let a = store.export(a_value);
+		let b_value = store.list(f.types[1], &[]).unwrap();
+		let b = store.export(b_value);
+		let one = store.root_i64(1);
+		let twin_value = store.list(f.types[2], &[one.value]).unwrap();
+		let twin = store.export(twin_value);
+		let mut executor =
+			Executor::with_limits(crate::experimental_core::execute::ExecutorLimits {
+				frames: 1,
+				slots: 32,
+			})
+			.unwrap();
+		for (root, expected) in [(&a, true), (&b, false), (&twin, true)] {
+			let result = executor
+				.invoke_code(&code, &mut store, 0, &[root], 1000)
+				.unwrap();
+			assert_eq!(
+				store.root_scalar(&result).unwrap(),
+				Some(Scalar::Bool(expected))
+			);
+			store.root_release(result).unwrap();
+			assert!(executor.is_idle());
+		}
+		// The public builder resolves already-global descriptor operands too.
+		let mut g = Function::new(2, 1).unwrap();
+		let target = g.variant_test(f.types[0]).unwrap();
+		let (args_start, args_len) = g.arguments(&[0]).unwrap();
+		g.push(
+			Op::Call {
+				out: 1,
+				function: target,
+				args_start,
+				args_len,
+			},
+			location(),
+		)
+		.unwrap();
+		g.push(Op::Return { value: 1 }, location()).unwrap();
+		let mut builder = Builder::default();
+		builder.push(g).unwrap();
+		let public = builder.finish().unwrap();
+		assert!(
+			matches!(public.function(0).unwrap().cached[0].op, Op::Call { function, .. } if function == callee)
+		);
+		let result = executor
+			.invoke_code(&public, &mut store, 0, &[&a], 1000)
+			.unwrap();
+		assert_eq!(
+			store.root_scalar(&result).unwrap(),
+			Some(Scalar::Bool(true))
+		);
+		store.root_release(result).unwrap();
+		for root in [a, b, twin, one] {
+			store.root_release(root).unwrap();
+		}
+		assert_eq!(store.live_entries(), 0);
+		store.close().unwrap();
+	}
+
+	#[test]
+	fn variant_call_ids_require_caller_descriptors_and_slot_arguments() {
+		let prepared = variant_fixture();
+		let tag = prepared.function(0).unwrap().types[0];
+		let Type::Struct(n) = tag else { unreachable!() };
+		let identity = nominal::variant_id(n);
+		for (callee, descriptors, values) in [
+			(STAGED_VARIANT_TEST_BASE, &[][..], &[0][..]),
+			(STAGED_VARIANT_TEST_BASE, &[Type::Vec][..], &[0][..]),
+			(STAGED_VARIANT_TEST_BASE | 1, &[tag][..], &[0][..]),
+			(VARIANT_TEST_BASE | identity, &[][..], &[0][..]),
+			(VARIANT_TEST_BASE | identity, &[tag][..], &[][..]),
+			(VARIANT_TEST_BASE | identity, &[tag][..], &[2][..]),
+			(VARIANT_TEST_BASE | identity, &[tag][..], &[0, 0][..]),
+		] {
+			let mut f = Function::new(2, 1).unwrap();
+			for &tag in descriptors {
+				f.types.try_push(tag).unwrap();
+			}
+			let (args_start, args_len) = f.arguments(values).unwrap();
+			f.push(
+				Op::Call {
+					out: 1,
+					function: callee,
+					args_start,
+					args_len,
+				},
+				location(),
+			)
+			.unwrap();
+			f.push(Op::Return { value: 1 }, location()).unwrap();
+			let mut builder = Builder::default();
+			builder.push(f).unwrap();
+			assert_eq!(builder.finish().err().unwrap().kind, ErrorKind::InvalidCode);
+		}
 	}
 
 	#[test]
@@ -2940,7 +3209,7 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 48);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 49);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, MISSING_METHOD)
 				.unwrap()

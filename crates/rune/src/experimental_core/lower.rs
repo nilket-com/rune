@@ -1,4 +1,4 @@
-//! Resolved-HIR to independent instructions. No legacy assembly or execution.
+//! Resolved-HIR to independent instructions. No stock VM assembly or execution.
 //! Construction subset: unsupported forms fail with their original source span.
 //!
 //! Slot discipline (A1): the frame is a stack. Every expression allocates its
@@ -189,6 +189,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// heap handle. This is the only place that classification lives.
 	fn emit(&mut self, op: Op, span: Span) -> Result<u32> {
 		match op {
+			Op::Call { function, .. } if super::code::variant_test_type(function).is_some() => (),
 			// Never a heap value: the flag is left as the other paths set it.
 			Op::Literal { .. }
 			| Op::Unary { .. }
@@ -334,7 +335,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			match statement {
 				hir::Stmt::Local(local) => {
 					// The local owns its slot until the block ends; nothing can read
-					// the slot before the initialiser has written it.
+					// the slot before the initializer has written it.
 					let slot = self.slot()?;
 					self.expr_into(local.expr, slot)?;
 					self.pattern_local(&local.pat, slot)?;
@@ -471,8 +472,8 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	}
 
 	/// Assignment operands use deferred local addresses (observed reference
-	/// behaviour): a bare local is read when the store executes, after the
-	/// right side; a non-trivial expression materialises in source order.
+	/// behavior): a bare local is read when the store executes, after the
+	/// right side; a non-trivial expression materializes in source order.
 	fn assignment_operand(&mut self, id: hir::ExprId, span: Span) -> Result<u32> {
 		match self.exprs.get(id).kind {
 			hir::ExprKind::Variable(variable) => self.variable(variable, span),
@@ -480,11 +481,20 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 	}
 
-	/// `Ok(None)`: not a type this core knows. A fresh struct is staged locally
+	/// `Ok(None)`: not a type this core knows. A script struct is staged locally
 	/// until complete admission; table exhaustion is the `TypeTable` refusal.
 	fn type_tag(&mut self, hash: Hash, span: Span) -> Result<Option<Type>> {
 		if let Some(tag) = type_tag(hash) {
 			return Ok(Some(tag));
+		}
+
+		if let Some(item) = self.constants.fresh_enum_item(hash) {
+			return self
+				.transaction
+				.stage(hash.into_inner(), format_args!("{}", self.pool.item(item)))
+				.map(Type::Struct)
+				.map(Some)
+				.map_err(|e| e.at(self.location(span)));
 		}
 
 		if self.constants.fresh_struct_shape(hash).is_none() {
@@ -497,6 +507,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// Identity is the type hash; presentation uses its real item path. The
 	/// append-only table keeps the first published name for that identity.
 	fn struct_tag(&mut self, hash: Hash, span: Span) -> Result<Type> {
+		if self.constants.fresh_variant_shape(hash).is_some() {
+			return self.variant_tag(hash, span);
+		}
 		let shape = self
 			.constants
 			.fresh_struct_shape(hash)
@@ -513,6 +526,42 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				hash.into_inner(),
 				format_args!("{}", self.pool.item(shape.item)),
 				kind,
+			)
+			.map(Type::Struct)
+			.map_err(|e| e.at(self.location(span)))
+	}
+
+	fn variant_tag(&mut self, hash: Hash, span: Span) -> Result<Type> {
+		let shape = self
+			.constants
+			.fresh_variant_shape(hash)
+			.ok_or_else(|| self.refused(span, Refusal::Pattern))?;
+		let kind = match shape.fields {
+			crate::compile::meta::Fields::Empty => super::nominal::Shape::Empty,
+			crate::compile::meta::Fields::Unnamed(n) => super::nominal::Shape::Tuple(
+				u32::try_from(*n).map_err(|_| self.refused(span, Refusal::Arity))?,
+			),
+			crate::compile::meta::Fields::Named(_) => super::nominal::Shape::Named,
+		};
+		let mut fields = Vec::new();
+		if let crate::compile::meta::Fields::Named(named) = shape.fields {
+			for f in named.fields.iter() {
+				fields.try_push((f.position, f.name.as_ref()))?;
+			}
+			fields.sort_unstable_by_key(|f| f.0);
+		}
+		let mut names = Vec::new();
+		for (_, name) in fields {
+			names.try_push(name)?;
+		}
+		self.transaction
+			.stage_variant(
+				hash.into_inner(),
+				format_args!("{}", self.pool.item(shape.item)),
+				kind,
+				shape.enum_hash.into_inner(),
+				shape.ordinal,
+				&names,
 			)
 			.map(Type::Struct)
 			.map_err(|e| e.at(self.location(span)))
@@ -705,7 +754,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			E::Index(index) => {
 				// The reference defers a bare local address rather than copying
 				// its value: RHS rebinding changes the receiver read at Set.
-				// Nontrivial target expressions materialise before index/RHS.
+				// Nontrivial target expressions materialize before index/RHS.
 				let target = self.assignment_operand(index.target, span)?;
 				let key = self.assignment_operand(index.index, span)?;
 				let value = self.operand(assign.rhs)?;
@@ -1349,7 +1398,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let order = if let hir::ExprObjectKind::Struct { hash } = object.kind {
 			let shape = self
 				.constants
-				.fresh_struct_shape(hash)
+				.fresh_value_shape(hash)
 				.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
 			let crate::compile::meta::Fields::Named(fields) = shape.fields else {
 				return Err(self.refused(span, Refusal::ObjectConstructor));
@@ -1732,6 +1781,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			if self.tuple_struct_site(hash) {
 				return self.call_tuple_struct(hash, call, out, span);
 			}
+			if self.constants.fresh_variant_shape(hash).is_some() {
+				return self.call_tuple_variant(hash, call, out, span);
+			}
 		}
 
 		if let Some((target, m)) = self.pipeline_site(call) {
@@ -1943,7 +1995,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			&& !self.context.fresh_stdio_println()
 		{
 			// Host IO policy (capture, disable, custom or none): explicit compile-time
-			// refusal before any fresh execution or output; the caller decides fallback.
+			// refusal before any fresh core execution or output; the caller decides fallback.
 			return Err(self.refused(span, Refusal::Native));
 		}
 
@@ -2023,6 +2075,42 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					crate::compile::meta::Fields::Unnamed(_) | crate::compile::meta::Fields::Empty
 				)
 			})
+	}
+
+	#[cold]
+	#[inline(never)]
+	fn call_tuple_variant(
+		&mut self,
+		hash: Hash,
+		call: &hir::ExprCall<'_>,
+		out: u32,
+		span: Span,
+	) -> Result<()> {
+		let shape = self
+			.constants
+			.fresh_variant_shape(hash)
+			.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
+		let arity = match shape.fields {
+			crate::compile::meta::Fields::Empty => 0,
+			crate::compile::meta::Fields::Unnamed(n) => *n,
+			_ => return Err(self.refused(span, Refusal::ObjectConstructor)),
+		};
+		if call.args.len() != arity {
+			return Err(self.refused(span, Refusal::Arity));
+		}
+		let tag = self.variant_tag(hash, span)?;
+		let values = self.operands(call.args)?;
+		let (args_start, args_len) = self.function.arguments(&values)?;
+		self.emit(
+			Op::List {
+				out,
+				tag,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+		Ok(())
 	}
 
 	// Script unit and tuple constructors share existing owned List storage.
@@ -2233,6 +2321,9 @@ fn type_tag(hash: Hash) -> Option<Type> {
 		Type::Vec
 	} else if hash == crate::runtime::OwnedTuple::HASH {
 		Type::Tuple
+	} else if hash == <Option<crate::runtime::Value> as crate::TypeHash>::HASH { Type::Option
+	} else if hash == <core::result::Result<crate::runtime::Value, crate::runtime::Value> as crate::TypeHash>::HASH { Type::Result
+	} else if hash == crate::runtime::Object::HASH { Type::Object
 	} else if hash == crate::runtime::Function::HASH {
 		Type::Function
 	} else {

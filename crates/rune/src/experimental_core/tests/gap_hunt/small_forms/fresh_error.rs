@@ -278,6 +278,9 @@ fn fresh_struct_rtti(
 	nominal: crate::experimental_core::value::Nominal,
 	program: &frontend::Program,
 ) -> Option<crate::sync::Arc<crate::runtime::Rtti>> {
+	if let Some(rtti) = crate::experimental_core::nominal::variant_rtti(nominal) {
+		return Some(rtti);
+	}
 	use crate::experimental_core::code::Op;
 	use crate::experimental_core::nominal;
 	use crate::runtime::{Rtti, RttiKind};
@@ -338,6 +341,7 @@ fn fresh_struct_rtti(
 		}
 	}
 	let rtti = Rtti {
+		variant_index: 0,
 		kind,
 		hash,
 		variant_hash: Hash::EMPTY,

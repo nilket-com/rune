@@ -1,0 +1,30 @@
+{
+  "119": {
+    "source_sha256": "778f3bc594a08e138f1221dc5f7982aa6654d49e14c19cd66e4f557ba636603d",
+    "authority": "chatd seq19017",
+    "policy": "Exact original stock observation",
+    "previous_disposition": "Refused-surface",
+    "evidence_sha256": "e75532b4393486e9b28c7ab00f92ba3b7d5be2a6c7a33cbd0d8097f6cbdf2433"
+  },
+  "120": {
+    "source_sha256": "827d84cd533b1adad9706ba22ab5a1c28eb9efa66772ec9d3c1a11be9d334222",
+    "authority": "chatd seq19017",
+    "policy": "Exact original stock observation",
+    "previous_disposition": "Refused-surface",
+    "evidence_sha256": "4fec3242b0d66c4e7d4d90bc89759dd06de6ae517165c3256daa9a73f2001e7a"
+  },
+  "121": {
+    "source_sha256": "a4b32815809209834688b143335ac0f9e2d360274bc3931563ab02db7bd849fc",
+    "authority": "chatd seq19017",
+    "policy": "Exact original stock observation",
+    "previous_disposition": "Refused-surface",
+    "evidence_sha256": "84d01a584c989bce04d5d9f4ee6c24f8a4f25288cc80a5c6901e8bd3d4b98703"
+  },
+  "122": {
+    "source_sha256": "5a044d873e5d4b1438fd9bfc6a31fa76b6bbbde4e27d211cfdd431bb8903f4b8",
+    "authority": "chatd seq19017",
+    "policy": "Exact original stock observation",
+    "previous_disposition": "Refused-surface",
+    "evidence_sha256": "d05c82658689e93e66a57d7ac1bfda0730faf2b6b8cb62c782fa70d2753bd89a"
+  }
+}

@@ -83,6 +83,23 @@ fn error(kind: ErrorKind) -> Error {
 }
 
 impl Store {
+	fn nominal_sequence(&self, item: Item<'_>) -> Result<Sequence<'_>> {
+		let Item::Value(Value::Heap(h)) = item else {
+			return Err(error(ErrorKind::InvalidCode));
+		};
+		match self.payload(h)? {
+			Payload::List {
+				tag: Type::Struct(_),
+				values,
+			} => Ok(Sequence::Values(values)),
+			Payload::Record {
+				tag: Type::Struct(_),
+				fields,
+			} => Ok(Sequence::Fields(fields)),
+			_ => Err(error(ErrorKind::InvalidCode)),
+		}
+	}
+
 	fn item_type(&self, item: Item<'_>) -> Result<TypeName> {
 		match item {
 			Item::Text(_) => Ok(TypeName::String),
@@ -221,7 +238,38 @@ impl Store {
 					// Validate handles before producing type diagnostics, without changing ownership.
 					let lhs = self.item_type(a)?;
 					let rhs = self.item_type(b)?;
-					if lhs == TypeName::String {
+					let variant_order =
+						if let (TypeName::Struct(a), TypeName::Struct(b)) = (lhs, rhs) {
+							let a_info = super::super::nominal::variant_info(a);
+							let b_info = super::super::nominal::variant_info(b);
+							match (a_info, b_info) {
+								(Some((av, ai)), Some((bv, bi)))
+									if (av != 0 || bv != 0) && av != bv && a == b =>
+								{
+									Some(if equality {
+										Ordering::Less
+									} else {
+										ai.cmp(&bi).then_with(|| av.cmp(&bv))
+									})
+								}
+								_ => None,
+							}
+						} else {
+							None
+						};
+					if let Some(order) = variant_order {
+						Some(Some(order))
+					} else if matches!((lhs, rhs), (TypeName::Struct(_), TypeName::Struct(_)))
+						&& lhs == rhs
+					{
+						stack.try_push(Task::Sequence(
+							self.nominal_sequence(a)?,
+							self.nominal_sequence(b)?,
+							0,
+							depth,
+						))?;
+						None
+					} else if lhs == TypeName::String {
 						let left = self
 							.item_text(a)?
 							.ok_or_else(|| error(ErrorKind::InvalidCode))?;

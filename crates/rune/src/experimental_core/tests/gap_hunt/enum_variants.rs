@@ -42,11 +42,16 @@ fn error(error: &stock::VmError) -> Json {
 	json!({"status":"error","missing":missing,"kind":format!("{kind:?}"),"display":kind.to_string(),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
+include!("enum_variants/fresh_graph.rs");
+include!("enum_variants/fresh.rs");
+include!("enum_variants/contract.rs");
+include!("enum_variants/bounded.rs");
+
 #[test]
 #[ignore = "C15b stock VM oracle child; explicit bounded external operator only"]
 fn child() {
 	let engine = std::env::var("C15B_ENGINE").unwrap();
-	assert!(engine == "stock");
+	assert!(engine == "stock" || engine == "fresh");
 	let index: usize = std::env::var("C15B_CASE").unwrap().parse().unwrap();
 	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
 	let mut row = cases[index].clone();
@@ -57,9 +62,22 @@ fn child() {
 		row["fuel"] = json!(200000);
 	}
 	let row = &row;
-	eprintln!("C15b row {} {}", row["id"], row["label"]);
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
+
+	if engine == "fresh" {
+		let result = observe_fresh(row);
+		let path = std::env::var_os("C15B_RESULT").unwrap();
+		let mut file = std::fs::OpenOptions::new()
+			.create_new(true)
+			.write(true)
+			.open(path)
+			.unwrap();
+		use std::io::Write;
+		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
+			.unwrap();
+		return;
+	}
 
 	let context = context(row["fixture"].as_str().unwrap());
 	let mut sources = Sources::new();
@@ -135,9 +153,7 @@ fn observer_controls() {
 	tap(1, 2);
 	TAPE.with(|t| assert_eq!(t.borrow().len(), 1));
 	TAPE.with(|t| t.borrow_mut().clear());
-	for f in ["default"] {
-		let _ = context(f);
-	}
+	let _ = context("default");
 }
 
 #[test]
@@ -173,6 +189,266 @@ fn nominal_observer_controls() {
 	let shared = run("let x=E::T(1);(x,std::clone::clone(x))");
 	let distinct = run("(E::T(1),E::T(1))");
 	assert_ne!(shared, distinct);
+}
+
+#[test]
+fn tuple_variant_match_slice() {
+	use crate::experimental_core::value::{Scalar, Type, Value as FreshValue};
+	let context = Context::with_default_modules().unwrap();
+	let mut sources = Sources::new();
+	sources.insert(Source::memory("enum E{U,T(a)} enum F{T(a)} pub fn main(){match E::T(7){E::U=>0,E::T(x)=>x,_=>9}} pub fn repeat(){let value=E::T(7);let sum=0;for _ in 0..1000{sum+=match value{E::U=>0,E::T(x)=>x,_=>9};}sum} pub fn wrong_type(){match F::T(7){E::U=>0,E::T(x)=>x,_=>9}} pub fn scalar(){match 7{E::U=>0,E::T(x)=>x,_=>9}} pub fn reuse(){7}").unwrap()).unwrap();
+	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14).unwrap();
+	let mut store = Store::new(Limits {
+		entries: 32,
+		bytes: 4096,
+	})
+	.unwrap();
+	let mut executor = Executor::new().unwrap();
+	for (name, expected) in [
+		("main", 7),
+		("repeat", 7000),
+		("wrong_type", 9),
+		("scalar", 9),
+		("reuse", 7),
+	] {
+		let root = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash([name])).unwrap(),
+				&[],
+				200000,
+			)
+			.unwrap();
+		assert_eq!(
+			store.root_scalar(&root).unwrap(),
+			Some(Scalar::I64(expected)),
+			"{name}"
+		);
+		store.root_release(root).unwrap();
+		assert!(executor.is_idle());
+		assert_eq!(store.live_entries(), 0);
+		assert_eq!(store.payload_bytes(), 0);
+	}
+
+	assert_eq!(std::mem::size_of::<Type>(), 8);
+	assert_eq!(std::mem::size_of::<FreshValue>(), 16);
+	println!("C15b slice: two-arm match=7; 1000 misses and hits=7000; wrong types miss; lifecycle and reuse pass; Type8 Value16");
+}
+
+#[test]
+fn variant_metadata_survives_code_drop_and_changed_declarations() {
+	use crate::experimental_core::{nominal, value::Type};
+	let context = Context::with_default_modules().unwrap();
+	let compile = |text: &str| {
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(text).unwrap()).unwrap();
+		frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14).unwrap()
+	};
+	let mut store = Store::new(Limits {
+		entries: 32,
+		bytes: 4096,
+	})
+	.unwrap();
+	let mut executor = Executor::new().unwrap();
+	let mut roots = Vec::new();
+	for text in [
+		"enum C15bLife{V{x}} pub fn main(){C15bLife::V{x:7}}",
+		"enum C15bLife{U,V{y}} pub fn main(){C15bLife::V{y:9}}",
+		"enum C15bLife{V{z}} pub fn main(){C15bLife::V{z:11}}",
+	] {
+		let program = compile(text);
+		let root = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["main"])).unwrap(),
+				&[],
+				200000,
+			)
+			.unwrap();
+		drop(program);
+		roots.push(root);
+	}
+	let mut ids = Vec::new();
+	for (root, field, ordinal) in [
+		(&roots[0], "x", 0),
+		(&roots[1], "y", 1),
+		(&roots[2], "z", 0),
+	] {
+		let value = store.import(root).unwrap();
+		let Type::Struct(n) = store.tag(value).unwrap() else {
+			panic!("variant descriptor")
+		};
+		let rtti = nominal::variant_rtti(n).unwrap();
+		assert_eq!(rtti.fields.get(field), Some(&0));
+		assert_eq!(rtti.variant_index, ordinal);
+		ids.push(n);
+	}
+	assert_ne!(ids[0].0, ids[1].0);
+	assert!(nominal::same_variant(ids[0], ids[1]));
+	assert_ne!(ids[0].0, ids[2].0);
+	assert!(nominal::same_variant(ids[0], ids[2]));
+	for root in roots {
+		store.root_release(root).unwrap();
+	}
+	assert!(executor.is_idle());
+	assert_eq!(store.live_entries(), 0);
+	assert_eq!(store.payload_bytes(), 0);
+}
+
+#[test]
+fn variant_miss_does_not_read_a_moved_child() {
+	use crate::experimental_core::value::Scalar;
+	let context = Context::with_default_modules().unwrap();
+	let mut sources = Sources::new();
+	sources.insert(Source::memory("enum C15bMove{U,T(a)} pub fn make(){C15bMove::T([7])} pub fn probe(v){match v{C15bMove::U=>0,_=>1}} pub fn hit(v){match v{C15bMove::T(x)=>x[0],_=>0}}").unwrap()).unwrap();
+	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14).unwrap();
+	let mut store = Store::new(Limits {
+		entries: 32,
+		bytes: 4096,
+	})
+	.unwrap();
+	let mut executor = Executor::new().unwrap();
+	let root = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["make"])).unwrap(),
+			&[],
+			200000,
+		)
+		.unwrap();
+	let value = store.import(&root).unwrap();
+	let child = store.host_observe_values(value).unwrap()[0];
+	store.invalidate(child).unwrap();
+	let result = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["probe"])).unwrap(),
+			&[&root],
+			200000,
+		)
+		.unwrap();
+	assert_eq!(store.root_scalar(&result).unwrap(), Some(Scalar::I64(1)));
+	store.root_release(result).unwrap();
+	assert!(executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["hit"])).unwrap(),
+			&[&root],
+			200000
+		)
+		.is_err());
+	store.root_release(root).unwrap();
+	assert!(executor.is_idle());
+	assert_eq!(store.live_entries(), 0);
+	assert_eq!(store.payload_bytes(), 0);
+}
+
+#[test]
+fn context_variants_are_refused_before_effects() {
+	use crate as rune;
+	#[derive(crate::Any)]
+	enum HostEnum {
+		#[rune(constructor)]
+		V(#[rune(get)] i64),
+	}
+	let mut context = context_for("default", true);
+	let mut module = crate::Module::new();
+	module.ty::<HostEnum>().unwrap();
+	context.install(module).unwrap();
+	let mut sources = Sources::new();
+	sources
+		.insert(Source::memory("pub fn main(){c15b::tap(1,1);HostEnum::V(7)}").unwrap())
+		.unwrap();
+	TAPE.with(|t| t.borrow_mut().clear());
+	let mut stock_sources = Sources::new();
+	stock_sources
+		.insert(Source::memory("pub fn main(){c15b::tap(1,1);HostEnum::V(7)}").unwrap())
+		.unwrap();
+	assert!(crate::prepare(&mut stock_sources)
+		.with_context(&context)
+		.build_vm()
+		.is_ok());
+	let error = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14)
+		.err()
+		.expect("native context variant must be refused");
+	assert_eq!(
+		error.refusal,
+		Some(crate::experimental_core::error::Refusal::Native)
+	);
+	TAPE.with(|t| assert!(t.borrow().is_empty()));
+}
+
+#[test]
+fn same_variant_compares_across_tuple_and_named_programs() {
+	use crate::experimental_core::value::Scalar;
+	let context = Context::with_default_modules().unwrap();
+	let texts = [
+		"enum C15bShape{V(a)} pub fn main(){C15bShape::V(7)}",
+		"enum C15bShape{V{x}} pub fn main(){C15bShape::V{x:7}}",
+	];
+	let mut roots = Vec::new();
+	let mut stock_values = Vec::new();
+	let mut store = Store::new(Limits {
+		entries: 32,
+		bytes: 4096,
+	})
+	.unwrap();
+	let mut executor = Executor::new().unwrap();
+	for text in texts {
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(text).unwrap()).unwrap();
+		let program =
+			frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14).unwrap();
+		roots.push(
+			executor
+				.invoke(
+					&program,
+					&mut store,
+					program.function(Hash::type_hash(["main"])).unwrap(),
+					&[],
+					200000,
+				)
+				.unwrap(),
+		);
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(text).unwrap()).unwrap();
+		let mut vm = crate::prepare(&mut sources)
+			.with_context(&context)
+			.build_vm()
+			.unwrap();
+		stock_values.push(vm.call(["main"], ()).unwrap());
+	}
+	assert!(stock::Value::partial_eq(&stock_values[0], &stock_values[1]).unwrap());
+	let mut sources = Sources::new();
+	sources
+		.insert(Source::memory("pub fn main(a,b){a==b}").unwrap())
+		.unwrap();
+	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14).unwrap();
+	let result = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["main"])).unwrap(),
+			&[&roots[0], &roots[1]],
+			200000,
+		)
+		.unwrap();
+	assert_eq!(
+		store.root_scalar(&result).unwrap(),
+		Some(Scalar::Bool(true))
+	);
+	store.root_release(result).unwrap();
+	for root in roots {
+		store.root_release(root).unwrap();
+	}
+	assert!(executor.is_idle());
+	assert_eq!(store.live_entries(), 0);
+	assert_eq!(store.payload_bytes(), 0);
 }
 
 #[test]

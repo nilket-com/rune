@@ -1,5 +1,5 @@
-//! The fresh-core executor: an explicit-frame interpreter over a compiled
-//! [`Program`]. It uses no legacy `Value`, `Vm` or protocol caller.
+//! The fresh core executor: an explicit-frame interpreter over a compiled
+//! [`Program`]. It uses no stock VM `Value`, `Vm` or protocol caller.
 //!
 //! # Output
 //!
@@ -146,7 +146,7 @@ pub struct Failure {
 	pub missing_key: Option<Box<str>>,
 	/// Complete panic text, copied before cleanup and independent of Store lifetime.
 	pub panic_message: Option<Box<str>>,
-	/// Complete native failure text, independent of stock scratch and Store lifetime.
+	/// Complete native failure text, independent of stock VM scratch and Store lifetime.
 	pub host_message: Option<Box<str>>,
 	/// The callsite locations of the active calls, innermost caller first; empty when the
 	/// failure happened in the entry function or before it ran.
@@ -239,7 +239,7 @@ pub struct Executor {
 	frames: Vec<Frame>,
 	slots: Vec<Value>,
 	diagnostics: Vec<Location>,
-	cancelled: bool,
+	canceled: bool,
 	format_limits: FormatLimits,
 	limits: ExecutorLimits,
 	configured_host_runtime: Option<crate::sync::Arc<crate::runtime::RuntimeContext>>,
@@ -304,7 +304,7 @@ impl Executor {
 			frames: Vec::try_with_capacity(limits.frames.min(INITIAL_FRAMES))?,
 			slots: Vec::try_with_capacity(limits.slots.min(INITIAL_SLOTS))?,
 			diagnostics: Vec::try_with_capacity(limits.frames.min(INITIAL_FRAMES))?,
-			cancelled: false,
+			canceled: false,
 			format_limits: FormatLimits::default(),
 			limits,
 			configured_host_runtime: None,
@@ -372,7 +372,7 @@ impl Executor {
 	/// request and fails its invocation with [`ErrorKind::Cancelled`]; a refusal before
 	/// the first charged instruction leaves the request pending.
 	pub fn request_cancel(&mut self) {
-		self.cancelled = true;
+		self.canceled = true;
 	}
 
 	/// Limits used by each complete template/println formatting call.
@@ -585,7 +585,51 @@ impl Executor {
 		Ok(())
 	}
 
-	// Only a certified shared Call miss reaches this out-of-line IO path.
+	#[inline(never)]
+	fn match_variant_call(
+		&mut self,
+		store: &mut Store,
+		function: &super::code::Function,
+		base: usize,
+		out: u32,
+		args_start: u32,
+	) -> Result<()> {
+		let invalid = || error(ErrorKind::InvalidCode);
+		let end = args_start.checked_add(2).ok_or_else(invalid)?;
+		let args = function
+			.args
+			.get(args_start as usize..end as usize)
+			.ok_or_else(invalid)?;
+		let read = |slot: u32| {
+			if slot >= function.slots {
+				return Err(invalid());
+			}
+			let index = base.checked_add(slot as usize).ok_or_else(invalid)?;
+			self.slots.get(index).copied().ok_or_else(invalid)
+		};
+		let value = read(args[0])?;
+		let Value::Type(super::value::Type::Struct(expected)) = read(args[1])? else {
+			return Err(invalid());
+		};
+		let matches = match value {
+			Value::Type(_) | Value::Function { .. } => false,
+			_ => match store.tag(value)? {
+				super::value::Type::Struct(actual) => {
+					super::nominal::same_variant(actual, expected)
+				}
+				_ => false,
+			},
+		};
+		if out >= function.slots {
+			return Err(invalid());
+		}
+		let destination = base.checked_add(out as usize).ok_or_else(invalid)?;
+		if self.slots.get(destination).is_none() {
+			return Err(invalid());
+		}
+		self.put(store, destination, Value::Bool(matches))
+	}
+
 	#[cold]
 	#[inline(never)]
 	#[allow(clippy::too_many_arguments)]
@@ -600,10 +644,46 @@ impl Executor {
 		args_start: u32,
 		args_len: u32,
 	) -> Result<()> {
-		let invalid = || error(ErrorKind::InvalidCode);
 		if code.host(id).is_some() {
 			return self.host_call(code, store, function, base, out, id, args_start, args_len);
 		}
+		if super::code::variant_test_id(id).is_some() {
+			if args_len != 1 {
+				return Err(error(ErrorKind::InvalidCode));
+			}
+			let slot = *function
+				.args
+				.get(args_start as usize)
+				.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+			let value = self
+				.slots
+				.get(base + slot as usize)
+				.copied()
+				.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+			let matches =
+				store.variant_matches(value, super::code::variant_test_id(id).unwrap())?;
+			return self.put(store, base + out as usize, Value::Bool(matches));
+		}
+		self.fixed_intrinsic(code, store, function, base, out, id, args_start, args_len)
+	}
+
+	// Only a certified shared Call miss reaches this out-of-line intrinsic path.
+	#[cold]
+	#[inline(never)]
+	#[allow(clippy::too_many_arguments)]
+	fn fixed_intrinsic(
+		&mut self,
+		code: &Code,
+		store: &mut Store,
+		function: &super::code::Function,
+		base: usize,
+		out: u32,
+		id: u32,
+		args_start: u32,
+		args_len: u32,
+	) -> Result<()> {
+		let invalid = || error(ErrorKind::InvalidCode);
+
 		let certificate = code.intrinsic(id).ok_or_else(invalid)?;
 		if id == super::code::CLOSURE_CREATE {
 			if args_len != certificate.arity {
@@ -652,6 +732,12 @@ impl Executor {
 				return Err(invalid());
 			}
 			return self.small_forms_call(store, function, base, out, id, args_start, args_len);
+		}
+		if id == super::code::MATCH_VARIANT {
+			if args_len != certificate.arity {
+				return Err(invalid());
+			}
+			return self.match_variant_call(store, function, base, out, args_start);
 		}
 		if let Some(call) = crate::function::fresh_numeric::Call::from_id(id) {
 			if args_len != certificate.arity {
@@ -829,7 +915,7 @@ impl Executor {
 									source_pc,
 									window,
 									store,
-									self.cancelled,
+									self.canceled,
 									fuel,
 									room,
 								) {
@@ -865,7 +951,7 @@ impl Executor {
 									self.capacities(),
 								);
 								if let Some(window) = self.slots.get_mut(frame.base..end) {
-									match ready.enter(window, store, self.cancelled, fuel, room) {
+									match ready.enter(window, store, self.canceled, fuel, room) {
 										Ok(Some((next, left))) => {
 											pc = next;
 											fuel = left;
@@ -895,12 +981,12 @@ impl Executor {
 						if instruction.charged {
 							#[cfg(test)]
 							if cancel_tick_for_test() {
-								self.cancelled = true;
+								self.canceled = true;
 							}
 
-							if self.cancelled {
+							if self.canceled {
 								// The pending request is consumed here and only here.
-								self.cancelled = false;
+								self.canceled = false;
 								return Err(error(ErrorKind::Cancelled));
 							}
 
@@ -1182,11 +1268,9 @@ impl Executor {
 									Value::Type(_) => false,
 									_ => store.tag(operand)? == tag,
 								};
-
 								let v = Value::Bool(matches ^ negate);
 								self.put(store, frame.base + out as usize, v)?;
 							}
-
 							Op::Jump { target } => pc = target as usize,
 							Op::Branch { condition, yes, no } => {
 								let Value::Bool(condition) = get(condition)? else {
@@ -2338,7 +2422,7 @@ pub(crate) fn leave_fast_hits_for_test() -> usize {
 std::thread_local! {
 	/// D14 test-only: request cancellation at the Nth charged instruction of
 	/// this thread's next invocation(s), so a nested charged frame can be
-	/// cancelled; there is no other way to cancel mid-invocation.
+	/// canceled; there is no other way to cancel mid-invocation.
 	static CANCEL_AT_CHARGE: core::cell::Cell<Option<usize>> = const { core::cell::Cell::new(None) };
 }
 
@@ -2550,7 +2634,7 @@ impl Executor {
 				match ty {
 					TypeName::Struct(n) => {
 						let mut b = [0; 256];
-						let len = super::nominal::name_copy(n, &mut b).ok_or_else(invalid)?;
+						let len = super::nominal::type_name_copy(n, &mut b).ok_or_else(invalid)?;
 						crate::alloc::String::try_from(
 							core::str::from_utf8(&b[..len]).map_err(|_| invalid())?,
 						)?

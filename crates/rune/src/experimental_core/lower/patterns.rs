@@ -323,7 +323,28 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					self.pattern_require(condition, ok, misses, span)?;
 				} else {
 					if variant_hash != Hash::EMPTY {
-						return Err(self.refused(span, Refusal::Pattern));
+						let shape = self
+							.constants
+							.fresh_variant_shape(variant_hash)
+							.ok_or_else(|| self.refused(span, Refusal::Pattern))?;
+						if shape.enum_hash != hash {
+							return Err(self.refused(span, Refusal::Pattern));
+						}
+						let tag = self.variant_tag(variant_hash, span)?;
+						let condition = self.slot()?;
+						let function = self.function.variant_test(tag)?;
+						let (args_start, args_len) = self.function.arguments(&[value])?;
+						self.emit(
+							Op::Call {
+								out: condition,
+								function,
+								args_start,
+								args_len,
+							},
+							span,
+						)?;
+						self.pattern_require(condition, true, misses, span)?;
+						return Ok(());
 					}
 					let _shape = self
 						.constants
@@ -467,16 +488,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 						}
 						hir::PatKind::Object(object) => {
 							let anonymous = matches!(object.kind, hir::PatSequenceKind::Sequence { hash, .. } if hash == crate::runtime::Object::HASH);
-							if !anonymous
-								&& !matches!(
-									object.kind,
-									hir::PatSequenceKind::Type {
-										variant_hash: Hash::EMPTY,
-										..
-									}
-								) {
-								return Err(self.refused(pat.span, Refusal::Pattern));
-							}
+
 							self.pattern_kind(object.kind, value, &mut misses, pat.span)?;
 							for field in object.bindings.iter().rev() {
 								work.try_push(Walk::Field(field, value, depth + 1, anonymous))?;

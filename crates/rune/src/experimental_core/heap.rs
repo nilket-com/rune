@@ -1174,6 +1174,18 @@ impl Store {
 		}
 	}
 
+	/// Check a variant identity after validating only the root handle.
+	#[inline(always)]
+	pub(crate) fn variant_matches(&self, value: Value, expected: u32) -> Result<bool> {
+		let Value::Heap(handle) = value else {
+			return Ok(false);
+		};
+		Ok(match self.entry(handle)?.tag()? {
+			Type::Struct(actual) => super::nominal::same_variant_id(actual, expected),
+			_ => false,
+		})
+	}
+
 	/// Diagnostic classification only: never invoked on a successful execution path.
 	pub(crate) fn diagnostic_type(&self, value: Value) -> Option<super::error::TypeName> {
 		use super::error::TypeName;
