@@ -1,0 +1,842 @@
+[
+  {
+    "id": "000",
+    "label": "missing/core17/i64",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f(42)}\npub fn c13_reuse(){7}",
+    "source_sha256": "8610352c464356b0b13d3942f374e40acd75de698e0df811c8475bd48899519c",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "001",
+    "label": "missing/core17/u64",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f(42u64)}\npub fn c13_reuse(){7}",
+    "source_sha256": "80b8166f3e24a86a91cd69cef2fa8855c5e3b35c68bc4bfe043562d3278a20ef",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "002",
+    "label": "missing/core17/f64",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f(1.25)}\npub fn c13_reuse(){7}",
+    "source_sha256": "65d970acdbc86bdc8f922d7267bd8dc115d2813d2d255a477cf597658ac3e760",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "003",
+    "label": "missing/core17/char",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f('x')}\npub fn c13_reuse(){7}",
+    "source_sha256": "5d6a3f4382b142988073754d1663dc509a24d27d27f5684ff42ebd6c15e04306",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "004",
+    "label": "missing/core17/ordering",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f(std::cmp::Ordering::Less)}\npub fn c13_reuse(){7}",
+    "source_sha256": "9ce69866f9c532e04b1515aacbbc01e567f49a795d818506824e53aa1c197692",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "005",
+    "label": "missing/core17/string",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f(\"text\")}\npub fn c13_reuse(){7}",
+    "source_sha256": "fe08cf4df24f699fa9c4295649aa06291a1b8e0d2051794313031d1888f5ce27",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "006",
+    "label": "missing/core17/vec",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f([1,2])}\npub fn c13_reuse(){7}",
+    "source_sha256": "a00daf7fb5b51e2452cd8c6466975253bca286d2dee56a2cd522768e3d1469fd",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "007",
+    "label": "missing/core17/tuple",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f((1,true))}\npub fn c13_reuse(){7}",
+    "source_sha256": "b58bd798816f1b6eb7172538f519f2f66a3a91fc69f5078e5fe208a8977f9254",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "008",
+    "label": "missing/core17/object",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f(#{a:1})}\npub fn c13_reuse(){7}",
+    "source_sha256": "92067de8cd6d40590461813ca23d4f7b4d1b09cb71a2a95552281534e621a548",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "009",
+    "label": "missing/core17/option",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f(Some(1))}\npub fn c13_reuse(){7}",
+    "source_sha256": "0919d1161687c9e89aa7c73e8f5e1ba2109c57c93a258fe328cb177610153a71",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "010",
+    "label": "missing/core17/result",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f(Ok(1))}\npub fn c13_reuse(){7}",
+    "source_sha256": "73dab18cd6ba57e425aabfbf50fb02df580b51c29eb87870d785178cdd0ba3a2",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "011",
+    "label": "missing/core17/range",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f((1..3))}\npub fn c13_reuse(){7}",
+    "source_sha256": "e34a4071c9751dbc4ea4f00ce5ad182498c91669b14f3933dfa24f6f6be89e2f",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "012",
+    "label": "missing/core17/range-from",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f((1..))}\npub fn c13_reuse(){7}",
+    "source_sha256": "40ee3f5e35b27b380d77cf830056f7df6cd998a8c4eb0fc5e37d78a1344646fc",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "013",
+    "label": "missing/core17/range-full",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f((..))}\npub fn c13_reuse(){7}",
+    "source_sha256": "b0c292df05d06b1dce16bd123e12e2bede6313b0cd0eec3fabeec65bb9d77585",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "014",
+    "label": "missing/core17/range-inclusive",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f((1..=3))}\npub fn c13_reuse(){7}",
+    "source_sha256": "5cc7a5dddee07f3af6aa3e58019826e5b48905ef6c268306231eaaa7c152e80d",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "015",
+    "label": "missing/core17/range-to-inclusive",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f((..=3))}\npub fn c13_reuse(){7}",
+    "source_sha256": "08d113d251293d7cf3364d8c8c38d683ca6dd819b5e35b5bda489d9cbbf278b5",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "016",
+    "label": "missing/core17/range-to",
+    "source": "fn f(x){x.unrecognized()} pub fn main(){f((..3))}\npub fn c13_reuse(){7}",
+    "source_sha256": "23bf4d4f5c946f48a950dace87de717730d4d28803f7f52949e4377e5f349ba5",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "017",
+    "label": "missing/extra/unit",
+    "source": "pub fn main(){let x=();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "60242c90c43e3836bc2935f8c2626aed56c2806e69559e82f5bbed2cb0946faa",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "018",
+    "label": "missing/extra/bool",
+    "source": "pub fn main(){true.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "2dd0759f3fef1f11d45c556e2636b9bb3cc8da0629e0b8386618fe1aa9f5907c",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "019",
+    "label": "missing/extra/type-value",
+    "source": "pub fn main(){let x=i64;x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "3f54fa9f38e824066128f82745cc35709d5bd38184a38bc9253d77850fa18065",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "020",
+    "label": "missing/extra/plain-function",
+    "source": "fn f(){7} pub fn main(){let x=f;x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "4c3c521e4ee6da5cc24a9c4eeaf9f2a242097e3a14d46c92312f57fea0706fb7",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "021",
+    "label": "missing/extra/capturing-function",
+    "source": "pub fn main(){let n=7;let f=||n;f.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "db84b8dbe8367a843d8ec1ec9ffce4d3b1dec508b649359e914cd068ee54b8d0",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "022",
+    "label": "missing/extra/unit-struct",
+    "source": "struct Local; pub fn main(){Local.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "38dcbca034787d2c027cfbf286244f6011fbf348cd3e582a8eec36fa72bf4a2e",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "023",
+    "label": "missing/extra/tuple-struct",
+    "source": "struct Local(n); pub fn main(){Local(7).unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "017e0d15e00fe806c5b6bb318ff7f4de1b5b6180f1766b523e098bade68a0a40",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "024",
+    "label": "missing/extra/named-struct",
+    "source": "struct Local{n} pub fn main(){Local{n:7}.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "f896c74a9c01e5121e0b7720cc17348d5e6a2148cff468aa4d862448cf5be559",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "025",
+    "label": "missing/extra/unit-variant",
+    "source": "enum Local{A} pub fn main(){Local::A.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "d5658e1fd0e7ce7360f9f2a165e7cbd969f33d43684c6b70cfbfec8a92f9a01f",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "026",
+    "label": "missing/extra/tuple-variant",
+    "source": "enum Local{A(n)} pub fn main(){Local::A(7).unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "308d94058f3d8d48d2c5bb7540a5c697636836684ddd654c521ff53b746f6bd0",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "027",
+    "label": "missing/extra/named-variant",
+    "source": "enum Local{A{n}} pub fn main(){Local::A{n:7}.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "6ec4f0dfada9b29e0aef01037a154099d4aae5ecfd26b095e457c496d8b26d19",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "028",
+    "label": "missing/iterator/vec",
+    "source": "pub fn main(){let x=[1,2].iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "de839cd940b38b787280a59c88097193df25903f423d7c9c65ec1dddf3d4ccc2",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "029",
+    "label": "missing/iterator/option",
+    "source": "pub fn main(){let x=Some(1).iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "2d1a96c59ba4ff771f02df050ada3d7db77e677fb240986941cdda6205356523",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "030",
+    "label": "missing/iterator/range-i64",
+    "source": "pub fn main(){let x=(1..3).iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "0ba9e652b976c918da53de61650f57634e66bf6b8a6d871557f63c164d403cfc",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "031",
+    "label": "missing/iterator/range-u64",
+    "source": "pub fn main(){let x=(1u64..3u64).iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "4e3b460cb785a7caa9bb08aca9e9cdb96d87107d4c7579b09a28dd7b0b4d6c66",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "032",
+    "label": "missing/iterator/range-char",
+    "source": "pub fn main(){let x=('a'..'c').iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "f2504886a8e1f0c87e3ccc08162d5547aeb8cf28a046cdedcc49d345546dfb10",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "033",
+    "label": "missing/iterator/inclusive-i64",
+    "source": "pub fn main(){let x=(1..=3).iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "4b6a53f7e20218917680b05c251237f3d93443135e1059234888754e7ba7cf24",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "034",
+    "label": "missing/iterator/inclusive-u64",
+    "source": "pub fn main(){let x=(1u64..=3u64).iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "a33ab05cd3b874c1ee73f237b1d866d0ed36c59b8d52017b0c9f637a50c96586",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "035",
+    "label": "missing/iterator/inclusive-char",
+    "source": "pub fn main(){let x=('a'..='c').iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "b89d828444d3b42681085a6ef22a2dccf6dd51e325643df64a47ec1c91effa78",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "036",
+    "label": "missing/iterator/from-i64",
+    "source": "pub fn main(){let x=(1..).iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "40aca0308ba6f7c04fbec9f0c57bd07f016653a4eea8a9d2a56fd48c011fb57e",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "037",
+    "label": "missing/iterator/from-u64",
+    "source": "pub fn main(){let x=(1u64..).iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "0c6f779b071b59f82090ef9bfb5cb4263442408d919d17ec57356f6ebbb621f5",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "038",
+    "label": "missing/iterator/from-char",
+    "source": "pub fn main(){let x=('a'..).iter();x.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "062192a2bcdc200ebd11a219b49b03b9aada102ccfa75699bf94e6c75a30cfda",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "039",
+    "label": "semantics/zero-args",
+    "source": "pub fn main(){42.missing()}\npub fn c13_reuse(){7}",
+    "source_sha256": "6f007d851a0ff4d27ec0f03dd6fdaa72e3aa1cd63fce65936103cd6e26a4cbca",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "040",
+    "label": "semantics/argument-order",
+    "source": "pub fn main(){c13::tap(1,42).unrecognized(c13::tap(2,7),c13::tap(3,8))}\npub fn c13_reuse(){7}",
+    "source_sha256": "021a9a68bf936e13937c7313fdbc69833dbb8edadfcc03b8edb082fdd88b87e1",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "041",
+    "label": "semantics/many-arguments",
+    "source": "pub fn main(){42.unrecognized(c13::tap(1,1),c13::tap(2,2),c13::tap(3,3),c13::tap(4,4),c13::tap(5,5),c13::tap(6,6))}\npub fn c13_reuse(){7}",
+    "source_sha256": "46261f7451eaf12c3d55cfe0238e9afadd66679b44c6561645dd701220829c5c",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "042",
+    "label": "semantics/receiver-failure",
+    "source": "pub fn main(){(c13::tap(1,7)/0).unrecognized(c13::tap(2,8))}\npub fn c13_reuse(){7}",
+    "source_sha256": "6760e2e5838b6dd4105b0df818aef0e7ede402b5cc1708dbbefbc43b5f57815c",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "043",
+    "label": "semantics/argument-failure",
+    "source": "pub fn main(){c13::tap(1,42).unrecognized(c13::tap(2,7)/0,c13::tap(3,8))}\npub fn c13_reuse(){7}",
+    "source_sha256": "88d8937a5b476db2438852d2bf0e963da134767153abfe2e359169835a03e174",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "044",
+    "label": "semantics/argument-panic",
+    "source": "pub fn main(){42.unrecognized(panic!(\"argument\"))}\npub fn c13_reuse(){7}",
+    "source_sha256": "822fbaa03f1281ae1204ea828c39900dd6a7de46ddb38585e7c7d03316d74785",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "045",
+    "label": "semantics/receiver-return",
+    "source": "pub fn main(){(return 9).unrecognized(c13::tap(2,8))}\npub fn c13_reuse(){7}",
+    "source_sha256": "686b2a4f9aacfc06b5d8a3c33aca4709b2daf61f9fbf0971e14ad7edbcd06850",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "046",
+    "label": "semantics/generic-hash",
+    "source": "pub fn main(){42.unrecognized::<i64>()}\npub fn c13_reuse(){7}",
+    "source_sha256": "bee29ea324b74f75ac3b9bfa6ff6110f74ce93f6be87107fcf41879e78eb6fd1",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "047",
+    "label": "semantics/nested-frames",
+    "source": "fn inner(x){x.unrecognized()} fn outer(){inner(42)} pub fn main(){outer()}\npub fn c13_reuse(){7}",
+    "source_sha256": "2e01df69558b894b5930843737159e268347ce332c2fb4860c9a8eabd6dead66",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "048",
+    "label": "semantics/callback-frames",
+    "source": "pub fn main(){let f=|x|x.unrecognized();f(42)}\npub fn c13_reuse(){7}",
+    "source_sha256": "1b97423e1048a2b7d02506e95cc48f665436e032775c0c62c6c233394920623e",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "049",
+    "label": "semantics/different-name",
+    "source": "pub fn main(){42.c13_other_missing()}\npub fn c13_reuse(){7}",
+    "source_sha256": "467e89af18f77d978c99007a5a104bac981d64d3ea190e078a4d7fc1345fef0c",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "050",
+    "label": "refuse/registered/string-starts-with",
+    "source": "pub fn main(){\"abc\".starts_with(\"a\")}\npub fn c13_reuse(){7}",
+    "source_sha256": "763eb99ef143baa2db65a4ff11828b0be97ca5cd1a9ad8ffbbc26ba0f824e00b",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "051",
+    "label": "refuse/registered/object-contains-key",
+    "source": "pub fn main(){#{a:1}.contains_key(\"a\")}\npub fn c13_reuse(){7}",
+    "source_sha256": "d0288156b50723854e96c4bf3fa48bc25d57e4d56be2742d3873278fede6f424",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "052",
+    "label": "refuse/registered/vec-is-empty",
+    "source": "pub fn main(){[].is_empty()}\npub fn c13_reuse(){7}",
+    "source_sha256": "1923a7c0bcacc6138561b554a3a113007455cf82503a4ef0a198bc3cd9a642cd",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "053",
+    "label": "refuse/registered/option-unwrap",
+    "source": "pub fn main(){Some(7).unwrap()}\npub fn c13_reuse(){7}",
+    "source_sha256": "477362bdd9c20436a19019ca46707100706b7cd24f38c6661d401c9c1123597e",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "054",
+    "label": "refuse/registered/range-contains",
+    "source": "pub fn main(){(1..3).contains(2)}\npub fn c13_reuse(){7}",
+    "source_sha256": "fa5849a3bb4bd816da7b1adb5ab398fc831fbf587cca6ef8c3169d4431e7172d",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "055",
+    "label": "refuse/registered/protocol-alias-eq",
+    "source": "pub fn main(){1.eq(1)}\npub fn c13_reuse(){7}",
+    "source_sha256": "a06b669cbf7d145f865b13013bcf61bfc82f27037076a4306813e41cf172dca2",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "056",
+    "label": "refuse/registered/iterator-alias-next-back",
+    "source": "pub fn main(){[1,2].iter().next_back()}\npub fn c13_reuse(){7}",
+    "source_sha256": "0dd214f616da1d349cfc4c9d1c492feba1b8b8fc50b46b202b633882c8ca2372",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "057",
+    "label": "refuse/registered/iterator-name-on-scalar",
+    "source": "pub fn main(){42.next_back()}\npub fn c13_reuse(){7}",
+    "source_sha256": "d442805b61621ccbecbe4650cfcf77b0b3f281d5556ee6723ab33d25c44a4894",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "058",
+    "label": "refuse/registered/registered-other-receiver",
+    "source": "pub fn main(){42.starts_with(\"a\")}\npub fn c13_reuse(){7}",
+    "source_sha256": "702661c25f7dd7dbf6bcdb67b2745401a450678c8829e029e2e09de901ca860b",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "059",
+    "label": "refuse/registered/generic-registered-name",
+    "source": "pub fn main(){\"42\".parse::<i64>()}\npub fn c13_reuse(){7}",
+    "source_sha256": "495eb68457aee62409a10f2d2b1162a47c6800035eef6c8929fd1767490f7527",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "060",
+    "label": "refuse/registered/refusal-before-effects",
+    "source": "pub fn main(){c13::tap(1,7);Some(7).unwrap()}\npub fn c13_reuse(){7}",
+    "source_sha256": "daa6cf903bf2c7adc5206a5734a6a8f938d5e983337dd9363c6f7f8f58999946",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "061",
+    "label": "refuse/registered/dead-branch",
+    "source": "pub fn main(){if false{42.starts_with(\"x\");}7}\npub fn c13_reuse(){7}",
+    "source_sha256": "a029d25947379b3f46a7c8ca46c6be503c968b808f618584596f9cab6f4186db",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "062",
+    "label": "refuse/foreign/i64-provider/062",
+    "source": "pub fn main(){42.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "063",
+    "label": "refuse/foreign/i64-provider/063",
+    "source": "pub fn main(){\"x\".unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "96b8f5ce50febaebbefab1d21965131e13bd1e6f2ba161407b0222fdef5398c3",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "064",
+    "label": "refuse/foreign/bool-provider/064",
+    "source": "pub fn main(){true.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "2dd0759f3fef1f11d45c556e2636b9bb3cc8da0629e0b8386618fe1aa9f5907c",
+    "fixture": "bool-provider",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "065",
+    "label": "refuse/foreign/bool-provider/065",
+    "source": "pub fn main(){42.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "bool-provider",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "066",
+    "label": "refuse/foreign/unit-provider/066",
+    "source": "pub fn main(){().unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "2239c5185d0ccd61dec4cabf0ef6a127ffab8d73e914a781d1ec24acb2650e59",
+    "fixture": "unit-provider",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "067",
+    "label": "refuse/foreign/raw-i64-provider/067",
+    "source": "pub fn main(){42.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "068",
+    "label": "refuse/foreign/raw-i64-provider/068",
+    "source": "pub fn main(){\"x\".unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "96b8f5ce50febaebbefab1d21965131e13bd1e6f2ba161407b0222fdef5398c3",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "069",
+    "label": "refuse/foreign/failed-install-provider/069",
+    "source": "pub fn main(){42.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "failed-install-provider",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "070",
+    "label": "missing/opaque-provider-only",
+    "source": "pub fn main(){42.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "opaque-provider",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "071",
+    "label": "missing/foreign-other-name",
+    "source": "pub fn main(){42.c13_other_missing()}\npub fn c13_reuse(){7}",
+    "source_sha256": "467e89af18f77d978c99007a5a104bac981d64d3ea190e078a4d7fc1345fef0c",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "072",
+    "label": "shadow/script/actual",
+    "source": "struct Local; impl Local{fn unrecognized(self){23}} pub fn main(){Local.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "c9e7daa018dc0715dda1b5b043b85cedcfd55547b4f213b254def3feb0f716c4",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "073",
+    "label": "shadow/script/other-receiver",
+    "source": "struct Local; impl Local{fn unrecognized(self){23}} pub fn main(){42.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "38f7b50030e6bfee00e8361aca4a2fd79cb2100aa8a5952a63f819417378d02e",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "074",
+    "label": "shadow/script/unreachable",
+    "source": "struct Local; impl Local{fn unrecognized(self){23}} pub fn main(){if false{Local.unrecognized()}else{42.unrecognized()}}\npub fn c13_reuse(){7}",
+    "source_sha256": "6358aefc12107fecd49d4792be3bbb8a5d4a31764d99c965d383179c6c1016ad",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "075",
+    "label": "shadow/script/associated-not-instance",
+    "source": "struct Local; impl Local{fn unrecognized(){23}} pub fn main(){42.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "e8d92bc4cfd444d2c41755854a0ed94269ed90661a12d3c994b5ca9569544770",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "076",
+    "label": "shadow/script/context-before-unit",
+    "source": "struct Local; impl Local{fn unrecognized(self){23}} pub fn main(){Local.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "c9e7daa018dc0715dda1b5b043b85cedcfd55547b4f213b254def3feb0f716c4",
+    "fixture": "raw-local-provider",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "077",
+    "label": "shadow/script/unrelated-top-level",
+    "source": "fn unrecognized(){23} pub fn main(){42.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "898a59a3fe163e2b421b3d285ee4fe48a10aa1d7727fa5016f25eb35214dbde3",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "078",
+    "label": "shadow/script/unrelated-method-name",
+    "source": "struct Local; impl Local{fn unrecognized(self){23}} pub fn main(){42.c13_other_missing()}\npub fn c13_reuse(){7}",
+    "source_sha256": "2d3dfc0d69716fc39c61d234053e999546a9aeeb8ecd8fa83005ee677d3e1aa8",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "missing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "079",
+    "label": "shadow/script/nested-module",
+    "source": "mod hidden{pub struct Local; impl Local{fn unrecognized(self){23}}} pub fn main(){42.unrecognized()}\npub fn c13_reuse(){7}",
+    "source_sha256": "a4b97358de5ccdba258e8bc9228b9e44c4ca1ccd368861121cd6d8b35649ee77",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "refuse-method",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "080",
+    "label": "control/plain",
+    "source": "pub fn main(){7}\npub fn c13_reuse(){7}",
+    "source_sha256": "3b1efe8cc656153a426f984ae28e889022ce1af5b58d14abda6c4e521a23c86d",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "existing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "081",
+    "label": "control/fast-len-push",
+    "source": "pub fn main(){let v=[];v.push(7);v.len()}\npub fn c13_reuse(){7}",
+    "source_sha256": "83008ebe521f453c43c1b554f9cec51ad6efad315881c040fd693f64c5f6f5d0",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "existing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "082",
+    "label": "control/fast-numeric",
+    "source": "pub fn main(){(-7).abs()}\npub fn c13_reuse(){7}",
+    "source_sha256": "c82c0a05681cef6d4d908c612a5b200d5ba614895e6019ea8c03f18b53dd8408",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "existing",
+    "provisional": "observe stock before dispositions"
+  },
+  {
+    "id": "083",
+    "label": "control/fast-iterator-any",
+    "source": "pub fn main(){[1,2].iter().any(|x|x==2)}\npub fn c13_reuse(){7}",
+    "source_sha256": "b2a9b09f2e63ba0815eb57cf710aa3f041d1db6e0e929d578f84f9f0accf4fa2",
+    "fixture": "default",
+    "fuel": 200000,
+    "proposed_surface": "existing",
+    "provisional": "observe stock before dispositions"
+  }
+]

@@ -1589,3 +1589,6 @@ mod small_forms;
 
 #[path = "gap_hunt/captures.rs"]
 mod captures;
+
+#[path = "gap_hunt/methods.rs"]
+mod methods;

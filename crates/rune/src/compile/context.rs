@@ -1766,3 +1766,15 @@ mod c12_iter_certificates {
 		assert!(cx.fresh_iter_method(Name::Next));
 	}
 }
+
+// C13 stock-oracle raw-hash insertion fixture. Test-only; no product API.
+#[cfg(test)]
+impl Context {
+	pub(crate) fn c13_insert_raw_fixture(
+		&mut self,
+		hash: Hash,
+		handler: FunctionHandler,
+	) -> Result<(), ContextError> {
+		self.insert_native_fn(&"C13 raw fixture", hash, &handler, None)
+	}
+}

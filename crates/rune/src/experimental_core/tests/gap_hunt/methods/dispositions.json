@@ -1,0 +1,4067 @@
+{
+  "000": {
+    "index": 0,
+    "label": "missing/core17/i64",
+    "source_sha256": "8610352c464356b0b13d3942f374e40acd75de698e0df811c8475bd48899519c",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "c2138c621006560d3702b546015d6330f27431f1d0c25ffe8125641ee215f2aa",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 3, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "001": {
+    "index": 1,
+    "label": "missing/core17/u64",
+    "source_sha256": "80b8166f3e24a86a91cd69cef2fa8855c5e3b35c68bc4bfe043562d3278a20ef",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "552baa0af3dc878995ae509001b5207f6e633d32a96ad87a7f6550bcc83251a5",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x97550c8b68af2f3e` for `std::u64`",
+        "kind": "MissingInstanceFunction { hash: 0x97550c8b68af2f3e, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xb41669ccb4fdb76a }) }",
+        "missing": {
+          "hash": "0x97550c8b68af2f3e",
+          "instance": "0xb41669ccb4fdb76a",
+          "instance_name": "std::u64"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 3, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "002": {
+    "index": 2,
+    "label": "missing/core17/f64",
+    "source_sha256": "65d970acdbc86bdc8f922d7267bd8dc115d2813d2d255a477cf597658ac3e760",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "74379b4e9c2af72aa1fa5909db5953a29fc63119d63247f0f26e9b8b932a6a77",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x9af1497f4f761765` for `std::f64`",
+        "kind": "MissingInstanceFunction { hash: 0x9af1497f4f761765, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xb9b22c3893248f31 }) }",
+        "missing": {
+          "hash": "0x9af1497f4f761765",
+          "instance": "0xb9b22c3893248f31",
+          "instance_name": "std::f64"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 3, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "003": {
+    "index": 3,
+    "label": "missing/core17/char",
+    "source_sha256": "5d6a3f4382b142988073754d1663dc509a24d27d27f5684ff42ebd6c15e04306",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "857584d186cb1e4385be1b7d49abf0a4841d787e8282cabe0c49f6555c16aca8",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x20d6ed225d18c64` for `std::char`",
+        "kind": "MissingInstanceFunction { hash: 0x20d6ed225d18c64, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x214e0b95f9831430 }) }",
+        "missing": {
+          "hash": "0x20d6ed225d18c64",
+          "instance": "0x214e0b95f9831430",
+          "instance_name": "std::char"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 3, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "004": {
+    "index": 4,
+    "label": "missing/core17/ordering",
+    "source_sha256": "9ce69866f9c532e04b1515aacbbc01e567f49a795d818506824e53aa1c197692",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "5b5777fc94ca30a268ea54eaa2f71aac43e3fb42e69d566552b5160bc3923c32",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x1391298426417ce3` for `std::cmp::Ordering`",
+        "kind": "MissingInstanceFunction { hash: 0x1391298426417ce3, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x30d24cc3fa13e4b7 }) }",
+        "missing": {
+          "hash": "0x1391298426417ce3",
+          "instance": "0x30d24cc3fa13e4b7",
+          "instance_name": "std::cmp::Ordering"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 3, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "005": {
+    "index": 5,
+    "label": "missing/core17/string",
+    "source_sha256": "fe08cf4df24f699fa9c4295649aa06291a1b8e0d2051794313031d1888f5ce27",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "7103cc6280fa0dd327bc86bfa777801026dc5882da0fe31b4d3a6a3a45860093",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x21b7174aea802f58` for `std::string::String`",
+        "kind": "MissingInstanceFunction { hash: 0x21b7174aea802f58, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }) }",
+        "missing": {
+          "hash": "0x21b7174aea802f58",
+          "instance": "0x2f4720d36d2b70c",
+          "instance_name": "std::string::String"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 3, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "006": {
+    "index": 6,
+    "label": "missing/core17/vec",
+    "source_sha256": "a00daf7fb5b51e2452cd8c6466975253bca286d2dee56a2cd522768e3d1469fd",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "c6137436953d72de43751bb566fe45cdb961122660c46aa0bb867f35022aa5fc",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xe2587b3146b80ca6` for `std::vec::Vec`",
+        "kind": "MissingInstanceFunction { hash: 0xe2587b3146b80ca6, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc11b1e769aea94f2 }) }",
+        "missing": {
+          "hash": "0xe2587b3146b80ca6",
+          "instance": "0xc11b1e769aea94f2",
+          "instance_name": "std::vec::Vec"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 5, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "007": {
+    "index": 7,
+    "label": "missing/core17/tuple",
+    "source_sha256": "b58bd798816f1b6eb7172538f519f2f66a3a91fc69f5078e5fe208a8977f9254",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "80b5b41a4c6ff1f9a684c0eb48a684656710a982da4d2ab277f1cc35f209003a",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xddf53e789b0736a4` for `std::tuple::Tuple`",
+        "kind": "MissingInstanceFunction { hash: 0xddf53e789b0736a4, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xfeb65b3f4755aef0 }) }",
+        "missing": {
+          "hash": "0xddf53e789b0736a4",
+          "instance": "0xfeb65b3f4755aef0",
+          "instance_name": "std::tuple::Tuple"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 5, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "008": {
+    "index": 8,
+    "label": "missing/core17/object",
+    "source_sha256": "92067de8cd6d40590461813ca23d4f7b4d1b09cb71a2a95552281534e621a548",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "fc54c8ad64047100600c39f59b59d0ce6494e3e1fe850efbc3de3b3baccd9776",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xc1f493045461871` for `std::object::Object`",
+        "kind": "MissingInstanceFunction { hash: 0xc1f493045461871, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f5c2c7799148025 }) }",
+        "missing": {
+          "hash": "0xc1f493045461871",
+          "instance": "0x2f5c2c7799148025",
+          "instance_name": "std::object::Object"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 4, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "009": {
+    "index": 9,
+    "label": "missing/core17/option",
+    "source_sha256": "0919d1161687c9e89aa7c73e8f5e1ba2109c57c93a258fe328cb177610153a71",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "fbafb57ee599850c9587659eefd68a2ef410263ce16e552674e594723c4b0363",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xe3d6ea63b24ba62c` for `std::option::Option`",
+        "kind": "MissingInstanceFunction { hash: 0xe3d6ea63b24ba62c, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc0958f246e193e78 }) }",
+        "missing": {
+          "hash": "0xe3d6ea63b24ba62c",
+          "instance": "0xc0958f246e193e78",
+          "instance_name": "std::option::Option"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 4, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "010": {
+    "index": 10,
+    "label": "missing/core17/result",
+    "source_sha256": "73dab18cd6ba57e425aabfbf50fb02df580b51c29eb87870d785178cdd0ba3a2",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "b1769c4da7afd6cd9017212357867549b14e6bce9ab0ceabf8f56cb4118564cb",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3a3b8fa1695800bb` for `std::result::Result`",
+        "kind": "MissingInstanceFunction { hash: 0x3a3b8fa1695800bb, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1978eae6b50a98ef }) }",
+        "missing": {
+          "hash": "0x3a3b8fa1695800bb",
+          "instance": "0x1978eae6b50a98ef",
+          "instance_name": "std::result::Result"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 4, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "011": {
+    "index": 11,
+    "label": "missing/core17/range",
+    "source_sha256": "e34a4071c9751dbc4ea4f00ce5ad182498c91669b14f3933dfa24f6f6be89e2f",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "ef6cf27fba179c9d8b9ec9cefb4e349103532d89f6d86b90600ddc0445c28ff3",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x534951fb0a3194ee` for `std::ops::Range`",
+        "kind": "MissingInstanceFunction { hash: 0x534951fb0a3194ee, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x700a34bcd6630cba }) }",
+        "missing": {
+          "hash": "0x534951fb0a3194ee",
+          "instance": "0x700a34bcd6630cba",
+          "instance_name": "std::ops::Range"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 5, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "012": {
+    "index": 12,
+    "label": "missing/core17/range-from",
+    "source_sha256": "40ee3f5e35b27b380d77cf830056f7df6cd998a8c4eb0fc5e37d78a1344646fc",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "15689577e09333faa70b89f9b0750dfff82d9501cd43c934a1fb101321d41eff",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x7db5b8d2d62403ca` for `std::ops::RangeFrom`",
+        "kind": "MissingInstanceFunction { hash: 0x7db5b8d2d62403ca, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x5ef6dd950a769b9e }) }",
+        "missing": {
+          "hash": "0x7db5b8d2d62403ca",
+          "instance": "0x5ef6dd950a769b9e",
+          "instance_name": "std::ops::RangeFrom"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 4, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "013": {
+    "index": 13,
+    "label": "missing/core17/range-full",
+    "source_sha256": "b0c292df05d06b1dce16bd123e12e2bede6313b0cd0eec3fabeec65bb9d77585",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "ac1cd2a132d4cc7a8286df96d81110cf9a0034bcfded83346dab5938e3b9d3e3",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xe22e5bca5a20a448` for `std::ops::RangeFull`",
+        "kind": "MissingInstanceFunction { hash: 0xe22e5bca5a20a448, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc16d3e8d86723c1c }) }",
+        "missing": {
+          "hash": "0xe22e5bca5a20a448",
+          "instance": "0xc16d3e8d86723c1c",
+          "instance_name": "std::ops::RangeFull"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 3, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "014": {
+    "index": 14,
+    "label": "missing/core17/range-inclusive",
+    "source_sha256": "5cc7a5dddee07f3af6aa3e58019826e5b48905ef6c268306231eaaa7c152e80d",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "82bcda12f0b081de2b6b38540dd628973c93d906414abfbce1e1a0333a19faaf",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x26cda2bfdefeef7c` for `std::ops::RangeInclusive`",
+        "kind": "MissingInstanceFunction { hash: 0x26cda2bfdefeef7c, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x58ec7f802ac7728 }) }",
+        "missing": {
+          "hash": "0x26cda2bfdefeef7c",
+          "instance": "0x58ec7f802ac7728",
+          "instance_name": "std::ops::RangeInclusive"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 5, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "015": {
+    "index": 15,
+    "label": "missing/core17/range-to-inclusive",
+    "source_sha256": "08d113d251293d7cf3364d8c8c38d683ca6dd819b5e35b5bda489d9cbbf278b5",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "a0fff4459717f20524762c21bdd44456ad05282309e7be5219a5d705b188451c",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xf72d7189409171fa` for `std::ops::RangeToInclusive`",
+        "kind": "MissingInstanceFunction { hash: 0xf72d7189409171fa, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xd46e14ce9cc3e9ae }) }",
+        "missing": {
+          "hash": "0xf72d7189409171fa",
+          "instance": "0xd46e14ce9cc3e9ae",
+          "instance_name": "std::ops::RangeToInclusive"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 4, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "016": {
+    "index": 16,
+    "label": "missing/core17/range-to",
+    "source_sha256": "23bf4d4f5c946f48a950dace87de717730d4d28803f7f52949e4377e5f349ba5",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "047cc41f9663d2db3f78d9d934c912333ed6864641c47790cbee8cabd6495306",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xd7ce48040c474be3` for `std::ops::RangeTo`",
+        "kind": "MissingInstanceFunction { hash: 0xd7ce48040c474be3, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xf48d2d43d015d3b7 }) }",
+        "missing": {
+          "hash": "0xd7ce48040c474be3",
+          "instance": "0xf48d2d43d015d3b7",
+          "instance_name": "std::ops::RangeTo"
+        },
+        "sites": [
+          {
+            "end": 24,
+            "frames": "[CallFrame { ip: 4, top: 0, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 8
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "017": {
+    "index": 17,
+    "label": "missing/extra/unit",
+    "source_sha256": "60242c90c43e3836bc2935f8c2626aed56c2806e69559e82f5bbed2cb0946faa",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "aad46f7f70798b53b809a28aaebf9f63b0d9d808a260ec31e126941a7a400a63",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xddf53e789b0736a4` for `std::tuple::Tuple`",
+        "kind": "MissingInstanceFunction { hash: 0xddf53e789b0736a4, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xfeb65b3f4755aef0 }) }",
+        "missing": {
+          "hash": "0xddf53e789b0736a4",
+          "instance": "0xfeb65b3f4755aef0",
+          "instance_name": "std::tuple::Tuple"
+        },
+        "sites": [
+          {
+            "end": 39,
+            "frames": "[]",
+            "source": 0,
+            "start": 23
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "018": {
+    "index": 18,
+    "label": "missing/extra/bool",
+    "source_sha256": "2dd0759f3fef1f11d45c556e2636b9bb3cc8da0629e0b8386618fe1aa9f5907c",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "6dab0cd7bda4f861e7c2de5badd546459658c4b5b575c2254f063e55e502cc00",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xbb50569886e99c6b` for `std::bool`",
+        "kind": "MissingInstanceFunction { hash: 0xbb50569886e99c6b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x981333df5abb043f }) }",
+        "missing": {
+          "hash": "0xbb50569886e99c6b",
+          "instance": "0x981333df5abb043f",
+          "instance_name": "std::bool"
+        },
+        "sites": [
+          {
+            "end": 33,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "019": {
+    "index": 19,
+    "label": "missing/extra/type-value",
+    "source_sha256": "3f54fa9f38e824066128f82745cc35709d5bd38184a38bc9253d77850fa18065",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "490beb7dcc7b1f52347f248d5b2a7a3958d3377ad9f13c5a49be7ad29761a1cb",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x9e3faa3e0c5c7914` for `std::any::Type`",
+        "kind": "MissingInstanceFunction { hash: 0x9e3faa3e0c5c7914, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xbd7ccf79d00ee140 }) }",
+        "missing": {
+          "hash": "0x9e3faa3e0c5c7914",
+          "instance": "0xbd7ccf79d00ee140",
+          "instance_name": "std::any::Type"
+        },
+        "sites": [
+          {
+            "end": 40,
+            "frames": "[]",
+            "source": 0,
+            "start": 24
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "020": {
+    "index": 20,
+    "label": "missing/extra/plain-function",
+    "source_sha256": "4c3c521e4ee6da5cc24a9c4eeaf9f2a242097e3a14d46c92312f57fea0706fb7",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "e76fcb312dc2d4b90f3f0aa0095cfc7a74b3c9ba83d06d79bf62baf34bc6a985",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x2148e517c948b001` for `std::ops::Function`",
+        "kind": "MissingInstanceFunction { hash: 0x2148e517c948b001, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x20b8050151a2855 }) }",
+        "missing": {
+          "hash": "0x2148e517c948b001",
+          "instance": "0x20b8050151a2855",
+          "instance_name": "std::ops::Function"
+        },
+        "sites": [
+          {
+            "end": 48,
+            "frames": "[]",
+            "source": 0,
+            "start": 32
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "021": {
+    "index": 21,
+    "label": "missing/extra/capturing-function",
+    "source_sha256": "db84b8dbe8367a843d8ec1ec9ffce4d3b1dec508b649359e914cd068ee54b8d0",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "a79be2aa5173cae1575f16b5aee8eb4f6c274451ec081a20b45f552879cd8a8e",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x2148e517c948b001` for `std::ops::Function`",
+        "kind": "MissingInstanceFunction { hash: 0x2148e517c948b001, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x20b8050151a2855 }) }",
+        "missing": {
+          "hash": "0x2148e517c948b001",
+          "instance": "0x20b8050151a2855",
+          "instance_name": "std::ops::Function"
+        },
+        "sites": [
+          {
+            "end": 48,
+            "frames": "[]",
+            "source": 0,
+            "start": 32
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "022": {
+    "index": 22,
+    "label": "missing/extra/unit-struct",
+    "source_sha256": "38dcbca034787d2c027cfbf286244f6011fbf348cd3e582a8eec36fa72bf4a2e",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "c566ae7bf488e97addda879a131dfbc033f8eb46bdb3f9d69d9e1b253ef28f34",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x11a01929ed9cca35` for `Local`",
+        "kind": "MissingInstanceFunction { hash: 0x11a01929ed9cca35, instance: Runtime(Rtti { kind: Empty, hash: 0x32e37c6e31ce5261, variant_hash: 0x0, item: Local, fields: {} }) }",
+        "missing": {
+          "hash": "0x11a01929ed9cca35",
+          "instance": "0x32e37c6e31ce5261",
+          "instance_name": "Local"
+        },
+        "sites": [
+          {
+            "end": 48,
+            "frames": "[]",
+            "source": 0,
+            "start": 28
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "023": {
+    "index": 23,
+    "label": "missing/extra/tuple-struct",
+    "source_sha256": "017e0d15e00fe806c5b6bb318ff7f4de1b5b6180f1766b523e098bade68a0a40",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "778b0c455a18132491f16fc62b445177b5dea3b995618109e7578ede95f995e8",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x11a01929ed9cca35` for `Local`",
+        "kind": "MissingInstanceFunction { hash: 0x11a01929ed9cca35, instance: Runtime(Rtti { kind: Tuple, hash: 0x32e37c6e31ce5261, variant_hash: 0x0, item: Local, fields: {} }) }",
+        "missing": {
+          "hash": "0x11a01929ed9cca35",
+          "instance": "0x32e37c6e31ce5261",
+          "instance_name": "Local"
+        },
+        "sites": [
+          {
+            "end": 54,
+            "frames": "[]",
+            "source": 0,
+            "start": 31
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "024": {
+    "index": 24,
+    "label": "missing/extra/named-struct",
+    "source_sha256": "f896c74a9c01e5121e0b7720cc17348d5e6a2148cff468aa4d862448cf5be559",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "54969a08686468a45cc094510592c882d4b12238d1f809795a44786407f9a18d",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x11a01929ed9cca35` for `Local`",
+        "kind": "MissingInstanceFunction { hash: 0x11a01929ed9cca35, instance: Runtime(Rtti { kind: Struct, hash: 0x32e37c6e31ce5261, variant_hash: 0x0, item: Local, fields: {\"n\": 0} }) }",
+        "missing": {
+          "hash": "0x11a01929ed9cca35",
+          "instance": "0x32e37c6e31ce5261",
+          "instance_name": "Local"
+        },
+        "sites": [
+          {
+            "end": 55,
+            "frames": "[]",
+            "source": 0,
+            "start": 30
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "025": {
+    "index": 25,
+    "label": "missing/extra/unit-variant",
+    "source_sha256": "d5658e1fd0e7ce7360f9f2a165e7cbd969f33d43684c6b70cfbfec8a92f9a01f",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "171ea630747a6459ed18f30b63cf09258bfca920ae7cbebc794bf12ba67e1a02",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x11a01929ed9cca35` for `Local::A`",
+        "kind": "MissingInstanceFunction { hash: 0x11a01929ed9cca35, instance: Runtime(Rtti { kind: Empty, hash: 0x32e37c6e31ce5261, variant_hash: 0x6125b118ca97c1b8, item: Local::A, fields: {} }) }",
+        "missing": {
+          "hash": "0x11a01929ed9cca35",
+          "instance": "0x32e37c6e31ce5261",
+          "instance_name": "Local::A"
+        },
+        "sites": [
+          {
+            "end": 51,
+            "frames": "[]",
+            "source": 0,
+            "start": 28
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "026": {
+    "index": 26,
+    "label": "missing/extra/tuple-variant",
+    "source_sha256": "308d94058f3d8d48d2c5bb7540a5c697636836684ddd654c521ff53b746f6bd0",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "a8402a09a06a178f8a5b35b95c213a7af814630b269aaba8f179228d43d0b5bc",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x11a01929ed9cca35` for `Local::A`",
+        "kind": "MissingInstanceFunction { hash: 0x11a01929ed9cca35, instance: Runtime(Rtti { kind: Tuple, hash: 0x32e37c6e31ce5261, variant_hash: 0x6125b118ca97c1b8, item: Local::A, fields: {} }) }",
+        "missing": {
+          "hash": "0x11a01929ed9cca35",
+          "instance": "0x32e37c6e31ce5261",
+          "instance_name": "Local::A"
+        },
+        "sites": [
+          {
+            "end": 57,
+            "frames": "[]",
+            "source": 0,
+            "start": 31
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "027": {
+    "index": 27,
+    "label": "missing/extra/named-variant",
+    "source_sha256": "6ec4f0dfada9b29e0aef01037a154099d4aae5ecfd26b095e457c496d8b26d19",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "222c3d54fddc4481ac5c7c45b6e01f0ee8e2638a37d120c0675febc6bacc3618",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x11a01929ed9cca35` for `Local::A`",
+        "kind": "MissingInstanceFunction { hash: 0x11a01929ed9cca35, instance: Runtime(Rtti { kind: Struct, hash: 0x32e37c6e31ce5261, variant_hash: 0x6125b118ca97c1b8, item: Local::A, fields: {\"n\": 0} }) }",
+        "missing": {
+          "hash": "0x11a01929ed9cca35",
+          "instance": "0x32e37c6e31ce5261",
+          "instance_name": "Local::A"
+        },
+        "sites": [
+          {
+            "end": 59,
+            "frames": "[]",
+            "source": 0,
+            "start": 31
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "028": {
+    "index": 28,
+    "label": "missing/iterator/vec",
+    "source_sha256": "de839cd940b38b787280a59c88097193df25903f423d7c9c65ec1dddf3d4ccc2",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "a629514ec29aaec2789f44adaed19bdedd75ef913e416684effd05782b98acd8",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xd76207a55146b005` for `std::slice::Iter`",
+        "kind": "MissingInstanceFunction { hash: 0xd76207a55146b005, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xf42162e28d142851 }) }",
+        "missing": {
+          "hash": "0xd76207a55146b005",
+          "instance": "0xf42162e28d142851",
+          "instance_name": "std::slice::Iter"
+        },
+        "sites": [
+          {
+            "end": 49,
+            "frames": "[]",
+            "source": 0,
+            "start": 33
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "029": {
+    "index": 29,
+    "label": "missing/iterator/option",
+    "source_sha256": "2d1a96c59ba4ff771f02df050ada3d7db77e677fb240986941cdda6205356523",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "dfad61fa6d3541faceb56ca6f8fc235cd5e2c933e65637f7de43c47bc93b7749",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xccb2283b4e4110fb` for `std::option::Iter`",
+        "kind": "MissingInstanceFunction { hash: 0xccb2283b4e4110fb, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xeff14d7c921388af }) }",
+        "missing": {
+          "hash": "0xccb2283b4e4110fb",
+          "instance": "0xeff14d7c921388af",
+          "instance_name": "std::option::Iter"
+        },
+        "sites": [
+          {
+            "end": 51,
+            "frames": "[]",
+            "source": 0,
+            "start": 35
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "030": {
+    "index": 30,
+    "label": "missing/iterator/range-i64",
+    "source_sha256": "0ba9e652b976c918da53de61650f57634e66bf6b8a6d871557f63c164d403cfc",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "686da4a8e103e52f652585caaedaa2d2cbb062aaf80513671dace639fc65fd9b",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xe7ead768c94e419d` for `std::ops::RangeIter<std::i64>`",
+        "kind": "MissingInstanceFunction { hash: 0xe7ead768c94e419d, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc4a9b22f151cd9c9 }) }",
+        "missing": {
+          "hash": "0xe7ead768c94e419d",
+          "instance": "0xc4a9b22f151cd9c9",
+          "instance_name": "std::ops::RangeIter<std::i64>"
+        },
+        "sites": [
+          {
+            "end": 50,
+            "frames": "[]",
+            "source": 0,
+            "start": 34
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "031": {
+    "index": 31,
+    "label": "missing/iterator/range-u64",
+    "source_sha256": "4e3b460cb785a7caa9bb08aca9e9cdb96d87107d4c7579b09a28dd7b0b4d6c66",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "120308f05a42071da79a09261840ab04c684335187fc8c3f6bd8fdccca5515ee",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x1fa0aaf1626b419d` for `std::ops::RangeIter<std::u64>`",
+        "kind": "MissingInstanceFunction { hash: 0x1fa0aaf1626b419d, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x3ce3cfb6be39d9c9 }) }",
+        "missing": {
+          "hash": "0x1fa0aaf1626b419d",
+          "instance": "0x3ce3cfb6be39d9c9",
+          "instance_name": "std::ops::RangeIter<std::u64>"
+        },
+        "sites": [
+          {
+            "end": 56,
+            "frames": "[]",
+            "source": 0,
+            "start": 40
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "032": {
+    "index": 32,
+    "label": "missing/iterator/range-char",
+    "source_sha256": "f2504886a8e1f0c87e3ccc08162d5547aeb8cf28a046cdedcc49d345546dfb10",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "4181c7241e5da5632767a844b0a68f27479aee982cd3527cc04df05cde5b6f3b",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x7df9e78fc131419d` for `std::ops::RangeIter<std::char>`",
+        "kind": "MissingInstanceFunction { hash: 0x7df9e78fc131419d, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x5eba82c81d63d9c9 }) }",
+        "missing": {
+          "hash": "0x7df9e78fc131419d",
+          "instance": "0x5eba82c81d63d9c9",
+          "instance_name": "std::ops::RangeIter<std::char>"
+        },
+        "sites": [
+          {
+            "end": 54,
+            "frames": "[]",
+            "source": 0,
+            "start": 38
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "033": {
+    "index": 33,
+    "label": "missing/iterator/inclusive-i64",
+    "source_sha256": "4b6a53f7e20218917680b05c251237f3d93443135e1059234888754e7ba7cf24",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "cb0dc087c82ee249bd3f4fde0b1eec902592950548f008fdf609142bf1036ce2",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xa51e2f1ad507383e` for `std::ops::RangeInclusiveIter<std::i64>`",
+        "kind": "MissingInstanceFunction { hash: 0xa51e2f1ad507383e, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x865d4a5d0955a06a }) }",
+        "missing": {
+          "hash": "0xa51e2f1ad507383e",
+          "instance": "0x865d4a5d0955a06a",
+          "instance_name": "std::ops::RangeInclusiveIter<std::i64>"
+        },
+        "sites": [
+          {
+            "end": 51,
+            "frames": "[]",
+            "source": 0,
+            "start": 35
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "034": {
+    "index": 34,
+    "label": "missing/iterator/inclusive-u64",
+    "source_sha256": "a33ab05cd3b874c1ee73f237b1d866d0ed36c59b8d52017b0c9f637a50c96586",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "52bf19b1396478546c8fc982101d43c5c4c72474fe8f9d5d1ec99b509fcf28bf",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x5d5452837e22383e` for `std::ops::RangeInclusiveIter<std::u64>`",
+        "kind": "MissingInstanceFunction { hash: 0x5d5452837e22383e, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x7e1737c4a270a06a }) }",
+        "missing": {
+          "hash": "0x5d5452837e22383e",
+          "instance": "0x7e1737c4a270a06a",
+          "instance_name": "std::ops::RangeInclusiveIter<std::u64>"
+        },
+        "sites": [
+          {
+            "end": 57,
+            "frames": "[]",
+            "source": 0,
+            "start": 41
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "035": {
+    "index": 35,
+    "label": "missing/iterator/inclusive-char",
+    "source_sha256": "b89d828444d3b42681085a6ef22a2dccf6dd51e325643df64a47ec1c91effa78",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "8ebf9eae504cf87ae1dfad1a561464d268915d64827689982a4eda0b97807bfd",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3f0d1ffddd78383e` for `std::ops::RangeInclusiveIter<std::char>`",
+        "kind": "MissingInstanceFunction { hash: 0x3f0d1ffddd78383e, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1c4e7aba012aa06a }) }",
+        "missing": {
+          "hash": "0x3f0d1ffddd78383e",
+          "instance": "0x1c4e7aba012aa06a",
+          "instance_name": "std::ops::RangeInclusiveIter<std::char>"
+        },
+        "sites": [
+          {
+            "end": 55,
+            "frames": "[]",
+            "source": 0,
+            "start": 39
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "036": {
+    "index": 36,
+    "label": "missing/iterator/from-i64",
+    "source_sha256": "40aca0308ba6f7c04fbec9f0c57bd07f016653a4eea8a9d2a56fd48c011fb57e",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "6db54909f47c218df3158edb9c4fc113bc4ea6515e2ab718d87df18e26b585a5",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x1f96d0dbd230ffb8` for `std::ops::RangeFromIter<std::i64>`",
+        "kind": "MissingInstanceFunction { hash: 0x1f96d0dbd230ffb8, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x3cd5b59c0e6267ec }) }",
+        "missing": {
+          "hash": "0x1f96d0dbd230ffb8",
+          "instance": "0x3cd5b59c0e6267ec",
+          "instance_name": "std::ops::RangeFromIter<std::i64>"
+        },
+        "sites": [
+          {
+            "end": 49,
+            "frames": "[]",
+            "source": 0,
+            "start": 33
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "037": {
+    "index": 37,
+    "label": "missing/iterator/from-u64",
+    "source_sha256": "0c6f779b071b59f82090ef9bfb5cb4263442408d919d17ec57356f6ebbb621f5",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "09ec5328273df549e3d25ea369444654282e9985b55b0f12e822d8f86d57d347",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xe7dcad427915ffb8` for `std::ops::RangeFromIter<std::u64>`",
+        "kind": "MissingInstanceFunction { hash: 0xe7dcad427915ffb8, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xc49fc805a54767ec }) }",
+        "missing": {
+          "hash": "0xe7dcad427915ffb8",
+          "instance": "0xc49fc805a54767ec",
+          "instance_name": "std::ops::RangeFromIter<std::u64>"
+        },
+        "sites": [
+          {
+            "end": 52,
+            "frames": "[]",
+            "source": 0,
+            "start": 36
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "038": {
+    "index": 38,
+    "label": "missing/iterator/from-char",
+    "source_sha256": "062192a2bcdc200ebd11a219b49b03b9aada102ccfa75699bf94e6c75a30cfda",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "6302737459347703f1cbc1ef02d9702f26ce25d672d1af4be2ba9e7f519a7688",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x8585e03cda4fffb8` for `std::ops::RangeFromIter<std::char>`",
+        "kind": "MissingInstanceFunction { hash: 0x8585e03cda4fffb8, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0xa6c6857b061d67ec }) }",
+        "missing": {
+          "hash": "0x8585e03cda4fffb8",
+          "instance": "0xa6c6857b061d67ec",
+          "instance_name": "std::ops::RangeFromIter<std::char>"
+        },
+        "sites": [
+          {
+            "end": 51,
+            "frames": "[]",
+            "source": 0,
+            "start": 35
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "039": {
+    "index": 39,
+    "label": "semantics/zero-args",
+    "source_sha256": "6f007d851a0ff4d27ec0f03dd6fdaa72e3aa1cd63fce65936103cd6e26a4cbca",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "51e18559e59a1f5775966735323036dbf5343963bdc04851d98f2d5077c4bcc0",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xff0afefdd65e03a7` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0xff0afefdd65e03a7, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0xff0afefdd65e03a7",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 26,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "040": {
+    "index": 40,
+    "label": "semantics/argument-order",
+    "source_sha256": "021a9a68bf936e13937c7313fdbc69833dbb8edadfcc03b8edb082fdd88b87e1",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "b6e10ec8667c9e611b72b75af4c00aaa87b844cf615d6745b44560e63e16050d",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "42"
+        },
+        {
+          "kind": "i64",
+          "tag": 2,
+          "value": "7"
+        },
+        {
+          "kind": "i64",
+          "tag": 3,
+          "value": "8"
+        }
+      ],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 70,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "041": {
+    "index": 41,
+    "label": "semantics/many-arguments",
+    "source_sha256": "46261f7451eaf12c3d55cfe0238e9afadd66679b44c6561645dd701220829c5c",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "971e2a3a503880aaf79024e9d029e7170454914c46e60172102d38d85aca6b25",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "1"
+        },
+        {
+          "kind": "i64",
+          "tag": 2,
+          "value": "2"
+        },
+        {
+          "kind": "i64",
+          "tag": 3,
+          "value": "3"
+        },
+        {
+          "kind": "i64",
+          "tag": 4,
+          "value": "4"
+        },
+        {
+          "kind": "i64",
+          "tag": 5,
+          "value": "5"
+        },
+        {
+          "kind": "i64",
+          "tag": 6,
+          "value": "6"
+        }
+      ],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 114,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "042": {
+    "index": 42,
+    "label": "semantics/receiver-failure",
+    "source_sha256": "6760e2e5838b6dd4105b0df818aef0e7ede402b5cc1708dbbefbc43b5f57815c",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "b3adddb171cbb7a93b2b31c85aedea6acc6479043fb880f07ca786a73f9cd14d",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "7"
+        }
+      ],
+      "outcome": {
+        "chain": [],
+        "display": "Division by zero",
+        "kind": "DivideByZero",
+        "missing": null,
+        "sites": [
+          {
+            "end": 30,
+            "frames": "[]",
+            "source": 0,
+            "start": 15
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "043": {
+    "index": 43,
+    "label": "semantics/argument-failure",
+    "source_sha256": "88d8937a5b476db2438852d2bf0e963da134767153abfe2e359169835a03e174",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "b17026373f2b7daab7fc09434f067c894813cf21f8551d4ba86801396ee721f8",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "42"
+        },
+        {
+          "kind": "i64",
+          "tag": 2,
+          "value": "7"
+        }
+      ],
+      "outcome": {
+        "chain": [],
+        "display": "Division by zero",
+        "kind": "DivideByZero",
+        "missing": null,
+        "sites": [
+          {
+            "end": 57,
+            "frames": "[]",
+            "source": 0,
+            "start": 42
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "044": {
+    "index": 44,
+    "label": "semantics/argument-panic",
+    "source_sha256": "822fbaa03f1281ae1204ea828c39900dd6a7de46ddb38585e7c7d03316d74785",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "b808cbb0803e8631fedb6778256a88175f6b7bb66c55030f50923a96455ea2e3",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Panicked: argument",
+        "kind": "Panic { reason: Panic { inner: \"argument\" } }",
+        "missing": null,
+        "sites": [
+          {
+            "end": 48,
+            "frames": "[]",
+            "source": 0,
+            "start": 30
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "045": {
+    "index": 45,
+    "label": "semantics/receiver-return",
+    "source_sha256": "686b2a4f9aacfc06b5d8a3c33aca4709b2daf61f9fbf0971e14ad7edbcd06850",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "55594b142c13266a8b4ab5a09296eb3d64af9f777dc652e0aa627d16f8ca6ae3",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "9"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "046": {
+    "index": 46,
+    "label": "semantics/generic-hash",
+    "source_sha256": "bee29ea324b74f75ac3b9bfa6ff6110f74ce93f6be87107fcf41879e78eb6fd1",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "7aad9018088859cfc6a19cc1ad330144d34623df8ec152f6cb89a9371ab817dd",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x9d92f4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x9d92f4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x9d92f4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 38,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "047": {
+    "index": 47,
+    "label": "semantics/nested-frames",
+    "source_sha256": "2e01df69558b894b5930843737159e268347ce332c2fb4860c9a8eabd6dead66",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "8855480bb0237d36192f56e14d69446fad1ec3ec42cdefcbbbd204e0f7013dc8",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 28,
+            "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 9, top: 1, isolated: None, out: keep(1) }]",
+            "source": 0,
+            "start": 12
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "048": {
+    "index": 48,
+    "label": "semantics/callback-frames",
+    "source_sha256": "1b97423e1048a2b7d02506e95cc48f665436e032775c0c62c6c233394920623e",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "a011a169efcbbcebdc7e4760b51d666bbdf0b22687a1ce73e3c785439bd47051",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 39,
+            "frames": "[CallFrame { ip: 4, top: 0, isolated: None, out: keep(2) }]",
+            "source": 0,
+            "start": 23
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "049": {
+    "index": 49,
+    "label": "semantics/different-name",
+    "source_sha256": "467e89af18f77d978c99007a5a104bac981d64d3ea190e078a4d7fc1345fef0c",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "97d5407e6e22ca29694317487bf7804fde76ca7b3e93ad13f1370ca9f3c7828d",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xb51a88153818a9ca` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0xb51a88153818a9ca, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0xb51a88153818a9ca",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 36,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "050": {
+    "index": 50,
+    "label": "refuse/registered/string-starts-with",
+    "source_sha256": "763eb99ef143baa2db65a4ff11828b0be97ca5cd1a9ad8ffbbc26ba0f824e00b",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "18cdcf1b199f35454f465f499c47009f5c98bc63fe1425e70a5202d03bed73bf",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "slice": "\"abc\".starts_with(\"a\")"
+      }
+    ]
+  },
+  "051": {
+    "index": 51,
+    "label": "refuse/registered/object-contains-key",
+    "source_sha256": "d0288156b50723854e96c4bf3fa48bc25d57e4d56be2742d3873278fede6f424",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "82d0ed0b55b4392e51f2d38ed77f8223fade15b1235cf391ebe0edcadec4a521",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "slice": "#{a:1}.contains_key(\"a\")"
+      }
+    ]
+  },
+  "052": {
+    "index": 52,
+    "label": "refuse/registered/vec-is-empty",
+    "source_sha256": "1923a7c0bcacc6138561b554a3a113007455cf82503a4ef0a198bc3cd9a642cd",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "3fe6d713580751d8ff33633cb7d890359ea6d762dcd92507f745671af30c359b",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 27,
+        "slice": "[].is_empty()"
+      }
+    ]
+  },
+  "053": {
+    "index": 53,
+    "label": "refuse/registered/option-unwrap",
+    "source_sha256": "477362bdd9c20436a19019ca46707100706b7cd24f38c6661d401c9c1123597e",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "f65b1067f5bb79e7662876823b5b5e3f7de8e6469560c56aeed878c5b2a8d252",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 30,
+        "slice": "Some(7).unwrap()"
+      }
+    ]
+  },
+  "054": {
+    "index": 54,
+    "label": "refuse/registered/range-contains",
+    "source_sha256": "fa5849a3bb4bd816da7b1adb5ab398fc831fbf587cca6ef8c3169d4431e7172d",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "d8508d36ae83c4f1997af615b80d8574da4e7e6f5088e4e6206163e7f84c969a",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 32,
+        "slice": "(1..3).contains(2)"
+      }
+    ]
+  },
+  "055": {
+    "index": 55,
+    "label": "refuse/registered/protocol-alias-eq",
+    "source_sha256": "a06b669cbf7d145f865b13013bcf61bfc82f27037076a4306813e41cf172dca2",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "e201c8b303e58d345f3d08946cd584f4027bd74b7da543e22cc6fc27dea4a84d",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 21,
+        "slice": "1.eq(1)"
+      }
+    ]
+  },
+  "056": {
+    "index": 56,
+    "label": "refuse/registered/iterator-alias-next-back",
+    "source_sha256": "0dd214f616da1d349cfc4c9d1c492feba1b8b8fc50b46b202b633882c8ca2372",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "9e45adf0a1e5f7c624796f4faee318474e4be90e8a3a5085c7464491bd9f548b",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Option",
+              "0xc0958f246e193e78",
+              1
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "2"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "slice": "[1,2].iter().next_back()"
+      }
+    ]
+  },
+  "057": {
+    "index": 57,
+    "label": "refuse/registered/iterator-name-on-scalar",
+    "source_sha256": "d442805b61621ccbecbe4650cfcf77b0b3f281d5556ee6723ab33d25c44a4894",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "d66d0179834d3cf0dcb98790b1eb957d30eb07e9ca6e21155eaa650b94b31f15",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xd9fd110114ada9a6` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0xd9fd110114ada9a6, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0xd9fd110114ada9a6",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 28,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 28,
+        "slice": "42.next_back()"
+      }
+    ]
+  },
+  "058": {
+    "index": 58,
+    "label": "refuse/registered/registered-other-receiver",
+    "source_sha256": "702661c25f7dd7dbf6bcdb67b2745401a450678c8829e029e2e09de901ca860b",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "c30d0880c78bbdcc6389b9001b1de7a0f136a3a3a423a5aee0bc3dee5fcfbe7e",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x883cd410546588d1` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x883cd410546588d1, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x883cd410546588d1",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 33,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 33,
+        "slice": "42.starts_with(\"a\")"
+      }
+    ]
+  },
+  "059": {
+    "index": 59,
+    "label": "refuse/registered/generic-registered-name",
+    "source_sha256": "495eb68457aee62409a10f2d2b1162a47c6800035eef6c8929fd1767490f7527",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "d2d5d58aab003daa551c1d1b496dac5dfb6c39517c40081fc94690f0c6b28bed",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Result",
+              "0x1978eae6b50a98ef",
+              "Ok",
+              1
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "42"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 33,
+        "slice": "\"42\".parse::<i64>()"
+      }
+    ]
+  },
+  "060": {
+    "index": 60,
+    "label": "refuse/registered/refusal-before-effects",
+    "source_sha256": "daa6cf903bf2c7adc5206a5734a6a8f938d5e983337dd9363c6f7f8f58999946",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "5df78fdca9e6b41da0035381a156b652f93b63fe2e49ccb14bb38c7f131e9de2",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "7"
+        }
+      ],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 28,
+        "end": 44,
+        "slice": "Some(7).unwrap()"
+      }
+    ]
+  },
+  "061": {
+    "index": 61,
+    "label": "refuse/registered/dead-branch",
+    "source_sha256": "a029d25947379b3f46a7c8ca46c6be503c968b808f618584596f9cab6f4186db",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "9cc4fb808c220fa847ec590791dbb2acce2dffb62e27a1e9ebf2b92a0833d9c4",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 23,
+        "end": 42,
+        "slice": "42.starts_with(\"x\")"
+      }
+    ]
+  },
+  "062": {
+    "index": 62,
+    "label": "refuse/foreign/i64-provider/062",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "353da9fadc9b199b9f260a7b186c524e9e39ec4fe3a1eeb63505c29c6fd08c7d",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [
+        {
+          "native-body": true
+        }
+      ],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "41"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "slice": "42.unrecognized()"
+      }
+    ]
+  },
+  "063": {
+    "index": 63,
+    "label": "refuse/foreign/i64-provider/063",
+    "source_sha256": "96b8f5ce50febaebbefab1d21965131e13bd1e6f2ba161407b0222fdef5398c3",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "90501054db8c181235077620d73a0f7a027e3bc7dc2569f4e612da6942b8efc9",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x21b7174aea802f58` for `std::string::String`",
+        "kind": "MissingInstanceFunction { hash: 0x21b7174aea802f58, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }) }",
+        "missing": {
+          "hash": "0x21b7174aea802f58",
+          "instance": "0x2f4720d36d2b70c",
+          "instance_name": "std::string::String"
+        },
+        "sites": [
+          {
+            "end": 32,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 32,
+        "slice": "\"x\".unrecognized()"
+      }
+    ]
+  },
+  "064": {
+    "index": 64,
+    "label": "refuse/foreign/bool-provider/064",
+    "source_sha256": "2dd0759f3fef1f11d45c556e2636b9bb3cc8da0629e0b8386618fe1aa9f5907c",
+    "fixture": "bool-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "918bc9eb397171ada83ee70e433dc44f4c132b323ab040ab1f9bfbbb69cbe9fc",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [
+        {
+          "native-body": true
+        }
+      ],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "41"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 33,
+        "slice": "true.unrecognized()"
+      }
+    ]
+  },
+  "065": {
+    "index": 65,
+    "label": "refuse/foreign/bool-provider/065",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "bool-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "648d9357d49f3958d7fa8c0cc9d6eb30b60d1151b4fb826668542b54166b52fd",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 31,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "slice": "42.unrecognized()"
+      }
+    ]
+  },
+  "066": {
+    "index": 66,
+    "label": "refuse/foreign/unit-provider/066",
+    "source_sha256": "2239c5185d0ccd61dec4cabf0ef6a127ffab8d73e914a781d1ec24acb2650e59",
+    "fixture": "unit-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "399f53ce6c09315f202020b3d8528b17099585406d55902a2750c85edea35a2f",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [
+        {
+          "native-body": true
+        }
+      ],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "41"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "slice": "().unrecognized()"
+      }
+    ]
+  },
+  "067": {
+    "index": 67,
+    "label": "refuse/foreign/raw-i64-provider/067",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "9b89e3fdf16f9559a2d87bc2ff8590e0ef16015b48b098499d506db7672bd0fe",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [
+        {
+          "native-body": true
+        }
+      ],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "41"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "slice": "42.unrecognized()"
+      }
+    ]
+  },
+  "068": {
+    "index": 68,
+    "label": "refuse/foreign/raw-i64-provider/068",
+    "source_sha256": "96b8f5ce50febaebbefab1d21965131e13bd1e6f2ba161407b0222fdef5398c3",
+    "fixture": "raw-i64-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "4710f67e89164ea4b30c842c6aeca184c914df6075f50fbf482728fad2923cd6",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x21b7174aea802f58` for `std::string::String`",
+        "kind": "MissingInstanceFunction { hash: 0x21b7174aea802f58, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x2f4720d36d2b70c }) }",
+        "missing": {
+          "hash": "0x21b7174aea802f58",
+          "instance": "0x2f4720d36d2b70c",
+          "instance_name": "std::string::String"
+        },
+        "sites": [
+          {
+            "end": 32,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 32,
+        "slice": "\"x\".unrecognized()"
+      }
+    ]
+  },
+  "069": {
+    "index": 69,
+    "label": "refuse/foreign/failed-install-provider/069",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "failed-install-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "cd6e991463e264495f3175005b117f89668aab7f3a4ea4586a817a3e07a2dc4a",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [
+        {
+          "native-body": true
+        }
+      ],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "41"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "slice": "42.unrecognized()"
+      }
+    ]
+  },
+  "070": {
+    "index": 70,
+    "label": "missing/opaque-provider-only",
+    "source_sha256": "ae0c6c7c7c8e578f5f1fc3004ab1676c73648f9c50836f241b703b6da79ba610",
+    "fixture": "opaque-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "0255147191b888cb818ee5c9faed0f99ade98dde6a4fd03e6f58b8dadeb293b5",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 31,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "071": {
+    "index": 71,
+    "label": "missing/foreign-other-name",
+    "source_sha256": "467e89af18f77d978c99007a5a104bac981d64d3ea190e078a4d7fc1345fef0c",
+    "fixture": "i64-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "6448604c8aa445d7ad4769b0d7c874b9fac93efd14dbf94a16fc8902c5e09b5f",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xb51a88153818a9ca` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0xb51a88153818a9ca, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0xb51a88153818a9ca",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 36,
+            "frames": "[]",
+            "source": 0,
+            "start": 14
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "072": {
+    "index": 72,
+    "label": "shadow/script/actual",
+    "source_sha256": "c9e7daa018dc0715dda1b5b043b85cedcfd55547b4f213b254def3feb0f716c4",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "13ec0937acaa04c0358e3f313d960958674720ad24a716d372e42efbc2df67ac",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "23"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 66,
+        "end": 86,
+        "slice": "Local.unrecognized()"
+      }
+    ]
+  },
+  "073": {
+    "index": 73,
+    "label": "shadow/script/other-receiver",
+    "source_sha256": "38f7b50030e6bfee00e8361aca4a2fd79cb2100aa8a5952a63f819417378d02e",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "272d0aaa30b7dba0ecbff9402dbf7271fc7cfa0803b8900bc469c3a2a9ba789a",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 83,
+            "frames": "[]",
+            "source": 0,
+            "start": 66
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 66,
+        "end": 83,
+        "slice": "42.unrecognized()"
+      }
+    ]
+  },
+  "074": {
+    "index": 74,
+    "label": "shadow/script/unreachable",
+    "source_sha256": "6358aefc12107fecd49d4792be3bbb8a5d4a31764d99c965d383179c6c1016ad",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "d8a854050673c366970c87a82fd4a39f4e7dd3154abc868f4dd6baf23d4227e1",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 118,
+            "frames": "[]",
+            "source": 0,
+            "start": 101
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 75,
+        "end": 95,
+        "slice": "Local.unrecognized()"
+      },
+      {
+        "source": 0,
+        "start": 101,
+        "end": 118,
+        "slice": "42.unrecognized()"
+      }
+    ]
+  },
+  "075": {
+    "index": 75,
+    "label": "shadow/script/associated-not-instance",
+    "source_sha256": "e8d92bc4cfd444d2c41755854a0ed94269ed90661a12d3c994b5ca9569544770",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "3ddc5eb2a6ddf05e77e8e4a761e1ead39af469e8d056646f13c74791bb252860",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 79,
+            "frames": "[]",
+            "source": 0,
+            "start": 62
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 62,
+        "end": 79,
+        "slice": "42.unrecognized()"
+      }
+    ]
+  },
+  "076": {
+    "index": 76,
+    "label": "shadow/script/context-before-unit",
+    "source_sha256": "c9e7daa018dc0715dda1b5b043b85cedcfd55547b4f213b254def3feb0f716c4",
+    "fixture": "raw-local-provider",
+    "fuel": 200000,
+    "stock_observation_sha256": "0edc5292a8e6e4eddafbc5b0393e652e4dc6c95474200cc2a4ff694a5a7b311a",
+    "disposition": "Refused-surface",
+    "reason": "A native or script provider closes this unsupported method name. Fresh must refuse Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [
+        {
+          "native-body": true
+        }
+      ],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "41"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 66,
+        "end": 86,
+        "slice": "Local.unrecognized()"
+      }
+    ]
+  },
+  "077": {
+    "index": 77,
+    "label": "shadow/script/unrelated-top-level",
+    "source_sha256": "898a59a3fe163e2b421b3d285ee4fe48a10aa1d7727fa5016f25eb35214dbde3",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "a371146d5cfcaa1030235d67cc908f23a1324f37cd42df171792d64a19105d99",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 53,
+            "frames": "[]",
+            "source": 0,
+            "start": 36
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "078": {
+    "index": 78,
+    "label": "shadow/script/unrelated-method-name",
+    "source_sha256": "2d3dfc0d69716fc39c61d234053e999546a9aeeb8ecd8fa83005ee677d3e1aa8",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "25cb5bf0227dcb33bd4463e8cf958078e264d495f25b830d7bc65b18d4be744c",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0xb51a88153818a9ca` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0xb51a88153818a9ca, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0xb51a88153818a9ca",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 88,
+            "frames": "[]",
+            "source": 0,
+            "start": 66
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "079": {
+    "index": 79,
+    "label": "shadow/script/nested-module",
+    "source_sha256": "a4b97358de5ccdba258e8bc9228b9e44c4ca1ccd368861121cd6d8b35649ee77",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "e6ceb6baaa33293d3107b9a200f1705db50f1a6c201d929d50fb320c373f6e1c",
+    "disposition": "Refused-surface",
+    "reason": "The nested script impl provider closes this name globally. Fresh refuses Method before source effects; no runtime unsupported-method refusal.",
+    "fresh_refusal": "Method",
+    "fresh_events": [],
+    "stock_observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "kind": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: <pointer>, hash: 0x1cad9186c9641c4f }) }",
+        "missing": {
+          "hash": "0x3feef4c11536841b",
+          "instance": "0x1cad9186c9641c4f",
+          "instance_name": "std::i64"
+        },
+        "sites": [
+          {
+            "end": 99,
+            "frames": "[]",
+            "source": 0,
+            "start": 82
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "fresh_refusal_sites": [
+      {
+        "source": 0,
+        "start": 82,
+        "end": 99,
+        "slice": "42.unrecognized()"
+      }
+    ]
+  },
+  "080": {
+    "index": 80,
+    "label": "control/plain",
+    "source_sha256": "3b1efe8cc656153a426f984ae28e889022ce1af5b58d14abda6c4e521a23c86d",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "7abb13f8c79dc419c36055848dc44177c7cba5e3fd7e709993223f13ee4332bd",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "081": {
+    "index": 81,
+    "label": "control/fast-len-push",
+    "source_sha256": "83008ebe521f453c43c1b554f9cec51ad6efad315881c040fd693f64c5f6f5d0",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "3bfb713f41c739f7fbabc10acaa80df4c85e88c03cdc1e84fc693ef1df4c9793",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "U64",
+              "0xb41669ccb4fdb76a",
+              "1"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "082": {
+    "index": 82,
+    "label": "control/fast-numeric",
+    "source_sha256": "c82c0a05681cef6d4d908c612a5b200d5ba614895e6019ea8c03f18b53dd8408",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "cc886bc55053c27985c7cb9dcfdf53bc1af4bb202ad56fb291877911bdb93b5a",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  },
+  "083": {
+    "index": 83,
+    "label": "control/fast-iterator-any",
+    "source_sha256": "b2a9b09f2e63ba0815eb57cf710aa3f041d1db6e0e929d578f84f9f0accf4fa2",
+    "fixture": "default",
+    "fuel": 200000,
+    "stock_observation_sha256": "9736b7e44731879254f0c39ef8c84d80708b9c8d07f33f00c36b59fcb88494b8",
+    "disposition": "Exact",
+    "reason": "Match frozen stock outcome, structured missing identity, kind/display/sites/frames/chain, event order and reuse. Only P1 full_name pointers are projected; raw VmError remains audit-only.",
+    "fresh_expectation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "cleanup": "clean"
+  }
+}
