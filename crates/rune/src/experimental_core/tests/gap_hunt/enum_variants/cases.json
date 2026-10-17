@@ -1,0 +1,1499 @@
+[
+  {
+    "id": "000",
+    "label": "forms/unit/value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::U}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "f068042196046de8f33652918ff36bfbad8eec75be03e788e0d1cfba1fd60b11",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "001",
+    "label": "forms/unit/is",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::U;(x is E,x is F,x is S,x is Option)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e6443408a731d0bedc9367e5ebbbecc79f03558d3b99c153b69afadb5e83324d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "002",
+    "label": "forms/unit/type",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(std::any::Type::of_val(E::U),E)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "69b9ea5f45fa12386af4e183ed344864da8cff2c1851a4a067666a6f5180d8cf",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "003",
+    "label": "forms/unit/name",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){std::any::type_name_of_val(E::U)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "c8f169656fbdbb3870e54fb0b6b4760f6081ff6f4038684b01d31426ba2d29a3",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "004",
+    "label": "forms/unit/debug",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{:?}\",E::U)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "b69e123c58253de4d5b4ed802f3ce9f2e5ce8867b89b4f0c0b84ff926ccfdbf8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "005",
+    "label": "forms/unit/display",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{}\",E::U)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "9dee9d98f17ed9e058e684ee3f5cb2c11e5177af99e07ea118ac26f9be54b738",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "006",
+    "label": "forms/unit/clone",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::U;(x,std::clone::clone(x))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "f84457e013c5e713bde4bb7ecdc37ecb8141ecdc2cadf0344c90b8c330989b4f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "007",
+    "label": "forms/empty/value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::Z()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "b69e4ad305ad7ad590eded902189d4c142034b397bf9b36d29b8c3c54853c132",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "008",
+    "label": "forms/empty/is",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::Z();(x is E,x is F,x is S,x is Option)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "5175a634860e56a595acd991aaa4110e43603a7c4abbf37f45e8e151639c9a34",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "009",
+    "label": "forms/empty/type",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(std::any::Type::of_val(E::Z()),E)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e8c8cfb8547dda5d81afffe20f58f929e2695e3bda45a3efb58ac79c72548284",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "010",
+    "label": "forms/empty/name",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){std::any::type_name_of_val(E::Z())}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e794aebfe6768db4dfb58cefde19b85e91875d0c8a8c224428811500b0417160",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "011",
+    "label": "forms/empty/debug",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{:?}\",E::Z())}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "a497ed4d6208d0315abcd97d1b6efb714ff4c6487cba6bf329afdd71e22d1d4e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "012",
+    "label": "forms/empty/display",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{}\",E::Z())}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "483f40964b0c24ae6ef8ed6daecb7c188783e415bcec5393238ccd809cdfc34b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "013",
+    "label": "forms/empty/clone",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::Z();(x,std::clone::clone(x))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "2c72eed7f0a261a27f2184d49cb859a6f9bb11f137e1f96e68a6680aa60ac771",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "014",
+    "label": "forms/tuple/value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(7)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "5cedc4d422382c6df6cb55aeffee5979d7cba238db91b5f3f63e3a2224b77dce",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "015",
+    "label": "forms/tuple/is",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);(x is E,x is F,x is S,x is Option)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "eacefdc5c571e7a6c3ad7fd426b25495af01abb9154191d8087e563a911c3a42",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "016",
+    "label": "forms/tuple/type",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(std::any::Type::of_val(E::T(7)),E)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "0b0e717aced5ca3cb7aa3f7ba0d620b1321696412ac49b0d4954d379a3abd51f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "017",
+    "label": "forms/tuple/name",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){std::any::type_name_of_val(E::T(7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "53b2d48b997e1e988442c2a79ee4f546a2cf52fe649290ab6987f24388693d41",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "018",
+    "label": "forms/tuple/debug",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{:?}\",E::T(7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "5c5acfd16f6833d164ddab1441af43a8eb7cb728d57ebc8bd62c74ceb1fe82df",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "019",
+    "label": "forms/tuple/display",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{}\",E::T(7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "80a213fdaac4e2c06f57a8f5696fe0356908d673e566abbef22cdf0c9ff9648a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "020",
+    "label": "forms/tuple/clone",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);(x,std::clone::clone(x))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "b110d18a4db0a5ca85ebd2d375bbaecb498aa277bf6e2f16bd8e0dd86498140e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "021",
+    "label": "forms/pair/value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::P(7,9)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "30aade5832c4bc76c56e273d14fe32abbeae0ed31f874826b1eb0cbb08cc4be1",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "022",
+    "label": "forms/pair/is",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::P(7,9);(x is E,x is F,x is S,x is Option)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "206fb78da9082c6f4c9ca7b72e0e1008440cca30d555ee2b5f911e5582bf0ea6",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "023",
+    "label": "forms/pair/type",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(std::any::Type::of_val(E::P(7,9)),E)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "2cc729df63479edf62cb5714b4789599e63c25cc4782bd19a33c27949424a0d1",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "024",
+    "label": "forms/pair/name",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){std::any::type_name_of_val(E::P(7,9))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "cc27a7ddc6bc00617fa866b71937631248b78e7e8d89c863476166fa7e5cb53b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "025",
+    "label": "forms/pair/debug",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{:?}\",E::P(7,9))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "29d04974f925c2b0c6e016ee2338240f45d0be6aef7450689edd40a87cd96fa0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "026",
+    "label": "forms/pair/display",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{}\",E::P(7,9))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "dd4dd757930917028570adc50a9aa0941d779b70c356d136cbafb72e02c8ff7f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "027",
+    "label": "forms/pair/clone",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::P(7,9);(x,std::clone::clone(x))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "eeca05f69b26285e098d561e0ac54e20e7636f291828662fac898601a53f9f54",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "028",
+    "label": "forms/named/value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::N{x:7,y:9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e3ddfbcc58a0bbdd079c5cd2d81ad7042acb9b74c625a593ebab65a071954d6d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "029",
+    "label": "forms/named/is",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::N{x:7,y:9};(x is E,x is F,x is S,x is Option)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "f5ec9650cc55cfb0e136e4d4700e2d2423ac7f845f9f1f7ca7e3ff7260c6e4e4",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "030",
+    "label": "forms/named/type",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(std::any::Type::of_val(E::N{x:7,y:9}),E)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "839ea51e742b5ae118bb7f348aee887efff243c4ceb712b1a2f109e1b1f2d201",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "031",
+    "label": "forms/named/name",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){std::any::type_name_of_val(E::N{x:7,y:9})}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "5ec52a0a9b2a92944c5da8b9e573792ddb3fcd682921e7b78e6b7b5b93509502",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "032",
+    "label": "forms/named/debug",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{:?}\",E::N{x:7,y:9})}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "eda291b0fafc5e4bffacf4742d384412eea6e746271310314813c24fda6fe67a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "033",
+    "label": "forms/named/display",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){format!(\"{}\",E::N{x:7,y:9})}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "3e6ceaaf44baf005d666a3e35ad3b7853a08a5cb9c18f9f2edd8da4768d48789",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "034",
+    "label": "forms/named/clone",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::N{x:7,y:9};(x,std::clone::clone(x))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "9682a4d58eb68023b9ef51d695db75917ee8d2f373de7b109caa9bad6c54be75",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "035",
+    "label": "compare/unit-same",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let a=E::U;let b=E::U;(a==b,a!=b,a<b,a<=b,a>b,a>=b)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "7ce88807064f2e29b5c58fa6da86827f70c7fa4b499cba51790dc42acaf9ef10",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "036",
+    "label": "compare/unit-empty",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let a=E::U;let b=E::Z();(a==b,a!=b,a<b,a<=b,a>b,a>=b)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "dad3418c312534b1640b3e48906494b36e767bebd4dee06cc49f5ad84fbc707e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "037",
+    "label": "compare/tuple-same",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let a=E::T(7);let b=E::T(7);(a==b,a!=b,a<b,a<=b,a>b,a>=b)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e75b7905df27d1588d11d2d0a73b949916683f2aeb85675b8278e330e40d1333",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "038",
+    "label": "compare/tuple-different",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let a=E::T(7);let b=E::T(9);(a==b,a!=b,a<b,a<=b,a>b,a>=b)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "3cf061d73a7f01e8b03d87f86f548b0665bbfb352db201aeabcb0a691a9c26de",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "039",
+    "label": "compare/tuple-pair",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let a=E::T(7);let b=E::P(7,9);(a==b,a!=b,a<b,a<=b,a>b,a>=b)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "01a3753a843662d6308a62724d1e5a57f90df44531b9bf57e89f932741913348",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "040",
+    "label": "compare/tuple-named",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let a=E::T(7);let b=E::N{x:7,y:9};(a==b,a!=b,a<b,a<=b,a>b,a>=b)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "15c714771f98d2cfadd6cd4aa3f36d18c004d1eaf37de3dd4c304adfc618e84f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "041",
+    "label": "compare/named-same",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let a=E::N{x:7,y:9};let b=E::N{y:9,x:7};(a==b,a!=b,a<b,a<=b,a>b,a>=b)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "7dbf9141ec169dbdfeb537c52db1054fcf3e84f336c2618636e9a2f17d4cba86",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "042",
+    "label": "compare/named-different",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let a=E::N{x:7,y:9};let b=E::N{x:8,y:9};(a==b,a!=b,a<b,a<=b,a>b,a>=b)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "720c7e13439ff8feb7ac0c61f1f57b1872cf0edc17113d56c10fee24c6e82c3c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "043",
+    "label": "compare/cross-enum",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(E::T(7))==(F::T(7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "b1c55f5ae63e76f43a21ceca4d70a8ba9582608ac44dfcf9a26b0f2d6247964f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "044",
+    "label": "compare/cross-struct",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(E::T(7))==(S(7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "221c7b6ed2f45685f6542a0bb2fcc61633bdac3d5069bcb43d5cf3a12daf14ec",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "045",
+    "label": "compare/cross-scalar",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(E::T(7))==(7)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "6f92ea7f3ca76c3977e03055bf4e72ed0322991ab88c45d161a3649624706984",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "046",
+    "label": "compare/cross-reverse-scalar",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(7)==(E::T(7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "5560e16e350d99f7ea79183fffb77d6a60f15d520ff4298dd2b314722f07699d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "047",
+    "label": "compare/cross-option",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(E::T(7))==(Some(7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "b0e93d76b1465806e8d739453bcd78d4be33f80d2a900057840eb6d376e861ab",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "048",
+    "label": "compare/cross-tuple",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(E::T(7))==((7,))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "aa056d0a2755a4dffec62029fc2d19656ded8c118b76ed3490dc067a78a9de04",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "049",
+    "label": "compare/nested",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(E::P(1,2))==E::T(E::P(1,2))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "d5b7fdf077cad4cadec9191a664baf588f320856199bedefed8e959ffb6428b2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "050",
+    "label": "compare/payload-type-error",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(7)==E::T(\"x\")}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "1516bf70f3657944e5db096182a14a162358a5faabdaa6d61839cf178724ab52",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "051",
+    "label": "compare/method-cmp",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(7).cmp(E::T(9))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e45b825fe67bb07dbf62638e14bd00228baf629440243247c5fe04b6fbb30994",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "052",
+    "label": "compare/hash-order",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(E::U<E::T(0),E::T(0)<E::N{x:0,y:0},E::N{x:0,y:0}<E::U)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e01c28d568391279cc4f13c6b7b56b051caaade2843c4f115ce490727b8c56b9",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "053",
+    "label": "patterns/slice",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(7){E::U=>0,E::T(x)=>x,_=>9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "8769144e412c150ceaba56992ee595c1ec4286b1d3db85255932f59d16258473",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "054",
+    "label": "patterns/unit",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::U{E::U=>7,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "08048d19074618461bf4700a8d17abdb4d15620277f747f1f62f9c60338fae28",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "055",
+    "label": "patterns/empty",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::Z(){E::Z()=>7,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "b7037986d7fe928ca0e4a8deda3529e3a722de2827f62533162c4f42fb0a7935",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "056",
+    "label": "patterns/tuple-literal",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(7){E::T(8)=>0,E::T(x)=>x,_=>9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "28576637aea3dbef400ccb7d9f50ab6fbd6f0eb0817283b572176f6217a91eca",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "057",
+    "label": "patterns/pair-rest",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::P(7,9){E::P(x,..)=>x,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "4f60091d0303681e907cac335dd1e1cfafa4addc17a54f2128a78a2f879905e0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "058",
+    "label": "patterns/named-rest",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::N{x:7,y:9}{E::N{x,..}=>x,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "58fe4d9b0a0db631043fae2dc74a0378649152df3cd750796c55609bf6d632db",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "059",
+    "label": "patterns/named-rename",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::N{x:7,y:9}{E::N{y:b,x:a}=>a+b,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "5feaef6a2e5dbe3e177c596510201e2e864b13b0b222ac1a8f5286fe4af38952",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "060",
+    "label": "patterns/nested",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(E::N{x:7,y:9}){E::T(E::N{x:7,y})=>y,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "581499aa5d44a4aab47d5d07e7ace3949f9fdd1de08820780611628b16e9b3b4",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "061",
+    "label": "patterns/option-nested",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match Some(E::T(7)){Some(E::T(x))=>x,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "88ee21188c75efd708d5380b254a968e0476b814649a1b4b5702eefbafae4d52",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "062",
+    "label": "patterns/result-nested",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(Ok(7)){E::T(Ok(x))=>x,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "0867d82cd4f86312fc6433cfda634c93321445a663c3f44db60fa67cc73df24a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "063",
+    "label": "patterns/guard-false",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(7){E::T(x) if tap(1,x)==8=>0,E::T(x)=>tap(2,x),_=>9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "6af9633fe5fa39e16cf3d25a5fc0e58e9bf357ed0b4aeb8d16b271409599360f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "064",
+    "label": "patterns/guard-true",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(7){E::T(x) if tap(1,x)==7=>tap(2,x),_=>tap(3,0)}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "dd0f719da338e6520c07e69d87f8c33dc1f197eb8d6e31e82798bce0a906fc9e",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "065",
+    "label": "patterns/guard-error",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(7){E::T(x) if 1/0==x=>1,_=>tap(2,0)}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "89ff376435a4535614a94a36248ca568218e0bc3c5e6c4f1be76389503d1b97f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "066",
+    "label": "patterns/wrong-enum",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match F::T(7){E::T(x)=>tap(1,x),_=>9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e0c8d589e83771dc221382c463b2f64d51379592b66077a761d466e73b4bdb75",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "067",
+    "label": "patterns/wrong-int",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match 7{E::T(x)=>x,_=>9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "a40b2d4c27fdd08b9383c770ca9499ab798d34af3246bd06549c9139f659279b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "068",
+    "label": "patterns/wrong-option",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match Some(7){E::T(x)=>x,_=>9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "0b65f6d48bc9dd199af116f7b316941f589aba144ded4bd142f64fac44b02741",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "069",
+    "label": "patterns/wrong-struct",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match S(7){E::T(x)=>x,_=>9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "c404f80f873a38528aafd36fa8407ad78f9dae172142f048db475011f761c9a7",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "070",
+    "label": "patterns/no-arm",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::U{E::T(x)=>x}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "4b750a4c7953d3c46a7c1b58b598737b10575b59926ee2c069d39f8df9bdcd82",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "071",
+    "label": "patterns/if-success",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){if let E::T(x)=E::T(7){x}else{0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "7de5b54373dbe4c656f00964b0f9aecbed502379ed35ba74c3af95911e8f5d1b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "072",
+    "label": "patterns/if-miss",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){if let E::T(x)=E::U{x}else{tap(1,9)}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "7b3ce1c9def10cb60fe7493a8632255bdfaf5f8831ae17f943b133f44fc684be",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "073",
+    "label": "patterns/while",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let e=E::T(3);let out=0;while let E::T(x)=e{out+=x;if x>0{e=E::T(x-1);}else{e=E::U;}}out}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "bfe98d71821b04e6322c23a505041b7d4bf2400ab1b5485038d9d42f45799753",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "074",
+    "label": "patterns/scrutinee-once",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match {tap(1,7);E::T(7)}{E::U=>0,E::T(x)=>x,_=>9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "1ccb44f6bf07f89018d107268bfdd54c9cf0f5b5f7f1a292db042d4f2f2558dd",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "075",
+    "label": "patterns/prefix-miss",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::P(0,E::T(7)){E::P(1,E::T(x))=>x,E::P(0,_)=>9,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "12a4eb5391db54d03a8f78c8e1617275077a274f95df85e0df8a7597965faef4",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "076",
+    "label": "patterns/bare-name-binding",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::U{Unqualified=>format!(\"{:?}\",Unqualified)}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "786c7175ad997c61f82d53f2e68c7f4e66d4fdd5fb9dd2f8caa85f85d7d79f7b",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "077",
+    "label": "patterns/open-unit",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::U{E::U{..}=>7,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "ee06361e63d8d6f17637297fe25e9c1b592707ab7e8bc91ae0811e52c90bec00",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "078",
+    "label": "patterns/open-tuple",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(7){E::T{..}=>7,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "380544d2647777a4be3135054ff674416c0fa025d8eb6877710787e8704fff9f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "079",
+    "label": "fields/read",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::P(7,9).1}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "830416c097d552252541db066fa7d4d742a875a487d4b58f9ae0b5e8b0e5708a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "080",
+    "label": "fields/set",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.0=9;x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "a0136eee500a4dfdbc9b1c4dbba288218ad8e15e55e0036cb8461d2accaf7f88",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "081",
+    "label": "fields/compound",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.0+=2;x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "6311ab809bc3859edcef0b3abdac96cca7687b954fc28e31800b3da2e141ce4a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "082",
+    "label": "fields/named",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::N{y:9,x:7}.x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "d4c89d0cc042651d215b20456837003bfe629bcaed198b7a94a9444c784086f2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "083",
+    "label": "fields/named-set",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::N{x:7,y:9};x.y=8;x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "963e11ba4f87658844227b2280aa58b9983a3184a185a889a552f7f0a324e0e7",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "084",
+    "label": "fields/named-compound",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::N{x:7,y:9};x.y+=8;x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "56fde1bb28d1420012bfcef7161d699b32d19238489f879092eaed2f8440b396",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "085",
+    "label": "fields/dynamic-int",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::P(7,9)[1]}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "7f8fad0e7f742d8f715b4f93ecb18bd2afd5c0e8bfe60bad106483d621ded5f9",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "086",
+    "label": "fields/dynamic-str",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::N{x:7,y:9}[\"x\"]}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "8b3749e5d9019cc57d90561d7778dd60a2ea310cfe6878751e4a30ff109e95bb",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "087",
+    "label": "fields/oob",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(7).1}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "c297a948eb4c885978ef91636a8d1004b83102a009371ace4ec2c7a7e2dd75ca",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "088",
+    "label": "fields/unit-index",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::U.0}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "eab401291e1f7d9bd6c72f71c176506ed1565c0f49d5a5ef27ea2a1faae11554",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "089",
+    "label": "fields/named-index",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::N{x:7,y:9}.0}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "9a7416bb9e95cdfad53c69d9feb799b8056b1a18a894cb1308d61d8b448dbff8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "090",
+    "label": "fields/tuple-name",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(7).x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "321722fa1fae81b462e5cf863cdae847303fa63f93a48f89d4744c977088dd2d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "091",
+    "label": "fields/unit-name",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::U.x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "ec3adce3ceee5769ada8141a7f10e9be22fca10cdaa32fe71890c1e8ff176654",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "092",
+    "label": "fields/missing-name",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::N{x:7,y:9}.z}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e71610c5aa4bfba7bc46dc7c6e58408319eb2dd4b36829108d60d5799a2325bc",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "093",
+    "label": "fields/oob-set",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.1=9;x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e362af64e8a4c62bdd2e79f002baa39ac2b3735dcb941248f314e78b9261d819",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "094",
+    "label": "fields/dynamic-set",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x[0]=9;x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "fba5164fb6c39aca62ac34afec7640ec17d7c73c4e9c00fa121cdde5d3e801b9",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "095",
+    "label": "fields/nested",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(E::N{x:7,y:9}).0.y}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "938f6858e9bc07062cbf4234e90d52d7e2f1d9f1785c8d3c81bb2768f98170bd",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "096",
+    "label": "ownership/alias",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);let y=x;y.0=9;(x,y)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "5ea9116880be94c23511f5ddc11a5524586fb4283c7d037417eaf51355aff438",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "097",
+    "label": "ownership/clone-mutation",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);let y=std::clone::clone(x);y.0=9;(x,y)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "d006fcc5b480577bc9ce6390367a7891f986a4f95dc378b7925e3ffe9da8b131",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "098",
+    "label": "ownership/named-clone",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::N{x:7,y:9};let y=std::clone::clone(x);y.y=8;(x,y)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "4a8488334081c381e67c45018f44e4fcf127152bd8be6f941245981c157371bb",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "099",
+    "label": "ownership/nested-clone",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T([1]);let y=std::clone::clone(x);y.0.push(2);(x,y)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "1e24f876876cc5228d735638c7035791c32ef5c46a58a595148ae7a84de577b8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "100",
+    "label": "ownership/distinct",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){(E::T(7),E::T(7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "12073419458e6b0991b0fea7f8c6a884737c7829870ce3f688b9f1ca3b5f3705",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "101",
+    "label": "ownership/drop",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);drop(x);9}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "91539754314fc36ad8a61c70d5ec946a1d1a1e44d7d4716eee5c5b648d97d583",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "102",
+    "label": "ownership/moved",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);drop(x);x.0}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "fede2337d4160b64605a47ee9e941bd0be932b3fbc9d0b6fa56e061bed4d8441",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "103",
+    "label": "ownership/moved-alias",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);let y=x;drop(x);y.0}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "3efc362f8d095b00d7c9c7e7c20d983c9a19a6f0024f893ceae7fa31165a25d3",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "104",
+    "label": "ownership/closure",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);let f=||x.0;f()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "c16a9b576ba5cdffa8749c03c48c95a8510bbbc39189aa9b5e9736cb919f61c2",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "105",
+    "label": "ownership/container",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){[E::U,E::T(7),E::N{x:8,y:9}]}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "d336e303caa376f442121de18f196cbd253aec3f0f3142743e2304570faf1e9d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "106",
+    "label": "ownership/rebind",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x=E::N{x:8,y:9};x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "87279a99b69cd8c52f00e4094236c964252eff79b36f28e1641202c9083f4444",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "107",
+    "label": "ownership/loop",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let out=[];for i in 0..4{out.push(E::T(i));}out}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "50142aa1272dfe851918effeb5d9f310b94d536ca2c9c07451dbf0237be13fc3",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "108",
+    "label": "effects/args",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::P(tap(1,7),tap(2,9))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e70971b4d82ca7a0556075a5a5e5df5a05ff3a251e1ac4690db0e1894ac7992a",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "109",
+    "label": "effects/named-order",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::N{y:tap(1,9),x:tap(2,7)}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "3963005480920625377b844db49492379654531120c0931956234608c36ff30c",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "110",
+    "label": "effects/error-first",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::P(1/0,tap(2,9))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "57f54981b413c903a2ba87946fb821049781f09bfeb2da5c21908be90ece34fc",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "111",
+    "label": "effects/error-second",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::P(tap(1,7),1/0)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "eb0d6be8a61ad0b2848bad0fd31fed4553a40752328dc03e3b64b496be315ff9",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "112",
+    "label": "effects/return",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T({tap(1,7);return 9;})}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "8ffc9fa4bf9b85488b220a5b22c3cc57aff226988f93ca560bbf235382716176",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "113",
+    "label": "effects/rebind",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let n=7;let x=E::P(n,{n=9;n});(x,n)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "650cb7cba1cfefebd403151f4569a37476b8b2004602697911e4f0dc9f23d75f",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "114",
+    "label": "effects/set-order",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(0);x.0=tap(1,9);x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "c65925ed593462f772a726616ac400e337d52ad1cd879d31ff2283858f7bf080",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "115",
+    "label": "effects/match-return",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(7){E::T(x)=>{tap(1,x);return x;},_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "a6c3f7d56b2d9a59486afe7cb873deb80a534971181edd765ef53c8dcbbc09ac",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "116",
+    "label": "frontend/too-few",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "331ce706faae70ae4bdd6e3d470ef4ef51ec7e5c425183dbfc5051c9b36ac5a2",
+    "fuel": 200000,
+    "proposed_policy": "Frontend-audit"
+  },
+  {
+    "id": "117",
+    "label": "frontend/too-many",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(tap(1,7),tap(2,9))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "35d749d35184af14d4f0f637a377a2f8e0f50dc1f96c63e356b18ab2a819928d",
+    "fuel": 200000,
+    "proposed_policy": "Frontend-audit"
+  },
+  {
+    "id": "118",
+    "label": "frontend/unit-call",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::U()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "566ce939a8ecaf68fc80b6e7da4697388b9d2e873b5e332fdadc4d6b317b39f6",
+    "fuel": 200000,
+    "proposed_policy": "Frontend-audit"
+  },
+  {
+    "id": "119",
+    "label": "frontend/zero-extra",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::Z(tap(1,7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "42572c5cf292440c58aab63fcbec814a0424cc89ed9cc9a31dfc58aa65a429d2",
+    "fuel": 200000,
+    "proposed_policy": "Frontend-audit"
+  },
+  {
+    "id": "120",
+    "label": "frontend/missing-field",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::N{x:tap(1,7)}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "12ca82b070468d0450580cd8baf64ef715ad604638fe5f743adb544d4b3b5fb0",
+    "fuel": 200000,
+    "proposed_policy": "Frontend-audit"
+  },
+  {
+    "id": "121",
+    "label": "frontend/unknown-field",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::N{x:7,y:9,z:tap(1,8)}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "df75c93fbb8dd869ccb0e45e3c372d03745c406b74749cd3d92e7b87152f258a",
+    "fuel": 200000,
+    "proposed_policy": "Frontend-audit"
+  },
+  {
+    "id": "122",
+    "label": "frontend/pattern-arity",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::T(7){E::T(a,b)=>a,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "6b3878dc66d693941165f0a2d89c1732f90f1a4be03dcdc9aa9ad19c0a8c3a27",
+    "fuel": 200000,
+    "proposed_policy": "Frontend-audit"
+  },
+  {
+    "id": "123",
+    "label": "frontend/pattern-field",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){match E::N{x:7,y:9}{E::N{z,..}=>z,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "25f27a0ff8e75c9ced99088c2552fbc4defac3c24cd9074d5c5b0e7a423c55e2",
+    "fuel": 200000,
+    "proposed_policy": "Frontend-audit"
+  },
+  {
+    "id": "124",
+    "label": "boundary/len",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.len()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "7ca3aab3ed980b04e44ce1d4053494381ea3892610879777fa2e0f107d06dd77",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "125",
+    "label": "boundary/iter",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.iter()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "aaa973d0182eb7122b6cacf70c073bb32abb316a958bf508cb3e0c29da596d96",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "126",
+    "label": "boundary/push",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.push(tap(1,9))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "d869eac933dc45e86e6d252a3333876612b528cb9a5e693f0b2a2a0c327718a4",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "127",
+    "label": "boundary/sort",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.sort()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "422c245b91d93da09592e1333ab238ccb7056bf32f06a619f586fe456e0056c2",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "128",
+    "label": "boundary/for",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);for v in x{tap(1,v);}7}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "32fae1275f3e09fe59634e0f527f9f7c8138050c31d0545955507de2e1ee12ba",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "129",
+    "label": "boundary/range",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x[0..1]}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "be8a2f4e9137c121aa928621df23804525ee2564667712d9aeb07d1efbce23c9",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "130",
+    "label": "boundary/next",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.next()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "10327e42b47e44ba6487271b73642a694ab60254b30ea820cad3bcd363e16fff",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "131",
+    "label": "boundary/any",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.any(|v|true)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "29f1386bdadaaf1afcebd4e55540ba4610a2573054d9a51b0ccb81dacb4900cd",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "132",
+    "label": "boundary/clone-method",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.clone()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "6e0713f6273072e5c94a56c7bf6a493b4f1a3cacb6993bdbafe6c46c0c2836b1",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "133",
+    "label": "boundary/absent",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.c15b_missing(tap(1,9))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "20cc3231ae608757bb6f8f66e943788da8d49f5a51b51a10e11513fdd0738dfa",
+    "fuel": 200000,
+    "proposed_policy": "Boundary-audit"
+  },
+  {
+    "id": "134",
+    "label": "deferred/ctor-value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let f=E::T;f(tap(1,7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "d442d3c1e354080a94f6de5651dd8ca84ef24262e1ee941c6b216cd8239344f5",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "135",
+    "label": "deferred/ctor-callback",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){[1,2].iter().map(E::T).collect::<Vec>()}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "68b9519183c3a09c6a72835efdaeba4cfba7b295737a8175b5734a15e8a28845",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "136",
+    "label": "deferred/struct-ctor",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let f=S;f(tap(1,7))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "e036055162c5c3f98973e91a3cb1cedd45e5304a575f6073b1e6e817c70d1f6c",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "137",
+    "label": "deferred/named-type-value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::N}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "12adcad7d7a01e7c82b8689a3eb67a20f378d2e82400d4fdf05694aa19cbd1ce",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "138",
+    "label": "deferred/let-success",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let E::T(x)=E::T(tap(1,7));x}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "46ed749887c17b26ceffabe61f2b126c67b5674e875c1618a5852665328a2ec9",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "139",
+    "label": "deferred/let-miss",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let E::T(x)=E::U;tap(1,x)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "2552bba7b658459e6e1271fa4a7ceb05175a1da1495b7b8573aa0372856a4662",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "140",
+    "label": "deferred/param",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){fn f(E::T(x)){x}f(E::T(tap(1,7)))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "33917ea3ff66fc46e60ef4059a059562266caca3258d99bc304ac5ed91bafd05",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "141",
+    "label": "deferred/async",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let f=async{E::T(tap(1,7))};tap(2,9)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "66e711d7b4f8edaa2c7e4d77193c33ec97cb0cacb88d250d9844a6dbbf4d58ec",
+    "fuel": 200000,
+    "proposed_policy": "Refused-surface-candidate"
+  },
+  {
+    "id": "142",
+    "label": "scope/alias",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);use E as Alias;\npub fn main(){Alias::T(7)}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "d8cf4a99b4196eda526a89271cb7ec534800ab1443ef51d2a6daaf51565c48b8",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "143",
+    "label": "scope/import",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);use E::T;\npub fn main(){match T(7){T(x)=>x,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "5d1c5985b40803f2b161d7e01b0ebda9cf20c5b950d11d88f1b009b810bb145d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "144",
+    "label": "scope/module",
+    "fixture": "default",
+    "source": "use c15b::tap;\nmod m{pub enum E{U,T(a)}}\npub fn main(){let x=m::E::T(7);(x is m::E,format!(\"{:?}\",x),std::any::type_name_of_val(x))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "8690edb2c1462dd3ced831f0a4a974aea043c22ff1dc033f62a11002451bfbd5",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "145",
+    "label": "scope/local",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){enum Local{U,T(a)} let x=Local::T(7);(format!(\"{:?}\",x),std::any::type_name_of_val(x))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "97d0bc1273aa5533d5e8fce1120c6a6dc2c52ed25ac48b15efa6ef9fa1246594",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "146",
+    "label": "analytics/status",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum Status{Ok(value),Missing,Bad{code}}\npub fn main(){let rows=[Status::Ok(7),Status::Missing,Status::Bad{code:2}];let sum=0;for row in rows{sum+=match row{Status::Ok(x)=>x,Status::Missing=>0,Status::Bad{code}=>-code};}sum}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "ddc73e7dffd35abbefc2dcebe5752430e47f942220a149939d9e9b22ba196857",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "147",
+    "label": "analytics/nested",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum Status{Ok(value),Missing} enum Event{Row(status),End}\npub fn main(){let rows=[Event::Row(Status::Ok(7)),Event::Row(Status::Missing),Event::End];let sum=0;for row in rows{sum+=match row{Event::Row(Status::Ok(x))=>x,_=>0};}sum}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "05d5d5fe04b8dd507b12e04682c844da746f286922cd3639b547ef7ff18e96c0",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "148",
+    "label": "resource/fuel",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let n=0;while n<100{let x=E::T(n);match x{E::T(v)=>tap(1,v),_=>0};n+=1;}n}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "dce2f18635c4c1f98bdec672a8b79f9de7d6cbafbdfd22bd0ce5b5f9954d9883",
+    "fuel": 32,
+    "proposed_policy": "Resource-audit"
+  },
+  {
+    "id": "149",
+    "label": "resource/depth-126",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(7))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "b64776aadc7aa58fab745a1969b897d6dad76648da5f80de46b9abbc33dc5198",
+    "fuel": 200000,
+    "proposed_policy": "Depth-audit"
+  },
+  {
+    "id": "150",
+    "label": "resource/depth-127",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(7)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "f613c3507c0ab5a159d5297cb7d2c80d827a8a447b375eaf31c907d0fb919a2e",
+    "fuel": 200000,
+    "proposed_policy": "Depth-audit"
+  },
+  {
+    "id": "151",
+    "label": "resource/depth-128",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(E::T(7))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "5e110018e97ff63a5af9c14824482322672a728243bde9436be222f1aeaf9b7c",
+    "fuel": 200000,
+    "proposed_policy": "Depth-audit"
+  },
+  {
+    "id": "152",
+    "label": "containers/vec/value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){[E::T(7),E::U,E::N{x:9}]}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "539392ef80c9a36f0f39ff1de36c314f662901fad1389d805070051848cf1640",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "153",
+    "label": "containers/vec/debug",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){format!(\"{:?}\",[E::T(7),E::U,E::N{x:9}])}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "86607601fbf2f5e4e02e75cd7e49f7d94f89a6b4e193e8430e1765bc73eab2a6",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "154",
+    "label": "containers/vec/equality",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){([E::T(7),E::U,E::N{x:9}])==([E::T(7),E::U,E::N{x:9}])}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "319ceab6a262d4c35d0e157aa01583c8a08b04c64ac9adb2c4ed1e8ae82604af",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "155",
+    "label": "containers/object/value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){#{a:E::T(7),b:E::U,c:E::N{x:9}}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "f5de175683593cdedc703ed177cab8f8755781bf70babf83958dfa2a933e6a6d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "156",
+    "label": "containers/object/debug",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){format!(\"{:?}\",#{a:E::T(7),b:E::U,c:E::N{x:9}})}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "22f0c632cd5c7639c7e8f8b54877658e259b5728a14209c1d6d76f7f06ca50f7",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "157",
+    "label": "containers/object/equality",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){(#{a:E::T(7),b:E::U,c:E::N{x:9}})==(#{a:E::T(7),b:E::U,c:E::N{x:9}})}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "f7d8cd772c39c24d6d13569594ca0b1d42a4117079efc4b62fb34e260798f60d",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "158",
+    "label": "containers/tuple/value",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){(E::T(7),E::U,E::N{x:9})}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "89a97421a0c9a7eaf226df2ecbb1e5c5963df9824b632ab9920f4f1a95704e63",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "159",
+    "label": "containers/tuple/debug",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){format!(\"{:?}\",(E::T(7),E::U,E::N{x:9}))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "f996030ac38af84865dd2e8e9c5c4d790ee31196371b2b631f69890fc6022427",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "160",
+    "label": "containers/tuple/equality",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){((E::T(7),E::U,E::N{x:9}))==((E::T(7),E::U,E::N{x:9}))}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "139a60e32a9775912582034b9a7cbfc0a9b2fe166181ab37b7c3039cb02bbcd9",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "161",
+    "label": "patterns/function-result",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a)} fn make(x){E::T(x)}\npub fn main(){match make(tap(1,7)){E::U=>0,E::T(x)=>x,_=>9}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "4d1f5761c695ad1b74c0c57b23360203b63937ee27594670a15cfd810863f124",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "162",
+    "label": "patterns/option-variant-literal",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,T(a),N{x}}\npub fn main(){match Some(E::T(7)){Some(E::T(8))=>0,Some(E::T(x))=>x,None=>9,_=>8}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "d4ed4297de41a46415bb4b286e22fc29c5b75cca4d309a4bb443973cddb63ce4",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate"
+  },
+  {
+    "id": "163",
+    "label": "patterns/named-rest-let-bound",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let value=E::N{x:7,y:9};match value{E::N{x,..}=>x,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "60b5c769d90f7f93693da95bb70adb07b67d231e1d00c0f19dd6c71ac4db3229",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate",
+    "corrects_witness": "058"
+  },
+  {
+    "id": "164",
+    "label": "patterns/named-rename-let-bound",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let value=E::N{x:7,y:9};match value{E::N{y:b,x:a}=>a+b,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "91efc4f1b535661ffa2e783c31525f492a66ec89acbc31366fe83700d3ae7f86",
+    "fuel": 200000,
+    "proposed_policy": "Exact-candidate",
+    "corrects_witness": "059"
+  },
+  {
+    "id": "165",
+    "label": "frontend/pattern-field-let-bound",
+    "fixture": "default",
+    "source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let value=E::N{x:7,y:9};match value{E::N{z,..}=>z,_=>0}}\npub fn c15b_reuse(){7}\n",
+    "source_sha256": "608ce6196762106e94b9c2546c76dd447ec13e4b357245e670ce763f5f2fb05c",
+    "fuel": 200000,
+    "proposed_policy": "Frontend-audit",
+    "corrects_witness": "123"
+  }
+]

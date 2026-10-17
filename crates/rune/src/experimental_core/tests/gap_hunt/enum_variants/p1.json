@@ -1,0 +1,44 @@
+{
+  "045": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "046": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "047": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "048": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ],
+  "050": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 2
+    }
+  ],
+  "094": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 2
+    }
+  ],
+  "129": [
+    {
+      "path": "observation.outcome.kind",
+      "count": 1
+    }
+  ]
+}

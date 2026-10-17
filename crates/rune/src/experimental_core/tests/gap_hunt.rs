@@ -4,7 +4,7 @@
 //! per output stream. Corpus roles are fixed in gap_corpus.tsv; external roles
 //! are inventoried explicitly at runtime. Missing host modules are coverage gaps.
 //! Debug is the bounded value observation, not a proof of arbitrary value equality.
-//! No ordering normalization is performed. Module loading differs: fresh refuses
+//! No ordering normalization is performed. Module loading differs: the fresh core refuses
 //! filesystem module loading. Support/no-main files are compiled but not invoked.
 use super::super::{
 	execute::Executor,
@@ -232,7 +232,7 @@ fn observe_with_context(
 				}
 			}
 			Err(e) => {
-				// Assertion oracle opt-in: preserve exact stock failure metadata without
+				// Assertion oracle opt-in: preserve exact stock VM failure metadata without
 				// changing any existing frozen observation or running the case twice.
 				if mode == "assert-main" || mode == "output-main" || mode.starts_with("patterns-") {
 					let site = match e.first_location() {
@@ -1186,10 +1186,10 @@ fn comparison_contract() {
 		let actual_message = unhex(actual[3]);
 		let actual_value = unhex(actual[4]);
 		if *policy == "exact" {
-			// Only these stock resource/coercion classes have explicit fresh names.
+			// Only these stock VM resource/coercion classes have fresh core names.
 			let expected_class = if engine == "fresh" && class.starts_with("stock:MaxValueDepth ") {
 				"ValueDepth"
-			// S-index gave stock's shared classifier this same public class.
+			// S-index gave the stock VM classifier this same public class.
 			// Preserve the frozen Debug label and equate only its coercion rows.
 			} else if class.starts_with("stock:ValueToIntegerCoercionError ") {
 				"IntegerCoercion"
@@ -1475,8 +1475,8 @@ mod contracts;
 fn emission_child() {
 	let path = std::env::var_os("GAP_CASE").expect("GAP_CASE required");
 	let result = std::env::var_os("GAP_RESULT").expect("GAP_RESULT required");
-	// The old lowerer overflows a normal stack. This larger stack is solely a
-	// baseline-emission diagnostic; the production regression uses exactly2MiB.
+	// This compiler-emission diagnostic uses a larger stack.
+	// The production stack regression uses exactly 2 MiB.
 	let text = std::thread::Builder::new()
 		.stack_size(16 << 20)
 		.spawn(move || {
@@ -1604,3 +1604,7 @@ mod text_pipeline;
 #[cfg(feature = "fresh-core")]
 #[path = "gap_hunt/constructors.rs"]
 mod constructors;
+
+#[cfg(feature = "fresh-core")]
+#[path = "gap_hunt/enum_variants.rs"]
+mod enum_variants;

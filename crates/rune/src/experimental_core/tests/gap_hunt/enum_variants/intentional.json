@@ -1,0 +1,562 @@
+{
+  "036": {
+    "source_sha256": "dad3418c312534b1640b3e48906494b36e767bebd4dee06cc49f5ad84fbc707e",
+    "authority": "chatd seq18981",
+    "engines": [
+      "stock",
+      "fresh"
+    ],
+    "reason": "Compare distinct variants by declaration order before comparing payloads.",
+    "declaration_order": [
+      "E::U",
+      "E::Z",
+      "E::T",
+      "E::P",
+      "E::N"
+    ],
+    "stock_before_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "expected_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "expected_origin": "Approved rule; not a measured implementation result"
+  },
+  "039": {
+    "source_sha256": "01a3753a843662d6308a62724d1e5a57f90df44531b9bf57e89f932741913348",
+    "authority": "chatd seq18981",
+    "engines": [
+      "stock",
+      "fresh"
+    ],
+    "reason": "Compare distinct variants by declaration order before comparing payloads.",
+    "declaration_order": [
+      "E::U",
+      "E::Z",
+      "E::T",
+      "E::P",
+      "E::N"
+    ],
+    "stock_before_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "expected_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "expected_origin": "Approved rule; not a measured implementation result"
+  },
+  "040": {
+    "source_sha256": "15c714771f98d2cfadd6cd4aa3f36d18c004d1eaf37de3dd4c304adfc618e84f",
+    "authority": "chatd seq18981",
+    "engines": [
+      "stock",
+      "fresh"
+    ],
+    "reason": "Compare distinct variants by declaration order before comparing payloads.",
+    "declaration_order": [
+      "E::U",
+      "E::Z",
+      "E::T",
+      "E::P",
+      "E::N"
+    ],
+    "stock_before_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "expected_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ]
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "expected_origin": "Approved rule; not a measured implementation result"
+  },
+  "052": {
+    "source_sha256": "e01c28d568391279cc4f13c6b7b56b051caaade2843c4f115ce490727b8c56b9",
+    "authority": "chatd seq18981",
+    "engines": [
+      "stock",
+      "fresh"
+    ],
+    "reason": "Compare distinct variants by declaration order before comparing payloads.",
+    "declaration_order": [
+      "E::U",
+      "E::Z",
+      "E::T",
+      "E::P",
+      "E::N"
+    ],
+    "stock_before_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2,
+                3
+              ]
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "expected_observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2,
+                3
+              ]
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              true
+            ],
+            [
+              "Bool",
+              "0x981333df5abb043f",
+              false
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "expected_origin": "Approved rule; not a measured implementation result"
+  }
+}

@@ -1,0 +1,544 @@
+{
+  "148": {
+    "source_sha256": "dce2f18635c4c1f98bdec672a8b79f9de7d6cbafbdfd22bd0ce5b5f9954d9883",
+    "fresh_fuel": 32,
+    "stock_fuel": 200000,
+    "observation": {
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "0"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "1"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "2"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "3"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "4"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "5"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "6"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "7"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "8"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "9"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "10"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "11"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "12"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "13"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "14"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "15"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "16"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "17"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "18"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "19"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "20"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "21"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "22"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "23"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "24"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "25"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "26"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "27"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "28"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "29"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "30"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "31"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "32"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "33"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "34"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "35"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "36"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "37"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "38"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "39"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "40"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "41"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "42"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "43"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "44"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "45"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "46"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "47"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "48"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "49"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "50"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "51"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "52"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "53"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "54"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "55"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "56"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "57"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "58"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "59"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "60"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "61"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "62"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "63"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "64"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "65"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "66"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "67"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "68"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "69"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "70"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "71"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "72"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "73"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "74"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "75"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "76"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "77"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "78"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "79"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "80"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "81"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "82"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "83"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "84"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "85"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "86"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "87"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "88"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "89"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "90"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "91"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "92"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "93"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "94"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "95"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "96"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "97"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "98"
+        },
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "99"
+        }
+      ],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "100"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "authority": "chatd seq18976",
+    "evidence": {
+      "path": "/home/me/work/.reviews/0185-c15b-complete1/148/observation.json",
+      "sha256": "b7237d2740ee9dfd9777f2679c3243312cd70a7be3dc4456e4dc0ea0ac6803e0",
+      "receipt_sha256": "94a64beaffe8abc170f1bc031746cec2f7a02e47f362239ee3cadde7b61bd2f8",
+      "binary_sha256": "39c07868b340a8108231d7d2d71b8bef09b6372230f89ca599b9986861caddc2"
+    }
+  }
+}
