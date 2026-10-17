@@ -77,7 +77,8 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	}
 	let observed = &actual["observation"];
 	let c14: Json = serde_json::from_str(include_str!("c14_admissions.json")).unwrap();
-	if let Some(rule) = c14.get(case["id"].as_str().unwrap()) {
+	let c15: Json = serde_json::from_str(include_str!("c15_admissions.json")).unwrap();
+	if let Some(rule) = c14.get(case["id"].as_str().unwrap()).or_else(|| c15.get(case["id"].as_str().unwrap())) {
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
 		assert_eq!(frozen["disposition"], "Refused-surface");
 		assert_eq!(audit["invoked"], true);

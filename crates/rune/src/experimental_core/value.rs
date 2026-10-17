@@ -26,8 +26,14 @@ pub(crate) struct Handle {
 /// ```compile_fail
 /// let _ = rune::experimental_core::value::Nominal(0);
 /// ```
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug)]
 pub struct Nominal(pub(crate) u32);
+impl PartialEq for Nominal {
+	fn eq(&self, other: &Self) -> bool {
+		self.0 == other.0 || super::nominal::same_type(*self, *other)
+	}
+}
+impl Eq for Nominal {}
 
 /// The type of a value.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

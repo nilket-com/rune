@@ -405,7 +405,18 @@ fn fresh_contract() {
 		assert!(run.complete, "{label}: {}", run.record);
 		let actual: Vec<_> = run.record.split('\t').collect();
 		assert_eq!(actual.len(), 5);
-		if let Some(class) = fresh_refusal(label) {
+		let admissions: serde_json::Value =
+			serde_json::from_str(include_str!("c15_admissions.json")).unwrap();
+		let admitted = admissions.get(*label);
+		if let Some(rule) = admitted {
+			use sha2::Digest as _;
+			assert_eq!(
+				rule["source_sha256"],
+				hex(&sha2::Sha256::digest(source.as_bytes()))
+			);
+			assert!(fresh_refusal(label).is_some());
+		}
+		if let Some(class) = fresh_refusal(label).filter(|_| admitted.is_none()) {
 			assert_eq!((actual[0], actual[1]), ("refused", class), "{label}");
 			assert_eq!(run.stdout, b"\nrunning 1 test\n");
 			assert!(run.stderr.is_empty());
@@ -442,8 +453,8 @@ fn fresh_contract() {
 		assert_eq!(hex(&site), row[6], "{label}: site");
 		exact += 1;
 	}
-	assert_eq!((exact, refused, full_budget), (178, 11, 75));
-	fs::write(out.join("summary.txt"),"178 exact;11 explicit refusals;75 full-fresh-budget source checks (no numeric stock fuel parity)\n").unwrap();
+	assert_eq!((exact, refused, full_budget), (180, 9, 75));
+	fs::write(out.join("summary.txt"),"180 exact;9 explicit refusals;75 full-fresh-budget source checks (no numeric stock fuel parity)\n").unwrap();
 	contract_completed("fresh", COUNT);
 }
 #[test]

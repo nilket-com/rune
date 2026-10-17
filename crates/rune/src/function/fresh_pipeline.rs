@@ -92,6 +92,8 @@ pub(crate) struct State {
 	pending: u8,
 	certified: [u8; 8],
 	closed: u8,
+	any_certified: u8,
+	any_closed: u8,
 }
 impl State {
 	pub(crate) fn begin_module(&mut self, n: u8) -> u8 {
@@ -134,9 +136,76 @@ impl State {
 			&& self.certified[m as usize] == m.required()
 	}
 }
+pub(crate) const TYPE_OF: Hash = crate::hash_in!(crate, ::std::any::Type::of_val);
+pub(crate) const TYPE_OF_ASSOC: Hash = crate::hash_in!(crate, ::std::any::Type.of_val);
+pub(crate) fn any_kind(h: Hash) -> Option<bool> {
+	if h == TYPE_OF || h == TYPE_OF_ASSOC {
+		Some(true)
+	} else if h == TYPE_NAME {
+		Some(false)
+	} else {
+		None
+	}
+}
+pub(crate) const TYPE_NAME: Hash = crate::hash_in!(crate, ::std::any::type_name_of_val);
+impl State {
+	pub(crate) fn begin_any(&mut self, h: Hash) -> Option<u8> {
+		let bit = if h == TYPE_OF || h == TYPE_OF_ASSOC {
+			1
+		} else if h == TYPE_NAME {
+			2
+		} else {
+			return None;
+		};
+		if self.pending & 16 == 0 {
+			self.any_closed |= bit;
+			None
+		} else {
+			Some(bit)
+		}
+	}
+	pub(crate) fn finish_any(&mut self, bit: u8) {
+		self.any_certified |= bit;
+	}
+	pub(crate) fn close_type_names(&mut self) {
+		self.any_closed |= 2;
+	}
+	pub(crate) fn any_ready(&self, h: Hash) -> bool {
+		let bit = if h == TYPE_OF || h == TYPE_OF_ASSOC {
+			1
+		} else if h == TYPE_NAME {
+			2
+		} else {
+			return false;
+		};
+		self.pending == 0 && self.any_closed & bit == 0 && self.any_certified & bit != 0
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
+	#[test]
+	fn any_certificates_require_successful_trusted_install_and_stay_closed() {
+		for hash in [TYPE_OF, TYPE_OF_ASSOC, TYPE_NAME] {
+			let mut state = State::default();
+			assert!(!state.any_ready(hash));
+			state.begin_module(16);
+			let bit = state.begin_any(hash).unwrap();
+			state.finish_module(0);
+			assert!(!state.any_ready(hash)); // A failed insertion never finishes.
+			state.finish_any(bit);
+			assert!(state.any_ready(hash));
+			assert!(state.begin_any(hash).is_none()); // Foreign replacement attempt.
+			assert!(!state.any_ready(hash));
+			state.begin_module(16);
+			let bit = state.begin_any(hash).unwrap();
+			state.finish_any(bit);
+			state.finish_module(0);
+			assert!(!state.any_ready(hash));
+		}
+	}
+
 	#[test]
 	fn const_hashes() {
 		for (m, n) in [

@@ -1,0 +1,10 @@
+{
+  "022": {
+    "source_sha256": "38dcbca034787d2c027cfbf286244f6011fbf348cd3e582a8eec36fa72bf4a2e",
+    "reason": "C15 unit/tuple constructor admission; compare complete original stock observation without changing frozen oracle."
+  },
+  "023": {
+    "source_sha256": "017e0d15e00fe806c5b6bb318ff7f4de1b5b6180f1766b523e098bade68a0a40",
+    "reason": "C15 unit/tuple constructor admission; compare complete original stock observation without changing frozen oracle."
+  }
+}

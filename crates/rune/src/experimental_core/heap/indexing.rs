@@ -71,7 +71,7 @@ impl Store {
 			Value::Heap(h) => {
 				match self.entry(h)?.tag()? {
 					Type::Vec | Type::Tuple | Type::Option | Type::Result | Type::String => (),
-					Type::Struct(_) => return Err(self.missing_integer(value, index)?),
+					Type::Struct(_) => return self.tuple_struct_get(value, h, index),
 					_ => return Err(self.tuple_get_error(value, index)?),
 				}
 				match self.payload(h)? {
@@ -93,6 +93,53 @@ impl Store {
 				}
 			}
 			_ => return Err(self.tuple_get_error(value, index)?),
+		};
+		self.retain(old)?;
+		Ok(old)
+	}
+
+	#[cold]
+	#[inline(never)]
+	fn tuple_struct_get(
+		&mut self,
+		value: Value,
+		handle: super::Handle,
+		index: usize,
+	) -> Result<Value> {
+		let payload = match self.payload(handle) {
+			Ok(payload) => payload,
+			Err(error) => {
+				// Nominal types without integer fields fail dispatch before any
+				// moved/leased payload access, as the stock index path does.
+				if error.kind == ErrorKind::AccessConflict {
+					if let Type::Struct(nominal) = self.entry(handle)?.tag()? {
+						let missing = match super::super::nominal::shape_copy(nominal) {
+							Some(
+								super::super::nominal::Shape::Named
+								| super::super::nominal::Shape::Empty,
+							) => true,
+							Some(super::super::nominal::Shape::Tuple(arity)) => {
+								index >= arity as usize
+							}
+							None => false,
+						};
+						if missing {
+							return Err(self.missing_integer(value, index)?);
+						}
+					}
+				}
+				return Err(error);
+			}
+		};
+		let old = match payload {
+			Payload::List {
+				tag: Type::Struct(_),
+				values,
+			} => values.get(index).copied(),
+			_ => None,
+		};
+		let Some(old) = old else {
+			return Err(self.missing_integer(value, index)?);
 		};
 		self.retain(old)?;
 		Ok(old)
@@ -243,8 +290,16 @@ impl Store {
 			});
 		}
 		if self.index_tag(index)? == Some(Type::String)
-			&& matches!(self.index_tag(value)?, Some(Type::Object | Type::Struct(_)))
-		{
+			&& match self.index_tag(value)? {
+				Some(Type::Object) => true,
+				Some(Type::Struct(n)) => {
+					matches!(
+						super::super::nominal::shape_copy(n),
+						Some(super::super::nominal::Shape::Named)
+					)
+				}
+				_ => false,
+			} {
 			let Value::Heap(h) = value else {
 				unreachable!()
 			};
@@ -295,8 +350,16 @@ impl Store {
 			);
 		}
 		if self.index_tag(index)? == Some(Type::String)
-			&& matches!(self.index_tag(value)?, Some(Type::Object | Type::Struct(_)))
-		{
+			&& match self.index_tag(value)? {
+				Some(Type::Object) => true,
+				Some(Type::Struct(n)) => {
+					matches!(
+						super::super::nominal::shape_copy(n),
+						Some(super::super::nominal::Shape::Named)
+					)
+				}
+				_ => false,
+			} {
 			return self.set_key(value, RecordKey::Dynamic(index), new);
 		}
 		if self.index_tag(value)? == Some(Type::Vec) {

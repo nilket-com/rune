@@ -606,6 +606,32 @@ impl Store {
 					sink.formatted(format_args!("{:?}", text.as_str()))?
 				}
 				Payload::String(text) => sink.push(text)?,
+				Payload::List {
+					tag: Type::Struct(n),
+					values,
+				} if debug => {
+					let invalid = || Error::new(ErrorKind::InvalidCode, "nominal shape");
+					let mut buffer = [0; 256];
+					let len =
+						super::super::nominal::name_copy(*n, &mut buffer).ok_or_else(invalid)?;
+					let name = core::str::from_utf8(&buffer[..len]).map_err(|_| invalid())?;
+					sink.push(name)?;
+					match super::super::nominal::shape_copy(*n).ok_or_else(invalid)? {
+						super::super::nominal::Shape::Empty => {}
+						super::super::nominal::Shape::Tuple(_) => {
+							sink.push(" (")?;
+							sink.frame(
+								stack,
+								Frame::List {
+									values,
+									next: 0,
+									close: ")",
+								},
+							)?;
+						}
+						_ => return Err(invalid()),
+					}
+				}
 				Payload::List { tag, values } if debug => {
 					let (open, close) = match tag {
 						Type::Vec => ("[", "]"),
@@ -749,7 +775,7 @@ impl Store {
 					}
 				}
 				Payload::List {
-					tag: Type::Vec | Type::Tuple,
+					tag: Type::Vec | Type::Tuple | Type::Struct(_),
 					..
 				}
 				| Payload::Record {

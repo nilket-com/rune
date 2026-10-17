@@ -39,12 +39,24 @@ impl Default for Limits {
 	}
 }
 
+/// Storage shape and positional arity are cold metadata, separate from the type hash.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Shape {
+	Named,
+	Empty,
+	Tuple(u32),
+}
+
 #[derive(Clone, Copy)]
 struct Entry {
 	hash: u64,
+	shape: Shape,
 	start: u32,
 	len: u32,
 }
+
+// Arity uses existing cold descriptor space; no further table-entry growth.
+const _: () = assert!(core::mem::size_of::<Entry>() == 24);
 
 pub(crate) struct Interner {
 	limits: Limits,
@@ -136,9 +148,13 @@ impl Interner {
 	}
 
 	pub(crate) fn lookup(&self, hash: u64) -> Option<Nominal> {
+		self.lookup_shape(hash, Shape::Named)
+	}
+
+	fn lookup_shape(&self, hash: u64, shape: Shape) -> Option<Nominal> {
 		self.entries
 			.iter()
-			.position(|e| e.hash == hash)
+			.position(|e| e.hash == hash && e.shape == shape)
 			.map(|i| Nominal(i as u32))
 	}
 
@@ -154,7 +170,7 @@ impl Interner {
 		}
 		let id = Nominal(self.entries.len() as u32);
 		let before = (self.entries.len(), self.names.len());
-		if self.append(hash, name).is_err() {
+		if self.append(hash, name, Shape::Named).is_err() {
 			self.rollback(before);
 			debug_assert!(false, "preflighted nominal append failed");
 			return Err(refused());
@@ -182,9 +198,10 @@ impl Interner {
 	}
 
 	// Only called after the whole batch's capacity and conversion preflight.
-	fn append(&mut self, hash: u64, name: &str) -> Result<()> {
+	fn append(&mut self, hash: u64, name: &str, shape: Shape) -> Result<()> {
 		let entry = Entry {
 			hash,
+			shape,
 			start: self.names.len() as u32,
 			len: name.len() as u32,
 		};
@@ -206,7 +223,7 @@ impl Interner {
 		let mut count = 0usize;
 		let mut bytes = 0usize;
 		for (i, entry) in staging.entries.iter().enumerate() {
-			if let Some(id) = self.lookup(entry.hash) {
+			if let Some(id) = self.lookup_shape(entry.hash, entry.shape) {
 				remap[i] = id;
 			} else {
 				let name = staging.name(entry);
@@ -221,12 +238,15 @@ impl Interner {
 		let before = (self.entries.len(), self.names.len());
 		let capacities = (self.entries.capacity(), self.names.capacity());
 		for (i, entry) in staging.entries.iter().enumerate() {
-			if let Some(id) = self.lookup(entry.hash) {
+			if let Some(id) = self.lookup_shape(entry.hash, entry.shape) {
 				remap[i] = id;
 				continue;
 			}
 			remap[i] = Nominal(self.entries.len() as u32);
-			if self.append(entry.hash, staging.name(entry)).is_err() {
+			if self
+				.append(entry.hash, staging.name(entry), entry.shape)
+				.is_err()
+			{
 				self.rollback(before);
 				debug_assert!(false, "preflighted nominal batch append failed");
 				return Err(refused());
@@ -295,11 +315,29 @@ impl Staging {
 		&self.names[entry.start as usize..entry.start as usize + entry.len as usize]
 	}
 
+	#[cfg_attr(not(test), allow(dead_code))]
 	pub(super) fn stage(&mut self, hash: u64, name: core::fmt::Arguments<'_>) -> Result<Nominal> {
-		if let Some(id) = lookup(hash)? {
+		self.stage_shape(hash, name, Shape::Named)
+	}
+
+	pub(super) fn stage_shape(
+		&mut self,
+		hash: u64,
+		name: core::fmt::Arguments<'_>,
+		shape: Shape,
+	) -> Result<Nominal> {
+		let existing = {
+			let guard = GLOBAL.lock().map_err(|_| refused())?;
+			guard.as_ref().and_then(|t| t.lookup_shape(hash, shape))
+		};
+		if let Some(id) = existing {
 			return Ok(id);
 		}
-		if let Some(i) = self.entries.iter().position(|e| e.hash == hash) {
+		if let Some(i) = self
+			.entries
+			.iter()
+			.position(|e| e.hash == hash && e.shape == shape)
+		{
 			return Ok(Nominal(PROVISIONAL | i as u32));
 		}
 		let limits = Limits::default();
@@ -329,6 +367,7 @@ impl Staging {
 			.map_err(|_| refused_by(ErrorKind::Allocation, "staged nominal names"))?;
 		let entry = Entry {
 			hash,
+			shape,
 			start: self.names.len() as u32,
 			len: len as u32,
 		};
@@ -447,6 +486,29 @@ pub(crate) fn name_copy(nominal: Nominal, buffer: &mut [u8; 256]) -> Option<usiz
 		.get_mut(..name.len())?
 		.copy_from_slice(name.as_bytes());
 	Some(name.len())
+}
+
+/// No allocation or compiler/query dependency at runtime.
+pub(crate) fn shape_copy(n: Nominal) -> Option<Shape> {
+	let guard = GLOBAL.lock().ok()?;
+	Some(guard.as_ref()?.entries.get(n.0 as usize)?.shape)
+}
+#[cold]
+#[inline(never)]
+pub(crate) fn same_type(a: Nominal, b: Nominal) -> bool {
+	if a.0 == b.0 {
+		return true;
+	}
+	let Ok(guard) = GLOBAL.lock() else {
+		return false;
+	};
+	let Some(t) = guard.as_ref() else {
+		return false;
+	};
+	match (t.hash(a), t.hash(b)) {
+		(Some(a), Some(b)) => a == b,
+		_ => false,
+	}
 }
 
 #[cfg(test)]

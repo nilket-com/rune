@@ -10,6 +10,9 @@ impl<'hir> Lower<'_, 'hir> {
 		let hir::Call::Associated { target, hash, .. } = c.call else {
 			return None;
 		};
+		if self.nominal_missing_site(c) {
+			return None;
+		}
 		self.pipeline_method(target, hash).map(|m| (target, m))
 	}
 

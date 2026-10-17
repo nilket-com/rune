@@ -46,14 +46,33 @@ fn error(error: &stock::VmError) -> Json {
 #[ignore = "C15 stock-oracle child; explicit bounded external operator only"]
 fn child() {
 	let engine = std::env::var("C15_ENGINE").unwrap();
-	assert!(engine == "stock");
+	assert!(engine == "stock" || engine == "fresh");
 	let index: usize = std::env::var("C15_CASE").unwrap().parse().unwrap();
 	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	let row = cases[index].clone();
+	let mut row = cases[index].clone();
+	if let Ok(fuel) = std::env::var("C15_COUNTERFACTUAL_FUEL") {
+		assert_eq!(engine, "stock");
+		assert_eq!(index, 125);
+		assert_eq!(fuel, "200000");
+		row["fuel"] = json!(200000);
+	}
 	let row = &row;
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
 
+	if engine == "fresh" {
+		let result = observe_fresh(row);
+		let path = std::env::var_os("C15_RESULT").unwrap();
+		let mut file = std::fs::OpenOptions::new()
+			.create_new(true)
+			.write(true)
+			.open(path)
+			.unwrap();
+		use std::io::Write;
+		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
+			.unwrap();
+		return;
+	}
 	let context = context(row["fixture"].as_str().unwrap());
 	let mut sources = Sources::new();
 	sources
@@ -271,4 +290,242 @@ fn stock_replay_controls() {
 		.replace("0x1cad9186c9641c4f", "0x1111111111111111");
 	bad["observation"]["outcome"]["kind"] = json!(kind);
 	assert_ne!(project(&bad, "", &mut Vec::new()), frozen["059"]);
+}
+
+#[test]
+fn single_field_tuple_struct_slice() {
+	use crate::experimental_core::value::{Scalar, Type, Value as FreshValue};
+	let context = Context::with_default_modules().unwrap();
+	let mut sources = Sources::new();
+	sources
+		.insert(Source::memory("struct T(a);pub fn main(){T(7).0}pub fn reuse(){7}").unwrap())
+		.unwrap();
+	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14).unwrap();
+	let mut store = Store::new(Limits {
+		entries: 32,
+		bytes: 4096,
+	})
+	.unwrap();
+	let mut executor = Executor::new().unwrap();
+	for name in ["main", "reuse"] {
+		let root = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash([name])).unwrap(),
+				&[],
+				200000,
+			)
+			.unwrap();
+		assert_eq!(store.root_scalar(&root).unwrap(), Some(Scalar::I64(7)));
+		store.root_release(root).unwrap();
+		assert!(executor.is_idle());
+		assert_eq!(store.live_entries(), 0);
+		assert_eq!(store.payload_bytes(), 0);
+	}
+	{
+		let source = "struct T(a);pub fn main(){let f=T;f(7).0}";
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(source).unwrap()).unwrap();
+		assert!(frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14).is_err());
+	}
+	assert_eq!(std::mem::size_of::<Type>(), 8);
+	assert_eq!(std::mem::size_of::<FreshValue>(), 16);
+	println!("C15 SLICE: T(7).0=7; lifecycle closed; reuse7; firstclass still refused; unit/pair widened; Type8 Value16; heap static asserts Payload40 Entry72 Slot80");
+}
+
+#[test]
+fn nominal_shape_survives_foreign_program_arguments() {
+	let c = Context::with_default_modules().unwrap();
+	let compile = |text: &str| {
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(text).unwrap()).unwrap();
+		frontend::compile(&mut sources, &c, &mut Diagnostics::new(), 14).unwrap()
+	};
+	let unit = compile("struct Foreign;pub fn main(){Foreign}");
+	let tuple = compile("struct Foreign();pub fn main(){Foreign()}");
+	let render = compile("pub fn main(x){format!(\"{:?}\",x)}");
+	let mut store = Store::new(Limits {
+		entries: 64,
+		bytes: 4096,
+	})
+	.unwrap();
+	let mut executor = Executor::new().unwrap();
+	let mut types = Vec::new();
+	for (p, expected) in [(&unit, "Foreign"), (&tuple, "Foreign ()")] {
+		let value = executor
+			.invoke(
+				p,
+				&mut store,
+				p.function(Hash::type_hash(["main"])).unwrap(),
+				&[],
+				200000,
+			)
+			.unwrap();
+		types.push(store.root_tag(&value).unwrap());
+		let out = executor
+			.invoke(
+				&render,
+				&mut store,
+				render.function(Hash::type_hash(["main"])).unwrap(),
+				&[&value],
+				200000,
+			)
+			.unwrap();
+		assert_eq!(store.root_text(&out).unwrap(), expected);
+		store.root_release(out).unwrap();
+		store.root_release(value).unwrap();
+	}
+	assert_eq!(types[0], types[1]);
+	assert!(executor.is_idle());
+	assert_eq!(store.live_entries(), 0);
+	assert_eq!(store.payload_bytes(), 0);
+}
+
+include!("constructors/fresh_graph.rs");
+include!("constructors/fresh.rs");
+include!("constructors/contract.rs");
+include!("constructors/bounded.rs");
+
+#[test]
+fn type_observation_registry_controls() {
+	use crate::function::fresh_pipeline as a;
+	let c = Context::with_default_modules().unwrap();
+	for hash in [a::TYPE_OF, a::TYPE_OF_ASSOC, a::TYPE_NAME] {
+		println!(
+			"ANY REGISTRY {hash} present={} certified={}",
+			c.lookup_function(hash).is_some(),
+			c.fresh_any_function(hash)
+		);
+	}
+	assert!(c.fresh_any_function(a::TYPE_NAME));
+	assert!(c.fresh_any_function(a::TYPE_OF_ASSOC) || c.fresh_any_function(a::TYPE_OF));
+	use crate::experimental_core::error::TypeName as N;
+	for name in [
+		N::Unit,
+		N::Bool,
+		N::I64,
+		N::U64,
+		N::F64,
+		N::Char,
+		N::Ordering,
+		N::String,
+		N::Vec,
+		N::Tuple,
+		N::Object,
+		N::Option,
+		N::Result,
+		N::Range,
+		N::RangeFrom,
+		N::RangeFull,
+		N::RangeInclusive,
+		N::RangeToInclusive,
+		N::RangeTo,
+		N::Function,
+		N::Type,
+		N::VecIter,
+		N::OptionIter,
+		N::StringSplit,
+		N::CharSplit,
+		N::Chars,
+		N::Skip,
+		N::Take,
+		N::RangeIter,
+		N::UnsignedRangeIter,
+		N::CharRangeIter,
+		N::RangeInclusiveIter,
+		N::UnsignedRangeInclusiveIter,
+		N::CharRangeInclusiveIter,
+		N::RangeFromIter,
+		N::UnsignedRangeFromIter,
+		N::CharRangeFromIter,
+	] {
+		let hash = name.builtin_hash().unwrap();
+		let actual = c
+			.get_const_value(Hash::associated_function(
+				hash,
+				&crate::runtime::Protocol::INTO_TYPE_NAME,
+			))
+			.and_then(|v| v.as_string().ok());
+		println!("TYPE NAME REGISTRY {name}: {actual:?}");
+	}
+}
+
+#[test]
+fn nominal_missing_method_proof_rejects_unclosed_receiver_sets() {
+	let context = Context::with_default_modules().unwrap();
+	for (source, admitted) in [
+		(
+			"struct T(a);pub fn main(){let t=T(7);let u=t;u.is_empty()}",
+			true,
+		),
+		(
+			"struct T(a);pub fn main(){let t=T(7);t=[];t.is_empty()}",
+			false,
+		),
+		("struct T(a);pub fn main(t){t.is_empty()}", false),
+		(
+			"struct T(a);impl T{fn is_empty(self){true}}pub fn main(){T(7).is_empty()}",
+			false,
+		),
+		("struct T(a);pub fn main(){T(7).collect::<T>()}", false),
+	] {
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(source).unwrap()).unwrap();
+		let result = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14);
+		assert_eq!(result.is_ok(), admitted, "{source}");
+	}
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: compiles Rune source in bounded 2MiB subprocesses; native CI covers this compiler stack boundary"
+)]
+fn nested_tuple_constructors_keep_the_normal_stack_boundary() {
+	let scratch =
+		Scratch(std::env::temp_dir().join(format!("rune-c15-stack-{}", std::process::id())));
+	fs::create_dir(&scratch.0).unwrap();
+	let out = scratch.0.join("out");
+	fs::create_dir(&out).unwrap();
+	for arity in [1, 2] {
+		for depth in [126, 127, 128] {
+			let mut expression = String::from("1");
+			for _ in 0..depth {
+				expression = if arity == 1 {
+					format!("T({expression})")
+				} else {
+					format!("T({expression},0)")
+				};
+			}
+			let id = format!("{arity}-{depth}");
+			let path = out.join(format!("{id}.rn"));
+			let declaration = if arity == 1 {
+				"struct T(v);"
+			} else {
+				"struct T(v,w);"
+			};
+			fs::write(
+				&path,
+				format!("{declaration} pub fn main(){{{expression};1}}"),
+			)
+			.unwrap();
+			let observed = launch(&path, &path, "stack-main", "fresh", &scratch.0, &out, &id);
+			assert!(observed.complete, "{id}: {}", observed.record);
+			let fields: Vec<_> = observed.record.split('\t').collect();
+			if depth < 128 {
+				assert_eq!(fields[0], "value", "{id}: {}", observed.record);
+				assert_eq!(unhex(fields[4]), "i64:1:1");
+			} else {
+				assert_eq!(fields[0], "refused", "{id}: {}", observed.record);
+				assert!(
+					fields[1] == "Some(DepthLimit)"
+						|| (fields[1] == "Some(FrontendDiagnostic)"
+							&& unhex(fields[3]).contains("MaxItemDepth { max: 128 }")),
+					"{id}: {}",
+					observed.record
+				);
+			}
+		}
+	}
 }

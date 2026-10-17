@@ -1,0 +1,10 @@
+{
+  "c4/nominal/shadow-type": {
+    "source_sha256": "6cc85bda1b165b1a14645446076e44c4093ba6784439a2814e0a9b740c6e4de1",
+    "reason": "C15 tuple constructor/pattern admission; require complete original stock record, stdout, stderr and site."
+  },
+  "c4/nominal/tuple-struct": {
+    "source_sha256": "ae379c6d1e13e9cf470ad402c212893edb4704c426595eb10f737f8cff8df2a9",
+    "reason": "C15 tuple constructor/pattern admission; require complete original stock record, stdout, stderr and site."
+  }
+}

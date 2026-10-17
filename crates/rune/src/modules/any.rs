@@ -15,6 +15,10 @@ use crate::{docstring, ContextError, Hash, Module};
 #[rune::module(::std::any)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_pipeline = 16;
+	}
 
 	m.ty::<Type>()?.docs(docstring! {
 		/// Represents a type in the Rune type system.

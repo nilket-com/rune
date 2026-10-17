@@ -338,10 +338,10 @@ fn fresh_contract() {
 		let refusal = if pieces[0] == "method" {
 			if pieces[1] == "bytes" {
 				Some("Some(ByteStr)")
-			} else if matches!(pieces[2], "len-extra" | "clone-extra") {
+			} else if matches!(pieces[2], "len-extra" | "clone-extra")
+				&& !matches!(pieces[1], "tuple-struct" | "unit-struct")
+			{
 				Some("Some(Method)")
-			} else if matches!(pieces[1], "tuple-struct" | "unit-struct") {
-				Some("Some(UnresolvedFunction)")
 			} else {
 				None
 			}
@@ -374,7 +374,7 @@ fn fresh_contract() {
 		assert_eq!(hex(&run.stdout), row[3], "stdout drift: {label}");
 		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
 	}
-	assert_eq!(coverage, 65);
+	assert_eq!(coverage, 51);
 	assert_eq!(retained, 1);
 	super::contract_completed("fresh", rows.len());
 }

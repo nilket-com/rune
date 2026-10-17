@@ -628,7 +628,7 @@ impl fmt::Display for IntTarget {
 }
 
 impl FieldRef {
-	fn resolve(self, program: &Program) -> Option<&str> {
+	pub(crate) fn resolve(self, program: &Program) -> Option<&str> {
 		if self.code != program.code.id() {
 			return None;
 		}

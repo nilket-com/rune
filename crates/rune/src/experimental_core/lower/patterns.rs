@@ -325,13 +325,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					if variant_hash != Hash::EMPTY {
 						return Err(self.refused(span, Refusal::Pattern));
 					}
-					let shape = self
+					let _shape = self
 						.constants
 						.fresh_struct_shape(hash)
 						.ok_or_else(|| self.refused(span, Refusal::Pattern))?;
-					if !matches!(shape.fields, crate::compile::meta::Fields::Named(_)) {
-						return Err(self.refused(span, Refusal::Pattern));
-					}
 					let tag = self.struct_tag(hash, span)?;
 					self.pattern_is(value, tag, misses, span)?;
 				}
@@ -566,8 +563,28 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					names.try_push(*name)?;
 				}
 				hir::PatKind::Sequence(sequence) => {
-					if !matches!(sequence.kind, hir::PatSequenceKind::Sequence { hash, is_open: false, .. } if hash == crate::runtime::OwnedTuple::HASH)
-					{
+					let supported = match sequence.kind {
+						hir::PatSequenceKind::Sequence {
+							hash,
+							is_open: false,
+							..
+						} => hash == crate::runtime::OwnedTuple::HASH,
+						hir::PatSequenceKind::Type { hash, variant_hash }
+							if variant_hash == Hash::EMPTY =>
+						{
+							self.constants
+								.fresh_struct_shape(hash)
+								.is_some_and(|shape| {
+									matches!(
+										shape.fields,
+										crate::compile::meta::Fields::Empty
+											| crate::compile::meta::Fields::Unnamed(_)
+									)
+								})
+						}
+						_ => false,
+					};
+					if !supported {
 						return Err(self.refused(pat.span, Refusal::Pattern));
 					}
 					for child in sequence.items.iter().rev() {

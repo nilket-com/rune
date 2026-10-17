@@ -1,4 +1,4 @@
-fn fresh_type_info(
+pub(super) fn fresh_type_info(
 	name: TypeName,
 	program: &frontend::Program,
 ) -> Option<crate::runtime::TypeInfo> {
@@ -285,8 +285,21 @@ fn fresh_struct_rtti(
 	let mut buffer = [0u8; 256];
 	let len = nominal::name_copy(nominal, &mut buffer)?;
 	let name = core::str::from_utf8(&buffer[..len]).ok()?;
-	let mut shape: Option<Vec<&str>> = None;
-	for id in 0..program.code.functions() {
+	let kind = match nominal::shape_copy(nominal)? {
+		nominal::Shape::Named => RttiKind::Struct,
+		nominal::Shape::Empty => RttiKind::Empty,
+		nominal::Shape::Tuple(_) => RttiKind::Tuple,
+	};
+	let mut shape: Option<Vec<&str>> = if matches!(kind, RttiKind::Struct) {
+		None
+	} else {
+		Some(Vec::new())
+	};
+	for id in 0..if matches!(kind, RttiKind::Struct) {
+		program.code.functions()
+	} else {
+		0
+	} {
 		let function = program.code.function(u32::try_from(id).ok()?)?;
 		for pc in 0..function.instructions().len() {
 			let Op::Record {
@@ -325,7 +338,7 @@ fn fresh_struct_rtti(
 		}
 	}
 	let rtti = Rtti {
-		kind: RttiKind::Struct,
+		kind,
 		hash,
 		variant_hash: Hash::EMPTY,
 		item: crate::ItemBuf::with_item(name.trim_start_matches("::").split("::")).ok()?,

@@ -501,10 +501,18 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			.constants
 			.fresh_struct_shape(hash)
 			.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
+		let kind = match shape.fields {
+			crate::compile::meta::Fields::Empty => super::nominal::Shape::Empty,
+			crate::compile::meta::Fields::Unnamed(n) => super::nominal::Shape::Tuple(
+				u32::try_from(*n).map_err(|_| self.refused(span, Refusal::Arity))?,
+			),
+			crate::compile::meta::Fields::Named(_) => super::nominal::Shape::Named,
+		};
 		self.transaction
-			.stage(
+			.stage_shape(
 				hash.into_inner(),
 				format_args!("{}", self.pool.item(shape.item)),
+				kind,
 			)
 			.map(Type::Struct)
 			.map_err(|e| e.at(self.location(span)))
@@ -1720,6 +1728,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				)?;
 				return Ok(());
 			}
+
+			if self.tuple_struct_site(hash) {
+				return self.call_tuple_struct(hash, call, out, span);
+			}
 		}
 
 		if let Some((target, m)) = self.pipeline_site(call) {
@@ -1841,6 +1853,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			name_hash,
 		} = call.call
 		{
+			if self.nominal_missing_site(call) {
+				return self.call_missing_method(call, target, name_hash, hash, out, span);
+			}
 			if let Some(method) = crate::function::fresh_text::Method::from_hash(hash) {
 				return self.call_text_method(call, target, method, out, span);
 			}
@@ -1893,6 +1908,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 		};
 
+		if crate::function::fresh_pipeline::any_kind(hash).is_some() {
+			return self.call_any_value(hash, call, out, span);
+		}
 		if let Some(pair) = crate::function::fresh_numeric::Pair::from_item(hash) {
 			return self.call_numeric_direct(call, pair, out, span);
 		}
@@ -1991,6 +2009,182 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			},
 			span,
 		)?;
+		Ok(())
+	}
+
+	#[cold]
+	#[inline(never)]
+	fn tuple_struct_site(&self, hash: Hash) -> bool {
+		self.constants
+			.fresh_struct_shape(hash)
+			.is_some_and(|shape| {
+				matches!(
+					shape.fields,
+					crate::compile::meta::Fields::Unnamed(_) | crate::compile::meta::Fields::Empty
+				)
+			})
+	}
+
+	// Script unit and tuple constructors share existing owned List storage.
+	#[cold]
+	#[inline(never)]
+	fn call_tuple_struct(
+		&mut self,
+		hash: Hash,
+		call: &hir::ExprCall<'_>,
+		out: u32,
+		span: Span,
+	) -> Result<()> {
+		let shape = self
+			.constants
+			.fresh_struct_shape(hash)
+			.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
+		let arity = match shape.fields {
+			crate::compile::meta::Fields::Empty => 0,
+			crate::compile::meta::Fields::Unnamed(n) => *n,
+			_ => return Err(self.refused(span, Refusal::ObjectConstructor)),
+		};
+		if call.args.len() != arity {
+			return Err(self.refused(span, Refusal::Arity));
+		}
+		let tag = self.struct_tag(hash, span)?;
+		let values = self.operands(call.args)?;
+		let (args_start, args_len) = self.function.arguments(&values)?;
+		self.emit(
+			Op::List {
+				out,
+				tag,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+		Ok(())
+	}
+	#[cold]
+	#[inline(never)]
+	fn call_any_value(
+		&mut self,
+		hash: Hash,
+		call: &hir::ExprCall<'_>,
+		out: u32,
+		span: Span,
+	) -> Result<()> {
+		if !self.context.fresh_any_function(hash) {
+			return Err(self.refused(span, Refusal::Native));
+		}
+		if hash == crate::function::fresh_pipeline::TYPE_NAME {
+			self.check_type_names(span)?;
+		}
+		if call.args.len() != 1 {
+			return Err(self.refused(span, Refusal::Arity));
+		}
+		let mut values = self.operands(call.args)?;
+		let function = if crate::function::fresh_pipeline::any_kind(hash) == Some(true) {
+			// Existing nominal type values also represent the builtin metatype; no hot Type variant.
+			let nominal = self.transaction.stage(
+				crate::hash_in!(crate, ::std::any::Type).into_inner(),
+				format_args!("::std::any::Type"),
+			)?;
+			let meta = self.slot()?;
+			self.emit(
+				Op::Literal {
+					out: meta,
+					value: Value::Type(Type::Struct(nominal)),
+				},
+				span,
+			)?;
+			values.try_push(meta)?;
+			super::code::ANY_TYPE_OF
+		} else {
+			super::code::ANY_TYPE_NAME
+		};
+		let (args_start, args_len) = self.function.arguments(&values)?;
+		self.emit(
+			Op::Call {
+				out,
+				function,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+		Ok(())
+	}
+	#[cold]
+	#[inline(never)]
+	fn check_type_names(&self, span: Span) -> Result<()> {
+		use super::error::TypeName as N;
+		for name in [
+			N::Unit,
+			N::Bool,
+			N::I64,
+			N::U64,
+			N::F64,
+			N::Char,
+			N::Ordering,
+			N::String,
+			N::Vec,
+			N::Tuple,
+			N::Object,
+			N::Option,
+			N::Result,
+			N::Range,
+			N::RangeFrom,
+			N::RangeFull,
+			N::RangeInclusive,
+			N::RangeToInclusive,
+			N::RangeTo,
+			N::Function,
+			N::Type,
+			N::VecIter,
+			N::OptionIter,
+			N::StringSplit,
+			N::CharSplit,
+			N::Chars,
+			N::Skip,
+			N::Take,
+			N::RangeIter,
+			N::UnsignedRangeIter,
+			N::CharRangeIter,
+			N::RangeInclusiveIter,
+			N::UnsignedRangeInclusiveIter,
+			N::CharRangeInclusiveIter,
+			N::RangeFromIter,
+			N::UnsignedRangeFromIter,
+			N::CharRangeFromIter,
+		] {
+			let hash = name
+				.builtin_hash()
+				.ok_or_else(|| self.refused(span, Refusal::Native))?;
+			let key = Hash::associated_function(hash, &crate::runtime::Protocol::INTO_TYPE_NAME);
+			let text = format!("::{name}");
+			let expected = text
+				.split('<')
+				.next()
+				.ok_or_else(|| self.refused(span, Refusal::Native))?;
+			if self
+				.context
+				.get_const_value(key)
+				.and_then(|v| v.as_string().ok())
+				!= Some(expected)
+			{
+				return Err(self.refused(span, Refusal::Native));
+			}
+		}
+		for item in self.constants.items.keys() {
+			let hash = self.pool.item_type_hash(*item);
+			if let Some(shape) = self.constants.fresh_struct_shape(hash) {
+				let key =
+					Hash::associated_function(hash, &crate::runtime::Protocol::INTO_TYPE_NAME);
+				if let Some(v) = self.context.get_const_value(key) {
+					let expected = format!("{}", self.pool.item(shape.item));
+					if v.as_string().ok() != Some(expected.as_str()) {
+						return Err(self.refused(span, Refusal::Native));
+					}
+				}
+			}
+		}
 		Ok(())
 	}
 }

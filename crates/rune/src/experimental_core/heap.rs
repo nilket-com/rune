@@ -767,6 +767,17 @@ impl Store {
 		Ok(fields)
 	}
 
+	#[cfg(test)]
+	pub(crate) fn host_observe_values(&self, value: Value) -> Result<&[Value]> {
+		let Value::Heap(h) = value else {
+			return Err(err(ErrorKind::Type));
+		};
+		match self.payload(h)? {
+			Payload::List { values, .. } => Ok(values),
+			_ => Err(err(ErrorKind::Type)),
+		}
+	}
+
 	pub(crate) fn string(&mut self, text: &str) -> Result<Value> {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));
@@ -804,8 +815,18 @@ impl Store {
 			return Err(err(ErrorKind::ClosedStore));
 		}
 
-		if !matches!(tag, Type::Vec | Type::Tuple) {
+		if !matches!(tag, Type::Vec | Type::Tuple | Type::Struct(_)) {
 			return Err(err(ErrorKind::Type));
+		}
+		if let Type::Struct(n) = tag {
+			let arity = match super::nominal::shape_copy(n) {
+				Some(super::nominal::Shape::Empty) => 0,
+				Some(super::nominal::Shape::Tuple(n)) => n as usize,
+				_ => return Err(err(ErrorKind::Type)),
+			};
+			if values.len() != arity {
+				return Err(err(ErrorKind::Type));
+			}
 		}
 
 		let bytes = values
@@ -970,7 +991,10 @@ impl Store {
 		}
 		self.mutable(handle)?;
 		let Payload::Record { tag, fields } = self.payload(handle)? else {
-			return Err(err(ErrorKind::Type));
+			return Err(err(match self.entry(handle)?.tag()? {
+				Type::Struct(_) => ErrorKind::IndexOutOfBounds,
+				_ => ErrorKind::Type,
+			}));
 		};
 		let old = fields
 			.iter()
@@ -1030,6 +1054,11 @@ impl Store {
 			| Type::RangeToInclusive
 			| Type::RangeTo => return self.set_other_range_field(handle, key, new),
 			_ => return Err(err(ErrorKind::Type)),
+		}
+		if let Type::Struct(n) = self.entry(handle)?.tag()? {
+			if super::nominal::shape_copy(n) != Some(super::nominal::Shape::Named) {
+				return Err(err(ErrorKind::IndexOutOfBounds));
+			}
 		}
 		self.set_key(value, indexing::RecordKey::Static(key), new)
 			.map_err(|error| {
@@ -1189,7 +1218,10 @@ impl Store {
 					tag: Type::Object,
 					fields,
 				} => Ok(fields.len()),
-				Payload::List { values, .. } => Ok(values.len()),
+				Payload::List {
+					tag: Type::Vec | Type::Tuple,
+					values,
+				} => Ok(values.len()),
 				_ => Err(err(ErrorKind::Type)),
 			},
 			_ => Err(err(ErrorKind::Type)),

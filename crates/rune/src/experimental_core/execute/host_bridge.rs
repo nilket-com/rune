@@ -132,8 +132,18 @@ fn witness(tag: Type) -> Result<stock::Value> {
 				core::str::from_utf8(&name[..len]).map_err(|_| error(ErrorKind::InvalidCode))?;
 			let hash = super::super::nominal::hash_copy(nominal)
 				.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+			let shape = super::super::nominal::shape_copy(nominal)
+				.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+			// Preserve the existing named-struct diagnostic witness; newly admitted
+			// tuple structs must carry their actual RTTI shape through conversion.
+			let kind = match shape {
+				super::super::nominal::Shape::Tuple(_) => stock::RttiKind::Tuple,
+				super::super::nominal::Shape::Empty | super::super::nominal::Shape::Named => {
+					stock::RttiKind::Empty
+				}
+			};
 			stock::Value::empty_struct(crate::sync::Arc::try_new(stock::Rtti {
-				kind: stock::RttiKind::Empty,
+				kind,
 				hash: crate::Hash::new(hash),
 				variant_hash: crate::Hash::EMPTY,
 				item: crate::ItemBuf::with_item(name.trim_start_matches("::").split("::"))?,
@@ -1235,3 +1245,40 @@ mod minimal_tests;
 
 #[cfg(test)]
 mod fault_tests;
+
+#[cfg(test)]
+mod nominal_shape_tests {
+	use super::*;
+	#[test]
+	fn tuple_conversion_witness_uses_runtime_nominal_shape() {
+		use crate::experimental_core::nominal::{self, Shape};
+		let mut staging = nominal::Staging::default();
+		staging
+			.stage_shape(
+				0xc150_0000_0000_0002,
+				format_args!("HostTuple"),
+				Shape::Tuple(1),
+			)
+			.unwrap();
+		let mut remap = staging.prepare_remap().unwrap();
+		staging.commit(&mut remap).unwrap();
+		let n = nominal::Staging::default()
+			.stage_shape(
+				0xc150_0000_0000_0002,
+				format_args!("HostTuple"),
+				Shape::Tuple(1),
+			)
+			.unwrap();
+		let expected = stock::TypeInfo::rtti(
+			crate::sync::Arc::try_new(stock::Rtti {
+				kind: stock::RttiKind::Tuple,
+				hash: crate::Hash::new(0xc150_0000_0000_0002),
+				variant_hash: crate::Hash::EMPTY,
+				item: crate::ItemBuf::with_item(["HostTuple"]).unwrap(),
+				fields: stock::new_field_map(),
+			})
+			.unwrap(),
+		);
+		assert_eq!(witness(Type::Struct(n)).unwrap().type_info(), expected);
+	}
+}

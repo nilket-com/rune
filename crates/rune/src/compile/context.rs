@@ -896,6 +896,10 @@ impl Context {
 	/// Fresh core (C12): `name` resolves to the certified std providers for every receiver a
 	/// fresh value can have. Script methods of the same name are checked by the lowerer.
 	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_any_function(&self, h: Hash) -> bool {
+		self.fresh_pipeline.any_ready(h)
+	}
+	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_pipeline_method(&self, m: crate::function::fresh_pipeline::Method) -> bool {
 		self.fresh_pipeline.ready(m)
 	}
@@ -1596,6 +1600,10 @@ impl Context {
 
 		let kind = match &assoc.kind {
 			ModuleAssociatedKind::Constant(value) => {
+				#[cfg(feature = "fresh-core")]
+				if hash == Hash::associated_function(assoc.container, &Protocol::INTO_TYPE_NAME) {
+					self.fresh_pipeline.close_type_names();
+				}
 				if let Some((hash, ..)) = item {
 					self.constants.try_insert(hash, value.try_clone()?)?;
 				}
@@ -1691,6 +1699,8 @@ impl Context {
 		#[cfg(feature = "fresh-core")]
 		self.fresh_numeric.invalidate_hash(hash);
 		#[cfg(feature = "fresh-core")]
+		let any_touch = self.fresh_pipeline.begin_any(hash);
+		#[cfg(feature = "fresh-core")]
 		if hash == FRESH_SORT_ASSOCIATED || hash == FRESH_SORT_ITEM {
 			self.fresh_sort_by = false;
 			self.fresh_sort_by_closed = true;
@@ -1703,6 +1713,10 @@ impl Context {
 		}
 
 		self.functions.try_insert(hash, handler.clone())?;
+		#[cfg(feature = "fresh-core")]
+		if let Some(bit) = any_touch {
+			self.fresh_pipeline.finish_any(bit);
+		}
 
 		if let Some(msg) = deprecation {
 			self.deprecations.try_insert(hash, msg.try_to_owned()?)?;

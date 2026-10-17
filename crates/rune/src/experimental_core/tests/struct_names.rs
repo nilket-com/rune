@@ -138,23 +138,20 @@ fn cross_program_identity_keeps_each_values_fields_and_early_return() {
 	miri,
 	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
 )]
-fn tuple_and_unit_constructors_keep_the_existing_refusals() {
+fn tuple_and_unit_constructors_are_admitted_and_release_cleanly() {
 	let context = Context::with_default_modules().unwrap();
-	for source in [
-		"struct T(a, b); pub fn main() { T(1, 2) }",
-		"struct U; pub fn main() { U }",
+	for (source, debug) in [
+		("struct T(a,b);pub fn main(){T(1,2)}", "T (1, 2)"),
+		("struct U;pub fn main(){U}", "U"),
 	] {
-		let mut sources = Sources::new();
-		sources.insert(Source::memory(source).unwrap()).unwrap();
-		let error = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 1)
-			.err()
-			.expect("constructor stays refused");
-		assert_eq!(
-			error.refusal,
-			Some(crate::experimental_core::error::Refusal::UnresolvedFunction),
-			"{error:?}"
-		);
-		std::eprintln!("constructor refusal: {:?} for {source}", error.refusal);
+		let program = compile(&context, source);
+		let mut store = Store::new(Limits::default()).unwrap();
+		let root = invoke(&program, &mut store);
+		let value = store.import(&root).unwrap();
+		assert_eq!(store.format_value(value, true).unwrap(), debug);
+		store.root_release(root).unwrap();
+		assert_eq!(store.live_entries(), 0);
+		assert_eq!(store.payload_bytes(), 0);
 	}
 }
 
@@ -204,4 +201,97 @@ fn struct_diagnostic_uses_the_item_name_on_both_engines() {
 		.build_vm()
 		.unwrap();
 	assert_eq!(vm.call(["main"], ()).unwrap_err().to_string(), expected);
+}
+
+// Frontend-free ownership and shape control, also selected by the Miri runner.
+#[test]
+fn tuple_struct_storage_alias_mutation_and_rollback() {
+	use crate::experimental_core::{
+		nominal,
+		value::{Type, Value},
+	};
+	let mut staged = nominal::Staging::default();
+	staged
+		.stage_shape(
+			0xc150_0000_0000_0001,
+			format_args!("C15Miri"),
+			nominal::Shape::Tuple(1),
+		)
+		.unwrap();
+	let mut remap = staged.prepare_remap().unwrap();
+	staged.commit(&mut remap).unwrap();
+	let nominal = nominal::Staging::default()
+		.stage_shape(
+			0xc150_0000_0000_0001,
+			format_args!("C15Miri"),
+			nominal::Shape::Tuple(1),
+		)
+		.unwrap();
+	let mut store = Store::new(Limits {
+		entries: 4,
+		bytes: 32,
+	})
+	.unwrap();
+	let value = store.list(Type::Struct(nominal), &[Value::I64(7)]).unwrap();
+	store.retain(value).unwrap();
+	store.tuple_set(value, 0, Value::I64(9)).unwrap();
+	assert_eq!(store.tuple_get(value, 0).unwrap(), Value::I64(9));
+	assert_eq!(store.format_value(value, true).unwrap(), "C15Miri (9)");
+	assert!(store.len(value).is_err());
+	assert_eq!(
+		store.field_get_mut(value, "x").unwrap_err().kind,
+		crate::experimental_core::error::ErrorKind::IndexOutOfBounds
+	);
+	assert_eq!(
+		store.dynamic_get(value, Value::I64(0)).unwrap(),
+		Value::I64(9)
+	);
+	let key = store.string("x").unwrap();
+	assert!(store.dynamic_get(value, key).is_err());
+	store.release(key).unwrap();
+	assert!(store.tuple_set(value, 1, Value::I64(0)).is_err());
+	let before = (store.live_entries(), store.payload_bytes());
+	assert!(store
+		.list(Type::Struct(nominal), &[Value::Unit; 3])
+		.is_err());
+	assert_eq!((store.live_entries(), store.payload_bytes()), before);
+	let extra = store.list(Type::Struct(nominal), &[Value::Unit]).unwrap();
+	let full = (store.live_entries(), store.payload_bytes());
+	assert!(store.list(Type::Struct(nominal), &[Value::Unit]).is_err());
+	assert_eq!((store.live_entries(), store.payload_bytes()), full);
+	store.release(extra).unwrap();
+	store.release(value).unwrap();
+	store.release(value).unwrap();
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	let mut staged = nominal::Staging::default();
+	staged
+		.stage_shape(
+			0xc150_0000_0000_0003,
+			format_args!("C15Named"),
+			nominal::Shape::Named,
+		)
+		.unwrap();
+	let mut remap = staged.prepare_remap().unwrap();
+	staged.commit(&mut remap).unwrap();
+	let named = nominal::Staging::default()
+		.stage_shape(
+			0xc150_0000_0000_0003,
+			format_args!("C15Named"),
+			nominal::Shape::Named,
+		)
+		.unwrap();
+	let mut named_store = Store::new(Limits::default()).unwrap();
+	let named_value = named_store
+		.record(Type::Struct(named), &[("x", Value::I64(1))])
+		.unwrap();
+	named_store.invalidate(named_value).unwrap();
+	assert_eq!(
+		named_store.tuple_get(named_value, 0).unwrap_err().kind,
+		crate::experimental_core::error::ErrorKind::IndexOutOfBounds
+	);
+	named_store.release(named_value).unwrap();
+	assert_eq!(
+		(named_store.live_entries(), named_store.payload_bytes()),
+		(0, 0)
+	);
 }

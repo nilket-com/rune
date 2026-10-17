@@ -648,7 +648,7 @@ fn expected_fresh_refusal(label: &str) -> Option<&'static str> {
 		Some("Some(ByteStr)")
 	} else if label.starts_with("deferred/")
 		|| label.starts_with("flow/mixed-")
-		|| matches!(label, "paths/enum" | "paths/tuple-struct")
+		|| label == "paths/enum"
 	{
 		Some("Some(Match)")
 	} else {
@@ -743,8 +743,8 @@ fn fresh_contract() {
 		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
 		equal += 1;
 	}
-	assert_eq!((equal, refused, full_budget), (256, 29, 63));
-	fs::write(out.join("summary.txt"),"256 exact stock parity;29 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
+	assert_eq!((equal, refused, full_budget), (257, 28, 63));
+	fs::write(out.join("summary.txt"),"257 exact stock parity;28 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
 	contract_completed("fresh", 348);
 }
 

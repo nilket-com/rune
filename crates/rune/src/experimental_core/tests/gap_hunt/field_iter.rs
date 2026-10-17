@@ -255,7 +255,6 @@ fn contract() {
 		let refusal = if matches!(root, "field" | "iterate") {
 			match target {
 				"bytes" => Some("Some(ByteStr)"),
-				"tuple-struct" | "unit-struct" => Some("Some(UnresolvedFunction)"),
 				_ => None,
 			}
 		} else {
@@ -284,6 +283,6 @@ fn contract() {
 		assert_eq!(hex(&run.stdout), row[3], "{engine} stdout {label}");
 		assert_eq!(hex(&run.stderr), row[4], "{engine} stderr {label}");
 	}
-	assert_eq!(coverage, if engine == "fresh" { 21 } else { 0 });
+	assert_eq!(coverage, if engine == "fresh" { 7 } else { 0 });
 	super::contract_completed(&engine, rows.len());
 }

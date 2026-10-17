@@ -1003,7 +1003,18 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 		id: 0x8000_007b,
 		arity: 2,
 	},
+	CertifiedIntrinsic {
+		id: ANY_TYPE_OF,
+		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: ANY_TYPE_NAME,
+		arity: 1,
+	},
 ];
+pub(crate) const ANY_TYPE_OF: u32 = 0x8000_007c;
+pub(crate) const ANY_TYPE_NAME: u32 = 0x8000_007d;
+
 fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
 	if !reserved_intrinsic_id(id) {
 		return None;
@@ -1251,12 +1262,21 @@ impl CompileTransaction {
 	) -> Result<u32> {
 		self.builder.host(binding)
 	}
+	#[cfg_attr(not(test), allow(dead_code))]
 	pub(crate) fn stage(
 		&mut self,
 		hash: u64,
 		name: core::fmt::Arguments<'_>,
 	) -> Result<super::value::Nominal> {
 		self.staging.stage(hash, name)
+	}
+	pub(super) fn stage_shape(
+		&mut self,
+		hash: u64,
+		name: core::fmt::Arguments<'_>,
+		shape: nominal::Shape,
+	) -> Result<super::value::Nominal> {
+		self.staging.stage_shape(hash, name, shape)
 	}
 
 	pub(crate) fn push(&mut self, function: Function) -> Result<u32> {
@@ -1782,7 +1802,7 @@ fn validate_operands(
 				args_len,
 			} => {
 				slot(out)?;
-				if !matches!(tag, Type::Vec | Type::Tuple) {
+				if !matches!(tag, Type::Vec | Type::Tuple | Type::Struct(_)) {
 					return Err(invalid());
 				}
 
@@ -2920,7 +2940,7 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 46);
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 48);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, MISSING_METHOD)
 				.unwrap()

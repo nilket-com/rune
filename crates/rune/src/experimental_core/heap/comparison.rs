@@ -261,6 +261,29 @@ impl Store {
 						}
 					} else if let Item::Value(Value::Heap(h)) = a {
 						match self.payload(h)? {
+							Payload::List {
+								tag: Type::Struct(n),
+								values,
+							} => {
+								let other = match b {
+									Item::Value(Value::Heap(h)) => match self.payload(h)? {
+										Payload::List {
+											tag: Type::Struct(m),
+											values,
+										} if n == m => Some(values),
+										_ => None,
+									},
+									_ => None,
+								}
+								.ok_or_else(|| self.unsupported_pair(op, a, b))?;
+								stack.try_push(Task::Sequence(
+									Sequence::Values(values),
+									Sequence::Values(other),
+									0,
+									depth,
+								))?;
+								None
+							}
 							Payload::Record { tag, fields } => {
 								if *tag == Type::Object && !equality {
 									return Err(self.unsupported_pair(op, a, b));

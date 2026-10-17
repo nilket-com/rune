@@ -631,6 +631,9 @@ impl Executor {
 			let destination = base.checked_add(out as usize).ok_or_else(invalid)?;
 			return self.put(store, destination, value);
 		}
+		if id == super::code::ANY_TYPE_OF || id == super::code::ANY_TYPE_NAME {
+			return self.any_value_call(store, function, base, out, id, args_start, args_len);
+		}
 		if (0x8000_0060..=0x8000_007b).contains(&id) {
 			return self.text_call(store, function, base, out, id, args_start, args_len);
 		}
@@ -2474,3 +2477,96 @@ mod numeric_tests;
 
 #[cfg(test)]
 mod numeric_frontier_tests;
+
+impl Executor {
+	#[cold]
+	#[inline(never)]
+	#[allow(clippy::too_many_arguments)]
+	fn any_value_call(
+		&mut self,
+		store: &mut Store,
+		f: &super::code::Function,
+		base: usize,
+		out: u32,
+		id: u32,
+		start: u32,
+		len: u32,
+	) -> Result<()> {
+		let invalid = || error(ErrorKind::InvalidCode);
+		let end = start.checked_add(len).ok_or_else(invalid)?;
+		let indices = f
+			.args
+			.get(start as usize..end as usize)
+			.ok_or_else(invalid)?;
+		if out >= f.slots {
+			return Err(invalid());
+		}
+		let get = |i: usize| -> Result<Value> {
+			let slot = *indices.get(i).ok_or_else(invalid)?;
+			if slot >= f.slots {
+				return Err(invalid());
+			}
+			self.slots
+				.get(base.checked_add(slot as usize).ok_or_else(invalid)?)
+				.copied()
+				.ok_or_else(invalid)
+		};
+		let value = get(0)?;
+		let result = if id == super::code::ANY_TYPE_OF {
+			if len != 2 {
+				return Err(invalid());
+			}
+			let tag = match value {
+				Value::Type(_) => {
+					let Value::Type(t) = get(1)? else {
+						return Err(invalid());
+					};
+					t
+				}
+				Value::Function { .. } => super::value::Type::Function,
+				_ => store.tag(value)?,
+			};
+			Value::Type(tag)
+		} else {
+			if len != 1 {
+				return Err(invalid());
+			}
+			let ty = store.diagnostic_type(value).ok_or_else(invalid)?;
+			let hash = match ty {
+				TypeName::Struct(n) => {
+					crate::Hash::new(super::nominal::hash_copy(n).ok_or_else(invalid)?)
+				}
+				_ => ty.builtin_hash().ok_or_else(invalid)?,
+			};
+			let registered = self.active_host_runtime.as_ref().and_then(|runtime| {
+				runtime.constant(&crate::Hash::associated_function(
+					hash,
+					&crate::runtime::Protocol::INTO_TYPE_NAME,
+				))
+			});
+			let name = if let Some(constant) = registered {
+				crate::alloc::String::try_from(constant.as_string().map_err(|_| invalid())?)?
+			} else {
+				match ty {
+					TypeName::Struct(n) => {
+						let mut b = [0; 256];
+						let len = super::nominal::name_copy(n, &mut b).ok_or_else(invalid)?;
+						crate::alloc::String::try_from(
+							core::str::from_utf8(&b[..len]).map_err(|_| invalid())?,
+						)?
+					}
+					name => {
+						let text = crate::alloc::fmt::try_format(format_args!("::{name}"))?;
+						crate::alloc::String::try_from(text.split('<').next().ok_or_else(invalid)?)?
+					}
+				}
+			};
+			store.string_owned(name)?
+		};
+		self.put(
+			store,
+			base.checked_add(out as usize).ok_or_else(invalid)?,
+			result,
+		)
+	}
+}

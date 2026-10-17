@@ -12,9 +12,19 @@ impl Lower<'_, '_> {
 		span: Span,
 	) -> Result<()> {
 		let location = self.location(span);
-		self.transaction
-			.missing_method(self.context, self.constants, self.pool, name, hash)
-			.map_err(|error| error.at(location))?;
+		if let Some(receiver) = self.nominal_origin(target, 0) {
+			self.transaction.missing_nominal_method(
+				self.context,
+				self.constants,
+				receiver,
+				name,
+				hash,
+			)
+		} else {
+			self.transaction
+				.missing_method(self.context, self.constants, self.pool, name, hash)
+		}
+		.map_err(|error| error.at(location))?;
 		let mut ids = Vec::try_with_capacity(call.args.len() + 1)?;
 		ids.try_push(target)?;
 		for id in call.args {
@@ -42,5 +52,50 @@ impl Lower<'_, '_> {
 			span,
 		)?;
 		Ok(())
+	}
+}
+
+impl Lower<'_, '_> {
+	pub(super) fn nominal_origin(&self, id: hir::ExprId, depth: usize) -> Option<Hash> {
+		if depth >= 128 {
+			return None;
+		}
+		match self.exprs.get(id).kind {
+			hir::ExprKind::Group(id) => self.nominal_origin(id, depth + 1),
+			hir::ExprKind::Variable(v) => {
+				let hash = self.nominal_origin(self.text_init(v)?, depth + 1)?;
+				self.text_writes(v, |rhs| self.nominal_origin(rhs, depth + 1) == Some(hash))
+					.then_some(hash)
+			}
+			hir::ExprKind::Call(call) => {
+				let hir::Call::Meta { hash } = call.call else {
+					return None;
+				};
+				self.constants.fresh_struct_shape(hash).map(|_| hash)
+			}
+			_ => None,
+		}
+	}
+}
+
+impl Lower<'_, '_> {
+	#[cold]
+	#[inline(never)]
+	pub(super) fn nominal_missing_site(&self, call: &hir::ExprCall<'_>) -> bool {
+		let hir::Call::Associated {
+			target,
+			hash,
+			name_hash,
+		} = call.call
+		else {
+			return false;
+		};
+		use crate::TypeHash;
+		let plain = hash == name_hash;
+		let collect = name_hash == Hash::ident("collect")
+			&& [crate::runtime::Vec::HASH, crate::alloc::String::HASH]
+				.into_iter()
+				.any(|ty| hash == name_hash.with_function_parameters(Hash::parameters([ty])));
+		(plain || collect) && self.nominal_origin(target, 0).is_some()
 	}
 }

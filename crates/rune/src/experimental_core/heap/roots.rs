@@ -181,7 +181,12 @@ impl Store {
 	) -> Result<Root> {
 		let tag = match nominal {
 			None => Type::Object,
-			Some(n) if nominal::contains(n) => Type::Struct(n),
+			Some(n)
+				if nominal::contains(n)
+					&& nominal::shape_copy(n) == Some(nominal::Shape::Named) =>
+			{
+				Type::Struct(n)
+			}
 			Some(_) => return Err(err(ErrorKind::Type)),
 		};
 

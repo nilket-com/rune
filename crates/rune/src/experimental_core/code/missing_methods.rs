@@ -4,6 +4,32 @@ use super::*;
 use crate::{Context, Hash};
 
 impl CompileTransaction {
+	pub(crate) fn missing_nominal_method(
+		&mut self,
+		context: &Context,
+		query: &crate::query::QueryInner<'_>,
+		receiver: Hash,
+		name: Hash,
+		effective: Hash,
+	) -> Result<()> {
+		// This proof applies only to a statically closed source nominal receiver.
+		// Script/trait installation remains conservatively closed by method name.
+		if query.fresh_method_script.closed(name) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		let hash = Hash::associated_function(receiver, effective);
+		if context.lookup_function(hash).is_some() {
+			return Err(Error::refused(Refusal::Method));
+		}
+		if !self.builder.absent.contains(&hash) {
+			if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
+				return Err(invalid());
+			}
+			self.builder.absent.try_push(hash)?;
+		}
+		Ok(())
+	}
+
 	pub(crate) fn missing_method(
 		&mut self,
 		context: &Context,
