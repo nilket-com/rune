@@ -150,7 +150,8 @@ pub struct Failure {
 	/// Complete native failure text, independent of stock VM scratch and Store lifetime.
 	pub host_message: Option<Box<str>>,
 	/// The callsite locations of the active calls, innermost caller first; empty when the
-	/// failure happened in the entry function or before it ran.
+	/// failure happened in the entry function or before it ran. An unresolved
+	/// active caller is retained as [`Location::UNKNOWN`].
 	pub call_chain: Vec<Location>,
 	/// A second error raised while unwinding the invocation's frames, if any.
 	pub cleanup_error: Option<Error>,
@@ -175,6 +176,66 @@ impl MissingInstanceFunction {
 }
 
 impl Failure {
+	/// Inspect typed argument provenance independently of the logical frames.
+	#[cold]
+	#[inline(never)]
+	pub fn invocation_context(&self) -> impl Iterator<Item = crate::runtime::InvocationContext> {
+		self.error
+			.detail
+			.numeric_argument()
+			.map(|(_, arg)| crate::runtime::InvocationContext::BadArgument {
+				arg: usize::from(arg),
+			})
+			.into_iter()
+	}
+
+	/// Inspect the origin followed by callers from inner to outer.
+	#[cold]
+	#[inline(never)]
+	pub fn logical_frames(&self) -> impl Iterator<Item = crate::runtime::LogicalFrame<'_>> {
+		use crate::runtime::{LogicalFrame, LogicalFrameRole, LogicalLocation};
+		core::iter::once((LogicalFrameRole::Origin, self.error.location))
+			.chain(
+				self.call_chain
+					.iter()
+					.copied()
+					.map(|at| (LogicalFrameRole::Caller, Some(at))),
+			)
+			.map(|(role, location)| LogicalFrame {
+				role,
+				location: location.filter(|at| *at != Location::UNKNOWN).map(|at| {
+					LogicalLocation {
+						source_id: crate::SourceId::new(at.source),
+						span: crate::ast::Span::new(at.start, at.end),
+						unit: None,
+					}
+				}),
+			})
+	}
+
+	/// Render the primary error and its logical invocation frames.
+	#[cold]
+	#[inline(never)]
+	pub fn diagnostic<'a>(
+		&'a self,
+		program: &'a Program,
+		sources: &'a crate::Sources,
+	) -> impl core::fmt::Display + 'a {
+		struct Diagnostic<'a>(&'a Failure, &'a Program, &'a crate::Sources);
+		impl core::fmt::Display for Diagnostic<'_> {
+			#[cold]
+			#[inline(never)]
+			fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+				write!(f, "{}", self.0.message(self.1))?;
+				for frame in self.0.logical_frames() {
+					crate::runtime::write_logical_frame(f, frame, self.2)?;
+				}
+				Ok(())
+			}
+		}
+		Diagnostic(self, program, sources)
+	}
+
 	/// Return the missing instance function from the root error, if any.
 	pub fn missing_instance_function(&self) -> Option<MissingInstanceFunction> {
 		let Detail::MissingInstanceFunction {
@@ -2742,4 +2803,35 @@ fn invocation_numeric_context(
 		lhs,
 		rhs,
 	})
+}
+
+#[cfg(test)]
+mod d1e_frame_tests {
+	use super::*;
+
+	#[test]
+	fn unresolved_origin_and_repeated_callers_are_retained() {
+		let failure = Failure {
+			numeric_context: None,
+			error: Error::new(ErrorKind::InvalidCode, "contextless"),
+			missing_key: None,
+			panic_message: None,
+			host_message: None,
+			call_chain: {
+				let mut chain = Vec::new();
+				chain.try_push(Location::UNKNOWN).unwrap();
+				chain.try_push(Location::UNKNOWN).unwrap();
+				chain
+			},
+			cleanup_error: None,
+		};
+		let frames = failure
+			.logical_frames()
+			.collect::<rust_alloc::vec::Vec<_>>();
+		assert_eq!(frames.len(), 3);
+		assert!(frames.iter().all(|frame| frame.location.is_none()));
+		assert_eq!(frames[0].role, crate::runtime::LogicalFrameRole::Origin);
+		assert_eq!(frames[1].role, crate::runtime::LogicalFrameRole::Caller);
+		assert_eq!(frames[2].role, crate::runtime::LogicalFrameRole::Caller);
+	}
 }

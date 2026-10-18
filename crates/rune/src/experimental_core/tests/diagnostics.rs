@@ -1194,3 +1194,108 @@ fn d1d_numeric_context_slice_both_engines() {
 		assert_eq!(error.message(&program).to_string(), expected);
 	}
 }
+
+#[test]
+#[cfg_attr(miri, ignore = "frontend compilation; bounded D1e slice")]
+fn d1e_logical_frames_and_rendering_slice() {
+	use crate::runtime::{InvocationContext, LogicalFrameRole, VmError};
+	let context = Context::with_default_modules().unwrap();
+	let examples = [
+		"pub fn target(){outer()} fn outer(){inner()} fn inner(){panic!(\"nested\")}",
+		"pub fn target(){recur(3)} fn recur(n){if n == 0 {panic!(\"repeat\")} else {recur(n-1)}}",
+		"pub fn target(){let a=Some([1]);let b=a;drop(a);format!(\"{:>7?}\",b)}",
+		"pub fn target(){let a=[1];let b=a;drop(a);b.len()}",
+		"pub fn target(){let é=1; panic!(\"unicode\")}",
+	];
+	for source in examples {
+		let (mut stock, program) = compile(&context, source);
+		let stock = stock.call(["target"], ()).unwrap_err();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		let failure = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["target"])).unwrap(),
+				&[],
+				100_000,
+			)
+			.unwrap_err();
+		let project = |frame: crate::runtime::LogicalFrame<'_>| {
+			(
+				frame.role,
+				frame
+					.location
+					.map(|at| (at.source_id.into_index(), at.span.range())),
+			)
+		};
+		let stock_frames = stock
+			.logical_frames()
+			.map(project)
+			.collect::<std::vec::Vec<_>>();
+		let fresh_frames = failure
+			.logical_frames()
+			.map(project)
+			.collect::<std::vec::Vec<_>>();
+		assert_eq!(stock_frames, fresh_frames, "{source}");
+		assert_eq!(stock_frames[0].0, LogicalFrameRole::Origin);
+		if source.contains("b.len()") {
+			// Existing unrelated method provenance is not manufactured by D1e.
+			assert!(failure.invocation_context().next().is_none());
+			assert_eq!(
+				stock.invocation_context().collect::<std::vec::Vec<_>>(),
+				[InvocationContext::BadArgument { arg: 0 }]
+			);
+		} else {
+			assert_eq!(
+				stock.invocation_context().collect::<std::vec::Vec<_>>(),
+				failure.invocation_context().collect::<std::vec::Vec<_>>(),
+				"{source}"
+			);
+		}
+		if source.contains(":>7?") {
+			assert_eq!(
+				failure.invocation_context().collect::<std::vec::Vec<_>>(),
+				[InvocationContext::BadArgument { arg: 0 }]
+			);
+		}
+		let mut sources = Sources::new();
+		sources.insert(Source::memory(source).unwrap()).unwrap();
+		let stock_text = stock.diagnostic(&sources).to_string();
+		let fresh_text = failure.diagnostic(&program, &sources).to_string();
+		assert_eq!(stock_text, fresh_text, "{source}");
+		assert!(stock_text.contains("\n  at "));
+		std::println!("D1E source={source}\n{stock_text}");
+		assert!(failure.cleanup_error.is_none());
+		assert_eq!(store.live_entries(), 0);
+		let again = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["target"])).unwrap(),
+				&[],
+				100_000,
+			)
+			.unwrap_err();
+		assert_eq!(again.diagnostic(&program, &sources).to_string(), fresh_text);
+		assert_eq!(store.live_entries(), 0);
+	}
+	assert_eq!(
+		VmError::panic("contextless")
+			.diagnostic(&Sources::new())
+			.to_string(),
+		"Panicked: contextless\n  at <unknown>"
+	);
+	assert_eq!(
+		core::mem::size_of::<crate::experimental_core::error::Detail>(),
+		32
+	);
+	assert_eq!(
+		core::mem::size_of::<crate::experimental_core::error::Error>(),
+		88
+	);
+	assert_eq!(
+		core::mem::size_of::<crate::experimental_core::execute::Failure>(),
+		272
+	);
+}

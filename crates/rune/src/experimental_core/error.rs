@@ -221,6 +221,16 @@ pub struct Location {
 	pub end: u32,
 }
 
+impl Location {
+	/// An active caller whose source metadata could not be resolved.
+	pub const UNKNOWN: Self = Self {
+		source: u32::MAX,
+		revision: 0,
+		start: 0,
+		end: 0,
+	};
+}
+
 /// An error of the fresh core: a compile-time refusal or a run-time error.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Error {

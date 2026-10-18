@@ -8,7 +8,11 @@
         "Bad argument #0"
       ],
       "fresh_chains": [],
-      "reason": "C5 chain display divergence remains; D1b source/display site agreement is covered by d1b_diagnostics.json"
+      "reason": "C5 chain display divergence remains; D1b source/display site agreement is covered by d1b_diagnostics.json",
+      "fresh_after_chains": [
+        "Bad argument #0"
+      ]
     }
-  ]
+  ],
+  "status": "Intentional-D1e; retired allowance"
 }

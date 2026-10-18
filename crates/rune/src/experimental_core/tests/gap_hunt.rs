@@ -31,6 +31,7 @@ use std::{
 
 pub(super) mod d1b_diagnostics;
 mod d1c_diagnostics;
+mod d1e_diagnostics;
 
 pub(super) fn contract_completed(engine: &str, rows: usize) {
 	println!("\nCONTRACT ENGINE {engine}");

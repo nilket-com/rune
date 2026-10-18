@@ -70,7 +70,10 @@ fn observe(source: &str, fixture_name: &str, mode: &str, fuel: usize) -> Json {
 	.call();
 	let outcome = match result {
 		Ok(value) => json!({"status":"value","graph":graph(&value)}),
-		Err(e) => error_projection(&e),
+		Err(e) => {
+			super::d1e_diagnostics::stock(&e, &sources);
+			error_projection(&e)
+		}
 	};
 	// Observe the held receiver and its aliases before any test-fixture cleanup.
 	let post = roots_graph(&v, &state);

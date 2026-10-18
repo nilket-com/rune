@@ -206,7 +206,11 @@ pub(crate) mod vm_diagnostics;
 pub use self::vm_diagnostics::VmDiagnostics;
 pub(crate) use self::vm_diagnostics::VmDiagnosticsObj;
 
+mod logical_frame;
 pub(crate) mod messages;
+pub use self::logical_frame::{
+	write_logical_frame, InvocationContext, LogicalFrame, LogicalFrameRole, LogicalLocation,
+};
 mod vm_error;
 #[cfg(feature = "emit")]
 pub(crate) use self::vm_error::VmErrorAt;

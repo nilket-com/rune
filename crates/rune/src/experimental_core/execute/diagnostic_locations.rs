@@ -76,16 +76,12 @@ impl Executor {
 				continue;
 			}
 			let caller = self.frames[index - 1];
-			let Some(at) = code
+			let at = code
 				.function(caller.function)
 				.and_then(|f| f.locations.get(frame.callsite_pc as usize))
 				.copied()
-			else {
-				continue;
-			};
-			let Some(at) = self.diagnostic_location(code, index - 1, caller, at) else {
-				continue;
-			};
+				.and_then(|at| self.diagnostic_location(code, index - 1, caller, at))
+				.unwrap_or(Location::UNKNOWN);
 			if self.diagnostics.try_push(at).is_err() {
 				break;
 			}

@@ -208,6 +208,7 @@ fn observe_fresh(
 					json!({"status":"value","graph":g})
 				}
 				Err(f) => {
+					super::d1e_diagnostics::fresh(&f, program, &sources);
 					typed_failure = Some(format!("{:?}", f.error.kind));
 					cleanup_error = f.cleanup_error.as_ref().map(|e| format!("{e:?}"));
 					actual_failure = json!({"failure":format!("{f:?}"),"typed_kind":format!("{:?}",f.error.kind),"typed_detail":format!("{:?}",f.error.detail),"call_chain":f.call_chain.iter().map(|at|json!({"source":at.source,"start":at.start,"end":at.end})).collect::<Vec<_>>()});

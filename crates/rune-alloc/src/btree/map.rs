@@ -1692,6 +1692,9 @@ where
 		into_ok(self.entry_with(&mut (), key, infallible_cmp))
 	}
 
+	// Keep the comparator visible to callers such as entry, which pass a
+	// constant function pointer. This avoids an indirect call per tree edge.
+	#[inline(always)]
 	pub(crate) fn entry_with<C: ?Sized, E>(
 		&mut self,
 		cx: &mut C,

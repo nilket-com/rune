@@ -11,6 +11,48 @@ use crate::experimental_core::{
 use core::fmt::{self, Write};
 use core::mem::size_of;
 
+// Only a proven moved native Debug receiver has argument-zero provenance.
+// Stock FormatSpec handles String directly; nominal/dynamic and unknown paths
+// must keep the generic failure. Read the retained tag only after failure.
+#[cold]
+#[inline(never)]
+fn format_argument_failure(
+	store: &Store,
+	value: Value,
+	debug: bool,
+	mut detail: crate::experimental_core::error::Detail,
+) -> crate::experimental_core::error::Detail {
+	use crate::experimental_core::error::{Detail, MovedAccess};
+	if !debug
+		|| !matches!(
+			detail,
+			Detail::Moved {
+				access: MovedAccess::Read
+			}
+		) {
+		return detail;
+	}
+	let Value::Heap(handle) = value else {
+		return detail;
+	};
+	let receiver = store
+		.entry(handle)
+		.ok()
+		.and_then(|entry| entry.payload.as_ref());
+	if matches!(
+		receiver,
+		Some(Payload::Moved(
+			Type::Vec | Type::Tuple | Type::Object | Type::Option
+		))
+	) {
+		detail = Detail::FormatArgumentMoved {
+			arg: 0,
+			access: MovedAccess::Read,
+		};
+	}
+	detail
+}
+
 /// Host-selected limits for each complete formatting call (including all parts).
 ///
 /// Depth starts at zero: the default accepts levels 0..=32. Scratch is the sum
@@ -250,9 +292,21 @@ impl Store {
 		for part in parts.clone() {
 			let (value, debug, spec) = part?;
 			if let Some(spec) = spec {
-				self.render_spec(value, spec, &mut sink)?;
+				self.render_spec(value, spec, &mut sink)
+					.map_err(|mut error| {
+						error.detail = format_argument_failure(
+							self,
+							value,
+							matches!(spec.format_type, crate::runtime::format::Type::Debug),
+							error.detail,
+						);
+						error
+					})?;
 			} else {
-				self.render(value, debug, &mut sink)?;
+				self.render(value, debug, &mut sink).map_err(|mut error| {
+					error.detail = format_argument_failure(self, value, debug, error.detail);
+					error
+				})?;
 			}
 		}
 		let size = sink.bytes;
@@ -281,9 +335,21 @@ impl Store {
 		for part in parts {
 			let (value, debug, spec) = part?;
 			if let Some(spec) = spec {
-				self.render_spec(value, spec, &mut sink)?;
+				self.render_spec(value, spec, &mut sink)
+					.map_err(|mut error| {
+						error.detail = format_argument_failure(
+							self,
+							value,
+							matches!(spec.format_type, crate::runtime::format::Type::Debug),
+							error.detail,
+						);
+						error
+					})?;
 			} else {
-				self.render(value, debug, &mut sink)?;
+				self.render(value, debug, &mut sink).map_err(|mut error| {
+					error.detail = format_argument_failure(self, value, debug, error.detail);
+					error
+				})?;
 			}
 		}
 		if sink.bytes != size {
@@ -1338,6 +1404,47 @@ mod spec_tests {
 			"zero-node budget must precede the moved read in both paths"
 		);
 		store.release(value).unwrap();
+		assert_eq!(store.live_entries(), 0);
+	}
+
+	#[test]
+	fn d1e_formatter_argument_requires_moved_native_debug_receiver() {
+		use crate::experimental_core::error::{Detail, MovedAccess};
+		let mut store = Store::new(Limits {
+			entries: 8,
+			bytes: 1024,
+		})
+		.unwrap();
+		let value = store.list(Type::Vec, &[Value::I64(1)]).unwrap();
+		let failure = Error::new(ErrorKind::AccessConflict, "store").with_detail(Detail::Moved {
+			access: MovedAccess::Read,
+		});
+		assert_eq!(
+			format_argument_failure(&store, value, true, failure.detail),
+			failure.detail,
+			"a live receiver does not prove which child failed"
+		);
+		store.invalidate(value).unwrap();
+		assert_eq!(
+			format_argument_failure(&store, value, false, failure.detail),
+			failure.detail
+		);
+		assert_eq!(
+			format_argument_failure(&store, value, true, failure.detail),
+			Detail::FormatArgumentMoved {
+				arg: 0,
+				access: MovedAccess::Read
+			}
+		);
+		store.release(value).unwrap();
+		let text = store.string("x").unwrap();
+		store.invalidate(text).unwrap();
+		assert_eq!(
+			format_argument_failure(&store, text, true, failure.detail),
+			failure.detail,
+			"String is a direct FormatSpec read, not a native conversion"
+		);
+		store.release(text).unwrap();
 		assert_eq!(store.live_entries(), 0);
 	}
 

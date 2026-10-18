@@ -93,6 +93,10 @@ fn fresh_primary_kind(
 		},
 		Detail::Moved {
 			access: crate::experimental_core::error::MovedAccess::Read,
+		}
+		| Detail::FormatArgumentMoved {
+			access: crate::experimental_core::error::MovedAccess::Read,
+			..
 		} if error.kind == ErrorKind::AccessConflict => K::AccessError {
 			error: crate::runtime::AccessError::fresh_moved_read(),
 		},

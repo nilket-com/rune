@@ -43,6 +43,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 			}
 		}
 		Err(e) => {
+			super::d1e_diagnostics::stock(&e, &sources);
 			// Capture metadata directly inside the crate, no parsing Display/Debug.
 			let kind = e.error().kind();
 			let class = match kind {

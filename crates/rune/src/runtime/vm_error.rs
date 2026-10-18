@@ -61,6 +61,86 @@ impl MissingInstanceFunction<'_> {
 }
 
 impl VmError {
+	/// Inspect typed argument context without conflating it with caller frames.
+	#[cold]
+	#[inline(never)]
+	pub fn invocation_context(&self) -> impl Iterator<Item = super::InvocationContext> + '_ {
+		self.inner
+			.chain
+			.iter()
+			.filter_map(|entry| match entry.kind {
+				VmErrorKind::BadArgument { arg } => {
+					Some(super::InvocationContext::BadArgument { arg })
+				}
+				_ => None,
+			})
+	}
+
+	/// Inspect the origin followed by active callers, retaining unresolved frames.
+	/// Each frozen callback window is resolved through its own unit.
+	#[cold]
+	#[inline(never)]
+	pub fn logical_frames(&self) -> impl Iterator<Item = super::LogicalFrame<'_>> {
+		let mut origin = true;
+		let frames = self.inner.stacktrace.iter().flat_map(|window| {
+			let debug = window.unit.debug_info();
+			core::iter::once(debug.and_then(|d| d.instruction_at(window.ip)))
+				.chain(window.frames.iter().rev().map(move |frame| {
+					// A saved pc is the return address. Debug instruction boundaries,
+					// rather than a guessed instruction width, identify its call.
+					debug.and_then(|d| {
+						let (ip, inst) = d
+							.instructions
+							.iter()
+							.filter(|(ip, _)| **ip < frame.ip)
+							.max_by_key(|(ip, _)| **ip)?;
+						let (_, width) = window.unit.instruction_at(*ip).ok()??;
+						// A missing call's debug entry must not resolve to an older
+						// instruction merely because it precedes the return address.
+						(ip.checked_add(width) == Some(frame.ip)).then_some(inst)
+					})
+				}))
+				.map(move |inst| {
+					inst.map(|inst| super::LogicalLocation {
+						source_id: inst.source_id,
+						span: inst.span,
+						unit: Some(window.unit.as_ref()),
+					})
+				})
+		});
+		// Even a contextless error has an unresolved origin.
+		let empty = self.inner.stacktrace.is_empty();
+		frames
+			.chain(core::iter::once(None).take(usize::from(empty)))
+			.map(move |location| {
+				let role = if core::mem::replace(&mut origin, false) {
+					super::LogicalFrameRole::Origin
+				} else {
+					super::LogicalFrameRole::Caller
+				};
+				super::LogicalFrame { role, location }
+			})
+	}
+
+	/// Render the primary error and its logical invocation frames.
+	#[cold]
+	#[inline(never)]
+	pub fn diagnostic<'a>(&'a self, sources: &'a crate::Sources) -> impl fmt::Display + 'a {
+		struct Diagnostic<'a>(&'a VmError, &'a crate::Sources);
+		impl fmt::Display for Diagnostic<'_> {
+			#[cold]
+			#[inline(never)]
+			fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+				write!(f, "{}", self.0)?;
+				for frame in self.0.logical_frames() {
+					super::write_logical_frame(f, frame, self.1)?;
+				}
+				Ok(())
+			}
+		}
+		Diagnostic(self, sources)
+	}
+
 	/// Inspect a missing instance function at the root failure without parsing text.
 	///
 	/// Auxiliary errors are not searched. A panic quoting a missing-function
@@ -1381,5 +1461,30 @@ fn fmt_global(f: &mut fmt::Formatter<'_>, slot: usize, name: Option<&Item>) -> f
 	match name {
 		Some(name) => write!(f, "`{name}` (slot {slot})"),
 		None => write!(f, "in slot {slot}"),
+	}
+}
+
+#[cfg(test)]
+mod logical_frame_tests {
+	use super::*;
+
+	#[test]
+	fn d1e_unresolved_window_retains_each_frame() {
+		let mut error = VmError::panic("unresolved");
+		error.inner.stacktrace.push(VmErrorLocation {
+			unit: Arc::try_new(Unit::default()).unwrap(),
+			ip: 0,
+			frames: rust_alloc::vec![CallFrame {
+                ip: 0,
+                top: 0,
+                isolated: super::super::Isolated::None,
+                out: super::super::Output::discard(),
+            }; 2],
+		});
+		let frames = error.logical_frames().collect::<rust_alloc::vec::Vec<_>>();
+		assert_eq!(frames.len(), 3);
+		assert!(frames.iter().all(|frame| frame.location.is_none()));
+		assert_eq!(rust_alloc::format!("{}", error.diagnostic(&crate::Sources::new())),
+            "Panicked: unresolved\n  at <unknown>\n  called from <unknown>\n  called from <unknown>");
 	}
 }

@@ -61,6 +61,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 					observation
 				}
 				Err(failure) => {
+					super::d1e_diagnostics::fresh(&failure, &program, &sources);
 					no_cleanup_error = failure.cleanup_error.is_none();
 					typed_failure_kind = Some(format!("{:?}", failure.error.kind));
 					call_chain = failure

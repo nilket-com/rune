@@ -143,10 +143,6 @@ fn run_contract(engine: &str) {
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
 	let mut policies = std::collections::BTreeMap::new();
-	let mut retained_chains = Vec::new();
-	let retained: Json = serde_json::from_str(include_str!("retained_errors.json")).unwrap();
-	assert_eq!(retained["schema"], 1);
-	assert_eq!(retained["rows"].as_array().unwrap().len(), 1);
 	for (i, ((label, source, mode, policy), line)) in CASES.iter().zip(rows).enumerate() {
 		let columns = line.split('\t').collect::<Vec<_>>();
 		assert_eq!(columns.len(), 7);
@@ -233,7 +229,13 @@ fn run_contract(engine: &str) {
 		);
 		assert!(result.metadata().unwrap().len() <= REPLAY_CAP as u64);
 		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		actual["outcome"] = super::d1c_diagnostics::before("format_specs", label, source, engine, &actual["outcome"]);
+		actual["outcome"] = super::d1c_diagnostics::before(
+			"format_specs",
+			label,
+			source,
+			engine,
+			&actual["outcome"],
+		);
 		assert_eq!(actual["schema"], 1);
 		assert_eq!(actual["index"], i);
 		assert_eq!(actual["label"], *label);
@@ -281,47 +283,18 @@ fn run_contract(engine: &str) {
 						&projected,
 					);
 					let mut expected = expected;
-					if let Some(sites) =
-						super::d1b_diagnostics::intentional_sites_before(
-							"format_specs",
-							label,
-							source,
-							"fresh",
-						)
-					{
+					if let Some(sites) = super::d1b_diagnostics::intentional_sites_before(
+						"format_specs",
+						label,
+						source,
+						"fresh",
+					) {
 						expected["sites"] = sites;
 					}
-					let rule = retained["rows"]
-						.as_array()
-						.unwrap()
-						.iter()
-						.find(|row| row["case"] == *label);
-					if let Some(rule) = rule {
-						assert!(
-							retained_error_matches(rule, label, source, &expected, &projected),
-							"pinned retained error drift: {label}"
-						);
-						let mut other = projected.clone();
-						let mut frozen_other = expected.clone();
-						if rule["stock_chains"] != rule["fresh_chains"] {
-							assert!(retained_chain_shape(
-								&expected["chain_displays"],
-								&projected["chain_displays"]
-							));
-							other.as_object_mut().unwrap().remove("chain_displays");
-							frozen_other
-								.as_object_mut()
-								.unwrap()
-								.remove("chain_displays");
-							retained_chains.push((*label).to_owned());
-						}
-						assert_eq!(
-							other, frozen_other,
-							"retained primary fields remain exact: {label}"
-						);
-					} else {
-						assert_eq!(projected, expected, "fresh exact fields/sites: {label}");
-					}
+					assert_eq!(
+						projected, expected,
+						"fresh exact fields/sites/argument chain: {label}"
+					);
 				}
 				"Compile-error" => {
 					assert_eq!(outcome["status"], "compile-error");
@@ -370,103 +343,26 @@ fn run_contract(engine: &str) {
 		);
 	}
 	if engine == "fresh" {
-		assert_eq!(retained_chains.len(), 1);
-		fs::write(out.join("RETAINED-ENFORCED.json"),serde_json::to_vec_pretty(&json!({"d1b_site_rows":16,"retained_chains":retained_chains,"partition":{"Exact":228,"D1b-intentional-sites":16,"Retained-chain":1,"Compile-error":14,"Refused-format-type":5,"Retained-dynamic-precision":1,"Retained-resource":2}})).unwrap()).unwrap();
+		fs::write(
+			out.join("RETAINED-ENFORCED.json"),
+			serde_json::to_vec_pretty(&json!({
+				"d1b_site_rows":16,"retained_chains":[],"d1e_intentional_chain_rows":1,
+				"partition":{"Exact":228,"D1b-intentional-sites":16,"Retained-chain":0,
+				"Compile-error":14,"Refused-format-type":5,"Retained-dynamic-precision":1,"Retained-resource":2}
+			}))
+			.unwrap(),
+		)
+		.unwrap();
 	}
 	contract_completed(engine, COUNT);
 }
 
-fn retained_chain_shape(stock: &Json, fresh: &Json) -> bool {
-	let (Some(stock), Some(fresh)) = (stock.as_array(), fresh.as_array()) else {
-		return false;
-	};
-	if stock.len() != 1 || !fresh.is_empty() {
-		return false;
-	}
-	let Some(text) = stock[0].as_str() else {
-		return false;
-	};
-	text.strip_prefix("Bad argument #")
-		.is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()))
-}
-
 #[test]
-fn retained_chain_rule_rejects_other_context_and_nonempty_fresh_chain() {
-	assert!(retained_chain_shape(
-		&json!(["Bad argument #0"]),
-		&json!([])
-	));
-	for stock in [
-		json!([]),
-		json!(["Bad argument #"]),
-		json!(["Bad argument #-1"]),
-		json!(["Bad argument #x"]),
-		json!(["different"]),
-		json!(["Bad argument #0", "Bad argument #1"]),
-	] {
-		assert!(!retained_chain_shape(&stock, &json!([])));
-	}
-	assert!(!retained_chain_shape(
-		&json!(["Bad argument #0"]),
-		&json!(["Bad argument #0"])
-	));
-}
-
-fn source_sha256(source: &str) -> String {
-	#[cfg(feature = "sha2")]
-	{
-		use sha2::{Digest, Sha256};
-		hex(&Sha256::digest(source.as_bytes()))
-	}
-	#[cfg(not(feature = "sha2"))]
-	{
-		let _ = source;
-		panic!("C5 frozen error pins require existing sha2 feature");
-	}
-}
-
-fn retained_error_matches(
-	rule: &Json,
-	label: &str,
-	source: &str,
-	stock: &Json,
-	fresh: &Json,
-) -> bool {
-	rule["case"] == label
-		&& rule["source_sha256"] == source_sha256(source)
-		&& rule["stock_chains"] == stock["chain_displays"]
-		&& rule["fresh_chains"] == fresh["chain_displays"]
-}
-
-#[test]
-#[cfg(feature = "sha2")]
-fn retained_error_pin_rejects_chain_source_and_label_drift() {
-	let rows: Json = serde_json::from_str(include_str!("retained_errors.json")).unwrap();
-	let rule = rows["rows"]
-		.as_array()
-		.unwrap()
-		.iter()
-		.find(|row| row["case"] == "access/moved-parent/?")
-		.unwrap();
-	let source = CASES.iter().find(|row| row.0 == rule["case"]).unwrap().1;
-	let stock = json!({"chain_displays":rule["stock_chains"]});
-	let fresh = json!({"chain_displays":rule["fresh_chains"]});
-	let label = rule["case"].as_str().unwrap();
-	assert!(retained_error_matches(rule, label, source, &stock, &fresh));
-	let mut removed = stock.clone();
-	removed["chain_displays"] = json!([]);
-	assert!(!retained_error_matches(
-		rule, label, source, &removed, &fresh
-	));
-	let mut added = fresh.clone();
-	added["chain_displays"] = json!(["Bad argument #0"]);
-	assert!(!retained_error_matches(rule, label, source, &stock, &added));
-	let changed = format!("x{}", &source[1..]);
-	assert_eq!(changed.len(), source.len());
-	assert!(!retained_error_matches(
-		rule, label, &changed, &stock, &fresh
-	));
-	assert!(!retained_error_matches(
-		rule, "unknown", source, &stock, &fresh
-	));
+fn d1e_moved_parent_chain_allowance_is_retired() {
+	let archive: Json = serde_json::from_str(include_str!("d1e_intentional_chain.json")).unwrap();
+	let row = &archive["rows"][0];
+	assert_eq!(row["case"], "access/moved-parent/?");
+	assert_eq!(row["fresh_chains"], json!([]));
+	assert_eq!(row["fresh_after_chains"], row["stock_chains"]);
+	assert_eq!(row["fresh_after_chains"], json!(["Bad argument #0"]));
 }

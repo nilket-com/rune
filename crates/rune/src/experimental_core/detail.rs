@@ -359,6 +359,11 @@ pub enum Detail {
 		arg: u8,
 		access: MovedAccess,
 	},
+	/// A moved read at an actual formatting protocol argument boundary.
+	FormatArgumentMoved {
+		arg: u8,
+		access: MovedAccess,
+	},
 }
 
 impl Detail {
@@ -369,6 +374,7 @@ impl Detail {
 			| Self::NumericArgumentNumber { cause, arg, .. }
 			| Self::NumericArgumentCoerce { cause, arg, .. } => Some((cause, arg)),
 			Self::SharedArgument { arg, .. }
+			| Self::FormatArgumentMoved { arg, .. }
 			| Self::CmpArgumentAccess { arg, .. }
 			| Self::ExclusiveArgument { arg, .. } => Some((HostCause::Access, arg)),
 			Self::HostExpectedType { arg: Some(arg), .. } => Some((HostCause::ExpectedType, arg)),
@@ -833,7 +839,9 @@ impl fmt::Display for Message<'_> {
 			},
 			NotCallable { found } => messages::not_callable(f, found),
 			Arity { given, expected } => messages::arity(f, given, expected),
-			Moved { access } | CmpArgumentAccess { access, .. } => {
+			Moved { access }
+			| FormatArgumentMoved { access, .. }
+			| CmpArgumentAccess { access, .. } => {
 				access_message(f, access, Option::None, "it has been moved")
 			}
 			ExpectedChar { found } => write!(f, "Expected type `std::char` but found `{found}`"),

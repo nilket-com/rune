@@ -42,6 +42,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 			json!({"status":"value","type":"String","bytes_hex":hex(string.as_bytes()),"bytes":string.len()})
 		}
 		Err(e) => {
+			super::d1e_diagnostics::stock(&e, &sources);
 			// Capture metadata directly inside the crate, no parsing Display/Debug.
 			let kind = e.error().kind();
 			let class = stock_class(kind);
@@ -116,6 +117,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 					observation
 				}
 				Err(failure) => {
+					super::d1e_diagnostics::fresh(&failure, &program, &sources);
 					no_cleanup_error = failure.cleanup_error.is_none();
 					// Closed map: these are the only three exact frozen runtime classes,
 					// plus the explicitly retained resource class. Unknown remains raw.
@@ -127,6 +129,9 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 						_ => "UNMAPPED",
 					};
 					let chain = match failure.error.detail {
+						Detail::FormatArgumentMoved { arg, .. } => vec![
+							json!({"kind":"fresh formatter argument","display":format!("Bad argument #{arg}")}),
+						],
 						Detail::HostMessage { arg: Some(arg), .. }
 						| Detail::HostExpectedType { arg: Some(arg), .. }
 						| Detail::HostExpectedNumber { arg: Some(arg), .. } => vec![
