@@ -3,9 +3,10 @@
 //! Descriptors survive every program and store for the life of the process; nothing depends on a
 //! `Code` or `Store` lifetime.
 //!
-//! Storage is two exactly reserved buffers (entry records and one name
-//! arena). Compilation stages identities locally; admission prepares all storage
-//! before publishing one atomic batch. Appends under the lock never allocate.
+//! Compiler storage is two exactly reserved buffers (entry records and one name
+//! arena). Bounded read slots own immutable metadata and text. Compilation stages
+//! identities locally and prepares owned text before taking the writer lock.
+//! Admission publishes one atomic batch. Appends under the lock never allocate.
 //! Exhaustion and a failed construction are the named `TypeTable` refusal.
 //!
 //! Only the process-global table issues identities a host can use:
@@ -18,9 +19,10 @@ use super::error::{Error, ErrorKind, Refusal, Result};
 use super::value::Nominal;
 use crate::alloc::{String, Vec};
 use core::sync::atomic::{AtomicBool, AtomicU32, AtomicUsize, Ordering};
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 
 pub(super) const PROVISIONAL: u32 = 1 << 31;
+const MAX_ENTRIES: usize = 4096;
 
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct Limits {
@@ -32,7 +34,7 @@ pub(crate) struct Limits {
 impl Default for Limits {
 	fn default() -> Self {
 		Self {
-			entries: 4096,
+			entries: MAX_ENTRIES,
 			name_bytes: 256,
 			total_name_bytes: 256 << 10,
 		}
@@ -56,6 +58,17 @@ struct Entry {
 	len: u32,
 	ordinal: u32,
 	total_len: u32,
+}
+
+struct ReadEntry {
+	metadata: Entry,
+	record: String,
+}
+
+impl ReadEntry {
+	fn name(&self) -> &str {
+		&self.record[..self.metadata.len as usize]
+	}
 }
 
 // Variant order and persistent field names are cold metadata; heap layouts are unchanged.
@@ -376,10 +389,6 @@ impl Interner {
 			.get(nominal.0 as usize)
 			.map(|e| &self.names[e.start as usize..(e.start + e.len) as usize])
 	}
-
-	pub(crate) fn contains(&self, nominal: Nominal) -> bool {
-		(nominal.0 as usize) < self.entries.len()
-	}
 }
 
 /// Compile-local identities. Only CompileTransaction owns one; it cannot be
@@ -553,7 +562,8 @@ impl Staging {
 		if self.entries.is_empty() {
 			return Ok(());
 		}
-		with_global(|table| table.commit(self, remap))
+		let records = prepare_records(self.entries.iter().map(|entry| self.record(entry)))?;
+		with_global(records, |table| table.commit(self, remap))
 	}
 }
 
@@ -562,7 +572,45 @@ static INITIALIZED: AtomicBool = AtomicBool::new(false);
 // Fixed, append-only identity publication. Readers acquire the published length;
 // all entries below it are immutable. Private interner tests never publish here.
 static PUBLISHED: AtomicUsize = AtomicUsize::new(0);
-static VARIANT_IDS: [AtomicU32; 4096] = [const { AtomicU32::new(0) }; 4096];
+static VARIANT_IDS: [AtomicU32; MAX_ENTRIES] = [const { AtomicU32::new(0) }; MAX_ENTRIES];
+// Immutable copies retain metadata independently of the writer's Vec borrows.
+// Only the writer under GLOBAL initializes slots; readers never take that lock.
+static READ_ENTRIES: [OnceLock<ReadEntry>; MAX_ENTRIES] = [const { OnceLock::new() }; MAX_ENTRIES];
+
+#[cfg(test)]
+#[path = "nominal/construction_micro.rs"]
+mod construction_micro;
+
+#[cfg(test)]
+fn published_entry<'a>(
+	entries: &'a [OnceLock<Entry>],
+	published: &AtomicUsize,
+	n: Nominal,
+) -> Option<&'a Entry> {
+	if n.0 as usize >= published.load(Ordering::Acquire) {
+		return None;
+	}
+	entries.get(n.0 as usize)?.get()
+}
+
+#[inline]
+fn read_entry(n: Nominal) -> Option<&'static ReadEntry> {
+	if n.0 as usize >= PUBLISHED.load(Ordering::Acquire) {
+		return None;
+	}
+	READ_ENTRIES.get(n.0 as usize)?.get()
+}
+
+fn prepare_records<'a>(records: impl ExactSizeIterator<Item = &'a str>) -> Result<Vec<String>> {
+	let allocation = || refused_by(ErrorKind::Allocation, "nominal read records");
+	let mut prepared = Vec::try_with_capacity(records.len()).map_err(|_| allocation())?;
+	for record in records {
+		prepared
+			.try_push(String::try_from(record).map_err(|_| allocation())?)
+			.map_err(|_| allocation())?;
+	}
+	Ok(prepared)
+}
 
 /// Compare variant identity without the global metadata mutex or payload access.
 #[inline]
@@ -591,17 +639,18 @@ pub(super) fn same_variant_id(actual: Nominal, expected: u32) -> bool {
 
 /// The atomic flag is only a monotonic allocation hint. The mutex is authoritative.
 /// A losing candidate is dropped after the guard, including every error path.
-fn with_global<T>(f: impl FnOnce(&mut Interner) -> Result<T>) -> Result<T> {
+fn with_global<T>(records: Vec<String>, f: impl FnOnce(&mut Interner) -> Result<T>) -> Result<T> {
 	let candidate = if !INITIALIZED.load(Ordering::Acquire) {
 		Some(Interner::with_limits(Limits::default())?)
 	} else {
 		None
 	};
-	with_prepared(candidate, f)
+	with_prepared(candidate, records, f)
 }
 
 fn with_prepared<T>(
 	mut candidate: Option<Interner>,
+	mut records: Vec<String>,
 	f: impl FnOnce(&mut Interner) -> Result<T>,
 ) -> Result<T> {
 	let result = {
@@ -612,15 +661,39 @@ fn with_prepared<T>(
 		}
 		let table = guard.as_mut().ok_or_else(refused)?;
 		let before = PUBLISHED.load(Ordering::Relaxed);
+		let before_names = table.names.len();
 		let result = f(table);
 		if result.is_ok() {
-			for (i, slot) in VARIANT_IDS
-				.iter()
-				.enumerate()
-				.take(table.entries.len())
-				.skip(before)
-			{
+			let count = table.entries.len() - before;
+			if table.entries.len() > MAX_ENTRIES {
+				table.rollback((before, before_names));
+				return Err(refused());
+			}
+			// Bind every owned record before publishing any slot. All storage was
+			// prepared before the lock; a failed binding rolls back the whole batch.
+			for offset in 0..count {
+				let e = table.entries[before + offset];
+				let text = &table.names[e.start as usize..e.start as usize + e.total_len as usize];
+				let found = records
+					.get(offset..)
+					.and_then(|tail| tail.iter().position(|record| record.as_str() == text));
+				let Some(found) = found else {
+					table.rollback((before, before_names));
+					return Err(refused());
+				};
+				records.swap(offset, offset + found);
+			}
+			for (i, record) in (before..table.entries.len()).zip(records.drain(..count)) {
 				let e = table.entries[i];
+				assert!(
+					READ_ENTRIES[i]
+						.set(ReadEntry {
+							metadata: e,
+							record
+						})
+						.is_ok(),
+					"nominal slot already published"
+				);
 				let id = if e.enum_hash == 0 {
 					0
 				} else {
@@ -630,7 +703,7 @@ fn with_prepared<T>(
 						.expect("published descriptor") as u32
 						+ 1
 				};
-				slot.store(id, Ordering::Release);
+				VARIANT_IDS[i].store(id, Ordering::Release);
 			}
 			PUBLISHED.store(table.entries.len(), Ordering::Release);
 		}
@@ -642,7 +715,14 @@ fn with_prepared<T>(
 
 #[cfg_attr(not(test), allow(dead_code))]
 pub fn intern(hash: u64, name: &str) -> Result<Nominal> {
-	with_global(|table| table.intern(hash, name))
+	if let Some(nominal) = lookup(hash)? {
+		return Ok(nominal);
+	}
+	if name.len() > Limits::default().name_bytes {
+		return Err(refused());
+	}
+	let records = prepare_records(core::iter::once(name))?;
+	with_global(records, |table| table.intern(hash, name))
 }
 
 /// Format before acquiring the publication lock; user Display never runs inside it.
@@ -671,23 +751,22 @@ pub(super) fn lookup(hash: u64) -> Result<Option<Nominal>> {
 
 /// Read-only validation never installs a cold table.
 pub fn contains(nominal: Nominal) -> bool {
-	GLOBAL
-		.lock()
-		.ok()
-		.and_then(|guard| guard.as_ref().map(|table| table.contains(nominal)))
-		.unwrap_or(false)
+	read_entry(nominal).is_some()
 }
 
 /// Read the canonical hash for an admitted type value, without allocating.
 pub(crate) fn hash_copy(nominal: Nominal) -> Option<u64> {
-	let guard = GLOBAL.lock().ok()?;
-	guard.as_ref()?.hash(nominal)
+	let e = &read_entry(nominal)?.metadata;
+	Some(if e.enum_hash == 0 {
+		e.hash
+	} else {
+		e.enum_hash
+	})
 }
 
 /// Copy a diagnostic name without initializing the table or holding its lock while formatting.
 pub(crate) fn name_copy(nominal: Nominal, buffer: &mut [u8; 256]) -> Option<usize> {
-	let guard = GLOBAL.lock().ok()?;
-	let name = guard.as_ref()?.name(nominal)?;
+	let name = read_entry(nominal)?.name();
 	buffer
 		.get_mut(..name.len())?
 		.copy_from_slice(name.as_bytes());
@@ -696,17 +775,13 @@ pub(crate) fn name_copy(nominal: Nominal, buffer: &mut [u8; 256]) -> Option<usiz
 
 /// Persistent declaration metadata for diagnostics and enum ordering.
 pub(crate) fn variant_info(n: Nominal) -> Option<(u64, u32)> {
-	let guard = GLOBAL.lock().ok()?;
-	let e = guard.as_ref()?.entries.get(n.0 as usize)?;
+	let e = &read_entry(n)?.metadata;
 	Some((if e.enum_hash == 0 { 0 } else { e.hash }, e.ordinal))
 }
 pub(crate) fn fields_copy(n: Nominal) -> Option<Vec<String>> {
-	let guard = GLOBAL.lock().ok()?;
-	let table = guard.as_ref()?;
-	let e = table.entries.get(n.0 as usize)?;
-	let tail = table
-		.names
-		.get(e.start as usize + e.len as usize..e.start as usize + e.total_len as usize)?;
+	let entry = read_entry(n)?;
+	let e = &entry.metadata;
+	let tail = entry.record.get(e.len as usize..e.total_len as usize)?;
 	let mut fields = Vec::new();
 	for name in tail.split('\0').skip(1) {
 		fields.try_push(String::try_from(name).ok()?).ok()?;
@@ -714,10 +789,9 @@ pub(crate) fn fields_copy(n: Nominal) -> Option<Vec<String>> {
 	Some(fields)
 }
 pub(crate) fn type_name_copy(n: Nominal, buffer: &mut [u8; 256]) -> Option<usize> {
-	let guard = GLOBAL.lock().ok()?;
-	let table = guard.as_ref()?;
-	let e = table.entries.get(n.0 as usize)?;
-	let name = table.name(n)?;
+	let entry = read_entry(n)?;
+	let e = &entry.metadata;
+	let name = entry.name();
 	let name = if e.enum_hash == 0 {
 		name
 	} else {
@@ -760,9 +834,9 @@ pub(crate) fn variant_rtti(n: Nominal) -> Option<crate::sync::Arc<crate::runtime
 }
 
 /// No allocation or compiler/query dependency at runtime.
+#[inline]
 pub(crate) fn shape_copy(n: Nominal) -> Option<Shape> {
-	let guard = GLOBAL.lock().ok()?;
-	Some(guard.as_ref()?.entries.get(n.0 as usize)?.shape)
+	Some(read_entry(n)?.metadata.shape)
 }
 #[cold]
 #[inline(never)]
@@ -770,13 +844,7 @@ pub(crate) fn same_type(a: Nominal, b: Nominal) -> bool {
 	if a.0 == b.0 {
 		return true;
 	}
-	let Ok(guard) = GLOBAL.lock() else {
-		return false;
-	};
-	let Some(t) = guard.as_ref() else {
-		return false;
-	};
-	match (t.hash(a), t.hash(b)) {
+	match (hash_copy(a), hash_copy(b)) {
 		(Some(a), Some(b)) => a == b,
 		_ => false,
 	}
@@ -819,6 +887,16 @@ mod tests {
 				0xc15b100,
 			)
 			.unwrap();
+		let named = staging
+			.stage_variant_order(
+				0xc15b003,
+				format_args!("C15b::Named"),
+				super::Shape::Named,
+				0xc15b000,
+				2,
+				&["right", "left"],
+			)
+			.unwrap();
 		let mut remap = staging.prepare_remap().unwrap();
 		staging.commit(&mut remap).unwrap();
 		let resolve = |n: super::Nominal| {
@@ -829,8 +907,13 @@ mod tests {
 			}
 		};
 		let (a, twin, miss, foreign) = (resolve(a), resolve(twin), resolve(miss), resolve(foreign));
+		let named = resolve(named);
 		// Holding the metadata mutex proves both hits and misses avoid that mutex.
 		let _guard = super::GLOBAL.lock().unwrap();
+		assert_eq!(super::shape_copy(a), Some(super::Shape::Tuple(1)));
+		assert_eq!(super::shape_copy(twin), Some(super::Shape::Tuple(2)));
+		assert_eq!(super::shape_copy(miss), Some(super::Shape::Empty));
+		assert_eq!(super::shape_copy(super::Nominal(super::PROVISIONAL)), None);
 		assert!(super::same_variant(a, a));
 		assert!(super::same_variant(a, twin));
 		assert!(!super::same_variant(a, miss));
@@ -841,8 +924,195 @@ mod tests {
 		assert!(!super::same_variant_id(miss, identity));
 		assert!(!super::same_variant_id(foreign, identity));
 		assert!(!super::same_variant_id(a, 0));
+		assert!(super::contains(named));
+		assert_eq!(super::hash_copy(named), Some(0xc15b000));
+		assert_eq!(super::variant_info(named), Some((0xc15b003, 2)));
+		let mut buffer = [0; 256];
+		let len = super::name_copy(named, &mut buffer).unwrap();
+		assert_eq!(&buffer[..len], b"C15b::Named");
+		let len = super::type_name_copy(named, &mut buffer).unwrap();
+		assert_eq!(&buffer[..len], b"C15b");
+		assert!(super::fields_copy(named)
+			.unwrap()
+			.iter()
+			.map(|name| name.as_str())
+			.eq(["right", "left"]));
+		assert!(super::same_type(a, named));
+		assert!(!super::same_type(a, foreign));
+		let rtti = super::variant_rtti(named).unwrap();
+		assert_eq!(rtti.hash, crate::Hash::new(0xc15b000));
+		assert_eq!(rtti.variant_hash, crate::Hash::new(0xc15b003));
+		assert_eq!(rtti.variant_index, 2);
+		let invalid = super::Nominal(super::PROVISIONAL);
+		assert!(!super::contains(invalid));
+		assert_eq!(super::hash_copy(invalid), None);
+		assert_eq!(super::name_copy(invalid, &mut buffer), None);
+		assert_eq!(super::type_name_copy(invalid, &mut buffer), None);
+		assert!(super::fields_copy(invalid).is_none());
+		assert!(super::variant_info(invalid).is_none());
+		assert!(super::variant_rtti(invalid).is_none());
+		assert!(!super::same_type(a, invalid));
+		assert!(super::same_type(invalid, invalid));
 	}
 	use super::*;
+
+	#[test]
+	fn failed_record_binding_rolls_back_before_publication() {
+		let first_hash = 0x4e31_ab01;
+		let second_hash = 0x4e31_ab02;
+		let mut first = None;
+		let records = prepare_records(core::iter::once("N1AbortA")).unwrap();
+		let result = with_global(records, |table| {
+			first = Some(table.intern(first_hash, "N1AbortA")?);
+			table.intern(second_hash, "N1AbortB")?;
+			Ok(())
+		});
+		assert_eq!(result.unwrap_err().refusal, Some(Refusal::TypeTable));
+		assert_eq!(lookup(first_hash).unwrap(), None);
+		assert_eq!(lookup(second_hash).unwrap(), None);
+		let first = first.unwrap();
+		assert_ne!(hash_copy(first), Some(first_hash));
+		assert!(READ_ENTRIES[first.0 as usize]
+			.get()
+			.is_none_or(|entry| entry.metadata.hash != first_hash));
+		let retry = intern(first_hash, "N1AbortA").unwrap();
+		assert_eq!(hash_copy(retry), Some(first_hash));
+		let mut buffer = [0; 256];
+		let len = name_copy(retry, &mut buffer).unwrap();
+		assert_eq!(&buffer[..len], b"N1AbortA");
+	}
+
+	#[test]
+	fn concurrent_publication_keeps_old_entries_readable() {
+		let entries: [OnceLock<Entry>; 32] = [const { OnceLock::new() }; 32];
+		let published = AtomicUsize::new(0);
+		std::thread::scope(|scope| {
+			for _ in 0..4 {
+				let entries = &entries;
+				let published = &published;
+				scope.spawn(move || loop {
+					let len = published.load(Ordering::Acquire);
+					for i in 0..len {
+						let e = published_entry(entries, published, Nominal(i as u32)).unwrap();
+						assert_eq!(e.hash, i as u64 + 1);
+						assert_eq!(e.shape, Shape::Tuple(i as u32));
+						assert_eq!((e.start, e.len, e.total_len), (0, 0, 0));
+					}
+					assert!(published_entry(entries, published, Nominal(32)).is_none());
+					if len == entries.len() {
+						break;
+					}
+					std::thread::yield_now();
+				});
+			}
+			for (i, slot) in entries.iter().enumerate() {
+				assert!(slot
+					.set(Entry {
+						hash: i as u64 + 1,
+						enum_hash: 0,
+						shape: Shape::Tuple(i as u32),
+						start: 0,
+						len: 0,
+						ordinal: 0,
+						total_len: 0,
+					})
+					.is_ok());
+				published.store(i + 1, Ordering::Release);
+				std::thread::yield_now();
+			}
+		});
+	}
+
+	#[test]
+	fn concurrent_interning_publishes_constructor_shapes() {
+		fn check(i: usize, n: Nominal) {
+			let shape = if i.is_multiple_of(2) {
+				Shape::Named
+			} else {
+				Shape::Tuple(i as u32)
+			};
+			assert!(contains(n));
+			assert_eq!(shape_copy(n), Some(shape));
+			assert_eq!(hash_copy(n), Some(0x4e31_ffff));
+			assert_eq!(variant_info(n), Some((0x4e31_0000 + i as u64, i as u32)));
+			let mut buffer = [0; 256];
+			let len = name_copy(n, &mut buffer).unwrap();
+			assert_eq!(
+				&buffer[..len],
+				std::format!("N1Concurrent::V{i}").as_bytes()
+			);
+			let len = type_name_copy(n, &mut buffer).unwrap();
+			assert_eq!(&buffer[..len], b"N1Concurrent");
+			let fields = fields_copy(n).unwrap();
+			if shape == Shape::Named {
+				assert!(fields
+					.iter()
+					.map(|name| name.as_str())
+					.eq(["first", "second"]));
+			} else {
+				assert!(fields.is_empty());
+			}
+		}
+		let ids: [AtomicU32; 16] = [const { AtomicU32::new(0) }; 16];
+		let start = std::sync::Barrier::new(5);
+		let finish = std::sync::Barrier::new(5);
+		std::thread::scope(|scope| {
+			for _ in 0..4 {
+				let ids = &ids;
+				let start = &start;
+				let finish = &finish;
+				scope.spawn(move || {
+					for round in 0..=ids.len() {
+						start.wait();
+						if round > 0 {
+							let i = round - 1;
+							let id = ids[i].load(Ordering::Acquire);
+							assert_ne!(id, 0);
+							check(i, Nominal(id - 1));
+							let first = ids[0].load(Ordering::Acquire);
+							check(0, Nominal(first - 1));
+						}
+						finish.wait();
+					}
+				});
+			}
+			for i in 0..=ids.len() {
+				start.wait();
+				if i < ids.len() {
+					let mut staging = Staging::default();
+					let shape = if i.is_multiple_of(2) {
+						Shape::Named
+					} else {
+						Shape::Tuple(i as u32)
+					};
+					let fields: &[&str] = if shape == Shape::Named {
+						&["first", "second"]
+					} else {
+						&[]
+					};
+					let n = staging
+						.stage_variant_order(
+							0x4e31_0000 + i as u64,
+							format_args!("N1Concurrent::V{i}"),
+							shape,
+							0x4e31_ffff,
+							i as u32,
+							fields,
+						)
+						.unwrap();
+					let mut remap = staging.prepare_remap().unwrap();
+					staging.commit(&mut remap).unwrap();
+					let n = if n.0 & PROVISIONAL == 0 {
+						n
+					} else {
+						remap[(n.0 & !PROVISIONAL) as usize]
+					};
+					ids[i].store(n.0 + 1, Ordering::Release);
+				}
+				finish.wait();
+			}
+		});
+	}
 
 	fn small(entries: usize, name_bytes: usize, total_name_bytes: usize) -> Interner {
 		Interner::with_limits(Limits {
@@ -1093,10 +1363,12 @@ mod tests {
 				// A batch can fit staging yet exceed the destination's capacity.
 				let s = staged(&[(1, "A"), (2, "B"), (3, "C")]);
 				let mut remap = s.prepare_remap().unwrap();
-				assert!(
-					with_prepared(Some(small(2, 4, 8)), |table| table.commit(&s, &mut remap))
-						.is_err()
-				);
+				assert!(with_prepared(
+					Some(small(2, 4, 8)),
+					prepare_records(s.entries.iter().map(|e| s.record(e))).unwrap(),
+					|table| table.commit(&s, &mut remap)
+				)
+				.is_err());
 				assert_eq!(global_len(), 0);
 			}
 			"poison" => {
@@ -1122,8 +1394,12 @@ mod tests {
 						let mut remap = s.prepare_remap().unwrap();
 						let candidate = Interner::with_limits(Limits::default()).unwrap();
 						barrier.wait();
-						with_prepared(Some(candidate), |table| table.commit(&s, &mut remap))
-							.unwrap();
+						with_prepared(
+							Some(candidate),
+							prepare_records(s.entries.iter().map(|e| s.record(e))).unwrap(),
+							|table| table.commit(&s, &mut remap),
+						)
+						.unwrap();
 						(remap[0], name)
 					}));
 				}
