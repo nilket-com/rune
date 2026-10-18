@@ -30,6 +30,7 @@ use std::{
 };
 
 pub(super) mod d1b_diagnostics;
+mod d1c_diagnostics;
 
 pub(super) fn contract_completed(engine: &str, rows: usize) {
 	println!("\nCONTRACT ENGINE {engine}");
@@ -256,12 +257,29 @@ fn observe_with_context(
 					let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
 					fs::write(result.with_extension("site"), site).unwrap();
 				}
+				let message = d1c_diagnostics::stock_display(&e);
+				if matches!(
+					e.error().kind(),
+					crate::runtime::VmErrorKind::AccessError { .. }
+				) {
+					if let Some(path) = std::env::var_os("GAP_ACCESS_RESULT") {
+						let arguments: Vec<_> = e
+							.chain()
+							.iter()
+							.filter_map(|entry| match entry.kind() {
+								crate::runtime::VmErrorKind::BadArgument { arg } => Some(*arg),
+								_ => None,
+							})
+							.collect();
+						fs::write(path, serde_json::to_vec_pretty(&serde_json::json!({"engine":"stock","kind":format!("{:?}",e.error().kind()),"arguments":arguments,"display":message})).unwrap()).unwrap();
+					}
+				}
 				let k = e.into_kind();
 				Observation::new(
 					"error",
 					&stock_class(&k),
 					"stock runtime",
-					k.to_string(),
+					message,
 					String::new(),
 				)
 			}
@@ -334,6 +352,17 @@ fn observe_with_context(
 			observed
 		}
 		Err(f) => {
+			if f.error.kind == super::super::error::ErrorKind::AccessConflict {
+				if let Some(path) = std::env::var_os("GAP_ACCESS_RESULT") {
+					use super::super::error::Detail;
+					let arguments: Vec<_> = match f.error.detail {
+						Detail::SharedArgument { arg, .. }
+						| Detail::ExclusiveArgument { arg, .. } => vec![arg],
+						_ => vec![],
+					};
+					fs::write(path, serde_json::to_vec_pretty(&serde_json::json!({"engine":"fresh","detail":format!("{:?}",f.error.detail),"arguments":arguments,"display":f.message(&program).to_string()})).unwrap()).unwrap();
+				}
+			}
 			if mode.starts_with("assert-main")
 				|| mode == "output-main"
 				|| mode.starts_with("patterns-")
@@ -454,6 +483,10 @@ fn launch(
 		.env("GAP_MODE", mode)
 		.env("GAP_ENGINE", engine)
 		.env("GAP_RESULT", &result)
+		.env(
+			"GAP_ACCESS_RESULT",
+			out.join(format!("{id}.{engine}.access.json")),
+		)
 		.stdin(Stdio::null())
 		.stdout(Stdio::piped())
 		.stderr(Stdio::piped())
@@ -504,6 +537,8 @@ fn launch(
 	fs::write(out.join(format!("{id}.{engine}.out")), &stdout).unwrap();
 	fs::write(out.join(format!("{id}.{engine}.err")), &stderr).unwrap();
 	fs::write(out.join(format!("{id}.{engine}.result")), &record).unwrap();
+	let record =
+		d1c_diagnostics::record_before(&fs::read_to_string(path).unwrap(), engine, &record);
 	Run {
 		record,
 		stdout,

@@ -205,6 +205,17 @@ impl VmError {
 impl fmt::Display for VmError {
 	#[inline]
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		if let VmErrorKind::AccessError { error } = &self.inner.error.kind {
+			let arg = if error.is_moved() {
+				None
+			} else {
+				self.inner.chain.iter().find_map(|entry| match &entry.kind {
+					VmErrorKind::BadArgument { arg } => Some(*arg),
+					_ => None,
+				})
+			};
+			return error.fmt_subject(f, arg);
+		}
 		if let VmErrorKind::MissingInstanceFunction { hash, instance } = &self.inner.error.kind {
 			let name_hash = Hash::associated_function(instance.type_hash(), *hash);
 			let target = super::messages::DiagnosticType(instance);

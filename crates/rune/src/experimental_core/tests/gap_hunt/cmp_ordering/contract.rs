@@ -6,6 +6,34 @@ fn d1_cmp_expectation(label: &str, source: &str, expected: &Json, engine: &str) 
 		assert_eq!(expected["display"], row["changes"][engine]["before"]);
 		expected["display"] = row["changes"][engine]["after"].clone();
 	}
+	if label == "access/leased-parent-mutate" {
+		assert_eq!(
+			hex(source.as_bytes()),
+			"70756220666e206d61696e28297b6c657420763d5b2261225d3b666f72207820696e20767b782e636d70287b762e7075736828226322293b2262227d293b7d377d0a70756220666e2063395f726575736528297b377d"
+		);
+		assert_eq!(
+			expected["display"],
+			"Cannot write, the value is being read from"
+		);
+		expected["display"] = json!(D1C_ACCESS_DISPLAY);
+	}
+	let moved_value = match label {
+		"access/moved-receiver" => Some(
+			"70756220666e206d61696e28297b6c657420733d2261223b6c657420616c6961733d733b64726f702873293b616c6961732e636d7028226222297d0a70756220666e2063395f726575736528297b377d",
+		),
+		"access/moved-rhs" => Some(
+			"70756220666e206d61696e28297b6c657420733d2261223b6c657420616c6961733d733b64726f702873293b2262222e636d7028616c696173297d0a70756220666e2063395f726575736528297b377d",
+		),
+		_ => Option::None,
+	};
+	if let Some(source_hex) = moved_value {
+		assert_eq!(hex(source.as_bytes()), source_hex);
+		assert_eq!(
+			expected["display"],
+			"Cannot read, the value has been moved"
+		);
+		expected["display"] = json!("Cannot read the value: it has been moved");
+	}
 	expected
 }
 

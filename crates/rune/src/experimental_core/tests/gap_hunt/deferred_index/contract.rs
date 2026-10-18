@@ -217,7 +217,8 @@ fn run_contract(engine: &str) {
 		.unwrap();
 		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
 		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
-		let e: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let mut e: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		e["outcome"] = super::d1c_diagnostics::before("deferred_index", label, source, engine, &e["outcome"]);
 		if engine == "stock" {
 			exact_keys(
 				e.as_object().unwrap(),

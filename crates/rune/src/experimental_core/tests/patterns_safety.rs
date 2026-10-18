@@ -115,7 +115,7 @@ fn host_empty_nonempty_and_moved_tuple_patterns_keep_access_order() {
 			assert_eq!(failed.error.kind, ErrorKind::AccessConflict);
 			assert_eq!(
 				std::format!("{}", failed.message(&p)),
-				"Cannot read, the value has been moved"
+				"Cannot read the value: it has been moved"
 			);
 			let at = failed.error.location.unwrap();
 			let start = source.find(pattern).unwrap() as u32;

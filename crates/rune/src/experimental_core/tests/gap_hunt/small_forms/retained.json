@@ -341,8 +341,10 @@
       "source_sha256": "c2834475f049a2eba206d7b385bec251ab6fd05fc8132b42717e2594db8dd6e3",
       "leaf": "outcome.kind",
       "stock": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
-      "fresh": "WriteBorrowed",
-      "category": "Retained-kind"
+      "fresh": "SharedArgument { arg: 0, readers: 1 }",
+      "category": "Intentional-more-context",
+      "ruling_message": "01a14f55-a78a-7294-b0f4-e7662161c89a",
+      "ruling_seq": 19886
     },
     {
       "index": 102,

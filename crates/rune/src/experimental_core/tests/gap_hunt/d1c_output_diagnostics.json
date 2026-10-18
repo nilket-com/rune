@@ -1,0 +1,26 @@
+[
+  {
+    "label": "closed/string",
+    "source_hex": "70756220666e206d61696e2829207b206c657420613d2278223b206c657420623d613b2064726f702861293b20646267212862293b203432207d",
+    "before_suffix": ": Cannot read, the value has been moved>\n",
+    "after_suffix": ": Cannot read the value: it has been moved>\n"
+  },
+  {
+    "label": "host-fixture/c2-lease-string",
+    "source_hex": "70756220666e206d61696e2829207b2064626721283a3a63323a3a736565642829293b203432207d",
+    "before_suffix": ": Cannot read, the value is being written to>\n",
+    "after_suffix": ": Cannot read the receiver: it is being written>\n"
+  },
+  {
+    "label": "host-fixture/c2-closed-string",
+    "source_hex": "70756220666e206d61696e2829207b2064626721283a3a63323a3a736565642829293b203432207d",
+    "before_suffix": ": Cannot read, the value has been moved>\n",
+    "after_suffix": ": Cannot read the value: it has been moved>\n"
+  },
+  {
+    "label": "host-fixture/c2-moved-string",
+    "source_hex": "70756220666e206d61696e2829207b2064626721283a3a63323a3a736565642829293b203432207d",
+    "before_suffix": ": Cannot read, the value has been moved>\n",
+    "after_suffix": ": Cannot read the value: it has been moved>\n"
+  }
+]

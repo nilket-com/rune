@@ -186,7 +186,9 @@ fn fresh_contract() {
 			status.success() && !exceeded.load(Ordering::SeqCst),
 			"C12 child STOP {i}"
 		);
-		let actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let source = unhex(actual["source_hex"].as_str().unwrap());
+		actual["observation"]["outcome"] = super::d1c_diagnostics::before("small_forms", actual["label"].as_str().unwrap(), &source, "fresh", &actual["observation"]["outcome"]);
 		c12_compare_fresh(i, expected, &actual, &counts);
 		assert_eq!(
 			hex(&subject_stdout(&stdout).unwrap()),

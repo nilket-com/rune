@@ -22,24 +22,26 @@ pub(super) fn conflict(kind: Access, entry: &Entry) -> Error {
 		}
 		Access::Write | Access::Take => {
 			// Only Detail crosses the opaque call. Construct Error afterwards.
-			let mut detail = Detail::WriteBorrowed;
-			borrowed_detail(&mut detail, kind, entry);
-			err(ErrorKind::AccessConflict).with_detail(detail)
+			err(ErrorKind::AccessConflict).with_detail(borrowed_detail(kind, entry))
 		}
 	}
 }
 #[cold]
 #[inline(never)]
-fn borrowed_detail(detail: &mut Detail, kind: Access, entry: &Entry) {
-	*detail = if entry.readers == EXCLUSIVE {
+fn borrowed_detail(kind: Access, entry: &Entry) -> Detail {
+	if entry.readers == EXCLUSIVE {
 		match kind {
 			Access::Read => Detail::ReadExclusive,
 			Access::Write => Detail::WriteExclusive,
 			Access::Take => Detail::TakeExclusive,
 		}
 	} else {
-		Detail::WriteBorrowed
-	};
+		match kind {
+			Access::Read => Detail::ReadExclusive,
+			Access::Write => Detail::WriteBorrowed,
+			Access::Take => Detail::TakeBorrowed,
+		}
+	}
 }
 pub(super) fn access(access: Access) -> Error {
 	err(ErrorKind::AccessConflict).with_detail(match access {

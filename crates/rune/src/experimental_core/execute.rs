@@ -1978,12 +1978,10 @@ fn enrich_error(
 		error.detail = Detail::ExclusiveArgument { access, arg: 0 };
 		return error;
 	}
-	if let Op::AssignBinary { lhs, .. } | Op::Push { value: lhs, .. } = *op {
-		if error.detail == Detail::WriteBorrowed
-			&& slots
-				.get(base + lhs as usize)
-				.is_some_and(|v| store.tag(*v) == Ok(super::value::Type::String))
-		{
+	if let Op::AssignBinary { lhs, .. } | Op::Push { value: lhs, .. } | Op::Set { value: lhs, .. } =
+		*op
+	{
+		if error.detail == Detail::WriteBorrowed {
 			if let Some(readers) = slots
 				.get(base + lhs as usize)
 				.and_then(|v| store.shared_readers(*v))

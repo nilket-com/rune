@@ -102,7 +102,8 @@ fn stock_contract() {
 		assert_eq!(stderr, decode(cells[5]));
 		assert!(fs::metadata(&result).unwrap().len() <= 64 * 1024 * 1024);
 		// The child archive is already preserved; only a copy is projected.
-		let raw: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let mut raw: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		raw["observation"]["outcome"] = super::d1c_diagnostics::before("callback_sort", label, source, "stock", &raw["observation"]["outcome"]);
 		assert_eq!(raw["schema"], 1);
 		assert_eq!(raw["engine"], "stock");
 		assert_eq!(raw["index"], i);

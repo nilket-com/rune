@@ -580,11 +580,11 @@ fn access_conflict_wording_distinguishes_mutation_and_invalidated_payload() {
 		.unwrap_err();
 	assert_eq!(
 		failure.error.detail,
-		crate::experimental_core::error::Detail::WriteBorrowed
+		crate::experimental_core::error::Detail::SharedArgument { arg: 0, readers: 1 }
 	);
 	assert_eq!(
 		failure.error.message(&program).to_string(),
-		stock.into_kind().to_string()
+		stock.to_string()
 	);
 	let at = failure.error.location.unwrap();
 	assert_eq!(at.start as usize..at.end as usize, stock_span);
@@ -600,7 +600,22 @@ fn access_conflict_wording_distinguishes_mutation_and_invalidated_payload() {
 	);
 	assert_eq!(
 		error.message(&program).to_string(),
-		"Cannot read, the value has been moved"
+		"Cannot read the value: it has been moved"
+	);
+	let take = crate::experimental_core::error::Error::new(ErrorKind::AccessConflict, "take")
+		.with_detail(crate::experimental_core::error::Detail::TakeBorrowed);
+	assert_eq!(
+		take.message(&program).to_string(),
+		"Cannot take the value: it is being read"
+	);
+	let receiver = crate::experimental_core::error::Error::new(ErrorKind::AccessConflict, "write")
+		.with_detail(crate::experimental_core::error::Detail::ExclusiveArgument {
+			access: crate::experimental_core::error::MovedAccess::Write,
+			arg: 0,
+		});
+	assert_eq!(
+		receiver.message(&program).to_string(),
+		"Cannot write the receiver: it is being written"
 	);
 	store.release(value).unwrap();
 	assert_eq!(store.live_entries(), 0);
@@ -899,11 +914,7 @@ fn vector_dynamic_set_borrows_before_converting_the_index() {
 		let source =
 			std::format!("pub fn main() {{ let x=[1]; for v in x {{ x[{index}] = 2; }} }}");
 		let (mut stock, program) = compile(&context, &source);
-		let expected = stock
-			.call(["main"], ())
-			.unwrap_err()
-			.into_kind()
-			.to_string();
+		let expected = stock.call(["main"], ()).unwrap_err().to_string();
 		let mut store = Store::new(Limits::default()).unwrap();
 		let failure = Executor::new()
 			.unwrap()
@@ -1006,4 +1017,39 @@ fn iteration_nominal_and_function_hashes_match_lowered_stock_values() {
 		store.root_release(root).unwrap();
 		assert_eq!(store.live_entries(), 0);
 	}
+}
+
+#[test]
+#[cfg(not(miri))]
+fn leased_indexed_write_keeps_the_proven_receiver_position() {
+	let context = Context::with_default_modules().unwrap();
+	let (mut stock, program) = compile(
+		&context,
+		"pub fn target() { let v=[1]; for x in v { v[0]=2; } }",
+	);
+	let stock = stock.call(["target"], ()).unwrap_err();
+	assert!(stock.chain().iter().any(|entry| matches!(
+		entry.kind(),
+		crate::runtime::VmErrorKind::BadArgument { arg: 0 }
+	)));
+	let mut store = Store::new(Limits::default()).unwrap();
+	let failure = Executor::new()
+		.unwrap()
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["target"])).unwrap(),
+			&[],
+			100_000,
+		)
+		.unwrap_err();
+	assert_eq!(
+		failure.error.detail,
+		crate::experimental_core::error::Detail::SharedArgument { arg: 0, readers: 1 }
+	);
+	assert_eq!(
+		failure.message(&program).to_string(),
+		"Cannot write the receiver: it is being read"
+	);
+	assert_eq!(stock.to_string(), failure.message(&program).to_string());
 }

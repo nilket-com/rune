@@ -1,0 +1,3427 @@
+[
+  {
+    "family": "range_endpoint",
+    "label": "lifecycle/drop-start",
+    "source_hex": "70756220666e206d61696e2829207b6c657420613d2261223b206c657420723d612e2e227a223b2064726f702861293b20722e73746172742e6c656e28297d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "e8e35cd4f37a1a63c66916b212fe8e9ab23de89b46b9afeab4623a9a136533f2",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_endpoint",
+    "label": "lifecycle/drop-end",
+    "source_hex": "70756220666e206d61696e2829207b6c657420623d227a223b206c657420723d2261222e2e623b2064726f702862293b20722e656e642e6c656e28297d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "da8fb9a44afcde17f42228b083ac0a8e2c36a6bed25560809230c02c17a1768b",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_endpoint",
+    "label": "lifecycle/drop-wrapper-alias",
+    "source_hex": "70756220666e206d61696e2829207b6c657420723d2261222e2e227a223b206c657420733d723b2064726f702872293b20732e73746172747d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "344386850a1e442bfbe07cccc75628c3f95f88036748e63cc5a18f02c727115c",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_endpoint",
+    "label": "lifecycle/moved-range-write",
+    "source_hex": "70756220666e206d61696e2829207b6c657420723d302e2e333b206c657420733d723b2064726f702873293b20722e73746172743d323b2028297d",
+    "mode": "main",
+    "before": "Cannot write, the value has been moved",
+    "source_sha256": "96991e931a8d13024decfa8272fca4ed76230d03b053f148de795f2b2c159486",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot write the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Write }",
+        "display": "Cannot write the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_endpoint",
+    "label": "lifecycle/moved-endpoint-debug",
+    "source_hex": "70756220666e206d61696e2829207b6c657420613d2261223b206c657420723d612e2e227a223b2064726f702861293b20722e73746172742e6c656e28297d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "e8e35cd4f37a1a63c66916b212fe8e9ab23de89b46b9afeab4623a9a136533f2",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_index",
+    "label": "witness/moved-vec-get",
+    "source_hex": "7374727563742050207b787d20666e20672829207b377d20666e206d616b655f72616e67652829207b302e2e327d20666e20696e6465782829207b7072696e746c6e212822696e64657822293b20302e2e327d20666e207268732829207b7072696e746c6e21282272687322293b205b372c385d7d2070756220666e206d61696e2829207b6c657420763d5b312c322c335d3b206c657420613d763b2064726f702861293b206c657420723d302e2e323b20765b725d7d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "af55f6d5205f4daf3867f6a5d080f031fc0ac8332a6ec918d5d8900741b5d339",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_index",
+    "label": "witness/moved-vec-set",
+    "source_hex": "7374727563742050207b787d20666e20672829207b377d20666e206d616b655f72616e67652829207b302e2e327d20666e20696e6465782829207b7072696e746c6e212822696e64657822293b20302e2e327d20666e207268732829207b7072696e746c6e21282272687322293b205b372c385d7d2070756220666e206d61696e2829207b6c657420763d5b312c322c335d3b206c657420613d763b2064726f702861293b20765b696e64657828295d3d72687328293b2028297d",
+    "mode": "main",
+    "before": "Cannot write, the value has been moved",
+    "source_sha256": "7cd8967398db2cbe43df8a9a87c7c80027c038280dca7fb32e13a5c05e5de73d",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot write the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Write }",
+        "display": "Cannot write the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_index",
+    "label": "witness/moved-vec-add",
+    "source_hex": "7374727563742050207b787d20666e20672829207b377d20666e206d616b655f72616e67652829207b302e2e327d20666e20696e6465782829207b7072696e746c6e212822696e64657822293b20302e2e327d20666e207268732829207b7072696e746c6e21282272687322293b205b372c385d7d2070756220666e206d61696e2829207b6c657420763d5b312c322c335d3b206c657420613d763b2064726f702861293b20765b696e64657828295d2b3d72687328293b2028297d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "b3d9e24d61cd23143365f1e9b36602a432e1a4ed289723748f41e38fde8d7c3a",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_index",
+    "label": "witness/moved-string-get",
+    "source_hex": "7374727563742050207b787d20666e20672829207b377d20666e206d616b655f72616e67652829207b302e2e327d20666e20696e6465782829207b7072696e746c6e212822696e64657822293b20302e2e327d20666e207268732829207b7072696e746c6e21282272687322293b205b372c385d7d2070756220666e206d61696e2829207b6c657420763d22616263223b206c657420613d763b2064726f702861293b206c657420723d302e2e323b20765b725d7d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "8d30b7797a6f47fc3c1de327896871b1bc423381200ab0f67efb13d4ad280acc",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_index",
+    "label": "witness/moved-range-get",
+    "source_hex": "7374727563742050207b787d20666e20672829207b377d20666e206d616b655f72616e67652829207b302e2e327d20666e20696e6465782829207b7072696e746c6e212822696e64657822293b20302e2e327d20666e207268732829207b7072696e746c6e21282272687322293b205b372c385d7d2070756220666e206d61696e2829207b6c657420763d5b312c322c335d3b206c657420723d302e2e323b206c657420613d723b2064726f702861293b20765b725d7d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "5a361b51c6044e541b2bbaa99ebf6fe5913768fd133bbf800e4f1a323e8b8dbe",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_index",
+    "label": "witness/moved-both",
+    "source_hex": "7374727563742050207b787d20666e20672829207b377d20666e206d616b655f72616e67652829207b302e2e327d20666e20696e6465782829207b7072696e746c6e212822696e64657822293b20302e2e327d20666e207268732829207b7072696e746c6e21282272687322293b205b372c385d7d2070756220666e206d61696e2829207b6c657420763d5b312c322c335d3b206c657420613d763b2064726f702861293b206c657420723d302e2e323b206c657420613d723b2064726f702861293b20765b725d7d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "06694fc4feb3f73a006214a465bf708d452c0d255a8777fbaf895b3e55994ede",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "range_index",
+    "label": "witness/leased-vec-set",
+    "source_hex": "7374727563742050207b787d20666e20672829207b377d20666e206d616b655f72616e67652829207b302e2e327d20666e20696e6465782829207b7072696e746c6e212822696e64657822293b20302e2e327d20666e207268732829207b7072696e746c6e21282272687322293b205b372c385d7d2070756220666e206d61696e2829207b6c657420763d5b312c322c335d3b206c657420723d302e2e323b20666f72207820696e2076207b20765b725d3d72687328293b207d2028297d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "95539560686835d017f0b5e2a019fc27dc80dc51952146c6b0aee3dc79a29309",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the receiver: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the receiver: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [
+      0
+    ],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot write the receiver: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [
+          0
+        ],
+        "detail": "SharedArgument { arg: 0, readers: 1 }",
+        "display": "Cannot write the receiver: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "field_iter",
+    "label": "iterate-mutation/object-update",
+    "source_hex": "70756220666e206d61696e2829207b206c657420783d237b783a31307d3b20666f72207020696e2078207b20782e783d323b207d20782e78207d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "0f5106b49511ab2e46ef353fd9c3ddd4a5e7434047efff4682c86b4a68561ca2",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "WriteBorrowed",
+        "display": "Cannot write the value: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "field_iter",
+    "label": "iterate-mutation/object-insert",
+    "source_hex": "70756220666e206d61696e2829207b206c657420783d237b783a31307d3b20666f72207020696e2078207b20782e793d323b207d20782e78207d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "b68b54387b2b3d6f3c3515dda9aa25ee6704562e1e3b11faaf7fb322724ffe19",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "WriteBorrowed",
+        "display": "Cannot write the value: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "field_iter",
+    "label": "iterate-mutation/object-alias-insert",
+    "source_hex": "70756220666e206d61696e2829207b206c657420783d237b783a31307d3b206c657420793d783b20666f72207020696e2078207b20792e793d323b207d20782e78207d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "9ddec45f3c2744badcd082d0b06e88570019b0fb881be5cb595af95ed8e2d113",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "WriteBorrowed",
+        "display": "Cannot write the value: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "field_iter",
+    "label": "iterate-mutation/vec-push",
+    "source_hex": "70756220666e206d61696e2829207b206c657420783d5b31305d3b20666f72207620696e2078207b20782e707573682832293b207d20782e6c656e2829207d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "9c43ad16c47023e382476df6ef069065ac14dc9c0a47df230f712e3213b913ce",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the receiver: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the receiver: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [
+      0
+    ],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot write the receiver: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [
+          0
+        ],
+        "detail": "SharedArgument { arg: 0, readers: 1 }",
+        "display": "Cannot write the receiver: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "field_iter",
+    "label": "iterate-mutation/tuple-write",
+    "source_hex": "70756220666e206d61696e2829207b206c657420783d2831302c3230293b20666f72207620696e2078207b20782e303d323b207d20782e30207d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "0e9a848484ffe57fba53c78055a8b9f4ac2523c9a91212ef331cb221e85bacd7",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "WriteBorrowed",
+        "display": "Cannot write the value: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "field_iter",
+    "label": "field-compound-reader/integer",
+    "source_hex": "70756220666e206d61696e2829207b206c657420783d237b783a31307d3b20666f72207020696e2078207b20782e782b3d313b207d20782e78207d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "ede3c9b25360a1aad94f6b0817ed2103b93f09b494202f7c2bacd72c072cc0ec",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "WriteBorrowed",
+        "display": "Cannot write the value: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "field_iter",
+    "label": "field-compound-reader/integer-bad-rhs",
+    "source_hex": "70756220666e206d61696e2829207b206c657420783d237b783a31307d3b20666f72207020696e2078207b20782e782b3d22626164223b207d20782e78207d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "e720a741d414dd92a75884585ca59252bdb64f60c2917ebd05602b24f3907115",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "WriteBorrowed",
+        "display": "Cannot write the value: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "field_iter",
+    "label": "field-compound-reader/string",
+    "source_hex": "70756220666e206d61696e2829207b206c657420783d237b783a2261227d3b20666f72207020696e2078207b20782e782b3d2262223b207d20782e78207d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "e974552018c817abe5271f15e278d834e20ae77ca4df641cafc87cfb1eb4fad9",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "WriteBorrowed",
+        "display": "Cannot write the value: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "field_iter",
+    "label": "field-compound-reader/string-bad-rhs",
+    "source_hex": "70756220666e206d61696e2829207b206c657420783d237b783a2261227d3b20666f72207020696e2078207b20782e782b3d313b207d20782e78207d",
+    "mode": "main",
+    "before": "Cannot write, the value is being read from",
+    "source_sha256": "b5ee8afee1e3d2adc18920395a80165baaf38545981c2a1b1e147cf1beb50c2c",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value is being read from",
+        "after": "Cannot write the value: it is being read",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it is being read",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "WriteBorrowed",
+        "display": "Cannot write the value: it is being read",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "patterns",
+    "label": "access/string/string",
+    "source_hex": "70756220666e206d61696e2829207b206c657420613d2268656c64223b6c657420623d613b64726f702861293b206d617463682062207b202268656c64223d3e31312c5f3d3e3232207d207d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "4c6dc1d354df5778669ea10e5f68b936936999a1caf6d3b3a4554849cddf10fb",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "patterns",
+    "label": "access/vec/vec",
+    "source_hex": "70756220666e206d61696e2829207b206c657420613d5b315d3b6c657420623d613b64726f702861293b206d617463682062207b205b5f5d3d3e31312c5f3d3e3232207d207d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "9e0469d1e338b52cda9dcd739dc7651ca39a67f095113e60a56bc2baacea42a7",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "patterns",
+    "label": "life/W3-ignore-later",
+    "source_hex": "70756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b6d617463682061207b536f6d65287829206966207b64726f702861293b66616c73657d3d3e302c536f6d65285f293d3e31312c5f3d3e32327d207d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "bef58f66f1d1b92572c757b137963c4a85b45cc2ba4f006296da6e1dfdee1bbb",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "patterns",
+    "label": "supplement/dropped-option/some-ignore",
+    "source_hex": "70756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b2064726f702861293b206d617463682062207b20536f6d65285f293d3e31312c5f3d3e3232207d207d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "0227bbeec625e2d0734102bf5bee8b137d06f278e77db36a62da40d3f8cc8147",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "patterns",
+    "label": "supplement/dropped-option/none",
+    "source_hex": "70756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b2064726f702861293b206d617463682062207b204e6f6e653d3e31312c5f3d3e3232207d207d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "d39bb517663143133cebb13a58b93ad97eda595e6ac5e892d9396de87c179056",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "patterns",
+    "label": "supplement2/moved-tuple/empty",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d28312c293b6c657420623d613b64726f702861293b6d6174636820627b28293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "e3a419f6c5bcfe6b50b69d85f535da9afdc0118415654badac386bc474e80350",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "patterns",
+    "label": "supplement2/moved-tuple/rest",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d28312c293b6c657420623d613b64726f702861293b6d6174636820627b282e2e293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "d47b9b8fb1142298d530d7f03702294fcf8d247f311d5bf3341883e2c6e8b5e1",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Ok(_)/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d6174636820627b4f6b285f293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "a6a7a49226c64cfeb2ddc7f2d853fb215a1d68e64a1815b66b89b6f56f6ddd6b",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Ok(_)/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b4f6b285f293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "4b269ef63caaac6ce6a7c6409f20066b9316fedbef42dfbaaaf177302607de69",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Err(_)/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d6174636820627b457272285f293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "5cd853ee0da58d7fb208c64a664940eadebe384bdd3bf395d1696b15003bab6d",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Err(_)/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b457272285f293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "b483ca8893d5c487d9cab79cc9a48fa1e35988354fa79c71593b923956109847",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Ok(x)/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d6174636820627b4f6b2878293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "47b336236305c0c89b70ef1431f5f5708d14510d2b2560730824aff307cd74fe",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Ok(x)/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b4f6b2878293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "804a4887d27a54e6f4ef71b58a2ecf97b8537f69d92fdc012fafaba2375fe155",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Err(x)/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d6174636820627b4572722878293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "a859fa1d677d14ae976d6afe87b846a8f11fcbf5fe8501b7d20dd7f16b7aefa6",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Err(x)/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b4572722878293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "3608e41afe330a2bfd5ad7fbb3f65504ee471ff88b0b5a31020b6bdfdc593182",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Ok([_])/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d6174636820627b4f6b285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "8fec59299a2901fc65b143cad8c7f22441cb887bd18f57c949cc437be5c641af",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Ok([_])/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b4f6b285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "00f9d9f8c3e160f4fdd315b6bb99467259ba4d7c2b56c1399ea76a1eec7d593e",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Err([_])/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d6174636820627b457272285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "66c216dc84a1d692be07b285d22e9d0331a4b47976ef542c6acb1252e2ff7c03",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Ok/Err([_])/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d4f6b285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b457272285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "8c01e0f7a2521181ac7f90ff12480fada008955c4533a882947395c0fbf0729f",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-payload/Ok/Ok([_])",
+    "source_hex": "70756220666e206d61696e28297b6c657420703d5b375d3b6c657420723d4f6b2870293b64726f702870293b6d6174636820727b4f6b285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "ff7a8323cffaab5f429f1e3330268b64baca0d2da88f34f6cdc6bfc0e74affa6",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Ok(_)/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d6174636820627b4f6b285f293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "d444ba0bce765a5cd9583d2fd8a1ea64f931c846d4e7b1b2d2f35d331c3d5f30",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Ok(_)/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b4f6b285f293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "e8d5b4cc1b421b8eeef976d8c760324758e450dd526328a274bb71209c541076",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Err(_)/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d6174636820627b457272285f293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "462875c71b47e7f184c6e0b245dde898e5c954bd560355874cf30792bbaf93d3",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Err(_)/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b457272285f293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "22a464bc22519379d3be5c447763237c55dc74292085d612ac614f61483dede4",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Ok(x)/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d6174636820627b4f6b2878293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "14935c4937d7d0ce86b1d795de044676ff309aa84352e3da5d07cbca5389f5ef",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Ok(x)/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b4f6b2878293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "4ca8dea6ceca0765f82ed4ab661d6005f5efdded7f899b8a988dcb81f0d51ef7",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Err(x)/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d6174636820627b4572722878293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "c5cbf54f5437a0c5758d46b8432cb93a00880e9386aa28dc8d1cb86b4fa990b9",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Err(x)/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b4572722878293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "3c1ad38a73cd683aa9d7805dcdf964efd2db968a43e4ae7566f407ccc9e76e3e",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Ok([_])/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d6174636820627b4f6b285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "243737ff26eed463244d762174eb8758f45406d4ba63b4ec7957c3b2713398ff",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Ok([_])/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b4f6b285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "72d5114fa58f0ad7316b3ff70b4eca5739763932d9f5ed209131ba46c4e1b56a",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Err([_])/variable",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d6174636820627b457272285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "d985acb867952e9d5fe2e92931a8f24eccdc2ff87dda1d0f6a6f725c5c0613c3",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-parent/Err/Err([_])/block",
+    "source_hex": "70756220666e206d61696e28297b6c657420613d457272285b375d293b6c657420623d613b64726f702861293b6d61746368207b627d7b457272285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "8427009bd0d5fb6e2f53ec55859766fddaac46b26e8b0830fbc229e50abcd7d8",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "result_patterns",
+    "label": "c4/access/moved-payload/Err/Err([_])",
+    "source_hex": "70756220666e206d61696e28297b6c657420703d5b375d3b6c657420723d4572722870293b64726f702870293b6d6174636820727b457272285b5f5d293d3e31312c5f3d3e32327d7d",
+    "mode": "c3-main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "a08a31ab3d3dd400512fe98d0c1a3f47dd7822ee40551cb5f58f40c140d875ae",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/vec/index-read",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b2064726f702862293b20615b305d207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "a115e25ce84a38ea6ccab2b018961e98c1d54c68c71c230effa22bd2fad0b6b1",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/vec/len",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b2064726f702862293b20612e6c656e2829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "c42b4bc2d0bd6d45a658ea7599781aab24024747b0b83535f823facc613fa250",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/vec/clone",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b2064726f702862293b20612e636c6f6e652829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "b4a114af1aafbe343d89fe496c25741f9b6a4428eb9c7893975c27dbde59cd52",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/vec/debug",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b2064726f702862293b207072696e746c6e2128227b3a3f7d222c61293b202829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "4642c501e2a35abf33a3d8f6e4b169ac6460f008aa889ad941f56a305deef0f9",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/vec/index-write",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b2064726f702862293b20615b305d3d323b202829207d",
+    "mode": "main",
+    "before": "Cannot write, the value has been moved",
+    "source_sha256": "49238d9c0b969179591609323e6c1515d6aa6d157366f2b5fe058b52515a5422",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot write the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Write }",
+        "display": "Cannot write the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/vec/push",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b2064726f702862293b20612e70757368283129207d",
+    "mode": "main",
+    "before": "Cannot write, the value has been moved",
+    "source_sha256": "3e435fec3f262c20239ffb0348a542dbc9f0c885447e3cdb5457e4e50aef6097",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot write the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Write }",
+        "display": "Cannot write the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/vec/double-drop",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b2064726f702862293b2064726f702861293b202829207d",
+    "mode": "main",
+    "before": "Cannot take, the value has been moved",
+    "source_sha256": "23f7049b024670a1260aa44fa74c2201f605de5c237a2bdf13770703e2e9c1e3",
+    "changes": {
+      "stock": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot take the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Take }",
+        "display": "Cannot take the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/object/field-read",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b2064726f702862293b20612e66207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "4b99957837bfa3042c5e08126634e771c5760c8932e67f21f253e2618f844ef9",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/object/len",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b2064726f702862293b20612e6c656e2829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "6885fe96483761a2de214b5c2726c8b0b7ddce66f6c62354cf2926dac01105d8",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/object/clone",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b2064726f702862293b20612e636c6f6e652829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "ada4a56975bc816d698c2826367d75dbc966c61e813f8c0adcbffa204dd8247e",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/object/debug",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b2064726f702862293b207072696e746c6e2128227b3a3f7d222c61293b202829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "c8520421719c37add3be28e51d9cd9ecc700660713830af0151652300170a0a0",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/object/field-write",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b2064726f702862293b20612e663d323b202829207d",
+    "mode": "main",
+    "before": "Cannot write, the value has been moved",
+    "source_sha256": "d7078f5a70bca301ce8d5f96f38554beeda27eb6e41428c634d3677ae7a79fa2",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Write }",
+        "display": "Cannot write the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/object/field-add",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b2064726f702862293b20612e662b3d313b202829207d",
+    "mode": "main",
+    "before": "Cannot write, the value has been moved",
+    "source_sha256": "fad9bd9fa43247555c339f2c82abc92239321955ca4c10b5a16daf43432f6205",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Write }",
+        "display": "Cannot write the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/object/double-drop",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b2064726f702862293b2064726f702861293b202829207d",
+    "mode": "main",
+    "before": "Cannot take, the value has been moved",
+    "source_sha256": "8dc97f89c7460f3d83d50cac22566747a48a0cc72ffec18a6d3d8bd64c7194f9",
+    "changes": {
+      "stock": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot take the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Take }",
+        "display": "Cannot take the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/tuple/index-read",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d285b315d2c293b206c657420623d613b2064726f702862293b20615b305d207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "7cfc1ec76a36c9feb1fa7742371b73055f40b6eda9ed0539cf5a6f4276152bb7",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/tuple/len",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d285b315d2c293b206c657420623d613b2064726f702862293b20612e6c656e2829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "4925519bfe07faf43186414b186f57de5291d2b2daa34cae7b72d5d2d44cc351",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/tuple/clone",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d285b315d2c293b206c657420623d613b2064726f702862293b20612e636c6f6e652829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "f43c4484acd81e832310c4527b4e61fbc96bc36589a065a19691be0b4773ff73",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/tuple/debug",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d285b315d2c293b206c657420623d613b2064726f702862293b207072696e746c6e2128227b3a3f7d222c61293b202829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "d295daef52c4ff73e729c8048eba6039d72633142b263320f479e8cb487a3721",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/tuple/double-drop",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d285b315d2c293b206c657420623d613b2064726f702862293b2064726f702861293b202829207d",
+    "mode": "main",
+    "before": "Cannot take, the value has been moved",
+    "source_sha256": "cb1ba44fc310447be3c24c0e8d6c164909c76be449df28ec6e60a3f53c72d160",
+    "changes": {
+      "stock": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot take the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Take }",
+        "display": "Cannot take the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/string/index-read",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b2064726f702862293b20615b305d207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "90733617cfc565baf4fe6fcf593150de5ff3157591728087d0e4e5d7bae2fff4",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/string/len",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b2064726f702862293b20612e6c656e2829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "9f8b2e7dd3ea3e4bea76f49f8c6ed54ce3e3951a58d7442791a7b0ea3f6577b8",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/string/clone",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b2064726f702862293b20612e636c6f6e652829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "eeb6d012bf633600dec98ede0293917f152c8347f34c93296bf17804301291e8",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/string/debug",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b2064726f702862293b207072696e746c6e2128227b3a3f7d222c61293b202829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "e96d3847778e83fa6e40c353bebffe6a9beaf26b742834005d2f9567e3006e0e",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/string/display",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b2064726f702862293b207072696e746c6e2128227b7d222c61293b202829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "021014aa2f3b00e542a46da6e13643e4894287e206c3a316b8656e9e20a086dd",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/string/push",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b2064726f702862293b20612e70757368283129207d",
+    "mode": "main",
+    "before": "Cannot write, the value has been moved",
+    "source_sha256": "9bd6757f0a411e8944ad76cdd5d430210d2fc3d102cda2154b8566089a158b5f",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot write the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Write }",
+        "display": "Cannot write the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/string/double-drop",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b2064726f702862293b2064726f702861293b202829207d",
+    "mode": "main",
+    "before": "Cannot take, the value has been moved",
+    "source_sha256": "6b902f104fbc9da36f5e8eee1c9d389a2120cbdea5f9b0625cd84632f53c43d9",
+    "changes": {
+      "stock": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot take the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Take }",
+        "display": "Cannot take the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/option/index-read",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b2064726f702862293b20615b305d207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "2103fc2ead2d8b2460a121a1a727a5fc91135e08da54584e9183ee247dadb616",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/option/clone",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b2064726f702862293b20612e636c6f6e652829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "f4636354280ead5179e7d811b6ed01b99c2fedd7d46c468f7c59134f9c81b9bd",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/option/debug",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b2064726f702862293b207072696e746c6e2128227b3a3f7d222c61293b202829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "ab6b2f5fe6920846f0f46479832e50f9dcd6875b5737a823b4e9bfbf4c2ff160",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [
+          0
+        ],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/option/double-drop",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b2064726f702862293b2064726f702861293b202829207d",
+    "mode": "main",
+    "before": "Cannot take, the value has been moved",
+    "source_sha256": "a0d7a15dfb281c4a062cbb7e59df8452feb92b3bf670634f4e690ecb6a14802b",
+    "changes": {
+      "stock": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot take the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Take }",
+        "display": "Cannot take the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/struct/field-read",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d507b663a5b315d7d3b206c657420623d613b2064726f702862293b20612e66207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "91d417ef752718b4ef9f4d74b3d431dc93343cbaba53773958cf0b97c2e83f9f",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/struct/debug",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d507b663a5b315d7d3b206c657420623d613b2064726f702862293b207072696e746c6e2128227b3a3f7d222c61293b202829207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "44c7bd225da514aca2774615ed769105e79aa8212a0612a9ee9abb14eb11ab89",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/struct/field-write",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d507b663a5b315d7d3b206c657420623d613b2064726f702862293b20612e663d323b202829207d",
+    "mode": "main",
+    "before": "Cannot write, the value has been moved",
+    "source_sha256": "e894cf4bf679bb249a1ecd474ac0b107c830f4d0702cc4ae51de2f7170de69df",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Write }",
+        "display": "Cannot write the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/struct/field-add",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d507b663a5b315d7d3b206c657420623d613b2064726f702862293b20612e662b3d313b202829207d",
+    "mode": "main",
+    "before": "Cannot write, the value has been moved",
+    "source_sha256": "20e0b4c6de38e158c8965f02aeda094b0f4c77ac7ba190750f68da02dfdd4823",
+    "changes": {
+      "stock": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot write, the value has been moved",
+        "after": "Cannot write the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot write the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Write }",
+        "display": "Cannot write the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/struct/double-drop",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d507b663a5b315d7d3b206c657420623d613b2064726f702862293b2064726f702861293b202829207d",
+    "mode": "main",
+    "before": "Cannot take, the value has been moved",
+    "source_sha256": "dc1ba6e695c7b0a15d12f7b7d905828a09a9133702f8ab3c2d151f461b89d8ed",
+    "changes": {
+      "stock": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot take, the value has been moved",
+        "after": "Cannot take the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot take the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Take }",
+        "display": "Cannot take the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "len_clone",
+    "label": "moved/take-argument",
+    "source_hex": "70756220666e206d61696e2829207b206c6574206f626a6563743d237b6669656c643a317d3b206c6574206f626a656374323d6f626a6563743b207072696e746c6e2128226669656c643a207b7d222c6f626a6563742e6669656c64293b2064726f70286f626a65637432293b207072696e746c6e2128226669656c643a207b7d222c6f626a6563742e6669656c64293b207d",
+    "mode": "main",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "5dd03ea14326a3dd642d6053807524a7efe0b0e30c1eb1793e97bece7199c6b8",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": {
+        "arguments": [],
+        "display": "Cannot read the value: it has been moved",
+        "engine": "stock",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }"
+      },
+      "fresh": {
+        "arguments": [],
+        "detail": "Moved { access: Read }",
+        "display": "Cannot read the value: it has been moved",
+        "engine": "fresh"
+      }
+    }
+  },
+  {
+    "family": "host_bridge",
+    "label": "h1/flow/moved-string",
+    "source_hex": "70756220666e206d61696e28297b6c657420733d22ceb1223b64726f702873293b68313a3a67726565742873297d",
+    "mode": "normal",
+    "before": "Cannot read, the value has been moved",
+    "source_sha256": "c49cc7dcbbeaa3e49f0f14502d6a9542cdac22c5b35c38c9a6a50891d9a5cd5a",
+    "changes": {
+      "stock": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      },
+      "fresh": {
+        "before": "Cannot read, the value has been moved",
+        "after": "Cannot read the value: it has been moved",
+        "observed_phase": "error",
+        "observed_class": "AccessConflict"
+      }
+    },
+    "paired_arguments": [],
+    "argument_evidence": {
+      "stock": null,
+      "fresh": null
+    }
+  }
+]

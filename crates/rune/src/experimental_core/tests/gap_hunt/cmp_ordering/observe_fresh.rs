@@ -162,6 +162,11 @@ fn fresh_primary_kind(
 		} if error.kind == ErrorKind::AccessConflict => K::AccessError {
 			error: crate::runtime::AccessError::fresh_moved_read(),
 		},
+		Detail::SharedArgument { readers, .. } if error.kind == ErrorKind::AccessConflict => {
+			K::AccessError {
+				error: crate::runtime::AccessError::fresh_shared_for_test(readers),
+			}
+		}
 		Detail::Moved {
 			access: crate::experimental_core::error::MovedAccess::Read,
 		} if error.kind == ErrorKind::AccessConflict => K::AccessError {

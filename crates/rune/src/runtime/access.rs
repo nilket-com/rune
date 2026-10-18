@@ -54,10 +54,35 @@ impl AccessError {
 impl fmt::Display for AccessError {
 	#[inline]
 	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		self.fmt_subject(f, None)
+	}
+}
+
+impl AccessError {
+	pub(crate) fn fmt_subject(
+		&self,
+		f: &mut fmt::Formatter<'_>,
+		arg: Option<usize>,
+	) -> fmt::Result {
+		let (operation, snapshot) = match &self.kind {
+			AccessErrorKind::NotAccessibleRef(s) => ("read", s),
+			AccessErrorKind::NotAccessibleMut(s) => ("write", s),
+			AccessErrorKind::NotAccessibleTake(s) => ("take", s),
+		};
+		write!(f, "Cannot {operation} ")?;
+		match arg {
+			Some(0) => f.write_str("the receiver")?,
+			Some(arg) => write!(f, "argument {arg}")?,
+			None => f.write_str("the value")?,
+		}
+		write!(f, ": {}", snapshot.what())
+	}
+
+	pub(crate) fn is_moved(&self) -> bool {
 		match &self.kind {
-			AccessErrorKind::NotAccessibleRef(s) => write!(f, "Cannot read, {}", s.what()),
-			AccessErrorKind::NotAccessibleMut(s) => write!(f, "Cannot write, {}", s.what()),
-			AccessErrorKind::NotAccessibleTake(s) => write!(f, "Cannot take, {}", s.what()),
+			AccessErrorKind::NotAccessibleRef(snapshot)
+			| AccessErrorKind::NotAccessibleMut(snapshot)
+			| AccessErrorKind::NotAccessibleTake(snapshot) => snapshot.is_moved(),
 		}
 	}
 }
@@ -79,6 +104,10 @@ enum AccessErrorKind {
 pub(crate) struct Snapshot(usize);
 
 impl Snapshot {
+	fn is_moved(&self) -> bool {
+		self.0 & MOVED != 0
+	}
+
 	/// Test if the snapshot indicates that the value is readable.
 	pub(crate) fn is_readable(&self) -> bool {
 		self.0 & MASK == 0
@@ -107,13 +136,13 @@ impl Snapshot {
 	/// half worth saying.
 	fn what(&self) -> &'static str {
 		if self.0 & MOVED != 0 {
-			"the value has been moved"
+			"it has been moved"
 		} else if self.0 & EXCLUSIVE != 0 {
-			"the value is being written to"
+			"it is being written"
 		} else if self.shared() > 0 {
-			"the value is being read from"
+			"it is being read"
 		} else {
-			"the value is not available"
+			"it is not available"
 		}
 	}
 }

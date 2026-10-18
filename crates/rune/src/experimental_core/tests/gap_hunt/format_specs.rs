@@ -55,7 +55,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 				let range = inst.span.range();
 				json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 			}).collect::<Vec<_>>();
-			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":kind.to_string(),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
 		}
 	}
 }

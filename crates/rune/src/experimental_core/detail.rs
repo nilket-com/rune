@@ -200,6 +200,8 @@ pub enum Detail {
 	ShiftWidth,
 	/// A mutation was refused because iteration holds a read lease.
 	WriteBorrowed,
+	/// Taking a value was refused because iteration holds a read lease.
+	TakeBorrowed,
 	SharedArgument {
 		arg: u8,
 		readers: u32,
@@ -649,6 +651,28 @@ pub struct Message<'a> {
 	pub(crate) program: &'a Program,
 }
 
+fn access_message(
+	f: &mut fmt::Formatter<'_>,
+	access: MovedAccess,
+	arg: Option<u8>,
+	state: &str,
+) -> fmt::Result {
+	let operation = match access {
+		MovedAccess::Read => "read",
+		MovedAccess::Write => "write",
+		MovedAccess::Take => "take",
+	};
+	f.write_str("Cannot ")?;
+	f.write_str(operation)?;
+	f.write_str(" ")?;
+	match arg {
+		Some(0) => f.write_str("the receiver")?,
+		Some(arg) => write!(f, "argument {arg}")?,
+		None => f.write_str("the value")?,
+	}
+	write!(f, ": {state}")
+}
+
 impl fmt::Display for Message<'_> {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		use Detail::*;
@@ -682,17 +706,25 @@ impl fmt::Display for Message<'_> {
 			}
 			StringOperand { found } => messages::expected_type(f, TypeName::String, found),
 			Coerce { value, to } => messages::coerce(f, value, to),
-			WriteBorrowed | SharedArgument { .. } => {
-				f.write_str("Cannot write, the value is being read from")
+			WriteBorrowed => {
+				access_message(f, MovedAccess::Write, Option::None, "it is being read")
 			}
-			ExclusiveArgument { access, .. } => f.write_str(match access {
-				MovedAccess::Read => "Cannot read, the value is being written to",
-				MovedAccess::Write => "Cannot write, the value is being written to",
-				MovedAccess::Take => "Cannot take, the value is being written to",
-			}),
-			ReadExclusive => f.write_str("Cannot read, the value is being written to"),
-			WriteExclusive => f.write_str("Cannot write, the value is being written to"),
-			TakeExclusive => f.write_str("Cannot take, the value is being written to"),
+			TakeBorrowed => access_message(f, MovedAccess::Take, Option::None, "it is being read"),
+			SharedArgument { arg, .. } => {
+				access_message(f, MovedAccess::Write, Some(arg), "it is being read")
+			}
+			ExclusiveArgument { access, arg } => {
+				access_message(f, access, Some(arg), "it is being written")
+			}
+			ReadExclusive => {
+				access_message(f, MovedAccess::Read, Option::None, "it is being written")
+			}
+			WriteExclusive => {
+				access_message(f, MovedAccess::Write, Option::None, "it is being written")
+			}
+			TakeExclusive => {
+				access_message(f, MovedAccess::Take, Option::None, "it is being written")
+			}
 			ShiftWidth => f.write_str("Numerical overflow"),
 			Underflow => f.write_str("Numerical underflow"),
 			OutOfRange { index, length } => messages::out_of_range(f, index, length),
@@ -760,15 +792,9 @@ impl fmt::Display for Message<'_> {
 			},
 			NotCallable { found } => messages::not_callable(f, found),
 			Arity { given, expected } => messages::arity(f, given, expected),
-			Moved { access } | CmpArgumentAccess { access, .. } => write!(
-				f,
-				"Cannot {}, the value has been moved",
-				match access {
-					MovedAccess::Read => "read",
-					MovedAccess::Write => "write",
-					MovedAccess::Take => "take",
-				}
-			),
+			Moved { access } | CmpArgumentAccess { access, .. } => {
+				access_message(f, access, Option::None, "it has been moved")
+			}
 			ExpectedChar { found } => write!(f, "Expected type `std::char` but found `{found}`"),
 			NoCloneProtocol { found } => {
 				write!(f, "Missing protocol function `CLONE` for `{found}`")

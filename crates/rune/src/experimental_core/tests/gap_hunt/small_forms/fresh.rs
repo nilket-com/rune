@@ -59,7 +59,8 @@ fn c12_fresh_error(
 	if error.kind == ErrorKind::FuelExhausted {
 		return json!({"status":"error","class":"FuelExhausted","kind":"FuelExhausted","display":failure.message(program).to_string(),"sites":c12_sites(failure),"chain":[],"raw":format!("{failure:?}")});
 	}
-	if error.kind == ErrorKind::AccessConflict && error.detail == Detail::WriteBorrowed {
+	if error.kind == ErrorKind::AccessConflict
+		&& matches!(error.detail, Detail::WriteBorrowed | Detail::SharedArgument { .. }) {
 		return json!({"status":"error","class":"AccessConflict","kind":format!("{:?}",error.detail),"display":failure.message(program).to_string(),"sites":c12_sites(failure),"chain":[],"raw":format!("{failure:?}")});
 	}
 	let Some(kind) = fresh_primary_kind(error, program) else {

@@ -1,0 +1,1095 @@
+{
+  "schema": 1,
+  "authority": "01a14f4d-4175-7071-b8b7-2b4ea15a0d4b",
+  "original_slice": 37,
+  "rows": [
+    {
+      "family": "deferred_index",
+      "label": "moved/string/normal",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b6c657420613d763b64726f702861293b765b302e2e325d3b28297d",
+      "source_sha256": "86ddab43532fcea01e19b5d8181d7770049e1b34b719b1dcdcc5572989d6be14",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "moved/string/negative",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b6c657420613d763b64726f702861293b765b2d312e2e325d3b28297d",
+      "source_sha256": "c0b3004f0bb782491abcaab6856a5943d7021ebfe6ce18276e42f80e00a75984",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "moved/string/float",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b6c657420613d763b64726f702861293b765b302e302e2e325d3b28297d",
+      "source_sha256": "87de13ff553f4f88e9537a0e485f03300458c393455c96ec80608baa7988f49d",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "moved/string/reversed",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b6c657420613d763b64726f702861293b765b322e2e315d3b28297d",
+      "source_sha256": "f7376ea80dd343d553a7b9daad3f4c5149cf44773cb3bb795b716f39b9a4a054",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "moved/vec/normal",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b6c657420613d763b64726f702861293b765b302e2e325d3b28297d",
+      "source_sha256": "337bbf0160972f23eb3011e8ee0ae5f3b741149d580d667d942958ac73b7be64",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "moved/vec/negative",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b6c657420613d763b64726f702861293b765b2d312e2e325d3b28297d",
+      "source_sha256": "1597ef4e6319543b6ce26060d835fa323e1d6f85980617163640e6586fc6c5aa",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "moved/vec/float",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b6c657420613d763b64726f702861293b765b302e302e2e325d3b28297d",
+      "source_sha256": "58d2e58f604eacbd1398a57d72704d6de90cc8ee66513f79641a27ba73a17e3a",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "moved/vec/reversed",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b6c657420613d763b64726f702861293b765b322e2e315d3b28297d",
+      "source_sha256": "ad3b52257ce2cb3e6ba7233a37753798a6d94166cb9204a5e98926103e2ca410",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "effects/leased-drop",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b666f72207820696e2076207b64726f702876293b765b302e2e325d3b7d20747275657d",
+      "source_sha256": "d6e0d53566d2c078663d9b08577cfe1fd506e2b62fd9064c2c9a17e72513a5f2",
+      "changes": {
+        "stock": {
+          "before": "Cannot take, the value is being read from",
+          "after": "Cannot take the value: it is being read"
+        },
+        "fresh": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot take the value: it is being read"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "effects/receiver-drop-start",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d22616263223b765b7b64726f702876293b307d2e2e325d3b28297d",
+      "source_sha256": "b018f346d03a522f49d18ebd2286ba6c44e0cd3129c9253d3398e6e4d7e603d5",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "effects/receiver-drop-end",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d5b312c322c335d3b765b302e2e7b64726f702876293b327d5d3b28297d",
+      "source_sha256": "183bdbbc7258b738de0db6b92d13f6419b2108955ffb9367e5a814bb86e210a1",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/vec/drop/local/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b765b7b64726f702876293b307d5d7d",
+      "source_sha256": "a64067f118b89c628faaf611ec42a4d83087088d3c74faca7813134c81db647d",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/vec/drop/local/set",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b765b7b64726f702876293b307d5d3d393b377d",
+      "source_sha256": "52a3affaea884fc1fdf046e3831f1d2fb85d95e475fb82dfd9bb1d3f7f022651",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/vec/drop/local/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b765b7b64726f702876293b307d5d2b3d313b377d",
+      "source_sha256": "67876e7765cb79635a9de8a91719724b2ba8709a8228aa5061f84e67059d884e",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/vec/drop/computed/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b69642876295b7b64726f702876293b307d5d7d",
+      "source_sha256": "84b879eebcc78b0f4c33ec30bb30329be2c3d02f8e0cf422d45a764bc9ef4506",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/vec/drop/computed/set",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b69642876295b7b64726f702876293b307d5d3d393b377d",
+      "source_sha256": "182952773109820d4f0a31ada86a91c643b9240369cd285dfd3ff9e96cb92a7c",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/vec/drop/computed/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b69642876295b7b64726f702876293b307d5d2b3d313b377d",
+      "source_sha256": "e52362b00260ad380134473c0405e784abe9dadb26075b5ce4ea13f068edd7af",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/vec/replace-drop-old/computed/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b6c6574206f6c643d763b69642876295b7b763d5b372c385d3b64726f70286f6c64293b307d5d7d",
+      "source_sha256": "7a3729b95528968fcd99b7d5bfb7eb0994f0b33036e6c3f1402557b3bdb7c036",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/vec/replace-drop-old/computed/set",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b6c6574206f6c643d763b69642876295b7b763d5b372c385d3b64726f70286f6c64293b307d5d3d393b765b305d7d",
+      "source_sha256": "384fb5b11f5142d677cc6bacf6015a0520068159c618b23074bcfe31c3f4ef2d",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/vec/replace-drop-old/computed/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d5b312c325d3b6c6574206f6c643d763b69642876295b7b763d5b372c385d3b64726f70286f6c64293b307d5d2b3d313b765b305d7d",
+      "source_sha256": "d263b44c452bbb5ebc90203caa8d74b54d18953376895438551cd880e342b9ba",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/object/drop/local/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d237b613a317d3b765b7b64726f702876293b2261227d5d7d",
+      "source_sha256": "ae8ec51db321f669def75ba659e7a870e295ae144c39b52014a960ffd9897210",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/object/drop/local/set",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d237b613a317d3b765b7b64726f702876293b2261227d5d3d393b377d",
+      "source_sha256": "f16282a5ea77904377ecc90d138c23c8e0e94d142415ef72ace5192a84bce490",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/object/drop/local/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d237b613a317d3b765b7b64726f702876293b2261227d5d2b3d313b377d",
+      "source_sha256": "16bdeb639f71d28b4b3da86cd12678512448d8bc7ff78a5d741baab34870fade",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/object/drop/computed/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d237b613a317d3b69642876295b7b64726f702876293b2261227d5d7d",
+      "source_sha256": "8d1e1d67f700cbfafcd56bb8fc7db16e0d747f090c00a7e40c94bbc59375e734",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/object/drop/computed/set",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d237b613a317d3b69642876295b7b64726f702876293b2261227d5d3d393b377d",
+      "source_sha256": "e3e62c6d0fdbf5a55a7b8f7e73e5e8e75ff2d4255849e9d235c504633cf76cd8",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/object/drop/computed/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d237b613a317d3b69642876295b7b64726f702876293b2261227d5d2b3d313b377d",
+      "source_sha256": "cba99b193621a1b7cac28567faff7848a254854ea37d3337c243a3940620aba9",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/object/replace-drop-old/computed/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d237b613a317d3b6c6574206f6c643d763b69642876295b7b763d237b613a377d3b64726f70286f6c64293b2261227d5d7d",
+      "source_sha256": "8bef2f24101193153df1f22d598c86aa25f2c061d944a9e6653a6081fec4f03b",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/object/replace-drop-old/computed/set",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d237b613a317d3b6c6574206f6c643d763b69642876295b7b763d237b613a377d3b64726f70286f6c64293b2261227d5d3d393b762e617d",
+      "source_sha256": "06ea5ce2fee654e9a44f1b7597b9f53ee012ffebc500275a1868710deab8284a",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot write, the value has been moved",
+          "after": "Cannot write the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/object/replace-drop-old/computed/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d237b613a317d3b6c6574206f6c643d763b69642876295b7b763d237b613a377d3b64726f70286f6c64293b2261227d5d2b3d313b762e617d",
+      "source_sha256": "5bf0ec8a593e569098c26a6ede9cdfd2c6b730fdced226a2ff069cc242d7fed2",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/tuple/drop/local/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d28312c32293b765b7b64726f702876293b307d5d7d",
+      "source_sha256": "79b1602bb27b26fdce4dbdee9ecbf623dfac6e1db699a9ffba20b33856486dda",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/tuple/drop/local/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d28312c32293b765b7b64726f702876293b307d5d2b3d313b377d",
+      "source_sha256": "b2fb19194f2c0e9eaf3c7eff73fc82019c4af7ab91ce7c91747bd17be51ab9f8",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/tuple/drop/computed/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d28312c32293b69642876295b7b64726f702876293b307d5d7d",
+      "source_sha256": "a823c153f0ecba2a4fe4708e557e9f8641c6de18910ec6dfaf3427c8600b6c14",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/tuple/drop/computed/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d28312c32293b69642876295b7b64726f702876293b307d5d2b3d313b377d",
+      "source_sha256": "a84e70cdd5a94bef8dd3d2ae274ce2dd60ed1bf2129b0df4262719b80397ae9e",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/tuple/replace-drop-old/computed/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d28312c32293b6c6574206f6c643d763b69642876295b7b763d28372c38293b64726f70286f6c64293b307d5d7d",
+      "source_sha256": "d6b1847990be94047439b7424330c2b4b95d5738178055c7ffbf324096628c18",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/tuple/replace-drop-old/computed/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d28312c32293b6c6574206f6c643d763b69642876295b7b763d28372c38293b64726f70286f6c64293b307d5d2b3d313b765b305d7d",
+      "source_sha256": "604a965bef2767084a08907c88cf27f4a6b0264537fc7f6726ef9848ab3ee98d",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/string/drop/local/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b765b7b64726f702876293b307d5d7d",
+      "source_sha256": "5854f3a5d60ae4b8f0db058619b7f17f28af8c2d32c4e20e4af282fb686040f6",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/string/drop/local/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b765b7b64726f702876293b307d5d2b3d313b377d",
+      "source_sha256": "a01718185eb14cd99aa2e2b13a7997f11459ca093c715fcd3b746d251ddb32aa",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/string/drop/computed/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b69642876295b7b64726f702876293b307d5d7d",
+      "source_sha256": "065c4b49c7e082d6dc177901d821276da4e09ff94d96041c16f4a25728c98874",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/string/drop/computed/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b69642876295b7b64726f702876293b307d5d2b3d313b377d",
+      "source_sha256": "d61230452f6a064923a37a1ced2e442f6fa6c6162c14057250fb3824ae631ce9",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/string/replace-drop-old/computed/get",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b6c6574206f6c643d763b69642876295b7b763d226364223b64726f70286f6c64293b307d5d7d",
+      "source_sha256": "7efc75177f954270340e7d397007516177c0d355486bfa440cf3f784283557e6",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "deferred_index",
+      "label": "matrix/string/replace-drop-old/computed/compound",
+      "source_hex": "666e2069642878297b787d2070756220666e206d61696e28297b6c657420763d226162223b6c6574206f6c643d763b69642876295b7b763d226364223b64726f70286f6c64293b307d5d2b3d313b765b305d7d",
+      "source_sha256": "d3c9e647d68433a45d9f8f200e7dae0bccd8f6ba08309c8f2df2fcd77ec72e38",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "cmp_ordering",
+      "label": "access/moved-receiver",
+      "source_hex": "70756220666e206d61696e28297b6c657420733d2261223b6c657420616c6961733d733b64726f702873293b616c6961732e636d7028226222297d0a70756220666e2063395f726575736528297b377d",
+      "source_sha256": "c669913bc17559c024c7d50a9452e5eec3e9269df767c1f381f91c49fb6c0a6a",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "cmp_ordering",
+      "label": "access/moved-rhs",
+      "source_hex": "70756220666e206d61696e28297b6c657420733d2261223b6c657420616c6961733d733b64726f702873293b2262222e636d7028616c696173297d0a70756220666e2063395f726575736528297b377d",
+      "source_sha256": "647007b1c11a2fd90e5ae517a64f3a041a8bbcb2668bf0e665d8a49da7b420fb",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "cmp_ordering",
+      "label": "access/leased-parent-mutate",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d5b2261225d3b666f72207820696e20767b782e636d70287b762e7075736828226322293b2262227d293b7d377d0a70756220666e2063395f726575736528297b377d",
+      "source_sha256": "ed04c37527950d21b66bfea500cac197003fc09b5c6ee69d008c32ef432a8519",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot write the receiver: it is being read"
+        },
+        "fresh": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot write the receiver: it is being read"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/read-len",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b612e6c656e28293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "84515bc65c820adb56476e51192d2f56b52de2aea54e6e67a114f970096ef61b",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/read-clone",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b6c657420783d612e636c6f6e6528293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "2767e55e48ed380b56b0e373ae3f08c29b92f570009cc7c153b67e79d088d803",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/read-index",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b6c657420783d615b305d3b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "41ee2baf35728bec14dffbd2cd2bce94a8d3cbf5b60f836876cc8e6dca9c8049",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the value: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the value: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/read-format",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b6c657420783d666f726d61742128227b3a3f7d222c61293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "a11207a5ecec963552529dfc417a9bbe8aee1c050e50311ea35984b73001bed1",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/read-iterate",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b666f72207820696e20617b627265616b3b7d7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "0f6c62e93ba1716e81bca7c0daff20bdeb208638043dbc7bb69c1de0ec155ef5",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/write-push",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b612e707573682833293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "204a1e62e7d3dc680ccff2cdc307d168551853dcf1cc0fd3f7beafe77a6d5de8",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value is being written to",
+          "after": "Cannot write the receiver: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot write, the value is being written to",
+          "after": "Cannot write the receiver: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/write-index",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b615b305d3d333b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "98db3766395b578458e0da724f15776ccf8abb4eda089a78f84d05cd9c897f5c",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value is being written to",
+          "after": "Cannot write the receiver: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot write, the value is being written to",
+          "after": "Cannot write the receiver: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/take-drop",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b64726f702861293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "9696dd4f8488db9f1278437a7067b13456c57d80b0cf4c642ec62ef749eccca1",
+      "changes": {
+        "stock": {
+          "before": "Cannot take, the value is being written to",
+          "after": "Cannot take the value: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot take, the value is being written to",
+          "after": "Cannot take the value: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/nested-same",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b612e736f72745f627928636f6d70617265293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "be41bbceebd2d3b45ee9a0c8b61bc1b27ef3463bffd4b564a8ce4c636c8ce00b",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value is being written to",
+          "after": "Cannot write the receiver: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot write, the value is being written to",
+          "after": "Cannot write the receiver: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/noncapturing-closure-read",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28612c62293b612e636d702862297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f6279287c612c627c7b6331313a3a7469636b28312c32293b612e6c656e28293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "1120322941e129ebabe183ece9a1c291fec4573211f63160b0797d622287154a",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "refused/captures-parent",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28612c62293b612e636d702862297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f6279287c612c627c7b762e6c656e28293b612e636d702862297d293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "source_sha256": "4c31b288147360803ee49fcf1fd8144120009f075723ad0895620e0c5b6d04a9",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        },
+        "fresh": {
+          "before": "Cannot read, the value is being written to",
+          "after": "Cannot read the receiver: it is being written"
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "access/moved-string/display",
+      "source_hex": "2070756220666e206d61696e28297b6c657420613d2278223b6c657420623d613b64726f702861293b666f726d61742128227b3a3e377d222c62297d",
+      "source_sha256": "9abb2518e0c81d5813a47671c7502e3b5f49570a04886739b3bb7358a64016a5",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "access/moved-string/?",
+      "source_hex": "2070756220666e206d61696e28297b6c657420613d2278223b6c657420623d613b64726f702861293b666f726d61742128227b3a3e373f7d222c62297d",
+      "source_sha256": "8e969bd5da7b0a2e36bf092cad3d3b333a731736b6f52c2f23908a80e11d08d6",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "access/moved-parent/?",
+      "source_hex": "2070756220666e206d61696e28297b6c657420613d536f6d65285b315d293b6c657420623d613b64726f702861293b666f726d61742128227b3a3e373f7d222c62297d",
+      "source_sha256": "d4c196232c9ea9e6673845135da09ded6956cf9cc89650f25aa3ad28a86a7ce1",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "tuple_let",
+      "label": "effects/moved-root",
+      "source_hex": "70756220666e206d61696e28297b6c657420743d28312c32293b64726f702874293b6c657428612c62293d743b377d",
+      "source_sha256": "83f57d65787c4f256609688e81944e5a1c0da29910b1181b436db4ab01f16f76",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "tuple_let",
+      "label": "effects/leased-child-drop",
+      "source_hex": "70756220666e206d61696e28297b6c657420763d5b312c325d3b666f72207820696e20767b6c657428612c62293d28762c37293b64726f702861293b7d307d",
+      "source_sha256": "9cb74d376e9f6afe2e81830c744ca763d2fa19ee86f0aba8544515c1fbf55006",
+      "changes": {
+        "stock": {
+          "before": "Cannot take, the value is being read from",
+          "after": "Cannot take the value: it is being read"
+        },
+        "fresh": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot take the value: it is being read"
+        }
+      }
+    },
+    {
+      "family": "tuple_let",
+      "label": "effects/named-moved-child-read",
+      "source_hex": "70756220666e206d61696e28297b6c657420743d285b315d2c37293b64726f7028742e30293b6c657428612c62293d743b615b305d7d",
+      "source_sha256": "798298642334c6cd390d498915b78b5e72228c60095f2d4f685caaacb45d5661",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "small_forms",
+      "label": "any/cycle-parent-write",
+      "source_hex": "666e20702878297b782e707573682837293b66616c73657d0a70756220666e206d61696e28762c7374617465297b762e6974657228292e616e792870297d0a70756220666e206331325f726575736528297b377d",
+      "source_sha256": "c2834475f049a2eba206d7b385bec251ab6fd05fc8132b42717e2594db8dd6e3",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot write the receiver: it is being read"
+        },
+        "fresh": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot write the receiver: it is being read"
+        }
+      }
+    },
+    {
+      "family": "constructors",
+      "label": "ownership/moved",
+      "source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b6c657420783d542831293b64726f702878293b782e307d0a70756220666e206331355f726575736528297b377d0a",
+      "source_sha256": "a6cf70a894ff013e9433c46d2cbd0b94dd2b8a9282f8a9da962ff0c533065f52",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "constructors",
+      "label": "ownership/moved-alias",
+      "source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b6c657420783d542831293b6c657420793d783b64726f702878293b792e307d0a70756220666e206331355f726575736528297b377d0a",
+      "source_sha256": "2cd2b4635db25da752b65dcca013142cd3ff8a6c4134e73bdb50b3d99d308bf8",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "enum_variants",
+      "label": "ownership/moved",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a542837293b64726f702878293b782e307d0a70756220666e20633135625f726575736528297b377d0a",
+      "source_sha256": "fede2337d4160b64605a47ee9e941bd0be932b3fbc9d0b6fa56e061bed4d8441",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "enum_variants",
+      "label": "ownership/moved-alias",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a542837293b6c657420793d783b64726f702878293b792e307d0a70756220666e20633135625f726575736528297b377d0a",
+      "source_sha256": "3efc362f8d095b00d7c9c7e7c20d983c9a19a6f0024f893ceae7fa31165a25d3",
+      "changes": {
+        "stock": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        },
+        "fresh": {
+          "before": "Cannot read, the value has been moved",
+          "after": "Cannot read the value: it has been moved"
+        }
+      }
+    },
+    {
+      "family": "text_methods",
+      "label": "split/source-borrowed-append",
+      "source_hex": "757365206331343a3a7461703b0a666e2074657874287461672c73297b746170287461672c30293b737d0a70756220666e206d61696e28297b6c657420733d22612c62223b6c65742069743d732e73706c697428222c22293b732b3d2278223b69742e6e65787428297d0a70756220666e206331345f726575736528297b377d0a",
+      "source_sha256": "2305c0ec4d0ea6c508f481b89422320a08462196d7852b436500c1fd5c1aa947",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot write the receiver: it is being read"
+        },
+        "fresh": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot write the receiver: it is being read"
+        }
+      }
+    },
+    {
+      "family": "text_pipeline",
+      "label": "lifecycle/source-write-lease",
+      "source_hex": "75736520633134623a3a7461703b0a666e2074657874287461672c73297b746170287461672c30293b737d0a0a70756220666e206d61696e28297b6c657420733d22616263223b6c65742069743d732e636861727328292e74616b652830293b732e7075736828277827293b69742e6e65787428297d0a70756220666e20633134625f726575736528297b377d0a",
+      "source_sha256": "3a41498c893c8dd418a7a06ddf21b9252323907d9fb1ef737df1d842abcd330c",
+      "changes": {
+        "stock": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot write the receiver: it is being read"
+        },
+        "fresh": {
+          "before": "Cannot write, the value is being read from",
+          "after": "Cannot write the receiver: it is being read"
+        }
+      }
+    }
+  ]
+}

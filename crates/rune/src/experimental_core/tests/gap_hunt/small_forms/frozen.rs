@@ -234,7 +234,16 @@ fn stock_contract() {
 			status.success() && !exceeded.load(Ordering::SeqCst),
 			"C12 child STOP {i}"
 		);
-		let actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let source = unhex(actual["source_hex"].as_str().unwrap());
+		actual["observation"]["outcome"] = super::d1c_diagnostics::before("small_forms", actual["label"].as_str().unwrap(), &source, "stock", &actual["observation"]["outcome"]);
+		actual["observation"] = super::method_diagnostics::intentional_json_before(
+			"small_forms",
+			actual["label"].as_str().unwrap(),
+			&source,
+			"stock",
+			&actual["observation"],
+		);
 		let empty = json!({});
 		let count = counts.get(format!("{i:03}")).unwrap_or(&empty);
 		let portable = project_p1(&actual, count).unwrap_or_else(|e| panic!("P1 row{i}: {e}"));

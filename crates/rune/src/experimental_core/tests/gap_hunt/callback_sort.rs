@@ -33,7 +33,7 @@ fn error_projection(error: &stock::VmError) -> Json {
 		let inst=at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();let range=inst.span.range();
 		json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 	}).collect::<Vec<_>>();
-	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"typed":typed_kind(kind),"display":kind.to_string(),"chain":chain,"sites":sites,"raw":format!("{error:?}")})
+	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"typed":typed_kind(kind),"display":super::d1c_diagnostics::stock_display(error),"chain":chain,"sites":sites,"raw":format!("{error:?}")})
 }
 fn observe(source: &str, fixture_name: &str, mode: &str, fuel: usize) -> Json {
 	reset_tape();

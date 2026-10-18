@@ -390,7 +390,30 @@ fn stock_contract() {
 			}
 			let a = unhex(a[4]);
 			let b = unhex(b[4]);
-			assert_eq!(address_fields(a.as_bytes()), address_fields(b.as_bytes()));
+			let pins: serde_json::Value =
+				serde_json::from_str(include_str!("d1c_output_diagnostics.json")).unwrap();
+			let pins = pins.as_array().unwrap();
+			assert_eq!(pins.len(), 4);
+			if let Some(pin) = pins
+				.iter()
+				.find(|pin| pin["label"] == current.split('\t').next().unwrap())
+			{
+				assert_eq!(pin["source_hex"], frozen.split('\t').nth(2).unwrap());
+				let (before_prefix, before_suffix) = address_fields(b.as_bytes());
+				assert_eq!(
+					before_suffix,
+					pin["before_suffix"].as_str().unwrap().as_bytes()
+				);
+				assert_eq!(
+					address_fields(a.as_bytes()),
+					(
+						before_prefix,
+						pin["after_suffix"].as_str().unwrap().as_bytes()
+					)
+				);
+			} else {
+				assert_eq!(address_fields(a.as_bytes()), address_fields(b.as_bytes()));
+			}
 			observations += 1;
 		}
 	}

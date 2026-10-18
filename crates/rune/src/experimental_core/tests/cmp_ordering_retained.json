@@ -3,15 +3,25 @@
   "leased_parent": {
     "follow_up": "D-family: leased-parent write borrow primary Snapshot/readers and native wrapper, beside leased-drop take",
     "fresh": {
-      "chain": [],
-      "kind": "WriteBorrowed",
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }",
+          "typed": {
+            "arg": 0,
+            "tag": "BadArgument"
+          }
+        }
+      ],
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
       "typed": {
-        "raw_kind": "WriteBorrowed"
+        "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
       }
     },
     "index": 170,
     "label": "access/leased-parent-mutate",
     "p1_fresh_counts": {
+      "/chain/0/kind": 0,
       "/kind": 0,
       "/raw": 0,
       "/typed/raw_kind": 0
@@ -57,7 +67,9 @@
       "binary_sha256": "20dff3d71223dfb06f765b0c906c0c5ecae2ce165e5ca466368cf51f6d65fd24",
       "observations_sha256": "d0228f749815a5edc3e75e09e00d07a9d479dcb49f1f01b7ff0bb1d5b9855b44",
       "source": "70756220666e206d61696e28297b6c657420763d5b2261225d3b666f72207820696e20767b762e7075736828226322293b7d377d"
-    }
+    },
+    "ruling_message_d1c": "01a14f55-a78a-7294-b0f4-e7662161c89a",
+    "ruling_seq_d1c": 19886
   },
   "diagnostics": {
     "schema": 1,

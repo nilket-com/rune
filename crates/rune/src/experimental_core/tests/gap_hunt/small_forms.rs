@@ -79,7 +79,7 @@ fn c12_error(error: &stock::VmError) -> Json {
 		.iter()
 		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
 		.collect::<Vec<_>>();
-	json!({"status":"error","class":stock_class(kind),"kind":format!("{kind:?}"),"display":kind.to_string(),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
+	json!({"status":"error","class":stock_class(kind),"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 fn c12_cleanup(name: &str, v: &Value) -> Json {
 	if name != "cycle" {

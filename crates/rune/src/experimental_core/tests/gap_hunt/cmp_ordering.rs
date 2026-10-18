@@ -82,7 +82,12 @@ fn error_projection(error: &crate::runtime::VmError) -> Json {
 		let span = inst.span.range();
 		json!({"source":inst.source_id.into_index(),"start":span.start,"end":span.end,"frames":format!("{:?}",at.frames)})
 	}).collect::<Vec<_>>();
-	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"typed":typed_kind(kind),"display":kind.to_string(),"chain":chain,"sites":sites,"raw":format!("{error:?}")})
+	let display = if matches!(kind, crate::runtime::VmErrorKind::AccessError { .. }) {
+		error.to_string()
+	} else {
+		kind.to_string()
+	};
+	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"typed":typed_kind(kind),"display":display,"chain":chain,"sites":sites,"raw":format!("{error:?}")})
 }
 
 fn observe_stock(source: &str, mode: &str) -> Json {

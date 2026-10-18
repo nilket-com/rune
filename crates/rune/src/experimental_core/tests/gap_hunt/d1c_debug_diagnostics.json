@@ -1,0 +1,104 @@
+[
+  {
+    "label": "moved/vec/nested-parent",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b206c657420633d615b305d3b2064726f702863293b2061207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/vec/nested-child",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b206c657420633d615b305d3b2064726f702863293b20615b305d207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/vec/revive-alias-moved",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b2064726f702862293b20613d5b5b315d5d3b2062207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/object/nested-child",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b206c657420633d612e663b2064726f702863293b20612e66207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/object/revive-alias-moved",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b2064726f702862293b20613d237b663a5b315d7d3b2062207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/tuple/nested-parent",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d285b315d2c293b206c657420623d613b206c657420633d612e303b2064726f702863293b2061207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/tuple/nested-child",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d285b315d2c293b206c657420623d613b206c657420633d612e303b2064726f702863293b20612e30207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/tuple/revive-alias-moved",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d285b315d2c293b206c657420623d613b2064726f702862293b20613d285b315d2c293b2062207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/string/nested-parent",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b206c657420633d613b2064726f702863293b2061207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/string/nested-child",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b206c657420633d613b2064726f702863293b2061207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/string/revive-alias-moved",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d226162223b206c657420623d613b2064726f702862293b20613d226162223b2062207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/option/nested-parent",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b206c657420633d612e303b2064726f702863293b2061207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/option/nested-child",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b206c657420633d612e303b2064726f702863293b20612e30207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/option/revive-alias-moved",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b2064726f702862293b20613d536f6d65285b315d293b2062207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/struct/nested-parent",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d507b663a5b315d7d3b206c657420623d613b206c657420633d612e663b2064726f702863293b2061207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/struct/nested-child",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d507b663a5b315d7d3b206c657420623d613b206c657420633d612e663b2064726f702863293b20612e66207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  },
+  {
+    "label": "moved/struct/revive-alias-moved",
+    "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d507b663a5b315d7d3b206c657420623d613b2064726f702862293b20613d507b663a5b315d7d3b2062207d",
+    "before": "Cannot read, the value has been moved",
+    "after": "Cannot read the value: it has been moved"
+  }
+]

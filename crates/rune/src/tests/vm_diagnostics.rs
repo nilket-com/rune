@@ -94,19 +94,19 @@ fn an_unavailable_value_says_what_is_being_done_with_it() {
 	let cases = [
 		(
 			"let a = #{f: 1}; let b = a; drop(b); a.f",
-			"Cannot read, the value has been moved",
+			"Cannot read the value: it has been moved",
 		),
 		(
 			"let v = [1, 2, 3]; for x in v { v.push(1); } v",
-			"Cannot write, the value is being read from",
+			"Cannot write the receiver: it is being read",
 		),
 		(
 			"let v = [3, 1, 2, 5, 4]; v.sort_by(|a, b| { v.push(1); a.cmp(b) }); v",
-			"Cannot write, the value is being written to",
+			"Cannot write the receiver: it is being written",
 		),
 		(
 			"let v = [1, 2, 3]; for x in v { drop(v); } v",
-			"Cannot take, the value is being read from",
+			"Cannot take the value: it is being read",
 		),
 	];
 

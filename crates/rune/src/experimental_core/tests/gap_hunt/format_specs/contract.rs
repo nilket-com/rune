@@ -232,7 +232,8 @@ fn run_contract(engine: &str) {
 			"stock replay child {label}"
 		);
 		assert!(result.metadata().unwrap().len() <= REPLAY_CAP as u64);
-		let actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		actual["outcome"] = super::d1c_diagnostics::before("format_specs", label, source, engine, &actual["outcome"]);
 		assert_eq!(actual["schema"], 1);
 		assert_eq!(actual["index"], i);
 		assert_eq!(actual["label"], *label);
