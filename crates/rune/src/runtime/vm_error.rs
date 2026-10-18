@@ -851,7 +851,11 @@ impl fmt::Display for VmErrorKind {
 			}
 			VmErrorKind::MissingProtocolFunction { protocol, instance } => {
 				let instance = super::messages::DiagnosticType(instance);
-				write!(f, "Missing protocol function `{protocol}` for `{instance}`")
+				if protocol.hash == Protocol::DISPLAY_FMT.hash {
+					write!(f, "`{instance}` cannot be formatted with `{{}}`")
+				} else {
+					write!(f, "Missing protocol function `{protocol}` for `{instance}`")
+				}
 			}
 			VmErrorKind::MissingInstanceFunction { hash, instance } => {
 				let target = super::messages::DiagnosticType(instance);

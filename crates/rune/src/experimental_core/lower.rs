@@ -1514,15 +1514,29 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 		let mut ids = Vec::try_with_capacity(template.exprs.len())?;
 		let mut descriptors_spec = Vec::try_with_capacity(template.exprs.len())?;
+		let mut expansion_span = None;
 		for id in template.exprs {
-			let (id, spec) = match self.exprs.get(*id).kind {
+			let expr = self.exprs.get(*id);
+			let (id, spec, span) = match expr.kind {
 				hir::ExprKind::Format(format) => {
 					let spec = template_spec(format.spec)
-						.map_err(|_| self.refused(span, Refusal::FormatSpec))?;
-					(format.value, Some(spec))
+						.map_err(|_| self.refused(expr.span, Refusal::FormatSpec))?;
+					(format.value, Some(spec), format.span)
 				}
-				_ => (*id, None),
+				hir::ExprKind::Lit(hir::Lit::Str(_)) => (*id, None, expr.span),
+				_ => (*id, None, expr.span),
 			};
+			let display = match expr.kind {
+				hir::ExprKind::Format(format) => {
+					format.spec.format_type.is_none()
+						|| format.spec.format_type == Some(crate::runtime::format::Type::Debug)
+				}
+				hir::ExprKind::Lit(hir::Lit::Str(_)) => false,
+				_ => true,
+			};
+			if display {
+				expansion_span = Some(expansion_span.map_or(span, |prev: Span| prev.join(span)));
+			}
 			ids.try_push(id)?;
 			descriptors_spec.try_push(spec)?;
 		}
@@ -1563,7 +1577,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				args_start,
 				args_len,
 			},
-			span,
+			expansion_span.unwrap_or(span),
 		)?;
 
 		Ok(())

@@ -120,6 +120,15 @@ fn stock_contract() {
 			assert_eq!(observation["cleanup"]["cycle_cleared"], true);
 		}
 		let actual = common(&project_p1(observation, &counts[label]).unwrap());
+		let mut actual = actual;
+		let d1b_outcome = super::d1b_diagnostics::intentional_json_before(
+			"callback_sort",
+			label,
+			source,
+			"stock",
+			&actual["outcome"],
+		);
+		actual["outcome"] = d1b_outcome;
 		let actual = super::method_diagnostics::intentional_json_before(
 			"callback_sort",
 			label,

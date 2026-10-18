@@ -84,7 +84,10 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	let id = case["id"].as_str().unwrap();
 	let intentional =
 		super::nominal_clone::intentional_json("constructors", case, &stock[id]["observation"]);
-	let expected = intentional.as_ref().unwrap_or(&stock[id]["observation"]);
+	let mut expected = intentional
+		.as_ref()
+		.unwrap_or(&stock[id]["observation"])
+		.clone();
 	let d1_observed = super::method_diagnostics::intentional_json_before(
 		"constructors",
 		case["label"].as_str().unwrap(),
@@ -92,7 +95,25 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 		"fresh",
 		&actual["observation"],
 	);
-	let observed = &d1_observed;
+	let mut d1b_observed = d1_observed.clone();
+	d1b_observed["outcome"] = super::d1b_diagnostics::intentional_json_before(
+		"constructors",
+		case["label"].as_str().unwrap(),
+		case["source"].as_str().unwrap(),
+		"fresh",
+		&d1_observed["outcome"],
+	);
+	let observed = &d1b_observed;
+	if let Some(sites) = super::d1b_diagnostics::intentional_sites_before(
+		"constructors",
+		case["label"].as_str().unwrap(),
+		case["source"].as_str().unwrap(),
+		"fresh",
+	) {
+		assert_eq!(observed["outcome"]["sites"], sites);
+		expected["outcome"]["sites"] = sites;
+	}
+	let expected = &expected;
 	let admissions: Json = serde_json::from_str(include_str!("c15b_admissions.json")).unwrap();
 	if let Some(rule) = admissions.get(id) {
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
@@ -153,22 +174,8 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 				);
 			}
 		} else {
-			let rules: Json = serde_json::from_str(include_str!("retained_sites.json")).unwrap();
-			let mut checked = observed.clone();
-			if let Some(rule) = rules.get(id) {
-				assert_eq!(rule["source_sha256"], case["source_sha256"]);
-				assert_eq!(expected["outcome"]["sites"], rule["stock_sites"]);
-				assert_eq!(observed["outcome"]["sites"], rule["fresh_sites"]);
-				let site = &rule["fresh_sites"][0];
-				let start = site["start"].as_u64().unwrap() as usize;
-				let end = site["end"].as_u64().unwrap() as usize;
-				let source = case["source"].as_str().unwrap();
-				assert!(source[start..end].starts_with("format!(\"{}\","));
-				assert!(source[start..end].ends_with(')'));
-				checked["outcome"]["sites"] = rule["stock_sites"].clone();
-			}
 			assert_eq!(
-				project_observation(&checked, expected, ""),
+				project_observation(observed, expected, ""),
 				*expected,
 				"C15 row {id}"
 			);

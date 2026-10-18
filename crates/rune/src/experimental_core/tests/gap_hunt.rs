@@ -29,6 +29,8 @@ use std::{
 	vec::Vec,
 };
 
+pub(super) mod d1b_diagnostics;
+
 pub(super) fn contract_completed(engine: &str, rows: usize) {
 	println!("\nCONTRACT ENGINE {engine}");
 	println!("CONTRACT ROWS {rows}");

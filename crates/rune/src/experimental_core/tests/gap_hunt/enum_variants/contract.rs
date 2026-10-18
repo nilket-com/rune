@@ -153,16 +153,26 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 			let expected = intentional
 				.get(id)
 				.map_or(expected, |rule| &rule["expected_observation"]);
-			let d1_expected = d1_enum_expectation(case, expected, "fresh");
-			let expected = &d1_expected;
-			let sites: Json = serde_json::from_str(include_str!("retained_sites.json")).unwrap();
+			let mut d1_expected = d1_enum_expectation(case, expected, "fresh");
 			let mut observed = observed.clone();
-			if let Some(rule) = sites.get(id) {
-				assert_eq!(rule["source_sha256"], case["source_sha256"]);
-				assert_eq!(rule["stock_sites"], expected["outcome"]["sites"]);
-				assert_eq!(rule["fresh_sites"], observed["outcome"]["sites"]);
-				observed["outcome"]["sites"] = rule["stock_sites"].clone();
+			let d1b_outcome = super::d1b_diagnostics::intentional_json_before(
+				"enum_variants",
+				case["label"].as_str().unwrap(),
+				case["source"].as_str().unwrap(),
+				"fresh",
+				&observed["outcome"],
+			);
+			observed["outcome"] = d1b_outcome;
+			if let Some(sites) = super::d1b_diagnostics::intentional_sites_before(
+				"enum_variants",
+				case["label"].as_str().unwrap(),
+				case["source"].as_str().unwrap(),
+				"fresh",
+			) {
+				assert_eq!(observed["outcome"]["sites"], sites);
+				d1_expected["outcome"]["sites"] = sites;
 			}
+			let expected = &d1_expected;
 			assert_eq!(
 				project_observation(&observed, expected, ""),
 				*expected,
@@ -194,8 +204,17 @@ fn compare_stock(case: &Json, actual: &Json) {
 	);
 	let d1_expected = d1_enum_expectation(case, expected, "stock");
 	let expected = &d1_expected;
+	let mut observed = actual["observation"].clone();
+	let d1b_outcome = super::d1b_diagnostics::intentional_json_before(
+		"enum_variants",
+		case["label"].as_str().unwrap(),
+		case["source"].as_str().unwrap(),
+		"stock",
+		&observed["outcome"],
+	);
+	observed["outcome"] = d1b_outcome;
 	assert_eq!(
-		project_observation(&actual["observation"], expected, ""),
+		project_observation(&observed, expected, ""),
 		*expected,
 		"C15b stock row {id}"
 	);

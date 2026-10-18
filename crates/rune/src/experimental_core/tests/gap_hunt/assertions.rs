@@ -244,7 +244,17 @@ fn stock_contract() {
 		} else {
 			String::new()
 		};
-		assert_eq!(actual, row[5], "site {label}");
+		let intentional = super::d1b_diagnostics::intentional_site_before(
+			"assertions",
+			label,
+			source,
+			"stock",
+			&actual,
+			row[5],
+		);
+		if intentional.is_none() {
+			assert_eq!(actual, row[5], "site {label}");
+		}
 	}
 	super::contract_completed("stock", rows.len());
 }

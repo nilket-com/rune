@@ -3674,7 +3674,6 @@ fn expr_format_macro<'hir>(
 	if !matches!(root.kind(), Root) {
 		return Err(Error::expected(root, Root));
 	}
-
 	let mut spec = hir::BuiltInFormatSpec::default();
 
 	root.parse(|p| {
@@ -3809,8 +3808,8 @@ fn expr_template_macro<'hir>(
 	if !matches!(root.kind(), Root) {
 		return Err(Error::expected(root, Root));
 	}
-
 	let mut exprs = Vec::new();
+	let mut expansion_span = None;
 
 	root.parse(|p| {
 		let mut comma = Remaining::default();
@@ -3819,7 +3818,20 @@ fn expr_template_macro<'hir>(
 
 		while let MaybeNode::Some(expr) = p.eat(Expr) {
 			comma.exactly_one(cx)?;
-			exprs.try_push(expr.parse(|p| self::expr(cx, p))?)?;
+			let span = expr.span();
+			let expr = expr.parse(|p| self::expr(cx, p))?;
+			let display = match expr.kind {
+				hir::ExprKind::Format(format) => {
+					format.spec.format_type.is_none()
+						|| format.spec.format_type == Some(runtime::format::Type::Debug)
+				}
+				hir::ExprKind::Lit(hir::Lit::Str(_)) => false,
+				_ => true,
+			};
+			if display {
+				expansion_span = Some(expansion_span.map_or(span, |prev: Span| prev.join(span)));
+			}
+			exprs.try_push(expr)?;
 			comma = p.one(K![,]);
 		}
 
@@ -3828,7 +3840,7 @@ fn expr_template_macro<'hir>(
 		comma.at_most_one(cx)?;
 
 		let template = alloc!(hir::BuiltInTemplate {
-			span: p.span(),
+			span: expansion_span.unwrap_or_else(|| p.span()),
 			from_literal: literal.is_yes(),
 			exprs: iter!(exprs, |e| expr!(e)),
 		});

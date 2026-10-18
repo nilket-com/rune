@@ -301,6 +301,13 @@ fn stock_contract() {
 			"stock",
 			&run.record,
 		);
+		run.record = super::d1b_diagnostics::intentional_record_before(
+			"len_clone",
+			label,
+			source,
+			"stock",
+			&run.record,
+		);
 		assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
 		assert_no_addresses(label, &unhex(row[2]), &[], &[]);
 		assert_eq!(
@@ -348,6 +355,13 @@ fn fresh_contract() {
 		let mut run = launch(&path, &path, "main", "fresh", &scratch.0, &out, &id);
 		assert!(run.complete, "incomplete {label}: {}", run.record);
 		run.record = super::method_diagnostics::intentional_record_before(
+			"len_clone",
+			label,
+			source,
+			"fresh",
+			&run.record,
+		);
+		run.record = super::d1b_diagnostics::intentional_record_before(
 			"len_clone",
 			label,
 			source,

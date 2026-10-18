@@ -516,7 +516,18 @@ fn fresh_contract() {
 				} else {
 					(case.source.find("println!(\"{}\",n)").unwrap(), 16)
 				};
-				assert_eq!(site, format!("0:{start}:{}", start + len));
+				let expected_site = format!("0:{start}:{}", start + len);
+				let intentional = super::d1b_diagnostics::intentional_site_before(
+					"output_macros",
+					&case.label,
+					&case.source,
+					"fresh",
+					&site,
+					&expected_site,
+				);
+				if intentional.is_none() {
+					assert_eq!(site, expected_site);
+				}
 				assert_eq!(
 					run.stdout,
 					if fuel == 2 {

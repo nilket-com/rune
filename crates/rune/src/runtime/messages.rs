@@ -281,10 +281,7 @@ mod tests {
 			hash,
 			instance: TypeInfo::named::<i64>(),
 		};
-		assert_eq!(
-			error.to_string(),
-			std::format!("Missing instance function `{hash}` for `std::i64`")
-		);
+		assert_eq!(error.to_string(), "Type `std::i64` has no matching method");
 		let error = AnyObjError::new(AnyObjErrorKind::Cast(
 			<bool as TypeOf>::STATIC_TYPE_INFO,
 			TypeInfo::named::<i64>(),

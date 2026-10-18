@@ -210,8 +210,16 @@ fn run_contract(engine: &str) {
 			// P1 validates both archived and common Debug counts. Archive contents
 			// remain raw metadata; only the common semantic object is compared.
 			project_p1(&observed["outcome"], &counts[*label]).unwrap();
+			let observed_projection = semantic_projection(&observed["outcome"]).unwrap();
+			let observed_projection = super::d1b_diagnostics::intentional_json_before(
+				"cmp_ordering",
+				label,
+				source,
+				"stock",
+				&observed_projection,
+			);
 			compare_p1(
-				&observed["outcome"],
+				&observed_projection,
 				&d1_cmp_expectation(
 					label,
 					source,
@@ -368,7 +376,19 @@ fn compare_fresh_envelope(
 			}
 			if label == "access/leased-parent-mutate" {
 				compare_c9_retained(label, source, outcome, expected, &counts[label])
-			} else if compare_p1(outcome, expected, &counts[label]).is_ok() {
+			} else if compare_p1(
+				&super::d1b_diagnostics::intentional_json_before(
+					"cmp_ordering",
+					label,
+					source,
+					"fresh",
+					&semantic_projection(outcome).map_err(|_| "fresh projection failed")?,
+				),
+				expected,
+				&counts[label],
+			)
+			.is_ok()
+			{
 				Ok(())
 			} else {
 				compare_c9_diagnostic_retained(

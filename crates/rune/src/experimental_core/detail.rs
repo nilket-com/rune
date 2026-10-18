@@ -838,7 +838,7 @@ impl fmt::Display for Message<'_> {
 			NotIterable { found } => write!(f, "Type `{found}` is not iterable"),
 			TryOperand { found } => messages::try_operand(f, found),
 			NoDisplay { found } => {
-				write!(f, "Missing protocol function `DISPLAY_FMT` for `{found}`")
+				write!(f, "`{found}` cannot be formatted with `{{}}`")
 			}
 			ExpectedNumber { found } => messages::expected_number(f, found),
 			IndexTarget { target, index } => messages::index_get(f, target, index),

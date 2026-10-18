@@ -7,6 +7,22 @@ use crate::macros::{quote, FormatArgs, MacroContext, TokenStream};
 use crate::runtime::Function;
 use crate::{docstring, Any, ContextError, Module};
 
+fn expand_debug_format(
+	cx: &mut MacroContext<'_, '_, '_>,
+	name: &str,
+	variable: &str,
+	span: crate::ast::Span,
+) -> compile::Result<TokenStream> {
+	let format = cx.lit(name)?;
+	let mut variable = cx.ident(variable)?;
+	variable.span = span;
+	let input = quote!(#format, #variable).into_token_stream(cx)?;
+	let format = FormatArgs::parse(cx, &input)?;
+	let expanded = format.expand_at(cx, span)?;
+	let tokens = expanded.into_token_stream(cx)?;
+	Ok(tokens)
+}
+
 /// Testing and benchmarking.
 #[rune::module(::std::test)]
 pub fn module() -> Result<Module, ContextError> {
@@ -141,6 +157,9 @@ pub(crate) fn assert_eq(
 
 	let output = if let Some(message) = &message {
 		let message = message.expand(cx)?;
+		let span = cx.macro_span();
+		let left_format = expand_debug_format(cx, "\nleft: {:?}", "left", span)?;
+		let right_format = expand_debug_format(cx, "\nright: {:?}", "right", span)?;
 
 		quote! {{
 			let left = #left;
@@ -148,13 +167,16 @@ pub(crate) fn assert_eq(
 
 			if !(left == right) {
 				let message = #message;
-				message += ::std::fmt::format!("\nleft: {:?}", left);
-				message += ::std::fmt::format!("\nright: {:?}", right);
+				message += (#left_format);
+				message += (#right_format);
 				::std::panic("assertion failed (left == right): " + message);
 			}
 		}}
 	} else {
 		let message = cx.lit("assertion failed (left == right):")?;
+		let span = cx.macro_span();
+		let left_format = expand_debug_format(cx, "\nleft: {:?}", "left", span)?;
+		let right_format = expand_debug_format(cx, "\nright: {:?}", "right", span)?;
 
 		quote! {{
 			let left = #left;
@@ -162,8 +184,8 @@ pub(crate) fn assert_eq(
 
 			if !(left == right) {
 				let message = ::std::string::String::from(#message);
-				message += ::std::fmt::format!("\nleft: {:?}", left);
-				message += ::std::fmt::format!("\nright: {:?}", right);
+				message += (#left_format);
+				message += (#right_format);
 				::std::panic(message);
 			}
 		}}
@@ -207,6 +229,9 @@ pub(crate) fn assert_ne(
 
 	let output = if let Some(message) = &message {
 		let message = message.expand(cx)?;
+		let span = cx.macro_span();
+		let left_format = expand_debug_format(cx, "\nleft: {:?}", "left", span)?;
+		let right_format = expand_debug_format(cx, "\nright: {:?}", "right", span)?;
 
 		quote! {{
 			let left = #left;
@@ -214,13 +239,16 @@ pub(crate) fn assert_ne(
 
 			if !(left != right) {
 				let message = #message;
-				message += ::std::fmt::format!("\nleft: {:?}", left);
-				message += ::std::fmt::format!("\nright: {:?}", right);
+				message += (#left_format);
+				message += (#right_format);
 				::std::panic("assertion failed (left != right): " + message);
 			}
 		}}
 	} else {
 		let message = cx.lit("assertion failed (left != right):")?;
+		let span = cx.macro_span();
+		let left_format = expand_debug_format(cx, "\nleft: {:?}", "left", span)?;
+		let right_format = expand_debug_format(cx, "\nright: {:?}", "right", span)?;
 
 		quote! {{
 			let left = #left;
@@ -228,8 +256,8 @@ pub(crate) fn assert_ne(
 
 			if !(left != right) {
 				let message = ::std::string::String::from(#message);
-				message += ::std::fmt::format!("\nleft: {:?}", left);
-				message += ::std::fmt::format!("\nright: {:?}", right);
+				message += (#left_format);
+				message += (#right_format);
 				::std::panic(message);
 			}
 		}}

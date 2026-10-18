@@ -47,11 +47,59 @@ fn c11_enforce_diagnostic(
 	{
 		return Err("diagnostic source drift".into());
 	}
-	let shape = c11_retained_frame_shape(source, actual, stock, chain)?;
+	let shape = c11_retained_frame_shape_d1b(
+		label,
+		source,
+		actual,
+		stock,
+		&row["retained"]["fresh_sites"][0],
+		chain,
+	)?;
 	if shape != row["retained"] || shape["categories"] != row["categories"] {
 		return Err("frozen diagnostic drift".into());
 	}
 	Ok(())
+}
+
+fn c11_retained_frame_shape_d1b(
+	label: &str,
+	source: &str,
+	actual: &Json,
+	stock: &Json,
+	frozen_site: &Json,
+	chain: &Json,
+) -> Result<Json, String> {
+	let mut projected = actual.clone();
+	let site = &actual["outcome"]["sites"][0];
+	let actual_site = format!(
+		"{}:{}:{}",
+		site["source"].as_u64().ok_or("fresh site source")?,
+		site["start"].as_u64().ok_or("fresh site start")?,
+		site["end"].as_u64().ok_or("fresh site end")?
+	);
+	let frozen = format!(
+		"{}:{}:{}",
+		frozen_site["source"].as_u64().ok_or("stock site source")?,
+		frozen_site["start"].as_u64().ok_or("stock site start")?,
+		frozen_site["end"].as_u64().ok_or("stock site end")?
+	);
+	if actual_site != frozen {
+		if super::d1b_diagnostics::matches_intentional_site(
+			"callback_sort",
+			label,
+			source,
+			"fresh",
+			&actual_site,
+			&frozen,
+		) {
+			let mut site = frozen_site.clone();
+			site["frames"] = actual["outcome"]["sites"][0]["frames"].clone();
+			projected["outcome"]["sites"][0] = site;
+		} else if label == "parent/read-format" {
+			return Err("D1b source-site drift".into());
+		}
+	}
+	c11_retained_frame_shape(source, &projected, stock, chain)
 }
 fn c11_enforce_resource(
 	label: &str,

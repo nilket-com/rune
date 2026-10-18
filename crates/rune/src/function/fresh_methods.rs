@@ -65,7 +65,7 @@ mod tests {
 	use super::*;
 	#[test]
 	fn identity_and_fail_closed() {
-		assert_eq!(RECEIVERS.len(), 33);
+		assert_eq!(RECEIVERS.len(), 36);
 		for receiver in RECEIVERS {
 			assert!(represented(*receiver));
 			for name in ["unrecognized", "parse", "next_back"] {

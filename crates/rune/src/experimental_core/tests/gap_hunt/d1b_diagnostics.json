@@ -1,0 +1,2306 @@
+{
+  "schema": 1,
+  "rows": [
+    {
+      "family": "assertions",
+      "label": "depth/vec/63/assert_ne",
+      "index": 145,
+      "source_sha256": "0e0b07c26d9ba66b0403f50fe5b5c176e165d5763fd4ead3c67533d12c29b70a",
+      "source_hex": "70756220666e206d61696e2829207b206c657420613d313b20666f72205f20696e20302e2e3633207b20613d5b615d3b207d206173736572745f6e652128612c61293b203432207d",
+      "before": {
+        "stock": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 0,
+              "end": 66,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 51,
+              "end": 66,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 51,
+              "end": 66,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 51,
+              "end": 66,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "assertions",
+      "label": "depth/tuple/63/assert_ne",
+      "index": 147,
+      "source_sha256": "24ed239c9697b0edec39bf58501d9102b8c4c5b9809a34d6648edf34858e7613",
+      "source_hex": "70756220666e206d61696e2829207b206c657420613d313b20666f72205f20696e20302e2e3633207b20613d28612c293b207d206173736572745f6e652128612c61293b203432207d",
+      "before": {
+        "stock": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 0,
+              "end": 67,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 52,
+              "end": 67,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 52,
+              "end": 67,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 52,
+              "end": 67,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "assertions",
+      "label": "depth/option/63/assert_ne",
+      "index": 151,
+      "source_sha256": "fe302a35d07c5547a96987986342173e1d682b0ae7f03f2abe72f3ce3aa293eb",
+      "source_hex": "70756220666e206d61696e2829207b206c657420613d313b20666f72205f20696e20302e2e3633207b20613d536f6d652861293b207d206173736572745f6e652128612c61293b203432207d",
+      "before": {
+        "stock": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 0,
+              "end": 70,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 55,
+              "end": 70,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 55,
+              "end": 70,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 55,
+              "end": 70,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "assertions",
+      "label": "depth/result/63/assert_ne",
+      "index": 153,
+      "source_sha256": "430cdf28b9b85e973cee88cf1e4d5920573328532144ea815aa556566f2cac70",
+      "source_hex": "70756220666e206d61696e2829207b206c657420613d313b20666f72205f20696e20302e2e3633207b20613d4f6b2861293b207d206173736572745f6e652128612c61293b203432207d",
+      "before": {
+        "stock": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 0,
+              "end": 68,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 53,
+              "end": 68,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 53,
+              "end": 68,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Value is nested too deeply to walk, limit is 64",
+          "sites": [
+            {
+              "source": 0,
+              "start": 53,
+              "end": 68,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "cmp_ordering",
+      "label": "format/display/Less",
+      "index": 120,
+      "source_sha256": "a335297156466dd086cfa6418d55554aac98fd507c89215442586ab8b49e6b53",
+      "source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a4c657373297d0a70756220666e2063395f726575736528297b377d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::cmp::Ordering`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::cmp::Ordering`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::cmp::Ordering` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 27
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::cmp::Ordering` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 27
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "cmp_ordering",
+      "label": "format/display/Equal",
+      "index": 122,
+      "source_sha256": "16f74a8939062209a5a4ed51018678a103d58dff83b7d0ccb1919b7020f898e6",
+      "source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a457175616c297d0a70756220666e2063395f726575736528297b377d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::cmp::Ordering`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::cmp::Ordering`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::cmp::Ordering` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 27
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::cmp::Ordering` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 27
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "cmp_ordering",
+      "label": "format/display/Greater",
+      "index": 124,
+      "source_sha256": "34b812c22aae5e484a46e853af2d1aaa6f8ae66eb2a1dbd9fe158b62fe5f586c",
+      "source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a47726561746572297d0a70756220666e2063395f726575736528297b377d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::cmp::Ordering`",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::cmp::Ordering`",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::cmp::Ordering` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[]",
+              "source": 0,
+              "start": 27
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::cmp::Ordering` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[]",
+              "source": 0,
+              "start": 27
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "cmp_ordering",
+      "label": "format/display-nested",
+      "index": 127,
+      "source_sha256": "acf332962f2c7618ea7851b805efdad6b434c3d6e9ec36ee472aae1f7820d32a",
+      "source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c287374643a3a636d703a3a4f72646572696e673a3a4c6573732c29297d0a70756220666e2063395f726575736528297b377d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[]",
+              "source": 0,
+              "start": 27
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[]",
+              "source": 0,
+              "start": 27
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "constructors",
+      "label": "forms/unit/display",
+      "index": 5,
+      "source_sha256": "c97fc7cfeb55d271ba4d6578cdae9945ba71cdac46d3665eb1a144276a61fd01",
+      "source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b666f726d61742128227b7d222c55297d0a70756220666e206331355f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `U`",
+          "sites": [
+            {
+              "end": 107,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `U`",
+          "sites": [
+            {
+              "end": 108,
+              "frames": "[]",
+              "source": 0,
+              "start": 93
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`U` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 107,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`U` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 107,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        }
+      },
+      "oracle_case": "constructors/005"
+    },
+    {
+      "family": "constructors",
+      "label": "forms/empty-tuple/display",
+      "index": 14,
+      "source_sha256": "8c080f8ab211a005842bce29e46cc1e0a9b647fc84106e2f8842808be1ce95bd",
+      "source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b666f726d61742128227b7d222c5a2829297d0a70756220666e206331355f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `Z`",
+          "sites": [
+            {
+              "end": 109,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `Z`",
+          "sites": [
+            {
+              "end": 110,
+              "frames": "[]",
+              "source": 0,
+              "start": 93
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`Z` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 109,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`Z` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 109,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        }
+      },
+      "oracle_case": "constructors/014"
+    },
+    {
+      "family": "constructors",
+      "label": "forms/single/display",
+      "index": 23,
+      "source_sha256": "640aed3f7f6ade02bc948b9eb7d93fe8b38961031339001355b2c5c5e6b903b8",
+      "source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b666f726d61742128227b7d222c54283729297d0a70756220666e206331355f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `T`",
+          "sites": [
+            {
+              "end": 110,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `T`",
+          "sites": [
+            {
+              "end": 111,
+              "frames": "[]",
+              "source": 0,
+              "start": 93
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`T` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 110,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`T` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 110,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        }
+      },
+      "oracle_case": "constructors/023"
+    },
+    {
+      "family": "constructors",
+      "label": "forms/pair/display",
+      "index": 32,
+      "source_sha256": "9900c7b8eeb1138b01755d28dcc7ff417fba05515d6de5658cda15ba45d8b659",
+      "source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b666f726d61742128227b7d222c5028372c3929297d0a70756220666e206331355f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `P`",
+          "sites": [
+            {
+              "end": 112,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `P`",
+          "sites": [
+            {
+              "end": 113,
+              "frames": "[]",
+              "source": 0,
+              "start": 93
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`P` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 112,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`P` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 112,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        }
+      },
+      "oracle_case": "constructors/032"
+    },
+    {
+      "family": "constructors",
+      "label": "forms/named-control/display",
+      "index": 41,
+      "source_sha256": "b5edaae5d503414014ac6b28ef46ee4c4be2f8384dd0466eede6decd3f1b8ee1",
+      "source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b666f726d61742128227b7d222c4e7b783a372c793a397d297d0a70756220666e206331355f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `N`",
+          "sites": [
+            {
+              "end": 116,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `N`",
+          "sites": [
+            {
+              "end": 117,
+              "frames": "[]",
+              "source": 0,
+              "start": 93
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`N` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 116,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`N` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 116,
+              "frames": "[]",
+              "source": 0,
+              "start": 106
+            }
+          ]
+        }
+      },
+      "oracle_case": "constructors/041"
+    },
+    {
+      "family": "enum_variants",
+      "label": "forms/unit/display",
+      "index": 5,
+      "source_sha256": "9dee9d98f17ed9e058e684ee3f5cb2c11e5177af99e07ea118ac26f9be54b738",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b666f726d61742128227b7d222c453a3a55297d0a70756220666e20633135625f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::U`",
+          "sites": [
+            {
+              "end": 107,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::U`",
+          "sites": [
+            {
+              "end": 108,
+              "frames": "[]",
+              "source": 0,
+              "start": 90
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`E::U` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 107,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`E::U` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 107,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        }
+      },
+      "oracle_case": "enum_variants/005"
+    },
+    {
+      "family": "enum_variants",
+      "label": "forms/empty/display",
+      "index": 12,
+      "source_sha256": "483f40964b0c24ae6ef8ed6daecb7c188783e415bcec5393238ccd809cdfc34b",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b666f726d61742128227b7d222c453a3a5a2829297d0a70756220666e20633135625f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::Z`",
+          "sites": [
+            {
+              "end": 109,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::Z`",
+          "sites": [
+            {
+              "end": 110,
+              "frames": "[]",
+              "source": 0,
+              "start": 90
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`E::Z` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 109,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`E::Z` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 109,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        }
+      },
+      "oracle_case": "enum_variants/012"
+    },
+    {
+      "family": "enum_variants",
+      "label": "forms/tuple/display",
+      "index": 19,
+      "source_sha256": "80a213fdaac4e2c06f57a8f5696fe0356908d673e566abbef22cdf0c9ff9648a",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b666f726d61742128227b7d222c453a3a54283729297d0a70756220666e20633135625f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::T`",
+          "sites": [
+            {
+              "end": 110,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::T`",
+          "sites": [
+            {
+              "end": 111,
+              "frames": "[]",
+              "source": 0,
+              "start": 90
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`E::T` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 110,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`E::T` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 110,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        }
+      },
+      "oracle_case": "enum_variants/019"
+    },
+    {
+      "family": "enum_variants",
+      "label": "forms/pair/display",
+      "index": 26,
+      "source_sha256": "dd4dd757930917028570adc50a9aa0941d779b70c356d136cbafb72e02c8ff7f",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b666f726d61742128227b7d222c453a3a5028372c3929297d0a70756220666e20633135625f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::P`",
+          "sites": [
+            {
+              "end": 112,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::P`",
+          "sites": [
+            {
+              "end": 113,
+              "frames": "[]",
+              "source": 0,
+              "start": 90
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`E::P` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 112,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`E::P` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 112,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        }
+      },
+      "oracle_case": "enum_variants/026"
+    },
+    {
+      "family": "enum_variants",
+      "label": "forms/named/display",
+      "index": 33,
+      "source_sha256": "3e6ceaaf44baf005d666a3e35ad3b7853a08a5cb9c18f9f2edd8da4768d48789",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b666f726d61742128227b7d222c453a3a4e7b783a372c793a397d297d0a70756220666e20633135625f726575736528297b377d0a",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::N`",
+          "sites": [
+            {
+              "end": 116,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `E::N`",
+          "sites": [
+            {
+              "end": 117,
+              "frames": "[]",
+              "source": 0,
+              "start": 90
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`E::N` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 116,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`E::N` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 116,
+              "frames": "[]",
+              "source": 0,
+              "start": 103
+            }
+          ]
+        }
+      },
+      "oracle_case": "enum_variants/033"
+    },
+    {
+      "family": "format_specs",
+      "label": "fallback/display/unit",
+      "index": 165,
+      "source_sha256": "ddb8bec721146f361ca3b9e72ebc1568b63e9710b90ddd53be81490a4fb26e8d",
+      "source_hex": "73747275637420507b787d2070756220666e206d61696e28297b666f726d61742128227b3a2a3e392e317d222c2829297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 48,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 48,
+              "frames": "[]",
+              "source": 0,
+              "start": 26
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 47,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 47,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "fallback/display/vec",
+      "index": 167,
+      "source_sha256": "7b7a14fd450f6187a6a0eacb0fac08540da4a07ea3a6ec8be94fa423cfa5bd14",
+      "source_hex": "73747275637420507b787d2070756220666e206d61696e28297b666f726d61742128227b3a2a3e392e317d222c5b312c325d297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 26
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::vec::Vec` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 50,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::vec::Vec` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 50,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "fallback/display/tuple",
+      "index": 169,
+      "source_sha256": "5f08e2505057ec8f5d2e288d273e6312f7376669b938d09b95e540bc6192bf83",
+      "source_hex": "73747275637420507b787d2070756220666e206d61696e28297b666f726d61742128227b3a2a3e392e317d222c28312c22782229297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 53,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 53,
+              "frames": "[]",
+              "source": 0,
+              "start": 26
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "fallback/display/object",
+      "index": 171,
+      "source_sha256": "cbd3a02a5ca441ec45083ad08ca7fe745e9bd490eb4af8ff85240f93df2fa142",
+      "source_hex": "73747275637420507b787d2070756220666e206d61696e28297b666f726d61742128227b3a2a3e392e317d222c237b783a317d297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::object::Object`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::object::Object`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 26
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::object::Object` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::object::Object` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "fallback/display/struct",
+      "index": 173,
+      "source_sha256": "dff7935dec2a6ceb6ea47765711499cfcd8df4a9045aaf56c92d54868b673ab9",
+      "source_hex": "73747275637420507b787d2070756220666e206d61696e28297b666f726d61742128227b3a2a3e392e317d222c507b783a317d297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `P`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `P`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 26
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`P` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`P` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "fallback/display/some",
+      "index": 175,
+      "source_sha256": "b8612270233949e01227e95e0873a79c4ac7f91b9dab8cabf98a246f0e882b1d",
+      "source_hex": "73747275637420507b787d2070756220666e206d61696e28297b666f726d61742128227b3a2a3e392e317d222c536f6d65283729297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::option::Option`",
+          "sites": [
+            {
+              "end": 53,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::option::Option`",
+          "sites": [
+            {
+              "end": 53,
+              "frames": "[]",
+              "source": 0,
+              "start": 26
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::option::Option` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::option::Option` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "fallback/display/none",
+      "index": 177,
+      "source_sha256": "cc44e36201ba8ea45380e09ca701fdf674fc2d53950b05a34050a1db16c58caa",
+      "source_hex": "73747275637420507b787d2070756220666e206d61696e28297b666f726d61742128227b3a2a3e392e317d222c4e6f6e65297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::option::Option`",
+          "sites": [
+            {
+              "end": 50,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::option::Option`",
+          "sites": [
+            {
+              "end": 50,
+              "frames": "[]",
+              "source": 0,
+              "start": 26
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::option::Option` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 49,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::option::Option` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 49,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "fallback/display/ok",
+      "index": 179,
+      "source_sha256": "72e1e8b9d3c49c0308fef60135e5f3655ed16648acecd7a09034cf55eddb82b7",
+      "source_hex": "73747275637420507b787d2070756220666e206d61696e28297b666f726d61742128227b3a2a3e392e317d222c4f6b283729297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::result::Result`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::result::Result`",
+          "sites": [
+            {
+              "end": 51,
+              "frames": "[]",
+              "source": 0,
+              "start": 26
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::result::Result` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 50,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::result::Result` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 50,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "fallback/display/err",
+      "index": 181,
+      "source_sha256": "d05aaa0c80da432344204f821a5f927351684c2dd59950439a5869fd2aef0590",
+      "source_hex": "73747275637420507b787d2070756220666e206d61696e28297b666f726d61742128227b3a2a3e392e317d222c45727228226261642229297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::result::Result`",
+          "sites": [
+            {
+              "end": 56,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::result::Result`",
+          "sites": [
+            {
+              "end": 56,
+              "frames": "[]",
+              "source": 0,
+              "start": 26
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::result::Result` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 55,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::result::Result` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 55,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "order/all-before-format-error",
+      "index": 243,
+      "source_sha256": "8fa1055d726c38f282bda459b4259d86f6287fb296184213c9fd68baa3e3cf34",
+      "source_hex": "666e206d61726b2878297b7072696e742128226d22293b787d2070756220666e206d61696e28297b666f726d61742128227b3a30327d7b7d222c6d61726b282829292c6d61726b283229297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 74,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 75,
+              "frames": "[]",
+              "source": 0,
+              "start": 40
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 74,
+              "frames": "[]",
+              "source": 0,
+              "start": 58
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 74,
+              "frames": "[]",
+              "source": 0,
+              "start": 58
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "order/print-no-partial",
+      "index": 247,
+      "source_sha256": "e282fa28124de92c74c82dac8684f2a3b4e29cfd536575c229ef6615cec29678",
+      "source_hex": "666e206d61726b2878297b7072696e742128226d22293b787d2070756220666e206d61696e28297b7072696e742128227072656669787b3a30327d222c2829293b22646f6e65227d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 64,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 64,
+              "frames": "[]",
+              "source": 0,
+              "start": 40
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 63,
+              "frames": "[]",
+              "source": 0,
+              "start": 61
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 63,
+              "frames": "[]",
+              "source": 0,
+              "start": 61
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "order/println-no-partial",
+      "index": 248,
+      "source_sha256": "6c3310991a34182138f39ea2fe73ad6efa34881a21c63c079c8740d97726e9a1",
+      "source_hex": "666e206d61726b2878297b7072696e742128226d22293b787d2070756220666e206d61696e28297b7072696e746c6e2128227072656669787b3a30327d222c2829293b22646f6e65227d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 66,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": [
+            {
+              "end": 66,
+              "frames": "[]",
+              "source": 0,
+              "start": 40
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 65,
+              "frames": "[]",
+              "source": 0,
+              "start": 63
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 65,
+              "frames": "[]",
+              "source": 0,
+              "start": 63
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "access/moved-string/display",
+      "index": 250,
+      "source_sha256": "9abb2518e0c81d5813a47671c7502e3b5f49570a04886739b3bb7358a64016a5",
+      "source_hex": "2070756220666e206d61696e28297b6c657420613d2278223b6c657420623d613b64726f702861293b666f726d61742128227b3a3e377d222c62297d",
+      "before": {
+        "stock": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 59,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 59,
+              "frames": "[]",
+              "source": 0,
+              "start": 41
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 58,
+              "frames": "[]",
+              "source": 0,
+              "start": 57
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 58,
+              "frames": "[]",
+              "source": 0,
+              "start": 57
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "access/moved-parent/display",
+      "index": 251,
+      "source_sha256": "e73152e4880e105da89adb6dd822d3c16a99ff68f2348df27a2a6b516fbb6e23",
+      "source_hex": "2070756220666e206d61696e28297b6c657420613d536f6d65285b315d293b6c657420623d613b64726f702861293b666f726d61742128227b3a3e377d222c62297d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::option::Option`",
+          "sites": [
+            {
+              "end": 65,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::option::Option`",
+          "sites": [
+            {
+              "end": 65,
+              "frames": "[]",
+              "source": 0,
+              "start": 47
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::option::Option` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 64,
+              "frames": "[]",
+              "source": 0,
+              "start": 63
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::option::Option` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "end": 64,
+              "frames": "[]",
+              "source": 0,
+              "start": 63
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "access/moved-string/?",
+      "index": 253,
+      "source_sha256": "8e969bd5da7b0a2e36bf092cad3d3b333a731736b6f52c2f23908a80e11d08d6",
+      "source_hex": "2070756220666e206d61696e28297b6c657420613d2278223b6c657420623d613b64726f702861293b666f726d61742128227b3a3e373f7d222c62297d",
+      "before": {
+        "stock": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 60,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 60,
+              "frames": "[]",
+              "source": 0,
+              "start": 41
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 59,
+              "frames": "[]",
+              "source": 0,
+              "start": 58
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 59,
+              "frames": "[]",
+              "source": 0,
+              "start": 58
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "format_specs",
+      "label": "access/moved-parent/?",
+      "index": 254,
+      "source_sha256": "d4c196232c9ea9e6673845135da09ded6956cf9cc89650f25aa3ad28a86a7ce1",
+      "source_hex": "2070756220666e206d61696e28297b6c657420613d536f6d65285b315d293b6c657420623d613b64726f702861293b666f726d61742128227b3a3e373f7d222c62297d",
+      "before": {
+        "stock": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 66,
+              "frames": "[]",
+              "source": 0,
+              "start": 0
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 66,
+              "frames": "[]",
+              "source": 0,
+              "start": 47
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 65,
+              "frames": "[]",
+              "source": 0,
+              "start": 64
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Cannot read, the value has been moved",
+          "sites": [
+            {
+              "end": 65,
+              "frames": "[]",
+              "source": 0,
+              "start": 64
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "len_clone",
+      "label": "moved/vec/display",
+      "index": 214,
+      "source_sha256": "086f168b6204bf7c141df6276a1acb1fdaa50e738b80dcec53986766ec09d69e",
+      "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d5b5b315d5d3b206c657420623d613b2064726f702862293b207072696e746c6e2128227b7d222c61293b202829207d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",
+          "sites": []
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::vec::Vec` cannot be formatted with `{}`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "`std::vec::Vec` cannot be formatted with `{}`",
+          "sites": []
+        }
+      }
+    },
+    {
+      "family": "len_clone",
+      "label": "moved/object/display",
+      "index": 231,
+      "source_sha256": "37ff1b8771fb4fcd68d498a30f19e5a6a18052c17d56289cd48c62f69224d51c",
+      "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d237b663a5b315d7d3b206c657420623d613b2064726f702862293b207072696e746c6e2128227b7d222c61293b202829207d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::object::Object`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::object::Object`",
+          "sites": []
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::object::Object` cannot be formatted with `{}`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "`std::object::Object` cannot be formatted with `{}`",
+          "sites": []
+        }
+      }
+    },
+    {
+      "family": "len_clone",
+      "label": "moved/tuple/display",
+      "index": 248,
+      "source_sha256": "1db8071970c9b969db5e0832c540b7fedd5c1230aeb16c3690392cace117e173",
+      "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d285b315d2c293b206c657420623d613b2064726f702862293b207072696e746c6e2128227b7d222c61293b202829207d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::tuple::Tuple`",
+          "sites": []
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "`std::tuple::Tuple` cannot be formatted with `{}`",
+          "sites": []
+        }
+      }
+    },
+    {
+      "family": "len_clone",
+      "label": "moved/option/display",
+      "index": 282,
+      "source_sha256": "206f4c33a10fbb05eb1399910d3d402c5a497ab275c6d65f53a133a56640de99",
+      "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d536f6d65285b315d293b206c657420623d613b2064726f702862293b207072696e746c6e2128227b7d222c61293b202829207d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::option::Option`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::option::Option`",
+          "sites": []
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::option::Option` cannot be formatted with `{}`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "`std::option::Option` cannot be formatted with `{}`",
+          "sites": []
+        }
+      }
+    },
+    {
+      "family": "len_clone",
+      "label": "moved/struct/display",
+      "index": 299,
+      "source_sha256": "1776a854cf561fa01cdd73d6bb7f63adc5a92c0e75f3bce0726739a3470f99f9",
+      "source_hex": "7374727563742050207b667d20666e2070617373287829207b2031207d2070756220666e206d61696e2829207b206c657420613d507b663a5b315d7d3b206c657420623d613b2064726f702862293b207072696e746c6e2128227b7d222c61293b202829207d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `P`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `P`",
+          "sites": []
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`P` cannot be formatted with `{}`",
+          "sites": []
+        },
+        "fresh": {
+          "display": "`P` cannot be formatted with `{}`",
+          "sites": []
+        }
+      }
+    },
+    {
+      "family": "output_macros",
+      "label": "fuel/print/1",
+      "index": 128,
+      "source_sha256": "19578384509f3f551374b69bca31702d15f0f852758b06627e278c8de138d5e0",
+      "source_hex": "666e206d61726b286e29207b207072696e746c6e2128227b7d222c6e293b206e207d2070756220666e206d61696e2829207b207072696e742128227b7d7b7d222c6d61726b2831292c6d61726b283229293b203432207d",
+      "before": {
+        "stock": {
+          "display": "Exhausted the budget it was given",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Exhausted the budget it was given",
+          "sites": [
+            {
+              "source": 0,
+              "start": 13,
+              "end": 29,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Exhausted the budget it was given",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Exhausted the budget it was given",
+          "sites": [
+            {
+              "source": 0,
+              "start": 27,
+              "end": 28,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "output_macros",
+      "label": "fuel/panic/1",
+      "index": 129,
+      "source_sha256": "58a85da8ded228ada39934fb48a9b898bccc329dc1e6a4e87c29db5a34d42ba4",
+      "source_hex": "666e206d61726b286e29207b207072696e746c6e2128227b7d222c6e293b206e207d2070756220666e206d61696e2829207b2070616e69632128227b7d7b7d222c6d61726b2831292c6d61726b283229293b203432207d",
+      "before": {
+        "stock": {
+          "display": "Exhausted the budget it was given",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Exhausted the budget it was given",
+          "sites": [
+            {
+              "source": 0,
+              "start": 13,
+              "end": 29,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Exhausted the budget it was given",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Exhausted the budget it was given",
+          "sites": [
+            {
+              "source": 0,
+              "start": 27,
+              "end": 28,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "output_macros",
+      "label": "fuel/print/2",
+      "index": 131,
+      "source_sha256": "19578384509f3f551374b69bca31702d15f0f852758b06627e278c8de138d5e0",
+      "source_hex": "666e206d61726b286e29207b207072696e746c6e2128227b7d222c6e293b206e207d2070756220666e206d61696e2829207b207072696e742128227b7d7b7d222c6d61726b2831292c6d61726b283229293b203432207d",
+      "before": {
+        "stock": {
+          "display": "Exhausted the budget it was given",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Exhausted the budget it was given",
+          "sites": [
+            {
+              "source": 0,
+              "start": 13,
+              "end": 29,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Exhausted the budget it was given",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Exhausted the budget it was given",
+          "sites": [
+            {
+              "source": 0,
+              "start": 27,
+              "end": 28,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "output_macros",
+      "label": "fuel/panic/2",
+      "index": 132,
+      "source_sha256": "58a85da8ded228ada39934fb48a9b898bccc329dc1e6a4e87c29db5a34d42ba4",
+      "source_hex": "666e206d61726b286e29207b207072696e746c6e2128227b7d222c6e293b206e207d2070756220666e206d61696e2829207b2070616e69632128227b7d7b7d222c6d61726b2831292c6d61726b283229293b203432207d",
+      "before": {
+        "stock": {
+          "display": "Exhausted the budget it was given",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Exhausted the budget it was given",
+          "sites": [
+            {
+              "source": 0,
+              "start": 13,
+              "end": 29,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Exhausted the budget it was given",
+          "sites": []
+        },
+        "fresh": {
+          "display": "Exhausted the budget it was given",
+          "sites": [
+            {
+              "source": 0,
+              "start": 27,
+              "end": 28,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "callback_sort",
+      "label": "parent/read-format",
+      "index": 78,
+      "source_sha256": "a11207a5ecec963552529dfc417a9bbe8aee1c050e50311ea35984b73001bed1",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b6c657420783d666f726d61742128227b3a3f7d222c61293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "before": {
+        "stock": {
+          "display": "Cannot read, the value is being written to",
+          "sites": [
+            {
+              "source": 0,
+              "start": 0,
+              "end": 54,
+              "frames": "[]"
+            },
+            {
+              "source": 0,
+              "start": 103,
+              "end": 121,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Cannot read, the value is being written to",
+          "sites": [
+            {
+              "source": 0,
+              "start": 37,
+              "end": 54,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "Cannot read, the value is being written to",
+          "sites": [
+            {
+              "source": 0,
+              "start": 52,
+              "end": 53,
+              "frames": "[]"
+            },
+            {
+              "source": 0,
+              "start": 103,
+              "end": 121,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Cannot read, the value is being written to",
+          "sites": [
+            {
+              "source": 0,
+              "start": 52,
+              "end": 53,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "diagnostics",
+      "label": "display",
+      "index": 0,
+      "source_sha256": "cb047727bb1bbf39e50f4b7a7d1c93ba3331804b6bed13774d0a415945e7e51e",
+      "source_hex": "70756220666e207461726765742829207b0a0a666f726d61742128227b7d222c205b315d290a7d",
+      "before": {
+        "stock": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",
+          "sites": [
+            {
+              "source": 0,
+              "start": 0,
+              "end": 36,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",
+          "sites": [
+            {
+              "source": 0,
+              "start": 19,
+              "end": 37,
+              "frames": "[]"
+            }
+          ]
+        }
+      },
+      "after": {
+        "stock": {
+          "display": "`std::vec::Vec` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "source": 0,
+              "start": 33,
+              "end": 36,
+              "frames": "[]"
+            }
+          ]
+        },
+        "fresh": {
+          "display": "`std::vec::Vec` cannot be formatted with `{}`",
+          "sites": [
+            {
+              "source": 0,
+              "start": 33,
+              "end": 36,
+              "frames": "[]"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

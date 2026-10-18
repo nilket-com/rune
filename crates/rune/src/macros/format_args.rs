@@ -84,6 +84,23 @@ impl FormatArgs {
 
 	/// Expand the format specification.
 	pub fn expand(&self, cx: &mut MacroContext<'_, '_, '_>) -> compile::Result<Quote<'_>> {
+		self.expand_inner(cx, None)
+	}
+
+	/// Expand the format specification with an explicit span for the resulting template.
+	pub fn expand_at(
+		&self,
+		cx: &mut MacroContext<'_, '_, '_>,
+		span: Span,
+	) -> compile::Result<Quote<'_>> {
+		self.expand_inner(cx, Some(span))
+	}
+
+	fn expand_inner(
+		&self,
+		cx: &mut MacroContext<'_, '_, '_>,
+		template_span: Option<Span>,
+	) -> compile::Result<Quote<'_>> {
 		#[cfg(not(feature = "fresh-core"))]
 		let format = cx.eval_stream(&self.format)?;
 		#[cfg(feature = "fresh-core")]
@@ -148,6 +165,7 @@ impl FormatArgs {
 		let result = expand_format_spec(
 			cx,
 			self.format_span,
+			template_span,
 			&format,
 			&pos,
 			&mut unused_pos,
@@ -235,9 +253,186 @@ impl FormatArg {
 	}
 }
 
+enum ExprOrIdent<'a> {
+	Expr(&'a TokenStream),
+	Ident(ast::Ident),
+}
+
+impl ToTokens for ExprOrIdent<'_> {
+	fn to_tokens(
+		&self,
+		cx: &mut MacroContext<'_, '_, '_>,
+		stream: &mut TokenStream,
+	) -> alloc::Result<()> {
+		match self {
+			Self::Expr(expr) => expr.to_tokens(cx, stream),
+			Self::Ident(ident) => ident.to_tokens(cx, stream),
+		}
+	}
+}
+
+fn push_macro_token(stream: &mut TokenStream, span: Span, kind: ast::Kind) -> alloc::Result<()> {
+	stream.push(ast::Token { span, kind })
+}
+
+fn push_macro_ident(
+	cx: &mut MacroContext<'_, '_, '_>,
+	stream: &mut TokenStream,
+	span: Span,
+	name: &str,
+) -> alloc::Result<()> {
+	let mut ident = cx.ident(name)?;
+	ident.span = span;
+	ident.to_tokens(cx, stream)
+}
+
+fn push_format_spec<T>(
+	cx: &mut MacroContext<'_, '_, '_>,
+	stream: &mut TokenStream,
+	span: Span,
+	name: &str,
+	value: &T,
+) -> alloc::Result<()>
+where
+	T: ToTokens,
+{
+	push_macro_token(stream, span, ast::Kind::Comma)?;
+	push_macro_ident(cx, stream, span, name)?;
+	push_macro_token(stream, span, ast::Kind::Eq)?;
+	value.to_tokens(cx, stream)
+}
+
+fn set_lit_span(lit: &mut ast::Lit, span: Span) {
+	match lit {
+		ast::Lit::Bool(lit) => lit.span = span,
+		ast::Lit::Byte(lit) => lit.span = span,
+		ast::Lit::Str(lit) => lit.span = span,
+		ast::Lit::ByteStr(lit) => lit.span = span,
+		ast::Lit::Char(lit) => lit.span = span,
+		ast::Lit::Number(lit) => lit.span = span,
+	}
+}
+
+struct FormatCall<'a> {
+	expr: ExprOrIdent<'a>,
+	span: Span,
+	fill: Option<char>,
+	align: Option<format::Alignment>,
+	width: Option<usize>,
+	precision: Option<usize>,
+	flags: format::Flags,
+	format_type: Option<format::Type>,
+}
+
+impl ToTokens for FormatCall<'_> {
+	fn to_tokens(
+		&self,
+		cx: &mut MacroContext<'_, '_, '_>,
+		stream: &mut TokenStream,
+	) -> alloc::Result<()> {
+		push_macro_token(stream, self.span, ast::Kind::Pound)?;
+		push_macro_token(stream, self.span, ast::Kind::Open(ast::Delimiter::Bracket))?;
+		push_macro_ident(cx, stream, self.span, "builtin")?;
+		push_macro_token(stream, self.span, ast::Kind::Close(ast::Delimiter::Bracket))?;
+		push_macro_ident(cx, stream, self.span, "format")?;
+		push_macro_token(stream, self.span, ast::Kind::Bang)?;
+		push_macro_token(
+			stream,
+			self.span,
+			ast::Kind::Open(ast::Delimiter::Parenthesis),
+		)?;
+		self.expr.to_tokens(cx, stream)?;
+
+		if let Some(fill) = self.fill {
+			let mut value = cx.lit(fill)?;
+			set_lit_span(&mut value, self.span);
+			push_format_spec(cx, stream, self.span, "fill", &value)?;
+		}
+
+		if let Some(width) = self.width {
+			let mut value = cx.lit(width)?;
+			set_lit_span(&mut value, self.span);
+			push_format_spec(cx, stream, self.span, "width", &value)?;
+		}
+
+		if let Some(precision) = self.precision {
+			let mut value = cx.lit(precision)?;
+			set_lit_span(&mut value, self.span);
+			push_format_spec(cx, stream, self.span, "precision", &value)?;
+		}
+
+		if let Some(align) = self.align {
+			let value = align.try_to_string()?;
+			let mut value = cx.ident(&value)?;
+			value.span = self.span;
+			push_format_spec(cx, stream, self.span, "align", &value)?;
+		}
+
+		if !self.flags.is_empty() {
+			let mut value = cx.lit(self.flags.into_u32())?;
+			set_lit_span(&mut value, self.span);
+			push_format_spec(cx, stream, self.span, "flags", &value)?;
+		}
+
+		if let Some(format_type) = self.format_type {
+			let value = format_type.try_to_string()?;
+			let mut value = cx.ident(&value)?;
+			value.span = self.span;
+			push_format_spec(cx, stream, self.span, "type", &value)?;
+		}
+
+		push_macro_token(
+			stream,
+			self.span,
+			ast::Kind::Close(ast::Delimiter::Parenthesis),
+		)?;
+		Ok(())
+	}
+}
+
+struct FormatTemplate<'a> {
+	args: Vec<Quote<'a>>,
+	span: Span,
+}
+
+impl ToTokens for FormatTemplate<'_> {
+	fn to_tokens(
+		&self,
+		cx: &mut MacroContext<'_, '_, '_>,
+		stream: &mut TokenStream,
+	) -> alloc::Result<()> {
+		push_macro_token(stream, self.span, ast::Kind::Pound)?;
+		push_macro_token(stream, self.span, ast::Kind::Open(ast::Delimiter::Bracket))?;
+		push_macro_ident(cx, stream, self.span, "builtin")?;
+		push_macro_token(stream, self.span, ast::Kind::Close(ast::Delimiter::Bracket))?;
+		push_macro_ident(cx, stream, self.span, "template")?;
+		push_macro_token(stream, self.span, ast::Kind::Bang)?;
+		push_macro_token(
+			stream,
+			self.span,
+			ast::Kind::Open(ast::Delimiter::Parenthesis),
+		)?;
+
+		for (i, arg) in self.args.iter().enumerate() {
+			if i != 0 {
+				push_macro_token(stream, self.span, ast::Kind::Comma)?;
+			}
+			arg.to_tokens(cx, stream)?;
+		}
+
+		push_macro_token(
+			stream,
+			self.span,
+			ast::Kind::Close(ast::Delimiter::Parenthesis),
+		)?;
+		Ok(())
+	}
+}
+
 fn expand_format_spec<'a>(
 	cx: &mut MacroContext<'_, '_, '_>,
 	span: Span,
+	template_span: Option<Span>,
 	input: &str,
 	pos: &[&'a FormatArg],
 	unused_pos: &mut BTreeSet<usize>,
@@ -324,12 +519,13 @@ fn expand_format_spec<'a>(
 		return Ok(quote!(""));
 	}
 
-	let mut args = Vec::<Quote<'static>>::new();
+	let mut args = Vec::<Quote<'a>>::new();
 
 	for c in components {
 		match c {
 			C::Literal(literal) => {
-				let lit = cx.lit(literal.as_ref())?;
+				let mut lit = cx.lit(literal.as_ref())?;
+				set_lit_span(&mut lit, span);
 				args.try_push(quote!(#lit))?;
 			}
 			C::Format {
@@ -340,96 +536,58 @@ fn expand_format_spec<'a>(
 				precision,
 				flags,
 				format_type,
+				span,
 			} => {
-				let mut specs = Vec::new();
-
-				let fill = fill
-					.map(|fill| {
-						let fill = cx.lit(fill)?;
-						Ok::<_, alloc::Error>(quote!(fill = #fill))
-					})
-					.transpose()?;
-
-				let width = width
-					.map(|width| {
-						let width = cx.lit(width)?;
-						Ok::<_, alloc::Error>(quote!(width = #width))
-					})
-					.transpose()?;
-
-				let precision = precision
-					.map(|precision| {
-						let precision = cx.lit(precision)?;
-						Ok::<_, alloc::Error>(quote!(precision = #precision))
-					})
-					.transpose()?;
-
-				let align = align
-					.map(|align| {
-						let align = align.try_to_string()?;
-						let align = cx.ident(&align)?;
-						Ok::<_, alloc::Error>(quote!(align = #align))
-					})
-					.transpose()?;
-
-				specs.try_extend(fill)?;
-				specs.try_extend(width)?;
-				specs.try_extend(precision)?;
-				specs.try_extend(align)?;
-
-				if !flags.is_empty() {
-					let flags = cx.lit(flags.into_u32())?;
-					specs.try_push(quote!(flags = #flags))?;
-				}
-
-				let format_type = format_type
-					.map(|format_type| {
-						let format_type = format_type.try_to_string()?;
-						let format_type = cx.ident(&format_type)?;
-						Ok::<_, alloc::Error>(quote!(type = #format_type))
-					})
-					.transpose()?;
-
-				specs.try_extend(format_type)?;
-
-				if specs.is_empty() {
+				if fill.is_none()
+					&& align.is_none()
+					&& width.is_none()
+					&& precision.is_none()
+					&& flags.is_empty()
+					&& format_type.is_none()
+				{
 					args.try_push(quote!(#expr))?;
 				} else {
-					args.try_push(quote!(
-						#[builtin]
-						format!(#expr, #(specs),*)
-					))?;
+					let call = FormatCall {
+						expr,
+						span,
+						fill,
+						align,
+						width,
+						precision,
+						flags,
+						format_type,
+					};
+					args.try_push(quote!(#call))?;
 				}
 			}
 		}
 	}
 
-	return Ok(quote! {
-		#[builtin] template!(#(args),*)
-	});
-
-	enum ExprOrIdent<'a> {
-		Expr(&'a TokenStream),
-		Ident(ast::Ident),
-	}
-
-	impl ToTokens for ExprOrIdent<'_> {
-		fn to_tokens(
-			&self,
-			cx: &mut MacroContext<'_, '_, '_>,
-			stream: &mut TokenStream,
-		) -> alloc::Result<()> {
-			match self {
-				Self::Expr(expr) => expr.to_tokens(cx, stream),
-				Self::Ident(ident) => ident.to_tokens(cx, stream),
+	let template_span = if let Some(template_span) = template_span {
+		template_span
+	} else {
+		let mut template_span = span;
+		for arg in pos.iter().chain(named.values()) {
+			if arg.span.start < template_span.start {
+				template_span.start = arg.span.start;
+			}
+			if arg.span.end > template_span.end {
+				template_span.end = arg.span.end;
 			}
 		}
-	}
+		template_span
+	};
+	let template = FormatTemplate {
+		args,
+		span: template_span,
+	};
+	return Ok(quote!(#template));
 
 	enum C<'a> {
 		Literal(Box<str>),
 		Format {
 			expr: ExprOrIdent<'a>,
+			span: Span,
 			fill: Option<char>,
 			align: Option<format::Alignment>,
 			width: Option<usize>,
@@ -706,7 +864,7 @@ fn expand_format_spec<'a>(
 			None
 		};
 
-		let expr = 'expr: {
+		let (expr, format_span) = 'expr: {
 			if name.is_empty() {
 				let Some(arg) = pos.get(*count) else {
 					return Err(compile::Error::msg(
@@ -717,7 +875,7 @@ fn expand_format_spec<'a>(
 
 				unused_pos.remove(count);
 				*count += 1;
-				break 'expr ExprOrIdent::Expr(&arg.value);
+				break 'expr (ExprOrIdent::Expr(&arg.value), arg.span);
 			};
 
 			if let Ok(n) = str::parse::<usize>(name) {
@@ -732,17 +890,17 @@ fn expand_format_spec<'a>(
 				};
 
 				unused_pos.remove(&n);
-				break 'expr ExprOrIdent::Expr(&arg.value);
+				break 'expr (ExprOrIdent::Expr(&arg.value), arg.span);
 			}
 
 			if let Some(n) = named.get(name.as_str()) {
 				unused_named.remove(name.as_str());
-				break 'expr ExprOrIdent::Expr(&n.value);
+				break 'expr (ExprOrIdent::Expr(&n.value), n.span);
 			}
 
 			let mut ident = cx.ident(name.as_str())?;
 			ident.span = span;
-			ExprOrIdent::Ident(ident)
+			(ExprOrIdent::Ident(ident), span)
 		};
 
 		let width = if !width.is_empty() {
@@ -753,6 +911,7 @@ fn expand_format_spec<'a>(
 
 		Ok(C::Format {
 			expr,
+			span: format_span,
 			fill,
 			align,
 			width,

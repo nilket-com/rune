@@ -256,7 +256,7 @@ fn diagnostic_catalogue_both_engines() {
 )]
 fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 	let context = Context::with_default_modules().unwrap();
-	// len/push wording now converges. DISPLAY_FMT macro-span differences remain explicit.
+	// len/push wording now converges. D1b pins the local DISPLAY_FMT argument site.
 	for (id, body, expected) in [
 		(
 			"len",
@@ -301,6 +301,7 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 		let d1_expected = match id {
 			"len" => "Type `std::i64` has no method named `len`",
 			"push" => "Type `std::i64` has no method named `push`",
+			"display" => "`std::vec::Vec` cannot be formatted with `{}`",
 			_ => expected,
 		};
 		assert_eq!(
@@ -312,18 +313,42 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 			"iter" => ("Missing instance function `0x57a2b2f073daaf28` for `std::i64`",28..29,19..32,"stock points at iterable; fresh points at the for expression; hash wording retained"),
 			"len" => ("Missing instance function `0x201f597bd58fafa8` for `std::i64`",30..37,30..37,"instance-function hash converged exactly"),
 			"push" => ("Missing instance function `0x3fd16e7ebc3afb1a` for `std::i64`",30..39,30..39,"instance-function hash converged exactly"),
-			"display" => ("Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",0..36,19..37,"stock macro expansion maps to its enclosing item; fresh maps to the invocation"),
+			"display" => ("Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",33..36,33..36,"D1b maps the failing expression inside format!"),
 			_ => unreachable!(),
 		};
 		assert!(!reason.is_empty());
 		let d1_stock = match id {
 			"len" | "push" => "Type `std::i64` has no matching method",
 			"iter" => "Cannot iterate over `std::i64`",
+			"display" => "`std::vec::Vec` cannot be formatted with `{}`",
 			_ => stock_text,
 		};
 		assert_eq!(stock.into_kind().to_string(), d1_stock, "{id}");
 		assert_eq!(span, stock_span, "{id}");
 		let at = failure.error.location.unwrap();
+		#[cfg(not(miri))]
+		if id == "display" {
+			let stock_site = std::format!("0:{}:{}", stock_span.start, stock_span.end);
+			let fresh_site = std::format!("0:{}:{}", at.start, at.end);
+			assert!(super::gap_hunt::d1b_diagnostics::intentional_site_before(
+				"diagnostics",
+				"display",
+				&source,
+				"stock",
+				&stock_site,
+				"0:0:36",
+			)
+			.is_some());
+			assert!(super::gap_hunt::d1b_diagnostics::intentional_site_before(
+				"diagnostics",
+				"display",
+				&source,
+				"fresh",
+				&fresh_site,
+				"0:19:37",
+			)
+			.is_some());
+		}
 		assert_eq!(at.start as usize..at.end as usize, fresh_span, "{id}");
 		assert_eq!((at.source, at.revision), (0, 73));
 	}
