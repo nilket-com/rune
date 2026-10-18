@@ -152,3 +152,82 @@ fn child() {
 	file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
 		.unwrap();
 }
+
+/// Validate D1's exact new text, then project only that field to the immutable oracle.
+pub(super) fn intentional_json_before(
+	family: &str,
+	label: &str,
+	source: &str,
+	engine: &str,
+	actual: &Json,
+) -> Json {
+	let rows: Vec<Json> =
+		serde_json::from_str(include_str!("method_diagnostics/all_consumers.json")).unwrap();
+	let mut actual = actual.clone();
+	if let Some(row) = rows
+		.iter()
+		.find(|row| row["family"] == family && row["label"] == label)
+	{
+		assert_eq!(row["source_hex"], hex(source.as_bytes()));
+		if let Some(rule) = row["changes"].get(engine) {
+			assert_eq!(rule["kind"], "json");
+			let patches = rule["patches"].as_array().unwrap();
+			assert_eq!(patches.len(), 1);
+			let mut changed = 0;
+			fn visit(value: &mut Json, patch: &Json, changed: &mut usize) {
+				match value {
+					Json::Object(fields) => {
+						for (key, value) in fields {
+							if (key == "display" || key == "message") && *value == patch["after"] {
+								*value = patch["before"].clone();
+								*changed += 1;
+							} else {
+								visit(value, patch, changed);
+							}
+						}
+					}
+					Json::Array(values) => {
+						for value in values {
+							visit(value, patch, changed);
+						}
+					}
+					_ => {}
+				}
+			}
+			visit(&mut actual, &patches[0], &mut changed);
+			assert_eq!(
+				changed, 1,
+				"D1 exact new diagnostic {family}/{label}/{engine}"
+			);
+		}
+	}
+	actual
+}
+
+/// Every changed legacy record is first checked against its captured AFTER bytes.
+pub(super) fn intentional_record_before(
+	family: &str,
+	label: &str,
+	source: &str,
+	engine: &str,
+	actual: &str,
+) -> String {
+	let rows: Vec<Json> =
+		serde_json::from_str(include_str!("method_diagnostics/all_consumers.json")).unwrap();
+	if let Some(row) = rows
+		.iter()
+		.find(|row| row["family"] == family && row["label"] == label)
+	{
+		assert_eq!(row["source_hex"], hex(source.as_bytes()));
+		if let Some(rule) = row["changes"].get(engine) {
+			assert_eq!(rule["kind"], "record");
+			assert_eq!(
+				actual,
+				rule["after"].as_str().unwrap(),
+				"D1 exact new record {family}/{label}/{engine}"
+			);
+			return rule["before"].as_str().unwrap().to_owned();
+		}
+	}
+	actual.to_owned()
+}

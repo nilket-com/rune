@@ -78,7 +78,14 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	let stock: Json = serde_json::from_str(STOCK).unwrap();
 	let id = case["id"].as_str().unwrap();
 	let expected = &stock[id];
-	let observed = &actual["observation"];
+	let d1_observed = super::method_diagnostics::intentional_json_before(
+		"text_methods",
+		case["label"].as_str().unwrap(),
+		case["source"].as_str().unwrap(),
+		"fresh",
+		&actual["observation"],
+	);
+	let observed = &d1_observed;
 	assert_eq!(observed["reuse"], expected["reuse"]);
 	let receivers: Json = serde_json::from_str(include_str!("receiver_policy.json")).unwrap();
 	let admissions: Json = serde_json::from_str(include_str!("c14b_admissions.json")).unwrap();

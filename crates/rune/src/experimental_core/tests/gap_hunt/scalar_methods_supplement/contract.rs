@@ -275,6 +275,14 @@ fn run_contract(engine: &str) {
 		assert_eq!(e["policy"], *policy);
 		assert_eq!(e["source_hex"], c[2]);
 		assert_eq!(e["fuel"], FUEL);
+		let mut e = e;
+		e["outcome"] = super::method_diagnostics::intentional_json_before(
+			"scalar_methods_supplement",
+			label,
+			source,
+			engine,
+			&e["outcome"],
+		);
 		let expected: Json = serde_json::from_str(&unhex(c[3])).unwrap();
 		let category = if engine == "stock" {
 			let got = project(source, &e["outcome"]);

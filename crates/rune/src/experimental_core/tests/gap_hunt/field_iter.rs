@@ -241,11 +241,18 @@ fn contract() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
-		let run = launch(&path, &path, "main", &engine, &scratch.0, &out, &id);
+		let mut run = launch(&path, &path, "main", &engine, &scratch.0, &out, &id);
 		assert!(
 			run.complete,
 			"incomplete {engine} case {label}: {}",
 			run.record
+		);
+		run.record = super::method_diagnostics::intentional_record_before(
+			"field_iter",
+			label,
+			source,
+			&engine,
+			&run.record,
 		);
 		let actual: Vec<_> = run.record.split('\t').collect();
 		assert_eq!(actual.len(), 5);

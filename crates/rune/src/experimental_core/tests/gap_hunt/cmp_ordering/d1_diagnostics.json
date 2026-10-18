@@ -1,0 +1,162 @@
+[
+  {
+    "index": 141,
+    "label": "missing-method/bool",
+    "source_sha256": "a278ee38959d29694843b01117b146e36d00cf8bf99bf2f33d4241a22a54b784",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xe60a85ccb192f47c` for `std::bool`",
+        "after": "Type `std::bool` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xe60a85ccb192f47c` for `std::bool`",
+        "after": "Type `std::bool` has no method named `cmp`"
+      }
+    },
+    "source_hex": "70756220666e206d61696e28297b2874727565292e636d702831297d0a70756220666e2063395f726575736528297b377d"
+  },
+  {
+    "index": 142,
+    "label": "missing-method/char",
+    "source_sha256": "a1d2519821555ff25ad8563d2415fa50ab73a3a62dfc2515e1b3d63ee1fe21a3",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x5f57bd8612aae473` for `std::char`",
+        "after": "Type `std::char` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x5f57bd8612aae473` for `std::char`",
+        "after": "Type `std::char` has no method named `cmp`"
+      }
+    },
+    "source_hex": "70756220666e206d61696e28297b2827ceb127292e636d702831297d0a70756220666e2063395f726575736528297b377d"
+  },
+  {
+    "index": 143,
+    "label": "missing-method/ordering",
+    "source_sha256": "46f3a040fe84ad815f8ac439799ec9daae4aa42d6aef9b7238c23491e86b532b",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x4ecbfad0113a14f4` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x4ecbfad0113a14f4` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no method named `cmp`"
+      }
+    },
+    "source_hex": "70756220666e206d61696e28297b287374643a3a636d703a3a4f72646572696e673a3a4c657373292e636d702831297d0a70756220666e2063395f726575736528297b377d"
+  },
+  {
+    "index": 144,
+    "label": "missing-method/object",
+    "source_sha256": "6765a3f288c55cee92c6c79c8318cfc8236c78af8a443c88bcfc0435471c66f2",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x51459a64723d7066` for `std::object::Object`",
+        "after": "Type `std::object::Object` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x51459a64723d7066` for `std::object::Object`",
+        "after": "Type `std::object::Object` has no method named `cmp`"
+      }
+    },
+    "source_hex": "70756220666e206d61696e28297b28237b783a317d292e636d702831297d0a70756220666e2063395f726575736528297b377d"
+  },
+  {
+    "index": 145,
+    "label": "missing-method/struct",
+    "source_sha256": "8bb554a8c4754a934ee673c8481c9a5209588290a8cd5594df2d8cda11a7bc06",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x70c08e22871ca57d` for `S`",
+        "after": "Type `S` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x70c08e22871ca57d` for `S`",
+        "after": "Type `S` has no method named `cmp`"
+      }
+    },
+    "source_hex": "73747275637420537b787d70756220666e206d61696e28297b28537b783a317d292e636d702831297d0a70756220666e2063395f726575736528297b377d"
+  },
+  {
+    "index": 162,
+    "label": "effects/order-missing",
+    "source_sha256": "8e02e54a5389bccef49f10c18eab8b23d923b5ae3f09ad9d0d59771425c79de8",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xe60a85ccb192f47c` for `std::bool`",
+        "after": "Type `std::bool` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xe60a85ccb192f47c` for `std::bool`",
+        "after": "Type `std::bool` has no method named `cmp`"
+      }
+    },
+    "source_hex": "70756220666e206d61696e28297b7b7072696e742128225222293b747275657d2e636d70287b7072696e742128224122293b327d297d0a70756220666e2063395f726575736528297b377d"
+  },
+  {
+    "index": 173,
+    "label": "frames/missing",
+    "source_sha256": "cbb65703d94e95efe5f33c566ddf3fba430c9fadfa54b9125c39fc2e0eacc676",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xe60a85ccb192f47c` for `std::bool`",
+        "after": "Type `std::bool` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xe60a85ccb192f47c` for `std::bool`",
+        "after": "Type `std::bool` has no method named `cmp`"
+      }
+    },
+    "source_hex": "666e20696e6e657228297b747275652e636d702831297d666e206f7574657228297b696e6e657228297d70756220666e206d61696e28297b6f7574657228297d0a70756220666e2063395f726575736528297b377d"
+  },
+  {
+    "index": 179,
+    "label": "refusal/reverse",
+    "source_sha256": "1c9137b68a71eee362d0148b5b3246e26df021c3f6713a8af9866fc83c87f80d",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xcc3fb5c24fe5c3bb` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xcc3fb5c24fe5c3bb` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no method named `reverse`"
+      }
+    },
+    "source_hex": "70756220666e206d61696e28297b7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7265766572736528297d0a70756220666e2063395f726575736528297b377d"
+  },
+  {
+    "index": 180,
+    "label": "refusal/then",
+    "source_sha256": "f67b8855ab5d1de83dace4f419a414312ed74f8d3c11ecb8fa9d18cdb5cc7038",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x2acad8ec2699716e` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x2acad8ec2699716e` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no method named `then`"
+      }
+    },
+    "source_hex": "70756220666e206d61696e28297b7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e287374643a3a636d703a3a4f72646572696e673a3a457175616c297d0a70756220666e2063395f726575736528297b377d"
+  },
+  {
+    "index": 181,
+    "label": "refusal/then-with",
+    "source_sha256": "08b66e62f48d5b34ec4b82b12cc1123705dd8f400f4c39222a55cf2d68a9e596",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xcbf97ece669297ee` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xcbf97ece669297ee` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no method named `then_with`"
+      }
+    },
+    "source_hex": "70756220666e206d61696e28297b7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e5f77697468287c7c7374643a3a636d703a3a4f72646572696e673a3a457175616c297d0a70756220666e2063395f726575736528297b377d"
+  }
+]

@@ -242,8 +242,7 @@ impl VmError {
 		}) = get(self.error())
 		{
 			labels.push(
-				d::Label::primary(source_id, span.range())
-					.with_message(self.error().try_to_string()?),
+				d::Label::primary(source_id, span.range()).with_message(self.try_to_string()?),
 			);
 		};
 
@@ -282,7 +281,7 @@ impl VmError {
 		}
 
 		let diagnostic = d::Diagnostic::error()
-			.with_message(self.error().try_to_string()?)
+			.with_message(self.try_to_string()?)
 			.with_labels(labels)
 			.with_notes(notes);
 

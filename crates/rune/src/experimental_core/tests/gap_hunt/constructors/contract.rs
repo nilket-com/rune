@@ -85,7 +85,14 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	let intentional =
 		super::nominal_clone::intentional_json("constructors", case, &stock[id]["observation"]);
 	let expected = intentional.as_ref().unwrap_or(&stock[id]["observation"]);
-	let observed = &actual["observation"];
+	let d1_observed = super::method_diagnostics::intentional_json_before(
+		"constructors",
+		case["label"].as_str().unwrap(),
+		case["source"].as_str().unwrap(),
+		"fresh",
+		&actual["observation"],
+	);
+	let observed = &d1_observed;
 	let admissions: Json = serde_json::from_str(include_str!("c15b_admissions.json")).unwrap();
 	if let Some(rule) = admissions.get(id) {
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);

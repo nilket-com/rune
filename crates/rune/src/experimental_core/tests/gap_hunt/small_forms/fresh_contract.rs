@@ -30,7 +30,15 @@ fn c12_compare_fresh(i: usize, frozen: &Json, actual: &Json, counts: &Json) {
 	] {
 		assert_eq!(audit[key], 0, "row{i}/{key}");
 	}
-	let observed = &actual["observation"];
+	let source = unhex(actual["source_hex"].as_str().unwrap());
+	let d1_observed = super::method_diagnostics::intentional_json_before(
+		"small_forms",
+		actual["label"].as_str().unwrap(),
+		&source,
+		"fresh",
+		&actual["observation"],
+	);
+	let observed = &d1_observed;
 	let expected = &frozen["stock"]["observation"];
 	assert_eq!(observed["before"], expected["before"]);
 	assert_eq!(observed["cleanup"], expected["cleanup"]);

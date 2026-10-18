@@ -643,7 +643,7 @@ impl FieldRef {
 	}
 }
 
-/// A borrowed allocation-free rendering of an owned error.
+/// A borrowed rendering of an owned error.
 pub struct Message<'a> {
 	pub(crate) error: &'a Error,
 	pub(crate) program: &'a Program,
@@ -782,8 +782,58 @@ impl fmt::Display for Message<'_> {
 				found,
 				to_numeric: false,
 			} => messages::cast_target(f, found),
-			MissingInstanceFunction { target, hash, .. } => {
-				write!(f, "Missing instance function `{hash}` for `{target}`")
+			MissingInstanceFunction {
+				target,
+				hash,
+				instance,
+			} => {
+				let name_hash = crate::Hash::associated_function(instance, hash);
+				if name_hash == crate::runtime::Protocol::INTO_ITER.hash {
+					return write!(f, "Cannot iterate over `{target}`");
+				}
+				let mut name = Option::None;
+				if let Some(at) = self.error.location {
+					if let Some(source) = self
+						.program
+						.sources()
+						.iter()
+						.find(|source| source.id == at.source && source.revision == at.revision)
+					{
+						let mut lexer =
+							crate::parse::Lexer::new(&source.text, crate::SourceId::EMPTY, false)
+								.without_processing();
+						let mut after_dot = false;
+						for _ in 0..=source.text.len() {
+							let Ok(Some(token)) = lexer.next() else {
+								break;
+							};
+							match token.kind {
+								crate::ast::Kind::Whitespace
+								| crate::ast::Kind::Comment
+								| crate::ast::Kind::MultilineComment(true) => continue,
+								crate::ast::Kind::MultilineComment(false) => break,
+								_ => {}
+							}
+							if after_dot && matches!(token.kind, crate::ast::Kind::Ident(..)) {
+								if let Some(candidate) = source.text.get(token.span.range()) {
+									if crate::Hash::associated_function(
+										instance,
+										crate::Hash::ident(candidate),
+									) == hash
+									{
+										name = Some(candidate);
+										break;
+									}
+								}
+							}
+							after_dot = matches!(token.kind, crate::ast::Kind::Dot);
+						}
+					}
+				}
+				match name {
+					Some(name) => write!(f, "Type `{target}` has no method named `{name}`"),
+					Option::None => write!(f, "Type `{target}` has no matching method"),
+				}
 			}
 			NotIterable { found } => write!(f, "Type `{found}` is not iterable"),
 			TryOperand { found } => messages::try_operand(f, found),
@@ -1054,3 +1104,7 @@ mod iteration_hash_tests {
 		}
 	}
 }
+
+#[cfg(test)]
+#[path = "tests/method_diagnostics_controls.rs"]
+mod method_diagnostics_tests;

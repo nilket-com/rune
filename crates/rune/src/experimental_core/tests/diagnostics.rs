@@ -297,9 +297,15 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 				100_000,
 			)
 			.unwrap_err();
+		// D1 preserves the original hash text above and declares only the new rendering.
+		let d1_expected = match id {
+			"len" => "Type `std::i64` has no method named `len`",
+			"push" => "Type `std::i64` has no method named `push`",
+			_ => expected,
+		};
 		assert_eq!(
 			failure.error.message(&program).to_string(),
-			expected,
+			d1_expected,
 			"{id}"
 		);
 		let (stock_text, stock_span, fresh_span, reason) = match id {
@@ -310,7 +316,12 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 			_ => unreachable!(),
 		};
 		assert!(!reason.is_empty());
-		assert_eq!(stock.into_kind().to_string(), stock_text, "{id}");
+		let d1_stock = match id {
+			"len" | "push" => "Type `std::i64` has no matching method",
+			"iter" => "Cannot iterate over `std::i64`",
+			_ => stock_text,
+		};
+		assert_eq!(stock.into_kind().to_string(), d1_stock, "{id}");
 		assert_eq!(span, stock_span, "{id}");
 		let at = failure.error.location.unwrap();
 		assert_eq!(at.start as usize..at.end as usize, fresh_span, "{id}");

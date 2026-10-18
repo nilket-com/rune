@@ -1,0 +1,25 @@
+{
+  "record": "D1",
+  "before": "before.json",
+  "after": "after.json",
+  "rule": "Only rendering changes. Typed identity, raw kind/detail, sites, frames, tapes, diagnostics, reuse and resource audit stay equal. Panic and success records stay byte-for-byte equal after JSON decoding.",
+  "stock_options_off_note": "Rows12/13 keep actual stock DebugInfo despite Options.debug_info(false); names are proven by retained map. Fresh source records are removed for these rows. A separate no-stacktrace typed stock error verifies the true contextless fallback.",
+  "changed_cases": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ]
+}

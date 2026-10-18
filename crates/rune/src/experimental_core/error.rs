@@ -266,7 +266,7 @@ impl Error {
 		self
 	}
 
-	/// Render without allocating. A foreign program never resolves constant field names.
+	/// Render using borrowed source text. A foreign program never resolves constant field names.
 	pub fn message<'a>(&'a self, program: &'a super::frontend::Program) -> Message<'a> {
 		Message {
 			error: self,

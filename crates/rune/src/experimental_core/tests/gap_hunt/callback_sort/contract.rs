@@ -120,6 +120,13 @@ fn stock_contract() {
 			assert_eq!(observation["cleanup"]["cycle_cleared"], true);
 		}
 		let actual = common(&project_p1(observation, &counts[label]).unwrap());
+		let actual = super::method_diagnostics::intentional_json_before(
+			"callback_sort",
+			label,
+			source,
+			"stock",
+			&actual,
+		);
 		let stored: Json = serde_json::from_slice(&decode(cells[3])).unwrap();
 		check_cell(&stored, &actual).unwrap();
 		digested += usize::from(stored.get("storage").is_some());

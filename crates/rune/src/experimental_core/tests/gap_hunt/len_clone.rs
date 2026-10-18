@@ -292,8 +292,15 @@ fn stock_contract() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
-		let run = launch(&path, &path, "main", "stock", &scratch.0, &out, &id);
+		let mut run = launch(&path, &path, "main", "stock", &scratch.0, &out, &id);
 		assert!(run.complete, "incomplete {label}: {}", run.record);
+		run.record = super::method_diagnostics::intentional_record_before(
+			"len_clone",
+			label,
+			source,
+			"stock",
+			&run.record,
+		);
 		assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
 		assert_no_addresses(label, &unhex(row[2]), &[], &[]);
 		assert_eq!(
@@ -338,8 +345,15 @@ fn fresh_contract() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
-		let run = launch(&path, &path, "main", "fresh", &scratch.0, &out, &id);
+		let mut run = launch(&path, &path, "main", "fresh", &scratch.0, &out, &id);
 		assert!(run.complete, "incomplete {label}: {}", run.record);
+		run.record = super::method_diagnostics::intentional_record_before(
+			"len_clone",
+			label,
+			source,
+			"fresh",
+			&run.record,
+		);
 		assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
 		assert_no_addresses(label, &unhex(row[2]), &[], &[]);
 		let actual: Vec<_> = run.record.split('\t').collect();
@@ -543,7 +557,7 @@ fn global_contract() {
 		let path = out.join(format!("{n:05}.source.rn"));
 		fs::write(&path, source).unwrap();
 		for engine in ["stock", "fresh"] {
-			let run = launch(
+			let mut run = launch(
 				&path,
 				&path,
 				"main",
@@ -553,6 +567,13 @@ fn global_contract() {
 				&format!("{n:05}"),
 			);
 			assert!(run.complete, "{label}/{engine}: {}", run.record);
+			run.record = super::method_diagnostics::intentional_record_before(
+				"global_clone",
+				label,
+				source,
+				engine,
+				&run.record,
+			);
 			assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
 			let expected = super::nominal_clone::intentional_record(
 				"global_clone_stock.tsv",

@@ -154,7 +154,7 @@ impl VmError {
 		self.inner.error.kind
 	}
 
-	/// Name the source operator at its instruction boundary, without relabelling
+	/// Name the source operator at its instruction boundary, without relabeling
 	/// an already-located failure from a nested protocol call or auxiliary error.
 	pub(crate) fn with_operator(mut self, protocol: &'static str, symbol: &'static str) -> Self {
 		if self.inner.stacktrace.is_empty() {
@@ -183,7 +183,7 @@ impl VmError {
 		}
 	}
 
-	/// Add auxilliary errors if appropriate.
+	/// Add auxiliary errors if appropriate.
 	#[inline]
 	pub(crate) fn with_error<E>(mut self, error: E) -> Self
 	where
@@ -205,6 +205,21 @@ impl VmError {
 impl fmt::Display for VmError {
 	#[inline]
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		if let VmErrorKind::MissingInstanceFunction { hash, instance } = &self.inner.error.kind {
+			let name_hash = Hash::associated_function(instance.type_hash(), *hash);
+			let target = super::messages::DiagnosticType(instance);
+			if name_hash == Protocol::INTO_ITER.hash {
+				return write!(f, "Cannot iterate over `{target}`");
+			}
+			let name = self
+				.first_location()
+				.and_then(|location| location.unit.debug_info())
+				.and_then(|debug| debug.ident_for_hash(name_hash));
+			return match name {
+				Some(name) => write!(f, "Type `{target}` has no method named `{name}`"),
+				None => write!(f, "Type `{target}` has no matching method"),
+			};
+		}
 		self.inner.error.fmt(f)
 	}
 }
@@ -839,8 +854,14 @@ impl fmt::Display for VmErrorKind {
 				write!(f, "Missing protocol function `{protocol}` for `{instance}`")
 			}
 			VmErrorKind::MissingInstanceFunction { hash, instance } => {
-				let instance = super::messages::DiagnosticType(instance);
-				write!(f, "Missing instance function `{hash}` for `{instance}`")
+				let target = super::messages::DiagnosticType(instance);
+				if Hash::associated_function(instance.type_hash(), *hash)
+					== Protocol::INTO_ITER.hash
+				{
+					write!(f, "Cannot iterate over `{target}`")
+				} else {
+					write!(f, "Type `{target}` has no matching method")
+				}
 			}
 			VmErrorKind::IpOutOfBounds { ip, length } => write!(
 				f,

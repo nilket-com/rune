@@ -1,0 +1,142 @@
+[
+  {
+    "id": "051",
+    "source_sha256": "e45b825fe67bb07dbf62638e14bd00228baf629440243247c5fe04b6fbb30994",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x716bc80c01db5389` for `E::T`",
+        "after": "Type `E::T` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x716bc80c01db5389` for `E::T`",
+        "after": "Type `E::T` has no method named `cmp`"
+      }
+    }
+  },
+  {
+    "id": "124",
+    "source_sha256": "7ca3aab3ed980b04e44ce1d4053494381ea3892610879777fa2e0f107d06dd77",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+        "after": "Type `E::T` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+        "after": "Type `E::T` has no method named `len`"
+      }
+    }
+  },
+  {
+    "id": "125",
+    "source_sha256": "aaa973d0182eb7122b6cacf70c073bb32abb316a958bf508cb3e0c29da596d96",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xeaaeda4df40432a1` for `E::T`",
+        "after": "Type `E::T` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xeaaeda4df40432a1` for `E::T`",
+        "after": "Type `E::T` has no method named `iter`"
+      }
+    }
+  },
+  {
+    "id": "126",
+    "source_sha256": "d869eac933dc45e86e6d252a3333876612b528cb9a5e693f0b2a2a0c327718a4",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x2c0e81e79fac449f` for `E::T`",
+        "after": "Type `E::T` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x2c0e81e79fac449f` for `E::T`",
+        "after": "Type `E::T` has no method named `push`"
+      }
+    }
+  },
+  {
+    "id": "127",
+    "source_sha256": "422c245b91d93da09592e1333ab238ccb7056bf32f06a619f586fe456e0056c2",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xf550737dccc83497` for `E::T`",
+        "after": "Type `E::T` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xf550737dccc83497` for `E::T`",
+        "after": "Type `E::T` has no method named `sort`"
+      }
+    }
+  },
+  {
+    "id": "128",
+    "source_sha256": "32fae1275f3e09fe59634e0f527f9f7c8138050c31d0545955507de2e1ee12ba",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x447d5d69504c10ad` for `E::T`",
+        "after": "Cannot iterate over `E::T`"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x447d5d69504c10ad` for `E::T`",
+        "after": "Cannot iterate over `E::T`"
+      }
+    }
+  },
+  {
+    "id": "130",
+    "source_sha256": "10327e42b47e44ba6487271b73642a694ab60254b30ea820cad3bcd363e16fff",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xa0004ebb729ea66a` for `E::T`",
+        "after": "Type `E::T` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xa0004ebb729ea66a` for `E::T`",
+        "after": "Type `E::T` has no method named `next`"
+      }
+    }
+  },
+  {
+    "id": "131",
+    "source_sha256": "29f1386bdadaaf1afcebd4e55540ba4610a2573054d9a51b0ccb81dacb4900cd",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x67fa487dd2d1a7ec` for `E::T`",
+        "after": "Type `E::T` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x67fa487dd2d1a7ec` for `E::T`",
+        "after": "Type `E::T` has no method named `any`"
+      }
+    }
+  },
+  {
+    "id": "132",
+    "source_sha256": "6e0713f6273072e5c94a56c7bf6a493b4f1a3cacb6993bdbafe6c46c0c2836b1",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xf5125c4034f0d266` for `E::T`",
+        "after": "Type `E::T` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xf5125c4034f0d266` for `E::T`",
+        "after": "Type `E::T` has no method named `clone`"
+      }
+    }
+  },
+  {
+    "id": "133",
+    "source_sha256": "20cc3231ae608757bb6f8f66e943788da8d49f5a51b51a10e11513fdd0738dfa",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+        "after": "Type `E::T` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+        "after": "Type `E::T` has no method named `c15b_missing`"
+      }
+    }
+  }
+]

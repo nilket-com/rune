@@ -53,6 +53,20 @@ fn project_observation(value: &Json, expected: &Json, path: &str) -> Json {
 	}
 }
 
+fn d1_enum_expectation(case: &Json, expected: &Json, engine: &str) -> Json {
+	let rows: Vec<Json> = serde_json::from_str(include_str!("d1_diagnostics.json")).unwrap();
+	let mut expected = expected.clone();
+	if let Some(row) = rows.iter().find(|row| row["id"] == case["id"]) {
+		assert_eq!(row["source_sha256"], case["source_sha256"]);
+		assert_eq!(
+			expected["outcome"]["display"],
+			row["changes"][engine]["before"]
+		);
+		expected["outcome"]["display"] = row["changes"][engine]["after"].clone();
+	}
+	expected
+}
+
 fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	for key in ["label", "source_sha256", "fixture", "fuel"] {
 		assert_eq!(actual[key], case[key]);
@@ -139,6 +153,8 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 			let expected = intentional
 				.get(id)
 				.map_or(expected, |rule| &rule["expected_observation"]);
+			let d1_expected = d1_enum_expectation(case, expected, "fresh");
+			let expected = &d1_expected;
 			let sites: Json = serde_json::from_str(include_str!("retained_sites.json")).unwrap();
 			let mut observed = observed.clone();
 			if let Some(rule) = sites.get(id) {
@@ -176,6 +192,8 @@ fn compare_stock(case: &Json, actual: &Json) {
 		|| intentional.as_ref().unwrap_or(&stock[id]["observation"]),
 		|rule| &rule["expected_observation"],
 	);
+	let d1_expected = d1_enum_expectation(case, expected, "stock");
+	let expected = &d1_expected;
 	assert_eq!(
 		project_observation(&actual["observation"], expected, ""),
 		*expected,

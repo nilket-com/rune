@@ -75,7 +75,14 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	] {
 		assert_eq!(audit[key], 0, "{key}");
 	}
-	let observed = &actual["observation"];
+	let d1_observed = super::method_diagnostics::intentional_json_before(
+		"methods",
+		case["label"].as_str().unwrap(),
+		case["source"].as_str().unwrap(),
+		"fresh",
+		&actual["observation"],
+	);
+	let observed = &d1_observed;
 	let c14: Json = serde_json::from_str(include_str!("c14_admissions.json")).unwrap();
 	let c15: Json = serde_json::from_str(include_str!("c15_admissions.json")).unwrap();
 	let c15b: Json = serde_json::from_str(include_str!("c15b_admissions.json")).unwrap();

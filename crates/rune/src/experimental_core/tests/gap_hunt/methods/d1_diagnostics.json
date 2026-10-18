@@ -1,0 +1,268 @@
+[
+  {
+    "id": "000",
+    "source_sha256": "8610352c464356b0b13d3942f374e40acd75de698e0df811c8475bd48899519c",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "after": "Type `std::i64` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "after": "Type `std::i64` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "001",
+    "source_sha256": "80b8166f3e24a86a91cd69cef2fa8855c5e3b35c68bc4bfe043562d3278a20ef",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x97550c8b68af2f3e` for `std::u64`",
+        "after": "Type `std::u64` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x97550c8b68af2f3e` for `std::u64`",
+        "after": "Type `std::u64` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "002",
+    "source_sha256": "65d970acdbc86bdc8f922d7267bd8dc115d2813d2d255a477cf597658ac3e760",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x9af1497f4f761765` for `std::f64`",
+        "after": "Type `std::f64` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x9af1497f4f761765` for `std::f64`",
+        "after": "Type `std::f64` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "003",
+    "source_sha256": "5d6a3f4382b142988073754d1663dc509a24d27d27f5684ff42ebd6c15e04306",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x20d6ed225d18c64` for `std::char`",
+        "after": "Type `std::char` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x20d6ed225d18c64` for `std::char`",
+        "after": "Type `std::char` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "004",
+    "source_sha256": "9ce69866f9c532e04b1515aacbbc01e567f49a795d818506824e53aa1c197692",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x1391298426417ce3` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x1391298426417ce3` for `std::cmp::Ordering`",
+        "after": "Type `std::cmp::Ordering` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "005",
+    "source_sha256": "fe08cf4df24f699fa9c4295649aa06291a1b8e0d2051794313031d1888f5ce27",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x21b7174aea802f58` for `std::string::String`",
+        "after": "Type `std::string::String` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x21b7174aea802f58` for `std::string::String`",
+        "after": "Type `std::string::String` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "006",
+    "source_sha256": "a00daf7fb5b51e2452cd8c6466975253bca286d2dee56a2cd522768e3d1469fd",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xe2587b3146b80ca6` for `std::vec::Vec`",
+        "after": "Type `std::vec::Vec` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xe2587b3146b80ca6` for `std::vec::Vec`",
+        "after": "Type `std::vec::Vec` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "007",
+    "source_sha256": "b58bd798816f1b6eb7172538f519f2f66a3a91fc69f5078e5fe208a8977f9254",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xddf53e789b0736a4` for `std::tuple::Tuple`",
+        "after": "Type `std::tuple::Tuple` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xddf53e789b0736a4` for `std::tuple::Tuple`",
+        "after": "Type `std::tuple::Tuple` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "008",
+    "source_sha256": "92067de8cd6d40590461813ca23d4f7b4d1b09cb71a2a95552281534e621a548",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xc1f493045461871` for `std::object::Object`",
+        "after": "Type `std::object::Object` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xc1f493045461871` for `std::object::Object`",
+        "after": "Type `std::object::Object` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "009",
+    "source_sha256": "0919d1161687c9e89aa7c73e8f5e1ba2109c57c93a258fe328cb177610153a71",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xe3d6ea63b24ba62c` for `std::option::Option`",
+        "after": "Type `std::option::Option` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xe3d6ea63b24ba62c` for `std::option::Option`",
+        "after": "Type `std::option::Option` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "010",
+    "source_sha256": "73dab18cd6ba57e425aabfbf50fb02df580b51c29eb87870d785178cdd0ba3a2",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x3a3b8fa1695800bb` for `std::result::Result`",
+        "after": "Type `std::result::Result` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x3a3b8fa1695800bb` for `std::result::Result`",
+        "after": "Type `std::result::Result` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "011",
+    "source_sha256": "e34a4071c9751dbc4ea4f00ce5ad182498c91669b14f3933dfa24f6f6be89e2f",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x534951fb0a3194ee` for `std::ops::Range`",
+        "after": "Type `std::ops::Range` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x534951fb0a3194ee` for `std::ops::Range`",
+        "after": "Type `std::ops::Range` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "012",
+    "source_sha256": "40ee3f5e35b27b380d77cf830056f7df6cd998a8c4eb0fc5e37d78a1344646fc",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x7db5b8d2d62403ca` for `std::ops::RangeFrom`",
+        "after": "Type `std::ops::RangeFrom` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x7db5b8d2d62403ca` for `std::ops::RangeFrom`",
+        "after": "Type `std::ops::RangeFrom` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "013",
+    "source_sha256": "b0c292df05d06b1dce16bd123e12e2bede6313b0cd0eec3fabeec65bb9d77585",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xe22e5bca5a20a448` for `std::ops::RangeFull`",
+        "after": "Type `std::ops::RangeFull` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xe22e5bca5a20a448` for `std::ops::RangeFull`",
+        "after": "Type `std::ops::RangeFull` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "014",
+    "source_sha256": "5cc7a5dddee07f3af6aa3e58019826e5b48905ef6c268306231eaaa7c152e80d",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x26cda2bfdefeef7c` for `std::ops::RangeInclusive`",
+        "after": "Type `std::ops::RangeInclusive` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x26cda2bfdefeef7c` for `std::ops::RangeInclusive`",
+        "after": "Type `std::ops::RangeInclusive` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "015",
+    "source_sha256": "08d113d251293d7cf3364d8c8c38d683ca6dd819b5e35b5bda489d9cbbf278b5",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xf72d7189409171fa` for `std::ops::RangeToInclusive`",
+        "after": "Type `std::ops::RangeToInclusive` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xf72d7189409171fa` for `std::ops::RangeToInclusive`",
+        "after": "Type `std::ops::RangeToInclusive` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "016",
+    "source_sha256": "23bf4d4f5c946f48a950dace87de717730d4d28803f7f52949e4377e5f349ba5",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0xd7ce48040c474be3` for `std::ops::RangeTo`",
+        "after": "Type `std::ops::RangeTo` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0xd7ce48040c474be3` for `std::ops::RangeTo`",
+        "after": "Type `std::ops::RangeTo` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "047",
+    "source_sha256": "2e01df69558b894b5930843737159e268347ce332c2fb4860c9a8eabd6dead66",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "after": "Type `std::i64` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "after": "Type `std::i64` has no method named `unrecognized`"
+      }
+    }
+  },
+  {
+    "id": "048",
+    "source_sha256": "1b97423e1048a2b7d02506e95cc48f665436e032775c0c62c6c233394920623e",
+    "changes": {
+      "stock": {
+        "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "after": "Type `std::i64` has no matching method"
+      },
+      "fresh": {
+        "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+        "after": "Type `std::i64` has no method named `unrecognized`"
+      }
+    }
+  }
+]

@@ -1,3 +1,14 @@
+fn d1_cmp_expectation(label: &str, source: &str, expected: &Json, engine: &str) -> Json {
+	let rows: Vec<Json> = serde_json::from_str(include_str!("d1_diagnostics.json")).unwrap();
+	let mut expected = expected.clone();
+	if let Some(row) = rows.iter().find(|row| row["label"] == label) {
+		assert_eq!(row["source_hex"], hex(source.as_bytes()));
+		assert_eq!(expected["display"], row["changes"][engine]["before"]);
+		expected["display"] = row["changes"][engine]["after"].clone();
+	}
+	expected
+}
+
 // Stock replay is a normal green test. No strict fresh test is registered here.
 const REPLAY_CAP: usize = 2 << 20;
 fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
@@ -201,7 +212,12 @@ fn run_contract(engine: &str) {
 			project_p1(&observed["outcome"], &counts[*label]).unwrap();
 			compare_p1(
 				&observed["outcome"],
-				&semantic_projection(&stock).unwrap(),
+				&d1_cmp_expectation(
+					label,
+					source,
+					&semantic_projection(&stock).unwrap(),
+					"stock",
+				),
 				&counts[*label],
 			)
 			.unwrap();
@@ -238,7 +254,7 @@ fn run_contract(engine: &str) {
 			assert_eq!(admission["stderr_hex"], c[5]);
 			compare_p1(
 				&observed["outcome"],
-				&admission["expected"],
+				&d1_cmp_expectation(label, source, &admission["expected"], "fresh"),
 				&counts[*label],
 			)
 			.unwrap();
@@ -296,7 +312,13 @@ fn compare_fresh_envelope(
 	{
 		return Err("manifest drift".into());
 	}
-	let expected = &dispositions.get(label).ok_or("unknown label")?["fresh_expectation"];
+	let d1_expected = d1_cmp_expectation(
+		label,
+		source,
+		&dispositions.get(label).ok_or("unknown label")?["fresh_expectation"],
+		"fresh",
+	);
+	let expected = &d1_expected;
 	if envelope["source_hex"] != hex(source.as_bytes())
 		|| envelope["label"] != label
 		|| envelope["engine"] != "fresh"
