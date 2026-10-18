@@ -1,0 +1,902 @@
+{
+  "schema": 1,
+  "rows": [
+    {
+      "family": "small_forms",
+      "label": "shift/shl/-1",
+      "source_hex": "666e206628612c62297b613c3c627d0a70756220666e206d61696e28297b6628312c2d31297d0a70756220666e206331325f726575736528297b377d",
+      "changes": {
+        "stock": {
+          "before": "Failed to convert value `-1` to integer `u32`",
+          "after": "Cannot convert `i64` value `-1` to `u32` for `<<`"
+        },
+        "fresh": {
+          "before": "Failed to convert value `-1` to integer `u32`",
+          "after": "Cannot convert `i64` value `-1` to `u32` for `<<`"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "small_forms",
+      "label": "shift/shl/64",
+      "source_hex": "666e206628612c62297b613c3c627d0a70756220666e206d61696e28297b6628312c3634297d0a70756220666e206331325f726575736528297b377d",
+      "changes": {
+        "stock": {
+          "before": "Numerical overflow",
+          "after": "Numerical overflow in `i64` left shift (`<<`)"
+        },
+        "fresh": {
+          "before": "Numerical overflow",
+          "after": "Numerical overflow in `i64` left shift (`<<`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "small_forms",
+      "label": "shift/shl/65",
+      "source_hex": "666e206628612c62297b613c3c627d0a70756220666e206d61696e28297b6628312c3635297d0a70756220666e206331325f726575736528297b377d",
+      "changes": {
+        "stock": {
+          "before": "Numerical overflow",
+          "after": "Numerical overflow in `i64` left shift (`<<`)"
+        },
+        "fresh": {
+          "before": "Numerical overflow",
+          "after": "Numerical overflow in `i64` left shift (`<<`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "small_forms",
+      "label": "shift/shr/-1",
+      "source_hex": "666e206628612c62297b613e3e627d0a70756220666e206d61696e28297b6628312c2d31297d0a70756220666e206331325f726575736528297b377d",
+      "changes": {
+        "stock": {
+          "before": "Failed to convert value `-1` to integer `u32`",
+          "after": "Cannot convert `i64` value `-1` to `u32` for `>>`"
+        },
+        "fresh": {
+          "before": "Failed to convert value `-1` to integer `u32`",
+          "after": "Cannot convert `i64` value `-1` to `u32` for `>>`"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "small_forms",
+      "label": "shift/shr/64",
+      "source_hex": "666e206628612c62297b613e3e627d0a70756220666e206d61696e28297b6628312c3634297d0a70756220666e206331325f726575736528297b377d",
+      "changes": {
+        "stock": {
+          "before": "Numerical underflow",
+          "after": "Numerical underflow in `i64` right shift (`>>`)"
+        },
+        "fresh": {
+          "before": "Numerical underflow",
+          "after": "Numerical underflow in `i64` right shift (`>>`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "small_forms",
+      "label": "shift/shr/65",
+      "source_hex": "666e206628612c62297b613e3e627d0a70756220666e206d61696e28297b6628312c3635297d0a70756220666e206331325f726575736528297b377d",
+      "changes": {
+        "stock": {
+          "before": "Numerical underflow",
+          "after": "Numerical underflow in `i64` right shift (`>>`)"
+        },
+        "fresh": {
+          "before": "Numerical underflow",
+          "after": "Numerical underflow in `i64` right shift (`>>`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "small_forms",
+      "label": "any/predicate-error",
+      "source_hex": "666e20702878297b6331323a3a74617028392c78293b782f28782d78293e307d0a70756220666e206d61696e28762c7374617465297b762e6974657228292e616e792870297d0a70756220666e206331325f726575736528297b377d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "callback_sort",
+      "label": "failure/first-call-failure",
+      "source_hex": "666e20636f6d7061726528612c62297b6c6574206e3d6331313a3a7469636b28612c62293b6966206e3d3d317b612f28622d62293b7d3b612e636d702862297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "callback_sort",
+      "label": "failure/later-failure",
+      "source_hex": "666e20636f6d7061726528612c62297b6c6574206e3d6331313a3a7469636b28612c62293b6966206e3d3d337b612f28622d62293b7d3b612e636d702862297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "callback_sort",
+      "label": "failure/all-failing",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28612c62293b612f28622d62297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "callback_sort",
+      "label": "failure/child-mutation",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28615b305d2c625b305d293b615b315d2e707573682839293b615b305d2f28625b305d2d625b305d297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "callback_sort",
+      "label": "failure/shared-child-mutation",
+      "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28615b305d2c625b305d293b615b315d2e707573682839293b615b305d2f28625b305d2d625b305d297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "constructors",
+      "label": "effects/error-second",
+      "source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b502874617028312c37292c312f30297d0a70756220666e206331355f726575736528297b377d0a",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "constructors",
+      "label": "effects/error-first",
+      "source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b5028312f302c74617028322c3929297d0a70756220666e206331355f726575736528297b377d0a",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "enum_variants",
+      "label": "patterns/guard-error",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6d6174636820453a3a542837297b453a3a5428782920696620312f303d3d783d3e312c5f3d3e74617028322c30297d7d0a70756220666e20633135625f726575736528297b377d0a",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "enum_variants",
+      "label": "effects/error-first",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b453a3a5028312f302c74617028322c3929297d0a70756220666e20633135625f726575736528297b377d0a",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "enum_variants",
+      "label": "effects/error-second",
+      "source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b453a3a502874617028312c37292c312f30297d0a70756220666e20633135625f726575736528297b377d0a",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "text_pipeline",
+      "label": "unwrap/eager-error/107",
+      "source_hex": "75736520633134623a3a7461703b0a666e2074657874287461672c73297b746170287461672c30293b737d0a0a70756220666e206d61696e28297b28536f6d65283729292e756e777261705f6f7228312f30297d0a70756220666e20633134625f726575736528297b377d0a",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "text_pipeline",
+      "label": "unwrap/eager-error/109",
+      "source_hex": "75736520633134623a3a7461703b0a666e2074657874287461672c73297b746170287461672c30293b737d0a0a70756220666e206d61696e28297b284e6f6e65292e756e777261705f6f7228312f30297d0a70756220666e20633134625f726575736528297b377d0a",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "text_pipeline",
+      "label": "unwrap/eager-error/111",
+      "source_hex": "75736520633134623a3a7461703b0a666e2074657874287461672c73297b746170287461672c30293b737d0a0a70756220666e206d61696e28297b284f6b283729292e756e777261705f6f7228312f30297d0a70756220666e20633134625f726575736528297b377d0a",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "family": "text_pipeline",
+      "label": "unwrap/eager-error/113",
+      "source_hex": "75736520633134623a3a7461703b0a666e2074657874287461672c73297b746170287461672c30293b737d0a0a70756220666e206d61696e28297b284572722822782229292e756e777261705f6f7228312f30297d0a70756220666e20633134625f726575736528297b377d0a",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      },
+      "disposition": "Intentional"
+    },
+    {
+      "disposition": "Intentional",
+      "family": "methods",
+      "label": "semantics/receiver-failure",
+      "source_hex": "70756220666e206d61696e28297b286331333a3a74617028312c37292f30292e756e7265636f676e697a6564286331333a3a74617028322c3829297d0a70756220666e206331335f726575736528297b377d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "methods",
+      "label": "semantics/argument-failure",
+      "source_hex": "70756220666e206d61696e28297b6331333a3a74617028312c3432292e756e7265636f676e697a6564286331333a3a74617028322c37292f302c6331333a3a74617028332c3829297d0a70756220666e206331335f726575736528297b377d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "format_specs",
+      "label": "order/first-operand-error",
+      "source_hex": "666e206d61726b2878297b7072696e742128226d22293b787d2070756220666e206d61696e28297b666f726d61742128227b3a30327d7b7d222c312f302c6d61726b283229297d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "format_specs",
+      "label": "order/later-operand-error",
+      "source_hex": "666e206d61726b2878297b7072696e742128226d22293b787d2070756220666e206d61696e28297b666f726d61742128227b3a30327d7b7d222c6d61726b2831292c312f30297d",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    }
+  ],
+  "records": [
+    {
+      "disposition": "Intentional",
+      "family": "index_stock.tsv",
+      "label": "witness/target-fails/get",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b202831202f203029207d20666e20696e6465782829207b207072696e746c6e212822696e64657822293b2030207d20666e207268732829207b207072696e746c6e21282272687322293b2033207d2070756220666e206d61696e2829207b2074617267657428295b696e64657828295d207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "index_stock.tsv",
+      "label": "witness/target-fails/set",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b202831202f203029207d20666e20696e6465782829207b207072696e746c6e212822696e64657822293b2030207d20666e207268732829207b207072696e746c6e21282272687322293b2033207d2070756220666e206d61696e2829207b2074617267657428295b696e64657828295d203d2072687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "index_stock.tsv",
+      "label": "witness/target-fails/add",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b202831202f203029207d20666e20696e6465782829207b207072696e746c6e212822696e64657822293b2030207d20666e207268732829207b207072696e746c6e21282272687322293b2033207d2070756220666e206d61696e2829207b2074617267657428295b696e64657828295d202b3d2072687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "index_stock.tsv",
+      "label": "witness/index-fails/get",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b205b31305d207d20666e20696e6465782829207b207072696e746c6e212822696e64657822293b202831202f203029207d20666e207268732829207b207072696e746c6e21282272687322293b2033207d2070756220666e206d61696e2829207b2074617267657428295b696e64657828295d207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "index_stock.tsv",
+      "label": "witness/index-fails/set",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b205b31305d207d20666e20696e6465782829207b207072696e746c6e212822696e64657822293b202831202f203029207d20666e207268732829207b207072696e746c6e21282272687322293b2033207d2070756220666e206d61696e2829207b2074617267657428295b696e64657828295d203d2072687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "index_stock.tsv",
+      "label": "witness/index-fails/add",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b205b31305d207d20666e20696e6465782829207b207072696e746c6e212822696e64657822293b202831202f203029207d20666e207268732829207b207072696e746c6e21282272687322293b2033207d2070756220666e206d61696e2829207b2074617267657428295b696e64657828295d202b3d2072687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "index_stock.tsv",
+      "label": "witness/rhs-fails/set",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b205b31305d207d20666e20696e6465782829207b207072696e746c6e212822696e64657822293b2030207d20666e207268732829207b207072696e746c6e21282272687322293b202831202f203029207d2070756220666e206d61696e2829207b2074617267657428295b696e64657828295d203d2072687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "index_stock.tsv",
+      "label": "witness/rhs-fails/add",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b205b31305d207d20666e20696e6465782829207b207072696e746c6e212822696e64657822293b2030207d20666e207268732829207b207072696e746c6e21282272687322293b202831202f203029207d2070756220666e206d61696e2829207b2074617267657428295b696e64657828295d202b3d2072687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "field_iter_stock.tsv",
+      "label": "witness/target-fails/get",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b2031202f2030207d20666e207268732829207b207072696e746c6e21282272687322293b2033207d2070756220666e206d61696e2829207b2074617267657428292e78207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "field_iter_stock.tsv",
+      "label": "witness/target-fails/set",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b2031202f2030207d20666e207268732829207b207072696e746c6e21282272687322293b2033207d2070756220666e206d61696e2829207b2074617267657428292e783d72687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "field_iter_stock.tsv",
+      "label": "witness/target-fails/add",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b2031202f2030207d20666e207268732829207b207072696e746c6e21282272687322293b2033207d2070756220666e206d61696e2829207b2074617267657428292e782b3d72687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "field_iter_stock.tsv",
+      "label": "witness/rhs-fails/set",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b20237b783a31307d207d20666e207268732829207b207072696e746c6e21282272687322293b2031202f2030207d2070756220666e206d61696e2829207b2074617267657428292e783d72687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "field_iter_stock.tsv",
+      "label": "witness/rhs-fails/add",
+      "source_hex": "666e207461726765742829207b207072696e746c6e21282274617267657422293b20237b783a31307d207d20666e207268732829207b207072696e746c6e21282272687322293b2031202f2030207d2070756220666e206d61696e2829207b2074617267657428292e782b3d72687328293b202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "field_iter_stock.tsv",
+      "label": "lifecycle/object-body-error",
+      "source_hex": "70756220666e206d61696e2829207b206c657420783d237b783a31307d3b20666f72207020696e2078207b206c6574206e3d312f303b207d202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "field_iter_stock.tsv",
+      "label": "option-snapshot/heap-body-error",
+      "source_hex": "70756220666e206d61696e2829207b206c657420783d536f6d65285b315d293b20666f72207620696e2078207b206c6574206e3d312f303b207d202829207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "field_iter_stock.tsv",
+      "label": "field-overflow",
+      "source_hex": "70756220666e206d61696e2829207b206c657420783d237b783a393232333337323033363835343737353830377d3b20782e782b3d313b20782e78207d",
+      "mode": "main",
+      "changes": {
+        "stock": {
+          "before": "Numerical overflow",
+          "after": "Numerical overflow in `i64` addition (`+=`)"
+        },
+        "fresh": {
+          "before": "Numerical overflow",
+          "after": "Numerical overflow in `i64` addition (`+=`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "assertions_stock.tsv",
+      "label": "errors/condition-error",
+      "source_hex": "666e206d61726b286e616d652c2076616c756529207b207072696e746c6e2128227b7d222c206e616d65293b2076616c7565207d2070756220666e206d61696e2829207b206173736572742128312f303d3d30293b203432207d",
+      "mode": "assert-main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "assertions_stock.tsv",
+      "label": "errors/left-error",
+      "source_hex": "666e206d61726b286e616d652c2076616c756529207b207072696e746c6e2128227b7d222c206e616d65293b2076616c7565207d2070756220666e206d61696e2829207b206173736572745f65712128312f302c206d61726b28227269676874222c203129293b203432207d",
+      "mode": "assert-main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "assertions_stock.tsv",
+      "label": "errors/right-error",
+      "source_hex": "666e206d61726b286e616d652c2076616c756529207b207072696e746c6e2128227b7d222c206e616d65293b2076616c7565207d2070756220666e206d61696e2829207b206173736572745f657121286d61726b28226c656674222c2031292c20312f30293b203432207d",
+      "mode": "assert-main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "assertions_stock.tsv",
+      "label": "errors/message-error",
+      "source_hex": "666e206d61726b286e616d652c2076616c756529207b207072696e746c6e2128227b7d222c206e616d65293b2076616c7565207d2070756220666e206d61696e2829207b20617373657274212866616c73652c2022776879207b7d222c20312f30293b203432207d",
+      "mode": "assert-main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "patterns_stock.tsv",
+      "label": "guard/error",
+      "source_hex": "73747275637420507b612c627d2070756220666e206d61696e28297b6d6174636820536f6d65283729207b20536f6d6528782920696620312f303d3d31203d3e20782c205f203d3e203232207d7d",
+      "mode": "c3-main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "patterns_stock.tsv",
+      "label": "flow/body-error",
+      "source_hex": "70756220666e206d61696e2829207b206d6174636820536f6d65285b315d29207b536f6d652878293d3e7b6c657420613d783b312f307d2c5f3d3e32327d207d",
+      "mode": "c3-main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "patterns_stock.tsv",
+      "label": "whilelet/error",
+      "source_hex": "70756220666e206d61696e2829207b207768696c65206c657420536f6d652878293d536f6d65285b315d29207b6c657420793d783b312f303b7d202829207d",
+      "mode": "c3-main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "patterns_stock.tsv",
+      "label": "life/W5-guard-error",
+      "source_hex": "70756220666e206d61696e2829207b206d6174636820536f6d65285b315d29207b536f6d6528782920696620312f303d3d313d3e782c5f3d3e5b5d7d207d",
+      "mode": "c3-main",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "output_macros_stock.tsv",
+      "label": "error/first-argument",
+      "source_hex": "70756220666e206d61696e2829207b206462672128312f302c7b7072696e746c6e2128226c61746522293b327d293b203432207d",
+      "mode": "c2-default",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero",
+          "observed_phase": "refused"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "output_macros_stock.tsv",
+      "label": "error/later-argument",
+      "source_hex": "70756220666e206d61696e2829207b2064626721287b7072696e742128226561726c7922293b317d2c312f30293b203432207d",
+      "mode": "c2-default",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero",
+          "observed_phase": "refused"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "output_macros_stock.tsv",
+      "label": "error/print-argument",
+      "source_hex": "70756220666e206d61696e2829207b207072696e742128227b7d222c312f30293b203432207d",
+      "mode": "c2-default",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "output_macros_stock.tsv",
+      "label": "error/panic-argument-format",
+      "source_hex": "70756220666e206d61696e2829207b2070616e69632128227b7d222c312f30293b203432207d",
+      "mode": "c2-default",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    },
+    {
+      "disposition": "Intentional",
+      "family": "gap_hunt/host_bridge/stock.tsv",
+      "label": "h1/flow/argument-error-before-host",
+      "source_hex": "70756220666e206d61696e28297b68313a3a6164642868313a3a6d61726b28226c656674222c37292c312f30297d",
+      "mode": "h1-normal",
+      "changes": {
+        "stock": {
+          "before": "Division by zero",
+          "after": "Division by zero"
+        },
+        "fresh": {
+          "before": "Division by zero",
+          "after": "Division by zero in `i64` division (`/`)"
+        }
+      }
+    }
+  ]
+}

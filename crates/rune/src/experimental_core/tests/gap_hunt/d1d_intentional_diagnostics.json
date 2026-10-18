@@ -1,0 +1,481 @@
+{
+  "schema": 1,
+  "authority": "Claude chatd 20008; keep old pins",
+  "baseline": "98a2da3074dbe17248f2e8e2bc8f4e22ded56aec",
+  "rows": [
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/detail.rs",
+      "old_start": 472,
+      "new_start": 472,
+      "before": [],
+      "after": [
+        "\t}",
+        "}",
+        "",
+        "impl crate::runtime::messages::OperandType for TypeName {",
+        "\tfn fmt_operand(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {",
+        "\t\tlet name = match self {",
+        "\t\t\tSelf::I64 => \"i64\",",
+        "\t\t\tSelf::U64 => \"u64\",",
+        "\t\t\tSelf::F64 => \"f64\",",
+        "\t\t\tSelf::Bool => \"bool\",",
+        "\t\t\tSelf::Char => \"char\",",
+        "\t\t\tSelf::String => \"String\",",
+        "\t\t\tSelf::Vec => \"Vec\",",
+        "\t\t\t_ => return fmt::Display::fmt(self, f),",
+        "\t\t};",
+        "\t\tf.write_str(name)"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/detail.rs",
+      "old_start": 654,
+      "new_start": 670,
+      "before": [],
+      "after": [
+        "pub(super) fn numeric_symbol(op: BinarySymbol) -> &'static str {",
+        "\tmatch op {",
+        "\t\tBinarySymbol::Add => \"+\",",
+        "\t\tBinarySymbol::Sub => \"-\",",
+        "\t\tBinarySymbol::Mul => \"*\",",
+        "\t\tBinarySymbol::Div => \"/\",",
+        "\t\tBinarySymbol::Rem => \"%\",",
+        "\t\tBinarySymbol::Shl => \"<<\",",
+        "\t\tBinarySymbol::Shr => \">>\",",
+        "\t\tBinarySymbol::AddAssign => \"+=\",",
+        "\t\tBinarySymbol::SubAssign => \"-=\",",
+        "\t\tBinarySymbol::MulAssign => \"*=\",",
+        "\t\tBinarySymbol::DivAssign => \"/=\",",
+        "\t\tBinarySymbol::RemAssign => \"%=\",",
+        "\t\tBinarySymbol::ShlAssign => \"<<=\",",
+        "\t\tBinarySymbol::ShrAssign => \">>=\",",
+        "\t\t_ => \"\",",
+        "\t}",
+        "}",
+        ""
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/detail.rs",
+      "old_start": 687,
+      "new_start": 723,
+      "before": [
+        "\t\t\tBinary { op, lhs, rhs } => messages::binary_unsupported(f, op, lhs, rhs),"
+      ],
+      "after": [
+        "\t\t\tBinary { op, lhs, rhs } => messages::binary_unsupported(",
+        "\t\t\t\tf,",
+        "\t\t\t\top,",
+        "\t\t\t\tmessages::Operand(&lhs),",
+        "\t\t\t\tmessages::Operand(&rhs),",
+        "\t\t\t),"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/detail.rs",
+      "old_start": 694,
+      "new_start": 735,
+      "before": [
+        "\t\t\t\toperand,"
+      ],
+      "after": [
+        "\t\t\t\tmessages::Operand(&operand),"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/detail.rs",
+      "old_start": 917,
+      "new_start": 958,
+      "before": [
+        "\t\t\t[32, 88, 248]"
+      ],
+      "after": [
+        "\t\t\t[32, 88, 272]"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/execute/host_bridge/minimal_tests.rs",
+      "old_start": 316,
+      "new_start": 316,
+      "before": [
+        "\tassert_eq!(core::mem::size_of::<Failure>(), 248);"
+      ],
+      "after": [
+        "\tassert_eq!(core::mem::size_of::<Failure>(), 272);"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/tests/diagnostics.rs",
+      "old_start": 197,
+      "new_start": 197,
+      "before": [
+        "\t\tlet text = stock_error.into_kind().to_string();"
+      ],
+      "after": [
+        "\t\tlet text = stock_error.to_string();"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/tests/diagnostics.rs",
+      "old_start": 221,
+      "new_start": 221,
+      "before": [
+        "\t\tlet fresh_text = failure.error.message(&program).to_string();"
+      ],
+      "after": [
+        "\t\tlet fresh_text = failure.message(&program).to_string();"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/tests/diagnostics.rs",
+      "old_start": 644,
+      "new_start": 644,
+      "before": [
+        "\t\tlet expected =",
+        "\t\t\tstd::format!(\"Unsupported binary operation `{op}` on `std::i64` and `std::bool`\");"
+      ],
+      "after": [
+        "\t\tlet expected = std::format!(\"Cannot apply `{op}` to `i64` and `bool`\");"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/tests/diagnostics.rs",
+      "old_start": 1056,
+      "new_start": 1055,
+      "before": [],
+      "after": [
+        "",
+        "#[test]",
+        "#[cfg(not(miri))]",
+        "fn d1d_numeric_context_slice_both_engines() {",
+        "\tuse crate::runtime::{VmError, VmErrorKind};",
+        "\tlet context = Context::with_default_modules().unwrap();",
+        "\tlet rows = [",
+        "\t\t(\"!a\", \"\\\"x\\\"\", \"0\", \"Cannot apply `!` to `String`\"),",
+        "\t\t(\"a & b\", \"7\", \"true\", \"Cannot apply `&` to `i64` and `bool`\"),",
+        "\t\t(\"a | b\", \"7\", \"true\", \"Cannot apply `|` to `i64` and `bool`\"),",
+        "\t\t(\"a ^ b\", \"7\", \"true\", \"Cannot apply `^` to `i64` and `bool`\"),",
+        "\t\t(",
+        "\t\t\t\"a << b\",",
+        "\t\t\t\"7\",",
+        "\t\t\t\"true\",",
+        "\t\t\t\"Cannot apply `<<` to `i64` and `bool`\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a >> b\",",
+        "\t\t\t\"7\",",
+        "\t\t\t\"true\",",
+        "\t\t\t\"Cannot apply `>>` to `i64` and `bool`\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a << b\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"-1\",",
+        "\t\t\t\"Cannot convert `i64` value `-1` to `u32` for `<<`\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a >> b\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"-1\",",
+        "\t\t\t\"Cannot convert `i64` value `-1` to `u32` for `>>`\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a << b\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"64\",",
+        "\t\t\t\"Numerical overflow in `i64` left shift (`<<`)\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a << b\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"65\",",
+        "\t\t\t\"Numerical overflow in `i64` left shift (`<<`)\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a >> b\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"64\",",
+        "\t\t\t\"Numerical underflow in `i64` right shift (`>>`)\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a >> b\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"65\",",
+        "\t\t\t\"Numerical underflow in `i64` right shift (`>>`)\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a / b\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"0\",",
+        "\t\t\t\"Division by zero in `i64` division (`/`)\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a % b\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"0\",",
+        "\t\t\t\"Division by zero in `i64` remainder (`%`)\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a + b\",",
+        "\t\t\t\"9223372036854775807\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"Numerical overflow in `i64` addition (`+`)\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a - b\",",
+        "\t\t\t\"-9223372036854775808\",",
+        "\t\t\t\"1\",",
+        "\t\t\t\"Numerical underflow in `i64` subtraction (`-`)\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a + b\",",
+        "\t\t\t\"18446744073709551615u64\",",
+        "\t\t\t\"1u64\",",
+        "\t\t\t\"Numerical overflow in `u64` addition (`+`)\",",
+        "\t\t),",
+        "\t\t(",
+        "\t\t\t\"a - b\",",
+        "\t\t\t\"0u64\",",
+        "\t\t\t\"1u64\",",
+        "\t\t\t\"Numerical underflow in `u64` subtraction (`-`)\",",
+        "\t\t),",
+        "\t];",
+        "\tfor (body, a, b, expected) in rows {",
+        "\t\tlet source = std::format!(\"fn f(a,b){{{body}}}pub fn main(){{f({a},{b})}}\");",
+        "\t\tlet (mut stock, program) = compile(&context, &source);",
+        "\t\tlet error = stock.call([\"main\"], ()).unwrap_err();",
+        "\t\tassert_eq!(error.to_string(), expected, \"stock {source}\");",
+        "\t\tlet mut store = Store::new(Limits::default()).unwrap();",
+        "\t\tlet mut executor = Executor::new().unwrap();",
+        "\t\tlet failure = executor",
+        "\t\t\t.invoke(",
+        "\t\t\t\t&program,",
+        "\t\t\t\t&mut store,",
+        "\t\t\t\tprogram.function(Hash::type_hash([\"main\"])).unwrap(),",
+        "\t\t\t\t&[],",
+        "\t\t\t\t100_000,",
+        "\t\t\t)",
+        "\t\t\t.unwrap_err();",
+        "\t\tassert_eq!(",
+        "\t\t\tfailure.message(&program).to_string(),",
+        "\t\t\texpected,",
+        "\t\t\t\"fresh {source}\"",
+        "\t\t);",
+        "\t\tassert!(matches!(",
+        "\t\t\tfailure.error.kind,",
+        "\t\t\tErrorKind::Type",
+        "\t\t\t\t| ErrorKind::Overflow",
+        "\t\t\t\t| ErrorKind::DivisionByZero",
+        "\t\t\t\t| ErrorKind::IntegerCoercion",
+        "\t\t));",
+        "\t\tassert_eq!(store.live_entries(), 0);",
+        "\t}",
+        "\tfor (kind, expected) in [",
+        "\t\t(VmErrorKind::Overflow, \"Numerical overflow\"),",
+        "\t\t(VmErrorKind::Underflow, \"Numerical underflow\"),",
+        "\t\t(VmErrorKind::DivideByZero, \"Division by zero\"),",
+        "\t] {",
+        "\t\tassert_eq!(VmError::from(kind).to_string(), expected);",
+        "\t}",
+        "\tlet (_, program) = compile(&context, \"pub fn main(){0}\");",
+        "\tfor (kind, expected) in [",
+        "\t\t(ErrorKind::Overflow, \"Numerical overflow\"),",
+        "\t\t(ErrorKind::DivisionByZero, \"Division by zero\"),",
+        "\t] {",
+        "\t\tlet error = crate::experimental_core::error::Error::new(kind, \"native helper\");",
+        "\t\tassert_eq!(error.message(&program).to_string(), expected);",
+        "\t}",
+        "}"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/tests/diagnostics_messages.tsv",
+      "old_start": 2,
+      "new_start": 2,
+      "before": [
+        "binary\tUnsupported binary operation `+` on `std::i64` and `std::bool`\t37\t45",
+        "multiline\tUnsupported binary operation `+` on `std::i64` and `std::bool`\t37\t46",
+        "binary-float\tUnsupported binary operation `+` on `std::i64` and `std::f64`\t37\t44",
+        "char\tUnsupported binary operation `+` on `std::char` and `std::i64`\t37\t44",
+        "unit\tUnsupported binary operation `+` on `std::tuple::Tuple` and `std::i64`\t37\t43",
+        "type\tUnsupported binary operation `+` on `std::any::Type` and `std::i64`\t37\t44",
+        "function\tUnsupported binary operation `+` on `std::ops::Function` and `std::i64`\t48\t53",
+        "assign\tUnsupported binary operation `+=` on `std::i64` and `std::bool`\t48\t57"
+      ],
+      "after": [
+        "binary\tCannot apply `+` to `i64` and `bool`\t37\t45",
+        "multiline\tCannot apply `+` to `i64` and `bool`\t37\t46",
+        "binary-float\tCannot apply `+` to `i64` and `f64`\t37\t44",
+        "char\tCannot apply `+` to `char` and `i64`\t37\t44",
+        "unit\tCannot apply `+` to `std::tuple::Tuple` and `i64`\t37\t43",
+        "type\tCannot apply `+` to `std::any::Type` and `i64`\t37\t44",
+        "function\tCannot apply `+` to `std::ops::Function` and `i64`\t48\t53",
+        "assign\tCannot apply `+=` to `i64` and `bool`\t48\t57"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/tests/diagnostics_messages.tsv",
+      "old_start": 13,
+      "new_start": 13,
+      "before": [
+        "string-unsupported\tUnsupported binary operation `-` on `std::string::String` and `std::string::String`\t37\t46",
+        "overflow\tNumerical overflow\t66\t71",
+        "underflow\tNumerical underflow\t67\t72",
+        "unsigned-underflow\tNumerical underflow\t37\t48",
+        "divide\tDivision by zero\t37\t42",
+        "remainder\tDivision by zero\t37\t42"
+      ],
+      "after": [
+        "string-unsupported\tCannot apply `-` to `String` and `String`\t37\t46",
+        "overflow\tNumerical overflow in `i64` addition (`+`)\t66\t71",
+        "underflow\tNumerical underflow in `i64` subtraction (`-`)\t67\t72",
+        "unsigned-underflow\tNumerical underflow in `u64` subtraction (`-`)\t37\t48",
+        "divide\tDivision by zero in `i64` division (`/`)\t37\t42",
+        "remainder\tDivision by zero in `i64` remainder (`%`)\t37\t42"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/tests/diagnostics_messages.tsv",
+      "old_start": 21,
+      "new_start": 21,
+      "before": [
+        "shift-negative\tFailed to convert value `-1` to integer `u32`\t37\t44",
+        "shift-wide\tFailed to convert value `4294967296` to integer `u32`\t37\t52",
+        "shift-width\tNumerical overflow\t37\t44",
+        "shift-unsigned\tFailed to convert value `18446744073709551615` to integer `u32`\t37\t65",
+        "neg\tUnsupported unary operation `-` on `std::bool`\t37\t42",
+        "not\tUnsupported unary operation `!` on `std::string::String`\t37\t41"
+      ],
+      "after": [
+        "shift-negative\tCannot convert `i64` value `-1` to `u32` for `<<`\t37\t44",
+        "shift-wide\tCannot convert `i64` value `4294967296` to `u32` for `<<`\t37\t52",
+        "shift-width\tNumerical overflow in `i64` left shift (`<<`)\t37\t44",
+        "shift-unsigned\tCannot convert `u64` value `18446744073709551615` to `u32` for `<<`\t37\t65",
+        "neg\tCannot apply `-` to `bool`\t37\t42",
+        "not\tCannot apply `!` to `String`\t37\t41"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/tests/struct_names.rs",
+      "old_start": 195,
+      "new_start": 195,
+      "before": [
+        "\tlet expected = \"Unsupported binary operation `+` on `NamedFailure` and `std::i64`\";"
+      ],
+      "after": [
+        "\tlet expected = \"Cannot apply `+` to `NamedFailure` and `i64`\";"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/tests/diagnostics_text.rs",
+      "old_start": 65,
+      "new_start": 65,
+      "before": [
+        "\t\t\t\t\t\t\t\"Unsupported binary operation `{op}` on `{}` and `{}`\",",
+        "\t\t\t\t\t\t\tcrate::runtime::messages::DiagnosticType(lhs),",
+        "\t\t\t\t\t\t\tcrate::runtime::messages::DiagnosticType(rhs)"
+      ],
+      "after": [
+        "\t\t\t\t\t\t\t\"Cannot apply `{op}` to `{}` and `{}`\",",
+        "\t\t\t\t\t\t\tcrate::runtime::messages::Operand(lhs),",
+        "\t\t\t\t\t\t\tcrate::runtime::messages::Operand(rhs)"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/tests/diagnostics_text.rs",
+      "old_start": 82,
+      "new_start": 82,
+      "before": [
+        "\t\t\tformat!(\"Unsupported binary operation `{op}` on `std::i64` and `std::string::String`\")",
+        "\t\t);",
+        "\t}",
+        "\tfor (body, op, ty) in [",
+        "\t\t(\"-(true)\", \"-\", \"std::bool\"),",
+        "\t\t(\"!\\\"a\\\"\", \"!\", \"std::string::String\"),",
+        "\t] {"
+      ],
+      "after": [
+        "\t\t\tformat!(\"Cannot apply `{op}` to `i64` and `String`\")",
+        "\t\t);",
+        "\t}",
+        "\tfor (body, op, ty) in [(\"-(true)\", \"-\", \"bool\"), (\"!\\\"a\\\"\", \"!\", \"String\")] {"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/tests/diagnostics_text.rs",
+      "old_start": 93,
+      "new_start": 90,
+      "before": [
+        "\t\tassert_eq!(",
+        "\t\t\terror.to_string(),",
+        "\t\t\tformat!(\"Unsupported unary operation `{op}` on `{ty}`\")",
+        "\t\t);"
+      ],
+      "after": [
+        "\t\tassert_eq!(error.to_string(), format!(\"Cannot apply `{op}` to `{ty}`\"));"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/tests/diagnostics_text.rs",
+      "old_start": 141,
+      "new_start": 135,
+      "before": [
+        "\t\t(\"1 << -1\", \"Failed to convert value `-1` to integer `u32`\"),"
+      ],
+      "after": [
+        "\t\t(",
+        "\t\t\t\"1 << -1\",",
+        "\t\t\t\"Cannot convert `i64` value `-1` to `u32` for `<<`\",",
+        "\t\t),"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/tests/diagnostics_text.rs",
+      "old_start": 215,
+      "new_start": 212,
+      "before": [
+        "\t\t\t\tformat!(",
+        "\t\t\t\t\t\"Unsupported binary operation `{op}` on `std::i64` and `std::string::String`\"",
+        "\t\t\t\t),"
+      ],
+      "after": [
+        "\t\t\t\tformat!(\"Cannot apply `{op}` to `i64` and `String`\"),"
+      ]
+    },
+    {
+      "disposition": "Intentional",
+      "path": "crates/rune/src/experimental_core/tests/gap_hunt/host_bridge/contract.rs",
+      "old_start": 121,
+      "new_start": 121,
+      "before": [
+        "\tassert_eq!(failure.message(&program).to_string(), unhex(fields[3]));"
+      ],
+      "after": [
+        "\tassert_eq!(unhex(fields[3]), \"Division by zero\");",
+        "\tassert_eq!(",
+        "\t\tfailure.message(&program).to_string(),",
+        "\t\t\"Division by zero in `i64` division (`/`)\"",
+        "\t);"
+      ]
+    }
+  ]
+}

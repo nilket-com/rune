@@ -1,29 +1,29 @@
 id	message	start	end
-binary	Unsupported binary operation `+` on `std::i64` and `std::bool`	37	45
-multiline	Unsupported binary operation `+` on `std::i64` and `std::bool`	37	46
-binary-float	Unsupported binary operation `+` on `std::i64` and `std::f64`	37	44
-char	Unsupported binary operation `+` on `std::char` and `std::i64`	37	44
-unit	Unsupported binary operation `+` on `std::tuple::Tuple` and `std::i64`	37	43
-type	Unsupported binary operation `+` on `std::any::Type` and `std::i64`	37	44
-function	Unsupported binary operation `+` on `std::ops::Function` and `std::i64`	48	53
-assign	Unsupported binary operation `+=` on `std::i64` and `std::bool`	48	57
+binary	Cannot apply `+` to `i64` and `bool`	37	45
+multiline	Cannot apply `+` to `i64` and `bool`	37	46
+binary-float	Cannot apply `+` to `i64` and `f64`	37	44
+char	Cannot apply `+` to `char` and `i64`	37	44
+unit	Cannot apply `+` to `std::tuple::Tuple` and `i64`	37	43
+type	Cannot apply `+` to `std::any::Type` and `i64`	37	44
+function	Cannot apply `+` to `std::ops::Function` and `i64`	48	53
+assign	Cannot apply `+=` to `i64` and `bool`	48	57
 assign-string	Expected type `std::string::String` but found `std::i64`	50	56
 string	Expected type `std::string::String` but found `std::i64`	37	44
 string-compare	Expected type `std::string::String` but found `std::i64`	37	44
-string-unsupported	Unsupported binary operation `-` on `std::string::String` and `std::string::String`	37	46
-overflow	Numerical overflow	66	71
-underflow	Numerical underflow	67	72
-unsigned-underflow	Numerical underflow	37	48
-divide	Division by zero	37	42
-remainder	Division by zero	37	42
+string-unsupported	Cannot apply `-` to `String` and `String`	37	46
+overflow	Numerical overflow in `i64` addition (`+`)	66	71
+underflow	Numerical underflow in `i64` subtraction (`-`)	67	72
+unsigned-underflow	Numerical underflow in `u64` subtraction (`-`)	37	48
+divide	Division by zero in `i64` division (`/`)	37	42
+remainder	Division by zero in `i64` remainder (`%`)	37	42
 coerce-signed	Failed to convert value `18446744073709551615` to integer `i64`	37	64
 coerce-unsigned	Failed to convert value `-1` to integer `u64`	37	46
-shift-negative	Failed to convert value `-1` to integer `u32`	37	44
-shift-wide	Failed to convert value `4294967296` to integer `u32`	37	52
-shift-width	Numerical overflow	37	44
-shift-unsigned	Failed to convert value `18446744073709551615` to integer `u32`	37	65
-neg	Unsupported unary operation `-` on `std::bool`	37	42
-not	Unsupported unary operation `!` on `std::string::String`	37	41
+shift-negative	Cannot convert `i64` value `-1` to `u32` for `<<`	37	44
+shift-wide	Cannot convert `i64` value `4294967296` to `u32` for `<<`	37	52
+shift-width	Numerical overflow in `i64` left shift (`<<`)	37	44
+shift-unsigned	Cannot convert `u64` value `18446744073709551615` to `u32` for `<<`	37	65
+neg	Cannot apply `-` to `bool`	37	42
+not	Cannot apply `!` to `String`	37	41
 cast-source	Type `std::bool` cannot be converted with `as`, which only converts between `i64`, `u64` and `f64`	37	48
 cast-target	Type `std::i64` cannot be converted with `as` to that type, which only converts to `i64`, `u64` or `f64`	37	46
 condition	Expected type `std::bool` but found `std::i64`	40	41

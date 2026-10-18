@@ -313,7 +313,7 @@ fn typed_host_conversion_metadata_comes_from_the_real_native_error() {
 	);
 	assert_eq!(core::mem::size_of::<Detail>(), 32);
 	assert_eq!(core::mem::size_of::<Error>(), 88);
-	assert_eq!(core::mem::size_of::<Failure>(), 248);
+	assert_eq!(core::mem::size_of::<Failure>(), 272);
 }
 
 #[test]

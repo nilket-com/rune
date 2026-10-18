@@ -116,6 +116,7 @@ fn missing_instance_accessor_is_root_only_and_detail_stays_small() {
 		instance,
 	};
 	let mut failure = Failure {
+		numeric_context: None,
 		error: Error::new(ErrorKind::Type, "store").with_detail(detail),
 		missing_key: None,
 		panic_message: None,

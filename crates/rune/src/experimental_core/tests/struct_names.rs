@@ -192,7 +192,7 @@ fn struct_diagnostic_uses_the_item_name_on_both_engines() {
 			1000,
 		)
 		.unwrap_err();
-	let expected = "Unsupported binary operation `+` on `NamedFailure` and `std::i64`";
+	let expected = "Cannot apply `+` to `NamedFailure` and `i64`";
 	assert_eq!(failure.error.message(&program).to_string(), expected);
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(source).unwrap()).unwrap();

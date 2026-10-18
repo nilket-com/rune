@@ -221,7 +221,8 @@ fn run_contract(engine: &str) {
 		.unwrap();
 		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
 		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
-		let e: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let mut e: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		e["observation"]["outcome"] = super::d1c_diagnostics::d1d_before("cmp_ordering", label, source, engine, &e["observation"]["outcome"]);
 		assert_eq!(e["schema"], 1);
 		assert_eq!(e["engine"], engine);
 		assert_eq!(e["index"], i);

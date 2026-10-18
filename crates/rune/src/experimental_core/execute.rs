@@ -140,6 +140,7 @@ struct Frame {
 /// script heap.
 #[derive(Debug)]
 pub struct Failure {
+	numeric_context: Option<NumericContext>,
 	/// The error that stopped the invocation.
 	pub error: Error,
 	/// Full dynamic missing-field key, if its best-effort diagnostic copy succeeded.
@@ -226,6 +227,36 @@ impl core::fmt::Display for FailureMessage<'_> {
 				Detail::HostPanicked => return write!(f, "host panicked: {message}"),
 				_ => (),
 			}
+		}
+		if let Some(context) = self.failure.numeric_context {
+			let error = &self.failure.error;
+			let op = super::detail::numeric_symbol(context.op);
+			if let Detail::Coerce { value, to } = error.detail {
+				return crate::runtime::messages::shift_coerce(
+					f,
+					if context.rhs == TypeName::U64 {
+						"u64"
+					} else {
+						"i64"
+					},
+					value,
+					to,
+					context.op,
+				);
+			}
+			let reason = if error.detail == Detail::Underflow {
+				"Numerical underflow"
+			} else if error.kind == ErrorKind::DivisionByZero {
+				"Division by zero"
+			} else {
+				"Numerical overflow"
+			};
+			return crate::runtime::messages::numeric_fault(
+				f,
+				reason,
+				op,
+				crate::runtime::messages::Operand(&context.lhs),
+			);
 		}
 		core::fmt::Display::fmt(&self.failure.error.message(self.program), f)
 	}
@@ -447,6 +478,7 @@ impl Executor {
 		})();
 		if let Err(error) = admission {
 			return Err(Failure {
+				numeric_context: None,
 				error,
 				missing_key: None,
 				panic_message: None,
@@ -1515,6 +1547,8 @@ impl Executor {
 		match result {
 			Ok(value) => Ok(value),
 			Err(mut failure) => {
+				let numeric_context =
+					invocation_numeric_context(&failure, code, store, &self.frames, &self.slots);
 				self.resolve_failure_location(code, &mut failure);
 				let mut cleanup_error = setup_cleanup_error.or(self.pending_host_cleanup.take());
 				let mut host_message = self.pending_host_message.take();
@@ -1536,6 +1570,7 @@ impl Executor {
 
 				self.frames.clear();
 				Err(Failure {
+					numeric_context,
 					error: failure,
 					missing_key,
 					panic_message,
@@ -2651,4 +2686,60 @@ impl Executor {
 			result,
 		)
 	}
+}
+
+#[derive(Clone, Copy, Debug)]
+struct NumericContext {
+	op: BinarySymbol,
+	lhs: TypeName,
+	rhs: TypeName,
+}
+
+#[cold]
+#[inline(never)]
+fn invocation_numeric_context(
+	error: &Error,
+	code: &Code,
+	store: &Store,
+	frames: &[Frame],
+	slots: &[Value],
+) -> Option<NumericContext> {
+	if error.operation != "primitive operation"
+		|| !matches!(
+			error.kind,
+			ErrorKind::Overflow | ErrorKind::DivisionByZero | ErrorKind::IntegerCoercion
+		) {
+		return None;
+	}
+	let frame = frames.last()?;
+	let function = code.function(frame.function)?;
+	let pc = frame.pc.checked_sub(1)?;
+	if error.location != function.locations.get(pc).copied() {
+		return None;
+	}
+	let (operator, lhs, rhs, assign) = match function.cached_ref(pc)?.op {
+		Op::Binary { op, lhs, rhs, .. } => (op, lhs, rhs, false),
+		Op::AssignBinary { op, lhs, rhs, .. } => (op, lhs, rhs, true),
+		_ => return None,
+	};
+	let lhs = store.diagnostic_type(*slots.get(frame.base + lhs as usize)?)?;
+	let rhs = store.diagnostic_type(*slots.get(frame.base + rhs as usize)?)?;
+	if !matches!(lhs, TypeName::I64 | TypeName::U64)
+		|| !matches!(rhs, TypeName::I64 | TypeName::U64)
+	{
+		return None;
+	}
+	match error.detail {
+		Detail::None | Detail::Underflow
+			if matches!(error.kind, ErrorKind::Overflow | ErrorKind::DivisionByZero) => {}
+		Detail::Coerce {
+			to: IntTarget::U32, ..
+		} if matches!(operator, arithmetic::Binary::Shl | arithmetic::Binary::Shr) => (),
+		_ => return None,
+	}
+	Some(NumericContext {
+		op: BinarySymbol::from_op(operator, assign),
+		lhs,
+		rhs,
+	})
 }

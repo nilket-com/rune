@@ -3,6 +3,8 @@ use serde_json::Value as Json;
 /// Check the exact source-bound D1c display before comparing immutable oracles.
 /// All non-display fields remain available to the existing strict comparators.
 pub(super) fn before(family: &str, label: &str, source: &str, engine: &str, actual: &Json) -> Json {
+	let actual = d1d_before(family, label, source, engine, actual);
+	let actual = &actual;
 	let document: Json = serde_json::from_str(include_str!("d1c_diagnostics.json")).unwrap();
 	assert_eq!(document["schema"], 1);
 	assert!(matches!(engine, "stock" | "fresh"));
@@ -33,7 +35,14 @@ pub(super) fn before(family: &str, label: &str, source: &str, engine: &str, actu
 
 pub(super) fn stock_display(error: &crate::runtime::VmError) -> std::string::String {
 	let kind = error.error().kind();
-	if matches!(kind, crate::runtime::VmErrorKind::AccessError { .. }) {
+	if matches!(
+		kind,
+		crate::runtime::VmErrorKind::AccessError { .. }
+			| crate::runtime::VmErrorKind::Overflow
+			| crate::runtime::VmErrorKind::Underflow
+			| crate::runtime::VmErrorKind::DivideByZero
+			| crate::runtime::VmErrorKind::ValueToIntegerCoercionError { .. }
+	) {
 		std::string::ToString::to_string(error)
 	} else {
 		std::string::ToString::to_string(kind)
@@ -47,6 +56,33 @@ pub(super) fn record_before(source: &str, engine: &str, actual: &str) -> std::st
 		.split('\t')
 		.map(str::to_string)
 		.collect::<std::vec::Vec<_>>();
+	if fields.len() == 5 && fields[0] == "error" {
+		let doc: Json = serde_json::from_str(include_str!("d1d_numeric_diagnostics.json")).unwrap();
+		let source_hex = super::hex(source.as_bytes());
+		let matching = doc["records"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.filter(|row| row["source_hex"] == source_hex)
+			.collect::<std::vec::Vec<_>>();
+		if let Some(row) = matching.first() {
+			let rule = &row["changes"][engine];
+			assert!(matching.iter().all(|r| r["changes"][engine] == *rule));
+			assert_eq!(
+				super::unhex(&fields[3]),
+				rule["after"].as_str().unwrap(),
+				"D1d record {}",
+				row["label"]
+			);
+			fields[3] = super::hex(rule["before"].as_str().unwrap().as_bytes());
+			return fields.join("\t");
+		}
+		let message = super::unhex(&fields[3]);
+		if let Some(previous) = previous_operator_display(&message) {
+			fields[3] = super::hex(previous.as_bytes());
+			return fields.join("\t");
+		}
+	}
 	if fields.len() == 5 && fields[0] == "observation-error" && fields[1] == "Debug" {
 		let rows: std::vec::Vec<Json> =
 			serde_json::from_str(include_str!("d1c_debug_diagnostics.json")).unwrap();
@@ -167,4 +203,69 @@ fn display_pins_reject_wrong_state_source_and_position() {
 			.is_err());
 		}
 	}
+}
+
+/// Reversible presentation migration for the existing typed operator payloads.
+/// The frozen comparisons still check the complete operator/type payload and sites.
+fn previous_operator_display(current: &str) -> Option<std::string::String> {
+	let tail = current.strip_prefix("Cannot apply `")?;
+	let (op, operands) = tail.split_once("` to `")?;
+	let operands = operands.strip_suffix('`')?;
+	fn previous_type(name: &str) -> &str {
+		match name {
+			"i64" => "std::i64",
+			"u64" => "std::u64",
+			"f64" => "std::f64",
+			"bool" => "std::bool",
+			"char" => "std::char",
+			"String" => "std::string::String",
+			"Vec" => "std::vec::Vec",
+			other => other,
+		}
+	}
+	Some(if let Some((lhs, rhs)) = operands.split_once("` and `") {
+		std::format!(
+			"Unsupported binary operation `{op}` on `{}` and `{}`",
+			previous_type(lhs),
+			previous_type(rhs)
+		)
+	} else {
+		assert!(matches!(op, "!" | "-"));
+		std::format!(
+			"Unsupported unary operation `{op}` on `{}`",
+			previous_type(operands)
+		)
+	})
+}
+
+pub(super) fn d1d_before(
+	family: &str,
+	label: &str,
+	source: &str,
+	engine: &str,
+	actual: &Json,
+) -> Json {
+	let mut before = actual.clone();
+	if let Some(current) = actual["display"].as_str() {
+		if let Some(previous) = previous_operator_display(current) {
+			before["display"] = Json::String(previous);
+			return before;
+		}
+	}
+	let doc: Json = serde_json::from_str(include_str!("d1d_numeric_diagnostics.json")).unwrap();
+	assert_eq!(doc["schema"], 1);
+	if let Some(row) = doc["rows"]
+		.as_array()
+		.unwrap()
+		.iter()
+		.find(|row| row["family"] == family && row["label"] == label)
+	{
+		assert_eq!(row["source_hex"], super::hex(source.as_bytes()));
+		assert_eq!(
+			actual["display"], row["changes"][engine]["after"],
+			"D1d {family}/{label}/{engine}"
+		);
+		before["display"] = row["changes"][engine]["before"].clone();
+	}
+	before
 }

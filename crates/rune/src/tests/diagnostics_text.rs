@@ -62,9 +62,9 @@ fn source_operator_symbols_and_inline_mismatches() {
 					assert_eq!(
 						error.to_string(),
 						format!(
-							"Unsupported binary operation `{op}` on `{}` and `{}`",
-							crate::runtime::messages::DiagnosticType(lhs),
-							crate::runtime::messages::DiagnosticType(rhs)
+							"Cannot apply `{op}` to `{}` and `{}`",
+							crate::runtime::messages::Operand(lhs),
+							crate::runtime::messages::Operand(rhs)
 						),
 						"{body}"
 					);
@@ -79,21 +79,15 @@ fn source_operator_symbols_and_inline_mismatches() {
 		);
 		assert_eq!(
 			error.to_string(),
-			format!("Unsupported binary operation `{op}` on `std::i64` and `std::string::String`")
+			format!("Cannot apply `{op}` to `i64` and `String`")
 		);
 	}
-	for (body, op, ty) in [
-		("-(true)", "-", "std::bool"),
-		("!\"a\"", "!", "std::string::String"),
-	] {
+	for (body, op, ty) in [("-(true)", "-", "bool"), ("!\"a\"", "!", "String")] {
 		let error = fail(body);
 		assert!(
 			matches!(error.error().kind(), VmErrorKind::UnsupportedUnaryOperation { op: actual, .. } if *actual == op)
 		);
-		assert_eq!(
-			error.to_string(),
-			format!("Unsupported unary operation `{op}` on `{ty}`")
-		);
+		assert_eq!(error.to_string(), format!("Cannot apply `{op}` to `{ty}`"));
 	}
 }
 
@@ -138,7 +132,10 @@ fn coercion_and_library_errors_keep_their_contract() {
 			"1 + u64::MAX",
 			"Failed to convert value `18446744073709551615` to integer `i64`",
 		),
-		("1 << -1", "Failed to convert value `-1` to integer `u32`"),
+		(
+			"1 << -1",
+			"Cannot convert `i64` value `-1` to `u32` for `<<`",
+		),
 		("[1][-1]", "Failed to convert value `-1` to integer `usize`"),
 		("[1,2][1.5]", "Expected number type, but found `std::f64`"),
 		(
@@ -212,9 +209,7 @@ fn compound_targets_and_heap_rhs_keep_source_symbols() {
 			);
 			assert_eq!(
 				error.to_string(),
-				format!(
-					"Unsupported binary operation `{op}` on `std::i64` and `std::string::String`"
-				),
+				format!("Cannot apply `{op}` to `i64` and `String`"),
 				"{body}"
 			);
 		}

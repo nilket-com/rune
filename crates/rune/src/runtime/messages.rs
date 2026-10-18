@@ -50,16 +50,80 @@ impl Write for TypeWriter<'_, '_> {
 	}
 }
 
+/// Diagnostic operand spelling, independent of type identity.
+pub(crate) trait OperandType {
+	fn fmt_operand(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result;
+}
+pub(crate) struct Operand<'a, T: ?Sized>(pub(crate) &'a T);
+impl<T: ?Sized + OperandType> Display for Operand<'_, T> {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		self.0.fmt_operand(f)
+	}
+}
+impl OperandType for crate::runtime::TypeInfo {
+	fn fmt_operand(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		use crate::TypeHash;
+		let hash = self.type_hash();
+		let name = if hash == i64::HASH {
+			"i64"
+		} else if hash == u64::HASH {
+			"u64"
+		} else if hash == f64::HASH {
+			"f64"
+		} else if hash == bool::HASH {
+			"bool"
+		} else if hash == char::HASH {
+			"char"
+		} else if hash == crate::alloc::String::HASH {
+			"String"
+		} else if hash == crate::runtime::Vec::HASH {
+			"Vec"
+		} else {
+			return DiagnosticType(self).fmt(f);
+		};
+		f.write_str(name)
+	}
+}
+
+pub(crate) fn numeric_fault(
+	f: &mut fmt::Formatter<'_>,
+	reason: &str,
+	op: &str,
+	operand: impl Display,
+) -> fmt::Result {
+	let action = match op {
+		"+" | "+=" => "addition",
+		"-" | "-=" => "subtraction",
+		"*" | "*=" => "multiplication",
+		"/" | "/=" => "division",
+		"%" | "%=" => "remainder",
+		"<<" | "<<=" => "left shift",
+		">>" | ">>=" => "right shift",
+		_ => return f.write_str(reason),
+	};
+	write!(f, "{reason} in `{operand}` {action} (`{op}`)")
+}
+
+pub(crate) fn shift_coerce(
+	f: &mut fmt::Formatter<'_>,
+	from: impl Display,
+	value: impl Display,
+	to: impl Display,
+	op: impl Display,
+) -> fmt::Result {
+	write!(
+		f,
+		"Cannot convert `{from}` value `{value}` to `{to}` for `{op}`"
+	)
+}
+
 pub(crate) fn binary_unsupported(
 	f: &mut fmt::Formatter<'_>,
 	op: impl Display,
 	lhs: impl Display,
 	rhs: impl Display,
 ) -> fmt::Result {
-	write!(
-		f,
-		"Unsupported binary operation `{op}` on `{lhs}` and `{rhs}`"
-	)
+	write!(f, "Cannot apply `{op}` to `{lhs}` and `{rhs}`")
 }
 
 pub(crate) fn unary_unsupported(
@@ -67,7 +131,7 @@ pub(crate) fn unary_unsupported(
 	op: impl Display,
 	operand: impl Display,
 ) -> fmt::Result {
-	write!(f, "Unsupported unary operation `{op}` on `{operand}`")
+	write!(f, "Cannot apply `{op}` to `{operand}`")
 }
 
 pub(crate) fn expected_type(

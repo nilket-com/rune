@@ -90,6 +90,7 @@ impl VmError {
 				},
 				chain: rust_alloc::vec::Vec::new(),
 				stacktrace: rust_alloc::vec::Vec::new(),
+				numeric_context: None,
 			}),
 		}
 	}
@@ -141,6 +142,27 @@ impl VmError {
 	#[inline]
 	pub fn overflow() -> Self {
 		Self::from(VmErrorKind::Overflow)
+	}
+
+	/// Construct context exclusively after a checked primitive has failed.
+	#[cold]
+	#[inline(never)]
+	pub(crate) fn numeric_failure(
+		kind: VmErrorKind,
+		op: &'static str,
+		operand: &'static str,
+	) -> Self {
+		let operand = match &kind {
+			VmErrorKind::ValueToIntegerCoercionError { from, .. } => match from.kind {
+				VmIntegerReprKind::Signed(_) => "i64",
+				VmIntegerReprKind::Unsigned(_) => "u64",
+				_ => operand,
+			},
+			_ => operand,
+		};
+		let mut error = Self::new(kind);
+		error.inner.numeric_context = Some((op, operand));
+		error
 	}
 
 	/// Get the first error location.
@@ -205,6 +227,31 @@ impl VmError {
 impl fmt::Display for VmError {
 	#[inline]
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		if let Some((op, operand)) = self.inner.numeric_context {
+			let reason = match &self.inner.error.kind {
+				VmErrorKind::Overflow => Some("Numerical overflow"),
+				VmErrorKind::Underflow => Some("Numerical underflow"),
+				VmErrorKind::DivideByZero => Some("Division by zero"),
+				VmErrorKind::ValueToIntegerCoercionError { from, to }
+					if matches!(op, "<<" | ">>" | "<<=" | ">>=") =>
+				{
+					let source = match from.kind {
+						VmIntegerReprKind::Signed(_) => Some("i64"),
+						VmIntegerReprKind::Unsigned(_) => Some("u64"),
+						_ => None,
+					};
+					if let Some(source) = source {
+						return super::messages::shift_coerce(f, source, from, to, op);
+					}
+					None
+				}
+				_ => None,
+			};
+			if let Some(reason) = reason {
+				return super::messages::numeric_fault(f, reason, op, operand);
+			}
+		}
+
 		if let VmErrorKind::AccessError { error } = &self.inner.error.kind {
 			let arg = if error.is_moved() {
 				None
@@ -294,6 +341,7 @@ pub(crate) struct VmErrorInner {
 	pub(crate) error: VmErrorAt,
 	pub(crate) chain: rust_alloc::vec::Vec<VmErrorAt>,
 	pub(crate) stacktrace: rust_alloc::vec::Vec<VmErrorLocation>,
+	numeric_context: Option<(&'static str, &'static str)>,
 }
 
 /// A result produced by the virtual machine.
@@ -350,6 +398,7 @@ impl<const N: usize> From<[VmErrorKind; N]> for VmError {
 				},
 				chain,
 				stacktrace: rust_alloc::vec::Vec::new(),
+				numeric_context: None,
 			}),
 		}
 	}
@@ -883,12 +932,12 @@ impl fmt::Display for VmErrorKind {
 				"Instruction pointer `{ip}` is out-of-bounds `0-{length}`",
 			),
 			VmErrorKind::UnsupportedBinaryOperation { op, lhs, rhs } => {
-				let lhs = super::messages::DiagnosticType(lhs);
-				let rhs = super::messages::DiagnosticType(rhs);
+				let lhs = super::messages::Operand(lhs);
+				let rhs = super::messages::Operand(rhs);
 				super::messages::binary_unsupported(f, op, lhs, rhs)
 			}
 			VmErrorKind::UnsupportedUnaryOperation { op, operand } => {
-				let operand = super::messages::DiagnosticType(operand);
+				let operand = super::messages::Operand(operand);
 				super::messages::unary_unsupported(f, op, operand)
 			}
 			VmErrorKind::MissingStaticString { slot } => {

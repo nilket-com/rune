@@ -1703,15 +1703,29 @@ impl Vm {
 			let inline = match (lhs.as_ref(), rhs.as_ref()) {
 				(Repr::Inline(lhs), Repr::Inline(rhs)) => match (lhs, rhs) {
 					(Inline::Unsigned(lhs), rhs @ (Inline::Signed(_) | Inline::Unsigned(_))) => {
-						let rhs = rhs.as_integer()?;
-						let value =
-							(ops.u64)(*lhs, rhs).ok_or_else(|| (ops.error)(i128::from(rhs)))?;
+						let rhs = rhs
+							.as_integer()
+							.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
+						let value = (ops.u64)(*lhs, rhs).ok_or_else(|| {
+							VmError::numeric_failure(
+								(ops.error)(i128::from(rhs)),
+								ops.symbol,
+								"u64",
+							)
+						})?;
 						Inline::Unsigned(value)
 					}
 					(Inline::Signed(lhs), rhs @ (Inline::Signed(_) | Inline::Unsigned(_))) => {
-						let rhs = rhs.as_integer()?;
-						let value =
-							(ops.i64)(*lhs, rhs).ok_or_else(|| (ops.error)(i128::from(rhs)))?;
+						let rhs = rhs
+							.as_integer()
+							.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
+						let value = (ops.i64)(*lhs, rhs).ok_or_else(|| {
+							VmError::numeric_failure(
+								(ops.error)(i128::from(rhs)),
+								ops.symbol,
+								"i64",
+							)
+						})?;
 						Inline::Signed(value)
 					}
 					(Inline::Float(lhs), Inline::Float(rhs)) => {
@@ -1779,7 +1793,9 @@ impl Vm {
 					Repr::Inline(Inline::Unsigned(lhs)),
 					Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 				) => {
-					let rhs = rhs.as_integer()?;
+					let rhs = rhs
+						.as_integer()
+						.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
 					let value = (ops.u64)(*lhs, rhs);
 					Inline::Unsigned(value)
 				}
@@ -1787,7 +1803,9 @@ impl Vm {
 					Repr::Inline(Inline::Signed(lhs)),
 					Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 				) => {
-					let rhs = rhs.as_integer()?;
+					let rhs = rhs
+						.as_integer()
+						.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
 					let value = (ops.i64)(*lhs, rhs);
 					Inline::Signed(value)
 				}
@@ -1844,13 +1862,21 @@ impl Vm {
 				match self.stack.pair(lhs, rhs)? {
 					Pair::Same(value) => match value.as_mut() {
 						Repr::Inline(Inline::Unsigned(value)) => {
-							let shift = u32::try_from(*value).ok().ok_or_else(ops.error)?;
-							let value = (ops.u64)(*value, shift).ok_or_else(ops.error)?;
+							let shift = u32::try_from(*value).ok().ok_or_else(|| {
+								VmError::numeric_failure((ops.error)(), ops.symbol, "u64")
+							})?;
+							let value = (ops.u64)(*value, shift).ok_or_else(|| {
+								VmError::numeric_failure((ops.error)(), ops.symbol, "u64")
+							})?;
 							Inline::Unsigned(value)
 						}
 						Repr::Inline(Inline::Signed(value)) => {
-							let shift = u32::try_from(*value).ok().ok_or_else(ops.error)?;
-							let value = (ops.i64)(*value, shift).ok_or_else(ops.error)?;
+							let shift = u32::try_from(*value).ok().ok_or_else(|| {
+								VmError::numeric_failure((ops.error)(), ops.symbol, "i64")
+							})?;
+							let value = (ops.i64)(*value, shift).ok_or_else(|| {
+								VmError::numeric_failure((ops.error)(), ops.symbol, "i64")
+							})?;
 							Inline::Signed(value)
 						}
 						Repr::Any(..) => break 'fallback (value.clone(), value.clone()),
@@ -1867,16 +1893,24 @@ impl Vm {
 							Repr::Inline(Inline::Unsigned(lhs)),
 							Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 						) => {
-							let rhs = rhs.as_integer()?;
-							let value = (ops.u64)(*lhs, rhs).ok_or_else(ops.error)?;
+							let rhs = rhs.as_integer().map_err(|e| {
+								VmError::numeric_failure(e.into(), ops.symbol, "i64")
+							})?;
+							let value = (ops.u64)(*lhs, rhs).ok_or_else(|| {
+								VmError::numeric_failure((ops.error)(), ops.symbol, "u64")
+							})?;
 							Inline::Unsigned(value)
 						}
 						(
 							Repr::Inline(Inline::Signed(lhs)),
 							Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 						) => {
-							let rhs = rhs.as_integer()?;
-							let value = (ops.i64)(*lhs, rhs).ok_or_else(ops.error)?;
+							let rhs = rhs.as_integer().map_err(|e| {
+								VmError::numeric_failure(e.into(), ops.symbol, "i64")
+							})?;
+							let value = (ops.i64)(*lhs, rhs).ok_or_else(|| {
+								VmError::numeric_failure((ops.error)(), ops.symbol, "i64")
+							})?;
 							Inline::Signed(value)
 						}
 						(Repr::Any(..), _) => {
@@ -1924,14 +1958,16 @@ impl Vm {
 		let fallback = match target_value(&mut self.stack, &self.unit, target, rhs)? {
 			TargetValue::Same(value) => match value.as_mut() {
 				Repr::Inline(Inline::Signed(value)) => {
-					let out =
-						(ops.i64)(*value, *value).ok_or_else(|| (ops.error)(i128::from(*value)))?;
+					let out = (ops.i64)(*value, *value).ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(i128::from(*value)), ops.symbol, "i64")
+					})?;
 					*value = out;
 					return Ok(());
 				}
 				Repr::Inline(Inline::Unsigned(value)) => {
-					let out =
-						(ops.u64)(*value, *value).ok_or_else(|| (ops.error)(i128::from(*value)))?;
+					let out = (ops.u64)(*value, *value).ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(i128::from(*value)), ops.symbol, "u64")
+					})?;
 					*value = out;
 					return Ok(());
 				}
@@ -1954,8 +1990,12 @@ impl Vm {
 					Repr::Inline(Inline::Signed(lhs)),
 					Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 				) => {
-					let rhs = rhs.as_integer()?;
-					let out = (ops.i64)(*lhs, rhs).ok_or_else(|| (ops.error)(i128::from(rhs)))?;
+					let rhs = rhs
+						.as_integer()
+						.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
+					let out = (ops.i64)(*lhs, rhs).ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(i128::from(rhs)), ops.symbol, "i64")
+					})?;
 					*lhs = out;
 					return Ok(());
 				}
@@ -1963,8 +2003,12 @@ impl Vm {
 					Repr::Inline(Inline::Unsigned(lhs)),
 					Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 				) => {
-					let rhs = rhs.as_integer()?;
-					let out = (ops.u64)(*lhs, rhs).ok_or_else(|| (ops.error)(i128::from(rhs)))?;
+					let rhs = rhs
+						.as_integer()
+						.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
+					let out = (ops.u64)(*lhs, rhs).ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(i128::from(rhs)), ops.symbol, "u64")
+					})?;
 					*lhs = out;
 					return Ok(());
 				}
@@ -2028,7 +2072,9 @@ impl Vm {
 					Repr::Inline(Inline::Unsigned(lhs)),
 					Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 				) => {
-					let rhs = rhs.as_integer()?;
+					let rhs = rhs
+						.as_integer()
+						.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
 					(ops.u64)(lhs, rhs);
 					return Ok(());
 				}
@@ -2036,7 +2082,9 @@ impl Vm {
 					Repr::Inline(Inline::Signed(lhs)),
 					Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 				) => {
-					let rhs = rhs.as_integer()?;
+					let rhs = rhs
+						.as_integer()
+						.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
 					(ops.i64)(lhs, rhs);
 					return Ok(());
 				}
@@ -2071,14 +2119,22 @@ impl Vm {
 		let fallback = match target_value(&mut self.stack, &self.unit, target, rhs)? {
 			TargetValue::Same(value) => match value.as_mut() {
 				Repr::Inline(Inline::Unsigned(value)) => {
-					let shift = u32::try_from(*value).ok().ok_or_else(ops.error)?;
-					let out = (ops.u64)(*value, shift).ok_or_else(ops.error)?;
+					let shift = u32::try_from(*value).ok().ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(), ops.symbol, "u64")
+					})?;
+					let out = (ops.u64)(*value, shift).ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(), ops.symbol, "u64")
+					})?;
 					*value = out;
 					return Ok(());
 				}
 				Repr::Inline(Inline::Signed(value)) => {
-					let shift = u32::try_from(*value).ok().ok_or_else(ops.error)?;
-					let out = (ops.i64)(*value, shift).ok_or_else(ops.error)?;
+					let shift = u32::try_from(*value).ok().ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(), ops.symbol, "i64")
+					})?;
+					let out = (ops.i64)(*value, shift).ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(), ops.symbol, "i64")
+					})?;
 					*value = out;
 					return Ok(());
 				}
@@ -2096,8 +2152,12 @@ impl Vm {
 					Repr::Inline(Inline::Unsigned(lhs)),
 					Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 				) => {
-					let rhs = rhs.as_integer()?;
-					let out = (ops.u64)(*lhs, rhs).ok_or_else(ops.error)?;
+					let rhs = rhs
+						.as_integer()
+						.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
+					let out = (ops.u64)(*lhs, rhs).ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(), ops.symbol, "u64")
+					})?;
 					*lhs = out;
 					return Ok(());
 				}
@@ -2105,8 +2165,12 @@ impl Vm {
 					Repr::Inline(Inline::Signed(lhs)),
 					Repr::Inline(rhs @ (Inline::Signed(_) | Inline::Unsigned(_))),
 				) => {
-					let rhs = rhs.as_integer()?;
-					let out = (ops.i64)(*lhs, rhs).ok_or_else(ops.error)?;
+					let rhs = rhs
+						.as_integer()
+						.map_err(|e| VmError::numeric_failure(e.into(), ops.symbol, "i64"))?;
+					let out = (ops.i64)(*lhs, rhs).ok_or_else(|| {
+						VmError::numeric_failure((ops.error)(), ops.symbol, "i64")
+					})?;
 					*lhs = out;
 					return Ok(());
 				}

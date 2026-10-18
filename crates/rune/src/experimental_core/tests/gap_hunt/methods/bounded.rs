@@ -96,7 +96,8 @@ fn fresh_contract() {
 			status.success() && !exceeded.load(Ordering::SeqCst),
 			"C13 child STOP {i}"
 		);
-		let actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		actual["observation"]["outcome"] = super::d1c_diagnostics::d1d_before("methods", case["label"].as_str().unwrap(), case["source"].as_str().unwrap(), "fresh", &actual["observation"]["outcome"]);
 		compare_fresh(case, &frozen[format!("{i:03}")], &actual);
 		assert!(stderr.is_empty(), "C13 stderr {i}");
 	}

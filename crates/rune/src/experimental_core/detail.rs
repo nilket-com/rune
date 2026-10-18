@@ -472,6 +472,22 @@ impl TypeName {
 	}
 }
 
+impl crate::runtime::messages::OperandType for TypeName {
+	fn fmt_operand(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		let name = match self {
+			Self::I64 => "i64",
+			Self::U64 => "u64",
+			Self::F64 => "f64",
+			Self::Bool => "bool",
+			Self::Char => "char",
+			Self::String => "String",
+			Self::Vec => "Vec",
+			_ => return fmt::Display::fmt(self, f),
+		};
+		f.write_str(name)
+	}
+}
+
 impl fmt::Display for TypeName {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		f.write_str(match self {
@@ -651,6 +667,26 @@ pub struct Message<'a> {
 	pub(crate) program: &'a Program,
 }
 
+pub(super) fn numeric_symbol(op: BinarySymbol) -> &'static str {
+	match op {
+		BinarySymbol::Add => "+",
+		BinarySymbol::Sub => "-",
+		BinarySymbol::Mul => "*",
+		BinarySymbol::Div => "/",
+		BinarySymbol::Rem => "%",
+		BinarySymbol::Shl => "<<",
+		BinarySymbol::Shr => ">>",
+		BinarySymbol::AddAssign => "+=",
+		BinarySymbol::SubAssign => "-=",
+		BinarySymbol::MulAssign => "*=",
+		BinarySymbol::DivAssign => "/=",
+		BinarySymbol::RemAssign => "%=",
+		BinarySymbol::ShlAssign => "<<=",
+		BinarySymbol::ShrAssign => ">>=",
+		_ => "",
+	}
+}
+
 fn access_message(
 	f: &mut fmt::Formatter<'_>,
 	access: MovedAccess,
@@ -684,14 +720,19 @@ impl fmt::Display for Message<'_> {
 				};
 				write!(f, "Panicked: failed printing to stdout: {error}")
 			}
-			Binary { op, lhs, rhs } => messages::binary_unsupported(f, op, lhs, rhs),
+			Binary { op, lhs, rhs } => messages::binary_unsupported(
+				f,
+				op,
+				messages::Operand(&lhs),
+				messages::Operand(&rhs),
+			),
 			Unary { op, operand } => messages::unary_unsupported(
 				f,
 				match op {
 					UnarySymbol::Neg => "-",
 					UnarySymbol::Not => "!",
 				},
-				operand,
+				messages::Operand(&operand),
 			),
 			ExpectedBool { found } => messages::expected_type(f, TypeName::Bool, found),
 			ValueDepth => f.write_str("Value is nested too deeply to walk, limit is 64"),
@@ -914,7 +955,7 @@ mod tests {
 				size_of::<Error>(),
 				size_of::<Failure>()
 			],
-			[32, 88, 248]
+			[32, 88, 272]
 		);
 		assert!(align_of::<Detail>() <= 8);
 		std::println!(

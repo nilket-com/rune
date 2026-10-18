@@ -194,7 +194,7 @@ fn diagnostic_catalogue_both_engines() {
 		let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
 		let stock_span = inst.span.range();
 		let source_id = inst.source_id.into_index();
-		let text = stock_error.into_kind().to_string();
+		let text = stock_error.to_string();
 		let pinned = include_str!("diagnostics_messages.tsv")
 			.lines()
 			.skip(1)
@@ -218,7 +218,7 @@ fn diagnostic_catalogue_both_engines() {
 				100_000,
 			)
 			.unwrap_err();
-		let fresh_text = failure.error.message(&program).to_string();
+		let fresh_text = failure.message(&program).to_string();
 		let at = failure.error.location.unwrap();
 		if (
 			fresh_text.as_str(),
@@ -641,8 +641,7 @@ fn all_assignment_symbols_are_preserved_in_owned_details() {
 			.unwrap()
 			.span
 			.range();
-		let expected =
-			std::format!("Unsupported binary operation `{op}` on `std::i64` and `std::bool`");
+		let expected = std::format!("Cannot apply `{op}` to `i64` and `bool`");
 		assert_eq!(error.into_kind().to_string(), expected);
 		let mut store = Store::new(Limits::default()).unwrap();
 		let failure = Executor::new()
@@ -1052,4 +1051,146 @@ fn leased_indexed_write_keeps_the_proven_receiver_position() {
 		"Cannot write the receiver: it is being read"
 	);
 	assert_eq!(stock.to_string(), failure.message(&program).to_string());
+}
+
+#[test]
+#[cfg(not(miri))]
+fn d1d_numeric_context_slice_both_engines() {
+	use crate::runtime::{VmError, VmErrorKind};
+	let context = Context::with_default_modules().unwrap();
+	let rows = [
+		("!a", "\"x\"", "0", "Cannot apply `!` to `String`"),
+		("a & b", "7", "true", "Cannot apply `&` to `i64` and `bool`"),
+		("a | b", "7", "true", "Cannot apply `|` to `i64` and `bool`"),
+		("a ^ b", "7", "true", "Cannot apply `^` to `i64` and `bool`"),
+		(
+			"a << b",
+			"7",
+			"true",
+			"Cannot apply `<<` to `i64` and `bool`",
+		),
+		(
+			"a >> b",
+			"7",
+			"true",
+			"Cannot apply `>>` to `i64` and `bool`",
+		),
+		(
+			"a << b",
+			"1",
+			"-1",
+			"Cannot convert `i64` value `-1` to `u32` for `<<`",
+		),
+		(
+			"a >> b",
+			"1",
+			"-1",
+			"Cannot convert `i64` value `-1` to `u32` for `>>`",
+		),
+		(
+			"a << b",
+			"1",
+			"64",
+			"Numerical overflow in `i64` left shift (`<<`)",
+		),
+		(
+			"a << b",
+			"1",
+			"65",
+			"Numerical overflow in `i64` left shift (`<<`)",
+		),
+		(
+			"a >> b",
+			"1",
+			"64",
+			"Numerical underflow in `i64` right shift (`>>`)",
+		),
+		(
+			"a >> b",
+			"1",
+			"65",
+			"Numerical underflow in `i64` right shift (`>>`)",
+		),
+		(
+			"a / b",
+			"1",
+			"0",
+			"Division by zero in `i64` division (`/`)",
+		),
+		(
+			"a % b",
+			"1",
+			"0",
+			"Division by zero in `i64` remainder (`%`)",
+		),
+		(
+			"a + b",
+			"9223372036854775807",
+			"1",
+			"Numerical overflow in `i64` addition (`+`)",
+		),
+		(
+			"a - b",
+			"-9223372036854775808",
+			"1",
+			"Numerical underflow in `i64` subtraction (`-`)",
+		),
+		(
+			"a + b",
+			"18446744073709551615u64",
+			"1u64",
+			"Numerical overflow in `u64` addition (`+`)",
+		),
+		(
+			"a - b",
+			"0u64",
+			"1u64",
+			"Numerical underflow in `u64` subtraction (`-`)",
+		),
+	];
+	for (body, a, b, expected) in rows {
+		let source = std::format!("fn f(a,b){{{body}}}pub fn main(){{f({a},{b})}}");
+		let (mut stock, program) = compile(&context, &source);
+		let error = stock.call(["main"], ()).unwrap_err();
+		assert_eq!(error.to_string(), expected, "stock {source}");
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		let failure = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["main"])).unwrap(),
+				&[],
+				100_000,
+			)
+			.unwrap_err();
+		assert_eq!(
+			failure.message(&program).to_string(),
+			expected,
+			"fresh {source}"
+		);
+		assert!(matches!(
+			failure.error.kind,
+			ErrorKind::Type
+				| ErrorKind::Overflow
+				| ErrorKind::DivisionByZero
+				| ErrorKind::IntegerCoercion
+		));
+		assert_eq!(store.live_entries(), 0);
+	}
+	for (kind, expected) in [
+		(VmErrorKind::Overflow, "Numerical overflow"),
+		(VmErrorKind::Underflow, "Numerical underflow"),
+		(VmErrorKind::DivideByZero, "Division by zero"),
+	] {
+		assert_eq!(VmError::from(kind).to_string(), expected);
+	}
+	let (_, program) = compile(&context, "pub fn main(){0}");
+	for (kind, expected) in [
+		(ErrorKind::Overflow, "Numerical overflow"),
+		(ErrorKind::DivisionByZero, "Division by zero"),
+	] {
+		let error = crate::experimental_core::error::Error::new(kind, "native helper");
+		assert_eq!(error.message(&program).to_string(), expected);
+	}
 }

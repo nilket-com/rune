@@ -118,7 +118,11 @@ fn native_argument_failure_matches_frozen_kind_message_site_and_effects() {
 	assert_eq!(failure.error.kind, ErrorKind::DivisionByZero);
 	let observation = unhex(frozen[3]);
 	let fields: Vec<_> = observation.split('\t').collect();
-	assert_eq!(failure.message(&program).to_string(), unhex(fields[3]));
+	assert_eq!(unhex(fields[3]), "Division by zero");
+	assert_eq!(
+		failure.message(&program).to_string(),
+		"Division by zero in `i64` division (`/`)"
+	);
 	let site = failure.error.location.unwrap();
 	let stable = unhex(frozen[8]);
 	let projected = stock_error_semantic(&stable).unwrap();
