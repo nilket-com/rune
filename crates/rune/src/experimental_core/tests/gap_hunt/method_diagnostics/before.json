@@ -1,0 +1,1410 @@
+[
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "enum_variants-051",
+      "index": 0,
+      "observed": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "identity": {
+            "hash": "0x716bc80c01db5389",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0x716bc80c01db5389, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0x716bc80c01db5389` for `E::T`",
+          "primary_display": "Missing instance function `0x716bc80c01db5389` for `E::T`",
+          "rich_emit": "error: Missing instance function `0x716bc80c01db5389` for `E::T`\n  ┌─ c15b.rn:3:15\n  │\n3 │ pub fn main(){E::T(7).cmp(E::T(9))}\n  │               ^^^^^^^^^^^^^^^^^^^^\n  │               │\n  │               Missing instance function `0x716bc80c01db5389` for `E::T`\n  │               This corresponds to the `E::T::cmp` instance function\n\nBacktrace:\nc15b.rn:3:15:\npub fn main(){E::T(7).cmp(E::T(9))}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 110,
+                "source": 0,
+                "start": 90
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "e45b825fe67bb07dbf62638e14bd00228baf629440243247c5fe04b6fbb30994"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "enum_variants-051",
+      "index": 0,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x716bc80c01db5389, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0x716bc80c01db5389` for `E::T`",
+          "identity": {
+            "hash": "0x716bc80c01db5389",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0x716bc80c01db5389` for `E::T`",
+          "site": {
+            "end": 110,
+            "source": 0,
+            "start": 90
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "e45b825fe67bb07dbf62638e14bd00228baf629440243247c5fe04b6fbb30994"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "enum_variants-124",
+      "index": 1,
+      "observed": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "identity": {
+            "hash": "0x33c0b6e2f619102d",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0x33c0b6e2f619102d, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "primary_display": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "rich_emit": "error: Missing instance function `0x33c0b6e2f619102d` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.len()}\n  │                             ^^^^^^^\n  │                             │\n  │                             Missing instance function `0x33c0b6e2f619102d` for `E::T`\n  │                             This corresponds to the `E::T::len` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.len()}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 111,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "7ca3aab3ed980b04e44ce1d4053494381ea3892610879777fa2e0f107d06dd77"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "enum_variants-124",
+      "index": 1,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x33c0b6e2f619102d, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "identity": {
+            "hash": "0x33c0b6e2f619102d",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "site": {
+            "end": 111,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "7ca3aab3ed980b04e44ce1d4053494381ea3892610879777fa2e0f107d06dd77"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "enum_variants-125",
+      "index": 2,
+      "observed": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "identity": {
+            "hash": "0xeaaeda4df40432a1",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0xeaaeda4df40432a1, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0xeaaeda4df40432a1` for `E::T`",
+          "primary_display": "Missing instance function `0xeaaeda4df40432a1` for `E::T`",
+          "rich_emit": "error: Missing instance function `0xeaaeda4df40432a1` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.iter()}\n  │                             ^^^^^^^^\n  │                             │\n  │                             Missing instance function `0xeaaeda4df40432a1` for `E::T`\n  │                             This corresponds to the `E::T::iter` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.iter()}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 112,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "aaa973d0182eb7122b6cacf70c073bb32abb316a958bf508cb3e0c29da596d96"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "enum_variants-125",
+      "index": 2,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xeaaeda4df40432a1, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0xeaaeda4df40432a1` for `E::T`",
+          "identity": {
+            "hash": "0xeaaeda4df40432a1",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0xeaaeda4df40432a1` for `E::T`",
+          "site": {
+            "end": 112,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "aaa973d0182eb7122b6cacf70c073bb32abb316a958bf508cb3e0c29da596d96"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "9"
+        }
+      ],
+      "id": "enum_variants-126",
+      "index": 3,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "identity": {
+            "hash": "0x2c0e81e79fac449f",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0x2c0e81e79fac449f, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0x2c0e81e79fac449f` for `E::T`",
+          "primary_display": "Missing instance function `0x2c0e81e79fac449f` for `E::T`",
+          "rich_emit": "error: Missing instance function `0x2c0e81e79fac449f` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.push(tap(1,9))}\n  │                             ^^^^^^^^^^^^^^^^\n  │                             │\n  │                             Missing instance function `0x2c0e81e79fac449f` for `E::T`\n  │                             This corresponds to the `E::T::push` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.push(tap(1,9))}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 120,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "d869eac933dc45e86e6d252a3333876612b528cb9a5e693f0b2a2a0c327718a4"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "9"
+        }
+      ],
+      "id": "enum_variants-126",
+      "index": 3,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x2c0e81e79fac449f, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0x2c0e81e79fac449f` for `E::T`",
+          "identity": {
+            "hash": "0x2c0e81e79fac449f",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0x2c0e81e79fac449f` for `E::T`",
+          "site": {
+            "end": 120,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "d869eac933dc45e86e6d252a3333876612b528cb9a5e693f0b2a2a0c327718a4"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "enum_variants-127",
+      "index": 4,
+      "observed": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "identity": {
+            "hash": "0xf550737dccc83497",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0xf550737dccc83497, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0xf550737dccc83497` for `E::T`",
+          "primary_display": "Missing instance function `0xf550737dccc83497` for `E::T`",
+          "rich_emit": "error: Missing instance function `0xf550737dccc83497` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.sort()}\n  │                             ^^^^^^^^\n  │                             │\n  │                             Missing instance function `0xf550737dccc83497` for `E::T`\n  │                             This corresponds to the `E::T::sort` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.sort()}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 112,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "422c245b91d93da09592e1333ab238ccb7056bf32f06a619f586fe456e0056c2"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "enum_variants-127",
+      "index": 4,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xf550737dccc83497, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0xf550737dccc83497` for `E::T`",
+          "identity": {
+            "hash": "0xf550737dccc83497",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0xf550737dccc83497` for `E::T`",
+          "site": {
+            "end": 112,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "422c245b91d93da09592e1333ab238ccb7056bf32f06a619f586fe456e0056c2"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "enum_variants-128",
+      "index": 5,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "identity": {
+            "hash": "0x447d5d69504c10ad",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0x447d5d69504c10ad, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0x447d5d69504c10ad` for `E::T`",
+          "primary_display": "Missing instance function `0x447d5d69504c10ad` for `E::T`",
+          "rich_emit": "error: Missing instance function `0x447d5d69504c10ad` for `E::T`\n  ┌─ c15b.rn:3:38\n  │\n3 │ pub fn main(){let x=E::T(7);for v in x{tap(1,v);}7}\n  │                                      ^\n  │                                      │\n  │                                      Missing instance function `0x447d5d69504c10ad` for `E::T`\n  │                                      This corresponds to the `INTO_ITER` protocol function for `E::T`\n\nBacktrace:\nc15b.rn:3:38:\npub fn main(){let x=E::T(7);for v in x{tap(1,v);}7}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 114,
+                "source": 0,
+                "start": 113
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "32fae1275f3e09fe59634e0f527f9f7c8138050c31d0545955507de2e1ee12ba"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "enum_variants-128",
+      "index": 5,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x447d5d69504c10ad, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0x447d5d69504c10ad` for `E::T`",
+          "identity": {
+            "hash": "0x447d5d69504c10ad",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0x447d5d69504c10ad` for `E::T`",
+          "site": {
+            "end": 114,
+            "source": 0,
+            "start": 113
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "32fae1275f3e09fe59634e0f527f9f7c8138050c31d0545955507de2e1ee12ba"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "enum_variants-130",
+      "index": 6,
+      "observed": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "identity": {
+            "hash": "0xa0004ebb729ea66a",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0xa0004ebb729ea66a, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0xa0004ebb729ea66a` for `E::T`",
+          "primary_display": "Missing instance function `0xa0004ebb729ea66a` for `E::T`",
+          "rich_emit": "error: Missing instance function `0xa0004ebb729ea66a` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.next()}\n  │                             ^^^^^^^^\n  │                             │\n  │                             Missing instance function `0xa0004ebb729ea66a` for `E::T`\n  │                             This corresponds to the `E::T::next` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.next()}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 112,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "10327e42b47e44ba6487271b73642a694ab60254b30ea820cad3bcd363e16fff"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "enum_variants-130",
+      "index": 6,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xa0004ebb729ea66a, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0xa0004ebb729ea66a` for `E::T`",
+          "identity": {
+            "hash": "0xa0004ebb729ea66a",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0xa0004ebb729ea66a` for `E::T`",
+          "site": {
+            "end": 112,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "10327e42b47e44ba6487271b73642a694ab60254b30ea820cad3bcd363e16fff"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "enum_variants-131",
+      "index": 7,
+      "observed": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "identity": {
+            "hash": "0x67fa487dd2d1a7ec",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0x67fa487dd2d1a7ec, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0x67fa487dd2d1a7ec` for `E::T`",
+          "primary_display": "Missing instance function `0x67fa487dd2d1a7ec` for `E::T`",
+          "rich_emit": "error: Missing instance function `0x67fa487dd2d1a7ec` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.any(|v|true)}\n  │                             ^^^^^^^^^^^^^^\n  │                             │\n  │                             Missing instance function `0x67fa487dd2d1a7ec` for `E::T`\n  │                             This corresponds to the `E::T::any` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.any(|v|true)}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 118,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "29f1386bdadaaf1afcebd4e55540ba4610a2573054d9a51b0ccb81dacb4900cd"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "enum_variants-131",
+      "index": 7,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x67fa487dd2d1a7ec, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0x67fa487dd2d1a7ec` for `E::T`",
+          "identity": {
+            "hash": "0x67fa487dd2d1a7ec",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0x67fa487dd2d1a7ec` for `E::T`",
+          "site": {
+            "end": 118,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "29f1386bdadaaf1afcebd4e55540ba4610a2573054d9a51b0ccb81dacb4900cd"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "enum_variants-132",
+      "index": 8,
+      "observed": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "identity": {
+            "hash": "0xf5125c4034f0d266",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0xf5125c4034f0d266, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0xf5125c4034f0d266` for `E::T`",
+          "primary_display": "Missing instance function `0xf5125c4034f0d266` for `E::T`",
+          "rich_emit": "error: Missing instance function `0xf5125c4034f0d266` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.clone()}\n  │                             ^^^^^^^^^\n  │                             │\n  │                             Missing instance function `0xf5125c4034f0d266` for `E::T`\n  │                             This corresponds to the `E::T::clone` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.clone()}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 113,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "6e0713f6273072e5c94a56c7bf6a493b4f1a3cacb6993bdbafe6c46c0c2836b1"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "enum_variants-132",
+      "index": 8,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xf5125c4034f0d266, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0xf5125c4034f0d266` for `E::T`",
+          "identity": {
+            "hash": "0xf5125c4034f0d266",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0xf5125c4034f0d266` for `E::T`",
+          "site": {
+            "end": 113,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "6e0713f6273072e5c94a56c7bf6a493b4f1a3cacb6993bdbafe6c46c0c2836b1"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "9"
+        }
+      ],
+      "id": "enum_variants-133",
+      "index": 9,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "identity": {
+            "hash": "0xb513b6e49b45866b",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0xb513b6e49b45866b, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+          "primary_display": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+          "rich_emit": "error: Missing instance function `0xb513b6e49b45866b` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.c15b_missing(tap(1,9))}\n  │                             ^^^^^^^^^^^^^^^^^^^^^^^^\n  │                             │\n  │                             Missing instance function `0xb513b6e49b45866b` for `E::T`\n  │                             This corresponds to the `E::T::c15b_missing` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.c15b_missing(tap(1,9))}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 128,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "20cc3231ae608757bb6f8f66e943788da8d49f5a51b51a10e11513fdd0738dfa"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "9"
+        }
+      ],
+      "id": "enum_variants-133",
+      "index": 9,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xb513b6e49b45866b, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+          "identity": {
+            "hash": "0xb513b6e49b45866b",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+          "site": {
+            "end": 128,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "20cc3231ae608757bb6f8f66e943788da8d49f5a51b51a10e11513fdd0738dfa"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "methods-000",
+      "index": 10,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "identity": {
+            "hash": "0x3feef4c11536841b",
+            "instance": "0x1cad9186c9641c4f",
+            "target": "std::i64",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0x3feef4c11536841b, instance: Any(AnyTypeInfo { full_name: 0x588bd3b7b6e0, hash: 0x1cad9186c9641c4f }) }",
+          "kind_display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+          "primary_display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+          "rich_emit": "error: Missing instance function `0x3feef4c11536841b` for `std::i64`\n  ┌─ c13.rn:1:9\n  │\n1 │ fn f(x){x.unrecognized()} pub fn main(){f(42)}\n  │         ^^^^^^^^^^^^^^^^\n  │         │\n  │         Missing instance function `0x3feef4c11536841b` for `std::i64`\n  │         This corresponds to the `std::i64::unrecognized` instance function\n\nBacktrace:\nc13.rn:1:9:\nfn f(x){x.unrecognized()} pub fn main(){f(42)}\nc13.rn:1:27:\nfn f(x){x.unrecognized()} pub fn main(){f(42)}\n",
+          "sites": [
+            {
+              "frames_debug": "[CallFrame { ip: 3, top: 0, isolated: None, out: keep(1) }]",
+              "location": {
+                "end": 24,
+                "source": 0,
+                "start": 8
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "8610352c464356b0b13d3942f374e40acd75de698e0df811c8475bd48899519c"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "methods-000",
+      "index": 10,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "call_chain": [
+            {
+              "end": 45,
+              "source": 0,
+              "start": 40
+            }
+          ],
+          "detail_debug": "MissingInstanceFunction { target: I64, hash: 0x3feef4c11536841b, instance: 0x1cad9186c9641c4f }",
+          "error_message": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+          "identity": {
+            "hash": "0x3feef4c11536841b",
+            "instance": "0x1cad9186c9641c4f",
+            "target": "std::i64",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+          "site": {
+            "end": 24,
+            "source": 0,
+            "start": 8
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "8610352c464356b0b13d3942f374e40acd75de698e0df811c8475bd48899519c"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "methods-001",
+      "index": 11,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "identity": {
+            "hash": "0x97550c8b68af2f3e",
+            "instance": "0xb41669ccb4fdb76a",
+            "target": "std::u64",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0x97550c8b68af2f3e, instance: Any(AnyTypeInfo { full_name: 0x5a56aca3c750, hash: 0xb41669ccb4fdb76a }) }",
+          "kind_display": "Missing instance function `0x97550c8b68af2f3e` for `std::u64`",
+          "primary_display": "Missing instance function `0x97550c8b68af2f3e` for `std::u64`",
+          "rich_emit": "error: Missing instance function `0x97550c8b68af2f3e` for `std::u64`\n  ┌─ c13.rn:1:9\n  │\n1 │ fn f(x){x.unrecognized()} pub fn main(){f(42u64)}\n  │         ^^^^^^^^^^^^^^^^\n  │         │\n  │         Missing instance function `0x97550c8b68af2f3e` for `std::u64`\n  │         This corresponds to the `std::u64::unrecognized` instance function\n\nBacktrace:\nc13.rn:1:9:\nfn f(x){x.unrecognized()} pub fn main(){f(42u64)}\nc13.rn:1:27:\nfn f(x){x.unrecognized()} pub fn main(){f(42u64)}\n",
+          "sites": [
+            {
+              "frames_debug": "[CallFrame { ip: 3, top: 0, isolated: None, out: keep(1) }]",
+              "location": {
+                "end": 24,
+                "source": 0,
+                "start": 8
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "80b8166f3e24a86a91cd69cef2fa8855c5e3b35c68bc4bfe043562d3278a20ef"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "methods-001",
+      "index": 11,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "call_chain": [
+            {
+              "end": 48,
+              "source": 0,
+              "start": 40
+            }
+          ],
+          "detail_debug": "MissingInstanceFunction { target: U64, hash: 0x97550c8b68af2f3e, instance: 0xb41669ccb4fdb76a }",
+          "error_message": "Missing instance function `0x97550c8b68af2f3e` for `std::u64`",
+          "identity": {
+            "hash": "0x97550c8b68af2f3e",
+            "instance": "0xb41669ccb4fdb76a",
+            "target": "std::u64",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0x97550c8b68af2f3e` for `std::u64`",
+          "site": {
+            "end": 24,
+            "source": 0,
+            "start": 8
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "80b8166f3e24a86a91cd69cef2fa8855c5e3b35c68bc4bfe043562d3278a20ef"
+    }
+  },
+  {
+    "stock": {
+      "context": false,
+      "engine": "stock",
+      "events": [],
+      "id": "enum_variants-124-no-context",
+      "index": 12,
+      "observed": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "identity": {
+            "hash": "0x33c0b6e2f619102d",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0x33c0b6e2f619102d, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "primary_display": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "rich_emit": "error: Missing instance function `0x33c0b6e2f619102d` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.len()}\n  │                             ^^^^^^^\n  │                             │\n  │                             Missing instance function `0x33c0b6e2f619102d` for `E::T`\n  │                             This corresponds to the `E::T::len` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.len()}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 111,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "7ca3aab3ed980b04e44ce1d4053494381ea3892610879777fa2e0f107d06dd77"
+    },
+    "fresh": {
+      "context": false,
+      "engine": "fresh",
+      "events": [],
+      "id": "enum_variants-124-no-context",
+      "index": 12,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x33c0b6e2f619102d, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "identity": {
+            "hash": "0x33c0b6e2f619102d",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "site": {
+            "end": 111,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "7ca3aab3ed980b04e44ce1d4053494381ea3892610879777fa2e0f107d06dd77"
+    }
+  },
+  {
+    "stock": {
+      "context": false,
+      "engine": "stock",
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "9"
+        }
+      ],
+      "id": "enum_variants-133-no-context",
+      "index": 13,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "identity": {
+            "hash": "0xb513b6e49b45866b",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0xb513b6e49b45866b, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+          "primary_display": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+          "rich_emit": "error: Missing instance function `0xb513b6e49b45866b` for `E::T`\n  ┌─ c15b.rn:3:29\n  │\n3 │ pub fn main(){let x=E::T(7);x.c15b_missing(tap(1,9))}\n  │                             ^^^^^^^^^^^^^^^^^^^^^^^^\n  │                             │\n  │                             Missing instance function `0xb513b6e49b45866b` for `E::T`\n  │                             This corresponds to the `E::T::c15b_missing` instance function\n\nBacktrace:\nc15b.rn:3:29:\npub fn main(){let x=E::T(7);x.c15b_missing(tap(1,9))}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 128,
+                "source": 0,
+                "start": 104
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "20cc3231ae608757bb6f8f66e943788da8d49f5a51b51a10e11513fdd0738dfa"
+    },
+    "fresh": {
+      "context": false,
+      "engine": "fresh",
+      "events": [
+        {
+          "kind": "i64",
+          "tag": 1,
+          "value": "9"
+        }
+      ],
+      "id": "enum_variants-133-no-context",
+      "index": 13,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xb513b6e49b45866b, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+          "identity": {
+            "hash": "0xb513b6e49b45866b",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0xb513b6e49b45866b` for `E::T`",
+          "site": {
+            "end": 128,
+            "source": 0,
+            "start": 104
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "20cc3231ae608757bb6f8f66e943788da8d49f5a51b51a10e11513fdd0738dfa"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "unicode-method",
+      "index": 14,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "identity": {
+            "hash": "0xe2f0c9db0301345d",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0xe2f0c9db0301345d, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0xe2f0c9db0301345d` for `E::T`",
+          "primary_display": "Missing instance function `0xe2f0c9db0301345d` for `E::T`",
+          "rich_emit": "error: Missing instance function `0xe2f0c9db0301345d` for `E::T`\n  ┌─ d1.rn:1:28\n  │\n1 │ enum E{T(a)} pub fn main(){E::T(1).méthode()} pub fn d1_reuse(){7}\n  │                            ^^^^^^^^^^^^^^^^^\n  │                            │\n  │                            Missing instance function `0xe2f0c9db0301345d` for `E::T`\n  │                            This corresponds to the `E::T::méthode` instance function\n\nBacktrace:\nd1.rn:1:28:\nenum E{T(a)} pub fn main(){E::T(1).méthode()} pub fn d1_reuse(){7}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 45,
+                "source": 0,
+                "start": 27
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "42884633a22a41f944e5aa989726c9149ba248586b224151dabf42e3e6f43487"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "unicode-method",
+      "index": 14,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xe2f0c9db0301345d, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0xe2f0c9db0301345d` for `E::T`",
+          "identity": {
+            "hash": "0xe2f0c9db0301345d",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0xe2f0c9db0301345d` for `E::T`",
+          "site": {
+            "end": 45,
+            "source": 0,
+            "start": 27
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "42884633a22a41f944e5aa989726c9149ba248586b224151dabf42e3e6f43487"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "chained-name",
+      "index": 15,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "identity": {
+            "hash": "0xa805b27cc6b938aa",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "MissingInstanceFunction { hash: 0xa805b27cc6b938aa, instance: Runtime(Rtti { kind: Tuple, hash: 0xf727e1feaf2a3ca, variant_hash: 0x3386e677262b182d, item: E::T, fields: {} }) }",
+          "kind_display": "Missing instance function `0xa805b27cc6b938aa` for `E::T`",
+          "primary_display": "Missing instance function `0xa805b27cc6b938aa` for `E::T`",
+          "rich_emit": "error: Missing instance function `0xa805b27cc6b938aa` for `E::T`\n  ┌─ d1.rn:1:46\n  │\n1 │ enum E{T(a)} fn identity(x){x} pub fn main(){identity(E::T(1)).not_registered()} pub fn d1_reuse(){7}\n  │                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  │                                              │\n  │                                              Missing instance function `0xa805b27cc6b938aa` for `E::T`\n  │                                              This corresponds to the `E::T::not_registered` instance function\n\nBacktrace:\nd1.rn:1:46:\nenum E{T(a)} fn identity(x){x} pub fn main(){identity(E::T(1)).not_registered()} pub fn d1_reuse(){7}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 79,
+                "source": 0,
+                "start": 45
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "8dbed5659248644c0e3db753b926eb2f1f353ffc0013c4c99e6c20b8457a85d1"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "chained-name",
+      "index": 15,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xa805b27cc6b938aa, instance: 0xf727e1feaf2a3ca }",
+          "error_message": "Missing instance function `0xa805b27cc6b938aa` for `E::T`",
+          "identity": {
+            "hash": "0xa805b27cc6b938aa",
+            "instance": "0xf727e1feaf2a3ca",
+            "target": "E::T",
+            "variant": "MissingInstanceFunction"
+          },
+          "kind_debug": "Type",
+          "primary_display": "Missing instance function `0xa805b27cc6b938aa` for `E::T`",
+          "site": {
+            "end": 79,
+            "source": 0,
+            "start": 45
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "8dbed5659248644c0e3db753b926eb2f1f353ffc0013c4c99e6c20b8457a85d1"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "panic-lookalike",
+      "index": 16,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "identity": null,
+          "kind_debug": "Panic { reason: Panic { inner: \"Missing instance function `0x33c0b6e2f619102d` for `E::T`\" } }",
+          "kind_display": "Panicked: Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "primary_display": "Panicked: Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "rich_emit": "error: Panicked: Missing instance function `0x33c0b6e2f619102d` for `E::T`\n  ┌─ d1.rn:1:15\n  │\n1 │ pub fn main(){panic!(\"Missing instance function `0x33c0b6e2f619102d` for `E::T`\")} pub fn d1_reuse(){7}\n  │               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Panicked: Missing instance function `0x33c0b6e2f619102d` for `E::T`\n\nBacktrace:\nd1.rn:1:15:\npub fn main(){panic!(\"Missing instance function `0x33c0b6e2f619102d` for `E::T`\")} pub fn d1_reuse(){7}\n",
+          "sites": [
+            {
+              "frames_debug": "[]",
+              "location": {
+                "end": 81,
+                "source": 0,
+                "start": 14
+              }
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "16903917d63fae430c5c97205f411b49379842b3e4c1a56a2a910bc57ae4425c"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "panic-lookalike",
+      "index": 16,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "call_chain": [],
+          "detail_debug": "PanicMessage",
+          "error_message": "Panicked",
+          "identity": null,
+          "kind_debug": "Panic",
+          "primary_display": "Panicked: Missing instance function `0x33c0b6e2f619102d` for `E::T`",
+          "site": {
+            "end": 81,
+            "source": 0,
+            "start": 14
+          },
+          "status": "error"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "16903917d63fae430c5c97205f411b49379842b3e4c1a56a2a910bc57ae4425c"
+    }
+  },
+  {
+    "stock": {
+      "context": true,
+      "engine": "stock",
+      "events": [],
+      "id": "success-control",
+      "index": 17,
+      "observed": {
+        "diagnostics": "[]",
+        "outcome": {
+          "i64": 7,
+          "status": "value"
+        },
+        "reuse": 7
+      },
+      "schema": 1,
+      "source_sha256": "57cad445e4a2cd79655f985971ef79e06d420b89bc34d137d1ee1156972f611f"
+    },
+    "fresh": {
+      "context": true,
+      "engine": "fresh",
+      "events": [],
+      "id": "success-control",
+      "index": 17,
+      "observed": {
+        "audit": {
+          "bytes": 0,
+          "idle": true,
+          "live": 0,
+          "row_bytes": 0,
+          "row_idle": true,
+          "row_live": 0
+        },
+        "diagnostics": "[]",
+        "outcome": {
+          "scalar": "Some(I64(7))",
+          "status": "value"
+        },
+        "reuse": "Some(I64(7))"
+      },
+      "schema": 1,
+      "source_sha256": "57cad445e4a2cd79655f985971ef79e06d420b89bc34d137d1ee1156972f611f"
+    }
+  }
+]

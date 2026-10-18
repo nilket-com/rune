@@ -1,0 +1,196 @@
+[
+	{
+		"id": "enum_variants-051",
+		"label": "compare/method-cmp",
+		"family": "enum_variants",
+		"original_id": "051",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){E::T(7).cmp(E::T(9))}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "e45b825fe67bb07dbf62638e14bd00228baf629440243247c5fe04b6fbb30994",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-124",
+		"label": "boundary/len",
+		"family": "enum_variants",
+		"original_id": "124",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.len()}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "7ca3aab3ed980b04e44ce1d4053494381ea3892610879777fa2e0f107d06dd77",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-125",
+		"label": "boundary/iter",
+		"family": "enum_variants",
+		"original_id": "125",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.iter()}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "aaa973d0182eb7122b6cacf70c073bb32abb316a958bf508cb3e0c29da596d96",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-126",
+		"label": "boundary/push",
+		"family": "enum_variants",
+		"original_id": "126",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.push(tap(1,9))}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "d869eac933dc45e86e6d252a3333876612b528cb9a5e693f0b2a2a0c327718a4",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-127",
+		"label": "boundary/sort",
+		"family": "enum_variants",
+		"original_id": "127",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.sort()}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "422c245b91d93da09592e1333ab238ccb7056bf32f06a619f586fe456e0056c2",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-128",
+		"label": "boundary/for",
+		"family": "enum_variants",
+		"original_id": "128",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);for v in x{tap(1,v);}7}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "32fae1275f3e09fe59634e0f527f9f7c8138050c31d0545955507de2e1ee12ba",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-130",
+		"label": "boundary/next",
+		"family": "enum_variants",
+		"original_id": "130",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.next()}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "10327e42b47e44ba6487271b73642a694ab60254b30ea820cad3bcd363e16fff",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-131",
+		"label": "boundary/any",
+		"family": "enum_variants",
+		"original_id": "131",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.any(|v|true)}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "29f1386bdadaaf1afcebd4e55540ba4610a2573054d9a51b0ccb81dacb4900cd",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-132",
+		"label": "boundary/clone-method",
+		"family": "enum_variants",
+		"original_id": "132",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.clone()}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "6e0713f6273072e5c94a56c7bf6a493b4f1a3cacb6993bdbafe6c46c0c2836b1",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-133",
+		"label": "boundary/absent",
+		"family": "enum_variants",
+		"original_id": "133",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.c15b_missing(tap(1,9))}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "20cc3231ae608757bb6f8f66e943788da8d49f5a51b51a10e11513fdd0738dfa",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": true
+	},
+	{
+		"id": "methods-000",
+		"label": "missing/core17/i64",
+		"family": "methods",
+		"original_id": "000",
+		"source": "fn f(x){x.unrecognized()} pub fn main(){f(42)}\npub fn c13_reuse(){7}",
+		"source_sha256": "8610352c464356b0b13d3942f374e40acd75de698e0df811c8475bd48899519c",
+		"source_name": "c13.rn",
+		"reuse": "c13_reuse",
+		"context": true
+	},
+	{
+		"id": "methods-001",
+		"label": "missing/core17/u64",
+		"family": "methods",
+		"original_id": "001",
+		"source": "fn f(x){x.unrecognized()} pub fn main(){f(42u64)}\npub fn c13_reuse(){7}",
+		"source_sha256": "80b8166f3e24a86a91cd69cef2fa8855c5e3b35c68bc4bfe043562d3278a20ef",
+		"source_name": "c13.rn",
+		"reuse": "c13_reuse",
+		"context": true
+	},
+	{
+		"id": "enum_variants-124-no-context",
+		"label": "boundary/len",
+		"family": "enum_variants",
+		"original_id": "124",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.len()}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "7ca3aab3ed980b04e44ce1d4053494381ea3892610879777fa2e0f107d06dd77",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": false
+	},
+	{
+		"id": "enum_variants-133-no-context",
+		"label": "boundary/absent",
+		"family": "enum_variants",
+		"original_id": "133",
+		"source": "use c15b::tap;\nenum E{U,Z(),T(a),P(a,b),N{x,y}} enum F{U,T(a)} struct S(a);\npub fn main(){let x=E::T(7);x.c15b_missing(tap(1,9))}\npub fn c15b_reuse(){7}\n",
+		"source_sha256": "20cc3231ae608757bb6f8f66e943788da8d49f5a51b51a10e11513fdd0738dfa",
+		"source_name": "c15b.rn",
+		"reuse": "c15b_reuse",
+		"context": false
+	},
+	{
+		"id": "unicode-method",
+		"label": "unicode-method",
+		"family": "controls",
+		"source": "enum E{T(a)} pub fn main(){E::T(1).méthode()} pub fn d1_reuse(){7}",
+		"source_sha256": "42884633a22a41f944e5aa989726c9149ba248586b224151dabf42e3e6f43487",
+		"source_name": "d1.rn",
+		"reuse": "d1_reuse",
+		"context": true
+	},
+	{
+		"id": "chained-name",
+		"label": "chained-name",
+		"family": "controls",
+		"source": "enum E{T(a)} fn identity(x){x} pub fn main(){identity(E::T(1)).not_registered()} pub fn d1_reuse(){7}",
+		"source_sha256": "8dbed5659248644c0e3db753b926eb2f1f353ffc0013c4c99e6c20b8457a85d1",
+		"source_name": "d1.rn",
+		"reuse": "d1_reuse",
+		"context": true
+	},
+	{
+		"id": "panic-lookalike",
+		"label": "panic-lookalike",
+		"family": "controls",
+		"source": "pub fn main(){panic!(\"Missing instance function `0x33c0b6e2f619102d` for `E::T`\")} pub fn d1_reuse(){7}",
+		"source_sha256": "16903917d63fae430c5c97205f411b49379842b3e4c1a56a2a910bc57ae4425c",
+		"source_name": "d1.rn",
+		"reuse": "d1_reuse",
+		"context": true
+	},
+	{
+		"id": "success-control",
+		"label": "success-control",
+		"family": "controls",
+		"source": "pub fn main(){7} pub fn d1_reuse(){7}",
+		"source_sha256": "57cad445e4a2cd79655f985971ef79e06d420b89bc34d137d1ee1156972f611f",
+		"source_name": "d1.rn",
+		"reuse": "d1_reuse",
+		"context": true
+	}
+]

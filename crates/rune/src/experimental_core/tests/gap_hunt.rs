@@ -1611,3 +1611,6 @@ mod enum_variants;
 
 #[path = "gap_hunt/nominal_clone.rs"]
 mod nominal_clone;
+
+#[path = "gap_hunt/method_diagnostics.rs"]
+mod method_diagnostics;
