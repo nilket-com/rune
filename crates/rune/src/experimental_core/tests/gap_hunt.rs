@@ -1654,3 +1654,5 @@ mod nominal_clone;
 mod method_diagnostics;
 
 mod vec_local;
+
+mod loop_binders;

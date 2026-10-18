@@ -1,0 +1,710 @@
+[
+  {
+    "label": "tuple/sum",
+    "source": "pub fn main(){let n=0;for (a,b) in [(1,2),(3,4)]{n+=(a*10+b);}n}",
+    "policy": "Exact",
+    "source_sha256": "178d8a809bccda8f272782d063b24be32a1c4792d255804263aad7837cc88e9b"
+  },
+  {
+    "label": "tuple/empty",
+    "source": "pub fn main(){let n=0;for (a,b) in []{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "1fbde9883fa17fb49566c6b7172cf3700a39e2c09699d6d45079e1d95a16319a"
+  },
+  {
+    "label": "tuple/break",
+    "source": "pub fn main(){let n=0;for (a,b) in [(1,2),(3,4)]{n+=(a*10+b);break;}n}",
+    "policy": "Exact",
+    "source_sha256": "427f00679141db4cb171e30b759fefe34ddb26ad999f68f30681edb7dac3f6fa"
+  },
+  {
+    "label": "tuple/continue",
+    "source": "pub fn main(){let n=0;for (a,b) in [(1,2),(3,4)]{if a==1{continue;}n+=(a*10+b);}n}",
+    "policy": "Exact",
+    "source_sha256": "5060e1b9c012dd9db0bf5d06abcb2f2beb37929efb8f1c9add1eb05caf352657"
+  },
+  {
+    "label": "tuple/return",
+    "source": "pub fn main(){for (a,b) in [(1,2),(3,4)]{return (a*10+b);}0}",
+    "policy": "Exact",
+    "source_sha256": "e0bbbd96e393aea8a9d6278c0520297a38cab7de61e36502f59b26d9f594e94c"
+  },
+  {
+    "label": "tuple/shadow",
+    "source": "pub fn main(){let a=9;let n=0;for (a,b) in [(1,2),(3,4)]{n+=(a*10+b);}a*1000+n}",
+    "policy": "Exact",
+    "source_sha256": "d5b5adb7b0e2f4021db0324e1fdc070d07ca717df9195d9ca0cc853ef98f6aa3"
+  },
+  {
+    "label": "tuple/reassign",
+    "source": "pub fn main(){let n=0;for (a,b) in [(1,2),(3,4)]{a+=1;n+=(a*10+b);}n}",
+    "policy": "Exact",
+    "source_sha256": "9df97c95d93090fcb039dca2ce3ee5f4f544b6c69bcfe5f4645a8c7492a8d6b4"
+  },
+  {
+    "label": "tuple/rhs-once",
+    "source": "pub fn main(){let calls=0;let n=0;for (a,b) in {calls+=1;[(1,2),(3,4)]}{n+=(a*10+b);}calls*10000+n}",
+    "policy": "Exact",
+    "source_sha256": "5eafbbd278e4ef2f12290c62ef81de65de533ee47bdae85bdafa472372886601"
+  },
+  {
+    "label": "tuple/nested-break",
+    "source": "pub fn main(){let n=0;for (a,b) in [(1,2),(3,4)]{for x in 0..3{n+=(a*10+b);break;}}n}",
+    "policy": "Exact",
+    "source_sha256": "5efea2dbc7b01bb89d144825271e65db41a37fb75da4eff8f343cd4feb5b3275"
+  },
+  {
+    "label": "tuple/label-break",
+    "source": "pub fn main(){let n=0;'outer: for (a,b) in [(1,2),(3,4)]{for x in 0..3{n+=(a*10+b);break 'outer;}}n}",
+    "policy": "Exact",
+    "source_sha256": "b4f2d5e0e78af07552190d98f54361609ea28736fefc378d1fd58fdfa520bb01"
+  },
+  {
+    "label": "tuple/label-continue",
+    "source": "pub fn main(){let n=0;'outer: for (a,b) in [(1,2),(3,4)]{for x in 0..3{n+=(a*10+b);continue 'outer;}}n}",
+    "policy": "Exact",
+    "source_sha256": "40b3ebe4e0fede8565cdc4390fff1c10671756db68de242df45ba6c9d0afcdc3"
+  },
+  {
+    "label": "tuple/body-error",
+    "source": "pub fn main(){for (a,b) in [(1,2),(3,4)]{let z=0;return a/z;}0}",
+    "policy": "Exact",
+    "source_sha256": "3f2878d4e247c991305d625d92c880a4b7020065034a7baa851b5fb7604f325b"
+  },
+  {
+    "label": "vec/sum",
+    "source": "pub fn main(){let n=0;for [a,b] in [[1,2],[3,4]]{n+=(a*10+b);}n}",
+    "policy": "Exact",
+    "source_sha256": "7de21fdd5d3dd3329501a590f8e2f208323f8c0507e70d58e77c3de9aea498f4"
+  },
+  {
+    "label": "vec/empty",
+    "source": "pub fn main(){let n=0;for [a,b] in []{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "4b76d8f88a3a1fb55212d728b095483b22d7d7c571237f1097b724fc174ca6f1"
+  },
+  {
+    "label": "vec/break",
+    "source": "pub fn main(){let n=0;for [a,b] in [[1,2],[3,4]]{n+=(a*10+b);break;}n}",
+    "policy": "Exact",
+    "source_sha256": "088c27263a2151b589eaac4f73df7eebe3161eb051d98126f48f43e8d916aefd"
+  },
+  {
+    "label": "vec/continue",
+    "source": "pub fn main(){let n=0;for [a,b] in [[1,2],[3,4]]{if a==1{continue;}n+=(a*10+b);}n}",
+    "policy": "Exact",
+    "source_sha256": "20ed54a5f3b0b633c9733ddbe4416b0174969e92e6f89462b0e564b3fc8117d1"
+  },
+  {
+    "label": "vec/return",
+    "source": "pub fn main(){for [a,b] in [[1,2],[3,4]]{return (a*10+b);}0}",
+    "policy": "Exact",
+    "source_sha256": "b26a29eaad6e6e40dad74e5f7a00340f8df2d84290e9db23303af37b36689b2c"
+  },
+  {
+    "label": "vec/shadow",
+    "source": "pub fn main(){let a=9;let n=0;for [a,b] in [[1,2],[3,4]]{n+=(a*10+b);}a*1000+n}",
+    "policy": "Exact",
+    "source_sha256": "8e302359b35ecb82d3d77d0257bf8a0ad0cde2c2b14e54f14c8ff63f37eaa4bb"
+  },
+  {
+    "label": "vec/reassign",
+    "source": "pub fn main(){let n=0;for [a,b] in [[1,2],[3,4]]{a+=1;n+=(a*10+b);}n}",
+    "policy": "Exact",
+    "source_sha256": "36ee852929ce0276240f075b336084d7f39034600fba840d218149fb9bfaa10a"
+  },
+  {
+    "label": "vec/rhs-once",
+    "source": "pub fn main(){let calls=0;let n=0;for [a,b] in {calls+=1;[[1,2],[3,4]]}{n+=(a*10+b);}calls*10000+n}",
+    "policy": "Exact",
+    "source_sha256": "071fdd332b777708f747611a5551e9a86da57c88343598e5ce10a80066193860"
+  },
+  {
+    "label": "vec/nested-break",
+    "source": "pub fn main(){let n=0;for [a,b] in [[1,2],[3,4]]{for x in 0..3{n+=(a*10+b);break;}}n}",
+    "policy": "Exact",
+    "source_sha256": "7b8cd5fa6ed9806a6956b36ed5ffbc8f1d76669353f0925a0c22bce4f07a3fa6"
+  },
+  {
+    "label": "vec/label-break",
+    "source": "pub fn main(){let n=0;'outer: for [a,b] in [[1,2],[3,4]]{for x in 0..3{n+=(a*10+b);break 'outer;}}n}",
+    "policy": "Exact",
+    "source_sha256": "cb5d8e04067f5b8160150feb391c84afb15d6cb73b37da9eea24d37f52f905ea"
+  },
+  {
+    "label": "vec/label-continue",
+    "source": "pub fn main(){let n=0;'outer: for [a,b] in [[1,2],[3,4]]{for x in 0..3{n+=(a*10+b);continue 'outer;}}n}",
+    "policy": "Exact",
+    "source_sha256": "edf844211e30d956171c4b66aa514f1a128e221b0c88167b0408c340cbb9fa29"
+  },
+  {
+    "label": "vec/body-error",
+    "source": "pub fn main(){for [a,b] in [[1,2],[3,4]]{let z=0;return a/z;}0}",
+    "policy": "Exact",
+    "source_sha256": "412e3acce78f3732324e97840f1682a41e597f088f54e0bdb718a1eee6251478"
+  },
+  {
+    "label": "nested/sum",
+    "source": "pub fn main(){let n=0;for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{n+=(a*100+b*10+c);}n}",
+    "policy": "Exact",
+    "source_sha256": "3604a4ed3ae399e3054be7d1d691fd7d1b22e423982f3bb2245d8ee1cfbb063d"
+  },
+  {
+    "label": "nested/empty",
+    "source": "pub fn main(){let n=0;for (a,[b,c]) in []{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "b46d4c9f5be157903275c91221507d76321ca338607e28e9eee8364bb8552829"
+  },
+  {
+    "label": "nested/break",
+    "source": "pub fn main(){let n=0;for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{n+=(a*100+b*10+c);break;}n}",
+    "policy": "Exact",
+    "source_sha256": "99dd4064e7d90718408836093aab9f12ea6d6a948d5d2bed1df1fe18bb8b9255"
+  },
+  {
+    "label": "nested/continue",
+    "source": "pub fn main(){let n=0;for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{if a==1{continue;}n+=(a*100+b*10+c);}n}",
+    "policy": "Exact",
+    "source_sha256": "a2f1398092a4c1756e89e01cbd8ddc909ca847cb9e6135b880569d0da12ec232"
+  },
+  {
+    "label": "nested/return",
+    "source": "pub fn main(){for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{return (a*100+b*10+c);}0}",
+    "policy": "Exact",
+    "source_sha256": "796e8668bbcea7df4d4adbe9e8dd9966fc024d365f84a21630ca87584f4d8fd3"
+  },
+  {
+    "label": "nested/shadow",
+    "source": "pub fn main(){let a=9;let n=0;for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{n+=(a*100+b*10+c);}a*1000+n}",
+    "policy": "Exact",
+    "source_sha256": "250d94eac9ba9190e509de82cf31e402b89eee4cee302e44f209a4cc88ae7935"
+  },
+  {
+    "label": "nested/reassign",
+    "source": "pub fn main(){let n=0;for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{a+=1;n+=(a*100+b*10+c);}n}",
+    "policy": "Exact",
+    "source_sha256": "c62cc070bf906c3f43a1308c0079d5dc9b9969ddb9533c6b5ed6d5807c8539de"
+  },
+  {
+    "label": "nested/rhs-once",
+    "source": "pub fn main(){let calls=0;let n=0;for (a,[b,c]) in {calls+=1;[(1,[2,3]),(4,[5,6])]}{n+=(a*100+b*10+c);}calls*10000+n}",
+    "policy": "Exact",
+    "source_sha256": "999eb0821d369b58cfa11ede5c9202fed79c07515c5ef8457a24bd87b56a4bff"
+  },
+  {
+    "label": "nested/nested-break",
+    "source": "pub fn main(){let n=0;for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{for x in 0..3{n+=(a*100+b*10+c);break;}}n}",
+    "policy": "Exact",
+    "source_sha256": "366bfdcb6c8e52d027ebd430171cf268a2ab2b5f7069706756f1c7180f77e853"
+  },
+  {
+    "label": "nested/label-break",
+    "source": "pub fn main(){let n=0;'outer: for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{for x in 0..3{n+=(a*100+b*10+c);break 'outer;}}n}",
+    "policy": "Exact",
+    "source_sha256": "bb2150fd0ce855492e63a809ef7a6016fc795092c19a4ff18e6129ef4d3e5024"
+  },
+  {
+    "label": "nested/label-continue",
+    "source": "pub fn main(){let n=0;'outer: for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{for x in 0..3{n+=(a*100+b*10+c);continue 'outer;}}n}",
+    "policy": "Exact",
+    "source_sha256": "743fec5a2f35c9405655e16435339c094f90735acb1547b433a5cc4ad5a69690"
+  },
+  {
+    "label": "nested/body-error",
+    "source": "pub fn main(){for (a,[b,c]) in [(1,[2,3]),(4,[5,6])]{let z=0;return a/z;}0}",
+    "policy": "Exact",
+    "source_sha256": "167eace547c2a271a45a1f1c6bc77b65495596319e1b476934789472c5607dba"
+  },
+  {
+    "label": "shape/ignore",
+    "source": "pub fn main(){let n=0;for (_,b) in [([1],2),([3],4)]{n+=(b);}n}",
+    "policy": "Exact",
+    "source_sha256": "276854d6bc808d1bdfeae6dcd46a70f28d6b9173f021eba85c6ec34b4e64e87c"
+  },
+  {
+    "label": "shape/all-ignore",
+    "source": "pub fn main(){let n=0;for (_,_) in [([1],[2]),([3],[4])]{n+=(1);}n}",
+    "policy": "Exact",
+    "source_sha256": "e313cb1e879369724cae380367910f0b12aa2a80e0d3d5d36d8f2921a768ecee"
+  },
+  {
+    "label": "shape/unit",
+    "source": "pub fn main(){let n=0;for () in [(),()]{n+=(1);}n}",
+    "policy": "Exact",
+    "source_sha256": "7c34a1c4f5aa0723e828567796191da7f1da592d4e940250d579c7c6a5597b26"
+  },
+  {
+    "label": "shape/single",
+    "source": "pub fn main(){let n=0;for (a,) in [(1,),(2,)]{n+=(a);}n}",
+    "policy": "Exact",
+    "source_sha256": "3d9fbf728c0271fcc12c5f5bdbd85af7981fe9a3417e60c618842b00f2b4f466"
+  },
+  {
+    "label": "shape/vec-rest",
+    "source": "pub fn main(){let n=0;for [a,..] in [[1],[2,3]]{n+=(a);}n}",
+    "policy": "Exact",
+    "source_sha256": "563b76d73f7676324a425cca5867c75ca5f830b9211d935a278483ada7441589"
+  },
+  {
+    "label": "shape/vec-all-rest",
+    "source": "pub fn main(){let n=0;for [..] in [[],[1,2]]{n+=(1);}n}",
+    "policy": "Exact",
+    "source_sha256": "621d676dbe33956726c6db9c320ab25c2d6c0cf42a800318a53f43ded3200f35"
+  },
+  {
+    "label": "shape/vec-empty",
+    "source": "pub fn main(){let n=0;for [] in [[],[]]{n+=(1);}n}",
+    "policy": "Exact",
+    "source_sha256": "aa4846082017d133948a12984d9e22a62858533789d96a2d0067105cacf95d47"
+  },
+  {
+    "label": "shape/vec-ignore",
+    "source": "pub fn main(){let n=0;for [_,b] in [[[1],2],[[3],4]]{n+=(b);}n}",
+    "policy": "Exact",
+    "source_sha256": "3d90da5129836ca35255cb847f52b976644c093c637e66ecace6d98bbf9b8bfc"
+  },
+  {
+    "label": "shape/tuple-in-vec",
+    "source": "pub fn main(){let n=0;for [(a,b),c] in [[(1,2),3],[(4,5),6]]{n+=(a*100+b*10+c);}n}",
+    "policy": "Exact",
+    "source_sha256": "4f92ff9247cfd6d1a2d9941ed7b6c464631b7fbb4d2038082005fe66da21851f"
+  },
+  {
+    "label": "shape/struct",
+    "source": "struct T(a,b);pub fn main(){let n=0;for T(a,b) in [T(1,2),T(3,4)]{n+=(a*10+b);}n}",
+    "policy": "Exact",
+    "source_sha256": "af0657e71dd1064d3dae2ad072bdd499470b0b36c75f41e91f08ff93a9081cb8"
+  },
+  {
+    "label": "shape/struct-nested",
+    "source": "struct T(a);pub fn main(){let n=0;for (T(a),b) in [(T(1),2),(T(3),4)]{n+=(a*10+b);}n}",
+    "policy": "Exact",
+    "source_sha256": "f4c5b80f6372397cb15d735ead7b20f09e75500a90cbc26c0901361a29e6cffd"
+  },
+  {
+    "label": "matrix/tuple/00",
+    "source": "pub fn main(){let n=0;for (a,b) in [()]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "ac6faa1de8bbaaf29d5b35cbeb7ae03d2e059377808f9634faa6f2a4d5cfc41e"
+  },
+  {
+    "label": "matrix/tuple/01",
+    "source": "pub fn main(){let n=0;for (a,b) in [(1,)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "c6a3ae246b03a23168c53d2342a887353b19b9f150e6de543268ecc5e60e3f78"
+  },
+  {
+    "label": "matrix/tuple/02",
+    "source": "pub fn main(){let n=0;for (a,b) in [(1,2)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "23c4c9c68ccad2f5929b996891d858a282454d11b5251980eedeeb5fd0ab7332"
+  },
+  {
+    "label": "matrix/tuple/03",
+    "source": "pub fn main(){let n=0;for (a,b) in [(1,2,3)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "669c299cde6079c29488076d0c444c747e1550949621220f744013fa289677fe"
+  },
+  {
+    "label": "matrix/tuple/04",
+    "source": "pub fn main(){let n=0;for (a,b) in [[]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "639333fbda4f89f5cf4a0d4faed18c38fd248e7ff49c14bbd332f79bfe3137bc"
+  },
+  {
+    "label": "matrix/tuple/05",
+    "source": "pub fn main(){let n=0;for (a,b) in [[1]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "cb7cc837b776656b0de80bd6fd3875d781df2115cdf0895f0bf44800018ff641"
+  },
+  {
+    "label": "matrix/tuple/06",
+    "source": "pub fn main(){let n=0;for (a,b) in [[1,2]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "79acdd6eb448f58bd2b6a902b5e4bae4e2c48e3f96b820176917826e66eba1b3"
+  },
+  {
+    "label": "matrix/tuple/07",
+    "source": "pub fn main(){let n=0;for (a,b) in [[1,2,3]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "dede61660d84aa096560aa61fad09c3eaca0163344abb0f76ba7ca5eb179d0a9"
+  },
+  {
+    "label": "matrix/tuple/08",
+    "source": "pub fn main(){let n=0;for (a,b) in [1]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "34b26218d1f91e6e51774b7e6470eccf5dd720edff24e8bc7941032166a98e31"
+  },
+  {
+    "label": "matrix/tuple/09",
+    "source": "pub fn main(){let n=0;for (a,b) in [true]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "a34b989b04addd4db68114d4d67e4961055516d0a5e60148d35f5b8594246f99"
+  },
+  {
+    "label": "matrix/tuple/10",
+    "source": "pub fn main(){let n=0;for (a,b) in [#{a:1,b:2}]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "7162f07df45124a99e72acd2f0d563821661765300403ec670c5dd7ed0485c4b"
+  },
+  {
+    "label": "matrix/tuple/11",
+    "source": "pub fn main(){let n=0;for (a,b) in [Some((1,2))]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "062ba112a4583061aa28f6a504401761accf70ed0bc651a115ab9cf7af2f925c"
+  },
+  {
+    "label": "matrix/vec/00",
+    "source": "pub fn main(){let n=0;for [a,b] in [()]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "f511fad90f503e1da5f55582289231d98ea53ebeedd9d4c6623b84c0ce5124d4"
+  },
+  {
+    "label": "matrix/vec/01",
+    "source": "pub fn main(){let n=0;for [a,b] in [(1,)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "65b5adec2467c69e393ab3230c4aa323880b06076c21725887a5ff4dc1064287"
+  },
+  {
+    "label": "matrix/vec/02",
+    "source": "pub fn main(){let n=0;for [a,b] in [(1,2)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "136d69df3b8a5515209f5c6eae279679ebe6db198c15a4e0e270c84afe61e4a9"
+  },
+  {
+    "label": "matrix/vec/03",
+    "source": "pub fn main(){let n=0;for [a,b] in [(1,2,3)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "104e645594802c20ad193d2df28ea693882ce33f3272580026d733c8ba433fdf"
+  },
+  {
+    "label": "matrix/vec/04",
+    "source": "pub fn main(){let n=0;for [a,b] in [[]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "506cfde74380fc9bc9e23cedb4617c7cf954b3d02ec8cd74d4d54fe747cc5cd4"
+  },
+  {
+    "label": "matrix/vec/05",
+    "source": "pub fn main(){let n=0;for [a,b] in [[1]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "1ec1264551a9de3ec826c03d8b6325391efae0618f3ef5a15c5518d57117b4e4"
+  },
+  {
+    "label": "matrix/vec/06",
+    "source": "pub fn main(){let n=0;for [a,b] in [[1,2]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "2171e6b1e9500029da974626f07a4fd9b800d2a66a931e68528f273361072d3a"
+  },
+  {
+    "label": "matrix/vec/07",
+    "source": "pub fn main(){let n=0;for [a,b] in [[1,2,3]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "c0e48b1c0d6e66cf0f87f35bcfb192db76e41e2285ccf3a995f245d5dd4cbe1f"
+  },
+  {
+    "label": "matrix/vec/08",
+    "source": "pub fn main(){let n=0;for [a,b] in [1]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "ca717f25ceb967bef6f354a0726cf996c61e365ab40e3f0fee4ecb3666c35389"
+  },
+  {
+    "label": "matrix/vec/09",
+    "source": "pub fn main(){let n=0;for [a,b] in [true]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "e4e9d82737099a538075a89662b7add83a343c6693a01560ce06f4b141d3246c"
+  },
+  {
+    "label": "matrix/vec/10",
+    "source": "pub fn main(){let n=0;for [a,b] in [#{a:1,b:2}]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "8ce6015adc3f131188636fee4ad60d8daca26dc25a47384b6611540f44c3dc00"
+  },
+  {
+    "label": "matrix/vec/11",
+    "source": "pub fn main(){let n=0;for [a,b] in [Some((1,2))]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "75148a07acc6f7bb1fa9e593d1a1ce7e0ca0be526186b9a297be1e4ca0cb7458"
+  },
+  {
+    "label": "matrix/vec-rest/00",
+    "source": "pub fn main(){let n=0;for [a,..] in [()]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "e23425dc4fc14e36ee9ce0d818ad6a0c13c8fcbae4f9722de121886ad61342a4"
+  },
+  {
+    "label": "matrix/vec-rest/01",
+    "source": "pub fn main(){let n=0;for [a,..] in [(1,)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "2725d01d67ead9da4d0bd4ac83cb5a4f8f5653957bc72f97c08b9d9655ed3364"
+  },
+  {
+    "label": "matrix/vec-rest/02",
+    "source": "pub fn main(){let n=0;for [a,..] in [(1,2)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "f115a2805cba66c11d44f5a3cf8312ae376275116b94d7373b13f99646d1521c"
+  },
+  {
+    "label": "matrix/vec-rest/03",
+    "source": "pub fn main(){let n=0;for [a,..] in [(1,2,3)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "1bc0eacce28b1fa4b0b5dd547c324780aab6e2c6d9f98e83b0555d28416ff47d"
+  },
+  {
+    "label": "matrix/vec-rest/04",
+    "source": "pub fn main(){let n=0;for [a,..] in [[]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "313bc99d5d1fb1dbf9a70b6ab57a54f69325d2320ea30e2f9ec270a4c3e8fdec"
+  },
+  {
+    "label": "matrix/vec-rest/05",
+    "source": "pub fn main(){let n=0;for [a,..] in [[1]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "279c408c659d0951e7d732346f610cc2d65c2fd5dbd9b66c7ae6e92fd4216f9b"
+  },
+  {
+    "label": "matrix/vec-rest/06",
+    "source": "pub fn main(){let n=0;for [a,..] in [[1,2]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "3c898160236d55a8499cb21f861da494cdbae88da319f9a0fe267490521bc100"
+  },
+  {
+    "label": "matrix/vec-rest/07",
+    "source": "pub fn main(){let n=0;for [a,..] in [[1,2,3]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "e247464bc1eba58f637b932d38ece6bba97aca04e07a1c1a82a2bdde6c802349"
+  },
+  {
+    "label": "matrix/vec-rest/08",
+    "source": "pub fn main(){let n=0;for [a,..] in [1]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "3f016d5bdad9b4194fd3843758f1b4f53be41ad1507414d04262818bc760083b"
+  },
+  {
+    "label": "matrix/vec-rest/09",
+    "source": "pub fn main(){let n=0;for [a,..] in [true]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "63a128523d29695b893954117842408414ced54b7f1ba5227f81d910437f9644"
+  },
+  {
+    "label": "matrix/vec-rest/10",
+    "source": "pub fn main(){let n=0;for [a,..] in [#{a:1,b:2}]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "3b4c55c6f0a361db8693e54a3062242406d46a553420733cb9251588e9ff54c7"
+  },
+  {
+    "label": "matrix/vec-rest/11",
+    "source": "pub fn main(){let n=0;for [a,..] in [Some((1,2))]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "5fb23b9b98b1387cbe47a1eccc3421e2265e9232d8807463962d2458cd28627f"
+  },
+  {
+    "label": "matrix/vec-all-rest/00",
+    "source": "pub fn main(){let n=0;for [..] in [()]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "de5b45ffd67f4eaf2dfa6edc27d70171f2090bb7c0593f14b8f734d5508a974b"
+  },
+  {
+    "label": "matrix/vec-all-rest/01",
+    "source": "pub fn main(){let n=0;for [..] in [(1,)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "a3efbedd9f75542d34b2c9a7a7bee41148cf4320d602dd52062c26e1ba373d60"
+  },
+  {
+    "label": "matrix/vec-all-rest/02",
+    "source": "pub fn main(){let n=0;for [..] in [(1,2)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "b4465d4a21f43df7d70b1a6e7e75fa8b70e7135fed658a1eb17d05a7229a50d2"
+  },
+  {
+    "label": "matrix/vec-all-rest/03",
+    "source": "pub fn main(){let n=0;for [..] in [(1,2,3)]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "c6f330b976ac0f30a237bd05a8275bef887818d851389ec4fd0417038faa3785"
+  },
+  {
+    "label": "matrix/vec-all-rest/04",
+    "source": "pub fn main(){let n=0;for [..] in [[]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "af7dbf5f2bedd34c3e21b73b91bbced0d8793aa174baa63d6ad9c429f5215d78"
+  },
+  {
+    "label": "matrix/vec-all-rest/05",
+    "source": "pub fn main(){let n=0;for [..] in [[1]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "c412dbb0c820dcce38e5241909570b0b6377f7d6a5090672888aa8108e698f42"
+  },
+  {
+    "label": "matrix/vec-all-rest/06",
+    "source": "pub fn main(){let n=0;for [..] in [[1,2]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "8506bfd72ef0a0ba8fc1c2043b13460b23d0fcdaedc6f2e715ba6c9c661d8220"
+  },
+  {
+    "label": "matrix/vec-all-rest/07",
+    "source": "pub fn main(){let n=0;for [..] in [[1,2,3]]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "4f65da27ac7b34f9de8e3a1bf9bef9f54339bd4a6b83c0ea6a2f219298839ffd"
+  },
+  {
+    "label": "matrix/vec-all-rest/08",
+    "source": "pub fn main(){let n=0;for [..] in [1]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "a38f3dab35b265d6a8b1d93d6913cedf5ecd9496eea7a856208b712210570ab3"
+  },
+  {
+    "label": "matrix/vec-all-rest/09",
+    "source": "pub fn main(){let n=0;for [..] in [true]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "9f1021c9dd3548efa4a640cc40843fcd44677df2de3d6f4228cb26fff20eb95a"
+  },
+  {
+    "label": "matrix/vec-all-rest/10",
+    "source": "pub fn main(){let n=0;for [..] in [#{a:1,b:2}]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "07f3dac5c223ae59aae94f212f9450e25fb493574d1845afabe73849d8747dc3"
+  },
+  {
+    "label": "matrix/vec-all-rest/11",
+    "source": "pub fn main(){let n=0;for [..] in [Some((1,2))]{n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "e56582b1447c67b71e5ad9e7fd44dde455b7ac1cd4e0e17152789ec549019a37"
+  },
+  {
+    "label": "ownership/late-mismatch",
+    "source": "pub fn main(){let n=0;for(a,b)in[(1,2),(3,)]{n+=a+b;}n}",
+    "policy": "Exact",
+    "source_sha256": "2673e51dbecd5b6ed54d4840569556602f30611cc1045bad6f834fc8cde58a62"
+  },
+  {
+    "label": "ownership/late-vec-mismatch",
+    "source": "pub fn main(){let n=0;for[a,b]in[[1,2],[3]]{n+=a+b;}n}",
+    "policy": "Exact",
+    "source_sha256": "90d94d0aa3decf10f1811d32c691e9669d0a747dbdca9a3a688bd17f7651afef"
+  },
+  {
+    "label": "ownership/nested-mismatch",
+    "source": "pub fn main(){for(a,(b,c))in[(1,(2,))]{}7}",
+    "policy": "Exact",
+    "source_sha256": "b2aabf169159f1e22d411e1a32fe6bf415075e4e4abced1d617e506aa126b6c1"
+  },
+  {
+    "label": "ownership/alias-root",
+    "source": "pub fn main(){let v=[([1],[2])];for(a,b)in v{a[0]=9;}v[0].0[0]}",
+    "policy": "Exact",
+    "source_sha256": "c741c59e1ee32c72cca286f8adf2233419bf534ac844a56bafce4752fb36f5e3"
+  },
+  {
+    "label": "ownership/alias-children",
+    "source": "pub fn main(){let x=[1];for(a,b)in[(x,x)]{a[0]=9;}x[0]}",
+    "policy": "Exact",
+    "source_sha256": "ae3e605ead2eb5c22bf76ad96640c8f714c9c2230ae75e905c71f290deaf016f"
+  },
+  {
+    "label": "ownership/drop-child",
+    "source": "pub fn main(){for(a,b)in[([1],[2]),([3],[4])]{drop(a);}7}",
+    "policy": "Exact",
+    "source_sha256": "b6c2e1a4d7e79b7d6ddcddf5eea3e152f508a643ba57db8be8dbd35ae9cfa07f"
+  },
+  {
+    "label": "ownership/drop-iterable",
+    "source": "pub fn main(){let v=[(1,2)];for(a,b)in v{drop(v);}7}",
+    "policy": "Exact",
+    "source_sha256": "50eb62e0625db38fa71b3f0caf7258892329e43017e79252790441354276e1de"
+  },
+  {
+    "label": "ownership/mutate-iterable",
+    "source": "pub fn main(){let v=[(1,2)];for(a,b)in v{v.push((3,4));}7}",
+    "policy": "Exact",
+    "source_sha256": "f5e64ac23b24610d19a839e97c28505ed2369165a609eaa1da56c20700222865"
+  },
+  {
+    "label": "ownership/moved-iterable",
+    "source": "pub fn main(){let v=[(1,2)];drop(v);for(a,b)in v{}7}",
+    "policy": "Exact",
+    "source_sha256": "725eafec7d57ea1049740fa89e3f99b058a43648b151a7d10c3299fcabac7529"
+  },
+  {
+    "label": "ownership/moved-element",
+    "source": "pub fn main(){let x=(1,2);let v=[x];drop(x);for(a,b)in v{}7}",
+    "policy": "Exact",
+    "source_sha256": "04b44a938fb8de01e88a309a23e32d4cfd48f243b764b78233d43c89b1bfd241"
+  },
+  {
+    "label": "ownership/moved-child-ignore",
+    "source": "pub fn main(){let x=[1];let v=[(x,2)];drop(x);for(_,b)in v{return b;}0}",
+    "policy": "Exact",
+    "source_sha256": "a5dcc061d6026d8f4058d1221863a3616359a60154622f4325b4518a9c6076db"
+  },
+  {
+    "label": "ownership/moved-child-name",
+    "source": "pub fn main(){let x=[1];let v=[(x,2)];drop(x);for(a,b)in v{return b;}0}",
+    "policy": "Exact",
+    "source_sha256": "529989c6fc9969b28f61918c3894e965d618d483928ce3fbf5724325333dcfa9"
+  },
+  {
+    "label": "ownership/leased-element",
+    "source": "pub fn main(){let x=[1,2];for z in x{for[a,b]in[x]{return a+b;}}0}",
+    "policy": "Exact",
+    "source_sha256": "5d7cece99c93b332eb4d2bda6cf5b3c37c7a8d049ca9552302c47243450a94a7"
+  },
+  {
+    "label": "ownership/pipeline",
+    "source": "pub fn main(){let n=0;for(a,b)in[(1,2),(3,4)].iter(){n+=a+b;}n}",
+    "policy": "Exact",
+    "source_sha256": "94f3a042daa9c0e1bc53fb24a9e6e74207da8ea71d7b33c725d439bd000ce662"
+  },
+  {
+    "label": "ownership/pipeline-vec",
+    "source": "pub fn main(){let n=0;for[a,b]in[[1,2],[3,4]].iter(){n+=a+b;}n}",
+    "policy": "Exact",
+    "source_sha256": "cd420343a4c05f0c68c44fcd3d9b5842fefe6bfa58dcbc3a57aef3c106e9e098"
+  },
+  {
+    "label": "excluded/duplicate",
+    "source": "pub fn main(){for (a,a) in [(1,2)]{}7}",
+    "policy": "Retain-refusal",
+    "source_sha256": "17cfb2dafd9f3570b9b7e46eedac36cd7c821c7c4e12337334a48395f723d5d0"
+  },
+  {
+    "label": "excluded/tuple-rest",
+    "source": "pub fn main(){for (a,..) in [(1,2)]{}7}",
+    "policy": "Retain-refusal",
+    "source_sha256": "ec588bfdf00e41c554eac79d7523fabb3c6f8359acebecf3df9b084f42932c5e"
+  },
+  {
+    "label": "excluded/literal",
+    "source": "pub fn main(){for (1,a) in [(1,2)]{}7}",
+    "policy": "Retain-refusal",
+    "source_sha256": "14910698214c3e6bc2131dfa106ac8de5b76504fb8ab4a6a527fe006564b8f0b"
+  },
+  {
+    "label": "excluded/variant",
+    "source": "pub fn main(){for Some(a) in [Some(7)]{}7}",
+    "policy": "Retain-refusal",
+    "source_sha256": "8300d525890cd34623dd1fcf4467004ad48713733582df90ef77e885cda1a530"
+  },
+  {
+    "label": "excluded/object",
+    "source": "pub fn main(){for #{a} in [#{a:7}]{}7}",
+    "policy": "Retain-refusal",
+    "source_sha256": "452e6ac357d55a398a57017179dda70025b9be92c6f0c52c02b5a0f999028cde"
+  },
+  {
+    "label": "excluded/vec-middle-rest",
+    "source": "pub fn main(){for [a,..,b] in [[1,2,3]]{}7}",
+    "policy": "Retain-refusal",
+    "source_sha256": "71fb1a72db7826ae46ee5b6ed8ae49742bdbe1ad316d5574e7597c12fec461e9"
+  },
+  {
+    "label": "excluded/parameter",
+    "source": "fn f((a,b)){a+b}pub fn main(){f((1,2))}",
+    "policy": "Retain-refusal",
+    "source_sha256": "40d00e0c889beb8a7b8ea75a041d7ad358037d65e2e6cb5cdb1a2d8cd679e6dc"
+  },
+  {
+    "label": "frames/miss",
+    "source": "fn inner(){for(a,b)in[(1,)]{}7}fn outer(){inner()}pub fn main(){outer()}",
+    "policy": "Exact",
+    "source_sha256": "553154aaf08d7011a2e78ac696e2ca1dc82e2f6df315c3eb2b82ec09eba90798"
+  }
+]
