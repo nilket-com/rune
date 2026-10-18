@@ -82,7 +82,9 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	}
 	let stock: Json = serde_json::from_str(STOCK).unwrap();
 	let id = case["id"].as_str().unwrap();
-	let expected = &stock[id]["observation"];
+	let intentional =
+		super::nominal_clone::intentional_json("constructors", case, &stock[id]["observation"]);
+	let expected = intentional.as_ref().unwrap_or(&stock[id]["observation"]);
 	let observed = &actual["observation"];
 	let admissions: Json = serde_json::from_str(include_str!("c15b_admissions.json")).unwrap();
 	if let Some(rule) = admissions.get(id) {

@@ -1,0 +1,6592 @@
+{
+	"000": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 0,
+		"label": "constructors/126/clone-function/forms/unit/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x6c1a4b787cc3b1f4",
+							"0x0",
+							"U",
+							"Empty",
+							[],
+							[]
+						],
+						[
+							"Nominal",
+							"0x6c1a4b787cc3b1f4",
+							"0x0",
+							"U",
+							"Empty",
+							[],
+							[]
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b6c657420783d553b287374643a3a636c6f6e653a3a636c6f6e652878292c78297d0a70756220666e206331355f726575736528297b377d0a",
+		"source_sha256": "dc2f6dae22b729c47e19dc2716ce105fbd0065a1c782c86d70aaf18abe605f8f"
+	},
+	"001": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: RemoveTupleCallParams { span: 99:100, variant: 99:100, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 1,
+		"label": "constructors/127/clone-function/forms/empty-tuple/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x73340c59789f5bd",
+							"0x0",
+							"Z",
+							"Tuple",
+							[],
+							[]
+						],
+						[
+							"Nominal",
+							"0x73340c59789f5bd",
+							"0x0",
+							"Z",
+							"Tuple",
+							[],
+							[]
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b6c657420783d5a28293b287374643a3a636c6f6e653a3a636c6f6e652878292c78297d0a70756220666e206331355f726575736528297b377d0a",
+		"source_sha256": "c66eb36310bd51f866d738bba8fb3645aae976715b479c15e01b04a9e44a4e0f"
+	},
+	"002": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 2,
+		"label": "constructors/128/clone-function/forms/single/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b6c657420783d542837293b287374643a3a636c6f6e653a3a636c6f6e652878292c78297d0a70756220666e206331355f726575736528297b377d0a",
+		"source_sha256": "e558ad7703a7ade20bee63d7faab1ef254c00cfbffab501f23dce043c6e22010"
+	},
+	"003": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 3,
+		"label": "constructors/129/clone-function/forms/pair/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Tuple",
+							[],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Tuple",
+							[],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b6c657420783d5028372c39293b287374643a3a636c6f6e653a3a636c6f6e652878292c78297d0a70756220666e206331355f726575736528297b377d0a",
+		"source_sha256": "fa8b5fe777a180d533593f2c37fe2e6deff37da8289c461db578a9825b5ee1a9"
+	},
+	"004": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 4,
+		"label": "constructors/130/clone-function/forms/named-control/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b6c657420783d4e7b783a372c793a397d3b287374643a3a636c6f6e653a3a636c6f6e652878292c78297d0a70756220666e206331355f726575736528297b377d0a",
+		"source_sha256": "06a8b620c715f09c3df34ac91a5d42dafd2e45ae93d01e53cab205520a7018fe"
+	},
+	"005": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 5,
+		"label": "constructors/131/clone-function/ownership/shallow-clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b6c657420783d542831293b6c657420793d7374643a3a636c6f6e653a3a636c6f6e652878293b792e303d323b28782c79297d0a70756220666e206331355f726575736528297b377d0a",
+		"source_sha256": "526ab977249cdf9ba068e92d6bb14dd4573d9f76a15c16d07aceed24bfdeb576"
+	},
+	"006": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 6,
+		"label": "constructors/132/clone-function/ownership/nested-clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "757365206331353a3a7461703b0a73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e207b782c797d0a70756220666e206d61696e28297b6c657420783d54285b315d293b6c657420793d7374643a3a636c6f6e653a3a636c6f6e652878293b792e302e707573682832293b28782c79297d0a70756220666e206331355f726575736528297b377d0a",
+		"source_sha256": "f218e55e9b994fdcf97e7d02cb09ef27def8db95d247cea2ba4e5e6f3d7716b2"
+	},
+	"007": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 7,
+		"label": "enum_variants/006/forms/unit/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x1bb3a008a8b4701a",
+							"E::U",
+							"Empty",
+							[],
+							[]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x1bb3a008a8b4701a",
+							"E::U",
+							"Empty",
+							[],
+							[]
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a553b28782c7374643a3a636c6f6e653a3a636c6f6e65287829297d0a70756220666e20633135625f726575736528297b377d0a",
+		"source_sha256": "f84457e013c5e713bde4bb7ecdc37ecb8141ecdc2cadf0344c90b8c330989b4f"
+	},
+	"008": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: RemoveTupleCallParams { span: 96:100, variant: 96:100, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 8,
+		"label": "enum_variants/013/forms/empty/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x11415aa2fd9ee6f8",
+							"E::Z",
+							"Tuple",
+							[],
+							[]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x11415aa2fd9ee6f8",
+							"E::Z",
+							"Tuple",
+							[],
+							[]
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a5a28293b28782c7374643a3a636c6f6e653a3a636c6f6e65287829297d0a70756220666e20633135625f726575736528297b377d0a",
+		"source_sha256": "2c72eed7f0a261a27f2184d49cb859a6f9bb11f137e1f96e68a6680aa60ac771"
+	},
+	"009": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 9,
+		"label": "enum_variants/020/forms/tuple/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a542837293b28782c7374643a3a636c6f6e653a3a636c6f6e65287829297d0a70756220666e20633135625f726575736528297b377d0a",
+		"source_sha256": "b110d18a4db0a5ca85ebd2d375bbaecb498aa277bf6e2f16bd8e0dd86498140e"
+	},
+	"010": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 10,
+		"label": "enum_variants/027/forms/pair/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0xe1cddb7505fbaac1",
+							"E::P",
+							"Tuple",
+							[],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0xe1cddb7505fbaac1",
+							"E::P",
+							"Tuple",
+							[],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a5028372c39293b28782c7374643a3a636c6f6e653a3a636c6f6e65287829297d0a70756220666e20633135625f726575736528297b377d0a",
+		"source_sha256": "eeca05f69b26285e098d561e0ac54e20e7636f291828662fac898601a53f9f54"
+	},
+	"011": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 11,
+		"label": "enum_variants/034/forms/named/clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a4e7b783a372c793a397d3b28782c7374643a3a636c6f6e653a3a636c6f6e65287829297d0a70756220666e20633135625f726575736528297b377d0a",
+		"source_sha256": "9682a4d58eb68023b9ef51d695db75917ee8d2f373de7b109caa9bad6c54be75"
+	},
+	"012": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 12,
+		"label": "enum_variants/097/ownership/clone-mutation",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a542837293b6c657420793d7374643a3a636c6f6e653a3a636c6f6e652878293b792e303d393b28782c79297d0a70756220666e20633135625f726575736528297b377d0a",
+		"source_sha256": "d006fcc5b480577bc9ce6390367a7891f986a4f95dc378b7925e3ffe9da8b131"
+	},
+	"013": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 13,
+		"label": "enum_variants/098/ownership/named-clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"8"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a4e7b783a372c793a397d3b6c657420793d7374643a3a636c6f6e653a3a636c6f6e652878293b792e793d383b28782c79297d0a70756220666e20633135625f726575736528297b377d0a",
+		"source_sha256": "4a8488334081c381e67c45018f44e4fcf127152bd8be6f941245981c157371bb"
+	},
+	"014": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 14,
+		"label": "enum_variants/099/ownership/nested-clone",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "75736520633135623a3a7461703b0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d20656e756d20467b552c542861297d2073747275637420532861293b0a70756220666e206d61696e28297b6c657420783d453a3a54285b315d293b6c657420793d7374643a3a636c6f6e653a3a636c6f6e652878293b792e302e707573682832293b28782c79297d0a70756220666e20633135625f726575736528297b377d0a",
+		"source_sha256": "1e24f876876cc5228d735638c7035791c32ef5c46a58a595148ae7a84de577b8"
+	},
+	"015": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 13:25, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 15,
+		"label": "len_clone_stock.tsv/clone/option-struct-field",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							3
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							4
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								]
+							],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								]
+							],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"5"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							3
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							4
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								]
+							],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								]
+							],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"5"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "7374727563742050207b787d20666e20672829207b2037207d2070756220666e206d61696e2829207b206c657420613d536f6d6528507b783a317d293b206c657420623d612e636c6f6e6528293b20622e302e783d353b2028612c6229207d",
+		"source_sha256": "7731cbe5a4c4934f5f426e9cf279864536223005bd2b251e6ddc31a2c0a391da"
+	},
+	"016": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 13:25, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 16,
+		"label": "len_clone_stock.tsv/clone/tuple-struct-field",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								3
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								]
+							],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								]
+							],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"5"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								3
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								]
+							],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								]
+							],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"5"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "7374727563742050207b787d20666e20672829207b2037207d2070756220666e206d61696e2829207b206c657420613d28507b783a317d2c293b206c657420623d612e636c6f6e6528293b20622e302e783d353b2028612c6229207d",
+		"source_sha256": "4681a05118d1e404fdbc48a5c2f02afcb221e1afaf44e3450ac1d07630c18324"
+	},
+	"017": {
+		"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:24, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 25:40, context: None } })]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 17,
+		"label": "global_clone_stock.tsv/global/struct",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420507b787d20666e20672878297b782b317d20666e20636c6f6e652878297b31377d2070756220666e206d61696e28297b206c657420783d507b783a317d3b206c657420793d7374643a3a636c6f6e653a3a636c6f6e652878293b20792e783d373b20782e78207d",
+		"source_sha256": "29ec8271bbae4cead8447d502b1e5de70f551b4fed104402ab1fc58fabea72cc"
+	},
+	"018": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 18,
+		"label": "field-reassignment/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d542831293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "b37117241449ae46ff01c38748d05e5230c2b35365f1527b0735af85a1f9c133"
+	},
+	"019": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 19,
+		"label": "field-reassignment/pair",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Tuple",
+							[],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Tuple",
+							[],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d5028312c32293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e313d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "e90fc658e7c5426544e7b4ff33547f1117553afb9117e86205ccf006ae5d1934"
+	},
+	"020": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 20,
+		"label": "field-reassignment/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4e7b783a312c793a327d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "6c53e19bbb8d119fcf934d1a37468fa7db2b2d8b8bc80d8199370ded33411527"
+	},
+	"021": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 21,
+		"label": "field-reassignment/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a542831293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "d392fee39d62de87b7d2d6f9f5676964e27edd77f959af7edef425216d014b5f"
+	},
+	"022": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 22,
+		"label": "field-reassignment/enum-pair",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0xe1cddb7505fbaac1",
+							"E::P",
+							"Tuple",
+							[],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0xe1cddb7505fbaac1",
+							"E::P",
+							"Tuple",
+							[],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a5028312c32293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e313d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "09cb6406d8a7cdc122a83a1c08c10fda8c12bb266a580cfe1483427d4dd3656a"
+	},
+	"023": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 23,
+		"label": "field-reassignment/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a4e7b783a312c793a327d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "c341c89ee346b5edd7cd8e47060ffa07366b4b8dbd34ef6c27da23866025e4a9"
+	},
+	"024": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 24,
+		"label": "shared-child-vec/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d54285b315d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e707573682839293b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "82ff8bef5a4ae65ea0fbfa3e4977d0cca3d8eff94ee854646613c159f0da9df8"
+	},
+	"025": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 25,
+		"label": "shared-child-vec/pair",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Tuple",
+							[],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0x467f80bed6994967",
+							"0x0",
+							"P",
+							"Tuple",
+							[],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								5
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								6,
+								7
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d50285b315d2c5b325d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e312e707573682839293b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "9cb931540eb26889e2112c42be3200ab315c5b434d6a59ca530a69cf0131e5e9"
+	},
+	"026": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 26,
+		"label": "shared-child-vec/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								5
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								6,
+								7
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4e7b783a5b315d2c793a5b325d7d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e792e707573682839293b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "432c448af6fb9048c7b87fe68d5491607ac01bbba91c020f4e6a477ef2051067"
+	},
+	"027": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 27,
+		"label": "shared-child-vec/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a54285b315d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e707573682839293b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "d310faef70648bacbcf3b5b6a4455f2295b7aef09b3e3d5c11b173b133f2ecd5"
+	},
+	"028": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 28,
+		"label": "shared-child-vec/enum-pair",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0xe1cddb7505fbaac1",
+							"E::P",
+							"Tuple",
+							[],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0xe1cddb7505fbaac1",
+							"E::P",
+							"Tuple",
+							[],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								5
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								6,
+								7
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a50285b315d2c5b325d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e312e707573682839293b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "8424d619ef7af505e4aa4b9822121b1f8abd5123b00e75b36d143c232562b4e2"
+	},
+	"029": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 29,
+		"label": "shared-child-vec/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								5
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								6,
+								7
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a4e7b783a5b315d2c793a5b325d7d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e792e707573682839293b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "5ad0c96338cf26a6b7ec82a95f0014e8b8b935d9386f576f8448b583629e39db"
+	},
+	"030": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 30,
+		"label": "recursive-wrapper/tuple/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								3
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d28542831292c293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "653896690049beb0149c2562dc37bceca08defb16147aa5fb6bbeb0293259f4e"
+	},
+	"031": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 31,
+		"label": "recursive-wrapper/some/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							3
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							4
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d536f6d652854283129293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "1eab7e138c6ae636fe7717edfe5ed4195cefdca2d76ab65611404216f0124f9c"
+	},
+	"032": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 32,
+		"label": "recursive-wrapper/ok/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Ok",
+							3
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Ok",
+							4
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4f6b2854283129293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "af36a97ac591eec3e5117f750bc7d4a9bd2be589145f11941b86863ff8d87d84"
+	},
+	"033": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 33,
+		"label": "recursive-wrapper/err/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Err",
+							3
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Err",
+							4
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4572722854283129293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "827202445bd6e4acde868b326f5f6bc915b0e5a1de0ff0ff82008414541e4810"
+	},
+	"034": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 34,
+		"label": "shallow-wrapper/vec/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								3
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d5b542831295d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b625b305d2e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "0f277afcb325e6baa8d2fa7696fb6dd51d8f12e19140c234b7e2d09e6b268e77"
+	},
+	"035": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 35,
+		"label": "shallow-wrapper/object/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Object",
+							"0x2f5c2c7799148025",
+							[
+								[
+									"6e",
+									3
+								]
+							]
+						],
+						[
+							"Object",
+							"0x2f5c2c7799148025",
+							[
+								[
+									"6e",
+									3
+								]
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d237b6e3a542831297d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e6e2e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "79100c85d3ce50a0701d0ffd8f6c8e8ea54b03e2efc93e29792883ccc66375ea"
+	},
+	"036": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 36,
+		"label": "repeated-dag/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2,
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								1
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								7
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420703d542831293b6c657420613d28702c70293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d373b622e312e303d393b28702c612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "5b05c584bd65a947179d9e51c1c787f223e0935d6a08fceb280ef03f0ef320f4"
+	},
+	"037": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 37,
+		"label": "recursive-wrapper/tuple/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								3
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								7,
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d284e7b783a312c793a327d2c293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "f5838eb5e443b48c335e1c8498e211ac6d8f5e9f23fdd5470b9d2dcf6d781e85"
+	},
+	"038": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 38,
+		"label": "recursive-wrapper/some/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							3
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							4
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								7,
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d536f6d65284e7b783a312c793a327d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "15d903ae9ccd398e6592bb55601fb85c58e79d8cb3078ac69f617d5af2560705"
+	},
+	"039": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 39,
+		"label": "recursive-wrapper/ok/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Ok",
+							3
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Ok",
+							4
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								7,
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4f6b284e7b783a312c793a327d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "8cb04cecb23ab54451589692f2cec1a82b3a85f9bc91358fcc792ab720467441"
+	},
+	"040": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 40,
+		"label": "recursive-wrapper/err/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Err",
+							3
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Err",
+							4
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								7,
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d457272284e7b783a312c793a327d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "fdc604d0d859fed4bc898dbf6a44efa1b54114282dbd15e87647dd26cae8359f"
+	},
+	"041": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 41,
+		"label": "shallow-wrapper/vec/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								3
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d5b4e7b783a312c793a327d5d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b625b305d2e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "d345810a6c21dbd16e48025c0e7e905daf0e878cd0540036a30a714518419d17"
+	},
+	"042": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 42,
+		"label": "shallow-wrapper/object/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Object",
+							"0x2f5c2c7799148025",
+							[
+								[
+									"6e",
+									3
+								]
+							]
+						],
+						[
+							"Object",
+							"0x2f5c2c7799148025",
+							[
+								[
+									"6e",
+									3
+								]
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d237b6e3a4e7b783a312c793a327d7d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e6e2e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "f14d6c67cffae74f171ab75d1d3c738f42d9ddfbd573bd39e62054217b7f39f6"
+	},
+	"043": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 43,
+		"label": "repeated-dag/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2,
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								4,
+								5
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								1
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								6,
+								7
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								8,
+								9
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								10,
+								11
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420703d4e7b783a312c793a327d3b6c657420613d28702c70293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d373b622e312e793d393b28702c612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "03f592bce01af3aa716f73c2257e3ac38a6fa31ce7226495de6bc980135522ff"
+	},
+	"044": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 44,
+		"label": "recursive-wrapper/tuple/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								3
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d28453a3a542831292c293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "7f4fbc0b3a85644e07986c3fc70605ef15355e8130def550ac4f741ec53f915e"
+	},
+	"045": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 45,
+		"label": "recursive-wrapper/some/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							3
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							4
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d536f6d6528453a3a54283129293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "9ae26d2fe89b76a742eb0c326724568fd6d2cfa8141f2280485c28104b396abc"
+	},
+	"046": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 46,
+		"label": "recursive-wrapper/ok/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Ok",
+							3
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Ok",
+							4
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4f6b28453a3a54283129293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "05511ef8d7630703ceacd74579bb46aa5d1f7911b7eea137fc58d4b8750e71dc"
+	},
+	"047": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 47,
+		"label": "recursive-wrapper/err/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Err",
+							3
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Err",
+							4
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								5
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d45727228453a3a54283129293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "65eff1d35b58ab3602a8f9ed1c7cfbb534495e35ea5fa5cd4d8ab61af8e0aef9"
+	},
+	"048": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 48,
+		"label": "shallow-wrapper/vec/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								3
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d5b453a3a542831295d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b625b305d2e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "1ab3ebabae9fee99077257a02665f7dafea92152a550e45f87430bdfdcb4557d"
+	},
+	"049": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 49,
+		"label": "shallow-wrapper/object/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Object",
+							"0x2f5c2c7799148025",
+							[
+								[
+									"6e",
+									3
+								]
+							]
+						],
+						[
+							"Object",
+							"0x2f5c2c7799148025",
+							[
+								[
+									"6e",
+									3
+								]
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d237b6e3a453a3a542831297d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e6e2e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "e13d671c10a130360f4451521849d7131932ce0bf717fcafeee72780ac4802c1"
+	},
+	"050": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 50,
+		"label": "repeated-dag/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2,
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								4
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								1
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								5,
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								7
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420703d453a3a542831293b6c657420613d28702c70293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d373b622e312e303d393b28702c612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "b720d7ca7fd828e4dcfe6f56cac4c452a80e745418aee7785c926302c22300cd"
+	},
+	"051": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 51,
+		"label": "recursive-wrapper/tuple/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								3
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								7,
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d28453a3a4e7b783a312c793a327d2c293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "d4c7041fb013d08970d4c603ffad899af52c0137ac58d880215809ba6e5ce513"
+	},
+	"052": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 52,
+		"label": "recursive-wrapper/some/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							3
+						],
+						[
+							"Option",
+							"0xc0958f246e193e78",
+							4
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								7,
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d536f6d6528453a3a4e7b783a312c793a327d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "a43d755a412824f9e7bfc649bf3a195cc5af9284b25e35f104bda86bc60b09c0"
+	},
+	"053": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 53,
+		"label": "recursive-wrapper/ok/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Ok",
+							3
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Ok",
+							4
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								7,
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4f6b28453a3a4e7b783a312c793a327d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "286b91bb3c316464d03ca5828d9fcf39ff3f8a5783359186f5e49473dde85219"
+	},
+	"054": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 54,
+		"label": "recursive-wrapper/err/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Err",
+							3
+						],
+						[
+							"Result",
+							"0x1978eae6b50a98ef",
+							"Err",
+							4
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								5,
+								6
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								7,
+								8
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d45727228453a3a4e7b783a312c793a327d293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "9b432f8af222511b6c939286b0a63b07f61fd22b9bfe21a1e84b1cfe1338aaae"
+	},
+	"055": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 55,
+		"label": "shallow-wrapper/vec/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								3
+							]
+						],
+						[
+							"Vec",
+							"0xc11b1e769aea94f2",
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d5b453a3a4e7b783a312c793a327d5d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b625b305d2e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "f7a32a6d82309dd22faa930d3b64c7b1ed44c19dd740031e19e86e285ba053b7"
+	},
+	"056": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 56,
+		"label": "shallow-wrapper/object/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Object",
+							"0x2f5c2c7799148025",
+							[
+								[
+									"6e",
+									3
+								]
+							]
+						],
+						[
+							"Object",
+							"0x2f5c2c7799148025",
+							[
+								[
+									"6e",
+									3
+								]
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								4,
+								5
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d237b6e3a453a3a4e7b783a312c793a327d7d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e6e2e793d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "73cb36dc344c54a0de8a9a6affe1e9768c405b0a3f54172fade1471264ec7d71"
+	},
+	"057": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 57,
+		"label": "repeated-dag/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2,
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								4,
+								5
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								1
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								6,
+								7
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"2"
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								8,
+								9
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								10,
+								11
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420703d453a3a4e7b783a312c793a327d3b6c657420613d28702c70293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e793d373b622e312e793d393b28702c612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "e16d6c36cad5a34b4e7f0bf678608dad98cf9bf812df7bc639dea00d6077545f"
+	},
+	"058": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 58,
+		"label": "shared-child-tuple/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d542828312c29293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "65040c2cb7cb76ca08f17817604f3cae822ac564106e0fd06385d7aefc1ddc07"
+	},
+	"059": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 59,
+		"label": "shared-child-tuple/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								5
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4e7b783a28312c292c793a307d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e782e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "014e3ab03ebb8968d1b2af108773c4fc5107f68e5fd298df963e48c32f58684f"
+	},
+	"060": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 60,
+		"label": "shared-child-tuple/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								4
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a542828312c29293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "4ecf1d654c7a89b212750ee524739228b8ad49d7e35c25fb825e084f37921be7"
+	},
+	"061": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 61,
+		"label": "shared-child-tuple/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								5
+							]
+						],
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								6
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a4e7b783a28312c292c793a307d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e782e303d393b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "247dd93fcf5189715a17d8749f6f7673362e8e391d9762c0483c8b948cf8afe4"
+	},
+	"062": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 62,
+		"label": "shared-child-string/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0x9e5263ff104e8f68",
+							"0x0",
+							"T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"String",
+							"0x2f4720d36d2b70c",
+							"6162"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d5428226122293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302b3d2262223b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "ec21b5b851b0eb879685bd377f0556c888f61b5b04f94a1fc921bc1ec1f9717d"
+	},
+	"063": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 63,
+		"label": "shared-child-string/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xbe6b74e85e3244d6",
+							"0x0",
+							"N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								5
+							]
+						],
+						[
+							"String",
+							"0x2f4720d36d2b70c",
+							"6162"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4e7b783a2261222c793a307d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e782b3d2262223b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "a2667c19bf587fe149a6e4fd308d724d8ff84b6098746702752e12dc4535819d"
+	},
+	"064": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 64,
+		"label": "shared-child-string/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x3386e677262b182d",
+							"E::T",
+							"Tuple",
+							[],
+							[
+								3
+							]
+						],
+						[
+							"String",
+							"0x2f4720d36d2b70c",
+							"6162"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a5428226122293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e302b3d2262223b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "e65b82463d47fd0cef033c1112a17087d0d1bc3ef6f3a98c6822c26e7a1ab992"
+	},
+	"065": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 65,
+		"label": "shared-child-string/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								4
+							]
+						],
+						[
+							"Nominal",
+							"0xf727e1feaf2a3ca",
+							"0x4fb8db37aa25f75b",
+							"E::N",
+							"Struct",
+							[
+								[
+									0,
+									"78"
+								],
+								[
+									1,
+									"79"
+								]
+							],
+							[
+								3,
+								5
+							]
+						],
+						[
+							"String",
+							"0x2f4720d36d2b70c",
+							"6162"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"0"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a4e7b783a2261222c793a307d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e782b3d2262223b28612c62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "b0452dc5c4b50e60e581f7c894f856018af4ce8a845d20a91b3bea461638093f"
+	},
+	"066": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 66,
+		"label": "self-cycle-cleanup/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2,
+								3
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420703d4e7b783a28292c793a317d3b702e783d703b6c657420713d7374643a3a636c6f6e653a3a636c6f6e652870293b712e782e793d373b712e793d393b6c657420613d702e793b6c657420623d712e793b6c657420633d712e782e793b702e783d28293b712e783d28293b28612c622c63297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "26fa0c0c0e0393cb8d36868c1d19afc6ccb67237e36392e6e12e53c67cc5971c"
+	},
+	"067": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 67,
+		"label": "self-cycle-cleanup/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2,
+								3
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"9"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420703d453a3a4e7b783a28292c793a317d3b702e783d703b6c657420713d7374643a3a636c6f6e653a3a636c6f6e652870293b712e782e793d373b712e793d393b6c657420613d702e793b6c657420623d712e793b6c657420633d712e782e793b702e783d28293b712e783d28293b28612c622c63297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "793c8237788aa7bc48e597a6b9a267eef480653f3e64329668e8867dfa86ff6b"
+	},
+	"068": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 68,
+		"label": "no-clone-child-range/tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"42"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d5428302e2e32293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e303d373b28622e302c3432297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "0c8723de3e74c10ac65902db074dc7ab52d503ad5cdf5890b5e559ace252477b"
+	},
+	"069": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 69,
+		"label": "no-clone-child-range/named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4e7b783a302e2e322c793a317d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e793d373b28612e792c622e79297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "6681d4b67b39fbf0bd06ae267b65893fe2e16a48cac607140e5536408663b5d8"
+	},
+	"070": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 70,
+		"label": "no-clone-child-range/enum-tuple",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"42"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a5428302e2e32293b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e303d373b28622e302c3432297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "59c7e04fcc7b81253d27928cb616860a1fe7ded5b5cfbef7e0086f18211d3034"
+	},
+	"071": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 71,
+		"label": "no-clone-child-range/enum-named",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2
+							]
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"1"
+						],
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d453a3a4e7b783a302e2e322c793a317d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b622e793d373b28612e792c622e79297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "372420f96a64e92485001b8ca63fdbc59b518b570deb806bfa2e5e36d90e8ec4"
+	},
+	"072": {
+		"diagnostics": "[]",
+		"engine": "stock",
+		"fuel": 200000,
+		"index": 72,
+		"label": "nominal-nan-equality",
+		"observation": {
+			"events": [],
+			"outcome": {
+				"graph": {
+					"nodes": [
+						[
+							"Tuple",
+							"0xfeb65b3f4755aef0",
+							[
+								1,
+								2,
+								3
+							]
+						],
+						[
+							"Bool",
+							"0x981333df5abb043f",
+							false
+						],
+						[
+							"Bool",
+							"0x981333df5abb043f",
+							false
+						],
+						[
+							"Bool",
+							"0x981333df5abb043f",
+							false
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			},
+			"reuse": {
+				"graph": {
+					"nodes": [
+						[
+							"I64",
+							"0x1cad9186c9641c4f",
+							"7"
+						]
+					],
+					"root": 0
+				},
+				"status": "value"
+			}
+		},
+		"phase": "after",
+		"schema": 1,
+		"source_hex": "73747275637420553b20737472756374205a28293b2073747275637420542861293b20737472756374205028612c62293b20737472756374204e7b782c797d0a656e756d20457b552c5a28292c542861292c5028612c62292c4e7b782c797d7d0a70756220666e206d61696e28297b6c657420613d4e7b783a28302e302f302e30292c793a317d3b6c657420623d7374643a3a636c6f6e653a3a636c6f6e652861293b28613d3d622c613d3d612c623d3d62297d0a70756220666e20633135635f726575736528297b377d0a",
+		"source_sha256": "bca13d7ec7f5c4b93921f4e37258adbea7e6dfe3e75d2faa66f9c698746328c2"
+	}
+}

@@ -78,7 +78,9 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	}
 	let stock: Json = serde_json::from_str(STOCK).unwrap();
 	let id = case["id"].as_str().unwrap();
-	let expected = &stock[id]["observation"];
+	let intentional =
+		super::nominal_clone::intentional_json("enum_variants", case, &stock[id]["observation"]);
+	let expected = intentional.as_ref().unwrap_or(&stock[id]["observation"]);
 	let observed = &actual["observation"];
 	if frozen["disposition"] == "Refused-frontend" {
 		assert_eq!(audit["invoked"], false);
@@ -168,9 +170,12 @@ fn compare_stock(case: &Json, actual: &Json) {
 	] {
 		assert_eq!(actual[key], stock[id][key], "{id} {key}");
 	}
-	let expected = rules.get(id).map_or(&stock[id]["observation"], |rule| {
-		&rule["expected_observation"]
-	});
+	let intentional =
+		super::nominal_clone::intentional_json("enum_variants", case, &stock[id]["observation"]);
+	let expected = rules.get(id).map_or_else(
+		|| intentional.as_ref().unwrap_or(&stock[id]["observation"]),
+		|rule| &rule["expected_observation"],
+	);
 	assert_eq!(
 		project_observation(&actual["observation"], expected, ""),
 		*expected,

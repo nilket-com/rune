@@ -296,7 +296,16 @@ fn stock_contract() {
 		assert!(run.complete, "incomplete {label}: {}", run.record);
 		assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
 		assert_no_addresses(label, &unhex(row[2]), &[], &[]);
-		assert_eq!(run.record, unhex(row[2]), "observation drift: {label}");
+		assert_eq!(
+			run.record,
+			super::nominal_clone::intentional_record(
+				"len_clone_stock.tsv",
+				label,
+				source,
+				unhex(row[2])
+			),
+			"observation drift: {label}"
+		);
 		assert_eq!(hex(&run.stdout), row[3], "stdout drift: {label}");
 		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
 	}
@@ -363,7 +372,12 @@ fn fresh_contract() {
 			assert_eq!(unhex(actual[4]), "");
 			retained += 1;
 		} else {
-			let expected = unhex(row[2]);
+			let expected = super::nominal_clone::intentional_record(
+				"len_clone_stock.tsv",
+				label,
+				source,
+				unhex(row[2]),
+			);
 			let expected: Vec<_> = expected.split('\t').collect();
 			assert_eq!(
 				(&actual[..2], &actual[3..]),
@@ -540,7 +554,12 @@ fn global_contract() {
 			);
 			assert!(run.complete, "{label}/{engine}: {}", run.record);
 			assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
-			let expected = unhex(row[2]);
+			let expected = super::nominal_clone::intentional_record(
+				"global_clone_stock.tsv",
+				label,
+				source,
+				unhex(row[2]),
+			);
 			let expected: Vec<_> = expected.split('\t').collect();
 			let actual: Vec<_> = run.record.split('\t').collect();
 			assert_eq!(

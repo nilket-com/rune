@@ -1,0 +1,31 @@
+{
+	"rows": 73,
+	"stock_before": "69b0a865eff3a10055b07517df24a7c6478b6512d38cd6c2fd09d2bdefb5a9ec",
+	"stock_after": "2950b872be5c3dfdd2ecd6f332ab9a9fd2ca0b6f4b175f3bc8710a3cab5bc195",
+	"cases": "210f277b5af78429969ef2330193f3140f58149c10c6170582846b85d8c4cff6",
+	"intentional": "59ad31299e4ff63117a78ea95af3a5fd3cccf2a102d8d904f1973cb94c2554e2",
+	"actual_stock_binary_binding": {
+		"before": {
+			"path": "/home/me/work/.reviews/0185-c15c-oracle-source2/before-test",
+			"sha256": "8b6deaab6a19d44f7df25aa83231ba24cd11dd5304dfca5e1fae46cc994b89b4",
+			"source": "/home/me/work/.reviews/0185-c15c-oracle-source2/before",
+			"source_receipt": "/home/me/work/.reviews/0185-c15c-oracle-source2/before-DWARF-CU.json",
+			"source_receipt_sha256": "e08cf7cd4c6984a0b417224034a64470a391cc6ef8aa76faa3d8f3bb8c7ade02"
+		},
+		"after": {
+			"path": "/home/me/work/.reviews/0185-c15c-oracle-source2/after-test",
+			"sha256": "cf766b0612b6abf58fa1d6b5b5c5ab58c10f3ff32d8a66b890107d1c1130c1dd",
+			"source": "/home/me/work/.reviews/0185-c15c-oracle-source2/after",
+			"source_receipt": "/home/me/work/.reviews/0185-c15c-oracle-source2/after-DWARF-CU.json",
+			"source_receipt_sha256": "3a3806d96058f0975788e8e125ec4c1344acb0f4392eef952c0a98703c212f5e"
+		}
+	},
+	"all_values": true,
+	"all_reuse": true,
+	"observed_changes": 62,
+	"unchanged": 11,
+	"legacy_rows": 349,
+	"legacy_changed": 3,
+	"native_guard_authority": 19195,
+	"expected_fresh": "post-fix stock_after observation plus diagnostics; no observation projection required for value rows"
+}

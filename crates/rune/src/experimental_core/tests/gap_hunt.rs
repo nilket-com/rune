@@ -1608,3 +1608,6 @@ mod constructors;
 #[cfg(feature = "fresh-core")]
 #[path = "gap_hunt/enum_variants.rs"]
 mod enum_variants;
+
+#[path = "gap_hunt/nominal_clone.rs"]
+mod nominal_clone;

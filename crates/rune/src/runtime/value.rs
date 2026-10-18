@@ -457,9 +457,11 @@ impl Value {
 				});
 			}
 			Repr::Dynamic(value) => {
-				// TODO: This type of cloning should be deep, not shallow.
+				// Match Vec/Object: copy the outer storage and retain child values.
+				let values = value.borrow_ref()?;
+				let copy = AnySequence::new(value.rtti().clone(), values.iter().cloned())?;
 				return Ok(Self {
-					repr: Repr::Dynamic(value.clone()),
+					repr: Repr::Dynamic(copy),
 				});
 			}
 			Repr::Any(..) => {}
