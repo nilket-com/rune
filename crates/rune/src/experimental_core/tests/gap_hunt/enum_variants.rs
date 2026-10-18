@@ -186,9 +186,14 @@ fn nominal_observer_controls() {
 	assert_ne!(u, z);
 	assert_ne!(a, n);
 	assert_ne!(a["nodes"][0][1], other["nodes"][0][1]);
-	let shared = run("let x=E::T(1);(x,std::clone::clone(x))");
+	let shared = run("let x=E::T(1);(x,x)");
+	let cloned = run("let x=E::T(1);(x,std::clone::clone(x))");
 	let distinct = run("(E::T(1),E::T(1))");
 	assert_ne!(shared, distinct);
+	assert_eq!(cloned, distinct);
+	let shared_child = run("let x=E::T([1]);(x,std::clone::clone(x))");
+	let distinct_children = run("(E::T([1]),E::T([1]))");
+	assert_ne!(shared_child, distinct_children);
 }
 
 #[test]

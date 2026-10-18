@@ -141,39 +141,33 @@ fn readers_saturation_and_budgets_never_publish_a_lease() {
 const EXCLUSIVE_FOR_TEST: u32 = u32::MAX;
 
 #[test]
-fn moved_struct_identity_is_unchanged_and_exclusive_is_narrow() {
+fn moved_struct_clone_reads_storage_and_inert_aliases_survive() {
+	use super::super::error::MovedAccess;
 	let mut s = Store::new(Limits::default()).unwrap();
-	let v = s
+	let value = s
 		.record(
 			Type::Struct(super::super::value::Nominal(0)),
 			&[("x", Value::I64(1))],
 		)
 		.unwrap();
-	let Value::Heap(h) = v else { panic!() };
-	// Structs cannot be sort parents; their pre-C11 identity path stays exact.
-	s.invalidate(v).unwrap();
+	let Value::Heap(h) = value else { panic!() };
+	s.invalidate(value).unwrap();
 	let before = format!("{:?}", s.entry(h).unwrap());
-	let baseline = (s.live, s.bytes, s.edges, s.work.len());
-	// The pre-C11 Struct identity shortcut does exactly retain(value); Ok(value).
-	s.retain(v).unwrap();
-	let old = v;
-	let old_header = format!("{:?}", s.entry(h).unwrap());
-	s.release(old).unwrap();
-	let new = s.clone_value(v).unwrap();
-	assert_eq!(new, old);
+	let accounting = (s.live, s.bytes, s.edges, s.work.len());
+	// Ordinary aliases remain inert. The clone protocol must read outer storage.
+	s.retain(value).unwrap();
+	let alias = value;
+	let retained = format!("{:?}", s.entry(h).unwrap());
 	assert_eq!(
-		format!("{:?}", s.entry(h).unwrap()).as_bytes(),
-		old_header.as_bytes()
+		s.clone_value(value).unwrap_err().detail,
+		Detail::Moved {
+			access: MovedAccess::Read
+		}
 	);
-	s.release(new).unwrap();
-	assert_eq!(
-		format!("{:?}", s.entry(h).unwrap()).as_bytes(),
-		before.as_bytes()
-	);
-	assert_eq!((s.live, s.bytes, s.edges, s.work.len()), baseline);
-	let new = s.clone_value(v).unwrap();
-	assert_eq!(new, v);
-	s.release(new).unwrap();
-	s.release(v).unwrap();
+	assert_eq!(format!("{:?}", s.entry(h).unwrap()), retained);
+	s.release(alias).unwrap();
+	assert_eq!(format!("{:?}", s.entry(h).unwrap()), before);
+	assert_eq!((s.live, s.bytes, s.edges, s.work.len()), accounting);
+	s.release(value).unwrap();
 	assert_eq!((s.live, s.bytes, s.edges, s.work.len()), (0, 0, 0, 0));
 }

@@ -41,12 +41,6 @@ impl Store {
 			self.retain(value)?;
 			return Ok(value);
 		};
-		if matches!(self.entry(h)?.tag()?, Type::Struct(_)) {
-			// Dynamic script values clone their storage identity through clone_with;
-			// a direct method call is rejected separately by the executor.
-			self.retain(value)?;
-			return Ok(value);
-		}
 		if matches!(self.payload(h)?, Payload::Closure { .. }) {
 			self.retain(value)?;
 			return Ok(value);
@@ -57,7 +51,7 @@ impl Store {
 				Payload::String(String::try_from(text.as_str())?)
 			}
 			Payload::List {
-				tag: Type::Vec,
+				tag: tag @ (Type::Vec | Type::Struct(_)),
 				values,
 			} => {
 				self.clone_room(
@@ -73,12 +67,12 @@ impl Store {
 					copy.try_push(v)?;
 				}
 				Payload::List {
-					tag: Type::Vec,
+					tag: *tag,
 					values: copy,
 				}
 			}
 			Payload::Record {
-				tag: Type::Object,
+				tag: tag @ (Type::Object | Type::Struct(_)),
 				fields,
 			} => {
 				let size = fields
@@ -109,7 +103,7 @@ impl Store {
 					self.clone_room(start, scratch, actual)?;
 				}
 				Payload::Record {
-					tag: Type::Object,
+					tag: *tag,
 					fields: copy,
 				}
 			}
@@ -321,6 +315,8 @@ impl Store {
 mod tests {
 	use super::*;
 	use rune_alloc::limit;
+
+	include!("nominal_clone_tests.rs");
 
 	fn clear(s: &Store) {
 		assert!(s

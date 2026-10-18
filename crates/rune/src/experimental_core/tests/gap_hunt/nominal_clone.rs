@@ -13,11 +13,15 @@ fn tap(tag: i64, value: i64) -> i64 {
 	value
 }
 
-fn context() -> Context {
+fn context(fresh: bool) -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	for name in ["c15", "c15b", "c15c"] {
 		let mut module = crate::Module::with_item([name]).unwrap();
-		module.function("tap", tap).build().unwrap();
+		if fresh {
+			module.fresh_host_function("tap", tap).unwrap();
+		} else {
+			module.function("tap", tap).build().unwrap();
+		}
 		context.install(module).unwrap();
 	}
 	context
@@ -53,7 +57,14 @@ fn child() {
 	let rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
 	let row = &rows[index];
 	let source = row["source"].as_str().unwrap();
-	let context = context();
+	let engine = std::env::var("C15C_ENGINE").unwrap_or_else(|_| "stock".to_owned());
+	assert!(["stock", "fresh"].contains(&engine.as_str()));
+	if engine == "fresh" {
+		let result = observe_fresh(row, &phase);
+		write_result(&result);
+		return;
+	}
+	let context = context(false);
 	let mut sources = Sources::new();
 	sources
 		.insert(Source::new(row["source_name"].as_str().unwrap(), source).unwrap())
@@ -91,6 +102,10 @@ fn child() {
 	};
 	let events = TAPE.with(|tape| tape.borrow().clone());
 	let result = json!({"schema":1,"engine":"stock","phase":phase,"index":index,"label":row["label"],"source_sha256":row["source_sha256"],"source_hex":hex(source.as_bytes()),"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
+	write_result(&result);
+}
+
+fn write_result(result: &Json) {
 	let path = std::env::var_os("C15C_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
 		.create_new(true)
@@ -161,10 +176,33 @@ pub(super) fn intentional_record(family: &str, label: &str, source: &str, old: S
 #[test]
 #[ignore = "C15c stock contract; new C15C_STOCK_OUT and source-bound native binary"]
 fn stock_contract() {
+	contract("stock", false);
+}
+
+#[test]
+#[ignore = "C15c fresh contract; bounded source-bound native children"]
+fn fresh_contract() {
+	contract("fresh", false);
+}
+
+#[test]
+#[ignore = "C15c tuple-shaped nominal slice; bounded source-bound native children"]
+fn slice_contract() {
+	contract("fresh", true);
+}
+
+fn contract(engine: &str, slice: bool) {
 	use sha2::{Digest, Sha256};
 	use std::process::{Command, Stdio};
 	use std::time::{Duration, Instant};
-	let out = PathBuf::from(std::env::var_os("C15C_STOCK_OUT").unwrap());
+	let out = PathBuf::from(
+		std::env::var_os(if engine == "stock" {
+			"C15C_STOCK_OUT"
+		} else {
+			"C15C_FRESH_OUT"
+		})
+		.unwrap(),
+	);
 	fs::create_dir(&out).unwrap();
 	let receipt_path = PathBuf::from(std::env::var_os("C15C_NATIVE_RECEIPT").unwrap());
 	let receipt_hash = std::env::var("C15C_NATIVE_RECEIPT_SHA256").unwrap();
@@ -175,7 +213,12 @@ fn stock_contract() {
 	let expected: Json =
 		serde_json::from_str(include_str!("nominal_clone/stock_after.json")).unwrap();
 	let started = Instant::now();
+	let mut count = 0;
 	for (index, row) in rows.iter().enumerate() {
+		if slice && ![0, 1, 2, 3, 5, 6, 18, 21, 24, 27].contains(&index) {
+			continue;
+		}
+		count += 1;
 		assert!(started.elapsed() < Duration::from_secs(1700));
 		let receipt_bytes = fs::read(&receipt_path).unwrap();
 		assert_eq!(hex(&Sha256::digest(&receipt_bytes)), receipt_hash);
@@ -204,6 +247,7 @@ fn stock_contract() {
 			.env("PATH", "/usr/bin:/bin")
 			.env("HOME", "/home/me")
 			.env("LANG", "C.UTF-8")
+			.env("C15C_ENGINE", engine)
 			.env("C15C_PHASE", "after")
 			.env("C15C_CASE", index.to_string())
 			.env("C15C_RESULT", &result)
@@ -234,7 +278,27 @@ fn stock_contract() {
 		);
 		assert_eq!(stdout.matches("test result:").count(), 1);
 		assert!(fs::read(&stderr).unwrap().is_empty());
-		let actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
+		if engine == "fresh" {
+			let audit = actual
+				.as_object_mut()
+				.unwrap()
+				.remove("fresh_audit")
+				.unwrap();
+			assert_eq!(audit["post_code_drop"], true);
+			for key in ["row_idle", "executor_idle"] {
+				assert_eq!(audit[key], true);
+			}
+			for key in [
+				"row_live_entries",
+				"row_payload_bytes",
+				"live_entries",
+				"payload_bytes",
+			] {
+				assert_eq!(audit[key], 0);
+			}
+			actual["engine"] = json!("stock");
+		}
 		assert_eq!(
 			actual,
 			expected[row["id"].as_str().unwrap()],
@@ -247,10 +311,10 @@ fn stock_contract() {
 	);
 	fs::write(
 		out.join("COMPLETE"),
-		"stock73 exact; source and test counts checked per child\n",
+		format!("{engine}{count} exact; source and test counts checked per child\n"),
 	)
 	.unwrap();
-	println!("CONTRACT ENGINE stock\nCONTRACT ROWS {}", rows.len());
+	println!("CONTRACT ENGINE {engine}\nCONTRACT ROWS {count}");
 }
 
 #[test]
@@ -299,4 +363,75 @@ fn intentional_rows_preserve_original_observations() {
 		}
 	}
 	assert_eq!(changed, 3);
+}
+
+// Independent observations: this function never reads frozen expectations.
+include!("enum_variants/fresh_graph.rs");
+fn observe_fresh(row: &Json, phase: &str) -> Json {
+	let source = row["source"].as_str().unwrap();
+	let context = context(true);
+	let mut sources = Sources::new();
+	sources
+		.insert(Source::new(row["source_name"].as_str().unwrap(), source).unwrap())
+		.unwrap();
+	let mut diagnostics = Diagnostics::new();
+	let program = frontend::compile(&mut sources, &context, &mut diagnostics, 15).unwrap();
+	let mut store = Store::new(Limits {
+		entries: 4096,
+		bytes: 4 << 20,
+	})
+	.unwrap();
+	let mut executor = Executor::new().unwrap();
+	executor
+		.set_host_runtime(Some(
+			crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
+		))
+		.unwrap();
+	TAPE.with(|tape| tape.borrow_mut().clear());
+	let root = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["main"])).unwrap(),
+			&[],
+			row["fuel"].as_u64().unwrap() as usize,
+		)
+		.unwrap();
+	let value = store.import(&root).unwrap();
+	let outcome = json!({"status":"value","graph":fresh_graph(&mut store, value)});
+	store.root_release(root).unwrap();
+	let events = TAPE.with(|tape| tape.borrow().clone());
+	let row_idle = executor.is_idle();
+	let row_live = store.live_entries();
+	let row_bytes = store.payload_bytes();
+	let root = executor
+		.invoke(
+			&program,
+			&mut store,
+			program
+				.function(Hash::type_hash([row["reuse"].as_str().unwrap()]))
+				.unwrap(),
+			&[],
+			200_000,
+		)
+		.unwrap();
+	let value = store.import(&root).unwrap();
+	let reuse = json!({"status":"value","graph":fresh_graph(&mut store, value)});
+	store.root_release(root).unwrap();
+	// Keep a fresh result alive across compiler metadata destruction. Compare
+	// actual observations from the same script, without consulting the oracle.
+	let held = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["main"])).unwrap(),
+			&[],
+			row["fuel"].as_u64().unwrap() as usize,
+		)
+		.unwrap();
+	drop(program);
+	let value = store.import(&held).unwrap();
+	assert_eq!(fresh_graph(&mut store, value), outcome["graph"]);
+	store.root_release(held).unwrap();
+	json!({"schema":1,"engine":"fresh","phase":phase,"index":row["id"].as_str().unwrap().parse::<usize>().unwrap(),"label":row["label"],"source_sha256":row["source_sha256"],"source_hex":hex(source.as_bytes()),"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"post_code_drop":true,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes()}})
 }
