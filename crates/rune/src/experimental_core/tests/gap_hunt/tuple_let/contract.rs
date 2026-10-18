@@ -243,7 +243,8 @@ fn run_contract(engine: &str) {
 		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
 		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
 		let mut e: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		e["outcome"] = super::d1c_diagnostics::before("tuple_let", label, source, engine, &e["outcome"]);
+		e["outcome"] =
+			super::d1c_diagnostics::before("tuple_let", label, source, engine, &e["outcome"]);
 		if engine == "stock" {
 			exact_keys(
 				e.as_object().unwrap(),
@@ -332,9 +333,9 @@ fn run_contract(engine: &str) {
 			}
 			_ => panic!("unreviewed C8 policy"),
 		}
-		// C12 admission: historical freeze above remains unchanged; these two
-		// former refusals now owe their exact independently frozen stock values.
-		let fresh_expected = if *policy == "Refused-Range" {
+		// C12 and C16a admissions retain the historical freeze above and now
+		// owe their exact independently frozen stock values.
+		let fresh_expected = if *policy == "Refused-Range" || *label == "refusal/vec-pattern" {
 			stock_expected.clone()
 		} else {
 			fresh_expected

@@ -631,6 +631,8 @@ fn expected_fresh_refusal(label: &str) -> Option<&'static str> {
 			| "deferred/object-closed"
 			| "deferred/object-open"
 			| "deferred/object-missing"
+			| "let/vec"
+			| "let/vec-miss"
 	) {
 		return None;
 	}
@@ -739,7 +741,23 @@ fn fresh_contract() {
 		}
 		let expected = unhex(row[3]);
 		let expected: Vec<_> = expected.split('\t').collect();
-		assert_eq!(actual[..2], expected[..2], "C3 class {}", case.label);
+		let expected_class = if case.label == "let/vec-miss" {
+			// The historical C3 observer used the stock fallback taxonomy for
+			// UnmatchedPattern. C16a's typed stock oracle classifies it as Panic.
+			assert_eq!(
+				expected[1],
+				"stock:Panic { reason: Panic { inner: UnmatchedPattern } }"
+			);
+			"Panic"
+		} else {
+			expected[1]
+		};
+		assert_eq!(
+			(&actual[0], &actual[1]),
+			(&expected[0], &expected_class),
+			"C3 class {}",
+			case.label
+		);
 		assert_eq!(
 			actual[3..],
 			expected[3..],
@@ -757,8 +775,8 @@ fn fresh_contract() {
 		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
 		equal += 1;
 	}
-	assert_eq!((equal, refused, full_budget), (258, 27, 63));
-	fs::write(out.join("summary.txt"),"258 exact stock parity;27 declared refusals;63 full-fresh-budget source checks (no numeric budget parity)\n").unwrap();
+	assert_eq!((equal, refused, full_budget), (260, 25, 63));
+	fs::write(out.join("summary.txt"),format!("{equal} exact stock parity;{refused} declared refusals;{full_budget} full-fresh-budget source checks (no numeric budget parity)\n")).unwrap();
 	contract_completed("fresh", 348);
 }
 

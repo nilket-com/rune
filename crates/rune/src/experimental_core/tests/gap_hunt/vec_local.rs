@@ -1,11 +1,12 @@
 //! C16a test-only Vec local stock oracle. No production admission changes.
 use super::*;
 use serde_json::{json, Value as Json};
+include!("tuple_let/observe_fresh.rs");
 fn observe_stock(source: &str, mode: &str) -> Json {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
-		.insert(Source::new("c16a.rn", source).unwrap())
+		.insert(Source::new("c8.rn", source).unwrap())
 		.unwrap();
 	let mut diagnostics = Diagnostics::new();
 	let built = crate::prepare(&mut sources)
@@ -157,14 +158,27 @@ fn child() {
 	let index: usize = std::env::var("C16_CASE").unwrap().parse().unwrap();
 	let row = &rows[index];
 	let source = row["source"].as_str().unwrap();
-	let observation = observe_stock(source, "c8-main");
-	if std::env::var_os("C16_REPLAY").is_some() {
+	let engine = std::env::var("C16_ENGINE").unwrap_or_else(|_| "stock".into());
+	let (observation, audit) = match engine.as_str() {
+		"stock" => (observe_stock(source, "c8-main"), None),
+		"fresh" => {
+			let (observation, audit) = observe_fresh(source, "c8-main");
+			(observation, Some(audit))
+		}
+		_ => panic!("unknown C16 engine"),
+	};
+	if engine == "stock" && std::env::var_os("C16_REPLAY").is_some() {
 		let frozen: Json = serde_json::from_str(include_str!("vec_local/stock.json")).unwrap();
 		assert_eq!(frozen[index]["label"], row["label"]);
 		assert_eq!(frozen[index]["source"], row["source"]);
 		assert_eq!(project(&observation), frozen[index]["projected"]);
 	}
-	let envelope = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"policy":row["policy"],"source":source,"fuel":FUEL,"outcome":observation,"projected":project(&observation)});
+	let projected = if engine == "stock" {
+		project(&observation)
+	} else {
+		observation.clone()
+	};
+	let envelope = json!({"schema":1,"engine":engine,"index":index,"label":row["label"],"policy":row["policy"],"source":source,"fuel":FUEL,"outcome":observation,"projected":projected,"fresh_audit":audit});
 	fs::write(
 		std::env::var_os("C16_RESULT").unwrap(),
 		serde_json::to_vec_pretty(&envelope).unwrap(),
@@ -197,8 +211,23 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[cfg(target_os = "linux")]
 #[ignore = "C16a frozen stock replay; bounded children and exclusive GAP_OUT"]
 fn stock_contract() {
+	run_contract("stock");
+}
+
+#[test]
+#[cfg(target_os = "linux")]
+#[ignore = "C16a strict fresh replay; bounded children and exclusive GAP_OUT"]
+fn fresh_contract() {
+	run_contract("fresh");
+}
+
+#[cfg(target_os = "linux")]
+fn run_contract(engine: &str) {
+	assert!(matches!(engine, "stock" | "fresh"));
 	let cases: Json = serde_json::from_str(include_str!("vec_local/cases.json")).unwrap();
 	let frozen: Json = serde_json::from_str(include_str!("vec_local/stock.json")).unwrap();
+	let dispositions: Json =
+		serde_json::from_str(include_str!("vec_local/dispositions.json")).unwrap();
 	let cases = cases.as_array().unwrap();
 	let frozen = frozen.as_array().unwrap();
 	assert_eq!(cases.len(), 92);
@@ -235,12 +264,14 @@ fn stock_contract() {
 				"--quiet",
 			])
 			.env_clear()
+			.env("C16_ENGINE", engine)
 			.env("C16_REPLAY", "1")
 			.env("PATH", "/usr/bin:/bin")
 			.env("LANG", "C.UTF-8")
 			.env("TZ", "UTC")
 			.env("C16_CASE", i.to_string())
 			.env("C16_RESULT", &result)
+			.env("D1E_TRACE_OUT", folder.join("logical.json"))
 			.current_dir(&folder)
 			.stdin(Stdio::null())
 			.stdout(Stdio::piped())
@@ -298,15 +329,122 @@ fn stock_contract() {
 
 		let observed: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
 		assert_eq!(observed["schema"], 1);
-		assert_eq!(observed["engine"], "stock");
+		assert_eq!(observed["engine"], engine);
 		assert_eq!(observed["index"], i);
 		assert_eq!(observed["fuel"], FUEL);
 		assert_eq!(observed["label"], case["label"]);
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["policy"], case["policy"]);
-		assert_eq!(observed["projected"], expected["projected"]);
+		if engine == "stock" {
+			assert_eq!(observed["projected"], expected["projected"]);
+			if let Some(rule) = dispositions
+				.get(label)
+				.filter(|rule| rule.get("logical").is_some())
+			{
+				let logical: Json =
+					serde_json::from_slice(&fs::read(folder.join("logical.json")).unwrap())
+						.unwrap();
+				assert_eq!(logical, rule["logical"]);
+			}
+		} else {
+			let audit = &observed["fresh_audit"];
+			for key in [
+				"no_cleanup_error",
+				"clean_after_row",
+				"row_idle",
+				"reuse",
+				"idle",
+			] {
+				assert_eq!(audit[key], true, "{label}: {key}");
+			}
+			for key in [
+				"row_live_entries",
+				"row_payload_bytes",
+				"live_entries",
+				"payload_bytes",
+			] {
+				assert_eq!(audit[key], 0, "{label}: {key}");
+			}
+			let outcome = &observed["outcome"];
+			if let Some(rule) = dispositions.get(label) {
+				use sha2::{Digest, Sha256};
+				assert_eq!(rule["ruling"], "01a1511a-f99b-722e-a49a-e7a74e601943");
+				assert_eq!(
+					rule["source_sha256"],
+					hex(&Sha256::digest(case["source"].as_str().unwrap().as_bytes()))
+				);
+				assert_eq!(
+					rule["stock_outcome_sha256"],
+					hex(&Sha256::digest(
+						serde_json::to_vec(&expected["outcome"]).unwrap()
+					))
+				);
+				assert_eq!(audit["invoked"], true, "{label}");
+				assert_eq!(project(outcome), rule["fresh"], "{label}");
+				if label == "frames/miss" {
+					assert_eq!(rule["policy"], "Raw-frame-disposition");
+					let logical: Json =
+						serde_json::from_slice(&fs::read(folder.join("logical.json")).unwrap())
+							.unwrap();
+					assert_eq!(logical, rule["logical"]);
+				} else {
+					assert_eq!(label, "value/return-rhs");
+					assert_eq!(rule["policy"], "Intentional-divergence");
+					assert_eq!(expected["outcome"]["status"], "compile-error");
+				}
+			} else if expected["outcome"]["status"] == "compile-error" {
+				assert_eq!(outcome["status"], "compile-error", "{label}");
+				assert_eq!(
+					outcome["diagnostics"], expected["outcome"]["diagnostics"],
+					"{label}"
+				);
+				assert_eq!(audit["invoked"], false, "{label}");
+			} else if case["policy"] == "Retain-refusal" {
+				assert_eq!(outcome["status"], "refused", "{label}");
+				assert_eq!(outcome["refusal"], "Pattern", "{label}");
+				assert_eq!(audit["invoked"], false, "{label}");
+				let at = &outcome["location"];
+				let source = case["source"].as_str().unwrap();
+				let start = at["start"].as_u64().unwrap() as usize;
+				let end = at["end"].as_u64().unwrap() as usize;
+				assert!(!source.get(start..end).unwrap().is_empty(), "{label}");
+			} else {
+				assert_eq!(audit["invoked"], true, "{label}");
+				assert_eq!(project(outcome), expected["projected"], "{label}");
+			}
+		}
 		assert_eq!(hex(&stdout), expected["stdout_hex"]);
 		assert_eq!(hex(&stderr), expected["stderr_hex"]);
 	}
-	super::contract_completed("stock", cases.len());
+	super::contract_completed(engine, cases.len());
+}
+
+#[test]
+fn vec_local_patterns_preserve_aliases_failures_and_store_reuse() {
+	let cases: Json = serde_json::from_str(include_str!("vec_local/cases.json")).unwrap();
+	let frozen: Json = serde_json::from_str(include_str!("vec_local/stock.json")).unwrap();
+	let selected = [0usize, 5, 7, 8, 9, 13, 18, 19, 26, 29, 30, 33];
+	assert_eq!(selected.len(), 12);
+	for index in selected {
+		let (actual, audit) = observe_fresh(cases[index]["source"].as_str().unwrap(), "c8-main");
+		assert_eq!(project(&actual), frozen[index]["projected"]);
+		for key in [
+			"no_cleanup_error",
+			"clean_after_row",
+			"row_idle",
+			"reuse",
+			"idle",
+		] {
+			assert_eq!(audit[key], true, "{index}: {key}");
+		}
+		for key in [
+			"row_live_entries",
+			"row_payload_bytes",
+			"live_entries",
+			"payload_bytes",
+		] {
+			assert_eq!(audit[key], 0, "{index}: {key}");
+		}
+	}
+	println!("C16a Vec local Miri rows 12");
 }

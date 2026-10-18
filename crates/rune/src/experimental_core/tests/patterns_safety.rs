@@ -9,6 +9,83 @@ use crate::experimental_core::{
 };
 use crate::{Context, Diagnostics, Hash, Source, Sources};
 
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "C16a opt-in minimal-Context Vec local ownership witness"
+)]
+fn vec_local_host_shapes_moved_values_and_reuse() {
+	let mut rows = 0;
+	for (pattern, result, lengths) in [
+		("[a,b]", "a+b", &[2usize, 1][..]),
+		("[..]", "7", &[0usize][..]),
+		("[a,..]", "a", &[2usize, 0][..]),
+	] {
+		let source = std::format!("pub fn main(v){{let{pattern}=v;{result}}}");
+		let program = compile(&source);
+		let main = program.function(Hash::type_hash(["main"])).unwrap();
+		for &len in lengths {
+			let mut store = Store::new(Limits::default()).unwrap();
+			let a = store.root_i64(1);
+			let b = store.root_i64(2);
+			let values = [&a, &b];
+			let vector = store.root_list(Type::Vec, &values[..len]).unwrap();
+			let mut executor = Executor::new().unwrap();
+			let expected = match pattern {
+				"[a,b]" if len == 2 => Some(3),
+				"[..]" => Some(7),
+				"[a,..]" if len != 0 => Some(1),
+				_ => None,
+			};
+			match executor.invoke(&program, &mut store, main, &[&vector], 100) {
+				Ok(root) => {
+					assert_eq!(store.root_scalar(&root).unwrap(), expected.map(Scalar::I64));
+					store.root_release(root).unwrap();
+				}
+				Err(failure) => {
+					assert_eq!(expected, None);
+					assert_eq!(failure.error.kind, ErrorKind::Panic);
+					assert!(failure.cleanup_error.is_none());
+				}
+			}
+			rows += 1;
+			store.invalidate(vector.value).unwrap();
+			let failure = executor
+				.invoke(&program, &mut store, main, &[&vector], 100)
+				.unwrap_err();
+			assert_eq!(failure.error.kind, ErrorKind::AccessConflict);
+			assert_eq!(
+				std::format!("{}", failure.message(&program)),
+				"Cannot read the value: it has been moved"
+			);
+			let at = failure.error.location.unwrap();
+			let start = source.find(pattern).unwrap() as u32;
+			assert_eq!((at.start, at.end), (start, start + pattern.len() as u32));
+			assert!(failure.cleanup_error.is_none());
+			rows += 1;
+			store.root_release(vector).unwrap();
+			store.root_release(a).unwrap();
+			store.root_release(b).unwrap();
+			idle(&executor, &store);
+		}
+	}
+	let program = compile("pub fn main(){let[(a,b),[c,..]]=[(1,2),[3]];a+b+c}");
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let main = program.function(Hash::type_hash(["main"])).unwrap();
+	for _ in 0..2 {
+		let root = executor
+			.invoke(&program, &mut store, main, &[], 100)
+			.unwrap();
+		assert_eq!(store.root_scalar(&root).unwrap(), Some(Scalar::I64(6)));
+		store.root_release(root).unwrap();
+		idle(&executor, &store);
+		rows += 1;
+	}
+	assert_eq!(rows, 12);
+	println!("C16a Vec local Miri rows {rows}");
+}
+
 fn compile(source: &str) -> Program {
 	// The tuple/Vec-only fixtures need no std module installation.
 	let context = Context::new();

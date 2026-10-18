@@ -1,0 +1,63 @@
+{
+  "value/return-rhs": {
+    "policy": "Intentional-divergence",
+    "ruling": "01a1511a-f99b-722e-a49a-e7a74e601943",
+    "source_sha256": "0154048a5288640ab0058bd75a48bcecb66bed98a64fecbaefdafab7e834e531",
+    "stock_outcome_sha256": "f6493ec1c83a0c0cb60e02967e8394e84ba142874afdfcaa2539182cabe34f36",
+    "fresh": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    }
+  },
+  "frames/miss": {
+    "policy": "Raw-frame-disposition",
+    "ruling": "01a1511a-f99b-722e-a49a-e7a74e601943",
+    "source_sha256": "7ef02d003dbaf9dfba0562cdfc39e22004832ce58c8d545ba6472ccf5696f89d",
+    "stock_outcome_sha256": "fc84ce3310ca0952850f966fefae9619b24e8588c35e19db6bb463797f11379d",
+    "fresh": {
+      "status": "error",
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "chain_displays": [],
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[{\"end\":44,\"source\":0,\"start\":37},{\"end\":66,\"source\":0,\"start\":59}]",
+          "source": 0,
+          "start": 14
+        }
+      ]
+    },
+    "logical": {
+      "context": [],
+      "frames": [
+        {
+          "location": {
+            "end": 19,
+            "source": 0,
+            "start": 14
+          },
+          "role": "Origin"
+        },
+        {
+          "location": {
+            "end": 44,
+            "source": 0,
+            "start": 37
+          },
+          "role": "Caller"
+        },
+        {
+          "location": {
+            "end": 66,
+            "source": 0,
+            "start": 59
+          },
+          "role": "Caller"
+        }
+      ],
+      "rendered": "Panicked: pattern did not match\n  at c8.rn:1:15\n  called from c8.rn:1:38\n  called from c8.rn:1:60"
+    }
+  }
+}

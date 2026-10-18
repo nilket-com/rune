@@ -508,8 +508,8 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		Ok(())
 	}
 
-	/// Only local closed tuple bindings gain C8 admission. The ordinary bind
-	/// entry remains unchanged for parameters and for-loop bindings.
+	/// Local tuple and Vec bindings use the general pattern walker. The
+	/// ordinary bind entry remains unchanged for parameters and for-loop bindings.
 	#[inline(never)]
 	pub(super) fn pattern_local(
 		&mut self,
@@ -552,8 +552,8 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		self.pattern_bindings(binding, &linear)
 	}
 
-	/// Validate the narrower let subset before the general match walker can
-	/// admit vectors, objects, variants, literals or trailing rest patterns.
+	/// Validate local tuple and Vec shapes before the general match walker.
+	/// Only Vec patterns can have a trailing nonbinding rest pattern here.
 	#[inline(never)]
 	fn local_tuple_shape(&self, root: &hir::Pat<'hir>) -> Result<()> {
 		let mut work = Vec::new();
@@ -576,11 +576,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				}
 				hir::PatKind::Sequence(sequence) => {
 					let supported = match sequence.kind {
-						hir::PatSequenceKind::Sequence {
-							hash,
-							is_open: false,
-							..
-						} => hash == crate::runtime::OwnedTuple::HASH,
+						hir::PatSequenceKind::Sequence { hash, is_open, .. } => {
+							hash == crate::runtime::Vec::HASH
+								|| (!is_open && hash == crate::runtime::OwnedTuple::HASH)
+						}
 						hir::PatSequenceKind::Type { hash, variant_hash }
 							if variant_hash == Hash::EMPTY =>
 						{
