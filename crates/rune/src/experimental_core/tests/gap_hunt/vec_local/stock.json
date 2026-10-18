@@ -1,0 +1,2346 @@
+[
+  {
+    "label": "value/pair",
+    "source": "pub fn main(){let[a,b]=[10,20];a*100+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "1020"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "1020"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/empty",
+    "source": "pub fn main(){let[]=[];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/singleton",
+    "source": "pub fn main(){let[a]=[7];a}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/ignore",
+    "source": "pub fn main(){let[_,b]=[[1],7];b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/all-ignore",
+    "source": "pub fn main(){let[_,_]=[[1],[2]];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/nested-vec",
+    "source": "pub fn main(){let[a,[b,c]]=[1,[2,3]];a*100+b*10+c}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "123"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "123"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/nested-tuple",
+    "source": "pub fn main(){let[(a,b),c]=[(1,2),3];a*100+b*10+c}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "123"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "123"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/vec-in-tuple",
+    "source": "pub fn main(){let(a,[b,c])=(1,[2,3]);a*100+b*10+c}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "123"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "123"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/nested-struct",
+    "source": "struct T(a);pub fn main(){let[T(a),b]=[T(3),4];a+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/rest-empty",
+    "source": "pub fn main(){let[..]=[];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/rest-all",
+    "source": "pub fn main(){let[..]=[1,2];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/rest-exact",
+    "source": "pub fn main(){let[a,b,..]=[1,2];a*10+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/rest-long",
+    "source": "pub fn main(){let[a,b,..]=[1,2,3];a*10+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/rest-nested",
+    "source": "pub fn main(){let[a,[b,..],..]=[1,[2,3],4];a*10+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/rebind",
+    "source": "pub fn main(){let a=10;let b=20;let[a,b]=[b,a];a*100+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "2010"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "2010"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/rhs-once",
+    "source": "pub fn main(){let n=0;let[a,b]={n+=1;[n,n+1]};n*100+a*10+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "112"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "112"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/rhs-order",
+    "source": "pub fn main(){let n=0;let[a,b]=[{n=n*10+1;n},{n=n*10+2;n}];n*100+a*10+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "1222"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "1222"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/alias-root",
+    "source": "pub fn main(){let v=[1,2];let[a,b]=v;v[0]=9;a*10+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/alias-children",
+    "source": "pub fn main(){let v=[1];let[a,b]=[v,v];a[0]=9;b[0]==9&&v[0]==9}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "projected": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/drop-root",
+    "source": "pub fn main(){let v=[[1],[2]];let[a,b]=v;drop(v);a[0]+b[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/drop-child",
+    "source": "pub fn main(){let v=[[1],[2]];let[a,b]=v;drop(a);b[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/reassign-bindings",
+    "source": "pub fn main(){let[a,b]=[1,2];a=7;b=8;a*10+b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "78"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "78"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/block-shadow",
+    "source": "pub fn main(){let a=1;let n={let[a,b]=[2,3];a+b};a*10+n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "15"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "15"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/return-rhs",
+    "source": "pub fn main(){let[a,b]={return 7;[1,2]};a+b}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: Unreachable { span: 33:38, cause: 24:32 } }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 17:22, kind: Custom { error: \"Unbound name in pattern: 1\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: Unreachable { span: 33:38, cause: 24:32 } }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 17:22, kind: Custom { error: \"Unbound name in pattern: 1\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/break-rhs",
+    "source": "pub fn main(){for n in 0..2{let[a,b]={break;[1,2]};}7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/continue-rhs",
+    "source": "pub fn main(){let n=0;for i in 0..2{n+=1;let[a,b]={continue;[1,2]};}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/leased-root",
+    "source": "pub fn main(){let v=[1,2];for x in v{let[a,b]=v;return a+b;}0}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/leased-rest",
+    "source": "pub fn main(){let v=[1,2];for x in v{let[..]=v;return 7;}0}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/leased-child",
+    "source": "pub fn main(){let v=[1,2];for x in v{let[a]=[v];return a[0];}0}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/moved-root",
+    "source": "pub fn main(){let v=[1,2];drop(v);let[a,b]=v;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "AccessConflict",
+      "display": "Cannot read the value: it has been moved",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Vec { addr: 1, count: 2, out: keep(0) }, Copy { addr: 0, out: keep(1) }, Call { hash: 0xcc25647cd9450672, addr: 1, args: 1, out: discard }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 0, out: keep(3) }, JumpIfNot { cond: 3, jump: 11 }, TupleIndexGetAt { addr: 0, index: 0, out: keep(1) }, TupleIndexGetAt { addr: 0, index: 1, out: keep(2) }, Jump { jump: 12 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(3) }, Return { addr: 3 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 37:42, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 37:42, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 1, jump: Some(12) }] }, 7: DebugInst { source_id: 0, span: 37:42, comment: Some(\"label:pattern_panic_1 (11)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 20:25, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 38:39, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 40:41, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 26:33, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 31:32, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 0:47, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 37:42, comment: Some(\"label:patter_match_2 (12)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 45:46, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 2, jump: Some(13) }] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 6, frames: [] }] }",
+      "sites": [
+        {
+          "end": 42,
+          "frames": "[]",
+          "source": 0,
+          "start": 37
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "AccessConflict",
+      "display": "Cannot read the value: it has been moved",
+      "sites": [
+        {
+          "end": 42,
+          "frames": "[]",
+          "source": 0,
+          "start": 37
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/moved-rest",
+    "source": "pub fn main(){let v=[1,2];drop(v);let[..]=v;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "AccessConflict",
+      "display": "Cannot read the value: it has been moved",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Vec { addr: 1, count: 2, out: keep(0) }, Copy { addr: 0, out: keep(1) }, Call { hash: 0xcc25647cd9450672, addr: 1, args: 1, out: discard }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: false, addr: 0, out: keep(1) }, JumpIfNot { cond: 1, jump: 9 }, Jump { jump: 10 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 37:41, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 0:46, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 37:41, comment: Some(\"label:pattern_panic_1 (9)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 20:25, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 37:41, comment: Some(\"label:patter_match_2 (10)\"), labels: [] }, 9: DebugInst { source_id: 0, span: 37:41, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 1, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 26:33, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 31:32, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 44:45, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 2, jump: Some(11) }] }, 2: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 6, frames: [] }] }",
+      "sites": [
+        {
+          "end": 41,
+          "frames": "[]",
+          "source": 0,
+          "start": 37
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "AccessConflict",
+      "display": "Cannot read the value: it has been moved",
+      "sites": [
+        {
+          "end": 41,
+          "frames": "[]",
+          "source": 0,
+          "start": 37
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/moved-child-ignore",
+    "source": "pub fn main(){let v=[[1],7];drop(v[0]);let[_,b]=v;b}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/moved-child-name",
+    "source": "pub fn main(){let v=[[1],7];drop(v[0]);let[a,b]=v;7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/partial-miss",
+    "source": "pub fn main(){let v=[1];let[a,[b,c]]=[v,[2]];7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 7 }, Store { value: Integer(1), out: keep(1) }, Vec { addr: 1, count: 1, out: keep(0) }, Copy { addr: 0, out: keep(4) }, Store { value: Integer(2), out: keep(6) }, Vec { addr: 6, count: 1, out: keep(5) }, Vec { addr: 4, count: 2, out: keep(6) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 6, out: keep(4) }, JumpIfNot { cond: 4, jump: 16 }, TupleIndexGetAt { addr: 6, index: 0, out: keep(1) }, TupleIndexGetAt { addr: 6, index: 1, out: keep(4) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 4, out: keep(5) }, JumpIfNot { cond: 5, jump: 16 }, TupleIndexGetAt { addr: 4, index: 0, out: keep(2) }, TupleIndexGetAt { addr: 4, index: 1, out: keep(3) }, Jump { jump: 17 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(4) }, Return { addr: 4 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 37:44, comment: None, labels: [] }, 15: DebugInst { source_id: 0, span: 27:36, comment: Some(\"label:patter_match_2 (17)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 27:36, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 40:43, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 41:42, comment: None, labels: [] }, 17: DebugInst { source_id: 0, span: 45:46, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 2, jump: Some(18) }] }, 12: DebugInst { source_id: 0, span: 30:35, comment: Some(\"label:pattern_panic_1 (16)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 20:23, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 0:47, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 30:35, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 37:44, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 27:36, comment: Some(\"label:pattern_panic_1 (16)\"), labels: [] }, 9: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [] }, 16: DebugInst { source_id: 0, span: 27:36, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 1, jump: Some(17) }] }, 14: DebugInst { source_id: 0, span: 33:34, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 31:32, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 30:35, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 16, frames: [] }] }",
+      "sites": [
+        {
+          "end": 36,
+          "frames": "[]",
+          "source": 0,
+          "start": 27
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 36,
+          "frames": "[]",
+          "source": 0,
+          "start": 27
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/float-char",
+    "source": "pub fn main(){let[a,b]=[1.5,'é'];a==1.5&&b=='é'}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "projected": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/string-range",
+    "source": "pub fn main(){let[a,b]=[\"é\",0..2];a==\"é\"&&b.start==0}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "projected": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/00",
+    "source": "pub fn main(){let[a,b]=[];7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Vec { addr: invalid, count: 0, out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 2, out: keep(3) }, JumpIfNot { cond: 3, jump: 7 }, TupleIndexGetAt { addr: 2, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 2, index: 1, out: keep(1) }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 26:27, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:28, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 23:25, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/01",
+    "source": "pub fn main(){let[a,b]=[1];7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Integer(1), out: keep(2) }, Vec { addr: 2, count: 1, out: keep(3) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 3, out: keep(2) }, JumpIfNot { cond: 2, jump: 8 }, TupleIndexGetAt { addr: 3, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 3, index: 1, out: keep(1) }, Jump { jump: 9 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (9)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 27:28, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (8)\"), labels: [] }, 10: DebugInst { source_id: 0, span: 0:29, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 23:26, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 8, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/02",
+    "source": "pub fn main(){let[a,b]=[1,2];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/03",
+    "source": "pub fn main(){let[a,b]=[1,2,3];7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 6 }, Store { value: Integer(1), out: keep(2) }, Store { value: Integer(2), out: keep(3) }, Store { value: Integer(3), out: keep(4) }, Vec { addr: 2, count: 3, out: keep(5) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 5, out: keep(2) }, JumpIfNot { cond: 2, jump: 10 }, TupleIndexGetAt { addr: 5, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 5, index: 1, out: keep(1) }, Jump { jump: 11 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (10)\"), labels: [] }, 11: DebugInst { source_id: 0, span: 31:32, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(12) }] }, 7: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (11)\"), labels: [] }, 5: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 23:30, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(11) }] }, 2: DebugInst { source_id: 0, span: 26:27, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 0:33, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 10, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/04",
+    "source": "pub fn main(){let[a,b]=();7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Unit, out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 2, out: keep(3) }, JumpIfNot { cond: 3, jump: 7 }, TupleIndexGetAt { addr: 2, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 2, index: 1, out: keep(1) }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 26:27, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:28, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 23:25, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/05",
+    "source": "pub fn main(){let[a,b]=(1,2);7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 5 }, Store { value: Integer(1), out: keep(2) }, Store { value: Integer(2), out: keep(3) }, Tuple2 { addr: [2, 3], out: keep(4) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 4, out: keep(2) }, JumpIfNot { cond: 2, jump: 9 }, TupleIndexGetAt { addr: 4, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 4, index: 1, out: keep(1) }, Jump { jump: 10 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 0:31, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 23:28, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (10)\"), labels: [] }, 9: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (9)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 29:30, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(11) }] }, 2: DebugInst { source_id: 0, span: 26:27, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 9, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/06",
+    "source": "pub fn main(){let[a,b]=1;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Integer(1), out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 2, out: keep(3) }, JumpIfNot { cond: 3, jump: 7 }, TupleIndexGetAt { addr: 2, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 2, index: 1, out: keep(1) }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:27, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/07",
+    "source": "pub fn main(){let[a,b]=true;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Bool(true), out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 2, out: keep(3) }, JumpIfNot { cond: 3, jump: 7 }, TupleIndexGetAt { addr: 2, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 2, index: 1, out: keep(1) }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:30, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 23:27, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/08",
+    "source": "pub fn main(){let[a,b]=\"ab\";7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, String { slot: 0, out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 2, out: keep(3) }, JumpIfNot { cond: 3, jump: 7 }, TupleIndexGetAt { addr: 2, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 2, index: 1, out: keep(1) }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [\"ab\"], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:30, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 23:27, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/09",
+    "source": "pub fn main(){let[a,b]=#{a:1,b:2};7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 5 }, Store { value: Integer(1), out: keep(2) }, Store { value: Integer(2), out: keep(3) }, Object { addr: 2, slot: 0, out: keep(4) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 4, out: keep(2) }, JumpIfNot { cond: 2, jump: 9 }, TupleIndexGetAt { addr: 4, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 4, index: 1, out: keep(1) }, Jump { jump: 10 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [[\"a\", \"b\"]], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 0:36, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 23:33, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (10)\"), labels: [] }, 9: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (9)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 34:35, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(11) }] }, 2: DebugInst { source_id: 0, span: 31:32, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 27:28, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 9, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/pair/10",
+    "source": "pub fn main(){let[a,b]=Some([1,2]);7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 5 }, Store { value: Integer(1), out: keep(3) }, Store { value: Integer(2), out: keep(4) }, Vec { addr: 3, count: 2, out: keep(2) }, Call { hash: 0x91b8a530bce8a752, addr: 2, args: 1, out: keep(3) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 3, out: keep(2) }, JumpIfNot { cond: 2, jump: 10 }, TupleIndexGetAt { addr: 3, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 3, index: 1, out: keep(1) }, Jump { jump: 11 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:pattern_panic_0 (10)\"), labels: [] }, 11: DebugInst { source_id: 0, span: 35:36, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(12) }] }, 7: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 28:33, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 17:22, comment: Some(\"label:patter_match_1 (11)\"), labels: [] }, 5: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 23:34, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 17:22, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(11) }] }, 2: DebugInst { source_id: 0, span: 31:32, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 0:37, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 29:30, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 10, frames: [] }] }",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 22,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/00",
+    "source": "pub fn main(){let[]=[];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/01",
+    "source": "pub fn main(){let[]=[1];7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, Store { value: Integer(1), out: keep(0) }, Vec { addr: 0, count: 1, out: keep(1) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 1, out: keep(0) }, JumpIfNot { cond: 0, jump: 6 }, Jump { jump: 7 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 0:26, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (6)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 20:23, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 6, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/02",
+    "source": "pub fn main(){let[]=[1,2];7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(1), out: keep(0) }, Store { value: Integer(2), out: keep(1) }, Vec { addr: 0, count: 2, out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 2, out: keep(0) }, JumpIfNot { cond: 0, jump: 7 }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 20:25, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 26:27, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:28, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/03",
+    "source": "pub fn main(){let[]=[1,2,3];7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Integer(1), out: keep(0) }, Store { value: Integer(2), out: keep(1) }, Store { value: Integer(3), out: keep(2) }, Vec { addr: 0, count: 3, out: keep(3) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 3, out: keep(0) }, JumpIfNot { cond: 0, jump: 8 }, Jump { jump: 9 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (9)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 20:27, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 0:30, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 8, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/04",
+    "source": "pub fn main(){let[]=();7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, Store { value: Unit, out: keep(0) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 0, out: keep(1) }, JumpIfNot { cond: 1, jump: 5 }, Jump { jump: 6 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(6) }] }, 4: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (6)\"), labels: [] }, 6: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 0:25, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (5)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 20:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 5, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/05",
+    "source": "pub fn main(){let[]=(1,2);7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(1), out: keep(0) }, Store { value: Integer(2), out: keep(1) }, Tuple2 { addr: [0, 1], out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 2, out: keep(0) }, JumpIfNot { cond: 0, jump: 7 }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 20:25, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 26:27, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:28, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/06",
+    "source": "pub fn main(){let[]=1;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, Store { value: Integer(1), out: keep(0) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 0, out: keep(1) }, JumpIfNot { cond: 1, jump: 5 }, Jump { jump: 6 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(6) }] }, 4: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (6)\"), labels: [] }, 6: DebugInst { source_id: 0, span: 22:23, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 0:24, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (5)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 20:21, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 5, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/07",
+    "source": "pub fn main(){let[]=true;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, Store { value: Bool(true), out: keep(0) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 0, out: keep(1) }, JumpIfNot { cond: 1, jump: 5 }, Jump { jump: 6 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(6) }] }, 4: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (6)\"), labels: [] }, 6: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 0:27, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (5)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 20:24, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 5, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/08",
+    "source": "pub fn main(){let[]=\"ab\";7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, String { slot: 0, out: keep(0) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 0, out: keep(1) }, JumpIfNot { cond: 1, jump: 5 }, Jump { jump: 6 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [\"ab\"], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(6) }] }, 4: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (6)\"), labels: [] }, 6: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 0:27, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (5)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 20:24, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 5, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/09",
+    "source": "pub fn main(){let[]=#{a:1,b:2};7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(1), out: keep(0) }, Store { value: Integer(2), out: keep(1) }, Object { addr: 0, slot: 0, out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 2, out: keep(0) }, JumpIfNot { cond: 0, jump: 7 }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [[\"a\", \"b\"]], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 20:30, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 31:32, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:33, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/empty/10",
+    "source": "pub fn main(){let[]=Some([1,2]);7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Vec { addr: 1, count: 2, out: keep(0) }, Call { hash: 0x91b8a530bce8a752, addr: 0, args: 1, out: keep(1) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: true, addr: 1, out: keep(0) }, JumpIfNot { cond: 0, jump: 8 }, Jump { jump: 9 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:pattern_panic_0 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:19, comment: Some(\"label:patter_match_1 (9)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 25:30, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 32:33, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 17:19, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 20:31, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 0:34, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 26:27, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 8, frames: [] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/00",
+    "source": "pub fn main(){let[..]=[];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/01",
+    "source": "pub fn main(){let[..]=[1];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/02",
+    "source": "pub fn main(){let[..]=[1,2];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/03",
+    "source": "pub fn main(){let[..]=[1,2,3];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/04",
+    "source": "pub fn main(){let[..]=();7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, Store { value: Unit, out: keep(0) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: false, addr: 0, out: keep(1) }, JumpIfNot { cond: 1, jump: 5 }, Jump { jump: 6 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(6) }] }, 4: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:patter_match_1 (6)\"), labels: [] }, 6: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 0:27, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:pattern_panic_0 (5)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 22:24, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 5, frames: [] }] }",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/05",
+    "source": "pub fn main(){let[..]=(1,2);7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(1), out: keep(0) }, Store { value: Integer(2), out: keep(1) }, Tuple2 { addr: [0, 1], out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: false, addr: 2, out: keep(0) }, JumpIfNot { cond: 0, jump: 7 }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 22:27, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:30, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/06",
+    "source": "pub fn main(){let[..]=1;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, Store { value: Integer(1), out: keep(0) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: false, addr: 0, out: keep(1) }, JumpIfNot { cond: 1, jump: 5 }, Jump { jump: 6 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(6) }] }, 4: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:patter_match_1 (6)\"), labels: [] }, 6: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 0:26, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:pattern_panic_0 (5)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 22:23, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 5, frames: [] }] }",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/07",
+    "source": "pub fn main(){let[..]=true;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, Store { value: Bool(true), out: keep(0) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: false, addr: 0, out: keep(1) }, JumpIfNot { cond: 1, jump: 5 }, Jump { jump: 6 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(6) }] }, 4: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:patter_match_1 (6)\"), labels: [] }, 6: DebugInst { source_id: 0, span: 27:28, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 0:29, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:pattern_panic_0 (5)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 22:26, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 5, frames: [] }] }",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/08",
+    "source": "pub fn main(){let[..]=\"ab\";7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, String { slot: 0, out: keep(0) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: false, addr: 0, out: keep(1) }, JumpIfNot { cond: 1, jump: 5 }, Jump { jump: 6 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [\"ab\"], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(6) }] }, 4: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:patter_match_1 (6)\"), labels: [] }, 6: DebugInst { source_id: 0, span: 27:28, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 0:29, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:pattern_panic_0 (5)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 22:26, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 5, frames: [] }] }",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/09",
+    "source": "pub fn main(){let[..]=#{a:1,b:2};7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(1), out: keep(0) }, Store { value: Integer(2), out: keep(1) }, Object { addr: 0, slot: 0, out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: false, addr: 2, out: keep(0) }, JumpIfNot { cond: 0, jump: 7 }, Jump { jump: 8 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [[\"a\", \"b\"]], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:patter_match_1 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 22:32, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 33:34, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 0:35, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:pattern_panic_0 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 30:31, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 26:27, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 7, frames: [] }] }",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/rest/10",
+    "source": "pub fn main(){let[..]=Some([1,2]);7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Vec { addr: 1, count: 2, out: keep(0) }, Call { hash: 0x91b8a530bce8a752, addr: 0, args: 1, out: keep(1) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 0, exact: false, addr: 1, out: keep(0) }, JumpIfNot { cond: 0, jump: 8 }, Jump { jump: 9 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:pattern_panic_0 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 17:21, comment: Some(\"label:patter_match_1 (9)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 27:32, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 34:35, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 17:21, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 22:33, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 0:36, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 30:31, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 8, frames: [] }] }",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/00",
+    "source": "pub fn main(){let[a,..]=[];7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Vec { addr: invalid, count: 0, out: keep(1) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 1, exact: false, addr: 1, out: keep(2) }, JumpIfNot { cond: 2, jump: 6 }, TupleIndexGetAt { addr: 1, index: 0, out: keep(0) }, Jump { jump: 7 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 27:28, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:pattern_panic_0 (6)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 0:29, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:patter_match_1 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:26, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 6, frames: [] }] }",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/01",
+    "source": "pub fn main(){let[a,..]=[1];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/02",
+    "source": "pub fn main(){let[a,..]=[1,2];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/03",
+    "source": "pub fn main(){let[a,..]=[1,2,3];7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/04",
+    "source": "pub fn main(){let[a,..]=();7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Unit, out: keep(1) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 1, exact: false, addr: 1, out: keep(2) }, JumpIfNot { cond: 2, jump: 6 }, TupleIndexGetAt { addr: 1, index: 0, out: keep(0) }, Jump { jump: 7 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 27:28, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:pattern_panic_0 (6)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 0:29, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:patter_match_1 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:26, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 6, frames: [] }] }",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/05",
+    "source": "pub fn main(){let[a,..]=(1,2);7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Tuple2 { addr: [1, 2], out: keep(3) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 1, exact: false, addr: 3, out: keep(1) }, JumpIfNot { cond: 1, jump: 8 }, TupleIndexGetAt { addr: 3, index: 0, out: keep(0) }, Jump { jump: 9 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:patter_match_1 (9)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 24:29, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 30:31, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:pattern_panic_0 (8)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 0:32, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 27:28, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 8, frames: [] }] }",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/06",
+    "source": "pub fn main(){let[a,..]=1;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(1), out: keep(1) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 1, exact: false, addr: 1, out: keep(2) }, JumpIfNot { cond: 2, jump: 6 }, TupleIndexGetAt { addr: 1, index: 0, out: keep(0) }, Jump { jump: 7 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 26:27, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:pattern_panic_0 (6)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 0:28, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:patter_match_1 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 6, frames: [] }] }",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/07",
+    "source": "pub fn main(){let[a,..]=true;7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Bool(true), out: keep(1) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 1, exact: false, addr: 1, out: keep(2) }, JumpIfNot { cond: 2, jump: 6 }, TupleIndexGetAt { addr: 1, index: 0, out: keep(0) }, Jump { jump: 7 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 29:30, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:pattern_panic_0 (6)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 0:31, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:patter_match_1 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:28, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 6, frames: [] }] }",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/08",
+    "source": "pub fn main(){let[a,..]=\"ab\";7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, String { slot: 0, out: keep(1) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 1, exact: false, addr: 1, out: keep(2) }, JumpIfNot { cond: 2, jump: 6 }, TupleIndexGetAt { addr: 1, index: 0, out: keep(0) }, Jump { jump: 7 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [\"ab\"], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(7) }] }, 7: DebugInst { source_id: 0, span: 29:30, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:pattern_panic_0 (6)\"), labels: [] }, 8: DebugInst { source_id: 0, span: 0:31, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:patter_match_1 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:28, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 6, frames: [] }] }",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/09",
+    "source": "pub fn main(){let[a,..]=#{a:1,b:2};7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Object { addr: 1, slot: 0, out: keep(3) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 1, exact: false, addr: 3, out: keep(1) }, JumpIfNot { cond: 1, jump: 8 }, TupleIndexGetAt { addr: 3, index: 0, out: keep(0) }, Jump { jump: 9 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [[\"a\", \"b\"]], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:patter_match_1 (9)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 24:34, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(9) }] }, 9: DebugInst { source_id: 0, span: 35:36, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:pattern_panic_0 (8)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 0:37, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 32:33, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 8, frames: [] }] }",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "matrix/prefix/10",
+    "source": "pub fn main(){let[a,..]=Some([1,2]);7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Integer(1), out: keep(2) }, Store { value: Integer(2), out: keep(3) }, Vec { addr: 2, count: 2, out: keep(1) }, Call { hash: 0x91b8a530bce8a752, addr: 1, args: 1, out: keep(2) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 1, exact: false, addr: 2, out: keep(1) }, JumpIfNot { cond: 1, jump: 9 }, TupleIndexGetAt { addr: 2, index: 0, out: keep(0) }, Jump { jump: 10 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:pattern_panic_0 (9)\"), labels: [] }, 11: DebugInst { source_id: 0, span: 0:38, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 29:34, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 17:23, comment: Some(\"label:patter_match_1 (10)\"), labels: [] }, 9: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 17:23, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 24:35, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 36:37, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(11) }] }, 2: DebugInst { source_id: 0, span: 32:33, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 30:31, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 9, frames: [] }] }",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 23,
+          "frames": "[]",
+          "source": 0,
+          "start": 17
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/duplicate",
+    "source": "pub fn main(){let[a,a]=[1,2];a}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/tuple-rest",
+    "source": "pub fn main(){let(a,..)=(1,2);a}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/variant",
+    "source": "pub fn main(){let[Some(a)]=[Some(7)];a}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/literal",
+    "source": "pub fn main(){let[1]=[1];7}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/object",
+    "source": "pub fn main(){let[#{a}]=[#{a:7}];a}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/leading-rest",
+    "source": "pub fn main(){let[..,a]=[1,2];a}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 20:21, kind: ExpectedSyntaxIn { inside: Syntax(\"an array pattern\"), expected: Delimiter(\"]\"), actual: Punctuation(\",\") } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 20:21, kind: ExpectedSyntaxIn { inside: Syntax(\"an array pattern\"), expected: Delimiter(\"]\"), actual: Punctuation(\",\") } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/middle-rest",
+    "source": "pub fn main(){let[a,..,b]=[1,2,3];a+b}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 22:23, kind: ExpectedSyntaxIn { inside: Syntax(\"an array pattern\"), expected: Delimiter(\"]\"), actual: Punctuation(\",\") } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 22:23, kind: ExpectedSyntaxIn { inside: Syntax(\"an array pattern\"), expected: Delimiter(\"]\"), actual: Punctuation(\",\") } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/bound-rest",
+    "source": "pub fn main(){let[a,tail @ ..]=[1,2];a}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 25:36, kind: ExpectedSyntaxIn { inside: Syntax(\"a variable declaration\"), expected: Punctuation(\"=\"), actual: Syntax(\"an expression\") } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 25:36, kind: ExpectedSyntaxIn { inside: Syntax(\"a variable declaration\"), expected: Punctuation(\"=\"), actual: Syntax(\"an expression\") } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/parameter",
+    "source": "fn f([a,b]){a+b}pub fn main(){f([1,2])}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "excluded/for",
+    "source": "pub fn main(){let n=0;for[a,b]in[[1,2]]{n+=a+b;}n}",
+    "policy": "Retain-refusal",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "frames/miss",
+    "source": "fn inner(){let[a,b]=[1];7}fn outer(){inner()}pub fn main(){outer()}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: UnmatchedPattern } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 1 }, Call { hash: 0x49e9a3b0295f991d, addr: invalid, args: 0, out: keep(0) }, Return { addr: 0 }, Allocate { size: 1 }, Call { hash: 0xe50aee3e3ff0bdf5, addr: invalid, args: 0, out: keep(0) }, Return { addr: 0 }, Allocate { size: 4 }, Store { value: Integer(1), out: keep(2) }, Vec { addr: 2, count: 1, out: keep(3) }, MatchSequence { hash: 0xc11b1e769aea94f2, len: 2, exact: true, addr: 3, out: keep(2) }, JumpIfNot { cond: 2, jump: 14 }, TupleIndexGetAt { addr: 3, index: 0, out: keep(0) }, TupleIndexGetAt { addr: 3, index: 1, out: keep(1) }, Jump { jump: 15 }, Panic { reason: UnmatchedPattern }, Store { value: Integer(7), out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }, 0x49e9a3b0295f991d: Offset { offset: 3, call: Immediate, args: 0, captures: None }, 0xe50aee3e3ff0bdf5: Offset { offset: 6, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\", 0xa8b3d4f3f2682c9d: \"outer\", 0x450997de4c70875: \"inner\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {11: DebugInst { source_id: 0, span: 15:16, comment: None, labels: [] }, 15: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [DebugLabel { name: \"patter_match\", index: 1, jump: Some(16) }] }, 7: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }, 16: DebugInst { source_id: 0, span: 0:26, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 20:23, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 14:19, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 26:45, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 37:44, comment: None, labels: [] }, 14: DebugInst { source_id: 0, span: 14:19, comment: None, labels: [DebugLabel { name: \"pattern_panic\", index: 0, jump: Some(15) }] }, 13: DebugInst { source_id: 0, span: 14:19, comment: Some(\"label:patter_match_1 (15)\"), labels: [] }, 10: DebugInst { source_id: 0, span: 14:19, comment: Some(\"label:pattern_panic_0 (14)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 45:67, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 17:18, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 59:66, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }, 0x49e9a3b0295f991d: DebugSignature { path: outer, args: Named([]) }, 0xe50aee3e3ff0bdf5: DebugSignature { path: inner, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1, 3: 0x49e9a3b0295f991d, 6: 0xe50aee3e3ff0bdf5}, hash_to_ident: {}, globals: [] }) }, ip: 14, frames: [CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 5, top: 1, isolated: None, out: keep(0) }] }] }",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 5, top: 1, isolated: None, out: keep(0) }]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: pattern did not match",
+      "sites": [
+        {
+          "end": 19,
+          "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 5, top: 1, isolated: None, out: keep(0) }]",
+          "source": 0,
+          "start": 14
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "frames/success",
+    "source": "fn inner(){let[a,b]=[3,4];a+b}fn outer(){inner()}pub fn main(){outer()}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  }
+]

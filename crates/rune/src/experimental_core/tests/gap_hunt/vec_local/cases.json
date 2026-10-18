@@ -1,0 +1,554 @@
+[
+  {
+    "label": "value/pair",
+    "source": "pub fn main(){let[a,b]=[10,20];a*100+b}",
+    "policy": "Exact",
+    "source_sha256": "a04f8f68ef32f70bcabb0adfd72c708cabddd28effd7834310ccededdf4d93c1"
+  },
+  {
+    "label": "value/empty",
+    "source": "pub fn main(){let[]=[];7}",
+    "policy": "Exact",
+    "source_sha256": "5cfb4ab440d600ca17ca7d69066c3efc99e50329dceeb0324ee4b1536f39a792"
+  },
+  {
+    "label": "value/singleton",
+    "source": "pub fn main(){let[a]=[7];a}",
+    "policy": "Exact",
+    "source_sha256": "0218da8720a1ad46736b06ba421c91b9f166a0e9eb68b6d6db948acc65143d39"
+  },
+  {
+    "label": "value/ignore",
+    "source": "pub fn main(){let[_,b]=[[1],7];b}",
+    "policy": "Exact",
+    "source_sha256": "60a6de7f47f68af933afef9b217e26f17b63f612737742bdde3289edb6bdf825"
+  },
+  {
+    "label": "value/all-ignore",
+    "source": "pub fn main(){let[_,_]=[[1],[2]];7}",
+    "policy": "Exact",
+    "source_sha256": "7a9244cb473b6bf1e8e245f782c14048322e2b3abd979280a83278aa544dd0f7"
+  },
+  {
+    "label": "value/nested-vec",
+    "source": "pub fn main(){let[a,[b,c]]=[1,[2,3]];a*100+b*10+c}",
+    "policy": "Exact",
+    "source_sha256": "19a852188b74dc509c3b8e3bd38969470da7b4b55e735778981a168f3c10bb48"
+  },
+  {
+    "label": "value/nested-tuple",
+    "source": "pub fn main(){let[(a,b),c]=[(1,2),3];a*100+b*10+c}",
+    "policy": "Exact",
+    "source_sha256": "e7ba751d3dbc5a71a704373fae07de379d97a8ac3e3325558fdffa1e4c889d65"
+  },
+  {
+    "label": "value/vec-in-tuple",
+    "source": "pub fn main(){let(a,[b,c])=(1,[2,3]);a*100+b*10+c}",
+    "policy": "Exact",
+    "source_sha256": "6ce916073ddd81a812f5a3d66f285594673be14a1b685ea25a0ebcabedf2a036"
+  },
+  {
+    "label": "value/nested-struct",
+    "source": "struct T(a);pub fn main(){let[T(a),b]=[T(3),4];a+b}",
+    "policy": "Exact",
+    "source_sha256": "8c99c5a24a26cdf3d13d7a7c28250cbfbc90ee8db89c8311a3a4cfcf27759a95"
+  },
+  {
+    "label": "value/rest-empty",
+    "source": "pub fn main(){let[..]=[];7}",
+    "policy": "Exact",
+    "source_sha256": "44646f11c7c2e1b40f991b2cacf1250182084de22ba0b938ba448a261c9cca3a"
+  },
+  {
+    "label": "value/rest-all",
+    "source": "pub fn main(){let[..]=[1,2];7}",
+    "policy": "Exact",
+    "source_sha256": "faa56ae384f2d10d20f735b6016b19c13e4400ee99d97ce72d866e94563ee094"
+  },
+  {
+    "label": "value/rest-exact",
+    "source": "pub fn main(){let[a,b,..]=[1,2];a*10+b}",
+    "policy": "Exact",
+    "source_sha256": "269906806c0cea30eaa711771dcc60b037f8b804118296aea8126e412a105af2"
+  },
+  {
+    "label": "value/rest-long",
+    "source": "pub fn main(){let[a,b,..]=[1,2,3];a*10+b}",
+    "policy": "Exact",
+    "source_sha256": "3c1a91a04203b7be74ca7a4f803f61dffdf57889b22e2df0727cdd5d5be9fd3f"
+  },
+  {
+    "label": "value/rest-nested",
+    "source": "pub fn main(){let[a,[b,..],..]=[1,[2,3],4];a*10+b}",
+    "policy": "Exact",
+    "source_sha256": "def5e852b5f8edf5dad7a14dcf0bad4818dde3764d5558f2ed737ab64b4b1def"
+  },
+  {
+    "label": "value/rebind",
+    "source": "pub fn main(){let a=10;let b=20;let[a,b]=[b,a];a*100+b}",
+    "policy": "Exact",
+    "source_sha256": "219501535eedad6256dc8ba8831e9bec397bc082434f1a74c059267d93bc9c2a"
+  },
+  {
+    "label": "value/rhs-once",
+    "source": "pub fn main(){let n=0;let[a,b]={n+=1;[n,n+1]};n*100+a*10+b}",
+    "policy": "Exact",
+    "source_sha256": "1acebf186065be172f4da85ced1eef7875054552242b57ce561fa5f74dc31284"
+  },
+  {
+    "label": "value/rhs-order",
+    "source": "pub fn main(){let n=0;let[a,b]=[{n=n*10+1;n},{n=n*10+2;n}];n*100+a*10+b}",
+    "policy": "Exact",
+    "source_sha256": "ec8e8183a72a43c5f708e1fd11aac474c1c6f8b6b2ac11e33d9e6c40cfb7fa13"
+  },
+  {
+    "label": "value/alias-root",
+    "source": "pub fn main(){let v=[1,2];let[a,b]=v;v[0]=9;a*10+b}",
+    "policy": "Exact",
+    "source_sha256": "4266481f06e4e9267213db7d3906ddc55723998d8973287b6a66d600dcec2dde"
+  },
+  {
+    "label": "value/alias-children",
+    "source": "pub fn main(){let v=[1];let[a,b]=[v,v];a[0]=9;b[0]==9&&v[0]==9}",
+    "policy": "Exact",
+    "source_sha256": "11207ff740564bdb3c57aea44c6087acdc884834c35eb366843801a8c0b2209a"
+  },
+  {
+    "label": "value/drop-root",
+    "source": "pub fn main(){let v=[[1],[2]];let[a,b]=v;drop(v);a[0]+b[0]}",
+    "policy": "Exact",
+    "source_sha256": "87eef8c376ac458d84639e1210aca0ec2243afe1647aef0e34ce83ae35478670"
+  },
+  {
+    "label": "value/drop-child",
+    "source": "pub fn main(){let v=[[1],[2]];let[a,b]=v;drop(a);b[0]}",
+    "policy": "Exact",
+    "source_sha256": "bb837feb3405433134f7eab9aee31fc270094d2c7ad7bdda959fea7360c77198"
+  },
+  {
+    "label": "value/reassign-bindings",
+    "source": "pub fn main(){let[a,b]=[1,2];a=7;b=8;a*10+b}",
+    "policy": "Exact",
+    "source_sha256": "c6cae356818a580185308c38a03c7fac49d7995a072533029b96b57966b23ad8"
+  },
+  {
+    "label": "value/block-shadow",
+    "source": "pub fn main(){let a=1;let n={let[a,b]=[2,3];a+b};a*10+n}",
+    "policy": "Exact",
+    "source_sha256": "d3f8b32115f3e0484832a4aeb589ce7ebaba41f4ba57eb44359e8862931fb70d"
+  },
+  {
+    "label": "value/return-rhs",
+    "source": "pub fn main(){let[a,b]={return 7;[1,2]};a+b}",
+    "policy": "Exact",
+    "source_sha256": "0154048a5288640ab0058bd75a48bcecb66bed98a64fecbaefdafab7e834e531"
+  },
+  {
+    "label": "value/break-rhs",
+    "source": "pub fn main(){for n in 0..2{let[a,b]={break;[1,2]};}7}",
+    "policy": "Exact",
+    "source_sha256": "2ca6c73785e43496098eb7a33b0e8d44174d217cc0dfaa6fbba9bc360fe4631f"
+  },
+  {
+    "label": "value/continue-rhs",
+    "source": "pub fn main(){let n=0;for i in 0..2{n+=1;let[a,b]={continue;[1,2]};}n}",
+    "policy": "Exact",
+    "source_sha256": "454d3862162f0e586f183c099bc2c0689d515b2e2c96f9cacf9a71c3c9f95f99"
+  },
+  {
+    "label": "value/leased-root",
+    "source": "pub fn main(){let v=[1,2];for x in v{let[a,b]=v;return a+b;}0}",
+    "policy": "Exact",
+    "source_sha256": "0435a213e96ecbc1ffdc1b60124ed47fea15f11656b2d6ee2f01168683143f81"
+  },
+  {
+    "label": "value/leased-rest",
+    "source": "pub fn main(){let v=[1,2];for x in v{let[..]=v;return 7;}0}",
+    "policy": "Exact",
+    "source_sha256": "5cc2cd67ddc5f9dcd5c97d3d6c2da7590520d8cc6bce89ae58078656067a3ea7"
+  },
+  {
+    "label": "value/leased-child",
+    "source": "pub fn main(){let v=[1,2];for x in v{let[a]=[v];return a[0];}0}",
+    "policy": "Exact",
+    "source_sha256": "3733b4c1eafc0c0e2d81e984e80b416ec16e7a411af2c97ea1255579a6d90681"
+  },
+  {
+    "label": "value/moved-root",
+    "source": "pub fn main(){let v=[1,2];drop(v);let[a,b]=v;7}",
+    "policy": "Exact",
+    "source_sha256": "927010a4b5438fa78a37776774c947d1d9b68d39fd10731c1d8f4404022fce97"
+  },
+  {
+    "label": "value/moved-rest",
+    "source": "pub fn main(){let v=[1,2];drop(v);let[..]=v;7}",
+    "policy": "Exact",
+    "source_sha256": "c8f6c82101fccf69cabf5961636a4c5309be244b24156f4d3c0d7b7705b3f022"
+  },
+  {
+    "label": "value/moved-child-ignore",
+    "source": "pub fn main(){let v=[[1],7];drop(v[0]);let[_,b]=v;b}",
+    "policy": "Exact",
+    "source_sha256": "8cbf9a58673baa40b2ed3ee4084d39de263c18871e41b19edac5c69aef89672a"
+  },
+  {
+    "label": "value/moved-child-name",
+    "source": "pub fn main(){let v=[[1],7];drop(v[0]);let[a,b]=v;7}",
+    "policy": "Exact",
+    "source_sha256": "5116b18ff03146c462442286d638856f87dfb4492f22c71812da81b0032bda6b"
+  },
+  {
+    "label": "value/partial-miss",
+    "source": "pub fn main(){let v=[1];let[a,[b,c]]=[v,[2]];7}",
+    "policy": "Exact",
+    "source_sha256": "ed1bd77f321a5de0e86776ed26652f689f64e05c762b47a242de7e2fe5104c4c"
+  },
+  {
+    "label": "value/float-char",
+    "source": "pub fn main(){let[a,b]=[1.5,'é'];a==1.5&&b=='é'}",
+    "policy": "Exact",
+    "source_sha256": "f8c460233faa0308b72c0d45dde14d8399f45b208392b47a0636cc6d88e03cef"
+  },
+  {
+    "label": "value/string-range",
+    "source": "pub fn main(){let[a,b]=[\"é\",0..2];a==\"é\"&&b.start==0}",
+    "policy": "Exact",
+    "source_sha256": "1afa6b09bc9cc80f9e3b1379a56c1b5843c1e135a05dc9d7c5b52553bb50605b"
+  },
+  {
+    "label": "matrix/pair/00",
+    "source": "pub fn main(){let[a,b]=[];7}",
+    "policy": "Exact",
+    "source_sha256": "9ac0ff80ba9dbd6f931a6e1016ae6169e649eaafed0999ef7f0039edd62f0b57"
+  },
+  {
+    "label": "matrix/pair/01",
+    "source": "pub fn main(){let[a,b]=[1];7}",
+    "policy": "Exact",
+    "source_sha256": "7654a999a5d94840769fe2d4b83bd2fe870aca872c9f7f071b1d9f9bd10afe1b"
+  },
+  {
+    "label": "matrix/pair/02",
+    "source": "pub fn main(){let[a,b]=[1,2];7}",
+    "policy": "Exact",
+    "source_sha256": "bc2ea571a03601e610eec5428fbfb7bfaf6943aeeb3ffdc6b54835e651f456db"
+  },
+  {
+    "label": "matrix/pair/03",
+    "source": "pub fn main(){let[a,b]=[1,2,3];7}",
+    "policy": "Exact",
+    "source_sha256": "fc521d7f0e8bb93f96b7d25ee818bf19d35de0fddb055506f62eac0b11e20320"
+  },
+  {
+    "label": "matrix/pair/04",
+    "source": "pub fn main(){let[a,b]=();7}",
+    "policy": "Exact",
+    "source_sha256": "ae579d84a6c67c09d4af623199a1986e75535497b12adce9674e2ab7f14a1109"
+  },
+  {
+    "label": "matrix/pair/05",
+    "source": "pub fn main(){let[a,b]=(1,2);7}",
+    "policy": "Exact",
+    "source_sha256": "52c8dc4a80741211afdb01004bd06d90f5549da68edb68de01cacf928b72771b"
+  },
+  {
+    "label": "matrix/pair/06",
+    "source": "pub fn main(){let[a,b]=1;7}",
+    "policy": "Exact",
+    "source_sha256": "aef34de008ce3ca5eb536a06cc6c6288847cdeeed7b72816822f023b842c5742"
+  },
+  {
+    "label": "matrix/pair/07",
+    "source": "pub fn main(){let[a,b]=true;7}",
+    "policy": "Exact",
+    "source_sha256": "4bf7209fd2b327163e73b7557c072af7eb7a0c163ce80d76fe0f92b6d2189707"
+  },
+  {
+    "label": "matrix/pair/08",
+    "source": "pub fn main(){let[a,b]=\"ab\";7}",
+    "policy": "Exact",
+    "source_sha256": "19df7bf3cd944884ac504fdc42eae6a4a7debd4926b099d1a8f92c45a17a2885"
+  },
+  {
+    "label": "matrix/pair/09",
+    "source": "pub fn main(){let[a,b]=#{a:1,b:2};7}",
+    "policy": "Exact",
+    "source_sha256": "e9d376a6dd989a0463caa7280dbef08fa096e595f7a519a202d3fce80f636a08"
+  },
+  {
+    "label": "matrix/pair/10",
+    "source": "pub fn main(){let[a,b]=Some([1,2]);7}",
+    "policy": "Exact",
+    "source_sha256": "efd10e8487695ac827affe307e72046a4a380d4aa5c2ed3e4b516e7415ca1a72"
+  },
+  {
+    "label": "matrix/empty/00",
+    "source": "pub fn main(){let[]=[];7}",
+    "policy": "Exact",
+    "source_sha256": "5cfb4ab440d600ca17ca7d69066c3efc99e50329dceeb0324ee4b1536f39a792"
+  },
+  {
+    "label": "matrix/empty/01",
+    "source": "pub fn main(){let[]=[1];7}",
+    "policy": "Exact",
+    "source_sha256": "952f7531a6dd0ae73838b482c2e20e955ee4e28c799c271358b9844be9291e8d"
+  },
+  {
+    "label": "matrix/empty/02",
+    "source": "pub fn main(){let[]=[1,2];7}",
+    "policy": "Exact",
+    "source_sha256": "1ba4c64ef84d6cac0d69f67bd22d8ac35fa8e6fd272ef2f518e4ccfe651df095"
+  },
+  {
+    "label": "matrix/empty/03",
+    "source": "pub fn main(){let[]=[1,2,3];7}",
+    "policy": "Exact",
+    "source_sha256": "2effbc66eed685f60d4b0dc2ddec3cf50b28d48c0319c4e166422ba64817bb10"
+  },
+  {
+    "label": "matrix/empty/04",
+    "source": "pub fn main(){let[]=();7}",
+    "policy": "Exact",
+    "source_sha256": "3e9d23b1539a44e520f138f2d465259f9ea65ee8837cb985bd1f529e1f4988cb"
+  },
+  {
+    "label": "matrix/empty/05",
+    "source": "pub fn main(){let[]=(1,2);7}",
+    "policy": "Exact",
+    "source_sha256": "91d8fb434e1347024c58d44ad30d899e5bb5733ba70d5e30bb3a7a33978a5d6f"
+  },
+  {
+    "label": "matrix/empty/06",
+    "source": "pub fn main(){let[]=1;7}",
+    "policy": "Exact",
+    "source_sha256": "1d8d53503c4d3bfbbb9ea3900c40585bc533e51be8c8fc39e172472a3aa39c21"
+  },
+  {
+    "label": "matrix/empty/07",
+    "source": "pub fn main(){let[]=true;7}",
+    "policy": "Exact",
+    "source_sha256": "e06c1aff87d4699276b8ad50f9ab0a32550a0b8169fdc6f6839cc11d14fd70e8"
+  },
+  {
+    "label": "matrix/empty/08",
+    "source": "pub fn main(){let[]=\"ab\";7}",
+    "policy": "Exact",
+    "source_sha256": "8ab3be5e40c793ac7fe428bdc8211098b8ff57d504616b70292c32df874c57f6"
+  },
+  {
+    "label": "matrix/empty/09",
+    "source": "pub fn main(){let[]=#{a:1,b:2};7}",
+    "policy": "Exact",
+    "source_sha256": "f705004d5a1e39925e1a631f8e8f784f4a71b4df69913f0056a68ba120964d2e"
+  },
+  {
+    "label": "matrix/empty/10",
+    "source": "pub fn main(){let[]=Some([1,2]);7}",
+    "policy": "Exact",
+    "source_sha256": "1b20392e5bfcf41ba4cd776a25085da68dcc23f8f3e901ad8cba8114ff9dcb08"
+  },
+  {
+    "label": "matrix/rest/00",
+    "source": "pub fn main(){let[..]=[];7}",
+    "policy": "Exact",
+    "source_sha256": "44646f11c7c2e1b40f991b2cacf1250182084de22ba0b938ba448a261c9cca3a"
+  },
+  {
+    "label": "matrix/rest/01",
+    "source": "pub fn main(){let[..]=[1];7}",
+    "policy": "Exact",
+    "source_sha256": "9a46314526b3e9421f34e01663a28d5ced3ee41a82fae1730ab81311ed0b0e6f"
+  },
+  {
+    "label": "matrix/rest/02",
+    "source": "pub fn main(){let[..]=[1,2];7}",
+    "policy": "Exact",
+    "source_sha256": "faa56ae384f2d10d20f735b6016b19c13e4400ee99d97ce72d866e94563ee094"
+  },
+  {
+    "label": "matrix/rest/03",
+    "source": "pub fn main(){let[..]=[1,2,3];7}",
+    "policy": "Exact",
+    "source_sha256": "a4b4a9a7a24709893df32e6ade32c36c1c82bf1c17585a9d179b3a080f45d7a3"
+  },
+  {
+    "label": "matrix/rest/04",
+    "source": "pub fn main(){let[..]=();7}",
+    "policy": "Exact",
+    "source_sha256": "170b696b42f7ea49e0503d826c5f170b3fed8b16ace31809eb5cb851a05a8dc8"
+  },
+  {
+    "label": "matrix/rest/05",
+    "source": "pub fn main(){let[..]=(1,2);7}",
+    "policy": "Exact",
+    "source_sha256": "adbb5e8ca28eb5ad499e9d41d9b367e7cf8f8bcbd881c4bf6bb07dd1af08dd7c"
+  },
+  {
+    "label": "matrix/rest/06",
+    "source": "pub fn main(){let[..]=1;7}",
+    "policy": "Exact",
+    "source_sha256": "8b29796ffb45c4d421be6480270b55d9e70778dd02ed746ba76cd581fb52eda5"
+  },
+  {
+    "label": "matrix/rest/07",
+    "source": "pub fn main(){let[..]=true;7}",
+    "policy": "Exact",
+    "source_sha256": "4ec1c1395746fa5e2c111ca4868603fefb3d1e645fba3ac1a6ae5af459c3babf"
+  },
+  {
+    "label": "matrix/rest/08",
+    "source": "pub fn main(){let[..]=\"ab\";7}",
+    "policy": "Exact",
+    "source_sha256": "bbfd1f44effbac2db99c3dd55103d72603f482a4c44ffccad493da212b558360"
+  },
+  {
+    "label": "matrix/rest/09",
+    "source": "pub fn main(){let[..]=#{a:1,b:2};7}",
+    "policy": "Exact",
+    "source_sha256": "15948ad6c71dc99102498ca265ef3b7b3cfc83245ceb36464a765bcd24703240"
+  },
+  {
+    "label": "matrix/rest/10",
+    "source": "pub fn main(){let[..]=Some([1,2]);7}",
+    "policy": "Exact",
+    "source_sha256": "83d6e57deca52ec9056787723abfdb24778eab5142090c15e72a0b5f2f2c6741"
+  },
+  {
+    "label": "matrix/prefix/00",
+    "source": "pub fn main(){let[a,..]=[];7}",
+    "policy": "Exact",
+    "source_sha256": "eed0e51a6f2f42b7d4e5617d35b4fdbdf272841767e0af4ef47c602f1189a8b4"
+  },
+  {
+    "label": "matrix/prefix/01",
+    "source": "pub fn main(){let[a,..]=[1];7}",
+    "policy": "Exact",
+    "source_sha256": "9ede706af3128eda6927548900100895badfefd2c9d92cde87c1a8b6d278b403"
+  },
+  {
+    "label": "matrix/prefix/02",
+    "source": "pub fn main(){let[a,..]=[1,2];7}",
+    "policy": "Exact",
+    "source_sha256": "76cffb2c8f4fa958d4bba9b9441370339e87d9cfcb0dedcbbb357657d5a7c75b"
+  },
+  {
+    "label": "matrix/prefix/03",
+    "source": "pub fn main(){let[a,..]=[1,2,3];7}",
+    "policy": "Exact",
+    "source_sha256": "626b558601a32d13bcc9a83e573603fed72468bf216947688f655eaaaff042f8"
+  },
+  {
+    "label": "matrix/prefix/04",
+    "source": "pub fn main(){let[a,..]=();7}",
+    "policy": "Exact",
+    "source_sha256": "b96d47252fcf8ce8b3bb2321005b1018d3035021c74356d741e8979a7137a8ce"
+  },
+  {
+    "label": "matrix/prefix/05",
+    "source": "pub fn main(){let[a,..]=(1,2);7}",
+    "policy": "Exact",
+    "source_sha256": "8618e689cb8dbf0b43813e16a1a53336a15f146eb9890d289fce0adba50b99e2"
+  },
+  {
+    "label": "matrix/prefix/06",
+    "source": "pub fn main(){let[a,..]=1;7}",
+    "policy": "Exact",
+    "source_sha256": "35c79ca09acf2cbd97e8298fe53254d05037c3f28f8eedf9d6daf0896b312913"
+  },
+  {
+    "label": "matrix/prefix/07",
+    "source": "pub fn main(){let[a,..]=true;7}",
+    "policy": "Exact",
+    "source_sha256": "c87ed8e69a078ae41d631760bddb667e90cd814415b4adefe8e628dd60af7a25"
+  },
+  {
+    "label": "matrix/prefix/08",
+    "source": "pub fn main(){let[a,..]=\"ab\";7}",
+    "policy": "Exact",
+    "source_sha256": "d2012ade24fdd4ab230e501c4bc307f6e664b4c5a3fa3fd15d58466d27b9e705"
+  },
+  {
+    "label": "matrix/prefix/09",
+    "source": "pub fn main(){let[a,..]=#{a:1,b:2};7}",
+    "policy": "Exact",
+    "source_sha256": "de5d8ea256059cf2ff547fed5d4cdc37d12b1c6a728484afafe36247494e25c8"
+  },
+  {
+    "label": "matrix/prefix/10",
+    "source": "pub fn main(){let[a,..]=Some([1,2]);7}",
+    "policy": "Exact",
+    "source_sha256": "75c76ecfcfa387b469f3638b25e7909a8d4a96a132f91cfef4467a5986e0dcd9"
+  },
+  {
+    "label": "excluded/duplicate",
+    "source": "pub fn main(){let[a,a]=[1,2];a}",
+    "policy": "Retain-refusal",
+    "source_sha256": "5f8fd8d331b52fcf7c87dbb4d4b16390f1361b557d5f56e8b09b567419d15687"
+  },
+  {
+    "label": "excluded/tuple-rest",
+    "source": "pub fn main(){let(a,..)=(1,2);a}",
+    "policy": "Retain-refusal",
+    "source_sha256": "a4765f08e2b21cb4b3d9eed304861d2577b921b970f9f703995139759764c89b"
+  },
+  {
+    "label": "excluded/variant",
+    "source": "pub fn main(){let[Some(a)]=[Some(7)];a}",
+    "policy": "Retain-refusal",
+    "source_sha256": "6564ac24c0b932f8a675342a2d76074543c0f4f8f5b0a3a494256323cce1ea9f"
+  },
+  {
+    "label": "excluded/literal",
+    "source": "pub fn main(){let[1]=[1];7}",
+    "policy": "Retain-refusal",
+    "source_sha256": "8c6d664bdc8106d940bca6bf4f62a30e568cbfb6551f1d72901590e890d09e3a"
+  },
+  {
+    "label": "excluded/object",
+    "source": "pub fn main(){let[#{a}]=[#{a:7}];a}",
+    "policy": "Retain-refusal",
+    "source_sha256": "e940185ed148a84c7a7a89e42b1a91ee98d5b4f40f71fca27b7b6187837ab789"
+  },
+  {
+    "label": "excluded/leading-rest",
+    "source": "pub fn main(){let[..,a]=[1,2];a}",
+    "policy": "Retain-refusal",
+    "source_sha256": "3f1d12738ac2aaad5f2a37854a4e5d149bc21e72dffbf812711c73f44d44a698"
+  },
+  {
+    "label": "excluded/middle-rest",
+    "source": "pub fn main(){let[a,..,b]=[1,2,3];a+b}",
+    "policy": "Retain-refusal",
+    "source_sha256": "1bda5b8a90ed50cd9279386e768e57f4c5d58d5c2232781dc5cd189060a38aa8"
+  },
+  {
+    "label": "excluded/bound-rest",
+    "source": "pub fn main(){let[a,tail @ ..]=[1,2];a}",
+    "policy": "Retain-refusal",
+    "source_sha256": "cd85b8bd2c1ad22fbf2f4d70dd76fc7691ec48a0d55a04b1ae8cb56974394ad0"
+  },
+  {
+    "label": "excluded/parameter",
+    "source": "fn f([a,b]){a+b}pub fn main(){f([1,2])}",
+    "policy": "Retain-refusal",
+    "source_sha256": "7cce3afbf74ff1ae591f05792bf9173db718072f57d9270c00ba576fd2396f8b"
+  },
+  {
+    "label": "excluded/for",
+    "source": "pub fn main(){let n=0;for[a,b]in[[1,2]]{n+=a+b;}n}",
+    "policy": "Retain-refusal",
+    "source_sha256": "ad1bad59aafd0929fb2ffd5015a0e37aa7e70ff828542aa075e5a84e700b164f"
+  },
+  {
+    "label": "frames/miss",
+    "source": "fn inner(){let[a,b]=[1];7}fn outer(){inner()}pub fn main(){outer()}",
+    "policy": "Exact",
+    "source_sha256": "7ef02d003dbaf9dfba0562cdfc39e22004832ce58c8d545ba6472ccf5696f89d"
+  },
+  {
+    "label": "frames/success",
+    "source": "fn inner(){let[a,b]=[3,4];a+b}fn outer(){inner()}pub fn main(){outer()}",
+    "policy": "Exact",
+    "source_sha256": "17fbc6bb85b5580fe26c0a7b412c84343c220e7d3f2cc45e5940fc482a051526"
+  }
+]

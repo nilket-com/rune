@@ -1652,3 +1652,5 @@ mod nominal_clone;
 
 #[path = "gap_hunt/method_diagnostics.rs"]
 mod method_diagnostics;
+
+mod vec_local;
