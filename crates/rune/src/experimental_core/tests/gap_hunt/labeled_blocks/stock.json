@@ -1,0 +1,1857 @@
+[
+  {
+    "label": "normal/unit",
+    "source": "pub fn main(){'b:{()}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "Unit"
+    },
+    "projected": {
+      "status": "value",
+      "type": "Unit"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "break/unit",
+    "source": "pub fn main(){'b:{break 'b ();}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "Unit"
+    },
+    "projected": {
+      "status": "value",
+      "type": "Unit"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "normal/bool",
+    "source": "pub fn main(){'b:{true}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "projected": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "break/bool",
+    "source": "pub fn main(){'b:{break 'b true;}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "projected": {
+      "status": "value",
+      "type": "Bool",
+      "value": true
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "normal/i64",
+    "source": "pub fn main(){'b:{7}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "break/i64",
+    "source": "pub fn main(){'b:{break 'b 7;}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "normal/u64",
+    "source": "pub fn main(){'b:{7u64}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "U64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "U64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "break/u64",
+    "source": "pub fn main(){'b:{break 'b 7u64;}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "U64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "U64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "normal/f64",
+    "source": "pub fn main(){'b:{1.5}}",
+    "policy": "Exact",
+    "outcome": {
+      "bits": "3ff8000000000000",
+      "status": "value",
+      "type": "F64"
+    },
+    "projected": {
+      "bits": "3ff8000000000000",
+      "status": "value",
+      "type": "F64"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "break/f64",
+    "source": "pub fn main(){'b:{break 'b 1.5;}}",
+    "policy": "Exact",
+    "outcome": {
+      "bits": "3ff8000000000000",
+      "status": "value",
+      "type": "F64"
+    },
+    "projected": {
+      "bits": "3ff8000000000000",
+      "status": "value",
+      "type": "F64"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/unit-break",
+    "source": "fn id(x){x}pub fn main(){'b:{break 'b;}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "Unit"
+    },
+    "projected": {
+      "status": "value",
+      "type": "Unit"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/discard",
+    "source": "fn id(x){x}pub fn main(){'b:{break 'b 9;};7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/tail-discard",
+    "source": "fn id(x){x}pub fn main(){'b:{9};7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/if-true",
+    "source": "fn id(x){x}pub fn main(){'b:{if true{break 'b 7;}9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/if-false",
+    "source": "fn id(x){x}pub fn main(){'b:{if false{break 'b 7;}9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/else-break",
+    "source": "fn id(x){x}pub fn main(){'b:{if false{1}else{break 'b 7;}}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/match-break",
+    "source": "fn id(x){x}pub fn main(){'b:{match 2{1=>1,_=>break 'b 7};9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/break-from-expression",
+    "source": "fn id(x){x}pub fn main(){'b:{let x=1+{break 'b 7;2};x}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/return",
+    "source": "fn id(x){x}pub fn main(){'b:{return 7;9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/parenthesized",
+    "source": "fn id(x){x}pub fn main(){('b:{break 'b 7;})}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/local",
+    "source": "fn id(x){x}pub fn main(){let x='b:{break 'b 7;};x+2}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/call-argument",
+    "source": "fn id(x){x}pub fn main(){id('b:{break 'b 7;})}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/call-callee",
+    "source": "fn id(x){x}pub fn main(){('b:{break 'b id;})(7)}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/binary-left",
+    "source": "fn id(x){x}pub fn main(){('b:{break 'b 7;})+2}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/binary-right",
+    "source": "fn id(x){x}pub fn main(){2+('b:{break 'b 7;})}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/if-condition",
+    "source": "fn id(x){x}pub fn main(){if 'b:{break 'b true;}{7}else{9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/tuple-value",
+    "source": "fn id(x){x}pub fn main(){let v='b:{break 'b (7,8);};v.0+v.1}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "15"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "15"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/vec-value",
+    "source": "fn id(x){x}pub fn main(){let v='b:{break 'b [7,8];};v[0]+v[1]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "15"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "15"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/object-value",
+    "source": "fn id(x){x}pub fn main(){let v='b:{break 'b #{x:7};};v.x}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "value/closure-value",
+    "source": "fn id(x){x}pub fn main(){let f='b:{let n=4;break 'b move||n+3;};f()}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/inner",
+    "source": "pub fn main(){'a:{let n='b:{break 'b 7;};n+2}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/outer",
+    "source": "pub fn main(){'a:{'b:{break 'a 7;}9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/normal-inner",
+    "source": "pub fn main(){'a:{let n='b:{7};n+2}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/shadow-block",
+    "source": "pub fn main(){'a:{let n='a:{break 'a 7;};n+2}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/shadow-loop",
+    "source": "pub fn main(){'a:{let n='a:loop{break 'a 7;};n+2}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/outer-block-through-loop",
+    "source": "pub fn main(){'a:{for n in 0..3{if n==1{break 'a 7;}}9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/outer-loop-through-block",
+    "source": "pub fn main(){let n='a:loop{'b:{break 'a 7;}break 'a 9;};n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/two-hop",
+    "source": "pub fn main(){'a:{'b:{'c:{break 'a 7;}8}9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/inner-value-to-outer",
+    "source": "pub fn main(){'a:{let n='b:{break 'b 3;};break 'a n+4;}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "labels/reuse-label",
+    "source": "pub fn main(){let x='a:{break 'a 3;};let y='a:{break 'a 4;};x+y}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/break-inner-loop",
+    "source": "pub fn main(){'b:{let n=loop{break 7;};n+2}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/break-outer-loop",
+    "source": "pub fn main(){let n=0;loop{'b:{n+=1;break;}n+=100;break;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "101"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "101"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/continue-outer-loop",
+    "source": "pub fn main(){let n=0;let k=0;while n<3{'b:{n+=1;continue;}k+=100;}n+k}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 49:57, kind: ContinueUnsupportedBlock }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 49:57, kind: ContinueUnsupportedBlock }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/continue-inner-loop",
+    "source": "pub fn main(){'b:{let n=0;for i in 0..3{if i==1{continue;}n+=i;}n}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/labeled-continue-outer",
+    "source": "pub fn main(){let n=0;let k=0;'a:while n<3{'b:{n+=1;continue 'a;}k+=100;}n+k}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/for-break-block",
+    "source": "pub fn main(){'b:{for i in 0..3{if i==1{break 'b i+6;}}9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/for-continue-outer",
+    "source": "pub fn main(){let n=0;'a:for i in 0..3{'b:{n+=i;continue 'a;}n+=100;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/while-break-block",
+    "source": "pub fn main(){'b:{let n=0;while n<3{n+=1;if n==2{break 'b n+5;}}9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/nested-unlabeled",
+    "source": "pub fn main(){let n=0;loop{'b:{loop{n+=1;break;}n+=10;}break;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "11"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "11"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "loops/block-in-loop-value",
+    "source": "pub fn main(){let n=loop{break 'b:{break 'b 7;};};n}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 25:47, kind: MissingLabel { label: \"b\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 25:47, kind: MissingLabel { label: \"b\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/locals",
+    "source": "pub fn main(){let x=3;let n='b:{let x=7;break 'b x;};x+n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "10"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "10"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/assign-outer",
+    "source": "pub fn main(){let x=3;'b:{x=7;break 'b;};x}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/heap-break-local",
+    "source": "pub fn main(){let v='b:{let v=[7];let t=[v];break 'b v;};v[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/heap-normal-local",
+    "source": "pub fn main(){let v='b:{let v=[7];let t=[v];v};v[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/heap-outer-alias",
+    "source": "pub fn main(){let a=[7];let v='b:{let t=[a];break 'b a;};v[0]+a[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "14"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "14"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/heap-reassign",
+    "source": "pub fn main(){let a=[1];'b:{let t=[a];a=[7];break 'b;};a[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/heap-nested",
+    "source": "pub fn main(){let v='a:{let x=[7];'b:{let y=[x];break 'a x;}};v[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/heap-continue",
+    "source": "pub fn main(){let n=0;let a=[7];while n<3{'b:{let t=[a,[9]];n+=1;continue;}}a[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: ContinueUnsupportedBlock }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: ContinueUnsupportedBlock }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/heap-loop-break",
+    "source": "pub fn main(){let a=[7];loop{'b:{let t=[a,[9]];break;}}a[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "FuelExhausted",
+      "display": "Exhausted the budget it was given",
+      "kind": "Halted { halt: Limited }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Halted { halt: Limited } }, chain: [], stacktrace: [] }",
+      "sites": [],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "FuelExhausted",
+      "display": "Exhausted the budget it was given",
+      "sites": [],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/heap-return",
+    "source": "pub fn main(){'b:{let a=[7];let t=[a,[9]];return a[0];}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/tuple-nested",
+    "source": "pub fn main(){let v='a:{let x=([7],);'b:{let y=[x.0];break 'a x;}};v.0[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/capture",
+    "source": "pub fn main(){let a=[7];let f='b:{let x=a;break 'b move||x[0];};f()}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/drop-before-break",
+    "source": "pub fn main(){let a=[7];'b:{let x=a;drop(x);break 'b;};a[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "AccessConflict",
+      "display": "Cannot read the value: it has been moved",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(7), out: keep(1) }, Vec { addr: 1, count: 1, out: keep(0) }, Copy { addr: 0, out: keep(1) }, Copy { addr: 1, out: keep(2) }, Call { hash: 0xcc25647cd9450672, addr: 2, args: 1, out: discard }, Store { value: Unit, out: discard }, Jump { jump: 9 }, Drop { set: 0 }, Store { value: Integer(0), out: keep(1) }, IndexGet { target: 0, index: 1, out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[1]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 44:52, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 0:60, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 44:52, comment: Some(\"label:block_break_1 (9)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 32:33, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 28:53, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 57:58, comment: None, labels: [DebugLabel { name: \"block_break\", index: 1, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 36:43, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 41:42, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 55:59, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 20:23, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 10, frames: [] }] }",
+      "sites": [
+        {
+          "end": 59,
+          "frames": "[]",
+          "source": 0,
+          "start": 55
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "AccessConflict",
+      "display": "Cannot read the value: it has been moved",
+      "sites": [
+        {
+          "end": 59,
+          "frames": "[]",
+          "source": 0,
+          "start": 55
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/moved-break-value",
+    "source": "pub fn main(){let v='b:{let a=[7];let x=a;drop(x);break 'b a;};v[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "AccessConflict",
+      "display": "Cannot read the value: it has been moved",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 4 }, Store { value: Integer(7), out: keep(1) }, Vec { addr: 1, count: 1, out: keep(2) }, Copy { addr: 2, out: keep(1) }, Copy { addr: 1, out: keep(2) }, Copy { addr: 2, out: keep(3) }, Call { hash: 0xcc25647cd9450672, addr: 3, args: 1, out: discard }, Copy { addr: 1, out: keep(0) }, Jump { jump: 10 }, Drop { set: 0 }, Store { value: Integer(0), out: keep(1) }, IndexGet { target: 0, index: 1, out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[2, 1]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 42:49, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 63:67, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 50:60, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 28:29, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 50:60, comment: Some(\"label:block_break_1 (10)\"), labels: [] }, 9: DebugInst { source_id: 0, span: 24:61, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 47:48, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 38:39, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 65:66, comment: None, labels: [DebugLabel { name: \"block_break\", index: 1, jump: Some(11) }] }, 2: DebugInst { source_id: 0, span: 30:33, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 0:68, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 31:32, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 11, frames: [] }] }",
+      "sites": [
+        {
+          "end": 67,
+          "frames": "[]",
+          "source": 0,
+          "start": 63
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "AccessConflict",
+      "display": "Cannot read the value: it has been moved",
+      "sites": [
+        {
+          "end": 67,
+          "frames": "[]",
+          "source": 0,
+          "start": 63
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "effects/tail",
+    "source": "fn add(a,b){a*10+b}pub fn main(){'b:{println!(\"body\");println!(\"tail\");7}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a626f64790a7461696c0a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "effects/break-value",
+    "source": "fn add(a,b){a*10+b}pub fn main(){'b:{println!(\"body\");break 'b {println!(\"value\");7};println!(\"unreachable\");9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a626f64790a76616c75650a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "effects/discard-value",
+    "source": "fn add(a,b){a*10+b}pub fn main(){'b:{break 'b {println!(\"value\");7};};println!(\"after\");9}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "9"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a76616c75650a61667465720a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "effects/nested-break",
+    "source": "fn add(a,b){a*10+b}pub fn main(){'a:{println!(\"outer\");'b:{println!(\"inner\");break 'a {println!(\"value\");7};}println!(\"unreachable\");9}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a6f757465720a696e6e65720a76616c75650a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "effects/call-left-to-right",
+    "source": "fn add(a,b){a*10+b}pub fn main(){add({println!(\"first\");1},'b:{println!(\"block\");break 'b 2;})}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "12"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a66697273740a626c6f636b0a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "effects/after-loop-exit-bounded",
+    "source": "fn add(a,b){a*10+b}pub fn main(){let n=0;while n<2{'b:{println!(\"block\");n+=1;break;}println!(\"unreachable\");}println!(\"after\");n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "2"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a626c6f636b0a756e726561636861626c650a626c6f636b0a756e726561636861626c650a61667465720a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "errors/division",
+    "source": "pub fn main(){'b:{let z=0;break 'b 7/z;}}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "DivisionByZero",
+      "display": "Division by zero in `i64` division (`/`)",
+      "kind": "DivideByZero",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: DivideByZero }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(0), out: keep(1) }, Copy { addr: 1, out: keep(2) }, Store { value: Integer(7), out: keep(1) }, Arithmetic { op: Div, a: 1, b: 2, out: keep(0) }, Jump { jump: 7 }, Drop { set: 0 }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[2, 1]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 26:38, comment: Some(\"label:block_break_0 (7)\"), labels: [] }, 4: DebugInst { source_id: 0, span: 35:38, comment: None, labels: [] }, 6: DebugInst { source_id: 0, span: 18:39, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 0:41, comment: None, labels: [DebugLabel { name: \"block_break\", index: 0, jump: Some(8) }] }, 3: DebugInst { source_id: 0, span: 35:36, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 22:23, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 4, frames: [] }] }",
+      "sites": [
+        {
+          "end": 38,
+          "frames": "[]",
+          "source": 0,
+          "start": 35
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "DivisionByZero",
+      "display": "Division by zero in `i64` division (`/`)",
+      "sites": [
+        {
+          "end": 38,
+          "frames": "[]",
+          "source": 0,
+          "start": 35
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "errors/panic",
+    "source": "pub fn main(){'b:{panic(\"labeled\");7}}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "Panic",
+      "display": "Panicked: labeled",
+      "kind": "Panic { reason: Panic { inner: \"labeled\" } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Panic { reason: Panic { inner: \"labeled\" } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 2 }, String { slot: 0, out: keep(1) }, Call { hash: 0xe65886aa2e4f15a4, addr: 1, args: 1, out: discard }, Store { value: Integer(7), out: keep(0) }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [\"labeled\"], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {4: DebugInst { source_id: 0, span: 0:38, comment: None, labels: [DebugLabel { name: \"block_break\", index: 0, jump: Some(5) }] }, 3: DebugInst { source_id: 0, span: 35:36, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 18:34, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 24:33, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 2, frames: [] }] }",
+      "sites": [
+        {
+          "end": 34,
+          "frames": "[]",
+          "source": 0,
+          "start": 18
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "Panic",
+      "display": "Panicked: labeled",
+      "sites": [
+        {
+          "end": 34,
+          "frames": "[]",
+          "source": 0,
+          "start": 18
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "errors/callee",
+    "source": "fn fail(){let z=0;7/z}pub fn main(){'b:{fail()}}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "DivisionByZero",
+      "display": "Division by zero in `i64` division (`/`)",
+      "kind": "DivideByZero",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: DivideByZero }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 1 }, Call { hash: 0x571d6eb8a06e41fc, addr: invalid, args: 0, out: keep(0) }, Return { addr: 0 }, Allocate { size: 3 }, Store { value: Integer(0), out: keep(0) }, Store { value: Integer(7), out: keep(1) }, Arithmetic { op: Div, a: 1, b: 0, out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }, 0x571d6eb8a06e41fc: Offset { offset: 3, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\", 0xb64719fb7b59f47c: \"fail\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {5: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 16:17, comment: None, labels: [] }, 6: DebugInst { source_id: 0, span: 18:21, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 0:22, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 22:48, comment: None, labels: [DebugLabel { name: \"block_break\", index: 0, jump: Some(3) }] }, 1: DebugInst { source_id: 0, span: 40:46, comment: None, labels: [] }}, functions: {0x571d6eb8a06e41fc: DebugSignature { path: fail, args: Named([]) }, 0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1, 3: 0x571d6eb8a06e41fc}, hash_to_ident: {}, globals: [] }) }, ip: 6, frames: [CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }] }] }",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }]",
+          "source": 0,
+          "start": 18
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "DivisionByZero",
+      "display": "Division by zero in `i64` division (`/`)",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }]",
+          "source": 0,
+          "start": 18
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "errors/nested-call",
+    "source": "fn fail(){let z=0;7/z}fn middle(){'b:{break 'b fail();}}fn outer(){middle()}pub fn main(){outer()}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "DivisionByZero",
+      "display": "Division by zero in `i64` division (`/`)",
+      "kind": "DivideByZero",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: DivideByZero }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 1 }, Call { hash: 0x49e9a3b0295f991d, addr: invalid, args: 0, out: keep(0) }, Return { addr: 0 }, Allocate { size: 1 }, Call { hash: 0x6a23dfb01b2d08b6, addr: invalid, args: 0, out: keep(0) }, Return { addr: 0 }, Allocate { size: 1 }, Call { hash: 0x571d6eb8a06e41fc, addr: invalid, args: 0, out: keep(0) }, Jump { jump: 9 }, Return { addr: 0 }, Allocate { size: 3 }, Store { value: Integer(0), out: keep(0) }, Store { value: Integer(7), out: keep(1) }, Arithmetic { op: Div, a: 1, b: 0, out: keep(2) }, Return { addr: 2 }] }, functions: {0x49e9a3b0295f991d: Offset { offset: 3, call: Immediate, args: 0, captures: None }, 0x571d6eb8a06e41fc: Offset { offset: 10, call: Immediate, args: 0, captures: None }, 0x6a23dfb01b2d08b6: Offset { offset: 6, call: Immediate, args: 0, captures: None }, 0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xa8b3d4f3f2682c9d: \"outer\", 0xb64719fb7b59f47c: \"fail\", 0x8b79a8f3c01abd36: \"middle\", 0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {11: DebugInst { source_id: 0, span: 16:17, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 47:53, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 38:53, comment: Some(\"label:block_break_0 (9)\"), labels: [] }, 9: DebugInst { source_id: 0, span: 22:56, comment: None, labels: [DebugLabel { name: \"block_break\", index: 0, jump: Some(10) }] }, 5: DebugInst { source_id: 0, span: 56:76, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 67:75, comment: None, labels: [] }, 14: DebugInst { source_id: 0, span: 0:22, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 18:21, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 18:19, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 76:98, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 90:97, comment: None, labels: [] }}, functions: {0x571d6eb8a06e41fc: DebugSignature { path: fail, args: Named([]) }, 0x6a23dfb01b2d08b6: DebugSignature { path: middle, args: Named([]) }, 0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }, 0x49e9a3b0295f991d: DebugSignature { path: outer, args: Named([]) }}, functions_rev: {6: 0x6a23dfb01b2d08b6, 0: 0x1c69d5964e831fc1, 3: 0x49e9a3b0295f991d, 10: 0x571d6eb8a06e41fc}, hash_to_ident: {}, globals: [] }) }, ip: 13, frames: [CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 5, top: 1, isolated: None, out: keep(0) }, CallFrame { ip: 8, top: 2, isolated: None, out: keep(0) }] }] }",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 5, top: 1, isolated: None, out: keep(0) }, CallFrame { ip: 8, top: 2, isolated: None, out: keep(0) }]",
+          "source": 0,
+          "start": 18
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "DivisionByZero",
+      "display": "Division by zero in `i64` division (`/`)",
+      "sites": [
+        {
+          "end": 21,
+          "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 5, top: 1, isolated: None, out: keep(0) }, CallFrame { ip: 8, top: 2, isolated: None, out: keep(0) }]",
+          "source": 0,
+          "start": 18
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "errors/index",
+    "source": "pub fn main(){'b:{let a=[7];break 'b a[1];}}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "IndexOutOfBounds",
+      "display": "Index out of bounds, the length is `1` but the index is `1`",
+      "kind": "OutOfRange { index: Usize(1), length: Usize(1) }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: OutOfRange { index: Usize(1), length: Usize(1) } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 3 }, Store { value: Integer(7), out: keep(1) }, Vec { addr: 1, count: 1, out: keep(2) }, Copy { addr: 2, out: keep(1) }, Store { value: Integer(1), out: keep(2) }, IndexGet { target: 1, index: 2, out: keep(0) }, Jump { jump: 8 }, Drop { set: 0 }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[1, 2]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 28:41, comment: Some(\"label:block_break_0 (8)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 18:42, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 22:23, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 0:44, comment: None, labels: [DebugLabel { name: \"block_break\", index: 0, jump: Some(9) }] }, 5: DebugInst { source_id: 0, span: 37:41, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 39:40, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 24:27, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 5, frames: [] }] }",
+      "sites": [
+        {
+          "end": 41,
+          "frames": "[]",
+          "source": 0,
+          "start": 37
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "IndexOutOfBounds",
+      "display": "Index out of bounds, the length is `1` but the index is `1`",
+      "sites": [
+        {
+          "end": 41,
+          "frames": "[]",
+          "source": 0,
+          "start": 37
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "errors/moved-set",
+    "source": "pub fn main(){'b:{let a=[7];let x=a;drop(x);a[0]=9;7}}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the value: it has been moved",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } } }, chain: [VmErrorAt { index: 0, kind: BadArgument { arg: 0 } }], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 5 }, Store { value: Integer(7), out: keep(1) }, Vec { addr: 1, count: 1, out: keep(2) }, Copy { addr: 2, out: keep(1) }, Copy { addr: 1, out: keep(2) }, Copy { addr: 2, out: keep(3) }, Call { hash: 0xcc25647cd9450672, addr: 3, args: 1, out: discard }, Store { value: Integer(0), out: keep(3) }, Store { value: Integer(9), out: keep(4) }, IndexSet { target: 1, index: 3, value: 4 }, Store { value: Integer(7), out: keep(0) }, Drop { set: 0 }, Return { addr: 0 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[2, 1, 3, 4]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 36:43, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 18:52, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 46:47, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 22:23, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 49:50, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 44:50, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 41:42, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 32:33, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 51:52, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 24:27, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 0:54, comment: None, labels: [DebugLabel { name: \"block_break\", index: 0, jump: Some(13) }] }, 1: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 9, frames: [] }] }",
+      "sites": [
+        {
+          "end": 50,
+          "frames": "[]",
+          "source": 0,
+          "start": 44
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [
+        "Bad argument #0"
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the value: it has been moved",
+      "sites": [
+        {
+          "end": 50,
+          "frames": "[]",
+          "source": 0,
+          "start": 44
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "errors/fuel-loop",
+    "source": "pub fn main(){'b:{loop{}}}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "FuelExhausted",
+      "display": "Exhausted the budget it was given",
+      "kind": "Halted { halt: Limited }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Halted { halt: Limited } }, chain: [], stacktrace: [] }",
+      "sites": [],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "FuelExhausted",
+      "display": "Exhausted the budget it was given",
+      "sites": [],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "errors/fuel-continue",
+    "source": "pub fn main(){'b:{'a:loop{continue 'a;}}}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "FuelExhausted",
+      "display": "Exhausted the budget it was given",
+      "kind": "Halted { halt: Limited }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: Halted { halt: Limited } }, chain: [], stacktrace: [] }",
+      "sites": [],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "FuelExhausted",
+      "display": "Exhausted the budget it was given",
+      "sites": [],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/missing-break",
+    "source": "pub fn main(){'b:{break 'missing 7;}}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:34, kind: MissingLabel { label: \"missing\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:34, kind: MissingLabel { label: \"missing\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/missing-continue",
+    "source": "pub fn main(){'b:{continue 'missing;}}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:35, kind: MissingLabel { label: \"missing\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:35, kind: MissingLabel { label: \"missing\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/continue-block",
+    "source": "pub fn main(){'b:{continue 'b;}}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:29, kind: ContinueUnsupportedBlock }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:29, kind: ContinueUnsupportedBlock }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/continue-shadow-block",
+    "source": "pub fn main(){'a:loop{'a:{continue 'a;}}}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 26:37, kind: ContinueUnsupportedBlock }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 26:37, kind: ContinueUnsupportedBlock }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/break-no-loop",
+    "source": "pub fn main(){'b:{break;}}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:23, kind: BreakUnsupported }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:23, kind: BreakUnsupported }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/continue-no-loop",
+    "source": "pub fn main(){'b:{continue;}}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:26, kind: ContinueUnsupported }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 18:26, kind: ContinueUnsupported }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/escape-function",
+    "source": "fn inner(){break 'b 7;}pub fn main(){'b:{inner();7}}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 11:21, kind: MissingLabel { label: \"b\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 11:21, kind: MissingLabel { label: \"b\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/escape-closure",
+    "source": "pub fn main(){'b:{let f=||{break 'b 7;};f()}}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 27:37, kind: MissingLabel { label: \"b\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 27:37, kind: MissingLabel { label: \"b\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/scope-after-block",
+    "source": "pub fn main(){'b:{let x=7;x};x}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 29:30, kind: MissingLocal { name: \"x\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 29:30, kind: MissingLocal { name: \"x\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "invalid/break-outside-scope",
+    "source": "pub fn main(){'b:{7};break 'b 9;}",
+    "policy": "Exact",
+    "outcome": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 21:31, kind: MissingLabel { label: \"b\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "projected": {
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 21:31, kind: MissingLabel { label: \"b\" } }) })]",
+      "error": "BuildError { kind: Default }",
+      "status": "compile-error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "corpus/block_break",
+    "source": "#[test]\nfn block_break() {\n    let value = 0;\n\n    let out = 'block1: {\n        if value == 0 {\n            break 'block1 10;\n        }\n\n        77\n    };\n\n    assert_eq!(out, 10);\n}\n\n#[test]\nfn block_inner_break() {\n    let value = 0;\n\n    let out = 'block1: {\n        'block2: {\n            if value == 0 {\n                break 'block1 10;\n            }\n        }\n\n        77\n    };\n\n    assert_eq!(out, 10);\n}\n\n#[test]\nfn block_inner_break2() {\n    let value = 0;\n\n    let out = 'block1: {\n        let value = 'block2: {\n            if value == 0 {\n                break 'block2 10;\n            }\n        };\n\n        77 + value\n    };\n\n    assert_eq!(out, 87);\n}\npub fn main(){block_break();7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "corpus/block_inner_break",
+    "source": "#[test]\nfn block_break() {\n    let value = 0;\n\n    let out = 'block1: {\n        if value == 0 {\n            break 'block1 10;\n        }\n\n        77\n    };\n\n    assert_eq!(out, 10);\n}\n\n#[test]\nfn block_inner_break() {\n    let value = 0;\n\n    let out = 'block1: {\n        'block2: {\n            if value == 0 {\n                break 'block1 10;\n            }\n        }\n\n        77\n    };\n\n    assert_eq!(out, 10);\n}\n\n#[test]\nfn block_inner_break2() {\n    let value = 0;\n\n    let out = 'block1: {\n        let value = 'block2: {\n            if value == 0 {\n                break 'block2 10;\n            }\n        };\n\n        77 + value\n    };\n\n    assert_eq!(out, 87);\n}\npub fn main(){block_inner_break();7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "corpus/block_inner_break2",
+    "source": "#[test]\nfn block_break() {\n    let value = 0;\n\n    let out = 'block1: {\n        if value == 0 {\n            break 'block1 10;\n        }\n\n        77\n    };\n\n    assert_eq!(out, 10);\n}\n\n#[test]\nfn block_inner_break() {\n    let value = 0;\n\n    let out = 'block1: {\n        'block2: {\n            if value == 0 {\n                break 'block1 10;\n            }\n        }\n\n        77\n    };\n\n    assert_eq!(out, 10);\n}\n\n#[test]\nfn block_inner_break2() {\n    let value = 0;\n\n    let out = 'block1: {\n        let value = 'block2: {\n            if value == 0 {\n                break 'block2 10;\n            }\n        };\n\n        77 + value\n    };\n\n    assert_eq!(out, 87);\n}\npub fn main(){block_inner_break2();7}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "control/plain-block",
+    "source": "pub fn main(){{let a=7;a}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "control/labeled-loop",
+    "source": "pub fn main(){'a:loop{break 'a 7;}}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/iterator-break-release",
+    "source": "pub fn main(){let v=[1,2];let n='b:{for x in v{break 'b x;}0};v[0]=9;n+v[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "10"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "10"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/iterator-nested-break",
+    "source": "pub fn main(){let v=[1,2];let n='a:{'b:{for x in v{break 'a x;}}0};v[0]=9;n+v[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "10"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "10"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/iterator-continue-release",
+    "source": "pub fn main(){let v=[1,2];let n=0;'a:while n<2{'b:{for x in v{n+=1;continue 'a;}}}v[0]=9;n+v[0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "11"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "11"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "ownership/iterator-error-cleanup",
+    "source": "pub fn main(){let v=[1,2];'b:{for x in v{v[0]=9;break 'b x;}0}}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the receiver: it is being read",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } } }, chain: [VmErrorAt { index: 0, kind: BadArgument { arg: 0 } }], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 8 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Vec { addr: 1, count: 2, out: keep(0) }, Copy { addr: 0, out: keep(2) }, CallAssociated { hash: 0x15a85c8d774b4065, addr: 2, args: 1, out: keep(2) }, LoadInstanceFn { addr: 2, hash: 0xc3cde069de2ba320, out: keep(4) }, Copy { addr: 2, out: keep(5) }, CallFn { function: 4, addr: 5, args: 1, out: keep(3) }, IterNext { addr: 3, jump: 18, out: keep(3) }, Copy { addr: 3, out: keep(5) }, Store { value: Integer(0), out: keep(6) }, Store { value: Integer(9), out: keep(7) }, IndexSet { target: 0, index: 6, value: 7 }, Copy { addr: 5, out: keep(1) }, Drop { set: 0 }, Jump { jump: 21 }, Drop { set: 1 }, Drop { set: 0 }, Store { value: Integer(0), out: keep(1) }, Drop { set: 2 }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[2], [6, 7], [2, 3, 4, 5]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 39:40, comment: Some(\"Protocol::NEXT\"), labels: [] }, 15: DebugInst { source_id: 0, span: 48:58, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 30:60, comment: None, labels: [DebugLabel { name: \"for_continue\", index: 2, jump: Some(8) }] }, 5: DebugInst { source_id: 0, span: 39:40, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 19: DebugInst { source_id: 0, span: 60:61, comment: None, labels: [DebugLabel { name: \"for_break\", index: 4, jump: Some(20) }] }, 4: DebugInst { source_id: 0, span: 30:60, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 17: DebugInst { source_id: 0, span: 41:59, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 46:47, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 30:60, comment: None, labels: [DebugLabel { name: \"for_end\", index: 3, jump: Some(19) }] }, 20: DebugInst { source_id: 0, span: 30:61, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 43:44, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 20:25, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 30:60, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 34:35, comment: Some(\"label:for_end_3 (18)\"), labels: [] }, 16: DebugInst { source_id: 0, span: 48:58, comment: Some(\"label:block_break_1 (21)\"), labels: [] }, 21: DebugInst { source_id: 0, span: 0:63, comment: None, labels: [DebugLabel { name: \"block_break\", index: 1, jump: Some(22) }] }, 14: DebugInst { source_id: 0, span: 48:58, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 41:47, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 34:35, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {}, globals: [] }) }, ip: 13, frames: [] }] }",
+      "sites": [
+        {
+          "end": 47,
+          "frames": "[]",
+          "source": 0,
+          "start": 41
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [
+        "Bad argument #0"
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the receiver: it is being read",
+      "sites": [
+        {
+          "end": 47,
+          "frames": "[]",
+          "source": 0,
+          "start": 41
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  }
+]

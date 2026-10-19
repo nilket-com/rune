@@ -1662,3 +1662,5 @@ mod loop_iterator;
 mod expression_calls;
 
 mod move_captures;
+
+mod labeled_blocks;
