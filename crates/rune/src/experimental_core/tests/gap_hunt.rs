@@ -1658,3 +1658,5 @@ mod vec_local;
 mod loop_binders;
 
 mod loop_iterator;
+
+mod expression_calls;

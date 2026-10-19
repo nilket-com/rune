@@ -1,0 +1,602 @@
+[
+  {
+    "label": "value/chain",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){inc}pub fn main(){maker()(7)}",
+    "policy": "Exact",
+    "source_sha256": "c906889446238bff94c82b53a781919b63c0a2da53e3727a4c8be219c4bfaca9"
+  },
+  {
+    "label": "value/triple-chain",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){inc}fn outer(){maker}pub fn main(){outer()()(7)}",
+    "policy": "Exact",
+    "source_sha256": "5ce9154437763b487a417deb6269e1e66f05989e6c8ecea6e8da62eaa8312729"
+  },
+  {
+    "label": "value/id-chain",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){id(id)(id)(7)}",
+    "policy": "Exact",
+    "source_sha256": "d7007547a1de53953bc9df626ca24199d657abb14d074bcd790ed2bb044ce030"
+  },
+  {
+    "label": "value/block",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({inc})(7)}",
+    "policy": "Exact",
+    "source_sha256": "b7f32f299e372a74c90999c3b2831aaf9700313f6e612cf615c6ee4a1bd0b0d3"
+  },
+  {
+    "label": "value/group",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(inc)(7)}",
+    "policy": "Exact",
+    "source_sha256": "563820b5d2af064e6ea603a04d7375fdf2f17ae12d85ae934d4ceab8cb733bfb"
+  },
+  {
+    "label": "value/if-true",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(if true{inc}else{dec})(7)}",
+    "policy": "Exact",
+    "source_sha256": "e9ceb0478d23acadb0fa5a11d33912da69c34e1dc35d543d6b03c857aaeab780"
+  },
+  {
+    "label": "value/if-false",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(if false{inc}else{dec})(7)}",
+    "policy": "Exact",
+    "source_sha256": "e5f229afabd7b82107dcd563fcadb31fd6f8780249971553ee54655f57aef93d"
+  },
+  {
+    "label": "value/match",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(match 2{1=>inc,_=>dec})(7)}",
+    "policy": "Exact",
+    "source_sha256": "6cc211c10d33ba1db1a613954ccbf27d5155c5cc93c2b2f8e30a8b6147236af0"
+  },
+  {
+    "label": "value/index",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){([inc,dec][1])(7)}",
+    "policy": "Exact",
+    "source_sha256": "722b07beff9e45a45260a667da65e89cc45eee3661bb6313e45b1852ab104d88"
+  },
+  {
+    "label": "value/tuple-field",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){((inc,dec).0)(7)}",
+    "policy": "Exact",
+    "source_sha256": "f3aa2dad0985245221bbb906134cfd8ece50f16c15cb9d2ca34ba180a711b635"
+  },
+  {
+    "label": "value/object-field",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(#{f:inc}.f)(7)}",
+    "policy": "Exact",
+    "source_sha256": "82eae2716c7e6f92b2b331e01ee32ad4163a51c6a98df5e39b2dbeafafa6e607"
+  },
+  {
+    "label": "value/returned-tuple",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn pair(){(inc,dec)}pub fn main(){(pair().1)(7)}",
+    "policy": "Exact",
+    "source_sha256": "2b8e9a24794966b79f0dbe3b72db3cdcd76665da6d7a025df75afedaf27d6aa7"
+  },
+  {
+    "label": "value/returned-vec",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn pair(){[inc,dec]}pub fn main(){(pair()[0])(7)}",
+    "policy": "Exact",
+    "source_sha256": "2f7174b0a8bc567975add8109e49480ef23b444298311537bd655a02b56e7bc7"
+  },
+  {
+    "label": "value/option-unwrap",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){Some(inc)}pub fn main(){maker().unwrap()(7)}",
+    "policy": "Exact",
+    "source_sha256": "58bb569958029417822d9ac4a3ff0774a4de254a973ad0728d8251d8850d1b79"
+  },
+  {
+    "label": "value/literal-closure",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(|x|x+1)(7)}",
+    "policy": "Exact",
+    "source_sha256": "b23aa40ccedb84c15d3025588d8d299ac330cce3a6ba2861e3b045b4d65fdc60"
+  },
+  {
+    "label": "value/zero-closure",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(||7)()}",
+    "policy": "Exact",
+    "source_sha256": "1ed60d1b5c0acb7b19e689a9f63ad27f9a4ab244af2f1d56917692983097b94d"
+  },
+  {
+    "label": "value/returned-closure",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(n){move|x|n+x}pub fn main(){maker(4)(3)}",
+    "policy": "Exact",
+    "source_sha256": "9657215300fcb4323a76135ee86c45ace26cf66f02f8e0bea160185f1b0dee7a"
+  },
+  {
+    "label": "value/echo-closure",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){id(|x|x+1)(7)}",
+    "policy": "Exact",
+    "source_sha256": "642b9b36a8fe6a10bb81f5fe25ca1f7a914daa06fd28ddd979ea789bf85b1e1c"
+  },
+  {
+    "label": "value/block-closure",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({let n=4;move|x|n+x})(3)}",
+    "policy": "Exact",
+    "source_sha256": "015f97f0b41512cc874a4a5f195f876b723d7c5005e8824c6578d9cff438eb26"
+  },
+  {
+    "label": "value/recursive-factory",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(n){if n==0{||7}else{maker(n-1)}}pub fn main(){maker(3)()}",
+    "policy": "Exact",
+    "source_sha256": "ddd7ecfc1810733703b3e537f73724b8a9c51dded6952227682c5692344f9145"
+  },
+  {
+    "label": "value/heap-return",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){||[7]}pub fn main(){maker()()[0]}",
+    "policy": "Exact",
+    "source_sha256": "04fcf1ef1fe768ab50312af7b8e436b80691d5b93b15caf0a8fa74a9eae1a182"
+  },
+  {
+    "label": "value/closure-alias",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move||v[0]}pub fn main(){let v=[1];let n=maker(v)();v[0]=9;n*10+v[0]}",
+    "policy": "Exact",
+    "source_sha256": "e98ab47b772db4331be448faf6b7beaf641268b7bdd45e0601bee17dccceae51"
+  },
+  {
+    "label": "value/closure-held",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move||v[0]}pub fn main(){let v=[1];let f=maker(v);let n=id(f)();v[0]=9;n*10+f()}",
+    "policy": "Exact",
+    "source_sha256": "59775593aca78bc6b02fa1de76738f4e4123928dbd175a9f770aa0458658d914"
+  },
+  {
+    "label": "value/heap-arguments",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({|a,b|a[0]+b[0]})([3],[4])}",
+    "policy": "Exact",
+    "source_sha256": "b3b38758ec1065a541f6200963164659e1aac9adf21ed87c1e0e4a7595846683"
+  },
+  {
+    "label": "value/ignore-argument",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({|_|7})([1,2])}",
+    "policy": "Exact",
+    "source_sha256": "900f5b5ca8ee525e400dee8dbf5e25a2be9fe699e9dda1493a445523646be123"
+  },
+  {
+    "label": "value/nested-call-argument",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){inc}pub fn main(){maker()(maker()(5))}",
+    "policy": "Exact",
+    "source_sha256": "2796b1fdd7a867051fc41ba8c1137abf84a219d3868722b030cd55eb6030cc7c"
+  },
+  {
+    "label": "value/discard",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){inc}pub fn main(){maker()(7);9}",
+    "policy": "Exact",
+    "source_sha256": "ea95fbdb2d4cf37340a109eee2ec0b7b15f1045f4563e938b4de44c3d1a78feb"
+  },
+  {
+    "label": "value/callee-return",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({return 7;inc})(1)}",
+    "policy": "Exact",
+    "source_sha256": "c80f6d67179837d920e95e58d1bf46fe7d0dbfc00ef22bc335c0f62a5229f862"
+  },
+  {
+    "label": "value/arg-return",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({inc})({return 7;2})}",
+    "policy": "Exact",
+    "source_sha256": "dabe04c0502d5cabd8361f0f56d2b4be2100865942742ea72f03c6ded1a78d01"
+  },
+  {
+    "label": "value/callee-break",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){for n in 0..2{({break;inc})(1);}7}",
+    "policy": "Exact",
+    "source_sha256": "a5de488776c3043b313444936213d971dde4db212ea9af87690d4071274c1287"
+  },
+  {
+    "label": "value/callee-continue",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){let n=0;for i in 0..2{n+=1;({continue;inc})(1);}n}",
+    "policy": "Exact",
+    "source_sha256": "7edeec91a979b16e0b76e4743423f83c84c40a46f6f9efee8bbc5cf896c0424b"
+  },
+  {
+    "label": "value/arg-break",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){for n in 0..2{({inc})({break;1});}7}",
+    "policy": "Exact",
+    "source_sha256": "082941d79d77f6e830ab7a2c3aa377c9adda75b147ca2cf308390a0f142d7eb3"
+  },
+  {
+    "label": "value/arg-continue",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){let n=0;for i in 0..2{n+=1;({inc})({continue;1});}n}",
+    "policy": "Exact",
+    "source_sha256": "f88a3e0ef33e33dbc2b6bbc700e9cb2b7af583e89c0fd3e85ed900998fcf706a"
+  },
+  {
+    "label": "order/plain-variable",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn tap(t,n,v){t.push(n);v}fn choose(t){t.push(1);add}fn first(t){t.push(1);second}fn second(t){t.push(2);add}pub fn main(){let f=inc;f({f=dec;7})}",
+    "policy": "Exact",
+    "source_sha256": "fb442db8695087ba37d4c44964e06df630f9be2028d83d4676e6403b1d24decb"
+  },
+  {
+    "label": "order/group-variable",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn tap(t,n,v){t.push(n);v}fn choose(t){t.push(1);add}fn first(t){t.push(1);second}fn second(t){t.push(2);add}pub fn main(){let f=inc;(f)({f=dec;7})}",
+    "policy": "Exact",
+    "source_sha256": "307a3caf5378b4fea998fcb2f4bb54b27dadae93c88c78f6be1974e8adf379ca"
+  },
+  {
+    "label": "order/block-snapshot",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn tap(t,n,v){t.push(n);v}fn choose(t){t.push(1);add}fn first(t){t.push(1);second}fn second(t){t.push(2);add}pub fn main(){let f=inc;({f})({f=dec;7})}",
+    "policy": "Exact",
+    "source_sha256": "0a00ace01d64d4e382f39eb710730f89f0fcc60d2b8f47eaad71aa9dfc252246"
+  },
+  {
+    "label": "order/if-snapshot",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn tap(t,n,v){t.push(n);v}fn choose(t){t.push(1);add}fn first(t){t.push(1);second}fn second(t){t.push(2);add}pub fn main(){let f=inc;(if true{f}else{dec})({f=dec;7})}",
+    "policy": "Exact",
+    "source_sha256": "30aa3a47790c8ff7637f4e9bc4ae154d516c9b935e92b6e403226d20da9acaa1"
+  },
+  {
+    "label": "order/index-snapshot",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn tap(t,n,v){t.push(n);v}fn choose(t){t.push(1);add}fn first(t){t.push(1);second}fn second(t){t.push(2);add}pub fn main(){let v=[inc];(v[0])({v[0]=dec;7})}",
+    "policy": "Exact",
+    "source_sha256": "9e8ae47a889c4bbe29c056381f02b4608ac0baec920a938d9fc3f38950dbc41c"
+  },
+  {
+    "label": "order/tuple-snapshot",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn tap(t,n,v){t.push(n);v}fn choose(t){t.push(1);add}fn first(t){t.push(1);second}fn second(t){t.push(2);add}pub fn main(){let v=(inc,);(v.0)({v.0=dec;7})}",
+    "policy": "Exact",
+    "source_sha256": "255066fabbcfc83153eca326b265a1b85e44d0299d859e1e62009e93bf97a42d"
+  },
+  {
+    "label": "order/object-snapshot",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn tap(t,n,v){t.push(n);v}fn choose(t){t.push(1);add}fn first(t){t.push(1);second}fn second(t){t.push(2);add}pub fn main(){let v=#{f:inc};(v.f)({v.f=dec;7})}",
+    "policy": "Exact",
+    "source_sha256": "9dcb0f0fae856160c66c6e9683e4e2199874b32406551335524b58564c98a35a"
+  },
+  {
+    "label": "order/factory-args",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn tap(t,n,v){t.push(n);v}fn choose(t){t.push(1);add}fn first(t){t.push(1);second}fn second(t){t.push(2);add}pub fn main(){let t=[];let n=choose(t)(tap(t,2,3),tap(t,3,4));n*1000+t[0]*100+t[1]*10+t[2]}",
+    "policy": "Exact",
+    "source_sha256": "a0bd4cc86b15fe5fdeb4ed8b759a6f241b58db12fb9ceda74380415e20640838"
+  },
+  {
+    "label": "order/nested-factory",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn tap(t,n,v){t.push(n);v}fn choose(t){t.push(1);add}fn first(t){t.push(1);second}fn second(t){t.push(2);add}pub fn main(){let t=[];let n=first(t)(t)(tap(t,3,4),tap(t,4,5));n*10000+t[0]*1000+t[1]*100+t[2]*10+t[3]}",
+    "policy": "Exact",
+    "source_sha256": "866deaa0104e7524ae96984d5f603dd8c8e937c05d26d73146a3c1cad36db677"
+  },
+  {
+    "label": "timing/success-order",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn a(){println!(\"arg-a\");3}fn b(){println!(\"arg-b\");4}fn make(){println!(\"callee\");add}fn bad(){println!(\"callee\");7}pub fn main(){make()(a(),b())}",
+    "policy": "Exact",
+    "source_sha256": "a93a8ed7002d8765b16b6adc97eef9dce3e5c6228b61bb0044e7a5bcc3f31065"
+  },
+  {
+    "label": "timing/noncallable-after-args",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn a(){println!(\"arg-a\");3}fn b(){println!(\"arg-b\");4}fn make(){println!(\"callee\");add}fn bad(){println!(\"callee\");7}pub fn main(){bad()(a(),b())}",
+    "policy": "Exact",
+    "source_sha256": "03974a5348680826140f4eabe867e03ce224bfe76a6f97261f323f713f5bf0b2"
+  },
+  {
+    "label": "timing/scalar-after-args",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn a(){println!(\"arg-a\");3}fn b(){println!(\"arg-b\");4}fn make(){println!(\"callee\");add}fn bad(){println!(\"callee\");7}pub fn main(){(7)(a(),b())}",
+    "policy": "Exact",
+    "source_sha256": "1d1d9a35b9483258887fc081b80341896dff44dc778d2e99214b63425586b091"
+  },
+  {
+    "label": "timing/arity-after-args",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn a(){println!(\"arg-a\");3}fn b(){println!(\"arg-b\");4}fn make(){println!(\"callee\");add}fn bad(){println!(\"callee\");7}pub fn main(){({inc})(a(),b())}",
+    "policy": "Exact",
+    "source_sha256": "66f504574817f8fd3c77539315fe9ccacdf22d8a6d33e08b5a0d40689f626db9"
+  },
+  {
+    "label": "timing/callee-fails-first",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn a(){println!(\"arg-a\");3}fn b(){println!(\"arg-b\");4}fn make(){println!(\"callee\");add}fn bad(){println!(\"callee\");7}pub fn main(){({println!(\"callee\");panic(\"callee\")})(a(),b())}",
+    "policy": "Exact",
+    "source_sha256": "2a519f23ffa0811b06383bae31291b5a41a864d8caf865074ee3248a8bb9bb56"
+  },
+  {
+    "label": "timing/arg-fails-before-call",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn a(){println!(\"arg-a\");3}fn b(){println!(\"arg-b\");4}fn make(){println!(\"callee\");add}fn bad(){println!(\"callee\");7}pub fn main(){(7)({println!(\"arg-a\");panic(\"arg\")},b())}",
+    "policy": "Exact",
+    "source_sha256": "a0e2b4dd185e05a779111d21a397541391638c3e0910e02e1c9615cf62fd12e7"
+  },
+  {
+    "label": "timing/first-arg-fails",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn a(){println!(\"arg-a\");3}fn b(){println!(\"arg-b\");4}fn make(){println!(\"callee\");add}fn bad(){println!(\"callee\");7}pub fn main(){make()({println!(\"arg-a\");panic(\"arg\")},b())}",
+    "policy": "Exact",
+    "source_sha256": "46158cce56c8155e1046a3594ec5eb173730ae388f5945ab1ec1498c21197c33"
+  },
+  {
+    "label": "timing/second-arg-fails",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn a(){println!(\"arg-a\");3}fn b(){println!(\"arg-b\");4}fn make(){println!(\"callee\");add}fn bad(){println!(\"callee\");7}pub fn main(){make()(a(),{println!(\"arg-b\");panic(\"arg\")})}",
+    "policy": "Exact",
+    "source_sha256": "060db5e0775e15d4cc3e56b60f28e1b92264f49faf6c593493db327bb206dd4d"
+  },
+  {
+    "label": "ownership/moved-capture",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move|x|v[0]+x}pub fn main(){let v=[1];maker(v)({drop(v);2})}",
+    "policy": "Exact",
+    "source_sha256": "066f25568845aaaa6520ae38201e5f7a2fcb3f123e6bbc337a0289377c8c405f"
+  },
+  {
+    "label": "ownership/moved-closure",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move|x|v[0]+x}pub fn main(){let v=[1];let f=maker(v);drop(f);({f})(7)}",
+    "policy": "Exact",
+    "source_sha256": "dda7e4e6b804d69d10dabc9a043735bf5bc319c7d5a22c16ae1b05b35045da4a"
+  },
+  {
+    "label": "ownership/drop-closure-arg",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move|x|v[0]+x}pub fn main(){let v=[1];let f=maker(v);({f})({drop(f);7})}",
+    "policy": "Exact",
+    "source_sha256": "2f167f3a24a818a3426522c128da463d57bbca5fb3647670bd0d1d07a18be6a0"
+  },
+  {
+    "label": "ownership/temp-closure-capture",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){let v=[1];(move|x|v[0]+x)({drop(v);7})}",
+    "policy": "Exact",
+    "source_sha256": "1a55109629e3fee2ac678dff7f142103cf32392179b07f15e8d2d65c88b5b37e"
+  },
+  {
+    "label": "ownership/leased-capture",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move||v[0]}pub fn main(){let v=[1,2];for x in v{return maker(v)();}0}",
+    "policy": "Exact",
+    "source_sha256": "8c7d50cdb22c0ed4f879b0f967f5d3d38812748b30eba949c7adc651d1713df9"
+  },
+  {
+    "label": "ownership/drop-factory-container",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){let fs=[|x|x+1];(fs[0])({drop(fs);7})}",
+    "policy": "Exact",
+    "source_sha256": "00b5520def3bc5a211d26c4c19333340724e9721b3a15de2c80aa98188802ea0"
+  },
+  {
+    "label": "ownership/body-type",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){inc}pub fn main(){maker()(true)}",
+    "policy": "Exact",
+    "source_sha256": "acc46df9e5d718e40cd35d011bf28469d5d7bfb8b34ce46ae3c6052fe29e7489"
+  },
+  {
+    "label": "ownership/body-divzero",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){|x|7/x}pub fn main(){maker()(0)}",
+    "policy": "Exact",
+    "source_sha256": "f2516758227a29a361fb2bf5cafc0c231a631e0616d5f33f7e636001a39a383c"
+  },
+  {
+    "label": "ownership/callee-index-fails",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){let fs=[inc];(fs[1])(7)}",
+    "policy": "Exact",
+    "source_sha256": "9e6194ca0efa14b8cf50248c03324c4e5b3c457f6cc305f4aa19616a0dffb1c2"
+  },
+  {
+    "label": "noncallable/unit/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(())()}",
+    "policy": "Exact",
+    "source_sha256": "bdc8752ddcdbe2ab2d8281478c04b17c714e98aa6f12d72eb751366b342d83f3"
+  },
+  {
+    "label": "noncallable/unit/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(())(7)}",
+    "policy": "Exact",
+    "source_sha256": "07be9769297478ca1120b75bf6164a7c2eabeaf5aba02ea0aa134d129aadd985"
+  },
+  {
+    "label": "noncallable/bool/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(true)()}",
+    "policy": "Exact",
+    "source_sha256": "b1ab784d20e1fd971d53b7cde983b7479a2fd326bc207db3e97c9fcdd1fdcdaa"
+  },
+  {
+    "label": "noncallable/bool/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(true)(7)}",
+    "policy": "Exact",
+    "source_sha256": "5b3b0783e0d93ddc0f0f9d830db13537f07b55de443f60a35633e76a855fb279"
+  },
+  {
+    "label": "noncallable/integer/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(7)()}",
+    "policy": "Exact",
+    "source_sha256": "ad0b51ab17bf225990b1cea85181b795cd6ee3ad0ad84209bbe702be6021e14b"
+  },
+  {
+    "label": "noncallable/integer/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(7)(7)}",
+    "policy": "Exact",
+    "source_sha256": "ee92381541195327ea2937701c54cd56388bd98119fc1f40a6c628edc3b2c250"
+  },
+  {
+    "label": "noncallable/float/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(1.5)()}",
+    "policy": "Exact",
+    "source_sha256": "bcd6b91151582b81fd132df90d46c6791656f6806f2050c6a465355e6e2bc49d"
+  },
+  {
+    "label": "noncallable/float/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(1.5)(7)}",
+    "policy": "Exact",
+    "source_sha256": "d10cb0da3d31f67385f742754197a2f62e800e24cb3e7e5bcbe499940dc4187b"
+  },
+  {
+    "label": "noncallable/char/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){('x')()}",
+    "policy": "Exact",
+    "source_sha256": "0ab7be315154592269f7107fdb189a66bb4e6dfd860c39f6ce99a6d11ffe4ac1"
+  },
+  {
+    "label": "noncallable/char/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){('x')(7)}",
+    "policy": "Exact",
+    "source_sha256": "36280b8868570abf276042d0a50ad5652a93eb88b4df711b7b0c592f206ceb0a"
+  },
+  {
+    "label": "noncallable/string/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(\"f\")()}",
+    "policy": "Exact",
+    "source_sha256": "1494e76d1d218102dadafbb6fcc7b158bf6091c510b870a78d3065af2f8a1544"
+  },
+  {
+    "label": "noncallable/string/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(\"f\")(7)}",
+    "policy": "Exact",
+    "source_sha256": "9eb825cd1867c3fa723cdfd8ab928a065af7a55d4a295e796f35de1042c99c64"
+  },
+  {
+    "label": "noncallable/vec/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){([inc])()}",
+    "policy": "Exact",
+    "source_sha256": "b60a85e9c2151ca453febea0cbf5ad9398ad1dc298fe31fae7062fa8eb239c18"
+  },
+  {
+    "label": "noncallable/vec/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){([inc])(7)}",
+    "policy": "Exact",
+    "source_sha256": "ae65699c6a9a0a4408b6274e984f0017123a5c546b0655b1e32c3f1af24f167f"
+  },
+  {
+    "label": "noncallable/tuple/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){((inc,))()}",
+    "policy": "Exact",
+    "source_sha256": "f25f50978f783dbfca318d5750c69f321a96a5830a234cc62b52642b513adaf4"
+  },
+  {
+    "label": "noncallable/tuple/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){((inc,))(7)}",
+    "policy": "Exact",
+    "source_sha256": "d0e17a381c2dcf6b1160c4173d46521b7f90559ccb0aa3cf94347b526dea9fec"
+  },
+  {
+    "label": "noncallable/object/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(#{f:inc})()}",
+    "policy": "Exact",
+    "source_sha256": "2fc0d4736ceb355b1f05af5565235452753660f111e1da98096395df220fea26"
+  },
+  {
+    "label": "noncallable/object/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(#{f:inc})(7)}",
+    "policy": "Exact",
+    "source_sha256": "37785bb7a76689242a6ac8f7db4bb0d4a89fd99e34c6e4d2a4f0ba5c7d9fe028"
+  },
+  {
+    "label": "noncallable/option/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(Some(inc))()}",
+    "policy": "Exact",
+    "source_sha256": "c48f53d63661cffae6c6200c8dcd057d7a9f4406766d10ac4c18462806fa007c"
+  },
+  {
+    "label": "noncallable/option/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(Some(inc))(7)}",
+    "policy": "Exact",
+    "source_sha256": "95d1a68577e149fda31f820916bf30369d0fe33c9cb6177c4d057d2cbd59cbce"
+  },
+  {
+    "label": "noncallable/result/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(Ok(inc))()}",
+    "policy": "Exact",
+    "source_sha256": "61b03103db68c749a46b950520e50197b38ac57ce97b77b824082643b66f2103"
+  },
+  {
+    "label": "noncallable/result/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(Ok(inc))(7)}",
+    "policy": "Exact",
+    "source_sha256": "b1f6a57680a0df7a3a0443b19960bf56cbb90ba97fca8dfc1ea1383ec6a4941c"
+  },
+  {
+    "label": "noncallable/range/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(0..2)()}",
+    "policy": "Exact",
+    "source_sha256": "be25532c9bdaf5b35d4199d436ac6b65528d4e84e88ceb82aae29ccf9df6c54c"
+  },
+  {
+    "label": "noncallable/range/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(0..2)(7)}",
+    "policy": "Exact",
+    "source_sha256": "3cb54a63d510f12da6150e48eba23545268610a06a58ab37653101244a75b97d"
+  },
+  {
+    "label": "arity/chain/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){inc}pub fn main(){(maker())()}",
+    "policy": "Exact",
+    "source_sha256": "ca02a5d3abeebf6035fc81ae1afaee413d336ffc46d94f1c3427106f59f9bafe"
+  },
+  {
+    "label": "arity/chain/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){inc}pub fn main(){(maker())(7)}",
+    "policy": "Exact",
+    "source_sha256": "5298a143bee2af22eeb0cf0518cd5ecdadec0414e5c0301eb4091d6cc430a464"
+  },
+  {
+    "label": "arity/chain/2",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){inc}pub fn main(){(maker())(7,8)}",
+    "policy": "Exact",
+    "source_sha256": "88e8ee1341a08266cdeb1542dc8d4ce67a94fc6d6282b94eab8e71703668c413"
+  },
+  {
+    "label": "arity/chain/3",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(){inc}pub fn main(){(maker())(7,8,9)}",
+    "policy": "Exact",
+    "source_sha256": "7b2873c4967f42af69d92bab0c83b6021482936e74201459f40148fed13c7363"
+  },
+  {
+    "label": "arity/block/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({inc})()}",
+    "policy": "Exact",
+    "source_sha256": "dd899babd12208594db07458b4853d494cefb0008d04b72128ad18b3c5945b30"
+  },
+  {
+    "label": "arity/block/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({inc})(7)}",
+    "policy": "Exact",
+    "source_sha256": "b7f32f299e372a74c90999c3b2831aaf9700313f6e612cf615c6ee4a1bd0b0d3"
+  },
+  {
+    "label": "arity/block/2",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({inc})(7,8)}",
+    "policy": "Exact",
+    "source_sha256": "7d47bd09cb050768be66e576fe0acdf6015663c5c625ae13eb2d6b600cc7ec28"
+  },
+  {
+    "label": "arity/block/3",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){({inc})(7,8,9)}",
+    "policy": "Exact",
+    "source_sha256": "42dccfedf7a999c2843e1cb828539aa7dc174ae46cd9967175cd8a2873a47a21"
+  },
+  {
+    "label": "arity/closure/0",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(|x|x+1)()}",
+    "policy": "Exact",
+    "source_sha256": "d37f66440c6e964de48360a4be6cc1d9ff2c0c4a7df1696cd91384445dd237d5"
+  },
+  {
+    "label": "arity/closure/1",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(|x|x+1)(7)}",
+    "policy": "Exact",
+    "source_sha256": "b23aa40ccedb84c15d3025588d8d299ac330cce3a6ba2861e3b045b4d65fdc60"
+  },
+  {
+    "label": "arity/closure/2",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(|x|x+1)(7,8)}",
+    "policy": "Exact",
+    "source_sha256": "490787ba4b4d66038c0f2fe2618cf6dd70ddd5a43af06893457708e9cdd49cd1"
+  },
+  {
+    "label": "arity/closure/3",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){(|x|x+1)(7,8,9)}",
+    "policy": "Exact",
+    "source_sha256": "a43f1edf9b4ee0357256c1c93967d53e8257f32ae1a5f98cbedd1db6eb83e8ff"
+  },
+  {
+    "label": "frames/chain",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn make(){|x|7/x}fn middle(){make()(0)}fn outer(){middle()}pub fn main(){outer()}",
+    "policy": "Exact",
+    "source_sha256": "1da88ec87ae9b06bd6e7aecabc034a8a56e0443360931e73e6e9ff5467cc38ef"
+  },
+  {
+    "label": "control/direct",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){inc(7)}",
+    "policy": "Exact",
+    "source_sha256": "334e9a79cce8ecc48b9f97eea8d21201aafe03a48e4965c8db0dc5c946679e0e"
+  },
+  {
+    "label": "control/var",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){let f=inc;f(7)}",
+    "policy": "Exact",
+    "source_sha256": "50faf702fdff8895d57c7fd25917f11f1ee13c06fdaa4e0c0b76f2b9fa8bebfb"
+  },
+  {
+    "label": "deferred/constructor",
+    "source": "struct T(a);pub fn main(){({T})(7);7}",
+    "policy": "Observe-only",
+    "source_sha256": "7dab6549e40ae218c6cb12cdf2286f50dcc175f7df485cda60b28347cd7691c0"
+  },
+  {
+    "label": "deferred/native-value",
+    "source": "pub fn main(){({std::i64::abs})(-7)}",
+    "policy": "Observe-only",
+    "source_sha256": "0c8957fb9038be55acba792ffa1319834194d5e270ee7b929a30d02504bef7fe"
+  }
+]
