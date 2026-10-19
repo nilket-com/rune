@@ -2074,6 +2074,13 @@ fn copy_missing_key(store: &Store, value: Value) -> Option<Box<str>> {
 	Box::<str>::try_from(store.text(value).ok()?).ok()
 }
 
+// Prove only the Vec IndexSet native argument wrapper on failure.
+#[cold]
+#[inline(never)]
+fn moved_set_is_vector(store: &Store, value: Value) -> bool {
+	matches!(store.tag(value), Ok(super::value::Type::Vec))
+}
+
 fn enrich_error(
 	mut error: Error,
 	store: &Store,
@@ -2083,6 +2090,14 @@ fn enrich_error(
 	slots: &[Value],
 	base: usize,
 ) -> Error {
+	if let (Op::Set { value, .. }, Detail::Moved { access }) = (op, error.detail) {
+		if let Some(&value) = slots.get(base + *value as usize) {
+			if moved_set_is_vector(store, value) {
+				error.detail = Detail::MovedArgument { access, arg: 0 };
+			}
+		}
+		return error;
+	}
 	if let (Op::IterStart { .. } | Op::IterNext { .. }, Detail::Moved { access }) =
 		(op, error.detail)
 	{

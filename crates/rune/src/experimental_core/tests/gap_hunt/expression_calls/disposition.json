@@ -135,15 +135,15 @@
     "index": 21,
     "label": "value/closure-alias",
     "source_sha256": "e98ab47b772db4331be448faf6b7beaf641268b7bdd45e0601bee17dccceae51",
-    "classification": "Retained-chain",
-    "authority": 20798
+    "classification": "Exact",
+    "authority": 20966
   },
   {
     "index": 22,
     "label": "value/closure-held",
     "source_sha256": "59775593aca78bc6b02fa1de76738f4e4123928dbd175a9f770aa0458658d914",
-    "classification": "Retained-chain",
-    "authority": 20798
+    "classification": "Exact",
+    "authority": 20966
   },
   {
     "index": 23,

@@ -1,4 +1,4 @@
-// The peer-frozen 23-row diagnostic allowlist. Full paired observations remain
+// The peer-frozen 20-row diagnostic allowlist. Full paired observations remain
 // pinned; this matcher never rewrites a projection or invents metadata.
 fn retained_pins() -> &'static Json {
 	static PINS: std::sync::OnceLock<Json> = std::sync::OnceLock::new();
@@ -82,7 +82,7 @@ fn retained_matches(
 #[cfg(not(miri))]
 fn retained_pins_reject_drift() {
 	let pins = retained_pins().as_array().unwrap();
-	assert_eq!(pins.len(), 23);
+	assert_eq!(pins.len(), 20);
 	let mut categories = std::collections::BTreeMap::new();
 	for pin in pins {
 		let label = pin["label"].as_str().unwrap();
@@ -144,7 +144,7 @@ fn retained_pins_reject_drift() {
 	assert_eq!(
 		categories,
 		std::collections::BTreeMap::from([
-			("Retained-chain", 20),
+			("Retained-chain", 17),
 			("Retained-frame", 2),
 			("Retained-display", 1),
 		])

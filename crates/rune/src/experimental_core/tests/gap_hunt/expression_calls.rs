@@ -383,21 +383,11 @@ fn run_contract(engine: &str) {
 				for key in ["status", "class", "display"] {
 					assert_eq!(actual[key], expected["projected"][key], "{label}: {key}");
 				}
-				if policy["classification"] == "Retained-chain" {
-					assert!(matches!(i, 21 | 22));
-					assert_eq!(policy["authority"], 20798);
-					assert_eq!(actual["chain_displays"], json!([]));
-					assert_eq!(
-						expected["projected"]["chain_displays"],
-						json!(["Bad argument #0"])
-					);
-				} else {
-					assert_eq!(policy["classification"], "Exact");
-					assert_eq!(
-						actual["chain_displays"], expected["projected"]["chain_displays"],
-						"{label}"
-					);
-				}
+				assert_eq!(policy["classification"], "Exact");
+				assert_eq!(
+					actual["chain_displays"], expected["projected"]["chain_displays"],
+					"{label}"
+				);
 				let sites = actual["sites"].as_array().unwrap();
 				let stock_sites = expected["projected"]["sites"].as_array().unwrap();
 				assert_eq!(sites.len(), stock_sites.len());

@@ -20,7 +20,12 @@
       "rendered": "Cannot write the value: it has been moved\n  at c8.rn:1:123"
     },
     "fresh": {
-      "context": [],
+      "context": [
+        {
+          "arg": 0,
+          "tag": "BadArgument"
+        }
+      ],
       "frames": [
         {
           "location": {
@@ -55,7 +60,12 @@
       "rendered": "Cannot write the value: it has been moved\n  at c8.rn:1:135"
     },
     "fresh": {
-      "context": [],
+      "context": [
+        {
+          "arg": 0,
+          "tag": "BadArgument"
+        }
+      ],
       "frames": [
         {
           "location": {

@@ -452,8 +452,8 @@ fn run_contract(engine: &str) {
 		])
 	} else {
 		std::collections::BTreeMap::from([
-			("Exact", 283),
-			("Retained-chain", 20),
+			("Exact", 286),
+			("Retained-chain", 17),
 			("Retained-frame", 2),
 			("Retained-display", 1),
 			("C12-admitted-range", 10),

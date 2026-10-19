@@ -537,7 +537,7 @@ fn d20_charge_precedes_call_value_checks() {
 }
 
 #[test]
-fn c11c_moved_set_context_stays_deferred_for_all_receivers() {
+fn p3_moved_set_context_is_vec_only() {
 	use crate::experimental_core::value::Type;
 	let mut builder = Builder::default();
 	let mut function = Function::new(3, 0).unwrap();
@@ -573,9 +573,17 @@ fn c11c_moved_set_context_stays_deferred_for_all_receivers() {
 			&[original],
 			0,
 		);
+		let expected = if tag == Type::Vec {
+			error.with_detail(Detail::MovedArgument {
+				access: super::super::error::MovedAccess::Write,
+				arg: 0,
+			})
+		} else {
+			error
+		};
 		assert_eq!(
-			enriched, error,
-			"Set must preserve the original Moved detail without argument context"
+			enriched, expected,
+			"only Vec Set has native argument context"
 		);
 		store.release(original).unwrap();
 		store.release(taken).unwrap();

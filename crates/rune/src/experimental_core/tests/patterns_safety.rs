@@ -10,6 +10,69 @@ use crate::experimental_core::{
 use crate::{Context, Diagnostics, Hash, Source, Sources};
 
 #[test]
+#[cfg_attr(miri, ignore = "P3 default-Context diagnostic negatives; native suite")]
+fn moved_index_set_context_is_vec_only() {
+	use crate::experimental_core::error::{Detail, MovedAccess};
+	let context = Context::with_default_modules().unwrap();
+	for (body, vector, kind) in [
+		(
+			"let v=[1];let a=v;drop(a);v[0]=9;",
+			true,
+			ErrorKind::AccessConflict,
+		),
+		(
+			"let v=(1,);let a=v;drop(a);v.0=9;",
+			false,
+			ErrorKind::AccessConflict,
+		),
+		("let v=(1,);let a=v;drop(a);v[0]=9;", false, ErrorKind::Type),
+		(
+			"let v=#{x:1};let a=v;drop(a);v[\"x\"]=9;",
+			false,
+			ErrorKind::AccessConflict,
+		),
+	] {
+		let mut sources = Sources::new();
+		sources
+			.insert(Source::memory(std::format!("pub fn main(){{{body}}}")).unwrap())
+			.unwrap();
+		let program =
+			frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 9).unwrap();
+		let main = program.function(Hash::type_hash(["main"])).unwrap();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		for _ in 0..2 {
+			let failure = executor
+				.invoke(&program, &mut store, main, &[], 1000)
+				.unwrap_err();
+			assert_eq!(failure.error.kind, kind, "{body}");
+			if kind == ErrorKind::Type {
+				assert!(!matches!(
+					failure.error.detail,
+					Detail::MovedArgument { .. }
+				));
+				assert!(failure.cleanup_error.is_none());
+				idle(&executor, &store);
+				continue;
+			}
+			let expected = if vector {
+				Detail::MovedArgument {
+					access: MovedAccess::Write,
+					arg: 0,
+				}
+			} else {
+				Detail::Moved {
+					access: MovedAccess::Write,
+				}
+			};
+			assert_eq!(failure.error.detail, expected, "{body}");
+			assert!(failure.cleanup_error.is_none());
+			idle(&executor, &store);
+		}
+	}
+}
+
+#[test]
 #[cfg_attr(
 	miri,
 	ignore = "C16a opt-in minimal-Context Vec local ownership witness"

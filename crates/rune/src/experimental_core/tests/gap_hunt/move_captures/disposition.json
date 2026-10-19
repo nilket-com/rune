@@ -4,9 +4,9 @@
   "protected_main": "b1030a87df9fcdf14262cae2c35d7b0dd3209fe7",
   "authority": 20703,
   "counts": {
-    "exact": 60,
+    "exact": 66,
     "inherited-refusal": 1,
-    "policy-presentation": 10
+    "policy-presentation": 4
   },
   "total": 71,
   "rows": [
@@ -14,7 +14,7 @@
       "index": 0,
       "label": "seed/original/value/closure-alias",
       "source_sha256": "e98ab47b772db4331be448faf6b7beaf641268b7bdd45e0601bee17dccceae51",
-      "classification": "policy-presentation",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 121,
@@ -55,162 +55,91 @@
           "status": "refused"
         }
       },
-      "authority": 20798,
-      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
-      "stock": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
-        "events": [],
-        "logical": {
-          "context": [
-            {
-              "arg": 0,
-              "tag": "BadArgument"
-            }
-          ],
-          "frames": [
-            {
-              "location": {
+      "prior_p3_policy": {
+        "authority": 20798,
+        "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+        "stock": {
+          "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+          "events": [],
+          "logical": {
+            "context": [
+              {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            ],
+            "frames": [
+              {
+                "location": {
+                  "end": 128,
+                  "source": 0,
+                  "start": 122
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:123"
+          },
+          "outcome": {
+            "chain_displays": [
+              "Bad argument #0"
+            ],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
                 "end": 128,
+                "frames": "[]",
                 "source": 0,
                 "start": 122
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:123"
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
         },
-        "outcome": {
-          "chain_displays": [
-            "Bad argument #0"
-          ],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 128,
-              "frames": "[]",
-              "source": 0,
-              "start": 122
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
+        "fresh": {
+          "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+          "events": [],
+          "logical": {
+            "context": [],
+            "frames": [
+              {
+                "location": {
+                  "end": 128,
+                  "source": 0,
+                  "start": 122
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:123"
+          },
+          "outcome": {
+            "chain_displays": [],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 128,
+                "frames": "[]",
+                "source": 0,
+                "start": 122
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        }
       },
-      "fresh": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 128,
-                "source": 0,
-                "start": 122
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:123"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 128,
-              "frames": "[]",
-              "source": 0,
-              "start": 122
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      }
+      "authority": 20966,
+      "restoration": "P3 heap-isolated Vec IndexSet moved argument context"
     },
     {
       "index": 1,
       "label": "seed/var/value/closure-alias",
       "source_sha256": "b92c27320caedbfd7f8fddb3f8356a10c13896c2e91273570e15324675ded9e4",
-      "classification": "policy-presentation",
-      "authority": 20798,
-      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
-      "stock": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
-        "events": [],
-        "logical": {
-          "context": [
-            {
-              "arg": 0,
-              "tag": "BadArgument"
-            }
-          ],
-          "frames": [
-            {
-              "location": {
-                "end": 136,
-                "source": 0,
-                "start": 130
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:131"
-        },
-        "outcome": {
-          "chain_displays": [
-            "Bad argument #0"
-          ],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 136,
-              "frames": "[]",
-              "source": 0,
-              "start": 130
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 136,
-                "source": 0,
-                "start": 130
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:131"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 136,
-              "frames": "[]",
-              "source": 0,
-              "start": 130
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
+      "classification": "exact",
       "previous_exact": {
         "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
         "events": [],
@@ -250,13 +179,92 @@
           "status": "error"
         },
         "reuse": null
-      }
+      },
+      "prior_p3_policy": {
+        "authority": 20798,
+        "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+        "stock": {
+          "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+          "events": [],
+          "logical": {
+            "context": [
+              {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            ],
+            "frames": [
+              {
+                "location": {
+                  "end": 136,
+                  "source": 0,
+                  "start": 130
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:131"
+          },
+          "outcome": {
+            "chain_displays": [
+              "Bad argument #0"
+            ],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 136,
+                "frames": "[]",
+                "source": 0,
+                "start": 130
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        },
+        "fresh": {
+          "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+          "events": [],
+          "logical": {
+            "context": [],
+            "frames": [
+              {
+                "location": {
+                  "end": 136,
+                  "source": 0,
+                  "start": 130
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:131"
+          },
+          "outcome": {
+            "chain_displays": [],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 136,
+                "frames": "[]",
+                "source": 0,
+                "start": 130
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        }
+      },
+      "authority": 20966,
+      "restoration": "P3 heap-isolated Vec IndexSet moved argument context"
     },
     {
       "index": 2,
       "label": "seed/original/value/closure-held",
       "source_sha256": "59775593aca78bc6b02fa1de76738f4e4123928dbd175a9f770aa0458658d914",
-      "classification": "policy-presentation",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 133,
@@ -297,162 +305,91 @@
           "status": "refused"
         }
       },
-      "authority": 20798,
-      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
-      "stock": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
-        "events": [],
-        "logical": {
-          "context": [
-            {
-              "arg": 0,
-              "tag": "BadArgument"
-            }
-          ],
-          "frames": [
-            {
-              "location": {
+      "prior_p3_policy": {
+        "authority": 20798,
+        "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+        "stock": {
+          "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+          "events": [],
+          "logical": {
+            "context": [
+              {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            ],
+            "frames": [
+              {
+                "location": {
+                  "end": 140,
+                  "source": 0,
+                  "start": 134
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:135"
+          },
+          "outcome": {
+            "chain_displays": [
+              "Bad argument #0"
+            ],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
                 "end": 140,
+                "frames": "[]",
                 "source": 0,
                 "start": 134
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:135"
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
         },
-        "outcome": {
-          "chain_displays": [
-            "Bad argument #0"
-          ],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 140,
-              "frames": "[]",
-              "source": 0,
-              "start": 134
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
+        "fresh": {
+          "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+          "events": [],
+          "logical": {
+            "context": [],
+            "frames": [
+              {
+                "location": {
+                  "end": 140,
+                  "source": 0,
+                  "start": 134
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:135"
+          },
+          "outcome": {
+            "chain_displays": [],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 140,
+                "frames": "[]",
+                "source": 0,
+                "start": 134
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        }
       },
-      "fresh": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 140,
-                "source": 0,
-                "start": 134
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:135"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 140,
-              "frames": "[]",
-              "source": 0,
-              "start": 134
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      }
+      "authority": 20966,
+      "restoration": "P3 heap-isolated Vec IndexSet moved argument context"
     },
     {
       "index": 3,
       "label": "seed/var/value/closure-held",
       "source_sha256": "a3db1439716736b613b0701e7c2b322d9c7602b94dc3bf33238bc890aa114596",
-      "classification": "policy-presentation",
-      "authority": 20798,
-      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
-      "stock": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
-        "events": [],
-        "logical": {
-          "context": [
-            {
-              "arg": 0,
-              "tag": "BadArgument"
-            }
-          ],
-          "frames": [
-            {
-              "location": {
-                "end": 148,
-                "source": 0,
-                "start": 142
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:143"
-        },
-        "outcome": {
-          "chain_displays": [
-            "Bad argument #0"
-          ],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 148,
-              "frames": "[]",
-              "source": 0,
-              "start": 142
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 148,
-                "source": 0,
-                "start": 142
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:143"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 148,
-              "frames": "[]",
-              "source": 0,
-              "start": 142
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
+      "classification": "exact",
       "previous_exact": {
         "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
         "events": [],
@@ -492,7 +429,86 @@
           "status": "error"
         },
         "reuse": null
-      }
+      },
+      "prior_p3_policy": {
+        "authority": 20798,
+        "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+        "stock": {
+          "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+          "events": [],
+          "logical": {
+            "context": [
+              {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            ],
+            "frames": [
+              {
+                "location": {
+                  "end": 148,
+                  "source": 0,
+                  "start": 142
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:143"
+          },
+          "outcome": {
+            "chain_displays": [
+              "Bad argument #0"
+            ],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 148,
+                "frames": "[]",
+                "source": 0,
+                "start": 142
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        },
+        "fresh": {
+          "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+          "events": [],
+          "logical": {
+            "context": [],
+            "frames": [
+              {
+                "location": {
+                  "end": 148,
+                  "source": 0,
+                  "start": 142
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:143"
+          },
+          "outcome": {
+            "chain_displays": [],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 148,
+                "frames": "[]",
+                "source": 0,
+                "start": 142
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        }
+      },
+      "authority": 20966,
+      "restoration": "P3 heap-isolated Vec IndexSet moved argument context"
     },
     {
       "index": 4,
@@ -675,98 +691,7 @@
       "index": 13,
       "label": "new/nested/captured-alias",
       "source_sha256": "447ba6b741147a240b9ea3be404b713d26688e45ca75e55f8e86368c2323a332",
-      "classification": "policy-presentation",
-      "authority": 20798,
-      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [
-            {
-              "arg": 0,
-              "tag": "BadArgument"
-            }
-          ],
-          "frames": [
-            {
-              "location": {
-                "end": 75,
-                "source": 0,
-                "start": 69
-              },
-              "role": "Origin"
-            },
-            {
-              "location": {
-                "end": 82,
-                "source": 0,
-                "start": 79
-              },
-              "role": "Caller"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:70\n  called from c11b.rn:1:80"
-        },
-        "outcome": {
-          "chain_displays": [
-            "Bad argument #0"
-          ],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 75,
-              "frames": "[CallFrame { ip: 6, top: 0, isolated: None, out: keep(2) }]",
-              "source": 0,
-              "start": 69
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 75,
-                "source": 0,
-                "start": 69
-              },
-              "role": "Origin"
-            },
-            {
-              "location": {
-                "end": 82,
-                "source": 0,
-                "start": 79
-              },
-              "role": "Caller"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:70\n  called from c11b.rn:1:80"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 75,
-              "frames": "[{\"end\":82,\"source\":0,\"start\":79}]",
-              "source": 0,
-              "start": 69
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
+      "classification": "exact",
       "previous_exact": {
         "diagnostics": "[]",
         "events": [],
@@ -814,7 +739,102 @@
           "status": "error"
         },
         "reuse": null
-      }
+      },
+      "prior_p3_policy": {
+        "authority": 20798,
+        "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+        "stock": {
+          "diagnostics": "[]",
+          "events": [],
+          "logical": {
+            "context": [
+              {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            ],
+            "frames": [
+              {
+                "location": {
+                  "end": 75,
+                  "source": 0,
+                  "start": 69
+                },
+                "role": "Origin"
+              },
+              {
+                "location": {
+                  "end": 82,
+                  "source": 0,
+                  "start": 79
+                },
+                "role": "Caller"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:70\n  called from c11b.rn:1:80"
+          },
+          "outcome": {
+            "chain_displays": [
+              "Bad argument #0"
+            ],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 75,
+                "frames": "[CallFrame { ip: 6, top: 0, isolated: None, out: keep(2) }]",
+                "source": 0,
+                "start": 69
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        },
+        "fresh": {
+          "diagnostics": "[]",
+          "events": [],
+          "logical": {
+            "context": [],
+            "frames": [
+              {
+                "location": {
+                  "end": 75,
+                  "source": 0,
+                  "start": 69
+                },
+                "role": "Origin"
+              },
+              {
+                "location": {
+                  "end": 82,
+                  "source": 0,
+                  "start": 79
+                },
+                "role": "Caller"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:70\n  called from c11b.rn:1:80"
+          },
+          "outcome": {
+            "chain_displays": [],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 75,
+                "frames": "[{\"end\":82,\"source\":0,\"start\":79}]",
+                "source": 0,
+                "start": 69
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        }
+      },
+      "authority": 20966,
+      "restoration": "P3 heap-isolated Vec IndexSet moved argument context"
     },
     {
       "index": 14,
@@ -850,82 +870,7 @@
       "index": 19,
       "label": "new/returned/alias-moved-write",
       "source_sha256": "d7880628455a3e9fd6b505c06ca8bf93cb110e565cd42933ac60ccb6beeef459",
-      "classification": "policy-presentation",
-      "authority": 20798,
-      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [
-            {
-              "arg": 0,
-              "tag": "BadArgument"
-            }
-          ],
-          "frames": [
-            {
-              "location": {
-                "end": 77,
-                "source": 0,
-                "start": 71
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:72"
-        },
-        "outcome": {
-          "chain_displays": [
-            "Bad argument #0"
-          ],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 77,
-              "frames": "[]",
-              "source": 0,
-              "start": 71
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 77,
-                "source": 0,
-                "start": 71
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:72"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot write the value: it has been moved",
-          "sites": [
-            {
-              "end": 77,
-              "frames": "[]",
-              "source": 0,
-              "start": 71
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
+      "classification": "exact",
       "previous_exact": {
         "diagnostics": "[]",
         "events": [],
@@ -965,7 +910,86 @@
           "status": "error"
         },
         "reuse": null
-      }
+      },
+      "prior_p3_policy": {
+        "authority": 20798,
+        "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+        "stock": {
+          "diagnostics": "[]",
+          "events": [],
+          "logical": {
+            "context": [
+              {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            ],
+            "frames": [
+              {
+                "location": {
+                  "end": 77,
+                  "source": 0,
+                  "start": 71
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:72"
+          },
+          "outcome": {
+            "chain_displays": [
+              "Bad argument #0"
+            ],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 77,
+                "frames": "[]",
+                "source": 0,
+                "start": 71
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        },
+        "fresh": {
+          "diagnostics": "[]",
+          "events": [],
+          "logical": {
+            "context": [],
+            "frames": [
+              {
+                "location": {
+                  "end": 77,
+                  "source": 0,
+                  "start": 71
+                },
+                "role": "Origin"
+              }
+            ],
+            "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:72"
+          },
+          "outcome": {
+            "chain_displays": [],
+            "class": "AccessConflict",
+            "display": "Cannot write the value: it has been moved",
+            "sites": [
+              {
+                "end": 77,
+                "frames": "[]",
+                "source": 0,
+                "start": 71
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": null
+        }
+      },
+      "authority": 20966,
+      "restoration": "P3 heap-isolated Vec IndexSet moved argument context"
     },
     {
       "index": 20,

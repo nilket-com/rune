@@ -14,6 +14,7 @@ use core::sync::atomic::{AtomicU64, Ordering};
 mod cloning;
 mod comparison;
 mod formatting;
+mod hot;
 mod indexing;
 pub use formatting::FormatLimits;
 mod boxed_iterator;
@@ -535,66 +536,6 @@ impl Store {
 			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
 		self.reserve_work(Self::heap_edge(new), Self::heap_edge(old))?;
 		Ok(next)
-	}
-
-	fn slot(&self, h: Handle) -> Result<&Slot> {
-		if self.closed {
-			return Err(err(ErrorKind::ClosedStore));
-		}
-
-		self.slots
-			.get(h.slot as usize)
-			.filter(|s| s.generation == h.generation && s.entry.is_some())
-			.ok_or_else(|| err(ErrorKind::InvalidHandle))
-	}
-
-	fn entry(&self, h: Handle) -> Result<&Entry> {
-		self.slot(h)?
-			.entry
-			.as_ref()
-			.ok_or_else(|| err(ErrorKind::InvalidHandle))
-	}
-
-	fn entry_mut(&mut self, h: Handle) -> Result<&mut Entry> {
-		self.slot(h)?;
-		self.slots[h.slot as usize]
-			.entry
-			.as_mut()
-			.ok_or_else(|| err(ErrorKind::InvalidHandle))
-	}
-
-	fn payload(&self, h: Handle) -> Result<&Payload> {
-		match self.entry(h)?.payload.as_ref() {
-			Some(Payload::Moved(_)) => {
-				Err(sorting::conflict(sorting::Access::Read, self.entry(h)?))
-			}
-			Some(payload) => {
-				#[cfg(debug_assertions)]
-				payload.assert_canonical_range();
-				Ok(payload)
-			}
-			None => Err(err(ErrorKind::InvalidCode)),
-		}
-	}
-
-	fn mutable(&mut self, h: Handle) -> Result<&mut Payload> {
-		let e = self.entry_mut(h)?;
-		if e.readers != 0 {
-			return Err(sorting::conflict(sorting::Access::Write, e));
-		}
-		match e.payload.as_mut() {
-			Some(Payload::Moved(_)) => Err(err(ErrorKind::AccessConflict).with_detail(
-				super::error::Detail::Moved {
-					access: super::error::MovedAccess::Write,
-				},
-			)),
-			Some(payload) => {
-				#[cfg(debug_assertions)]
-				payload.assert_canonical_range();
-				Ok(payload)
-			}
-			None => Err(err(ErrorKind::InvalidCode)),
-		}
 	}
 
 	/// Undo only references acquired for an unpublished payload. Each acquired
@@ -1150,18 +1091,6 @@ impl Store {
 		self.admit(Payload::String(text))
 	}
 
-	pub(crate) fn retain(&mut self, value: Value) -> Result<()> {
-		if let Value::Heap(h) = value {
-			let e = self.entry_mut(h)?;
-			e.strong = e
-				.strong
-				.checked_add(1)
-				.ok_or_else(|| err(ErrorKind::Overflow))?;
-		}
-
-		Ok(())
-	}
-
 	// The binary heap-pair branch has already matched both handles. Keep its
 	// generation-checked tag read at the callsite without changing tag() globally.
 	#[inline(always)]
@@ -1496,104 +1425,6 @@ impl Store {
 		// Admission acquires the retained root and shared lease together only
 		// after every capacity and metadata check; no temporary lease escapes.
 		self.admit(Payload::VectorIterator(Iter { handle, index: 0 }))
-	}
-
-	pub(crate) fn iterator_next(&mut self, value: Value) -> Result<Option<Value>> {
-		let Value::Heap(h) = value else {
-			return Err(err(ErrorKind::Type));
-		};
-
-		// A failed advance must not allocate or consume any payload.
-		let payload = self.mutable(h)?;
-		if let Payload::RangeIterator { next, end } = payload {
-			if *next >= *end {
-				return Ok(None);
-			}
-
-			let value = *next;
-			let new = value
-				.checked_add(1)
-				.ok_or_else(|| err(ErrorKind::Overflow))?;
-			*next = new;
-			return Ok(Some(Value::I64(value)));
-		}
-
-		match self.payload(h)? {
-			Payload::OtherRangeIterator(_) => self.other_range_next(h),
-			Payload::ValueRangeIterator { next, end } => self.value_range_next(h, *next, *end),
-			Payload::OptionIterator { payload } => {
-				let value = *payload;
-				let Payload::OptionIterator { payload } = self.mutable(h)? else {
-					unreachable!()
-				};
-				*payload = None;
-				// Transfer the snapshot's retained root to the caller, without an
-				// extra retain or a lease on the mutable Option wrapper.
-				self.edges = self
-					.edges
-					.checked_sub(value.map_or(0, Self::heap_edge))
-					.ok_or_else(|| err(ErrorKind::InvalidCode))?;
-				self.assert_work();
-				Ok(value)
-			}
-			Payload::VectorIterator(iter) => {
-				let root = Value::Heap(iter.handle);
-				let index = iter.index;
-
-				let length = match self.payload(iter.handle)? {
-					Payload::Record {
-						fields,
-						tag: Type::Object,
-					} => fields.len(),
-					Payload::List { values, .. } => values.len(),
-					_ => return Err(err(ErrorKind::InvalidCode)),
-				};
-				if index == length {
-					return Ok(None);
-				}
-
-				let value = if let Payload::Record {
-					fields,
-					tag: Type::Object,
-				} = self.payload(iter.handle)?
-				{
-					let (key, child) = fields
-						.get(index)
-						.ok_or_else(|| err(ErrorKind::InvalidCode))?;
-					let child = *child;
-					if key.len() > self.limits.bytes.saturating_sub(self.bytes) {
-						return Err(err(ErrorKind::StoreCapacity));
-					}
-					let copy = String::try_from(key.as_str())?;
-					let key = self.admit(Payload::String(copy))?;
-					let pair = self.list(Type::Tuple, &[key, child]);
-					let released = self.release(key);
-					match pair {
-						Ok(pair) => {
-							if let Err(e) = released {
-								let _ = self.release(pair);
-								return Err(e);
-							}
-							pair
-						}
-						Err(e) => {
-							released?;
-							return Err(e);
-						}
-					}
-				} else {
-					self.get(root, index)?
-				};
-				let Payload::VectorIterator(iter) = self.mutable(h)? else {
-					return Err(err(ErrorKind::Type));
-				};
-
-				iter.index += 1;
-				Ok(Some(value))
-			}
-
-			_ => Err(err(ErrorKind::Type)),
-		}
 	}
 
 	// Lease-token iteration: exercised by the crate's own tests, not yet by the executor.
