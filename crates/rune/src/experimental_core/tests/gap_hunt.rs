@@ -1670,3 +1670,5 @@ mod remaining_patterns;
 mod function_values;
 
 mod byte_strings;
+
+mod type_values;

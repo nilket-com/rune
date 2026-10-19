@@ -1,0 +1,1082 @@
+[
+  {
+    "label": "surface/struct",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N}pub fn c16h_reuse(){7}",
+    "source_sha256": "f4ce0e9f6334fb7325154cd0b8a683c83b8a2e63a070e96ad9744af9b93770ce",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){E::D}pub fn c16h_reuse(){7}",
+    "source_sha256": "ec1ea09cdd4702ddf64aa862372929697d6fa1f6b160b4d1559ae5e51badf3cb",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/enum",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){E}pub fn c16h_reuse(){7}",
+    "source_sha256": "ccadc9b1a98ac851831568010a651f54d37780dbc414b2374fcc1d52911f6434",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/module-struct",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){m::S}pub fn c16h_reuse(){7}",
+    "source_sha256": "f85e18518eb6860f48839c70840e4cd4bdc3932a1bad844a722362dfb20e77cc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/module-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){m::F::G}pub fn c16h_reuse(){7}",
+    "source_sha256": "32af5ab7228b104577157a529b93a3bd1bba07c830793569e1c61ef47bb879c1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/string",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){String}pub fn c16h_reuse(){7}",
+    "source_sha256": "addb5bb2e665924d6a7cbde08979a878843392929847ae24233a3505531816c7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/vec",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){Vec}pub fn c16h_reuse(){7}",
+    "source_sha256": "333c7136069c854ba04d10d5664db9d91ac594a897761061456d7456b16ec4ca",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/option",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){Option}pub fn c16h_reuse(){7}",
+    "source_sha256": "b66500b53b5b1c8bb7eb18af628cccb5c1dbffdeb7137c39b2d3bfda9c4008cb",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/result",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){Result}pub fn c16h_reuse(){7}",
+    "source_sha256": "c249d5623b87ddf3644283abc498df5fca02d23ce4dd93b43b1a10c7c5ef3ec0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/object",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){Object}pub fn c16h_reuse(){7}",
+    "source_sha256": "87c29887a26430e77f6f1e37cb6154819f0c87eac22d6ea20da19a407c250b48",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/primitives",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(i64,u64,f64,bool,char)}pub fn c16h_reuse(){7}",
+    "source_sha256": "451fe845354e75b7c5420a762f22c5581a4a0b8d7a20d981d3f420baadee0eb0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/ordering",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::cmp::Ordering}pub fn c16h_reuse(){7}",
+    "source_sha256": "dfd46c87200b6a969fb017125662996c8e74564b9cfb4d40b8a754c83a956b32",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/range",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::ops::Range}pub fn c16h_reuse(){7}",
+    "source_sha256": "ec6b598cccf23c8aa3b8f9661bce9f912c75af6d356d32ce0bb774255d9c5021",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/bytes",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::bytes::Bytes}pub fn c16h_reuse(){7}",
+    "source_sha256": "1ebf35accc86daad879993bea34bae0cc3af5352c092220db638567ebd42166b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/type",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::any::Type}pub fn c16h_reuse(){7}",
+    "source_sha256": "2c70c4fbe3f2f82839fd8b1cc8241a72ebad8ca929fbe511590f655e3ee8cd6f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/hashmap",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::collections::HashMap}pub fn c16h_reuse(){7}",
+    "source_sha256": "622cc5903a257dac082b6409e345c30e44f65ddcd63f00fd801c8cc31fc1c438",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/function-path",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::ops::Function}pub fn c16h_reuse(){7}",
+    "source_sha256": "85837f3fd6f58a63b49fd4a689ada26181bf54093c1fae982408bc0367fcc6bf",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/self",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}impl N{fn t(){Self}}pub fn main(){N::t()}pub fn c16h_reuse(){7}",
+    "source_sha256": "75f0dc7d600d79202ce8bb16378ee180c80aad6604856b49d1e69c6c6b17769e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/use-struct",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}use self::N as M;pub fn main(){(M,M==N)}pub fn c16h_reuse(){7}",
+    "source_sha256": "57d91d752de638ce03e44daed077af0702b1580d9b991bb420d91b14b75ec456",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/use-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}use self::E::D as V;pub fn main(){(V,V==E::D)}pub fn c16h_reuse(){7}",
+    "source_sha256": "bacd4390e5da3135b80f19da94f4ce3e06f3a5dcd4bf1d89ff2e385357cca0f4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "surface/use-enum",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}use self::E as G;pub fn main(){(G,G::D==E::D,G==E)}pub fn c16h_reuse(){7}",
+    "source_sha256": "2c372e24ed916d555d170215e29504e505aebc43372b29cbf988ac4fc6f34821",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "control/unit-struct",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){U}pub fn c16h_reuse(){7}",
+    "source_sha256": "291460c4689153be22b03548ef5c549e8a2a3d4f6b2972d99700a934e0a1acf5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "control/unit-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){E::A}pub fn c16h_reuse(){7}",
+    "source_sha256": "0e6799d1e100de64b2fe9ef0367f1f06c47cca26de9572922286133494f6da6e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "control/tuple-struct-call",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let f=T;f(1)}pub fn c16h_reuse(){7}",
+    "source_sha256": "499f70d40118227d03eaad6309f294e262b3d79e939ce12c5598dad1976b93a4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "control/tuple-variant-call",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let f=E::B;f(1)}pub fn c16h_reuse(){7}",
+    "source_sha256": "942ae3b665b23c3a19004ce548cb05d64ad1c7047e395cbfe8f9211b4b4fd1fc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/same",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(N==N,E::D==E::D,E==E)}pub fn c16h_reuse(){7}",
+    "source_sha256": "35185c6075cf5a1a7528ce079a50b7823881fac4476e9e70ce4735caf9ba81bb",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/distinct",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(N==E::D,E::D==E,E::D==m::F::G,N==m::S,N!=E)}pub fn c16h_reuse(){7}",
+    "source_sha256": "dab4671f7191c9f03546f2ea9c486c25b4d12feb3d925bc77d0551a6a5187240",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/builtins",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(String==String,String==Vec,i64==u64,Option==Option)}pub fn c16h_reuse(){7}",
+    "source_sha256": "b2219552cc5aff5779ec01edfacc073eef01376a9420f55c2c7e62bf69f795c3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/alias",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=N;let u=t;(t==u,u==N,t)}pub fn c16h_reuse(){7}",
+    "source_sha256": "b100f45482f419f53e653000758025056e2e888b9f6555928728fccf70a279be",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/of-val-struct",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::any::Type::of_val(N{x:1,y:2})==N}pub fn c16h_reuse(){7}",
+    "source_sha256": "91ab552f60dd1d6116259954341cac368f0bb1f0c174e7e7df0cc79d07140df4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/of-val-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=std::any::Type::of_val(E::D{x:1});(t==E::D,t==E,t)}pub fn c16h_reuse(){7}",
+    "source_sha256": "0200eb98749cadcfbf61140c350e151e0b2300bd298207902ef62b20949c4ba0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/of-val-unit-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=std::any::Type::of_val(E::A);(t==E,t)}pub fn c16h_reuse(){7}",
+    "source_sha256": "d559f064a8823b266c00f65a9834bbaf3709f4e48f64701257dcec55fae511f4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/of-val-tuple-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::any::Type::of_val(E::B(1))==E}pub fn c16h_reuse(){7}",
+    "source_sha256": "9ccc4172b6c31bbf93c946d6fc42ca013d8ca715be00003382032e94a955192b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/of-val-builtins",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(std::any::Type::of_val(\"a\")==String,std::any::Type::of_val(1)==i64,std::any::Type::of_val([])==Vec,std::any::Type::of_val(None)==Option)}pub fn c16h_reuse(){7}",
+    "source_sha256": "c2b5e7e96d14deb4f5148ff9ae8f675131f1ede9d005f75cdc448b04397ca4a0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/of-val-type",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::any::Type::of_val(N)==std::any::Type}pub fn c16h_reuse(){7}",
+    "source_sha256": "ded23d3e150f984af1c4375b381688f6387f46b3b83b6da74b8ae76563c705e4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/int",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N==1}pub fn c16h_reuse(){7}",
+    "source_sha256": "6fe376e0460b535fc60f1ebbd1915ba05f811fc80c3b410f185cdaa1a4e59902",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "eq/containers",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){([N,E::D]==[N,E::D],(N,1)==(N,1),#{a:N}==#{a:N},Some(E::D)==Some(E::D),[N]==[E])}pub fn c16h_reuse(){7}",
+    "source_sha256": "9c200e94310de8ef893395c68b95216eaed8334c59e675d155600fedcb3d24b6",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "cmp/ops",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(N<E,N>E,E<N,N<=E,N>=E,N<=N,N>=N,N<N)}pub fn c16h_reuse(){7}",
+    "source_sha256": "7cb9caff392aa05532bc902d764c6c6b27318af97603e2c562b07f517f814414",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "cmp/vec",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){[N]<[E]}pub fn c16h_reuse(){7}",
+    "source_sha256": "418f103f7857326ea7997ed9d851cd2c8e5fb416e5f08d269370ce71ccad9b64",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "cmp/max",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::cmp::max(N,E)}pub fn c16h_reuse(){7}",
+    "source_sha256": "f9f03a1be0274190f32746d8eac5edac58835f4194ad207b3c3253b873f5db47",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "cmp/sort",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let v=[E,N,E::D];v.sort();v}pub fn c16h_reuse(){7}",
+    "source_sha256": "ada804bf46aa23465e141ebb65726641a76d2880f3ccc6ed1f6838abb8718767",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "cmp/method",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N.cmp(N)}pub fn c16h_reuse(){7}",
+    "source_sha256": "5435966f179a23484e361e5d9b4c08d609e8714d0d72dce26a49c75d2da58685",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "is/type-value",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(N is std::any::Type,E::D is std::any::Type,String is std::any::Type)}pub fn c16h_reuse(){7}",
+    "source_sha256": "94800c797057bd85b421c33465c3edf113c8e456bb9ca0cf83179d45b546c675",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "is/type-value-not",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(N is N,N is Object)}pub fn c16h_reuse(){7}",
+    "source_sha256": "199c242298bbcec9834760e1bedf44937e0423bc5331e3f441e2f39daad6b76b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "is/struct-instance",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(N{x:1,y:2} is N,N{x:1,y:2} is E)}pub fn c16h_reuse(){7}",
+    "source_sha256": "8d90c2f4d17ad2f186a381d32fa9b2edc200b3da733279286f56d602791282ec",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "is/variant-instance-enum",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(E::D{x:1} is E,E::A is E,E::B(1) is E)}pub fn c16h_reuse(){7}",
+    "source_sha256": "810618c03c7842c6297b2e85ce98f82b65719c38717d8a4330664a089671020a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "is/module",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(m::F::G{v:1} is m::F,m::S{v:1} is m::S)}pub fn c16h_reuse(){7}",
+    "source_sha256": "ad49d0d3b6563a1c99490358be66b153db27ea21885f3c40cde6b0af47a2c06e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "is/not",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N{x:1,y:2} is not E}pub fn c16h_reuse(){7}",
+    "source_sha256": "59d016b4a3a89504da1e6dac66566ab280141a7d9ad1a4babf39b05d6bc66480",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "is/bytes",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){b\"a\" is std::bytes::Bytes}pub fn c16h_reuse(){7}",
+    "source_sha256": "c176ee71e9ada1ac357e29748bee3459a5398f6be5a2ed4048c7bed0ef6ff806",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/is-named-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){E::D{x:1} is E::D}pub fn c16h_reuse(){7}",
+    "source_sha256": "89def3bc77c839dcfd78de43d627a744d9ac25590840b9e383eaf4d040e1aa53",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/is-unit-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){E::A is E::A}pub fn c16h_reuse(){7}",
+    "source_sha256": "80455f8128f68e3948cf1eb1601e975805d31b8aec7379874d9cfa3104b775ba",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/is-tuple-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){E::B(1) is E::B}pub fn c16h_reuse(){7}",
+    "source_sha256": "d73e4664940c62c2e1a29a08b126683310d166dbdae248aff68c3183a4cb9c19",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/is-variable",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=N;1 is t}pub fn c16h_reuse(){7}",
+    "source_sha256": "1e690df4fbf9bf309546ab6bd3cc35ba07ae506ca9c8a928460b76cc21dfb778",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/match-variant-path",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){match N{E::D=>1,_=>2}}pub fn c16h_reuse(){7}",
+    "source_sha256": "4e5032f935ecb1e4c8a5d68b4ed76e10013dae35abe087fabc4424f3d85d8fa7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/direct-struct",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N(1,2)}pub fn c16h_reuse(){7}",
+    "source_sha256": "33b83fdb18b2c0ab9b8d4d3ec1738cd310d756ddbf2c1cf931ec24371ebc2221",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/direct-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){E::D(1)}pub fn c16h_reuse(){7}",
+    "source_sha256": "44f5e708474bcd7c5ed97ba2064221900a65dc8037d36200a30d842ba3084eea",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/module-value",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){m}pub fn c16h_reuse(){7}",
+    "source_sha256": "6b102a8e017e74ac7270f6ee151bfbcb03b28ec8420535f999e2652bb9af47cf",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/unknown-path",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){Nope}pub fn c16h_reuse(){7}",
+    "source_sha256": "90a06e4ef053c11467e5a40819ccbe55cb6e1f92607ba7f3b41e369aae315564",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/variant-of-struct",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N::D}pub fn c16h_reuse(){7}",
+    "source_sha256": "3859ddb2f3feedcde36415d1673b5851b3f6ecb4098a3f7e2b59c67fb919a1a4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "match/guard",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=E::D;match t{x if x==N=>1,x if x==E::D=>2,_=>3}}pub fn c16h_reuse(){7}",
+    "source_sha256": "8c817cbf433a612ead673a16c66f4f95f46173271b2ceb3bdc94b99032838eec",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "match/uppercase-binding",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){match 5{N=>1,_=>2}}pub fn c16h_reuse(){7}",
+    "source_sha256": "7454501c1c4c0576a0697965dc0f46b7cf294cae8fd96b3ad698130648baf0c4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "match/vec-of-types",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){match [N,E]{[a,b]=>a==N&&b==E,_=>false}}pub fn c16h_reuse(){7}",
+    "source_sha256": "cb1a617f3c4705e0d33fa9881e7c095e6c492cdd0f5a11c6072ebd81353506da",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/debug",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){format!(\"{:?}\",N)}pub fn c16h_reuse(){7}",
+    "source_sha256": "55e7f140ad4b6460d3e0cf7f44ba3c394fcba3a400ac059d4d998a3a8b655389",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/display",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){format!(\"{}\",N)}pub fn c16h_reuse(){7}",
+    "source_sha256": "9e21bc5f1d5ca0ca1154eaf0deb79f1cb7fb968302dc70aaf184cf23e6b0f078",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/debug-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){format!(\"{:?}\",E::D)}pub fn c16h_reuse(){7}",
+    "source_sha256": "993448e5582f16fb2d3ad80e38e2fb2c1028bdea11104dee2baa0a32f1d98278",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/display-variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){format!(\"{}\",E::D)}pub fn c16h_reuse(){7}",
+    "source_sha256": "241c770a54c0f1e6d444187c528cc0f8f170e96c5984222a15fa2f9c1656c1a8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/template",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){`${N}`}pub fn c16h_reuse(){7}",
+    "source_sha256": "044d28aafc914e0271c16dc2117d6bc63eb8e2ae8f7b985c1d0d25cda218c73b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/debug-container",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){format!(\"{:?}\",[N,E::D])}pub fn c16h_reuse(){7}",
+    "source_sha256": "3a63ddbccd678eb428fa4bb4c52cd171df08c8b9d1a1d470fa92a7d9bbf1afe7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/display-of-val",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){format!(\"{}\",std::any::Type::of_val(1))}pub fn c16h_reuse(){7}",
+    "source_sha256": "8365a3805b4d65b813a4b9fc3b2dd5d3015efc3d0850cf49839d14a63ad0a4cc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/println",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){println!(\"{:?}\",E::D);N}pub fn c16h_reuse(){7}",
+    "source_sha256": "dd8ac27303f1a48bbdf0e2906143a40986c070f15ca3dce7e3672ea482008a5d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/string-add",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){\"t:\"+N}pub fn c16h_reuse(){7}",
+    "source_sha256": "b860daf43d572bc501b92561f0776b8b6164d344d340e19415e2d5bd81b82a2b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/type-name",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){std::any::type_name_of_val(N)}pub fn c16h_reuse(){7}",
+    "source_sha256": "3373da1a0761ec9a7021c7ab4ef82ba88841f5af92ca8500b8ac27fdb74df3ab",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "fmt/instance-names",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(std::any::type_name_of_val(N{x:1,y:2}),std::any::type_name_of_val(E::D{x:1}),std::any::type_name_of_val(m::S{v:1}))}pub fn c16h_reuse(){7}",
+    "source_sha256": "65005e608f1bbefffa8646e74ed17a12910d91e24f0dba18a5c0718debcf653a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/fn",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}fn id(t){t}pub fn main(){(id(N),id(E::D))}pub fn c16h_reuse(){7}",
+    "source_sha256": "c3da3086d93a32ab08a39baaf6bad22c559b606f0cf12d00be2d2f73e4287e06",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/closure",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let f=|t|t==N;(f(N),f(E::D))}pub fn c16h_reuse(){7}",
+    "source_sha256": "4d0562b45ae9a56719e7c2ac00964aa8018bf429bc06e9aea1b8f97da1b6ab95",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/capture",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=E::D;let f=move||t;f()}pub fn c16h_reuse(){7}",
+    "source_sha256": "7a3cb89e22ccc533bf807004b3135acbfe5532e53b38063ff6a57c604d58edec",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/capture-borrow",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=N;let f=||t==N;(f(),t)}pub fn c16h_reuse(){7}",
+    "source_sha256": "62cb4f7f3222bb195b1893b3a10a16733f4564e97835b66daff08b43e16398fd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/vec",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){[N,E::D,E,String]}pub fn c16h_reuse(){7}",
+    "source_sha256": "5328c9987a5dc5aa1c5f04e693587330ca0f053cd1f90f8bd8ceb85b153ca3c0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/object",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){#{a:N,b:E::D}}pub fn c16h_reuse(){7}",
+    "source_sha256": "46495d84ed274cea7094f9b1fe1334ed2fa51a64efa88e77c0cf99444fd89f92",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/tuple",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(N,E::D)}pub fn c16h_reuse(){7}",
+    "source_sha256": "95eafaa19c957e38b30934b8abfecd58fbbc487088f7f023c01d31fd4d79b56c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/option-result",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){(Some(E::D),Ok(N),Err(E))}pub fn c16h_reuse(){7}",
+    "source_sha256": "11d77eec71249ee19ceeed4d6488a70363d0fbca65ebfedf6a7c6839e3bf7d81",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/struct-field",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N{x:E::D,y:N}}pub fn c16h_reuse(){7}",
+    "source_sha256": "52be72084e9b92b2af9795aa06daaa18ac132c500440dcde28853ce65112270a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/variant-field",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){E::D{x:N}}pub fn c16h_reuse(){7}",
+    "source_sha256": "4b0994b8a26a98fc5c1f719c7b9811c39cb5323360b087b19a26a0b95ad27671",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/return",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}fn make(){E::D}pub fn main(){make()}pub fn c16h_reuse(){7}",
+    "source_sha256": "5b258630af44290c091ee061a919ae388355d551921db830eeb6d6a7b2e31666",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/return-builtin",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}fn make(){String}pub fn main(){make()==String}pub fn c16h_reuse(){7}",
+    "source_sha256": "3a013e57be86913b332535dea5738a092a8c094df2ab4b1b9c5cb88db1462f4e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/push",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let v=[];v.push(E::D);v.push(N);v}pub fn c16h_reuse(){7}",
+    "source_sha256": "47c8f54903ebf557c5afc5c0c3f7968c97b24d70bf55b82533b62d344998b1a4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/loop",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let out=[];for t in [N,E::D]{out.push(t==N);}out}pub fn c16h_reuse(){7}",
+    "source_sha256": "3102ffd9eb0275c3f6e9d8dedb61d0653429f0c6ce509c45347a248c44037c17",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/if-let",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){if let Some(t)=Some(N){t==N}else{false}}pub fn c16h_reuse(){7}",
+    "source_sha256": "4f376b251d881ff2bb2e0aea7f14c73b83729563b21e93ee83f6ee525a56b249",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/map",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){[1,2].iter().map(|x|N).collect::<Vec>()}pub fn c16h_reuse(){7}",
+    "source_sha256": "1ec490139e6f3e51d2f03449ca6d63537f329668d3733175b2ad94df23c0e616",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/host",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){tap(1,N)}pub fn c16h_reuse(){7}",
+    "source_sha256": "88fa04d3055b4f982162da27fd2e6b9822284ab07cb627f0a815890e111f5857",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/hashmap",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let h=std::collections::HashMap::new();h.insert(N,1);h.len()}pub fn c16h_reuse(){7}",
+    "source_sha256": "0e5018cc75928843a8be10606d139c076d98083a9ec2299b4cbdc15f32a895c9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/clone",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N.clone()}pub fn c16h_reuse(){7}",
+    "source_sha256": "e4f2c2110efc35e24dda8ddfe49f2aa85786660bf32f82339e3cff75fd7b9889",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "pass/host-chain",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}fn outer(t){inner(t)}fn inner(t){tap(1,t)}pub fn main(){outer(E::D)}pub fn c16h_reuse(){7}",
+    "source_sha256": "36a484e474c21916660174d97be623225ef69b043b4766659d9cf2fa4a474d04",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/struct",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let f=N;f(7,9)}pub fn c16h_reuse(){7}",
+    "source_sha256": "ac73c372536fbc081f2c9a89d4761d2e7e77ecd603d5deb1555e249da81f66a7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/variant",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let f=E::D;f(7)}pub fn c16h_reuse(){7}",
+    "source_sha256": "f052b37e7ab08c8541b469a0075cb1a94a9c7ff3f1cb4f255734802dff58cf63",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/enum",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let f=E;f()}pub fn c16h_reuse(){7}",
+    "source_sha256": "8872cbce1e3384ed7e91c1c77871295aee617736f4940da6b19d3f8deeebaca4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/builtin",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let f=String;f()}pub fn c16h_reuse(){7}",
+    "source_sha256": "399a7f44a1bc82b17758328dace8cd1c980bf2afcf67f76a6afb8476ffc5aa20",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/of-val",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=std::any::Type::of_val(1);t(1)}pub fn c16h_reuse(){7}",
+    "source_sha256": "ba6a8dbcd3c2eebcd114c33ba2629291ee8dd6199885764c0942020e54263db0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/args-effects",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let f=N;f(tap(1,1),tap(2,2))}pub fn c16h_reuse(){7}",
+    "source_sha256": "f0133ecb6b2cb4ede5798525a08891d7e9c464b61dcec4aa1f9851267d9099fb",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/callee-effects",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}fn pick(){tap(1,1);N}pub fn main(){pick()(tap(2,2))}pub fn c16h_reuse(){7}",
+    "source_sha256": "38716d27939e6f7eb55bb59cf4272835ee9bc0b6e872cb44d6dc2dd7be619124",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/callback",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}fn apply(f){f(1)}pub fn main(){apply(E::D)}pub fn c16h_reuse(){7}",
+    "source_sha256": "6ba7aa2ff5657751532724419ea56ea593783647fc1fa1877c095165c89a3c5e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/chain",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}fn outer(t){inner(t)}fn inner(t){t(1)}pub fn main(){outer(N)}pub fn c16h_reuse(){7}",
+    "source_sha256": "5ff95b184297b1424178957b0681d8cb932aa22838381e14e183fccc76baef11",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/capture",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=N;let f=move||t(1);f()}pub fn c16h_reuse(){7}",
+    "source_sha256": "63dad146834d33dcafb519893a08fd0bfeffc3ae1154d2fc81f663adbc5dd7e2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/map-callback",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){[1].iter().map(N).collect::<Vec>()}pub fn c16h_reuse(){7}",
+    "source_sha256": "c6f69b229d07642aa349b835f3265d81f6ce668b06022eabe050346ae5720547",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/assoc-path",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}impl N{fn new(){N{x:1,y:2}}}pub fn main(){N::new()}pub fn c16h_reuse(){7}",
+    "source_sha256": "8050c83d428ce285a8e44f1b753c9b795b766e864e76a5c0054dc349fc8a4a3f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "call/method-on-type-value",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}impl N{fn new(){N{x:1,y:2}}}pub fn main(){let t=N;t.new()}pub fn c16h_reuse(){7}",
+    "source_sha256": "34972032b8c2e9d68b9523d81912ab933ac7d2fafce8112503c3b459b32ef5d8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/field",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=N;t.x}pub fn c16h_reuse(){7}",
+    "source_sha256": "dfdeaab2e39453bf9b6149483806278fd07cbf68f1894b44f672d8473ac0f830",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/index",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){let t=N;t[0]}pub fn c16h_reuse(){7}",
+    "source_sha256": "090709748ad6c3949a5ebdc4f3c13bd44864331103b15ff7726845b19d4ba56f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/add",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N+1}pub fn c16h_reuse(){7}",
+    "source_sha256": "16524a646887c12973b86e01cd3b55700f90f37e2ec2d39f5b49e7f2e9417dba",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/neg",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){-N}pub fn c16h_reuse(){7}",
+    "source_sha256": "c594853986165adb2539e0f777c3aed2e7f7f961a45f4f9ea6f074840d8dfac0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/if",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){if N{1}else{2}}pub fn c16h_reuse(){7}",
+    "source_sha256": "223e49d8f9bc363dce286b6d60377cf0d12d0fcaac1dd0014cf527b0e69a0557",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/and",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N&&true}pub fn c16h_reuse(){7}",
+    "source_sha256": "aec5a39860072d6ac691e3c28164948e78a6b9a673b9fa937daf6ea4dfd4c50c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/iter",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){for x in N{}}pub fn c16h_reuse(){7}",
+    "source_sha256": "95e6a816abbfddb02e6ad39060728736a3740683f6d9a4b61838b87ca1efcbb2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/len",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N.len()}pub fn c16h_reuse(){7}",
+    "source_sha256": "e192845a30e0b26a0cd815d98945ea139a70de03e20950c5db7bb83f86a6c3ff",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/method",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){E::D.foo()}pub fn c16h_reuse(){7}",
+    "source_sha256": "97ed8ecad2d10124211481807ed052922d8f996e15ecc8997185df72e6607a0c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/try",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N?}pub fn c16h_reuse(){7}",
+    "source_sha256": "b4ff5abb0f6e65cf45998321d919441349ac8aa8793be20ffc3057f32fa545c7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/cast",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){N as i64}pub fn c16h_reuse(){7}",
+    "source_sha256": "96461a9edc51c22653b00f0e808431f7769450e6ec93bea9757dbfb852caf9a9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/effect-order",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){[tap(1,1),N+tap(2,2),tap(3,3)]}pub fn c16h_reuse(){7}",
+    "source_sha256": "983f9d30fa688d9c34aef28897dac8d4043937557a51d215836ee875b1b50db1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/chain-field",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}fn outer(t){inner(t)}fn inner(t){t.x}pub fn main(){outer(E::D)}pub fn c16h_reuse(){7}",
+    "source_sha256": "e7e6ed872f743731de85991a2cc302f95690f85146dae1635c0dafa57748e5e4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  },
+  {
+    "label": "error/object-index",
+    "source": "use c16h::tap;struct U;struct T(a);struct N{x,y}enum E{A,B(x),D{x}}mod m{pub struct S{v}pub enum F{G{v}}}pub fn main(){#{a:1}[N]}pub fn c16h_reuse(){7}",
+    "source_sha256": "9a1702bc5e525f561389f8cb4c5feab6cc269ce54be23e1051001b4bb368a4fa",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16h",
+    "policy": "observe"
+  }
+]
