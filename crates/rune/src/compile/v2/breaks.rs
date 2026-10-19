@@ -31,9 +31,9 @@ impl<'hir> Breaks<'hir> {
 		Self { loops: Vec::new() }
 	}
 
-	/// Get the last loop context.
-	pub(crate) fn last(&self) -> Option<&Break<'hir>> {
-		self.loops.last()
+	/// Get the nearest enclosing loop, skipping labeled blocks.
+	pub(crate) fn last_loop(&self) -> Option<&Break<'hir>> {
+		self.loops.iter().rev().find(|l| l.continue_label.is_some())
 	}
 
 	/// Push loop information.

@@ -2709,7 +2709,7 @@ fn break_target<'hir>(
 			Ok((l.break_label.try_clone()?, l.output))
 		}
 		None => {
-			let Some(l) = cx.breaks.last() else {
+			let Some(l) = cx.breaks.last_loop() else {
 				return Err(compile::Error::new(span, ErrorKind::BreakUnsupported));
 			};
 
@@ -3792,7 +3792,7 @@ where
 
 		match stmt {
 			hir::Stmt::Local(local_hir) => {
-				// The initialiser is assembled into a deferred address which
+				// The initializer is assembled into a deferred address which
 				// the pattern is then bound against, so that it goes over the
 				// work stack rather than through a callback.
 				let value = cx.scopes.defer(&local_hir.pat);
@@ -5574,7 +5574,7 @@ fn expr_continue<'a, 'hir>(
 	let last_loop = if let Some(label) = hir.label {
 		cx.breaks.find_label(span, label)?
 	} else {
-		let Some(current_loop) = cx.breaks.last() else {
+		let Some(current_loop) = cx.breaks.last_loop() else {
 			return Err(compile::Error::new(span, ErrorKind::ContinueUnsupported));
 		};
 

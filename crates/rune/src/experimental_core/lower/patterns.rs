@@ -777,7 +777,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		self.pattern_bindings(&let_.pat, &linear)?;
 		self.loops.try_push(Loop {
 			label: hir.label.map(String::try_from).transpose()?,
-			start,
+			start: Some(start),
 			cleanup: self.next,
 			out,
 			breaks: Vec::new(),

@@ -1,0 +1,153 @@
+[
+  {
+    "index": 41,
+    "label": "loops/break-outer-loop",
+    "policy": "Intentional-fix-both",
+    "old": {
+      "label": "loops/break-outer-loop",
+      "source": "pub fn main(){let n=0;loop{'b:{n+=1;break;}n+=100;break;}n}",
+      "policy": "Exact",
+      "outcome": {
+        "status": "value",
+        "type": "I64",
+        "value": "101"
+      },
+      "projected": {
+        "status": "value",
+        "type": "I64",
+        "value": "101"
+      },
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": ""
+    },
+    "new": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "index": 42,
+    "label": "loops/continue-outer-loop",
+    "policy": "Intentional-fix-both",
+    "old": {
+      "label": "loops/continue-outer-loop",
+      "source": "pub fn main(){let n=0;let k=0;while n<3{'b:{n+=1;continue;}k+=100;}n+k}",
+      "policy": "Exact",
+      "outcome": {
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 49:57, kind: ContinueUnsupportedBlock }) })]",
+        "error": "BuildError { kind: Default }",
+        "status": "compile-error"
+      },
+      "projected": {
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 49:57, kind: ContinueUnsupportedBlock }) })]",
+        "error": "BuildError { kind: Default }",
+        "status": "compile-error"
+      },
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": ""
+    },
+    "new": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "index": 57,
+    "label": "ownership/heap-continue",
+    "policy": "Intentional-fix-both",
+    "old": {
+      "label": "ownership/heap-continue",
+      "source": "pub fn main(){let n=0;let a=[7];while n<3{'b:{let t=[a,[9]];n+=1;continue;}}a[0]}",
+      "policy": "Exact",
+      "outcome": {
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: ContinueUnsupportedBlock }) })]",
+        "error": "BuildError { kind: Default }",
+        "status": "compile-error"
+      },
+      "projected": {
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: ContinueUnsupportedBlock }) })]",
+        "error": "BuildError { kind: Default }",
+        "status": "compile-error"
+      },
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": ""
+    },
+    "new": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "index": 58,
+    "label": "ownership/heap-loop-break",
+    "policy": "Intentional-fix-both",
+    "old": {
+      "label": "ownership/heap-loop-break",
+      "source": "pub fn main(){let a=[7];loop{'b:{let t=[a,[9]];break;}}a[0]}",
+      "policy": "Exact",
+      "outcome": {
+        "chain": [],
+        "class": "FuelExhausted",
+        "display": "Exhausted the budget it was given",
+        "kind": "Halted { halt: Limited }",
+        "raw": "VmError { error: VmErrorAt { index: 0, kind: Halted { halt: Limited } }, chain: [], stacktrace: [] }",
+        "sites": [],
+        "status": "error"
+      },
+      "projected": {
+        "chain_displays": [],
+        "class": "FuelExhausted",
+        "display": "Exhausted the budget it was given",
+        "sites": [],
+        "status": "error"
+      },
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": ""
+    },
+    "new": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "index": 69,
+    "label": "effects/after-loop-exit-bounded",
+    "policy": "Intentional-fix-both",
+    "old": {
+      "label": "effects/after-loop-exit-bounded",
+      "source": "fn add(a,b){a*10+b}pub fn main(){let n=0;while n<2{'b:{println!(\"block\");n+=1;break;}println!(\"unreachable\");}println!(\"after\");n}",
+      "policy": "Exact",
+      "outcome": {
+        "status": "value",
+        "type": "I64",
+        "value": "2"
+      },
+      "projected": {
+        "status": "value",
+        "type": "I64",
+        "value": "2"
+      },
+      "stdout_hex": "0a72756e6e696e67203120746573740a626c6f636b0a756e726561636861626c650a626c6f636b0a756e726561636861626c650a61667465720a",
+      "stderr_hex": ""
+    },
+    "new": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a626c6f636b0a61667465720a",
+    "stderr_hex": ""
+  }
+]

@@ -110,7 +110,7 @@ enum Mode {
 
 struct Loop {
 	label: Option<String>,
-	start: u32,
+	start: Option<u32>,
 	/// Slots at or above this mark belong to the body and are released on break/continue.
 	cleanup: u32,
 	/// Where a `break value` is delivered, when the loop's value is used.
@@ -317,7 +317,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	fn loop_index(&self, label: Option<&str>, span: Span) -> Result<usize> {
 		self.loops
 			.iter()
-			.rposition(|context| label.is_none() || context.label.as_deref() == label)
+			.rposition(|context| match label {
+				Some(label) => context.label.as_deref() == Some(label),
+				None => context.start.is_some(),
+			})
 			.ok_or_else(|| self.refused(span, Refusal::LoopControl))
 	}
 
@@ -333,10 +336,41 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	}
 
 	fn block(&mut self, block: &hir::Block<'hir>, mode: Mode) -> Result<()> {
-		if block.label.is_some() {
-			return Err(self.refused(block.span, Refusal::LabelledBlock));
-		}
+		let Some(label) = block.label else {
+			return self.block_body(block, mode);
+		};
 
+		let mark = self.next;
+		let out = match mode {
+			Mode::Into(out) => Some(out),
+			Mode::Discard => None,
+			Mode::Return => Some(self.slot()?),
+		};
+		self.loops.try_push(Loop {
+			label: Some(String::try_from(label)?),
+			start: None,
+			cleanup: self.next,
+			out,
+			breaks: Vec::new(),
+		})?;
+		self.block_body(block, out.map_or(Mode::Discard, Mode::Into))?;
+		let end = self.pc();
+		let context = self
+			.loops
+			.pop()
+			.ok_or_else(|| self.refused(block.span, Refusal::LoopControl))?;
+		for pc in context.breaks {
+			self.function.patch(pc, Op::Jump { target: end })?;
+		}
+		if let Mode::Return = mode {
+			let value = out.ok_or_else(|| self.refused(block.span, Refusal::LoopControl))?;
+			self.emit(Op::Return { value }, block.span)?;
+			self.forget_to(mark);
+		}
+		Ok(())
+	}
+
+	fn block_body(&mut self, block: &hir::Block<'hir>, mode: Mode) -> Result<()> {
 		let vars = self.variables.len();
 		let mark = self.next;
 
@@ -997,7 +1031,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 		self.loops.try_push(Loop {
 			label: loop_.label.map(String::try_from).transpose()?,
-			start,
+			start: Some(start),
 			cleanup: self.next,
 			out,
 			breaks: Vec::new(),
@@ -1072,7 +1106,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 		self.loops.try_push(Loop {
 			label: for_.label.map(String::try_from).transpose()?,
-			start,
+			start: Some(start),
 			cleanup: if destructure { binding + 1 } else { self.next },
 			out,
 			breaks: Vec::new(),
@@ -1397,7 +1431,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
 		let index = self.loop_index(continue_.label, span)?;
-		let target = self.loops[index].start;
+		let target = self.loops[index]
+			.start
+			.ok_or_else(|| self.refused(span, Refusal::LoopControl))?;
 		let cleanup = self.loops[index].cleanup;
 		self.release_from(cleanup, span)?;
 		self.emit(Op::Jump { target }, span)?;

@@ -459,7 +459,7 @@ impl<'hir> Lower<'_, 'hir> {
 		}
 		self.loops.try_push(Loop {
 			label: for_.label.map(String::try_from).transpose()?,
-			start,
+			start: Some(start),
 			cleanup: if destructure { binding + 1 } else { self.next },
 			out,
 			breaks: Vec::new(),
