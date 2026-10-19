@@ -148,6 +148,13 @@ fn run_contract(engine: &str) {
 	assert_eq!(CASES.len(), COUNT);
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
+	let c16e: Json = if engine == "fresh" {
+		let rows: Json = serde_json::from_str(include_str!("c16e_admissions.json")).unwrap();
+		assert_eq!(rows.as_object().unwrap().len(), 9);
+		rows
+	} else {
+		json!({})
+	};
 	let mut labels = std::collections::BTreeSet::new();
 	let mut policies = std::collections::BTreeMap::new();
 	for (i, ((label, source, mode, policy), line)) in CASES.iter().zip(lines).enumerate() {
@@ -333,9 +340,18 @@ fn run_contract(engine: &str) {
 			}
 			_ => panic!("unreviewed C8 policy"),
 		}
-		// C12, C16a and C16b admissions retain the historical freeze above and now
+		let c16e_admission = c16e.get(*label);
+		if let Some(rule) = c16e_admission {
+			use sha2::{Digest, Sha256};
+			assert_eq!(rule["index"], i);
+			assert_eq!(rule["previous_policy"], *policy);
+			assert_eq!(rule["policy"], "Exact");
+			assert_eq!(rule["source_sha256"], hex(&Sha256::digest(source.as_bytes())));
+			assert_eq!(rule["stock_row_sha256"], hex(&Sha256::digest(line.as_bytes())));
+		}
+		// C12, C16a, C16b and C16e admissions retain the historical freeze above and now
 		// owe their exact independently frozen stock values.
-		let fresh_expected = if *policy == "Refused-Range"
+		let fresh_expected = if c16e_admission.is_some() || *policy == "Refused-Range"
 			|| matches!(
 				*label,
 				"refusal/vec-pattern" | "refusal/for-pair" | "refusal/for-nested"

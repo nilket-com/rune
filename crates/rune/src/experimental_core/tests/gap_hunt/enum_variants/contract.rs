@@ -67,6 +67,36 @@ fn d1_enum_expectation(case: &Json, expected: &Json, engine: &str) -> Json {
 	expected
 }
 
+fn c16e_admission(case: &Json, frozen: &Json, actual: &Json, expected: &Json) -> bool {
+	let supplement: Json = serde_json::from_str(include_str!("c16e_admissions.json")).unwrap();
+	let rows = supplement["rows"].as_array().unwrap();
+	assert_eq!(rows.len(), 3);
+	let Some(rule) = rows.iter().find(|row| row["id"] == case["id"]) else {
+		return false;
+	};
+	for key in ["label", "source_sha256"] {
+		assert_eq!(rule[key], case[key]);
+		assert_eq!(rule[key], frozen[key]);
+	}
+	assert_eq!(rule["previous_disposition"], frozen["disposition"]);
+	assert_eq!(actual["fresh_audit"]["invoked"], true);
+	assert_eq!(actual["fresh_audit"]["reuse_used_fallback"], false);
+	let mut observed = actual["observation"].clone();
+	if rule["disposition"] == "Policy-presentation" {
+		assert_eq!(case["id"], "139");
+		assert_eq!(expected["outcome"]["kind"], rule["stock_kind"]);
+		assert_eq!(observed["outcome"]["kind"], rule["fresh_kind"]);
+		// Only this source-pinned typed panic representation differs.
+		// The full display, sites, chain, events, and reuse still agree.
+		observed["outcome"]["kind"] = rule["stock_kind"].clone();
+	} else {
+		assert_eq!(rule["disposition"], "Exact");
+		assert!(matches!(case["id"].as_str().unwrap(), "138" | "140"));
+	}
+	assert_eq!(project_observation(&observed, expected, ""), *expected);
+	true
+}
+
 fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	for key in ["label", "source_sha256", "fixture", "fuel"] {
 		assert_eq!(actual[key], case[key]);
@@ -96,6 +126,9 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 		super::nominal_clone::intentional_json("enum_variants", case, &stock[id]["observation"]);
 	let expected = intentional.as_ref().unwrap_or(&stock[id]["observation"]);
 	let observed = &actual["observation"];
+	if c16e_admission(case, frozen, actual, expected) {
+		return;
+	}
 	if frozen["disposition"] == "Refused-frontend" {
 		assert_eq!(audit["invoked"], false);
 		assert_eq!(actual["diagnostics"], stock[id]["diagnostics"]);

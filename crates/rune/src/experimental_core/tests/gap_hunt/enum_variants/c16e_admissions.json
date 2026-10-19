@@ -1,0 +1,39 @@
+{
+	"schema": 1,
+	"scope": "C16e remaining local and parameter pattern admissions in the frozen enum contract",
+	"rows": [
+		{
+			"id": "138",
+			"label": "deferred/let-success",
+			"source_sha256": "46ed749887c17b26ceffabe61f2b126c67b5674e875c1618a5852665328a2ec9",
+			"previous_disposition": "Refused-surface",
+			"disposition": "Exact",
+			"authority": "Claude chatd seq21237 and seq21248"
+		},
+		{
+			"id": "139",
+			"label": "deferred/let-miss",
+			"source_sha256": "2552bba7b658459e6e1271fa4a7ceb05175a1da1495b7b8573aa0372856a4662",
+			"previous_disposition": "Refused-surface",
+			"disposition": "Policy-presentation",
+			"authority": "Claude chatd seq21237 and seq21248",
+			"stock_kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+			"fresh_kind": "Panic { reason: Panic { inner: \"pattern did not match\" } }"
+		},
+		{
+			"id": "140",
+			"label": "deferred/param",
+			"source_sha256": "33917ea3ff66fc46e60ef4059a059562266caca3258d99bc304ac5ed91bafd05",
+			"previous_disposition": "Refused-surface",
+			"disposition": "Exact",
+			"authority": "Claude chatd seq21237 and seq21248"
+		}
+	],
+	"backlog": [
+		{
+			"title": "fresh unmatched-pattern panics use a string reason instead of PanicReason::UnmatchedPattern",
+			"scope": "Typed unmatched-pattern panic reason; preserve display, logical sites, and layout",
+			"authority": "Claude chatd seq21237 and seq21248"
+		}
+	]
+}

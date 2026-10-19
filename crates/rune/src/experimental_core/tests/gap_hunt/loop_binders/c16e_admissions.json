@@ -1,0 +1,42 @@
+[
+	{
+		"index": 111,
+		"label": "excluded/tuple-rest",
+		"source_sha256": "ec588bfdf00e41c554eac79d7523fabb3c6f8359acebecf3df9b084f42932c5e",
+		"disposition": "Exact",
+		"previous_policy": "Retain-refusal",
+		"authority": "Claude chatd seq21259"
+	},
+	{
+		"index": 112,
+		"label": "excluded/literal",
+		"source_sha256": "14910698214c3e6bc2131dfa106ac8de5b76504fb8ab4a6a527fe006564b8f0b",
+		"disposition": "Exact",
+		"previous_policy": "Retain-refusal",
+		"authority": "Claude chatd seq21259"
+	},
+	{
+		"index": 113,
+		"label": "excluded/variant",
+		"source_sha256": "8300d525890cd34623dd1fcf4467004ad48713733582df90ef77e885cda1a530",
+		"disposition": "Exact",
+		"previous_policy": "Retain-refusal",
+		"authority": "Claude chatd seq21259"
+	},
+	{
+		"index": 114,
+		"label": "excluded/object",
+		"source_sha256": "452e6ac357d55a398a57017179dda70025b9be92c6f0c52c02b5a0f999028cde",
+		"disposition": "Exact",
+		"previous_policy": "Retain-refusal",
+		"authority": "Claude chatd seq21259"
+	},
+	{
+		"index": 116,
+		"label": "excluded/parameter",
+		"source_sha256": "40d00e0c889beb8a7b8ea75a041d7ad358037d65e2e6cb5cdb1a2d8cd679e6dc",
+		"disposition": "Exact",
+		"previous_policy": "Retain-refusal",
+		"authority": "Claude chatd seq21259"
+	}
+]

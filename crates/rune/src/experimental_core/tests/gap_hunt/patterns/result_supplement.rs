@@ -387,6 +387,7 @@ fn fresh_contract() {
 		.collect();
 	assert_eq!(frozen.len(), COUNT);
 	let (mut exact, mut refused, mut full_budget) = (0, 0, 0);
+	let mut presentation = 0;
 	for (n, ((label, source, mode), row)) in CASES.iter().zip(frozen).enumerate() {
 		let row: Vec<_> = row.split('\t').collect();
 		assert_eq!(row.len(), 9);
@@ -409,7 +410,20 @@ fn fresh_contract() {
 			serde_json::from_str(include_str!("c15_admissions.json")).unwrap();
 		let c15b: serde_json::Value =
 			serde_json::from_str(include_str!("c15b_admissions.json")).unwrap();
-		let admitted = c15b.get(*label).or_else(|| admissions.get(*label));
+		let c16e: serde_json::Value =
+			serde_json::from_str(include_str!("c16e_admissions.json")).unwrap();
+		let c16e_rule = c16e.get(*label);
+		let admitted = c16e_rule
+			.or_else(|| c15b.get(*label))
+			.or_else(|| admissions.get(*label));
+		if let Some(rule) = c16e_rule {
+			use sha2::{Digest, Sha256};
+			assert_eq!(
+				rule["stock_row_sha256"],
+				hex(&Sha256::digest(row.join("\t").as_bytes()))
+			);
+			assert_eq!(rule["previous_refusal"], fresh_refusal(label).unwrap());
+		}
 		if let Some(rule) = c15b.get(*label) {
 			use sha2::{Digest, Sha256};
 			assert_eq!(
@@ -449,7 +463,23 @@ fn fresh_contract() {
 		}
 		let expected = unhex(row[3]);
 		let expected: Vec<_> = expected.split('\t').collect();
-		assert_eq!(actual[..2], expected[..2], "{label}: class");
+		let expected_class =
+			if let Some(rule) = c16e_rule.filter(|r| r["policy"] == "Policy-presentation") {
+				assert_eq!(expected[0], "error");
+				assert_eq!(expected[1], rule["stock_class"].as_str().unwrap());
+				assert_eq!(actual[1], rule["fresh_class"].as_str().unwrap());
+				rule["fresh_class"].as_str().unwrap()
+			} else {
+				if let Some(rule) = c16e_rule {
+					assert_eq!(rule["policy"], "Exact");
+				}
+				expected[1]
+			};
+		assert_eq!(
+			(actual[0], actual[1]),
+			(expected[0], expected_class),
+			"{label}: class"
+		);
 		assert_eq!(actual[3..], expected[3..], "{label}: message/value");
 		assert_eq!(hex(&run.stdout), row[4], "{label}: stdout");
 		assert_eq!(hex(&run.stderr), row[5], "{label}: stderr");
@@ -460,10 +490,14 @@ fn fresh_contract() {
 		};
 		fs::write(out.join(format!("{id}.fresh.site")), &site).unwrap();
 		assert_eq!(hex(&site), row[6], "{label}: site");
-		exact += 1;
+		if c16e_rule.is_some_and(|r| r["policy"] == "Policy-presentation") {
+			presentation += 1;
+		} else {
+			exact += 1;
+		}
 	}
-	assert_eq!((exact, refused, full_budget), (181, 8, 75));
-	fs::write(out.join("summary.txt"),"181 exact;8 explicit refusals;75 full-fresh-budget source checks (no numeric stock fuel parity)\n").unwrap();
+	assert_eq!((exact, presentation, refused, full_budget), (183, 2, 4, 75));
+	fs::write(out.join("summary.txt"),"183 exact;2 source-pinned policy-presentation;4 explicit refusals;75 full-fresh-budget source checks (no numeric stock fuel parity)\n").unwrap();
 	contract_completed("fresh", COUNT);
 }
 #[test]

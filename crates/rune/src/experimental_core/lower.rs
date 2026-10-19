@@ -76,10 +76,26 @@ pub(crate) fn function(
 
 		// Arguments arrive retained by the caller and may be anything.
 		cx.raise(slot);
-		cx.bind(&pat.pat, slot)?;
+		if matches!(
+			pat.pat.kind,
+			hir::PatKind::Ignore | hir::PatKind::Path(hir::PatPathKind::Ident { .. })
+		) {
+			cx.bind(&pat.pat, slot)?;
+		}
 	}
 
 	cx.function.parameters = cx.next;
+	// Reserve every incoming argument before allocating extraction slots.
+	// Destructuring consumes only its retained argument root.
+	for (index, arg) in item.args.iter().enumerate() {
+		let hir::FnArg::Pat(pat) = arg;
+		if !matches!(
+			pat.pat.kind,
+			hir::PatKind::Ignore | hir::PatKind::Path(hir::PatPathKind::Ident { .. })
+		) {
+			cx.pattern_local(pat, (captures.len() + index) as u32)?;
+		}
+	}
 	cx.block(&item.body, Mode::Return)?;
 	cx.function.slots = cx.high.max(1);
 	for (descriptor, words) in core::mem::take(&mut cx.format_specs) {

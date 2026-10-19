@@ -508,8 +508,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		Ok(())
 	}
 
-	/// Local tuple and Vec bindings use the general pattern walker. The
-	/// ordinary bind entry remains unchanged for parameters and for-loop bindings.
+	/// Local and parameter bindings use the general pattern walker.
 	#[inline(never)]
 	pub(super) fn pattern_local(
 		&mut self,
@@ -522,7 +521,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		) {
 			return self.bind(&binding.pat, root);
 		}
-		self.local_tuple_shape(&binding.pat)?;
+		self.local_pattern_shape(&binding.pat)?;
 		let span = binding.pat.span;
 		let linear = self.pattern_slots(binding.names.len())?;
 		let temps = self.next;
@@ -552,10 +551,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		self.pattern_bindings(binding, &linear)
 	}
 
-	/// Validate local tuple and Vec shapes before the general match walker.
-	/// Only Vec patterns can have a trailing nonbinding rest pattern here.
+	/// Retain the local duplicate-binding refusal before walking any pattern.
 	#[inline(never)]
-	fn local_tuple_shape(&self, root: &hir::Pat<'hir>) -> Result<()> {
+	fn local_pattern_shape(&self, root: &hir::Pat<'hir>) -> Result<()> {
 		let mut work = Vec::new();
 		let mut names = Vec::new();
 		work.try_push((root, 0usize))?;
@@ -564,45 +562,32 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				return Err(self.refused(pat.span, Refusal::DepthLimit));
 			}
 			match pat.kind {
-				hir::PatKind::Ignore => (),
-				hir::PatKind::Path(hir::PatPathKind::Ident {
-					name: hir::Name::Str(name),
-					..
-				}) => {
+				hir::PatKind::Path(hir::PatPathKind::Ident { name, .. }) => {
 					if names.contains(name) {
 						return Err(self.refused(pat.span, Refusal::Pattern));
 					}
 					names.try_push(*name)?;
 				}
 				hir::PatKind::Sequence(sequence) => {
-					let supported = match sequence.kind {
-						hir::PatSequenceKind::Sequence { hash, is_open, .. } => {
-							hash == crate::runtime::Vec::HASH
-								|| (!is_open && hash == crate::runtime::OwnedTuple::HASH)
-						}
-						hir::PatSequenceKind::Type { hash, variant_hash }
-							if variant_hash == Hash::EMPTY =>
-						{
-							self.constants
-								.fresh_struct_shape(hash)
-								.is_some_and(|shape| {
-									matches!(
-										shape.fields,
-										crate::compile::meta::Fields::Empty
-											| crate::compile::meta::Fields::Unnamed(_)
-									)
-								})
-						}
-						_ => false,
-					};
-					if !supported {
-						return Err(self.refused(pat.span, Refusal::Pattern));
-					}
 					for child in sequence.items.iter().rev() {
 						work.try_push((child, depth + 1))?;
 					}
 				}
-				_ => return Err(self.refused(pat.span, Refusal::Pattern)),
+				hir::PatKind::Object(object) => {
+					for field in object.bindings.iter().rev() {
+						match field {
+							hir::Binding::Binding(_, _, pat) => work.try_push((pat, depth + 1))?,
+							hir::Binding::Ident(span, name, _) => {
+								let name = hir::Name::Str(name);
+								if names.contains(&name) {
+									return Err(self.refused(*span, Refusal::Pattern));
+								}
+								names.try_push(name)?;
+							}
+						}
+					}
+				}
+				_ => (),
 			}
 		}
 		Ok(())

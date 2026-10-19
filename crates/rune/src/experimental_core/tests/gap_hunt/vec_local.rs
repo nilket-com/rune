@@ -228,6 +228,9 @@ fn run_contract(engine: &str) {
 	let frozen: Json = serde_json::from_str(include_str!("vec_local/stock.json")).unwrap();
 	let dispositions: Json =
 		serde_json::from_str(include_str!("vec_local/dispositions.json")).unwrap();
+	let c16e_admissions: Vec<Json> =
+		serde_json::from_str(include_str!("vec_local/c16e_admissions.json")).unwrap();
+	assert_eq!(c16e_admissions.len(), 5);
 	let cases = cases.as_array().unwrap();
 	let frozen = frozen.as_array().unwrap();
 	assert_eq!(cases.len(), 92);
@@ -399,6 +402,17 @@ fn run_contract(engine: &str) {
 					"{label}"
 				);
 				assert_eq!(audit["invoked"], false, "{label}");
+			} else if let Some(rule) = c16e_admissions.iter().find(|row| row["label"] == label) {
+				use sha2::{Digest, Sha256};
+				assert_eq!(rule["index"], i);
+				assert_eq!(rule["previous_policy"], case["policy"]);
+				assert_eq!(rule["disposition"], "Exact");
+				assert_eq!(
+					rule["source_sha256"],
+					hex(&Sha256::digest(case["source"].as_str().unwrap().as_bytes()))
+				);
+				assert_eq!(audit["invoked"], true, "{label}");
+				assert_eq!(project(outcome), expected["projected"], "{label}");
 			} else if case["policy"] == "Retain-refusal" && label != "excluded/for" {
 				assert_eq!(outcome["status"], "refused", "{label}");
 				assert_eq!(outcome["refusal"], "Pattern", "{label}");

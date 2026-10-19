@@ -1,0 +1,89 @@
+{
+	"let/some": {
+		"source_sha256": "d02409f150baf422f50113090e0cb7a03973fe58c5f04d8368694a46682e0b3e",
+		"stock_row_sha256": "b7af61533cdd9bb66c26b330cf633f57b95281c12d6695a9047795d37ca15bc1",
+		"policy": "Exact",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309"
+	},
+	"let/none": {
+		"source_sha256": "832777215a03294808af80008ad4b647f8d2ba77fde756cc007a80cf31b99921",
+		"stock_row_sha256": "0624f5b535100006b8a51debf0029e82ba77c996450927f380ec4c60fd458c90",
+		"policy": "Policy-presentation",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309",
+		"stock_class": "stock:Panic { reason: Panic { inner: UnmatchedPattern } }",
+		"fresh_class": "Panic"
+	},
+	"let/tuple": {
+		"source_sha256": "2122950f247914b8fc0a4bb4abdb515ef2a8feaa4ba6ca5d6aef3176f5e4b560",
+		"stock_row_sha256": "13fa77b44ca383ee65817b7dbe3066b80ccec0c96fae31e79342bf3a6f2669ee",
+		"policy": "Exact",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309"
+	},
+	"let/tuple-miss": {
+		"source_sha256": "b924dd652765f5ed0d3916d37caa098d6b84ea0810291375a21d9ca1ada2ab3e",
+		"stock_row_sha256": "9d40ae15e736901609e3aab60a15bfb1516c368d80b43098b4b236773fc4410f",
+		"policy": "Policy-presentation",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309",
+		"stock_class": "stock:Panic { reason: Panic { inner: UnmatchedPattern } }",
+		"fresh_class": "Panic"
+	},
+	"let/nested": {
+		"source_sha256": "775a5588a9bce35a4fc3dd73fcc1322dd83d6fd0b4fff5126c45afa1cb102d23",
+		"stock_row_sha256": "4d2f29ae345f447a33749c9d9c4325515ba6f499eb2f7a8d62692833a6cea1b2",
+		"policy": "Exact",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309"
+	},
+	"supplement/struct-let/match": {
+		"source_sha256": "5d3e5485813f4b2db9aa2edd06e493f348f8d2867eb6d9c5f53f2e9210fd3ddf",
+		"stock_row_sha256": "43d598656044127bfa7eb3fee8e033727f5a1e857f7737e3f84e5a6910ca4b1d",
+		"policy": "Exact",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309"
+	},
+	"supplement/struct-let/mismatch": {
+		"source_sha256": "b45cc09d1ee5f0247755cf9a8994be0ed9f2dc9e79ec969cf69487383b7453c0",
+		"stock_row_sha256": "7be3ca706654cdd1d2a810cd34dc0e4e5e9017fba71c129bf68d880120743191",
+		"policy": "Policy-presentation",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309",
+		"stock_class": "stock:Panic { reason: Panic { inner: UnmatchedPattern } }",
+		"fresh_class": "Panic"
+	},
+	"c4/let/deferred/Ok/match": {
+		"source_sha256": "33a65dbffe4416d9470f560b285c9ed098568f234783147a9032e205c0ceed15",
+		"stock_row_sha256": "2dc633d6ea12cb4f748385d27609e7cd58da0fedbc5dca1b1616946736410a25",
+		"policy": "Exact",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309"
+	},
+	"c4/let/deferred/Ok/mismatch": {
+		"source_sha256": "0b62e107018c95f7d3bd5a8769815e3ff6a8a709139835f3ea779812e6e9c48e",
+		"stock_row_sha256": "7e1080cdcdb0e9050578affded310e0c7f1b350fffaa2aace462e40a6725b54f",
+		"policy": "Policy-presentation",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309",
+		"stock_class": "stock:Panic { reason: Panic { inner: UnmatchedPattern } }",
+		"fresh_class": "Panic"
+	},
+	"c4/let/deferred/Err/match": {
+		"source_sha256": "e6734765cd7fc886b8a46bf06b65da8ce05e9cebafc7f59d6535c2876c47a7f7",
+		"stock_row_sha256": "0289900d6bba9c46e3097c258a8c845a555df733fe69dbbc08a6f22ba5dc5340",
+		"policy": "Exact",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309"
+	},
+	"c4/let/deferred/Err/mismatch": {
+		"source_sha256": "e837fc7a9d7e9c18e02c48c638e6fbcd60bbe1950cffd223aba190f0bb1c8dc0",
+		"stock_row_sha256": "1e307e20a9610362fd17009b318ebabe7f7045ebb78c1309a1090d0733e9f3ba",
+		"policy": "Policy-presentation",
+		"previous_refusal": "Some(Pattern)",
+		"authority": "Claude chatd seq21309",
+		"stock_class": "stock:Panic { reason: Panic { inner: UnmatchedPattern } }",
+		"fresh_class": "Panic"
+	}
+}

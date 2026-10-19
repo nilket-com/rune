@@ -679,6 +679,7 @@ fn fresh_contract() {
 	let mut equal = 0;
 	let mut refused = 0;
 	let mut full_budget = 0;
+	let mut presentation = 0;
 	for (n, (case, line)) in generated.iter().zip(&frozen).enumerate() {
 		let row: Vec<_> = line.split('\t').collect();
 		assert_eq!(row[0], case.label);
@@ -698,7 +699,16 @@ fn fresh_contract() {
 		assert_eq!(actual.len(), 5);
 		let admissions: serde_json::Value =
 			serde_json::from_str(include_str!("patterns/c15b_admissions.json")).unwrap();
-		let admitted = admissions.get(case.label.as_str());
+		let c16e: serde_json::Value =
+			serde_json::from_str(include_str!("patterns/c16e_admissions.json")).unwrap();
+		let c16e_rule = c16e.get(case.label.as_str());
+		let admitted = c16e_rule.or_else(|| admissions.get(case.label.as_str()));
+		if let Some(rule) = c16e_rule {
+			assert_eq!(
+				rule["previous_refusal"],
+				expected_fresh_refusal(&case.label).unwrap()
+			);
+		}
 		if let Some(rule) = admitted {
 			use sha2::{Digest, Sha256};
 			assert_eq!(
@@ -749,7 +759,15 @@ fn fresh_contract() {
 				"stock:Panic { reason: Panic { inner: UnmatchedPattern } }"
 			);
 			"Panic"
+		} else if let Some(rule) = c16e_rule.filter(|r| r["policy"] == "Policy-presentation") {
+			assert_eq!(expected[0], "error");
+			assert_eq!(expected[1], rule["stock_class"].as_str().unwrap());
+			assert_eq!(actual[1], rule["fresh_class"].as_str().unwrap());
+			rule["fresh_class"].as_str().unwrap()
 		} else {
+			if let Some(rule) = c16e_rule {
+				assert_eq!(rule["policy"], "Exact");
+			}
 			expected[1]
 		};
 		assert_eq!(
@@ -773,10 +791,17 @@ fn fresh_contract() {
 		};
 		fs::write(out.join(format!("{id}.fresh.site")), &site).unwrap();
 		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
-		equal += 1;
+		if c16e_rule.is_some_and(|r| r["policy"] == "Policy-presentation") {
+			presentation += 1;
+		} else {
+			equal += 1;
+		}
 	}
-	assert_eq!((equal, refused, full_budget), (260, 25, 63));
-	fs::write(out.join("summary.txt"),format!("{equal} exact stock parity;{refused} declared refusals;{full_budget} full-fresh-budget source checks (no numeric budget parity)\n")).unwrap();
+	assert_eq!(
+		(equal, presentation, refused, full_budget),
+		(264, 3, 18, 63)
+	);
+	fs::write(out.join("summary.txt"),format!("{equal} exact stock parity;{presentation} source-pinned policy-presentation;{refused} declared refusals;{full_budget} full-fresh-budget source checks (no numeric budget parity)\n")).unwrap();
 	contract_completed("fresh", 348);
 }
 
