@@ -1163,6 +1163,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let E::CallClosure(closure) = expr.kind else {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
+		// P0 stopgap: copying captured handles does not implement stock's
+		// payload take or moved-variable diagnostics. Refuse until C11c does.
+		if closure.do_move && !closure.captures.is_empty() {
+			return Err(self.refused(span, Refusal::CallClosure));
+		}
 		let at = self.location(span);
 		let id = (self.resolve)(Resolve::Script(closure.hash), at)?;
 		if !closure.captures.is_empty() {

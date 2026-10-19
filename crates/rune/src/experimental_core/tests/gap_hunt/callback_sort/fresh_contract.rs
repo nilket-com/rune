@@ -302,6 +302,25 @@ fn c11_check_stale_refusal_admission(
 		return Err(format!("stale refusal stock pin drift {label}"));
 	}
 	let actual = common(&project_p1(observation, counts)?);
+	if label == "refused/move-capture" {
+		// C11c P0 stopgap reverses only this capturing-move admission.
+		// Pin its complete old admission before requiring compile-time refusal.
+		if row["fresh_expectation"]["outcome"]["status"] != "value"
+			|| row["fresh_expectation"]["invoked"] != true
+			|| digest(&canonical(&row["fresh_expectation"]))
+				!= "c687396d8a21727c22946d6d9d569d57fd4dc7fbaa184b60ae5b7a34710881f3"
+		{
+			return Err("C11c historical move admission drift".into());
+		}
+		let mut expected = row["fresh_expectation"].clone();
+		expected["outcome"] = json!({"status":"refused","kind":"Unsupported","operation":"CallClosure","refusal":"CallClosure","location":{"source":0,"start":72,"end":104}});
+		expected["post"] = expected["before"].clone();
+		expected["invoked"] = json!(false);
+		if actual != expected {
+			return Err(format!("C11c move refusal drift {label}"));
+		}
+		return Ok(true);
+	}
 	if actual != row["fresh_expectation"] {
 		return Err(format!("stale refusal fresh pin drift {label}"));
 	}

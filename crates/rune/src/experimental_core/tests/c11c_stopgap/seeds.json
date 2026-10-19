@@ -1,0 +1,62 @@
+[
+  {
+    "label": "original/value/closure-alias",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move||v[0]}pub fn main(){let v=[1];let n=maker(v)();v[0]=9;n*10+v[0]}",
+    "policy": "Exact",
+    "source_sha256": "e98ab47b772db4331be448faf6b7beaf641268b7bdd45e0601bee17dccceae51"
+  },
+  {
+    "label": "var/value/closure-alias",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move||v[0]}pub fn main(){let v=[1];let f=maker(v);let n=f();v[0]=9;n*10+v[0]}",
+    "policy": "Exact",
+    "source_sha256": "e98ab47b772db4331be448faf6b7beaf641268b7bdd45e0601bee17dccceae51"
+  },
+  {
+    "label": "original/value/closure-held",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move||v[0]}pub fn main(){let v=[1];let f=maker(v);let n=id(f)();v[0]=9;n*10+f()}",
+    "policy": "Exact",
+    "source_sha256": "59775593aca78bc6b02fa1de76738f4e4123928dbd175a9f770aa0458658d914"
+  },
+  {
+    "label": "var/value/closure-held",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move||v[0]}pub fn main(){let v=[1];let f=maker(v);let g=id(f);let n=g();v[0]=9;n*10+f()}",
+    "policy": "Exact",
+    "source_sha256": "59775593aca78bc6b02fa1de76738f4e4123928dbd175a9f770aa0458658d914"
+  },
+  {
+    "label": "original/ownership/moved-capture",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move|x|v[0]+x}pub fn main(){let v=[1];maker(v)({drop(v);2})}",
+    "policy": "Exact",
+    "source_sha256": "066f25568845aaaa6520ae38201e5f7a2fcb3f123e6bbc337a0289377c8c405f"
+  },
+  {
+    "label": "var/ownership/moved-capture",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move|x|v[0]+x}pub fn main(){let v=[1];let f=maker(v);f({drop(v);2})}",
+    "policy": "Exact",
+    "source_sha256": "066f25568845aaaa6520ae38201e5f7a2fcb3f123e6bbc337a0289377c8c405f"
+  },
+  {
+    "label": "original/ownership/temp-closure-capture",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){let v=[1];(move|x|v[0]+x)({drop(v);7})}",
+    "policy": "Exact",
+    "source_sha256": "1a55109629e3fee2ac678dff7f142103cf32392179b07f15e8d2d65c88b5b37e"
+  },
+  {
+    "label": "var/ownership/temp-closure-capture",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}pub fn main(){let v=[1];let f=move|x|v[0]+x;f({drop(v);7})}",
+    "policy": "Exact",
+    "source_sha256": "1a55109629e3fee2ac678dff7f142103cf32392179b07f15e8d2d65c88b5b37e"
+  },
+  {
+    "label": "original/ownership/leased-capture",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move||v[0]}pub fn main(){let v=[1,2];for x in v{return maker(v)();}0}",
+    "policy": "Exact",
+    "source_sha256": "8c7d50cdb22c0ed4f879b0f967f5d3d38812748b30eba949c7adc651d1713df9"
+  },
+  {
+    "label": "var/ownership/leased-capture",
+    "source": "fn inc(x){x+1}fn dec(x){x-1}fn add(a,b){a*10+b}fn id(x){x}fn maker(v){move||v[0]}pub fn main(){let v=[1,2];for x in v{let f=maker(v);return f();}0}",
+    "policy": "Exact",
+    "source_sha256": "8c7d50cdb22c0ed4f879b0f967f5d3d38812748b30eba949c7adc651d1713df9"
+  }
+]

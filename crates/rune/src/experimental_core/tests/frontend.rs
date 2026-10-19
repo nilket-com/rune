@@ -741,3 +741,6 @@ fn type_tests_on_function_and_type_values_are_boolean() {
 		Value::Bool(true)
 	);
 }
+
+#[path = "c11c_stopgap.rs"]
+mod c11c_stopgap;
