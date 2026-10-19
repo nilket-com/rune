@@ -1676,3 +1676,5 @@ mod type_values;
 mod option_methods;
 
 mod object_methods;
+
+mod object_order;
