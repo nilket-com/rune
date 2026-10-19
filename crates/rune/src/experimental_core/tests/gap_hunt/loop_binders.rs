@@ -213,9 +213,16 @@ fn stock_contract() {
 	run_contract("stock");
 }
 
+#[test]
+#[cfg(target_os = "linux")]
+#[ignore = "C16b strict fresh replay; bounded children and exclusive GAP_OUT"]
+fn fresh_contract() {
+	run_contract("fresh");
+}
+
 #[cfg(target_os = "linux")]
 fn run_contract(engine: &str) {
-	assert_eq!(engine, "stock");
+	assert!(matches!(engine, "stock" | "fresh"));
 	let cases: Json = serde_json::from_str(include_str!("loop_binders/cases.json")).unwrap();
 	let frozen: Json = serde_json::from_str(include_str!("loop_binders/stock.json")).unwrap();
 	let cases = cases.as_array().unwrap();
@@ -325,7 +332,68 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["label"], case["label"]);
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["policy"], case["policy"]);
-		assert_eq!(observed["projected"], expected["projected"], "{label}");
+		let logical: Json =
+			serde_json::from_str(include_str!("loop_binders/logical.json")).unwrap();
+		if engine == "stock" {
+			assert_eq!(observed["projected"], expected["projected"], "{label}");
+		} else {
+			let audit = &observed["fresh_audit"];
+			for key in [
+				"no_cleanup_error",
+				"clean_after_row",
+				"row_idle",
+				"reuse",
+				"idle",
+			] {
+				assert_eq!(audit[key], true, "{label}: {key}");
+			}
+			for key in [
+				"row_live_entries",
+				"row_payload_bytes",
+				"live_entries",
+				"payload_bytes",
+			] {
+				assert_eq!(audit[key], 0, "{label}: {key}");
+			}
+			let actual = &observed["outcome"];
+			if expected["outcome"]["status"] == "compile-error" {
+				assert_eq!(actual["status"], "compile-error", "{label}");
+				assert_eq!(
+					actual["diagnostics"], expected["outcome"]["diagnostics"],
+					"{label}"
+				);
+				assert_eq!(audit["invoked"], false);
+			} else if case["policy"] == "Retain-refusal" {
+				assert_eq!(actual["status"], "refused", "{label}");
+				assert_eq!(actual["refusal"], "Pattern", "{label}");
+				assert_eq!(audit["invoked"], false);
+			} else if logical.get(label).is_some() {
+				let actual = project(actual);
+				let expected = &expected["projected"];
+				for key in ["status", "class", "display", "chain_displays"] {
+					assert_eq!(actual[key], expected[key], "{label}: {key}");
+				}
+				let sites = actual["sites"].as_array().unwrap();
+				let stock_sites = expected["sites"].as_array().unwrap();
+				assert_eq!(sites.len(), stock_sites.len());
+				for (a, b) in sites.iter().zip(stock_sites) {
+					for key in ["source", "start", "end"] {
+						assert_eq!(a[key], b[key]);
+					}
+				}
+			} else {
+				assert_eq!(audit["invoked"], true, "{label}");
+				assert_eq!(project(actual), expected["projected"], "{label}");
+			}
+		}
+		if let Some(expected) = logical.get(label) {
+			let actual: Json =
+				serde_json::from_slice(&fs::read(folder.join("logical.json")).unwrap()).unwrap();
+			assert_eq!(
+				actual, *expected,
+				"{label}: logical frames/context/rendered"
+			);
+		}
 		assert_eq!(hex(&stdout), expected["stdout_hex"]);
 		assert_eq!(hex(&stderr), expected["stderr_hex"]);
 	}

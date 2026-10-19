@@ -1452,6 +1452,15 @@ impl Store {
 			return self.admit(Payload::OptionIterator { payload: None });
 		}
 		if let Value::Heap(h) = value {
+			// Identity does not read an iterator's payload. A moved iterator is
+			// rejected when next tries to advance it, matching stock's site/access.
+			if matches!(
+				self.entry(h)?.payload.as_ref(),
+				Some(Payload::VectorIterator(_) | Payload::Moved(Type::Iterator))
+			) {
+				self.retain(value)?;
+				return Ok(value);
+			}
 			match self.payload(h)? {
 				Payload::Variant {
 					tag: Type::Option,

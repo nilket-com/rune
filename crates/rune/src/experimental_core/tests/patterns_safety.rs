@@ -372,3 +372,60 @@ fn pattern_kinds_guards_and_nested_loop_exits_balance_at_every_fuel_frontier() {
 		std::println!("C3 FUEL {name} minimum={minimum:?} pcs={frontiers:?}");
 	}
 }
+
+#[test]
+#[cfg_attr(miri, ignore = "C16b opt-in minimal-Context loop ownership witness")]
+fn loop_binders_control_flow_failures_and_reuse() {
+	let cases = [
+		("let n=0;for(a,b)in[]{n+=a+b;}n", Ok(0)),
+		("let n=0;for(a,b)in[(1,2),(3,4)]{n+=a+b;}n", Ok(10)),
+		("let n=0;for[a,b]in[[1,2],[3,4]]{n+=a+b;}n", Ok(10)),
+		(
+			"let n=0;for(a,[b,c])in[(1,[2,3]),(4,[5,6])]{n+=a+b+c;}n",
+			Ok(21),
+		),
+		("let n=0;for[a,..]in[[1],[2,3]]{n+=a;}n", Ok(3)),
+		("let n=0;for(_,b)in[([1],2),([3],4)]{n+=b;}n", Ok(6)),
+		(
+			"let n=0;for(a,b)in[(1,2),(3,4)]{if a==1{continue;}n+=a+b;}n",
+			Ok(7),
+		),
+		("let n=0;for(a,b)in[(1,2),(3,4)]{n+=a+b;break;}n", Ok(3)),
+		(
+			"let n=0;'outer:for(a,b)in[(1,2),(3,4)]{for x in [1,2]{n+=a+b;continue 'outer;}}n",
+			Ok(10),
+		),
+		("for(a,b)in[(1,2),(3,)]{}7", Err(ErrorKind::Panic)),
+		("for[a,b]in[[1,2],[3,4]]{return a+b;}0", Ok(3)),
+		(
+			"for(a,b)in[(1,2)]{let z=0;return a/z;}0",
+			Err(ErrorKind::DivisionByZero),
+		),
+	];
+	let mut rows = 0;
+	for (body, expected) in cases {
+		let program = compile(&std::format!("pub fn main(){{{body}}}"));
+		let main = program.function(Hash::type_hash(["main"])).unwrap();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		for _ in 0..2 {
+			match executor.invoke(&program, &mut store, main, &[], 1000) {
+				Ok(root) => {
+					assert_eq!(
+						store.root_scalar(&root).unwrap(),
+						Some(Scalar::I64(expected.unwrap()))
+					);
+					store.root_release(root).unwrap();
+				}
+				Err(failure) => {
+					assert_eq!(Err(failure.error.kind), expected);
+					assert!(failure.cleanup_error.is_none());
+				}
+			}
+			idle(&executor, &store);
+			rows += 1;
+		}
+	}
+	assert_eq!(rows, 24);
+	println!("C16b loop Miri rows {rows}");
+}

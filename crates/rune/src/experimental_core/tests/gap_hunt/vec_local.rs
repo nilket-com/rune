@@ -399,7 +399,7 @@ fn run_contract(engine: &str) {
 					"{label}"
 				);
 				assert_eq!(audit["invoked"], false, "{label}");
-			} else if case["policy"] == "Retain-refusal" {
+			} else if case["policy"] == "Retain-refusal" && label != "excluded/for" {
 				assert_eq!(outcome["status"], "refused", "{label}");
 				assert_eq!(outcome["refusal"], "Pattern", "{label}");
 				assert_eq!(audit["invoked"], false, "{label}");

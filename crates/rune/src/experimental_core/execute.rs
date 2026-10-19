@@ -2056,6 +2056,12 @@ fn enrich_error(
 	slots: &[Value],
 	base: usize,
 ) -> Error {
+	if let (Op::IterStart { .. } | Op::IterNext { .. }, Detail::Moved { access }) =
+		(op, error.detail)
+	{
+		error.detail = Detail::IteratorArgumentMoved { access, arg: 0 };
+		return error;
+	}
 	if matches!(error.detail, Detail::ReadExclusive | Detail::WriteExclusive)
 		&& matches!(
 			op,

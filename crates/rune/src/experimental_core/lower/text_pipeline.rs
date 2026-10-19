@@ -432,7 +432,13 @@ impl<'hir> Lower<'_, 'hir> {
 		)?;
 		let option = self.slot()?;
 		let binding = self.slot()?;
-		self.bind(&for_.binding.pat, binding)?;
+		let destructure = !matches!(
+			for_.binding.pat.kind,
+			hir::PatKind::Ignore | hir::PatKind::Path(hir::PatPathKind::Ident { .. })
+		);
+		if !destructure {
+			self.bind(&for_.binding.pat, binding)?;
+		}
 		let start = self.pc();
 		self.pipeline_next(&shape, node, option, span)?;
 		let flag = self.pipeline_flag(option, span)?;
@@ -448,15 +454,22 @@ impl<'hir> Lower<'_, 'hir> {
 		)?;
 		self.raise(binding);
 		self.emit(Op::Release { value: option }, span)?;
+		if destructure {
+			self.pattern_local(&for_.binding, binding)?;
+		}
 		self.loops.try_push(Loop {
 			label: for_.label.map(String::try_from).transpose()?,
 			start,
-			cleanup: self.next,
+			cleanup: if destructure { binding + 1 } else { self.next },
 			out,
 			breaks: Vec::new(),
 		})?;
 		self.block(&for_.body, Mode::Discard)?;
-		self.emit(Op::Release { value: binding }, span)?;
+		if destructure {
+			self.pop_to(binding + 1, span)?;
+		} else {
+			self.emit(Op::Release { value: binding }, span)?;
+		}
 		self.emit(Op::Jump { target: start }, span)?;
 		let end = self.pc();
 		self.pipeline_patch(branch, flag, yes, end)?;

@@ -213,3 +213,51 @@ fn iterator_admission_and_cleanup_allocate_nothing_after_reservation() {
 	assert_eq!(s.reserved_metadata_bytes(), metadata);
 	assert!(s.work.is_empty());
 }
+
+#[test]
+fn vector_iterator_identity_preserves_position_aliases_and_lease() {
+	let mut s = store();
+	let list = s.list(Type::Vec, &[Value::I64(1), Value::I64(2)]).unwrap();
+	let iterator = s.iterator(list).unwrap();
+	assert_eq!(s.iterator_next(iterator).unwrap(), Some(Value::I64(1)));
+	let before = state(&s);
+	let alias = limit::with(0, || s.iterator(iterator)).call().unwrap();
+	assert_eq!(alias, iterator);
+	assert_eq!(state(&s), before);
+	assert_eq!(s.iterator_next(alias).unwrap(), Some(Value::I64(2)));
+	assert_eq!(s.iterator_next(iterator).unwrap(), None);
+	assert_eq!(
+		s.push(list, Value::I64(3)).unwrap_err().kind,
+		ErrorKind::AccessConflict
+	);
+	s.release(iterator).unwrap();
+	assert_eq!(
+		s.push(list, Value::I64(3)).unwrap_err().kind,
+		ErrorKind::AccessConflict
+	);
+	s.release(alias).unwrap();
+	s.push(list, Value::I64(3)).unwrap();
+	s.release(list).unwrap();
+	assert_eq!(s.live_entries(), 0);
+	assert_eq!(s.payload_bytes(), 0);
+	assert!(s.work.is_empty());
+
+	let empty = s.list(Type::Vec, &[]).unwrap();
+	let iterator = s.iterator(empty).unwrap();
+	let alias = s.iterator(iterator).unwrap();
+	assert_eq!(s.iterator_next(alias).unwrap(), None);
+	s.invalidate(iterator).unwrap();
+	let moved_alias = s.iterator(alias).unwrap();
+	assert_eq!(
+		s.iterator_next(moved_alias).unwrap_err().kind,
+		ErrorKind::AccessConflict
+	);
+	s.release(moved_alias).unwrap();
+	s.release(alias).unwrap();
+	s.release(iterator).unwrap();
+	s.push(empty, Value::I64(7)).unwrap();
+	s.release(empty).unwrap();
+	assert_eq!(s.live_entries(), 0);
+	assert_eq!(s.payload_bytes(), 0);
+	assert!(s.work.is_empty());
+}

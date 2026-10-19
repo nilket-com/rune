@@ -1040,7 +1040,13 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			self.exprs.get(for_.iter).span,
 		)?;
 		let binding = self.slot()?;
-		self.bind(&for_.binding.pat, binding)?;
+		let destructure = !matches!(
+			for_.binding.pat.kind,
+			hir::PatKind::Ignore | hir::PatKind::Path(hir::PatPathKind::Ident { .. })
+		);
+		if !destructure {
+			self.bind(&for_.binding.pat, binding)?;
+		}
 		let start = self.pc();
 		let header = self.emit(
 			Op::IterNext {
@@ -1050,14 +1056,22 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			},
 			span,
 		)?;
+		// Extraction runs only after a successful next. The root is released by
+		// pattern_local; extracted bindings live only for this iteration.
+		if destructure {
+			self.pattern_local(&for_.binding, binding)?;
+		}
 		self.loops.try_push(Loop {
 			label: for_.label.map(String::try_from).transpose()?,
 			start,
-			cleanup: self.next,
+			cleanup: if destructure { binding + 1 } else { self.next },
 			out,
 			breaks: Vec::new(),
 		})?;
 		self.block(&for_.body, Mode::Discard)?;
+		if destructure {
+			self.pop_to(binding + 1, span)?;
+		}
 		self.emit(Op::Jump { target: start }, span)?;
 		let end = self.pc();
 		self.function.patch(

@@ -1,0 +1,409 @@
+[
+  {
+    "label": "plain",
+    "source": "pub fn main(){let n=0;for x in [1,2,3].iter(){n+=x;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "6"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "6"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "plain-pairs",
+    "source": "pub fn main(){let n=0;for x in [(1,2),(3,4)].iter(){n+=x.0+x.1;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "10"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "10"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "plain-empty",
+    "source": "pub fn main(){let n=0;for x in [].iter(){n+=1;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "0"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "0"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "alias",
+    "source": "pub fn main(){let v=[[1],[2]];let it=v.iter();let other=it;for x in other{x[0]+=10;}v[0][0]+v[1][0]}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "23"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "23"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "advance",
+    "source": "pub fn main(){let v=[1,2,3];let it=v.iter();it.next();let n=0;for x in it{n+=x;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "5"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "5"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "exhaust-reuse",
+    "source": "pub fn main(){let it=[1,2].iter();let n=0;for x in it{n+=x;}for x in it{n+=100;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "3"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "empty-reuse",
+    "source": "pub fn main(){let it=[].iter();let n=0;for x in it{n+=1;}for x in it{n+=2;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "0"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "0"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "break-reuse",
+    "source": "pub fn main(){let it=[1,2,3].iter();let n=0;for x in it{n+=x;break;}for x in it{n+=x*10;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "51"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "51"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "continue",
+    "source": "pub fn main(){let n=0;for x in [1,2,3].iter(){if x==2{continue;}n+=x;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "4"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "4"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "moved-reuse",
+    "source": "pub fn main(){let it=[1,2].iter();drop(it);for x in it{}7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the value: it has been moved",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(M-000000)) } } }, chain: [VmErrorAt { index: 0, kind: BadArgument { arg: 0 } }], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 5 }, Store { value: Integer(1), out: keep(2) }, Store { value: Integer(2), out: keep(3) }, Vec { addr: 2, count: 2, out: keep(1) }, CallAssociated { hash: 0xbb7bdba9d3036269, addr: 1, args: 1, out: keep(0) }, Copy { addr: 0, out: keep(1) }, Call { hash: 0xcc25647cd9450672, addr: 1, args: 1, out: discard }, Copy { addr: 0, out: keep(1) }, CallAssociated { hash: 0x15a85c8d774b4065, addr: 1, args: 1, out: keep(1) }, LoadInstanceFn { addr: 1, hash: 0xc3cde069de2ba320, out: keep(3) }, Copy { addr: 1, out: keep(4) }, CallFn { function: 3, addr: 4, args: 1, out: keep(2) }, IterNext { addr: 2, jump: 15, out: keep(2) }, Copy { addr: 2, out: keep(4) }, Jump { jump: 10 }, Drop { set: 0 }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[1]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 34:42, comment: None, labels: [] }, 15: DebugInst { source_id: 0, span: 43:56, comment: None, labels: [DebugLabel { name: \"for_end\", index: 2, jump: Some(16) }] }, 7: DebugInst { source_id: 0, span: 43:56, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 5: DebugInst { source_id: 0, span: 39:41, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 21:33, comment: None, labels: [] }, 17: DebugInst { source_id: 0, span: 0:58, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 47:48, comment: Some(\"label:for_end_2 (15)\"), labels: [] }, 2: DebugInst { source_id: 0, span: 24:25, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 43:56, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 21:26, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 52:54, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 9: DebugInst { source_id: 0, span: 52:54, comment: Some(\"Protocol::NEXT\"), labels: [] }, 16: DebugInst { source_id: 0, span: 56:57, comment: None, labels: [DebugLabel { name: \"for_break\", index: 3, jump: Some(17) }] }, 14: DebugInst { source_id: 0, span: 43:56, comment: Some(\"label:for_continue_1 (10)\"), labels: [] }, 13: DebugInst { source_id: 0, span: 47:48, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 43:56, comment: None, labels: [DebugLabel { name: \"for_continue\", index: 1, jump: Some(11) }] }, 1: DebugInst { source_id: 0, span: 22:23, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {0xbb7bdba9d3036269: \"iter\"}, globals: [] }) }, ip: 11, frames: [] }] }",
+      "sites": [
+        {
+          "end": 56,
+          "frames": "[]",
+          "source": 0,
+          "start": 43
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [
+        "Bad argument #0"
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the value: it has been moved",
+      "sites": [
+        {
+          "end": 56,
+          "frames": "[]",
+          "source": 0,
+          "start": 43
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "lease-write",
+    "source": "pub fn main(){let v=[1,2];for x in v.iter(){v.push(3);}7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the receiver: it is being read",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } } }, chain: [VmErrorAt { index: 0, kind: BadArgument { arg: 0 } }], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 8 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Vec { addr: 1, count: 2, out: keep(0) }, Copy { addr: 0, out: keep(1) }, CallAssociated { hash: 0xbb7bdba9d3036269, addr: 1, args: 1, out: keep(2) }, Copy { addr: 2, out: keep(1) }, CallAssociated { hash: 0x15a85c8d774b4065, addr: 1, args: 1, out: keep(1) }, LoadInstanceFn { addr: 1, hash: 0xc3cde069de2ba320, out: keep(4) }, Copy { addr: 1, out: keep(5) }, CallFn { function: 4, addr: 5, args: 1, out: keep(3) }, IterNext { addr: 3, jump: 17, out: keep(3) }, Copy { addr: 3, out: keep(5) }, Copy { addr: 0, out: keep(6) }, Store { value: Integer(3), out: keep(7) }, CallAssociated { hash: 0x7ddb8003b8ab1457, addr: 6, args: 2, out: discard }, Jump { jump: 9 }, Drop { set: 0 }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[1]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 26:55, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 15: DebugInst { source_id: 0, span: 44:53, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 35:43, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 5: DebugInst { source_id: 0, span: 35:43, comment: None, labels: [] }, 19: DebugInst { source_id: 0, span: 0:57, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 35:36, comment: None, labels: [] }, 17: DebugInst { source_id: 0, span: 26:55, comment: None, labels: [DebugLabel { name: \"for_end\", index: 2, jump: Some(18) }] }, 12: DebugInst { source_id: 0, span: 30:31, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 55:56, comment: None, labels: [DebugLabel { name: \"for_break\", index: 3, jump: Some(19) }] }, 11: DebugInst { source_id: 0, span: 30:31, comment: Some(\"label:for_end_2 (17)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 20:25, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 35:43, comment: Some(\"Protocol::NEXT\"), labels: [] }, 9: DebugInst { source_id: 0, span: 26:55, comment: None, labels: [DebugLabel { name: \"for_continue\", index: 1, jump: Some(10) }] }, 16: DebugInst { source_id: 0, span: 26:55, comment: Some(\"label:for_continue_1 (9)\"), labels: [] }, 14: DebugInst { source_id: 0, span: 51:52, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 44:53, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 26:55, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {0x7ddb8003b8ab1457: \"push\", 0xbb7bdba9d3036269: \"iter\"}, globals: [] }) }, ip: 15, frames: [] }] }",
+      "sites": [
+        {
+          "end": 53,
+          "frames": "[]",
+          "source": 0,
+          "start": 44
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [
+        "Bad argument #0"
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the receiver: it is being read",
+      "sites": [
+        {
+          "end": 53,
+          "frames": "[]",
+          "source": 0,
+          "start": 44
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "lease-drop",
+    "source": "pub fn main(){let v=[1,2];for x in v.iter(){drop(v);}7}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [],
+      "class": "AccessConflict",
+      "display": "Cannot take the value: it is being read",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(--000001)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(--000001)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 7 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Vec { addr: 1, count: 2, out: keep(0) }, Copy { addr: 0, out: keep(1) }, CallAssociated { hash: 0xbb7bdba9d3036269, addr: 1, args: 1, out: keep(2) }, Copy { addr: 2, out: keep(1) }, CallAssociated { hash: 0x15a85c8d774b4065, addr: 1, args: 1, out: keep(1) }, LoadInstanceFn { addr: 1, hash: 0xc3cde069de2ba320, out: keep(4) }, Copy { addr: 1, out: keep(5) }, CallFn { function: 4, addr: 5, args: 1, out: keep(3) }, IterNext { addr: 3, jump: 16, out: keep(3) }, Copy { addr: 3, out: keep(5) }, Copy { addr: 0, out: keep(6) }, Call { hash: 0xcc25647cd9450672, addr: 6, args: 1, out: discard }, Jump { jump: 9 }, Drop { set: 0 }, Store { value: Integer(7), out: keep(1) }, Return { addr: 1 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[1]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 26:53, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 15: DebugInst { source_id: 0, span: 26:53, comment: Some(\"label:for_continue_1 (9)\"), labels: [] }, 7: DebugInst { source_id: 0, span: 35:43, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 5: DebugInst { source_id: 0, span: 35:43, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 35:36, comment: None, labels: [] }, 17: DebugInst { source_id: 0, span: 53:54, comment: None, labels: [DebugLabel { name: \"for_break\", index: 3, jump: Some(18) }] }, 12: DebugInst { source_id: 0, span: 30:31, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 0:55, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 30:31, comment: Some(\"label:for_end_2 (16)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 20:25, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 35:43, comment: Some(\"Protocol::NEXT\"), labels: [] }, 9: DebugInst { source_id: 0, span: 26:53, comment: None, labels: [DebugLabel { name: \"for_continue\", index: 1, jump: Some(10) }] }, 16: DebugInst { source_id: 0, span: 26:53, comment: None, labels: [DebugLabel { name: \"for_end\", index: 2, jump: Some(17) }] }, 14: DebugInst { source_id: 0, span: 44:51, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 49:50, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 26:53, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {0xbb7bdba9d3036269: \"iter\"}, globals: [] }) }, ip: 14, frames: [] }] }",
+      "sites": [
+        {
+          "end": 51,
+          "frames": "[]",
+          "source": 0,
+          "start": 44
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [],
+      "class": "AccessConflict",
+      "display": "Cannot take the value: it is being read",
+      "sites": [
+        {
+          "end": 51,
+          "frames": "[]",
+          "source": 0,
+          "start": 44
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "lease-after-exhaust",
+    "source": "pub fn main(){let v=[1,2];let it=v.iter();for x in it{}v.push(3);v.len()}",
+    "policy": "Exact",
+    "outcome": {
+      "chain": [
+        {
+          "display": "Bad argument #0",
+          "kind": "BadArgument { arg: 0 }"
+        }
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the receiver: it is being read",
+      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
+      "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } } }, chain: [VmErrorAt { index: 0, kind: BadArgument { arg: 0 } }], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 6 }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, Vec { addr: 1, count: 2, out: keep(0) }, Copy { addr: 0, out: keep(2) }, CallAssociated { hash: 0xbb7bdba9d3036269, addr: 2, args: 1, out: keep(1) }, Copy { addr: 1, out: keep(2) }, CallAssociated { hash: 0x15a85c8d774b4065, addr: 2, args: 1, out: keep(2) }, LoadInstanceFn { addr: 2, hash: 0xc3cde069de2ba320, out: keep(4) }, Copy { addr: 2, out: keep(5) }, CallFn { function: 4, addr: 5, args: 1, out: keep(3) }, IterNext { addr: 3, jump: 14, out: keep(3) }, Copy { addr: 3, out: keep(5) }, Jump { jump: 9 }, Drop { set: 0 }, Copy { addr: 0, out: keep(2) }, Store { value: Integer(3), out: keep(3) }, CallAssociated { hash: 0x7ddb8003b8ab1457, addr: 2, args: 2, out: discard }, Copy { addr: 0, out: keep(2) }, CallAssociated { hash: 0x6215b706d11e40e5, addr: 2, args: 1, out: keep(3) }, Return { addr: 3 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [[2]], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 42:55, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 15: DebugInst { source_id: 0, span: 55:64, comment: None, labels: [DebugLabel { name: \"for_break\", index: 4, jump: Some(16) }] }, 7: DebugInst { source_id: 0, span: 51:53, comment: Some(\"Protocol::INTO_ITER\"), labels: [] }, 5: DebugInst { source_id: 0, span: 33:41, comment: None, labels: [] }, 19: DebugInst { source_id: 0, span: 65:72, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 33:34, comment: None, labels: [] }, 17: DebugInst { source_id: 0, span: 55:64, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 46:47, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 23:24, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 65:66, comment: None, labels: [] }, 20: DebugInst { source_id: 0, span: 0:73, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 46:47, comment: Some(\"label:for_end_3 (14)\"), labels: [] }, 3: DebugInst { source_id: 0, span: 20:25, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 51:53, comment: Some(\"Protocol::NEXT\"), labels: [] }, 9: DebugInst { source_id: 0, span: 42:55, comment: None, labels: [DebugLabel { name: \"for_continue\", index: 2, jump: Some(10) }] }, 16: DebugInst { source_id: 0, span: 62:63, comment: None, labels: [] }, 14: DebugInst { source_id: 0, span: 42:55, comment: None, labels: [DebugLabel { name: \"for_end\", index: 3, jump: Some(15) }] }, 13: DebugInst { source_id: 0, span: 42:55, comment: Some(\"label:for_continue_2 (9)\"), labels: [] }, 10: DebugInst { source_id: 0, span: 42:55, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 21:22, comment: None, labels: [] }}, functions: {0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {0: 0x1c69d5964e831fc1}, hash_to_ident: {0x7ddb8003b8ab1457: \"push\", 0x6215b706d11e40e5: \"len\", 0xbb7bdba9d3036269: \"iter\"}, globals: [] }) }, ip: 17, frames: [] }] }",
+      "sites": [
+        {
+          "end": 64,
+          "frames": "[]",
+          "source": 0,
+          "start": 55
+        }
+      ],
+      "status": "error"
+    },
+    "projected": {
+      "chain_displays": [
+        "Bad argument #0"
+      ],
+      "class": "AccessConflict",
+      "display": "Cannot write the receiver: it is being read",
+      "sites": [
+        {
+          "end": 64,
+          "frames": "[]",
+          "source": 0,
+          "start": 55
+        }
+      ],
+      "status": "error"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "lease-after-drop",
+    "source": "pub fn main(){let v=[1,2];let it=v.iter();for x in it{}drop(it);v.push(3);v.len()}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "U64",
+      "value": "3"
+    },
+    "projected": {
+      "status": "value",
+      "type": "U64",
+      "value": "3"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "cleanup-break",
+    "source": "pub fn main(){let v=[[1],[2]];let n=0;for x in v.iter(){n+=x[0];break;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "cleanup-return",
+    "source": "pub fn main(){let v=[[1],[2]];for x in v.iter(){return x[0];}0}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "1"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "destructure-advance",
+    "source": "pub fn main(){let it=[(1,2),(3,4)].iter();it.next();let n=0;for(a,b)in it{n+=a+b;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "7"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "label": "destructure-empty",
+    "source": "pub fn main(){let n=0;for(a,b)in [].iter(){n+=a+b;}n}",
+    "policy": "Exact",
+    "outcome": {
+      "status": "value",
+      "type": "I64",
+      "value": "0"
+    },
+    "projected": {
+      "status": "value",
+      "type": "I64",
+      "value": "0"
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  }
+]

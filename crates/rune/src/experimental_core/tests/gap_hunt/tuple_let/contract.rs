@@ -333,9 +333,13 @@ fn run_contract(engine: &str) {
 			}
 			_ => panic!("unreviewed C8 policy"),
 		}
-		// C12 and C16a admissions retain the historical freeze above and now
+		// C12, C16a and C16b admissions retain the historical freeze above and now
 		// owe their exact independently frozen stock values.
-		let fresh_expected = if *policy == "Refused-Range" || *label == "refusal/vec-pattern" {
+		let fresh_expected = if *policy == "Refused-Range"
+			|| matches!(
+				*label,
+				"refusal/vec-pattern" | "refusal/for-pair" | "refusal/for-nested"
+			) {
 			stock_expected.clone()
 		} else {
 			fresh_expected

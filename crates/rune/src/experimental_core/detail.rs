@@ -364,6 +364,11 @@ pub enum Detail {
 		arg: u8,
 		access: MovedAccess,
 	},
+	/// A moved access at the iterator conversion or next protocol boundary.
+	IteratorArgumentMoved {
+		arg: u8,
+		access: MovedAccess,
+	},
 }
 
 impl Detail {
@@ -375,6 +380,7 @@ impl Detail {
 			| Self::NumericArgumentCoerce { cause, arg, .. } => Some((cause, arg)),
 			Self::SharedArgument { arg, .. }
 			| Self::FormatArgumentMoved { arg, .. }
+			| Self::IteratorArgumentMoved { arg, .. }
 			| Self::CmpArgumentAccess { arg, .. }
 			| Self::ExclusiveArgument { arg, .. } => Some((HostCause::Access, arg)),
 			Self::HostExpectedType { arg: Some(arg), .. } => Some((HostCause::ExpectedType, arg)),
@@ -841,6 +847,7 @@ impl fmt::Display for Message<'_> {
 			Arity { given, expected } => messages::arity(f, given, expected),
 			Moved { access }
 			| FormatArgumentMoved { access, .. }
+			| IteratorArgumentMoved { access, .. }
 			| CmpArgumentAccess { access, .. } => {
 				access_message(f, access, Option::None, "it has been moved")
 			}

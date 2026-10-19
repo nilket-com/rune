@@ -1,0 +1,110 @@
+[
+  {
+    "label": "plain",
+    "source": "pub fn main(){let n=0;for x in [1,2,3].iter(){n+=x;}n}",
+    "policy": "Exact",
+    "source_sha256": "180e0cabb9590c8bcfae97f24cf97274ddc3d8898e35556dac34b6817fae9658"
+  },
+  {
+    "label": "plain-pairs",
+    "source": "pub fn main(){let n=0;for x in [(1,2),(3,4)].iter(){n+=x.0+x.1;}n}",
+    "policy": "Exact",
+    "source_sha256": "4652766536b42db7f3ed8eecfdd88bbb08288e65f445a548718ace93179334ea"
+  },
+  {
+    "label": "plain-empty",
+    "source": "pub fn main(){let n=0;for x in [].iter(){n+=1;}n}",
+    "policy": "Exact",
+    "source_sha256": "3766f4f8d4caeda8213106853f85688a373cb2ae828e19885673f43331db505c"
+  },
+  {
+    "label": "alias",
+    "source": "pub fn main(){let v=[[1],[2]];let it=v.iter();let other=it;for x in other{x[0]+=10;}v[0][0]+v[1][0]}",
+    "policy": "Exact",
+    "source_sha256": "af30236d9f758aea9fdf3f7c536879cf6b5001f8eaef5bf8ead22d26a070f533"
+  },
+  {
+    "label": "advance",
+    "source": "pub fn main(){let v=[1,2,3];let it=v.iter();it.next();let n=0;for x in it{n+=x;}n}",
+    "policy": "Exact",
+    "source_sha256": "c7860b488af60b577948b66931ff8e1ba4851c0fdce322578507aabe742df1ab"
+  },
+  {
+    "label": "exhaust-reuse",
+    "source": "pub fn main(){let it=[1,2].iter();let n=0;for x in it{n+=x;}for x in it{n+=100;}n}",
+    "policy": "Exact",
+    "source_sha256": "921f13bbb91f94a56faffb96bfeea49a0f043e87b9ec585c0d082fd903c89019"
+  },
+  {
+    "label": "empty-reuse",
+    "source": "pub fn main(){let it=[].iter();let n=0;for x in it{n+=1;}for x in it{n+=2;}n}",
+    "policy": "Exact",
+    "source_sha256": "e31c90f7681febaf08f003d65047aa8463b18f1c931343ee31aa8ae2707e6141"
+  },
+  {
+    "label": "break-reuse",
+    "source": "pub fn main(){let it=[1,2,3].iter();let n=0;for x in it{n+=x;break;}for x in it{n+=x*10;}n}",
+    "policy": "Exact",
+    "source_sha256": "25f85f09687a419baf35c6f72b970c18610aa6c1a492c50d229bf898ab9177cd"
+  },
+  {
+    "label": "continue",
+    "source": "pub fn main(){let n=0;for x in [1,2,3].iter(){if x==2{continue;}n+=x;}n}",
+    "policy": "Exact",
+    "source_sha256": "02e142ee389b11bdd1afc00c1ab28c5098f3932da46e5000774c39c3c1050d17"
+  },
+  {
+    "label": "moved-reuse",
+    "source": "pub fn main(){let it=[1,2].iter();drop(it);for x in it{}7}",
+    "policy": "Exact",
+    "source_sha256": "8686568f36a43bc9d6e69280109c899e4268295770213a5585e8105b9d67b0fd"
+  },
+  {
+    "label": "lease-write",
+    "source": "pub fn main(){let v=[1,2];for x in v.iter(){v.push(3);}7}",
+    "policy": "Exact",
+    "source_sha256": "c5bd06bede17cd643ec1132d4c9a3bfd2ff75370188b33843fff6f75030ee8d0"
+  },
+  {
+    "label": "lease-drop",
+    "source": "pub fn main(){let v=[1,2];for x in v.iter(){drop(v);}7}",
+    "policy": "Exact",
+    "source_sha256": "6322d98ae1ecd1b86efb95e03ec3d8c3db0412edc2847db8106a409d3246df06"
+  },
+  {
+    "label": "lease-after-exhaust",
+    "source": "pub fn main(){let v=[1,2];let it=v.iter();for x in it{}v.push(3);v.len()}",
+    "policy": "Exact",
+    "source_sha256": "ed7b1b808538c73175bba089c6a5d522b14555013035909d8175b488b9f23bab"
+  },
+  {
+    "label": "lease-after-drop",
+    "source": "pub fn main(){let v=[1,2];let it=v.iter();for x in it{}drop(it);v.push(3);v.len()}",
+    "policy": "Exact",
+    "source_sha256": "7e85218fadfc3b3f9b0eb9a15b45d93ce222d021e1157016d24adff24c1a05e1"
+  },
+  {
+    "label": "cleanup-break",
+    "source": "pub fn main(){let v=[[1],[2]];let n=0;for x in v.iter(){n+=x[0];break;}n}",
+    "policy": "Exact",
+    "source_sha256": "cfde91bb79db576cc6d51ffadbafd8b410782c53ed85be240762f43a720d4214"
+  },
+  {
+    "label": "cleanup-return",
+    "source": "pub fn main(){let v=[[1],[2]];for x in v.iter(){return x[0];}0}",
+    "policy": "Exact",
+    "source_sha256": "8e3c77dd3136e25ba49babc28f02d7e441e84fe11d4852515b5f0d3611149d40"
+  },
+  {
+    "label": "destructure-advance",
+    "source": "pub fn main(){let it=[(1,2),(3,4)].iter();it.next();let n=0;for(a,b)in it{n+=a+b;}n}",
+    "policy": "Exact",
+    "source_sha256": "f08680312fe34f5d9203fe082401f1af9394cf678909ce0786c25a18911e5bc7"
+  },
+  {
+    "label": "destructure-empty",
+    "source": "pub fn main(){let n=0;for(a,b)in [].iter(){n+=a+b;}n}",
+    "policy": "Exact",
+    "source_sha256": "d89fdbab7dc06321e450744af0d6dcdb292c5328948d20c1dc1e5c2cdbf23704"
+  }
+]
