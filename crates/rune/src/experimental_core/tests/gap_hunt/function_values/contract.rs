@@ -18,7 +18,7 @@ fn canonical_record(index: usize, record: &Json) -> Json {
 			// spans and the entire typed logical call chain are checked below.
 			site.as_object_mut().unwrap().remove("frames");
 		}
-		if index == 95 || index == 96 {
+		if matches!(index, 95..=97) {
 			let kind = outcome["kind"].as_str().unwrap();
 			if kind.contains("full_name:") {
 				let prefix = "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x";
@@ -56,6 +56,9 @@ fn verify_fresh_case(index: usize, case: &Json, stock: &Json, actual: &Json, std
 	for key in ["row_idle", "executor_idle"] { assert_eq!(audit[key], true); }
 	for key in ["row_live_entries", "row_payload_bytes", "live_entries", "payload_bytes"] { assert_eq!(audit[key], 0); }
 	assert_eq!(audit["cleanup_error"], false);
+	if c16h_admission(index, case, stock, actual, stdout, stderr) {
+		return;
+	}
 	let refused = rule["classification"] == "Inherited-refusal";
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
@@ -84,4 +87,51 @@ fn verify_fresh_case(index: usize, case: &Json, stock: &Json, actual: &Json, std
 	}
 	assert_eq!(hex(stdout), stock["stdout_hex"]);
 	assert_eq!(hex(stderr), stock["stderr_hex"]);
+}
+
+/// Rows 11 and 97 were refused before C16h lowered named-variant type values.
+/// The supplement pins them by source and stock row; the frozen dispositions
+/// stay unchanged.
+fn c16h_admission(
+	index: usize,
+	case: &Json,
+	stock: &Json,
+	actual: &Json,
+	stdout: &[u8],
+	stderr: &[u8],
+) -> bool {
+	use sha2::{Digest, Sha256};
+	let supplement: Json = serde_json::from_str(include_str!("c16h_admissions.json")).unwrap();
+	assert_eq!(supplement.as_object().unwrap().len(), 2);
+	let Some(rule) = supplement.get(index.to_string()) else {
+		return false;
+	};
+	assert_eq!(rule["label"], case["label"]);
+	assert_eq!(rule["source_sha256"], case["source_sha256"]);
+	let mut raw_stock = stock.clone();
+	for key in ["stdout_hex", "stderr_hex"] {
+		raw_stock.as_object_mut().unwrap().remove(key);
+	}
+	assert_eq!(
+		hex(Sha256::digest(serde_json::to_vec(&raw_stock).unwrap()).as_ref()),
+		rule["stock_row_sha256"]
+	);
+	let audit = &actual["fresh_audit"];
+	assert_eq!(audit["invoked"], true);
+	assert_eq!(audit["reuse_used_fallback"], false);
+	match rule["classification"].as_str().unwrap() {
+		"Exact" => {
+			assert_eq!(index, 11);
+			assert_eq!(canonical_record(index, actual), canonical_record(index, stock));
+		}
+		"Inherited-diagnostic" => {
+			// The C16f row 96 call-kind difference, for a variant type value.
+			assert_eq!(index, 97);
+			assert_eq!(canonical_record(index, actual), rule["fresh"]);
+		}
+		_ => panic!("unknown C16h supplement classification"),
+	}
+	assert_eq!(hex(stdout), stock["stdout_hex"]);
+	assert_eq!(hex(stderr), stock["stderr_hex"]);
+	true
 }

@@ -1,0 +1,10 @@
+{
+  "137": {
+    "label": "deferred/named-type-value",
+    "source_sha256": "12adcad7d7a01e7c82b8689a3eb67a20f378d2e82400d4fdf05694aa19cbd1ce",
+    "stock_row_sha256": "687defd6196461b8425c0868f86d505a9a76e1345dd8efa792ca4beae4a4641a",
+    "previous_disposition": "Refused-surface",
+    "classification": "Exact",
+    "record": "C16h"
+  }
+}

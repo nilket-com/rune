@@ -475,7 +475,10 @@ impl Store {
 	}
 }
 
-fn type_hash(tag: Type) -> Result<u64> {
+/// The stock type hash of a type value. Type values order by this hash, as in
+/// stock, and print as `Type(<hash>)`.
+pub(super) fn type_hash(tag: Type) -> Result<u64> {
+	use crate::runtime as rt;
 	use crate::TypeHash;
 	Ok(match tag {
 		Type::Unit => <()>::HASH.into_inner(),
@@ -489,9 +492,19 @@ fn type_hash(tag: Type) -> Result<u64> {
 		Type::Vec => crate::runtime::Vec::HASH.into_inner(),
 		Type::Tuple => crate::runtime::OwnedTuple::HASH.into_inner(),
 		Type::Function => crate::runtime::Function::HASH.into_inner(),
+		Type::Object => rt::Object::HASH.into_inner(),
+		Type::Option => Option::<rt::Value>::HASH.into_inner(),
+		Type::Result => core::result::Result::<rt::Value, rt::Value>::HASH.into_inner(),
+		Type::Range => rt::Range::HASH.into_inner(),
+		Type::RangeFrom => rt::RangeFrom::HASH.into_inner(),
+		Type::RangeFull => rt::RangeFull::HASH.into_inner(),
+		Type::RangeInclusive => rt::RangeInclusive::HASH.into_inner(),
+		Type::RangeTo => rt::RangeTo::HASH.into_inner(),
+		Type::RangeToInclusive => rt::RangeToInclusive::HASH.into_inner(),
 		Type::Struct(nominal) => crate::experimental_core::nominal::hash_copy(nominal)
 			.ok_or_else(|| error(ErrorKind::InvalidCode))?,
-		_ => return Err(error(ErrorKind::InvalidCode)),
+		// One fresh tag stands for several stock iterator types.
+		Type::Iterator => return Err(error(ErrorKind::InvalidCode)),
 	})
 }
 

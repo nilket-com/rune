@@ -1,0 +1,1823 @@
+{
+  "summary": {
+    "rows": 120,
+    "classifications": {
+      "Exact": 86,
+      "Inherited-refusal": 10,
+      "Intentional-D1": 4,
+      "Frontend-refusal": 10,
+      "Inherited-diagnostic": 10
+    },
+    "status": "FROZEN",
+    "rulings": {
+      "call_kind": "calling a type value: fresh keeps UnsupportedCallFn, stock raises MissingFunction{hash}; inherited from C16f row 96, backlog",
+      "variant_identity": "E::D type identity quirks copied",
+      "hash_order": "raw-hash ordering copied",
+      "display": "hash-only Display copied",
+      "method_display": "fresh names the missing method (existing D1 intentional diagnostic)",
+      "bytes_hashmap": "Bytes/HashMap type values and is Bytes stay refused"
+    }
+  },
+  "rows": [
+    {
+      "index": 0,
+      "label": "surface/struct",
+      "source_sha256": "f4ce0e9f6334fb7325154cd0b8a683c83b8a2e63a070e96ad9744af9b93770ce",
+      "stock_row_sha256": "a1477242aa24aac540f4340f3f0f5c0e06b1f560c2f7b540b3389bbc43ccd608",
+      "classification": "Exact"
+    },
+    {
+      "index": 1,
+      "label": "surface/variant",
+      "source_sha256": "ec1ea09cdd4702ddf64aa862372929697d6fa1f6b160b4d1559ae5e51badf3cb",
+      "stock_row_sha256": "1f609ffeefad5c22136b80f0a5525b4d7bfd13c007e4e9187d336117d0f25340",
+      "classification": "Exact"
+    },
+    {
+      "index": 2,
+      "label": "surface/enum",
+      "source_sha256": "ccadc9b1a98ac851831568010a651f54d37780dbc414b2374fcc1d52911f6434",
+      "stock_row_sha256": "0996200f3ac65a630f93f771edfa00c50b348134f02ef1525011fd63518fd691",
+      "classification": "Exact"
+    },
+    {
+      "index": 3,
+      "label": "surface/module-struct",
+      "source_sha256": "f85e18518eb6860f48839c70840e4cd4bdc3932a1bad844a722362dfb20e77cc",
+      "stock_row_sha256": "8605a3db856022da7d88f01c10ec869898acb6864ec10337790be6b94adf9c6f",
+      "classification": "Exact"
+    },
+    {
+      "index": 4,
+      "label": "surface/module-variant",
+      "source_sha256": "32af5ab7228b104577157a529b93a3bd1bba07c830793569e1c61ef47bb879c1",
+      "stock_row_sha256": "4a9cce2ae9de1bdfcdafcb9ee3d729cbd6242b651540cf8ecfb11713c3fde24e",
+      "classification": "Exact"
+    },
+    {
+      "index": 5,
+      "label": "surface/string",
+      "source_sha256": "addb5bb2e665924d6a7cbde08979a878843392929847ae24233a3505531816c7",
+      "stock_row_sha256": "6c9bbbb20ed7fcabbda0b116253ebfbbdb5db901529f18406a77f00be6ea4092",
+      "classification": "Exact"
+    },
+    {
+      "index": 6,
+      "label": "surface/vec",
+      "source_sha256": "333c7136069c854ba04d10d5664db9d91ac594a897761061456d7456b16ec4ca",
+      "stock_row_sha256": "8f656ad8ac4d5faea74499244ba59fcab434b47b51048f80b39593ee6c6651ae",
+      "classification": "Exact"
+    },
+    {
+      "index": 7,
+      "label": "surface/option",
+      "source_sha256": "b66500b53b5b1c8bb7eb18af628cccb5c1dbffdeb7137c39b2d3bfda9c4008cb",
+      "stock_row_sha256": "826ed0747da041823f1e512f43dfa42cc90e573e55c34b0118f934ea2c12084d",
+      "classification": "Exact"
+    },
+    {
+      "index": 8,
+      "label": "surface/result",
+      "source_sha256": "c249d5623b87ddf3644283abc498df5fca02d23ce4dd93b43b1a10c7c5ef3ec0",
+      "stock_row_sha256": "4c097b5409aeee32963e474a26c8f118d9444d9b41a7756e85119a14bddad0be",
+      "classification": "Exact"
+    },
+    {
+      "index": 9,
+      "label": "surface/object",
+      "source_sha256": "87c29887a26430e77f6f1e37cb6154819f0c87eac22d6ea20da19a407c250b48",
+      "stock_row_sha256": "5ce523fdd400de9b4b33cf88a2be33c19bcde32d5a7b3aff8ff5e576ef273fff",
+      "classification": "Exact"
+    },
+    {
+      "index": 10,
+      "label": "surface/primitives",
+      "source_sha256": "451fe845354e75b7c5420a762f22c5581a4a0b8d7a20d981d3f420baadee0eb0",
+      "stock_row_sha256": "5816f5dbfee11647bf654dc6cad0da3f872ca22f29726a86103d00d0e67c8bb6",
+      "classification": "Exact"
+    },
+    {
+      "index": 11,
+      "label": "surface/ordering",
+      "source_sha256": "dfd46c87200b6a969fb017125662996c8e74564b9cfb4d40b8a754c83a956b32",
+      "stock_row_sha256": "c4b52e6a6b0ea587f9799d7ad3f9fd720c0dc75088f45341ae7d5b6f51223fbe",
+      "classification": "Exact"
+    },
+    {
+      "index": 12,
+      "label": "surface/range",
+      "source_sha256": "ec6b598cccf23c8aa3b8f9661bce9f912c75af6d356d32ce0bb774255d9c5021",
+      "stock_row_sha256": "c4626a974474b9eeeb176535e13da0ce063cd15a00eb6fe7311a0421da7a123f",
+      "classification": "Exact"
+    },
+    {
+      "index": 13,
+      "label": "surface/bytes",
+      "source_sha256": "1ebf35accc86daad879993bea34bae0cc3af5352c092220db638567ebd42166b",
+      "stock_row_sha256": "e53231360a6a8e934f69823d01098962773bf7cf02b59889d8f0ab463cfa9938",
+      "fresh": {
+        "location": {
+          "end": 136,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 136 }), operation: \"TypeExpr\", refusal: Some(TypeExpr), detail: None }",
+        "refusal": "TypeExpr",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:136, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 14,
+      "label": "surface/type",
+      "source_sha256": "2c70c4fbe3f2f82839fd8b1cc8241a72ebad8ca929fbe511590f655e3ee8cd6f",
+      "stock_row_sha256": "1ccd02aaf3f716a8c42f3a947ca01fcfacae5f1dd2a5f78e2cd4dd1c68f504bb",
+      "classification": "Exact"
+    },
+    {
+      "index": 15,
+      "label": "surface/hashmap",
+      "source_sha256": "622cc5903a257dac082b6409e345c30e44f65ddcd63f00fd801c8cc31fc1c438",
+      "stock_row_sha256": "affb14bad769a2510616e5dc55458868bef2b897db1c5eeea36bc0aa0a3c94fb",
+      "fresh": {
+        "location": {
+          "end": 144,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 144 }), operation: \"TypeExpr\", refusal: Some(TypeExpr), detail: None }",
+        "refusal": "TypeExpr",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:144, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 16,
+      "label": "surface/function-path",
+      "source_sha256": "85837f3fd6f58a63b49fd4a689ada26181bf54093c1fae982408bc0367fcc6bf",
+      "stock_row_sha256": "66ef4ff29f5339252cc3a7eaf875e4d887070c165c73d5f325e100cb4f85d2f7",
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 137 }), operation: \"UnresolvedFunction\", refusal: Some(UnresolvedFunction), detail: None }",
+        "refusal": "UnresolvedFunction",
+        "status": "refused"
+      },
+      "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 17,
+      "label": "surface/self",
+      "source_sha256": "75f0dc7d600d79202ce8bb16378ee180c80aad6604856b49d1e69c6c6b17769e",
+      "stock_row_sha256": "101df10bc25f1efd11a01187a70e24560f40e495e6d1221c0c9db29639e0acb3",
+      "classification": "Exact"
+    },
+    {
+      "index": 18,
+      "label": "surface/use-struct",
+      "source_sha256": "57d91d752de638ce03e44daed077af0702b1580d9b991bb420d91b14b75ec456",
+      "stock_row_sha256": "0a8e2fa09ccfc9bba0311a7a6d59c79aa3b1bec7305008910b3c99f71b770764",
+      "classification": "Exact"
+    },
+    {
+      "index": 19,
+      "label": "surface/use-variant",
+      "source_sha256": "bacd4390e5da3135b80f19da94f4ce3e06f3a5dcd4bf1d89ff2e385357cca0f4",
+      "stock_row_sha256": "019aaf38b0bcf1f1b37ff68e18ec0fb6332c231b6bfa7a30e33b8142c6fd8151",
+      "classification": "Exact"
+    },
+    {
+      "index": 20,
+      "label": "surface/use-enum",
+      "source_sha256": "2c372e24ed916d555d170215e29504e505aebc43372b29cbf988ac4fc6f34821",
+      "stock_row_sha256": "75b6685aac07fa4475f84242d3606bc29e56b143cbad8422d129cb6357111acc",
+      "classification": "Exact"
+    },
+    {
+      "index": 21,
+      "label": "control/unit-struct",
+      "source_sha256": "291460c4689153be22b03548ef5c549e8a2a3d4f6b2972d99700a934e0a1acf5",
+      "stock_row_sha256": "fea4d44ba4546be23a311f61b9c32a455f4310a022ee2d672d1c7a820969012e",
+      "classification": "Exact"
+    },
+    {
+      "index": 22,
+      "label": "control/unit-variant",
+      "source_sha256": "0e6799d1e100de64b2fe9ef0367f1f06c47cca26de9572922286133494f6da6e",
+      "stock_row_sha256": "a4a67c8de766a0375c17eb8f2fc64e320147027a21becb7e332be134a026d3d6",
+      "classification": "Exact"
+    },
+    {
+      "index": 23,
+      "label": "control/tuple-struct-call",
+      "source_sha256": "499f70d40118227d03eaad6309f294e262b3d79e939ce12c5598dad1976b93a4",
+      "stock_row_sha256": "90e59a03d70394c1e769c21657a7cc38c3a48cc9e6516e833047c31296e8db4d",
+      "classification": "Exact"
+    },
+    {
+      "index": 24,
+      "label": "control/tuple-variant-call",
+      "source_sha256": "942ae3b665b23c3a19004ce548cb05d64ad1c7047e395cbfe8f9211b4b4fd1fc",
+      "stock_row_sha256": "c38bf930e2545786af0a583bcf43a4d04355806b7b55cead716bce2b18eb01a7",
+      "classification": "Exact"
+    },
+    {
+      "index": 25,
+      "label": "eq/same",
+      "source_sha256": "35185c6075cf5a1a7528ce079a50b7823881fac4476e9e70ce4735caf9ba81bb",
+      "stock_row_sha256": "eeba12a43b13628b2ba2ac989d6a0ef8d837890a558388049b8e5f0dd1051fdc",
+      "classification": "Exact"
+    },
+    {
+      "index": 26,
+      "label": "eq/distinct",
+      "source_sha256": "dab4671f7191c9f03546f2ea9c486c25b4d12feb3d925bc77d0551a6a5187240",
+      "stock_row_sha256": "34510d35175ebd50bde0d9dce8ae0eff18c612fd8b135412ad6a68707a6c47e8",
+      "classification": "Exact"
+    },
+    {
+      "index": 27,
+      "label": "eq/builtins",
+      "source_sha256": "b2219552cc5aff5779ec01edfacc073eef01376a9420f55c2c7e62bf69f795c3",
+      "stock_row_sha256": "d99ca046b172bb031777cadae55a4243835474ef42c9ff2d335fa719a8f19d1f",
+      "classification": "Exact"
+    },
+    {
+      "index": 28,
+      "label": "eq/alias",
+      "source_sha256": "b100f45482f419f53e653000758025056e2e888b9f6555928728fccf70a279be",
+      "stock_row_sha256": "10edb006dfb6e3532032370fa609e388045884940a4c48b803719c9af3dd165b",
+      "classification": "Exact"
+    },
+    {
+      "index": 29,
+      "label": "eq/of-val-struct",
+      "source_sha256": "91ab552f60dd1d6116259954341cac368f0bb1f0c174e7e7df0cc79d07140df4",
+      "stock_row_sha256": "6e079c3640db0e8ccba27b4823ffe0687bf6f8d8fa9d95b6e2d04bdc45d9ee46",
+      "classification": "Exact"
+    },
+    {
+      "index": 30,
+      "label": "eq/of-val-variant",
+      "source_sha256": "0200eb98749cadcfbf61140c350e151e0b2300bd298207902ef62b20949c4ba0",
+      "stock_row_sha256": "d902771bf1064ce25beb073b6fd73ea4ce183c8f61d36d71c1e7b9fc0f77154d",
+      "classification": "Exact"
+    },
+    {
+      "index": 31,
+      "label": "eq/of-val-unit-variant",
+      "source_sha256": "d559f064a8823b266c00f65a9834bbaf3709f4e48f64701257dcec55fae511f4",
+      "stock_row_sha256": "e4e77e7b3e79fb4488728f26996a76e220ad4009135a251c7a34b2ee87887940",
+      "classification": "Exact"
+    },
+    {
+      "index": 32,
+      "label": "eq/of-val-tuple-variant",
+      "source_sha256": "9ccc4172b6c31bbf93c946d6fc42ca013d8ca715be00003382032e94a955192b",
+      "stock_row_sha256": "fbede0f83053e244b7429707047941f5b70acd81cf70096224140f7e9ab4f1b9",
+      "classification": "Exact"
+    },
+    {
+      "index": 33,
+      "label": "eq/of-val-builtins",
+      "source_sha256": "c2b5e7e96d14deb4f5148ff9ae8f675131f1ede9d005f75cdc448b04397ca4a0",
+      "stock_row_sha256": "56bf2cd712a7107b145ead0eb81f02a3d0958c532130c3ebb3029d3049ff0565",
+      "classification": "Exact"
+    },
+    {
+      "index": 34,
+      "label": "eq/of-val-type",
+      "source_sha256": "ded23d3e150f984af1c4375b381688f6387f46b3b83b6da74b8ae76563c705e4",
+      "stock_row_sha256": "0c887682e0422bff9c668d94b8204487cfd63dede9a42091cd30d63bb5de448d",
+      "classification": "Exact"
+    },
+    {
+      "index": 35,
+      "label": "eq/int",
+      "source_sha256": "6fe376e0460b535fc60f1ebbd1915ba05f811fc80c3b410f185cdaa1a4e59902",
+      "stock_row_sha256": "7c24e6b1807455e4050314fbadad7dafea153b6078eed1adbf6cd78715a99495",
+      "classification": "Exact"
+    },
+    {
+      "index": 36,
+      "label": "eq/containers",
+      "source_sha256": "9c200e94310de8ef893395c68b95216eaed8334c59e675d155600fedcb3d24b6",
+      "stock_row_sha256": "ffc8a30e4e6f42e09281f005401c2b633abf5a14a9399dfdfbb339e795691e6c",
+      "classification": "Exact"
+    },
+    {
+      "index": 37,
+      "label": "cmp/ops",
+      "source_sha256": "7cb9caff392aa05532bc902d764c6c6b27318af97603e2c562b07f517f814414",
+      "stock_row_sha256": "3fa068da44ae93a3af09f73fadf228d7b8013bca26d5729ba0b7d7df29183e0a",
+      "classification": "Exact"
+    },
+    {
+      "index": 38,
+      "label": "cmp/vec",
+      "source_sha256": "418f103f7857326ea7997ed9d851cd2c8e5fb416e5f08d269370ce71ccad9b64",
+      "stock_row_sha256": "cb8b497a760135498c1bb90b30f50ee5ab18f0a07ee001f1e354725729f9d004",
+      "classification": "Exact"
+    },
+    {
+      "index": 39,
+      "label": "cmp/max",
+      "source_sha256": "f9f03a1be0274190f32746d8eac5edac58835f4194ad207b3c3253b873f5db47",
+      "stock_row_sha256": "1fcdce6edea315d7898eb351d73cf4495b10a1d708eb5b9ee9a0ff2e4867f31d",
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 40,
+      "label": "cmp/sort",
+      "source_sha256": "ada804bf46aa23465e141ebb65726641a76d2880f3ccc6ed1f6838abb8718767",
+      "stock_row_sha256": "6274b652125aedaebfc9a943339c7f797d165e483d0333e6b2ae4c100653df15",
+      "fresh": {
+        "location": {
+          "end": 144,
+          "source": 0,
+          "start": 136
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 136, end: 144 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 136:144, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 41,
+      "label": "cmp/method",
+      "source_sha256": "5435966f179a23484e361e5d9b4c08d609e8714d0d72dce26a49c75d2da58685",
+      "stock_row_sha256": "f75c48b7c5e6476d01fe0de70bfd3a5408858ebdb9926d63dafbdc566bd00a4d",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` has no method named `cmp`",
+            "kind": "MissingInstanceFunction { hash: 0xc365796a3b271103, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 127,
+                "source": 0,
+                "start": 119
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 127,
+                "source": 0,
+                "start": 119
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` has no method named `cmp`\n  at c16h.rn:1:120"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::any::Type` has no matching method",
+      "fresh_display": "Type `std::any::Type` has no method named `cmp`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 42,
+      "label": "is/type-value",
+      "source_sha256": "94800c797057bd85b421c33465c3edf113c8e456bb9ca0cf83179d45b546c675",
+      "stock_row_sha256": "1913d2f1383fc31c16e40e5218cc83637da990b2ad15afd55076794e25868f64",
+      "classification": "Exact"
+    },
+    {
+      "index": 43,
+      "label": "is/type-value-not",
+      "source_sha256": "199c242298bbcec9834760e1bedf44937e0423bc5331e3f441e2f39daad6b76b",
+      "stock_row_sha256": "cbfaba246cf833d1c64df4cc0f52048fbc082c5606255e9117e49fd01bd46e3a",
+      "classification": "Exact"
+    },
+    {
+      "index": 44,
+      "label": "is/struct-instance",
+      "source_sha256": "8d90c2f4d17ad2f186a381d32fa9b2edc200b3da733279286f56d602791282ec",
+      "stock_row_sha256": "53f0c429150358d362f54a447eb3fad1c3cfda67fee8b0acaa0472efea45971f",
+      "classification": "Exact"
+    },
+    {
+      "index": 45,
+      "label": "is/variant-instance-enum",
+      "source_sha256": "810618c03c7842c6297b2e85ce98f82b65719c38717d8a4330664a089671020a",
+      "stock_row_sha256": "4e175be235e4df363515cb2e39b571704c3a88d33954539defc061a84bb6b3fb",
+      "classification": "Exact"
+    },
+    {
+      "index": 46,
+      "label": "is/module",
+      "source_sha256": "ad49d0d3b6563a1c99490358be66b153db27ea21885f3c40cde6b0af47a2c06e",
+      "stock_row_sha256": "5d4591df371887cae24321c90403394a25018036252fc06d996c28717f635c42",
+      "classification": "Exact"
+    },
+    {
+      "index": 47,
+      "label": "is/not",
+      "source_sha256": "59d016b4a3a89504da1e6dac66566ab280141a7d9ad1a4babf39b05d6bc66480",
+      "stock_row_sha256": "19e1d6922808fb935055ea4389c2a963648b03ca62ccd408efdb06276ef6d138",
+      "classification": "Exact"
+    },
+    {
+      "index": 48,
+      "label": "is/bytes",
+      "source_sha256": "c176ee71e9ada1ac357e29748bee3459a5398f6be5a2ed4048c7bed0ef6ff806",
+      "stock_row_sha256": "8da76467ae36bb0b9bc43da5082bc75caf6005cb9f421b778aca0f80408643ee",
+      "fresh": {
+        "location": {
+          "end": 144,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 144 }), operation: \"TypeExpr\", refusal: Some(TypeExpr), detail: None }",
+        "refusal": "TypeExpr",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:144, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 49,
+      "label": "compile/is-named-variant",
+      "source_sha256": "89def3bc77c839dcfd78de43d627a744d9ac25590840b9e383eaf4d040e1aa53",
+      "stock_row_sha256": "9ce178a6dcece2ebcbc0eb3be8ef66050aa106651b19d8d7531a3266948de226",
+      "fresh": {
+        "location": {
+          "end": 136,
+          "source": 0,
+          "start": 132
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 132, end: 136 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 132:136, kind: ExpectedMeta { expected: \"something that has a type\", meta: MetaInfo { kind: Variant, hash: 0x489be30d02f3940f, item: Some(E::D) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 50,
+      "label": "compile/is-unit-variant",
+      "source_sha256": "80455f8128f68e3948cf1eb1601e975805d31b8aec7379874d9cfa3104b775ba",
+      "stock_row_sha256": "0f9d53cd30121b44cbfdf4987248bcd635b3955157e2acea3f81f4fc67ee2bac",
+      "fresh": {
+        "location": {
+          "end": 131,
+          "source": 0,
+          "start": 127
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 127, end: 131 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:131, kind: ExpectedMeta { expected: \"something that has a type\", meta: MetaInfo { kind: Variant, hash: 0x31e6fa421a80c8d1, item: Some(E::A) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 51,
+      "label": "compile/is-tuple-variant",
+      "source_sha256": "d73e4664940c62c2e1a29a08b126683310d166dbdae248aff68c3183a4cb9c19",
+      "stock_row_sha256": "2572495ba9a34af75fed823bad238f05e9841d235833266f6aeffdd1d07be91e",
+      "fresh": {
+        "location": {
+          "end": 134,
+          "source": 0,
+          "start": 130
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 130, end: 134 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 130:134, kind: ExpectedMeta { expected: \"something that has a type\", meta: MetaInfo { kind: Variant, hash: 0x20df65bb1e80fc7, item: Some(E::B) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 52,
+      "label": "compile/is-variable",
+      "source_sha256": "1e690df4fbf9bf309546ab6bd3cc35ba07ae506ca9c8a928460b76cc21dfb778",
+      "stock_row_sha256": "545c950ca805c489ba2546190787aaeca7c558458582fa811ff9f8696c8695ac",
+      "fresh": {
+        "location": {
+          "end": 133,
+          "source": 0,
+          "start": 132
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 132, end: 133 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 132:133, kind: MissingItem { item: t } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 53,
+      "label": "compile/match-variant-path",
+      "source_sha256": "4e5032f935ecb1e4c8a5d68b4ed76e10013dae35abe087fabc4424f3d85d8fa7",
+      "stock_row_sha256": "3a87104d01a4876c6c9eb4c52812b0b1c139cd6aac6e27b87e9a4b101eb08734",
+      "fresh": {
+        "location": {
+          "end": 131,
+          "source": 0,
+          "start": 127
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 127, end: 131 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:131, kind: UnsupportedBinding }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 54,
+      "label": "compile/direct-struct",
+      "source_sha256": "33b83fdb18b2c0ab9b8d4d3ec1738cd310d756ddbf2c1cf931ec24371ebc2221",
+      "stock_row_sha256": "16af312657f3856a396d25277a8fa78e90691affacec66c718785037a553023d",
+      "fresh": {
+        "location": {
+          "end": 120,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 120 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:120, kind: ExpectedMeta { expected: \"something that can be called as a function\", meta: MetaInfo { kind: Struct, hash: 0xbe6b74e85e3244d6, item: Some(N) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 55,
+      "label": "compile/direct-variant",
+      "source_sha256": "44f5e708474bcd7c5ed97ba2064221900a65dc8037d36200a30d842ba3084eea",
+      "stock_row_sha256": "7196f33c5640f5ec0c46b01f627543a30339fd1c8a5f7bcdc3c27214189fa590",
+      "fresh": {
+        "location": {
+          "end": 123,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 123 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:123, kind: ExpectedMeta { expected: \"something that can be called as a function\", meta: MetaInfo { kind: Variant, hash: 0x489be30d02f3940f, item: Some(E::D) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 56,
+      "label": "compile/module-value",
+      "source_sha256": "6b102a8e017e74ac7270f6ee151bfbcb03b28ec8420535f999e2652bb9af47cf",
+      "stock_row_sha256": "d12baaf5de31c6177a10ec2fc411b853b04721a85e47106a49fa64ca5b3a79fe",
+      "fresh": {
+        "location": {
+          "end": 120,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 120 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:120, kind: ExpectedMeta { expected: \"something that can be used as a value\", meta: MetaInfo { kind: Module, hash: 0x1a8040fe7d8e65a4, item: Some(m) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 57,
+      "label": "compile/unknown-path",
+      "source_sha256": "90a06e4ef053c11467e5a40819ccbe55cb6e1f92607ba7f3b41e369aae315564",
+      "stock_row_sha256": "7d19de294a9f174ef901c8da07b65a4502af658019a4b2f2c85e8e4bf3f97ff1",
+      "fresh": {
+        "location": {
+          "end": 123,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 123 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:123, kind: MissingItem { item: Nope } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 58,
+      "label": "compile/variant-of-struct",
+      "source_sha256": "3859ddb2f3feedcde36415d1673b5851b3f6ecb4098a3f7e2b59c67fb919a1a4",
+      "stock_row_sha256": "e489bf2371f7143cbc16482524ce8195a9f433e201e69fb5093548648a0f6499",
+      "fresh": {
+        "location": {
+          "end": 123,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 123 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "refusal": "FrontendDiagnostic",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:123, kind: MissingItem { item: N::D } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Frontend-refusal"
+    },
+    {
+      "index": 59,
+      "label": "match/guard",
+      "source_sha256": "8c817cbf433a612ead673a16c66f4f95f46173271b2ceb3bdc94b99032838eec",
+      "stock_row_sha256": "af57c06dbfe37c715474942a3d201314c30295a92afee00a33ed7cfc68e3abb9",
+      "classification": "Exact"
+    },
+    {
+      "index": 60,
+      "label": "match/uppercase-binding",
+      "source_sha256": "7454501c1c4c0576a0697965dc0f46b7cf294cae8fd96b3ad698130648baf0c4",
+      "stock_row_sha256": "3822c309d7389595ef960ae5fddc149d602d0c3757759638c6ed667b162ad020",
+      "classification": "Exact"
+    },
+    {
+      "index": 61,
+      "label": "match/vec-of-types",
+      "source_sha256": "cb1a617f3c4705e0d33fa9881e7c095e6c492cdd0f5a11c6072ebd81353506da",
+      "stock_row_sha256": "93b646917987a0d6730534929abba621296a03f62e39b48547bf7a02414d2997",
+      "classification": "Exact"
+    },
+    {
+      "index": 62,
+      "label": "fmt/debug",
+      "source_sha256": "55e7f140ad4b6460d3e0cf7f44ba3c394fcba3a400ac059d4d998a3a8b655389",
+      "stock_row_sha256": "c5d827b058c97ac10908e0c6ce0db30b92a753717d37aa2a0422eb177cb5b6dd",
+      "classification": "Exact"
+    },
+    {
+      "index": 63,
+      "label": "fmt/display",
+      "source_sha256": "9e21bc5f1d5ca0ca1154eaf0deb79f1cb7fb968302dc70aaf184cf23e6b0f078",
+      "stock_row_sha256": "7bb49b2d7e0dfd3b6b66b7835b1808e2e8ffc488b43e52c3d253468a39c829e2",
+      "classification": "Exact"
+    },
+    {
+      "index": 64,
+      "label": "fmt/debug-variant",
+      "source_sha256": "993448e5582f16fb2d3ad80e38e2fb2c1028bdea11104dee2baa0a32f1d98278",
+      "stock_row_sha256": "5108e1110eccbd922457b503286a233b51f2b8854f04ed1c7e9982115691c273",
+      "classification": "Exact"
+    },
+    {
+      "index": 65,
+      "label": "fmt/display-variant",
+      "source_sha256": "241c770a54c0f1e6d444187c528cc0f8f170e96c5984222a15fa2f9c1656c1a8",
+      "stock_row_sha256": "485e5186da06388b680171b4e69c9f37127e07b080bb243c00d033475a78e7fb",
+      "classification": "Exact"
+    },
+    {
+      "index": 66,
+      "label": "fmt/template",
+      "source_sha256": "044d28aafc914e0271c16dc2117d6bc63eb8e2ae8f7b985c1d0d25cda218c73b",
+      "stock_row_sha256": "1da6c645e37936a1a5584424cdd8ab3367867bb24729e37822cd440ab44383e2",
+      "classification": "Exact"
+    },
+    {
+      "index": 67,
+      "label": "fmt/debug-container",
+      "source_sha256": "3a63ddbccd678eb428fa4bb4c52cd171df08c8b9d1a1d470fa92a7d9bbf1afe7",
+      "stock_row_sha256": "2447ad58b0cf1e5199ad3a39be141831d7e4fc5508007449b98a527fd6106a33",
+      "classification": "Exact"
+    },
+    {
+      "index": 68,
+      "label": "fmt/display-of-val",
+      "source_sha256": "8365a3805b4d65b813a4b9fc3b2dd5d3015efc3d0850cf49839d14a63ad0a4cc",
+      "stock_row_sha256": "eb7bbbea4075831103a8aa4e3ef657f29d88af7a75d978a4df4aa8edc424df19",
+      "classification": "Exact"
+    },
+    {
+      "index": 69,
+      "label": "fmt/println",
+      "source_sha256": "dd8ac27303f1a48bbdf0e2906143a40986c070f15ca3dce7e3672ea482008a5d",
+      "stock_row_sha256": "46814f36de7f4a225371ea047b61ccba7596989afe9f3e81d0b677e06d187ceb",
+      "classification": "Exact"
+    },
+    {
+      "index": 70,
+      "label": "fmt/string-add",
+      "source_sha256": "b860daf43d572bc501b92561f0776b8b6164d344d340e19415e2d5bd81b82a2b",
+      "stock_row_sha256": "4ecf239ae9e96a43d8ba9d928af4d63fc54500d33d7fd0a9397ca8c18f3fbcf5",
+      "classification": "Exact"
+    },
+    {
+      "index": 71,
+      "label": "fmt/type-name",
+      "source_sha256": "3373da1a0761ec9a7021c7ab4ef82ba88841f5af92ca8500b8ac27fdb74df3ab",
+      "stock_row_sha256": "41f1122121a79e16033e2ca68edbe59740729bc3f6fbb09b7a84c81ee45820e7",
+      "classification": "Exact"
+    },
+    {
+      "index": 72,
+      "label": "fmt/instance-names",
+      "source_sha256": "65005e608f1bbefffa8646e74ed17a12910d91e24f0dba18a5c0718debcf653a",
+      "stock_row_sha256": "76ce3cec496fc8d0beabd3d413c4373c18b555c9a543cc555779db09c12262f2",
+      "classification": "Exact"
+    },
+    {
+      "index": 73,
+      "label": "pass/fn",
+      "source_sha256": "c3da3086d93a32ab08a39baaf6bad22c559b606f0cf12d00be2d2f73e4287e06",
+      "stock_row_sha256": "f771723c3e3e2a27d0872bc6a472ce5ed4c83abfad5646d58ed0e20031aeef39",
+      "classification": "Exact"
+    },
+    {
+      "index": 74,
+      "label": "pass/closure",
+      "source_sha256": "4d0562b45ae9a56719e7c2ac00964aa8018bf429bc06e9aea1b8f97da1b6ab95",
+      "stock_row_sha256": "2eb45f23c0e005c2d1ef1e4bc316db901a2bfe18f51b48d2b7cb29a6bd59e12c",
+      "classification": "Exact"
+    },
+    {
+      "index": 75,
+      "label": "pass/capture",
+      "source_sha256": "7a3cb89e22ccc533bf807004b3135acbfe5532e53b38063ff6a57c604d58edec",
+      "stock_row_sha256": "20d1460a3af51704986e3c9de9dfa6e4b05f11c2c63fe129dfc0b932c54be572",
+      "classification": "Exact"
+    },
+    {
+      "index": 76,
+      "label": "pass/capture-borrow",
+      "source_sha256": "62cb4f7f3222bb195b1893b3a10a16733f4564e97835b66daff08b43e16398fd",
+      "stock_row_sha256": "5bce8e4469f59bdd8fe3a12eefbcf598958c6bf6af596086214ad5d5ee5bd00f",
+      "classification": "Exact"
+    },
+    {
+      "index": 77,
+      "label": "pass/vec",
+      "source_sha256": "5328c9987a5dc5aa1c5f04e693587330ca0f053cd1f90f8bd8ceb85b153ca3c0",
+      "stock_row_sha256": "ea52b74d9d71f2f05a1bcb221ebf9b32d6079bb4659f77765e125a61fa8ee1dc",
+      "classification": "Exact"
+    },
+    {
+      "index": 78,
+      "label": "pass/object",
+      "source_sha256": "46495d84ed274cea7094f9b1fe1334ed2fa51a64efa88e77c0cf99444fd89f92",
+      "stock_row_sha256": "4725029dafcd8d3d06741e8cac8b118cdeb65d17de5dbc96c59194fe7ced754f",
+      "classification": "Exact"
+    },
+    {
+      "index": 79,
+      "label": "pass/tuple",
+      "source_sha256": "95eafaa19c957e38b30934b8abfecd58fbbc487088f7f023c01d31fd4d79b56c",
+      "stock_row_sha256": "90753f774d607f1a5543e325b8f27cb6d2314623ce267a5b527fbe36233013f9",
+      "classification": "Exact"
+    },
+    {
+      "index": 80,
+      "label": "pass/option-result",
+      "source_sha256": "11d77eec71249ee19ceeed4d6488a70363d0fbca65ebfedf6a7c6839e3bf7d81",
+      "stock_row_sha256": "122f9949797fcb2eb9684376a7d84c401e698643dfa24015c06846095485a2ca",
+      "classification": "Exact"
+    },
+    {
+      "index": 81,
+      "label": "pass/struct-field",
+      "source_sha256": "52be72084e9b92b2af9795aa06daaa18ac132c500440dcde28853ce65112270a",
+      "stock_row_sha256": "3c4ce4a0dfeb0d756a15f6852596d12ad2c5c388bd765a210fc273393d8af351",
+      "classification": "Exact"
+    },
+    {
+      "index": 82,
+      "label": "pass/variant-field",
+      "source_sha256": "4b0994b8a26a98fc5c1f719c7b9811c39cb5323360b087b19a26a0b95ad27671",
+      "stock_row_sha256": "c6ae1cf94389a8ce1097d7dd292e4bf6fff15c617c25718316e4d5cd6c0ba82e",
+      "classification": "Exact"
+    },
+    {
+      "index": 83,
+      "label": "pass/return",
+      "source_sha256": "5b258630af44290c091ee061a919ae388355d551921db830eeb6d6a7b2e31666",
+      "stock_row_sha256": "24ed9849c3c8da1a07b6612b73e3aa7486e78649f0dd292a028d50aaa5cd8c14",
+      "classification": "Exact"
+    },
+    {
+      "index": 84,
+      "label": "pass/return-builtin",
+      "source_sha256": "3a013e57be86913b332535dea5738a092a8c094df2ab4b1b9c5cb88db1462f4e",
+      "stock_row_sha256": "333a17ff92c366a1d78e732bd32da9c62ffcff6304b67fddaa3bf4f3ef420bf5",
+      "classification": "Exact"
+    },
+    {
+      "index": 85,
+      "label": "pass/push",
+      "source_sha256": "47c8f54903ebf557c5afc5c0c3f7968c97b24d70bf55b82533b62d344998b1a4",
+      "stock_row_sha256": "0cc32c8e8eb0a1060934a402d1a8f769fe7db46d6b1432b7d6ba40a3f649e214",
+      "classification": "Exact"
+    },
+    {
+      "index": 86,
+      "label": "pass/loop",
+      "source_sha256": "3102ffd9eb0275c3f6e9d8dedb61d0653429f0c6ce509c45347a248c44037c17",
+      "stock_row_sha256": "1a8543d1dfcb99fe758895390be7fb977fd06ee39865ca9308033675e5c0da0d",
+      "classification": "Exact"
+    },
+    {
+      "index": 87,
+      "label": "pass/if-let",
+      "source_sha256": "4f376b251d881ff2bb2e0aea7f14c73b83729563b21e93ee83f6ee525a56b249",
+      "stock_row_sha256": "5d5cc15440d5b8c67b9dd9595b53df426768183781b5ee10e5ec1947ec9bc7c4",
+      "classification": "Exact"
+    },
+    {
+      "index": 88,
+      "label": "pass/map",
+      "source_sha256": "1ec490139e6f3e51d2f03449ca6d63537f329668d3733175b2ad94df23c0e616",
+      "stock_row_sha256": "2a3fb4d8e213f32a89bb48ea4015e62c001b250c96e481cc38519c550994cf00",
+      "fresh": {
+        "location": {
+          "end": 158,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 158 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:158, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 89,
+      "label": "pass/host",
+      "source_sha256": "88fa04d3055b4f982162da27fd2e6b9822284ab07cb627f0a815890e111f5857",
+      "stock_row_sha256": "9aa51df3d7fc3e6e029abe508d13a70c230dc9eba13ff0ca270ff8d65f8d1b18",
+      "classification": "Exact"
+    },
+    {
+      "index": 90,
+      "label": "pass/hashmap",
+      "source_sha256": "0e5018cc75928843a8be10606d139c076d98083a9ec2299b4cbdc15f32a895c9",
+      "stock_row_sha256": "969099d21b08f7bff88fb8286f860af9214a3c601aca33f072222d2fe28ea41a",
+      "fresh": {
+        "location": {
+          "end": 157,
+          "source": 0,
+          "start": 125
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 125, end: 157 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 125:157, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 91,
+      "label": "pass/clone",
+      "source_sha256": "e4f2c2110efc35e24dda8ddfe49f2aa85786660bf32f82339e3cff75fd7b9889",
+      "stock_row_sha256": "5cdac48ee8c130de07f6fb45de7534659ee99b6151e64f6be66ea9be2008b58a",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` has no method named `clone`",
+            "kind": "MissingInstanceFunction { hash: 0x471ced260e0c90ec, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 128,
+                "source": 0,
+                "start": 119
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 128,
+                "source": 0,
+                "start": 119
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` has no method named `clone`\n  at c16h.rn:1:120"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::any::Type` has no matching method",
+      "fresh_display": "Type `std::any::Type` has no method named `clone`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 92,
+      "label": "pass/host-chain",
+      "source_sha256": "36a484e474c21916660174d97be623225ef69b043b4766659d9cf2fa4a474d04",
+      "stock_row_sha256": "18d618c18d444c7593c43fb9e11e43761ba50ca4f33b720bed489e9346c3fdc9",
+      "classification": "Exact"
+    },
+    {
+      "index": 93,
+      "label": "call/struct",
+      "source_sha256": "ac73c372536fbc081f2c9a89d4761d2e7e77ecd603d5deb1555e249da81f66a7",
+      "stock_row_sha256": "c7c3d151e306ce837b7994a8b00d54164434357cd6d365e8986a22ac40d4b10b",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 133,
+                "source": 0,
+                "start": 127
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 133,
+                "source": 0,
+                "start": 127
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:128"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Missing function with hash `0xbe6b74e85e3244d6`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 94,
+      "label": "call/variant",
+      "source_sha256": "f052b37e7ab08c8541b469a0075cb1a94a9c7ff3f1cb4f255734802dff58cf63",
+      "stock_row_sha256": "bc330d7e147d557cd7a88b94ebc32ca0f4c306f846f036609bcf42b4c0feb995",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 134,
+                "source": 0,
+                "start": 130
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 134,
+                "source": 0,
+                "start": 130
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:131"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Missing function with hash `0x489be30d02f3940f`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 95,
+      "label": "call/enum",
+      "source_sha256": "8872cbce1e3384ed7e91c1c77871295aee617736f4940da6b19d3f8deeebaca4",
+      "stock_row_sha256": "1ffec31a0ae07c5fec68782b9ffed3ea644ef8d73038de8c381f534053d5bbfc",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 130,
+                "source": 0,
+                "start": 127
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 130,
+                "source": 0,
+                "start": 127
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:128"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Missing function with hash `0xf727e1feaf2a3ca`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 96,
+      "label": "call/builtin",
+      "source_sha256": "399a7f44a1bc82b17758328dace8cd1c980bf2afcf67f76a6afb8476ffc5aa20",
+      "stock_row_sha256": "200223155780e54fc362ad4b1f255913849b13f5c828defb6f93544de91c8e2f",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 135,
+                "source": 0,
+                "start": 132
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 135,
+                "source": 0,
+                "start": 132
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:133"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Missing function with hash `0x2f4720d36d2b70c`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 97,
+      "label": "call/of-val",
+      "source_sha256": "ba6a8dbcd3c2eebcd114c33ba2629291ee8dd6199885764c0942020e54263db0",
+      "stock_row_sha256": "2ec4a58d3b5c87bfb93d4e8743b48627ff436a5acffac17336a35b3a6b8a0dd2",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 155,
+                "source": 0,
+                "start": 151
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 155,
+                "source": 0,
+                "start": 151
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:152"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Missing function with hash `0x1cad9186c9641c4f`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 98,
+      "label": "call/args-effects",
+      "source_sha256": "f0133ecb6b2cb4ede5798525a08891d7e9c464b61dcec4aa1f9851267d9099fb",
+      "stock_row_sha256": "7cb43f452b87a86032206c845796ac1019c6ac132bcbe83b618d4ba90a78a633",
+      "fresh": {
+        "observation": {
+          "events": [
+            {
+              "kind": "i64",
+              "tag": 1,
+              "value": "1"
+            },
+            {
+              "kind": "i64",
+              "tag": 2,
+              "value": "2"
+            }
+          ],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 147,
+                "source": 0,
+                "start": 127
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 147,
+                "source": 0,
+                "start": 127
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:128"
+        },
+        "diagnostics": "[]"
+      },
+      "stock_display": "Missing function with hash `0xbe6b74e85e3244d6`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 99,
+      "label": "call/callee-effects",
+      "source_sha256": "38716d27939e6f7eb55bb59cf4272835ee9bc0b6e872cb44d6dc2dd7be619124",
+      "stock_row_sha256": "577e3d562ef42390b5cd9b528f6d43ed9fb44f6478dc8f5a38e551f8a73c1891",
+      "fresh": {
+        "observation": {
+          "events": [
+            {
+              "kind": "i64",
+              "tag": 1,
+              "value": "1"
+            },
+            {
+              "kind": "i64",
+              "tag": 2,
+              "value": "2"
+            }
+          ],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 156,
+                "source": 0,
+                "start": 140
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 156,
+                "source": 0,
+                "start": 140
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:141"
+        },
+        "diagnostics": "[]"
+      },
+      "stock_display": "Missing function with hash `0xbe6b74e85e3244d6`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 100,
+      "label": "call/callback",
+      "source_sha256": "6ba7aa2ff5657751532724419ea56ea593783647fc1fa1877c095165c89a3c5e",
+      "stock_row_sha256": "83d5bf3396ccc0b5c47a1794253015c4c314d70df5aeff3c8309bbd96ffcc407",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 121,
+                "source": 0,
+                "start": 117
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 121,
+                "source": 0,
+                "start": 117
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 147,
+                "source": 0,
+                "start": 136
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:118\n  called from c16h.rn:1:137"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Missing function with hash `0x489be30d02f3940f`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 101,
+      "label": "call/chain",
+      "source_sha256": "5ff95b184297b1424178957b0681d8cb932aa22838381e14e183fccc76baef11",
+      "stock_row_sha256": "2d4e902ed007a0d8297c640e73dd4a20e398ffb3ca6f707687b3a696771ae8d3",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 142,
+                "source": 0,
+                "start": 138
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 142,
+                "source": 0,
+                "start": 138
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 125,
+                "source": 0,
+                "start": 117
+              },
+              "role": "Caller"
+            },
+            {
+              "location": {
+                "end": 165,
+                "source": 0,
+                "start": 157
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:139\n  called from c16h.rn:1:118\n  called from c16h.rn:1:158"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Missing function with hash `0xbe6b74e85e3244d6`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 102,
+      "label": "call/capture",
+      "source_sha256": "63dad146834d33dcafb519893a08fd0bfeffc3ae1154d2fc81f663adbc5dd7e2",
+      "stock_row_sha256": "47797038d72173fe3267e5f8cd9ccaa65df8e5cd4449e59b30c6dabf1abf0d42",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 143,
+                "source": 0,
+                "start": 139
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 143,
+                "source": 0,
+                "start": 139
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 147,
+                "source": 0,
+                "start": 144
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:140\n  called from c16h.rn:1:145"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Missing function with hash `0xbe6b74e85e3244d6`",
+      "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
+      "classification": "Inherited-diagnostic"
+    },
+    {
+      "index": 103,
+      "label": "call/map-callback",
+      "source_sha256": "c6f69b229d07642aa349b835f3265d81f6ce668b06022eabe050346ae5720547",
+      "stock_row_sha256": "c1b15512c82bf19df3cc7a675fe7aa7f4a148d382caed4a5b9aa37cfe3046e41",
+      "fresh": {
+        "location": {
+          "end": 153,
+          "source": 0,
+          "start": 119
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 153 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:153, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 104,
+      "label": "call/assoc-path",
+      "source_sha256": "8050c83d428ce285a8e44f1b753c9b795b766e864e76a5c0054dc349fc8a4a3f",
+      "stock_row_sha256": "261107b35d7ae77fb6b709cb4649c8505016e7a4444cc036d1d4be5e14804f7a",
+      "classification": "Exact"
+    },
+    {
+      "index": 105,
+      "label": "call/method-on-type-value",
+      "source_sha256": "34972032b8c2e9d68b9523d81912ab933ac7d2fafce8112503c3b459b32ef5d8",
+      "stock_row_sha256": "61d98060783c0e66b01daf12d9998580137ef5c276077d59ab88425b04d9b890",
+      "fresh": {
+        "location": {
+          "end": 162,
+          "source": 0,
+          "start": 155
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 155, end: 162 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 155:162, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 112:132, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 106,
+      "label": "error/field",
+      "source_sha256": "dfdeaab2e39453bf9b6149483806278fd07cbf68f1894b44f672d8473ac0f830",
+      "stock_row_sha256": "f57b6b98cb7eb8e10fc556ff16e19b919a63aa4d8094b3148d11132a334ba519",
+      "classification": "Exact"
+    },
+    {
+      "index": 107,
+      "label": "error/index",
+      "source_sha256": "090709748ad6c3949a5ebdc4f3c13bd44864331103b15ff7726845b19d4ba56f",
+      "stock_row_sha256": "10833ab5cefb0554a20cdba1856870af4be78f02d58ad35e4ff7cf56a543f31a",
+      "classification": "Exact"
+    },
+    {
+      "index": 108,
+      "label": "error/add",
+      "source_sha256": "16524a646887c12973b86e01cd3b55700f90f37e2ec2d39f5b49e7f2e9417dba",
+      "stock_row_sha256": "207a790ec4e82c66c561823eeeb199a53d4ff615588b00f5bd8511680f6a6dd6",
+      "classification": "Exact"
+    },
+    {
+      "index": 109,
+      "label": "error/neg",
+      "source_sha256": "c594853986165adb2539e0f777c3aed2e7f7f961a45f4f9ea6f074840d8dfac0",
+      "stock_row_sha256": "94a401eaf6a907658e59fd39d2c0c72dacc5895f87c70ff7ea5de31fef965612",
+      "classification": "Exact"
+    },
+    {
+      "index": 110,
+      "label": "error/if",
+      "source_sha256": "223e49d8f9bc363dce286b6d60377cf0d12d0fcaac1dd0014cf527b0e69a0557",
+      "stock_row_sha256": "800f3f7ad1a80c3c2c6aa79b79d2930b8fe88c7d540f2885f0c6aa717d48687f",
+      "classification": "Exact"
+    },
+    {
+      "index": 111,
+      "label": "error/and",
+      "source_sha256": "aec5a39860072d6ac691e3c28164948e78a6b9a673b9fa937daf6ea4dfd4c50c",
+      "stock_row_sha256": "bd05be10ffeb7864445b7d41ed21acc055997b9035c21ab794a6d8eae4d166d1",
+      "classification": "Exact"
+    },
+    {
+      "index": 112,
+      "label": "error/iter",
+      "source_sha256": "95e6a816abbfddb02e6ad39060728736a3740683f6d9a4b61838b87ca1efcbb2",
+      "stock_row_sha256": "0d1148bf475b45e98be77ad4a39d3461561283f700239bf4da25e067698eefe8",
+      "classification": "Exact"
+    },
+    {
+      "index": 113,
+      "label": "error/len",
+      "source_sha256": "e192845a30e0b26a0cd815d98945ea139a70de03e20950c5db7bb83f86a6c3ff",
+      "stock_row_sha256": "4154455d31f3d74df4b3bca1c8d5536c34db7da59c2400c968922707e2780f31",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` has no method named `len`",
+            "kind": "MissingInstanceFunction { hash: 0x81ce0784cce552a7, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 126,
+                "source": 0,
+                "start": 119
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 126,
+                "source": 0,
+                "start": 119
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` has no method named `len`\n  at c16h.rn:1:120"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::any::Type` has no matching method",
+      "fresh_display": "Type `std::any::Type` has no method named `len`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 114,
+      "label": "error/method",
+      "source_sha256": "97ed8ecad2d10124211481807ed052922d8f996e15ecc8997185df72e6607a0c",
+      "stock_row_sha256": "797c68ab3f0030c2f5e65e5e552489359fecb251e8e90c386873b45a11eb2586",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` has no method named `foo`",
+            "kind": "MissingInstanceFunction { hash: 0xc502ae751dcff8ad, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 129,
+                "source": 0,
+                "start": 119
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 129,
+                "source": 0,
+                "start": 119
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` has no method named `foo`\n  at c16h.rn:1:120"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::any::Type` has no matching method",
+      "fresh_display": "Type `std::any::Type` has no method named `foo`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 115,
+      "label": "error/try",
+      "source_sha256": "b4ff5abb0f6e65cf45998321d919441349ac8aa8793be20ffc3057f32fa545c7",
+      "stock_row_sha256": "35ca5bf2d3ce12f24212b2ebd9b6486f8142395fe1cbce9584854b4a17880dea",
+      "classification": "Exact"
+    },
+    {
+      "index": 116,
+      "label": "error/cast",
+      "source_sha256": "96461a9edc51c22653b00f0e808431f7769450e6ec93bea9757dbfb852caf9a9",
+      "stock_row_sha256": "2d5c82a233ff88e96ade41a1500f7bf13a0181d20c3369d3de0f771d3529f115",
+      "classification": "Exact"
+    },
+    {
+      "index": 117,
+      "label": "error/effect-order",
+      "source_sha256": "983f9d30fa688d9c34aef28897dac8d4043937557a51d215836ee875b1b50db1",
+      "stock_row_sha256": "dfea6aedc0260cafa267cfecddaefa4b254613b1c180dd229cbd06b8be45b74c",
+      "classification": "Exact"
+    },
+    {
+      "index": 118,
+      "label": "error/chain-field",
+      "source_sha256": "e7e6ed872f743731de85991a2cc302f95690f85146dae1635c0dafa57748e5e4",
+      "stock_row_sha256": "8384adae228e3f3f55c320ce6b3cdec160254100e9fea310976ba5df96d4f458",
+      "classification": "Exact"
+    },
+    {
+      "index": 119,
+      "label": "error/object-index",
+      "source_sha256": "9a1702bc5e525f561389f8cb4c5feab6cc269ce54be23e1051001b4bb368a4fa",
+      "stock_row_sha256": "533a001e9436c6342abb11a6295a372a58cb2fc9d4aa7599fec5c218c77bf008",
+      "classification": "Exact"
+    }
+  ]
+}

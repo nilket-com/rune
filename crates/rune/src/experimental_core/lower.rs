@@ -1348,12 +1348,117 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let E::Type(tag) = expr.kind else {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
-		let value = Value::Type(
-			self.type_tag(tag.into_hash(), span)?
+		let hash = tag.into_hash();
+		let tag = match self.type_tag(hash, span)? {
+			Some(tag) => tag,
+			None => self
+				.type_value_tag(hash, span)?
 				.ok_or_else(|| self.refused(span, Refusal::TypeExpr))?,
-		);
-		self.emit(Op::Literal { out, value }, span)?;
+		};
+		self.emit(
+			Op::Literal {
+				out,
+				value: Value::Type(tag),
+			},
+			span,
+		)?;
 
+		Ok(())
+	}
+
+	/// Type paths that are values but not `is`/`as` targets: a named variant,
+	/// `std::any::Type` and the `std::ops` range types.
+	///
+	/// Stock keys a named-variant path such as `E::D` by the variant hash,
+	/// which no value reports: a variant value's type is its enum. It
+	/// therefore gets its own plain identity, never the variant's value
+	/// identity (whose hash is the enum hash).
+	#[cold]
+	#[inline(never)]
+	fn type_value_tag(&mut self, hash: Hash, span: Span) -> Result<Option<Type>> {
+		use crate::runtime as rt;
+		use crate::TypeHash;
+		if hash == rt::Type::HASH {
+			return self
+				.metatype(span)
+				.map(|nominal| Some(Type::Struct(nominal)));
+		}
+		for (range, tag) in [
+			(rt::Range::HASH, Type::Range),
+			(rt::RangeFrom::HASH, Type::RangeFrom),
+			(rt::RangeFull::HASH, Type::RangeFull),
+			(rt::RangeInclusive::HASH, Type::RangeInclusive),
+			(rt::RangeTo::HASH, Type::RangeTo),
+			(rt::RangeToInclusive::HASH, Type::RangeToInclusive),
+		] {
+			if hash == range {
+				return Ok(Some(tag));
+			}
+		}
+		let Some(shape) = self.constants.fresh_variant_shape(hash) else {
+			return Ok(None);
+		};
+		self.transaction
+			.stage(
+				hash.into_inner(),
+				format_args!("{}", self.pool.item(shape.item)),
+			)
+			.map(|nominal| Some(Type::Struct(nominal)))
+			.map_err(|e| e.at(self.location(span)))
+	}
+
+	/// `std::any::Type`, the type of every type value. It is a nominal
+	/// identity under the stock hash, so no hot `Type` variant exists for it.
+	fn metatype(&mut self, span: Span) -> Result<super::value::Nominal> {
+		use crate::TypeHash;
+		self.transaction
+			.stage(
+				crate::runtime::Type::HASH.into_inner(),
+				format_args!("::std::any::Type"),
+			)
+			.map_err(|e| e.at(self.location(span)))
+	}
+
+	/// `x is std::any::Type`. The hot `Is` arm answers false for every type
+	/// value, so this lowers to `Type::of_val(x) == std::any::Type`.
+	#[cold]
+	#[inline(never)]
+	fn is_metatype(&mut self, binary: &hir::ExprBinary, out: u32, span: Span) -> Result<()> {
+		let value = self.operand(binary.lhs)?;
+		let meta = self.slot()?;
+		let nominal = self.metatype(span)?;
+		self.emit(
+			Op::Literal {
+				out: meta,
+				value: Value::Type(Type::Struct(nominal)),
+			},
+			span,
+		)?;
+		let of = self.slot()?;
+		let (args_start, args_len) = self.function.arguments(&[value, meta])?;
+		self.emit(
+			Op::Call {
+				out: of,
+				function: super::code::ANY_TYPE_OF,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+		let op = if matches!(binary.op, BinOp::IsNot(..)) {
+			Binary::Ne
+		} else {
+			Binary::Eq
+		};
+		self.emit(
+			Op::Binary {
+				out,
+				op,
+				lhs: of,
+				rhs: meta,
+			},
+			span,
+		)?;
 		Ok(())
 	}
 
@@ -1804,9 +1909,15 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				return Err(self.refused(span, Refusal::TypeExpr));
 			};
 
-			let tag = self
-				.type_tag(tag.into_hash(), span)?
-				.ok_or_else(|| self.refused(span, Refusal::TypeExpr))?;
+			let hash = tag.into_hash();
+			let Some(tag) = self.type_tag(hash, span)? else {
+				if !matches!(binary.op, BinOp::As(..))
+					&& hash == crate::hash_in!(crate, ::std::any::Type)
+				{
+					return self.is_metatype(binary, out, span);
+				}
+				return Err(self.refused(span, Refusal::TypeExpr));
+			};
 			let value = self.operand(binary.lhs)?;
 
 			if matches!(binary.op, BinOp::As(..)) {
@@ -2362,11 +2473,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 		let mut values = self.operands(call.args)?;
 		let function = if crate::function::fresh_pipeline::any_kind(hash) == Some(true) {
-			// Existing nominal type values also represent the builtin metatype; no hot Type variant.
-			let nominal = self.transaction.stage(
-				crate::hash_in!(crate, ::std::any::Type).into_inner(),
-				format_args!("::std::any::Type"),
-			)?;
+			let nominal = self.metatype(span)?;
 			let meta = self.slot()?;
 			self.emit(
 				Op::Literal {

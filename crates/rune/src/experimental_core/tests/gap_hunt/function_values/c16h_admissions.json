@@ -1,0 +1,65 @@
+{
+  "11": {
+    "label": "surface/named-variant-type",
+    "source_sha256": "f7e97d3c96a02814f44bfd2d7a360b5b9f351079e39cdbe2aee4ff6d5d5b4cdc",
+    "stock_row_sha256": "cc1cc117ac3ff078d204f33057bdc67830cd6bbffedcf0a902f02682a812682b",
+    "previous_classification": "Inherited-refusal",
+    "classification": "Exact",
+    "record": "C16h"
+  },
+  "97": {
+    "label": "control/enum-type-call",
+    "source_sha256": "1ba3af9395fbd581c49a66d22a9328aa50adcf0fcc661474fa93118a1e4b4ea4",
+    "stock_row_sha256": "830b16dd329d55f0113f83f339e9932a8892ecd6357bb4f98147edad7be20b26",
+    "previous_classification": "Inherited-refusal",
+    "classification": "Inherited-diagnostic",
+    "record": "C16h",
+    "fresh": {
+      "observation": {
+        "events": [],
+        "outcome": {
+          "chain": [],
+          "class": "Type",
+          "display": "Type `std::any::Type` cannot be called since it's not a function",
+          "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0xADDRESS, hash: 0xbd7ccf79d00ee140 }) }",
+          "sites": [
+            {
+              "end": 142,
+              "source": 0,
+              "start": 138
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      },
+      "logical": {
+        "context": [],
+        "frames": [
+          {
+            "location": {
+              "end": 142,
+              "source": 0,
+              "start": 138
+            },
+            "role": "Origin"
+          }
+        ],
+        "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16f.rn:1:139"
+      },
+      "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    }
+  }
+}

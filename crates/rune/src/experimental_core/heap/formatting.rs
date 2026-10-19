@@ -240,6 +240,14 @@ fn accounting() -> Error {
 	Error::new(ErrorKind::InvalidCode, "format accounting")
 }
 
+/// Debug and Display of a type value are both stock's `Type(<hash>)`.
+#[cold]
+#[inline(never)]
+fn type_value(tag: Type, sink: &mut Sink<'_>) -> Result<()> {
+	let hash = crate::Hash::new(super::comparison::type_hash(tag)?);
+	sink.formatted(format_args!("{:?}", crate::runtime::Type::new(hash)))
+}
+
 fn unsupported() -> Error {
 	Error::new(ErrorKind::Unsupported, "value formatting form")
 }
@@ -853,6 +861,7 @@ impl Store {
 				} if !debug => return Err(self.no_display(value)),
 				_ => return Err(unsupported()),
 			},
+			Value::Type(tag) => type_value(tag, sink)?,
 			_ => return Err(unsupported()),
 		}
 		Ok(None)
