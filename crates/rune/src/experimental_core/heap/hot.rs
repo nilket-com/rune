@@ -97,6 +97,68 @@ impl Store {
 			return Ok(Some(Value::I64(value)));
 		}
 
+		if let Payload::VectorIterator(iter) = self.payload(h)? {
+			let root = Value::Heap(iter.handle);
+			let index = iter.index;
+
+			let length = match self.payload(iter.handle)? {
+				Payload::Record {
+					fields,
+					tag: Type::Object,
+				} => fields.len(),
+				Payload::List { values, .. } => values.len(),
+				_ => return Err(err(ErrorKind::InvalidCode)),
+			};
+			if index == length {
+				return Ok(None);
+			}
+
+			let value = if let Payload::Record {
+				fields,
+				tag: Type::Object,
+			} = self.payload(iter.handle)?
+			{
+				let (key, child) = fields
+					.get(index)
+					.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+				let child = *child;
+				if key.len() > self.limits.bytes.saturating_sub(self.bytes) {
+					return Err(err(ErrorKind::StoreCapacity));
+				}
+				let copy = String::try_from(key.as_str())?;
+				let key = self.admit(Payload::String(copy))?;
+				let pair = self.list(Type::Tuple, &[key, child]);
+				let released = self.release(key);
+				match pair {
+					Ok(pair) => {
+						if let Err(e) = released {
+							let _ = self.release(pair);
+							return Err(e);
+						}
+						pair
+					}
+					Err(e) => {
+						released?;
+						return Err(e);
+					}
+				}
+			} else {
+				self.get(root, index)?
+			};
+			let Payload::VectorIterator(iter) = self.mutable(h)? else {
+				return Err(err(ErrorKind::Type));
+			};
+
+			iter.index += 1;
+			return Ok(Some(value));
+		}
+
+		self.iterator_next_cold(h)
+	}
+
+	#[cold]
+	#[inline(never)]
+	fn iterator_next_cold(&mut self, h: Handle) -> Result<Option<Value>> {
 		match self.payload(h)? {
 			Payload::OtherRangeIterator(_) => self.other_range_next(h),
 			Payload::ValueRangeIterator { next, end } => self.value_range_next(h, *next, *end),
@@ -115,62 +177,6 @@ impl Store {
 				self.assert_work();
 				Ok(value)
 			}
-			Payload::VectorIterator(iter) => {
-				let root = Value::Heap(iter.handle);
-				let index = iter.index;
-
-				let length = match self.payload(iter.handle)? {
-					Payload::Record {
-						fields,
-						tag: Type::Object,
-					} => fields.len(),
-					Payload::List { values, .. } => values.len(),
-					_ => return Err(err(ErrorKind::InvalidCode)),
-				};
-				if index == length {
-					return Ok(None);
-				}
-
-				let value = if let Payload::Record {
-					fields,
-					tag: Type::Object,
-				} = self.payload(iter.handle)?
-				{
-					let (key, child) = fields
-						.get(index)
-						.ok_or_else(|| err(ErrorKind::InvalidCode))?;
-					let child = *child;
-					if key.len() > self.limits.bytes.saturating_sub(self.bytes) {
-						return Err(err(ErrorKind::StoreCapacity));
-					}
-					let copy = String::try_from(key.as_str())?;
-					let key = self.admit(Payload::String(copy))?;
-					let pair = self.list(Type::Tuple, &[key, child]);
-					let released = self.release(key);
-					match pair {
-						Ok(pair) => {
-							if let Err(e) = released {
-								let _ = self.release(pair);
-								return Err(e);
-							}
-							pair
-						}
-						Err(e) => {
-							released?;
-							return Err(e);
-						}
-					}
-				} else {
-					self.get(root, index)?
-				};
-				let Payload::VectorIterator(iter) = self.mutable(h)? else {
-					return Err(err(ErrorKind::Type));
-				};
-
-				iter.index += 1;
-				Ok(Some(value))
-			}
-
 			_ => Err(err(ErrorKind::Type)),
 		}
 	}
