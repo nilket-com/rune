@@ -129,11 +129,20 @@ impl Collector {
 			&mut |hash, at| {
 				let hash = match hash {
 					super::lower::Resolve::Script(hash) => hash,
+					super::lower::Resolve::Constructor { hash, tag, arity } => {
+						let id = reserve(entries, hash)?;
+						if entries[id as usize].1.is_none() {
+							entries[id as usize].1 =
+								Some(super::lower::constructor_function(tag, arity)?);
+						}
+						return Ok(id);
+					}
 					kind => {
 						let cache = match kind {
 							super::lower::Resolve::Sort => &mut *sort_helper,
 							super::lower::Resolve::Any => &mut *any_helper,
-							super::lower::Resolve::Script(_) => unreachable!(),
+							super::lower::Resolve::Script(_)
+							| super::lower::Resolve::Constructor { .. } => unreachable!(),
 						};
 						if let Some(id) = *cache {
 							return Ok(id);
@@ -145,7 +154,8 @@ impl Collector {
 							super::lower::Resolve::Any => {
 								super::lower::small_forms::any_function()?
 							}
-							super::lower::Resolve::Script(_) => unreachable!(),
+							super::lower::Resolve::Script(_)
+							| super::lower::Resolve::Constructor { .. } => unreachable!(),
 						};
 						entries.try_push((Hash::EMPTY, Some(function), None))?;
 						*cache = Some(id);

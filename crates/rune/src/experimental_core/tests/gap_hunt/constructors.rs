@@ -327,11 +327,26 @@ fn single_field_tuple_struct_slice() {
 		let source = "struct T(a);pub fn main(){let f=T;f(7).0}";
 		let mut sources = Sources::new();
 		sources.insert(Source::memory(source).unwrap()).unwrap();
-		assert!(frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14).is_err());
+		let program =
+			frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 14).unwrap();
+		let root = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["main"])).unwrap(),
+				&[],
+				200000,
+			)
+			.unwrap();
+		assert_eq!(store.root_scalar(&root).unwrap(), Some(Scalar::I64(7)));
+		store.root_release(root).unwrap();
+		assert!(executor.is_idle());
+		assert_eq!(store.live_entries(), 0);
+		assert_eq!(store.payload_bytes(), 0);
 	}
 	assert_eq!(std::mem::size_of::<Type>(), 8);
 	assert_eq!(std::mem::size_of::<FreshValue>(), 16);
-	println!("C15 SLICE: T(7).0=7; lifecycle closed; reuse7; firstclass still refused; unit/pair widened; Type8 Value16; heap static asserts Payload40 Entry72 Slot80");
+	println!("C15 SLICE: T(7).0=7; lifecycle closed; reuse7; C16f constructor value admitted; unit/pair widened; Type8 Value16; heap static asserts Payload40 Entry72 Slot80");
 }
 
 #[test]

@@ -123,6 +123,20 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 		assert_eq!(project_observation(observed, expected, ""), *expected);
 		return;
 	}
+	let c16f: Json = serde_json::from_str(include_str!("c16f_admissions.json")).unwrap();
+	assert_eq!(c16f.as_object().unwrap().len(), 2);
+	if let Some(rule) = c16f.get(id) {
+		use sha2::{Digest, Sha256};
+		assert!(matches!(id, "116" | "117"));
+		assert_eq!(rule["authority"], 21337);
+		assert_eq!(rule["source_sha256"], case["source_sha256"]);
+		assert_eq!(hex(Sha256::digest(serde_json::to_vec(&stock[id]).unwrap()).as_ref()), rule["stock_row_sha256"]);
+		assert_eq!(frozen["disposition"], "Refused-surface");
+		assert_eq!(audit["invoked"], true);
+		assert_eq!(audit["reuse_used_fallback"], false);
+		assert_eq!(project_observation(observed, expected, ""), *expected);
+		return;
+	}
 	if frozen["disposition"] == "Refused-frontend-arity" {
 		assert_eq!(audit["invoked"], false);
 		assert_eq!(actual["diagnostics"], stock[id]["diagnostics"]);

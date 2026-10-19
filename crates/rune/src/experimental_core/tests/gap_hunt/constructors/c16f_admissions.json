@@ -1,0 +1,14 @@
+{
+  "116": {
+    "source_sha256": "814dd88b172891e1916e6122be88a6411c2bc80df8e3a1c63a454f319291b857",
+    "stock_row_sha256": "b5a0ef91cc4576a2b68c78cf9710dae63429bccccf2bb2dc5f5dc7e87ec5bf7c",
+    "classification": "Exact",
+    "authority": 21337
+  },
+  "117": {
+    "source_sha256": "dca6b86481471a4da7d7da24dac80d65de2a39a27cc2640dc932a5f777131880",
+    "stock_row_sha256": "3147f128f47c96cdd1ce96ff3c318f71493a091c994b700b7c8b03f2b935a37f",
+    "classification": "Exact",
+    "authority": 21337
+  }
+}

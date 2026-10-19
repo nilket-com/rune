@@ -1,0 +1,1682 @@
+{
+  "summary": {
+    "rows": 101,
+    "classifications": {
+      "Exact": 67,
+      "Inherited-refusal": 31,
+      "Intentional-C11c-Copy": 2,
+      "Inherited-diagnostic": 1
+    },
+    "status": "FROZEN",
+    "new_compile_admissions": 54,
+    "raw_vm_frames": "audit only; exact origin spans and entire typed D1e logical call chain checked independently",
+    "P1": "row95 stock/fresh AnyTypeInfo::full_name pointer; row96 baseline/fresh type-name pointer only; exact fixed type hashes checked"
+  },
+  "rows": [
+    {
+      "index": 0,
+      "label": "surface/zero",
+      "source_sha256": "17220341249ff5f326ccf82db4495ceca3c12c47e58312da2d48274b6c4a2171",
+      "stock_row_sha256": "28762dcdc9919f3f9db318e40b237bfeab7cbebac91ee471b1f5bf6b8428cf35",
+      "classification": "Exact"
+    },
+    {
+      "index": 1,
+      "label": "surface/one",
+      "source_sha256": "187e888abd8397f22db3d01f3e07e74f6e3db45d9fd24ba4045e475abac5e5b8",
+      "stock_row_sha256": "0be7af49f9a8b4c8bc7c1045d8302d83e288abed1e35e75ee843481c7c9971f3",
+      "classification": "Exact"
+    },
+    {
+      "index": 2,
+      "label": "surface/two",
+      "source_sha256": "6747440785578aa96b5c58c1f2051efc112d83cea713084b8700a8edc8b97746",
+      "stock_row_sha256": "752e7faa9bf01ada6d4be24003886749c4b982993e5943b3250f9d5a2c99d9ff",
+      "classification": "Exact"
+    },
+    {
+      "index": 3,
+      "label": "surface/enum-one",
+      "source_sha256": "9962efd324709dfa0c10caa7d1e7609db8581963cd8789097e3c5a9055486ca3",
+      "stock_row_sha256": "b1a9704880a69c3f801eb21f5f5e32e3c73d4b12cc9f2c75fca316a077026b49",
+      "classification": "Exact"
+    },
+    {
+      "index": 4,
+      "label": "surface/enum-two",
+      "source_sha256": "832e8f2bfb964d7a4097d33af4f1d41e13c801c1cd32c60acce4bbd3f4d7a487",
+      "stock_row_sha256": "026e01a41fed8d8110ade68787bafdfb5be7ec0fa6b3a6557fcd0e7055e5d26f",
+      "classification": "Exact"
+    },
+    {
+      "index": 5,
+      "label": "surface/some",
+      "source_sha256": "87a16a6cf17ad4845354db6ca8a16bf9d654314a8ff35c1ff7bb89b290da792f",
+      "stock_row_sha256": "403a947dac24b05d03f7fa4ea81cd4b9fb0f88f8ed053ba4f8215f42658baa2b",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 6,
+      "label": "surface/ok",
+      "source_sha256": "4d59ff9590d159205838a923c181b69b238990b3cf75d0fd3d7ca6d015acf817",
+      "stock_row_sha256": "bd1581468c5c32637ecb95b0d0207cb87fff30b84a24edaa91018116cc6939a7",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 7,
+      "label": "surface/err",
+      "source_sha256": "88713b388c96260e77ea11086a29991919f843b5675dcab5638973941fa1fddf",
+      "stock_row_sha256": "97198cb513bec681a5e8347c360fe97195c61493851b81decea17c13ea8eb51a",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 136,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 136 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 136,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 136 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:136, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 8,
+      "label": "surface/unit-value",
+      "source_sha256": "ac4036ff00360d1edfb8e77c6db3b1b7172a439c9ba32cf7e1d5f7a74cdf9933",
+      "stock_row_sha256": "78fa7203a300ae012714c0d83f0cb1cf708c4ffb01d9b5c82b07d6394d49f18e",
+      "classification": "Exact"
+    },
+    {
+      "index": 9,
+      "label": "surface/enum-unit-value",
+      "source_sha256": "9a1cc1b50ba3207feb7750a5f36b4855fdccce4f16f2c2835628053999ea01b7",
+      "stock_row_sha256": "3d2b2061b5e089b61a3fb3af3ad6c7ff82ba7dc02bd99e08220efc2f7e5bc68b",
+      "classification": "Exact"
+    },
+    {
+      "index": 10,
+      "label": "surface/named-type",
+      "source_sha256": "46d7e651d3e2e9b1d7115b79f1897e989aa838111952675a0b774a9589b3efb6",
+      "stock_row_sha256": "1f0c8a4a9c569b3d974b1fc8e91a0b6f22dc4d1920edd3d7d6d49fd8cbb8e8e8",
+      "classification": "Exact"
+    },
+    {
+      "index": 11,
+      "label": "surface/named-variant-type",
+      "source_sha256": "f7e97d3c96a02814f44bfd2d7a360b5b9f351079e39cdbe2aee4ff6d5d5b4cdc",
+      "stock_row_sha256": "cc1cc117ac3ff078d204f33057bdc67830cd6bbffedcf0a902f02682a812682b",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 131,
+          "source": 0,
+          "start": 127
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 127, end: 131 }), operation: \"TypeExpr\", refusal: Some(TypeExpr), detail: None }",
+        "refusal": "TypeExpr",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 131,
+          "source": 0,
+          "start": 127
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 127, end: 131 }), operation: \"TypeExpr\", refusal: Some(TypeExpr), detail: None }",
+        "refusal": "TypeExpr",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:131, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 12,
+      "label": "alias/Z",
+      "source_sha256": "d47f4470a3d17180b99b8609567a25dbfb9451a43467984cd5ea6abad235c4e8",
+      "stock_row_sha256": "a14b4ae0c6682a7cb72c4952d45c92013c279d018ea0eb9bbbc9b554e4c280f0",
+      "classification": "Exact"
+    },
+    {
+      "index": 13,
+      "label": "callback/Z",
+      "source_sha256": "dd8116ffae75393aa1fa04f377d3b15c2439a59b1fa3ae43567ef751175ad039",
+      "stock_row_sha256": "8f3895bbef08941ba289d6ee6217cea6cfd26eb54986713b234a9e900dc10bbe",
+      "classification": "Exact"
+    },
+    {
+      "index": 14,
+      "label": "returned/Z",
+      "source_sha256": "4ea4608f97ec6950cc0fa938d524107580757711175dddf41df05d6677cd7ca1",
+      "stock_row_sha256": "287367a95a71a2f7e73ff74e6c4e1b51d449f423c29ed2aa8c643bbf537f2bf1",
+      "classification": "Exact"
+    },
+    {
+      "index": 15,
+      "label": "vector/Z",
+      "source_sha256": "f5f6edc2c26037a2d2bf6756f4f60e84d0c550d148695b8ff29ba9304488cd20",
+      "stock_row_sha256": "09296300a7ab3bb28d869e6bc0c83ef6facc5626c2f34c07328a7d4b2d817f2d",
+      "classification": "Exact"
+    },
+    {
+      "index": 16,
+      "label": "capture/Z",
+      "source_sha256": "bafbc49c72f17fc8ff916653dd99c63c8fb17759ad29d4ca40b446ce53d2b063",
+      "stock_row_sha256": "b0dcfe62e5040c207b4a1110420bab9515001f194be6cdd937bd6cf01ee1ba9f",
+      "classification": "Exact"
+    },
+    {
+      "index": 17,
+      "label": "alias/T",
+      "source_sha256": "8a4e7f2beb9be74747c498ede03d80811d1c71f8bdf6cf61ce5a37da40e7c29b",
+      "stock_row_sha256": "64e000bb2251d4a5bf1feb8e25621d61722608bbe8746ef232e8821747b1323d",
+      "classification": "Exact"
+    },
+    {
+      "index": 18,
+      "label": "callback/T",
+      "source_sha256": "40b1779251fa1f639487e3f35c359f77f5c8fcdd742602dfc7846d009dde96c7",
+      "stock_row_sha256": "97004cb653edb3ca2ed9f5cc6b9ff4115093959f9ad0b7f9ed770b754e138a72",
+      "classification": "Exact"
+    },
+    {
+      "index": 19,
+      "label": "returned/T",
+      "source_sha256": "e217a36519acb2faf727f64af92c80ab34bd7a7f0b59c867316c83388189093d",
+      "stock_row_sha256": "f28c2881df8e9ddd92cf2c1aa6ecbb381e4f92ef3a44ba76130e4656715c9a2d",
+      "classification": "Exact"
+    },
+    {
+      "index": 20,
+      "label": "vector/T",
+      "source_sha256": "da4bc14cecda824f546d6c7689593c1392530f6ea16d4a75e1198b42c2dde37b",
+      "stock_row_sha256": "1a0261da8c4c5a79703335c97cd4979b96ea82a48d72e7842e53311b189171a2",
+      "classification": "Exact"
+    },
+    {
+      "index": 21,
+      "label": "capture/T",
+      "source_sha256": "cf908e2c3e6135a742f195cb9fa2dc8bd36bde46bd0ff408e47a379f3ecb5391",
+      "stock_row_sha256": "237cfa70be01a6b6061ba8d784e3b14c1226c23676b3272dec379ab4d7c0c73e",
+      "classification": "Exact"
+    },
+    {
+      "index": 22,
+      "label": "alias/P",
+      "source_sha256": "00c5d9a6b4c3f0b76ae45fc333bdd0807e9f2e7c8d2cd2a4ab70ef3b4e760a42",
+      "stock_row_sha256": "59472c271d840c31a2408a6be33869dcd23a640810cc7318aa318828206e14c4",
+      "classification": "Exact"
+    },
+    {
+      "index": 23,
+      "label": "callback/P",
+      "source_sha256": "b1bd295a8e8184c66be635c4bb81ab776af9962e8a9e6a74641d84efc98d70f7",
+      "stock_row_sha256": "841f8d667be0b6ff64e8dd20daa055dab33397db48fdc8a2da9264670529086a",
+      "classification": "Exact"
+    },
+    {
+      "index": 24,
+      "label": "returned/P",
+      "source_sha256": "120f9b0580bfb32cbbc1142fee3ae3732d48f71ae25a800a1fbf91b91671b4b3",
+      "stock_row_sha256": "f66da46b9a7234671c1cde2ae1598c14d5907199e520c9f9f7b886908b41dd9b",
+      "classification": "Exact"
+    },
+    {
+      "index": 25,
+      "label": "vector/P",
+      "source_sha256": "79bcc8079c4486283ab904e967b6a32b137123eff782cc23de62d8891a369e2c",
+      "stock_row_sha256": "433e6c21795d4d79750794311541d2dd6a8b23ac496265021f3a59e8f43cd9d8",
+      "classification": "Exact"
+    },
+    {
+      "index": 26,
+      "label": "capture/P",
+      "source_sha256": "484f7985d0d015293478a75ce10171b659e982e6e498f25c5e8b726daac60e1b",
+      "stock_row_sha256": "43bd772279691ab851902032d7a01aed2234d82f7ad65509121a9fdb3f6ff110",
+      "classification": "Exact"
+    },
+    {
+      "index": 27,
+      "label": "alias/E-B",
+      "source_sha256": "08974bc1d6a5c33a263e37331f43272d33a6c268a2296ef0ca1583febdb6b01d",
+      "stock_row_sha256": "8b2a02b6af0d7ec17789fac08bd8aec685f4e4bc6b75943ea6839b75f8f216ad",
+      "classification": "Exact"
+    },
+    {
+      "index": 28,
+      "label": "callback/E-B",
+      "source_sha256": "aa50041b06d80dfcf708e5a211b0df6a8d7126241a48a506186fa11a7d3b3d6d",
+      "stock_row_sha256": "22805700a3de9afbbbcc44dae3c4e82ce9bd1100846584026c55eb0e0083ddce",
+      "classification": "Exact"
+    },
+    {
+      "index": 29,
+      "label": "returned/E-B",
+      "source_sha256": "c1f294ac210e8aac80a7cef4a6854dbacfb05d13866330dd2f585c21725a9e46",
+      "stock_row_sha256": "3d900170f18839ea0bdb87e1115db1c99086fc0b2191f812fdf9f33f2cb9b2cc",
+      "classification": "Exact"
+    },
+    {
+      "index": 30,
+      "label": "vector/E-B",
+      "source_sha256": "205a74b851dcb7e4da2afc09d9db112b4a86a66c6dfbd1646e2eda9b13a1aa5e",
+      "stock_row_sha256": "9c08b251e68bd6c298891917d5b3c52982016a1f1731dcd9765092d6147db337",
+      "classification": "Exact"
+    },
+    {
+      "index": 31,
+      "label": "capture/E-B",
+      "source_sha256": "50742d68509844924a93ff6f361ec76b3bb02c219b7183590d435c62aa724046",
+      "stock_row_sha256": "40aaf77b70edc25d9e25adafd1b8ee8b6f270e918d7198dc59896c2802673b31",
+      "classification": "Exact"
+    },
+    {
+      "index": 32,
+      "label": "alias/E-C",
+      "source_sha256": "3a04f22111ef52a16065db0b80a7c6be35ed9ebb18f7a55285905956eef4af2b",
+      "stock_row_sha256": "0751c580a004bda3a7613ea2a472e1edae17bb61757ee97cb598e137bf8d8a4b",
+      "classification": "Exact"
+    },
+    {
+      "index": 33,
+      "label": "callback/E-C",
+      "source_sha256": "6b62b02724edbfec488dcbd05de0647497c600366cc27bbf3cd275a6b6fd7769",
+      "stock_row_sha256": "e911fade3fcad98a2f52efc3c0deb37caee8bb838a61819c3d02e067954b41e5",
+      "classification": "Exact"
+    },
+    {
+      "index": 34,
+      "label": "returned/E-C",
+      "source_sha256": "eb3a8e07714e54797debcba7aec14730354211030eac6b52efffaeaf72b6cb64",
+      "stock_row_sha256": "06a6072b233efe78163b636bec9b6aa8b39b1511dc7ee97834b53bafe0c316a4",
+      "classification": "Exact"
+    },
+    {
+      "index": 35,
+      "label": "vector/E-C",
+      "source_sha256": "419aed82296d9bcab0a767d48d2d5bb86ca40de1ddbb14ddc30efc96947209f2",
+      "stock_row_sha256": "e569be8597a2980044959cb30835dcbc6379fe8eaae1c177a01f27c4aa933032",
+      "classification": "Exact"
+    },
+    {
+      "index": 36,
+      "label": "capture/E-C",
+      "source_sha256": "6df4312b185b85cec6419d04fec996e32e4d45ef5682f289fcf0227e5af1b169",
+      "stock_row_sha256": "d55b94ce08c2f19217594913fa12c4bd63e92d3c0f181ada3be25f7dae7a67a2",
+      "classification": "Exact"
+    },
+    {
+      "index": 37,
+      "label": "alias/Some",
+      "source_sha256": "42cc1e11ff51172ee9915619c6ab521b1b4d119bf9023d9e5ce93e4070b25497",
+      "stock_row_sha256": "e335c5ac8170afc41180657825bf291ded0f707385862b19a79dc2ccb8fc61f8",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 38,
+      "label": "callback/Some",
+      "source_sha256": "21636f7d5b89d2ad33906a06aca0bc2a9662b78c0c3ea28d7f00baf74a1cba8f",
+      "stock_row_sha256": "082dd033c51cea9c0d931afec1abc89b37f1655d01a4f46040afd7124f6f5eac",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 154,
+          "source": 0,
+          "start": 150
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 150, end: 154 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 154,
+          "source": 0,
+          "start": 150
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 150, end: 154 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 150:154, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 39,
+      "label": "returned/Some",
+      "source_sha256": "81120e3a408e4fae3b653c00a9a30afcb88010ce56697db4eacc7c81b6e85798",
+      "stock_row_sha256": "4936057133d79f7471de4363cd157027dbc1e20a68bcb6c75acaf9dc6f31bc58",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 127,
+          "source": 0,
+          "start": 123
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 123, end: 127 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 127,
+          "source": 0,
+          "start": 123
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 123, end: 127 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:127, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 40,
+      "label": "vector/Some",
+      "source_sha256": "2300e11f8eb0a3ef375d75785b601a2e5a176cdc7f62350c5b30ffc19773e63b",
+      "stock_row_sha256": "086c62ad4e5a057d1d1baad093d6d2fccf87d763849f5a83cdb23e30628e7432",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 139,
+          "source": 0,
+          "start": 135
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 135, end: 139 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 139,
+          "source": 0,
+          "start": 135
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 135, end: 139 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:139, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 41,
+      "label": "capture/Some",
+      "source_sha256": "e3ee3647fa7b562342542a8a05d5fbb0aa6c64905aae910ed6c4bbc04781e5f3",
+      "stock_row_sha256": "f53e3b6181e00216789377b57a1af27be6de0659e1106c4380b30bc971153873",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 42,
+      "label": "alias/Ok",
+      "source_sha256": "4d6570c258c6efc607e4ff0d4e8408477a23d8c39f89d87237052f4b6aab0d27",
+      "stock_row_sha256": "5daf54b58841df4db4f70e9a30d98b728f4828a63a04dfedb7260bba327d92c7",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 43,
+      "label": "callback/Ok",
+      "source_sha256": "3c744103e262982be68982cf7a74afacec778bc729ff0189c3f0058c2f1a0e43",
+      "stock_row_sha256": "f76e055b5036788fa2aeb3a0fdc4667dfcaba62884918d6d970c133e6d26dcd5",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 152,
+          "source": 0,
+          "start": 150
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 150, end: 152 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 152,
+          "source": 0,
+          "start": 150
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 150, end: 152 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 150:152, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 44,
+      "label": "returned/Ok",
+      "source_sha256": "c15b45eef8992a444295265ee20f9ad84c7a08e563f36a945235163ee9e82f8e",
+      "stock_row_sha256": "73694ec4cd2b7539f8a4a3886b4558cf5560ee86e0c74ca8aa2a94dc9a759014",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 125,
+          "source": 0,
+          "start": 123
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 123, end: 125 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 125,
+          "source": 0,
+          "start": 123
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 123, end: 125 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:125, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 45,
+      "label": "vector/Ok",
+      "source_sha256": "5a89beda6fcc1815954831fc14553c7257cd98539e80f58db38d0e2c2966a814",
+      "stock_row_sha256": "472b312ab6d321aa2cc53837aae87e9c7e58922b58226cbd9e4bc1d8cd1733db",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 135
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 135, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 135
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 135, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 46,
+      "label": "capture/Ok",
+      "source_sha256": "48e3aa2b336932531e8b7719791e26db4d261198a716f41cc564d4e71939a869",
+      "stock_row_sha256": "3406f971d6dd108ea79f849c41393b68f9459ebe5294a56ab89b03dfbabcef9a",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 47,
+      "label": "alias/Err",
+      "source_sha256": "f7c7cbe678475f97bc0f44cb083945b03416b61db60f221cbeab27605e605198",
+      "stock_row_sha256": "69fe31f63cf9681054b3f9d18ab03b8ef16d9477b80f0ffed2983186d6e7c31e",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 136,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 136 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 136,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 136 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:136, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 48,
+      "label": "callback/Err",
+      "source_sha256": "f1e0a12f0221088d38d7d7025b8fc700bf3b071d64fd3e98b67c27ef7c654c17",
+      "stock_row_sha256": "bcc6af7d2e413f7300d531ffc3a8feb0e720071b4394763758175772f27454b4",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 153,
+          "source": 0,
+          "start": 150
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 150, end: 153 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 153,
+          "source": 0,
+          "start": 150
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 150, end: 153 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 150:153, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 49,
+      "label": "returned/Err",
+      "source_sha256": "5e9f126618fd92895b6395c7e1505c9c968e160dc38c485e2a603e153b86e932",
+      "stock_row_sha256": "99901ec4b8be25b49638a91abf1f489c46407b12be156e8b40824c5a10dd50e0",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 126,
+          "source": 0,
+          "start": 123
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 123, end: 126 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 126,
+          "source": 0,
+          "start": 123
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 123, end: 126 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:126, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 50,
+      "label": "vector/Err",
+      "source_sha256": "ee47607f874d48a95ce191b9bca92e0de7f9d1699271a8ac44176ce8408ec6d1",
+      "stock_row_sha256": "3a405063b779e09d876c595d522cc10905d6bb190ee5f271f0ad08678acc7c05",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 138,
+          "source": 0,
+          "start": 135
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 135, end: 138 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 138,
+          "source": 0,
+          "start": 135
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 135, end: 138 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:138, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 51,
+      "label": "capture/Err",
+      "source_sha256": "330fe636e5e7c37137d5a5963379f0551b54b6875f968e7106fc6018dabdb63d",
+      "stock_row_sha256": "dc1ad5dd32ce5f4c81694bfda90f37b0dd8791e62d4ac231b0b1ad42cbb3f266",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 136,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 136 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 136,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 136 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:136, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 52,
+      "label": "effects/two",
+      "source_sha256": "9243b0297df17d14e6f7d640618a0286c6c53f44351683742639986a5ac1adbd",
+      "stock_row_sha256": "c3cbd8106eb3ac76d445a2220a43cd0d83bdd8f13ecf59df6698865e8aba8e0a",
+      "classification": "Exact"
+    },
+    {
+      "index": 53,
+      "label": "effects/enum",
+      "source_sha256": "c34d54b5dc60455aa455a0ae2a59d6f523828417938bd0da69e1a9cb400cc7ef",
+      "stock_row_sha256": "5cde95d85865d9225bd7863e1887572ce8af2bd8c36c65f315e6dda67cf1ac5b",
+      "classification": "Exact"
+    },
+    {
+      "index": 54,
+      "label": "effects/callback",
+      "source_sha256": "640296389a6832fcf61156582d64a2dad3284dc78e029463a2d7052b309bfe0b",
+      "stock_row_sha256": "414d6e3bf925730353025054a270f3f93f23214a4f6d4f20bfcc5c3c168fc5e5",
+      "classification": "Exact"
+    },
+    {
+      "index": 55,
+      "label": "effects/callee",
+      "source_sha256": "e274944fc48c8b0331daf08cccaf9b5a838d6e3262c35c871fd5aaddbd954fa0",
+      "stock_row_sha256": "8cad1f5424c96b9d19c7a44fa33473d4dbfbc02c0dc256d03505d1d14f61a018",
+      "classification": "Exact"
+    },
+    {
+      "index": 56,
+      "label": "effects/callee-return",
+      "source_sha256": "452a526c4882f976c863f18946b742245fac988a1618c72433a82563e25aca32",
+      "stock_row_sha256": "880ea1cd66dbb83ebec35c8e1a07ffff07b6729924027474b3076b62805668fb",
+      "classification": "Exact"
+    },
+    {
+      "index": 57,
+      "label": "effects/arg-error",
+      "source_sha256": "c8d3081b84186be571591ec5ca9c9efc064db6af726a470f7c2496897eeab5ad",
+      "stock_row_sha256": "84c45dba4fa490fe41dcf736d444b5ef5eaaabe00a2d1aa3e0953897c4a2d542",
+      "classification": "Exact"
+    },
+    {
+      "index": 58,
+      "label": "effects/extra",
+      "source_sha256": "eb2f458cc1126b69f6c93ad301acd2546a37f6ba75f4c413063b6a1b3b917bb5",
+      "stock_row_sha256": "118df2128f8957e600d11602e61423c68e37e25e80b9338887ebaf7667681f61",
+      "classification": "Exact"
+    },
+    {
+      "index": 59,
+      "label": "effects/few",
+      "source_sha256": "ab043a0f393f9f2a5c9d445e4289bf636f19769b79898b92382a98a459ccb4f8",
+      "stock_row_sha256": "320edfee809e8723bd82c73905d9574e06a10c82aec943d2933b823deedd91b0",
+      "classification": "Exact"
+    },
+    {
+      "index": 60,
+      "label": "effects/body-error",
+      "source_sha256": "6aad3a537dbb54f051fc04254c453c8ba561693cbee86370820d13c563eeff59",
+      "stock_row_sha256": "bad3beb499e22563e7e959fb6568625466cd061a872faadda888d5c01aad1ca5",
+      "classification": "Exact"
+    },
+    {
+      "index": 61,
+      "label": "effects/stdout",
+      "source_sha256": "38919c034cd3aee2082f4425caecfdd999d00856c57e96bb9693070127621c32",
+      "stock_row_sha256": "e4a30bc69087b48672290018ff7fc734e6aecc0839519e18468553f0c422767f",
+      "classification": "Exact"
+    },
+    {
+      "index": 62,
+      "label": "arity/Z/1",
+      "source_sha256": "5fa9c1a4fee465bd21c8e7519f7e1ba49cf8efe14ca9a38bf5ebed0f5a3ef6e0",
+      "stock_row_sha256": "e86c1cb74948020be458c658bdd255cfc224be7d33221068126a2afd46cbbbe2",
+      "classification": "Exact"
+    },
+    {
+      "index": 63,
+      "label": "arity/Z/2",
+      "source_sha256": "654cc583721094dbe4b181533f9f9ec2eaa2074dc1d0a750bf47e8acf94cbe55",
+      "stock_row_sha256": "54bc93c1d5eacc33f4e72bdc8cd8e4b8b51323c7038cc54b4254342cd9f7b034",
+      "classification": "Exact"
+    },
+    {
+      "index": 64,
+      "label": "arity/Z/3",
+      "source_sha256": "c9833971b480af2aad8dde69d5728af0d80026ea2e9dd29896dff0e06ee3c4e5",
+      "stock_row_sha256": "7087c6174fc1ac5ca5ef9b36ee338df7060b0dc6c61990f2ddbd0a021b88ebac",
+      "classification": "Exact"
+    },
+    {
+      "index": 65,
+      "label": "arity/T/0",
+      "source_sha256": "94f352ce42cc62dc1bb44b509daf13b88206e93f39424faa479facd8a0309078",
+      "stock_row_sha256": "15e5caa63b751784c990e21109e96c4b9a89795ea52b60d250393d58d50402f0",
+      "classification": "Exact"
+    },
+    {
+      "index": 66,
+      "label": "arity/T/2",
+      "source_sha256": "07b24410bb1e48a8febdb5cdae6dccc9d881297a3e6151ffe6bd17789ed68a47",
+      "stock_row_sha256": "08b2561a41ccd2b6a0e993d0e919baa052cfa616db1aa2aeb0a6797b5f869309",
+      "classification": "Exact"
+    },
+    {
+      "index": 67,
+      "label": "arity/T/3",
+      "source_sha256": "467776d0014660066d99c479f32dfc7d1b387cad9e5291170753a36e36185192",
+      "stock_row_sha256": "1c76dde5d424bae46ec4e713ec95158391c8336fc1c96b091661b51b81a014e9",
+      "classification": "Exact"
+    },
+    {
+      "index": 68,
+      "label": "arity/P/0",
+      "source_sha256": "c602af043665ecfdeea3922a7266e16474108c4e1a63607ba82c9dffe02fe0c1",
+      "stock_row_sha256": "1bd402b1004a879f79f6b9eeea77cb2c530429871f483cb9dedb5b3e63911645",
+      "classification": "Exact"
+    },
+    {
+      "index": 69,
+      "label": "arity/P/1",
+      "source_sha256": "7362c0df6006f67e947a65d7e635c02ddf8631ca88b60df54fe9bf97d4bd2218",
+      "stock_row_sha256": "ced3283c53f4eb7dc8ce3fbbfd299a9d06c9ece8bc22711ea587a0d3b83d3f14",
+      "classification": "Exact"
+    },
+    {
+      "index": 70,
+      "label": "arity/P/3",
+      "source_sha256": "789d47e329d44cab0e61e733504ba2d23bd6a6ce55add56663584c727f0b7acc",
+      "stock_row_sha256": "d7b64228b88dfac5578688061c4bc719f560f994afe8982760c05c13b5b05fb1",
+      "classification": "Exact"
+    },
+    {
+      "index": 71,
+      "label": "arity/E-B/0",
+      "source_sha256": "aad31b4e2b7a9c6157c5715eecae2bfaa0473212f28e9d46321a47711110ab5d",
+      "stock_row_sha256": "bf158dc595c3a9643c6d9e5a9ba8821cb5705688e6d62dc2fef506f212315906",
+      "classification": "Exact"
+    },
+    {
+      "index": 72,
+      "label": "arity/E-B/2",
+      "source_sha256": "fee17dbac716aa2fa1de44b29ca3ccfa2711d56ebb7ffd325a162310d66b246a",
+      "stock_row_sha256": "13fa73bda577e097f0c295182adafc5e59b7daa7c3b020577d265b0dc90a04a6",
+      "classification": "Exact"
+    },
+    {
+      "index": 73,
+      "label": "arity/E-B/3",
+      "source_sha256": "c1692c3031d672c79034a1c916b1613d22eaaed0adfa51ad708c55e613c3f395",
+      "stock_row_sha256": "354b8cd155b495da7b719654ea647f5123a29030db87da4417ce7e510ce482fe",
+      "classification": "Exact"
+    },
+    {
+      "index": 74,
+      "label": "arity/E-C/0",
+      "source_sha256": "d8168b9bf26176d0b83d82224a546cf419bd413dedf1789c1539c6b23d877070",
+      "stock_row_sha256": "4e235c542d77203d4d2ade2f7d66b5044cf745488719977d3b4057dae334d6cc",
+      "classification": "Exact"
+    },
+    {
+      "index": 75,
+      "label": "arity/E-C/1",
+      "source_sha256": "301127512d2fd570cfa73d1dfc57f07f6204c8a9515118472964bf7c439070ad",
+      "stock_row_sha256": "6035592234c4568199e0d4e088b58069c197c07fdc789a37304dec1841a27f83",
+      "classification": "Exact"
+    },
+    {
+      "index": 76,
+      "label": "arity/E-C/3",
+      "source_sha256": "cd21b3928b7f4f487432585b2cef67405612c04985edb3519a8b55ce3522d773",
+      "stock_row_sha256": "2e6f125279d98e33e27b1959cc2392aa5818fbaec48a05d135cd1ffc7a0e1021",
+      "classification": "Exact"
+    },
+    {
+      "index": 77,
+      "label": "arity/Some/0",
+      "source_sha256": "32f42f9c5aba6462e48c71422cfabc3b8fbe5be06d29ee2baa3deae2158f2061",
+      "stock_row_sha256": "5ed5072618e34643e04ae85198c6fe929f304ad0b5ee8d4bf7615f26132506b6",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 78,
+      "label": "arity/Some/2",
+      "source_sha256": "b1ef52d1cc924db2757f36c2bdba4a3f8085a42ac95be3a4b87abaa95c3d326b",
+      "stock_row_sha256": "51da4ce244140f72936e8572ede20adebb6f8b4746fa8f4d087698fc8235cb56",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 79,
+      "label": "arity/Some/3",
+      "source_sha256": "638866bdcdf68f8c4b6344b6ad4794babfbcf0fa34744fd08ee9bc12ef955994",
+      "stock_row_sha256": "c99af981e49022ef06fdbfd68334bfea208a7bcff91bf163ca9c4a45de641a80",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 80,
+      "label": "arity/Ok/0",
+      "source_sha256": "ecd078ef2114c64da045c16416cb241b413abb1dc9f4e73353e48e4a58fc1374",
+      "stock_row_sha256": "36bea061fc10c3566df28db379369e8f38fcd007b6c687a0ab8f53cee0312c28",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 81,
+      "label": "arity/Ok/2",
+      "source_sha256": "3c628228836a78acafdafa2d2f4819d758675ee0cafcac162bdd2f3ea69cddd9",
+      "stock_row_sha256": "d5569c884d88c2aed7dd5517e062634790161b35a50f24a84400f040960a222a",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 82,
+      "label": "arity/Ok/3",
+      "source_sha256": "55cb1f7406b324334f7fbc4e9fb0219d29b6be7eae84a05159d078821898ba01",
+      "stock_row_sha256": "90630bfdac20025fb28a7c0696329e282fb29fcbc264d42da4f8ade6c4394ce8",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 135 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 83,
+      "label": "control/named",
+      "source_sha256": "8c673f675dc0b0234221f746bc7fc3f80727aa3143ec6b22474e363fd719a617",
+      "stock_row_sha256": "c46892797afc1da7233650328f109da874d47481632b5583f73c71fe4c827959",
+      "classification": "Exact"
+    },
+    {
+      "index": 84,
+      "label": "control/named-callback",
+      "source_sha256": "9d343296ea1b88ee5111f71496e176c6cdfc955d2e6a72330a8da1de2056898d",
+      "stock_row_sha256": "4a69c257f3e81431417d6bea0cb482ce2ef00a88e13a5f26f684072d7dda0417",
+      "classification": "Exact"
+    },
+    {
+      "index": 85,
+      "label": "control/native",
+      "source_sha256": "b790045be7834f5fb071e62e89114e08ffdceaa7f2921d5f269f76dab5790355",
+      "stock_row_sha256": "abebcc9b5e752ed6e5d1ee40a836144b32dc27ec84621232cb36d2a513d9b8be",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 146,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 146 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 146,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 146 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:146, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 86,
+      "label": "control/map-constructor",
+      "source_sha256": "3a42df3bd739e83d46b320dd9612514de826fb9dbd7a2788a0d9e514264fa6b0",
+      "stock_row_sha256": "4f5facf61d0efb98b29842813fac4e8e7f066488ecde17f39e57e20d6e895d4c",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 163,
+          "source": 0,
+          "start": 127
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 127, end: 163 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 163,
+          "source": 0,
+          "start": 127
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 127, end: 163 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:163, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 87,
+      "label": "control/map-function",
+      "source_sha256": "c0647b41115c217eb6c37db296bcdbb87fee32b06590febacca437f74b85405d",
+      "stock_row_sha256": "041b1b14dc5ae49433166c4e54b71e5202c614f735a0ebab812982ecddc1feaf",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 179,
+          "source": 0,
+          "start": 141
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 141, end: 179 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 179,
+          "source": 0,
+          "start": 141
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 141, end: 179 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:179, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 88,
+      "label": "control/filter",
+      "source_sha256": "38f4a6dac2615a1efffc432de4a91e2b802f56b65f6cd1e121b01d5cfbcdf5dd",
+      "stock_row_sha256": "c9db395961b75dc482f9778e35a568bc16d9aa46e4579fa8ea90273eb9cd48e2",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 184,
+          "source": 0,
+          "start": 141
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 141, end: 184 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 184,
+          "source": 0,
+          "start": 141
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 141, end: 184 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:184, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 89,
+      "label": "control/heap-alias",
+      "source_sha256": "ef38d65a7bb26fa42a4c3ffeb46741dd5fe777aae95a91854b4255ecbb4f618a",
+      "stock_row_sha256": "3d5cdd533b642fc65027c74f13c9fc56b348481688eb41c7aea6d4002888a4e1",
+      "classification": "Exact"
+    },
+    {
+      "index": 90,
+      "label": "control/distinct",
+      "source_sha256": "5dca4b627a1eed6bcb93d8107977735f39fc246b55e9570fd426c6b82f4d8bbc",
+      "stock_row_sha256": "64f942dac7bdcf46f870b09ffb93fd0ee8a312eb8b7fca3ba4d4d97e25a67ed1",
+      "classification": "Exact"
+    },
+    {
+      "index": 91,
+      "label": "control/loop",
+      "source_sha256": "7f366d91f519fd6ae12cd0bce6d2922600b3c0f666ca49dcc1f47b52f586ec6a",
+      "stock_row_sha256": "d49af47d277a67b24026030abed78d1e63588e4ddf7e929ada62fc3b8a16d3b1",
+      "classification": "Exact"
+    },
+    {
+      "index": 92,
+      "label": "control/nested",
+      "source_sha256": "8b14932fc73bd887a8112c3fc72fd378bdb338143f0df1e09b57e933a4ce7ff2",
+      "stock_row_sha256": "3569ee88d4e9a200c6bf486bda0dd93d36f89173c657cd1ca82deba3e8ec4b66",
+      "classification": "Exact"
+    },
+    {
+      "index": 93,
+      "label": "control/dropped",
+      "source_sha256": "6904b696a73a6e04cddbefbb0247618d960274cb25386054ac65c3741d2bcd31",
+      "stock_row_sha256": "127c6bef0cc546b1d28870c535f33d4c92af28bdd815dcc73659ce00a7ac8ea0",
+      "classification": "Intentional-C11c-Copy",
+      "stock": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "AccessConflict",
+            "display": "Cannot read the value: it has been moved",
+            "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+            "sites": [
+              {
+                "end": 147,
+                "source": 0,
+                "start": 143
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 147,
+                "source": 0,
+                "start": 143
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot read the value: it has been moved\n  at c16f.rn:1:144"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "graph": {
+              "nodes": [
+                [
+                  "Nominal",
+                  "0x9e5263ff104e8f68",
+                  "0x0",
+                  "T",
+                  "Tuple",
+                  [],
+                  [
+                    1
+                  ]
+                ],
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": null,
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      }
+    },
+    {
+      "index": 94,
+      "label": "control/move-capture-alias",
+      "source_sha256": "4bc4942790ff72be50dd1b6caabf4796fe6631d66bd11ec98f4fb9bbb13f465c",
+      "stock_row_sha256": "36595f6f63fd235879784df05678997182946fe6dd1ce883312eef6df35b286f",
+      "classification": "Intentional-C11c-Copy",
+      "stock": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "AccessConflict",
+            "display": "Cannot read the value: it has been moved",
+            "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+            "sites": [
+              {
+                "end": 165,
+                "source": 0,
+                "start": 161
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 165,
+                "source": 0,
+                "start": 161
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot read the value: it has been moved\n  at c16f.rn:1:162"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "graph": {
+              "nodes": [
+                [
+                  "Tuple",
+                  "0xfeb65b3f4755aef0",
+                  [
+                    1,
+                    2
+                  ]
+                ],
+                [
+                  "Nominal",
+                  "0x9e5263ff104e8f68",
+                  "0x0",
+                  "T",
+                  "Tuple",
+                  [],
+                  [
+                    3
+                  ]
+                ],
+                [
+                  "Nominal",
+                  "0x9e5263ff104e8f68",
+                  "0x0",
+                  "T",
+                  "Tuple",
+                  [],
+                  [
+                    4
+                  ]
+                ],
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "9"
+                ],
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": null,
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      }
+    },
+    {
+      "index": 95,
+      "label": "control/non-callable",
+      "source_sha256": "a673ffcf0cd0e4906894b433bb4d39844e5a0bda8dc9eca5ec23ba79a1bcce72",
+      "stock_row_sha256": "4def8782b9a73cf85f5a28634b6ebc9509b8694dd9901c3e3056efea933ee9c3",
+      "classification": "Exact"
+    },
+    {
+      "index": 96,
+      "label": "control/named-type-call",
+      "source_sha256": "095604d22d729ca783396ffaa6ebcd7bf89f7b2ba7e85c5a32e195ef9a53e755",
+      "stock_row_sha256": "a0572cbbf8d7e3c20f972f86424103841265ca92cd6e3eadcdfbf06c95c0d393",
+      "classification": "Inherited-diagnostic",
+      "stock": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "stock:MissingFunction { hash: 0xbe6b74e85e3244d6 }",
+            "display": "Missing function with hash `0xbe6b74e85e3244d6`",
+            "kind": "MissingFunction { hash: 0xbe6b74e85e3244d6 }",
+            "sites": [
+              {
+                "end": 141,
+                "source": 0,
+                "start": 135
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 141,
+                "source": 0,
+                "start": 135
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Missing function with hash `0xbe6b74e85e3244d6`\n  at c16f.rn:1:136"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` cannot be called since it's not a function",
+            "kind": "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x5746a3356440, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 141,
+                "source": 0,
+                "start": 135
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 141,
+                "source": 0,
+                "start": 135
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16f.rn:1:136"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "before_full_equals_after_except_type_name_pointer": true
+    },
+    {
+      "index": 97,
+      "label": "control/enum-type-call",
+      "source_sha256": "1ba3af9395fbd581c49a66d22a9328aa50adcf0fcc661474fa93118a1e4b4ea4",
+      "stock_row_sha256": "830b16dd329d55f0113f83f339e9932a8892ecd6357bb4f98147edad7be20b26",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"TypeExpr\", refusal: Some(TypeExpr), detail: None }",
+        "refusal": "TypeExpr",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 133
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 133, end: 137 }), operation: \"TypeExpr\", refusal: Some(TypeExpr), detail: None }",
+        "refusal": "TypeExpr",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    },
+    {
+      "index": 98,
+      "label": "frontier/refused/first-class",
+      "source_sha256": "814dd88b172891e1916e6122be88a6411c2bc80df8e3a1c63a454f319291b857",
+      "stock_row_sha256": "44ef6abb1085674cac961ac65fb95dfc15ab4c103dfd6c7477cb6a807d24a8b9",
+      "classification": "Exact"
+    },
+    {
+      "index": 99,
+      "label": "frontier/refused/first-class-pair",
+      "source_sha256": "dca6b86481471a4da7d7da24dac80d65de2a39a27cc2640dc932a5f777131880",
+      "stock_row_sha256": "bcd8b7a2b090d8006abdec47fb37cdfb14fe1f3d56337f5522dc9a9ea7395d0a",
+      "classification": "Exact"
+    },
+    {
+      "index": 100,
+      "label": "frontier/refused/map-constructor",
+      "source_sha256": "8d150fbe1b21defda8abb81ce3c9e4691d0e2a9fac576310d2d890801f5142b8",
+      "stock_row_sha256": "86dced17ce9e07853e4abc4e1008cefc06a219abcd483fd0941a7dc8e3492bbc",
+      "classification": "Inherited-refusal",
+      "before": {
+        "location": {
+          "end": 119,
+          "source": 0,
+          "start": 83
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 83, end: 119 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "fresh": {
+        "location": {
+          "end": 119,
+          "source": 0,
+          "start": 83
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 83, end: 119 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 83:119, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+    }
+  ],
+  "authority": 21337,
+  "backlog": {
+    "row": 96,
+    "authority": 21337,
+    "fix": "Fresh should raise stock MissingFunction for calling a non-callable named type, keeping its better message text; preexisting diagnostic difference, no C16f runtime change."
+  }
+}

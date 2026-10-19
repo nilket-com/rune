@@ -364,7 +364,25 @@ fn run_contract(engine: &str) {
 			assert_eq!(policy["label"], case["label"]);
 			assert_eq!(policy["source_sha256"], case["source_sha256"]);
 			let actual = &observed["outcome"];
-			if policy["classification"] == "Retain-refusal" {
+			let admissions: Json =
+				serde_json::from_str(include_str!("expression_calls/c16f_admissions.json"))
+					.unwrap();
+			assert_eq!(admissions.as_object().unwrap().len(), 1);
+			if let Some(rule) = admissions.get(format!("{i:03}")) {
+				use sha2::{Digest, Sha256};
+				assert_eq!(i, 98);
+				assert_eq!(rule["authority"], 21347);
+				assert_eq!(rule["classification"], "Exact");
+				assert_eq!(rule["source_sha256"], case["source_sha256"]);
+				assert_eq!(
+					hex(Sha256::digest(serde_json::to_vec(expected).unwrap()).as_ref()),
+					rule["stock_row_sha256"]
+				);
+				assert_eq!(policy["classification"], "Retain-refusal");
+				assert_eq!(policy["refusal"], "UnresolvedFunction");
+				assert_eq!(audit["invoked"], true);
+				assert_eq!(project(actual), expected["projected"], "{label}");
+			} else if policy["classification"] == "Retain-refusal" {
 				assert_eq!(actual["status"], "refused", "{label}");
 				assert_eq!(actual["refusal"], policy["refusal"], "{label}");
 				assert_eq!(actual["location"], policy["location"], "{label}");

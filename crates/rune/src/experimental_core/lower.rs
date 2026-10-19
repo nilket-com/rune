@@ -15,11 +15,38 @@ mod text_pipeline;
 #[derive(Clone, Copy)]
 pub(crate) enum Resolve {
 	Script(Hash),
+	Constructor { hash: Hash, tag: Type, arity: u32 },
 	Sort,
 	Any,
 }
 pub(super) mod small_forms;
 pub(super) mod sorting;
+
+/// Constructor values use ordinary functions, so CallValue retains its existing
+/// arity, fuel, frame, ownership and error-site behavior.
+pub(crate) fn constructor_function(tag: Type, arity: u32) -> Result<Function> {
+	let slots = arity
+		.checked_add(1)
+		.ok_or_else(|| Error::refused(Refusal::Arity))?;
+	let mut function = Function::new(slots, arity)?;
+	let mut operands = Vec::try_with_capacity(arity as usize)?;
+	for slot in 0..arity {
+		operands.try_push(slot)?;
+	}
+	let (args_start, args_len) = function.arguments(&operands)?;
+	let at = super::code::TRANSPARENT_SORT_LOCATION;
+	function.push(
+		Op::List {
+			out: arity,
+			tag,
+			args_start,
+			args_len,
+		},
+		at,
+	)?;
+	function.push(Op::Return { value: arity }, at)?;
+	Ok(function)
+}
 
 use super::arithmetic::{Binary, Unary};
 use super::code::{CloneMode, CompileTransaction, Function, Op, PRINT_RAW};
@@ -1338,7 +1365,36 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
 		let at = self.location(span);
-		let id = (self.resolve)(Resolve::Script(hash), at)?;
+		let resolve = match self.constants.fresh_struct_shape(hash) {
+			Some(shape) => match shape.fields {
+				crate::compile::meta::Fields::Unnamed(arity) if *arity > 0 => {
+					let arity =
+						u32::try_from(*arity).map_err(|_| self.refused(span, Refusal::Arity))?;
+					Resolve::Constructor {
+						hash,
+						tag: self.struct_tag(hash, span)?,
+						arity,
+					}
+				}
+				_ => Resolve::Script(hash),
+			},
+			None => match self.constants.fresh_variant_shape(hash) {
+				Some(shape) => match shape.fields {
+					crate::compile::meta::Fields::Unnamed(arity) if *arity > 0 => {
+						let arity = u32::try_from(*arity)
+							.map_err(|_| self.refused(span, Refusal::Arity))?;
+						Resolve::Constructor {
+							hash,
+							tag: self.variant_tag(hash, span)?,
+							arity,
+						}
+					}
+					_ => Resolve::Script(hash),
+				},
+				None => Resolve::Script(hash),
+			},
+		};
+		let id = (self.resolve)(resolve, at)?;
 
 		self.emit(
 			Op::Literal {
