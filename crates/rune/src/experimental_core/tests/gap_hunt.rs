@@ -1672,3 +1672,5 @@ mod function_values;
 mod byte_strings;
 
 mod type_values;
+
+mod option_methods;

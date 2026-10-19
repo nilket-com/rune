@@ -1,0 +1,175 @@
+{
+  "rows": 166,
+  "production_changes": false,
+  "files": {
+    "cases.json": "cec775594d81710c0ae8ffdfb202d9b3508b9ef1d8c32d1321c415cbfd43fad5",
+    "stock.json": "2e44349392b92d23bce3d15d7619476294c51772fd01fdee770328de222f41da",
+    "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
+  },
+  "stock_binary": {
+    "path": "/home/me/work/.reviews/0185-c17a-oracle4/rune-tests",
+    "sha256": "ec1834268e01b7bf465b72154da9fe763ae355d7d5f2b95a157e6d975443bb93",
+    "pins_sha256": "6468b7017807630fda7b80b8c192fe595d76ebd210d2554f28ac53cf051f2f08"
+  },
+  "stock_summary": {
+    "rows": 166,
+    "statuses": {
+      "value": 80,
+      "error": 86
+    },
+    "error_classes": {
+      "Panic": 50,
+      "Type": 31,
+      "DivisionByZero": 1,
+      "ArgumentCount": 4
+    },
+    "replay": false,
+    "logical_traces": 86,
+    "cpu_list": "0-7,10-31"
+  },
+  "P1": {
+    "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",
+    "rows": [
+      {
+        "index": 101,
+        "label": "expect/none-vec-message",
+        "source_sha256": "21fc7277214e49a828851096a64fc46cf35dd9468d9460bda66291b23436acd5"
+      },
+      {
+        "index": 103,
+        "label": "expect/none-option-message",
+        "source_sha256": "657bfd9af1d61fc078d520c474ffd54c2bfa6d18f7a6686cd34a10370976e26a"
+      },
+      {
+        "index": 105,
+        "label": "expect/err-vec-message",
+        "source_sha256": "97b16424c0c826a79fc086b1ba2d46d9d1cfae8ac0b1c9168fd96ab37bb18026"
+      },
+      {
+        "index": 122,
+        "label": "receiver/vec-unwrap",
+        "source_sha256": "b65d807996d9a5aeb1abf6313649d716968e6dd0939811c049733bc1aa943e2a"
+      },
+      {
+        "index": 123,
+        "label": "receiver/string-unwrap",
+        "source_sha256": "162c2c1c0b0909cfcadbf0ea8c909742eae8dc02776afec382d30536a2a5f77e"
+      },
+      {
+        "index": 124,
+        "label": "receiver/int-unwrap",
+        "source_sha256": "0b10a376c13ec8cfac31f67dce207506cdc1e8025b2cf404ef9f36db31e78fb6"
+      },
+      {
+        "index": 125,
+        "label": "receiver/float-expect",
+        "source_sha256": "c4a37bfa1b724613564fc9e0012421e9354092803cc449f1ff649e4c3ad5853d"
+      },
+      {
+        "index": 126,
+        "label": "receiver/bool-unwrap_or",
+        "source_sha256": "20d1224eef7551c21de9f3baf734f09e1d5804775f0781cf07d11f4cad4f6053"
+      },
+      {
+        "index": 127,
+        "label": "receiver/char-is_err",
+        "source_sha256": "d19bb6ba371f65f504dbe25f38a8ec10366ce35287f8340b0aef628b2d254c92"
+      },
+      {
+        "index": 128,
+        "label": "receiver/unit-is_some",
+        "source_sha256": "c6fd4229b01e5a1f606a54d907ac46e8660000213c914fed9b366c8da243b3a4"
+      },
+      {
+        "index": 129,
+        "label": "receiver/object-is_some",
+        "source_sha256": "c1ce66a47a1d7be23a8f7b6ad5fa0065b58b35ecb69dd11063f1ebe690514163"
+      },
+      {
+        "index": 130,
+        "label": "receiver/tuple-is_ok",
+        "source_sha256": "23ff57e1234456a6a7ed2eca5bad50e2a3f8ded6a651a4fa1df54baac21999b5"
+      },
+      {
+        "index": 133,
+        "label": "receiver/iter-unwrap",
+        "source_sha256": "2022df2289d1d69242d13c22f2752a02a12aab6bf78942f912ff3d0022c5a19c"
+      },
+      {
+        "index": 134,
+        "label": "receiver/range-is_none",
+        "source_sha256": "6f567a1c839f892171941386e1a2207e6f31d2b2979d7cf15400f352414e508e"
+      },
+      {
+        "index": 135,
+        "label": "receiver/option-is_ok",
+        "source_sha256": "7e373b03f9150ab0b16e8b70dff07e4a711a9593a11fa568af75597e8d4455c2"
+      },
+      {
+        "index": 136,
+        "label": "receiver/option-is_err",
+        "source_sha256": "28de34954042d291b1509aef082063df671ec368df69954c2a846e3681975555"
+      },
+      {
+        "index": 137,
+        "label": "receiver/result-is_some",
+        "source_sha256": "d064098d0e6e83733329fa5b0ac9d7376fed8736ac251029a730479a5a7a41f2"
+      },
+      {
+        "index": 138,
+        "label": "receiver/result-is_none",
+        "source_sha256": "c2fa5b1da865024b329595072bd8af9569bab6b10347a47e75a537cde5e9fd86"
+      },
+      {
+        "index": 139,
+        "label": "receiver/fn-param",
+        "source_sha256": "8d52e9469fc47d1a4566ae2e56109e472533eda9154aef9e983145a71c424428"
+      },
+      {
+        "index": 140,
+        "label": "receiver/mixed-loop",
+        "source_sha256": "46a9dfbde87438e41e43ec67da1493fab0efb49909590636b18964c0d1f3bcbc"
+      },
+      {
+        "index": 141,
+        "label": "receiver/args-effects",
+        "source_sha256": "c900b69fbc30da499c7b222d45ebd7aa8bac9e9cfb0b00b4c6553fbd4a9f56cf"
+      },
+      {
+        "index": 142,
+        "label": "receiver/args-effects-expect",
+        "source_sha256": "10d831eb2fc8fe261f43b45ccd1c45e5ac8e609684d8e758442e246b90c0074b"
+      },
+      {
+        "index": 143,
+        "label": "receiver/chain",
+        "source_sha256": "0e7483d4dfa4a4fec72381d737bbb1e82501b9b7e548fe6799157e17a5ae849b"
+      },
+      {
+        "index": 144,
+        "label": "receiver/type-value",
+        "source_sha256": "084022d9e1e2b550ba40d593b491fcf8a4bdced9d470f654c9c316a95c6f7787"
+      },
+      {
+        "index": 145,
+        "label": "receiver/fn-value",
+        "source_sha256": "4acc574495d2ee1da145f0f73b7f9a557afd5dbd1bb632bc5668cd836355e7a8"
+      },
+      {
+        "index": 157,
+        "label": "compile/path-wrong-type",
+        "source_sha256": "fe207e5b70134bd7cf87399f6ee55757e5e2e9e507d9d6a267931727a9f24bd4"
+      },
+      {
+        "index": 159,
+        "label": "compile/method-as-field",
+        "source_sha256": "8460b2246d5a01ff0f117d0f531aa0a6da12446aecd51a89494cc1ea49985c90"
+      },
+      {
+        "index": 164,
+        "label": "compile/turbofish",
+        "source_sha256": "ec88a72ced8c5ea12c8ba8f60c1b62bfa49d5a7d00ccb8db105816fc1ff25f9f"
+      }
+    ]
+  }
+}
