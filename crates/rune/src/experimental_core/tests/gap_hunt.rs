@@ -1666,3 +1666,5 @@ mod move_captures;
 mod labeled_blocks;
 
 mod remaining_patterns;
+
+mod function_values;

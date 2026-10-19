@@ -1,0 +1,911 @@
+[
+  {
+    "label": "surface/zero",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Z;f()}pub fn c16f_reuse(){7}",
+    "source_sha256": "17220341249ff5f326ccf82db4495ceca3c12c47e58312da2d48274b6c4a2171",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/one",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;f(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "187e888abd8397f22db3d01f3e07e74f6e3db45d9fd24ba4045e475abac5e5b8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/two",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=P;f(7,9)}pub fn c16f_reuse(){7}",
+    "source_sha256": "6747440785578aa96b5c58c1f2051efc112d83cea713084b8700a8edc8b97746",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/enum-one",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::B;f(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "9962efd324709dfa0c10caa7d1e7609db8581963cd8789097e3c5a9055486ca3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/enum-two",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::C;f(7,9)}pub fn c16f_reuse(){7}",
+    "source_sha256": "832e8f2bfb964d7a4097d33af4f1d41e13c801c1cd32c60acce4bbd3f4d7a487",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/some",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Some;f(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "87a16a6cf17ad4845354db6ca8a16bf9d654314a8ff35c1ff7bb89b290da792f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/ok",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Ok;f(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "4d59ff9590d159205838a923c181b69b238990b3cf75d0fd3d7ca6d015acf817",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/err",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Err;f(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "88713b388c96260e77ea11086a29991919f843b5675dcab5638973941fa1fddf",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/unit-value",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){U}pub fn c16f_reuse(){7}",
+    "source_sha256": "ac4036ff00360d1edfb8e77c6db3b1b7172a439c9ba32cf7e1d5f7a74cdf9933",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/enum-unit-value",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){E::A}pub fn c16f_reuse(){7}",
+    "source_sha256": "9a1cc1b50ba3207feb7750a5f36b4855fdccce4f16f2c2835628053999ea01b7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/named-type",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){N}pub fn c16f_reuse(){7}",
+    "source_sha256": "46d7e651d3e2e9b1d7115b79f1897e989aa838111952675a0b774a9589b3efb6",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "surface/named-variant-type",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){E::D}pub fn c16f_reuse(){7}",
+    "source_sha256": "f7e97d3c96a02814f44bfd2d7a360b5b9f351079e39cdbe2aee4ff6d5d5b4cdc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "alias/Z",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Z;let g=f;(f(),g())}pub fn c16f_reuse(){7}",
+    "source_sha256": "d47f4470a3d17180b99b8609567a25dbfb9451a43467984cd5ea6abad235c4e8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "callback/Z",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f){f()}pub fn main(){apply(Z)}pub fn c16f_reuse(){7}",
+    "source_sha256": "dd8116ffae75393aa1fa04f377d3b15c2439a59b1fa3ae43567ef751175ad039",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "returned/Z",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn make(){Z}pub fn main(){make()()}pub fn c16f_reuse(){7}",
+    "source_sha256": "4ea4608f97ec6950cc0fa938d524107580757711175dddf41df05d6677cd7ca1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "vector/Z",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let fs=[Z];fs[0]()}pub fn c16f_reuse(){7}",
+    "source_sha256": "f5f6edc2c26037a2d2bf6756f4f60e84d0c550d148695b8ff29ba9304488cd20",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "capture/Z",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Z;let g=move||f();g()}pub fn c16f_reuse(){7}",
+    "source_sha256": "bafbc49c72f17fc8ff916653dd99c63c8fb17759ad29d4ca40b446ce53d2b063",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "alias/T",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;let g=f;(f(7),g(7))}pub fn c16f_reuse(){7}",
+    "source_sha256": "8a4e7f2beb9be74747c498ede03d80811d1c71f8bdf6cf61ce5a37da40e7c29b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "callback/T",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f){f(7)}pub fn main(){apply(T)}pub fn c16f_reuse(){7}",
+    "source_sha256": "40b1779251fa1f639487e3f35c359f77f5c8fcdd742602dfc7846d009dde96c7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "returned/T",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn make(){T}pub fn main(){make()(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "e217a36519acb2faf727f64af92c80ab34bd7a7f0b59c867316c83388189093d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "vector/T",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let fs=[T];fs[0](7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "da4bc14cecda824f546d6c7689593c1392530f6ea16d4a75e1198b42c2dde37b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "capture/T",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;let g=move||f(7);g()}pub fn c16f_reuse(){7}",
+    "source_sha256": "cf908e2c3e6135a742f195cb9fa2dc8bd36bde46bd0ff408e47a379f3ecb5391",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "alias/P",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=P;let g=f;(f(7,9),g(7,9))}pub fn c16f_reuse(){7}",
+    "source_sha256": "00c5d9a6b4c3f0b76ae45fc333bdd0807e9f2e7c8d2cd2a4ab70ef3b4e760a42",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "callback/P",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f){f(7,9)}pub fn main(){apply(P)}pub fn c16f_reuse(){7}",
+    "source_sha256": "b1bd295a8e8184c66be635c4bb81ab776af9962e8a9e6a74641d84efc98d70f7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "returned/P",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn make(){P}pub fn main(){make()(7,9)}pub fn c16f_reuse(){7}",
+    "source_sha256": "120f9b0580bfb32cbbc1142fee3ae3732d48f71ae25a800a1fbf91b91671b4b3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "vector/P",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let fs=[P];fs[0](7,9)}pub fn c16f_reuse(){7}",
+    "source_sha256": "79bcc8079c4486283ab904e967b6a32b137123eff782cc23de62d8891a369e2c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "capture/P",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=P;let g=move||f(7,9);g()}pub fn c16f_reuse(){7}",
+    "source_sha256": "484f7985d0d015293478a75ce10171b659e982e6e498f25c5e8b726daac60e1b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "alias/E-B",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::B;let g=f;(f(7),g(7))}pub fn c16f_reuse(){7}",
+    "source_sha256": "08974bc1d6a5c33a263e37331f43272d33a6c268a2296ef0ca1583febdb6b01d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "callback/E-B",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f){f(7)}pub fn main(){apply(E::B)}pub fn c16f_reuse(){7}",
+    "source_sha256": "aa50041b06d80dfcf708e5a211b0df6a8d7126241a48a506186fa11a7d3b3d6d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "returned/E-B",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn make(){E::B}pub fn main(){make()(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "c1f294ac210e8aac80a7cef4a6854dbacfb05d13866330dd2f585c21725a9e46",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "vector/E-B",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let fs=[E::B];fs[0](7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "205a74b851dcb7e4da2afc09d9db112b4a86a66c6dfbd1646e2eda9b13a1aa5e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "capture/E-B",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::B;let g=move||f(7);g()}pub fn c16f_reuse(){7}",
+    "source_sha256": "50742d68509844924a93ff6f361ec76b3bb02c219b7183590d435c62aa724046",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "alias/E-C",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::C;let g=f;(f(7,9),g(7,9))}pub fn c16f_reuse(){7}",
+    "source_sha256": "3a04f22111ef52a16065db0b80a7c6be35ed9ebb18f7a55285905956eef4af2b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "callback/E-C",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f){f(7,9)}pub fn main(){apply(E::C)}pub fn c16f_reuse(){7}",
+    "source_sha256": "6b62b02724edbfec488dcbd05de0647497c600366cc27bbf3cd275a6b6fd7769",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "returned/E-C",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn make(){E::C}pub fn main(){make()(7,9)}pub fn c16f_reuse(){7}",
+    "source_sha256": "eb3a8e07714e54797debcba7aec14730354211030eac6b52efffaeaf72b6cb64",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "vector/E-C",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let fs=[E::C];fs[0](7,9)}pub fn c16f_reuse(){7}",
+    "source_sha256": "419aed82296d9bcab0a767d48d2d5bb86ca40de1ddbb14ddc30efc96947209f2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "capture/E-C",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::C;let g=move||f(7,9);g()}pub fn c16f_reuse(){7}",
+    "source_sha256": "6df4312b185b85cec6419d04fec996e32e4d45ef5682f289fcf0227e5af1b169",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "alias/Some",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Some;let g=f;(f(7),g(7))}pub fn c16f_reuse(){7}",
+    "source_sha256": "42cc1e11ff51172ee9915619c6ab521b1b4d119bf9023d9e5ce93e4070b25497",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "callback/Some",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f){f(7)}pub fn main(){apply(Some)}pub fn c16f_reuse(){7}",
+    "source_sha256": "21636f7d5b89d2ad33906a06aca0bc2a9662b78c0c3ea28d7f00baf74a1cba8f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "returned/Some",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn make(){Some}pub fn main(){make()(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "81120e3a408e4fae3b653c00a9a30afcb88010ce56697db4eacc7c81b6e85798",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "vector/Some",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let fs=[Some];fs[0](7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "2300e11f8eb0a3ef375d75785b601a2e5a176cdc7f62350c5b30ffc19773e63b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "capture/Some",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Some;let g=move||f(7);g()}pub fn c16f_reuse(){7}",
+    "source_sha256": "e3ee3647fa7b562342542a8a05d5fbb0aa6c64905aae910ed6c4bbc04781e5f3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "alias/Ok",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Ok;let g=f;(f(7),g(7))}pub fn c16f_reuse(){7}",
+    "source_sha256": "4d6570c258c6efc607e4ff0d4e8408477a23d8c39f89d87237052f4b6aab0d27",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "callback/Ok",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f){f(7)}pub fn main(){apply(Ok)}pub fn c16f_reuse(){7}",
+    "source_sha256": "3c744103e262982be68982cf7a74afacec778bc729ff0189c3f0058c2f1a0e43",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "returned/Ok",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn make(){Ok}pub fn main(){make()(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "c15b45eef8992a444295265ee20f9ad84c7a08e563f36a945235163ee9e82f8e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "vector/Ok",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let fs=[Ok];fs[0](7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "5a89beda6fcc1815954831fc14553c7257cd98539e80f58db38d0e2c2966a814",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "capture/Ok",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Ok;let g=move||f(7);g()}pub fn c16f_reuse(){7}",
+    "source_sha256": "48e3aa2b336932531e8b7719791e26db4d261198a716f41cc564d4e71939a869",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "alias/Err",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Err;let g=f;(f(7),g(7))}pub fn c16f_reuse(){7}",
+    "source_sha256": "f7c7cbe678475f97bc0f44cb083945b03416b61db60f221cbeab27605e605198",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "callback/Err",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f){f(7)}pub fn main(){apply(Err)}pub fn c16f_reuse(){7}",
+    "source_sha256": "f1e0a12f0221088d38d7d7025b8fc700bf3b071d64fd3e98b67c27ef7c654c17",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "returned/Err",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn make(){Err}pub fn main(){make()(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "5e9f126618fd92895b6395c7e1505c9c968e160dc38c485e2a603e153b86e932",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "vector/Err",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let fs=[Err];fs[0](7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "ee47607f874d48a95ce191b9bca92e0de7f9d1699271a8ac44176ce8408ec6d1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "capture/Err",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Err;let g=move||f(7);g()}pub fn c16f_reuse(){7}",
+    "source_sha256": "330fe636e5e7c37137d5a5963379f0551b54b6875f968e7106fc6018dabdb63d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/two",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){let f=P;f(tap(1,7),tap(2,9))}pub fn c16f_reuse(){7}",
+    "source_sha256": "9243b0297df17d14e6f7d640618a0286c6c53f44351683742639986a5ac1adbd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/enum",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){let f=E::C;f(tap(1,7),tap(2,9))}pub fn c16f_reuse(){7}",
+    "source_sha256": "c34d54b5dc60455aa455a0ae2a59d6f523828417938bd0da69e1a9cb400cc7ef",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/callback",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){apply(P,tap(1,7),tap(2,9))}pub fn c16f_reuse(){7}",
+    "source_sha256": "640296389a6832fcf61156582d64a2dad3284dc78e029463a2d7052b309bfe0b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/callee",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){{tap(1,0);P}(tap(2,7),tap(3,9))}pub fn c16f_reuse(){7}",
+    "source_sha256": "e274944fc48c8b0331daf08cccaf9b5a838d6e3262c35c871fd5aaddbd954fa0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/callee-return",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){make()(tap(2,7),tap(3,9))}pub fn c16f_reuse(){7}",
+    "source_sha256": "452a526c4882f976c863f18946b742245fac988a1618c72433a82563e25aca32",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/arg-error",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){let f=P;f(tap(1,7),1/0)}pub fn c16f_reuse(){7}",
+    "source_sha256": "c8d3081b84186be571591ec5ca9c9efc064db6af726a470f7c2496897eeab5ad",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/extra",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){let f=P;f(tap(1,7),tap(2,9),tap(3,11))}pub fn c16f_reuse(){7}",
+    "source_sha256": "eb2f458cc1126b69f6c93ad301acd2546a37f6ba75f4c413063b6a1b3b917bb5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/few",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){let f=P;f(tap(1,7))}pub fn c16f_reuse(){7}",
+    "source_sha256": "ab043a0f393f9f2a5c9d445e4289bf636f19769b79898b92382a98a459ccb4f8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/body-error",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){outer(P)}pub fn c16f_reuse(){7}",
+    "source_sha256": "6aad3a537dbb54f051fc04254c453c8ba561693cbee86370820d13c563eeff59",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "effects/stdout",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn apply(f,a,b){f(a,b)}fn make(){tap(1,0);P}fn outer(f){inner(f)}fn inner(f){f(7)}pub fn main(){let f=P;println!(\"before\");let p=f({println!(\"left\");7},{println!(\"right\");9});println!(\"after\");p}pub fn c16f_reuse(){7}",
+    "source_sha256": "38919c034cd3aee2082f4425caecfdd999d00856c57e96bb9693070127621c32",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/Z/1",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Z;f(1)}pub fn c16f_reuse(){7}",
+    "source_sha256": "5fa9c1a4fee465bd21c8e7519f7e1ba49cf8efe14ca9a38bf5ebed0f5a3ef6e0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/Z/2",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Z;f(1,2)}pub fn c16f_reuse(){7}",
+    "source_sha256": "654cc583721094dbe4b181533f9f9ec2eaa2074dc1d0a750bf47e8acf94cbe55",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/Z/3",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Z;f(1,2,3)}pub fn c16f_reuse(){7}",
+    "source_sha256": "c9833971b480af2aad8dde69d5728af0d80026ea2e9dd29896dff0e06ee3c4e5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/T/0",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;f()}pub fn c16f_reuse(){7}",
+    "source_sha256": "94f352ce42cc62dc1bb44b509daf13b88206e93f39424faa479facd8a0309078",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/T/2",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;f(1,2)}pub fn c16f_reuse(){7}",
+    "source_sha256": "07b24410bb1e48a8febdb5cdae6dccc9d881297a3e6151ffe6bd17789ed68a47",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/T/3",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;f(1,2,3)}pub fn c16f_reuse(){7}",
+    "source_sha256": "467776d0014660066d99c479f32dfc7d1b387cad9e5291170753a36e36185192",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/P/0",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=P;f()}pub fn c16f_reuse(){7}",
+    "source_sha256": "c602af043665ecfdeea3922a7266e16474108c4e1a63607ba82c9dffe02fe0c1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/P/1",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=P;f(1)}pub fn c16f_reuse(){7}",
+    "source_sha256": "7362c0df6006f67e947a65d7e635c02ddf8631ca88b60df54fe9bf97d4bd2218",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/P/3",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=P;f(1,2,3)}pub fn c16f_reuse(){7}",
+    "source_sha256": "789d47e329d44cab0e61e733504ba2d23bd6a6ce55add56663584c727f0b7acc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/E-B/0",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::B;f()}pub fn c16f_reuse(){7}",
+    "source_sha256": "aad31b4e2b7a9c6157c5715eecae2bfaa0473212f28e9d46321a47711110ab5d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/E-B/2",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::B;f(1,2)}pub fn c16f_reuse(){7}",
+    "source_sha256": "fee17dbac716aa2fa1de44b29ca3ccfa2711d56ebb7ffd325a162310d66b246a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/E-B/3",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::B;f(1,2,3)}pub fn c16f_reuse(){7}",
+    "source_sha256": "c1692c3031d672c79034a1c916b1613d22eaaed0adfa51ad708c55e613c3f395",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/E-C/0",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::C;f()}pub fn c16f_reuse(){7}",
+    "source_sha256": "d8168b9bf26176d0b83d82224a546cf419bd413dedf1789c1539c6b23d877070",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/E-C/1",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::C;f(1)}pub fn c16f_reuse(){7}",
+    "source_sha256": "301127512d2fd570cfa73d1dfc57f07f6204c8a9515118472964bf7c439070ad",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/E-C/3",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::C;f(1,2,3)}pub fn c16f_reuse(){7}",
+    "source_sha256": "cd21b3928b7f4f487432585b2cef67405612c04985edb3519a8b55ce3522d773",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/Some/0",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Some;f()}pub fn c16f_reuse(){7}",
+    "source_sha256": "32f42f9c5aba6462e48c71422cfabc3b8fbe5be06d29ee2baa3deae2158f2061",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/Some/2",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Some;f(1,2)}pub fn c16f_reuse(){7}",
+    "source_sha256": "b1ef52d1cc924db2757f36c2bdba4a3f8085a42ac95be3a4b87abaa95c3d326b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/Some/3",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Some;f(1,2,3)}pub fn c16f_reuse(){7}",
+    "source_sha256": "638866bdcdf68f8c4b6344b6ad4794babfbcf0fa34744fd08ee9bc12ef955994",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/Ok/0",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Ok;f()}pub fn c16f_reuse(){7}",
+    "source_sha256": "ecd078ef2114c64da045c16416cb241b413abb1dc9f4e73353e48e4a58fc1374",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/Ok/2",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Ok;f(1,2)}pub fn c16f_reuse(){7}",
+    "source_sha256": "3c628228836a78acafdafa2d2f4819d758675ee0cafcac162bdd2f3ea69cddd9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "arity/Ok/3",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=Ok;f(1,2,3)}pub fn c16f_reuse(){7}",
+    "source_sha256": "55cb1f7406b324334f7fbc4e9fb0219d29b6be7eae84a05159d078821898ba01",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/named",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn foo(x){x+1}pub fn main(){let f=foo;let g=f;(f(3),g(4))}pub fn c16f_reuse(){7}",
+    "source_sha256": "8c673f675dc0b0234221f746bc7fc3f80727aa3143ec6b22474e363fd719a617",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/named-callback",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn foo(x){x+1}fn apply(f,x){f(x)}pub fn main(){apply(foo,7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "9d343296ea1b88ee5111f71496e176c6cdfc955d2e6a72330a8da1de2056898d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/native",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=std::i64::abs;f(-7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "b790045be7834f5fb071e62e89114e08ffdceaa7f2921d5f269f76dab5790355",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/map-constructor",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){[1,2].iter().map(T).collect::<Vec>()}pub fn c16f_reuse(){7}",
+    "source_sha256": "3a42df3bd739e83d46b320dd9612514de826fb9dbd7a2788a0d9e514264fa6b0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/map-function",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn foo(x){x+1}pub fn main(){[1,2].iter().map(foo).collect::<Vec>()}pub fn c16f_reuse(){7}",
+    "source_sha256": "c0647b41115c217eb6c37db296bcdbb87fee32b06590febacca437f74b85405d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/filter",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}fn foo(x){x>1}pub fn main(){[1,2,3].iter().filter(foo).collect::<Vec>()}pub fn c16f_reuse(){7}",
+    "source_sha256": "38f4a6dac2615a1efffc432de4a91e2b802f56b65f6cd1e121b01d5cfbcdf5dd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/heap-alias",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let a=[7];let f=P;let p=f(a,a);p.0[0]=9;(p,a)}pub fn c16f_reuse(){7}",
+    "source_sha256": "ef38d65a7bb26fa42a4c3ffeb46741dd5fe777aae95a91854b4255ecbb4f618a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/distinct",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=P;(f(7,9),Q(7,9))}pub fn c16f_reuse(){7}",
+    "source_sha256": "5dca4b627a1eed6bcb93d8107977735f39fc246b55e9570fd426c6b82f4d8bbc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/loop",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;let a=[];for x in 0..3{a.push(f(x));}a}pub fn c16f_reuse(){7}",
+    "source_sha256": "7f366d91f519fd6ae12cd0bce6d2922600b3c0f666ca49dcc1f47b52f586ec6a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/nested",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;let g=P;g(f(7),f(9))}pub fn c16f_reuse(){7}",
+    "source_sha256": "8b14932fc73bd887a8112c3fc72fd378bdb338143f0df1e09b57e933a4ce7ff2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/dropped",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;drop(f);f(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "6904b696a73a6e04cddbefbb0247618d960274cb25386054ac65c3741d2bcd31",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "C11c-Copy-candidate"
+  },
+  {
+    "label": "control/move-capture-alias",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=T;let g=f;let h=move||g(7);(f(9),h())}pub fn c16f_reuse(){7}",
+    "source_sha256": "4bc4942790ff72be50dd1b6caabf4796fe6631d66bd11ec98f4fb9bbb13f465c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "C11c-Copy-candidate"
+  },
+  {
+    "label": "control/non-callable",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=7;f(1)}pub fn c16f_reuse(){7}",
+    "source_sha256": "a673ffcf0cd0e4906894b433bb4d39844e5a0bda8dc9eca5ec23ba79a1bcce72",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/named-type-call",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=N;f(7,9)}pub fn c16f_reuse(){7}",
+    "source_sha256": "095604d22d729ca783396ffaa6ebcd7bf89f7b2ba7e85c5a32e195ef9a53e755",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "control/enum-type-call",
+    "source": "use c16f::tap;struct U;struct Z();struct T(a);struct P(a,b);struct Q(a,b);struct N{x,y}enum E{A,B(x),C(x,y),D{x}}pub fn main(){let f=E::D;f(7)}pub fn c16f_reuse(){7}",
+    "source_sha256": "1ba3af9395fbd581c49a66d22a9328aa50adcf0fcc661474fa93118a1e4b4ea4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C16f",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "frontier/refused/first-class",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){let f=T;f(tap(1,7))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "814dd88b172891e1916e6122be88a6411c2bc80df8e3a1c63a454f319291b857",
+    "fuel": 200000,
+    "reuse_enabled": false,
+    "origin": "C15/116",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "frontier/refused/first-class-pair",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){let f=P;f(tap(1,7),tap(2,9))}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "dca6b86481471a4da7d7da24dac80d65de2a39a27cc2640dc932a5f777131880",
+    "fuel": 200000,
+    "reuse_enabled": false,
+    "origin": "C15/117",
+    "policy": "Exact-candidate"
+  },
+  {
+    "label": "frontier/refused/map-constructor",
+    "source": "use c15::tap;\nstruct U;struct T(a);struct P(a,b);enum E{A,B(x),C{x}}\npub fn main(){[1,2].iter().map(T).collect::<Vec>()}\npub fn c15_reuse(){7}\n",
+    "source_sha256": "8d150fbe1b21defda8abb81ce3c9e4691d0e2a9fac576310d2d890801f5142b8",
+    "fuel": 200000,
+    "reuse_enabled": false,
+    "origin": "C15/118",
+    "policy": "Exact-candidate"
+  }
+]
