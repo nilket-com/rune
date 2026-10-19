@@ -369,6 +369,11 @@ pub enum Detail {
 		arg: u8,
 		access: MovedAccess,
 	},
+	/// A moved access at a proven native argument boundary.
+	MovedArgument {
+		arg: u8,
+		access: MovedAccess,
+	},
 }
 
 impl Detail {
@@ -381,6 +386,7 @@ impl Detail {
 			Self::SharedArgument { arg, .. }
 			| Self::FormatArgumentMoved { arg, .. }
 			| Self::IteratorArgumentMoved { arg, .. }
+			| Self::MovedArgument { arg, .. }
 			| Self::CmpArgumentAccess { arg, .. }
 			| Self::ExclusiveArgument { arg, .. } => Some((HostCause::Access, arg)),
 			Self::HostExpectedType { arg: Some(arg), .. } => Some((HostCause::ExpectedType, arg)),
@@ -848,6 +854,7 @@ impl fmt::Display for Message<'_> {
 			Moved { access }
 			| FormatArgumentMoved { access, .. }
 			| IteratorArgumentMoved { access, .. }
+			| MovedArgument { access, .. }
 			| CmpArgumentAccess { access, .. } => {
 				access_message(f, access, Option::None, "it has been moved")
 			}

@@ -176,8 +176,8 @@ fn diagnostic_catalogue_both_engines() {
 			"store",
 		),
 		("call-target", "let x = 1; x()", Type, "execute"),
-		("arity-zero", "let f = g; f()", Type, "execute"),
-		("arity-two", "let f = g; f(1,2)", Type, "execute"),
+		("arity-zero", "let f = g; f()", ArgumentCount, "execute"),
+		("arity-two", "let f = g; f(1,2)", ArgumentCount, "execute"),
 		("try", "1?", Type, "store"),
 		// Endpoint validation is deferred until iteration, matching stock.
 		("range", "for i in 0..1.5 {}", Type, "store"),

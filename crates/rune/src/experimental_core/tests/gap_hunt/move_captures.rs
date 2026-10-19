@@ -4,6 +4,8 @@ use crate::runtime::{self as stock, Value};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
 include!("captures/graph.rs");
+include!("move_captures/fresh.rs");
+include!("move_captures/fresh_contract.rs");
 const CASES: &str = include_str!("move_captures/cases.json");
 
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
@@ -64,10 +66,17 @@ fn error(error: &stock::VmError, sources: &Sources) -> Json {
 #[test]
 #[ignore = "C11c stock-oracle child; explicit bounded external operator only"]
 fn child() {
-	assert_eq!(std::env::var("C11C_ENGINE").unwrap(), "stock");
+	let engine = std::env::var("C11C_ENGINE").unwrap();
+	assert!(matches!(engine.as_str(), "stock" | "fresh"));
 	let index: usize = std::env::var("C11C_CASE").unwrap().parse().unwrap();
-	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	let cases: Vec<Json> = match std::env::var_os("C11C_CASES_FILE") {
+		Some(path) => serde_json::from_slice(&fs::read(path).unwrap()).unwrap(),
+		None => serde_json::from_str(CASES).unwrap(),
+	};
 	let row = &cases[index];
+	if engine == "fresh" {
+		fresh_child(index, row);
+	}
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
 	let context = context();
@@ -115,7 +124,12 @@ fn child() {
 	let mut result = result;
 	result["projected"] = projection(&result);
 	if std::env::var_os("C11C_REPLAY").is_some() {
-		let frozen: Json = serde_json::from_str(include_str!("move_captures/stock.json")).unwrap();
+		let frozen: Json = serde_json::from_str(if std::env::var_os("C11C_CASES_FILE").is_some() {
+			include_str!("move_captures/function_tokens_stock.json")
+		} else {
+			include_str!("move_captures/stock.json")
+		})
+		.unwrap();
 		assert_eq!(result["projected"], frozen[index]["projected"]);
 	}
 	let path = std::env::var_os("C11C_RESULT").unwrap();
@@ -169,15 +183,61 @@ fn stock_contract() {
 
 #[cfg(target_os = "linux")]
 fn run_contract(engine: &str) {
-	assert_eq!(engine, "stock");
-	let cases: Json = serde_json::from_str(include_str!("move_captures/cases.json")).unwrap();
-	let frozen: Json = serde_json::from_str(include_str!("move_captures/stock.json")).unwrap();
+	run_contract_cases(engine, false);
+}
+
+#[cfg(target_os = "linux")]
+fn run_contract_cases(engine: &str, function_copy: bool) {
+	assert!(matches!(engine, "stock" | "fresh"));
+	let cases_text = if function_copy {
+		include_str!("move_captures/function_tokens_cases.json")
+	} else {
+		include_str!("move_captures/cases.json")
+	};
+	let cases: Json = serde_json::from_str(cases_text).unwrap();
+	let mut frozen: Json = serde_json::from_str(if function_copy {
+		include_str!("move_captures/function_tokens_stock.json")
+	} else {
+		include_str!("move_captures/stock.json")
+	})
+	.unwrap();
+	if function_copy {
+		for row in frozen.as_array_mut().unwrap() {
+			let case = row["case"].as_object().unwrap().clone();
+			row.as_object_mut().unwrap().extend(case);
+		}
+	}
 	let cases = cases.as_array().unwrap();
 	let frozen = frozen.as_array().unwrap();
-	assert_eq!(cases.len(), 71);
+	assert_eq!(cases.len(), if function_copy { 8 } else { 71 });
+	let disposition: Json = serde_json::from_str(if function_copy {
+		include_str!("move_captures/function_tokens_disposition.json")
+	} else {
+		include_str!("move_captures/disposition.json")
+	})
+	.unwrap();
+	assert_eq!(disposition["rows"].as_array().unwrap().len(), cases.len());
+	let mut counts = std::collections::BTreeMap::new();
+	for row in disposition["rows"].as_array().unwrap() {
+		*counts
+			.entry(row["classification"].as_str().unwrap())
+			.or_insert(0usize) += 1;
+	}
+	if function_copy {
+		assert_eq!(counts.get("Intentional"), Some(&8));
+	} else {
+		assert_eq!(counts.get("exact"), Some(&52));
+		assert_eq!(counts.get("inherited-refusal"), Some(&11));
+		assert_eq!(counts.get("policy-presentation"), Some(&8));
+		assert_eq!(counts.values().sum::<usize>(), 71);
+	}
 	assert_eq!(cases.len(), frozen.len());
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
+	let supplemental_cases = out.join("function_tokens_cases.json");
+	if function_copy {
+		fs::write(&supplemental_cases, cases_text).unwrap();
+	}
 	let mut labels = std::collections::BTreeSet::new();
 	for (i, (case, expected)) in cases.iter().zip(frozen).enumerate() {
 		let label = case["label"].as_str().unwrap();
@@ -199,6 +259,10 @@ fn run_contract(engine: &str) {
 			])
 			.arg(std::env::current_exe().unwrap());
 		command.process_group(0);
+		command.env_clear();
+		if function_copy {
+			command.env("C11C_CASES_FILE", &supplemental_cases);
+		}
 		let mut child = command
 			.args([
 				"--exact",
@@ -207,7 +271,6 @@ fn run_contract(engine: &str) {
 				"--nocapture",
 				"--quiet",
 			])
-			.env_clear()
 			.env("C11C_ENGINE", engine)
 			.env("C11C_REPLAY", "1")
 			.env("PATH", "/usr/bin:/bin")
@@ -279,7 +342,13 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["label"], case["label"]);
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["origin"], case["origin"]);
-		assert_eq!(observed["projected"], expected["projected"], "{label}");
+		if engine == "stock" {
+			assert_eq!(observed["projected"], expected["projected"], "{label}");
+		} else if function_copy {
+			verify_function_copy_record(&observed, case, expected, &disposition["rows"][i]);
+		} else {
+			verify_fresh_record(&observed, case, expected, &disposition["rows"][i]);
+		}
 		assert_eq!(hex(&stdout), expected["stdout_hex"]);
 		assert_eq!(hex(&stderr), expected["stderr_hex"]);
 	}

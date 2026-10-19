@@ -6,7 +6,7 @@
 //! the result and are popped. A slot is "dirty" after an instruction that may
 //! have stored a heap handle in it; popping emits one Release per dirty slot and
 //! nothing for the others. Bare locals are read in place where the reference's
-//! `writes_nothing` rule allows; nothing here moves a user local.
+//! `writes_nothing` rule allows; capturing move closures transfer payload ownership and track moved bindings.
 
 mod missing_methods;
 mod patterns;
@@ -41,11 +41,14 @@ pub(crate) fn function(
 	pool: &crate::compile::Pool,
 	context: &crate::Context,
 	transaction: &mut CompileTransaction,
+	moved_error: &core::cell::Cell<Option<(Span, Span)>>,
 ) -> Result<Function> {
 	let mut cx = Lower {
 		exprs,
 		function: Function::new(1, 0)?,
 		variables: Vec::new(),
+		moved: Vec::new(),
+		moved_error,
 		text_bindings: Vec::new(),
 		loops: Vec::new(),
 		dirty: Vec::new(),
@@ -119,6 +122,8 @@ struct Lower<'a, 'hir> {
 	exprs: &'a hir::Exprs<'hir>,
 	function: Function,
 	variables: Vec<(hir::Variable, u32)>,
+	moved: Vec<(hir::Variable, Span)>,
+	moved_error: &'a core::cell::Cell<Option<(Span, Span)>>,
 	text_bindings: Vec<(hir::Variable, hir::ExprId)>,
 	loops: Vec<Loop>,
 	/// Per slot: may currently hold a heap handle that needs a Release.
@@ -282,6 +287,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	}
 
 	fn variable(&self, variable: hir::Variable, span: Span) -> Result<u32> {
+		if let Some((_, moved_at)) = self.moved.iter().find(|(v, _)| *v == variable) {
+			self.moved_error.set(Some((span, *moved_at)));
+			return Err(self.refused(span, Refusal::FrontendDiagnostic));
+		}
 		self.variables
 			.iter()
 			.rev()
@@ -474,9 +483,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// Assignment operands use deferred local addresses (observed reference
 	/// behavior): a bare local is read when the store executes, after the
 	/// right side; a non-trivial expression materializes in source order.
-	fn assignment_operand(&mut self, id: hir::ExprId, span: Span) -> Result<u32> {
+	fn assignment_operand(&mut self, id: hir::ExprId, _span: Span) -> Result<u32> {
 		match self.exprs.get(id).kind {
-			hir::ExprKind::Variable(variable) => self.variable(variable, span),
+			hir::ExprKind::Variable(variable) => self.variable(variable, self.exprs.get(id).span),
 			_ => self.expr(id),
 		}
 	}
@@ -1163,17 +1172,30 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let E::CallClosure(closure) = expr.kind else {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
-		// P0 stopgap: copying captured handles does not implement stock's
-		// payload take or moved-variable diagnostics. Refuse until C11c does.
-		if closure.do_move && !closure.captures.is_empty() {
-			return Err(self.refused(span, Refusal::CallClosure));
-		}
 		let at = self.location(span);
 		let id = (self.resolve)(Resolve::Script(closure.hash), at)?;
 		if !closure.captures.is_empty() {
 			let mut captured = Vec::try_with_capacity(closure.captures.len())?;
 			for &variable in closure.captures {
-				captured.try_push(self.variable(variable, span)?)?;
+				let source = self.variable(variable, span)?;
+				let value = if closure.do_move {
+					let out = self.slot()?;
+					let (args_start, args_len) = self.function.arguments(&[source])?;
+					self.emit(
+						Op::Call {
+							out,
+							function: super::code::CAPTURE_TAKE,
+							args_start,
+							args_len,
+						},
+						span,
+					)?;
+					self.moved.try_push((variable, span))?;
+					out
+				} else {
+					source
+				};
+				captured.try_push(value)?;
 			}
 			let (capture_start, capture_len) = self.function.arguments(&captured)?;
 			let captures = self.slot()?;
@@ -1205,13 +1227,6 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				},
 				span,
 			)?;
-			if closure.do_move {
-				for &variable in closure.captures {
-					let value = self.variable(variable, span)?;
-					self.emit(Op::Release { value }, span)?;
-					self.dirty[value as usize] = false;
-				}
-			}
 			return Ok(());
 		}
 		self.emit(
@@ -1275,10 +1290,13 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let at = self.location(span);
 		let id = (self.resolve)(Resolve::Script(hash), at)?;
 
-		// Stamped with the program identity by `Builder::finish`.
-		let value = Value::Function { code: 0, id };
-		self.emit(Op::Literal { out, value }, span)?;
-
+		self.emit(
+			Op::Literal {
+				out,
+				value: Value::Function { code: 0, id },
+			},
+			span,
+		)?;
 		Ok(())
 	}
 

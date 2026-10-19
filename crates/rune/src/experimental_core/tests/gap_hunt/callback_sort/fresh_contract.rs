@@ -92,7 +92,13 @@ fn fresh_contract() {
 		assert!(fs::metadata(&result).unwrap().len() <= 64 * 1024 * 1024);
 		// The child archive is already preserved; only a copy is projected.
 		let mut raw: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		raw["observation"]["outcome"] = super::d1c_diagnostics::before("callback_sort", label, source, "fresh", &raw["observation"]["outcome"]);
+		raw["observation"]["outcome"] = super::d1c_diagnostics::before(
+			"callback_sort",
+			label,
+			source,
+			"fresh",
+			&raw["observation"]["outcome"],
+		);
 		assert_eq!(raw["schema"], 1);
 		assert_eq!(raw["engine"], "fresh");
 		assert_eq!(raw["index"], i);
@@ -303,8 +309,8 @@ fn c11_check_stale_refusal_admission(
 	}
 	let actual = common(&project_p1(observation, counts)?);
 	if label == "refused/move-capture" {
-		// C11c P0 stopgap reverses only this capturing-move admission.
-		// Pin its complete old admission before requiring compile-time refusal.
+		// Pin both the historical C11c stopgap refusal and the original admission.
+		// C11c root restores this admission after independent ownership proof.
 		if row["fresh_expectation"]["outcome"]["status"] != "value"
 			|| row["fresh_expectation"]["invoked"] != true
 			|| digest(&canonical(&row["fresh_expectation"]))
@@ -316,8 +322,17 @@ fn c11_check_stale_refusal_admission(
 		expected["outcome"] = json!({"status":"refused","kind":"Unsupported","operation":"CallClosure","refusal":"CallClosure","location":{"source":0,"start":72,"end":104}});
 		expected["post"] = expected["before"].clone();
 		expected["invoked"] = json!(false);
-		if actual != expected {
-			return Err(format!("C11c move refusal drift {label}"));
+		let historical_stopgap = json!({"status":"refused","kind":"Unsupported","operation":"CallClosure","refusal":"CallClosure","location":{"source":0,"start":72,"end":104}});
+		if expected["outcome"] != historical_stopgap
+			|| expected["invoked"] != false
+			|| expected["post"] != expected["before"]
+		{
+			return Err("C11c historical stopgap pin drift".into());
+		}
+		// The root fix also closes the old Retained-ownership state-alias gap.
+		// Keep both historical admissions/refusal pins; require actual stock now.
+		if actual != stock {
+			return Err(format!("C11c exact move ownership drift {label}"));
 		}
 		return Ok(true);
 	}
@@ -639,7 +654,8 @@ fn callback_and_c5_discovery_compose_only_independently_valid_halves() {
 	let mut site_actual = actual.clone();
 	site_actual["outcome"]["sites"][0]["frames"] = json!("[]");
 	assert_eq!(
-		c11_retained_frame_shape(source, &site_actual, &site_stock, &json!([])).unwrap()["categories"],
+		c11_retained_frame_shape(source, &site_actual, &site_stock, &json!([])).unwrap()
+			["categories"],
 		json!(["Retained-site"])
 	);
 	for (field, value) in [

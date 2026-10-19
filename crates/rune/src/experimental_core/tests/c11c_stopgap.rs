@@ -1,36 +1,53 @@
-//! Temporary P0 protection; frozen stock admissions remain untouched.
+//! C11c root migration: retain the stopgap history and restore proved admissions.
 use super::*;
 use serde_json::Value as Json;
 use std::vec::Vec;
 
-fn refusal(source: &str) -> Refusal {
+fn compile_refusal(source: &str) -> core::result::Result<Option<Refusal>, ErrorKind> {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(source).unwrap()).unwrap();
 	let mut diagnostics = Diagnostics::new();
 	let error = match frontend::compile(&mut sources, &context, &mut diagnostics, 7) {
-		Ok(_) => panic!("P0 source must not be admitted"),
+		Ok(_) => return Ok(None),
 		Err(error) => error,
 	};
-	error.refusal.expect("compile-time refusal required")
-}
-
-#[test]
-fn all_ten_p0_seed_forms_are_refused_before_execution() {
-	let rows: Vec<Json> = serde_json::from_str(include_str!("c11c_stopgap/seeds.json")).unwrap();
-	assert_eq!(rows.len(), 10);
-	for row in rows {
-		let got = refusal(row["source"].as_str().unwrap());
-		assert!(
-			matches!(got, Refusal::Call | Refusal::CallClosure),
-			"{}: {got:?}",
-			row["label"]
-		);
+	match error.refusal {
+		Some(refusal) => Ok(Some(refusal)),
+		None => Err(error.kind),
 	}
 }
 
 #[test]
-fn frozen_c11b_move_admissions_migrate_to_refusal() {
+fn p0_seed_admissions_follow_verified_root_dispositions() {
+	let rows: Vec<Json> = serde_json::from_str(include_str!("c11c_stopgap/seeds.json")).unwrap();
+	let root: Json =
+		serde_json::from_str(include_str!("gap_hunt/move_captures/disposition.json")).unwrap();
+	assert_eq!(rows.len(), 10);
+	for (index, row) in rows.iter().enumerate() {
+		let disposition = &root["rows"][index];
+		let got = compile_refusal(row["source"].as_str().unwrap());
+		if disposition["classification"] == "inherited-refusal" {
+			assert_eq!(got, Ok(Some(Refusal::Call)), "{}", row["label"]);
+		} else {
+			if matches!(index, 1 | 3) {
+				assert_eq!(disposition["classification"], "policy-presentation");
+				assert_eq!(disposition["authority"], 20798);
+			} else {
+				assert_eq!(disposition["classification"], "exact");
+			}
+			if index == 7 {
+				// Real VariableMoved diagnostic remains a compile error.
+				assert_eq!(got, Ok(Some(Refusal::FrontendDiagnostic)));
+			} else {
+				assert_eq!(got, Ok(None), "{}", row["label"]);
+			}
+		}
+	}
+}
+
+#[test]
+fn frozen_c11b_move_admissions_restored_after_root_proof() {
 	let rows: Vec<Json> =
 		serde_json::from_str(include_str!("gap_hunt/captures/cases.json")).unwrap();
 	let frozen: Json =
@@ -62,8 +79,8 @@ fn frozen_c11b_move_admissions_migrate_to_refusal() {
 			serde_json::from_str::<Json>(graph).unwrap()
 		);
 		assert_eq!(
-			refusal(rows[index]["source"].as_str().unwrap()),
-			Refusal::CallClosure
+			compile_refusal(rows[index]["source"].as_str().unwrap()),
+			Ok(None)
 		);
 	}
 }

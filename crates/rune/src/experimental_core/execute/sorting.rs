@@ -68,6 +68,16 @@ impl Executor {
 					closure @ Value::Heap(_) => {
 						let (owner, id, _) = match store.closure_parts(closure) {
 							Ok(parts) => parts,
+							Err(mut e)
+								if e.kind == ErrorKind::AccessConflict
+									&& store.diagnostic_type(closure)
+										== Some(TypeName::Function) =>
+							{
+								if let Detail::Moved { access } = e.detail {
+									e.detail = Detail::MovedArgument { access, arg: 1 };
+								}
+								return Err(e);
+							}
 							Err(_) => {
 								return Err(error(ErrorKind::Type).with_detail(
 									Detail::NumericArgumentType {

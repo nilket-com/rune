@@ -841,7 +841,7 @@ impl Executor {
 		if args_len != certificate.arity
 			|| !matches!(id, super::code::PRINT_RAW | super::code::VARIANT_SUCCESS)
 		{
-			return Err(invalid());
+			return self.capture_take_call(store, function, base, out, id, args_start, args_len);
 		}
 		let end = args_start.checked_add(args_len).ok_or_else(invalid)?;
 		let args = function
@@ -901,6 +901,33 @@ impl Executor {
 			}
 		}
 		self.put(store, destination, Value::Unit)
+	}
+
+	#[cold]
+	#[inline(never)]
+	fn capture_take_call(
+		&mut self,
+		store: &mut Store,
+		function: &super::code::Function,
+		base: usize,
+		out: u32,
+		id: u32,
+		args_start: u32,
+		args_len: u32,
+	) -> Result<()> {
+		let invalid = || error(ErrorKind::InvalidCode);
+		if id != super::code::CAPTURE_TAKE || args_len != 1 {
+			return Err(invalid());
+		}
+		let slot = *function.args.get(args_start as usize).ok_or_else(invalid)?;
+		let value = *self
+			.slots
+			.get(base.checked_add(slot as usize).ok_or_else(invalid)?)
+			.ok_or_else(invalid)?;
+		let destination = base.checked_add(out as usize).ok_or_else(invalid)?;
+		self.slots.get(destination).ok_or_else(invalid)?;
+		let value = store.take_capture(value)?;
+		self.put(store, destination, value)
 	}
 
 	// D21-derived execution logic preserved during extraction: the loops read fixed
@@ -2137,7 +2164,12 @@ fn enrich_error(
 								| arithmetic::Binary::Lt | arithmetic::Binary::Le
 								| arithmetic::Binary::Gt | arithmetic::Binary::Ge
 						) {
-						Detail::StringOperand { found: rhs }
+						Detail::NumericArgumentType {
+							cause: super::error::HostCause::ExpectedType,
+							arg: 1,
+							expected: TypeName::String,
+							found: rhs,
+						}
 					} else {
 						Detail::Binary {
 							op: BinarySymbol::from_op(op, false),
@@ -2330,6 +2362,9 @@ fn enrich_error(
 			};
 		}
 		error.detail = detail;
+	}
+	if matches!(error.detail, Detail::Arity { .. }) {
+		error.kind = ErrorKind::ArgumentCount;
 	}
 	error
 }

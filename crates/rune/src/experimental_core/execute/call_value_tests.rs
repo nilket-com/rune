@@ -237,7 +237,13 @@ fn c11b_hidden_closure_arguments_activation_and_rollback() {
 	let failure = executor
 		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[vector]), 1000)
 		.unwrap_err();
-	assert_eq!(failure.error.kind, ErrorKind::Type, "{:#?}", failure.error);
+	// C11c replaces the historical Type classification with real ArgumentCount.
+	assert_eq!(
+		failure.error.kind,
+		ErrorKind::ArgumentCount,
+		"{:#?}",
+		failure.error
+	);
 	assert!(matches!(
 		failure.error.detail,
 		Detail::Arity {
@@ -400,13 +406,13 @@ fn d20_call_value_with_a_foreign_owner_is_a_type_error() {
 }
 
 #[test]
-fn d20_call_value_with_the_wrong_arity_is_a_type_error() {
+fn d20_call_value_with_the_wrong_arity_is_argument_count() {
 	// The callee takes one parameter; the call passes two.
 	fails(
 		&program(3, 2, 1),
 		Value::Unit,
 		1024,
-		at_call(ErrorKind::Type),
+		at_call(ErrorKind::ArgumentCount),
 	);
 }
 
@@ -430,7 +436,7 @@ fn d20_call_value_owner_check_precedes_the_callee_lookup() {
 #[test]
 fn d20_call_value_callee_lookup_precedes_the_arity_check() {
 	// A valid owner with an id that names no function, and an args_len that
-	// matches no callee: the lookup (InvalidCode) fires before arity (Type).
+	// matches no callee: the lookup (InvalidCode) fires before arity (ArgumentCount).
 	let code = program(0, 1, 2);
 	fails(
 		&code,
@@ -445,7 +451,7 @@ fn d20_call_value_callee_lookup_precedes_the_arity_check() {
 
 #[test]
 fn d20_call_value_non_function_with_wrong_arity_is_still_a_type_error() {
-	// Both the token check and the arity check would report Type; this pins
+	// C11c keeps token Type precedence over the later ArgumentCount check; this pins
 	// the observable result only, not which check fired.
 	fails(
 		&program(1, 2, 1),
@@ -528,4 +534,51 @@ fn d20_charge_precedes_call_value_checks() {
 	assert_eq!(value, token);
 	assert!(executor.is_idle());
 	assert_eq!(store.live_entries(), 0);
+}
+
+#[test]
+fn c11c_moved_set_context_stays_deferred_for_all_receivers() {
+	use crate::experimental_core::value::Type;
+	let mut builder = Builder::default();
+	let mut function = Function::new(3, 0).unwrap();
+	function.push(Op::Return { value: 0 }, loc(0)).unwrap();
+	builder.push(function).unwrap();
+	let code = builder.finish().unwrap();
+	for tag in [Type::Vec, Type::Tuple, Type::Object] {
+		let mut store = store();
+		let original = if tag == Type::Object {
+			store.record(tag, &[("x", Value::I64(7))]).unwrap()
+		} else {
+			store.list(tag, &[Value::I64(7)]).unwrap()
+		};
+		let taken = store.take_capture(original).unwrap();
+		let error = store.set(original, 0, Value::I64(9)).unwrap_err();
+		assert_eq!(error.kind, ErrorKind::AccessConflict);
+		assert_eq!(
+			error.detail,
+			Detail::Moved {
+				access: super::super::error::MovedAccess::Write
+			}
+		);
+		let enriched = enrich_error(
+			error,
+			&store,
+			&Op::Set {
+				value: 0,
+				index: 1,
+				new: 2,
+			},
+			&code,
+			0,
+			&[original],
+			0,
+		);
+		assert_eq!(
+			enriched, error,
+			"Set must preserve the original Moved detail without argument context"
+		);
+		store.release(original).unwrap();
+		store.release(taken).unwrap();
+		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	}
 }

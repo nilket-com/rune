@@ -1,0 +1,74 @@
+[
+  {
+    "id": "000",
+    "label": "token/named-alias",
+    "source": "fn inc(x){x+1}pub fn main(){let f=inc;let a=f;let g=move ||f(7);let n=g();n+a(7)}",
+    "source_sha256": "7def4412399e07bc33cfa1b01a7e8ed2a90e89b1dbe7f1b02330cb5b45af407a",
+    "origin": "C11c-function-token-supplement",
+    "fuel": 2000000,
+    "reuse_enabled": false
+  },
+  {
+    "id": "001",
+    "label": "token/empty-closure-alias",
+    "source": "pub fn main(){let f=|x|x+1;let a=f;let g=move ||f(7);let n=g();n+a(7)}",
+    "source_sha256": "d85f5f1526add238ffab86e9ce73bacaa1abea5c5512260aaaf61eeb882dce1c",
+    "origin": "C11c-function-token-supplement",
+    "fuel": 2000000,
+    "reuse_enabled": false
+  },
+  {
+    "id": "002",
+    "label": "token/callback-after-move",
+    "source": "fn cmp(a,b){a.cmp(b)}pub fn main(){let f=cmp;let a=f;let g=move ||f(1,2);g();let v=[2,1];v.sort_by(a);v}",
+    "source_sha256": "91167ecc5448313d0e2af6ae76d7be04da3d2855c624043f5154aa662e26a9b9",
+    "origin": "C11c-function-token-supplement",
+    "fuel": 2000000,
+    "reuse_enabled": false
+  },
+  {
+    "id": "003",
+    "label": "token/vector-alias",
+    "source": "fn inc(x){x+1}pub fn main(){let f=inc;let fs=[f];let g=move ||f(7);g();let a=fs[0];a(7)}",
+    "source_sha256": "6ce186f2063a971d70ece0e074a9baf070327197b6c0611cdceb6676e044c028",
+    "origin": "C11c-function-token-supplement",
+    "fuel": 2000000,
+    "reuse_enabled": false
+  },
+  {
+    "id": "004",
+    "label": "token/object-alias",
+    "source": "fn inc(x){x+1}pub fn main(){let f=inc;let fs=#{f:f};let g=move ||f(7);g();let a=fs.f;a(7)}",
+    "source_sha256": "116f33a7ef591a56463983c6ea03a5ed54a90f7ed15fb6a84ed944aade4f4344",
+    "origin": "C11c-function-token-supplement",
+    "fuel": 2000000,
+    "reuse_enabled": false
+  },
+  {
+    "id": "005",
+    "label": "token/independent-values",
+    "source": "fn inc(x){x+1}pub fn main(){let f=inc;let a=inc;let g=move ||f(7);g()+a(7)}",
+    "source_sha256": "17128007d31fb567cf27872331a26028e2c83c6a56fa84691dcd5726ff98f073",
+    "origin": "C11c-function-token-supplement",
+    "fuel": 2000000,
+    "reuse_enabled": false
+  },
+  {
+    "id": "006",
+    "label": "token/container-moved-into-capture",
+    "source": "fn inc(x){x+1}pub fn main(){let f=inc;let fs=[f];let g=move ||{let a=fs[0];a(7)};let n=g();n+f(7)}",
+    "source_sha256": "2e5356fd76936170deec3f14709987c128c39679c6e24067b2b332d17e96d433",
+    "origin": "C11c-function-token-supplement",
+    "fuel": 2000000,
+    "reuse_enabled": false
+  },
+  {
+    "id": "007",
+    "label": "token/function-capture-returned",
+    "source": "fn inc(x){x+1}fn make(f){move |x|f(x)}pub fn main(){let f=inc;let a=f;let g=make(f);let n=g(7);n+a(7)}",
+    "source_sha256": "4beb8d97714945dc8c98fa23fcbd39f0cbedee83f4a3640bcf1a2cf910e0e146",
+    "origin": "C11c-function-token-supplement",
+    "fuel": 2000000,
+    "reuse_enabled": false
+  }
+]

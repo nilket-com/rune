@@ -344,7 +344,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 								.location
 								.map(|l| Span::new(l.start, l.end))
 								.unwrap_or(location.span);
-							compile::Error::msg(at, e.operation)
+							fresh.compile_error(e, at)
 						})?;
 					for build in &secondary_builds {
 						if let SecondaryBuild::Closure(c) = &build.build {
@@ -372,7 +372,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 										self.q.context,
 										&refused_functions,
 									)
-									.map_err(|e| compile::Error::msg(c.hir.span, e.operation))?;
+									.map_err(|e| fresh.compile_error(e, c.hir.span))?;
 							}
 						}
 					}

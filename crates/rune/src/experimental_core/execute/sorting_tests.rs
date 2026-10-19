@@ -94,6 +94,8 @@ fn merge_calls_are_ordinary_and_all_exit_paths_release_the_guard() {
 					f.error.kind,
 					if kind == 2 {
 						ErrorKind::Panic
+					} else if kind == 3 {
+						ErrorKind::ArgumentCount
 					} else {
 						ErrorKind::Type
 					}

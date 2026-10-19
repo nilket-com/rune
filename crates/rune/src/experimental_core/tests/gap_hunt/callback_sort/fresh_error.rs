@@ -135,7 +135,7 @@ fn fresh_primary_kind(
 				actual: fresh_hash_info(actual, program)?,
 			}
 		}
-		Detail::Arity { given, expected } if error.kind == ErrorKind::Type => K::BadArgumentCount {
+		Detail::Arity { given, expected } if error.kind == ErrorKind::ArgumentCount => K::BadArgumentCount {
 			actual: given as usize,
 			expected: expected as usize,
 		},

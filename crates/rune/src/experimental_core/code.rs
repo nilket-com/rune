@@ -822,6 +822,7 @@ pub(crate) const ITER_METHOD: u32 = FIRST_INTRINSIC_ID + 0x56;
 pub(crate) const NEXT_METHOD: u32 = FIRST_INTRINSIC_ID + 0x57;
 pub(crate) const ANY_READY: u32 = FIRST_INTRINSIC_ID + 0x58;
 pub(crate) const CLOSURE_CREATE: u32 = FIRST_INTRINSIC_ID + 0x59;
+pub(crate) const CAPTURE_TAKE: u32 = FIRST_INTRINSIC_ID + 0x5c;
 pub(crate) const MISSING_METHOD: u32 = FIRST_INTRINSIC_ID + 0x5a;
 pub(crate) const MATCH_VARIANT: u32 = FIRST_INTRINSIC_ID + 0x5b;
 // Staged predicates bind a Struct descriptor in the caller's checked type pool.
@@ -935,6 +936,10 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 	CertifiedIntrinsic {
 		id: CLOSURE_CREATE,
 		arity: 2,
+	},
+	CertifiedIntrinsic {
+		id: CAPTURE_TAKE,
+		arity: 1,
 	},
 	CertifiedIntrinsic {
 		id: RANGE_FROM,
@@ -3209,7 +3214,14 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 49);
+		// C11c adds the certified cold capture-take intrinsic to the prior49.
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 50);
+		assert_eq!(
+			certified_intrinsic(CERTIFIED_INTRINSICS, CAPTURE_TAKE)
+				.unwrap()
+				.arity,
+			1
+		);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, MISSING_METHOD)
 				.unwrap()

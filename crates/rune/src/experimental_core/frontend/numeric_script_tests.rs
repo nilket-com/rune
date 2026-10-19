@@ -41,6 +41,7 @@ fn indexed(text: &str, loader: &mut dyn compile::SourceLoader) -> (Result<Progra
 		sort_helper: None,
 		any_helper: None,
 		failure: None,
+		variable_moved: None,
 	};
 	let result = compile::compile(
 		&mut UnitBuilder::default(),

@@ -61,6 +61,8 @@ pub enum ErrorKind {
 	Cancelled,
 	/// A certified host failed, with cold-owned text in Failure.
 	Host,
+	/// A callable received the wrong number of arguments.
+	ArgumentCount,
 }
 
 /// Named compile-time refusal categories. The adapter consumes this enum,

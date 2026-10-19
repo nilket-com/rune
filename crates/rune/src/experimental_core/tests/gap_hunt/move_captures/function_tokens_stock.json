@@ -1,0 +1,607 @@
+[
+  {
+    "case": {
+      "id": "000",
+      "label": "token/named-alias",
+      "source": "fn inc(x){x+1}pub fn main(){let f=inc;let a=f;let g=move ||f(7);let n=g();n+a(7)}",
+      "source_sha256": "7def4412399e07bc33cfa1b01a7e8ed2a90e89b1dbe7f1b02330cb5b45af407a",
+      "origin": "C11c-function-token-supplement",
+      "fuel": 2000000,
+      "reuse_enabled": false
+    },
+    "observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+        "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 7 }, LoadFn { hash: 0xd237cbad937c2c04, out: keep(0) }, Copy { addr: 0, out: keep(1) }, Move { addr: 0, out: keep(3) }, Closure { hash: 0xbef6d5f6276cd45e, addr: 3, count: 1, out: keep(2) }, CallFn { function: 2, addr: invalid, args: 0, out: keep(3) }, Copy { addr: 3, out: keep(4) }, Store { value: Integer(7), out: keep(5) }, CallFn { function: 1, addr: 5, args: 1, out: keep(6) }, Arithmetic { op: Add, a: 4, b: 6, out: keep(5) }, Return { addr: 5 }, Allocate { size: 3 }, Environment { addr: 0, count: 1, out: keep(0) }, Store { value: Integer(7), out: keep(1) }, CallFn { function: 0, addr: 1, args: 1, out: keep(2) }, Return { addr: 2 }, Allocate { size: 3 }, Store { value: Integer(1), out: keep(1) }, Arithmetic { op: Add, a: 0, b: 1, out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }, 0xd237cbad937c2c04: Offset { offset: 16, call: Immediate, args: 1, captures: None }, 0xbef6d5f6276cd45e: Offset { offset: 11, call: Immediate, args: 1, captures: Some(1) }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\", 0x336dbcee484b9984: \"inc\", 0x5faca2b5fc5b61de: \"main::$0::$0\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 74:80, comment: None, labels: [] }, 15: DebugInst { source_id: 0, span: 59:63, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 78:79, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 70:73, comment: None, labels: [] }, 19: DebugInst { source_id: 0, span: 0:14, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 52:63, comment: None, labels: [] }, 17: DebugInst { source_id: 0, span: 12:13, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 59:63, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 42:43, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 10:13, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 52:63, comment: Some(\"var `1`; capture\"), labels: [] }, 8: DebugInst { source_id: 0, span: 76:80, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 74:80, comment: None, labels: [] }, 14: DebugInst { source_id: 0, span: 59:63, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 61:62, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 14:81, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 34:37, comment: None, labels: [] }}, functions: {0xbef6d5f6276cd45e: DebugSignature { path: main::$0::$0, args: Named([\"environment\"]) }, 0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }, 0xd237cbad937c2c04: DebugSignature { path: inc, args: Named([\"x\"]) }}, functions_rev: {0: 0x1c69d5964e831fc1, 11: 0xbef6d5f6276cd45e, 16: 0xd237cbad937c2c04}, hash_to_ident: {}, globals: [] }) }, ip: 8, frames: [] }] }",
+        "sites": [
+          {
+            "end": 80,
+            "frames": "[]",
+            "source": 0,
+            "start": 76
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "diagnostics": "[]",
+    "logical": {
+      "context": [],
+      "frames": [
+        {
+          "location": {
+            "end": 80,
+            "source": 0,
+            "start": 76
+          },
+          "role": "Origin"
+        }
+      ],
+      "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:77"
+    },
+    "projected": {
+      "diagnostics": "[]",
+      "events": [],
+      "logical": {
+        "context": [],
+        "frames": [
+          {
+            "location": {
+              "end": 80,
+              "source": 0,
+              "start": 76
+            },
+            "role": "Origin"
+          }
+        ],
+        "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:77"
+      },
+      "outcome": {
+        "chain_displays": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "sites": [
+          {
+            "end": 80,
+            "frames": "[]",
+            "source": 0,
+            "start": 76
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "case": {
+      "id": "001",
+      "label": "token/empty-closure-alias",
+      "source": "pub fn main(){let f=|x|x+1;let a=f;let g=move ||f(7);let n=g();n+a(7)}",
+      "source_sha256": "d85f5f1526add238ffab86e9ce73bacaa1abea5c5512260aaaf61eeb882dce1c",
+      "origin": "C11c-function-token-supplement",
+      "fuel": 2000000,
+      "reuse_enabled": false
+    },
+    "observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+        "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 7 }, LoadFn { hash: 0xbef6d5f6276cd45e, out: keep(0) }, Copy { addr: 0, out: keep(1) }, Move { addr: 0, out: keep(3) }, Closure { hash: 0xc85192167cded9c2, addr: 3, count: 1, out: keep(2) }, CallFn { function: 2, addr: invalid, args: 0, out: keep(3) }, Copy { addr: 3, out: keep(4) }, Store { value: Integer(7), out: keep(5) }, CallFn { function: 1, addr: 5, args: 1, out: keep(6) }, Arithmetic { op: Add, a: 4, b: 6, out: keep(5) }, Return { addr: 5 }, Allocate { size: 3 }, Store { value: Integer(1), out: keep(1) }, Arithmetic { op: Add, a: 0, b: 1, out: keep(2) }, Return { addr: 2 }, Allocate { size: 3 }, Environment { addr: 0, count: 1, out: keep(0) }, Store { value: Integer(7), out: keep(1) }, CallFn { function: 0, addr: 1, args: 1, out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }, 0xc85192167cded9c2: Offset { offset: 15, call: Immediate, args: 1, captures: Some(1) }, 0xbef6d5f6276cd45e: Offset { offset: 11, call: Immediate, args: 1, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\", 0x290be555a7e96c42: \"main::$0::$1\", 0x5faca2b5fc5b61de: \"main::$0::$0\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 63:69, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 67:68, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 59:62, comment: None, labels: [] }, 19: DebugInst { source_id: 0, span: 48:52, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 41:52, comment: None, labels: [] }, 17: DebugInst { source_id: 0, span: 50:51, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 25:26, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 31:32, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 48:52, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 41:52, comment: Some(\"var `2`; capture\"), labels: [] }, 8: DebugInst { source_id: 0, span: 65:69, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 63:69, comment: None, labels: [] }, 16: DebugInst { source_id: 0, span: 48:52, comment: None, labels: [] }, 14: DebugInst { source_id: 0, span: 23:26, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 23:26, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 0:70, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 20:26, comment: None, labels: [] }}, functions: {0xbef6d5f6276cd45e: DebugSignature { path: main::$0::$0, args: Named([\"x\", \"environment\"]) }, 0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }, 0xc85192167cded9c2: DebugSignature { path: main::$0::$1, args: Named([\"environment\"]) }}, functions_rev: {0: 0x1c69d5964e831fc1, 11: 0xbef6d5f6276cd45e, 15: 0xc85192167cded9c2}, hash_to_ident: {}, globals: [] }) }, ip: 8, frames: [] }] }",
+        "sites": [
+          {
+            "end": 69,
+            "frames": "[]",
+            "source": 0,
+            "start": 65
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "diagnostics": "[]",
+    "logical": {
+      "context": [],
+      "frames": [
+        {
+          "location": {
+            "end": 69,
+            "source": 0,
+            "start": 65
+          },
+          "role": "Origin"
+        }
+      ],
+      "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:66"
+    },
+    "projected": {
+      "diagnostics": "[]",
+      "events": [],
+      "logical": {
+        "context": [],
+        "frames": [
+          {
+            "location": {
+              "end": 69,
+              "source": 0,
+              "start": 65
+            },
+            "role": "Origin"
+          }
+        ],
+        "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:66"
+      },
+      "outcome": {
+        "chain_displays": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "sites": [
+          {
+            "end": 69,
+            "frames": "[]",
+            "source": 0,
+            "start": 65
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "case": {
+      "id": "002",
+      "label": "token/callback-after-move",
+      "source": "fn cmp(a,b){a.cmp(b)}pub fn main(){let f=cmp;let a=f;let g=move ||f(1,2);g();let v=[2,1];v.sort_by(a);v}",
+      "source_sha256": "91167ecc5448313d0e2af6ae76d7be04da3d2855c624043f5154aa662e26a9b9",
+      "origin": "C11c-function-token-supplement",
+      "fuel": 2000000,
+      "reuse_enabled": false
+    },
+    "observation": {
+      "events": [],
+      "outcome": {
+        "chain": [
+          {
+            "display": "Bad argument #1",
+            "kind": "BadArgument { arg: 1 }"
+          }
+        ],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+        "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [VmErrorAt { index: 0, kind: BadArgument { arg: 1 } }], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 6 }, LoadFn { hash: 0xb7a96c6b81f1ab6a, out: keep(0) }, Copy { addr: 0, out: keep(1) }, Move { addr: 0, out: keep(3) }, Closure { hash: 0xbef6d5f6276cd45e, addr: 3, count: 1, out: keep(2) }, CallFn { function: 2, addr: invalid, args: 0, out: discard }, Store { value: Integer(2), out: keep(4) }, Store { value: Integer(1), out: keep(5) }, Vec { addr: 4, count: 2, out: keep(3) }, Copy { addr: 3, out: keep(4) }, Copy { addr: 1, out: keep(5) }, CallAssociated { hash: 0xfc0a6fe5f4563cef, addr: 4, args: 2, out: discard }, Return { addr: 3 }, Allocate { size: 4 }, Environment { addr: 0, count: 1, out: keep(0) }, Store { value: Integer(1), out: keep(1) }, Store { value: Integer(2), out: keep(2) }, CallFn { function: 0, addr: 1, args: 2, out: keep(3) }, Return { addr: 3 }, Allocate { size: 5 }, Copy { addr: 0, out: keep(2) }, Copy { addr: 1, out: keep(3) }, CallAssociated { hash: 0x20bec9e826dc0341, addr: 2, args: 2, out: keep(4) }, Return { addr: 4 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }, 0xb7a96c6b81f1ab6a: Offset { offset: 19, call: Immediate, args: 2, captures: None }, 0xbef6d5f6276cd45e: Offset { offset: 13, call: Immediate, args: 1, captures: Some(1) }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\", 0x56f31b285ac61eea: \"cmp\", 0x5faca2b5fc5b61de: \"main::$0::$0\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 84:85, comment: None, labels: [] }, 15: DebugInst { source_id: 0, span: 68:69, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 86:87, comment: None, labels: [] }, 22: DebugInst { source_id: 0, span: 12:20, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 73:76, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 59:72, comment: None, labels: [] }, 23: DebugInst { source_id: 0, span: 0:21, comment: None, labels: [] }, 17: DebugInst { source_id: 0, span: 66:72, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 21:104, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 49:50, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 66:72, comment: None, labels: [] }, 20: DebugInst { source_id: 0, span: 12:20, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 89:101, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 59:72, comment: Some(\"var `1`; capture\"), labels: [] }, 8: DebugInst { source_id: 0, span: 83:88, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 89:101, comment: None, labels: [] }, 16: DebugInst { source_id: 0, span: 70:71, comment: None, labels: [] }, 21: DebugInst { source_id: 0, span: 12:20, comment: None, labels: [] }, 14: DebugInst { source_id: 0, span: 66:72, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 89:101, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 41:44, comment: None, labels: [] }}, functions: {0xbef6d5f6276cd45e: DebugSignature { path: main::$0::$0, args: Named([\"environment\"]) }, 0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }, 0xb7a96c6b81f1ab6a: DebugSignature { path: cmp, args: Named([\"a\", \"b\"]) }}, functions_rev: {0: 0x1c69d5964e831fc1, 19: 0xb7a96c6b81f1ab6a, 13: 0xbef6d5f6276cd45e}, hash_to_ident: {0xfc0a6fe5f4563cef: \"sort_by\", 0x20bec9e826dc0341: \"cmp\"}, globals: [] }) }, ip: 11, frames: [] }] }",
+        "sites": [
+          {
+            "end": 101,
+            "frames": "[]",
+            "source": 0,
+            "start": 89
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "diagnostics": "[]",
+    "logical": {
+      "context": [
+        {
+          "arg": 1,
+          "tag": "BadArgument"
+        }
+      ],
+      "frames": [
+        {
+          "location": {
+            "end": 101,
+            "source": 0,
+            "start": 89
+          },
+          "role": "Origin"
+        }
+      ],
+      "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:90"
+    },
+    "projected": {
+      "diagnostics": "[]",
+      "events": [],
+      "logical": {
+        "context": [
+          {
+            "arg": 1,
+            "tag": "BadArgument"
+          }
+        ],
+        "frames": [
+          {
+            "location": {
+              "end": 101,
+              "source": 0,
+              "start": 89
+            },
+            "role": "Origin"
+          }
+        ],
+        "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:90"
+      },
+      "outcome": {
+        "chain_displays": [
+          "Bad argument #1"
+        ],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "sites": [
+          {
+            "end": 101,
+            "frames": "[]",
+            "source": 0,
+            "start": 89
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "case": {
+      "id": "003",
+      "label": "token/vector-alias",
+      "source": "fn inc(x){x+1}pub fn main(){let f=inc;let fs=[f];let g=move ||f(7);g();let a=fs[0];a(7)}",
+      "source_sha256": "6ce186f2063a971d70ece0e074a9baf070327197b6c0611cdceb6676e044c028",
+      "origin": "C11c-function-token-supplement",
+      "fuel": 2000000,
+      "reuse_enabled": false
+    },
+    "observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+        "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 6 }, LoadFn { hash: 0xd237cbad937c2c04, out: keep(0) }, Copy { addr: 0, out: keep(2) }, Vec { addr: 2, count: 1, out: keep(1) }, Move { addr: 0, out: keep(3) }, Closure { hash: 0xbef6d5f6276cd45e, addr: 3, count: 1, out: keep(2) }, CallFn { function: 2, addr: invalid, args: 0, out: discard }, Store { value: Integer(0), out: keep(4) }, IndexGet { target: 1, index: 4, out: keep(3) }, Store { value: Integer(7), out: keep(4) }, CallFn { function: 3, addr: 4, args: 1, out: keep(5) }, Return { addr: 5 }, Allocate { size: 3 }, Environment { addr: 0, count: 1, out: keep(0) }, Store { value: Integer(7), out: keep(1) }, CallFn { function: 0, addr: 1, args: 1, out: keep(2) }, Return { addr: 2 }, Allocate { size: 3 }, Store { value: Integer(1), out: keep(1) }, Arithmetic { op: Add, a: 0, b: 1, out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }, 0xd237cbad937c2c04: Offset { offset: 17, call: Immediate, args: 1, captures: None }, 0xbef6d5f6276cd45e: Offset { offset: 12, call: Immediate, args: 1, captures: Some(1) }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\", 0x336dbcee484b9984: \"inc\", 0x5faca2b5fc5b61de: \"main::$0::$0\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 67:70, comment: None, labels: [] }, 15: DebugInst { source_id: 0, span: 62:66, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 80:81, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 55:66, comment: None, labels: [] }, 19: DebugInst { source_id: 0, span: 10:13, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 55:66, comment: Some(\"var `1`; capture\"), labels: [] }, 20: DebugInst { source_id: 0, span: 0:14, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 46:47, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 12:13, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 14:88, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 45:48, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 77:82, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 85:86, comment: None, labels: [] }, 16: DebugInst { source_id: 0, span: 62:66, comment: None, labels: [] }, 14: DebugInst { source_id: 0, span: 64:65, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 62:66, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 83:87, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 34:37, comment: None, labels: [] }}, functions: {0xbef6d5f6276cd45e: DebugSignature { path: main::$0::$0, args: Named([\"environment\"]) }, 0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }, 0xd237cbad937c2c04: DebugSignature { path: inc, args: Named([\"x\"]) }}, functions_rev: {0: 0x1c69d5964e831fc1, 12: 0xbef6d5f6276cd45e, 17: 0xd237cbad937c2c04}, hash_to_ident: {}, globals: [] }) }, ip: 10, frames: [] }] }",
+        "sites": [
+          {
+            "end": 87,
+            "frames": "[]",
+            "source": 0,
+            "start": 83
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "diagnostics": "[]",
+    "logical": {
+      "context": [],
+      "frames": [
+        {
+          "location": {
+            "end": 87,
+            "source": 0,
+            "start": 83
+          },
+          "role": "Origin"
+        }
+      ],
+      "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:84"
+    },
+    "projected": {
+      "diagnostics": "[]",
+      "events": [],
+      "logical": {
+        "context": [],
+        "frames": [
+          {
+            "location": {
+              "end": 87,
+              "source": 0,
+              "start": 83
+            },
+            "role": "Origin"
+          }
+        ],
+        "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:84"
+      },
+      "outcome": {
+        "chain_displays": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "sites": [
+          {
+            "end": 87,
+            "frames": "[]",
+            "source": 0,
+            "start": 83
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "case": {
+      "id": "004",
+      "label": "token/object-alias",
+      "source": "fn inc(x){x+1}pub fn main(){let f=inc;let fs=#{f:f};let g=move ||f(7);g();let a=fs.f;a(7)}",
+      "source_sha256": "116f33a7ef591a56463983c6ea03a5ed54a90f7ed15fb6a84ed944aade4f4344",
+      "origin": "C11c-function-token-supplement",
+      "fuel": 2000000,
+      "reuse_enabled": false
+    },
+    "observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+        "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 6 }, LoadFn { hash: 0xd237cbad937c2c04, out: keep(0) }, Copy { addr: 0, out: keep(2) }, Object { addr: 2, slot: 0, out: keep(1) }, Move { addr: 0, out: keep(3) }, Closure { hash: 0xbef6d5f6276cd45e, addr: 3, count: 1, out: keep(2) }, CallFn { function: 2, addr: invalid, args: 0, out: discard }, ObjectIndexGetAt { addr: 1, slot: 0, out: keep(3) }, Store { value: Integer(7), out: keep(4) }, CallFn { function: 3, addr: 4, args: 1, out: keep(5) }, Return { addr: 5 }, Allocate { size: 3 }, Environment { addr: 0, count: 1, out: keep(0) }, Store { value: Integer(7), out: keep(1) }, CallFn { function: 0, addr: 1, args: 1, out: keep(2) }, Return { addr: 2 }, Allocate { size: 3 }, Store { value: Integer(1), out: keep(1) }, Arithmetic { op: Add, a: 0, b: 1, out: keep(2) }, Return { addr: 2 }] }, functions: {0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }, 0xd237cbad937c2c04: Offset { offset: 16, call: Immediate, args: 1, captures: None }, 0xbef6d5f6276cd45e: Offset { offset: 11, call: Immediate, args: 1, captures: Some(1) }}, static_strings: [\"f\"], static_bytes: [], static_object_keys: [[\"f\"]], drop_sets: [], rtti: {}, constants: {0xfd33a2d595b4aa41: \"main\", 0x336dbcee484b9984: \"inc\", 0x5faca2b5fc5b61de: \"main::$0::$0\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 70:73, comment: None, labels: [] }, 15: DebugInst { source_id: 0, span: 65:69, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 80:84, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 58:69, comment: None, labels: [] }, 19: DebugInst { source_id: 0, span: 0:14, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 58:69, comment: Some(\"var `1`; capture\"), labels: [] }, 17: DebugInst { source_id: 0, span: 12:13, comment: None, labels: [] }, 12: DebugInst { source_id: 0, span: 65:69, comment: None, labels: [] }, 2: DebugInst { source_id: 0, span: 49:50, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 10:13, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 45:51, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 87:88, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 85:89, comment: None, labels: [] }, 14: DebugInst { source_id: 0, span: 65:69, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 67:68, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 14:90, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 34:37, comment: None, labels: [] }}, functions: {0xbef6d5f6276cd45e: DebugSignature { path: main::$0::$0, args: Named([\"environment\"]) }, 0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }, 0xd237cbad937c2c04: DebugSignature { path: inc, args: Named([\"x\"]) }}, functions_rev: {0: 0x1c69d5964e831fc1, 11: 0xbef6d5f6276cd45e, 16: 0xd237cbad937c2c04}, hash_to_ident: {}, globals: [] }) }, ip: 9, frames: [] }] }",
+        "sites": [
+          {
+            "end": 89,
+            "frames": "[]",
+            "source": 0,
+            "start": 85
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "diagnostics": "[]",
+    "logical": {
+      "context": [],
+      "frames": [
+        {
+          "location": {
+            "end": 89,
+            "source": 0,
+            "start": 85
+          },
+          "role": "Origin"
+        }
+      ],
+      "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:86"
+    },
+    "projected": {
+      "diagnostics": "[]",
+      "events": [],
+      "logical": {
+        "context": [],
+        "frames": [
+          {
+            "location": {
+              "end": 89,
+              "source": 0,
+              "start": 85
+            },
+            "role": "Origin"
+          }
+        ],
+        "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:86"
+      },
+      "outcome": {
+        "chain_displays": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "sites": [
+          {
+            "end": 89,
+            "frames": "[]",
+            "source": 0,
+            "start": 85
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "case": {
+      "id": "005",
+      "label": "token/independent-values",
+      "source": "fn inc(x){x+1}pub fn main(){let f=inc;let a=inc;let g=move ||f(7);g()+a(7)}",
+      "source_sha256": "17128007d31fb567cf27872331a26028e2c83c6a56fa84691dcd5726ff98f073",
+      "origin": "C11c-function-token-supplement",
+      "fuel": 2000000,
+      "reuse_enabled": false
+    },
+    "observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "16"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": null
+    },
+    "diagnostics": "[]",
+    "logical": null,
+    "projected": {
+      "diagnostics": "[]",
+      "events": [],
+      "logical": null,
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "16"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": null
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "case": {
+      "id": "006",
+      "label": "token/container-moved-into-capture",
+      "source": "fn inc(x){x+1}pub fn main(){let f=inc;let fs=[f];let g=move ||{let a=fs[0];a(7)};let n=g();n+f(7)}",
+      "source_sha256": "2e5356fd76936170deec3f14709987c128c39679c6e24067b2b332d17e96d433",
+      "origin": "C11c-function-token-supplement",
+      "fuel": 2000000,
+      "reuse_enabled": false
+    },
+    "observation": {
+      "events": [],
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "16"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": null
+    },
+    "diagnostics": "[]",
+    "logical": null,
+    "projected": {
+      "diagnostics": "[]",
+      "events": [],
+      "logical": null,
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "16"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "reuse": null
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  },
+  {
+    "case": {
+      "id": "007",
+      "label": "token/function-capture-returned",
+      "source": "fn inc(x){x+1}fn make(f){move |x|f(x)}pub fn main(){let f=inc;let a=f;let g=make(f);let n=g(7);n+a(7)}",
+      "source_sha256": "4beb8d97714945dc8c98fa23fcbd39f0cbedee83f4a3640bcf1a2cf910e0e146",
+      "origin": "C11c-function-token-supplement",
+      "fuel": 2000000,
+      "reuse_enabled": false
+    },
+    "observation": {
+      "events": [],
+      "outcome": {
+        "chain": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+        "raw": "VmError { error: VmErrorAt { index: 0, kind: AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } } }, chain: [], stacktrace: [VmErrorLocation { unit: Unit { logic: Logic { storage: ArrayUnit { instructions: [Allocate { size: 7 }, LoadFn { hash: 0xd237cbad937c2c04, out: keep(0) }, Copy { addr: 0, out: keep(1) }, Copy { addr: 0, out: keep(3) }, Call { hash: 0x4d0d1dc02e6e177d, addr: 3, args: 1, out: keep(2) }, Store { value: Integer(7), out: keep(4) }, CallFn { function: 2, addr: 4, args: 1, out: keep(3) }, Copy { addr: 3, out: keep(4) }, Store { value: Integer(7), out: keep(5) }, CallFn { function: 1, addr: 5, args: 1, out: keep(6) }, Arithmetic { op: Add, a: 4, b: 6, out: keep(5) }, Return { addr: 5 }, Allocate { size: 3 }, Store { value: Integer(1), out: keep(1) }, Arithmetic { op: Add, a: 0, b: 1, out: keep(2) }, Return { addr: 2 }, Allocate { size: 3 }, Move { addr: 0, out: keep(2) }, Closure { hash: 0x5aa21193a586677e, addr: 2, count: 1, out: keep(1) }, Return { addr: 1 }, Allocate { size: 4 }, Environment { addr: 1, count: 1, out: keep(1) }, Copy { addr: 0, out: keep(2) }, CallFn { function: 1, addr: 2, args: 1, out: keep(3) }, Return { addr: 3 }] }, functions: {0x4d0d1dc02e6e177d: Offset { offset: 16, call: Immediate, args: 1, captures: None }, 0xd237cbad937c2c04: Offset { offset: 12, call: Immediate, args: 1, captures: None }, 0x5aa21193a586677e: Offset { offset: 20, call: Immediate, args: 2, captures: Some(1) }, 0x1c69d5964e831fc1: Offset { offset: 0, call: Immediate, args: 0, captures: None }}, static_strings: [], static_bytes: [], static_object_keys: [], drop_sets: [], rtti: {}, constants: {0xac576a83f559a2fd: \"make\", 0x336dbcee484b9984: \"inc\", 0xbbf866d07eb1d2fe: \"make::$0::$0\", 0xfd33a2d595b4aa41: \"main\"}, globals: [], globals_rev: {} }, debug: Some(DebugInfo { instructions: {6: DebugInst { source_id: 0, span: 90:94, comment: None, labels: [] }, 15: DebugInst { source_id: 0, span: 0:14, comment: None, labels: [] }, 7: DebugInst { source_id: 0, span: 95:101, comment: None, labels: [] }, 22: DebugInst { source_id: 0, span: 35:36, comment: None, labels: [] }, 5: DebugInst { source_id: 0, span: 92:93, comment: None, labels: [] }, 19: DebugInst { source_id: 0, span: 14:38, comment: None, labels: [] }, 4: DebugInst { source_id: 0, span: 76:83, comment: None, labels: [] }, 23: DebugInst { source_id: 0, span: 33:37, comment: None, labels: [] }, 17: DebugInst { source_id: 0, span: 25:37, comment: Some(\"var `6`; capture\"), labels: [] }, 2: DebugInst { source_id: 0, span: 66:67, comment: None, labels: [] }, 18: DebugInst { source_id: 0, span: 25:37, comment: None, labels: [] }, 11: DebugInst { source_id: 0, span: 38:102, comment: None, labels: [] }, 3: DebugInst { source_id: 0, span: 81:82, comment: None, labels: [] }, 8: DebugInst { source_id: 0, span: 99:100, comment: None, labels: [] }, 9: DebugInst { source_id: 0, span: 97:101, comment: None, labels: [] }, 21: DebugInst { source_id: 0, span: 33:37, comment: None, labels: [] }, 24: DebugInst { source_id: 0, span: 33:37, comment: None, labels: [] }, 14: DebugInst { source_id: 0, span: 10:13, comment: None, labels: [] }, 13: DebugInst { source_id: 0, span: 12:13, comment: None, labels: [] }, 10: DebugInst { source_id: 0, span: 95:101, comment: None, labels: [] }, 1: DebugInst { source_id: 0, span: 58:61, comment: None, labels: [] }}, functions: {0x4d0d1dc02e6e177d: DebugSignature { path: make, args: Named([\"f\"]) }, 0xd237cbad937c2c04: DebugSignature { path: inc, args: Named([\"x\"]) }, 0x5aa21193a586677e: DebugSignature { path: make::$0::$0, args: Named([\"x\", \"environment\"]) }, 0x1c69d5964e831fc1: DebugSignature { path: main, args: Named([]) }}, functions_rev: {20: 0x5aa21193a586677e, 0: 0x1c69d5964e831fc1, 12: 0xd237cbad937c2c04, 16: 0x4d0d1dc02e6e177d}, hash_to_ident: {}, globals: [] }) }, ip: 9, frames: [] }] }",
+        "sites": [
+          {
+            "end": 101,
+            "frames": "[]",
+            "source": 0,
+            "start": 97
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "diagnostics": "[]",
+    "logical": {
+      "context": [],
+      "frames": [
+        {
+          "location": {
+            "end": 101,
+            "source": 0,
+            "start": 97
+          },
+          "role": "Origin"
+        }
+      ],
+      "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:98"
+    },
+    "projected": {
+      "diagnostics": "[]",
+      "events": [],
+      "logical": {
+        "context": [],
+        "frames": [
+          {
+            "location": {
+              "end": 101,
+              "source": 0,
+              "start": 97
+            },
+            "role": "Origin"
+          }
+        ],
+        "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:98"
+      },
+      "outcome": {
+        "chain_displays": [],
+        "class": "AccessConflict",
+        "display": "Cannot read the value: it has been moved",
+        "sites": [
+          {
+            "end": 101,
+            "frames": "[]",
+            "source": 0,
+            "start": 97
+          }
+        ],
+        "status": "error"
+      },
+      "reuse": null
+    },
+    "stdout_hex": "0a72756e6e696e67203120746573740a",
+    "stderr_hex": ""
+  }
+]

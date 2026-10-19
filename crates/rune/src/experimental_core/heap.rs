@@ -22,6 +22,7 @@ mod roots;
 mod sorting;
 #[cfg(test)]
 mod sorting_tests;
+mod taking;
 mod text_methods;
 mod text_pipeline;
 

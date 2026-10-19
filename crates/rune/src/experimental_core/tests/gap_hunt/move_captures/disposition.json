@@ -1,0 +1,1647 @@
+{
+  "schema": 1,
+  "oracle": "408afe9d1303ea8829b3bbdd0927f0fe3eb80d3d",
+  "protected_main": "b1030a87df9fcdf14262cae2c35d7b0dd3209fe7",
+  "authority": 20703,
+  "counts": {
+    "inherited-refusal": 11,
+    "policy-presentation": 8,
+    "exact": 52
+  },
+  "total": 71,
+  "rows": [
+    {
+      "index": 0,
+      "label": "seed/original/value/closure-alias",
+      "source_sha256": "e98ab47b772db4331be448faf6b7beaf641268b7bdd45e0601bee17dccceae51",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 121,
+        "source": 0,
+        "start": 111
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 121,
+          "source": 0,
+          "start": 111
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 111, end: 121 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 1,
+      "label": "seed/var/value/closure-alias",
+      "source_sha256": "b92c27320caedbfd7f8fddb3f8356a10c13896c2e91273570e15324675ded9e4",
+      "classification": "policy-presentation",
+      "authority": 20798,
+      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+      "stock": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 136,
+                "source": 0,
+                "start": 130
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:131"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 136,
+              "frames": "[]",
+              "source": 0,
+              "start": 130
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "fresh": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 136,
+                "source": 0,
+                "start": 130
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:131"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 136,
+              "frames": "[]",
+              "source": 0,
+              "start": 130
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "previous_exact": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 136,
+                "source": 0,
+                "start": 130
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:131"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 136,
+              "frames": "[]",
+              "source": 0,
+              "start": 130
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      }
+    },
+    {
+      "index": 2,
+      "label": "seed/original/value/closure-held",
+      "source_sha256": "59775593aca78bc6b02fa1de76738f4e4123928dbd175a9f770aa0458658d914",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 133,
+        "source": 0,
+        "start": 126
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 133,
+          "source": 0,
+          "start": 126
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 126, end: 133 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 3,
+      "label": "seed/var/value/closure-held",
+      "source_sha256": "a3db1439716736b613b0701e7c2b322d9c7602b94dc3bf33238bc890aa114596",
+      "classification": "policy-presentation",
+      "authority": 20798,
+      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+      "stock": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 148,
+                "source": 0,
+                "start": 142
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:143"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 148,
+              "frames": "[]",
+              "source": 0,
+              "start": 142
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "fresh": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 148,
+                "source": 0,
+                "start": 142
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:143"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 148,
+              "frames": "[]",
+              "source": 0,
+              "start": 142
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "previous_exact": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 148,
+                "source": 0,
+                "start": 142
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:143"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 148,
+              "frames": "[]",
+              "source": 0,
+              "start": 142
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      }
+    },
+    {
+      "index": 4,
+      "label": "seed/original/ownership/moved-capture",
+      "source_sha256": "066f25568845aaaa6520ae38201e5f7a2fcb3f123e6bbc337a0289377c8c405f",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 129,
+        "source": 0,
+        "start": 108
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 129,
+          "source": 0,
+          "start": 108
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 108, end: 129 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 5,
+      "label": "seed/var/ownership/moved-capture",
+      "source_sha256": "a801393bce023fe5b557bb9bfe5908c0a9d0fca0fe887ad9a0575967d6e1626c",
+      "classification": "exact"
+    },
+    {
+      "index": 6,
+      "label": "seed/original/ownership/temp-closure-capture",
+      "source_sha256": "1a55109629e3fee2ac678dff7f142103cf32392179b07f15e8d2d65c88b5b37e",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 110,
+        "source": 0,
+        "start": 82
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 110,
+          "source": 0,
+          "start": 82
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 82, end: 110 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 7,
+      "label": "seed/var/ownership/temp-closure-capture",
+      "source_sha256": "5e8d701140f50c394ba5a4b87a810bcb1bd5a986ad9d589fd24c27fd56e75064",
+      "classification": "exact"
+    },
+    {
+      "index": 8,
+      "label": "seed/original/ownership/leased-capture",
+      "source_sha256": "8c7d50cdb22c0ed4f879b0f967f5d3d38812748b30eba949c7adc651d1713df9",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 135,
+        "source": 0,
+        "start": 125
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 135,
+          "source": 0,
+          "start": 125
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 125, end: 135 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 9,
+      "label": "seed/var/ownership/leased-capture",
+      "source_sha256": "df0adf2d72f3ea167f8319b2b6cc336c97f41923d2ece036f38246ced4a97111",
+      "classification": "exact"
+    },
+    {
+      "index": 10,
+      "label": "new/nested/move-inside-move",
+      "source_sha256": "93f8b616bb833090906df9d6531d3f811a6084b9ea1b6ed90f0fbd25c4d853e9",
+      "classification": "exact"
+    },
+    {
+      "index": 11,
+      "label": "new/nested/nonmove-inside-move",
+      "source_sha256": "8de6afccb58657bebc3e6e3b762069a51c1c6f7c2098fae3a6206716e0c10bb8",
+      "classification": "exact"
+    },
+    {
+      "index": 12,
+      "label": "new/nested/move-inside-nonmove",
+      "source_sha256": "00a91373dfcdc2462e59be13b4187727a1bc6f0a3094070c58015314e646bfae",
+      "classification": "exact"
+    },
+    {
+      "index": 13,
+      "label": "new/nested/captured-alias",
+      "source_sha256": "447ba6b741147a240b9ea3be404b713d26688e45ca75e55f8e86368c2323a332",
+      "classification": "policy-presentation",
+      "authority": 20798,
+      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+      "stock": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 75,
+                "source": 0,
+                "start": 69
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 82,
+                "source": 0,
+                "start": 79
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:70\n  called from c11b.rn:1:80"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 75,
+              "frames": "[CallFrame { ip: 6, top: 0, isolated: None, out: keep(2) }]",
+              "source": 0,
+              "start": 69
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "fresh": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 75,
+                "source": 0,
+                "start": 69
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 82,
+                "source": 0,
+                "start": 79
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:70\n  called from c11b.rn:1:80"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 75,
+              "frames": "[{\"end\":82,\"source\":0,\"start\":79}]",
+              "source": 0,
+              "start": 69
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "previous_exact": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 75,
+                "source": 0,
+                "start": 69
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 82,
+                "source": 0,
+                "start": 79
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:70\n  called from c11b.rn:1:80"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 75,
+              "frames": "[{\"end\":82,\"source\":0,\"start\":79}]",
+              "source": 0,
+              "start": 69
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      }
+    },
+    {
+      "index": 14,
+      "label": "new/nested/outer-repeat",
+      "source_sha256": "00b20131bd38b700d7c485d21d7f47e7d679c3e3fd43d87144f66f274e564510",
+      "classification": "exact"
+    },
+    {
+      "index": 15,
+      "label": "new/nested/scalar-repeat",
+      "source_sha256": "b7dde22498f7288a8955c8c830f992b93e94f24d44a722b8c1cc7001100fec0b",
+      "classification": "exact"
+    },
+    {
+      "index": 16,
+      "label": "new/returned/heap-factory",
+      "source_sha256": "fc2942cba4c6b8e14dde16da75274d2c8939a541a83137b2b556e5605742d2f0",
+      "classification": "exact"
+    },
+    {
+      "index": 17,
+      "label": "new/returned/capture-of-capture",
+      "source_sha256": "5f5639ca4c4c53675df64a35634c0ce1ace39fd183c372228dd4bfaa8554d551",
+      "classification": "exact"
+    },
+    {
+      "index": 18,
+      "label": "new/returned/closure-captures-closure",
+      "source_sha256": "5c16780a37125769ecb2a19f1cd042ddbdd0b14c9eb29d391acfa145712ed8d0",
+      "classification": "exact"
+    },
+    {
+      "index": 19,
+      "label": "new/returned/alias-moved-write",
+      "source_sha256": "d7880628455a3e9fd6b505c06ca8bf93cb110e565cd42933ac60ccb6beeef459",
+      "classification": "policy-presentation",
+      "authority": 20798,
+      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+      "stock": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 77,
+                "source": 0,
+                "start": 71
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:72"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 77,
+              "frames": "[]",
+              "source": 0,
+              "start": 71
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "fresh": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 77,
+                "source": 0,
+                "start": 71
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:72"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 77,
+              "frames": "[]",
+              "source": 0,
+              "start": 71
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "previous_exact": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 77,
+                "source": 0,
+                "start": 71
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:72"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 77,
+              "frames": "[]",
+              "source": 0,
+              "start": 71
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      }
+    },
+    {
+      "index": 20,
+      "label": "new/returned/factory-argument-read",
+      "source_sha256": "c76c014a95d029f9f09b150c0c2bc3e0029c5644f02260deaca16a26591bfad7",
+      "classification": "exact"
+    },
+    {
+      "index": 21,
+      "label": "new/returned/nonmove-control",
+      "source_sha256": "86ea6f7abaffbf1e93f7311008c83e0663713e37bb0c8479cca8c89da8d634a1",
+      "classification": "exact"
+    },
+    {
+      "index": 22,
+      "label": "new/multiple/two-vectors",
+      "source_sha256": "198a98f713f30b306b136fe3ea70b6d9342626a2a4fd7c53121a9a9e7fb0f1a6",
+      "classification": "exact"
+    },
+    {
+      "index": 23,
+      "label": "new/multiple/duplicate-alias-take",
+      "source_sha256": "bca88ab3041318215e51575a14be84df23b29173525ea4f6a1bc4b9d34cb31b2",
+      "classification": "exact"
+    },
+    {
+      "index": 24,
+      "label": "new/multiple/later-capture-moved",
+      "source_sha256": "81b89a29ef71ed95607801cd2c5b1dc26fbad1ded5924c70feb5e3e4b85bd2b7",
+      "classification": "exact"
+    },
+    {
+      "index": 25,
+      "label": "new/multiple/later-capture-leased",
+      "source_sha256": "09a8bf6b6a41e53b0b926a02f5cadb9950a2359cad4c4b730dfc817c29aa340d",
+      "classification": "exact"
+    },
+    {
+      "index": 26,
+      "label": "new/multiple/closure-alias-take",
+      "source_sha256": "0e792275a317ccefe41aec746b5dff9ad93cfe68432b3cebdfb35432981cbc4a",
+      "classification": "exact"
+    },
+    {
+      "index": 27,
+      "label": "new/types/move-tuple",
+      "source_sha256": "517302885960fc96f041ea2698a7f34b48d5f43f7f2e067e0ad600c4d8b05298",
+      "classification": "exact"
+    },
+    {
+      "index": 28,
+      "label": "new/types/move-object",
+      "source_sha256": "2b791ff2d7791e17c70b12ca386b7721d0c2e3de1eb11469ccbb87004ed7bf91",
+      "classification": "exact"
+    },
+    {
+      "index": 29,
+      "label": "new/moved/read-after-capture",
+      "source_sha256": "3579f8d1bd5586d7f4889d10df17f8b8cbb63c4f29115efb22062c5631875834",
+      "classification": "exact"
+    },
+    {
+      "index": 30,
+      "label": "new/moved/rebind-after-capture",
+      "source_sha256": "a28384bf6d0ca82a9c71300dd76cfdef938e264e991dfce889bc7948de109bb9",
+      "classification": "exact"
+    },
+    {
+      "index": 31,
+      "label": "new/moved/conditional-capture",
+      "source_sha256": "e5ceeda1fba752a7837063e187eeeb29031b29a5c262ac8678208c9a4a14cd15",
+      "classification": "exact"
+    },
+    {
+      "index": 32,
+      "label": "new/moved/loop-capture",
+      "source_sha256": "57b3ee5e0c0bfcd8f46ff355b7aed6e697b6e1cdbf493e185a229aff635e1d6b",
+      "classification": "exact"
+    },
+    {
+      "index": 33,
+      "label": "new/moved/argument-order",
+      "source_sha256": "46f01d9f9717e69e4f8eeb60d1c36d9cbb46fcd0778687fe15f0cf6905e3610b",
+      "classification": "exact"
+    },
+    {
+      "index": 34,
+      "label": "c11b/capture/read",
+      "source_sha256": "96f3bc2731d5daf8592f368ede05a6691fec807d0a0e87ccc4a9fa77187d893d",
+      "classification": "exact"
+    },
+    {
+      "index": 35,
+      "label": "c11b/capture/rebind-after-create",
+      "source_sha256": "1176e719d32a4580f3fd8a547ce5e2befc70027b562be3655b9377630346ded9",
+      "classification": "exact"
+    },
+    {
+      "index": 36,
+      "label": "c11b/capture/shadow-after-create",
+      "source_sha256": "6ed3046f82e29973bc7e4de1d2feffb3ef502b0692cbc5c9b7f8d3354146deb8",
+      "classification": "exact"
+    },
+    {
+      "index": 37,
+      "label": "c11b/capture/scalar-assign-repeated",
+      "source_sha256": "a4f654378db4a44cfc97819024a596a673d3485450f77422839c9063413628b8",
+      "classification": "exact"
+    },
+    {
+      "index": 38,
+      "label": "c11b/capture/heap-handle-mutation",
+      "source_sha256": "3719270e8f12ee0cbb44d44a04ee61bffabdc6e6904a23552b5641fb1609ac9b",
+      "classification": "exact"
+    },
+    {
+      "index": 39,
+      "label": "c11b/capture/move-scalar",
+      "source_sha256": "56ee01721ade3ce61099b548ec2335dbbea6b8392ebcb39900f14898e787a335",
+      "classification": "exact"
+    },
+    {
+      "index": 40,
+      "label": "c11b/capture/move-heap",
+      "source_sha256": "0d14daefdef0dec19c02f1e0b79a0caf85426a70d78d2bcd2fa4c1ff7da88565",
+      "classification": "exact"
+    },
+    {
+      "index": 41,
+      "label": "c11b/capture/nested",
+      "source_sha256": "8bd4008c2348c99867831e8e25b37468845ceb717f0c56f6f73b2f50579030a8",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 51,
+        "source": 0,
+        "start": 46
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 51,
+          "source": 0,
+          "start": 46
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 46, end: 51 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 42,
+      "label": "c11b/capture/loop-environments",
+      "source_sha256": "4c903f0d25963e65396b2cd77183fc0348132565e8d9b40f30bf37508a4219db",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 60,
+        "source": 0,
+        "start": 53
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 60,
+          "source": 0,
+          "start": 53
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 53, end: 60 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 43,
+      "label": "c11b/capture/return-escape",
+      "source_sha256": "36097b945f51dddc39ab942f97b0a6dba0eb0c218601627f580d53e54f2bc242",
+      "classification": "exact"
+    },
+    {
+      "index": 44,
+      "label": "c11b/capture/store-vector",
+      "source_sha256": "263c394666b35777e5685353a785881bf8ee0c0cf752438d2d2dd674bc1756c6",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 43,
+        "source": 0,
+        "start": 36
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 43,
+          "source": 0,
+          "start": 36
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 36, end: 43 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 45,
+      "label": "c11b/capture/named-caller",
+      "source_sha256": "b0ae892639cbadb076f8557c01e0fd8105b057aed271c0b8ecfef58809e05239",
+      "classification": "exact"
+    },
+    {
+      "index": 46,
+      "label": "c11b/capture/callback-any",
+      "source_sha256": "6a663b6c2d3629208eb9336b5bdc4f71e2958f4203bbc93a59ab9161e725521d",
+      "classification": "exact"
+    },
+    {
+      "index": 47,
+      "label": "c11b/capture/callback-sort",
+      "source_sha256": "f3e4d056a8a09cf029c8fcd29ec3ccc8230c04305ccedc05ed9af2dbde1221e6",
+      "classification": "exact"
+    },
+    {
+      "index": 48,
+      "label": "c11b/capture/receiver-alias",
+      "source_sha256": "e4b18dbfde4bc8bd7cba16a10bf764d278da1be59975834925fda03cf802e32e",
+      "classification": "exact"
+    },
+    {
+      "index": 49,
+      "label": "c11b/error/wrong-arity",
+      "source_sha256": "05d196a94558c53ca69a1ffbf37ace3930245ec5f4fff5505ab70e769053ae4e",
+      "classification": "policy-presentation",
+      "policy": "Intentional-capturing-closure-arity-counts",
+      "authority": 20703,
+      "stock": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 38,
+                "source": 0,
+                "start": 35
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Wrong number of arguments 1, expected 2\n  at c11b.rn:1:36"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "ArgumentCount",
+          "display": "Wrong number of arguments 1, expected 2",
+          "sites": [
+            {
+              "end": 38,
+              "frames": "[]",
+              "source": 0,
+              "start": 35
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      },
+      "fresh": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 38,
+                "source": 0,
+                "start": 35
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Wrong number of arguments 0, expected 1\n  at c11b.rn:1:36"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "ArgumentCount",
+          "display": "Wrong number of arguments 0, expected 1",
+          "sites": [
+            {
+              "end": 38,
+              "frames": "[]",
+              "source": 0,
+              "start": 35
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      },
+      "protected_main": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 38,
+                "source": 0,
+                "start": 35
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Wrong number of arguments 0, expected 1\n  at c11b.rn:1:36"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "Type",
+          "display": "Wrong number of arguments 0, expected 1",
+          "sites": [
+            {
+              "end": 38,
+              "frames": "[]",
+              "source": 0,
+              "start": 35
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      }
+    },
+    {
+      "index": 50,
+      "label": "c11b/error/panic-in-call",
+      "source_sha256": "6b5a3448062adab324dbfaa316200d19db4c18ac7b9552da861bc51ee64b4286",
+      "classification": "exact"
+    },
+    {
+      "index": 51,
+      "label": "c11b/error/captured-type-at-use",
+      "source_sha256": "5c88a599e1895e3266a03857b3b8b9eecf714292000a0c4c9f44e8d7b23d8962",
+      "classification": "exact"
+    },
+    {
+      "index": 52,
+      "label": "c11b/error/fuel-in-call",
+      "source_sha256": "34f78f345c1939c1f4e31ff6176837f8e2d483451697a1fb5128d321518b0c8f",
+      "classification": "policy-presentation",
+      "policy": "Retained-fuel",
+      "authority": 20703,
+      "stock": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": null,
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Exhausted the budget it was given\n  at <unknown>"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "FuelExhausted",
+          "display": "Exhausted the budget it was given",
+          "sites": [],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      },
+      "fresh": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 45,
+                "source": 0,
+                "start": 39
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 50,
+                "source": 0,
+                "start": 47
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "execute: FuelExhausted\n  at c11b.rn:1:40\n  called from c11b.rn:1:48"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "FuelExhausted",
+          "display": "execute: FuelExhausted",
+          "sites": [
+            {
+              "end": 45,
+              "frames": "[{\"end\":50,\"source\":0,\"start\":47}]",
+              "source": 0,
+              "start": 39
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      },
+      "protected_main": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 45,
+                "source": 0,
+                "start": 39
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 50,
+                "source": 0,
+                "start": 47
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "execute: FuelExhausted\n  at c11b.rn:1:40\n  called from c11b.rn:1:48"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "FuelExhausted",
+          "display": "execute: FuelExhausted",
+          "sites": [
+            {
+              "end": 45,
+              "frames": "[{\"end\":50,\"source\":0,\"start\":47}]",
+              "source": 0,
+              "start": 39
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      }
+    },
+    {
+      "index": 53,
+      "label": "c11b/identity/function-value",
+      "source_sha256": "b19f1073a2853b0d0009f20212e091864561cd9dacd04ab4a9788d9ff2713f1c",
+      "classification": "exact"
+    },
+    {
+      "index": 54,
+      "label": "c11b/capture/cycle-in-vector",
+      "source_sha256": "05edf8a01c113bb8eb94261a511eba47dfc9e76cf43785b2b7e9a3e1a0fbc5ea",
+      "classification": "exact"
+    },
+    {
+      "index": 55,
+      "label": "c11b/capture/independent-closures",
+      "source_sha256": "755240d18f63f9032101aa71153492807702dde408c95123ea9c790b14accd9c",
+      "classification": "exact"
+    },
+    {
+      "index": 56,
+      "label": "c11b/capture/closure-created-in-loop-and-escape",
+      "source_sha256": "578280a4b76b41954fd1aeb09dd55b0e80eb0adaa8b22636a0c41fb4cd712369",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 79,
+        "source": 0,
+        "start": 72
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 79,
+          "source": 0,
+          "start": 72
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 72, end: 79 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 57,
+      "label": "c11b/capture/create-event-order",
+      "source_sha256": "3a7a7f047c153d0ba39092a98beff7b0206d29ca70cd4b61915033a35152589a",
+      "classification": "exact"
+    },
+    {
+      "index": 58,
+      "label": "c11b/capture/call-event-order",
+      "source_sha256": "efdbd9c96c49eaaaba122a32920a67eb06bec002ca3ebf77042e1a484fadba36",
+      "classification": "exact"
+    },
+    {
+      "index": 59,
+      "label": "c11b/capture/nested-event-order",
+      "source_sha256": "36d9101000e6b7a0aa916cc0964eb7214c6a8bf64bae3477b697f797c74d0538",
+      "classification": "inherited-refusal",
+      "refusal": "Call",
+      "site": {
+        "end": 90,
+        "source": 0,
+        "start": 85
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 90,
+          "source": 0,
+          "start": 85
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 85, end: 90 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+        "refusal": "Call",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 60,
+      "label": "c11b/callback/any-order-short-circuit",
+      "source_sha256": "c615cc38757de1791953de1255d952222f3509fc996454804edd1193608c10ec",
+      "classification": "exact"
+    },
+    {
+      "index": 61,
+      "label": "c11b/callback/sort-order",
+      "source_sha256": "310812376328de39457ba80a7a887557bc8857d21e65033c2844f80458d92b1c",
+      "classification": "exact"
+    },
+    {
+      "index": 62,
+      "label": "c11b/callback/leased-parent-capture",
+      "source_sha256": "e4b18dbfde4bc8bd7cba16a10bf764d278da1be59975834925fda03cf802e32e",
+      "classification": "exact"
+    },
+    {
+      "index": 63,
+      "label": "c11b/perf/closure-create-256",
+      "source_sha256": "804776744671947fe2caf7b09e5789958866d1c6cff594833c343edf41bbabd8",
+      "classification": "exact"
+    },
+    {
+      "index": 64,
+      "label": "c11b/perf/closure-invoke-256",
+      "source_sha256": "1799690fba510ba0d79988b8f4f22d10aa7515a067dafd9f2366d54ec1cd3c11",
+      "classification": "exact"
+    },
+    {
+      "index": 65,
+      "label": "c11b/perf/plain-function-256",
+      "source_sha256": "793482a327ffa05b3266620fb15ef1640288aff240b4db352609065f85c9d4d7",
+      "classification": "exact"
+    },
+    {
+      "index": 66,
+      "label": "c11b/async/refused",
+      "source_sha256": "416494cab2035c06474f930c7d99a372a29ef16336db5968cb22cbc66b196af6",
+      "classification": "inherited-refusal",
+      "refusal": "CallClosure",
+      "site": {
+        "end": 32,
+        "source": 0,
+        "start": 20
+      },
+      "protected_main_refusal": {
+        "kind": "Unsupported",
+        "location": {
+          "end": 32,
+          "source": 0,
+          "start": 20
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 20, end: 32 }), operation: \"CallClosure\", refusal: Some(CallClosure), detail: None }",
+        "refusal": "CallClosure",
+        "status": "refused"
+      }
+    },
+    {
+      "index": 67,
+      "label": "c11b/capture/store-object",
+      "source_sha256": "2a163242c4e00601d4793b9be381cbd0730604b899da500181f05a48b09daec6",
+      "classification": "exact"
+    },
+    {
+      "index": 68,
+      "label": "c11b/capture/closure-captures-closure",
+      "source_sha256": "1e91dcf1908900aae8e4ecf0be0cb43610438c65e1b9065151c9d92e29b59946",
+      "classification": "exact"
+    },
+    {
+      "index": 69,
+      "label": "c11b/identity/format",
+      "source_sha256": "8c9de9d06f836b4c6744528bdcc53394d0f602989a4cbc492a9a33621d5eb01e",
+      "classification": "policy-presentation",
+      "policy": "Retained-format",
+      "authority": 20703,
+      "stock": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": null,
+        "outcome": {
+          "graph": {
+            "nodes": [
+              [
+                "String",
+                "0x2f4720d36d2b70c",
+                "636c6f73757265202861743a203078382c20656e763a5b325d29"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      },
+      "fresh": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": null,
+        "outcome": {
+          "graph": {
+            "nodes": [
+              [
+                "String",
+                "0x2f4720d36d2b70c",
+                "636c6f73757265202866756e6374696f6e3a20312c20656e763a5b325d29"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      },
+      "protected_main": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": null,
+        "outcome": {
+          "graph": {
+            "nodes": [
+              [
+                "String",
+                "0x2f4720d36d2b70c",
+                "636c6f73757265202866756e6374696f6e3a20312c20656e763a5b325d29"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      }
+    },
+    {
+      "index": 70,
+      "label": "c11b/capture/store-object-method-call",
+      "source_sha256": "64d9283554618798c4fc1e469fbcfcab6a9a26c7f986ffdfb67aa7f77d61e4f7",
+      "classification": "policy-presentation",
+      "policy": "D1c-richer-missing-method",
+      "authority": 20703,
+      "stock": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 50,
+                "source": 0,
+                "start": 42
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::object::Object` has no method named `f`\n  at c11b.rn:1:43"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "Type",
+          "display": "Type `std::object::Object` has no matching method",
+          "sites": [
+            {
+              "end": 50,
+              "frames": "[]",
+              "source": 0,
+              "start": 42
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      },
+      "fresh": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 50,
+                "source": 0,
+                "start": 42
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::object::Object` has no method named `f`\n  at c11b.rn:1:43"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "Type",
+          "display": "Type `std::object::Object` has no method named `f`",
+          "sites": [
+            {
+              "end": 50,
+              "frames": "[]",
+              "source": 0,
+              "start": 42
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      },
+      "protected_main": {
+        "diagnostics": "[]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 50,
+                "source": 0,
+                "start": 42
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::object::Object` has no method named `f`\n  at c11b.rn:1:43"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "Type",
+          "display": "Type `std::object::Object` has no method named `f`",
+          "sites": [
+            {
+              "end": 50,
+              "frames": "[]",
+              "source": 0,
+              "start": 42
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        }
+      }
+    }
+  ],
+  "scope_20798": {
+    "changes": [
+      {
+        "index": 1,
+        "label": "seed/var/value/closure-alias",
+        "source_sha256": "b92c27320caedbfd7f8fddb3f8356a10c13896c2e91273570e15324675ded9e4"
+      },
+      {
+        "index": 3,
+        "label": "seed/var/value/closure-held",
+        "source_sha256": "a3db1439716736b613b0701e7c2b322d9c7602b94dc3bf33238bc890aa114596"
+      },
+      {
+        "index": 13,
+        "label": "new/nested/captured-alias",
+        "source_sha256": "447ba6b741147a240b9ea3be404b713d26688e45ca75e55f8e86368c2323a332"
+      },
+      {
+        "index": 19,
+        "label": "new/returned/alias-moved-write",
+        "source_sha256": "d7880628455a3e9fd6b505c06ca8bf93cb110e565cd42933ac60ccb6beeef459"
+      }
+    ],
+    "context": "IndexSet moved receiver argument chain deferred; kind/value/effects unchanged"
+  }
+}

@@ -40,6 +40,17 @@ impl FreshGraph {
 		if let Some(scalar) = scalar {
 			return graph(&scalar)["nodes"][0].clone();
 		}
+		if matches!(store.len(value), Err(error) if error.kind == ErrorKind::AccessConflict
+			&& matches!(error.detail, Detail::Moved { access: MovedAccess::Read }))
+		{
+			let hash = store
+				.diagnostic_type(value)
+				.unwrap()
+				.builtin_hash()
+				.unwrap()
+				.to_string();
+			return json!(["OpaqueAny", hash, false, false]);
+		}
 		match store.tag(value).unwrap() {
 			Type::String => json!([
 				"String",
@@ -100,4 +111,22 @@ fn fresh_graph(store: &mut Store, root: FreshValue) -> Json {
 		at += 1;
 	}
 	json!({"root":root,"nodes":nodes})
+}
+
+#[test]
+fn c11c_graph_distinguishes_live_vec_from_moved_alias() {
+	use crate::TypeHash;
+	let mut store = Store::new(Limits::default()).unwrap();
+	let value = store.list(Type::Vec, &[FreshValue::I64(7)]).unwrap();
+	let live = json!({"root":0,"nodes":[["Vec",stock::Vec::HASH.to_string(),[1]],["I64",i64::HASH.to_string(),"7"]]});
+	assert_eq!(fresh_graph(&mut store, value), live);
+	let taken = store.take_capture(value).unwrap();
+	assert_eq!(
+		fresh_graph(&mut store, value),
+		json!({"root":0,"nodes":[["OpaqueAny",stock::Vec::HASH.to_string(),false,false]]})
+	);
+	assert_eq!(fresh_graph(&mut store, taken), live);
+	store.release(value).unwrap();
+	store.release(taken).unwrap();
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 }

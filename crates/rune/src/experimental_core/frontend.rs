@@ -7,7 +7,7 @@
 use super::code::{Code, CompileTransaction, Function};
 use super::error::{Error, ErrorKind, Location, Refusal, Result};
 use crate::alloc::{String, Vec};
-use crate::ast::Spanned;
+use crate::ast::{Span, Spanned};
 use crate::compile::{
 	self, NoopCompileVisitor, NoopSourceLoader, Options, Pool, Prelude, UnitBuilder,
 };
@@ -71,9 +71,25 @@ pub(crate) struct Collector {
 	sort_helper: Option<u32>,
 	any_helper: Option<u32>,
 	pub(crate) failure: Option<Error>,
+	variable_moved: Option<(Span, Span)>,
 }
 
 impl Collector {
+	pub(crate) fn compile_error(&mut self, error: Error, fallback: Span) -> crate::compile::Error {
+		if let Some((at, moved_at)) = self.variable_moved.take() {
+			#[cfg(not(feature = "emit"))]
+			let _ = moved_at;
+			return crate::compile::Error::new(
+				at,
+				crate::compile::ErrorKind::VariableMoved {
+					#[cfg(feature = "emit")]
+					moved_at,
+				},
+			);
+		}
+		crate::compile::Error::msg(fallback, error.operation)
+	}
+
 	pub(crate) fn revision(&self) -> u64 {
 		self.revision
 	}
@@ -103,6 +119,7 @@ impl Collector {
 		let entries = &mut self.entries;
 		let sort_helper = &mut self.sort_helper;
 		let any_helper = &mut self.any_helper;
+		let moved_error = core::cell::Cell::new(None);
 		let result = super::lower::function(
 			exprs,
 			item,
@@ -151,10 +168,12 @@ impl Collector {
 			pool,
 			context,
 			&mut self.transaction,
+			&moved_error,
 		);
 		let function = match result {
 			Ok(function) => function,
 			Err(error) => {
+				self.variable_moved = moved_error.get();
 				self.failure.get_or_insert(error);
 				return Err(error);
 			}
@@ -263,6 +282,7 @@ pub fn compile(
 		sort_helper: None,
 		any_helper: None,
 		failure: None,
+		variable_moved: None,
 	};
 
 	let mut unit = UnitBuilder::default();
