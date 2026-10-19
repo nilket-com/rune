@@ -2485,28 +2485,37 @@ impl Vm {
 
 		match target.as_ref() {
 			Repr::Dynamic(data) if matches!(data.rtti().kind, RttiKind::Struct) => {
-				let Some(value) = data.get_field_ref(index.as_str())? else {
-					return Err(VmError::new(VmErrorKind::MissingField {
-						target: target.type_info(),
-						field: index.as_str().try_to_owned()?,
-					}));
+				// The output may be the same slot as the target, so the field
+				// guard must end before the store replaces the target.
+				let value = {
+					let Some(value) = data.get_field_ref(index.as_str())? else {
+						return Err(VmError::new(VmErrorKind::MissingField {
+							target: target.type_info(),
+							field: index.as_str().try_to_owned()?,
+						}));
+					};
+
+					value.clone()
 				};
 
-				let value = value.clone();
 				self.store(out, value)?;
 				return Ok(());
 			}
 			Repr::Any(value) if value.type_hash() == Object::HASH => {
-				let object = value.borrow_ref::<Object>()?;
+				// As above: end the object guard before storing.
+				let value = {
+					let object = value.borrow_ref::<Object>()?;
 
-				let Some(value) = object.get(index.as_str()) else {
-					return Err(VmError::new(VmErrorKind::MissingField {
-						target: target.type_info(),
-						field: index.as_str().try_to_owned()?,
-					}));
+					let Some(value) = object.get(index.as_str()) else {
+						return Err(VmError::new(VmErrorKind::MissingField {
+							target: target.type_info(),
+							field: index.as_str().try_to_owned()?,
+						}));
+					};
+
+					value.clone()
 				};
 
-				let value = value.clone();
 				self.store(out, value)?;
 				return Ok(());
 			}
