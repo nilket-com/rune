@@ -4,9 +4,9 @@
   "protected_main": "b1030a87df9fcdf14262cae2c35d7b0dd3209fe7",
   "authority": 20703,
   "counts": {
-    "inherited-refusal": 11,
-    "policy-presentation": 8,
-    "exact": 52
+    "exact": 60,
+    "inherited-refusal": 1,
+    "policy-presentation": 10
   },
   "total": 71,
   "rows": [
@@ -14,7 +14,7 @@
       "index": 0,
       "label": "seed/original/value/closure-alias",
       "source_sha256": "e98ab47b772db4331be448faf6b7beaf641268b7bdd45e0601bee17dccceae51",
-      "classification": "inherited-refusal",
+      "classification": "policy-presentation",
       "refusal": "Call",
       "site": {
         "end": 121,
@@ -31,6 +31,104 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 111, end: 121 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
+      },
+      "prior_c11c_disposition": {
+        "index": 0,
+        "label": "seed/original/value/closure-alias",
+        "source_sha256": "e98ab47b772db4331be448faf6b7beaf641268b7bdd45e0601bee17dccceae51",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 121,
+          "source": 0,
+          "start": 111
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 121,
+            "source": 0,
+            "start": 111
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 111, end: 121 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20798,
+      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+      "stock": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 128,
+                "source": 0,
+                "start": 122
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:123"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 128,
+              "frames": "[]",
+              "source": 0,
+              "start": 122
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "fresh": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 128,
+                "source": 0,
+                "start": 122
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:123"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 128,
+              "frames": "[]",
+              "source": 0,
+              "start": 122
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
       }
     },
     {
@@ -158,7 +256,7 @@
       "index": 2,
       "label": "seed/original/value/closure-held",
       "source_sha256": "59775593aca78bc6b02fa1de76738f4e4123928dbd175a9f770aa0458658d914",
-      "classification": "inherited-refusal",
+      "classification": "policy-presentation",
       "refusal": "Call",
       "site": {
         "end": 133,
@@ -175,6 +273,104 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 126, end: 133 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
+      },
+      "prior_c11c_disposition": {
+        "index": 2,
+        "label": "seed/original/value/closure-held",
+        "source_sha256": "59775593aca78bc6b02fa1de76738f4e4123928dbd175a9f770aa0458658d914",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 133,
+          "source": 0,
+          "start": 126
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 133,
+            "source": 0,
+            "start": 126
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 126, end: 133 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20798,
+      "policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
+      "stock": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [
+            {
+              "arg": 0,
+              "tag": "BadArgument"
+            }
+          ],
+          "frames": [
+            {
+              "location": {
+                "end": 140,
+                "source": 0,
+                "start": 134
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:135"
+        },
+        "outcome": {
+          "chain_displays": [
+            "Bad argument #0"
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 140,
+              "frames": "[]",
+              "source": 0,
+              "start": 134
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
+      },
+      "fresh": {
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+        "events": [],
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 140,
+                "source": 0,
+                "start": 134
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot write the value: it has been moved\n  at c11b.rn:1:135"
+        },
+        "outcome": {
+          "chain_displays": [],
+          "class": "AccessConflict",
+          "display": "Cannot write the value: it has been moved",
+          "sites": [
+            {
+              "end": 140,
+              "frames": "[]",
+              "source": 0,
+              "start": 134
+            }
+          ],
+          "status": "error"
+        },
+        "reuse": null
       }
     },
     {
@@ -302,7 +498,7 @@
       "index": 4,
       "label": "seed/original/ownership/moved-capture",
       "source_sha256": "066f25568845aaaa6520ae38201e5f7a2fcb3f123e6bbc337a0289377c8c405f",
-      "classification": "inherited-refusal",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 129,
@@ -319,7 +515,31 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 108, end: 129 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
-      }
+      },
+      "prior_c11c_disposition": {
+        "index": 4,
+        "label": "seed/original/ownership/moved-capture",
+        "source_sha256": "066f25568845aaaa6520ae38201e5f7a2fcb3f123e6bbc337a0289377c8c405f",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 129,
+          "source": 0,
+          "start": 108
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 129,
+            "source": 0,
+            "start": 108
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 108, end: 129 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20849
     },
     {
       "index": 5,
@@ -331,7 +551,7 @@
       "index": 6,
       "label": "seed/original/ownership/temp-closure-capture",
       "source_sha256": "1a55109629e3fee2ac678dff7f142103cf32392179b07f15e8d2d65c88b5b37e",
-      "classification": "inherited-refusal",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 110,
@@ -348,7 +568,31 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 82, end: 110 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
-      }
+      },
+      "prior_c11c_disposition": {
+        "index": 6,
+        "label": "seed/original/ownership/temp-closure-capture",
+        "source_sha256": "1a55109629e3fee2ac678dff7f142103cf32392179b07f15e8d2d65c88b5b37e",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 110,
+          "source": 0,
+          "start": 82
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 110,
+            "source": 0,
+            "start": 82
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 82, end: 110 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20849
     },
     {
       "index": 7,
@@ -360,7 +604,7 @@
       "index": 8,
       "label": "seed/original/ownership/leased-capture",
       "source_sha256": "8c7d50cdb22c0ed4f879b0f967f5d3d38812748b30eba949c7adc651d1713df9",
-      "classification": "inherited-refusal",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 135,
@@ -377,7 +621,31 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 125, end: 135 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
-      }
+      },
+      "prior_c11c_disposition": {
+        "index": 8,
+        "label": "seed/original/ownership/leased-capture",
+        "source_sha256": "8c7d50cdb22c0ed4f879b0f967f5d3d38812748b30eba949c7adc651d1713df9",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 135,
+          "source": 0,
+          "start": 125
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 135,
+            "source": 0,
+            "start": 125
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 125, end: 135 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20849
     },
     {
       "index": 9,
@@ -829,7 +1097,7 @@
       "index": 41,
       "label": "c11b/capture/nested",
       "source_sha256": "8bd4008c2348c99867831e8e25b37468845ceb717f0c56f6f73b2f50579030a8",
-      "classification": "inherited-refusal",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 51,
@@ -846,13 +1114,37 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 46, end: 51 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
-      }
+      },
+      "prior_c11c_disposition": {
+        "index": 41,
+        "label": "c11b/capture/nested",
+        "source_sha256": "8bd4008c2348c99867831e8e25b37468845ceb717f0c56f6f73b2f50579030a8",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 51,
+          "source": 0,
+          "start": 46
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 51,
+            "source": 0,
+            "start": 46
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 46, end: 51 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20849
     },
     {
       "index": 42,
       "label": "c11b/capture/loop-environments",
       "source_sha256": "4c903f0d25963e65396b2cd77183fc0348132565e8d9b40f30bf37508a4219db",
-      "classification": "inherited-refusal",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 60,
@@ -869,7 +1161,31 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 53, end: 60 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
-      }
+      },
+      "prior_c11c_disposition": {
+        "index": 42,
+        "label": "c11b/capture/loop-environments",
+        "source_sha256": "4c903f0d25963e65396b2cd77183fc0348132565e8d9b40f30bf37508a4219db",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 60,
+          "source": 0,
+          "start": 53
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 60,
+            "source": 0,
+            "start": 53
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 53, end: 60 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20849
     },
     {
       "index": 43,
@@ -881,7 +1197,7 @@
       "index": 44,
       "label": "c11b/capture/store-vector",
       "source_sha256": "263c394666b35777e5685353a785881bf8ee0c0cf752438d2d2dd674bc1756c6",
-      "classification": "inherited-refusal",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 43,
@@ -898,7 +1214,31 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 36, end: 43 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
-      }
+      },
+      "prior_c11c_disposition": {
+        "index": 44,
+        "label": "c11b/capture/store-vector",
+        "source_sha256": "263c394666b35777e5685353a785881bf8ee0c0cf752438d2d2dd674bc1756c6",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 43,
+          "source": 0,
+          "start": 36
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 43,
+            "source": 0,
+            "start": 36
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 36, end: 43 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20849
     },
     {
       "index": 45,
@@ -1249,7 +1589,7 @@
       "index": 56,
       "label": "c11b/capture/closure-created-in-loop-and-escape",
       "source_sha256": "578280a4b76b41954fd1aeb09dd55b0e80eb0adaa8b22636a0c41fb4cd712369",
-      "classification": "inherited-refusal",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 79,
@@ -1266,7 +1606,31 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 72, end: 79 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
-      }
+      },
+      "prior_c11c_disposition": {
+        "index": 56,
+        "label": "c11b/capture/closure-created-in-loop-and-escape",
+        "source_sha256": "578280a4b76b41954fd1aeb09dd55b0e80eb0adaa8b22636a0c41fb4cd712369",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 79,
+          "source": 0,
+          "start": 72
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 79,
+            "source": 0,
+            "start": 72
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 72, end: 79 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20849
     },
     {
       "index": 57,
@@ -1284,7 +1648,7 @@
       "index": 59,
       "label": "c11b/capture/nested-event-order",
       "source_sha256": "36d9101000e6b7a0aa916cc0964eb7214c6a8bf64bae3477b697f797c74d0538",
-      "classification": "inherited-refusal",
+      "classification": "exact",
       "refusal": "Call",
       "site": {
         "end": 90,
@@ -1301,7 +1665,31 @@
         "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 85, end: 90 }), operation: \"Call\", refusal: Some(Call), detail: None }",
         "refusal": "Call",
         "status": "refused"
-      }
+      },
+      "prior_c11c_disposition": {
+        "index": 59,
+        "label": "c11b/capture/nested-event-order",
+        "source_sha256": "36d9101000e6b7a0aa916cc0964eb7214c6a8bf64bae3477b697f797c74d0538",
+        "classification": "inherited-refusal",
+        "refusal": "Call",
+        "site": {
+          "end": 90,
+          "source": 0,
+          "start": 85
+        },
+        "protected_main_refusal": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 90,
+            "source": 0,
+            "start": 85
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 11, start: 85, end: 90 }), operation: \"Call\", refusal: Some(Call), detail: None }",
+          "refusal": "Call",
+          "status": "refused"
+        }
+      },
+      "authority": 20849
     },
     {
       "index": 60,
@@ -1643,5 +2031,6 @@
       }
     ],
     "context": "IndexSet moved receiver argument chain deferred; kind/value/effects unchanged"
-  }
+  },
+  "c16c_authority": 20849
 }

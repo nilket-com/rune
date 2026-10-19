@@ -83,6 +83,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 					}
 					let class = match failure.error.kind {
 						ErrorKind::Type => "Type",
+						ErrorKind::ArgumentCount => "ArgumentCount",
 						ErrorKind::IntegerCoercion => "IntegerCoercion",
 						ErrorKind::DivisionByZero => "DivisionByZero",
 						ErrorKind::AccessConflict => "AccessConflict",

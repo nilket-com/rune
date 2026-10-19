@@ -1,4 +1,4 @@
-//! C16c test-only expression-call stock oracle. No production admission changes.
+//! C16c expression-call oracle and bounded stock/fresh contracts.
 use super::*;
 use serde_json::{json, Value as Json};
 include!("tuple_let/observe_fresh.rs");
@@ -215,11 +215,22 @@ fn stock_contract() {
 	run_contract("stock");
 }
 
+#[test]
+#[cfg(target_os = "linux")]
+#[ignore = "C16c strict fresh replay; bounded children and exclusive GAP_OUT"]
+fn fresh_contract() {
+	run_contract("fresh");
+}
+
 #[cfg(target_os = "linux")]
 fn run_contract(engine: &str) {
-	assert_eq!(engine, "stock");
+	assert!(matches!(engine, "stock" | "fresh"));
 	let cases: Json = serde_json::from_str(include_str!("expression_calls/cases.json")).unwrap();
 	let frozen: Json = serde_json::from_str(include_str!("expression_calls/stock.json")).unwrap();
+	let disposition: Json =
+		serde_json::from_str(include_str!("expression_calls/disposition.json")).unwrap();
+	let logical: Json =
+		serde_json::from_str(include_str!("expression_calls/logical.json")).unwrap();
 	let cases = cases.as_array().unwrap();
 	let frozen = frozen.as_array().unwrap();
 	assert_eq!(cases.len(), 100);
@@ -327,7 +338,88 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["label"], case["label"]);
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["policy"], case["policy"]);
-		assert_eq!(observed["projected"], expected["projected"], "{label}");
+		if engine == "stock" {
+			assert_eq!(observed["projected"], expected["projected"], "{label}");
+		} else {
+			let audit = &observed["fresh_audit"];
+			for key in [
+				"no_cleanup_error",
+				"clean_after_row",
+				"row_idle",
+				"reuse",
+				"idle",
+			] {
+				assert_eq!(audit[key], true, "{label}: {key}");
+			}
+			for key in [
+				"row_live_entries",
+				"row_payload_bytes",
+				"live_entries",
+				"payload_bytes",
+			] {
+				assert_eq!(audit[key], 0, "{label}: {key}");
+			}
+			let policy = &disposition[i];
+			assert_eq!(policy["index"], i);
+			assert_eq!(policy["label"], case["label"]);
+			assert_eq!(policy["source_sha256"], case["source_sha256"]);
+			let actual = &observed["outcome"];
+			if policy["classification"] == "Retain-refusal" {
+				assert_eq!(actual["status"], "refused", "{label}");
+				assert_eq!(actual["refusal"], policy["refusal"], "{label}");
+				assert_eq!(actual["location"], policy["location"], "{label}");
+				assert_eq!(audit["invoked"], false);
+			} else if expected["outcome"]["status"] == "compile-error" {
+				assert_eq!(policy["classification"], "Exact");
+				assert_eq!(actual["status"], "compile-error", "{label}");
+				assert_eq!(
+					actual["diagnostics"], expected["outcome"]["diagnostics"],
+					"{label}"
+				);
+				assert_eq!(audit["invoked"], false);
+			} else if actual["status"] == "error" {
+				assert_eq!(audit["typed_failure_kind"], actual["class"]);
+				let actual = project(actual);
+				for key in ["status", "class", "display"] {
+					assert_eq!(actual[key], expected["projected"][key], "{label}: {key}");
+				}
+				if policy["classification"] == "Retained-chain" {
+					assert!(matches!(i, 21 | 22));
+					assert_eq!(policy["authority"], 20798);
+					assert_eq!(actual["chain_displays"], json!([]));
+					assert_eq!(
+						expected["projected"]["chain_displays"],
+						json!(["Bad argument #0"])
+					);
+				} else {
+					assert_eq!(policy["classification"], "Exact");
+					assert_eq!(
+						actual["chain_displays"], expected["projected"]["chain_displays"],
+						"{label}"
+					);
+				}
+				let sites = actual["sites"].as_array().unwrap();
+				let stock_sites = expected["projected"]["sites"].as_array().unwrap();
+				assert_eq!(sites.len(), stock_sites.len());
+				for (a, b) in sites.iter().zip(stock_sites) {
+					for key in ["source", "start", "end"] {
+						assert_eq!(a[key], b[key], "{label}: {key}");
+					}
+				}
+			} else {
+				assert_eq!(policy["classification"], "Exact");
+				assert_eq!(audit["invoked"], true);
+				assert_eq!(project(actual), expected["projected"], "{label}");
+			}
+		}
+		if let Some(expected) = logical.get(label) {
+			let actual: Json =
+				serde_json::from_slice(&fs::read(folder.join("logical.json")).unwrap()).unwrap();
+			assert_eq!(
+				actual, expected[engine],
+				"{label}: logical frames/context/rendered"
+			);
+		}
 		assert_eq!(hex(&stdout), expected["stdout_hex"]);
 		assert_eq!(hex(&stderr), expected["stderr_hex"]);
 	}

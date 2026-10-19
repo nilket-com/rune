@@ -30,13 +30,13 @@ fn p0_seed_admissions_follow_verified_root_dispositions() {
 		if disposition["classification"] == "inherited-refusal" {
 			assert_eq!(got, Ok(Some(Refusal::Call)), "{}", row["label"]);
 		} else {
-			if matches!(index, 1 | 3) {
+			if matches!(index, 0..=3) {
 				assert_eq!(disposition["classification"], "policy-presentation");
 				assert_eq!(disposition["authority"], 20798);
 			} else {
 				assert_eq!(disposition["classification"], "exact");
 			}
-			if index == 7 {
+			if matches!(index, 6 | 7) {
 				// Real VariableMoved diagnostic remains a compile error.
 				assert_eq!(got, Ok(Some(Refusal::FrontendDiagnostic)));
 			} else {

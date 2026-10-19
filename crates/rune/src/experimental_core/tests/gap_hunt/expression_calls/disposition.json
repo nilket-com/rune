@@ -1,0 +1,622 @@
+[
+  {
+    "index": 0,
+    "label": "value/chain",
+    "source_sha256": "c906889446238bff94c82b53a781919b63c0a2da53e3727a4c8be219c4bfaca9",
+    "classification": "Exact"
+  },
+  {
+    "index": 1,
+    "label": "value/triple-chain",
+    "source_sha256": "5ce9154437763b487a417deb6269e1e66f05989e6c8ecea6e8da62eaa8312729",
+    "classification": "Exact"
+  },
+  {
+    "index": 2,
+    "label": "value/id-chain",
+    "source_sha256": "d7007547a1de53953bc9df626ca24199d657abb14d074bcd790ed2bb044ce030",
+    "classification": "Exact"
+  },
+  {
+    "index": 3,
+    "label": "value/block",
+    "source_sha256": "b7f32f299e372a74c90999c3b2831aaf9700313f6e612cf615c6ee4a1bd0b0d3",
+    "classification": "Exact"
+  },
+  {
+    "index": 4,
+    "label": "value/group",
+    "source_sha256": "563820b5d2af064e6ea603a04d7375fdf2f17ae12d85ae934d4ceab8cb733bfb",
+    "classification": "Exact"
+  },
+  {
+    "index": 5,
+    "label": "value/if-true",
+    "source_sha256": "e9ceb0478d23acadb0fa5a11d33912da69c34e1dc35d543d6b03c857aaeab780",
+    "classification": "Exact"
+  },
+  {
+    "index": 6,
+    "label": "value/if-false",
+    "source_sha256": "e5f229afabd7b82107dcd563fcadb31fd6f8780249971553ee54655f57aef93d",
+    "classification": "Exact"
+  },
+  {
+    "index": 7,
+    "label": "value/match",
+    "source_sha256": "6cc211c10d33ba1db1a613954ccbf27d5155c5cc93c2b2f8e30a8b6147236af0",
+    "classification": "Exact"
+  },
+  {
+    "index": 8,
+    "label": "value/index",
+    "source_sha256": "722b07beff9e45a45260a667da65e89cc45eee3661bb6313e45b1852ab104d88",
+    "classification": "Exact"
+  },
+  {
+    "index": 9,
+    "label": "value/tuple-field",
+    "source_sha256": "f3aa2dad0985245221bbb906134cfd8ece50f16c15cb9d2ca34ba180a711b635",
+    "classification": "Exact"
+  },
+  {
+    "index": 10,
+    "label": "value/object-field",
+    "source_sha256": "82eae2716c7e6f92b2b331e01ee32ad4163a51c6a98df5e39b2dbeafafa6e607",
+    "classification": "Exact"
+  },
+  {
+    "index": 11,
+    "label": "value/returned-tuple",
+    "source_sha256": "2b8e9a24794966b79f0dbe3b72db3cdcd76665da6d7a025df75afedaf27d6aa7",
+    "classification": "Exact"
+  },
+  {
+    "index": 12,
+    "label": "value/returned-vec",
+    "source_sha256": "2f7174b0a8bc567975add8109e49480ef23b444298311537bd655a02b56e7bc7",
+    "classification": "Exact"
+  },
+  {
+    "index": 13,
+    "label": "value/option-unwrap",
+    "source_sha256": "58bb569958029417822d9ac4a3ff0774a4de254a973ad0728d8251d8850d1b79",
+    "classification": "Retain-refusal",
+    "refusal": "Method",
+    "location": {
+      "end": 109,
+      "source": 0,
+      "start": 93
+    }
+  },
+  {
+    "index": 14,
+    "label": "value/literal-closure",
+    "source_sha256": "b23aa40ccedb84c15d3025588d8d299ac330cce3a6ba2861e3b045b4d65fdc60",
+    "classification": "Exact"
+  },
+  {
+    "index": 15,
+    "label": "value/zero-closure",
+    "source_sha256": "1ed60d1b5c0acb7b19e689a9f63ad27f9a4ab244af2f1d56917692983097b94d",
+    "classification": "Exact"
+  },
+  {
+    "index": 16,
+    "label": "value/returned-closure",
+    "source_sha256": "9657215300fcb4323a76135ee86c45ace26cf66f02f8e0bea160185f1b0dee7a",
+    "classification": "Exact"
+  },
+  {
+    "index": 17,
+    "label": "value/echo-closure",
+    "source_sha256": "642b9b36a8fe6a10bb81f5fe25ca1f7a914daa06fd28ddd979ea789bf85b1e1c",
+    "classification": "Exact"
+  },
+  {
+    "index": 18,
+    "label": "value/block-closure",
+    "source_sha256": "015f97f0b41512cc874a4a5f195f876b723d7c5005e8824c6578d9cff438eb26",
+    "classification": "Exact"
+  },
+  {
+    "index": 19,
+    "label": "value/recursive-factory",
+    "source_sha256": "ddd7ecfc1810733703b3e537f73724b8a9c51dded6952227682c5692344f9145",
+    "classification": "Exact"
+  },
+  {
+    "index": 20,
+    "label": "value/heap-return",
+    "source_sha256": "04fcf1ef1fe768ab50312af7b8e436b80691d5b93b15caf0a8fa74a9eae1a182",
+    "classification": "Exact"
+  },
+  {
+    "index": 21,
+    "label": "value/closure-alias",
+    "source_sha256": "e98ab47b772db4331be448faf6b7beaf641268b7bdd45e0601bee17dccceae51",
+    "classification": "Retained-chain",
+    "authority": 20798
+  },
+  {
+    "index": 22,
+    "label": "value/closure-held",
+    "source_sha256": "59775593aca78bc6b02fa1de76738f4e4123928dbd175a9f770aa0458658d914",
+    "classification": "Retained-chain",
+    "authority": 20798
+  },
+  {
+    "index": 23,
+    "label": "value/heap-arguments",
+    "source_sha256": "b3b38758ec1065a541f6200963164659e1aac9adf21ed87c1e0e4a7595846683",
+    "classification": "Exact"
+  },
+  {
+    "index": 24,
+    "label": "value/ignore-argument",
+    "source_sha256": "900f5b5ca8ee525e400dee8dbf5e25a2be9fe699e9dda1493a445523646be123",
+    "classification": "Exact"
+  },
+  {
+    "index": 25,
+    "label": "value/nested-call-argument",
+    "source_sha256": "2796b1fdd7a867051fc41ba8c1137abf84a219d3868722b030cd55eb6030cc7c",
+    "classification": "Exact"
+  },
+  {
+    "index": 26,
+    "label": "value/discard",
+    "source_sha256": "ea95fbdb2d4cf37340a109eee2ec0b7b15f1045f4563e938b4de44c3d1a78feb",
+    "classification": "Exact"
+  },
+  {
+    "index": 27,
+    "label": "value/callee-return",
+    "source_sha256": "c80f6d67179837d920e95e58d1bf46fe7d0dbfc00ef22bc335c0f62a5229f862",
+    "classification": "Exact"
+  },
+  {
+    "index": 28,
+    "label": "value/arg-return",
+    "source_sha256": "dabe04c0502d5cabd8361f0f56d2b4be2100865942742ea72f03c6ded1a78d01",
+    "classification": "Exact"
+  },
+  {
+    "index": 29,
+    "label": "value/callee-break",
+    "source_sha256": "a5de488776c3043b313444936213d971dde4db212ea9af87690d4071274c1287",
+    "classification": "Exact"
+  },
+  {
+    "index": 30,
+    "label": "value/callee-continue",
+    "source_sha256": "7edeec91a979b16e0b76e4743423f83c84c40a46f6f9efee8bbc5cf896c0424b",
+    "classification": "Exact"
+  },
+  {
+    "index": 31,
+    "label": "value/arg-break",
+    "source_sha256": "082941d79d77f6e830ab7a2c3aa377c9adda75b147ca2cf308390a0f142d7eb3",
+    "classification": "Exact"
+  },
+  {
+    "index": 32,
+    "label": "value/arg-continue",
+    "source_sha256": "f88a3e0ef33e33dbc2b6bbc700e9cb2b7af583e89c0fd3e85ed900998fcf706a",
+    "classification": "Exact"
+  },
+  {
+    "index": 33,
+    "label": "order/plain-variable",
+    "source_sha256": "fb442db8695087ba37d4c44964e06df630f9be2028d83d4676e6403b1d24decb",
+    "classification": "Exact"
+  },
+  {
+    "index": 34,
+    "label": "order/group-variable",
+    "source_sha256": "307a3caf5378b4fea998fcb2f4bb54b27dadae93c88c78f6be1974e8adf379ca",
+    "classification": "Exact"
+  },
+  {
+    "index": 35,
+    "label": "order/block-snapshot",
+    "source_sha256": "0a00ace01d64d4e382f39eb710730f89f0fcc60d2b8f47eaad71aa9dfc252246",
+    "classification": "Exact"
+  },
+  {
+    "index": 36,
+    "label": "order/if-snapshot",
+    "source_sha256": "30aa3a47790c8ff7637f4e9bc4ae154d516c9b935e92b6e403226d20da9acaa1",
+    "classification": "Exact"
+  },
+  {
+    "index": 37,
+    "label": "order/index-snapshot",
+    "source_sha256": "9e8ae47a889c4bbe29c056381f02b4608ac0baec920a938d9fc3f38950dbc41c",
+    "classification": "Exact"
+  },
+  {
+    "index": 38,
+    "label": "order/tuple-snapshot",
+    "source_sha256": "255066fabbcfc83153eca326b265a1b85e44d0299d859e1e62009e93bf97a42d",
+    "classification": "Exact"
+  },
+  {
+    "index": 39,
+    "label": "order/object-snapshot",
+    "source_sha256": "9dcb0f0fae856160c66c6e9683e4e2199874b32406551335524b58564c98a35a",
+    "classification": "Exact"
+  },
+  {
+    "index": 40,
+    "label": "order/factory-args",
+    "source_sha256": "a0bd4cc86b15fe5fdeb4ed8b759a6f241b58db12fb9ceda74380415e20640838",
+    "classification": "Exact"
+  },
+  {
+    "index": 41,
+    "label": "order/nested-factory",
+    "source_sha256": "866deaa0104e7524ae96984d5f603dd8c8e937c05d26d73146a3c1cad36db677",
+    "classification": "Exact"
+  },
+  {
+    "index": 42,
+    "label": "timing/success-order",
+    "source_sha256": "a93a8ed7002d8765b16b6adc97eef9dce3e5c6228b61bb0044e7a5bcc3f31065",
+    "classification": "Exact"
+  },
+  {
+    "index": 43,
+    "label": "timing/noncallable-after-args",
+    "source_sha256": "03974a5348680826140f4eabe867e03ce224bfe76a6f97261f323f713f5bf0b2",
+    "classification": "Exact"
+  },
+  {
+    "index": 44,
+    "label": "timing/scalar-after-args",
+    "source_sha256": "1d1d9a35b9483258887fc081b80341896dff44dc778d2e99214b63425586b091",
+    "classification": "Exact"
+  },
+  {
+    "index": 45,
+    "label": "timing/arity-after-args",
+    "source_sha256": "66f504574817f8fd3c77539315fe9ccacdf22d8a6d33e08b5a0d40689f626db9",
+    "classification": "Exact"
+  },
+  {
+    "index": 46,
+    "label": "timing/callee-fails-first",
+    "source_sha256": "2a519f23ffa0811b06383bae31291b5a41a864d8caf865074ee3248a8bb9bb56",
+    "classification": "Exact"
+  },
+  {
+    "index": 47,
+    "label": "timing/arg-fails-before-call",
+    "source_sha256": "a0e2b4dd185e05a779111d21a397541391638c3e0910e02e1c9615cf62fd12e7",
+    "classification": "Exact"
+  },
+  {
+    "index": 48,
+    "label": "timing/first-arg-fails",
+    "source_sha256": "46158cce56c8155e1046a3594ec5eb173730ae388f5945ab1ec1498c21197c33",
+    "classification": "Exact"
+  },
+  {
+    "index": 49,
+    "label": "timing/second-arg-fails",
+    "source_sha256": "060db5e0775e15d4cc3e56b60f28e1b92264f49faf6c593493db327bb206dd4d",
+    "classification": "Exact"
+  },
+  {
+    "index": 50,
+    "label": "ownership/moved-capture",
+    "source_sha256": "066f25568845aaaa6520ae38201e5f7a2fcb3f123e6bbc337a0289377c8c405f",
+    "classification": "Exact"
+  },
+  {
+    "index": 51,
+    "label": "ownership/moved-closure",
+    "source_sha256": "dda7e4e6b804d69d10dabc9a043735bf5bc319c7d5a22c16ae1b05b35045da4a",
+    "classification": "Exact"
+  },
+  {
+    "index": 52,
+    "label": "ownership/drop-closure-arg",
+    "source_sha256": "2f167f3a24a818a3426522c128da463d57bbca5fb3647670bd0d1d07a18be6a0",
+    "classification": "Exact"
+  },
+  {
+    "index": 53,
+    "label": "ownership/temp-closure-capture",
+    "source_sha256": "1a55109629e3fee2ac678dff7f142103cf32392179b07f15e8d2d65c88b5b37e",
+    "classification": "Exact"
+  },
+  {
+    "index": 54,
+    "label": "ownership/leased-capture",
+    "source_sha256": "8c7d50cdb22c0ed4f879b0f967f5d3d38812748b30eba949c7adc651d1713df9",
+    "classification": "Exact"
+  },
+  {
+    "index": 55,
+    "label": "ownership/drop-factory-container",
+    "source_sha256": "00b5520def3bc5a211d26c4c19333340724e9721b3a15de2c80aa98188802ea0",
+    "classification": "Exact"
+  },
+  {
+    "index": 56,
+    "label": "ownership/body-type",
+    "source_sha256": "acc46df9e5d718e40cd35d011bf28469d5d7bfb8b34ce46ae3c6052fe29e7489",
+    "classification": "Exact"
+  },
+  {
+    "index": 57,
+    "label": "ownership/body-divzero",
+    "source_sha256": "f2516758227a29a361fb2bf5cafc0c231a631e0616d5f33f7e636001a39a383c",
+    "classification": "Exact"
+  },
+  {
+    "index": 58,
+    "label": "ownership/callee-index-fails",
+    "source_sha256": "9e6194ca0efa14b8cf50248c03324c4e5b3c457f6cc305f4aa19616a0dffb1c2",
+    "classification": "Exact"
+  },
+  {
+    "index": 59,
+    "label": "noncallable/unit/0",
+    "source_sha256": "bdc8752ddcdbe2ab2d8281478c04b17c714e98aa6f12d72eb751366b342d83f3",
+    "classification": "Exact"
+  },
+  {
+    "index": 60,
+    "label": "noncallable/unit/1",
+    "source_sha256": "07be9769297478ca1120b75bf6164a7c2eabeaf5aba02ea0aa134d129aadd985",
+    "classification": "Exact"
+  },
+  {
+    "index": 61,
+    "label": "noncallable/bool/0",
+    "source_sha256": "b1ab784d20e1fd971d53b7cde983b7479a2fd326bc207db3e97c9fcdd1fdcdaa",
+    "classification": "Exact"
+  },
+  {
+    "index": 62,
+    "label": "noncallable/bool/1",
+    "source_sha256": "5b3b0783e0d93ddc0f0f9d830db13537f07b55de443f60a35633e76a855fb279",
+    "classification": "Exact"
+  },
+  {
+    "index": 63,
+    "label": "noncallable/integer/0",
+    "source_sha256": "ad0b51ab17bf225990b1cea85181b795cd6ee3ad0ad84209bbe702be6021e14b",
+    "classification": "Exact"
+  },
+  {
+    "index": 64,
+    "label": "noncallable/integer/1",
+    "source_sha256": "ee92381541195327ea2937701c54cd56388bd98119fc1f40a6c628edc3b2c250",
+    "classification": "Exact"
+  },
+  {
+    "index": 65,
+    "label": "noncallable/float/0",
+    "source_sha256": "bcd6b91151582b81fd132df90d46c6791656f6806f2050c6a465355e6e2bc49d",
+    "classification": "Exact"
+  },
+  {
+    "index": 66,
+    "label": "noncallable/float/1",
+    "source_sha256": "d10cb0da3d31f67385f742754197a2f62e800e24cb3e7e5bcbe499940dc4187b",
+    "classification": "Exact"
+  },
+  {
+    "index": 67,
+    "label": "noncallable/char/0",
+    "source_sha256": "0ab7be315154592269f7107fdb189a66bb4e6dfd860c39f6ce99a6d11ffe4ac1",
+    "classification": "Exact"
+  },
+  {
+    "index": 68,
+    "label": "noncallable/char/1",
+    "source_sha256": "36280b8868570abf276042d0a50ad5652a93eb88b4df711b7b0c592f206ceb0a",
+    "classification": "Exact"
+  },
+  {
+    "index": 69,
+    "label": "noncallable/string/0",
+    "source_sha256": "1494e76d1d218102dadafbb6fcc7b158bf6091c510b870a78d3065af2f8a1544",
+    "classification": "Exact"
+  },
+  {
+    "index": 70,
+    "label": "noncallable/string/1",
+    "source_sha256": "9eb825cd1867c3fa723cdfd8ab928a065af7a55d4a295e796f35de1042c99c64",
+    "classification": "Exact"
+  },
+  {
+    "index": 71,
+    "label": "noncallable/vec/0",
+    "source_sha256": "b60a85e9c2151ca453febea0cbf5ad9398ad1dc298fe31fae7062fa8eb239c18",
+    "classification": "Exact"
+  },
+  {
+    "index": 72,
+    "label": "noncallable/vec/1",
+    "source_sha256": "ae65699c6a9a0a4408b6274e984f0017123a5c546b0655b1e32c3f1af24f167f",
+    "classification": "Exact"
+  },
+  {
+    "index": 73,
+    "label": "noncallable/tuple/0",
+    "source_sha256": "f25f50978f783dbfca318d5750c69f321a96a5830a234cc62b52642b513adaf4",
+    "classification": "Exact"
+  },
+  {
+    "index": 74,
+    "label": "noncallable/tuple/1",
+    "source_sha256": "d0e17a381c2dcf6b1160c4173d46521b7f90559ccb0aa3cf94347b526dea9fec",
+    "classification": "Exact"
+  },
+  {
+    "index": 75,
+    "label": "noncallable/object/0",
+    "source_sha256": "2fc0d4736ceb355b1f05af5565235452753660f111e1da98096395df220fea26",
+    "classification": "Exact"
+  },
+  {
+    "index": 76,
+    "label": "noncallable/object/1",
+    "source_sha256": "37785bb7a76689242a6ac8f7db4bb0d4a89fd99e34c6e4d2a4f0ba5c7d9fe028",
+    "classification": "Exact"
+  },
+  {
+    "index": 77,
+    "label": "noncallable/option/0",
+    "source_sha256": "c48f53d63661cffae6c6200c8dcd057d7a9f4406766d10ac4c18462806fa007c",
+    "classification": "Exact"
+  },
+  {
+    "index": 78,
+    "label": "noncallable/option/1",
+    "source_sha256": "95d1a68577e149fda31f820916bf30369d0fe33c9cb6177c4d057d2cbd59cbce",
+    "classification": "Exact"
+  },
+  {
+    "index": 79,
+    "label": "noncallable/result/0",
+    "source_sha256": "61b03103db68c749a46b950520e50197b38ac57ce97b77b824082643b66f2103",
+    "classification": "Exact"
+  },
+  {
+    "index": 80,
+    "label": "noncallable/result/1",
+    "source_sha256": "b1f6a57680a0df7a3a0443b19960bf56cbb90ba97fca8dfc1ea1383ec6a4941c",
+    "classification": "Exact"
+  },
+  {
+    "index": 81,
+    "label": "noncallable/range/0",
+    "source_sha256": "be25532c9bdaf5b35d4199d436ac6b65528d4e84e88ceb82aae29ccf9df6c54c",
+    "classification": "Exact"
+  },
+  {
+    "index": 82,
+    "label": "noncallable/range/1",
+    "source_sha256": "3cb54a63d510f12da6150e48eba23545268610a06a58ab37653101244a75b97d",
+    "classification": "Exact"
+  },
+  {
+    "index": 83,
+    "label": "arity/chain/0",
+    "source_sha256": "ca02a5d3abeebf6035fc81ae1afaee413d336ffc46d94f1c3427106f59f9bafe",
+    "classification": "Exact"
+  },
+  {
+    "index": 84,
+    "label": "arity/chain/1",
+    "source_sha256": "5298a143bee2af22eeb0cf0518cd5ecdadec0414e5c0301eb4091d6cc430a464",
+    "classification": "Exact"
+  },
+  {
+    "index": 85,
+    "label": "arity/chain/2",
+    "source_sha256": "88e8ee1341a08266cdeb1542dc8d4ce67a94fc6d6282b94eab8e71703668c413",
+    "classification": "Exact"
+  },
+  {
+    "index": 86,
+    "label": "arity/chain/3",
+    "source_sha256": "7b2873c4967f42af69d92bab0c83b6021482936e74201459f40148fed13c7363",
+    "classification": "Exact"
+  },
+  {
+    "index": 87,
+    "label": "arity/block/0",
+    "source_sha256": "dd899babd12208594db07458b4853d494cefb0008d04b72128ad18b3c5945b30",
+    "classification": "Exact"
+  },
+  {
+    "index": 88,
+    "label": "arity/block/1",
+    "source_sha256": "b7f32f299e372a74c90999c3b2831aaf9700313f6e612cf615c6ee4a1bd0b0d3",
+    "classification": "Exact"
+  },
+  {
+    "index": 89,
+    "label": "arity/block/2",
+    "source_sha256": "7d47bd09cb050768be66e576fe0acdf6015663c5c625ae13eb2d6b600cc7ec28",
+    "classification": "Exact"
+  },
+  {
+    "index": 90,
+    "label": "arity/block/3",
+    "source_sha256": "42dccfedf7a999c2843e1cb828539aa7dc174ae46cd9967175cd8a2873a47a21",
+    "classification": "Exact"
+  },
+  {
+    "index": 91,
+    "label": "arity/closure/0",
+    "source_sha256": "d37f66440c6e964de48360a4be6cc1d9ff2c0c4a7df1696cd91384445dd237d5",
+    "classification": "Exact"
+  },
+  {
+    "index": 92,
+    "label": "arity/closure/1",
+    "source_sha256": "b23aa40ccedb84c15d3025588d8d299ac330cce3a6ba2861e3b045b4d65fdc60",
+    "classification": "Exact"
+  },
+  {
+    "index": 93,
+    "label": "arity/closure/2",
+    "source_sha256": "490787ba4b4d66038c0f2fe2618cf6dd70ddd5a43af06893457708e9cdd49cd1",
+    "classification": "Exact"
+  },
+  {
+    "index": 94,
+    "label": "arity/closure/3",
+    "source_sha256": "a43f1edf9b4ee0357256c1c93967d53e8257f32ae1a5f98cbedd1db6eb83e8ff",
+    "classification": "Exact"
+  },
+  {
+    "index": 95,
+    "label": "frames/chain",
+    "source_sha256": "1da88ec87ae9b06bd6e7aecabc034a8a56e0443360931e73e6e9ff5467cc38ef",
+    "classification": "Exact"
+  },
+  {
+    "index": 96,
+    "label": "control/direct",
+    "source_sha256": "334e9a79cce8ecc48b9f97eea8d21201aafe03a48e4965c8db0dc5c946679e0e",
+    "classification": "Exact"
+  },
+  {
+    "index": 97,
+    "label": "control/var",
+    "source_sha256": "50faf702fdff8895d57c7fd25917f11f1ee13c06fdaa4e0c0b76f2b9fa8bebfb",
+    "classification": "Exact"
+  },
+  {
+    "index": 98,
+    "label": "deferred/constructor",
+    "source_sha256": "7dab6549e40ae218c6cb12cdf2286f50dcc175f7df485cda60b28347cd7691c0",
+    "classification": "Retain-refusal",
+    "refusal": "UnresolvedFunction",
+    "location": {
+      "end": 29,
+      "source": 0,
+      "start": 28
+    }
+  },
+  {
+    "index": 99,
+    "label": "deferred/native-value",
+    "source_sha256": "0c8957fb9038be55acba792ffa1319834194d5e270ee7b929a30d02504bef7fe",
+    "classification": "Retain-refusal",
+    "refusal": "Native",
+    "location": {
+      "end": 29,
+      "source": 0,
+      "start": 16
+    }
+  }
+]

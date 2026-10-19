@@ -103,6 +103,61 @@ fn idle(executor: &Executor, store: &Store) {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "C16c opt-in minimal-Context expression-call ownership")]
+fn expression_calls_order_failures_and_reuse() {
+	for (source, expected) in [
+		(
+			"fn inc(x){x+1}fn make(){inc}pub fn main(){make()(6)}",
+			Ok(7),
+		),
+		(
+			"fn inc(x){x+1}fn dec(x){x-1}pub fn main(){let f=inc;(f)({f=dec;7})}",
+			Ok(6),
+		),
+		(
+			"fn inc(x){x+1}fn dec(x){x-1}pub fn main(){let f=inc;({f})({f=dec;7})}",
+			Ok(8),
+		),
+		("pub fn main(){let n=7;let fs=[||n];fs[0]()}", Ok(7)),
+		(
+			"fn make(v){move||v[0]}pub fn main(){let v=[7];let n=make(v)();v[0]=9;n}",
+			Err(ErrorKind::AccessConflict),
+		),
+		(
+			"fn inc(x){x+1}fn make(){inc}pub fn main(){make()(1/0)}",
+			Err(ErrorKind::DivisionByZero),
+		),
+		(
+			"fn inc(x){x+1}fn make(){inc}pub fn main(){make()()}",
+			Err(ErrorKind::ArgumentCount),
+		),
+		("pub fn main(){({7})([1])}", Err(ErrorKind::Type)),
+	] {
+		let program = compile(source);
+		let main = program.function(Hash::type_hash(["main"])).unwrap();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		for _ in 0..2 {
+			match executor.invoke(&program, &mut store, main, &[], 1000) {
+				Ok(root) => {
+					assert_eq!(
+						store.root_scalar(&root).unwrap(),
+						expected.ok().map(Scalar::I64)
+					);
+					store.root_release(root).unwrap();
+				}
+				Err(failure) => {
+					assert_eq!(Some(failure.error.kind), expected.err());
+					assert!(failure.error.location.is_some());
+					assert!(failure.cleanup_error.is_none());
+				}
+			}
+			idle(&executor, &store);
+		}
+	}
+}
+
+#[test]
 fn malformed_handles_refuse_all_pattern_access_primitives() {
 	let mut store = Store::new(Limits::default()).unwrap();
 	let bad = Value::Heap(Handle {

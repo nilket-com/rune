@@ -1932,6 +1932,37 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	}
 
 	#[inline(never)]
+	fn call_expression(
+		&mut self,
+		call: &hir::ExprCall<'_>,
+		mut callee: hir::ExprId,
+		out: u32,
+		span: Span,
+	) -> Result<()> {
+		// Parentheses preserve stock's late read of a plain variable. Other
+		// expression callees own a snapshot before argument evaluation.
+		while let hir::ExprKind::Group(inner) = self.exprs.get(callee).kind {
+			callee = inner;
+		}
+		let value = match self.exprs.get(callee).kind {
+			hir::ExprKind::Variable(name) => self.variable(name, span)?,
+			_ => self.expr(callee)?,
+		};
+		let args = self.operands(call.args)?;
+		let (args_start, args_len) = self.function.arguments(&args)?;
+		self.emit(
+			Op::CallValue {
+				out,
+				value,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+		Ok(())
+	}
+
+	#[inline(never)]
 	fn call_non_variant(&mut self, call: &hir::ExprCall<'_>, out: u32, span: Span) -> Result<()> {
 		if let hir::Call::Var { name } = call.call {
 			// The callee token is read when the call executes, after the arguments.
@@ -1948,6 +1979,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				span,
 			)?;
 			return Ok(());
+		}
+
+		if let hir::Call::Expr { expr } = call.call {
+			return self.call_expression(call, expr, out, span);
 		}
 
 		if let hir::Call::Associated {
@@ -2002,11 +2037,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 		let hash = match call.call {
 			hir::Call::Meta { hash } => hash,
-			hir::Call::Expr { .. } => return Err(self.refused(span, Refusal::Call)),
 			hir::Call::ConstFn { .. } => return Err(self.refused(span, Refusal::ConstCall)),
 			// These arms already returned above; retain an explicit disposition
 			// so additions to Call cannot silently inherit a fallback.
-			hir::Call::Var { .. } | hir::Call::Associated { .. } => {
+			hir::Call::Var { .. } | hir::Call::Expr { .. } | hir::Call::Associated { .. } => {
 				return Err(Error::new(ErrorKind::InvalidCode, "call disposition"));
 			}
 		};

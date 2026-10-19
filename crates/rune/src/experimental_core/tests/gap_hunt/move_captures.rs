@@ -226,9 +226,9 @@ fn run_contract_cases(engine: &str, function_copy: bool) {
 	if function_copy {
 		assert_eq!(counts.get("Intentional"), Some(&8));
 	} else {
-		assert_eq!(counts.get("exact"), Some(&52));
-		assert_eq!(counts.get("inherited-refusal"), Some(&11));
-		assert_eq!(counts.get("policy-presentation"), Some(&8));
+		assert_eq!(counts.get("exact"), Some(&60));
+		assert_eq!(counts.get("inherited-refusal"), Some(&1));
+		assert_eq!(counts.get("policy-presentation"), Some(&10));
 		assert_eq!(counts.values().sum::<usize>(), 71);
 	}
 	assert_eq!(cases.len(), frozen.len());
