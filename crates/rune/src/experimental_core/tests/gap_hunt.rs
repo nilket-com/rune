@@ -1674,3 +1674,5 @@ mod byte_strings;
 mod type_values;
 
 mod option_methods;
+
+mod object_methods;

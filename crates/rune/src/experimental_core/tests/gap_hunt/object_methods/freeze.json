@@ -1,0 +1,221 @@
+{
+  "rows": 191,
+  "production_changes": false,
+  "files": {
+    "cases.json": "4a65d67fc1f5bd408b0c182cb6effb1c6eb67b833f5ecc998be2bb2589be0559",
+    "stock.json": "5287d76f58f6900239650fb80a2d857a6b6c0ee45bbe3d7fef39e24e830bb0a6",
+    "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
+  },
+  "stock_binary": {
+    "path": "/home/me/work/.reviews/0185-c17b-oracle2/rune-tests",
+    "sha256": "8383f975deae7407efc6cb6281aab02a0be452d5269bfafeda2f2455cae6d965",
+    "pins_sha256": "48e9231196f0f15f64f586ad6c1a1881cc80bbf195ac13bf8395e3d634bdf9d9"
+  },
+  "stock_summary": {
+    "rows": 191,
+    "statuses": {
+      "value": 132,
+      "error": 59
+    },
+    "error_classes": {
+      "Panic": 4,
+      "AccessConflict": 7,
+      "Type": 39,
+      "IndexOutOfBounds": 1,
+      "ArgumentCount": 8
+    },
+    "replay": false,
+    "logical_traces": 59,
+    "cpu_list": "0-7,10-31"
+  },
+  "P1": {
+    "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",
+    "rows": [
+      {
+        "index": 114,
+        "label": "key/get-int",
+        "source_sha256": "02f49ca6b4da4ba088b0ab36aa1d15193645af7ac9d4bb564f38105aa8a80099"
+      },
+      {
+        "index": 115,
+        "label": "key/get-char",
+        "source_sha256": "cf8824d2531bdf5a53122c94c5042abc6354ccf028d5ea5ae06c03f859db0dbf"
+      },
+      {
+        "index": 116,
+        "label": "key/get-vec",
+        "source_sha256": "58560311f8c421b13298d0024dc2e2f03c5639dad373de9a8e5489713e04c3f8"
+      },
+      {
+        "index": 117,
+        "label": "key/get-unit",
+        "source_sha256": "00c1e7da975f7ca7d77f886a20ca2678082f99025d1a73ca2dd588885dc4914c"
+      },
+      {
+        "index": 118,
+        "label": "key/get-option",
+        "source_sha256": "3fd578a9d9781857b0e7594d77b30133213d53093bb3b82911d6fe748fdf1a94"
+      },
+      {
+        "index": 119,
+        "label": "key/contains-int",
+        "source_sha256": "3140ee81089bad70d8884b03db7faf238a97b622a3445f2e35dccace10a48b9d"
+      },
+      {
+        "index": 120,
+        "label": "key/remove-bool",
+        "source_sha256": "311532224ac148ddebc59b73697c59ecf2493c947dc5b98f675d431df54eb5f7"
+      },
+      {
+        "index": 121,
+        "label": "key/insert-int",
+        "source_sha256": "918bf42391e2334398e7c2ac4974726d45ba7fa60f27c5fc0e18519e26e02b06"
+      },
+      {
+        "index": 122,
+        "label": "key/insert-float",
+        "source_sha256": "faab1b85f4e22ccfc74f1625cfcfff8b6d064619417232a46c640d104bc456d0"
+      },
+      {
+        "index": 123,
+        "label": "key/insert-char",
+        "source_sha256": "8a0c8ef793ae43563bb3710bd9265254a6936272f650d487e5a339bc7cd2ad6c"
+      },
+      {
+        "index": 124,
+        "label": "key/insert-struct",
+        "source_sha256": "bcfb1cc2af4e7f5b9f52303f669cadfd866e6f5e2f94574c00c99e9a901faef8"
+      },
+      {
+        "index": 125,
+        "label": "key/get-effects",
+        "source_sha256": "ee1e2ae69ac627bdfdfee60d56acc8773c7b8fa6f12521c9264bfbc5eaffbd86"
+      },
+      {
+        "index": 126,
+        "label": "key/insert-effects",
+        "source_sha256": "29eb2154126152d580cfc551c47c9c6bbef17888d9171d857fde9e36102c75ce"
+      },
+      {
+        "index": 127,
+        "label": "key/chain-get",
+        "source_sha256": "f9bb19389e5bec8384ef23956e820ba6df7ac436f4a9dba03f05e59f2f62aebc"
+      },
+      {
+        "index": 128,
+        "label": "key/chain-insert",
+        "source_sha256": "af6c1097320128d7bed70b366ef52e36232a50aab9df49ace6d85a3899e56ab6"
+      },
+      {
+        "index": 129,
+        "label": "key/closure",
+        "source_sha256": "552b3e0b7b389ebde744d534b6383b18b852c78e20d1049bfbc7d9d587f3cd35"
+      },
+      {
+        "index": 130,
+        "label": "key/loop-mixed",
+        "source_sha256": "120b5d4d8687baa5a029eddd780af5a71fbcd81199f246d8eb8476455f3212ca"
+      },
+      {
+        "index": 132,
+        "label": "receiver/vec-get-str",
+        "source_sha256": "7ea4a1a7f2407b00234c19d8dee860df923bfa7f896b29a43d826a535d790059"
+      },
+      {
+        "index": 134,
+        "label": "receiver/string-get",
+        "source_sha256": "364723bb270803ecc9b198d1fc5d970769fd0dcc372f059c04a4a5a807207d44"
+      },
+      {
+        "index": 139,
+        "label": "receiver/vec-contains_key",
+        "source_sha256": "bfc16f51c320aa21fff13289c992b178c95d87ed9ac64bee958e62e548a37351"
+      },
+      {
+        "index": 140,
+        "label": "receiver/string-insert",
+        "source_sha256": "f95d1f14c1a3c5986d0c38825b4768d8f79f3bc27349398887a6aae978050e10"
+      },
+      {
+        "index": 141,
+        "label": "receiver/string-remove",
+        "source_sha256": "daa6630d84fb013e92b2b8a8726b19af0592b23609b006d082742ab512e495ba"
+      },
+      {
+        "index": 144,
+        "label": "receiver/int-get",
+        "source_sha256": "1ade2c797a1024fe00d36123718cbe027280ad25b68d0be5639387d0fd9827ea"
+      },
+      {
+        "index": 145,
+        "label": "receiver/option-get",
+        "source_sha256": "87fd7bd0c96967502b85a1f56fdea34ac8f84482f1e68cdf4e4d63f4f3106e1f"
+      },
+      {
+        "index": 146,
+        "label": "receiver/option-insert",
+        "source_sha256": "a8d732f7e5a2c24f1648e021082c0fcad677214c6f001974438f7c0b65bfabe6"
+      },
+      {
+        "index": 147,
+        "label": "receiver/result-contains_key",
+        "source_sha256": "68c5fd1e72495fbea22367f63d9bf6a45fc5baba0b533e13126149519ffd027d"
+      },
+      {
+        "index": 151,
+        "label": "receiver/range-contains_key",
+        "source_sha256": "a91a2774299fc63e5cf3014452222c8fc608b71acb66700cbcc371fa3dc2f24c"
+      },
+      {
+        "index": 152,
+        "label": "receiver/iter-get",
+        "source_sha256": "f615167de602e407e8d7e4a059193a8354c543afdd681126c87c7a64561d86e1"
+      },
+      {
+        "index": 153,
+        "label": "receiver/fn-value",
+        "source_sha256": "67d0cd3ca0dca41aa73a8cda38f691ac55dee81876289ad6f9f8aa9ae522cb11"
+      },
+      {
+        "index": 154,
+        "label": "receiver/type-value",
+        "source_sha256": "06651951d9dd0b898cb3e71569a6623f4d56557778ff48dc33bdec1e03b49bdb"
+      },
+      {
+        "index": 155,
+        "label": "receiver/unit",
+        "source_sha256": "66974d26a3660405de0b23e47e3a50a32180428c161880d546c31cabeb5addac"
+      },
+      {
+        "index": 156,
+        "label": "receiver/mixed-loop-get",
+        "source_sha256": "e9748dd23b0f234141c6c0f3a2bf8b2ab64b8723fb59189ea36819c3c1bce961"
+      },
+      {
+        "index": 158,
+        "label": "receiver/fn-param",
+        "source_sha256": "e99e48af73e037e60b1678d09b3e3f4f092b782f001b8889823861533ca3a725"
+      },
+      {
+        "index": 160,
+        "label": "receiver/args-effects",
+        "source_sha256": "4123707ad202d9aab056a96ae4974876ee7210559a5833ae5c88e5bc6963d39a"
+      },
+      {
+        "index": 177,
+        "label": "compile/path-wrong-type",
+        "source_sha256": "d4dcbc69195e470808091fd123f972c6d6c049bacbdf8fd0e0ae1b9bd7ad0259"
+      },
+      {
+        "index": 179,
+        "label": "compile/method-as-field",
+        "source_sha256": "1fadabbd6fa409904154ac121d7968d2c2a0f4c59adf4f7aced388e3887c7fe5"
+      },
+      {
+        "index": 188,
+        "label": "compile/turbofish",
+        "source_sha256": "d05e4cb4d4cbeace34a2286c545cc9c38060ebb3606457f0f970cc023a38fc68"
+      }
+    ]
+  }
+}
