@@ -1,0 +1,803 @@
+{
+  "tuple-rest/short": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 26,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "tuple-rest/non-tuple": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 24,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "literal/signed-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 19,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "literal/negative-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 20,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "literal/unsigned-type": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 22,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "literal/bool-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 22,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "literal/unit-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 20,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "literal/char-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 21,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "literal/string-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 21,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/tuple-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 23,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/vec-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 23,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/some-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 25,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/none-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 22,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/ok-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 23,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/err-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 24,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/result-option-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 34,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/nested-literal-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 39,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/object": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 22,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/object-missing": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 25,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "local/object-literal-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 26,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "nominal/struct-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 102,
+          "source": 0,
+          "start": 93
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:94"
+  },
+  "nominal/enum-unit-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 97,
+          "source": 0,
+          "start": 93
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:94"
+  },
+  "nominal/enum-tuple-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 100,
+          "source": 0,
+          "start": 93
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:94"
+  },
+  "nominal/enum-object-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 103,
+          "source": 0,
+          "start": 93
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:94"
+  },
+  "parameter/tuple-short": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 10,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 37,
+          "source": 0,
+          "start": 30
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:31"
+  },
+  "parameter/tuple-type": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 10,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 38,
+          "source": 0,
+          "start": 30
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:31"
+  },
+  "parameter/vec-short": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 10,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 36,
+          "source": 0,
+          "start": 30
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:31"
+  },
+  "parameter/vec-type": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 10,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 38,
+          "source": 0,
+          "start": 30
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:31"
+  },
+  "parameter/some-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 12,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 37,
+          "source": 0,
+          "start": 30
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:31"
+  },
+  "parameter/ok-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 10,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 37,
+          "source": 0,
+          "start": 28
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:29"
+  },
+  "parameter/object-missing": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 12,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 39,
+          "source": 0,
+          "start": 30
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:31"
+  },
+  "parameter/literal-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 6,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 28,
+          "source": 0,
+          "start": 24
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:25"
+  },
+  "parameter/bool-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 9,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 35,
+          "source": 0,
+          "start": 27
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:28"
+  },
+  "parameter/unit-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 7,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 32,
+          "source": 0,
+          "start": 25
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:26"
+  },
+  "parameter-nominal/struct-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 87,
+          "source": 0,
+          "start": 80
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 118,
+          "source": 0,
+          "start": 105
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:81\n  called from c8.rn:1:106"
+  },
+  "parameter-nominal/enum-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 87,
+          "source": 0,
+          "start": 80
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 115,
+          "source": 0,
+          "start": 105
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:81\n  called from c8.rn:1:106"
+  },
+  "calling/arity-zero": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 33,
+          "source": 0,
+          "start": 30
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Wrong number of arguments 0, expected 1\n  at c8.rn:1:31"
+  },
+  "calling/arity-two": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 40,
+          "source": 0,
+          "start": 30
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Wrong number of arguments 2, expected 1\n  at c8.rn:1:31"
+  },
+  "calling/panic-body": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 25,
+          "source": 0,
+          "start": 12
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 50,
+          "source": 0,
+          "start": 40
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: body\n  at c8.rn:1:13\n  called from c8.rn:1:41"
+  },
+  "effects/rhs-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 23,
+          "source": 0,
+          "start": 18
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:19"
+  },
+  "effects/parameter-first-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 10,
+          "source": 0,
+          "start": 5
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 108,
+          "source": 0,
+          "start": 58
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:6\n  called from c8.rn:1:59"
+  },
+  "effects/parameter-second-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 16,
+          "source": 0,
+          "start": 11
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 117,
+          "source": 0,
+          "start": 64
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:12\n  called from c8.rn:1:65"
+  },
+  "effects/nested-call-chain": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 20,
+          "source": 0,
+          "start": 9
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 54,
+          "source": 0,
+          "start": 36
+        },
+        "role": "Caller"
+      },
+      {
+        "location": {
+          "end": 74,
+          "source": 0,
+          "start": 66
+        },
+        "role": "Caller"
+      },
+      {
+        "location": {
+          "end": 96,
+          "source": 0,
+          "start": 89
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:10\n  called from c8.rn:1:37\n  called from c8.rn:1:67\n  called from c8.rn:1:90"
+  },
+  "ownership/local-moved": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 64,
+          "source": 0,
+          "start": 60
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Cannot read the value: it has been moved\n  at c8.rn:1:61"
+  },
+  "ownership/local-early-miss": {
+    "context": [],
+    "frames": [
+      {
+        "location": {
+          "end": 36,
+          "source": 0,
+          "start": 28
+        },
+        "role": "Origin"
+      }
+    ],
+    "rendered": "Panicked: pattern did not match\n  at c8.rn:1:29"
+  },
+  "ownership/lease-write": {
+    "context": [
+      {
+        "arg": 0,
+        "tag": "BadArgument"
+      }
+    ],
+    "frames": [
+      {
+        "location": {
+          "end": 17,
+          "source": 0,
+          "start": 11
+        },
+        "role": "Origin"
+      },
+      {
+        "location": {
+          "end": 63,
+          "source": 0,
+          "start": 56
+        },
+        "role": "Caller"
+      }
+    ],
+    "rendered": "Cannot write the receiver: it is being read\n  at c8.rn:1:12\n  called from c8.rn:1:57"
+  }
+}

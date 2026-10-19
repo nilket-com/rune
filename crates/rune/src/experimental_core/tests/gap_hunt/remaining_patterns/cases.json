@@ -1,0 +1,824 @@
+[
+  {
+    "label": "tuple-rest/one",
+    "source": "pub fn main(){let (a,..)=(7,);a}",
+    "policy": "Exact",
+    "source_sha256": "74f62eb6190b724ef5aac1bf030a78b991e81ab41cd871bbe76991a0d4aa47b5"
+  },
+  {
+    "label": "tuple-rest/extra",
+    "source": "pub fn main(){let (a,..)=(7,8,9);a}",
+    "policy": "Exact",
+    "source_sha256": "6e4024bc73b70e6cd2d24122f936c05b5e716e2dec7d7129c11ef4b50152cec1"
+  },
+  {
+    "label": "tuple-rest/two",
+    "source": "pub fn main(){let (a,b,..)=(7,8,9);a+b}",
+    "policy": "Exact",
+    "source_sha256": "c4987f6a5d782f8958b6ed4919f4d568756be2cbb1422ba54db7c4f287142b3e"
+  },
+  {
+    "label": "tuple-rest/all",
+    "source": "pub fn main(){let (..)=(7,8);7}",
+    "policy": "Exact",
+    "source_sha256": "1a0542f6f9f1381d2c7ed0f7e2b8ee8d6fb9c4b99338f3fc68ae08469fc7333f"
+  },
+  {
+    "label": "tuple-rest/empty",
+    "source": "pub fn main(){let (..)=();7}",
+    "policy": "Exact",
+    "source_sha256": "35f9f67208a0242412c5df3b9fb9305acb537dec14cea855f16d9b99f944ba6f"
+  },
+  {
+    "label": "tuple-rest/short",
+    "source": "pub fn main(){let (a,b,..)=(7,);a+b}",
+    "policy": "Exact",
+    "source_sha256": "98af8caf32c9d52241752dd18fb74e77d5e02be608c75e5dbb340593dfd6425a"
+  },
+  {
+    "label": "tuple-rest/non-tuple",
+    "source": "pub fn main(){let (a,..)=[7,8];a}",
+    "policy": "Exact",
+    "source_sha256": "2a3fd46a9aae0b935e9a0ff5202e57d181df1a3920f604f9af79c48421f92a70"
+  },
+  {
+    "label": "tuple-rest/nested",
+    "source": "pub fn main(){let ((a,..),b,..)=((7,8),2,9);a+b}",
+    "policy": "Exact",
+    "source_sha256": "72ae49fce61daad44d767b215b320436a6383b7f9e95e9905e530f46d63ea937"
+  },
+  {
+    "label": "tuple-rest/nested-vec",
+    "source": "pub fn main(){let ([a,..],..)=([7,8],9);a}",
+    "policy": "Exact",
+    "source_sha256": "6780ced1530ff43688ead14a0e90e47c17a498a9088de7d04f4e54c88a9f0518"
+  },
+  {
+    "label": "tuple-rest/heap",
+    "source": "pub fn main(){let (a,..)=([7],[8]);a[0]}",
+    "policy": "Exact",
+    "source_sha256": "52e8dde11b21b8b31b4db0628f679cf3813da55aac1d0c420c61c792791ae507"
+  },
+  {
+    "label": "tuple-rest/empty-prefix",
+    "source": "pub fn main(){let (..)=((),);7}",
+    "policy": "Exact",
+    "source_sha256": "038966f683681632cac9c4662f6b232277f4db3c0bbc9227bffed7c01b03da33"
+  },
+  {
+    "label": "literal/signed",
+    "source": "pub fn main(){let 7=7;7}",
+    "policy": "Exact",
+    "source_sha256": "1497a486dd4dd2221b9d3f1e1ab1ee38e3d693a159ff913d65facbeb34694fce"
+  },
+  {
+    "label": "literal/signed-miss",
+    "source": "pub fn main(){let 7=8;7}",
+    "policy": "Exact",
+    "source_sha256": "edd308c8076bcd1ee42beed06ca755f56546d0518d53c9114f9030cdfd370b12"
+  },
+  {
+    "label": "literal/negative",
+    "source": "pub fn main(){let -7=-7;7}",
+    "policy": "Exact",
+    "source_sha256": "e21d2de986e65ab85217d36e73d983511d6b9df7e829546bae71371039992375"
+  },
+  {
+    "label": "literal/negative-miss",
+    "source": "pub fn main(){let -7=7;7}",
+    "policy": "Exact",
+    "source_sha256": "37b79c83312407e170fccf171ec909244610548b0fad02fd01cb4aeb1063a714"
+  },
+  {
+    "label": "literal/unsigned",
+    "source": "pub fn main(){let 7u64=7u64;7}",
+    "policy": "Exact",
+    "source_sha256": "31565719c31b6d1c0c64d5a1a4a91afdcf75c956d9bf44ef2993faf1521c6200"
+  },
+  {
+    "label": "literal/unsigned-type",
+    "source": "pub fn main(){let 7u64=7;7}",
+    "policy": "Exact",
+    "source_sha256": "18c8e848ab483cdc879daafba3a87c79059420279963782d767d5bd58ab8da9d"
+  },
+  {
+    "label": "literal/bool",
+    "source": "pub fn main(){let true=true;7}",
+    "policy": "Exact",
+    "source_sha256": "c6af166028c4bcaea3668722901865a93da8993a41af52932ef6456867f590fd"
+  },
+  {
+    "label": "literal/bool-miss",
+    "source": "pub fn main(){let true=false;7}",
+    "policy": "Exact",
+    "source_sha256": "4f186cb07a4607d438513fd933b9e6e7bdf0a16ed35a05fa08dab9a9cbdfa884"
+  },
+  {
+    "label": "literal/unit",
+    "source": "pub fn main(){let ()=();7}",
+    "policy": "Exact",
+    "source_sha256": "898e918304e34eb803acbd7aa1aefd9b76e3593b3b85eac646f9fef8d2b301d1"
+  },
+  {
+    "label": "literal/unit-miss",
+    "source": "pub fn main(){let ()=(7,);7}",
+    "policy": "Exact",
+    "source_sha256": "183dd1b880881f26e6e8213d6e54de10eb7358688a45d791ef4a27013e9a69c8"
+  },
+  {
+    "label": "literal/char",
+    "source": "pub fn main(){let 'a'='a';7}",
+    "policy": "Exact",
+    "source_sha256": "3f489d301a8a956a5a65e3f49a4730de38b5e37476457cd7ae5e311412e29ace"
+  },
+  {
+    "label": "literal/char-miss",
+    "source": "pub fn main(){let 'a'='b';7}",
+    "policy": "Exact",
+    "source_sha256": "bae4efdfe368b26db2b5f981b494293ae73a9ed452cbc6c79519adb3447e0477"
+  },
+  {
+    "label": "literal/string",
+    "source": "pub fn main(){let \"a\"=\"a\";7}",
+    "policy": "Exact",
+    "source_sha256": "d060f9326cbecec09e7177e798b58faf4299d3b8c1a1b381758ae00156529c4c"
+  },
+  {
+    "label": "literal/string-miss",
+    "source": "pub fn main(){let \"a\"=\"b\";7}",
+    "policy": "Exact",
+    "source_sha256": "dbde65102f5f43f7789ee75fcb5c2eaf01f2eaf4efc41afbc98255f01724ad8c"
+  },
+  {
+    "label": "literal/float",
+    "source": "pub fn main(){let 1.5=1.5;7}",
+    "policy": "Exact",
+    "source_sha256": "261990779dcc8ca3a46c430b22cdee96d91492a139819e5f2f7960141b1bf76d"
+  },
+  {
+    "label": "literal/float-miss",
+    "source": "pub fn main(){let 1.5=2.5;7}",
+    "policy": "Exact",
+    "source_sha256": "7f04fa2e00f2990d0081fc81c3508db3eaa0d30ef41e9298a01e4f2c05a5b699"
+  },
+  {
+    "label": "local/tuple",
+    "source": "pub fn main(){let (x,5)=(7,5);x}",
+    "policy": "Exact",
+    "source_sha256": "391d953d07199a161305401ab9b2d452b55e0c619e74cffbacf6474ba498b738"
+  },
+  {
+    "label": "local/tuple-miss",
+    "source": "pub fn main(){let (x,5)=(7,6);x}",
+    "policy": "Exact",
+    "source_sha256": "ec3c15e6208c525750bb5b0c71d87a2c7f2e8a4b25524765b260ad759b0343ba"
+  },
+  {
+    "label": "local/vec",
+    "source": "pub fn main(){let [x,5]=[7,5];x}",
+    "policy": "Exact",
+    "source_sha256": "26c37098fa1fef314a1e755b158969c40952174534665a2398a9a45fe16a1a00"
+  },
+  {
+    "label": "local/vec-miss",
+    "source": "pub fn main(){let [x,5]=[7,6];x}",
+    "policy": "Exact",
+    "source_sha256": "fb66ad551f11c675cad5cd4836cd265a6af833c5daca2b3c41d37bbe093f5a65"
+  },
+  {
+    "label": "local/vec-rest",
+    "source": "pub fn main(){let [x,5,..]=[7,5,9];x}",
+    "policy": "Exact",
+    "source_sha256": "dc0e0b810ddcedf73290eae0f4c4b190a726903aa8f0ba8854991387fdd3191f"
+  },
+  {
+    "label": "local/some",
+    "source": "pub fn main(){let Some(x)=Some(7);x}",
+    "policy": "Exact",
+    "source_sha256": "64f1492a0cb7fa461bffa0a5f1423147d90f4bdaa46281d23428d10d95a28996"
+  },
+  {
+    "label": "local/some-miss",
+    "source": "pub fn main(){let Some(x)=None;x}",
+    "policy": "Exact",
+    "source_sha256": "374f6b10b48364da374da5fd7e84eec9eec6510a6392733ace878ab5a0f2bd2c"
+  },
+  {
+    "label": "local/none",
+    "source": "pub fn main(){let None=None;7}",
+    "policy": "Exact",
+    "source_sha256": "cdfce376fd0eb79f82641a138195bfd2410cd415b76d8bdb2b020bf8b8e8e00b"
+  },
+  {
+    "label": "local/none-miss",
+    "source": "pub fn main(){let None=Some(7);7}",
+    "policy": "Exact",
+    "source_sha256": "e821cf912d527230a7ac70f533a1f029ef6d9974142b9ca1ef54f5bd47618c25"
+  },
+  {
+    "label": "local/ok",
+    "source": "pub fn main(){let Ok(x)=Ok(7);x}",
+    "policy": "Exact",
+    "source_sha256": "33a65dbffe4416d9470f560b285c9ed098568f234783147a9032e205c0ceed15"
+  },
+  {
+    "label": "local/ok-miss",
+    "source": "pub fn main(){let Ok(x)=Err(7);x}",
+    "policy": "Exact",
+    "source_sha256": "0b62e107018c95f7d3bd5a8769815e3ff6a8a709139835f3ea779812e6e9c48e"
+  },
+  {
+    "label": "local/err",
+    "source": "pub fn main(){let Err(x)=Err(7);x}",
+    "policy": "Exact",
+    "source_sha256": "e6734765cd7fc886b8a46bf06b65da8ce05e9cebafc7f59d6535c2876c47a7f7"
+  },
+  {
+    "label": "local/err-miss",
+    "source": "pub fn main(){let Err(x)=Ok(7);x}",
+    "policy": "Exact",
+    "source_sha256": "e837fc7a9d7e9c18e02c48c638e6fbcd60bbe1950cffd223aba190f0bb1c8dc0"
+  },
+  {
+    "label": "local/option-nested",
+    "source": "pub fn main(){let Some((_,x))=Some(([1],7));x}",
+    "policy": "Exact",
+    "source_sha256": "1050a78921190c4ca16d7def1d1db7dc762deb8c2c6f42cd852dec25068d1324"
+  },
+  {
+    "label": "local/result-option",
+    "source": "pub fn main(){let Ok(Some([x,..]))=Ok(Some([7,8]));x}",
+    "policy": "Exact",
+    "source_sha256": "299b7aba8c98211cd1e4040b3c867a7a604e660f847b249c25625901654d3d39"
+  },
+  {
+    "label": "local/result-option-miss",
+    "source": "pub fn main(){let Ok(Some([x,..]))=Ok(None);x}",
+    "policy": "Exact",
+    "source_sha256": "b24128dee2a606fc8df14d466190c5aa6bb72c0bbd728ae5feba6b2e0f3959b4"
+  },
+  {
+    "label": "local/nested-literal",
+    "source": "pub fn main(){let (Some([x,5,..]),true)=(Some([7,5,9]),true);x}",
+    "policy": "Exact",
+    "source_sha256": "84c81a5116ec43810b6a4915130836b511e65ffcad738419ce30ab73b4150e1f"
+  },
+  {
+    "label": "local/nested-literal-miss",
+    "source": "pub fn main(){let (Some([x,5,..]),true)=(Some([7,6,9]),true);x}",
+    "policy": "Exact",
+    "source_sha256": "88bbcf0b119e08e43cbacabcb9aabbb5ac72ea815fd660c68f14f7fe4e53a7dd"
+  },
+  {
+    "label": "local/object",
+    "source": "pub fn main(){let #{x}=#{x:7,y:8};x}",
+    "policy": "Exact",
+    "source_sha256": "5833c7aad9353ee93856d067ae4b9ed399eca4997764b75509d100c8f47ef760"
+  },
+  {
+    "label": "local/object-rest",
+    "source": "pub fn main(){let #{x,..}=#{x:7,y:8};x}",
+    "policy": "Exact",
+    "source_sha256": "82c33e17de718cd243d5bf7b71cc05424945d5f25aad4b14b8797ae1fef1739a"
+  },
+  {
+    "label": "local/object-missing",
+    "source": "pub fn main(){let #{x,..}=#{y:8};x}",
+    "policy": "Exact",
+    "source_sha256": "20d8b075c6041546b94362c62fd8aa3f75747778f6453eb5c75df7bacf1e87ae"
+  },
+  {
+    "label": "local/object-literal",
+    "source": "pub fn main(){let #{x:7,y}=#{x:7,y:8};y}",
+    "policy": "Exact",
+    "source_sha256": "70e4c978e6cf0f4334cabf184b1946c0e3ead948e6d572dba8b02949e571f80c"
+  },
+  {
+    "label": "local/object-literal-miss",
+    "source": "pub fn main(){let #{x:7,y}=#{x:9,y:8};y}",
+    "policy": "Exact",
+    "source_sha256": "25e86fddc843fb52b10fee162e2baac4d010bb45bd2d8e4b2163c004b617eece"
+  },
+  {
+    "label": "nominal/struct",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let P{x,y}=P{x:7,y:8};x+y}",
+    "policy": "Exact",
+    "source_sha256": "479854c962b5f80b8b683d807c8c7aa5dd00c94579d4a8bec8d7e8fdb4f1835d"
+  },
+  {
+    "label": "nominal/struct-rest",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let P{x:a,..}=P{x:7,y:8};a}",
+    "policy": "Exact",
+    "source_sha256": "dec55e62867ade7e27081b01b9a4432ebb5e3ccb3093460bc7032c13b866b611"
+  },
+  {
+    "label": "nominal/struct-miss",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let P{x:a,..}=Q{x:7,y:8};a}",
+    "policy": "Exact",
+    "source_sha256": "a58e12f55a7cab5438551cdd4fc99bda9748917e70f88c9dbc30d7773e3329ac"
+  },
+  {
+    "label": "nominal/tuple-struct",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let T(a,b)=T(7,8);a+b}",
+    "policy": "Exact",
+    "source_sha256": "5a97cafd27b72ee6dec7a4125801627847f212710d7ef4e96720cb9c8fbb07e8"
+  },
+  {
+    "label": "nominal/tuple-struct-rest",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let T(a,..)=T(7,8);a}",
+    "policy": "Exact",
+    "source_sha256": "9d6dd4fe09e3655833f6473df88d5ad843f1fc4f9aa2c9b1cc567e7a65f5109e"
+  },
+  {
+    "label": "nominal/enum-unit",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let E::U=E::U;7}",
+    "policy": "Exact",
+    "source_sha256": "14bd416830842226ff930268cfc7ce64db2c2fb1d485ca70b349f7a192879bac"
+  },
+  {
+    "label": "nominal/enum-unit-miss",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let E::U=F::U;7}",
+    "policy": "Exact",
+    "source_sha256": "8832e1c82897207e3148be0883e770b4ec86e65594a172a5f66c7b111ba905c9"
+  },
+  {
+    "label": "nominal/enum-tuple",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let E::T(x)=E::T(7);x}",
+    "policy": "Exact",
+    "source_sha256": "0b026b8c84107e303388edf5855cdcba13a80608e5b2752b3537174d9903cad0"
+  },
+  {
+    "label": "nominal/enum-tuple-miss",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let E::T(x)=F::T(7);x}",
+    "policy": "Exact",
+    "source_sha256": "633b32b759f452662dd090a3573ae4522b62f484ad301c7ab464032b55377fff"
+  },
+  {
+    "label": "nominal/enum-object",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let E::N{x,y}=E::N{x:7,y:8};x+y}",
+    "policy": "Exact",
+    "source_sha256": "dbcc423b07ed2bb0362095b7dc2a0c82760089fc06486fb76de03b55cf61be17"
+  },
+  {
+    "label": "nominal/enum-rest",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let E::N{x,..}=E::N{x:7,y:8};x}",
+    "policy": "Exact",
+    "source_sha256": "ec2b5528bec08287bfefcde338e6d99cfbd97b60de9f02757349589c3f115199"
+  },
+  {
+    "label": "nominal/enum-object-miss",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}pub fn main(){let E::N{x,..}=P{x:7,y:8};x}",
+    "policy": "Exact",
+    "source_sha256": "2c4d69408024c55324a42aa7e7c28032790185eb6ac3486ea0065dfaabf67075"
+  },
+  {
+    "label": "parameter/tuple",
+    "source": "fn f((a,b)){a+b}pub fn main(){f((7,8))}",
+    "policy": "Exact",
+    "source_sha256": "3717a0caf54086abbb29c7602e0f01b270bee9b9eb1bfd2b00a7d3f3462c1697"
+  },
+  {
+    "label": "parameter/tuple-nested",
+    "source": "fn f(((a,b),c)){a+b+c}pub fn main(){f(((7,8),9))}",
+    "policy": "Exact",
+    "source_sha256": "2000d57b9c1b78c74e20486e4e1e064feeed577c2b6f496b1a26968283d53706"
+  },
+  {
+    "label": "parameter/tuple-rest",
+    "source": "fn f((a,..)){a}pub fn main(){f((7,8,9))}",
+    "policy": "Exact",
+    "source_sha256": "922a42cb1a0510066f9a78704b366e3a460a9fd6b56ddc879f1108a5c40cafff"
+  },
+  {
+    "label": "parameter/tuple-all",
+    "source": "fn f((..)){7}pub fn main(){f((7,8))}",
+    "policy": "Exact",
+    "source_sha256": "0a1f043040075d2448ebc5f693d50ca43753faf65cb12b84f2a9693829f1dd30"
+  },
+  {
+    "label": "parameter/tuple-unit",
+    "source": "fn f((..)){7}pub fn main(){f(())}",
+    "policy": "Exact",
+    "source_sha256": "b0f980ddd33b00e841f42bac50638105481f91ade74d644c233adba45471239f"
+  },
+  {
+    "label": "parameter/tuple-short",
+    "source": "fn f((a,b)){a+b}pub fn main(){f((7,))}",
+    "policy": "Exact",
+    "source_sha256": "76a5c47bcd6d1934f36e96cd44f55734d906ae3cee204986362e54fee55756f5"
+  },
+  {
+    "label": "parameter/tuple-type",
+    "source": "fn f((a,b)){a+b}pub fn main(){f([7,8])}",
+    "policy": "Exact",
+    "source_sha256": "440e6f21f058b5af8b3ff520df04646266bc5c12a56fd6c34b48974320c5e29b"
+  },
+  {
+    "label": "parameter/vec",
+    "source": "fn f([a,b]){a+b}pub fn main(){f([7,8])}",
+    "policy": "Exact",
+    "source_sha256": "be61b03598e069cf2f89deb02c37b91f43c71ea2fa533f9c9529edf2af783d4a"
+  },
+  {
+    "label": "parameter/vec-rest",
+    "source": "fn f([a,..]){a}pub fn main(){f([7,8])}",
+    "policy": "Exact",
+    "source_sha256": "c22bb42d756159495aea46b6470aca4497d94c9c2d3e0dba150b79714796c7ba"
+  },
+  {
+    "label": "parameter/vec-short",
+    "source": "fn f([a,b]){a+b}pub fn main(){f([7])}",
+    "policy": "Exact",
+    "source_sha256": "ee3479bbd48cf26001d049019953e4252cd50cee79bdcd9bb931877ada3b9a14"
+  },
+  {
+    "label": "parameter/vec-type",
+    "source": "fn f([a,b]){a+b}pub fn main(){f((7,8))}",
+    "policy": "Exact",
+    "source_sha256": "5cbb097348d008920557cdf5bcbd713cbcccda0cbc22260fe3357fff2e44379c"
+  },
+  {
+    "label": "parameter/some",
+    "source": "fn f(Some(x)){x}pub fn main(){f(Some(7))}",
+    "policy": "Exact",
+    "source_sha256": "594a1e4e8307943bf102609a046d37891e30a4d5f748375d69d1ebb9660acae6"
+  },
+  {
+    "label": "parameter/some-miss",
+    "source": "fn f(Some(x)){x}pub fn main(){f(None)}",
+    "policy": "Exact",
+    "source_sha256": "4819b1c65e0dd80a52cc03d9ed1b7998823507369a92586c82135c6f9abc464d"
+  },
+  {
+    "label": "parameter/ok",
+    "source": "fn f(Ok(x)){x}pub fn main(){f(Ok(7))}",
+    "policy": "Exact",
+    "source_sha256": "59f7a9c7358a2a340297c7ba9677f886bf6ca461f026e0f9658d99ccadb80172"
+  },
+  {
+    "label": "parameter/ok-miss",
+    "source": "fn f(Ok(x)){x}pub fn main(){f(Err(7))}",
+    "policy": "Exact",
+    "source_sha256": "161f68851c47db0e99db22eac59dec3a383b9c30ce9c327b470187d82708d579"
+  },
+  {
+    "label": "parameter/err",
+    "source": "fn f(Err(x)){x}pub fn main(){f(Err(7))}",
+    "policy": "Exact",
+    "source_sha256": "b82c1db941a5072a5629997994f2fe491bf5512e509765ae900023e25929e55f"
+  },
+  {
+    "label": "parameter/object",
+    "source": "fn f(#{x,..}){x}pub fn main(){f(#{x:7,y:8})}",
+    "policy": "Exact",
+    "source_sha256": "a8029cffaed6c286ce37375fd01ed93b40a05a3e46eeb4f97571e8c54f878bbd"
+  },
+  {
+    "label": "parameter/object-missing",
+    "source": "fn f(#{x,..}){x}pub fn main(){f(#{y:8})}",
+    "policy": "Exact",
+    "source_sha256": "a97240547df91021ab1b9709f73a4744bfa8744cc3f36407b19d1d33542549e6"
+  },
+  {
+    "label": "parameter/literal",
+    "source": "fn f(7){9}pub fn main(){f(7)}",
+    "policy": "Exact",
+    "source_sha256": "b494bedfbdb98bb0c65a049d01b8d185ec4f784417a56623eb473d987fdd05f9"
+  },
+  {
+    "label": "parameter/literal-miss",
+    "source": "fn f(7){9}pub fn main(){f(8)}",
+    "policy": "Exact",
+    "source_sha256": "ef6a6c1f72d8e250c07c1850e48c37c258d592e13bb7cfd5471a9fd10f4b9d19"
+  },
+  {
+    "label": "parameter/bool",
+    "source": "fn f(true){7}pub fn main(){f(true)}",
+    "policy": "Exact",
+    "source_sha256": "92bab25e8ea18d692d8d913d1e7cbd3a3f01481bd639d396f6ebbf575b278bb5"
+  },
+  {
+    "label": "parameter/bool-miss",
+    "source": "fn f(true){7}pub fn main(){f(false)}",
+    "policy": "Exact",
+    "source_sha256": "23512987ae06c7324a38a013a804bf536b26dd7da87e3852382768f8d8373d6f"
+  },
+  {
+    "label": "parameter/unit",
+    "source": "fn f(()){7}pub fn main(){f(())}",
+    "policy": "Exact",
+    "source_sha256": "06fc36d2346e80681e82044590c33b6613acdf708b536550f175aea605b28400"
+  },
+  {
+    "label": "parameter/unit-miss",
+    "source": "fn f(()){7}pub fn main(){f((7,))}",
+    "policy": "Exact",
+    "source_sha256": "e41316c0063a3119d855e418b8a49087aff49afc454a00875deac9221836a661"
+  },
+  {
+    "label": "parameter/nested",
+    "source": "fn f((Some([a,..]),b)){a+b}pub fn main(){f((Some([7,8]),2))}",
+    "policy": "Exact",
+    "source_sha256": "3a5771ea62aa832496549b6b508ec8d5f6ff600c6b45eefe34c766204836dd62"
+  },
+  {
+    "label": "parameter-nominal/struct",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}fn f(P{x,y}){x+y}pub fn main(){f(P{x:7,y:8})}",
+    "policy": "Exact",
+    "source_sha256": "0c850bfe0793c76ef34a0f70c66ac0cb3f019708ac9d370f13f97ac456fa480a"
+  },
+  {
+    "label": "parameter-nominal/struct-rest",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}fn f(P{x,..}){x}pub fn main(){f(P{x:7,y:8})}",
+    "policy": "Exact",
+    "source_sha256": "29f419d4f4a3b2cd1722c4a385524751e466e7d6e97eb22888af52c8c9367d59"
+  },
+  {
+    "label": "parameter-nominal/struct-miss",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}fn f(P{x,..}){x}pub fn main(){f(Q{x:7,y:8})}",
+    "policy": "Exact",
+    "source_sha256": "11928056b7f765b2065b3edcf46ccbe71e6cae14d0915337d648ae4ca9688a44"
+  },
+  {
+    "label": "parameter-nominal/tuple-struct",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}fn f(T(a,b)){a+b}pub fn main(){f(T(7,8))}",
+    "policy": "Exact",
+    "source_sha256": "bfe65d1adf55dc09f6f43d9e5c5c46937d1376a18fb86ea15bfe74066e3f1d85"
+  },
+  {
+    "label": "parameter-nominal/enum",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}fn f(E::T(x)){x}pub fn main(){f(E::T(7))}",
+    "policy": "Exact",
+    "source_sha256": "4d65f0e000e7569b14712ad66ea80b14899b0cdd0ccc58661dc78957450de095"
+  },
+  {
+    "label": "parameter-nominal/enum-miss",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}fn f(E::T(x)){x}pub fn main(){f(F::T(7))}",
+    "policy": "Exact",
+    "source_sha256": "1b7b2fe13a4c04115069fe4250736d33382267806fab6f6108fc7ecdf7633ced"
+  },
+  {
+    "label": "parameter-nominal/enum-object",
+    "source": "struct P{x,y}struct Q{x,y}struct T(a,b);enum E{U,T(a),N{x,y}}enum F{U,T(a)}fn f(E::N{x,..}){x}pub fn main(){f(E::N{x:7,y:8})}",
+    "policy": "Exact",
+    "source_sha256": "f2883f28dbe54acbd2b924ff0e051bd7baa2993fb00df684639dc4af3b4b9d05"
+  },
+  {
+    "label": "calling/two-slots",
+    "source": "fn f((a,b),c){a*100+b*10+c}pub fn main(){f((1,2),3)}",
+    "policy": "Exact",
+    "source_sha256": "a7b0a96d0b5a6512bfcfa5735419f0b1dc48330cef903d5e166d9dcd522dfc05"
+  },
+  {
+    "label": "calling/two-patterns",
+    "source": "fn f((a,b),[c,d]){a*1000+b*100+c*10+d}pub fn main(){f((1,2),[3,4])}",
+    "policy": "Exact",
+    "source_sha256": "4f230e02e38f4daa0dfad53fde396d9328a79e264548e3b90d01a2f1226e9844"
+  },
+  {
+    "label": "calling/arity-zero",
+    "source": "fn f((a,b)){a+b}pub fn main(){f()}",
+    "policy": "Exact",
+    "source_sha256": "a424171b216cc91367e37ae749fe6b19af53ee0a29700c376a9b36b44c310bec"
+  },
+  {
+    "label": "calling/arity-two",
+    "source": "fn f((a,b)){a+b}pub fn main(){f((1,2),3)}",
+    "policy": "Exact",
+    "source_sha256": "099bc2c40cc5f8937ddf2b736d95169e301201c06e9ebd0463a4328217e0dd79"
+  },
+  {
+    "label": "calling/wildcard",
+    "source": "fn f(_){7}pub fn main(){f([7])}",
+    "policy": "Exact",
+    "source_sha256": "ea31844a63bcd8873f1fe560eaf5b6f0c4d3b2e14e425f676035da2f15a33a05"
+  },
+  {
+    "label": "calling/plain-control",
+    "source": "fn f(x){x.0+x.1}pub fn main(){f((7,8))}",
+    "policy": "Exact",
+    "source_sha256": "a0d2695197a2043f20f58350b4287c9ae54734955d3c1fcadab3f34ca0dfcf54"
+  },
+  {
+    "label": "calling/closure",
+    "source": "pub fn main(){let f=|(a,b)|a+b;f((7,8))}",
+    "policy": "Exact",
+    "source_sha256": "8b34b3a0d980098f2867c49bbc42286e2354275e826904dbd9ae2b8dbdfc65b9"
+  },
+  {
+    "label": "calling/closure-rest",
+    "source": "pub fn main(){let f=|(a,..)|a;f((7,8))}",
+    "policy": "Exact",
+    "source_sha256": "a707614ad656d58ca69f3340ab8910f820ab2866c36f0bccfa32183e979fe6fa"
+  },
+  {
+    "label": "calling/capture",
+    "source": "pub fn main(){let n=3;let f=move|(a,b)|a+b+n;f((7,8))}",
+    "policy": "Exact",
+    "source_sha256": "1fe389180ef4322ddef5279740fd82a05d7a9c789e61d6b033feddcf9da9aa5b"
+  },
+  {
+    "label": "calling/method",
+    "source": "struct P{x}impl P{fn f(self,(a,b)){self.x+a+b}}pub fn main(){P{x:3}.f((7,8))}",
+    "policy": "Exact",
+    "source_sha256": "8068e2859411642351ba79664a41bf081d198cc8b813b7c05eb6d048474d138b"
+  },
+  {
+    "label": "calling/recursion",
+    "source": "fn f((n,a)){if n==0{a[0]}else{f((n-1,a))}}pub fn main(){f((3,[7]))}",
+    "policy": "Exact",
+    "source_sha256": "05994d35639b2cfc439bb08061691f75969fdff45542569558be0156f52c8dbe"
+  },
+  {
+    "label": "calling/return-value",
+    "source": "fn f((a,b)){drop(b);a}pub fn main(){let a=f(([7],[8]));a[0]}",
+    "policy": "Exact",
+    "source_sha256": "a086b379ad26b6609615e41b813069687e6ea7479d3cb9bfa7f648cbc7c5c1f6"
+  },
+  {
+    "label": "calling/panic-body",
+    "source": "fn f((a,b)){panic(\"body\")}pub fn main(){f(([7],8))}",
+    "policy": "Exact",
+    "source_sha256": "d1fcf9f74ed08ae0d509dd152868a5e8a0f0f60fa5b85d36591216400e550778"
+  },
+  {
+    "label": "effects/rhs-once",
+    "source": "pub fn main(){let (x,7)={println!(\"rhs\");(3,7)};println!(\"after\");x}",
+    "policy": "Exact",
+    "source_sha256": "7377061fdbf4520b4852e4ca0275827020c893f37121cb4a9897df1429f8602c"
+  },
+  {
+    "label": "effects/rhs-miss",
+    "source": "pub fn main(){let (x,7)={println!(\"rhs\");(3,8)};println!(\"unreachable\");x}",
+    "policy": "Exact",
+    "source_sha256": "d59ffd857ad518bf3eea6e0a780e419f8a17acbf70beeea5640b55184093b8b7"
+  },
+  {
+    "label": "effects/parameter-order",
+    "source": "fn f((a,b),c){println!(\"body\");a+b+c}pub fn main(){f({println!(\"first\");(1,2)},{println!(\"second\");3})}",
+    "policy": "Exact",
+    "source_sha256": "037346294938636cc721f8eb202b84b23c4c7fc97390c0580a6c553f2f13cb16"
+  },
+  {
+    "label": "effects/parameter-first-miss",
+    "source": "fn f((a,b),c){println!(\"unreachable\");a+b+c}pub fn main(){f({println!(\"first\");(1,)},{println!(\"second\");3})}",
+    "policy": "Exact",
+    "source_sha256": "e04c73c66499cfa34190ae546ee878f782539de9b803b2d98ba77878bfb12871"
+  },
+  {
+    "label": "effects/parameter-second-miss",
+    "source": "fn f((a,b),[c,d]){println!(\"unreachable\");a+b+c+d}pub fn main(){f({println!(\"first\");(1,2)},{println!(\"second\");[3]})}",
+    "policy": "Exact",
+    "source_sha256": "9efcf9086ab3fda9a36c23557b045eff33ca304ab8bef3147b20e291efebc451"
+  },
+  {
+    "label": "effects/nested-call-chain",
+    "source": "fn inner(Some((x,7))){x}fn middle(){inner(Some((3,8)))}fn outer(){middle()}pub fn main(){outer()}",
+    "policy": "Exact",
+    "source_sha256": "dbc9a1385aa6db7a6a6708e26ca819c9d6ad83c08b5c6a9e7b0941d90249f664"
+  },
+  {
+    "label": "ownership/local-alias",
+    "source": "pub fn main(){let a=[7];let (Some(x),..)=(Some(a),[8]);x[0]+a[0]}",
+    "policy": "Exact",
+    "source_sha256": "163aac39f6290cd04510b4673dc2a0c0655ea122392113a7dc118f203a14fe85"
+  },
+  {
+    "label": "ownership/local-moved",
+    "source": "pub fn main(){let a=[7];let z=a;drop(z);let Some(x)=Some(a);x[0]}",
+    "policy": "Exact",
+    "source_sha256": "b7e71c9ff1cddf775a7483b6694def48fa792f256b04ed3efb4c5c18c9dc3b2c"
+  },
+  {
+    "label": "ownership/local-early-miss",
+    "source": "pub fn main(){let a=[7];let (None,x)=(Some(a),[8]);x[0]}",
+    "policy": "Exact",
+    "source_sha256": "575c914c280b585398a6458b6d6a29511316011b6c47c1604b4c94bca07d4341"
+  },
+  {
+    "label": "ownership/parameter-alias",
+    "source": "fn f((a,b)){a[0]+b[0]}pub fn main(){let a=[7];let n=f((a,a));a[0]=9;n+a[0]}",
+    "policy": "Exact",
+    "source_sha256": "4d85d70bb188813bb728d3424377a72d445a00079f1b787b5926c1d452347373"
+  },
+  {
+    "label": "ownership/parameter-release",
+    "source": "fn f([x,..]){x}pub fn main(){let a=[7,8];let n=f(a);a[0]=9;n+a[0]}",
+    "policy": "Exact",
+    "source_sha256": "638a5c244065d6231e0afd337bda9aba5060a3198e19b90d6fdce1ba2bec46c8"
+  },
+  {
+    "label": "ownership/lease-read",
+    "source": "fn f([x,..]){x}pub fn main(){let a=[7,8];let n=0;for x in a{n+=f(a);}n}",
+    "policy": "Exact",
+    "source_sha256": "ad41b436dddb67f389176443f96f5ae86fc31ce67a08b0a672ed701934a4fa2f"
+  },
+  {
+    "label": "ownership/lease-write",
+    "source": "fn f((a,)){a[0]=9;}pub fn main(){let a=[7,8];for x in a{f((a,));}7}",
+    "policy": "Exact",
+    "source_sha256": "87aaaeea5781e4c549ad3f002ab4feb9de5cb1ee7cff5956c39f96f0dc1366df"
+  },
+  {
+    "label": "ownership/loop-cleanup",
+    "source": "pub fn main(){let a=[7];let n=0;for i in 0..3{let Some(x)=Some(a);n+=x[0];}a[0]=9;n+a[0]}",
+    "policy": "Exact",
+    "source_sha256": "df730834becdde1608852cfd41f04fdd5c736405e91c7b2b8dc5f25325d69755"
+  },
+  {
+    "label": "ownership/closure-heap",
+    "source": "pub fn main(){let a=[7];let f=move|(Some(x),)|a[0]+x[0];f((Some([8]),))}",
+    "policy": "Exact",
+    "source_sha256": "44e49c4630376d36e86aa54f17aac50be1e0f35f1494cc4490b2854eafb3ae56"
+  },
+  {
+    "label": "policy/duplicate-tuple-local",
+    "source": "pub fn main(){let (a,a)=(1,7);a}",
+    "policy": "Retain-refusal",
+    "source_sha256": "91917dc04767d127690d8b88ad90cd448c2ffabd400b60a082082e658e29779a"
+  },
+  {
+    "label": "policy/duplicate-vec-local",
+    "source": "pub fn main(){let [a,a]=[1,7];a}",
+    "policy": "Retain-refusal",
+    "source_sha256": "011479eacb6065404229129249fd4be4c798b9f69a3fa9694b3c35fd75fc9923"
+  },
+  {
+    "label": "policy/duplicate-refutable-local",
+    "source": "pub fn main(){let (Some(a),a)=(Some(1),7);a}",
+    "policy": "Retain-refusal",
+    "source_sha256": "854a07385d7f3bef00ae321a9fa5b41ffd25f29bfe2fab0fc5bc0e625134fa8e"
+  },
+  {
+    "label": "policy/duplicate-parameter",
+    "source": "fn f((a,a)){a}pub fn main(){f((1,7))}",
+    "policy": "Retain-refusal",
+    "source_sha256": "2e9fb1660ef4435334b123e23811bbfd0a4502c22b2e9714663ab116859a00e6"
+  },
+  {
+    "label": "syntax/at",
+    "source": "pub fn main(){let a @ Some(x)=Some(7);x}",
+    "policy": "Exact",
+    "source_sha256": "4075768b98147f63b140541291ec3c25bf1616dc4951883535636e342d39e058"
+  },
+  {
+    "label": "syntax/range",
+    "source": "pub fn main(){let 1..=3=2;7}",
+    "policy": "Exact",
+    "source_sha256": "c606706ae5e9689d9758517aa5969fa1e10f4f8215836d01c76943622e19998d"
+  },
+  {
+    "label": "syntax/bound-rest",
+    "source": "pub fn main(){let [a,rest..]=[7,8];a}",
+    "policy": "Exact",
+    "source_sha256": "751a147e5423e5bdb498b47f6fda16afa6235638d2ce171603dee125b58a0f1d"
+  },
+  {
+    "label": "syntax/middle-rest",
+    "source": "pub fn main(){let [a,..,b]=[7,8,9];a+b}",
+    "policy": "Exact",
+    "source_sha256": "350a50ed65cdbce6090b0cac618de3141262ba99922fc8d7c1f1d1c10c16eeb3"
+  },
+  {
+    "label": "syntax/tuple-rest-binding",
+    "source": "pub fn main(){let (a,rest..)=(7,8);a}",
+    "policy": "Exact",
+    "source_sha256": "b4e68e45d421457afc838db8dba36631c97812ad82753a880d8fa5065934aea7"
+  },
+  {
+    "label": "syntax/missing-field",
+    "source": "struct P{x}pub fn main(){let P{z}=P{x:7};z}",
+    "policy": "Exact",
+    "source_sha256": "1d5391c64af00f0d055199c50d44d706ac652780cf12d80316dc2502dd802b95"
+  },
+  {
+    "label": "syntax/unknown-variant",
+    "source": "enum E{A(x)}pub fn main(){let E::B(x)=E::A(7);x}",
+    "policy": "Exact",
+    "source_sha256": "fc5c9a186686486fce3efe0f49753123981f782e3f9dcf6f76c0432d774f58b5"
+  },
+  {
+    "label": "syntax/result-bad-arity",
+    "source": "pub fn main(){let Ok(a,b)=Ok(7);a}",
+    "policy": "Exact",
+    "source_sha256": "9b6946ae0363bdd33862917eec692c324cd6b6350781381ff3bcd19dc75f736d"
+  },
+  {
+    "label": "syntax/scope",
+    "source": "pub fn main(){let Some(x)=Some(7);{let y=x;}y}",
+    "policy": "Exact",
+    "source_sha256": "5fa86c97d70f84e52028c675f632cc5ed7d14c2102fc7db06bddf2da9da9eb6e"
+  },
+  {
+    "label": "frontier/refusal/parameter-pair",
+    "source": "fn f((a,b)){a+b}pub fn main(){f((1,2))}",
+    "policy": "Exact",
+    "source_sha256": "40d00e0c889beb8a7b8ea75a041d7ad358037d65e2e6cb5cdb1a2d8cd679e6dc"
+  },
+  {
+    "label": "frontier/refusal/parameter-nested",
+    "source": "fn f((a,(b,c))){a+b+c}pub fn main(){f((1,(2,3)))}",
+    "policy": "Exact",
+    "source_sha256": "031ca43e80bc597a7c7c05869bcd9c166b2ef89797515b8a15cbc40b70f53dcf"
+  }
+]

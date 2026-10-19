@@ -1664,3 +1664,5 @@ mod expression_calls;
 mod move_captures;
 
 mod labeled_blocks;
+
+mod remaining_patterns;
