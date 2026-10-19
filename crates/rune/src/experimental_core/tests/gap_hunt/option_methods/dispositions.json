@@ -1,0 +1,2687 @@
+{
+  "summary": {
+    "rows": 166,
+    "classifications": {
+      "Exact": 120,
+      "Inherited-refusal": 21,
+      "Policy-presentation": 1,
+      "Intentional-D1": 24
+    },
+    "status": "FROZEN",
+    "rulings": {
+      "range_debug": "Range Debug prints a heap address in stock (defect, both-engine backlog); that row is not in the oracle",
+      "function_debug": "Err holding a function: fresh prints `immediate function (function: N)`, stock `immediate function (at: 0x8)`; Policy-presentation",
+      "expect_message": "expect formats its message only on failure; a non-Display message raises the Type error: copied",
+      "nominal_debug": "stock nominal Debug spacing inherited",
+      "wrong_receiver": "fresh names the missing method (existing D1 intentional diagnostic); stock message on the D backlog",
+      "unwrap_or": "unwrap_or was admitted before C17a by the C14b certificate; its rows are Exact"
+    }
+  },
+  "rows": [
+    {
+      "index": 0,
+      "label": "is/is_some",
+      "source_sha256": "2c834d58dcbf98f4f3608435c07833205e93b2c8b84f0fcdaad34a5fc3af6f12",
+      "stock_row_sha256": "603d9d051be73112df453d2503ada6b6eccfec2023a334627999637686df3d95",
+      "classification": "Exact"
+    },
+    {
+      "index": 1,
+      "label": "is/is_none",
+      "source_sha256": "4b83568b0ca5accc522da2830692c76ccc87afb3d0ab3a91ed47a8224d6f506a",
+      "stock_row_sha256": "74d0036bf449351c4bf8ef9f926d636a54bf52a9a7983207f2b76609861835c5",
+      "classification": "Exact"
+    },
+    {
+      "index": 2,
+      "label": "is/is_ok",
+      "source_sha256": "475bd9ad2cf81e9239440b2fa62178fd797d95a8315460a337f63dd23e279270",
+      "stock_row_sha256": "1824b9f2230d4ead943670695ca41c35e3bfcacd8d1ea7125c91082a42891208",
+      "classification": "Exact"
+    },
+    {
+      "index": 3,
+      "label": "is/is_err",
+      "source_sha256": "499f478265e3b21b4b39b21364d8f2733f46a68e3b8a278a28c32bc084657231",
+      "stock_row_sha256": "7a2c97a784c2456b43233c766acf5b75155799e306bd43215dc0c07c767dbe9a",
+      "classification": "Exact"
+    },
+    {
+      "index": 4,
+      "label": "is/variables",
+      "source_sha256": "e01558b3714b5745ed2a1c8014b386ef5ea6a1af49af4bc932b12135d7039cbb",
+      "stock_row_sha256": "bd2a4e2670ac938a78c374c26c85c7445210956da503cf5fbb3ea16d65fd31db",
+      "classification": "Exact"
+    },
+    {
+      "index": 5,
+      "label": "is/payloads",
+      "source_sha256": "de63a92e0ffebff100ad881c8068bf092ff57e92577773d1e7bbd793ad2b54d4",
+      "stock_row_sha256": "c77afb4207d6243ecd7cd35e39f8dba77401dcf8c1e6faf2ef6bcd84b09a1b57",
+      "classification": "Exact"
+    },
+    {
+      "index": 6,
+      "label": "is/nested",
+      "source_sha256": "cacb6b2123727a486ebb5a73d5031d2e0b9f554ffe4c6ed06f380542d4503400",
+      "stock_row_sha256": "770e0b3a4ffe60187ee770137503e6b052305768b9e0df50aedc5a9aaf0017fd",
+      "classification": "Exact"
+    },
+    {
+      "index": 7,
+      "label": "is/if",
+      "source_sha256": "19dca66078526b3ecdec7e27b67198c6ead7e032ccad54183707188e8671a07d",
+      "stock_row_sha256": "285f740cdeb3fd79505a49da9ef5ff245b8e4df8975edcceebe032baf2b8cff6",
+      "classification": "Exact"
+    },
+    {
+      "index": 8,
+      "label": "is/not",
+      "source_sha256": "71fdf3156503b161b8932ee8c482207a2c428a87ebffa19a9adaf888e5c8c76a",
+      "stock_row_sha256": "7d9fe7355899db42f63f36619615cd6acd01d83434d90c889d128b5098006439",
+      "classification": "Exact"
+    },
+    {
+      "index": 9,
+      "label": "is/and-short-circuit",
+      "source_sha256": "aeaa060a886a2e681b3c85a10ba293d286b26ca08e57b4107e2da533fb04fbee",
+      "stock_row_sha256": "76166ea85cbeea5a5b2766871d1f4ce064510ed082a1f66a6c72a39cd4f0bd75",
+      "classification": "Exact"
+    },
+    {
+      "index": 10,
+      "label": "is/or-short-circuit",
+      "source_sha256": "c5b3de6e920d5789e1505a61ba08039bb922b67e225d9301d29a3e397d4f1a2c",
+      "stock_row_sha256": "bde542c656a9453db146729f4fe87eac2fdd50932e5f29389be5d9ba6edd412f",
+      "classification": "Exact"
+    },
+    {
+      "index": 11,
+      "label": "is/loop",
+      "source_sha256": "b62b60863628a65150f3e44a860c0f297919e8faef85b6d522ffc8c6cf96c1bc",
+      "stock_row_sha256": "62e2a1b66784f3981b361fd4430e5ce2a37cd8e2977a7f243003431e504dd944",
+      "classification": "Exact"
+    },
+    {
+      "index": 12,
+      "label": "is/while",
+      "source_sha256": "a124fdbd65e22e049d47542e8702f155259824598f4076bfe015aa98a81ca16f",
+      "stock_row_sha256": "a89e8ee73d338496d8e145c10a702766a11b9434fd3119e6e608a3c6da32a42e",
+      "classification": "Exact"
+    },
+    {
+      "index": 13,
+      "label": "is/closure",
+      "source_sha256": "f3ed08cf5d3df71aa3e51eb4f153d66c24993492b9d688f507d12dfa3689bc2f",
+      "stock_row_sha256": "98b3cd5e6aa92452baec44ecd6fb74db646e3e2b1b1fad3af6b68213f04e2317",
+      "classification": "Exact"
+    },
+    {
+      "index": 14,
+      "label": "is/fn-return",
+      "source_sha256": "66dc80a85486c585aad6e58cb6d7cdc8716d14ea1397af47360ed05a100acef2",
+      "stock_row_sha256": "fc91df6fc976ea570a87ff15090818c53cedb7d312128e7896a87cbb4a5b88c9",
+      "classification": "Exact"
+    },
+    {
+      "index": 15,
+      "label": "is/match-guard",
+      "source_sha256": "e21261193c0b19b13375a03cc5736279ce0ab5662e3938e507aafe80baefafa4",
+      "stock_row_sha256": "c793d50fac17b1520ac1ed4b3373105338f1f45055556e17156aac447dcefb00",
+      "classification": "Exact"
+    },
+    {
+      "index": 16,
+      "label": "is/map",
+      "source_sha256": "1596af35b80017a15a795411c53aa03030860fcea8dcd27c5404f1134e27d290",
+      "stock_row_sha256": "a55943a08005a63b5d8316d7bdc78e0acea1ca546b93ec5b29f818cd2b97d863",
+      "fresh": {
+        "location": {
+          "end": 122,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 122 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:122, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 17,
+      "label": "is/mixed-dynamic",
+      "source_sha256": "59d3c29e47d510493303e772db0aac2f2cd5e9f8b8e9125d61e5d1eb8a8f42a1",
+      "stock_row_sha256": "81564f4955541455576b0ab1afe0c06b50e7274c4e12cf8c056b6d850948f7c3",
+      "classification": "Exact"
+    },
+    {
+      "index": 18,
+      "label": "is/vec-element",
+      "source_sha256": "ed7c37e4d711cf911960804b78d2d0f3d588698189e523a764d5e98274d13acb",
+      "stock_row_sha256": "5b59ebaa67b213d38c352b5c8827cf81ae24c7d7cb80468d8827b2d713f898f0",
+      "classification": "Exact"
+    },
+    {
+      "index": 19,
+      "label": "is/object-field",
+      "source_sha256": "fb02189dfdf80f94561878a3ba276def02b4a62748ed8be09eab44c764bed3de",
+      "stock_row_sha256": "0332046333fee84312218d5e5155261dd46625e60d6404005f7c21c1c4af4b3d",
+      "classification": "Exact"
+    },
+    {
+      "index": 20,
+      "label": "is/struct-field",
+      "source_sha256": "23674f60817f1b2935c5f8fe15a3b2742888e09cc4cce3367ddf9665138aa22d",
+      "stock_row_sha256": "04d3041ddfd728a4ea0bbe00e42165c1e499096df6356810650162b4977e52f6",
+      "classification": "Exact"
+    },
+    {
+      "index": 21,
+      "label": "is/effects",
+      "source_sha256": "09654206f2e5c951983c857908cdc5a960c53f3ff44cbc886665cddcce6b8357",
+      "stock_row_sha256": "3188b488b9a3d3ec51b7bec29eaaccc2a4c69a3ec7d93e7549387f28dedd7228",
+      "classification": "Exact"
+    },
+    {
+      "index": 22,
+      "label": "is/as-value",
+      "source_sha256": "f25f56a4e5273e0aca2a8878febe550a1033ae0d63a6de7e23f44035e7b9ad0c",
+      "stock_row_sha256": "eb5b35bf15af571b290103320de25d5c45382d66a33db813e39644b030ffc0c6",
+      "classification": "Exact"
+    },
+    {
+      "index": 23,
+      "label": "unwrap/scalars",
+      "source_sha256": "5464e2788b4f9d1ecdb67c3fafb9737e3f5e12a7a4e10519933b860a49814332",
+      "stock_row_sha256": "c4a5c7a804a4856caf496d09531ff659ddb1632f3093be972335050395000bf3",
+      "classification": "Exact"
+    },
+    {
+      "index": 24,
+      "label": "unwrap/string",
+      "source_sha256": "7bf3c1dcfd9c8b32941383e4d97bd71b4d1fe4df0eaf6c33240186f9aeb6c99c",
+      "stock_row_sha256": "3293047c8835a68754583b093cdbb2de5f07d1957629f8380e92f4540632c61c",
+      "classification": "Exact"
+    },
+    {
+      "index": 25,
+      "label": "unwrap/arith",
+      "source_sha256": "9285c142510a704e0cea7fa923c5ab73235bf54228eb2ad4788aa277a445dd79",
+      "stock_row_sha256": "1460d64dc63dab1c499c77e569ef9acfc628cf9d909f422ce1a07ccd44f5f5ce",
+      "classification": "Exact"
+    },
+    {
+      "index": 26,
+      "label": "unwrap/vec-alias",
+      "source_sha256": "7865ab6c3dedfca967ab10843cea9f10e4dd63564a15b61c99157cb1468238a2",
+      "stock_row_sha256": "6c440ede66529b4c66dc84c180b14e08cad1a51ff0cda9f12e255914ec8c383c",
+      "classification": "Exact"
+    },
+    {
+      "index": 27,
+      "label": "unwrap/vec-alias-chain",
+      "source_sha256": "a97e81cc7ef0164af0b4735381eb2c4ef29b134a63cabb3187fd5c14c7995a84",
+      "stock_row_sha256": "6a2788be9cb1b9d8becd8e313ccc5eaa89d4da6e55afcbe8322c08371a15dfb4",
+      "classification": "Exact"
+    },
+    {
+      "index": 28,
+      "label": "unwrap/result-alias-chain",
+      "source_sha256": "d764a62c76ace0e5690aa13b0c9dec11df313ce2444dc1c7e0f39f14bd28f357",
+      "stock_row_sha256": "6eb1508cf01d3b18430d7f3f300319ce8827382f827bcf9fe3e6af7b3f772f99",
+      "classification": "Exact"
+    },
+    {
+      "index": 29,
+      "label": "unwrap/object-alias",
+      "source_sha256": "9b4f01b7368849071c2fb2423ef08f6a38ddda97b410936e1d416e37c21f0d1d",
+      "stock_row_sha256": "c77c9ef0190375932b3453ec6902257969a5b6b1c0406f6831c5f2b2d4b47e5c",
+      "classification": "Exact"
+    },
+    {
+      "index": 30,
+      "label": "unwrap/tuple",
+      "source_sha256": "d1be9facfba8a4e7a09390014f2b6ddb15ffc492a1f7d7fe8c6a3816fe761abf",
+      "stock_row_sha256": "3186a777d2aeb616ee9ee354f167dd5fbfb76b9716b38ecc8a75b3bcbce6ed3e",
+      "classification": "Exact"
+    },
+    {
+      "index": 31,
+      "label": "unwrap/struct-alias",
+      "source_sha256": "cf62266303c464cef91fa316b255f94ec8054e7cf00615a396b40e43629be5ca",
+      "stock_row_sha256": "48f2abdd77fe6fe1f265008d03468abd6b86fd3c1ce6e78102233d11d28630ee",
+      "classification": "Exact"
+    },
+    {
+      "index": 32,
+      "label": "unwrap/tuple-struct",
+      "source_sha256": "166fd54d5fc745a59b8eb7c49eb869e4983bab7db697d5074e8fd4f3208e7c3e",
+      "stock_row_sha256": "ee45f79cbf4ae49d7218fcb1271bbc1a5be8a62b0e144f8c25d97f23e2bb6218",
+      "classification": "Exact"
+    },
+    {
+      "index": 33,
+      "label": "unwrap/variant",
+      "source_sha256": "6c050876568fb746e09277e5635e4d885ad6a285e50a4b9a91d51cf664e578ed",
+      "stock_row_sha256": "1c80ec37568e8a3389f6d06937f289119eac43ef98a0c24c90155e4ab7bbd1c3",
+      "classification": "Exact"
+    },
+    {
+      "index": 34,
+      "label": "unwrap/nested",
+      "source_sha256": "77dbc63311db1a5a7f159530c6a9a435ed17cfe3f6b5782d4411a008d10ebf28",
+      "stock_row_sha256": "cb14d1e7f1303ffffd3fd20b8a5cf92fd8d7b5b2cb9812195147f2e047011689",
+      "classification": "Exact"
+    },
+    {
+      "index": 35,
+      "label": "unwrap/nested-alias",
+      "source_sha256": "e65facef4f3a2fc051352514d0c8c92b9760530e146bec1bbe7be5e40a87f333",
+      "stock_row_sha256": "f5596b0dc0334f6b808d5cafc4c8438473fac8d0da226c4d85d723f9030bf0a5",
+      "classification": "Exact"
+    },
+    {
+      "index": 36,
+      "label": "unwrap/fn-return",
+      "source_sha256": "fef35d23687a3e982c60e7ff8f257b6d92cf3f8159c2f14c8a76ef3d3cf6a6ad",
+      "stock_row_sha256": "254dbeca691befc009888d66f440613d13c351b7d5474cc8926a4c03f7250e84",
+      "classification": "Exact"
+    },
+    {
+      "index": 37,
+      "label": "unwrap/loop-sum",
+      "source_sha256": "9f41f7890402740e5d64e32def4dbe20eb8f33c2c9e2acc02ff3a1e1e2c6f35e",
+      "stock_row_sha256": "74881776c1453aba09466adb98ed6f6059797c266ebd14187805f15fb006e89d",
+      "classification": "Exact"
+    },
+    {
+      "index": 38,
+      "label": "unwrap/closure",
+      "source_sha256": "ceb5182a85d2e110c91a24220e283b64a9b6e9ba4b5418cca8bea4e2106d9578",
+      "stock_row_sha256": "b93d626b237be8872b6e772b004527f63a0a1d8092494d98ace135fc9386873c",
+      "classification": "Exact"
+    },
+    {
+      "index": 39,
+      "label": "unwrap/capture",
+      "source_sha256": "04140c1e9446fc49371fa04e38819c27982f8f6a503706617429d10bc2c4c20e",
+      "stock_row_sha256": "4afc0231f3800701eab04ff022343d04da6b6ab4c98d9051a47243e4aad10ca4",
+      "classification": "Exact"
+    },
+    {
+      "index": 40,
+      "label": "unwrap/map",
+      "source_sha256": "72c48db830938acad57cc28f4cc43929c0c2e8e27f5994884baa6063f1b9ad95",
+      "stock_row_sha256": "1d9e943d0740648508411740239cd81bd15c91933e374ac486f1ba5948b6d475",
+      "fresh": {
+        "location": {
+          "end": 123,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 123 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:123, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 41,
+      "label": "unwrap/both-families",
+      "source_sha256": "4f6cde90d8050a976839694ab6e91e6a9700f48fad0d4865c4ea26a91ca33ee4",
+      "stock_row_sha256": "f2a57af020469a16117d37bf9d609bc348ca2bf5bc04bd396c34a28ee0bf03f3",
+      "classification": "Exact"
+    },
+    {
+      "index": 42,
+      "label": "unwrap/vec-element",
+      "source_sha256": "3999d51980695e58b46d0f94b654d41d562eac4f380d9e8f364f0f51e91a3fd0",
+      "stock_row_sha256": "599f71955598746c582d4473047a1b4075d93ac5b13f2f54cb4dc38c63f87a15",
+      "classification": "Exact"
+    },
+    {
+      "index": 43,
+      "label": "unwrap/object-get",
+      "source_sha256": "54c7b55db90074747307dd85269565fd8eeb6381c0b1d5f1e5a5d72665dd9050",
+      "stock_row_sha256": "d074dc61d6a4986f308ade6de42b9d58e0251aaf02b520d51dcf8071d9d34d3f",
+      "fresh": {
+        "location": {
+          "end": 89,
+          "source": 0,
+          "start": 79
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 79, end: 89 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:89, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 44,
+      "label": "unwrap/iter-next",
+      "source_sha256": "94d0853b3172f881026ff1d70c64e4faa6e936c56ecc1cb9c019a32fcb7728d8",
+      "stock_row_sha256": "e772af29d1222001a7a7988d53e2a8df5da30ccf558d647aea20c6def8af1dd0",
+      "classification": "Exact"
+    },
+    {
+      "index": 45,
+      "label": "unwrap/effects",
+      "source_sha256": "a5d16afbfcaa3cd5976658cd99df576becaa5eb80f1318e2f6c5f936164148bc",
+      "stock_row_sha256": "988abf60c9a6e8e2df2d96836c29afb444be8f682da5284a329932e547068bce",
+      "classification": "Exact"
+    },
+    {
+      "index": 46,
+      "label": "unwrap/fn-value",
+      "source_sha256": "4d5918222f04ffde76f200c1c7b748852b5c7998b257e6fe0e4abf6811fe17f8",
+      "stock_row_sha256": "a4bb40c03830cb929f1f591ff9cd4c89d000306ee1b413b3e7c6d690edbfa1b4",
+      "classification": "Exact"
+    },
+    {
+      "index": 47,
+      "label": "unwrap/type-value",
+      "source_sha256": "4cf5d94104318c55ca28619a2dca3d7edbf9750cc56cec43cb74352c10645b81",
+      "stock_row_sha256": "68c7fb81a97d98d4fdffe50c5a923163b44b03cbecce486e68cf3b1367437b2b",
+      "classification": "Exact"
+    },
+    {
+      "index": 48,
+      "label": "unwrap/large",
+      "source_sha256": "650ac8b3b53c24deb880380409988e463fb1c27fe23f9f2188f52a1647c83a69",
+      "stock_row_sha256": "6a2f563d7f64e509b6d214450c95f95c531f445061a439be78d3789feeeb1824",
+      "classification": "Exact"
+    },
+    {
+      "index": 49,
+      "label": "unwrap/scalar-copy",
+      "source_sha256": "3fd336a8e26072eb7ed73a7532493bc2f8cde0eb3f5dba4e1979d07d8fd2e9c6",
+      "stock_row_sha256": "363c38215994763499d88ff8a11ca5666931e50e3aa2284bd7c14ed9e5cd74bb",
+      "classification": "Exact"
+    },
+    {
+      "index": 50,
+      "label": "unwrap/then-len",
+      "source_sha256": "efa85ae314da1b5a0b635807c7b79da70ff38ce46a970f6b11c26aa34f43751c",
+      "stock_row_sha256": "3729b168a980a8522acd2d42abcbe9aa77626d933f22e8adb64dbb299591b6da",
+      "classification": "Exact"
+    },
+    {
+      "index": 51,
+      "label": "unwrap/recursive",
+      "source_sha256": "fa9a51fe0a42255fb5aa88ff3c59c37350b1834cd52abcf859e22b57fbafbf46",
+      "stock_row_sha256": "6dd4fa30399ce8e74e64e698fc298c0e3b680369141dd5b56a5beb4fda0649fa",
+      "classification": "Exact"
+    },
+    {
+      "index": 52,
+      "label": "unwrap-fail/none",
+      "source_sha256": "f8f65456534ca4faddbc387ffa05431418d4831aebd3252006dfa036e2f28134",
+      "stock_row_sha256": "8c3d563bf9d47957d5f5bbdc1d32c0fc2cf46fc0fdbd2b6d652db367fa0c5e7b",
+      "classification": "Exact"
+    },
+    {
+      "index": 53,
+      "label": "unwrap-fail/err-string",
+      "source_sha256": "64fa5d5c0a6b80401cdaa30ba188650e333e9ce2b8cd0ccb5dd25ab93b8eb15d",
+      "stock_row_sha256": "dd593c14d47b23a5ceae097697d36431bf8342c7c442520bcfccbd98eacb4056",
+      "classification": "Exact"
+    },
+    {
+      "index": 54,
+      "label": "unwrap-fail/err-escape",
+      "source_sha256": "2551a9d4484fa20a10ca8d3b9cc8c20a777faefda5bc77f6f27838bf80376d7e",
+      "stock_row_sha256": "7e2a2154ebeae67ddaf99f3e491edba21700037cddec3c349bb4fb92ff1068bc",
+      "classification": "Exact"
+    },
+    {
+      "index": 55,
+      "label": "unwrap-fail/err-int",
+      "source_sha256": "8fdcefbd172e530a38e3c40e69ae14fa70fbe15ea4f433e447b32aa8c3ac4d06",
+      "stock_row_sha256": "bdc5f5ff8c2518d0dbde7e3e9cc811496ff149eccc6749557024e8e3d0e1cd90",
+      "classification": "Exact"
+    },
+    {
+      "index": 56,
+      "label": "unwrap-fail/err-float",
+      "source_sha256": "36b9f4ab0de8f655e9a3d75450e6cf674b154aa6a6424157eac39e59f3373197",
+      "stock_row_sha256": "73ec6356786b2d4ed450f6c423322d55ee2dedad09ecf20e81936875794ff13d",
+      "classification": "Exact"
+    },
+    {
+      "index": 57,
+      "label": "unwrap-fail/err-bool-char-unit",
+      "source_sha256": "5c104e0ee9d6de93dd3828887a59df83859f3be0204b2e653273dce2022953cd",
+      "stock_row_sha256": "59c64d53c98e5dc502590f8eac49c5cde747b784ee4c5d0d9d9e55a83b93ca76",
+      "classification": "Exact"
+    },
+    {
+      "index": 58,
+      "label": "unwrap-fail/err-vec",
+      "source_sha256": "9e13324b0705a4d589c3bfa857594ee77ae4ce6f4ea1a27d29d5a407ae2d9d5d",
+      "stock_row_sha256": "a8f059d1e0c622d3d4c83618bc9c95137400959d7dc5fc9f8db24ccfb24a8a83",
+      "classification": "Exact"
+    },
+    {
+      "index": 59,
+      "label": "unwrap-fail/err-object",
+      "source_sha256": "63c39a92fea9a41d10d1c8c4ed30c34d79b70636a1fcf8c2c2f9a3950f1c0298",
+      "stock_row_sha256": "9d578e3ba6b116c2ebc61ac1e15cc17bbf6ffa49cd4566f602143ed68b9dc8b2",
+      "classification": "Exact"
+    },
+    {
+      "index": 60,
+      "label": "unwrap-fail/err-tuple",
+      "source_sha256": "3e436d160f3a27dc067e9324eb05963307115fdfecd52def33054117e78879b8",
+      "stock_row_sha256": "173d33528848281fcc0877f1e5c4ea41f452d2173aeb6d67f3c491ee6045e837",
+      "classification": "Exact"
+    },
+    {
+      "index": 61,
+      "label": "unwrap-fail/err-struct",
+      "source_sha256": "16585d6c1ef176fdaa3aa6bfbc5a4163d32445854c0e202c6c4b499d619c7455",
+      "stock_row_sha256": "9d75d95cd3aa90546ec673670edd6d5222acc3188e9f8db1b7843c4b392a2dad",
+      "classification": "Exact"
+    },
+    {
+      "index": 62,
+      "label": "unwrap-fail/err-tuple-struct",
+      "source_sha256": "eb5cfec1f8a9ab2c1559d55bda37ab598ade6f08cb6128a543d831c1f4ce7623",
+      "stock_row_sha256": "c96f310fa1915c3a9e864c4387de75a37ac0083f42eb9959b440789543cd5682",
+      "classification": "Exact"
+    },
+    {
+      "index": 63,
+      "label": "unwrap-fail/err-variant",
+      "source_sha256": "f84ff432e0e990896e1b41ede69380ad9488d61b88a7c8f4c7b36ac75b0be5ea",
+      "stock_row_sha256": "0ad685bf8202b93b28c621cb2518abf0eada39e59d87a6424703caa420bd5da5",
+      "classification": "Exact"
+    },
+    {
+      "index": 64,
+      "label": "unwrap-fail/err-unit-variant",
+      "source_sha256": "559e06c09c79577eb1d75c2bc466ce4ed556a1c5e308a31ad06a598723799d44",
+      "stock_row_sha256": "2cf81b26afad374d71c9f4ee228bf6ff3f434ef28d5f9b3a8e77eca82cad4ee3",
+      "classification": "Exact"
+    },
+    {
+      "index": 65,
+      "label": "unwrap-fail/err-option",
+      "source_sha256": "64f448c09e415abf3aa975e4c038e12b0109199a152c668d450e954de352c621",
+      "stock_row_sha256": "fb45fac1e65272c3f426679df7b2f815e2a870bc10bbd76ca35e37e32fbee101",
+      "classification": "Exact"
+    },
+    {
+      "index": 66,
+      "label": "unwrap-fail/err-result",
+      "source_sha256": "f4ef51a5feffc82e8885c3d9f62713f0db999f4b80016628661dccf17c1810a6",
+      "stock_row_sha256": "452e5c7349314827e9a366a5e683d30e055bf1ef44c09ea6d72d9990db494a0e",
+      "classification": "Exact"
+    },
+    {
+      "index": 67,
+      "label": "unwrap-fail/err-fn",
+      "source_sha256": "48ef3fbca6f95662f4592943593c7f979799d6b22fa7d27976fb3165f513f90c",
+      "stock_row_sha256": "b9e8e150d19958bd7c6f98333058952e5dfe0fe129cbb64af83c2dd11b259db2",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Panic",
+            "display": "Panicked: Called `Result::unwrap()` on an `Err` value: immediate function (function: 1)",
+            "kind": "Panic { reason: Panic { inner: \"Called `Result::unwrap()` on an `Err` value: immediate function (function: 1)\" } }",
+            "sites": [
+              {
+                "end": 87,
+                "source": 0,
+                "start": 72
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 87,
+                "source": 0,
+                "start": 72
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Panicked: Called `Result::unwrap()` on an `Err` value: immediate function (function: 1)\n  at c17a.rn:1:73"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Panicked: Called `Result::unwrap()` on an `Err` value: immediate function (at: 0x8)",
+      "fresh_display": "Panicked: Called `Result::unwrap()` on an `Err` value: immediate function (function: 1)",
+      "policy": "Retained-format (C11c row 69 precedent): fresh names the function index where stock prints its bytecode offset",
+      "classification": "Policy-presentation"
+    },
+    {
+      "index": 68,
+      "label": "unwrap-fail/err-type",
+      "source_sha256": "76e986cd1eccb985ff7fc72b4253decff8a2115a2fdf9f51874f7f89c41b5727",
+      "stock_row_sha256": "eaaa5016f5bc5509a6998d4ae4680262b0e4b89ce258c2bb578c7f6df683109a",
+      "classification": "Exact"
+    },
+    {
+      "index": 69,
+      "label": "unwrap-fail/err-u64",
+      "source_sha256": "89f37072bbb7140fbbace0a3c1c2e4f3ef7d56edf2026bb35f2fd8a50f61be49",
+      "stock_row_sha256": "58aa873876be6579a623096de9f75a0061fc63db40495210b6abd1db225aa321",
+      "classification": "Exact"
+    },
+    {
+      "index": 70,
+      "label": "unwrap-fail/err-control-string",
+      "source_sha256": "be998a43c38b8b42018d16e36d0fedc5849ad2300810a1c74bc06f258bdfe58e",
+      "stock_row_sha256": "e664d1483b6292eb1cd17d969bc29123dd4d177ee42a3f58adeab4c4fb73eece",
+      "classification": "Exact"
+    },
+    {
+      "index": 71,
+      "label": "unwrap-fail/err-float-nan",
+      "source_sha256": "ba5a0f67a276e558434faf95bf5fff09be798090a2b3a57572e926834c7019dd",
+      "stock_row_sha256": "f8278264eacb57ba395a5705335c21b8fb83c72850e8535ed62de75c20222dc1",
+      "classification": "Exact"
+    },
+    {
+      "index": 72,
+      "label": "unwrap-fail/err-float-inf",
+      "source_sha256": "3f6e3abab121a144db466a6e48afc720547a7731946bcd6b95d71919c7f54a3c",
+      "stock_row_sha256": "ab1afb171ff2427f70b903d4c44c95fb4f70d799a5efba0d975c9ec11dc47059",
+      "classification": "Exact"
+    },
+    {
+      "index": 73,
+      "label": "unwrap-fail/err-float-neg-zero",
+      "source_sha256": "b4077c67c490efd16fe001368608c5277e81130a2cd1f66f2d6c6252009c8e88",
+      "stock_row_sha256": "6a0c8631f894c45df383b774257ce97de6d4b0cf434bda3a85474973ade4f2dd",
+      "classification": "Exact"
+    },
+    {
+      "index": 74,
+      "label": "unwrap-fail/err-float-large",
+      "source_sha256": "0a5e7f08eff715616b9edda53424813fcbb78a17f2b5020ee58d2ea8f2899fc4",
+      "stock_row_sha256": "7fca94a3cc496ee52c09291dccd2447aa30a68a7d6f6f7f6cecfa4049c28f0c4",
+      "classification": "Exact"
+    },
+    {
+      "index": 75,
+      "label": "unwrap-fail/err-negative",
+      "source_sha256": "f79566e6e9d8717f85adc8fb9c72509c5ea5fb25376fa0064a8e0e21e120558f",
+      "stock_row_sha256": "6c46188be4f51ab1f599303f388af71e4823808a6a344e0562473c0e689da645",
+      "classification": "Exact"
+    },
+    {
+      "index": 76,
+      "label": "unwrap-fail/err-char-escape",
+      "source_sha256": "070fead17c70307eae1d6ff4e30a36a129dc01850f07b0a4218523342239f1a4",
+      "stock_row_sha256": "1488942274986b8c38ff7f328c0d5b728875ff6cdfd3769182aaf59a9e036cee",
+      "classification": "Exact"
+    },
+    {
+      "index": 77,
+      "label": "unwrap-fail/err-empty-containers",
+      "source_sha256": "8e0d1226cf6303879c750bbd695f959e594a51c23d2461dc0ed74ee454e383d4",
+      "stock_row_sha256": "ea64281399632e4d420b8efc22e26aaceaf0dba90113cf55eb0149473c9b7afc",
+      "classification": "Exact"
+    },
+    {
+      "index": 78,
+      "label": "unwrap-fail/err-ordering",
+      "source_sha256": "09824a62256b855a0fe5be84e9ef582059ec661690672a2ace35aa39d78aa6cd",
+      "stock_row_sha256": "46fb27f6c5ac31de8062cc4fca3cffc06d4662d97d3829cf9d8f6aa5d033a2f4",
+      "classification": "Exact"
+    },
+    {
+      "index": 79,
+      "label": "unwrap-fail/chain",
+      "source_sha256": "edb3c336f4c8a8791f1f76acd57e01ebf3cbc74b288c4e1f11d22c9ae1b04e3d",
+      "stock_row_sha256": "11cb86b97e183d967a7c91e47e2d0e020936bb6b06c3c9ed8aa26e60b2664d22",
+      "classification": "Exact"
+    },
+    {
+      "index": 80,
+      "label": "unwrap-fail/chain-err",
+      "source_sha256": "0586d048c8693b3cc5372eed6f3a2f06ea46f9cdfdd9fe70143e2c61f396bc9b",
+      "stock_row_sha256": "49f9235736153e3cf47da953074de7b35002076b2b5a4c03d731251bfb6b8e2a",
+      "classification": "Exact"
+    },
+    {
+      "index": 81,
+      "label": "unwrap-fail/closure",
+      "source_sha256": "363ea7a02959f64eec9991703e3278ae9522d486d69f642ce270f30f40bb45c0",
+      "stock_row_sha256": "5f2fd0f43f0a0d77d825d48e3108cc71e787462c6c4c72e4528a3ccc5aa42c1e",
+      "classification": "Exact"
+    },
+    {
+      "index": 82,
+      "label": "unwrap-fail/loop-effects",
+      "source_sha256": "37bedd558fcbcdc658bdb9b258bdea9d5a60c744306ccbbe1921abb268fe5cf2",
+      "stock_row_sha256": "faed66d16fe690f474082007f380f7521e60358cce9ab69c810edd47534195ac",
+      "classification": "Exact"
+    },
+    {
+      "index": 83,
+      "label": "unwrap-fail/effect-order",
+      "source_sha256": "48150e5af6d7677ef1542556700f7b706da685a10389a9772e644b780d844172",
+      "stock_row_sha256": "6fb76b7f8fd9c3bd2aedf860b6c5230a9cfc017dc395e5f35233d27b0bb352f4",
+      "classification": "Exact"
+    },
+    {
+      "index": 84,
+      "label": "unwrap-fail/map",
+      "source_sha256": "5b0d0b20930c141bef81ac742e4da641a9684f8f92d548e915bf38cc5756c7b2",
+      "stock_row_sha256": "9c32fd1d632f3faec72135cf4c48c06dbf9a69e7c5e373733dd8365ee5308744",
+      "fresh": {
+        "location": {
+          "end": 121,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 121 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:121, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 85,
+      "label": "unwrap-fail/nested-inner",
+      "source_sha256": "279a34402252912f0f9d936176c52f6428b79ad57d369247f2b3c424a40d2ced",
+      "stock_row_sha256": "67fce7359f58bd824546f5e0ee850db1c938c087faae780c8691ed223e199bfb",
+      "classification": "Exact"
+    },
+    {
+      "index": 86,
+      "label": "unwrap-fail/variable",
+      "source_sha256": "9b153bcfe9de2de5abadf3b7e3308177b73342a391b6bb558222fd990d8b46d7",
+      "stock_row_sha256": "378061bb27d296755169b3502686585ae30a77276d3dd3b06431f0c3970290f8",
+      "classification": "Exact"
+    },
+    {
+      "index": 87,
+      "label": "expect/ok",
+      "source_sha256": "d09f9833284fabd17491b9c9d82d020e3bbd7e0f2828bb9a41acb7ca5345c7b3",
+      "stock_row_sha256": "bda49da0e26b73b491a99b2b5ca036c56f6ac1aba6a0e51d1c71851cf21965df",
+      "classification": "Exact"
+    },
+    {
+      "index": 88,
+      "label": "expect/alias",
+      "source_sha256": "f695f37b071faa0860de7db46aed3cc538719a9855620d360c59c23f320a2507",
+      "stock_row_sha256": "1e0e265593888def16d958bd37f9dbe2de9d7341f4a63e0b2f0f6b02de5e27e6",
+      "classification": "Exact"
+    },
+    {
+      "index": 89,
+      "label": "expect/non-string-message-unused",
+      "source_sha256": "232b703ccf82205aea32bcc09b66dddfd26268de40071c2ce8c4c0b5cd14dd39",
+      "stock_row_sha256": "93c7cd186b131d3653330807e76b64484451f1321469ebbd4308b58a3be0abec",
+      "classification": "Exact"
+    },
+    {
+      "index": 90,
+      "label": "expect/message-effects",
+      "source_sha256": "accc09e915221c61690a11f96edce5618c5b009371b3c8e77dbb0b28782f9853",
+      "stock_row_sha256": "bfd2c2b3cf3778f0424b32dec789ab68a6a647ad9b4b5dc5d37aaaa3cc4051eb",
+      "classification": "Exact"
+    },
+    {
+      "index": 91,
+      "label": "expect/none",
+      "source_sha256": "aab49470f1947202175db014fa0a4b6241e2c7bed011aaf9795fa8272fade3cc",
+      "stock_row_sha256": "ac0bafd252a40105f4da4ed7907a06215dc36e91ff439981e10a90657ee84cef",
+      "classification": "Exact"
+    },
+    {
+      "index": 92,
+      "label": "expect/err",
+      "source_sha256": "94b0accb63c42783b5e95ad88e56f9c6672466852b7a476be5ec3c89a80c6f68",
+      "stock_row_sha256": "004c8d1a5635e787922e1bd13c70cef0a806a5e58ae58b7eb5045beb4f747e2d",
+      "classification": "Exact"
+    },
+    {
+      "index": 93,
+      "label": "expect/err-struct",
+      "source_sha256": "c584a706c6b8cd65f6b628c0f8fedc210171c0925fcae021ffd36825041012bc",
+      "stock_row_sha256": "b8cbd16c6d371e8de73803e959279510effee0331ef2a4b4277e6acedde83ad7",
+      "classification": "Exact"
+    },
+    {
+      "index": 94,
+      "label": "expect/none-int-message",
+      "source_sha256": "861857ab8e122f5243b3fccc2cef0bf596d53d0098587a9d28958a139ba71431",
+      "stock_row_sha256": "5d63bd5057fd3c9db06b1a477003a9bcd3209ecaea491d02896b3e3f9220bb03",
+      "classification": "Exact"
+    },
+    {
+      "index": 95,
+      "label": "expect/none-char-message",
+      "source_sha256": "04b4c611fce3daf3de2c55d1990c9c46243e91ac6f1bbea86ec896ddc9018244",
+      "stock_row_sha256": "aa7e58dd039282b4708684cfd4d61bf86cc24da4c3c44b4044bc395b561624cb",
+      "classification": "Exact"
+    },
+    {
+      "index": 96,
+      "label": "expect/none-float-message",
+      "source_sha256": "f9a833a49b26fa6b2ac18526d20457d490804a89a9696988f045dc37c3e3f0d1",
+      "stock_row_sha256": "42a72c7899edac55acbc41cc32ef209c985cd56784d6a723f3e1b4a10b35f99c",
+      "classification": "Exact"
+    },
+    {
+      "index": 97,
+      "label": "expect/none-bool-message",
+      "source_sha256": "a9bdf541bf1b937f2ac649f76d9f255a9f6d7d1e2dc315a560c40052dc946e97",
+      "stock_row_sha256": "9041e2a06a0bec421d03779bd92f11871a2d5beebd7cdf4fdc20748fda468739",
+      "classification": "Exact"
+    },
+    {
+      "index": 98,
+      "label": "expect/none-template-message",
+      "source_sha256": "e8e38f5ecebee702374632e2d2fb29ebc276829b39040c2a8e61e441f7f25d34",
+      "stock_row_sha256": "e32cb8827408f284679ff02702f17a0f853bdd209fcdda22badda340eea25569",
+      "classification": "Exact"
+    },
+    {
+      "index": 99,
+      "label": "expect/none-escape-message",
+      "source_sha256": "96e6b8e4a93e84145367c97635e26961eb5ffb0af36637772337b400bf5076da",
+      "stock_row_sha256": "942dd4277132add8b528f0b54eff9ca5ee25c1e386c756be481440563d84c397",
+      "classification": "Exact"
+    },
+    {
+      "index": 100,
+      "label": "expect/none-empty-message",
+      "source_sha256": "3a3d37990d7aa23839c0c44706aea8bd77c53dd57387f9279bfb3919892e1f75",
+      "stock_row_sha256": "8ffacd4ea498e9bd6e87d05f95866dbf9fc1c9e04eb512b4dcb6a02e5bd26399",
+      "classification": "Exact"
+    },
+    {
+      "index": 101,
+      "label": "expect/none-vec-message",
+      "source_sha256": "21fc7277214e49a828851096a64fc46cf35dd9468d9460bda66291b23436acd5",
+      "stock_row_sha256": "c78e8a6ed7a806230c8f8da59c0cd7464f9bb52c029a6e99238e4605b12058d1",
+      "classification": "Exact"
+    },
+    {
+      "index": 102,
+      "label": "expect/none-struct-message",
+      "source_sha256": "effa0493c3d75d58e4de07a0087f6a967d76a3ec952591fed45ccd522b015e1a",
+      "stock_row_sha256": "af15f9c496e4e3c453221b260d86666cfe77e81f0fdbceb07778862ccf007107",
+      "classification": "Exact"
+    },
+    {
+      "index": 103,
+      "label": "expect/none-option-message",
+      "source_sha256": "657bfd9af1d61fc078d520c474ffd54c2bfa6d18f7a6686cd34a10370976e26a",
+      "stock_row_sha256": "4603e89ed0c8820555fbcbc25e7c2b745cf7cbf03ce56c72ef59b7fd776a00b6",
+      "classification": "Exact"
+    },
+    {
+      "index": 104,
+      "label": "expect/err-int-message",
+      "source_sha256": "2d42370f2cb9f1fa2d3d8285d17f3a66f92c0c6b05950d306f28d14636d6739f",
+      "stock_row_sha256": "c8ed490d0b8393ec1972796250d9aa7075c1cd7eed155e5ceabaf304fcec929d",
+      "classification": "Exact"
+    },
+    {
+      "index": 105,
+      "label": "expect/err-vec-message",
+      "source_sha256": "97b16424c0c826a79fc086b1ba2d46d9d1cfae8ac0b1c9168fd96ab37bb18026",
+      "stock_row_sha256": "998b989f9be8942d1cc13a6a704464d61a3b409ad30fbdc2e207440e54490b6b",
+      "classification": "Exact"
+    },
+    {
+      "index": 106,
+      "label": "expect/braces-message",
+      "source_sha256": "28f8bfacc35d71d78d64c3f9b0814647010b676c6ed3309b2c7c2daf0a0caf1c",
+      "stock_row_sha256": "dc0d42e7b06ada4c3eb47efd022ad380e92317114a244933d219e4f745299c3c",
+      "classification": "Exact"
+    },
+    {
+      "index": 107,
+      "label": "expect/chain",
+      "source_sha256": "264ed24b44e9c1c2eb48c8f010583cdb001652f05996d1b271dca95930d80256",
+      "stock_row_sha256": "fd73da410df017e05148d11371e778d4727285771ebd6e1a35f3867bee43e05a",
+      "classification": "Exact"
+    },
+    {
+      "index": 108,
+      "label": "expect/closure",
+      "source_sha256": "c6f0d92a0124e4fac776bd321a5570ab63d1e1b56af9224b67b4209ac07e27dc",
+      "stock_row_sha256": "11f6e04ab419baec52d9a83f5912e574afaabad9e463ad38fc77a15cf0d67409",
+      "classification": "Exact"
+    },
+    {
+      "index": 109,
+      "label": "expect/loop",
+      "source_sha256": "81561aa863368a6dda25a9ef217cc439c4e29f4e5d5a7e6ffd034009585a7177",
+      "stock_row_sha256": "27b76479028f15c04e921837ca00469ab1672879292ad480c9941c72df902f91",
+      "classification": "Exact"
+    },
+    {
+      "index": 110,
+      "label": "unwrap_or/basic",
+      "source_sha256": "0e6228e94230e7d4d7fedbc3215a6a22b4d95e4f442252a2bc8fc2e7893c1712",
+      "stock_row_sha256": "ba6b4a8de759a8d1a3d5e30833f6b3feb98efe1282a2475f706fc5d534887fb9",
+      "classification": "Exact"
+    },
+    {
+      "index": 111,
+      "label": "unwrap_or/types",
+      "source_sha256": "26bfca7dd75323fbe888b61b146d6b35510a31d34eaf64e426d15fff8375a0b6",
+      "stock_row_sha256": "6af0d8c0810c38553b0cc1150c3012106ec894b77546de8ae0437053c63c2bbd",
+      "classification": "Exact"
+    },
+    {
+      "index": 112,
+      "label": "unwrap_or/payload-alias",
+      "source_sha256": "7176fed2d6c37293d5f86cc5bcf8379a30dee53604269463de604b6d3b990b2a",
+      "stock_row_sha256": "5dabe785a000d1941f03ccec1f17a048f0e9f252725b2b5951da9eb34dd4ab12",
+      "classification": "Exact"
+    },
+    {
+      "index": 113,
+      "label": "unwrap_or/default-alias",
+      "source_sha256": "9283d71fcf3e7372bce9af4236dae0473f63f84f13153a134bf339161b11015b",
+      "stock_row_sha256": "6d2d2bc7ccc9bad95d5843fe2359fe45c6ee2f9bb33c1f271761363b58b79cd6",
+      "classification": "Exact"
+    },
+    {
+      "index": 114,
+      "label": "unwrap_or/eager-effects",
+      "source_sha256": "3cbcc32879b97f5d55c5e77fd7f3d1b76797c08d315f8b7db04ec933501b4c40",
+      "stock_row_sha256": "f915720fc1369aa27178a88936453e5328c51006d684855a16ca26f30ed72a98",
+      "classification": "Exact"
+    },
+    {
+      "index": 115,
+      "label": "unwrap_or/default-error",
+      "source_sha256": "d8b91ed0fec945eb3f95f653961f931480fa98c634f7ee5782da88c8cf198a7d",
+      "stock_row_sha256": "9e4327e122a358992139d2f5d5d77d4cfe3b5c5b18fe6868f026ffa911379530",
+      "classification": "Exact"
+    },
+    {
+      "index": 116,
+      "label": "unwrap_or/loop",
+      "source_sha256": "4e39f92408675601143277a255982592105724507341f2a2a1d75b49d51dbe73",
+      "stock_row_sha256": "da80116e81c7dee1eef62e73d6002babe88828236ae6e7df19885b0c533cb5c7",
+      "classification": "Exact"
+    },
+    {
+      "index": 117,
+      "label": "unwrap_or/closure",
+      "source_sha256": "f694e3fd4a5dd5cb449ae3513fd66d1c6b800b9c8a973d3ea4391209ef6f98b2",
+      "stock_row_sha256": "500e7109804ec3b920d12538b6692470201d5f323c8c09f25e2c4732958f44c7",
+      "classification": "Exact"
+    },
+    {
+      "index": 118,
+      "label": "unwrap_or/fn-return",
+      "source_sha256": "cd21496b348efb0a57279798713b89edd3641fd9cda8bda2b5ffea77c2532152",
+      "stock_row_sha256": "c35b81ea112787df2d7059b7346da6aa18702a25879390e7c6f1416608287bb1",
+      "classification": "Exact"
+    },
+    {
+      "index": 119,
+      "label": "unwrap_or/iter-next",
+      "source_sha256": "263ecb600ea5157e17895d01d467a7ccc9d3533ef1e61de1585bb7375032a917",
+      "stock_row_sha256": "9cecc4267ef6213b2062c62558e6469a3c25bf425412cffe4a34ef9edcc07d73",
+      "classification": "Exact"
+    },
+    {
+      "index": 120,
+      "label": "unwrap_or/nested",
+      "source_sha256": "96d08b332bed2c5f55011163e49a50ef40fc9f575945575bebe5dfc8b23164a3",
+      "stock_row_sha256": "8517d54cfafe342a21c134cdd5b0a0ef804fc3eb33437c2d267adc32dcb27ceb",
+      "classification": "Exact"
+    },
+    {
+      "index": 121,
+      "label": "unwrap_or/map",
+      "source_sha256": "897e1fb456a2efd8c702ec04e585284ebd835e977ccce574cfce69e86f12022f",
+      "stock_row_sha256": "cb7fe21efee7def31a389b4b2dc4edd0dbe8674758b541920995b02d5ab1b215",
+      "fresh": {
+        "location": {
+          "end": 125,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 125 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:125, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 122,
+      "label": "receiver/vec-unwrap",
+      "source_sha256": "b65d807996d9a5aeb1abf6313649d716968e6dd0939811c049733bc1aa943e2a",
+      "stock_row_sha256": "53e6e19869f10649c6862744ab7b24fb9d45ec1110a43242f7894d07e59885af",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::vec::Vec` has no method named `unwrap`",
+            "kind": "MissingInstanceFunction { hash: 0x6ae3bea386d60d5e, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xc11b1e769aea94f2 }) }",
+            "sites": [
+              {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::vec::Vec` has no method named `unwrap`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::vec::Vec` has no matching method",
+      "fresh_display": "Type `std::vec::Vec` has no method named `unwrap`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 123,
+      "label": "receiver/string-unwrap",
+      "source_sha256": "162c2c1c0b0909cfcadbf0ea8c909742eae8dc02776afec382d30536a2a5f77e",
+      "stock_row_sha256": "9635799992f1bf4661942083c273fa86bd1e7ffafc53e863e371e30ac47f570f",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::string::String` has no method named `unwrap`",
+            "kind": "MissingInstanceFunction { hash: 0xa90cd2d82aee2ea0, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x2f4720d36d2b70c }) }",
+            "sites": [
+              {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::string::String` has no method named `unwrap`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::string::String` has no matching method",
+      "fresh_display": "Type `std::string::String` has no method named `unwrap`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 124,
+      "label": "receiver/int-unwrap",
+      "source_sha256": "0b10a376c13ec8cfac31f67dce207506cdc1e8025b2cf404ef9f36db31e78fb6",
+      "stock_row_sha256": "9f3028055ff9af46c3626f76c92a49a53a27d8865c2220a8dc69901955041121",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::i64` has no method named `unwrap`",
+            "kind": "MissingInstanceFunction { hash: 0xb7553153d55885e3, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1cad9186c9641c4f }) }",
+            "sites": [
+              {
+                "end": 74,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 74,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::i64` has no method named `unwrap`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::i64` has no matching method",
+      "fresh_display": "Type `std::i64` has no method named `unwrap`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 125,
+      "label": "receiver/float-expect",
+      "source_sha256": "c4a37bfa1b724613564fc9e0012421e9354092803cc449f1ff649e4c3ad5853d",
+      "stock_row_sha256": "185741353649712d415e0c1a3d226c9e0efc54455d6700b333df2c4464842dc4",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::f64` has no method named `expect`",
+            "kind": "MissingInstanceFunction { hash: 0x8b40217501c5cbfb, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xb9b22c3893248f31 }) }",
+            "sites": [
+              {
+                "end": 79,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 79,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::f64` has no method named `expect`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::f64` has no matching method",
+      "fresh_display": "Type `std::f64` has no method named `expect`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 126,
+      "label": "receiver/bool-unwrap_or",
+      "source_sha256": "20d1224eef7551c21de9f3baf734f09e1d5804775f0781cf07d11f4cad4f6053",
+      "stock_row_sha256": "6268350d0e2906f88d19d7719bfb208b9418173e620228ad8fab7982baa22761",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::bool` has no method named `unwrap_or`",
+            "kind": "MissingInstanceFunction { hash: 0xad76d4940a8b9167, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x981333df5abb043f }) }",
+            "sites": [
+              {
+                "end": 81,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 81,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::bool` has no method named `unwrap_or`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::bool` has no matching method",
+      "fresh_display": "Type `std::bool` has no method named `unwrap_or`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 127,
+      "label": "receiver/char-is_err",
+      "source_sha256": "d19bb6ba371f65f504dbe25f38a8ec10366ce35287f8340b0aef628b2d254c92",
+      "stock_row_sha256": "b9e48193c6ad92ba8ef8201f913caad7f26e0ea21f732e4c5943b3213416cc88",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::char` has no method named `is_err`",
+            "kind": "MissingInstanceFunction { hash: 0x2f4e8541473bc63e, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x214e0b95f9831430 }) }",
+            "sites": [
+              {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::char` has no method named `is_err`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::char` has no matching method",
+      "fresh_display": "Type `std::char` has no method named `is_err`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 128,
+      "label": "receiver/unit-is_some",
+      "source_sha256": "c6fd4229b01e5a1f606a54d907ac46e8660000213c914fed9b366c8da243b3a4",
+      "stock_row_sha256": "5bfef91da11a9b751378fbb99a25eb717ea6557c7b64127f975f6c1f93e92597",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::tuple::Tuple` has no method named `is_some`",
+            "kind": "MissingInstanceFunction { hash: 0x95650512358f768, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xfeb65b3f4755aef0 }) }",
+            "sites": [
+              {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::tuple::Tuple` has no method named `is_some`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::tuple::Tuple` has no matching method",
+      "fresh_display": "Type `std::tuple::Tuple` has no method named `is_some`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 129,
+      "label": "receiver/object-is_some",
+      "source_sha256": "c1ce66a47a1d7be23a8f7b6ad5fa0065b58b35ecb69dd11063f1ebe690514163",
+      "stock_row_sha256": "2d46fa9f9b9791bb05011cde03c2b55e6b20f1e9d2bc916ff90b500d63366f51",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::object::Object` has no method named `is_some`",
+            "kind": "MissingInstanceFunction { hash: 0xd8bc2719fd19d9bd, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x2f5c2c7799148025 }) }",
+            "sites": [
+              {
+                "end": 77,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 77,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::object::Object` has no method named `is_some`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::object::Object` has no matching method",
+      "fresh_display": "Type `std::object::Object` has no method named `is_some`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 130,
+      "label": "receiver/tuple-is_ok",
+      "source_sha256": "23ff57e1234456a6a7ed2eca5bad50e2a3f8ded6a651a4fa1df54baac21999b5",
+      "stock_row_sha256": "627f508c8b013689425e525391e6e97f1fa49748f2045500a18b4e04413cc637",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::tuple::Tuple` has no method named `is_ok`",
+            "kind": "MissingInstanceFunction { hash: 0x51fa42f25ae60389, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xfeb65b3f4755aef0 }) }",
+            "sites": [
+              {
+                "end": 77,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 77,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::tuple::Tuple` has no method named `is_ok`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::tuple::Tuple` has no matching method",
+      "fresh_display": "Type `std::tuple::Tuple` has no method named `is_ok`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 131,
+      "label": "receiver/struct-unwrap",
+      "source_sha256": "3d27fc18a87ccf802faeacc88495eecd62f717b29306c31f654d6d5ad572cca7",
+      "stock_row_sha256": "da5f57ec78342dfd480ff69dc382a7c9e01f2155c0792f2064b7014146477fe4",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `P` has no method named `unwrap`",
+            "kind": "MissingInstanceFunction { hash: 0xed87206bcaa5d0cb, instance: Runtime(Rtti { kind: Struct, hash: 0x467f80bed6994967, variant_hash: 0x0, item: P, fields: {\"x\": 0} }) }",
+            "sites": [
+              {
+                "end": 79,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 79,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `P` has no method named `unwrap`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `P` has no matching method",
+      "fresh_display": "Type `P` has no method named `unwrap`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 132,
+      "label": "receiver/variant-is_some",
+      "source_sha256": "f475f8feaaad2e06ef8cef686604de09ffba1e478ce314a6748feaa603e39205",
+      "stock_row_sha256": "d567f02e7713eabf8887f0373fe74909700c78d101f48a280162ab2830f06974",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `E::A` has no method named `is_some`",
+            "kind": "MissingInstanceFunction { hash: 0xf89275718efffa52, instance: Runtime(Rtti { kind: Empty, hash: 0xf727e1feaf2a3ca, variant_hash: 0x31e6fa421a80c8d1, item: E::A, fields: {} }) }",
+            "sites": [
+              {
+                "end": 78,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 78,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `E::A` has no method named `is_some`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `E::A` has no matching method",
+      "fresh_display": "Type `E::A` has no method named `is_some`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 133,
+      "label": "receiver/iter-unwrap",
+      "source_sha256": "2022df2289d1d69242d13c22f2752a02a12aab6bf78942f912ff3d0022c5a19c",
+      "stock_row_sha256": "1ec202225e7cec46db6ce7afce2a47102989f0a9d95218319233bff4d2d7c5af",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::slice::Iter` has no method named `unwrap`",
+            "kind": "MissingInstanceFunction { hash: 0x5fd9c2379128b1fd, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xf42162e28d142851 }) }",
+            "sites": [
+              {
+                "end": 83,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 83,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::slice::Iter` has no method named `unwrap`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::slice::Iter` has no matching method",
+      "fresh_display": "Type `std::slice::Iter` has no method named `unwrap`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 134,
+      "label": "receiver/range-is_none",
+      "source_sha256": "6f567a1c839f892171941386e1a2207e6f31d2b2979d7cf15400f352414e508e",
+      "stock_row_sha256": "2f34f341b32725e5648b69e69050d466e03424c9f854f630a005db8644a84fe5",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::ops::Range` has no method named `is_none`",
+            "kind": "MissingInstanceFunction { hash: 0x79fbea00a96f4c16, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x700a34bcd6630cba }) }",
+            "sites": [
+              {
+                "end": 80,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 80,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::ops::Range` has no method named `is_none`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::ops::Range` has no matching method",
+      "fresh_display": "Type `std::ops::Range` has no method named `is_none`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 135,
+      "label": "receiver/option-is_ok",
+      "source_sha256": "7e373b03f9150ab0b16e8b70dff07e4a711a9593a11fa568af75597e8d4455c2",
+      "stock_row_sha256": "98f4d55d67ce92f2d240dcffa19f6b17be75558491abe63ad853103093671afd",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::option::Option` has no method named `is_ok`",
+            "kind": "MissingInstanceFunction { hash: 0x6fd996e973aa9301, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xc0958f246e193e78 }) }",
+            "sites": [
+              {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::option::Option` has no method named `is_ok`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::option::Option` has no matching method",
+      "fresh_display": "Type `std::option::Option` has no method named `is_ok`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 136,
+      "label": "receiver/option-is_err",
+      "source_sha256": "28de34954042d291b1509aef082063df671ec368df69954c2a846e3681975555",
+      "stock_row_sha256": "bb0b78ddcfc16ad2936e644304ec3daf73c5a51076d7d16503c9e6610f1280d1",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::option::Option` has no method named `is_err`",
+            "kind": "MissingInstanceFunction { hash: 0xce9501f0d0a1ec76, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xc0958f246e193e78 }) }",
+            "sites": [
+              {
+                "end": 80,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 80,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::option::Option` has no method named `is_err`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::option::Option` has no matching method",
+      "fresh_display": "Type `std::option::Option` has no method named `is_err`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 137,
+      "label": "receiver/result-is_some",
+      "source_sha256": "d064098d0e6e83733329fa5b0ac9d7376fed8736ac251029a730479a5a7a41f2",
+      "stock_row_sha256": "fb90536fb5195d0c4635c0d55f89309477c6b550bf3e37eedc2d4573e18e957d",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::result::Result` has no method named `is_some`",
+            "kind": "MissingInstanceFunction { hash: 0xee98e188d107c177, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1978eae6b50a98ef }) }",
+            "sites": [
+              {
+                "end": 79,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 79,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::result::Result` has no method named `is_some`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::result::Result` has no matching method",
+      "fresh_display": "Type `std::result::Result` has no method named `is_some`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 138,
+      "label": "receiver/result-is_none",
+      "source_sha256": "c2fa5b1da865024b329595072bd8af9569bab6b10347a47e75a537cde5e9fd86",
+      "stock_row_sha256": "820aa3dee975f6bc17a6b4e36e831523595eb2b39378769032d0cb621839e4d2",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::result::Result` has no method named `is_none`",
+            "kind": "MissingInstanceFunction { hash: 0x1089345aca06d843, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1978eae6b50a98ef }) }",
+            "sites": [
+              {
+                "end": 80,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 80,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::result::Result` has no method named `is_none`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::result::Result` has no matching method",
+      "fresh_display": "Type `std::result::Result` has no method named `is_none`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 139,
+      "label": "receiver/fn-param",
+      "source_sha256": "8d52e9469fc47d1a4566ae2e56109e472533eda9154aef9e983145a71c424428",
+      "stock_row_sha256": "de769c9ed489dd30f77121d04b98b5664a67b651872a710f7822d35560b5683a",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::i64` has no method named `unwrap`",
+            "kind": "MissingInstanceFunction { hash: 0xb7553153d55885e3, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1cad9186c9641c4f }) }",
+            "sites": [
+              {
+                "end": 68,
+                "source": 0,
+                "start": 58
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 68,
+                "source": 0,
+                "start": 58
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 87,
+                "source": 0,
+                "start": 83
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "Type `std::i64` has no method named `unwrap`\n  at c17a.rn:1:59\n  called from c17a.rn:1:84"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::i64` has no matching method",
+      "fresh_display": "Type `std::i64` has no method named `unwrap`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 140,
+      "label": "receiver/mixed-loop",
+      "source_sha256": "46a9dfbde87438e41e43ec67da1493fab0efb49909590636b18964c0d1f3bcbc",
+      "stock_row_sha256": "887f061bb8da4ba8484616b6d3c1e06949151acfc5462481824f303248153d3c",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::i64` has no method named `unwrap`",
+            "kind": "MissingInstanceFunction { hash: 0xb7553153d55885e3, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1cad9186c9641c4f }) }",
+            "sites": [
+              {
+                "end": 106,
+                "source": 0,
+                "start": 96
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 106,
+                "source": 0,
+                "start": 96
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::i64` has no method named `unwrap`\n  at c17a.rn:1:97"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::i64` has no matching method",
+      "fresh_display": "Type `std::i64` has no method named `unwrap`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 141,
+      "label": "receiver/args-effects",
+      "source_sha256": "c900b69fbc30da499c7b222d45ebd7aa8bac9e9cfb0b00b4c6553fbd4a9f56cf",
+      "stock_row_sha256": "da8903913709dab2adfd555287efa0ec9deb038ca048af61116973029667b1a1",
+      "fresh": {
+        "observation": {
+          "events": [
+            {
+              "kind": "i64",
+              "tag": 1,
+              "value": "1"
+            },
+            {
+              "kind": "i64",
+              "tag": 2,
+              "value": "2"
+            }
+          ],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::i64` has no method named `unwrap_or`",
+            "kind": "MissingInstanceFunction { hash: 0x29c876cd99548917, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1cad9186c9641c4f }) }",
+            "sites": [
+              {
+                "end": 92,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 92,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::i64` has no method named `unwrap_or`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[]"
+      },
+      "stock_display": "Type `std::i64` has no matching method",
+      "fresh_display": "Type `std::i64` has no method named `unwrap_or`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 142,
+      "label": "receiver/args-effects-expect",
+      "source_sha256": "10d831eb2fc8fe261f43b45ccd1c45e5ac8e609684d8e758442e246b90c0074b",
+      "stock_row_sha256": "83eb80b865d4cdc681c01b88fb37d8b0a002b3a18c8c4423b95db8eb5e12c315",
+      "fresh": {
+        "observation": {
+          "events": [
+            {
+              "kind": "i64",
+              "tag": 1,
+              "value": "1"
+            },
+            {
+              "kind": "i64",
+              "tag": 2,
+              "value": "2"
+            }
+          ],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::i64` has no method named `expect`",
+            "kind": "MissingInstanceFunction { hash: 0x2e5f9ccb5b855885, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1cad9186c9641c4f }) }",
+            "sites": [
+              {
+                "end": 89,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 89,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::i64` has no method named `expect`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[]"
+      },
+      "stock_display": "Type `std::i64` has no matching method",
+      "fresh_display": "Type `std::i64` has no method named `expect`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 143,
+      "label": "receiver/chain",
+      "source_sha256": "0e7483d4dfa4a4fec72381d737bbb1e82501b9b7e548fe6799157e17a5ae849b",
+      "stock_row_sha256": "7f8e129d866bde945224dd6cdf8bac5593668cd87d2054dfd53895602750dce2",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::i64` has no method named `is_some`",
+            "kind": "MissingInstanceFunction { hash: 0xeb4d9ae8ad6945d7, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1cad9186c9641c4f }) }",
+            "sites": [
+              {
+                "end": 82,
+                "source": 0,
+                "start": 71
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 82,
+                "source": 0,
+                "start": 71
+              },
+              "role": "Origin"
+            },
+            {
+              "location": {
+                "end": 62,
+                "source": 0,
+                "start": 58
+              },
+              "role": "Caller"
+            },
+            {
+              "location": {
+                "end": 101,
+                "source": 0,
+                "start": 97
+              },
+              "role": "Caller"
+            }
+          ],
+          "rendered": "Type `std::i64` has no method named `is_some`\n  at c17a.rn:1:72\n  called from c17a.rn:1:59\n  called from c17a.rn:1:98"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::i64` has no matching method",
+      "fresh_display": "Type `std::i64` has no method named `is_some`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 144,
+      "label": "receiver/type-value",
+      "source_sha256": "084022d9e1e2b550ba40d593b491fcf8a4bdced9d470f654c9c316a95c6f7787",
+      "stock_row_sha256": "7257c03a5e8be7a2be23c77f1cf3ba16b28e48645851838736b8d2599042a89b",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::any::Type` has no method named `unwrap`",
+            "kind": "MissingInstanceFunction { hash: 0x16846faccc3278ec, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }",
+            "sites": [
+              {
+                "end": 74,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 74,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::any::Type` has no method named `unwrap`\n  at c17a.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::any::Type` has no matching method",
+      "fresh_display": "Type `std::any::Type` has no method named `unwrap`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 145,
+      "label": "receiver/fn-value",
+      "source_sha256": "4acc574495d2ee1da145f0f73b7f9a557afd5dbd1bb632bc5668cd836355e7a8",
+      "stock_row_sha256": "08fb2bd62ad0280f85fab7bf4d7023d459134a157db74c090d87cfbd0453dd93",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::ops::Function` has no method named `is_ok`",
+            "kind": "MissingInstanceFunction { hash: 0xad47999d08a9852c, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x20b8050151a2855 }) }",
+            "sites": [
+              {
+                "end": 81,
+                "source": 0,
+                "start": 72
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 81,
+                "source": 0,
+                "start": 72
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::ops::Function` has no method named `is_ok`\n  at c17a.rn:1:73"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::ops::Function` has no matching method",
+      "fresh_display": "Type `std::ops::Function` has no method named `is_ok`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 146,
+      "label": "script/impl-unwrap",
+      "source_sha256": "32d7c14a8237752727b163e9a13f05da14fd402d166f1d4f5aa109bf2978e188",
+      "stock_row_sha256": "bfbd87f728399b89f52b891ebf0fff77096d94fcf91e17b44f6009e6d682f921",
+      "fresh": {
+        "location": {
+          "end": 110,
+          "source": 0,
+          "start": 95
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 95, end: 110 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 95:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 147,
+      "label": "script/impl-unwrap-and-option",
+      "source_sha256": "ab6209129348faae8f5615410b3ebce704e06a914bb5ec313b8b3a130e5539fe",
+      "stock_row_sha256": "de7af0226a53751585977e3d3fe0b9d1961b2b77670ebbe9f35f08bf270ecc1e",
+      "fresh": {
+        "location": {
+          "end": 111,
+          "source": 0,
+          "start": 96
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 96, end: 111 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 96:111, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 148,
+      "label": "script/impl-is_some",
+      "source_sha256": "3d599a315fa751166ecbf9525cf58524b6ae4eac870fa9937d53b2e9ecec855e",
+      "stock_row_sha256": "8ef7d420b9e8853382fd7c676dbac0a016de1ef29316438dfaeb374601136ef7",
+      "fresh": {
+        "location": {
+          "end": 109,
+          "source": 0,
+          "start": 93
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 93, end: 109 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:109, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 149,
+      "label": "script/impl-expect-enum",
+      "source_sha256": "c8d689dc6c6ccd4082a496d55e7eb6d922bd6afd5672ec869cefacb39f2bc9d3",
+      "stock_row_sha256": "06af74180fa238d99bb718d4f32ad3748bbf452829dbdcefd41be0d174cf7aaf",
+      "fresh": {
+        "location": {
+          "end": 107,
+          "source": 0,
+          "start": 93
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 93, end: 107 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:107, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 150,
+      "label": "script/impl-unwrap_or-module",
+      "source_sha256": "7a3eee8e647a4256301d618518f1aad9c6678a1cad363ec3691d4f6fd23bc1c1",
+      "stock_row_sha256": "eb7575fb3b62cad898438b8569507380301091068022d3f2b7d9bb0379aa0a3e",
+      "fresh": {
+        "location": {
+          "end": 142,
+          "source": 0,
+          "start": 120
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 120, end: 142 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 120:142, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 151,
+      "label": "script/impl-is_ok-unused",
+      "source_sha256": "ae856b394cadd4a6c2cb9d8ca358139c8b0541ad8136ae5fb83fe4bd39f5b0d7",
+      "stock_row_sha256": "1955d210d5670babb690e307e71393753601a3a5ff8b9e3db17851a72b1732aa",
+      "fresh": {
+        "location": {
+          "end": 106,
+          "source": 0,
+          "start": 93
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 93, end: 106 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:106, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 152,
+      "label": "script/free-fn-unwrap",
+      "source_sha256": "d49b2e944def319382aacc26572c62de071b99763984ea6cce20c7ea13b6f9c0",
+      "stock_row_sha256": "9b79dd7de1e4fe667ba5c07884b22bf9bc95d0b7ac7fd35bbf7c9570e6606b62",
+      "classification": "Exact"
+    },
+    {
+      "index": 153,
+      "label": "script/assoc-fn-unwrap",
+      "source_sha256": "e0e7ebc77a392ca37133e684be458ce19e35f5b4b2fc5622284ca72df5450a80",
+      "stock_row_sha256": "a3f5a86c7c64451d6301850343e26d8a7387895d1b333aa0d503a83942a2f820",
+      "fresh": {
+        "location": {
+          "end": 117,
+          "source": 0,
+          "start": 101
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 101, end: 117 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 101:117, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 154,
+      "label": "script/field-named-unwrap",
+      "source_sha256": "b30196382e2a9f8790e17975b56ce7f0e71de8add24c6a52da75d1d2116866c4",
+      "stock_row_sha256": "c1b63119ca2dfd1d41990b21cfc729083911b425a9dc3b42dc9f382d928d01a3",
+      "classification": "Exact"
+    },
+    {
+      "index": 155,
+      "label": "compile/path-option-unwrap",
+      "source_sha256": "7a01f9da1b6786e3b263e842b62454516021de5d1e926daaa99c4088564cb9d1",
+      "stock_row_sha256": "238d032a68bb8d545fbc2a9d70ecb3913cbc966f3a0330ea9550a7b461f8252c",
+      "fresh": {
+        "location": {
+          "end": 87,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 87 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:87, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 156,
+      "label": "compile/path-result-is_ok",
+      "source_sha256": "110e16f10a67b4a309efd400dbe5e72f2cb68fb6d7f1a8d383fe8845ff5718b7",
+      "stock_row_sha256": "17e575c3842da921b042f70e7eab4c4af06fb27505923587bf8a103dc5470d58",
+      "fresh": {
+        "location": {
+          "end": 85,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 85 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:85, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 157,
+      "label": "compile/path-wrong-type",
+      "source_sha256": "fe207e5b70134bd7cf87399f6ee55757e5e2e9e507d9d6a267931727a9f24bd4",
+      "stock_row_sha256": "128314b5e252ab345e3fb717fe0a7f9d9a11a623571af0927ac8b6704efd607d",
+      "fresh": {
+        "location": {
+          "end": 82,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 82 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:82, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 158,
+      "label": "compile/fn-value-path",
+      "source_sha256": "bc4bf42778003fb6db832aae772a991a45a059fe5ea885e6f1fa08d3c9940815",
+      "stock_row_sha256": "bb3c14e65c1a6af2eb5e34959f42635cde9025aa2374a31675cd7b4038706fcf",
+      "fresh": {
+        "location": {
+          "end": 84,
+          "source": 0,
+          "start": 70
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 70, end: 84 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 70:84, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 159,
+      "label": "compile/method-as-field",
+      "source_sha256": "8460b2246d5a01ff0f117d0f531aa0a6da12446aecd51a89494cc1ea49985c90",
+      "stock_row_sha256": "c0b17eb589cfc8676f1243597b6b1f448e6a50b26e2b4ae2ed97829a1dc4c8f1",
+      "classification": "Exact"
+    },
+    {
+      "index": 160,
+      "label": "compile/unwrap-extra-arg",
+      "source_sha256": "ac65974d4a3d24b9e6b3e517720a065637277a4df446b4a6e5206e3e382f07bb",
+      "stock_row_sha256": "8605458bbc09572509d64ccf610b9f71c877bf54cfcd1cc8b3a22df93cfa9b7a",
+      "fresh": {
+        "location": {
+          "end": 81,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 81 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:81, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 161,
+      "label": "compile/expect-missing-arg",
+      "source_sha256": "1325fb6a5f90b25013c66b861f1de33356fd040e77708754cbd77b4689470cf7",
+      "stock_row_sha256": "93bc5b640769967a01a9d951340eac3f885a6753359994a5390782da5f82dd1a",
+      "fresh": {
+        "location": {
+          "end": 80,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 80 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:80, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 162,
+      "label": "compile/unwrap_or-missing-arg",
+      "source_sha256": "0815cb4831ede7de4b0cae4ca236608a6d73519bc37a10263b7c054901406c31",
+      "stock_row_sha256": "6bfe2a50bb951b0d4f0050feb1cc8669c0a0f64407970da2ca1592d705ece813",
+      "fresh": {
+        "location": {
+          "end": 80,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 80 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:80, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 163,
+      "label": "compile/is_some-extra-arg",
+      "source_sha256": "71089ed93cae6fcce239b408ab3ce8ffc5d400e5522e3deff237b627d4240208",
+      "stock_row_sha256": "17bd9e817fcd30386f61d30e6b7a9ee05b0cbba8ca0873a97e65ec08b065121b",
+      "fresh": {
+        "location": {
+          "end": 79,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 79 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:79, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 164,
+      "label": "compile/turbofish",
+      "source_sha256": "ec88a72ced8c5ea12c8ba8f60c1b62bfa49d5a7d00ccb8db105816fc1ff25f9f",
+      "stock_row_sha256": "a8b4dfc4a91d2bb1b3fcd9624268bef721feb8d94be4bf5340338dc57ff058cf",
+      "fresh": {
+        "location": {
+          "end": 87,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 87 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:87, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 165,
+      "label": "compile/try-then-unwrap",
+      "source_sha256": "a04adce1e3047d870d574d911549bd8cc07fdcf8f51fc7d2c1dc28fc9b001433",
+      "stock_row_sha256": "e43e1725ff44ad6087d9eac90a47a2105e66e84bde03fb20ce5b7cd3eae86b89",
+      "classification": "Exact"
+    }
+  ]
+}

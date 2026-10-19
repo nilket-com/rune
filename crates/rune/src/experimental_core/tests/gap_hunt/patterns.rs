@@ -702,7 +702,21 @@ fn fresh_contract() {
 		let c16e: serde_json::Value =
 			serde_json::from_str(include_str!("patterns/c16e_admissions.json")).unwrap();
 		let c16e_rule = c16e.get(case.label.as_str());
-		let admitted = c16e_rule.or_else(|| admissions.get(case.label.as_str()));
+		let c17a: serde_json::Value =
+			serde_json::from_str(include_str!("patterns/c17a_admissions.json")).unwrap();
+		assert_eq!(c17a.as_object().unwrap().len(), 7);
+		let c17a_rule = c17a.get(case.label.as_str());
+		if let Some(rule) = c17a_rule {
+			// C17a admits Option and Result methods; these rows were refused at the method.
+			assert_eq!(rule["policy"], "Exact");
+			assert_eq!(
+				rule["previous_refusal"],
+				expected_fresh_refusal(&case.label).unwrap()
+			);
+		}
+		let admitted = c17a_rule
+			.or(c16e_rule)
+			.or_else(|| admissions.get(case.label.as_str()));
 		if let Some(rule) = c16e_rule {
 			assert_eq!(
 				rule["previous_refusal"],
@@ -799,7 +813,7 @@ fn fresh_contract() {
 	}
 	assert_eq!(
 		(equal, presentation, refused, full_budget),
-		(264, 3, 18, 63)
+		(271, 3, 11, 63)
 	);
 	fs::write(out.join("summary.txt"),format!("{equal} exact stock parity;{presentation} source-pinned policy-presentation;{refused} declared refusals;{full_budget} full-fresh-budget source checks (no numeric budget parity)\n")).unwrap();
 	contract_completed("fresh", 348);

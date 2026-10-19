@@ -20,6 +20,7 @@ pub fn module() -> Result<Module, ContextError> {
 	#[cfg(feature = "fresh-core")]
 	{
 		m.fresh_pipeline = 4;
+		m.fresh_variant = crate::function::fresh_variant::marker::RESULT;
 	}
 
 	// Sorted for ease of finding

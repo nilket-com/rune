@@ -86,12 +86,21 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	let c14: Json = serde_json::from_str(include_str!("c14_admissions.json")).unwrap();
 	let c15: Json = serde_json::from_str(include_str!("c15_admissions.json")).unwrap();
 	let c15b: Json = serde_json::from_str(include_str!("c15b_admissions.json")).unwrap();
-	if let Some(rule) = c15b
+	let c17a: Json = serde_json::from_str(include_str!("c17a_admissions.json")).unwrap();
+	assert_eq!(c17a.as_object().unwrap().len(), 2);
+	if let Some(rule) = c17a
 		.get(case["id"].as_str().unwrap())
+		.or_else(|| c15b.get(case["id"].as_str().unwrap()))
 		.or_else(|| c14.get(case["id"].as_str().unwrap()))
 		.or_else(|| c15.get(case["id"].as_str().unwrap()))
 	{
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
+		if rule["record"] == "C17a" {
+			assert_eq!(
+				rule["stock_observation_sha256"],
+				frozen["stock_observation_sha256"]
+			);
+		}
 		assert_eq!(frozen["disposition"], "Refused-surface");
 		assert_eq!(audit["invoked"], true);
 		assert_eq!(audit["reuse_used_fallback"], false);

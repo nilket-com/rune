@@ -174,3 +174,43 @@ impl CompileTransaction {
 		Ok(())
 	}
 }
+
+impl CompileTransaction {
+	/// Proves that only the certified std Option and Result registrations provide
+	/// `m` for every receiver a fresh value or a source item can have.
+	pub(crate) fn variant_method(
+		&mut self,
+		c: &Context,
+		q: &crate::query::QueryInner<'_>,
+		p: &crate::compile::Pool,
+		m: crate::function::fresh_variant::Method,
+	) -> Result<()> {
+		if self.checked_variant & m.bit() != 0 {
+			return Ok(());
+		}
+		if !c.fresh_variant_method(m) || q.fresh_method_script.closed(m.hash()) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		for receiver in crate::function::fresh_methods::RECEIVERS
+			.iter()
+			.copied()
+			.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
+		{
+			if m.provider(receiver).is_some() {
+				continue;
+			}
+			let h = Hash::associated_function(receiver, m.hash());
+			if c.lookup_function(h).is_some() {
+				return Err(Error::refused(Refusal::Method));
+			}
+			if !self.builder.absent.contains(&h) {
+				if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
+					return Err(invalid());
+				}
+				self.builder.absent.try_push(h)?;
+			}
+		}
+		self.checked_variant |= m.bit();
+		Ok(())
+	}
+}

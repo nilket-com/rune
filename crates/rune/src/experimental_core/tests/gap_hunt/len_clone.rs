@@ -343,7 +343,7 @@ fn fresh_contract() {
 		.collect();
 	assert_eq!(rows.len(), generated.len());
 	let mut coverage = 0;
-	let mut retained = 0;
+	let mut presented = 0;
 	for (n, (line, (label, source))) in rows.iter().zip(&generated).enumerate() {
 		let row: Vec<_> = line.split('\t').collect();
 		assert_eq!(row.len(), 5);
@@ -395,10 +395,15 @@ fn fresh_contract() {
 			continue;
 		}
 		if label == "method/function/clone" {
-			assert_eq!((&actual[0], &actual[1]), (&"observation-error", &"Debug"));
-			assert_eq!(unhex(actual[3]), "value formatting form: Unsupported");
-			assert_eq!(unhex(actual[4]), "");
-			retained += 1;
+			// Policy presentation: stock Debug prints its bytecode offset, fresh the
+			// function index (C17a). Both strings are pinned.
+			let stock = unhex(row[2]);
+			let stock: Vec<_> = stock.split('\t').collect();
+			assert_eq!(&stock[..4], &["value", "", "", ""]);
+			assert_eq!(unhex(stock[4]), "immediate function (at: 0x5)");
+			assert_eq!(&actual[..4], &["value", "", "", ""]);
+			assert_eq!(unhex(actual[4]), "immediate function (function: 1)");
+			presented += 1;
 		} else {
 			let expected = super::nominal_clone::intentional_record(
 				"len_clone_stock.tsv",
@@ -417,7 +422,7 @@ fn fresh_contract() {
 		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
 	}
 	assert_eq!(coverage, 51);
-	assert_eq!(retained, 1);
+	assert_eq!(presented, 1);
 	super::contract_completed("fresh", rows.len());
 }
 

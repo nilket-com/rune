@@ -862,6 +862,11 @@ impl Store {
 				_ => return Err(unsupported()),
 			},
 			Value::Type(tag) => type_value(tag, sink)?,
+			// Stock prints its bytecode offset here; fresh names the function index,
+			// as the closure form does.
+			Value::Function { id, .. } if debug => {
+				sink.formatted(format_args!("immediate function (function: {id})"))?
+			}
 			_ => return Err(unsupported()),
 		}
 		Ok(None)
@@ -1027,7 +1032,8 @@ mod tests {
 				let child = if invalid {
 					store.string("stale").unwrap()
 				} else {
-					Value::Function { code: 0, id: 0 }
+					// A range has no fresh formatting form.
+					store.range(0, 1).unwrap()
 				};
 				let key = "z".repeat(if over { 65_536 } else { 1 });
 				let object = store
@@ -1075,9 +1081,9 @@ mod tests {
 			ErrorKind::FormatLimit
 		);
 		// A later oversized sibling does not globally outrank an earlier failure.
-		let earlier = store
-			.list(Type::Vec, &[Value::Function { code: 0, id: 0 }, object])
-			.unwrap();
+		let range = store.range(0, 1).unwrap();
+		let earlier = store.list(Type::Vec, &[range, object]).unwrap();
+		store.release(range).unwrap();
 		assert_eq!(
 			store.format_value(earlier, true).unwrap_err().kind,
 			ErrorKind::Unsupported

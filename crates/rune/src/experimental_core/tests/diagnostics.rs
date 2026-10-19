@@ -352,7 +352,8 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 		assert_eq!(at.start as usize..at.end as usize, fresh_span, "{id}");
 		assert_eq!((at.source, at.revision), (0, 73));
 	}
-	// Function clone succeeds; stock instruction-offset Debug has no fresh equivalent.
+	// Function clone succeeds. Stock Debug prints an instruction offset; fresh
+	// prints the function index instead, as its closure form does.
 	let source="fn g(a) {a} pub fn target() { let f=g; f.clone() } pub fn call_clone() { let f=g.clone(); f(7) }";
 	let (mut stock, program) = compile(&context, source);
 	assert_eq!(
@@ -370,13 +371,12 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 			100_000,
 		)
 		.unwrap();
-	assert!(matches!(
-		function.value,
-		super::super::value::Value::Function { .. }
-	));
+	let super::super::value::Value::Function { id, .. } = function.value else {
+		panic!("function value");
+	};
 	assert_eq!(
-		store.root_format(&function, true).unwrap_err().kind,
-		ErrorKind::Unsupported
+		store.root_format(&function, true).unwrap().as_str(),
+		std::format!("immediate function (function: {id})")
 	);
 	store.root_release(function).unwrap();
 	let answer = executor

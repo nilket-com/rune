@@ -368,7 +368,25 @@ fn run_contract(engine: &str) {
 				serde_json::from_str(include_str!("expression_calls/c16f_admissions.json"))
 					.unwrap();
 			assert_eq!(admissions.as_object().unwrap().len(), 1);
-			if let Some(rule) = admissions.get(format!("{i:03}")) {
+			let c17a: Json =
+				serde_json::from_str(include_str!("expression_calls/c17a_admissions.json"))
+					.unwrap();
+			assert_eq!(c17a.as_object().unwrap().len(), 1);
+			if let Some(rule) = c17a.get(format!("{i:03}")) {
+				// C17a admits `unwrap`; the frozen disposition still records the refusal.
+				use sha2::{Digest, Sha256};
+				assert_eq!(i, 13);
+				assert_eq!(rule["classification"], "Exact");
+				assert_eq!(rule["source_sha256"], case["source_sha256"]);
+				assert_eq!(
+					hex(Sha256::digest(serde_json::to_vec(expected).unwrap()).as_ref()),
+					rule["stock_row_sha256"]
+				);
+				assert_eq!(policy["classification"], "Retain-refusal");
+				assert_eq!(policy["refusal"], rule["previous_refusal"]);
+				assert_eq!(audit["invoked"], true);
+				assert_eq!(project(actual), expected["projected"], "{label}");
+			} else if let Some(rule) = admissions.get(format!("{i:03}")) {
 				use sha2::{Digest, Sha256};
 				assert_eq!(i, 98);
 				assert_eq!(rule["authority"], 21347);

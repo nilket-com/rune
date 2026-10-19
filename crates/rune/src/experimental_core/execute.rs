@@ -814,6 +814,11 @@ impl Executor {
 			return self
 				.missing_method_call(code, store, function, base, out, args_start, args_len);
 		}
+		if let Some(method) = crate::function::fresh_variant::Method::from_id(id) {
+			return self.variant_method_call(
+				code, store, function, base, out, method, args_start, args_len,
+			);
+		}
 		if (super::code::SORT_BEGIN..=super::code::SORT_ORDERING).contains(&id) {
 			if args_len != certificate.arity {
 				return Err(invalid());
@@ -2705,6 +2710,7 @@ mod sorting;
 #[cfg(test)]
 mod sorting_tests;
 mod text_methods;
+mod variant_methods;
 
 #[cfg(test)]
 mod numeric_tests;

@@ -12,6 +12,7 @@ mod missing_methods;
 mod patterns;
 mod text_methods;
 mod text_pipeline;
+mod variant_methods;
 #[derive(Clone, Copy)]
 pub(crate) enum Resolve {
 	Script(Hash),
@@ -2215,6 +2216,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 			if let Some(method) = crate::function::fresh_text::Method::from_hash(hash) {
 				return self.call_text_method(call, target, method, out, span);
+			}
+			if let Some(method) = crate::function::fresh_variant::Method::from_hash(hash) {
+				return self.call_variant_method(call, target, method, out, span);
 			}
 			if name_hash == Hash::ident("collect") {
 				return self.call_text_collect(call, target, hash, out, span);

@@ -92,6 +92,10 @@ pub struct Module {
 	pub(crate) fresh_text: bool,
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_pipeline: u8,
+	/// Private C17a provider markers (`function::fresh_variant::marker`), never set by
+	/// user registration APIs.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_variant: u8,
 	/// Constant constructors.
 	pub(crate) construct: Vec<(Hash, AnyTypeInfo, ConstConstructImpl)>,
 	/// Defines construct hashes.
@@ -216,7 +220,7 @@ impl Module {
 		Self::default()
 	}
 
-	/// Modify the current module to utilise a special identifier.
+	/// Modify the current module to utilize a special identifier.
 	///
 	/// TODO: Deprecate after next major release.
 	#[doc(hidden)]
@@ -283,6 +287,8 @@ impl Module {
 			fresh_text: false,
 			#[cfg(feature = "fresh-core")]
 			fresh_pipeline: 0,
+			#[cfg(feature = "fresh-core")]
+			fresh_variant: 0,
 			construct: Vec::new(),
 			construct_hash: HashSet::new(),
 			common: ModuleItemCommon {

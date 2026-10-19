@@ -1057,6 +1057,30 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 		id: ANY_TYPE_NAME,
 		arity: 1,
 	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_variant::Method::Unwrap.id(),
+		arity: crate::function::fresh_variant::Method::Unwrap.arity(),
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_variant::Method::Expect.id(),
+		arity: crate::function::fresh_variant::Method::Expect.arity(),
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_variant::Method::IsSome.id(),
+		arity: crate::function::fresh_variant::Method::IsSome.arity(),
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_variant::Method::IsNone.id(),
+		arity: crate::function::fresh_variant::Method::IsNone.arity(),
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_variant::Method::IsOk.id(),
+		arity: crate::function::fresh_variant::Method::IsOk.arity(),
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_variant::Method::IsErr.id(),
+		arity: crate::function::fresh_variant::Method::IsErr.arity(),
+	},
 ];
 pub(crate) const ANY_TYPE_OF: u32 = 0x8000_007c;
 pub(crate) const ANY_TYPE_NAME: u32 = 0x8000_007d;
@@ -1202,7 +1226,7 @@ impl Builder {
 		}
 
 		// Stamp only unstamped (code 0) function literals; a literal that already
-		// names a program is foreign and is rejected, never relabelled as local.
+		// names a program is foreign and is rejected, never relabeled as local.
 		let id = allocate_code_id(&NEXT_CODE)?;
 		for f in &mut self.functions {
 			for constant in &mut f.constants {
@@ -1301,6 +1325,7 @@ pub(crate) struct CompileTransaction {
 	checked_absent: Vec<crate::Hash>,
 	checked_text: u8,
 	checked_pipeline: u8,
+	checked_variant: u8,
 }
 
 impl CompileTransaction {
@@ -3214,8 +3239,9 @@ mod intrinsic_partition_tests {
 		);
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
-		// C11c adds the certified cold capture-take intrinsic to the prior49.
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 50);
+		// C11c adds the certified cold capture-take intrinsic to the prior 49; C17a
+		// adds the six Option and Result methods.
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 56);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, CAPTURE_TAKE)
 				.unwrap()
@@ -3241,6 +3267,13 @@ mod intrinsic_partition_tests {
 		assert_ne!(PRINT_RAW, VARIANT_SUCCESS);
 		for id in [0, FIRST_INTRINSIC_ID, VARIANT_SUCCESS + 1, u32::MAX] {
 			assert!(certified_intrinsic(CERTIFIED_INTRINSICS, id).is_none());
+		}
+		// Lookup returns the first entry, so a reused id would shadow a certificate.
+		for (i, entry) in CERTIFIED_INTRINSICS.iter().enumerate() {
+			assert!(entry.id < FIRST_HOST);
+			assert!(CERTIFIED_INTRINSICS[i + 1..]
+				.iter()
+				.all(|other| other.id != entry.id));
 		}
 	}
 }

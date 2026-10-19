@@ -21,6 +21,7 @@ pub fn module() -> Result<Module, ContextError> {
 	#[cfg(feature = "fresh-core")]
 	{
 		m.fresh_pipeline = 2;
+		m.fresh_variant = crate::function::fresh_variant::marker::OPTION;
 	}
 
 	// Private C12 provider markers: this std module registers the builtin providers.

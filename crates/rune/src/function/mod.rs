@@ -338,6 +338,8 @@ pub(crate) mod fresh_methods;
 pub(crate) mod fresh_pipeline;
 #[cfg(feature = "fresh-core")]
 pub(crate) mod fresh_text;
+#[cfg(feature = "fresh-core")]
+pub(crate) mod fresh_variant;
 
 #[cfg(feature = "fresh-core")]
 pub(crate) mod fresh_iter;

@@ -258,7 +258,7 @@ fn stock_contract() {
 
 #[cfg(target_os = "linux")]
 fn run_contract(engine: &str) {
-	assert_eq!(engine, "stock");
+	assert!(matches!(engine, "stock" | "fresh"));
 	let cases: Json = serde_json::from_str(CASES).unwrap();
 	let frozen: Json = serde_json::from_str(include_str!("option_methods/stock.json")).unwrap();
 	let cases = cases.as_array().unwrap();
@@ -292,7 +292,11 @@ fn run_contract(engine: &str) {
 		let mut child = command
 			.args([
 				"--exact",
-				"experimental_core::tests::gap_hunt::option_methods::child",
+				if engine == "stock" {
+					"experimental_core::tests::gap_hunt::option_methods::child"
+				} else {
+					"experimental_core::tests::gap_hunt::option_methods::fresh_child"
+				},
 				"--ignored",
 				"--nocapture",
 				"--quiet",
@@ -368,6 +372,10 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["label"], case["label"]);
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["origin"], case["origin"]);
+		if engine == "fresh" {
+			verify_fresh_case(i, case, expected, &observed, &stdout, &stderr);
+			continue;
+		}
 		if engine == "stock" {
 			assert_eq!(observed["projected"], expected["projected"], "{label}");
 		}
@@ -376,3 +384,7 @@ fn run_contract(engine: &str) {
 	}
 	super::contract_completed(engine, cases.len());
 }
+
+include!("option_methods/fresh.rs");
+
+include!("option_methods/contract.rs");

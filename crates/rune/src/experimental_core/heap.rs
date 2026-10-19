@@ -26,6 +26,8 @@ mod sorting_tests;
 mod taking;
 mod text_methods;
 mod text_pipeline;
+mod variant_methods;
+pub(crate) use variant_methods::VariantOutcome;
 
 #[cfg(feature = "fresh-core-native")]
 pub(crate) mod native;
@@ -1952,5 +1954,7 @@ impl Store {
 
 #[cfg(test)]
 mod field_iter_tests;
+#[cfg(test)]
+mod variant_method_tests;
 
 mod method_cmp;
