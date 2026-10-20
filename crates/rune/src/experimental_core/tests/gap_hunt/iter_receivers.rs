@@ -1,10 +1,57 @@
-//! O1b iterator receiver stock oracle. This module is test-only; it does not alter product code.
+//! O1b iterator receiver oracle, release rows and fix-both contracts.
 use super::*;
 use crate::runtime::{self as stock, Value};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
 include!("constructors/graph.rs");
 const CASES: &str = include_str!("iter_receivers/cases.json");
+/// Rows added by the O1b implementation. They observe, through a later write,
+/// that a `for` loop releases its temporary iterable on every exit path.
+const RELEASE_CASES: &str = include_str!("iter_receivers/release_cases.json");
+const ROWS: usize = 80;
+
+/// The frozen oracle rows followed by the release rows.
+fn cases() -> Vec<Json> {
+	let mut rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	rows.extend(serde_json::from_str::<Vec<Json>>(RELEASE_CASES).unwrap());
+	assert_eq!(rows.len(), ROWS);
+	rows
+}
+
+/// Stock observations before the fix: the frozen oracle, then the release
+/// rows observed on the oracle's production source.
+fn prior() -> Vec<Json> {
+	let mut rows: Vec<Json> =
+		serde_json::from_str(include_str!("iter_receivers/stock.json")).unwrap();
+	rows.extend(
+		serde_json::from_str::<Vec<Json>>(include_str!("iter_receivers/release_prior.json"))
+			.unwrap(),
+	);
+	assert_eq!(rows.len(), ROWS);
+	rows
+}
+
+/// O1b fix-both rows: a `for` loop's temporary iterable no longer outlives
+/// the loop in stock. The prior files keep the old observation; each entry
+/// pins it by hash and carries its replacement.
+fn release_fixed(index: usize, old: &Json) -> Json {
+	use sha2::{Digest, Sha256};
+	static FIXES: std::sync::OnceLock<Json> = std::sync::OnceLock::new();
+	let fixes = FIXES.get_or_init(|| {
+		serde_json::from_str(include_str!("iter_receivers/fix_both.json")).unwrap()
+	});
+	let Some(fix) = fixes["rows"].get(format!("{index:03}")) else {
+		return old.clone();
+	};
+	assert_eq!(fix["label"], old["label"]);
+	assert_eq!(fix["source_sha256"], old["source_sha256"]);
+	assert_eq!(
+		hex(Sha256::digest(serde_json::to_vec(old).unwrap()).as_ref()),
+		fix["old_sha256"],
+		"{index}"
+	);
+	fix["new"].clone()
+}
 
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
 
@@ -60,7 +107,7 @@ fn child() {
 	let engine = std::env::var("O1B_ENGINE").unwrap();
 	assert_eq!(engine, "stock");
 	let index: usize = std::env::var("O1B_CASE").unwrap().parse().unwrap();
-	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	let cases = cases();
 	let row = &cases[index];
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
@@ -109,8 +156,10 @@ fn child() {
 	let mut result = result;
 	result["projected"] = projection(&result);
 	if std::env::var_os("O1B_REPLAY").is_some() {
-		let frozen: Json = serde_json::from_str(include_str!("iter_receivers/stock.json")).unwrap();
-		assert_eq!(result["projected"], frozen[index]["projected"]);
+		assert_eq!(
+			result["projected"],
+			release_fixed(index, &prior()[index])["projected"]
+		);
 	}
 	let path = std::env::var_os("O1B_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
@@ -174,8 +223,7 @@ fn observer_controls() {
 			freeze["files"][name]
 		);
 	}
-	let rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	assert_eq!(rows.len(), 60);
+	let rows = cases();
 	let mut labels = std::collections::BTreeSet::new();
 	for row in rows {
 		assert!(labels.insert(row["label"].as_str().unwrap().to_owned()));
@@ -226,7 +274,7 @@ fn observer_controls() {
 #[ignore = "O1b admission inventory; bounded external operator only"]
 fn compile_child() {
 	let index: usize = std::env::var("O1B_CASE").unwrap().parse().unwrap();
-	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	let cases = cases();
 	let row = &cases[index];
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["o1b"]).unwrap();
@@ -277,18 +325,14 @@ fn stock_contract() {
 
 #[cfg(target_os = "linux")]
 fn run_contract(engine: &str) {
-	assert_eq!(engine, "stock");
-	let cases: Json = serde_json::from_str(CASES).unwrap();
-	let frozen: Json = serde_json::from_str(include_str!("iter_receivers/stock.json")).unwrap();
-	let cases = cases.as_array().unwrap();
-	let frozen = frozen.as_array().unwrap();
-	assert_eq!(cases.len(), 60);
-	assert_eq!(cases.len(), frozen.len());
+	assert!(matches!(engine, "stock" | "fresh"));
+	let cases = cases();
+	let frozen = prior();
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
-	for (i, (case, expected)) in cases.iter().zip(frozen).enumerate() {
-		let fixed = expected;
+	for (i, (case, expected)) in cases.iter().zip(&frozen).enumerate() {
+		let fixed = release_fixed(i, expected);
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
 		assert_eq!(case["label"], expected["label"]);
@@ -312,7 +356,11 @@ fn run_contract(engine: &str) {
 		let mut child = command
 			.args([
 				"--exact",
-				"experimental_core::tests::gap_hunt::iter_receivers::child",
+				if engine == "stock" {
+					"experimental_core::tests::gap_hunt::iter_receivers::child"
+				} else {
+					"experimental_core::tests::gap_hunt::iter_receivers::fresh_child"
+				},
 				"--ignored",
 				"--nocapture",
 				"--quiet",
@@ -388,6 +436,10 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["label"], case["label"]);
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["origin"], case["origin"]);
+		if engine == "fresh" {
+			verify_fresh_case(i, case, expected, &fixed, &observed, &stdout, &stderr);
+			continue;
+		}
 		if engine == "stock" {
 			assert_eq!(observed["projected"], fixed["projected"], "{label}");
 		}
@@ -396,3 +448,7 @@ fn run_contract(engine: &str) {
 	}
 	super::contract_completed(engine, cases.len());
 }
+
+include!("iter_receivers/fresh.rs");
+
+include!("iter_receivers/contract.rs");

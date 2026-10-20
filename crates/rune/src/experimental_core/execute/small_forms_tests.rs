@@ -147,17 +147,15 @@ fn any_fuel_cut_drops_callback_and_frame_owners() {
 	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 }
 
-#[test]
-fn unit_iter_method_remains_tuple_boundary() {
-	let mut executor = Executor::new().unwrap();
-	let mut store = Store::new(Default::default()).unwrap();
+/// Runs `ITER_METHOD` on `receiver` from slot 0 into slot 1 and returns the iterator.
+fn iter_method(executor: &mut Executor, store: &mut Store, receiver: Value) -> Value {
 	let mut function = Function::new(2, 1).unwrap();
 	let (args_start, args_len) = function.arguments(&[0]).unwrap();
+	executor.slots.try_push(receiver).unwrap();
 	executor.slots.try_push(Value::Unit).unwrap();
-	executor.slots.try_push(Value::Unit).unwrap();
-	let error = executor
+	executor
 		.small_forms_call(
-			&mut store,
+			store,
 			&function,
 			0,
 			1,
@@ -165,13 +163,50 @@ fn unit_iter_method_remains_tuple_boundary() {
 			args_start,
 			args_len,
 		)
-		.unwrap_err();
-	assert_eq!(
-		(error.kind, error.operation, error.refusal),
-		(ErrorKind::Unsupported, "Method", None)
-	);
-	assert_eq!(executor.slots.as_slice(), &[Value::Unit, Value::Unit]);
-	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+		.unwrap();
+	let iterator = executor.slots[1];
 	executor.slots.clear();
+	iterator
+}
+
+#[test]
+fn unit_iter_method_is_an_empty_slice_iterator() {
+	let mut executor = Executor::new().unwrap();
+	let mut store = Store::new(Default::default()).unwrap();
+	let iterator = iter_method(&mut executor, &mut store, Value::Unit);
+	assert_eq!(store.diagnostic_type(iterator), Some(TypeName::VecIter));
+	assert_eq!(store.iterator_next(iterator).unwrap(), None);
+	assert_eq!(store.iterator_next(iterator).unwrap(), None);
+	store.release(iterator).unwrap();
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	assert!(executor.is_idle());
+}
+
+#[test]
+fn tuple_and_object_iter_methods_lease_their_receiver() {
+	let mut executor = Executor::new().unwrap();
+	let mut store = Store::new(Default::default()).unwrap();
+	let tuple = store
+		.list(Type::Tuple, &[Value::I64(1), Value::I64(2)])
+		.unwrap();
+	let iterator = iter_method(&mut executor, &mut store, tuple);
+	assert_eq!(store.diagnostic_type(iterator), Some(TypeName::VecIter));
+	assert_eq!(store.iterator_next(iterator).unwrap(), Some(Value::I64(1)));
+	store.release(iterator).unwrap();
+	store.release(tuple).unwrap();
+
+	let object = store.record(Type::Object, &[("k", Value::I64(3))]).unwrap();
+	let iterator = iter_method(&mut executor, &mut store, object);
+	assert_eq!(store.diagnostic_type(iterator), Some(TypeName::ObjectIter));
+	// The live iterator keeps the object read-borrowed.
+	assert!(store.set_field(object, "z", Value::I64(4)).is_err());
+	let pair = store.iterator_next(iterator).unwrap().unwrap();
+	assert_eq!(store.get(pair, 1).unwrap(), Value::I64(3));
+	store.release(pair).unwrap();
+	assert_eq!(store.iterator_next(iterator).unwrap(), None);
+	store.release(iterator).unwrap();
+	store.set_field(object, "z", Value::I64(4)).unwrap();
+	store.release(object).unwrap();
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 	assert!(executor.is_idle());
 }

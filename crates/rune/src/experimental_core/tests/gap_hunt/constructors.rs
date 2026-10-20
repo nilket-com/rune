@@ -439,6 +439,7 @@ fn type_observation_registry_controls() {
 		N::Function,
 		N::Type,
 		N::VecIter,
+		N::ObjectIter,
 		N::OptionIter,
 		N::StringSplit,
 		N::CharSplit,

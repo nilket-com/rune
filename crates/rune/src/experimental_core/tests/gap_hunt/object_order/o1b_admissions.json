@@ -1,0 +1,31 @@
+{
+ "rule": "O1b admits .iter() on Objects, Tuples and (): each entry pins the whole O1 disposition it replaces (source and stock row hashes included) and carries the admitted rule.",
+ "rows": [
+  {
+   "index": 58,
+   "legacy": {
+    "index": 58,
+    "label": "iter/iter-exhaust",
+    "source_sha256": "aca14a016119d87745c4028c99031b09e158efe0fafd53f742726246fd70549e",
+    "stock_row_sha256": "401fe562fa046e1035091d18e95ddae621c472de37360e9e8aad0024188e72f4",
+    "classification": "Inherited-runtime-refusal",
+    "fresh": {
+     "location": {
+      "end": 92,
+      "source": 0,
+      "start": 79
+     },
+     "operation": "Method",
+     "status": "unsupported"
+    }
+   },
+   "admitted": {
+    "classification": "Exact",
+    "warnings": {
+     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    }
+   }
+  }
+ ]
+}

@@ -41,7 +41,8 @@ pub fn module() -> Result<Module, ContextError> {
 	// Private C12 provider markers: this std module registers the builtin providers.
 	#[cfg(feature = "fresh-core")]
 	{
-		m.fresh_iter = crate::function::fresh_iter::marker::ITER;
+		m.fresh_iter = crate::function::fresh_iter::marker::ITER
+			| crate::function::fresh_iter::marker::ITERATOR;
 	}
 
 	m.ty::<Object>()?;

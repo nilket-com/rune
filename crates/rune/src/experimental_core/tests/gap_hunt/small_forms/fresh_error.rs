@@ -24,6 +24,7 @@ pub(super) fn fresh_type_info(
 		TypeName::Result => TypeInfo::named::<Result<rt::Value, rt::Value>>(),
 		TypeName::Range => TypeInfo::named::<rt::Range>(),
 		TypeName::VecIter => TypeInfo::named::<rt::slice::Iter>(),
+		TypeName::ObjectIter => TypeInfo::named::<rt::object::RuneIter>(),
 		TypeName::OptionIter => TypeInfo::named::<crate::modules::option::Iter>(),
 		TypeName::StringSplit => {
 			TypeInfo::named::<crate::modules::string::Split<crate::alloc::String>>()
@@ -417,6 +418,7 @@ fn iterator_type_info_projection_matches_actual_builtin_hashes() {
 	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 12).unwrap();
 	for name in [
 		TypeName::VecIter,
+		TypeName::ObjectIter,
 		TypeName::OptionIter,
 		TypeName::RangeIter,
 		TypeName::UnsignedRangeIter,

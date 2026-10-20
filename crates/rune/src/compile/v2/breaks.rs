@@ -17,8 +17,17 @@ pub(crate) struct Break<'hir> {
 	pub(crate) continue_label: Option<Label>,
 	/// The end label of the break, used for `break`.
 	pub(crate) break_label: Label,
-	/// Locals to drop when breaking.
-	pub(crate) drop: Option<Address>,
+	/// Locals to drop when leaving the loop early: a `for` loop's iterator,
+	/// then its iterable when that is a temporary.
+	pub(crate) drop: Option<(Address, Option<Address>)>,
+}
+
+impl Break<'_> {
+	pub(crate) fn drops(&self) -> impl Iterator<Item = Address> {
+		self.drop
+			.into_iter()
+			.flat_map(|(iterator, iterable)| core::iter::once(iterator).chain(iterable))
+	}
 }
 
 pub(crate) struct Breaks<'hir> {
@@ -55,16 +64,24 @@ impl<'hir> Breaks<'hir> {
 		drop: &mut Vec<Address>,
 	) -> compile::Result<&Break<'hir>> {
 		drop.clear();
-		self.find_label_inner(span, expected, &mut |l| drop.try_extend(l.drop))
+		self.find_label_inner(span, expected, &mut |l| drop.try_extend(l.drops()))
 	}
 
-	/// Find the loop with the matching label.
-	pub(crate) fn find_label(
+	/// Find the loop a labeled `continue` targets and collect the addresses to
+	/// drop for the loops nested inside of it, which it leaves.
+	pub(crate) fn walk_inside_label(
 		&self,
 		span: &dyn Spanned,
 		expected: &str,
+		drop: &mut Vec<Address>,
 	) -> compile::Result<&Break<'hir>> {
-		self.find_label_inner(span, expected, &mut |_| Ok(()))
+		drop.clear();
+		self.find_label_inner(span, expected, &mut |l| {
+			if l.label != Some(expected) {
+				drop.try_extend(l.drops())?;
+			}
+			Ok(())
+		})
 	}
 
 	/// Find the loop with the matching label.

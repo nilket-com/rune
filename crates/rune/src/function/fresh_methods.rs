@@ -19,7 +19,8 @@ receivers! {
 	OBJECT: rt::Object, OPTION: Option<rt::Value>, RESULT: Result<rt::Value, rt::Value>,
 	FUNCTION: rt::Function, TYPE: rt::Type, RANGE: rt::Range, FROM: rt::RangeFrom,
 	FULL: rt::RangeFull, INCLUSIVE: rt::RangeInclusive, TO_INCLUSIVE: rt::RangeToInclusive,
-	TO: rt::RangeTo, VEC_ITER: rt::slice::Iter, OPTION_ITER: crate::modules::option::Iter,
+	TO: rt::RangeTo, VEC_ITER: rt::slice::Iter, OBJECT_ITER: rt::object::RuneIter,
+	OPTION_ITER: crate::modules::option::Iter,
 	SIGNED_ITER: rt::range::RangeIter<i64>, UNSIGNED_ITER: rt::range::RangeIter<u64>,
 	CHAR_ITER: rt::range::RangeIter<char>,
 	SIGNED_INCLUSIVE_ITER: rt::range_inclusive::RangeInclusiveIter<i64>,
@@ -65,7 +66,7 @@ mod tests {
 	use super::*;
 	#[test]
 	fn identity_and_fail_closed() {
-		assert_eq!(RECEIVERS.len(), 36);
+		assert_eq!(RECEIVERS.len(), 37);
 		for receiver in RECEIVERS {
 			assert!(represented(*receiver));
 			for name in ["unrecognized", "parse", "next_back"] {

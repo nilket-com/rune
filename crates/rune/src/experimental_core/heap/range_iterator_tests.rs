@@ -176,3 +176,30 @@ fn releasing_partial_iterator_preserves_other_live_children_and_work_reserve() {
 	assert_eq!((s.live, s.bytes, s.edges, s.work.len()), (0, 0, 0, 0));
 	s.assert_work();
 }
+
+#[test]
+fn every_iterator_is_its_own_iterator() {
+	let mut s = Store::new(Limits::default()).unwrap();
+	let option = s.variant(Type::Option, true, Some(Value::I64(4))).unwrap();
+	let range = s.range(0, 3).unwrap();
+	let inclusive = s
+		.other_range(Type::RangeInclusive, &[Value::I64(0), Value::I64(3)])
+		.unwrap();
+	let unsigned = s.range_values(Value::U64(0), Value::U64(2)).unwrap();
+	for source in [option, range, inclusive, unsigned] {
+		let iterator = s.iterator(source).unwrap();
+		let first = s.iterator_next(iterator).unwrap();
+		// A second start continues the same cursor, as stock's `INTO_ITER`.
+		let again = s.iterator(iterator).unwrap();
+		assert_eq!(again, iterator);
+		let second = s.iterator_next(again).unwrap();
+		assert_ne!(first, second);
+		for value in [first, second].into_iter().flatten() {
+			s.release(value).unwrap();
+		}
+		s.release(again).unwrap();
+		s.release(iterator).unwrap();
+		s.release(source).unwrap();
+	}
+	assert_eq!(accounting(&s).0, 0);
+}

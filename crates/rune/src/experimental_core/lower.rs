@@ -2530,6 +2530,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			N::Function,
 			N::Type,
 			N::VecIter,
+			N::ObjectIter,
 			N::OptionIter,
 			N::StringSplit,
 			N::CharSplit,

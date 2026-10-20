@@ -1137,7 +1137,10 @@ impl Store {
 			}) => TypeName::CharRangeIter,
 			Some(Payload::ValueRangeIterator { .. }) => TypeName::RangeIter,
 			Some(Payload::Moved(tag)) => TypeName::from_type(*tag),
-			Some(Payload::VectorIterator(_)) => TypeName::VecIter,
+			Some(Payload::VectorIterator(iter)) => match self.payload(iter.handle).ok()?.tag() {
+				Type::Object => TypeName::ObjectIter,
+				_ => TypeName::VecIter,
+			},
 			Some(Payload::OptionIterator { .. }) => TypeName::OptionIter,
 			_ => TypeName::from_type(self.entry(h).ok()?.tag().ok()?),
 		})
@@ -1384,11 +1387,19 @@ impl Store {
 			return self.admit(Payload::OptionIterator { payload: None });
 		}
 		if let Value::Heap(h) = value {
-			// Identity does not read an iterator's payload. A moved iterator is
-			// rejected when next tries to advance it, matching stock's site/access.
+			// An iterator is its own iterator, as stock's `INTO_ITER`. Identity does
+			// not read its payload: a moved iterator is rejected when next tries to
+			// advance it, matching stock's site/access.
 			if matches!(
 				self.entry(h)?.payload.as_ref(),
-				Some(Payload::VectorIterator(_) | Payload::Moved(Type::Iterator))
+				Some(
+					Payload::VectorIterator(_)
+						| Payload::OptionIterator { .. }
+						| Payload::RangeIterator { .. }
+						| Payload::ValueRangeIterator { .. }
+						| Payload::OtherRangeIterator(_)
+						| Payload::Moved(Type::Iterator)
+				)
 			) {
 				self.retain(value)?;
 				return Ok(value);
@@ -1412,10 +1423,6 @@ impl Store {
 					});
 				}
 				Payload::OtherRange(shape) => return self.other_range_iterator(**shape),
-				Payload::OtherRangeIterator(state) if state.is_split() => {
-					self.retain(value)?;
-					return Ok(value);
-				}
 				_ => (),
 			}
 		}
@@ -1427,6 +1434,24 @@ impl Store {
 		// Admission acquires the retained root and shared lease together only
 		// after every capacity and metadata check; no temporary lease escapes.
 		self.admit(Payload::VectorIterator(Iter { handle, index: 0 }))
+	}
+
+	/// `().iter()`: stock's slice iterator over the empty tuple. `for` over
+	/// `()` keeps the cheaper empty [`Self::iterator`], whose identity no
+	/// program can observe.
+	#[cold]
+	pub(crate) fn unit_iterator(&mut self) -> Result<Value> {
+		let tuple = self.list(Type::Tuple, &[])?;
+		let iterator = self.iterator(tuple);
+		let released = self.release(tuple);
+		match (iterator, released) {
+			(Ok(iterator), Ok(())) => Ok(iterator),
+			(Ok(iterator), Err(error)) => {
+				let _ = self.release(iterator);
+				Err(error)
+			}
+			(Err(error), _) => Err(error),
+		}
 	}
 
 	// Lease-token iteration: exercised by the crate's own tests, not yet by the executor.

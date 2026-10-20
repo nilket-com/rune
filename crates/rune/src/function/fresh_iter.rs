@@ -90,11 +90,13 @@ pub(crate) enum Provider {
 	RangeInclusiveIter,
 	RangeFromIter,
 	SliceIterNext,
+	ObjectIterNext,
 	OptionIterNext,
 	RangeIterNext,
 	RangeInclusiveIterNext,
 	RangeFromIterNext,
 	SliceIterAny,
+	ObjectIterAny,
 	OptionIterAny,
 	RangeIterAny,
 	RangeInclusiveIterAny,
@@ -106,7 +108,7 @@ pub(crate) enum Provider {
 }
 
 impl Provider {
-	pub(crate) const ALL: [Self; 21] = [
+	pub(crate) const ALL: [Self; 23] = [
 		Self::VecIter,
 		Self::OptionIter,
 		Self::TupleIter,
@@ -115,11 +117,13 @@ impl Provider {
 		Self::RangeInclusiveIter,
 		Self::RangeFromIter,
 		Self::SliceIterNext,
+		Self::ObjectIterNext,
 		Self::OptionIterNext,
 		Self::RangeIterNext,
 		Self::RangeInclusiveIterNext,
 		Self::RangeFromIterNext,
 		Self::SliceIterAny,
+		Self::ObjectIterAny,
 		Self::OptionIterAny,
 		Self::RangeIterAny,
 		Self::RangeInclusiveIterAny,
@@ -146,6 +150,7 @@ impl Provider {
 			| Self::RangeInclusiveIter
 			| Self::RangeFromIter => Name::Iter,
 			Self::SliceIterNext
+			| Self::ObjectIterNext
 			| Self::OptionIterNext
 			| Self::RangeIterNext
 			| Self::RangeInclusiveIterNext
@@ -171,6 +176,7 @@ impl Provider {
 			Self::RangeInclusiveIter => rt::RangeInclusive::HASH,
 			Self::RangeFromIter => rt::RangeFrom::HASH,
 			Self::SliceIterNext | Self::SliceIterAny => rt::slice::Iter::HASH,
+			Self::ObjectIterNext | Self::ObjectIterAny => rt::object::RuneIter::HASH,
 			Self::OptionIterNext | Self::OptionIterAny => crate::modules::option::Iter::HASH,
 			Self::RangeIterNext | Self::RangeIterAny => rt::range::RangeIter::<i64>::HASH,
 			Self::RangeInclusiveIterNext | Self::RangeInclusiveIterAny => {

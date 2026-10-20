@@ -46,12 +46,14 @@ impl Executor {
 			code::RANGE_TO => store.other_range(Type::RangeTo, &values[..args.len()])?,
 			code::OBJECT_HAS_FIELD => Value::Bool(store.object_has_field(values[0], values[1])?),
 			code::ITER_METHOD => match store.tag(values[0])? {
-				Type::Vec | Type::Option | Type::Range | Type::RangeInclusive | Type::RangeFrom => {
-					store.iterator(values[0])?
-				}
-				Type::Object | Type::Tuple | Type::Unit => {
-					return Err(Error::new(ErrorKind::Unsupported, "Method"))
-				}
+				Type::Vec
+				| Type::Tuple
+				| Type::Object
+				| Type::Option
+				| Type::Range
+				| Type::RangeInclusive
+				| Type::RangeFrom => store.iterator(values[0])?,
+				Type::Unit => store.unit_iterator()?,
 				_ => return Err(missing_iterator_method(store, values[0], "iter")?),
 			},
 			code::ANY_READY => {

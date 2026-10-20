@@ -1,0 +1,182 @@
+[
+  {
+    "label": "release/labeled-break-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};'x: for a in [1,2]{for p in o.iter(){break 'x;}}o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "d9b192f19531e3c5f58f00e399f8843b52e9ffa0fee9e73fbb3a3b5db4502e58",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/labeled-block-break-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};'b: {for p in o.iter(){break 'b;}}o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "7ad60d1b8e6a764c9858de809c0ad2079be944e560323d561f53a3886dba663f",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/labeled-continue-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};'x: for a in [1,2]{for p in o.iter(){for q in o.iter(){continue 'x;}}}o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "2687ff53afd1c0eb408478165d032890ba797dc415a80507b0fd546c8911439b",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/continue-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1,b:2};for p in o.iter(){continue;}o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "cb78d193613fa06b382cdf634a42ee2d541ad70b8a0f2286c19974b0f69fae8e",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/return-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}fn f(o){for p in o.iter(){return 1;}0}pub fn main(){let o=#{a:1};let r=f(o);o.c=3;(r,o)}pub fn o1b_reuse(){7}",
+    "source_sha256": "0501a5ac850e0fd94e4bf40605ced13d1bf177088e0defdf3afbaa19e4fe739e",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/closure-return-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};let r=(||{for p in o.iter(){return 1;}2})();o.c=3;(r,o)}pub fn o1b_reuse(){7}",
+    "source_sha256": "e62c07a98c90fee0965537a2daef24d194e680f37a1f75898b8d285b0125a0a4",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/inner-break-in-while-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};while true{for p in o.iter(){break;}break;}o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "27a3ad5116c20f6cdd8754080083b013864bfa16961ad98e0ccf5d257230d819",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/inner-break-in-loop-value-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};let x=loop{for p in o.iter(){break;}break 5;};o.c=x;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "b1d4474cdbfddbbdd20e3e8f05d09358f0f6fa061bc90f32f1b96c09066b5ac9",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/sum-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1,b:2};let n=0;for (k,v) in o.iter(){n+=v;}o.c=n;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "93ff24b6b25c09de2a0a2a602f69e58fa6f76128aab89f0d101354bd1bafcbb8",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/two-loops-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};for p in o.iter(){} for q in o.iter(){} o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "3dce00f619918c96644c7a88da99f42f9bb35f9fc89f60c681a5ec416c19abe6",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/collected-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};let s=[];for p in o.iter(){s.push(p);}o.c=3;(o,s)}pub fn o1b_reuse(){7}",
+    "source_sha256": "34305f56c997d7c230c8fd1dafda01959db4fa390aca00b9750502a43bf3ebb6",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/vec-of-iterator-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};for p in [o.iter()]{}o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "6ce7eab9ab885b833db744eca5228db4725f00ef58e99d89fa11ebcb0d99a824",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/keys-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};for k in o.keys(){}o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "1d1fed3f399554051f5cb1aa4670f61778f0ab2284c7509811ef5b728462df71",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/values-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};for v in o.values(){}o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "b92d08c8e1b1ac1525b956f98822fb4795032300ed2dd0a486f6959819bbf440",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/tuple-break-then-push",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let t=([1],2);for v in t.iter(){break;}t.0.push(3);t}pub fn o1b_reuse(){7}",
+    "source_sha256": "6bf0c13b5fc0ce8e85e3d7fa9b0a66b93e03187673d97f37b5a0a4d9427866c7",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/bound-iterator-loop-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1};let it=o.iter();for p in it{}o.c=3;o}pub fn o1b_reuse(){7}",
+    "source_sha256": "905a6d4485e71a015b31dbb07dec3216d100d47181971c20f72b2be569f1f861",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/bound-iterator-break-then-mutate",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let o=#{a:1,b:2};let it=o.iter();for p in it{break;}o.c=3;(it.next(),o)}pub fn o1b_reuse(){7}",
+    "source_sha256": "1338f410a58e9cd64ec975a21e093a698654ce9e8fdec1a1851dcf90decacce3",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/option-iterator-for",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let n=0;for x in Some(4).iter(){n+=x;}n}pub fn o1b_reuse(){7}",
+    "source_sha256": "771f3619a5ab5bf1389c22895e57a9862639ac3a07a26a51e9b57253c57c38a8",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/range-iterator-for",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let n=0;for x in (0..3).iter(){n+=x;}n}pub fn o1b_reuse(){7}",
+    "source_sha256": "d0b3353902fa615586bbe9b9dec49b273060c692891adec6b4a2c8da980a9b7c",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  },
+  {
+    "label": "release/inclusive-iterator-for",
+    "source": "use o1b::tap;struct P{x}enum E{A,B(x)}pub fn main(){let it=(0..=3).iter();it.next();let n=0;for x in it{n+=x;}n}pub fn o1b_reuse(){7}",
+    "source_sha256": "d3d487733b0297b36a83b022a2eda9d8cf09786800a0ef9f6c4c0bf0cb1d5d38",
+    "fuel": 400000,
+    "reuse_enabled": true,
+    "origin": "O1b-release",
+    "policy": "observe"
+  }
+]

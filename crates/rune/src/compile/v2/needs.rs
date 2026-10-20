@@ -240,6 +240,13 @@ impl<'a, 'hir> Address<'a, 'hir> {
 		self.address
 	}
 
+	/// Whether the slot holds a temporary this address owns, rather than a
+	/// variable it was assigned from.
+	#[inline]
+	pub(super) fn is_temporary(&self) -> bool {
+		matches!(self.kind, AddressKind::Local | AddressKind::Scope(_))
+	}
+
 	#[inline]
 	pub(super) fn alloc_addr(&mut self) -> compile::Result<&mut Self> {
 		if matches!(self.kind, AddressKind::Dangling) {

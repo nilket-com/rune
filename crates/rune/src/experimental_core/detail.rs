@@ -42,6 +42,7 @@ pub enum TypeName {
 	Chars,
 	Skip,
 	Take,
+	ObjectIter,
 }
 
 #[allow(missing_docs)]
@@ -440,6 +441,7 @@ impl TypeName {
 			Self::RangeFrom => rt::RangeFrom::HASH,
 			Self::RangeInclusive => rt::RangeInclusive::HASH,
 			Self::VecIter => rt::slice::Iter::HASH,
+			Self::ObjectIter => rt::object::RuneIter::HASH,
 			Self::OptionIter => crate::modules::option::Iter::HASH,
 			Self::StringSplit => crate::modules::string::Split::<crate::alloc::String>::HASH,
 			Self::CharSplit => crate::modules::string::Split::<char>::HASH,
@@ -535,6 +537,7 @@ impl fmt::Display for TypeName {
 			Self::RangeFrom => "std::ops::RangeFrom",
 			Self::RangeInclusive => "std::ops::RangeInclusive",
 			Self::VecIter => "std::slice::Iter",
+			Self::ObjectIter => "std::object::Iter",
 			Self::OptionIter => "std::option::Iter",
 			Self::StringSplit => "std::string::Split<std::string::String>",
 			Self::CharSplit => "std::string::Split<std::char>",

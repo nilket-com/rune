@@ -2714,7 +2714,7 @@ fn break_target<'hir>(
 			};
 
 			cx.drop.clear();
-			cx.drop.try_extend(l.drop).with_span(span)?;
+			cx.drop.try_extend(l.drops()).with_span(span)?;
 			Ok((l.break_label.try_clone()?, l.output))
 		}
 	}
@@ -3490,7 +3490,7 @@ fn for_body<'a, 'hir>(
 		continue_label: Some(continue_label.try_clone()?),
 		break_label: break_label.try_clone()?,
 		output: None,
-		drop: Some(into_iter.addr()),
+		drop: Some((into_iter.addr(), iter.is_temporary().then(|| iter.addr()))),
 	})?;
 
 	let into_iter_copy = cx.scopes.alloc(span)?.with_name("into_iter_copy");
@@ -4866,6 +4866,12 @@ where
 			let mut drop_set = cx.q.unit.drop_set();
 			drop_set.push(into_iter.addr())?;
 
+			// A temporary iterable, such as `o.iter()`, would otherwise keep
+			// what it borrows until its slot is reused.
+			if iter.is_temporary() {
+				drop_set.push(iter.addr())?;
+			}
+
 			// NB: Dropping has to happen before the break label. When breaking,
 			// the break statement is responsible for ensuring that active
 			// iterators are dropped.
@@ -5572,23 +5578,35 @@ fn expr_continue<'a, 'hir>(
 	_: &mut dyn Needs<'a, 'hir>,
 ) -> compile::Result<Asm<'hir>> {
 	let last_loop = if let Some(label) = hir.label {
-		cx.breaks.find_label(span, label)?
+		cx.breaks.walk_inside_label(span, label, &mut cx.drop)?
 	} else {
 		let Some(current_loop) = cx.breaks.last_loop() else {
 			return Err(compile::Error::new(span, ErrorKind::ContinueUnsupported));
 		};
 
+		cx.drop.clear();
 		current_loop
 	};
 
-	let Some(label) = &last_loop.continue_label else {
+	let Some(label) = last_loop.continue_label.try_clone()? else {
 		return Err(compile::Error::new(
 			span,
 			ErrorKind::ContinueUnsupportedBlock,
 		));
 	};
 
-	cx.asm.jump(label, span)?;
+	// Continuing an outer loop leaves the loops nested inside of it.
+	let mut drop_set = cx.q.unit.drop_set();
+
+	for addr in cx.drop.drain(..) {
+		drop_set.push(addr)?;
+	}
+
+	if let Some(set) = drop_set.finish()? {
+		cx.asm.push(inst::Kind::Drop { set }, span)?;
+	}
+
+	cx.asm.jump(&label, span)?;
 	Ok(Asm::new(span, ()))
 }
 
