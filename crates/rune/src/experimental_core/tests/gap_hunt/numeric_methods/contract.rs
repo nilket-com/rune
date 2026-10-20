@@ -53,7 +53,7 @@ fn verify_fresh_case(
 		dispositions["summary"]["classifications"],
 		serde_json::to_value(&counts).unwrap()
 	);
-	let rule = &rows[index];
+	let rule = &super::object_order::admitted(include_str!("c17e_admissions.json"), &rows[index]);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
@@ -86,6 +86,15 @@ fn verify_fresh_case(
 	let expected = canonical_record(stock);
 	match classification {
 		"Exact" => assert_eq!(fresh, expected),
+		"Retained-frame (callback)" => {
+			// C17e: an error inside a direct chain's function value. Stock reports
+			// one site per nested VM execution; fresh the origin with its callers.
+			assert!(super::iter_adapters::callback_frames(actual, stock));
+			let mut fresh = fresh.clone();
+			fresh["observation"]["outcome"]["sites"] =
+				expected["observation"]["outcome"]["sites"].clone();
+			assert_eq!(fresh, expected);
+		}
 		"Intentional-D1" => {
 			// A wrong receiver: fresh names the missing method (D1). Kind, class,
 			// tape, sites, logical frames and reuse stay stock-exact.

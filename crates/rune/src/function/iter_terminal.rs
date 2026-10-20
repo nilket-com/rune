@@ -1,8 +1,8 @@
-//! C17d iterator terminal policy: the closed set of terminals and adapters a
-//! direct iterator chain may end in or pass through, the iterator types that
-//! must provide each of them, the cold intrinsics that implement them, and
-//! their certification, checked on first use in a compile. Installation does
-//! no work for them; no handler is invoked.
+//! Direct iterator chain policy: the closed set of C17d terminals and adapters
+//! and C17e closure adapters and consumers a direct chain may end in or pass
+//! through, the iterator types that must provide each of them, the cold
+//! intrinsics that implement them, and their certification, checked on first
+//! use in a compile. Installation does no work for them; no handler is invoked.
 use crate::runtime as rt;
 use crate::{Hash, TypeHash};
 
@@ -258,12 +258,25 @@ pub(crate) enum Intrinsic {
 	IntoTuple,
 	/// Appends a String or char element to the collected String.
 	Append,
+	/// Whether a `filter_map` result is `Some`; anything but an Option is the
+	/// stock conversion error.
+	OptionSome,
+	/// Whether a reversed source has no element left; the stock missing
+	/// method error for a source without `rev`.
+	RevEmpty,
+	/// The offset of a reversed source's last element from its front.
+	RevLast,
+	/// The element at an offset from a reversed source's front.
+	RevAt,
+	/// A `chain` argument or `flat_map` result as an iterator, converted as
+	/// stock's `protocol_into_iter`.
+	IntoIter,
 }
 
 impl Intrinsic {
 	const FIRST_ID: u32 = crate::experimental_core::code::FIRST_INTRINSIC_ID + 0xd0;
 
-	pub(crate) const ALL: [Self; 10] = [
+	pub(crate) const ALL: [Self; 15] = [
 		Self::AdapterCount,
 		Self::Range,
 		Self::Seed(Number::I64),
@@ -274,6 +287,11 @@ impl Intrinsic {
 		Self::Insert,
 		Self::IntoTuple,
 		Self::Append,
+		Self::OptionSome,
+		Self::RevEmpty,
+		Self::RevLast,
+		Self::RevAt,
+		Self::IntoIter,
 	];
 
 	const fn index(self) -> u32 {
@@ -286,6 +304,11 @@ impl Intrinsic {
 			Self::Insert => 7,
 			Self::IntoTuple => 8,
 			Self::Append => 9,
+			Self::OptionSome => 10,
+			Self::RevEmpty => 11,
+			Self::RevLast => 12,
+			Self::RevAt => 13,
+			Self::IntoIter => 14,
 		}
 	}
 
@@ -302,7 +325,13 @@ impl Intrinsic {
 	/// Operand count.
 	pub(crate) const fn arity(self) -> u32 {
 		match self {
-			Self::AdapterCount | Self::Seed(_) | Self::IntoTuple => 1,
+			Self::AdapterCount
+			| Self::Seed(_)
+			| Self::IntoTuple
+			| Self::OptionSome
+			| Self::RevEmpty
+			| Self::RevLast
+			| Self::IntoIter => 1,
 			_ => 2,
 		}
 	}
@@ -339,6 +368,227 @@ fn settled(context: &crate::Context) -> bool {
 }
 
 const ITERATOR: Hash = crate::hash_in!(crate, ::std::iter::Iterator);
+const DOUBLE_ENDED: Hash = crate::hash_in!(crate, ::std::iter::DoubleEndedIterator);
+
+/// A C17e Iterator trait function a direct chain may call besides the C17d
+/// terminals: the adapters and consumers that take a function value, and
+/// `enumerate`, `chain` and `rev`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Closure {
+	Map,
+	Filter,
+	FilterMap,
+	FlatMap,
+	Enumerate,
+	Chain,
+	Rev,
+	Fold,
+	Reduce,
+	Find,
+	Any,
+	All,
+}
+
+impl Closure {
+	pub(crate) const ALL: [Self; 12] = [
+		Self::Map,
+		Self::Filter,
+		Self::FilterMap,
+		Self::FlatMap,
+		Self::Enumerate,
+		Self::Chain,
+		Self::Rev,
+		Self::Fold,
+		Self::Reduce,
+		Self::Find,
+		Self::Any,
+		Self::All,
+	];
+
+	#[cfg(test)]
+	const fn name(self) -> &'static str {
+		match self {
+			Self::Map => "map",
+			Self::Filter => "filter",
+			Self::FilterMap => "filter_map",
+			Self::FlatMap => "flat_map",
+			Self::Enumerate => "enumerate",
+			Self::Chain => "chain",
+			Self::Rev => "rev",
+			Self::Fold => "fold",
+			Self::Reduce => "reduce",
+			Self::Find => "find",
+			Self::Any => "any",
+			Self::All => "all",
+		}
+	}
+
+	/// The hash a method call site without a turbofish resolves to.
+	pub(crate) const fn hash(self) -> Hash {
+		match self {
+			Self::Map => ident(crate::hash_in!(crate, ::std::vec::Vec.map)),
+			Self::Filter => ident(crate::hash_in!(crate, ::std::vec::Vec.filter)),
+			Self::FilterMap => ident(crate::hash_in!(crate, ::std::vec::Vec.filter_map)),
+			Self::FlatMap => ident(crate::hash_in!(crate, ::std::vec::Vec.flat_map)),
+			Self::Enumerate => ident(crate::hash_in!(crate, ::std::vec::Vec.enumerate)),
+			Self::Chain => ident(crate::hash_in!(crate, ::std::vec::Vec.chain)),
+			Self::Rev => ident(crate::hash_in!(crate, ::std::vec::Vec.rev)),
+			Self::Fold => ident(crate::hash_in!(crate, ::std::vec::Vec.fold)),
+			Self::Reduce => ident(crate::hash_in!(crate, ::std::vec::Vec.reduce)),
+			Self::Find => ident(crate::hash_in!(crate, ::std::vec::Vec.find)),
+			Self::Any => ident(crate::hash_in!(crate, ::std::vec::Vec.any)),
+			Self::All => ident(crate::hash_in!(crate, ::std::vec::Vec.all)),
+		}
+	}
+
+	pub(crate) fn from_hash(hash: Hash) -> Option<Self> {
+		Self::ALL.into_iter().find(|c| c.hash() == hash)
+	}
+
+	/// Operand count of the call, receiver included.
+	pub(crate) const fn arity(self) -> usize {
+		match self {
+			Self::Enumerate | Self::Rev => 1,
+			Self::Fold => 3,
+			_ => 2,
+		}
+	}
+
+	/// Whether the call returns an iterator rather than consuming the chain.
+	pub(crate) const fn adapter(self) -> bool {
+		matches!(
+			self,
+			Self::Map
+				| Self::Filter
+				| Self::FilterMap
+				| Self::FlatMap
+				| Self::Enumerate
+				| Self::Chain
+				| Self::Rev
+		)
+	}
+
+	/// How many arguments the call passes to its function value, if it takes one.
+	pub(crate) const fn passes(self) -> Option<u32> {
+		match self {
+			Self::Enumerate | Self::Chain | Self::Rev => None,
+			Self::Fold | Self::Reduce => Some(2),
+			_ => Some(1),
+		}
+	}
+
+	/// The function's bit in `CompileTransaction::checked_closure`.
+	pub(crate) const fn bit(self) -> u16 {
+		1 << self as u16
+	}
+}
+
+/// The iterator types a C17e chain adds to [`Container::ALL`]: the text
+/// sources and the C17e adapters.
+const EXTENDED: [Hash; 10] = [
+	crate::modules::string::Chars::HASH,
+	crate::modules::string::Split::<crate::alloc::String>::HASH,
+	crate::modules::string::Split::<char>::HASH,
+	crate::modules::iter::Map::HASH,
+	crate::modules::iter::Filter::HASH,
+	crate::modules::iter::FilterMap::HASH,
+	crate::modules::iter::FlatMap::HASH,
+	crate::modules::iter::Enumerate::HASH,
+	crate::modules::iter::Chain::HASH,
+	crate::modules::iter::Rev::HASH,
+];
+
+/// The receivers of an admitted `rev`, all of which stock makes double-ended.
+const REVERSIBLE: [Hash; 13] = [
+	rt::slice::Iter::HASH,
+	crate::modules::option::Iter::HASH,
+	rt::range::RangeIter::<i64>::HASH,
+	rt::range::RangeIter::<u64>::HASH,
+	rt::range::RangeIter::<char>::HASH,
+	rt::range_inclusive::RangeInclusiveIter::<i64>::HASH,
+	rt::range_inclusive::RangeInclusiveIter::<u64>::HASH,
+	rt::range_inclusive::RangeInclusiveIter::<char>::HASH,
+	crate::modules::iter::Skip::HASH,
+	crate::modules::iter::Take::HASH,
+	crate::modules::iter::Map::HASH,
+	crate::modules::iter::Filter::HASH,
+	crate::modules::iter::FilterMap::HASH,
+];
+
+/// Source iterators stock gives no `rev`; a direct `rev` on one raises the
+/// stock missing-method error.
+pub(crate) const IRREVERSIBLE: [Hash; 4] = [
+	rt::object::RuneIter::HASH,
+	rt::range_from::RangeFromIter::<i64>::HASH,
+	rt::range_from::RangeFromIter::<u64>::HASH,
+	rt::range_from::RangeFromIter::<char>::HASH,
+];
+
+/// Whether the only function at `hash` is one the std `trait_hash` handler installed.
+fn trait_provided(context: &crate::Context, hash: Hash, trait_hash: Hash) -> bool {
+	let mut meta = context.lookup_meta_by_hash(hash);
+	context.lookup_function(hash).is_some()
+		&& meta.len() == 1
+		&& meta.all(|m| {
+			matches!(m.kind, crate::compile::meta::Kind::Function { trait_hash: Some(t), .. } if t == trait_hash)
+		})
+}
+
+/// Certifies `function` for every iterator a C17e chain can apply it to, on
+/// first use in a compile, as [`provided`] does for the C17d terminals. `rev`
+/// is the DoubleEndedIterator handler's; its absence on [`IRREVERSIBLE`] is
+/// checked by the caller.
+pub(crate) fn closure_provided(context: &crate::Context, function: Closure) -> bool {
+	if !settled(context) {
+		return false;
+	}
+	if function == Closure::Rev {
+		return REVERSIBLE.into_iter().all(|container| {
+			trait_provided(
+				context,
+				Hash::associated_function(container, function.hash()),
+				DOUBLE_ENDED,
+			)
+		});
+	}
+	Container::ALL
+		.into_iter()
+		.map(Container::hash)
+		.chain(EXTENDED)
+		.all(|container| {
+			trait_provided(
+				context,
+				Hash::associated_function(container, function.hash()),
+				ITERATOR,
+			)
+		})
+}
+
+/// Certifies a C17d `terminal` on the iterators only a C17e chain reaches.
+pub(crate) fn extended_provided(context: &crate::Context, terminal: Terminal) -> bool {
+	provided(context, terminal)
+		&& EXTENDED.into_iter().all(|container| {
+			trait_provided(
+				context,
+				Hash::associated_function(container, terminal.hash()),
+				ITERATOR,
+			)
+		})
+}
+
+/// Certifies `next` (and the for-loop NEXT protocol) on the C17e adapters:
+/// each type's own std `next`, associated with the Iterator trait when the
+/// std module implements it.
+pub(crate) fn extended_next_provided(context: &crate::Context) -> bool {
+	settled(context)
+		&& EXTENDED[3..].iter().all(|&container| {
+			trait_provided(
+				context,
+				Hash::associated_function(container, super::fresh_iter::Name::Next.hash()),
+				ITERATOR,
+			)
+		})
+}
 
 #[cfg(test)]
 mod tests {
@@ -380,7 +630,12 @@ mod tests {
 			assert_eq!(intrinsic.index() as usize, i);
 			assert_eq!(Intrinsic::from_id(intrinsic.id()), Some(intrinsic));
 		}
-		assert_eq!(Intrinsic::from_id(Intrinsic::FIRST_ID + 10), None);
+		assert_eq!(Intrinsic::from_id(Intrinsic::FIRST_ID + 15), None);
+		for c in Closure::ALL {
+			assert_eq!(c.hash(), Hash::ident(c.name()));
+			assert_eq!(Closure::from_hash(c.hash()), Some(c));
+			assert!(Terminal::from_hash(c.hash()).is_none());
+		}
 		assert_eq!(Intrinsic::from_id(Intrinsic::FIRST_ID - 1), None);
 		for (i, c) in Container::ALL.into_iter().enumerate() {
 			assert_eq!(c as usize, i);

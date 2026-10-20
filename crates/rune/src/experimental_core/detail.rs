@@ -190,7 +190,8 @@ pub enum Detail {
 		expected: TypeName,
 		found: TypeName,
 	},
-	ComparisonNotIterable {
+	/// Stock's `protocol_into_iter` failing on a value without `INTO_ITER`.
+	MissingIntoIter {
 		found: TypeName,
 	},
 	StringOperand {
@@ -779,7 +780,7 @@ impl fmt::Display for Message<'_> {
 			} => messages::expected_type(f, expected, found),
 			NumericArgumentNumber { found, .. } => messages::expected_number(f, found),
 			NumericArgumentCoerce { value, to, .. } => messages::coerce(f, value, to),
-			ComparisonNotIterable { found } => {
+			MissingIntoIter { found } => {
 				write!(f, "Missing protocol function `INTO_ITER` for `{found}`")
 			}
 			StringOperand { found } => messages::expected_type(f, TypeName::String, found),

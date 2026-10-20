@@ -1376,6 +1376,13 @@ pub(crate) struct CompileTransaction {
 	checked_object: u8,
 	checked_number: u64,
 	checked_terminal: u16,
+	checked_closure: u16,
+	/// C17d terminals certified on the C17e iterators; bit 15 is `next`.
+	checked_extended: u16,
+	/// Function values a C17e chain calls, by id: the parameter count each
+	/// must have and where the chain names it. Checked once every function
+	/// is lowered.
+	arities: Vec<(u32, u32, Location)>,
 }
 
 impl CompileTransaction {

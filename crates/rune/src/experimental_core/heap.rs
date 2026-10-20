@@ -1984,6 +1984,9 @@ impl Store {
 mod field_iter_tests;
 #[cfg(test)]
 mod iter_terminal_tests;
+
+#[cfg(test)]
+mod iter_adapter_tests;
 #[cfg(test)]
 mod number_method_tests;
 #[cfg(test)]

@@ -1,0 +1,10 @@
+{
+  "135": {
+    "label": "deferred/ctor-callback",
+    "source_sha256": "68b9519183c3a09c6a72835efdaeba4cfba7b295737a8175b5734a15e8a28845",
+    "stock_row_sha256": "a9fba1020f2ba13effccddf7a344df0710536e6487497fc6fa6bdb4d0e882edb",
+    "previous_disposition": "Refused-surface",
+    "classification": "Exact",
+    "record": "C17e"
+  }
+}

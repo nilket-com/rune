@@ -188,11 +188,9 @@ impl Store {
 			},
 			_ => {}
 		}
-		Err(
-			error(ErrorKind::Type).with_detail(Detail::ComparisonNotIterable {
-				found: self.item_type(item)?,
-			}),
-		)
+		Err(error(ErrorKind::Type).with_detail(Detail::MissingIntoIter {
+			found: self.item_type(item)?,
+		}))
 	}
 
 	/// Iterative DFS: a non-equal child decides every enclosing comparison.

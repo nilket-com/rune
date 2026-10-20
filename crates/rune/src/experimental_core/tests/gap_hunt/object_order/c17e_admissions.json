@@ -1,0 +1,33 @@
+{
+ "rule": "C17e admits a direct map chain over Object.iter() with a destructuring literal closure: each entry pins the whole disposition it replaces and carries the admitted rule.",
+ "rows": [
+  {
+   "index": 52,
+   "legacy": {
+    "index": 52,
+    "label": "iter/iter-map",
+    "source_sha256": "72a29933b01acf597e6dd2bff72da3e18e49577c58f3d2d7a716333b5ba26031",
+    "stock_row_sha256": "9057e06af2b8cc4558032b6399f546a5a6829f62cff6fa4c37c3db6a2f7532f5",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "location": {
+      "end": 127,
+      "source": 0,
+      "start": 72
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 72, end: 127 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:127, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   },
+   "admitted": {
+    "classification": "Exact",
+    "warnings": {
+     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 99:104, context: Some(105:109) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    }
+   }
+  }
+ ]
+}

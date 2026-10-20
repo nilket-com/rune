@@ -324,6 +324,84 @@ impl CompileTransaction {
 		Ok(())
 	}
 
+	/// Certifies a C17e closure adapter or consumer on its first use in this
+	/// compile. `rev` also proves the std iterators without one still lack it.
+	pub(crate) fn iter_closure(
+		&mut self,
+		c: &Context,
+		f: crate::function::iter_terminal::Closure,
+	) -> Result<()> {
+		use crate::function::iter_terminal::{closure_provided, Closure, IRREVERSIBLE};
+		if self.checked_closure & f.bit() != 0 {
+			return Ok(());
+		}
+		if !closure_provided(c, f) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		if f == Closure::Rev {
+			for receiver in IRREVERSIBLE {
+				let h = Hash::associated_function(receiver, f.hash());
+				if c.lookup_function(h).is_some() {
+					return Err(Error::refused(Refusal::Method));
+				}
+				if !self.builder.absent.contains(&h) {
+					if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
+						return Err(invalid());
+					}
+					self.builder.absent.try_push(h)?;
+				}
+			}
+		}
+		self.checked_closure |= f.bit();
+		Ok(())
+	}
+
+	/// Certifies a C17d terminal or adapter, or `next` (`None`), on the
+	/// iterators only a C17e chain reaches.
+	pub(crate) fn iter_extended(
+		&mut self,
+		c: &Context,
+		t: Option<crate::function::iter_terminal::Terminal>,
+	) -> Result<()> {
+		let bit = t.map_or(1 << 15, |t| t.bit());
+		if self.checked_extended & bit != 0 {
+			return Ok(());
+		}
+		let provided = match t {
+			Some(t) => crate::function::iter_terminal::extended_provided(c, t),
+			None => crate::function::iter_terminal::extended_next_provided(c),
+		};
+		if !provided {
+			return Err(Error::refused(Refusal::Method));
+		}
+		self.checked_extended |= bit;
+		Ok(())
+	}
+
+	/// Records that function `id`, called by a C17e chain at `at`, must take
+	/// `parameters` arguments, captures included.
+	pub(crate) fn require_parameters(
+		&mut self,
+		id: u32,
+		parameters: u32,
+		at: super::super::error::Location,
+	) -> Result<()> {
+		self.arities.try_push((id, parameters, at))?;
+		Ok(())
+	}
+
+	/// A recorded parameter count that `functions` does not have, by where
+	/// the chain names the function.
+	pub(crate) fn wrong_parameters(
+		&self,
+		parameters: impl Fn(u32) -> Option<u32>,
+	) -> Option<super::super::error::Location> {
+		self.arities
+			.iter()
+			.find(|(id, expected, _)| parameters(*id).is_some_and(|n| n != *expected))
+			.map(|(_, _, at)| *at)
+	}
+
 	/// Certifies `::std::iter::range` on its first use in this compile.
 	pub(crate) fn iter_range(&mut self, c: &Context) -> Result<()> {
 		const RANGE: u16 = 1 << 13;

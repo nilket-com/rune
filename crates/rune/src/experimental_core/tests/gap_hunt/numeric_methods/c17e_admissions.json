@@ -1,0 +1,77 @@
+{
+ "rule": "C17e admits direct map chains whose literal closure calls a C17c numeric method: each entry pins the whole disposition it replaces and carries the admitted rule.",
+ "rows": [
+  {
+   "index": 222,
+   "legacy": {
+    "index": 222,
+    "label": "int/closure-map",
+    "source_sha256": "58226bcc61a29c6fdff3c6b062ebaeb8c6806b575b0623ecb095708fa340398e",
+    "stock_row_sha256": "9467c22018c9a482d6918c57033f8b8f8985f6fc4fdfa291c8e4d7c97f654f42",
+    "fresh": {
+     "location": {
+      "end": 112,
+      "source": 0,
+      "start": 64
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 112 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:112, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "classification": "Inherited-refusal"
+   },
+   "admitted": {
+    "classification": "Exact"
+   }
+  },
+  {
+   "index": 223,
+   "legacy": {
+    "index": 223,
+    "label": "int/closure-map-overflow",
+    "source_sha256": "2cd16b979d977f29ce9d4cb170ec3a27774c94009100249a8123983be0c232ba",
+    "stock_row_sha256": "e42de4ddaa2b4e39d05bc4a85e692996e28c3d557671d7e93a4b100dfa60af62",
+    "fresh": {
+     "location": {
+      "end": 113,
+      "source": 0,
+      "start": 64
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 113 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:113, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "classification": "Inherited-refusal"
+   },
+   "admitted": {
+    "classification": "Retained-frame (callback)"
+   }
+  },
+  {
+   "index": 277,
+   "legacy": {
+    "index": 277,
+    "label": "char/from_i64-map",
+    "source_sha256": "d15eaaff2ed92e5b8fa3966de460ec294da9a094523a5a482806254a69fbbd45",
+    "stock_row_sha256": "08bd2ba7be24462addc9efa6dbcdcad3da1bf7c0cfc714c6e3b4104f57f9b0f8",
+    "fresh": {
+     "location": {
+      "end": 123,
+      "source": 0,
+      "start": 64
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 123 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:123, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "classification": "Inherited-refusal"
+   },
+   "admitted": {
+    "classification": "Exact"
+   }
+  }
+ ]
+}

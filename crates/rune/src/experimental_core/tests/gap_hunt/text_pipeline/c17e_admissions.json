@@ -1,0 +1,45 @@
+{
+ "rule": "C17e admits direct chains over chars() with a literal-closure map or filter: each entry pins the whole frozen disposition it replaces (after C17d) and carries the admitted one.",
+ "rows": {
+  "145": {
+   "legacy": {
+    "label": "refused/145",
+    "source_sha256": "c0f991797ee849f084d4894305d2be83ea8a3bd3ee7cc71419ff1e68f27bba6f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-surface",
+    "stock_status": "value",
+    "stock_observation_sha256": "8d54076c6fe3b73b9dc596fc7db27c5eee56403ad847a16e5965c4d9a1f71422"
+   },
+   "admitted": {
+    "label": "refused/145",
+    "source_sha256": "c0f991797ee849f084d4894305d2be83ea8a3bd3ee7cc71419ff1e68f27bba6f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "stock_status": "value",
+    "stock_observation_sha256": "8d54076c6fe3b73b9dc596fc7db27c5eee56403ad847a16e5965c4d9a1f71422"
+   }
+  },
+  "146": {
+   "legacy": {
+    "label": "refused/146",
+    "source_sha256": "e5e1a65a495818a6d84d97188b266febe96cb6085c681ffe23ce4bd0a27acc13",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-surface",
+    "stock_status": "value",
+    "stock_observation_sha256": "7499b49efdac24cb401b3b03084fa75ce2f04484523ed356f6921bf2d15de174"
+   },
+   "admitted": {
+    "label": "refused/146",
+    "source_sha256": "e5e1a65a495818a6d84d97188b266febe96cb6085c681ffe23ce4bd0a27acc13",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "stock_status": "value",
+    "stock_observation_sha256": "7499b49efdac24cb401b3b03084fa75ce2f04484523ed356f6921bf2d15de174"
+   }
+  }
+ }
+}

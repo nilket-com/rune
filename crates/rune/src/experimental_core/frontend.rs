@@ -194,6 +194,17 @@ impl Collector {
 	}
 
 	fn finish(mut self) -> Result<Program> {
+		// A function value a C17e chain calls with the wrong argument count
+		// refuses the program, so stock raises its error only if it is called.
+		let entries = &self.entries;
+		if let Some(at) = self.transaction.wrong_parameters(|id| {
+			entries
+				.get(id as usize)
+				.and_then(|(_, f, _)| f.as_ref())
+				.map(|f| f.parameters)
+		}) {
+			return Err(Error::refused(Refusal::Arity).at(at));
+		}
 		let mut functions = Vec::new();
 
 		for (hash, function, location) in self.entries {
@@ -364,3 +375,6 @@ mod number_method_tests;
 
 #[cfg(test)]
 mod iter_terminal_tests;
+
+#[cfg(test)]
+mod iter_adapter_tests;

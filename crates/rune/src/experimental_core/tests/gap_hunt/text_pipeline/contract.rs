@@ -53,17 +53,21 @@ fn project_observation(value: &Json, expected: &Json, path: &str) -> Json {
 	}
 }
 
-/// A later record's admission of a pinned row: the whole frozen disposition
-/// it replaces must match exactly before its new disposition applies.
+/// Later records' admissions of a pinned row, in order: the whole frozen
+/// disposition each replaces must match exactly before its new one applies.
 fn admitted(id: &str, frozen: &Json) -> Json {
-	let doc: Json = serde_json::from_str(include_str!("c17d_admissions.json")).unwrap();
-	match doc["rows"].get(id) {
-		Some(row) => {
-			assert_eq!(&row["legacy"], frozen);
-			row["admitted"].clone()
+	let mut rule = frozen.clone();
+	for doc in [
+		include_str!("c17d_admissions.json"),
+		include_str!("c17e_admissions.json"),
+	] {
+		let doc: Json = serde_json::from_str(doc).unwrap();
+		if let Some(row) = doc["rows"].get(id) {
+			assert_eq!(row["legacy"], rule);
+			rule = row["admitted"].clone();
 		}
-		None => frozen.clone(),
 	}
+	rule
 }
 
 fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {

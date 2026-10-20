@@ -1,4 +1,4 @@
-//! C17d iterator terminal intrinsics. Operands were evaluated in source order.
+//! C17d iterator terminal and C17e adapter intrinsics. Operands were evaluated in source order.
 use super::*;
 use crate::function::iter_terminal::Intrinsic;
 
@@ -54,6 +54,11 @@ impl Executor {
 				store.collect_append(a, b)?;
 				Value::Unit
 			}
+			Intrinsic::OptionSome => Value::Bool(store.option_some(a)?),
+			Intrinsic::RevEmpty => Value::Bool(store.rev_empty(a)?),
+			Intrinsic::RevLast => Value::U64(store.rev_last(a)?),
+			Intrinsic::RevAt => store.rev_at(a, b)?,
+			Intrinsic::IntoIter => store.protocol_iterator(a)?,
 		};
 		self.put(
 			store,

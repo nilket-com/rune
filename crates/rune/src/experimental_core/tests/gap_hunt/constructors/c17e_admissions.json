@@ -1,0 +1,10 @@
+{
+  "118": {
+    "label": "refused/map-constructor",
+    "source_sha256": "8d150fbe1b21defda8abb81ce3c9e4691d0e2a9fac576310d2d890801f5142b8",
+    "stock_row_sha256": "75c5077321a19922172fd601c2fa276c08ade598c4c682b75d6ebca60c08da29",
+    "previous_disposition": "Refused-surface",
+    "classification": "Exact",
+    "record": "C17e"
+  }
+}

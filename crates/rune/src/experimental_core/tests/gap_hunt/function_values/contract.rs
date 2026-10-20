@@ -42,7 +42,7 @@ fn verify_fresh_case(index: usize, case: &Json, stock: &Json, actual: &Json, std
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	assert_eq!(dispositions["authority"], 21337);
 	assert_eq!(dispositions["rows"].as_array().unwrap().len(), 101);
-	let rule = &dispositions["rows"][index];
+	let rule = &super::object_order::admitted(include_str!("c17e_admissions.json"), &dispositions["rows"][index]);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);

@@ -1,0 +1,64 @@
+{
+ "rule": "C17e admits a direct map chain whose literal closure returns a type value: each entry pins the whole disposition it replaces and carries the admitted rule.",
+ "rows": [
+  {
+   "index": 88,
+   "legacy": {
+    "index": 88,
+    "label": "pass/map",
+    "source_sha256": "1ec490139e6f3e51d2f03449ca6d63537f329668d3733175b2ad94df23c0e616",
+    "stock_row_sha256": "2a3fb4d8e213f32a89bb48ea4015e62c001b250c96e481cc38519c550994cf00",
+    "fresh": {
+     "location": {
+      "end": 158,
+      "source": 0,
+      "start": 119
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 158 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:158, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "classification": "Inherited-refusal"
+   },
+   "admitted": {
+    "classification": "Exact"
+   }
+  },
+  {
+   "index": 103,
+   "legacy": {
+    "index": 103,
+    "label": "call/map-callback",
+    "source_sha256": "c6f69b229d07642aa349b835f3265d81f6ce668b06022eabe050346ae5720547",
+    "stock_row_sha256": "c1b15512c82bf19df3cc7a675fe7aa7f4a148d382caed4a5b9aa37cfe3046e41",
+    "fresh": {
+     "location": {
+      "end": 153,
+      "source": 0,
+      "start": 119
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 153 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:153, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "classification": "Inherited-refusal"
+   },
+   "admitted": {
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "location": {
+      "end": 136,
+      "source": 0,
+      "start": 119
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 119, end: 136 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:136, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   }
+  }
+ ]
+}
