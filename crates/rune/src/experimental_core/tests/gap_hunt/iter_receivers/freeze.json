@@ -1,0 +1,79 @@
+{
+  "rows": 60,
+  "production_changes": false,
+  "files": {
+    "cases.json": "811c11205cb5aafdb172e0470ebab91f8beda021380a576461ba5f50f12451e4",
+    "stock.json": "0156657d784af2a6deab30ae584d5255a1e10a332159afc445cdbf0a341b4b6b",
+    "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
+  },
+  "stock_binary": {
+    "path": "/home/me/work/.reviews/0185-o1b-oracle2/rune-tests",
+    "sha256": "66188d48b6cee2c29494c60940ad971483af3ce345bc8e3297d564a5b2eb0b60",
+    "pins_sha256": "04a21bdf0ec06d76131ae35202c8e440b0a39a62710575749358fa16927f74f0"
+  },
+  "stock_summary": {
+    "rows": 60,
+    "statuses": {
+      "value": 43,
+      "error": 17
+    },
+    "error_classes": {
+      "Type": 11,
+      "AccessConflict": 5,
+      "ArgumentCount": 1
+    },
+    "replay": false,
+    "logical_traces": 17,
+    "cpu_list": "0-7,10-31"
+  },
+  "P1": {
+    "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",
+    "rows": [
+      {
+        "index": 12,
+        "label": "tuple/error-type",
+        "source_sha256": "da886af41142f4fdd71cc51340a6beb05020dcb3d6e3300151a3477f8a9ffa0c"
+      },
+      {
+        "index": 13,
+        "label": "tuple/error-method",
+        "source_sha256": "3ef49eab32b4833a71e689012be0d34f25201ec82d401c6ed07a1b4b6814b72f"
+      },
+      {
+        "index": 21,
+        "label": "unit/error-type",
+        "source_sha256": "8ab2fc1e865b546acf6e434e094ed3bea78c30a058a88caa337da5dd79b2fb09"
+      },
+      {
+        "index": 44,
+        "label": "object/error-type",
+        "source_sha256": "6ab80ba0acb896c38944f4b9f77b69faa4d602ee6de896599c82a40c105891a2"
+      },
+      {
+        "index": 45,
+        "label": "object/error-method",
+        "source_sha256": "3b60006f5c7f38bb17d7a4f50a4922da3680f636f2d1603444f2faff9772465a"
+      },
+      {
+        "index": 48,
+        "label": "object/iter-of-iter",
+        "source_sha256": "06e7f45a5450465a770673f4751aa92302c59b8b55954664f2d998e563b19f22"
+      },
+      {
+        "index": 50,
+        "label": "mixed/count-string",
+        "source_sha256": "b86e493473ddcbf4ae41fd1a7b41ecbc6ba8bb6a4e847f2cbf217811b2c446bb"
+      },
+      {
+        "index": 51,
+        "label": "mixed/count-int",
+        "source_sha256": "fead11049cd96f3bd35df57ab549a3cbcee6151d124636a02fa6c8261421c835"
+      },
+      {
+        "index": 54,
+        "label": "mixed/count-iterator",
+        "source_sha256": "4d8a53bbf0a49a328f4f5401813c50eca0699c585045222bff50df28d3760d10"
+      }
+    ]
+  }
+}
