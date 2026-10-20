@@ -2,10 +2,9 @@
   "summary": {
     "rows": 580,
     "classifications": {
-      "Exact": 486,
+      "Exact": 488,
       "Inherited-refusal": 77,
       "Intentional-D1": 13,
-      "Intentional-key-copy": 2,
       "Retained-fuel": 2
     },
     "status": "FROZEN",
@@ -17,7 +16,7 @@
       "texts": "overflow (\"Numerical overflow\"), element conversion, argument conversion and tuple texts copied from stock exactly",
       "seed": "sum/product convert the first element as the seed in the turbofish type (so [-0.0] sums to -0.0); an empty chain gives that type zero or one",
       "laziness": "adapter counts convert in source order when each adapter is reached; take stops without pulling, skip pulls and discards; elements are converted only when consumed",
-      "key_copy": "collect::<Object> copies each String key and leaves the key handle readable (stock moves it out); Intentional, the stock fix is a separate record",
+      "key_copy": "collect::<Object> copies each String key and leaves the key handle readable, in both engines since S2",
       "fuel": "fuel is charged per expanded instruction: rows that exhaust stock fuel halt in fresh with the stock class (C14b Retained-fuel precedent)",
       "warnings": "stock LetPatternMightPanic for a destructuring for pattern; the fresh frontend does not report it (O1 precedent)",
       "arity": "a wrong operand count is refused at compile time (stock: runtime ArgumentCount)",
@@ -2715,63 +2714,7 @@
       "label": "alias/collect-object-key-moved",
       "source_sha256": "33f50c76df59d7546bb47ee21099df1210f3fb9fe6903aec796adb69c7d17e8e",
       "stock_row_sha256": "9c69c011f75126f40fb3620689a146589f3297f13aac55d53dd1d7af38d1e937",
-      "fresh": {
-        "observation": {
-          "events": [],
-          "outcome": {
-            "graph": {
-              "nodes": [
-                [
-                  "Tuple",
-                  "0xfeb65b3f4755aef0",
-                  [
-                    1,
-                    2
-                  ]
-                ],
-                [
-                  "Object",
-                  "0x2f5c2c7799148025",
-                  [
-                    [
-                      "6b6579",
-                      3
-                    ]
-                  ]
-                ],
-                [
-                  "U64",
-                  "0xb41669ccb4fdb76a",
-                  "3"
-                ],
-                [
-                  "I64",
-                  "0x1cad9186c9641c4f",
-                  "1"
-                ]
-              ],
-              "root": 0
-            },
-            "status": "value"
-          },
-          "reuse": {
-            "graph": {
-              "nodes": [
-                [
-                  "I64",
-                  "0x1cad9186c9641c4f",
-                  "7"
-                ]
-              ],
-              "root": 0
-            },
-            "status": "value"
-          }
-        },
-        "logical": null,
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
-      },
-      "classification": "Intentional-key-copy"
+      "classification": "Exact"
     },
     {
       "index": 372,
@@ -2785,63 +2728,7 @@
       "label": "alias/collect-object-source-key-after",
       "source_sha256": "a3c180e94ee8a26ceed082113372da46ff0647f61b494cbd094e4cce86398a0a",
       "stock_row_sha256": "17ce9867d1fe287b363f4c7f779fe4ac537ca44c780cbca2793b7f88d8902ad1",
-      "fresh": {
-        "observation": {
-          "events": [],
-          "outcome": {
-            "graph": {
-              "nodes": [
-                [
-                  "Tuple",
-                  "0xfeb65b3f4755aef0",
-                  [
-                    1,
-                    2
-                  ]
-                ],
-                [
-                  "Object",
-                  "0x2f5c2c7799148025",
-                  [
-                    [
-                      "6b",
-                      3
-                    ]
-                  ]
-                ],
-                [
-                  "U64",
-                  "0xb41669ccb4fdb76a",
-                  "1"
-                ],
-                [
-                  "I64",
-                  "0x1cad9186c9641c4f",
-                  "1"
-                ]
-              ],
-              "root": 0
-            },
-            "status": "value"
-          },
-          "reuse": {
-            "graph": {
-              "nodes": [
-                [
-                  "I64",
-                  "0x1cad9186c9641c4f",
-                  "7"
-                ]
-              ],
-              "root": 0
-            },
-            "status": "value"
-          }
-        },
-        "logical": null,
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
-      },
-      "classification": "Intentional-key-copy"
+      "classification": "Exact"
     },
     {
       "index": 374,

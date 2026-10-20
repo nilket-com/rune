@@ -2,20 +2,18 @@
   "summary": {
     "rows": 242,
     "classifications": {
-      "Exact": 150,
-      "Inherited-chain": 2,
+      "Exact": 152,
       "Inherited-refusal": 79,
       "Intentional-D1": 11
     },
     "status": "FROZEN",
     "rulings": {
       "receiver_proof": "get/insert/remove are admitted only on a statically proven Object-origin receiver (anonymous object literal, group, unlabeled block tail, or a local whose initializer and every assignment are Object-origin); contains_key and is_empty also run on dynamic receivers under the C17a absence certificate",
-      "key_move": "insert moves its String key out of its handle (C11c tombstone); later reads, writes and takes report it has been moved, as stock",
+      "key_move": "insert copies its String key and leaves the key handle readable, in both engines since S2",
       "order": "insertion order in both engines (O1); remove shift-removes",
       "wrong_key_type": "stock message copied exactly (Expected type String, Bad argument #1)",
       "iteration_conflict": "insert/remove while the Object is iterated: Cannot write the receiver: it is being read (copied)",
       "self_insert": "copied: the reference cycle stays charged until the store closes (retained_cycle pins the charged entry)",
-      "inherited_chain": "rows 60 and 65: a moved value read by len has no BadArgument #0 chain in fresh; pre-existing at 0f475e00 (drop), on the D backlog",
       "warnings": "stock LetPatternMightPanic for `for (k, v) in o`; the fresh frontend does not report it (O1 precedent)",
       "wrong_receiver": "fresh names the missing method (existing D1 intentional diagnostic)"
     }
@@ -578,54 +576,7 @@
       "label": "insert/key-variable-moved-len",
       "source_sha256": "a76732265e1b3e294550b04cbdacdc86fb303d05c2d3314545a57b07ab60c935",
       "stock_row_sha256": "ba755e22c1ea4291826045c55cb086aaf6897f366a5c3946e141f1bd20e40db9",
-      "fresh": {
-        "observation": {
-          "events": [],
-          "outcome": {
-            "chain": [],
-            "class": "AccessConflict",
-            "display": "Cannot read the value: it has been moved",
-            "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
-            "sites": [
-              {
-                "end": 105,
-                "source": 0,
-                "start": 98
-              }
-            ],
-            "status": "error"
-          },
-          "reuse": {
-            "graph": {
-              "nodes": [
-                [
-                  "I64",
-                  "0x1cad9186c9641c4f",
-                  "7"
-                ]
-              ],
-              "root": 0
-            },
-            "status": "value"
-          }
-        },
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 105,
-                "source": 0,
-                "start": 98
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot read the value: it has been moved\n  at c17b.rn:1:99"
-        },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
-      },
-      "classification": "Inherited-chain"
+      "classification": "Exact"
     },
     {
       "index": 61,
@@ -671,54 +622,7 @@
       "label": "insert/key-field-string-moved",
       "source_sha256": "46903605a7415aad2bd2296e01d894caa099947e885fca24936acc7940a57f5d",
       "stock_row_sha256": "7f0e43ef942a65904b14bcc3762b124061e24468219aa4ddbbdc0255857b5b97",
-      "fresh": {
-        "observation": {
-          "events": [],
-          "outcome": {
-            "chain": [],
-            "class": "AccessConflict",
-            "display": "Cannot read the value: it has been moved",
-            "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
-            "sites": [
-              {
-                "end": 114,
-                "source": 0,
-                "start": 105
-              }
-            ],
-            "status": "error"
-          },
-          "reuse": {
-            "graph": {
-              "nodes": [
-                [
-                  "I64",
-                  "0x1cad9186c9641c4f",
-                  "7"
-                ]
-              ],
-              "root": 0
-            },
-            "status": "value"
-          }
-        },
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 114,
-                "source": 0,
-                "start": 105
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot read the value: it has been moved\n  at c17b.rn:1:106"
-        },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
-      },
-      "classification": "Inherited-chain"
+      "classification": "Exact"
     },
     {
       "index": 66,

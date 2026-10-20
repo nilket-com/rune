@@ -537,6 +537,9 @@ mod macros;
 mod moved;
 #[cfg(not(miri))]
 mod object_debug_order;
+// Deliberately not excluded from miri: it guards Object keys borrowed from
+// script values that other handles still read.
+mod object_key_alias;
 // Deliberately not excluded from miri: it guards a borrow that must end before
 // the machine stores into the slot the borrow came from.
 mod object_slot_alias;

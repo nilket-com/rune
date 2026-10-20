@@ -29,8 +29,9 @@ fn canonical_record(record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
-/// `frozen` is the pinned pre-O1 stock row; `stock` is its O1 replacement, or
-/// the same row where key order was never observable.
+/// `frozen` is the pinned pre-O1 stock row; `stock` is its O1 and S2
+/// replacement, or the same row where neither key order nor a key move was
+/// observable.
 fn verify_fresh_case(
 	index: usize,
 	case: &Json,
@@ -101,31 +102,6 @@ fn verify_fresh_case(
 	}
 	match classification {
 		"Exact" => assert_eq!(fresh, expected),
-		"Inherited-chain" => {
-			// A moved value read by `len` lacks stock's `Bad argument #0` context
-			// in fresh (pre-existing). Everything else is stock-exact.
-			assert_eq!(fresh, rule["fresh"]);
-			let (f, s) = (&fresh["observation"], &expected["observation"]);
-			for key in ["status", "class", "kind", "display", "sites"] {
-				assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
-			}
-			assert_eq!(f["outcome"]["chain"], json!([]));
-			assert_eq!(
-				s["outcome"]["chain"],
-				json!([{"display":"Bad argument #0","kind":"BadArgument { arg: 0 }"}])
-			);
-			assert_eq!(f["events"], s["events"]);
-			assert_eq!(f["reuse"], s["reuse"]);
-			for key in ["frames", "rendered"] {
-				assert_eq!(fresh["logical"][key], expected["logical"][key], "{key}");
-			}
-			assert_eq!(fresh["logical"]["context"], json!([]));
-			assert_eq!(
-				expected["logical"]["context"],
-				json!([{"arg":0,"tag":"BadArgument"}])
-			);
-			assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
-		}
 		"Intentional-D1" => {
 			// A wrong receiver: fresh names the missing method (D1). Kind, class,
 			// tape, sites, logical frames and reuse stay stock-exact.
@@ -170,9 +146,8 @@ fn verify_fresh_case(
 	assert_eq!(hex(stderr), stock["stderr_hex"]);
 }
 
-const EXPECTED_COUNTS: [(&str, u64); 4] = [
-	("Exact", 150),
-	("Inherited-chain", 2),
+const EXPECTED_COUNTS: [(&str, u64); 3] = [
+	("Exact", 152),
 	("Inherited-refusal", 79),
 	("Intentional-D1", 11),
 ];

@@ -132,8 +132,11 @@ fn child() {
 	if std::env::var_os("C17B_REPLAY").is_some() {
 		assert_eq!(
 			result["projected"],
-			super::object_order::order_fixed("object_methods", index, &frozen()[index])
-				["projected"]
+			super::object_keys::key_fixed(
+				"object_methods",
+				index,
+				&super::object_order::order_fixed("object_methods", index, &frozen()[index]),
+			)["projected"]
 		);
 	}
 	let path = std::env::var_os("C17B_RESULT").unwrap();
@@ -327,7 +330,11 @@ fn run_contract(engine: &str) {
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
 	for (i, (case, expected)) in cases.iter().zip(&frozen).enumerate() {
-		let fixed = super::object_order::order_fixed("object_methods", i, expected);
+		let fixed = super::object_keys::key_fixed(
+			"object_methods",
+			i,
+			&super::object_order::order_fixed("object_methods", i, expected),
+		);
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
 		assert_eq!(case["label"], expected["label"]);

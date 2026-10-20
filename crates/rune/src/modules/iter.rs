@@ -6,6 +6,7 @@ use crate::alloc::prelude::*;
 use crate::modules::collections::{HashMap, HashSet, VecDeque};
 use crate::runtime::budget;
 use crate::runtime::hint_capacity;
+use crate::runtime::object::CopiedKey;
 use crate::runtime::range::RangeIter;
 use crate::runtime::{
 	Address, Dismantle, FromValue, Function, Handover, Inline, Object, Output, OwnedTuple,
@@ -478,7 +479,7 @@ pub fn module() -> Result<Module, ContextError> {
 			}
 
 			{
-				let next = next.with_return::<Option<(String, Value)>>();
+				let next = next.with_return::<Option<(CopiedKey, Value)>>();
 				let size_hint = size_hint.clone();
 
 				cx.function(
@@ -488,7 +489,7 @@ pub fn module() -> Result<Module, ContextError> {
 						let cap = hint_capacity(cap);
 						let mut map = Object::with_capacity(cap)?;
 
-						while let Some((key, value)) = next.call((iter.clone(),))? {
+						while let Some((CopiedKey(key), value)) = next.call((iter.clone(),))? {
 							budget::permit()?;
 							map.insert(key, value)?;
 						}

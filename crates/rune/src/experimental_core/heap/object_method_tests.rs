@@ -1,7 +1,7 @@
 //! C17b Object methods: ownership, order, moves and failure paths, independent of
 //! the stock oracle.
 use super::*;
-use crate::experimental_core::error::{Detail, MovedAccess};
+use crate::experimental_core::error::Detail;
 use crate::function::fresh_object::Method;
 
 fn object(s: &mut Store, pairs: &[(&str, Value)]) -> Value {
@@ -84,32 +84,21 @@ fn remove_shift_removes_and_insert_appends() {
 }
 
 #[test]
-fn insert_moves_the_key_out_of_its_handle() {
+fn insert_copies_the_key_and_keeps_its_handle() {
 	let mut s = Store::new(Limits::default()).unwrap();
 	let o = object(&mut s, &[]);
 	let key = s.string("k").unwrap();
 	let r = s.object_method(Method::Insert, &[o, key, key]).unwrap();
-	// The stored value is the same, now moved, handle.
+	// The stored value is the same handle, and the key handle stays readable.
 	assert_eq!(s.object_fields(o).unwrap()[0].1, key);
-	let read = s.object_method(Method::Get, &[o, key]).unwrap_err();
-	assert_eq!(
-		read.detail,
-		Detail::MovedArgument {
-			arg: 1,
-			access: MovedAccess::Read
-		}
-	);
-	let take = s
+	let got = s.object_method(Method::Get, &[o, key]).unwrap();
+	assert_eq!(some_payload(&s, got), Some(key));
+	let again = s
 		.object_method(Method::Insert, &[o, key, Value::Unit])
-		.unwrap_err();
-	assert_eq!(
-		take.detail,
-		Detail::MovedArgument {
-			arg: 1,
-			access: MovedAccess::Take
-		}
-	);
-	for v in [r, key, o] {
+		.unwrap();
+	assert_eq!(some_payload(&s, again), Some(key));
+	assert_eq!(keys(&s, o), ["k"]);
+	for v in [r, got, again, key, o] {
 		s.release(v).unwrap();
 	}
 	assert_eq!(s.live_entries(), 0);
@@ -139,18 +128,17 @@ fn argument_order_types_and_leases() {
 	let e = s.object_method(Method::Remove, &[o, key]).unwrap_err();
 	assert_eq!(e.detail, Detail::SharedArgument { arg: 0, readers: 1 });
 	s.release(iter).unwrap();
-	// A key under a read lease cannot be taken.
+	// A key under a read lease is only read, so it can be inserted.
 	let text = s.string("x y").unwrap();
 	let space = s.string(" ").unwrap();
 	let split = s
 		.text_method(crate::function::fresh_text::Method::Split, &[text, space])
 		.unwrap();
-	let e = s
+	let inserted = s
 		.object_method(Method::Insert, &[o, text, Value::Unit])
-		.unwrap_err();
-	assert_eq!(e.detail, Detail::TakeSharedArgument { arg: 1, readers: 1 });
-	assert_eq!(keys(&s, o), ["a"]);
-	for v in [split, text, space, key, o] {
+		.unwrap();
+	assert_eq!(keys(&s, o), ["a", "x y"]);
+	for v in [inserted, split, text, space, key, o] {
 		s.release(v).unwrap();
 	}
 	assert_eq!(s.live_entries(), 0);

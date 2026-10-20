@@ -150,7 +150,7 @@ impl Store {
 			}
 			Method::Insert => {
 				self.argument(receiver, 0, MovedAccess::Write)?;
-				self.key_argument(args[1], MovedAccess::Take)?;
+				self.key_argument(args[1], MovedAccess::Read)?;
 				self.insert_field(receiver, args[1], args[2])
 			}
 		}
@@ -192,13 +192,10 @@ impl Store {
 		Ok(result)
 	}
 
-	/// Stores `new` under `key` and returns the previous value. The key String is
-	/// moved out of its handle, as stock moves a native `String` argument.
+	/// Stores a copy of `key` with `new` and returns the previous value; the key
+	/// handle stays readable.
 	fn insert_field(&mut self, receiver: Value, key: Value, new: Value) -> Result<Value> {
 		let Value::Heap(h) = receiver else {
-			return Err(err(ErrorKind::InvalidCode));
-		};
-		let Value::Heap(key_handle) = key else {
 			return Err(err(ErrorKind::InvalidCode));
 		};
 		let result = match self.key_index(receiver, key)? {
@@ -213,11 +210,6 @@ impl Store {
 			return Err(e);
 		}
 		debug_assert!(matches!(self.entry(h)?.tag()?, Type::Object));
-		let charged = self.entry(key_handle)?.charged_bytes();
-		let entry = self.entry_mut(key_handle)?;
-		entry.payload = Some(Payload::Moved(Type::String));
-		entry.set_charged_bytes(0);
-		self.bytes -= charged;
 		Ok(result)
 	}
 }

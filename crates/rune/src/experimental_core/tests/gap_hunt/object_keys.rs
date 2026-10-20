@@ -1,4 +1,5 @@
-//! S2 aliased Object key stock oracle for `collect::<Object>`. This module is test-only; it does not alter product code.
+//! S2 aliased Object key oracle and fix-both contracts for `collect::<Object>`
+//! and `Object::insert`.
 use super::*;
 use crate::runtime::{self as stock, Value};
 use serde_json::{json, Value as Json};
@@ -118,7 +119,10 @@ fn child() {
 	let mut result = result;
 	result["projected"] = projection(&result);
 	if std::env::var_os("S2_REPLAY").is_some() {
-		assert_eq!(result["projected"], frozen()[index]["projected"]);
+		assert_eq!(
+			result["projected"],
+			key_fixed("object_keys", index, &frozen()[index])["projected"]
+		);
 	}
 	let path = std::env::var_os("S2_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
@@ -278,7 +282,7 @@ fn stock_contract() {
 
 #[cfg(target_os = "linux")]
 fn run_contract(engine: &str) {
-	assert_eq!(engine, "stock");
+	assert!(matches!(engine, "stock" | "fresh"));
 	let cases: Json = serde_json::from_str(CASES).unwrap();
 	let cases = cases.as_array().unwrap();
 	let frozen = frozen();
@@ -288,6 +292,7 @@ fn run_contract(engine: &str) {
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
 	for (i, (case, expected)) in cases.iter().zip(&frozen).enumerate() {
+		let fixed = key_fixed("object_keys", i, expected);
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
 		assert_eq!(case["label"], expected["label"]);
@@ -311,7 +316,11 @@ fn run_contract(engine: &str) {
 		let mut child = command
 			.args([
 				"--exact",
-				"experimental_core::tests::gap_hunt::object_keys::child",
+				if engine == "stock" {
+					"experimental_core::tests::gap_hunt::object_keys::child"
+				} else {
+					"experimental_core::tests::gap_hunt::object_keys::fresh_child"
+				},
 				"--ignored",
 				"--nocapture",
 				"--quiet",
@@ -387,11 +396,37 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["label"], case["label"]);
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["origin"], case["origin"]);
-		if engine == "stock" {
-			assert_eq!(observed["projected"], expected["projected"], "{label}");
+		if engine == "fresh" {
+			verify_fresh_case(i, case, expected, &fixed, &observed, &stdout, &stderr);
+			continue;
 		}
-		assert_eq!(hex(&stdout), expected["stdout_hex"]);
-		assert_eq!(hex(&stderr), expected["stderr_hex"]);
+		assert_eq!(observed["projected"], fixed["projected"], "{label}");
+		assert_eq!(hex(&stdout), fixed["stdout_hex"]);
+		assert_eq!(hex(&stderr), fixed["stderr_hex"]);
 	}
 	super::contract_completed(engine, cases.len());
 }
+
+/// S2 fix-both rows: frozen stock rows that change once `collect::<Object>`
+/// and `Object::insert` copy their String key instead of moving it. The frozen
+/// files keep the old row; each entry pins the row it replaces by hash and
+/// carries its replacement.
+pub(super) fn key_fixed(module: &str, index: usize, old: &Json) -> Json {
+	use sha2::{Digest, Sha256};
+	static FIXES: std::sync::OnceLock<Json> = std::sync::OnceLock::new();
+	let fixes = FIXES
+		.get_or_init(|| serde_json::from_str(include_str!("object_keys/fix_both.json")).unwrap());
+	let Some(fix) = fixes["rows"][module].get(format!("{index:03}")) else {
+		return old.clone();
+	};
+	assert_eq!(
+		hex(Sha256::digest(serde_json::to_vec(old).unwrap()).as_ref()),
+		fix["old_sha256"],
+		"{module} {index}"
+	);
+	fix["new"].clone()
+}
+
+include!("object_keys/fresh.rs");
+
+include!("object_keys/contract.rs");

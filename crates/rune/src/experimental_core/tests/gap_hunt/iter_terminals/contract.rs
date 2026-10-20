@@ -29,9 +29,12 @@ fn canonical_record(record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
+/// `frozen` is the pinned stock row; `stock` is its S2 replacement, or the same
+/// row where no Object key was moved.
 fn verify_fresh_case(
 	index: usize,
 	case: &Json,
+	frozen: &Json,
 	stock: &Json,
 	actual: &Json,
 	stdout: &[u8],
@@ -62,7 +65,7 @@ fn verify_fresh_case(
 		rule["source_sha256"]
 	);
 	assert_eq!(
-		hex(Sha256::digest(serde_json::to_vec(stock).unwrap()).as_ref()),
+		hex(Sha256::digest(serde_json::to_vec(frozen).unwrap()).as_ref()),
 		rule["stock_row_sha256"]
 	);
 	let audit = &actual["fresh_audit"];
@@ -115,21 +118,6 @@ fn verify_fresh_case(
 			assert_eq!(fresh["logical"], expected["logical"]);
 			assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
 		}
-		"Intentional-key-copy" => {
-			// `collect::<Object>` copies its String keys; stock moves them out
-			// of their handles, so a later read of the key fails there.
-			assert_eq!(fresh, rule["fresh"]);
-			assert_eq!(f["outcome"]["status"], "value");
-			assert_eq!(s["outcome"]["status"], "error");
-			assert_eq!(
-				s["outcome"]["display"],
-				"Cannot read the value: it has been moved"
-			);
-			assert_eq!(f["events"], s["events"]);
-			assert_eq!(f["reuse"], s["reuse"]);
-			assert_eq!(fresh["logical"], Json::Null);
-			assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
-		}
 		"Retained-fuel" => {
 			// Fuel is charged per expanded instruction: fresh halts on its own
 			// count, with the stock class, an empty tape and stock reuse.
@@ -165,10 +153,9 @@ fn verify_fresh_case(
 	assert_eq!(hex(stderr), stock["stderr_hex"]);
 }
 
-const EXPECTED_COUNTS: [(&str, u64); 5] = [
-	("Exact", 486),
+const EXPECTED_COUNTS: [(&str, u64); 4] = [
+	("Exact", 488),
 	("Inherited-refusal", 77),
 	("Intentional-D1", 13),
-	("Intentional-key-copy", 2),
 	("Retained-fuel", 2),
 ];

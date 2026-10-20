@@ -11,8 +11,8 @@ use crate::alloc::prelude::*;
 use crate::alloc::{self, String};
 use crate::runtime::object_map::ObjectMap;
 use crate::runtime::{
-	Dismantle, FromValue, Handover, ProtocolCaller, RawAnyGuard, Ref, ToValue, Value, VmError,
-	Worklist,
+	Dismantle, FromValue, Handover, MaybeTypeOf, ProtocolCaller, RawAnyGuard, Ref, Repr,
+	RuntimeError, ToValue, Value, VmError, Worklist,
 };
 use crate::Any;
 
@@ -272,20 +272,7 @@ impl Object {
 	/// Inserts a key-value pair into the map.
 	///
 	/// If the map did not have this key present, `None` is returned.
-	///
-	/// # Examples
-	///
-	/// ```rune
-	/// let map = #{};
-	/// assert_eq!(map.insert("a", 1), None);
-	/// assert_eq!(map.is_empty(), false);
-	///
-	/// map.insert("b", 2);
-	/// assert_eq!(map.insert("b", 3), Some(2));
-	/// assert_eq!(map["b"], 3);
-	/// ```
 	#[inline]
-	#[rune::function(keep, path = Self::insert)]
 	pub fn insert(&mut self, k: String, v: Value) -> alloc::Result<Option<Value>> {
 		self.inner.try_insert(k, v)
 	}
@@ -706,6 +693,27 @@ impl Cursor {
 	/// As for [`Cursor::next`].
 	unsafe fn remaining(&self) -> usize {
 		self.object.as_ref().len() - self.next
+	}
+}
+
+/// A script `String` argument used as an Object key: the key is borrowed and
+/// copied, so every other handle to the String stays readable.
+pub(crate) struct CopiedKey(pub(crate) String);
+
+impl FromValue for CopiedKey {
+	#[inline]
+	fn from_value(value: Value) -> Result<Self, RuntimeError> {
+		match value.as_ref() {
+			Repr::Any(any) => Ok(Self(any.borrow_ref::<String>()?.try_clone()?)),
+			actual => Err(RuntimeError::expected::<String>(actual.type_info())),
+		}
+	}
+}
+
+impl MaybeTypeOf for CopiedKey {
+	#[inline]
+	fn maybe_type_of() -> alloc::Result<crate::compile::meta::DocType> {
+		String::maybe_type_of()
 	}
 }
 

@@ -4,7 +4,7 @@ use crate as rune;
 use crate::alloc;
 use crate::alloc::clone::TryClone;
 use crate::alloc::fmt::TryWrite;
-use crate::runtime::object::{RuneIter, RuneIterKeys, RuneValues};
+use crate::runtime::object::{CopiedKey, RuneIter, RuneIterKeys, RuneValues};
 use crate::runtime::{EnvProtocolCaller, Formatter, Object, Protocol, Value, VmError};
 use crate::{ContextError, Module};
 
@@ -52,7 +52,7 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(Object::with_capacity__meta)?;
 	m.function_meta(Object::len__meta)?;
 	m.function_meta(Object::is_empty__meta)?;
-	m.function_meta(Object::insert__meta)?;
+	m.function_meta(insert__meta)?;
 	m.function_meta(remove__meta)?;
 	m.function_meta(Object::rune_clear__meta)?;
 	m.function_meta(contains_key__meta)?;
@@ -109,6 +109,27 @@ pub fn module() -> Result<Module, ContextError> {
 #[inline]
 fn contains_key(object: &Object, key: &str) -> bool {
 	object.contains_key(key)
+}
+
+/// Inserts a key-value pair into the map.
+///
+/// If the map did not have this key present, `None` is returned.
+///
+/// # Examples
+///
+/// ```rune
+/// let map = #{};
+/// assert_eq!(map.insert("a", 1), None);
+/// assert_eq!(map.is_empty(), false);
+///
+/// map.insert("b", 2);
+/// assert_eq!(map.insert("b", 3), Some(2));
+/// assert_eq!(map["b"], 3);
+/// ```
+#[rune::function(keep, instance)]
+#[inline]
+fn insert(object: &mut Object, key: CopiedKey, value: Value) -> alloc::Result<Option<Value>> {
+	object.insert(key.0, value)
 }
 
 /// Removes a key from the map, returning the value at the key if the key was
