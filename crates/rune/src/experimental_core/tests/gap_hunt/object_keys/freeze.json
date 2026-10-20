@@ -1,0 +1,141 @@
+{
+  "rows": 70,
+  "production_changes": false,
+  "files": {
+    "cases.json": "e4b58b7982f543ed59f61390a7c49afdd973d53acd9e6444fa64bf3db35fe0a9",
+    "stock.json": "1548367b4d68876e33e09b9e07cd19181b860121d9df3cd9084d9e6a650ffed3",
+    "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
+  },
+  "stock_binary": {
+    "path": "/home/me/work/.reviews/0185-s2-oracle1/rune-tests",
+    "sha256": "a484c7039896b5ea5bec78a518517727032410c4f5d8341b4fa2d40523eb1b5c",
+    "pins_sha256": "f6a559063ab7c26a88fee9ba0ae60f05f234a858a208a5e98bbcd1330dd81314"
+  },
+  "stock_summary": {
+    "rows": 70,
+    "statuses": {
+      "error": 44,
+      "value": 26
+    },
+    "error_classes": {
+      "AccessConflict": 19,
+      "Type": 21,
+      "stock:ExpectedTupleLength { actual: 0, expected: 2 }": 1,
+      "stock:ExpectedTupleLength { actual: 1, expected: 2 }": 1,
+      "stock:ExpectedTupleLength { actual: 3, expected: 2 }": 2
+    },
+    "replay": false,
+    "logical_traces": 44,
+    "cpu_list": "0-7,10-31"
+  },
+  "P1": {
+    "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",
+    "rows": [
+      {
+        "index": 36,
+        "label": "key-type/int",
+        "source_sha256": "6905a6dc3348948b4f56e99c13dcf0fbe55248af95fffd57cb2f6864c3076c69"
+      },
+      {
+        "index": 37,
+        "label": "key-type/u64",
+        "source_sha256": "39ae3e112b078aef5069e80edc75402e485d0a886daa02e1f498e2ae18b35f49"
+      },
+      {
+        "index": 38,
+        "label": "key-type/float",
+        "source_sha256": "8e6c637256466394e17f168447c04162d1fe5c3be4f4626f0030cc3ba58f1803"
+      },
+      {
+        "index": 39,
+        "label": "key-type/char",
+        "source_sha256": "1a19092e555e1149e19596197eac7f1ed989f6d1ee976c55dbf18523e033c844"
+      },
+      {
+        "index": 40,
+        "label": "key-type/bool",
+        "source_sha256": "669c590f3ae81a601000743626f5dcdd9c5d13cd6fc3ca16d8585a1d3a05af63"
+      },
+      {
+        "index": 41,
+        "label": "key-type/unit",
+        "source_sha256": "84df76e342f4d70d64150705af4e266bc3f7ddde9035a2d266364d81de2b908a"
+      },
+      {
+        "index": 42,
+        "label": "key-type/vec",
+        "source_sha256": "d66b7c35d0eb6194c3f8c6c9f9b2093e8768e9ea3aad31c0921ba1bfc5e5a35f"
+      },
+      {
+        "index": 43,
+        "label": "key-type/bytes",
+        "source_sha256": "f6a3358d0b78ce42b68dad1ef56088d413ac26758b80f67db5ff7362af6dd191"
+      },
+      {
+        "index": 44,
+        "label": "key-type/object",
+        "source_sha256": "0e4a830ae94f27292427f03a47b4a6a380d0b18ec7a00caa60f530a4d70496db"
+      },
+      {
+        "index": 45,
+        "label": "key-type/tuple",
+        "source_sha256": "f1c7eab97ce9cd17c993f49f477abb5ab2f498b3b885fbfe91e5c461847e296f"
+      },
+      {
+        "index": 46,
+        "label": "key-type/option",
+        "source_sha256": "bdfd58c8c7126c71feba9d95440bd6cbf25b934b88583fc3d321c244a2b9d2a1"
+      },
+      {
+        "index": 47,
+        "label": "key-type/struct",
+        "source_sha256": "97342d1a700e19cf68366b7b1e529f7af79903ab7f08e04b3443fb87c5257734"
+      },
+      {
+        "index": 48,
+        "label": "key-type/tuple-struct",
+        "source_sha256": "34e136dcc70eb1a08056550641606967e2c173c0f081ec8f371c4ea0be8267f0"
+      },
+      {
+        "index": 49,
+        "label": "key-type/variant",
+        "source_sha256": "baa0f87c37173485ee2a8037c59f2f83791ba5882050641806a8587398a25bee"
+      },
+      {
+        "index": 50,
+        "label": "key-type/variant-tuple",
+        "source_sha256": "498f7b8285da2102c58d7993e567e0506fc43d838b367db7e3f4dbe64294e923"
+      },
+      {
+        "index": 51,
+        "label": "key-type/second-int",
+        "source_sha256": "0c032006e45c55cc3b87fb7ced5a5780c128cfddea553772fd2db776235120d7"
+      },
+      {
+        "index": 52,
+        "label": "key-type/let-int",
+        "source_sha256": "acb73a1f33e51e383d563a626d278eaa48d5a1e64420cf2377afb97a866f28ff"
+      },
+      {
+        "index": 53,
+        "label": "item/int",
+        "source_sha256": "fd6d2a9db9dd3359fa5352f020fe6669eb84fbf73fcb374eb64bff22a8de89ee"
+      },
+      {
+        "index": 54,
+        "label": "item/string",
+        "source_sha256": "a2e230081a01ab2ddd11e7247afaf4ff53425affacda72ea25c8aac7bc41411d"
+      },
+      {
+        "index": 55,
+        "label": "item/vec",
+        "source_sha256": "ce3ce4c12eebf66d78b46cf343e4633c34422257fe22230a3270baa2c3eb8f09"
+      },
+      {
+        "index": 56,
+        "label": "item/second-int",
+        "source_sha256": "aed0afdcf00fdefdcd7ff625aad62c5cc22f50ba4972d8c3166d497c12bf617a"
+      }
+    ]
+  }
+}
