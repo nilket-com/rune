@@ -1,0 +1,3332 @@
+[
+  {
+    "label": "f64/sqrt/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,0.5,-0.5,2.5,-2.5,4.0,10.0,1e300,-1e300,f64::MAX,f64::MIN,f64::MIN_POSITIVE,f64::MIN_POSITIVE/4.0,f64::EPSILON,f64::INFINITY,f64::NEG_INFINITY,f64::NAN,0.1+0.2,709.0,710.0,-745.0,-746.0]{r.push(x.sqrt());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "53eb16a9698f6cba3472e347ab9c392f7bac3d1f6c1e86cf752fbb60716cdfaf",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(4.0.sqrt(),2.0.sqrt(),(-2.5).sqrt(),0.5.sqrt())}pub fn c17c_reuse(){7}",
+    "source_sha256": "6776c07adb8be85e3bda845466195cb6a5c59866bcd0ed891fb80470f303c31f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/local",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=6.25;let y=x.sqrt();(x,y)}pub fn c17c_reuse(){7}",
+    "source_sha256": "da96c4c70b2d2322d57cd160febd1c806cd3b18bd7869a19672d31b04a5f391e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/reassigned",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=2.0;x=x.sqrt();x=x.sqrt();x}pub fn c17c_reuse(){7}",
+    "source_sha256": "5c20ccd6ee785f39f55c541c2247be181de58bef3b1670a52d3f9d54b387f112",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){9.5.sqrt().sqrt().abs()}pub fn c17c_reuse(){7}",
+    "source_sha256": "617e14efd385b000ffee7e4ae4d950f067049ed25be47b2b2faefd66d9329060",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/closure",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=|x|x.sqrt();(f(2.0),f(0.25))}pub fn c17c_reuse(){7}",
+    "source_sha256": "5696319bd6f18ee36d458df22df7442a4a784e1f601a68f22f6ef75259beb455",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/fn-param",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(x){x.sqrt()}pub fn main(){(f(2.0),f(-0.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "7f6b3172fc14b1a1953389ca2f89f5085a42cf5115808c34cb19962274ba9d01",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let p=P{x:3.75};p.x.sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "bcc9bb6665f964622b14923de19e90d1ede52e9f850bebae140ad4bac0bdc40e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/vec-element",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[1.5,8.0];(v[0].sqrt(),v[1].sqrt())}pub fn c17c_reuse(){7}",
+    "source_sha256": "421d0ea4976e72ff4a22c23e347eeea87814a7346c7ab7611b6a479e061b59d6",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/call-result",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(){12.0}pub fn main(){g().sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "d90932ab51542a8d9e81ecb1e4c7af8237a3ef1c3c77b169c7c0181c952e9989",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r={tap(1,1);2.0}.sqrt();tap(2,2);r}pub fn c17c_reuse(){7}",
+    "source_sha256": "5eeb1cdde3c140ed81dc84dbce887261e7a4b8bcc53f6a426872bc2e1e1320d8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/int-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "c17b49bf4400c3aecfe00acdd75a1ca9f51d5334713abd986cc27c58740e8c4f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/u64-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4u64.sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "a36623e20374da32f06b31673fba01994186d81dde4a9d7d2edf2444d4d3fe7a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/arity",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.0.sqrt(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "1a19a494e21018f2abc9e028464c8393e93f8aa8b25a21da76873828e5e8fdc3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/sqrt/chain-error",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){b(x)}fn b(x){x.sqrt()}pub fn main(){a(4)}pub fn c17c_reuse(){7}",
+    "source_sha256": "61d66024618843ef26fad1b0cf8d16bda2f81e18b2093df54d08b4ef0f2d0056",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,0.5,-0.5,2.5,-2.5,4.0,10.0,1e300,-1e300,f64::MAX,f64::MIN,f64::MIN_POSITIVE,f64::MIN_POSITIVE/4.0,f64::EPSILON,f64::INFINITY,f64::NEG_INFINITY,f64::NAN,0.1+0.2,709.0,710.0,-745.0,-746.0]{r.push(x.floor());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "454a8fa04f20e7b2d8243783ff6b2c3b7309e030e898c339ff94a2d52cc1b06c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(4.0.floor(),2.0.floor(),(-2.5).floor(),0.5.floor())}pub fn c17c_reuse(){7}",
+    "source_sha256": "b832c0e36b5c15e67223e8dec4ae91a8f93e73bb5cbb80c5fe1761fdf7aa05f0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/local",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=6.25;let y=x.floor();(x,y)}pub fn c17c_reuse(){7}",
+    "source_sha256": "b92199b96d2c38e0b21c7666e8dd68d0a7187f045f23d140e662149a20dff0b8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/reassigned",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=2.0;x=x.floor();x=x.floor();x}pub fn c17c_reuse(){7}",
+    "source_sha256": "9bd9ba03b04109799a55c541422db5cc9901b44fd270e35d27d583b7b720da81",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){9.5.floor().floor().abs()}pub fn c17c_reuse(){7}",
+    "source_sha256": "9aa66a9358ed1ae5fbd8571216c8bab5dcaa6d0ffca139097e5390f391fa7ca2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/closure",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=|x|x.floor();(f(2.0),f(0.25))}pub fn c17c_reuse(){7}",
+    "source_sha256": "7efa7989e450b5472753ae64356b08e792c5119eee14caba8666c97aa515d1cc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/fn-param",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(x){x.floor()}pub fn main(){(f(2.0),f(-0.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "42dd03f316cd2016b5ff0ec409d574d6f75d0fb75cfe5899d0c9f6836f2ba1fe",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let p=P{x:3.75};p.x.floor()}pub fn c17c_reuse(){7}",
+    "source_sha256": "4347cdca4aa938a3402d2a29e945794837f08ba6c5e290b7116bfb9599fd7c78",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/vec-element",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[1.5,8.0];(v[0].floor(),v[1].floor())}pub fn c17c_reuse(){7}",
+    "source_sha256": "bdba5fedc79fba981f60233c1b53ea1268f106633630e708515b7bf6dc864879",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/call-result",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(){12.0}pub fn main(){g().floor()}pub fn c17c_reuse(){7}",
+    "source_sha256": "18002c90d434cecd16b6f3f7a621098afa3187573c2f9ceffd364cde5c8770ea",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r={tap(1,1);2.0}.floor();tap(2,2);r}pub fn c17c_reuse(){7}",
+    "source_sha256": "2c5868dd65dec135f460cffb647d6744f3640a8aba97661488327a15aeaa8471",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/int-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.floor()}pub fn c17c_reuse(){7}",
+    "source_sha256": "e265c09db1766b9cde960ebacb8557003389857b318d532aed341dbff762bb56",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/u64-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4u64.floor()}pub fn c17c_reuse(){7}",
+    "source_sha256": "9d9bf14c812d9930a46f4c32a27f80b0fd8fecee9ee7892779e1190baf43391f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/arity",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.0.floor(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "b0f1ba9370bafa7bd6c5dae358e1f27792e4edb6509652ecf47cbb5a60db1766",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/floor/chain-error",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){b(x)}fn b(x){x.floor()}pub fn main(){a(4)}pub fn c17c_reuse(){7}",
+    "source_sha256": "b0acd2ad6323c0d08dcf80894f10511f2702c39233fdeb5b5b89d60938e5b64a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,0.5,-0.5,2.5,-2.5,4.0,10.0,1e300,-1e300,f64::MAX,f64::MIN,f64::MIN_POSITIVE,f64::MIN_POSITIVE/4.0,f64::EPSILON,f64::INFINITY,f64::NEG_INFINITY,f64::NAN,0.1+0.2,709.0,710.0,-745.0,-746.0]{r.push(x.ceil());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "a26b00ab98e03f75a27de7070de456b37ca742d738cc35fd9bd1ff34413243cc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(4.0.ceil(),2.0.ceil(),(-2.5).ceil(),0.5.ceil())}pub fn c17c_reuse(){7}",
+    "source_sha256": "41adf98db467a2795f600ba128e4c3c0c838951dc641e682bee998d535a6a190",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/local",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=6.25;let y=x.ceil();(x,y)}pub fn c17c_reuse(){7}",
+    "source_sha256": "d99254f6f93719a79ee5beaf9c56fe84131fa5ff632c127f73d6d4af12fe811e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/reassigned",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=2.0;x=x.ceil();x=x.ceil();x}pub fn c17c_reuse(){7}",
+    "source_sha256": "a24527e3243aee7950353c356eab0c700aff946a67002f9b59f1d0d54b61e35c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){9.5.ceil().ceil().abs()}pub fn c17c_reuse(){7}",
+    "source_sha256": "1e0c6a8e580c15c5eb78480b1f20e2c4892ff23a7215b0f5a03de613c64633d5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/closure",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=|x|x.ceil();(f(2.0),f(0.25))}pub fn c17c_reuse(){7}",
+    "source_sha256": "a089b8a7aba2595ea7c9265242b5d9e3499da9e824732b64420c46514251c6ac",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/fn-param",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(x){x.ceil()}pub fn main(){(f(2.0),f(-0.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "18c7a528cd3afa920808de88ba12c544f128e02c45ca2134dcceb2c657665771",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let p=P{x:3.75};p.x.ceil()}pub fn c17c_reuse(){7}",
+    "source_sha256": "21ec77d632dd6927807dcbf987d547e3b92ba9761b73e2f8c2d90a74179b0c31",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/vec-element",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[1.5,8.0];(v[0].ceil(),v[1].ceil())}pub fn c17c_reuse(){7}",
+    "source_sha256": "9718b24d4ed0c22e81eee8c0af584ef97d811adaa8242a7aaf3251a4701fd3f0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/call-result",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(){12.0}pub fn main(){g().ceil()}pub fn c17c_reuse(){7}",
+    "source_sha256": "35e177a33dd24a606b90af70f130fd36ea75736292131556446f83ae0aee53a5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r={tap(1,1);2.0}.ceil();tap(2,2);r}pub fn c17c_reuse(){7}",
+    "source_sha256": "851a077fa05d456097d0a38ed7cdfe56cd56c87e7cd9e3b3554a0b3d7ea13029",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/int-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.ceil()}pub fn c17c_reuse(){7}",
+    "source_sha256": "d6b7face0aa1135a673e20a2c749a1cf53927d5d17abef0e7ec83ccc632da2ed",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/u64-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4u64.ceil()}pub fn c17c_reuse(){7}",
+    "source_sha256": "8ef44d448543b6b05a405742b8d9b0132107f5c817c3621a38c871375341ad2f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/arity",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.0.ceil(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "9a79e9488181ddc55855bf6514720ff549319e4033822d152e2723f60824eb75",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ceil/chain-error",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){b(x)}fn b(x){x.ceil()}pub fn main(){a(4)}pub fn c17c_reuse(){7}",
+    "source_sha256": "5be1befab887057d157f38fd9fac493c85c217595dba8dfa6d6b5d30f4605167",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,0.5,-0.5,2.5,-2.5,4.0,10.0,1e300,-1e300,f64::MAX,f64::MIN,f64::MIN_POSITIVE,f64::MIN_POSITIVE/4.0,f64::EPSILON,f64::INFINITY,f64::NEG_INFINITY,f64::NAN,0.1+0.2,709.0,710.0,-745.0,-746.0]{r.push(x.exp());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "af97a16aff36115928c23790678e5f6858846dbc40459f83ca295cd0333ff758",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(4.0.exp(),2.0.exp(),(-2.5).exp(),0.5.exp())}pub fn c17c_reuse(){7}",
+    "source_sha256": "9e09014d3e2e326b945b95a79d85fe2d839a0cc81b4c72e4b8f615b0adf25777",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/local",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=6.25;let y=x.exp();(x,y)}pub fn c17c_reuse(){7}",
+    "source_sha256": "47d7c9598c2321775def40791b85b1fce9d0525d9574eb27ac10f6d973a4724f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/reassigned",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=2.0;x=x.exp();x=x.exp();x}pub fn c17c_reuse(){7}",
+    "source_sha256": "e2994654012958df052cbcc01511700127ba1ab1029629db1f219663194aa285",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){9.5.exp().exp().abs()}pub fn c17c_reuse(){7}",
+    "source_sha256": "54687b7b97008e694ad2a816fc4572a1d3751b64befdcbd2ba68c631a4fb1473",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/closure",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=|x|x.exp();(f(2.0),f(0.25))}pub fn c17c_reuse(){7}",
+    "source_sha256": "4e9fd5f0673b0401fcc1a88d9348df56c371ef763326af9563ea52bfde64ab25",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/fn-param",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(x){x.exp()}pub fn main(){(f(2.0),f(-0.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "4c5a0c6b97b2e0df8be30ddcdd07de6cdf23e2d2b6c596a0b505d6c7c45cb419",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let p=P{x:3.75};p.x.exp()}pub fn c17c_reuse(){7}",
+    "source_sha256": "07343f707b4a75cfb972603d03b2f24afdf3653469ce7010a70e7e693aee83c4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/vec-element",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[1.5,8.0];(v[0].exp(),v[1].exp())}pub fn c17c_reuse(){7}",
+    "source_sha256": "0f128a6826195a4ae64efc6fcfa6bacd2e606d3b7401eea83b08c46caafc82c1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/call-result",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(){12.0}pub fn main(){g().exp()}pub fn c17c_reuse(){7}",
+    "source_sha256": "848cf8012d18b909ed2e9bb23a1b16c22e38defd500de38121f08976a41a75f9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r={tap(1,1);2.0}.exp();tap(2,2);r}pub fn c17c_reuse(){7}",
+    "source_sha256": "e9b5c22eb9c6d71c27b8ab3b6cbaf921659d716af6efcd8da0a24d88976b6c83",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/int-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.exp()}pub fn c17c_reuse(){7}",
+    "source_sha256": "a9273a0630eda8b585208b0409c8c3c9dccddd1fc129270ebd0cc4dbafaa377b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/u64-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4u64.exp()}pub fn c17c_reuse(){7}",
+    "source_sha256": "817588cb78df1d3a60c24d29267e81851bf443a5441b6b2db807e757738e91ff",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/arity",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.0.exp(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "ffa1677a2c33c639183faa191b76ea0c2144aa54ecc1706b371291d003efb5c7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/exp/chain-error",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){b(x)}fn b(x){x.exp()}pub fn main(){a(4)}pub fn c17c_reuse(){7}",
+    "source_sha256": "21a552c911d175ec1f81ffb22ffb040e30dcf60b5adaa791727c09a4c70608c9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,0.5,-0.5,2.5,-2.5,4.0,10.0,1e300,-1e300,f64::MAX,f64::MIN,f64::MIN_POSITIVE,f64::MIN_POSITIVE/4.0,f64::EPSILON,f64::INFINITY,f64::NEG_INFINITY,f64::NAN,0.1+0.2,709.0,710.0,-745.0,-746.0]{r.push(x.ln());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "fb24a47550c040af81ce42ba8bb18d676537ef59e6ec48d5828227b8903befb9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(4.0.ln(),2.0.ln(),(-2.5).ln(),0.5.ln())}pub fn c17c_reuse(){7}",
+    "source_sha256": "43773feb11048b3a6cd4881040cd062f128d599e55da0609d609f18285bb5261",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/local",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=6.25;let y=x.ln();(x,y)}pub fn c17c_reuse(){7}",
+    "source_sha256": "56d6def8508698715d3700f5bf59ea2aef7bbffcca2b116dc3a343b8a4d16353",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/reassigned",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=2.0;x=x.ln();x=x.ln();x}pub fn c17c_reuse(){7}",
+    "source_sha256": "daa31f86f381609d2b196aa3a1e9d65932b7e2515060f8c0f6cc1a18406d62e1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){9.5.ln().ln().abs()}pub fn c17c_reuse(){7}",
+    "source_sha256": "1ee3618d6c8acad65cfbf8bf36c165faf2b8522ea9bbc1643a143a5da30aefe5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/closure",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=|x|x.ln();(f(2.0),f(0.25))}pub fn c17c_reuse(){7}",
+    "source_sha256": "07e12b11961558e917426c399ec471522fe9cd67e8c80f8e798c0d35a2d12311",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/fn-param",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(x){x.ln()}pub fn main(){(f(2.0),f(-0.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "850331545b05bcdbc94e02c767ab49ff8fa42439cfbea8859afca7fb62f0b977",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let p=P{x:3.75};p.x.ln()}pub fn c17c_reuse(){7}",
+    "source_sha256": "1fccbdacb8cb89442525fc175059e150bb4a2b386c26bc5543e94c2e1d9c5093",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/vec-element",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[1.5,8.0];(v[0].ln(),v[1].ln())}pub fn c17c_reuse(){7}",
+    "source_sha256": "36e037c94e255500ae86d1fae283f7df3139519d994c575ddb68acf48487e3dc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/call-result",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(){12.0}pub fn main(){g().ln()}pub fn c17c_reuse(){7}",
+    "source_sha256": "44da35dd255f8e62a8011bab3641c65ecb040b2d4adad1d682d46aa77dec17de",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r={tap(1,1);2.0}.ln();tap(2,2);r}pub fn c17c_reuse(){7}",
+    "source_sha256": "0469f0a1930805ea643ba535b8744c0222c9415f620d75f553b7a1dd621a2108",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/int-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.ln()}pub fn c17c_reuse(){7}",
+    "source_sha256": "15a2cff9c2116b5b7c92df1a2348c5586b2150cdff77ca18184fd692432f9a60",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/u64-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4u64.ln()}pub fn c17c_reuse(){7}",
+    "source_sha256": "1715b596a320d4007fd33fab36e8d07e6e98f5a5a10da01bb0e805eaedbf1445",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/arity",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.0.ln(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "4c80712bdc672dffffc7f69ed163b5e418973c0edc1420d7b353555f022a590e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/ln/chain-error",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){b(x)}fn b(x){x.ln()}pub fn main(){a(4)}pub fn c17c_reuse(){7}",
+    "source_sha256": "6a1220b4a96de8226029819dcaaabd99f4e6d5ee2887dc38c6d642c2647c34b8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,2.5,f64::INFINITY,f64::NEG_INFINITY,f64::NAN]{for y in [0.0,-0.0,1.0,-1.0,2.5,f64::INFINITY,f64::NEG_INFINITY,f64::NAN]{r.push(x.min(y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "cf42df53b218e3d3210a1e4b273ea57d8f9dcaf2dca7fdbc438428527efacaf8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(1.0.min(2.0),2.0.min(1.0),(0.0/0.0).min(1.0),1.0.min(0.0/0.0),0.0.min(-0.0),(-0.0).min(0.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "a0c57a0bdedaec49431213cd58ce40701df1ca7c2b324f54ec0a865b9522845a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.5.min(2.5).min(0.5).sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "7089ee35d01e32f695be66b55ba2254dadaedb794e7db6bb81c2781dfe911aed",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/closure",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=|a,b|a.min(b);(f(1.0,2.0),f(-1.0,-2.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "2d5791f2e94db0c370e99c6a7321e32af1ec88a7ac7f60675ec03c01893ba974",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/loop-acc",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let acc=0.0;for x in [3.0,-1.0,7.5,2.0]{acc=acc.min(x);}acc}pub fn c17c_reuse(){7}",
+    "source_sha256": "72282fe10cc9d4288622c09f815ff2c14403f1f56ef63f008a4b19d935046480",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/int-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.min(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "572911374a8b4b895b266748364055223a114b43336072440097a18733746a48",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/u64-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.min(2u64)}pub fn c17c_reuse(){7}",
+    "source_sha256": "8d92765a236129275d4165a8cf7de36bdcd122b500c79d1cc6a5813a301825de",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/string-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.min(\"a\")}pub fn c17c_reuse(){7}",
+    "source_sha256": "64526aade2e9a70911237cf11a97404a35a629128f316792b5a19b456f933073",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/no-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.min()}pub fn c17c_reuse(){7}",
+    "source_sha256": "ed7fc17601a598b96a0da21c82dee5d52583fcad8a52c1632ffe72c287b74618",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/extra-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.min(2.0,3.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "ed8180eb4768354ce3bcc47a15db7ec3b8f079385d9c4dea7607376631e726f3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/min/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){{tap(1,1);1.0}.min({tap(2,2);2.0})}pub fn c17c_reuse(){7}",
+    "source_sha256": "019bf868731e53a30be7b49ff66a27efc8acc9ee09f47edee49381202a8a0a1c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,2.5,f64::INFINITY,f64::NEG_INFINITY,f64::NAN]{for y in [0.0,-0.0,1.0,-1.0,2.5,f64::INFINITY,f64::NEG_INFINITY,f64::NAN]{r.push(x.max(y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "6627f450482f5817675894e7ce9244eb08f82e230eab6f3bf4dea589342e9e21",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(1.0.max(2.0),2.0.max(1.0),(0.0/0.0).max(1.0),1.0.max(0.0/0.0),0.0.max(-0.0),(-0.0).max(0.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "e29ee4485a46e58d84208dd81482c16d90c03037c07803479d5ffc2225ef61ac",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.5.max(2.5).max(0.5).sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "f2a25264f4d35977d12d51872fadffec8cce2aac1be6b06f6b84feeec7eb1938",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/closure",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=|a,b|a.max(b);(f(1.0,2.0),f(-1.0,-2.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "a088f0e858cab800102ff1303f9057eb2c7ecc876dec2f1a997e0e9be9dbb97b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/loop-acc",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let acc=0.0;for x in [3.0,-1.0,7.5,2.0]{acc=acc.max(x);}acc}pub fn c17c_reuse(){7}",
+    "source_sha256": "00fa9bcc1c056af7ec555251c84f616f99f40071d4e9aa035ff15bc48a088148",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/int-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.max(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "10cd6c2c37091126f27270b3a861bf3e0f22cfeff3a2679b90b66504acd30e67",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/u64-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.max(2u64)}pub fn c17c_reuse(){7}",
+    "source_sha256": "a4823c9c0bd150ab4049ac656908d63334bddfbbdc1366bcbb525be362f0256a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/string-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.max(\"a\")}pub fn c17c_reuse(){7}",
+    "source_sha256": "4a139a3eae58d9525acbfdca08ee3c38c627f5007d4820e1a9ebd4394bf41e3d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/no-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.max()}pub fn c17c_reuse(){7}",
+    "source_sha256": "74de6c458fb21c12fff510ca6a09bd8a8f04a0a57aba20fd74d8830ece6e1687",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/extra-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.max(2.0,3.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "b421d77e1a0fcca5e4a77330e474271869f83d65a3fc52fe9683780c0e7ae0f1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/max/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){{tap(1,1);1.0}.max({tap(2,2);2.0})}pub fn c17c_reuse(){7}",
+    "source_sha256": "e84139f4297a351d7856d6786ec6c4c4c82846cdd22c2721df73dc2925c60597",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.5,-2.0,f64::INFINITY,f64::NAN]{for n in [0,1,2,3,-1,-2,1023,1024,-1074,-1075]{r.push(x.powi(n));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "de51bd6229aff9958b5c7edf85aeff2a9df5257d8d6eae1fe07dfa805f9ee26e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(2.0.powi(3),2.0.powi(-2),(-2.0).powi(3),(0.0/0.0).powi(0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "d7ac915c9f63d8f090e9d6f324ae7ca3ae3ac2c7ac3464a894d4ae519039f29b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.5.powi(2).sqrt().powi(3)}pub fn c17c_reuse(){7}",
+    "source_sha256": "2f23dd3b2cee0cd7a3a5fcfb10d20f54f6d9bd44dde074812d5cccd99464376a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/i32-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.0.powi(2147483647)}pub fn c17c_reuse(){7}",
+    "source_sha256": "1b6d1faf0c58f4de216a8cbea31e000750d7c57ad8b05255f42099d4e024beff",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/i32-overflow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.0.powi(2147483648)}pub fn c17c_reuse(){7}",
+    "source_sha256": "7ed8a06dcb887fffcd9b9d13ae62d01e4f2635d7a948559f6e00e11b91c4ce0f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/i32-underflow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.0.powi(-2147483649)}pub fn c17c_reuse(){7}",
+    "source_sha256": "2da17502d00de086537a48ff3f38864e10f3988140d4f84ee02dd3b17fea3a3d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/float-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.0.powi(1.5)}pub fn c17c_reuse(){7}",
+    "source_sha256": "178111f1a793586e97e54751ce6da481714e2910f383abb2bc0f46ba1a45d667",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/u64-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.0.powi(3u64)}pub fn c17c_reuse(){7}",
+    "source_sha256": "46d49ba4565a8ff89ef50ab93e431e2a3b783e583d4c8e9bf43a881d080a5216",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/int-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.powi(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "73e5a0c19a777a5c0cf67d04f96b7228f68f48ba4f8aac75c1b036da2b4c52c6",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/loop",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=1.1;let r=[];for n in 0..5{r.push(x.powi(n));}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "14af5ab18ec11e2edd6c9e3a4893d473c224799201c43c51ef424001ef09815d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){{tap(1,1);2.0}.powi({tap(2,2);3})}pub fn c17c_reuse(){7}",
+    "source_sha256": "9187a5c3141c2640725cd7ae5940997a064e3e881315da1047bc5c4d537d24b0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/powf-edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,2.0,f64::INFINITY,f64::NAN]{for y in [0.0,0.5,-0.5,2.0,f64::INFINITY,f64::NAN]{r.push(x.powf(y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "2e9bb40df3c343d5939b33b41bf8d203597ce3fd65b4fce26b60c784b7a0f3c5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/powf-chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.0.powf(0.5).powi(2).powf(2.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "08766a7c18221cb41fe2decc9ef48961958302cc7f32ea1b188206ad5bf10e23",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/powf-int-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.0.powf(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "ff1cdc8f87f05c8151fc6d017a29a969fb74417cc95f2392ba3111929fbe4fb1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/powi/powf-int-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.powf(2.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "24073f28151e0681d0580d276ed864cb3851f7f18c460dd1ecc6264a8cb1b58f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/to_string/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,0.5,-0.5,2.5,-2.5,4.0,10.0,1e300,-1e300,f64::MAX,f64::MIN,f64::MIN_POSITIVE,f64::MIN_POSITIVE/4.0,f64::EPSILON,f64::INFINITY,f64::NEG_INFINITY,f64::NAN,0.1+0.2,709.0,710.0,-745.0,-746.0]{r.push(x.to_string());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "e1b252a9dcefedfbe9960cba8cd74e828aaf0625eb48fe2883ec48f2f3ff0684",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/to_string/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(1.0.to_string(),1.5.to_string(),(-0.0).to_string(),(0.0/0.0).to_string(),1e21.to_string(),1e-7.to_string(),123456789.125.to_string())}pub fn c17c_reuse(){7}",
+    "source_sha256": "9cdcdec8601daee2dc80fb0233b3bae43d1a00fd09dd2f3828a120c4107647c6",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/to_string/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let s=2.5.to_string();s.push_str(\"x\");(s,s.len())}pub fn c17c_reuse(){7}",
+    "source_sha256": "1db85d778c42606d84fac466febca07ff3d23beab2de774cd4724eeb8c3a0710",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/to_string/arity",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.to_string(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "c13af1297a6bfea91433170334661531486986ee7563b29fc47416694d43e699",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0.0,-0.0,1.0,-1.0,2.5,f64::INFINITY,f64::NEG_INFINITY,f64::NAN]{for y in [0.0,-0.0,1.0,-1.0,2.5,f64::INFINITY,f64::NEG_INFINITY,f64::NAN]{r.push(x.partial_cmp(y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "529b0eab9f0c7546320e0afeb2f38f87d0cd153ca2e2adc457f4a1bcb1fdb49b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(1.0.partial_cmp(2.0),2.0.partial_cmp(1.0),1.0.partial_cmp(1.0),(0.0/0.0).partial_cmp(1.0),(-0.0).partial_cmp(0.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "b8761dd3d809d0118de8940b57676ad46277c35a5577ce82e0434206dca47ebb",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/unwrap",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.partial_cmp(2.0).unwrap()}pub fn c17c_reuse(){7}",
+    "source_sha256": "70012a2208f0d12ca78c92563997c38d888152dd807957515549eefd6153b51e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/unwrap-nan",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.partial_cmp(0.0/0.0).unwrap()}pub fn c17c_reuse(){7}",
+    "source_sha256": "b26d901c4af49ceacacd4ef1953ccb436ebaa9620faf1e7e0bbffefd304bd9a9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/match",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){match 3.0.partial_cmp(2.0){Some(std::cmp::Ordering::Greater)=>1,Some(_)=>2,None=>3}}pub fn c17c_reuse(){7}",
+    "source_sha256": "d897290c446b855eb501e4ab0aa7ca8b90c901db15a275cd8ab2bd03129d2ff2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/eq-some",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(1.0.partial_cmp(2.0)==Some(std::cmp::Ordering::Less),2.0.partial_cmp(2.0)==Some(std::cmp::Ordering::Equal))}pub fn c17c_reuse(){7}",
+    "source_sha256": "df4cb5e4b58825c13ddec6727829118496033d69f851fecfa202ee7620b9bb98",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/sort-by",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[3.5,-1.0,2.25,0.0,-0.0,10.0];v.sort_by(|a,b|a.partial_cmp(b).unwrap());v}pub fn c17c_reuse(){7}",
+    "source_sha256": "2b6273ba17e03023bf8bab08dbe1fdcf2301e3d46860f25715eb5d1fd4ca7f6d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/sort-by-desc",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[3.5,-1.0,2.25,f64::INFINITY];v.sort_by(|a,b|b.partial_cmp(a).unwrap());v}pub fn c17c_reuse(){7}",
+    "source_sha256": "e8afb6db38164a3c0b6548eeba66f8d007ccf25ef7fd902d7a6525b5cd5bd9c8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/sort-by-nan",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[3.5,0.0/0.0,1.0];v.sort_by(|a,b|a.partial_cmp(b).unwrap());v}pub fn c17c_reuse(){7}",
+    "source_sha256": "10cdb6da68d8af0d1fe8e58b3bf4bd9330a5429e64d815d74523b54de963923d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/sort-by-field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[P{x:2.5},P{x:-1.0},P{x:0.5}];v.sort_by(|a,b|a.x.partial_cmp(b.x).unwrap());let r=[];for p in v{r.push(p.x);}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "d70c3aed23a4a52b67cc23ad2be0387f53c9818c4ee30273112ede9a86978bec",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/sort-by-fn",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn c(a,b){a.partial_cmp(b).unwrap()}pub fn main(){let v=[2.0,1.0,3.0];v.sort_by(c);v}pub fn c17c_reuse(){7}",
+    "source_sha256": "6517bf61a07042653e3f6811e15473ca52eebdbc7a92997769ac58064a6b766b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/sort-by-ints",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[3,1,2];v.sort_by(|a,b|a.partial_cmp(b).unwrap());v}pub fn c17c_reuse(){7}",
+    "source_sha256": "09b15a9c51f43369b710421a9a3c1a82874906a59d1dcfef5ac7bc9e2e0b8e7b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/sort-by-mixed",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[3.0,1,2.0];v.sort_by(|a,b|a.partial_cmp(b).unwrap());v}pub fn c17c_reuse(){7}",
+    "source_sha256": "e940d0397501c5f514a7223dc96f13609222adc77b893ec4f5ad8bf92d135968",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/sort-by-chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(a,b){g(a,b)}fn g(a,b){a.partial_cmp(0.0/0.0).unwrap()}pub fn main(){let v=[2.0,1.0];v.sort_by(|a,b|f(a,b));v}pub fn c17c_reuse(){7}",
+    "source_sha256": "b5d47baa9e3a9d2699a47a14a59d11badeddd3a051d73f2fa7ee32c8ed30c97d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/int-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.partial_cmp(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "2e990504b31e57f1996fff428263154a9de717cc23cb8535337b152b9ed6b007",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/string-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.partial_cmp(\"a\")}pub fn c17c_reuse(){7}",
+    "source_sha256": "16ed80f2f22743e5e3634487d80fafcc835214ea43d5a203347c073cf95106fd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/no-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.partial_cmp()}pub fn c17c_reuse(){7}",
+    "source_sha256": "e0ba00db4cbbaf691f1886de5f9c667182e2d2dd8bca6f0970633962b99fd3aa",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){{tap(1,1);1.0}.partial_cmp({tap(2,2);2.0})}pub fn c17c_reuse(){7}",
+    "source_sha256": "a94ae2746e9a2801687aa31e02083edba50874e01d0eccb756fe085862853771",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "f64/partial_cmp/closure",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=|a,b|a.partial_cmp(b);(f(1.0,2.0),f(0.0/0.0,0.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "56e217663a8f6415d7dcadc5ee6569e035dd0c15e4afafdfce560bf09becbf1e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/checked_abs/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{r.push(x.checked_abs());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "fb9127d9ff65b114364999730fa70c96101b74849bd08fca9e1e738011a7f273",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/wrapping_abs/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{r.push(x.wrapping_abs());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "8c53a643d66b80888ebdd3e035d6559ac1712b43e8426e5e5405a96e4896d3fd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/saturating_abs/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{r.push(x.saturating_abs());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "9c86b3daed57ced8973e850c5d0621a5a261c2fddb995db88302b5ced64d434b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/signum/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{r.push(x.signum());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "91ca4333b0f4024fa4fc95fd8369cb25eb83ed5e884235118d642898d77751a0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/to_string/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{r.push(x.to_string());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "26ceb7e4192e006db23a787d62564244faea84732f62b56fd53cf8995d697d7c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/abs/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MAX-1,i64::MIN+1]{r.push(x.abs());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "e0783936463d59ba5d210d41f7c7d8d1e53f4ced2294bf08bd7d466717e7dbca",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/max/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.max(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "003eb9cb09634ba1eb39740a5ddc423346c8654252fbf0222ea667348273ae93",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/max/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.max(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "528a8b2fb03044e3304af4abd7a9760bc0e7772b945548ae03f43ef9686442ba",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/min/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.min(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "cce31bf1750a6876b6f292a8211d0e6515698f91eea42de605cbf9703d49f1d8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/min/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.min(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "c240d55e904b38307938f95c1d099dd3c3bbdccd47a0cb693afeaa7143d6a065",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/checked_add/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_add(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "17a6946e95feb66f5aa9fb7a416d5cbcd09651b1f318f30a5750c31213d8761c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/checked_add/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_add(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "d02dd13491d66130a7f8ed32bcfcedaac49a5b087ab84eb4afd80938ec7b3d9a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/checked_sub/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_sub(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "1ab4dfac84d8083f1645bca1be49f51cee0dd701c113abbc9fe86f5534d9ed89",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/checked_sub/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_sub(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "369598d66eb76b46532f7e15dcc34c5c882a98df554c85d35b7a9524544e88a4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/checked_mul/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_mul(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "dca19e636af00dd7e8c8354a638db08efa6e74ce4af385417b507187e6b6a4f0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/checked_mul/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_mul(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "0ab7209a47703bac9a5b2a95376427b2b6efac3cb57acf509facd245d04b04e5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/checked_div/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_div(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "2799e9869da2f7e7f34d228e210be4b106e7f542646ce7f80216e738ab6bbd59",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/checked_div/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_div(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "e95b45c47da3d66a0e76345b905dd9287915c77420e5aa15e70718d9017ca25a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/checked_rem/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_rem(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "abd0a1182b9e4205c79bf0b82c27b893667bccf8fe08a9cc941e89769856ce87",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/checked_rem/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.checked_rem(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "b219aec3e488cd22d0b96527e20757a6c3696159aab23160df393a23107f2d25",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/wrapping_add/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.wrapping_add(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "0dc97074d8fd050e04b1465880b84965c756bcea98835246ed6babc12dcf2872",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/wrapping_add/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.wrapping_add(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "102ce1924db6313a8b49767a25a7e22af99de05d13632e13824f9fc47b505b6a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/wrapping_sub/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.wrapping_sub(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "c2cbbf25f833457108b1975da3d3509403e23e19f24eb6fb032e941ca3bdbdfa",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/wrapping_sub/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.wrapping_sub(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "20d388d2ad6113a8c3923f30eac2854da905d992d86e1f51ed72d951b00bd35c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/wrapping_mul/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.wrapping_mul(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "c432e7537be6ca7ff8b1fc4a4c71a89943d1e7a7ed3fb633830886fd2d04cb3c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/wrapping_mul/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.wrapping_mul(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "a497060782ec1bf265f3bfcbfc410d4e015784708a83167dff4cf7deb825fb5b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/wrapping_div/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){if y==0{()}else{x.wrapping_div(y)}}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "b48b676a71222b7badf7776acd0f951e0283360c57eeb487d82d28a347b9dd8e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/wrapping_div/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){if y==0u64{()}else{x.wrapping_div(y)}}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "5dd804980fc46ad2454a9ee321fa9d7953f5679e85745bec84184026df030de4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/wrapping_rem/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){if y==0{()}else{x.wrapping_rem(y)}}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "febce903185c5c298d1e81d2ac6df6b8e651c99604ee610b77e9eb54ec8ef40f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/wrapping_rem/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){if y==0u64{()}else{x.wrapping_rem(y)}}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "52a3810ef8e68bca8b29f4396e173ae5dd19c531f8efb55e040b44103a6ea9fc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/saturating_add/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.saturating_add(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "1a97806998ce6909c7bf4a5c8b0989e9e6f4b6a34a2738dad83215abfc3377ec",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/saturating_add/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.saturating_add(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "48065c8a58805d160fd1a470efb37ff8c468ff5648a63d6c24f2b61cb37def00",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/saturating_sub/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.saturating_sub(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "5a99c91724d03de53252ae7a3551c92f4d9521cf93b866e831796d70551b296b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/saturating_sub/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.saturating_sub(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "eade70f01188addf817792986fc73a11a7874fefc28df4e130cc4cb817c3560e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/saturating_mul/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.saturating_mul(y)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,7,-7,100,i64::MAX,i64::MIN,i64::MAX-1,i64::MIN+1]{for y in [0,1,-1,2,-2,i64::MAX,i64::MIN]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "b70a1bf6f8b0653bf82f4439eb2a0ccc8f9919babd5d776bf0ab48b5152fcb1a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/saturating_mul/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,y){x.saturating_mul(y)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{for y in [0u64,1u64,2u64,u64::MAX]{r.push(g(x,y));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "024c34341f838e8b81b49e631dfd776ebd715569e9f628853cff3d5fdfe75183",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/pow/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,n){x.checked_pow(n).map(|_|x.pow(n))}pub fn main(){let r=[];for x in [0,1,-1,2,-2,3,10,i64::MAX,i64::MIN]{for n in [0,1,2,3,62,63,64,100]{r.push(g(x,n));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "72ec383198009134134112b2e52596b6899bceeb6d92177dcbecb5a327bb9287",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/pow/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,n){x.checked_pow(n).map(|_|x.pow(n))}pub fn main(){let r=[];for x in [0u64,1u64,2u64,3u64,10u64,u64::MAX]{for n in [0,1,2,63,64,100]{r.push(g(x,n));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "2246b16778374d4082a89f0c7d378a57fa4a684c921bf0a9b98b30a1ad714da3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/checked_pow/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,n){x.checked_pow(n)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,3,10,i64::MAX,i64::MIN]{for n in [0,1,2,3,62,63,64,100]{r.push(g(x,n));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "c4d8f5713c4f04a54bfa58ced519fcc2e1ac3881cf5d383292063f65f300ae52",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/checked_pow/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,n){x.checked_pow(n)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,3u64,10u64,u64::MAX]{for n in [0,1,2,63,64,100]{r.push(g(x,n));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "e7d8ebbc460d054949dce43a2820e7f47525b3b60e7dc327058e43a029e21c2a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/wrapping_pow/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,n){x.wrapping_pow(n)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,3,10,i64::MAX,i64::MIN]{for n in [0,1,2,3,62,63,64,100]{r.push(g(x,n));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "8da6ff8002c443e7848ecdc45ad3b66cace9bd744aed5050492fa116d252b1a1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/wrapping_pow/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,n){x.wrapping_pow(n)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,3u64,10u64,u64::MAX]{for n in [0,1,2,63,64,100]{r.push(g(x,n));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "959307f818d94615b966b59b05c07618aacb4cf5aa1f30def601dc885ec8f676",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "i64/saturating_pow/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,n){x.saturating_pow(n)}pub fn main(){let r=[];for x in [0,1,-1,2,-2,3,10,i64::MAX,i64::MIN]{for n in [0,1,2,3,62,63,64,100]{r.push(g(x,n));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "d1a4b6e09edd523b87b4034210396084171bbb2a0688f0b5a8589b1e1f1aee19",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "u64/saturating_pow/edges",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(x,n){x.saturating_pow(n)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,3u64,10u64,u64::MAX]{for n in [0,1,2,63,64,100]{r.push(g(x,n));}}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "5ff997284264a2cafad2e157516a10c4fe3ad85b85e7d0f76d580ed32e16c5ee",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/u64-to_string",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for x in [0u64,1u64,2u64,7u64,100u64,u64::MAX,u64::MAX-1u64]{r.push(x.to_string());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "1a8bc33262b1420e9fabe11e5d3b65570a76cd3548db0e1ad53751853558a813",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(5.max(3),5.min(3),(-5).signum(),0.signum(),7.checked_add(1),7.checked_sub(10),7.checked_mul(6),7.checked_div(2),7.checked_rem(4),2.pow(10),(-3).checked_abs(),12.to_string())}pub fn c17c_reuse(){7}",
+    "source_sha256": "6af9275ccada8da5d3e47d77a022cdd9c79cbd75f71c94854955cf2808fadf66",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/u64-literal",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(5u64.max(3u64),5u64.min(3u64),7u64.checked_sub(10u64),0u64.wrapping_sub(1u64),0u64.saturating_sub(1u64),2u64.pow(10),12u64.to_string())}pub fn c17c_reuse(){7}",
+    "source_sha256": "53b040039e3bbc1986dfe6982de32c901f24c540f4dda3c37cd9ab3b99c99908",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/u64-int-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(5u64.max(3),5u64.checked_add(1),5u64.wrapping_mul(2),5u64.pow(2))}pub fn c17c_reuse(){7}",
+    "source_sha256": "c45b0d43f11013a1464eba981b901f319b84a599c8a43358f70fe7838fc85658",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/u64-negative-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5u64.checked_add(-1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "420af86720f978b0197ed7b172c85592d9992c73afb86ec6aa15a8e021b59068",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/u64-negative-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5u64.max(-1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "cd4e2800710cbce5ffa7725056dc6e09183cdb8401b158065cfaad1557dd5a3f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/i64-u64-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(5.max(3u64),5.checked_add(1u64))}pub fn c17c_reuse(){7}",
+    "source_sha256": "75341088169c2762065602bcdd1125d16eea5f6cfb74e52536fc8b8f28585962",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/i64-u64-max-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5.checked_add(u64::MAX)}pub fn c17c_reuse(){7}",
+    "source_sha256": "92da5b7a75ef2e81911a65259616bf6b2ba468a8398b6dd6c42d794749b6cead",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/i64-float-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5.max(2.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "60100573816a656291f4844d8d3a9021c2935551fc58413aad2abf35143bf9e5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/i64-string-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5.checked_add(\"a\")}pub fn c17c_reuse(){7}",
+    "source_sha256": "e632aa26ab909ed8cd89058de7a29e7a7a10341b4629e378e9cbe4593e1eb260",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/i64-bool-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5.wrapping_add(true)}pub fn c17c_reuse(){7}",
+    "source_sha256": "521515f21cb81f78698d89641de427dba3684d43bcfeee1860400661c6b4d899",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/u64-float-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5u64.saturating_add(1.5)}pub fn c17c_reuse(){7}",
+    "source_sha256": "0cc570f839f543cb384d041ff373b3222535a45f8cafa9b375c79e98ba7f4bf7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/pow-negative",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.pow(-1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "8432c14138877c37b4cf226dc137209e1db89a393a3ab229d8e4d13c2f3ce45c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/pow-u32-overflow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.pow(4294967296)}pub fn c17c_reuse(){7}",
+    "source_sha256": "aaa72e4eb5d82cba0bdbc5311a6e1475c2ebfc631f4eb5af535dffe07ce80dbf",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/pow-float",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.pow(2.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "41aeea18b8113e0db4936b458c6ce838d4d7b8ba5894985cf593ef4ff8e5c66a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/pow-overflow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.pow(64)}pub fn c17c_reuse(){7}",
+    "source_sha256": "304f839c65ecdd91e09af39b570ded7d83fd691087e8e462d8009e1787532c38",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/pow-overflow-u64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){u64::MAX.pow(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "fbde8a12941ed042827a42f6c062f1a0dde40f8cbc8c0bc06846ab04aebe6818",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/checked_pow-negative",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.checked_pow(-1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "76d0592f5e820e23d6b6ccd9969e74649e94892ff69096316ee9ef492d4ad196",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/saturating_pow-negative-base",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){((-2).saturating_pow(63),(-2).saturating_pow(64),(-2).saturating_pow(3))}pub fn c17c_reuse(){7}",
+    "source_sha256": "8c9ec7f0ecf29e6782324e1da9553e5ef1d208747cd81113eda0d48db22bb089",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/abs-overflow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){i64::MIN.abs()}pub fn c17c_reuse(){7}",
+    "source_sha256": "cd047ebc832c62656e485b8e62bdfb3d6bfdb5ea8e3344b828a8d5ed31d30db3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/add-operator-overflow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){i64::MAX+1}pub fn c17c_reuse(){7}",
+    "source_sha256": "1281975d12476d8a3781eeba0a38d54b9bb04ed52dc69fdf1d601596cc1e2b8c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/mul-operator-overflow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){i64::MAX*2}pub fn c17c_reuse(){7}",
+    "source_sha256": "c0f916a2ee4984f2404d51155940641c612f9c3eb1138195391f16af01a22a0b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/sub-operator-overflow-u64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){0u64-1u64}pub fn c17c_reuse(){7}",
+    "source_sha256": "46faa26028b0b0fc236c24d314ef9c168c5b318a0a484650cceb78ef0b5f2709",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/wrapping_div-zero",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){7.wrapping_div(0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "53d31892a190d647bfded28f95a4603e4144893bda40c081bc371800f8dfd50d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/wrapping_rem-zero",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){7.wrapping_rem(0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "e1a0c9ea73de0d39add314c08a80d50d47c41e29f559540ea1163899699d2bfe",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/wrapping_div-zero-u64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){7u64.wrapping_div(0u64)}pub fn c17c_reuse(){7}",
+    "source_sha256": "45d79568de1bd031cb1894b4314baaa8250f68af0ad53a000b6c01720883f9f3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/wrapping_rem-zero-u64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){7u64.wrapping_rem(0u64)}pub fn c17c_reuse(){7}",
+    "source_sha256": "d439268ff6a88efa81dd8f696e83c381f8b2206b7d6273d6d42976a1e225ac02",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/wrapping_div-min",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(i64::MIN.wrapping_div(-1),i64::MIN.wrapping_rem(-1),i64::MIN.checked_div(-1),i64::MIN.checked_rem(-1))}pub fn c17c_reuse(){7}",
+    "source_sha256": "10cffebabf0ab71b807a404e28d1fcfaf5b72b2f91d8d4d77b8bc61197e8a9c9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/div-operator-zero",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){7/0}pub fn c17c_reuse(){7}",
+    "source_sha256": "0858d85bb1bb681bf374efe4dc2834c26f1a042b9ddf5dcf6a12323ca60354a3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){7.checked_add(3).unwrap().wrapping_mul(2).saturating_sub(100).signum().max(-5).to_string()}pub fn c17c_reuse(){7}",
+    "source_sha256": "74af3236d06f542a8b4433c7d8e836bccd0ea4350bb245dcad4db46a4070a445",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/unwrap-none",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){i64::MAX.checked_add(1).unwrap()}pub fn c17c_reuse(){7}",
+    "source_sha256": "a3f93cb6f17c61312b114d31665179d4ac38094823ff047452acf8d680187f77",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/expect-none",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){0.checked_div(0).expect(\"no div\")}pub fn c17c_reuse(){7}",
+    "source_sha256": "597dd3fed69e82f4925c791ad82bc0914247d5c0bd403b297b4fe74cdc001e00",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/unwrap_or",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(i64::MAX.checked_add(1).unwrap_or(-1),5.checked_sub(2).unwrap_or(-1))}pub fn c17c_reuse(){7}",
+    "source_sha256": "5dc225f4ab46ebb1b5ae7e088dc18eaa56db7c2658004c74a6af5ac81e83ddcd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/match",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){match 9.checked_rem(0){Some(v)=>v,None=>-1}}pub fn c17c_reuse(){7}",
+    "source_sha256": "ae77c695f05bc697a3744f75d77c0acc5d048a05ef836048f153792331637c52",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/if-let",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){if let Some(v)=6.checked_mul(7){v}else{0}}pub fn c17c_reuse(){7}",
+    "source_sha256": "ec5c398d817f72e8fb37d2f42cf7bdde26ce63924e7ccb731257e65e9580fd1f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/while-let",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=1;let n=0;while let Some(y)=x.checked_mul(3){x=y;n+=1;}(x,n)}pub fn c17c_reuse(){7}",
+    "source_sha256": "36fa451681f225ae50284de5fb5c12571f082fe90cebafcbda0e74c1ef83faf6",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/try-some",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(a,b){let s=a.checked_add(b)?;Some(s*2)}pub fn main(){f(1,2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "5005657629cb578406ad6bc018553caf3cc94fceaed4ec9e1841a917ef1b3bf3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/try-none",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(a,b){let s=a.checked_add(b)?;Some(s*2)}pub fn main(){f(i64::MAX,2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "d15cfd52c0789b77300efaad827fdfb13899d2d321692d20bbb5589509c940c2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/loop-acc",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let acc=0;for x in [5,-9,3,12,-1]{acc=acc.max(x);}let lo=0;for x in [5,-9,3]{lo=lo.min(x);}(acc,lo)}pub fn c17c_reuse(){7}",
+    "source_sha256": "0b9e4662701da04bb44c6ac8f72bc481d44f980f7be6f1638f94b5de9ded4332",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/loop-saturating",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=i64::MAX-3;let r=[];for i in 0..6{x=x.saturating_add(1);r.push(x);}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "54f836211b65329e858227e522e8135f858cdc72007775f3a871998dba65fb1c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/loop-wrapping",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=i64::MAX-1;let r=[];for i in 0..4{x=x.wrapping_add(1);r.push(x);}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "133768ecf0e6b1a1ec72adbf7a5c699177bf630a72efef4bc32f476070fb8b4b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/loop-hash",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let h=1469598103934665603;for c in [97,98,99]{h=h.wrapping_mul(1099511628211).wrapping_add(c);}h}pub fn c17c_reuse(){7}",
+    "source_sha256": "2af4e4fb9212ebe3c3b64012a1838e0961ba1bc46aef80d77bb40575e014baa2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/closure",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=|a,b|a.checked_sub(b);(f(5,3),f(i64::MIN,1))}pub fn c17c_reuse(){7}",
+    "source_sha256": "e13902b118381b8971faf297b3d8e2e486eec7d40ec338e10a846798ce5a4da7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/closure-map",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){[1,2,3].iter().map(|x|x.pow(2)).collect::<Vec>()}pub fn c17c_reuse(){7}",
+    "source_sha256": "58226bcc61a29c6fdff3c6b062ebaeb8c6806b575b0623ecb095708fa340398e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/closure-map-overflow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){[1,2,3].iter().map(|x|x.pow(63)).collect::<Vec>()}pub fn c17c_reuse(){7}",
+    "source_sha256": "2cd16b979d977f29ce9d4cb170ec3a27774c94009100249a8123983be0c232ba",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/fn-param",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(a,b){a.max(b)}pub fn main(){(f(3,4),f(3u64,4u64),f(3.0,4.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "ae8b610f71a8154c5c77abc37e3d8355793e0e49ef1ce0dcf40f46e4b02eb929",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/fn-param-checked",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(a,b){a.checked_add(b)}pub fn main(){(f(3,4),f(3u64,4u64))}pub fn c17c_reuse(){7}",
+    "source_sha256": "532dec7ae74791065a869c1391072c92fa159eebed2495a68fc3222d27256767",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/fn-param-float-checked",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(a,b){a.checked_add(b)}pub fn main(){f(3.0,4.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "735f2a206cce4826fa377ec5a004d8999d817d144a0ca0e5d5d97b8b8b88d764",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let p=P{x:5};(p.x.max(9),p.x.checked_mul(2),p.x.to_string())}pub fn c17c_reuse(){7}",
+    "source_sha256": "600b8ec0d80b452f0177d27ceb579935e6da6fa28c36ec804365981f51fc2ac7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/vec-element",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let v=[5,u64::MAX];(v[0].wrapping_sub(6),v[1].wrapping_add(2u64))}pub fn c17c_reuse(){7}",
+    "source_sha256": "334eeb44af954e38f9ae92e701aed779e5515d290364b9adebbc3b5370193963",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/call-result",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn g(){-2}pub fn main(){g().saturating_mul(i64::MAX)}pub fn c17c_reuse(){7}",
+    "source_sha256": "f541d17c1628f5c8812986bdc82abedf26f27e94d6a1dc5e8b2a4d13c2332d08",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){{tap(1,1);5}.checked_add({tap(2,2);6})}pub fn c17c_reuse(){7}",
+    "source_sha256": "e03c53d08ccc9e77506df89973e2bcd1f19b0bcd6dcdf9565d3cac8300ad3e2f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/effects-pow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){{tap(1,1);2}.pow({tap(2,2);3})}pub fn c17c_reuse(){7}",
+    "source_sha256": "22f715189e4d3a56c57fbd9ce399a472026126e4425ba28114e8c9b7b9072f8d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/effects-error",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){{tap(1,1);2}.pow({tap(2,2);-3})}pub fn c17c_reuse(){7}",
+    "source_sha256": "e8e7cbbcdbe45bf3190bfbd29da9f4744adcc0bf117b1e343763435cf494d18c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/chain-error-pow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){1+b(x)}fn b(x){x.pow(100)}pub fn main(){a(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "f42cfae950ecb12a173121526d3d2918ae7a89ad951348612b543d96925ef6cd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/chain-error-abs",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){b(x)}fn b(x){x.abs()}pub fn main(){a(i64::MIN)}pub fn c17c_reuse(){7}",
+    "source_sha256": "89e25f417bc1e36c28a1a69c38a52f80498564dc527fe94d6c93c454e70efd59",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/chain-error-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){b(x)}fn b(x){x.max(1.0)}pub fn main(){a(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "b9d677d933b4967ba62277cea0ec26bc964b9588a51534e2e1f565423839d10c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/chain-error-div",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){b(x)}fn b(x){x.wrapping_div(0)}pub fn main(){a(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "63199f63fb8170732207c15f1621ed98e98319f6c3f58db2fa191dc025ebb7ab",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/no-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5.max()}pub fn c17c_reuse(){7}",
+    "source_sha256": "bfc518a07c4e433d71f42cb087755ad0d20a3cc11377fcff5e393813b1e4f0bd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/extra-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5.checked_add(1,2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "cae6fa6cd274a06c5ed2203db158bfb850a20a1a0246b2e6929111b0b4d5aded",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/unary-extra-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5.signum(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "365038f1812eb36cbbe5fcd76b32477b5f685bbb2a061da0f6d1651033243614",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/u64-abs",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5u64.abs()}pub fn c17c_reuse(){7}",
+    "source_sha256": "e8ec849e4d99cf74cc5ca124ae44d4637207f6d2e480b56ff22334bda259a1c1",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/u64-signum",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5u64.signum()}pub fn c17c_reuse(){7}",
+    "source_sha256": "c2c9c64105d386635ffcbcf866c329cf16c32fe5edd4e4c323f67ddfda2757f7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/u64-checked_abs",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5u64.checked_abs()}pub fn c17c_reuse(){7}",
+    "source_sha256": "bf6b22a2b18b65d0051f9648033a64bae18ffdf948050725032bc860be8bb99d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/to_string-arity",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){5.to_string(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "361ecd02fb4d2bb71b3ed99c6f5022537818fdcbb88f56f1cc41fd3318c98e08",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "int/to_string-len",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(12345.to_string().len(),(-1).to_string()==\"-1\")}pub fn c17c_reuse(){7}",
+    "source_sha256": "292690da7f2fc5b37015fd51551182fa712b2e8d0df95ecfe03bba8fe545ecce",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/signum",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(-2.5).signum()}pub fn c17c_reuse(){7}",
+    "source_sha256": "4bcc28d96bfe774a3b6f68c5d19644458da2eeadd352ade19f9c93a31d36e0c5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/pow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.0.pow(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "e5949f4665c55931d70f2f9778a17ee0c8390c689ceab844b23355f796151a67",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/checked_add",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.0.checked_add(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "1c2c3e4b3bc1bfb3d199df629e39a1cebb1a7fa6c2223a31a1e9d2901b838393",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/wrapping_mul",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.0.wrapping_mul(2.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "195468c153df13413d916a8a3b26d674865affca538afe9c5685dd160d901801",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/saturating_sub",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){4.0.saturating_sub(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "7ebd2047f53ffbeb5eeea2adccd34d0eb84e0e00ba7c601c1754e702557ba338",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/checked_abs",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(-4.0).checked_abs()}pub fn c17c_reuse(){7}",
+    "source_sha256": "644595f716411408b876509ef83243cfde1984ffe8d418f71dab561bcb4c45d2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/int-exp",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.exp()}pub fn c17c_reuse(){7}",
+    "source_sha256": "bf6b083728beb47b44967efee8f5e7da3756e25ac40a8968a317b7f61f626b29",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/int-floor",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.floor()}pub fn c17c_reuse(){7}",
+    "source_sha256": "bd1cd9b21ce2d76e4d8bd9483142796daf895effd067f2d726531ecc02cb0f9d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/int-partial_cmp",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(1.partial_cmp(2),1u64.partial_cmp(2u64),1.partial_cmp(1))}pub fn c17c_reuse(){7}",
+    "source_sha256": "4fbb15cf7c3c27af003d0669e1000d4481f526b518a2b9c91021facec771a638",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "cross/int-partial_cmp-float-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.partial_cmp(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "2f85f48c48af0c30fcdb1cfa2a4909392359b37638d5282187615bf9439b2efd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/to_i64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){('a'.to_i64(),'\\0'.to_i64(),'\u00e9'.to_i64(),'\u65e5'.to_i64(),'\\u{10FFFF}'.to_i64())}pub fn c17c_reuse(){7}",
+    "source_sha256": "67554a6526da4d24972913d8d0ee3b5271ff343a1219a936fb693f5d7e7edd19",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/to_i64-path",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(char::to_i64('z'),std::char::to_i64('A'))}pub fn c17c_reuse(){7}",
+    "source_sha256": "0ba4c62fcbcc450dbc24dde552d49f3d3e8cd00c66e7c47fb2e7882d740adf42",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/to_i64-loop",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let s=0;for c in ['a','b','c']{s+=c.to_i64();}s}pub fn c17c_reuse(){7}",
+    "source_sha256": "161225035a0cb1a3a6827a502be0977ba023ba632ad0d5c851bed47d908a1d83",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/to_i64-chars",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for c in \"h\u00e9llo\".chars(){r.push(c.to_i64());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "77c417266e5c6dbe39e0fc66b1421cc7bb02841211938de5b78074f8ccf72ae3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/to_i64-chain",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){'a'.to_i64().checked_add(1).unwrap()}pub fn c17c_reuse(){7}",
+    "source_sha256": "6401ee03b0fe785c969fea08d8c6a5a8fa8e236a5eacd3b26f3365eeb126fc36",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/to_i64-fn-param",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(c){c.to_i64()}pub fn main(){(f('x'),f('y'))}pub fn c17c_reuse(){7}",
+    "source_sha256": "3830dfbd615a4294870adb8285d394a66ed9d3ec26ee025c864480da17af3e86",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/to_i64-int-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){97.to_i64()}pub fn c17c_reuse(){7}",
+    "source_sha256": "3ceb08600998101710e426ca4ef3aa7d65edcd9627f5df5055fba1b42a7127cd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/to_i64-string-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){\"a\".to_i64()}pub fn c17c_reuse(){7}",
+    "source_sha256": "44ad1a9090627436fc2ef75e16c7be72a020c86047b6cdfd2559a1e765e2a2ac",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/to_i64-arity",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){'a'.to_i64(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "031100c36dc3486682b1e069cbf811ed0c0efe06d94c7433e8a0deee700a38dc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(char::from_i64(97),char::from_i64(0),char::from_i64(0x10FFFF),char::from_i64(0xD800),char::from_i64(0x110000),char::from_i64(4294967295))}pub fn c17c_reuse(){7}",
+    "source_sha256": "d37b32b3789b84cf6a671cc4ea4200e1a11ef9245e19ad4ee0b608b1a9f466e7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-std-path",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){std::char::from_i64(98)}pub fn c17c_reuse(){7}",
+    "source_sha256": "c33b8bdb03040c17e832817666ec7495abd0683df0e6a720c8adcac3763cda83",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-negative",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64(-1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "a9ee73dbd3de46444db04dc9bde446168031a9903d63e9224260aa197fcf5cf2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-overflow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64(4294967296)}pub fn c17c_reuse(){7}",
+    "source_sha256": "119acd7ff0f2fc40795dfb0348d46fdea1e3a6a8db6d2b40aba11aada2a9b633",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-min",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64(i64::MIN)}pub fn c17c_reuse(){7}",
+    "source_sha256": "21354a455217995bd4fb79e50c7958aea80af8ce26df60f5a3aad8a306e7a388",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-u64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64(97u64)}pub fn c17c_reuse(){7}",
+    "source_sha256": "5fc3656e3dac3e7b7cb5adf6b652e6dd2f16cb0ffa33a620321af82c519d229c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-float",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64(97.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "6f7e89c42feaff48bdac7870aa46fa8b424fed7d2389eea503d6b0efb40a4b8a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-char",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64('a')}pub fn c17c_reuse(){7}",
+    "source_sha256": "4b377430bd2a9526de305d490c0b1ac82eccf316837c8cd35b1d5dc16940a32a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-no-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64()}pub fn c17c_reuse(){7}",
+    "source_sha256": "db2e46f408ea82cbe05a8bb46d9f4bf408dcefda1e39350f5565b905526a6834",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-extra-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64(97,98)}pub fn c17c_reuse(){7}",
+    "source_sha256": "c1109d328cecd0fa642de461b1bb6f663ef89ed928b9f5f9b0b5c0477fdb90b9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-unwrap",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64(0xD800).unwrap()}pub fn c17c_reuse(){7}",
+    "source_sha256": "d3469a2dd7d19dfbf72178a9a8d8852a90375b0ecc04fdda67ab6cfa20028eb7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-roundtrip",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for i in [65,0x263A,0x1F600]{r.push(char::from_i64(i).unwrap().to_i64());}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "e327c43286e1cbd4de0934203bc0fb61819a27a560f5953cdb6751dd6e90ac80",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-fn-value",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=char::from_i64;(f(99),f(0xDFFF))}pub fn c17c_reuse(){7}",
+    "source_sha256": "b4a82d7f0e55125371c566f9b71778464c171bd97fb44686849ba040976f01a3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-map",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){[100,101].iter().map(|i|char::from_i64(i)).collect::<Vec>()}pub fn c17c_reuse(){7}",
+    "source_sha256": "d15eaaff2ed92e5b8fa3966de460ec294da9a094523a5a482806254a69fbbd45",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-method",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){'a'.from_i64(98)}pub fn c17c_reuse(){7}",
+    "source_sha256": "7f1699d750deef2824ee8c535328f7b62b0b17a68678d247fca4aa57649fc3d2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-chain-error",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn a(x){b(x)}fn b(x){char::from_i64(x)}pub fn main(){a(-5)}pub fn c17c_reuse(){7}",
+    "source_sha256": "47583fe72bddf3222558355dc74b11ead7bed7d7ff201761ba139172285b2db7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "char/from_i64-effects",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){char::from_i64({tap(1,1);120})}pub fn c17c_reuse(){7}",
+    "source_sha256": "8784d54210af5094da2ec878e2cc961692a234d7c2b9144be414444a593384a4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/vec-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){([3,1].max([2]),[3,1].min([2]))}pub fn c17c_reuse(){7}",
+    "source_sha256": "c5d0e9e3063065a01033918d76861419ee177c46136cf3111e5e602fc37f31ba",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/vec-max-no-arg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){[3,1,2].max()}pub fn c17c_reuse(){7}",
+    "source_sha256": "70bf87749807febd47b4f6dc98e49939d3d34f4d01bdde407e10c4c4cb4350db",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/string-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(\"b\".max(\"a\"),\"b\".min(\"a\"))}pub fn c17c_reuse(){7}",
+    "source_sha256": "2376e7b819cf4fe2d81d46d001eb81bdbab1cd668eb4d0ad6111ab7c1586897f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/tuple-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(1,2).max((0,5))}pub fn c17c_reuse(){7}",
+    "source_sha256": "e5c56ec0f0c1de14ebe499aab01bab2bd481b2c5ce021453ab3108451c38008d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/option-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(Some(1).max(Some(2)),Some(1).min(None))}pub fn c17c_reuse(){7}",
+    "source_sha256": "07194f3886ece61a1c54d7215ad4c8a3cc1a7d079a180a79485dbb040b386508",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/char-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){('a'.max('b'),'a'.min('b'))}pub fn c17c_reuse(){7}",
+    "source_sha256": "b323c0bc45f7bb7433e2f7537781e0e349d1a957ee29fafed7deff7f8a7f46f0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/bool-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){true.max(false)}pub fn c17c_reuse(){7}",
+    "source_sha256": "01797ba44cdf4a3647c87cbd2034cc0bb489e5b45b45cafb2f7b919561abeef5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/ordering-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){std::cmp::Ordering::Less.max(std::cmp::Ordering::Greater)}pub fn c17c_reuse(){7}",
+    "source_sha256": "aba5ded93296ee31eda33df77b199fed76aca853ac7a87694c12e0760bc787ab",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/unit-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){().max(())}pub fn c17c_reuse(){7}",
+    "source_sha256": "7713a9e5c74f6cee720363432239753a58822c1ef59d76034b0ceb7f24d5dd72",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/struct-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){P{x:1}.max(P{x:2})}pub fn c17c_reuse(){7}",
+    "source_sha256": "3672dd938386c4c414545b82fee310b3d80d06d683d34428161861b36c2a0591",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/mixed-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.max(1u64)}pub fn c17c_reuse(){7}",
+    "source_sha256": "530ea872d24936601949fb866fb55eca98ec096329d606c6693bf72e0e9cb4a0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/mixed-max-float",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.max(1u64)}pub fn c17c_reuse(){7}",
+    "source_sha256": "c78382f78c7a11282f333d52c31964e04dc4ab77ee00c34216b3069ab227b552",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/loop-mixed-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for (a,b) in [(1,2),(1.5,0.5),(\"a\",\"b\"),([1],[0])]{r.push(a.max(b));}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "7f599102161dbe266f298d710ce153e28ea513ea34c3ef8bd806e2ed157dec80",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/loop-mixed-min-error",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let r=[];for (a,b) in [(1,2),(1.5,2)]{r.push(a.min(b));}r}pub fn c17c_reuse(){7}",
+    "source_sha256": "b9d44aa9d1baacedfecbe4a490f3f89c278dabb41ff810c3724a36028a25f41a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/fn-param-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(a,b){a.max(b)}pub fn main(){(f([1],[2]),f(\"x\",\"y\"),f('a','b'))}pub fn c17c_reuse(){7}",
+    "source_sha256": "3a382d62fe648197fb9c62ce0a04bbc8a0926b85e7ff68bf606e8745ba8ac694",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/vec-partial_cmp",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){([1.0,2.0].partial_cmp([1.0]),[1].partial_cmp([1]))}pub fn c17c_reuse(){7}",
+    "source_sha256": "a1708f2b9abc253445f8c4c5fca5738326347a889586f88d9587b49e6ad78ce3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/string-partial_cmp",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(\"a\".partial_cmp(\"b\"),\"b\".partial_cmp(\"a\"))}pub fn c17c_reuse(){7}",
+    "source_sha256": "4c7d7f7e6643f10f026ebd81269d0aefcb0c68c962e71a4fb3343993b42ab20d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/option-partial_cmp",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(Some(1.0).partial_cmp(None),Some(0.0/0.0).partial_cmp(Some(1.0)))}pub fn c17c_reuse(){7}",
+    "source_sha256": "7527f33a3d2233027ed0c1692c04dba2143e64a74f584c809cdd109b3c167178",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/tuple-partial_cmp",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(1.0,2).partial_cmp((1.0,3))}pub fn c17c_reuse(){7}",
+    "source_sha256": "b7b0d12ad2510aaeac5b2315748819627f4e1bba760bcf4986830509bf0a0944",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/char-to_string",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){'a'.to_string()}pub fn c17c_reuse(){7}",
+    "source_sha256": "24136cdec0ccdbaad4df455149e6ef8d9bde7b0d03a4e7e66d24e23efe715548",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/bool-to_string",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){true.to_string()}pub fn c17c_reuse(){7}",
+    "source_sha256": "13ffd7a0dae9e16dd9dc4766254a965d260f008ff572c10ea231e0c201bd7738",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/string-to_string",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){\"a\".to_string()}pub fn c17c_reuse(){7}",
+    "source_sha256": "1a0f5efc4887ef971606df0572aa92e943c19dcbba61cf80bf8a46c52b56fcc7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/vec-to_string",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){[1].to_string()}pub fn c17c_reuse(){7}",
+    "source_sha256": "487d89ae5faad524ea8fb60f9674f9fe4a353ac5ecf1cbcd91f148b5dacc9a4e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/struct-to_string",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){P{x:1}.to_string()}pub fn c17c_reuse(){7}",
+    "source_sha256": "6a54e5cb03dcac0a1d7d9a8198fc2101567a18f4f3737fb6630c6cda9ca538c2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/vec-sqrt",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){[4.0].sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "47d1e851d3d2067fd6e3e215c30cd733daf64fb45d1b7c9580a7664dbe1f9ed4",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/option-checked_add",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){Some(1).checked_add(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "6a7f102b2c07d45cf9322f05184ca32ece55ffaff9702e179de0d7a1ffa23a91",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/unit-pow",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){().pow(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "58f5f2ce7141b198b39539d14bcfb177791b55c8b143da1f581a65046188db19",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/type-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){i64.max(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "28128950873c2eb04d3d2e6ec45ca502e382a5210beb811d0f281620a1ce5bf9",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/fn-value-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(){}pub fn main(){f.max(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "73babf1e3e1ef987e281a4e278c7343707285246312aa2132f39e7c3f05df58c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/args-effects-wrong",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){\"a\".max({tap(1,1);\"b\"})}pub fn c17c_reuse(){7}",
+    "source_sha256": "9bb4efb45f2ffaf83b168aa3874fc7d19f940e3a6ba33601a9171bbf5135f0f7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "receiver/args-effects-int-wrong",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){[1].checked_add({tap(1,1);2})}pub fn c17c_reuse(){7}",
+    "source_sha256": "2a459b0f94e9875981f720fa08ccae05d799db4d637bbc7d79ed72dbd7b80d78",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/impl-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}impl P{fn max(self,o){self.x+o}}pub fn main(){(P{x:3}.max(9),4.max(9),[1].max([0]))}pub fn c17c_reuse(){7}",
+    "source_sha256": "05112864593a4d83cead1799c1459bad09a237acc8eb4b4e4fae9025766bc4aa",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/impl-sqrt",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}impl P{fn sqrt(self){self.x/4}}pub fn main(){(P{x:16}.sqrt(),16.0.sqrt())}pub fn c17c_reuse(){7}",
+    "source_sha256": "66d07f478534407e80f1cfa21c8a97009748da62a3106ffc360f877347d4b426",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/impl-checked_add-tuple",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}impl T{fn checked_add(self,r){self.0*100+r}}pub fn main(){(T(1).checked_add(2),1.checked_add(2))}pub fn c17c_reuse(){7}",
+    "source_sha256": "ec018197fcd232666a11edc6b029eda76aea2d4049170de932b72a5dbb5f11cd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/impl-to_string-enum",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}impl E{fn to_string(self){\"E\"}}pub fn main(){(E::A.to_string(),5.to_string())}pub fn c17c_reuse(){7}",
+    "source_sha256": "c1a281dc3c7ebe6c67d6b65a9feebb31c287235ed54f0fa1b954ca127e73b5da",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/impl-partial_cmp-sort",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}impl P{fn partial_cmp(self,o){self.x.partial_cmp(o.x)}}pub fn main(){let v=[P{x:2},P{x:1}];v.sort_by(|a,b|a.partial_cmp(b).unwrap());(v[0].x,1.0.partial_cmp(2.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "1c24ffd88957b129c5466e67b14e7d734a07b010dd5e94aeb587f951703ac191",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/impl-to_i64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}impl P{fn to_i64(self){-1}}pub fn main(){(P{x:1}.to_i64(),'a'.to_i64())}pub fn c17c_reuse(){7}",
+    "source_sha256": "2135a006048983a8067b55135805497c04ffa8a7b8af4a01e69003e65b6c8362",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/impl-pow-module",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}mod m{pub struct S{v}impl S{fn pow(self,n){self.v*n}}}pub fn main(){(m::S{v:2}.pow(5),2.pow(5))}pub fn c17c_reuse(){7}",
+    "source_sha256": "a8450a33b12cbe6c9725eb785f5faacf25a450a466a865ff4076ba801591a0f3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/impl-floor-unused",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}impl P{fn floor(self){0}}pub fn main(){2.5.floor()}pub fn c17c_reuse(){7}",
+    "source_sha256": "25acfbe5778661b691ff2500e036f8e0f359a732b37b7a76a69cd69470ffaaf6",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/impl-min-unused",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}impl T{fn min(self,o){0}}pub fn main(){2.min(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "bc91b042a459f50eb5c416e41844a2b33c308bafc53ee04b73f2577148c8238d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/free-fn-sqrt",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn sqrt(x){x*x}pub fn main(){(sqrt(9),9.0.sqrt())}pub fn c17c_reuse(){7}",
+    "source_sha256": "f62f986afa03b604af7dca0926f24f403c4a31b4761f72c03bf4871937e5a7ed",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/free-fn-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn max(a,b){a*b}pub fn main(){(max(1,2),1.max(2))}pub fn c17c_reuse(){7}",
+    "source_sha256": "dc40da5feb98b11a1946570a671b0556de9aea9e8a3045af1c2b194624850a46",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/module-fn-from_i64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}mod m{pub fn from_i64(x){x+1}}pub fn main(){(m::from_i64(5),char::from_i64(65))}pub fn c17c_reuse(){7}",
+    "source_sha256": "00973d06c1a704a52da31c1144ed88570911b12050a37189b4bddacc75e25951",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/assoc-fn-checked_add",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}impl P{fn checked_add(a,b){a-b}}pub fn main(){(P::checked_add(1,2),1.checked_add(2))}pub fn c17c_reuse(){7}",
+    "source_sha256": "d0c71457c7d6359f274aeec97106b0c347b89994d11451645a16a2356928f2ac",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/struct-named-f64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}mod m{pub struct f64{v}impl f64{fn sqrt(self){self.v}}}pub fn main(){(m::f64{v:1}.sqrt(),4.0.sqrt())}pub fn c17c_reuse(){7}",
+    "source_sha256": "ae0a63ca0db65ff98a2cff3fb9b8ce11237cec8df0d6d512c7393704feeed437",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/field-named-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let o=#{max:1,sqrt:2};(o.max,o.sqrt,1.max(o.max))}pub fn c17c_reuse(){7}",
+    "source_sha256": "c5b46b8ee066e0d2180c97c61a6f9694c73197129a07b40e1ecd4ba6055d72d0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "script/field-fn-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let o=#{max:|a,b|a+b};(o.max)(1,2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "33b4dd0ab1b4a81b17668187d433002ac1b2fff48d5c45abbed800543c7d9c71",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/path-sqrt",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){f64::sqrt(9.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "aa86db9c6c1804b8a9061aa7a998a5156499c41e1fe499ecddf608ecac748b90",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/path-max",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(i64::max(1,2),u64::max(1u64,2u64),f64::max(1.0,2.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "b7a833363bc58eacabf0a312e4d857b7472554215698c4d5f352ebb9f947d953",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/path-full",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){std::i64::checked_add(1,2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "179c3884c5207d4054d317dad9b58a1112398f74e9f8d8abf2e99532fd88a593",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/path-partial_cmp",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){f64::partial_cmp(1.0,2.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "80e22122d0ddf4a3fa502ceb74a443c3e9e723f2356fba4bea7428b23d47fc9d",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/path-to_string",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(i64::to_string(5),f64::to_string(1.5))}pub fn c17c_reuse(){7}",
+    "source_sha256": "aa096796b1df28ecae7bb365a825e02fbc96924f7cd723f8d3f79fe887c60dc8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/path-wrong-type",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){f64::sqrt(9)}pub fn c17c_reuse(){7}",
+    "source_sha256": "7fb1cf287482b78ad3b5358e382392af5d8d8a50a14b8f0c0eae3e9898d045cb",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/fn-value-sqrt",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=f64::sqrt;f(16.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "e8039d657b97e37e5217f43627b45561f545ea5e014aa5654704a0357b21e879",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/fn-value-checked",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=i64::checked_mul;(f(3,4),f(i64::MAX,2))}pub fn c17c_reuse(){7}",
+    "source_sha256": "2090dec7841ba7fc4dabf196d42d6a92a5367164522f62127c9a5db1e0eacb5b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/method-as-field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.sqrt}pub fn c17c_reuse(){7}",
+    "source_sha256": "041fd6b0c5b2fd9d4fa115da5fe3a272df08ec02a32218e4cda07e22c553daac",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/turbofish",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.max::<i64>(2)}pub fn c17c_reuse(){7}",
+    "source_sha256": "9d189c75d32df4a2528d61a3b5d7c805932e4463524bf9da83c4b17ece9be155",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/turbofish-float",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){1.0.sqrt::<f64>()}pub fn c17c_reuse(){7}",
+    "source_sha256": "ca68b24fd7b9bc180cf33ee91ef59bc584d1f403f122f3bac5e24c1f6154bccb",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/negative-literal-precedence",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){-4.0.sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "72fcc616cb176ec3838e0ac8029f1253f65e7e586373e2c31f4cbcfba9a8bcf8",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/negative-literal-precedence-int",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){-5.signum()}pub fn c17c_reuse(){7}",
+    "source_sha256": "d95371087e02d46af807298404187b6fcfaccd56db1d8283da7b7dab2ef74e9f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/in-template",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){`${2.0.sqrt()}|${7.max(9)}|${i64::MAX.checked_add(1).unwrap_or(0)}|${1.5.to_string()}`}pub fn c17c_reuse(){7}",
+    "source_sha256": "27efcd2cda00e237fbe47f38ba0a55992f5e162d6b56647983cfc460a4b262e7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/in-template-option",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){`${i64::MAX.checked_add(1)}`}pub fn c17c_reuse(){7}",
+    "source_sha256": "c85e5e7cfb22a77f1c7ef4899239e03e069f4e4d03df75e8762142615a4de1ed",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/in-condition",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){if 4.0.sqrt()==2.0&&9.checked_sub(10).is_none(){1}else{0}}pub fn c17c_reuse(){7}",
+    "source_sha256": "1fe6ba4f812c756b848c8c96376898f6756f90c97f3cdc7e88071a6833430216",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/const-receiver",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){const X=2.0;X.sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "132d17948a164db25a30cb330bab5a6d1ddb6da09183c6d3e2e897d5c897c43f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "compile/nested-call-args",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){2.0.powf(9.0.sqrt()).max(1.0.max(2.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "7517934436fc701ad21da1553f099c9bedadc8b8f54e6fec143b15b8d11ee0bd",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/mixed-assign",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=2.0;if tap(1,1)==1{x=[3];}x.max([0])}pub fn c17c_reuse(){7}",
+    "source_sha256": "a5779b5c8900138d4cf845fdff1aaa1459e5ea1e035e9f8901152e0802a3dace",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/mixed-assign-untaken",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=2.0;if tap(1,2)==1{x=[3];}x.max(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "8b82a871bf740083c79d9c683c895b0aa4d1f394a1b031c19d89d5950a38bbde",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/shadow-other",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=1.5;let x=[1];x.max([2])}pub fn c17c_reuse(){7}",
+    "source_sha256": "aaef46e9e4142fea845b679502c50d91e131ae71d8a885de06f2ce55f1999efb",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/shadow-in-block",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=2.0;let y={let x=[1];x.max([0])};(y,x.max(3.0))}pub fn c17c_reuse(){7}",
+    "source_sha256": "a397042677766531ff72079d336c511982fddb8104fe51297506383f7a37cb3a",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/if-expr",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(if tap(1,1)==1{2}else{3.0}).max(1)}pub fn c17c_reuse(){7}",
+    "source_sha256": "156011d2416d25182fd91d6065735be8581ddb72742a9ba43b282fd8930d92fc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/if-expr-float",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){(if tap(1,2)==1{2}else{3.0}).max(1.0)}pub fn c17c_reuse(){7}",
+    "source_sha256": "71bbbd51cceb30c40bfc4c7edfd43a75f4377497d4b4a9b1a9ce9647a5ceb16e",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/match-expr",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=match tap(1,1){1=>\"a\",_=>\"b\"};x.max(\"c\")}pub fn c17c_reuse(){7}",
+    "source_sha256": "8f7bd93af3c80c315f862fa1e36e59a8fde273bd7b54bc937944ee60eac8604b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/closure-return",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let f=||[1];f().max([0])}pub fn c17c_reuse(){7}",
+    "source_sha256": "7ab3b34136351612ad291c367ec73847c34df4502243f96b42668d4aacfa1d6b",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/compound-assign",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=1.5;x+=1.0;(x.max(3.0),x.sqrt())}pub fn c17c_reuse(){7}",
+    "source_sha256": "5fcc8273e61ed9b002a0a01e1f7ef39b8c763673d176613f2416d04d30724b6f",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/compound-assign-int",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=5;x*=2;(x.checked_add(1),x.pow(2))}pub fn c17c_reuse(){7}",
+    "source_sha256": "45fb17fb975590235611f78aa52c490f06ee10eddd19fcbb1f7384eb9552ef83",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/arith-float",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){((1.0+2.0).max(0.5),(2.0*8.0).sqrt(),(-2.5).floor())}pub fn c17c_reuse(){7}",
+    "source_sha256": "803bfcf3ccc69547c9404e95a09d6d63baf0c41d03106a7bb324ae6972b9e285",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/arith-int",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){((3*4).pow(2),(7-9).signum(),(i64::MAX-1).checked_add(2))}pub fn c17c_reuse(){7}",
+    "source_sha256": "4448752e037ab6dfe1b4c72a092a1cf548257a6a9f19c20ae5361fde2f414db5",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/arith-u64",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){((7u64-2u64).max(1u64),(2u64*3u64).checked_sub(7u64))}pub fn c17c_reuse(){7}",
+    "source_sha256": "dc1c1035f685180e2b3be410892fa8d8df5a6913ea63337f57b8010334a9d0b3",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/unary-neg",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=2.5;((-x).max(0.0),(-x).ceil())}pub fn c17c_reuse(){7}",
+    "source_sha256": "29a035927fb2694b0266bea5489ea81d79dc02fa4d792399ba5fb36ff044d114",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/const-int",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){const N=7;(N.max(9),N.checked_mul(i64::MAX))}pub fn c17c_reuse(){7}",
+    "source_sha256": "49f9953fca5326b795aff08a0e89822763109e9100cd7d4acc445c29ea848f34",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/tuple-field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let t=(2.0,3);(t.0.sqrt(),t.1.pow(2))}pub fn c17c_reuse(){7}",
+    "source_sha256": "9535df726ce0d4e07369b10b5e695f0fe914734f9f8c8bcea6f0bd123891ca1c",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/loop-carried",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=1.0;for i in 0..3{x=x.max(2.0).sqrt();}x}pub fn c17c_reuse(){7}",
+    "source_sha256": "5ee764b60f55b72eec9ae00211554095585fa1af88e10f28bc0b84b5a27f4813",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/loop-carried-mixed",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=1.0;for i in 0..2{x=if i==0{x.max(2.0)}else{[x]};}x}pub fn c17c_reuse(){7}",
+    "source_sha256": "fee79ce8cb2133edfd4afa4cb0948f0870ecb089834387e1c98c71b773a653c0",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/while-carried",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=100;while x>1{x=x.wrapping_div(3);}x}pub fn c17c_reuse(){7}",
+    "source_sha256": "c8d7930f995fa064dcbcbfcad61685f4c6f2b84e6475cad42a3a3a2ecacc4154",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/param-twice",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(x){x.max(x)}pub fn main(){(f(4.0),f(9))}pub fn c17c_reuse(){7}",
+    "source_sha256": "8e73fb5e4a4b6a890e5a2e572dacc4e82ad49bf3ac6487e2e2f48e49eb9180a2",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/return-value",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}fn f(){return 25.0;}pub fn main(){f().sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "59c2600540a23fc7bf137d27b3f901ef592a01529c04893e219f3e0c20462bc7",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/break-value",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let x=loop{break 6.25;};x.sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "c3704d320e2170fdb87543d3497abdedc87a1465da4a55ecb5a5ed58b4e94176",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/option-unwrap",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){Some(9.0).unwrap().sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "f5dc2cc9011c0de78191bcf963d74870ce88c4b24317f3d62f3326c2040e62fc",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  },
+  {
+    "label": "proof/object-field",
+    "source": "use c17c::tap;struct P{x}struct T(a)enum E{A,B(x)}pub fn main(){let o=#{x:16.0};o.x.sqrt()}pub fn c17c_reuse(){7}",
+    "source_sha256": "29b980096e371fd347a2c5de5ede58b0453adc098fffc95d6f929eb77cd31dca",
+    "fuel": 200000,
+    "reuse_enabled": true,
+    "origin": "C17c",
+    "policy": "observe"
+  }
+]

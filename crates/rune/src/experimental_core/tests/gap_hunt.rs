@@ -1680,3 +1680,5 @@ mod object_methods;
 mod object_order;
 
 mod iter_receivers;
+
+mod numeric_methods;
