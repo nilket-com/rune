@@ -43,6 +43,8 @@ const CHILD: &str = "experimental_core::tests::gap_hunt::child";
 const FUEL: usize = 2_000_000;
 const CAP: usize = 128 * 1024;
 const WALL: Duration = Duration::from_secs(10);
+const MAIN_STACK_BYTES: usize = 2 << 20;
+const HEADROOM_STACK_BYTES: usize = MAIN_STACK_BYTES * 9 / 10;
 
 fn hex(bytes: &[u8]) -> String {
 	bytes.iter().map(|b| format!("{b:02x}")).collect()
@@ -415,9 +417,14 @@ fn child() {
 		patterns::observe_patterns(Path::new(&path), &mode, &engine)
 	} else if mode.starts_with("c2-") {
 		output_macros::observe_c2(Path::new(&path), &mode, &engine)
-	} else if mode == "stack-main" {
+	} else if mode == "stack-main" || mode == "stack-headroom" {
+		let stack_bytes = if mode == "stack-main" {
+			MAIN_STACK_BYTES
+		} else {
+			HEADROOM_STACK_BYTES
+		};
 		std::thread::Builder::new()
-			.stack_size(2 << 20)
+			.stack_size(stack_bytes)
 			.spawn(move || observe(Path::new(&path), "main", &engine))
 			.unwrap()
 			.join()

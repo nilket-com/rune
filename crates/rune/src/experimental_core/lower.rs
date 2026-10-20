@@ -2220,57 +2220,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			name_hash,
 		} = call.call
 		{
-			if self.nominal_missing_site(call) {
-				return self.call_missing_method(call, target, name_hash, hash, out, span);
-			}
-			if let Some(method) = crate::function::fresh_text::Method::from_hash(hash) {
-				return self.call_text_method(call, target, method, out, span);
-			}
-			if let Some(method) = crate::function::fresh_variant::Method::from_hash(hash) {
-				return self.call_variant_method(call, target, method, out, span);
-			}
-			if let Some(method) = crate::function::fresh_object::Method::from_hash(hash) {
-				return self.call_object_method(call, target, method, out, span);
-			}
-			if let Some(method) = crate::function::fresh_number::Method::from_hash(name_hash) {
-				return self.call_number_method(call, target, method, hash != name_hash, out, span);
-			}
-			if name_hash == Hash::ident("collect") {
-				return self.call_text_collect(call, target, hash, out, span);
-			}
-			if let Some(name) = crate::function::fresh_iter::Name::ALL
-				.into_iter()
-				.find(|name| hash == name.hash())
-			{
-				return self.call_iterator_method(call, target, name, out, span);
-			}
-			if hash == Hash::ident("sort_by") {
-				return self.call_sort_by(call, target, out, span);
-			}
-			if let Some(method) = crate::function::fresh_numeric::Method::from_hash(hash) {
-				return self.call_numeric_method(call, target, method, out, span);
-			}
-			if hash == Hash::ident("len") && call.args.is_empty() {
-				let value = self.operand(target)?;
-				self.emit(Op::Len { out, value }, span)?;
-			} else if hash == Hash::ident("clone") && call.args.is_empty() {
-				let value = self.operand(target)?;
-				self.emit(
-					Op::Clone {
-						out,
-						value,
-						mode: CloneMode::Associated,
-					},
-					span,
-				)?;
-			} else if hash == Hash::ident("push") && call.args.len() == 1 {
-				self.effect_call(call, span)?;
-				self.unit_into(out, span)?;
-			} else {
-				return self.call_missing_method(call, target, name_hash, hash, out, span);
-			}
-
-			return Ok(());
+			return self.call_associated(call, target, hash, name_hash, out, span);
 		}
 
 		let hash = match call.call {
@@ -2388,6 +2338,71 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			},
 			span,
 		)?;
+		Ok(())
+	}
+
+	/// Lowers a method call. Out of line so its arms stay out of the `call_non_variant`
+	/// frame, which every nested plain call holds while its arguments lower.
+	#[inline(never)]
+	fn call_associated(
+		&mut self,
+		call: &hir::ExprCall<'_>,
+		target: hir::ExprId,
+		hash: Hash,
+		name_hash: Hash,
+		out: u32,
+		span: Span,
+	) -> Result<()> {
+		if self.nominal_missing_site(call) {
+			return self.call_missing_method(call, target, name_hash, hash, out, span);
+		}
+		if let Some(method) = crate::function::fresh_text::Method::from_hash(hash) {
+			return self.call_text_method(call, target, method, out, span);
+		}
+		if let Some(method) = crate::function::fresh_variant::Method::from_hash(hash) {
+			return self.call_variant_method(call, target, method, out, span);
+		}
+		if let Some(method) = crate::function::fresh_object::Method::from_hash(hash) {
+			return self.call_object_method(call, target, method, out, span);
+		}
+		if let Some(method) = crate::function::fresh_number::Method::from_hash(name_hash) {
+			return self.call_number_method(call, target, method, hash != name_hash, out, span);
+		}
+		if name_hash == Hash::ident("collect") {
+			return self.call_text_collect(call, target, hash, out, span);
+		}
+		if let Some(name) = crate::function::fresh_iter::Name::ALL
+			.into_iter()
+			.find(|name| hash == name.hash())
+		{
+			return self.call_iterator_method(call, target, name, out, span);
+		}
+		if hash == Hash::ident("sort_by") {
+			return self.call_sort_by(call, target, out, span);
+		}
+		if let Some(method) = crate::function::fresh_numeric::Method::from_hash(hash) {
+			return self.call_numeric_method(call, target, method, out, span);
+		}
+		if hash == Hash::ident("len") && call.args.is_empty() {
+			let value = self.operand(target)?;
+			self.emit(Op::Len { out, value }, span)?;
+		} else if hash == Hash::ident("clone") && call.args.is_empty() {
+			let value = self.operand(target)?;
+			self.emit(
+				Op::Clone {
+					out,
+					value,
+					mode: CloneMode::Associated,
+				},
+				span,
+			)?;
+		} else if hash == Hash::ident("push") && call.args.len() == 1 {
+			self.effect_call(call, span)?;
+			self.unit_into(out, span)?;
+		} else {
+			return self.call_missing_method(call, target, name_hash, hash, out, span);
+		}
+
 		Ok(())
 	}
 

@@ -616,8 +616,21 @@ fn global_contract() {
 
 #[test]
 fn lowering_runs_at_the_normal_stack_boundary() {
-	let scratch =
-		Scratch(std::env::temp_dir().join(format!("rune-stack-regression-{}", std::process::id())));
+	lower_at_the_depth_bound("stack-main");
+}
+
+/// Debug lowering at the depth bound fits in 90% of the main stack, so the
+/// boundary keeps at least 10% headroom rather than passing by luck.
+#[test]
+#[cfg(debug_assertions)]
+fn lowering_keeps_stack_headroom_at_the_depth_bound() {
+	lower_at_the_depth_bound("stack-headroom");
+}
+
+fn lower_at_the_depth_bound(mode: &str) {
+	let scratch = Scratch(
+		std::env::temp_dir().join(format!("rune-{mode}-regression-{}", std::process::id())),
+	);
 	fs::create_dir(&scratch.0).unwrap();
 	let out = scratch.0.join("out");
 	fs::create_dir(&out).unwrap();
@@ -638,7 +651,7 @@ fn lowering_runs_at_the_normal_stack_boundary() {
 			let id = format!("{shape}-{depth}");
 			let path = out.join(format!("{id}.rn"));
 			fs::write(&path, format!("fn id(x){{x}} pub fn main(){{ {expr}; 1 }}")).unwrap();
-			let run = launch(&path, &path, "stack-main", "fresh", &scratch.0, &out, &id);
+			let run = launch(&path, &path, mode, "fresh", &scratch.0, &out, &id);
 			assert!(run.complete, "{id}: {}", run.record);
 			let fields: Vec<_> = run.record.split('\t').collect();
 			if depth == last {
