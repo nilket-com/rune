@@ -1,0 +1,60 @@
+{
+  "rows": 51,
+  "first_index": 191,
+  "parent": "0f475e00dad3c8add8e36bbfdb5ce2838177e787",
+  "production_changes": false,
+  "scope": "insertion order under O1 (shift-remove, re-insert, replace keeps slot), string-literal/const/template/call key materialization, keys moved through aliases, borrowed keys, dropped receivers, receiver-proof boundaries (alias, shadow, reassign, block, labeled block, if/match, closures, struct, clone, tuple field) and is_empty receivers",
+  "files": {
+    "supplement_cases.json": "f8d15842e78c950531ed380d43d5c07c3dc0d9b51528d7f363564697efbd5fcf",
+    "supplement_stock.json": "c770065cff9fff4e583ffa348bdb2d9ed8486b9e7fed48e30af0cebeceeff693"
+  },
+  "stock_binary": {
+    "path": "/home/me/work/.reviews/0185-c17b-oracle5/rune-tests-gen",
+    "sha256": "96bc3c3ffa6c358d646dd6d67a9c52633593e7e9ddeff585386265235a45dee8",
+    "pins_sha256": "31469146ec10282c425998ba0cefc4aaea87530b91ab0aba2c03232f972adefb"
+  },
+  "stock_summary": {
+    "rows": 51,
+    "statuses": {
+      "value": 33,
+      "error": 18
+    },
+    "error_classes": {
+      "AccessConflict": 11,
+      "Type": 7
+    },
+    "replay": false,
+    "logical_traces": 18,
+    "cpu_list": "0-7,10-31"
+  },
+  "P1": {
+    "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",
+    "rows": [
+      {
+        "index": 233,
+        "label": "is_empty/iterator",
+        "source_sha256": "43ec818cce031f70ccf65297b34c443f067a68a38e05a64a07d144a1af106bd5"
+      },
+      {
+        "index": 234,
+        "label": "is_empty/range",
+        "source_sha256": "5f0eca3039e07d066b40685b6c571125a36920905ec95d2db129a47e9fc1012e"
+      },
+      {
+        "index": 235,
+        "label": "is_empty/option",
+        "source_sha256": "97fa194254a1abdeddb591d1c9b7c388f00579cd437844bc4f14f371035bd41f"
+      },
+      {
+        "index": 236,
+        "label": "is_empty/int",
+        "source_sha256": "c0d13de38ddcd22916ac0f64aa23611f7f88feedb9fa0bb57c9591690d7f71a6"
+      },
+      {
+        "index": 241,
+        "label": "contains_key/iterator",
+        "source_sha256": "a7572453967082ac5c4b86066802fa5f3db80bf5ed9cab1f0ea6915d027f79d2"
+      }
+    ]
+  }
+}

@@ -5,6 +5,27 @@ use serde_json::{json, Value as Json};
 use std::cell::RefCell;
 include!("constructors/graph.rs");
 const CASES: &str = include_str!("object_methods/cases.json");
+const SUPPLEMENT: &str = include_str!("object_methods/supplement_cases.json");
+const ROWS: usize = 191;
+const SUPPLEMENT_ROWS: usize = 51;
+
+/// The frozen rows followed by the insertion-order and receiver-proof supplement.
+fn cases() -> Vec<Json> {
+	let mut rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	rows.extend(serde_json::from_str::<Vec<Json>>(SUPPLEMENT).unwrap());
+	rows
+}
+
+/// Stock observations in `cases()` order.
+fn frozen() -> Vec<Json> {
+	let mut rows: Vec<Json> =
+		serde_json::from_str(include_str!("object_methods/stock.json")).unwrap();
+	rows.extend(
+		serde_json::from_str::<Vec<Json>>(include_str!("object_methods/supplement_stock.json"))
+			.unwrap(),
+	);
+	rows
+}
 
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
 
@@ -60,7 +81,7 @@ fn child() {
 	let engine = std::env::var("C17B_ENGINE").unwrap();
 	assert_eq!(engine, "stock");
 	let index: usize = std::env::var("C17B_CASE").unwrap().parse().unwrap();
-	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	let cases = cases();
 	let row = &cases[index];
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
@@ -109,10 +130,10 @@ fn child() {
 	let mut result = result;
 	result["projected"] = projection(&result);
 	if std::env::var_os("C17B_REPLAY").is_some() {
-		let frozen: Json = serde_json::from_str(include_str!("object_methods/stock.json")).unwrap();
 		assert_eq!(
 			result["projected"],
-			super::object_order::order_fixed("object_methods", index, &frozen[index])["projected"]
+			super::object_order::order_fixed("object_methods", index, &frozen()[index])
+				["projected"]
 		);
 	}
 	let path = std::env::var_os("C17B_RESULT").unwrap();
@@ -177,8 +198,25 @@ fn observer_controls() {
 			freeze["files"][name]
 		);
 	}
+	let supplement: Json =
+		serde_json::from_str(include_str!("object_methods/supplement_freeze.json")).unwrap();
+	for (name, bytes) in [
+		("supplement_cases.json", SUPPLEMENT),
+		(
+			"supplement_stock.json",
+			include_str!("object_methods/supplement_stock.json"),
+		),
+	] {
+		assert_eq!(
+			hex(Sha256::digest(bytes.as_bytes()).as_ref()),
+			supplement["files"][name]
+		);
+	}
 	let rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	assert_eq!(rows.len(), 191);
+	assert_eq!(rows.len(), ROWS);
+	let rows = cases();
+	assert_eq!(rows.len(), ROWS + SUPPLEMENT_ROWS);
+	assert_eq!(frozen().len(), rows.len());
 	let mut labels = std::collections::BTreeSet::new();
 	for row in rows {
 		assert!(labels.insert(row["label"].as_str().unwrap().to_owned()));
@@ -229,7 +267,7 @@ fn observer_controls() {
 #[ignore = "C17b admission inventory; bounded external operator only"]
 fn compile_child() {
 	let index: usize = std::env::var("C17B_CASE").unwrap().parse().unwrap();
-	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	let cases = cases();
 	let row = &cases[index];
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["c17b"]).unwrap();
@@ -281,16 +319,14 @@ fn stock_contract() {
 #[cfg(target_os = "linux")]
 fn run_contract(engine: &str) {
 	assert_eq!(engine, "stock");
-	let cases: Json = serde_json::from_str(CASES).unwrap();
-	let frozen: Json = serde_json::from_str(include_str!("object_methods/stock.json")).unwrap();
-	let cases = cases.as_array().unwrap();
-	let frozen = frozen.as_array().unwrap();
-	assert_eq!(cases.len(), 191);
+	let cases = cases();
+	let frozen = frozen();
+	assert_eq!(cases.len(), ROWS + SUPPLEMENT_ROWS);
 	assert_eq!(cases.len(), frozen.len());
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
-	for (i, (case, expected)) in cases.iter().zip(frozen).enumerate() {
+	for (i, (case, expected)) in cases.iter().zip(&frozen).enumerate() {
 		let fixed = super::object_order::order_fixed("object_methods", i, expected);
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
