@@ -188,6 +188,7 @@ impl Store {
 	/// live entry of this open store, of the handle's generation, whose payload is
 	/// present, is a `RangeIterator`, and whose `readers` is 0, so `mutable` would succeed.
 	/// Never mutates (`&self`).
+	#[inline]
 	pub(crate) fn range_iterator_for_native(&self, value: Value) -> Option<(i64, i64)> {
 		// Kind of value: a heap handle. Any scalar is not an iterator.
 		let Value::Heap(h) = value else {
@@ -213,6 +214,7 @@ impl Store {
 	/// B1 commit (M1): sets the RangeIterator's `next` to `new`, only if the entry still
 	/// passes every check of `range_iterator_for_native` with exactly `expect`, and `new`
 	/// is reachable from it. Every `Err` returns before the single write.
+	#[inline]
 	pub(crate) fn commit_range_next_for_native(
 		&mut self,
 		value: Value,

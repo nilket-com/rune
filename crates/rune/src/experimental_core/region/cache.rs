@@ -611,6 +611,7 @@ std::thread_local! {
 }
 
 impl Cache {
+	#[inline]
 	fn enabled(&mut self) -> Enabled {
 		// cranelift-jit appends to /tmp/perf-<pid>.map (and unwraps) when this is set, so
 		// the tier refuses to load anything then. Read once per thread. The mapping
@@ -626,6 +627,7 @@ impl Cache {
 		})
 	}
 
+	#[inline]
 	fn position(&self, code: u32) -> Option<usize> {
 		self.entries.iter().position(|e| e.code == code)
 	}
@@ -716,6 +718,7 @@ impl Guard {
 }
 
 impl Drop for Guard {
+	#[inline]
 	fn drop(&mut self) {
 		let Some(regions) = self.regions.take() else {
 			return;
@@ -730,6 +733,7 @@ impl Drop for Guard {
 	}
 }
 
+#[inline]
 fn put_back(cache: &mut Cache, regions: ProgramRegions) {
 	cache.tick += 1;
 	let tick = cache.tick;
@@ -774,6 +778,7 @@ impl Drop for BuildGuard {
 /// the first invocation.
 // The cache closure returns the final `Checkout` as its `Err` (see `Checkout`).
 #[allow(clippy::result_large_err)]
+#[inline]
 pub(crate) fn checkout(code: &Code) -> Checkout {
 	#[cfg(test)]
 	{
