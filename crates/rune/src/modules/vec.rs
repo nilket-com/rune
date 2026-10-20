@@ -51,6 +51,7 @@ pub fn module() -> Result<Module, ContextError> {
 	#[cfg(feature = "fresh-core")]
 	{
 		m.fresh_iter = crate::function::fresh_iter::marker::ITER;
+		m.fresh_object = crate::function::fresh_object::marker::VEC;
 	}
 
 	m.ty::<Vec>()?.docs(docstring! {

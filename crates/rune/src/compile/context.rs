@@ -360,6 +360,8 @@ pub struct Context {
 	#[cfg(feature = "fresh-core")]
 	fresh_variant: crate::function::fresh_variant::State,
 	#[cfg(feature = "fresh-core")]
+	fresh_object: crate::function::fresh_object::State,
+	#[cfg(feature = "fresh-core")]
 	fresh_methods: crate::function::fresh_methods::State,
 	/// Handlers for realizing traits.
 	traits: hash::Map<Option<TraitHandler>>,
@@ -570,6 +572,8 @@ impl Context {
 		let pipeline_pending = self.fresh_pipeline.begin_module(module.fresh_pipeline);
 		#[cfg(feature = "fresh-core")]
 		let variant_pending = self.fresh_variant.begin_module(module.fresh_variant);
+		#[cfg(feature = "fresh-core")]
+		let object_pending = self.fresh_object.begin_module(module.fresh_object);
 		if let Some(ComponentRef::Crate(name)) = module.item.first() {
 			self.crates.try_insert(name.try_into()?)?;
 		}
@@ -696,6 +700,7 @@ impl Context {
 			self.fresh_text.finish_module(text_pending);
 			self.fresh_pipeline.finish_module(pipeline_pending);
 			self.fresh_variant.finish_module(variant_pending);
+			self.fresh_object.finish_module(object_pending);
 			if sort_builtin {
 				self.fresh_sort_by = true;
 				self.fresh_sort_by_closed = false;
@@ -916,6 +921,11 @@ impl Context {
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_variant_method(&self, m: crate::function::fresh_variant::Method) -> bool {
 		self.fresh_variant.ready(m)
+	}
+	/// Fresh core (C17b): every certified provider of `m` is its std registration.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_object_method(&self, m: crate::function::fresh_object::Method) -> bool {
+		self.fresh_object.ready(m)
 	}
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_text_collect(&self) -> bool {
@@ -1512,16 +1522,30 @@ impl Context {
 			})
 		};
 		#[cfg(feature = "fresh-core")]
+		let plain = || match &assoc.kind {
+			ModuleAssociatedKind::Function(f) => {
+				(assoc.name.function_parameters == Hash::EMPTY, f.trait_hash)
+			}
+			ModuleAssociatedKind::Constant(..) => (false, None),
+		};
+		#[cfg(feature = "fresh-core")]
 		let variant_touch = match &assoc.name.kind {
 			meta::AssociatedKind::Instance(name) => {
 				crate::function::fresh_variant::Method::from_name(name).and_then(|m| {
-					let (plain, trait_hash) = match &assoc.kind {
-						ModuleAssociatedKind::Function(f) => {
-							(assoc.name.function_parameters == Hash::EMPTY, f.trait_hash)
-						}
-						ModuleAssociatedKind::Constant(..) => (false, None),
-					};
+					let (plain, trait_hash) = plain();
 					self.fresh_variant
+						.begin(m, assoc.container, plain, trait_hash)
+						.map(|bit| (m, bit))
+				})
+			}
+			_ => None,
+		};
+		#[cfg(feature = "fresh-core")]
+		let object_touch = match &assoc.name.kind {
+			meta::AssociatedKind::Instance(name) => {
+				crate::function::fresh_object::Method::from_name(name).and_then(|m| {
+					let (plain, trait_hash) = plain();
+					self.fresh_object
 						.begin(m, assoc.container, plain, trait_hash)
 						.map(|bit| (m, bit))
 				})
@@ -1705,6 +1729,9 @@ impl Context {
 			}
 			if let Some((m, bit)) = variant_touch {
 				self.fresh_variant.installed(m, bit);
+			}
+			if let Some((m, bit)) = object_touch {
+				self.fresh_object.installed(m, bit);
 			}
 			if let Some((m, true)) = text_touch {
 				self.fresh_text.installed(m);

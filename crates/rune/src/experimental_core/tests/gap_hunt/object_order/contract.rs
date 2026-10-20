@@ -54,7 +54,10 @@ fn verify_fresh_case(
 		dispositions["summary"]["classifications"],
 		serde_json::to_value(&counts).unwrap()
 	);
-	let rule = &o1b_admitted(&rows[index]);
+	let rule = &admitted(
+		include_str!("c17b_admissions.json"),
+		&admitted(include_str!("o1b_admissions.json"), &rows[index]),
+	);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
@@ -128,10 +131,10 @@ fn verify_fresh_case(
 	assert_eq!(hex(stderr), stock["stderr_hex"]);
 }
 
-/// O1b admits `.iter()` on Objects, Tuples and `()`: the pinned O1 runtime
-/// refusal it replaces must match exactly before its new rule applies.
-fn o1b_admitted(rule: &Json) -> Json {
-	let doc: Json = serde_json::from_str(include_str!("o1b_admissions.json")).unwrap();
+/// A later record's admission of a pinned row: the whole disposition it
+/// replaces must match exactly before its new rule applies.
+pub(super) fn admitted(doc: &str, rule: &Json) -> Json {
+	let doc: Json = serde_json::from_str(doc).unwrap();
 	let Some(row) = doc["rows"]
 		.as_array()
 		.unwrap()

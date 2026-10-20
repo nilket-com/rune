@@ -84,7 +84,7 @@ fn missing_arguments_and_runtime_context_preflight() {
 fn registered_and_script_names_refuse_before_execution() {
 	let context = Context::with_default_modules().unwrap();
 	for source in [
-		"pub fn main(){42.is_empty()}",
+		"pub fn main(){42.extend()}",
 		"pub fn main(){42.next_back()}",
 		"pub fn main(){\"42\".parse::<i64>()}",
 		"struct Local; impl Local{fn unrecognized(self){23}} pub fn main(){42.unrecognized()}",

@@ -472,16 +472,16 @@ fn nominal_missing_method_proof_rejects_unclosed_receiver_sets() {
 	let context = Context::with_default_modules().unwrap();
 	for (source, admitted) in [
 		(
-			"struct T(a);pub fn main(){let t=T(7);let u=t;u.is_empty()}",
+			"struct T(a);pub fn main(){let t=T(7);let u=t;u.extend()}",
 			true,
 		),
 		(
-			"struct T(a);pub fn main(){let t=T(7);t=[];t.is_empty()}",
+			"struct T(a);pub fn main(){let t=T(7);t=[];t.extend()}",
 			false,
 		),
-		("struct T(a);pub fn main(t){t.is_empty()}", false),
+		("struct T(a);pub fn main(t){t.extend()}", false),
 		(
-			"struct T(a);impl T{fn is_empty(self){true}}pub fn main(){T(7).is_empty()}",
+			"struct T(a);impl T{fn extend(self){true}}pub fn main(){T(7).extend()}",
 			false,
 		),
 		("struct T(a);pub fn main(){T(7).collect::<T>()}", false),

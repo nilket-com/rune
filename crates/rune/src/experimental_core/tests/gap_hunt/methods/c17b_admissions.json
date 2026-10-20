@@ -1,0 +1,16 @@
+{
+  "051": {
+    "source_sha256": "d0288156b50723854e96c4bf3fa48bc25d57e4d56be2742d3873278fede6f424",
+    "stock_observation_sha256": "82d0ed0b55b4392e51f2d38ed77f8223fade15b1235cf391ebe0edcadec4a521",
+    "policy": "Exact original stock observation",
+    "previous_disposition": "Refused-surface",
+    "record": "C17b"
+  },
+  "052": {
+    "source_sha256": "1923a7c0bcacc6138561b554a3a113007455cf82503a4ef0a198bc3cd9a642cd",
+    "stock_observation_sha256": "3fe6d713580751d8ff33633cb7d890359ea6d762dcd92507f745671af30c359b",
+    "policy": "Exact original stock observation",
+    "previous_disposition": "Refused-surface",
+    "record": "C17b"
+  }
+}

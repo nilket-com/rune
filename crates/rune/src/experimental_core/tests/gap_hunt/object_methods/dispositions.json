@@ -1,0 +1,3275 @@
+{
+  "summary": {
+    "rows": 242,
+    "classifications": {
+      "Exact": 150,
+      "Inherited-chain": 2,
+      "Inherited-refusal": 79,
+      "Intentional-D1": 11
+    },
+    "status": "FROZEN",
+    "rulings": {
+      "receiver_proof": "get/insert/remove are admitted only on a statically proven Object-origin receiver (anonymous object literal, group, unlabeled block tail, or a local whose initializer and every assignment are Object-origin); contains_key and is_empty also run on dynamic receivers under the C17a absence certificate",
+      "key_move": "insert moves its String key out of its handle (C11c tombstone); later reads, writes and takes report it has been moved, as stock",
+      "order": "insertion order in both engines (O1); remove shift-removes",
+      "wrong_key_type": "stock message copied exactly (Expected type String, Bad argument #1)",
+      "iteration_conflict": "insert/remove while the Object is iterated: Cannot write the receiver: it is being read (copied)",
+      "self_insert": "copied: the reference cycle stays charged until the store closes (retained_cycle pins the charged entry)",
+      "inherited_chain": "rows 60 and 65: a moved value read by len has no BadArgument #0 chain in fresh; pre-existing at 0f475e00 (drop), on the D backlog",
+      "warnings": "stock LetPatternMightPanic for `for (k, v) in o`; the fresh frontend does not report it (O1 precedent)",
+      "wrong_receiver": "fresh names the missing method (existing D1 intentional diagnostic)"
+    }
+  },
+  "rows": [
+    {
+      "index": 0,
+      "label": "get/present",
+      "source_sha256": "b5df067ff835b4aba4577009054d3d11e263d0a5b8165bf712541aaebee6006e",
+      "stock_row_sha256": "fd124cd05b488d19aade0e0ce372a26bdaaa5686a22c51ccc33e5c9f8d04b9ff",
+      "classification": "Exact"
+    },
+    {
+      "index": 1,
+      "label": "get/missing",
+      "source_sha256": "73c72f2c54a2361afa9b369b611f8aabe8e0949bad643a74f2ad3e5d4ed12917",
+      "stock_row_sha256": "e46f2a219790b63cc00973f69ae8716858132e5f973c718fc5385ae0c5bc9a7c",
+      "classification": "Exact"
+    },
+    {
+      "index": 2,
+      "label": "get/empty-object",
+      "source_sha256": "1689a1e7f3f900cb73e730a45499f5bc973618685bc8ac8751f517939abfad2c",
+      "stock_row_sha256": "376b8f02f7f44ffe3845ac0dbd941eca2ae4fd193cf856e27868821d1ad8a070",
+      "classification": "Exact"
+    },
+    {
+      "index": 3,
+      "label": "get/kinds",
+      "source_sha256": "4755f8b9421daf6025bb53ef21a94a5fd27022641e638bac36978c23a6c134ec",
+      "stock_row_sha256": "4bfd654e30368c9eab997d3c2aa344d8002dca694d016d72a28b68a8a3463388",
+      "classification": "Exact"
+    },
+    {
+      "index": 4,
+      "label": "get/fn-type-values",
+      "source_sha256": "a7988fc9dfd61bda393ef0986ed066758bf8a174b024887fd00d5e6e8d7b30a4",
+      "stock_row_sha256": "2f715faea63e82f4ad1be7883277ac895e68d2fda5da7d1fd879b07f8182ffda",
+      "classification": "Exact"
+    },
+    {
+      "index": 5,
+      "label": "get/alias-unwrap-push",
+      "source_sha256": "1ad5105bc2ec28fa07a4e7f852494b57235f4ba1664f25c4efaf2723cdfaab15",
+      "stock_row_sha256": "76dd610a0c866ed90c8dca2ab5cf48132fee9757e742ea7e5d5bf0073a0692bc",
+      "classification": "Exact"
+    },
+    {
+      "index": 6,
+      "label": "get/alias-held",
+      "source_sha256": "1704c80c3098568fd8a47b840c814d88686548bb7f9534baf9467f1183ed0c68",
+      "stock_row_sha256": "66e37033325e2b221acc6fb8710483b958514d18ba2b0ab3df242443de3e691e",
+      "classification": "Exact"
+    },
+    {
+      "index": 7,
+      "label": "get/alias-object",
+      "source_sha256": "7042a289e626b6830cdf9d51b1253219dc9a0645b6e254b599ba6f4c25d651ba",
+      "stock_row_sha256": "545cc20428c7db8f2e6061fb2bb029dc18a9460f72fb75336a633c069cda2d27",
+      "classification": "Exact"
+    },
+    {
+      "index": 8,
+      "label": "get/alias-struct",
+      "source_sha256": "1897b330e96108557049adbc8f621ddb900b0e271230fd6efd981c80cff74556",
+      "stock_row_sha256": "126291c3b476c2466a988bfd6471996bc9d6805b89ed622a4df55ed1d3489be3",
+      "classification": "Exact"
+    },
+    {
+      "index": 9,
+      "label": "get/alias-string",
+      "source_sha256": "cd02dd816f7a84488593a4e6a1dcd6b3b0acab7d2e57e03e2c7b64efa7639509",
+      "stock_row_sha256": "2980b7cb655b3ef8acae920c00b891ec2b627f4c91a2261578a9d6ef7c90e10d",
+      "fresh": {
+        "location": {
+          "end": 120,
+          "source": 0,
+          "start": 105
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 105, end: 120 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 105:120, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 10,
+      "label": "get/scalar-copy",
+      "source_sha256": "3c13d1c42c22ae7474eb5fb004be93252f21645fb8a0a881a9222df908dd3fb3",
+      "stock_row_sha256": "550b0744ca47955f3d9049b86197c33949bd3ce44892efb9dd4f5b208237da9c",
+      "classification": "Exact"
+    },
+    {
+      "index": 11,
+      "label": "get/twice-same",
+      "source_sha256": "cc9589a6af5ff81a90eee3ae500e66246514b71480edbc7a7fd051e95ab334a5",
+      "stock_row_sha256": "eff8962b06c4de2010ed98b2ec0a3721eabff17f86eff04504eb9b3abb33b496",
+      "classification": "Exact"
+    },
+    {
+      "index": 12,
+      "label": "get/reassign-after-get",
+      "source_sha256": "bdb382203afab298c5b152cc826c30f69945953913d9d57f9ae77d0a0beef640",
+      "stock_row_sha256": "2846339be3311bebd1a7ae6f9cab7be184e63c8857485a702a1495db0ab50b4b",
+      "classification": "Exact"
+    },
+    {
+      "index": 13,
+      "label": "get/key-variable",
+      "source_sha256": "7f12e27a117b2144f20c315668a6410eed36edddf3295db99e0f5552db79460e",
+      "stock_row_sha256": "b48c6005438a5ba89687a842b56458f4f3c5034872d9e2de22483357b8e7db17",
+      "classification": "Exact"
+    },
+    {
+      "index": 14,
+      "label": "get/key-template",
+      "source_sha256": "f58b776ea4b3377ae8cf24ac170f43ac214ae8217fb5dc3c50affdac8a2f1a93",
+      "stock_row_sha256": "6e695defdb71cacda79a687aad2097f714a874ab3c2e350f7d2d6eee42db1b83",
+      "classification": "Exact"
+    },
+    {
+      "index": 15,
+      "label": "get/key-from-vec",
+      "source_sha256": "d6250798ff5ce6c96c2b767d29fbd48e42bb3ac713695dfc992785ea0cee4514",
+      "stock_row_sha256": "e51d93e06ee90dbbecd7835bfac1aebf951b17c4460ef80e20535aff1c0e2eb9",
+      "fresh": {
+        "location": {
+          "end": 137,
+          "source": 0,
+          "start": 94
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 94, end: 137 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 94:137, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 16,
+      "label": "get/key-case-space",
+      "source_sha256": "0ffef8cfdda356d87b20f3559713bbfebfb6121e521cb4d504bf95836539561b",
+      "stock_row_sha256": "f10b586604af6584cfaa33e75e00fd1d07cb850d24c1debb5a6b32142c5aa7f6",
+      "classification": "Exact"
+    },
+    {
+      "index": 17,
+      "label": "get/eq-some",
+      "source_sha256": "0dee999689fe1be032ce2a52e3721e0e6598430b5fe9c353cb3662ae0c93b3ce",
+      "stock_row_sha256": "38aa277a75cdf8c413758fddbbc333f4ae6259ce5161a6e7b447afb4dd70ae0b",
+      "classification": "Exact"
+    },
+    {
+      "index": 18,
+      "label": "get/eq-journey",
+      "source_sha256": "814bd055a3773d30d32e2237ba01a93447d65bb63f5909f29edc75d0108ab4ac",
+      "stock_row_sha256": "8e1b5498074ead7dce193aa22d8d86d47ae21168dd8fc11e8612c13f18fc2fb3",
+      "classification": "Exact"
+    },
+    {
+      "index": 19,
+      "label": "get/match",
+      "source_sha256": "af1ba30288db5274a3dc775544f154697e39619b8389560a3320772932946607",
+      "stock_row_sha256": "245c6cde55fad4eaef48d55861847ea35f23aa251087718a3748fabbcafb7aec",
+      "classification": "Exact"
+    },
+    {
+      "index": 20,
+      "label": "get/if-let",
+      "source_sha256": "d369ea5125054aa516910a34ce03919542e1dfc6054a34159fd98b57061e9843",
+      "stock_row_sha256": "74f316d8f0fed65cee4dceb55d7df847606d59f36e439aa0c5226402dd957bba",
+      "classification": "Exact"
+    },
+    {
+      "index": 21,
+      "label": "get/loop",
+      "source_sha256": "c1577c2a991b3b4829f27d1a1bff73e8b2ee0f0bb2e533ced3d3d46da217c223",
+      "stock_row_sha256": "68eebbb66ede4f0a20fcefb42dc177fa43fa50965e8da4e58229b54f1967cabb",
+      "classification": "Exact"
+    },
+    {
+      "index": 22,
+      "label": "get/closure-capture",
+      "source_sha256": "c7eb0bb39e50a4c26ec3c77467e0bd31eec77791ea2f24023ee99f6bf344a1de",
+      "stock_row_sha256": "3422818efb508dce2cb50a96a1be6cf1b91c84d7cb4b4bda8ee3bee2a25e9ea5",
+      "fresh": {
+        "location": {
+          "end": 94,
+          "source": 0,
+          "start": 86
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 86, end: 94 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 86:94, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 23,
+      "label": "get/closure-param",
+      "source_sha256": "a1c480399327e0ef56c0c0a95463943120d4ed12b404e001c7d7aa2edf258014",
+      "stock_row_sha256": "7249ed018126fcd84c53d82123260599d1d0163fa26d908aed7eddb92507f790",
+      "fresh": {
+        "location": {
+          "end": 83,
+          "source": 0,
+          "start": 73
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 73, end: 83 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 73:83, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 24,
+      "label": "get/fn-param",
+      "source_sha256": "8d28e95426ad0f01a3d82116801716b8f4d6c95ba02c0bc4f4215d849a0d6646",
+      "stock_row_sha256": "8f3a2fc3cfaf5ac7bef290071034ac988c64afc4a412882d48a9fcfdc92e68b6",
+      "fresh": {
+        "location": {
+          "end": 68,
+          "source": 0,
+          "start": 58
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 58, end: 68 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:68, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 25,
+      "label": "get/nested",
+      "source_sha256": "69c81f6abefe2982cd7ec9358d4bea9e7cf759831d2790c1250adf893e387a44",
+      "stock_row_sha256": "16f092b625cdafd8a89e14c558f5bd71e180d45a567807953d65430cd01d3baa",
+      "fresh": {
+        "location": {
+          "end": 133,
+          "source": 0,
+          "start": 87
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 87, end: 133 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 87:133, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 26,
+      "label": "get/field-then-get",
+      "source_sha256": "3db012e9877071bd02cf30eb952a991efe9ca7448194d8807f1823eb7f1fa4e2",
+      "stock_row_sha256": "116f5e2fd07a61a3fe485f068bfb868d8cada1aff17b668c8a8d7ac6829f27cb",
+      "fresh": {
+        "location": {
+          "end": 94,
+          "source": 0,
+          "start": 82
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 94 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:94, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 27,
+      "label": "get/vec-element",
+      "source_sha256": "1aef044166e686a3f00f562d30902efc9503a76d388942301df9d4f15cdd9ec1",
+      "stock_row_sha256": "2f5c45d82011930ed7665d8fd19605683a262f0cdd8d0703629ba026db790897",
+      "fresh": {
+        "location": {
+          "end": 92,
+          "source": 0,
+          "start": 79
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 79, end: 92 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:92, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 28,
+      "label": "get/struct-field",
+      "source_sha256": "36cce4d69f448ba6514aa51c0846cc4c421a22d2910cd6b807c85c67781a88df",
+      "stock_row_sha256": "d718199c074e6d72e01d86237e429e27039bc37ece2f5f7adde547a43967b723",
+      "fresh": {
+        "location": {
+          "end": 94,
+          "source": 0,
+          "start": 82
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 94 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:94, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 29,
+      "label": "get/effects",
+      "source_sha256": "8c1046e031b92d76fecd8853bbf8c76b4210d434ffa8847e7bee6cc52556b148",
+      "stock_row_sha256": "907b6527ed5765982441a8d6f357524538c44b477f04bd6cd8462807bd76859a",
+      "classification": "Exact"
+    },
+    {
+      "index": 30,
+      "label": "get/unwrap-missing",
+      "source_sha256": "20e4a3c917dad165929941b25e541c71490fc1c013df25bf6677aab874d9dc97",
+      "stock_row_sha256": "eeef44ad0b169c709ff306a2d00382108c16708a4a5520192c2e512918dc1bf7",
+      "classification": "Exact"
+    },
+    {
+      "index": 31,
+      "label": "get/expect-missing",
+      "source_sha256": "b93869724d4e1b4deeefd5fac924604e619c79d1abf696e40e052948ff9ee23c",
+      "stock_row_sha256": "2fa1ba07fba8a1ae6c968be4d214b6410ad16d31cc0ac9ffcbb6f6535d61db60",
+      "classification": "Exact"
+    },
+    {
+      "index": 32,
+      "label": "get/unwrap-missing-chain",
+      "source_sha256": "2adf384820c7baa86f16a0467d9bf0945fb055b78127718d75043fa71a31d52f",
+      "stock_row_sha256": "97a14a90dab5c8345da8e0f256e2021abbb3ec7d182e6206a8a68177c5b9da92",
+      "fresh": {
+        "location": {
+          "end": 81,
+          "source": 0,
+          "start": 71
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 71, end: 81 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 71:81, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 33,
+      "label": "get/collected",
+      "source_sha256": "607b22c47fcc08f9211045fd1c70651569f97bebcebfa263a79b5ed07f98577b",
+      "stock_row_sha256": "26ac9426f14f54c145e7ff4cd08ad6a548fd3b6012d9e61d3db9bd760e148610",
+      "fresh": {
+        "location": {
+          "end": 109,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 109 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:109, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 34,
+      "label": "get/large",
+      "source_sha256": "f4aab57b78c8277fd19e298b075353aa88f1b4e01bf41e05810a804ebd2c1b66",
+      "stock_row_sha256": "6899335f31777be6d1ff9caed6bbbdddf410ca38904dd110602cd1edcec3229c",
+      "classification": "Exact"
+    },
+    {
+      "index": 35,
+      "label": "get/as-value",
+      "source_sha256": "ce135ce7d8c2c9a4334e9ae131b3c78991480cd75d9644d66e8f76ed88980a60",
+      "stock_row_sha256": "c0cbe9c8d21a456e3db16d4db55ab010edd6f362e842b91b83fb2056259302c1",
+      "classification": "Exact"
+    },
+    {
+      "index": 36,
+      "label": "contains_key/basic",
+      "source_sha256": "39d63cb361a26e50be3b8e4a9110f9d4c32b4f5138b53319fad84cdbd0e9ebcb",
+      "stock_row_sha256": "0f3f12d24d1dd511cef3fb1b86cbe150947da8878c01cd7db827ecf624c9231a",
+      "classification": "Exact"
+    },
+    {
+      "index": 37,
+      "label": "contains_key/unit-and-none-values",
+      "source_sha256": "a6b1c86b2f644b93fd57ac79034509004a040f45527e4576e3dd00321be92189",
+      "stock_row_sha256": "5b5a1fd1c133f8547095cdfec62805a90c8f4fd69d29c6b11631abeaa333849b",
+      "classification": "Exact"
+    },
+    {
+      "index": 38,
+      "label": "contains_key/journey",
+      "source_sha256": "8f7b5e7a62c685126f84adf9016bc6e4adc08fb08a62757c3c8100605ae40b98",
+      "stock_row_sha256": "d5ca43200360efeabd33ddd9a3c9ef8bc80734987899d8e92ec5a9f9626670a4",
+      "classification": "Exact"
+    },
+    {
+      "index": 39,
+      "label": "contains_key/assert-fail",
+      "source_sha256": "f3f4897aebfaa0cbdfa7b13d79d9aa90cfc42591268766098d6ee392725c5e5d",
+      "stock_row_sha256": "624801deac0dd1fb757941a50d189a6a72216dd4c9d1560d9b806a9bceb791e9",
+      "classification": "Exact"
+    },
+    {
+      "index": 40,
+      "label": "contains_key/after-insert-remove",
+      "source_sha256": "81e66f9849d623a3675398bfb76110ca63053772d01e5476c361796b911c7230",
+      "stock_row_sha256": "4433311896bcc252b92be26a0678a4d0087d96c8ef51404f55fa093a97ddbeac",
+      "classification": "Exact"
+    },
+    {
+      "index": 41,
+      "label": "contains_key/word-count",
+      "source_sha256": "5adbc9a03efae9bac9cf1d1ef0c6e208a253cdd0d4d85cacf10b1fb5d557f750",
+      "stock_row_sha256": "d9751deb2b13c5a6fa5a2ed6b889923b0b31cd4e6db9d35e7f5df3156aca63e3",
+      "classification": "Exact"
+    },
+    {
+      "index": 42,
+      "label": "contains_key/not",
+      "source_sha256": "43c648984d03f5aa99f79e8c8432917341db954ba7e8bf07b53182134e044347",
+      "stock_row_sha256": "e310da20dfd4bbb9de65df244097edb30e1d7070a983d17786d8b6e6b2186604",
+      "classification": "Exact"
+    },
+    {
+      "index": 43,
+      "label": "contains_key/and-short-circuit",
+      "source_sha256": "b9a604e733186f5d5e5d3476ceaf6f8645e3bdcba3667dd0098fb0552f130618",
+      "stock_row_sha256": "69ebc30d318876517ff09de71e35210037d4f87279581390989138ff2cc8e76f",
+      "classification": "Exact"
+    },
+    {
+      "index": 44,
+      "label": "contains_key/while",
+      "source_sha256": "5e604814cdbfeae68570aec0e165b6f5d99e56dd1422a00fbd5e75b035fad40e",
+      "stock_row_sha256": "a2cf766ecfda276ee18e8c9c9d6b139ca5dc6b4a8c947b3aa2cd73afe0d505aa",
+      "classification": "Exact"
+    },
+    {
+      "index": 45,
+      "label": "contains_key/effects",
+      "source_sha256": "f36d421907484bb2b4d51bf2879bda958ab6cffbaf61ddc9ff793c91f85cac02",
+      "stock_row_sha256": "e5d5ef4222ca06eb25dd5362149babf8e8eba4eb8a02274c941e6723c717595a",
+      "classification": "Exact"
+    },
+    {
+      "index": 46,
+      "label": "contains_key/closure",
+      "source_sha256": "40386275c281f47e3cf36c6b74639350375cc2cd1dcd429d69d9e957e35dab58",
+      "stock_row_sha256": "542c7411b67b9681e006df6ec5de8f50574e4606a28743c8df41ae5c9fff7aad",
+      "fresh": {
+        "location": {
+          "end": 136,
+          "source": 0,
+          "start": 77
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 77, end: 136 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 77:136, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 47,
+      "label": "contains_key/fn-param",
+      "source_sha256": "040273d59276bf3010d0939450f20a2825edfcd37490827782965455d6ad8e72",
+      "stock_row_sha256": "6287b276b092fe30fb27f4e623f275d7a4f894aaaa5cae74cba7a2836a2b18a9",
+      "classification": "Exact"
+    },
+    {
+      "index": 48,
+      "label": "contains_key/unicode",
+      "source_sha256": "a8df44acb429dd3b1f043e75790bcec243a2560016162ac81adb1d738d779bb6",
+      "stock_row_sha256": "6a09ab4542e547b54aac0578131a49cbec9530fbe6828ce2b41e2228b79cbca2",
+      "classification": "Exact"
+    },
+    {
+      "index": 49,
+      "label": "contains_key/escape",
+      "source_sha256": "4335b67daca29017eb8bc1641a47aa958cbae045a95d4a5c644821fc3b80697d",
+      "stock_row_sha256": "ee566a80a4c503bebc450b65c337b355d88d10e888ec7ffcbd1f4a6ea36f05d3",
+      "classification": "Exact"
+    },
+    {
+      "index": 50,
+      "label": "contains_key/as-value",
+      "source_sha256": "909cd40d976a17111cdda8554ae33a5deb6e0b93489c8b9e830bd006862c6a5f",
+      "stock_row_sha256": "3ca7615566d536f0677df2d3af215b3550fb69086c1b1db0bee4ac7ee02bd1f2",
+      "classification": "Exact"
+    },
+    {
+      "index": 51,
+      "label": "insert/new-key",
+      "source_sha256": "ff8189e6f2ba0349843d11cf21b3b5a56329b6b31ebd82488a4bee34d2ab85c3",
+      "stock_row_sha256": "e63f6df2890a148eee280442cacf444181d70fcf36073b8b8a57078920fb76fb",
+      "classification": "Exact"
+    },
+    {
+      "index": 52,
+      "label": "insert/replace",
+      "source_sha256": "b76ad65f0b5060bc98e1bc2dae66bbdfb6f79602c607fe70ef78206aa9905ead",
+      "stock_row_sha256": "58d9f78af8c021f591c7d337a49f30ae1509562dd66b57cfeaa92eaa4d0a6d03",
+      "classification": "Exact"
+    },
+    {
+      "index": 53,
+      "label": "insert/returns-old-alias",
+      "source_sha256": "7af2353c716aed678b4beed247adf22eb0942886bd16b0bd71be11f39fa6dbc7",
+      "stock_row_sha256": "d24e4ad96d94fe4b7bd9bbdf62cc84a4a631933ef25907e92474a510193e1089",
+      "classification": "Exact"
+    },
+    {
+      "index": 54,
+      "label": "insert/value-alias",
+      "source_sha256": "e6c42f0153d5ae0ff45d8c8640f9ea23291ef83783a038053ab3538dbf50e7bf",
+      "stock_row_sha256": "67ebdbedbfa40120266187d8b720e8c6b8ba9722fef7108b9e5b55c2560e1a93",
+      "classification": "Exact"
+    },
+    {
+      "index": 55,
+      "label": "insert/value-alias-two-keys",
+      "source_sha256": "cf94cff2c09cbdd7e994090a3161e3500c28a863464aa43c8d8fa91360506572",
+      "stock_row_sha256": "386c268766c7bd2105f02d2e8238dce2594acacf978fc49150a465f06bede8d2",
+      "classification": "Exact"
+    },
+    {
+      "index": 56,
+      "label": "insert/old-held-elsewhere",
+      "source_sha256": "21750d3992cb81421617de4ed0e325d424da355e7682120bff6ff400fdd84369",
+      "stock_row_sha256": "40d6ce88a577434064c903fbf71857f4ebb876d1c34ac545989f37e9c6ac23f5",
+      "classification": "Exact"
+    },
+    {
+      "index": 57,
+      "label": "insert/replace-same-value",
+      "source_sha256": "620fe0c0576fd8d309d0db2aafb86c42fb63a0fdf727069fdab7dcf273f61277",
+      "stock_row_sha256": "fe9366982848639e0eaf34f57fa9ae7518095483d0e9618e45e428f9d7dee37e",
+      "classification": "Exact"
+    },
+    {
+      "index": 58,
+      "label": "insert/kinds",
+      "source_sha256": "4889b1feaef538003af1eb4546e94636b25899b566b9e68abffb93d2888e979b",
+      "stock_row_sha256": "825190f3f3c626a375078a695d5f3cb18abdb6b98350ab122b64ac9f00353b92",
+      "classification": "Exact"
+    },
+    {
+      "index": 59,
+      "label": "insert/key-variable",
+      "source_sha256": "e4784b0ceb006db0dd6c27c09475aa22e2cee3aa597e93ae220a4e5672c88703",
+      "stock_row_sha256": "87167e3f15bbea48ccfcbce8009c5d84bd4f6d21519f3c8c75602cbd128f5cc9",
+      "classification": "Exact"
+    },
+    {
+      "index": 60,
+      "label": "insert/key-variable-moved-len",
+      "source_sha256": "a76732265e1b3e294550b04cbdacdc86fb303d05c2d3314545a57b07ab60c935",
+      "stock_row_sha256": "ba755e22c1ea4291826045c55cb086aaf6897f366a5c3946e141f1bd20e40db9",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "AccessConflict",
+            "display": "Cannot read the value: it has been moved",
+            "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+            "sites": [
+              {
+                "end": 105,
+                "source": 0,
+                "start": 98
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 105,
+                "source": 0,
+                "start": 98
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot read the value: it has been moved\n  at c17b.rn:1:99"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Inherited-chain"
+    },
+    {
+      "index": 61,
+      "label": "insert/key-variable-moved-get",
+      "source_sha256": "7b866d6d2be17a4152b1e41cb0522bd28d18ecf6e7ca6545b6cd7bd956e6d224",
+      "stock_row_sha256": "bfd7a4e1deba1be06fe41ce22690d1c510b28a9ab2765f5d20530a5d0e549349",
+      "classification": "Exact"
+    },
+    {
+      "index": 62,
+      "label": "insert/key-variable-reuse",
+      "source_sha256": "3bdcf8b703b4e28ba6b1f0dd36648339d7827659701773d01dafdd1640f49a2d",
+      "stock_row_sha256": "634fa9cc790f408709fc09673e3a8ee126301585f43e56480e9192c08ed25a6c",
+      "classification": "Exact"
+    },
+    {
+      "index": 63,
+      "label": "insert/key-mutated-after",
+      "source_sha256": "24f41964b2b5aca76ceb778d359c331ef5c4c6eca568d107ef55ad47f3a723de",
+      "stock_row_sha256": "aabe5bd0f7be185255c0033d466f7faeca6fc0666f9fa49c3bd5c610993d9b80",
+      "fresh": {
+        "location": {
+          "end": 113,
+          "source": 0,
+          "start": 98
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 98, end: 113 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:113, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 64,
+      "label": "insert/key-field-string",
+      "source_sha256": "8e6e5e23459e130229b71cab4fd11cf5208b67f42f547feebb817f0cca491575",
+      "stock_row_sha256": "f5aab9f818cdc5298a6c98ff468a5522554f33093e0e4e181e7ebc8b9266ea40",
+      "classification": "Exact"
+    },
+    {
+      "index": 65,
+      "label": "insert/key-field-string-moved",
+      "source_sha256": "46903605a7415aad2bd2296e01d894caa099947e885fca24936acc7940a57f5d",
+      "stock_row_sha256": "7f0e43ef942a65904b14bcc3762b124061e24468219aa4ddbbdc0255857b5b97",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "AccessConflict",
+            "display": "Cannot read the value: it has been moved",
+            "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+            "sites": [
+              {
+                "end": 114,
+                "source": 0,
+                "start": 105
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 114,
+                "source": 0,
+                "start": 105
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Cannot read the value: it has been moved\n  at c17b.rn:1:106"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Inherited-chain"
+    },
+    {
+      "index": 66,
+      "label": "insert/key-clone",
+      "source_sha256": "2769534badbda6ba2da5f4ca3bc20e74a5404f8c26f1565ff68adf2e23adae1b",
+      "stock_row_sha256": "8227e15072c7a2547e2cb9428e22769425e1323c98d320e4b0bb5bad1df2f318",
+      "classification": "Exact"
+    },
+    {
+      "index": 67,
+      "label": "insert/key-template",
+      "source_sha256": "ae138f37ae7b5e1f33ea82256182b427546a1f5c0f49185110c00dc5725e6201",
+      "stock_row_sha256": "bd28120548102afea39705675ef6a144546571d56c21bc7b5195ec3d2c773b0d",
+      "classification": "Exact"
+    },
+    {
+      "index": 68,
+      "label": "insert/key-empty",
+      "source_sha256": "b12d0739793f1762ae4b18e0858b6f447e35c90f5a20e5c2136f2a9bc393811c",
+      "stock_row_sha256": "1aa095a710db0adbbec6dea99097278dcf22e51ace4b22a8679dc3aa21d2d054",
+      "classification": "Exact"
+    },
+    {
+      "index": 69,
+      "label": "insert/order-small",
+      "source_sha256": "1635fcd5ff2b5e38b490e596fc2a46cf02f7990a77f283765d42e34f9159eb5f",
+      "stock_row_sha256": "175ca6d5a0a4b46eb70d97b75fcee24b58c71824a79678410d278bbaea76faff",
+      "classification": "Exact"
+    },
+    {
+      "index": 70,
+      "label": "insert/order-literal-vs-insert",
+      "source_sha256": "7031bc87905383c4dd7950afceb6f3d34302f21d04a68db18c15d3c7a78e5af1",
+      "stock_row_sha256": "7b1afd0764d92025ed95bdb40b97cfe193913623f6b303da7abbb840d68db5cb",
+      "classification": "Exact"
+    },
+    {
+      "index": 71,
+      "label": "insert/order-many",
+      "source_sha256": "9b7a94f018ea8d164c8f84ff5217a8fbddb66b5ba9b848c8c8b15910e1e02815",
+      "stock_row_sha256": "48476372d37a938f4359ae941b81e4afd313faf63474050237621ccde6c86cc3",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 124:129, context: Some(64:149) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 72,
+      "label": "insert/order-remove-reinsert",
+      "source_sha256": "cf147742971a587996ed76dd1c7d1107f735ccedbd184157be47068970e4f62d",
+      "stock_row_sha256": "90a7c770b598845fa97805ed85cd829b188513b52ae1f9f58192a7810499606c",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 191:196, context: Some(64:216) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 73,
+      "label": "insert/effects",
+      "source_sha256": "f66a2f4ffcb0d23b538dfadcc985c927aa25c52569ca387d6dbca2167ee15046",
+      "stock_row_sha256": "5bd4737596f43441673592dd0da6f1d894dc9b0d3792169474d62cb13f5fc65d",
+      "classification": "Exact"
+    },
+    {
+      "index": 74,
+      "label": "insert/effects-replace",
+      "source_sha256": "06223e81f5c15246cb99e3a4a919eccbc0d416c0df02817482e5e133e938e921",
+      "stock_row_sha256": "4e9b3ea216c49ced7be754ed45f927aa2e5eea021d2c0b433b003cb32f813c89",
+      "classification": "Exact"
+    },
+    {
+      "index": 75,
+      "label": "insert/value-from-get",
+      "source_sha256": "d36f968247220d2304516eee976498fb6ac7b5699030cb4874e9eba937040028",
+      "stock_row_sha256": "9772052f970bd77f7bab42dac48f07bc5fa04ef16bd2ca396269bd5d8e2a6ea2",
+      "classification": "Exact"
+    },
+    {
+      "index": 76,
+      "label": "insert/self-value",
+      "source_sha256": "262b6cd6888f39d2ec8b1f5658e1cef5b8536d14605b76135c67660545125abc",
+      "stock_row_sha256": "f1dc21a538bb6dabf51c7311495ba60c55268405c4170bb1cff211cd3a3db149",
+      "retained_cycle": {
+        "row_live_entries": 1,
+        "row_payload_bytes": 42,
+        "live_entries": 1,
+        "payload_bytes": 42
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 77,
+      "label": "insert/closure",
+      "source_sha256": "7e6892aa98181d306a081e43cc13df2d6e4bf6ac4ce7b0402eff9dbf7461ee2e",
+      "stock_row_sha256": "f621e772f569cffbeb04661519be9c45f99502eb44ed3c52264f424b4a23a680",
+      "fresh": {
+        "location": {
+          "end": 100,
+          "source": 0,
+          "start": 87
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 87, end: 100 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 87:100, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 78,
+      "label": "insert/fn-param",
+      "source_sha256": "3ff2247ead814f40a3b60652008987eb4901c0e1b7ab2639cf853d6371cb230e",
+      "stock_row_sha256": "f5ed501da8e7a4e46801107689d97232b52927cea915d1a210d31adb91055a40",
+      "fresh": {
+        "location": {
+          "end": 73,
+          "source": 0,
+          "start": 58
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 58, end: 73 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:73, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 79,
+      "label": "insert/nested-get",
+      "source_sha256": "85748f2e5f0beb760c4e671574db6c50dfe84730c954008638d2533953f1cdb6",
+      "stock_row_sha256": "733e8b76ca2ebe1719972bcacce7d357c29cd55754cbee476539f5d108749ebb",
+      "fresh": {
+        "location": {
+          "end": 112,
+          "source": 0,
+          "start": 79
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 79, end: 112 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:112, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 80,
+      "label": "insert/nested-field",
+      "source_sha256": "0abe0b75ca83ff4cb0c225718a20f52e9755f715b50cc85bda62d77fe06d9d36",
+      "stock_row_sha256": "52a8ee08d6dc046dbbfca00a439175cc41b64f135d69b91d0aca51e11e7a63ce",
+      "fresh": {
+        "location": {
+          "end": 96,
+          "source": 0,
+          "start": 79
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 79, end: 96 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:96, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 81,
+      "label": "insert/vec-element",
+      "source_sha256": "5285f27611676dccc312a29049fe56790a3287017cbbca82d7fd3a4d6fc84b3f",
+      "stock_row_sha256": "182a474f133e2f1d4b4d38a347a6d65201830cc6c557db8889255b16eee4e702",
+      "fresh": {
+        "location": {
+          "end": 94,
+          "source": 0,
+          "start": 76
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 76, end: 94 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 76:94, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 82,
+      "label": "insert/struct-field",
+      "source_sha256": "55ad9271f899621b334748d799cdf87fa0c3d281011f8e06d95bea8c8dad7fb2",
+      "stock_row_sha256": "04cf646bf9a121960ae3d60f244979f709c974c06386bb7fee29bab0aa6dc664",
+      "fresh": {
+        "location": {
+          "end": 96,
+          "source": 0,
+          "start": 79
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 79, end: 96 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:96, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 83,
+      "label": "insert/statement",
+      "source_sha256": "3630182a2b2d1a3a54814d68876bc4300e9e39f817837948d1f312e633a3d39d",
+      "stock_row_sha256": "7ec88a4f765261fd1a3bf39de3dabca59b3c5b31c09f325faaa74be1c25206ff",
+      "classification": "Exact"
+    },
+    {
+      "index": 84,
+      "label": "insert/large",
+      "source_sha256": "b2e7516303bfd4c41cd7ab86008f75630ff35ed63a041c890cefcd2b1795958b",
+      "stock_row_sha256": "4ccc02a690450315f2edcd46435a989d198c1baef78ebd6f68bb3a16d9dae357",
+      "classification": "Exact"
+    },
+    {
+      "index": 85,
+      "label": "insert/object-new",
+      "source_sha256": "8c1c524b52bda329df0507b5a3c8666a5b94ae95051eafb61b27b1e0bd39a85e",
+      "stock_row_sha256": "7772b927e7482849b8e1f21ca8f06241b0450fd85bee276b0cfaf3d746218836",
+      "fresh": {
+        "location": {
+          "end": 83,
+          "source": 0,
+          "start": 70
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 70, end: 83 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 70:83, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 86,
+      "label": "insert/with-capacity",
+      "source_sha256": "f4c14e09958d1c88d928d8811c024a50f1c5f25cebc318d65b9ab81b08202f49",
+      "stock_row_sha256": "cfba20b3b3ebe5bdd6aaacb4adfa0a3dc0d4966d88672f1a7f0228eeab9d1e56",
+      "fresh": {
+        "location": {
+          "end": 94,
+          "source": 0,
+          "start": 70
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 70, end: 94 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 70:94, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 87,
+      "label": "insert/index-assign-then-insert",
+      "source_sha256": "cc414334d1414159987c028c7e17f04f2bd5eab67b81224b19f91dc70651875f",
+      "stock_row_sha256": "7fca3c165b816471f45252ae7addf8c0408db8eddfd88862bd875ec711c0407f",
+      "classification": "Exact"
+    },
+    {
+      "index": 88,
+      "label": "remove/present",
+      "source_sha256": "6b8a4af10bd44e2b1ed04b3a8bdb4e8034b3c864f2c4e509d6bcfb89bc3f35d2",
+      "stock_row_sha256": "7b31dfa22a64be2e30977847c52625022516e242cce166771dec0f60560b728a",
+      "classification": "Exact"
+    },
+    {
+      "index": 89,
+      "label": "remove/missing",
+      "source_sha256": "939d49db322938d03157570e244df2dbea0285f97305d2b7bdf6b7123c168ec8",
+      "stock_row_sha256": "f17fec6ecb6670cd64cbf58021333c2e7b009fa2affde76f56a0eff0216497dd",
+      "classification": "Exact"
+    },
+    {
+      "index": 90,
+      "label": "remove/twice",
+      "source_sha256": "186a31809ccb6da7d97ea04d78f807929a4eb2d9cb6a49e4166ab57d12a3cd6f",
+      "stock_row_sha256": "0cd147b886adeab22312a6de8cca778110d8d101c8e38a63ae11a6bbb931590f",
+      "classification": "Exact"
+    },
+    {
+      "index": 91,
+      "label": "remove/alias",
+      "source_sha256": "5d9f3eea3d388f1109c0b4b5c8bdadae15e910b48205b4bcac16f54dd44ee759",
+      "stock_row_sha256": "72b2a923f6741c6d5bdc92eaa4782fa3a1ef6ad7c715fccd06c96f57f031f14f",
+      "classification": "Exact"
+    },
+    {
+      "index": 92,
+      "label": "remove/held-get",
+      "source_sha256": "df115bf431750370d70ceb933b3469fb65649863b2ce0f3444f0d31e91c0d68e",
+      "stock_row_sha256": "572d678dc3d355d1078ceb8523223dd0a741a9bc8b50ad6c267428cff994715c",
+      "classification": "Exact"
+    },
+    {
+      "index": 93,
+      "label": "remove/kinds",
+      "source_sha256": "e7a0da5278d92b2da28080cfcef83cd846990d107b2a300c0053818267b56185",
+      "stock_row_sha256": "c827696acbb8359d73153a55926cb2a70356e0e118a27446e95200300204ead7",
+      "classification": "Exact"
+    },
+    {
+      "index": 94,
+      "label": "remove/loop-drain",
+      "source_sha256": "2fc731bcef9e64f02365bada3cdb927ca3b87cecaa06f40ffed2735f391b6c1f",
+      "stock_row_sha256": "62789f24a5144e44db23bfd5041d41ca9a3ca0867b09e5ec2b8b23a95e37ae21",
+      "classification": "Exact"
+    },
+    {
+      "index": 95,
+      "label": "remove/effects",
+      "source_sha256": "4627fb77ca6d5d7792fcc2d427193cdca1b52dd2e403579bdfc7438872130493",
+      "stock_row_sha256": "63307b33323d7d51eaeb63d58f54b526f11e56e9f794540ac58512e897eb83c0",
+      "classification": "Exact"
+    },
+    {
+      "index": 96,
+      "label": "remove/closure",
+      "source_sha256": "b50c53dfb88bab5811dfa0b10580d2aedb238b42a595573853dbc320b09fa5f3",
+      "stock_row_sha256": "19e9849e127babe3237ad4a537c4b76e4a1e949e8c9bc22d5418b97eeac3ab18",
+      "fresh": {
+        "location": {
+          "end": 97,
+          "source": 0,
+          "start": 86
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 86, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 86:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 97,
+      "label": "remove/nested-field",
+      "source_sha256": "6a32d2f53e28eccfc448210f968b2c48d7a78c353a7cc491fc36ffbccfd97e5b",
+      "stock_row_sha256": "c9c77b6269ea57d09e3f4ded74282258af0b221f0bcd8eaf4708aa297b152254",
+      "fresh": {
+        "location": {
+          "end": 98,
+          "source": 0,
+          "start": 83
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 83, end: 98 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 83:98, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 98,
+      "label": "remove/during-iteration",
+      "source_sha256": "aa8ae50955821514d0d5410272c984f0b1ca3c4f5a6d30e7e8f578d535581fda",
+      "stock_row_sha256": "0a8ffc74b060ff2dbfb737ad1fbbba9eacd2aa63e806e906fbee52442bf0255d",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 85:90, context: Some(64:110) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 99,
+      "label": "remove/insert-during-iteration",
+      "source_sha256": "02751da696300dcba312be357f47563ece90a329bf359a0cbfe452a359eaac38",
+      "stock_row_sha256": "b801ad1795f6164365ee02c5ea098ad911045516089a69921f38c05b3fc69b4d",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 81:86, context: Some(64:110) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 100,
+      "label": "remove/get-during-iteration",
+      "source_sha256": "72d0883ad7fecf78c0178169bbf4772ad55d95bd9d5d9b9e20d915b8804cd354",
+      "stock_row_sha256": "4630686509f3ec6af6011499e5636470f7063c098a2eea402e7f63ddb76e5c85",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 93:98, context: Some(64:127) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 101,
+      "label": "remove/then-len",
+      "source_sha256": "20a49073707c16fdff9c8f9dfe318980c7f87cb0b387efb831f61a077b5cffa4",
+      "stock_row_sha256": "2e6fd6d23d1cc9a19197f996cdaab789b36f58d2e8cbb8bb217f2f0bda57a4f9",
+      "classification": "Exact"
+    },
+    {
+      "index": 102,
+      "label": "remove/unicode",
+      "source_sha256": "b4587302d2bc3cbf3341ff1d7bdb2c73c2781aecd6b23803777a939f15abcca4",
+      "stock_row_sha256": "186e5d46bcecf830bc8bd5488047fb21f5895b7125e5bba141be61ac863d7edc",
+      "classification": "Exact"
+    },
+    {
+      "index": 103,
+      "label": "remove/fn-param",
+      "source_sha256": "71b2858d514fa0cda05ffa7d871418f4b092aa0c54c5bca2e89f78506cbe181f",
+      "stock_row_sha256": "f02f469652910f5b9fd83ca0596d98e389fdb5ba9c2feaf174fed1c2f640cedb",
+      "fresh": {
+        "location": {
+          "end": 71,
+          "source": 0,
+          "start": 58
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 58, end: 71 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:71, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 104,
+      "label": "remove/statement",
+      "source_sha256": "337236bd29cbb7ce17464595d9fdd45ba6629e833a0b98417ec57d952b632f3f",
+      "stock_row_sha256": "52bbebdca8163f8ab99705289e93442e6d597f20fc85df43fa0783cedb002aa2",
+      "classification": "Exact"
+    },
+    {
+      "index": 105,
+      "label": "len/basic",
+      "source_sha256": "8cf35af930bc7ab75cc058413abbf079c4b62ddebc987c7d55ab18c0ff96531b",
+      "stock_row_sha256": "b63a74fedc50dbbfefb2ef9cf4096fa89097338213aeb924a7c01bcd7f1bba84",
+      "classification": "Exact"
+    },
+    {
+      "index": 106,
+      "label": "len/after-mutations",
+      "source_sha256": "37a153539ecd33691676c8ce9483ab48ae6ecc453d7a52e8b0b1a645378e11b9",
+      "stock_row_sha256": "c6e16aecc9e964055bed9ad87cfbb411cc827e57b157e96d6cb0a09058f25978",
+      "classification": "Exact"
+    },
+    {
+      "index": 107,
+      "label": "len/while",
+      "source_sha256": "c8f5577c7b0f6c0c8a3e59f029f171bb887bd04f490ca5679913564c4def67ae",
+      "stock_row_sha256": "fc3e118da5076411e25f90603e6ecfe39bee5f885b7ea647597ac4c747d3b577",
+      "classification": "Exact"
+    },
+    {
+      "index": 108,
+      "label": "len/if",
+      "source_sha256": "04d288385f2a6d4727ffa70c6d1c6565bd98e292aa974600b095ec4dd9731630",
+      "stock_row_sha256": "1c7c11f8795586bbd0a72d2681c15f5c5fbc437de935b30fa1247cff6ecac830",
+      "classification": "Exact"
+    },
+    {
+      "index": 109,
+      "label": "len/not",
+      "source_sha256": "c0a988d2bb6570f38dd10f93cdf07abdda8972f90823e2ffae9c318cd0af1517",
+      "stock_row_sha256": "37e0cd6ddd91a56045990b22f835db2969955d85e22b589a3556cea2ed5e2ba6",
+      "classification": "Exact"
+    },
+    {
+      "index": 110,
+      "label": "len/closure",
+      "source_sha256": "27acb44c838f09dfa9f198c0cfaabfdc679a0c181bef95f9cd7049fc85cbb0d5",
+      "stock_row_sha256": "c46e3cc54aefd6df7455bbca8e9c54c62f64d5fd5290272fc98e6528f3e9584f",
+      "classification": "Exact"
+    },
+    {
+      "index": 111,
+      "label": "len/fn-param",
+      "source_sha256": "e6e11473af6717a1a01d9ba11d888d6dc71aea54eadf2140a5209f916da38fdd",
+      "stock_row_sha256": "86a0d650405915df10ad848dcb73038e038531c22ff1dd3fcddd3d41d13b5172",
+      "classification": "Exact"
+    },
+    {
+      "index": 112,
+      "label": "len/arith",
+      "source_sha256": "84e843d07ab7baa762c047cf94dbaa8a1516e28078ce5d8038e84133923797d0",
+      "stock_row_sha256": "20ea7537fa56c346752db93b2e022708c369256ae5caa9f84ac4a90e8b8e42e1",
+      "classification": "Exact"
+    },
+    {
+      "index": 113,
+      "label": "len/effects",
+      "source_sha256": "3e2246d6441ba078908e2061d1d4679a8c7c4cc1dd10e131c838d20e46060cff",
+      "stock_row_sha256": "a5a7facac5fcb545acf3e7eeac962d3d6f5f37decf75f95a5c9287a2481fad79",
+      "classification": "Exact"
+    },
+    {
+      "index": 114,
+      "label": "key/get-int",
+      "source_sha256": "02f49ca6b4da4ba088b0ab36aa1d15193645af7ac9d4bb564f38105aa8a80099",
+      "stock_row_sha256": "afd65cca3618ff992dcbe52bc0aafe40ff43be6e1a8fddf869af8aebd494c33d",
+      "classification": "Exact"
+    },
+    {
+      "index": 115,
+      "label": "key/get-char",
+      "source_sha256": "cf8824d2531bdf5a53122c94c5042abc6354ccf028d5ea5ae06c03f859db0dbf",
+      "stock_row_sha256": "9bc0fe2fdadfe27e0bb7403ccd739b34cdb0e543b79f808913c50845096e0266",
+      "classification": "Exact"
+    },
+    {
+      "index": 116,
+      "label": "key/get-vec",
+      "source_sha256": "58560311f8c421b13298d0024dc2e2f03c5639dad373de9a8e5489713e04c3f8",
+      "stock_row_sha256": "7bd8db078a31aecb907e4e1dd6f3217f693a6666a428f9fa1d5ffe69bc3e4a82",
+      "classification": "Exact"
+    },
+    {
+      "index": 117,
+      "label": "key/get-unit",
+      "source_sha256": "00c1e7da975f7ca7d77f886a20ca2678082f99025d1a73ca2dd588885dc4914c",
+      "stock_row_sha256": "37e9b3cf7dfce8b156421a9c7f8bb20468ec29da5e0f22763d40da6e1dc7319e",
+      "classification": "Exact"
+    },
+    {
+      "index": 118,
+      "label": "key/get-option",
+      "source_sha256": "3fd578a9d9781857b0e7594d77b30133213d53093bb3b82911d6fe748fdf1a94",
+      "stock_row_sha256": "6580a7099009adae31f80a12aa63897f18cd39722be6ff99ffd0899012ac7441",
+      "classification": "Exact"
+    },
+    {
+      "index": 119,
+      "label": "key/contains-int",
+      "source_sha256": "3140ee81089bad70d8884b03db7faf238a97b622a3445f2e35dccace10a48b9d",
+      "stock_row_sha256": "d859eb759cdcf7e195c7fcbb06f037b9d35612901b5a77412b59145ecaf8577a",
+      "classification": "Exact"
+    },
+    {
+      "index": 120,
+      "label": "key/remove-bool",
+      "source_sha256": "311532224ac148ddebc59b73697c59ecf2493c947dc5b98f675d431df54eb5f7",
+      "stock_row_sha256": "5216e41577b4c6b70d42f2e2a04f72d8c4ce18445c3d704ecf4f9cf0be4a3a9e",
+      "classification": "Exact"
+    },
+    {
+      "index": 121,
+      "label": "key/insert-int",
+      "source_sha256": "918bf42391e2334398e7c2ac4974726d45ba7fa60f27c5fc0e18519e26e02b06",
+      "stock_row_sha256": "496240500d68a8a327167dd9ead73eccf22b0e00d8b026430e234348081fb33a",
+      "classification": "Exact"
+    },
+    {
+      "index": 122,
+      "label": "key/insert-float",
+      "source_sha256": "faab1b85f4e22ccfc74f1625cfcfff8b6d064619417232a46c640d104bc456d0",
+      "stock_row_sha256": "e15a71e29e2980c8f5ed45f157a7b2236281806439b30e98d6cceeaa00171c4e",
+      "classification": "Exact"
+    },
+    {
+      "index": 123,
+      "label": "key/insert-char",
+      "source_sha256": "8a0c8ef793ae43563bb3710bd9265254a6936272f650d487e5a339bc7cd2ad6c",
+      "stock_row_sha256": "82ab43506e91ab06e42a7ab76274164d3f432e4e01c3f78e387ff1bbf6fdff9a",
+      "classification": "Exact"
+    },
+    {
+      "index": 124,
+      "label": "key/insert-struct",
+      "source_sha256": "bcfb1cc2af4e7f5b9f52303f669cadfd866e6f5e2f94574c00c99e9a901faef8",
+      "stock_row_sha256": "b6c58e230c2b878ddc0faf5ce2a1fc44977149c6c5ff1c4eaa73356a41139d4f",
+      "classification": "Exact"
+    },
+    {
+      "index": 125,
+      "label": "key/get-effects",
+      "source_sha256": "ee1e2ae69ac627bdfdfee60d56acc8773c7b8fa6f12521c9264bfbc5eaffbd86",
+      "stock_row_sha256": "183b16032218afb5b278e1a33adbbb56a6ce8c413bc5cc4be83a3374403b1df5",
+      "classification": "Exact"
+    },
+    {
+      "index": 126,
+      "label": "key/insert-effects",
+      "source_sha256": "29eb2154126152d580cfc551c47c9c6bbef17888d9171d857fde9e36102c75ce",
+      "stock_row_sha256": "411e805a827f2fab2f8c07a2d6c4099636773899c35af9c4f64f8ea46dbf68c9",
+      "classification": "Exact"
+    },
+    {
+      "index": 127,
+      "label": "key/chain-get",
+      "source_sha256": "f9bb19389e5bec8384ef23956e820ba6df7ac436f4a9dba03f05e59f2f62aebc",
+      "stock_row_sha256": "4510b53986337d764ef2340ebd0e219ef318310f4cd95e0a89b3fa98996d9e5e",
+      "fresh": {
+        "location": {
+          "end": 79,
+          "source": 0,
+          "start": 71
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 71, end: 79 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 71:79, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 128,
+      "label": "key/chain-insert",
+      "source_sha256": "af6c1097320128d7bed70b366ef52e36232a50aab9df49ace6d85a3899e56ab6",
+      "stock_row_sha256": "f7bf4046ab244985166718352a0588f7108533855a9f37fce97859d22ddc1c49",
+      "fresh": {
+        "location": {
+          "end": 86,
+          "source": 0,
+          "start": 73
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 73, end: 86 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 73:86, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 129,
+      "label": "key/closure",
+      "source_sha256": "552b3e0b7b389ebde744d534b6383b18b852c78e20d1049bfbc7d9d587f3cd35",
+      "stock_row_sha256": "d6284c57e530ad0a5de74d46d05da3e76b010de77a9a5c2a1ff63ac492f929cb",
+      "fresh": {
+        "location": {
+          "end": 84,
+          "source": 0,
+          "start": 73
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 73, end: 84 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 73:84, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 130,
+      "label": "key/loop-mixed",
+      "source_sha256": "120b5d4d8687baa5a029eddd780af5a71fbcd81199f246d8eb8476455f3212ca",
+      "stock_row_sha256": "fb09a6996044d7559edb1624322cad73c88aa71ede052c90e1832981bd103bff",
+      "classification": "Exact"
+    },
+    {
+      "index": 131,
+      "label": "receiver/vec-get",
+      "source_sha256": "70cbc4fe65359b80d640dedbc5732aea2d49b41b805b9c322411ae63101a3a24",
+      "stock_row_sha256": "480b53ddebb71bc143639e25cc9eec28768eabe85ed35700b74e7a11114345d7",
+      "fresh": {
+        "location": {
+          "end": 76,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 76 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 132,
+      "label": "receiver/vec-get-str",
+      "source_sha256": "7ea4a1a7f2407b00234c19d8dee860df923bfa7f896b29a43d826a535d790059",
+      "stock_row_sha256": "eb378e98b39a56aae915e88b03110e5d89d56360ad38062899494017c349d977",
+      "fresh": {
+        "location": {
+          "end": 76,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 76 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 133,
+      "label": "receiver/tuple-get",
+      "source_sha256": "b54b2767aabb546f9922deada698785b2bd84a60511cbe9afffadb51ea53d08b",
+      "stock_row_sha256": "0dc6bb2b42894ed5b5b880007f8e98ed968cabf90e5a29956cde2ca2d9a27a58",
+      "fresh": {
+        "location": {
+          "end": 76,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 76 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 134,
+      "label": "receiver/string-get",
+      "source_sha256": "364723bb270803ecc9b198d1fc5d970769fd0dcc372f059c04a4a5a807207d44",
+      "stock_row_sha256": "a817a9fe557c29e47c6806b70b640d5d2c55c9c77430feec1f9a6b7a051d0a5e",
+      "fresh": {
+        "location": {
+          "end": 76,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 76 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 135,
+      "label": "receiver/string-get-range",
+      "source_sha256": "4b4050dbd0910daf004ed8f4da4bcec568e2c9329a48bcf6727fe1a1dcaaf12e",
+      "stock_row_sha256": "0e5bd277ff0b54700eb73c7f46e6ea06c1c3d59cb3746e88136616a840be702a",
+      "fresh": {
+        "location": {
+          "end": 79,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 79 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:79, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 136,
+      "label": "receiver/vec-insert",
+      "source_sha256": "734aa3719d711488fe79035a5fa1d6e7c01c40f10deb0fe54709fb86619b797a",
+      "stock_row_sha256": "88e3abd5c0d3422f518db47104dbcd71d36284e9b8068569bec12ce13066f134",
+      "fresh": {
+        "location": {
+          "end": 87,
+          "source": 0,
+          "start": 74
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 74, end: 87 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:87, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 137,
+      "label": "receiver/vec-remove",
+      "source_sha256": "4fc3056bb591e2a60c42cec2136edcf02eac7e34a8c6e4d5156ef4e6bd945800",
+      "stock_row_sha256": "e90fcc0de0a585205a77b431b1d1543e8f22931641462d5e0e9a62c50ddeb184",
+      "fresh": {
+        "location": {
+          "end": 88,
+          "source": 0,
+          "start": 77
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 77, end: 88 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 77:88, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 138,
+      "label": "receiver/vec-len-is_empty",
+      "source_sha256": "db056cb19ae7e59f09d38e8309695e7ebf82cf1ceb7884f7ee7722fe21e87edb",
+      "stock_row_sha256": "79457a7ed64dce66e1ed8c646f040642dbf44b5224e12cc7d38084fee2492582",
+      "classification": "Exact"
+    },
+    {
+      "index": 139,
+      "label": "receiver/vec-contains_key",
+      "source_sha256": "bfc16f51c320aa21fff13289c992b178c95d87ed9ac64bee958e62e548a37351",
+      "stock_row_sha256": "75cc0239cc49cc84ef34667df64c3c8e53b06ee27e0b73479a4f58c6810f19e2",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::vec::Vec` has no method named `contains_key`",
+            "kind": "MissingInstanceFunction { hash: 0x4743e09037f83a1c, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xc11b1e769aea94f2 }) }",
+            "sites": [
+              {
+                "end": 83,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 83,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::vec::Vec` has no method named `contains_key`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::vec::Vec` has no matching method",
+      "fresh_display": "Type `std::vec::Vec` has no method named `contains_key`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 140,
+      "label": "receiver/string-insert",
+      "source_sha256": "f95d1f14c1a3c5986d0c38825b4768d8f79f3bc27349398887a6aae978050e10",
+      "stock_row_sha256": "2318297032ed1e80715025b0e6fceb2c80cd28672f29b37f676cf81556d3b4bb",
+      "fresh": {
+        "location": {
+          "end": 90,
+          "source": 0,
+          "start": 75
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 75, end: 90 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:90, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 141,
+      "label": "receiver/string-remove",
+      "source_sha256": "daa6630d84fb013e92b2b8a8726b19af0592b23609b006d082742ab512e495ba",
+      "stock_row_sha256": "138d66b5b56c677a946389ea733e5c1d02ff982e47091c8dc879a88ab4d2bbad",
+      "fresh": {
+        "location": {
+          "end": 86,
+          "source": 0,
+          "start": 75
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 75, end: 86 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:86, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 142,
+      "label": "receiver/string-len-is_empty",
+      "source_sha256": "aad99f3e8fbd7430158b91fa0eb34735cde51d63b39564e508e918e75e311fb2",
+      "stock_row_sha256": "7420e61163040d0a578db271a945624262a3945518716e232966c7cacca90d9e",
+      "classification": "Exact"
+    },
+    {
+      "index": 143,
+      "label": "receiver/tuple-len",
+      "source_sha256": "d3b84452d354f3b6a89df6a14858f7fca1a7071ea1ac3f9b199d7d30e516766a",
+      "stock_row_sha256": "90f8073fbb5064b305f5896d552bc28dc6ea9162c0042120cc07fd06edb5b839",
+      "classification": "Exact"
+    },
+    {
+      "index": 144,
+      "label": "receiver/int-get",
+      "source_sha256": "1ade2c797a1024fe00d36123718cbe027280ad25b68d0be5639387d0fd9827ea",
+      "stock_row_sha256": "3975d2b75082ead3886aa26bdf5280870165f56cee08aef6fade5e5bb82319d1",
+      "fresh": {
+        "location": {
+          "end": 74,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 74 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:74, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 145,
+      "label": "receiver/option-get",
+      "source_sha256": "87fd7bd0c96967502b85a1f56fdea34ac8f84482f1e68cdf4e4d63f4f3106e1f",
+      "stock_row_sha256": "d7e131d62e5c9a64e08015c41d6c12e6ea6a331a91fd2ab9fd285a61071d42b2",
+      "fresh": {
+        "location": {
+          "end": 85,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 85 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:85, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 146,
+      "label": "receiver/option-insert",
+      "source_sha256": "a8d732f7e5a2c24f1648e021082c0fcad677214c6f001974438f7c0b65bfabe6",
+      "stock_row_sha256": "8507a860f614988fce0a38e1344f05810ff0989a7630085e7e0d4ca409409223",
+      "fresh": {
+        "location": {
+          "end": 86,
+          "source": 0,
+          "start": 75
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 75, end: 86 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:86, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 147,
+      "label": "receiver/result-contains_key",
+      "source_sha256": "68c5fd1e72495fbea22367f63d9bf6a45fc5baba0b533e13126149519ffd027d",
+      "stock_row_sha256": "8061a36057e1e8f16996305ef951db37101d3cc0674542889a9fe4d455b6ad90",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::result::Result` has no method named `contains_key`",
+            "kind": "MissingInstanceFunction { hash: 0x9f20140018183601, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1978eae6b50a98ef }) }",
+            "sites": [
+              {
+                "end": 89,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 89,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::result::Result` has no method named `contains_key`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::result::Result` has no matching method",
+      "fresh_display": "Type `std::result::Result` has no method named `contains_key`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 148,
+      "label": "receiver/struct-get",
+      "source_sha256": "16845f30a83cdba19aad9a79258a02024c75dd8cbaea42373f273f7def405493",
+      "stock_row_sha256": "7dff2852430376e3004834324f5ce13e912e3532181e8ee9f9e512c8cdc6ed6b",
+      "fresh": {
+        "location": {
+          "end": 79,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 79 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:79, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 149,
+      "label": "receiver/tuple-struct-len",
+      "source_sha256": "e278bbadd93750546cfc7c6ac16275b6b35071be18a4d114fe4cba7786dfae16",
+      "stock_row_sha256": "1eeaf1df1ba9129b61ccf2627f513b1ec97d0cc30f4dee145cf5fc19e78469f7",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `T` has no method named `len`",
+            "kind": "MissingInstanceFunction { hash: 0xa2e0ab020ca53c8f, instance: Runtime(Rtti { kind: Tuple, hash: 0x9e5263ff104e8f68, variant_hash: 0x0, item: T, fields: {} }) }",
+            "sites": [
+              {
+                "end": 74,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 74,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `T` has no method named `len`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `T` has no matching method",
+      "fresh_display": "Type `T` has no method named `len`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 150,
+      "label": "receiver/variant-remove",
+      "source_sha256": "23dcd405944c75aea27ba134ba952e63cc2ef413c399087147bb970322ff5c21",
+      "stock_row_sha256": "2a5bba9dbebeef551b40f31b08b18f1e8b20b268bb16e46f562efdbe322941b1",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `E::A` has no method named `remove`",
+            "kind": "MissingInstanceFunction { hash: 0x8e0a7cd6467b4178, instance: Runtime(Rtti { kind: Empty, hash: 0xf727e1feaf2a3ca, variant_hash: 0x31e6fa421a80c8d1, item: E::A, fields: {} }) }",
+            "sites": [
+              {
+                "end": 80,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 80,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `E::A` has no method named `remove`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `E::A` has no matching method",
+      "fresh_display": "Type `E::A` has no method named `remove`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 151,
+      "label": "receiver/range-contains_key",
+      "source_sha256": "a91a2774299fc63e5cf3014452222c8fc608b71acb66700cbcc371fa3dc2f24c",
+      "stock_row_sha256": "b7c48798c0eeecb1439208add953635c147a42760a6601d7dd65dd4822b36b1a",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::ops::Range` has no method named `contains_key`",
+            "kind": "MissingInstanceFunction { hash: 0xf652ca5a7b71a254, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x700a34bcd6630cba }) }",
+            "sites": [
+              {
+                "end": 86,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 86,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::ops::Range` has no method named `contains_key`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::ops::Range` has no matching method",
+      "fresh_display": "Type `std::ops::Range` has no method named `contains_key`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 152,
+      "label": "receiver/iter-get",
+      "source_sha256": "f615167de602e407e8d7e4a059193a8354c543afdd681126c87c7a64561d86e1",
+      "stock_row_sha256": "858f5807f18c3194074c5ed2b73e6f236d9f8ddc1c152375ecd53ff7b94e453a",
+      "fresh": {
+        "location": {
+          "end": 81,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 81 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:81, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 153,
+      "label": "receiver/fn-value",
+      "source_sha256": "67d0cd3ca0dca41aa73a8cda38f691ac55dee81876289ad6f9f8aa9ae522cb11",
+      "stock_row_sha256": "bf812e4b1ca3e404fb35a877cf81474cc1795e4b8351207e4e2d8905478ded12",
+      "fresh": {
+        "location": {
+          "end": 82,
+          "source": 0,
+          "start": 72
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 72, end: 82 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:82, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 154,
+      "label": "receiver/type-value",
+      "source_sha256": "06651951d9dd0b898cb3e71569a6623f4d56557778ff48dc33bdec1e03b49bdb",
+      "stock_row_sha256": "b66b3d8ed98fbe8a8a045fa4a2d2d6189c49d8b6a9feb9294c7de31938b60bbf",
+      "fresh": {
+        "location": {
+          "end": 74,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 74 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:74, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 155,
+      "label": "receiver/unit",
+      "source_sha256": "66974d26a3660405de0b23e47e3a50a32180428c161880d546c31cabeb5addac",
+      "stock_row_sha256": "2595fc39c5503c3b6d4819a518b59781c10c89345e63b9ed81a6b717c2e71bc5",
+      "fresh": {
+        "location": {
+          "end": 75,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 75 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:75, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 156,
+      "label": "receiver/mixed-loop-get",
+      "source_sha256": "e9748dd23b0f234141c6c0f3a2bf8b2ab64b8723fb59189ea36819c3c1bce961",
+      "stock_row_sha256": "066121a1a352ef8959fd426734d3b5deb75f5f29984442b122d1e91b9f6a3771",
+      "fresh": {
+        "location": {
+          "end": 107,
+          "source": 0,
+          "start": 97
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 97, end: 107 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:107, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 157,
+      "label": "receiver/mixed-loop-len",
+      "source_sha256": "cd08f59e3f930fbc43cf67ca300ae52a9569dfcd9fc0d456dba3e8dda1caddfe",
+      "stock_row_sha256": "52a92b3a285aac0684b82905b02672f6ace3798b58c00b6512e3edc8163ab7dd",
+      "classification": "Exact"
+    },
+    {
+      "index": 158,
+      "label": "receiver/fn-param",
+      "source_sha256": "e99e48af73e037e60b1678d09b3e3f4f092b782f001b8889823861533ca3a725",
+      "stock_row_sha256": "1af3414af00102d3053c9910d4f8455cf2fa636f9f803929d7db6762d09c2191",
+      "fresh": {
+        "location": {
+          "end": 66,
+          "source": 0,
+          "start": 58
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 58, end: 66 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:66, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 159,
+      "label": "receiver/fn-param-is_empty",
+      "source_sha256": "40387dc31c459ee4e5c3c3185985f2f3d34b36e3def7625e7400ff190c9518a8",
+      "stock_row_sha256": "c37e5a7f23d1b8dd8b037f0f6b0359c30f6741d09ed07be11f11179b41714362",
+      "classification": "Exact"
+    },
+    {
+      "index": 160,
+      "label": "receiver/args-effects",
+      "source_sha256": "4123707ad202d9aab056a96ae4974876ee7210559a5833ae5c88e5bc6963d39a",
+      "stock_row_sha256": "b4a06944841d77ca9ff9623aa6c16c2d380a6cc5a44d05dc693bd603c976a05a",
+      "fresh": {
+        "location": {
+          "end": 92,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 92 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:92, kind: Custom { error: \"Method\" } }) })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 161,
+      "label": "script/impl-get",
+      "source_sha256": "f0a5998bdddff2b97b9b446d285177f94884c76bdef62bc2590174b777e59eb6",
+      "stock_row_sha256": "105c569570e765b0dc109fc804cc82fcdd6b78e21ba313b8a12557bb1482c64d",
+      "fresh": {
+        "location": {
+          "end": 110,
+          "source": 0,
+          "start": 95
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 95, end: 110 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 95:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 162,
+      "label": "script/impl-insert",
+      "source_sha256": "2c2458a369c0be867c9bdd05557fa355f56f59cef7c28f3f4f8656dc894ae7bc",
+      "stock_row_sha256": "2b6fef83c2d12cd8e6e4ee54c39bb10fe0fd3a722e378bf953e995d70a33dbc5",
+      "fresh": {
+        "location": {
+          "end": 132,
+          "source": 0,
+          "start": 117
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 117, end: 132 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 117:132, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 163,
+      "label": "script/impl-contains_key-enum",
+      "source_sha256": "f82dd47904774a03227da22ca40d9d566edc2a32df639750947c2a3b2fe170e9",
+      "stock_row_sha256": "a21fc214c2335a2ed96d98043cbb21683b9e5871037bfc0ecdd8f92789d6ad15",
+      "fresh": {
+        "location": {
+          "end": 126,
+          "source": 0,
+          "start": 104
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 104, end: 126 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 104:126, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 164,
+      "label": "script/impl-remove-module",
+      "source_sha256": "9e40ff443bc602510f98d99c50359146259699893445eb72bbdfb11b34a0f868",
+      "stock_row_sha256": "d2bdb681cc189543e44143adc5e8c1f60397eadbb3d13ae0192294ab8b04b131",
+      "fresh": {
+        "location": {
+          "end": 141,
+          "source": 0,
+          "start": 120
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 120, end: 141 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 120:141, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 165,
+      "label": "script/impl-len-is_empty",
+      "source_sha256": "a6496205c49dee488ebfb6554dbc003a84cfb6dcce66597c9ed1c0b5c2a09e60",
+      "stock_row_sha256": "9e7bc7d8e2e529bdccc5771be096386276b098e555030afc725400e0ac626465",
+      "fresh": {
+        "location": {
+          "end": 123,
+          "source": 0,
+          "start": 113
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 113, end: 123 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 113:123, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 166,
+      "label": "script/impl-get-unused",
+      "source_sha256": "54ee0f975679c358e4e8f7aaffb570a05596d87f3fb95bae6931be367586cb37",
+      "stock_row_sha256": "471d9ae061641a31fb03d067ddca20530ea8dfc7255428f247777d3d85a95842",
+      "classification": "Exact"
+    },
+    {
+      "index": 167,
+      "label": "script/free-fn-get",
+      "source_sha256": "6aa744c2c5db43c1271a8cb988b575a8eb65ab35d219191587e0a2af6efe2bfe",
+      "stock_row_sha256": "82dab1845cc804c9bb8fa8827554c6381ac9cad62a97470d688cc21b7a79095f",
+      "classification": "Exact"
+    },
+    {
+      "index": 168,
+      "label": "script/free-fn-insert",
+      "source_sha256": "e36c6c263ff885960d0dedd4be49ec38541fd5316464b4539174f27f8244b563",
+      "stock_row_sha256": "4b8b9924eb60ffb25cccbe6b093f46b2a154a9b45151820fafbd40f1c7d6d255",
+      "classification": "Exact"
+    },
+    {
+      "index": 169,
+      "label": "script/assoc-fn-get",
+      "source_sha256": "cafce576d038159515a87dc26e60ad6e8b8ee4be8fe1068123dde445911520b3",
+      "stock_row_sha256": "7e9c367e30090ca7b1a7f2e7a98b66bc49d242b5d843d13e82d4707aff0d061a",
+      "classification": "Exact"
+    },
+    {
+      "index": 170,
+      "label": "script/module-fn-get",
+      "source_sha256": "6573d10bb5f3db1074cffad895a63abbb7a9f660fd931f6643ac2262ffcf5efc",
+      "stock_row_sha256": "2db9db35c4d41290f9246031f838e86beef24a4ddf1d287ee8e685505dda3be1",
+      "classification": "Exact"
+    },
+    {
+      "index": 171,
+      "label": "script/struct-named-object",
+      "source_sha256": "d223e7eec5e54c39f6c4c788e3bc0d21744577865052820f60ee7e3044dbbe4c",
+      "stock_row_sha256": "8c76f374945fb3e6884a20682e1df257b59eeb7c1e6793ecf8c9e9834374e79a",
+      "fresh": {
+        "location": {
+          "end": 150,
+          "source": 0,
+          "start": 127
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 127, end: 150 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:150, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 172,
+      "label": "script/field-named-get",
+      "source_sha256": "f0e19e32b983a1b5e426a834e8997a3b4bbf25b54a4405fbd7fe2cfd7e562f92",
+      "stock_row_sha256": "12a8bd24c1f7e50258c8bcd476d57a26bd4a14747a849e8e82201096909820de",
+      "classification": "Exact"
+    },
+    {
+      "index": 173,
+      "label": "script/field-fn-get",
+      "source_sha256": "d4a61124efcbd87009a57898272f6b539e206bde497e016ad195ac7a67bc7d66",
+      "stock_row_sha256": "c6cabde985f36eeb59276b2d8a381efc8daaf18aee7d84abfccce77e58b0e69a",
+      "classification": "Exact"
+    },
+    {
+      "index": 174,
+      "label": "compile/path-get",
+      "source_sha256": "4d082e97e50d219f8d908afd39005730d1bab0112749bc96ee7ce1a657739b11",
+      "stock_row_sha256": "32a2fcee20497301faeaf6c70fa335e8bd93183fc7f77fe0e914a4c8ea8be150",
+      "fresh": {
+        "location": {
+          "end": 87,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 87 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:87, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 175,
+      "label": "compile/path-insert",
+      "source_sha256": "7cce968fe3c176c0d167157f4e360cd061be11a8548fc015a39a2c8de94adc6c",
+      "stock_row_sha256": "2d068fb1bc9eab3d90d3c1b40b05524e20e518d4edbc04ff1816532201b9a68e",
+      "fresh": {
+        "location": {
+          "end": 98,
+          "source": 0,
+          "start": 75
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 75, end: 98 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:98, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 176,
+      "label": "compile/path-full",
+      "source_sha256": "bafe5e00d31e29f6ce281bc01b68c690c597446548ceb97a0ccf162bfecd35ed",
+      "stock_row_sha256": "6007e81414e26cc51c7ae1f8b3fb245efa50f5c297b0f8236b4633b3b13a4c89",
+      "fresh": {
+        "location": {
+          "end": 109,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 109 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:109, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 177,
+      "label": "compile/path-wrong-type",
+      "source_sha256": "d4dcbc69195e470808091fd123f972c6d6c049bacbdf8fd0e0ae1b9bd7ad0259",
+      "stock_row_sha256": "a095c0303d7e35873602837fef3e86bfd0aa41555eaf9db7e8de5c8e36fbff9c",
+      "fresh": {
+        "location": {
+          "end": 84,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 84 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:84, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 178,
+      "label": "compile/fn-value-path",
+      "source_sha256": "aef6dfbc26cf36155dd8583d5d0bc430e527dab172e51626085ef7a74f14384c",
+      "stock_row_sha256": "2f0efcf6209b4f060296b3c6f8682d922c1ad0c3e3d0c59bd6250d57496d8652",
+      "fresh": {
+        "location": {
+          "end": 81,
+          "source": 0,
+          "start": 70
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 70, end: 81 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "refusal": "Native",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 70:81, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 179,
+      "label": "compile/method-as-field",
+      "source_sha256": "1fadabbd6fa409904154ac121d7968d2c2a0f4c59adf4f7aced388e3887c7fe5",
+      "stock_row_sha256": "a67324e540575de4b9993b6e7434228c1c5baefa03b0cff109531f16e57b0aa9",
+      "classification": "Exact"
+    },
+    {
+      "index": 180,
+      "label": "compile/get-no-arg",
+      "source_sha256": "497503fed6ab2ea31d2684fde4fc8800cdce1c6b070566c82f7b31d9435d2896",
+      "stock_row_sha256": "4236a75fa2b20216e35ddd0144a9ff29ecd5a9cc797265ba0bd6b325ac8c6fa7",
+      "fresh": {
+        "location": {
+          "end": 76,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 76 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:76, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 181,
+      "label": "compile/get-extra-arg",
+      "source_sha256": "3565324a41dd675ac4ba749ab74ea65ae4552554178cc1575435700a9441bf72",
+      "stock_row_sha256": "bed37d15c08f60c075034ed7f87d76c5f95ce4ea6938c5a5a28bf91c71e9169b",
+      "fresh": {
+        "location": {
+          "end": 83,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 83 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:83, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 182,
+      "label": "compile/insert-one-arg",
+      "source_sha256": "20d809fce37272e95312008805ef18572ef5e05ec79847c578a44e5e7dfe94e4",
+      "stock_row_sha256": "93143f42eb80213a3a0508da903b7426084565e16f486c53980c056dffc79606",
+      "fresh": {
+        "location": {
+          "end": 79,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 79 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:79, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 183,
+      "label": "compile/insert-extra-arg",
+      "source_sha256": "3b3dc5c1b14a6d423decdf06bbe9b7bcdca2e274a2bd26c7dd58d4f20f83f29b",
+      "stock_row_sha256": "6853ccd0c771c275c2555dc89d92bb6cc00c22bb4bc01623ee2a196a60ef578d",
+      "fresh": {
+        "location": {
+          "end": 83,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 83 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:83, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 184,
+      "label": "compile/remove-no-arg",
+      "source_sha256": "9af81082eeb669be67762a441b94f013da430a480be9edfbfd12e9685f23c0f8",
+      "stock_row_sha256": "3eb924532618b716d33db69015b848f6ea5ebc544e83b15f929676800cdce141",
+      "fresh": {
+        "location": {
+          "end": 76,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 76 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:76, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 185,
+      "label": "compile/contains_key-extra-arg",
+      "source_sha256": "29a2e7966029407dae1f451df389b2a525346fb0cf88a3244db1390b65db139b",
+      "stock_row_sha256": "0223db396ecf2eb1d4af1b05582bdf79a83dbb749118c4cf5046bbb34e429c9e",
+      "fresh": {
+        "location": {
+          "end": 87,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 87 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:87, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 186,
+      "label": "compile/len-extra-arg",
+      "source_sha256": "c1aed666219cf9552b502b481992df0a7c21711a531c9cebb41c06496c122007",
+      "stock_row_sha256": "781eebe7d1e2d7f5369bc8ae45ba8cf3af5177d0b91813fa711e53e6f57f4ed1",
+      "fresh": {
+        "location": {
+          "end": 74,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 74 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:74, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 187,
+      "label": "compile/is_empty-extra-arg",
+      "source_sha256": "12643faa103c8f86ed10bfcf626e0eb48537665c625d596b37c6af5eff18c5b0",
+      "stock_row_sha256": "458a458c91600823dc06b97219fe2835d093d569000b9dd535a3fe570944287a",
+      "fresh": {
+        "location": {
+          "end": 79,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 79 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:79, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 188,
+      "label": "compile/turbofish",
+      "source_sha256": "d05e4cb4d4cbeace34a2286c545cc9c38060ebb3606457f0f970cc023a38fc68",
+      "stock_row_sha256": "b54441986402f3fd61f78a5e8f22222e63d4043585010eeef0c7a3a8276b0f0f",
+      "fresh": {
+        "location": {
+          "end": 86,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 86 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:86, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 189,
+      "label": "compile/try-present",
+      "source_sha256": "c48de0665508254b2b1307c134a1c8d0411942ae986d25cc6221479c4b07bc4a",
+      "stock_row_sha256": "2b296cfff030662dc82000697ba492a552754c09e5d7b9885a7a5c3a2a54a664",
+      "fresh": {
+        "location": {
+          "end": 75,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 75 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:75, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 190,
+      "label": "compile/try-missing",
+      "source_sha256": "4bb645d759375ed3c7de93fc26236c02a364074dc7bf2fcdb24f0d838f5c3a61",
+      "stock_row_sha256": "57a1e3a68f94f3dae0b2ac5f76b6cb74bd2d26e7a0b3edf3ed0b3d8dd1b8836f",
+      "fresh": {
+        "location": {
+          "end": 75,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 75 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:75, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 191,
+      "label": "order/remove-first",
+      "source_sha256": "2005c65465349655de730bbcc7980b0bc0f58bf0ccaf15c07196cc1c0c48e4a0",
+      "stock_row_sha256": "9566cd85eaf48693f53e2570606449c8f35717c8255835aa632a4f00a1dd3cf6",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 129:134, context: Some(64:154) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 192,
+      "label": "order/remove-middle",
+      "source_sha256": "5ad6d582e454422cbd1599aa81c3ed0430e7cf108528eb2ee0cbe30d7630a338",
+      "stock_row_sha256": "c1ecb027faefd507063eb03d816816ee92fb1319d43ef46b85d6b4459e3edf6d",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 113:118, context: Some(64:138) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 193,
+      "label": "order/remove-last-reinsert",
+      "source_sha256": "ff93b3bade4ea6e67a622f37e04a861aa94952c6fa5198c097164ce11d6979d0",
+      "stock_row_sha256": "2e43943f7a33d6671ae6025f22d161a6dd9e688af83db1f3f5ed67f9c23d9221",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 145:150, context: Some(64:174) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 194,
+      "label": "order/replace-keeps-slot",
+      "source_sha256": "7bf42c4220e8da56ecc6d40e5e9546747099923a931b6aa8b36a4beaef173ce1",
+      "stock_row_sha256": "401fec2822caf9fde7f3e9338ba8e67e1cec193ddd68f8cccd186e5331944214",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 152:157, context: Some(64:181) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 195,
+      "label": "order/drain-front",
+      "source_sha256": "c7cfa66c2bf7431fb82e66828538235e494c009f7cd1f743bab726abe73441f4",
+      "stock_row_sha256": "221f2a627cfe801381af8733793999d8a4b3e73e2fc274776d0686059f454753",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 173:178, context: Some(64:198) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 196,
+      "label": "order/debug-sorted",
+      "source_sha256": "ec28ee44872bdc7be0dfa7d7fc214d0cda17152040aca32df60a134b41770234",
+      "stock_row_sha256": "e6c46d332deb6c32efcb2be7b80f91b5e2cbfb79c3eec0ced08bceb597455c53",
+      "classification": "Exact"
+    },
+    {
+      "index": 197,
+      "label": "order/eq-after-remove",
+      "source_sha256": "8ebc3b90d8312b7c48c8aded82b6dc28ad41435a4a24abe7a76e51446d132dbd",
+      "stock_row_sha256": "605ca0f92a4861dc969fb666d413557312fc75cb49a2afc03ac9203123de753f",
+      "classification": "Exact"
+    },
+    {
+      "index": 198,
+      "label": "literal/loop-same-site",
+      "source_sha256": "df5ee1be78efc03e328920d33cbf6ccaf8ab180c06da09ba6c9046bc76eee50d",
+      "stock_row_sha256": "4deced6f9aa435e9de9ef1f7151c5ef5960c3f79bedb71c46387e043c32a4575",
+      "classification": "Exact"
+    },
+    {
+      "index": 199,
+      "label": "literal/loop-get-remove",
+      "source_sha256": "6d62d452789dbcce25050b6465b2f2c75c8dc256ac23b374efb599c07ae2516a",
+      "stock_row_sha256": "bc500d5a63eb4839368a3e43fdf7293f16340031b0b3ecd8ce24520bf725af93",
+      "classification": "Exact"
+    },
+    {
+      "index": 200,
+      "label": "literal/const-key",
+      "source_sha256": "9582518f17d9e8457847a46fbb67f2e154a4faec2d84d2bb253f6f1e3e9e1840",
+      "stock_row_sha256": "2cf3dcb9c3d51402e92d06b542ecfa2f6f013b1be618d43afe71675c7100f79f",
+      "classification": "Exact"
+    },
+    {
+      "index": 201,
+      "label": "literal/fn-returned-key",
+      "source_sha256": "f72860529eab2a4b52545e338cb72ad0904afc8acafd95c914ddf75d9d3120af",
+      "stock_row_sha256": "c36f709115d8e0f5cf3d0d65e6acc912dd43a5fa0fd8a18e2980d300f571f313",
+      "classification": "Exact"
+    },
+    {
+      "index": 202,
+      "label": "literal/template-twice",
+      "source_sha256": "3c6b96a606fafb86aef9b203e17500389fea4b4e224955a7b223699854d16a0d",
+      "stock_row_sha256": "5464e299c33d3f8771f42d0c9ad194b2062c694305012d589b4baefa76400736",
+      "classification": "Exact"
+    },
+    {
+      "index": 203,
+      "label": "moved/vec-element",
+      "source_sha256": "d247ead07f6bb6c2527211a24c8eb44d3981741d3fff3ee3c16d69f30bf2113a",
+      "stock_row_sha256": "46ebc094542043c4249ed906302c27e91d4ab64503493faa66693212bb31c234",
+      "classification": "Exact"
+    },
+    {
+      "index": 204,
+      "label": "moved/object-field-key",
+      "source_sha256": "c324bee8e490f1f7b08a585d0f00ed633b5637f045b2c3582926c3d693ceaeea",
+      "stock_row_sha256": "d1986fb8081d471c60d043206befa4abb58789e9756f9271851ac7cc5f006a0f",
+      "classification": "Exact"
+    },
+    {
+      "index": 205,
+      "label": "moved/field-read-after",
+      "source_sha256": "fa411737fdeca6b5ccb5bb3da3205dcb688316a9d4a663cb837d1bac1075af21",
+      "stock_row_sha256": "3370c6d0e241d0c4e77d6d1f353d3336c67e3e6c415468b90beac182ba466b78",
+      "classification": "Exact"
+    },
+    {
+      "index": 206,
+      "label": "moved/get-returned",
+      "source_sha256": "1b59a585b68576ef44f9d6ca4175b856121034329cf5c97f1feec99d0bae03f8",
+      "stock_row_sha256": "6fd2e2b49042465e7cac30c1deac43e36ebf3614596fd161b1072bab45662009",
+      "classification": "Exact"
+    },
+    {
+      "index": 207,
+      "label": "moved/existing-key-still-moves",
+      "source_sha256": "3eb43b9e7804441d33e375c87c3ee8b077d18cc4779606e0fb44f34612f898b9",
+      "stock_row_sha256": "2754ddb3f92f43bb661525459a7367c3e9c40c1b6d38c07aac4c14415d324c72",
+      "classification": "Exact"
+    },
+    {
+      "index": 208,
+      "label": "moved/alias-binding",
+      "source_sha256": "ebd7f8de9ae455d9ab4604d2a9385446a17e79531189ce16bc6146e6b08a749d",
+      "stock_row_sha256": "d136b5093870e2bd946a9a0671a7102827a99a671c91fc86c1483a3819b41f13",
+      "classification": "Exact"
+    },
+    {
+      "index": 209,
+      "label": "moved/own-key-string",
+      "source_sha256": "677adaff65af1828feb4da20b54717819fad876798203f23e4db1b4a0ea7cf47",
+      "stock_row_sha256": "319e32edc5cf8c18e0e5d420c4699c12c96d012d7e02e3f457a8377824769e9c",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 78:83, context: Some(64:110) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 210,
+      "label": "moved/receiver-dropped",
+      "source_sha256": "98979839f16b4fe32e575fa945c3dd734899fbf7154c66f486b141d603d639d7",
+      "stock_row_sha256": "df0557ba87020714a7945a6db6d681c3230f048ec878a4b4e998de0195640f84",
+      "classification": "Exact"
+    },
+    {
+      "index": 211,
+      "label": "moved/receiver-dropped-insert",
+      "source_sha256": "20de0b62e886934972476c03ba211758c2e2c262250181df46dab4cf25eec12f",
+      "stock_row_sha256": "625616b03c4308acc1328596e1aba33a3ea02656da3673646e342f0f0cf8e960",
+      "classification": "Exact"
+    },
+    {
+      "index": 212,
+      "label": "moved/receiver-dropped-is_empty",
+      "source_sha256": "1e1f5f4eb7066cba7028733814cc5ea7613292b35c694461793f381da0db5da2",
+      "stock_row_sha256": "f2be721e5e6586d3aa8e9fc3014f046f44df9ab3d94ece649c257ccb4aab9e5a",
+      "classification": "Exact"
+    },
+    {
+      "index": 213,
+      "label": "moved/key-dropped-contains",
+      "source_sha256": "713b229beb12747f42b6a0c51520a470e1608621d6595f1f6b2b75fa0b9d85be",
+      "stock_row_sha256": "f1394f861816cd3665929b3998c37e6fc20178078e56afc4cbfe8f72b789a854",
+      "classification": "Exact"
+    },
+    {
+      "index": 214,
+      "label": "borrowed/split-key",
+      "source_sha256": "85783b26a089a8c2c48d815917b9b8a1e7a406c427a7d3fb41d7db83fdb2e4c4",
+      "stock_row_sha256": "e50802b466c476fab2b993ada8b564b55e8ff09071864d3768015651b0f2c18f",
+      "classification": "Exact"
+    },
+    {
+      "index": 215,
+      "label": "borrowed/split-key-get",
+      "source_sha256": "b4dc9d7619fccd31524651463c1e8650accf269b1ac3a3d04f18cd031f2ae8a8",
+      "stock_row_sha256": "c87cf97135e73c43c3f19eaa7458e7514861840bc5c6eb44c455b9c4a9e530ca",
+      "classification": "Exact"
+    },
+    {
+      "index": 216,
+      "label": "borrowed/iterated-receiver-get",
+      "source_sha256": "a867a26f4a181b7823b16ac92c471e37e61ec93d3ed6c496f226601dda370e76",
+      "stock_row_sha256": "9445d759bce05f4002473f883f788efd1a0b678e8cc18dd6960c8fc77b0fc187",
+      "warnings": {
+        "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 94:99, context: Some(64:157) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "classification": "Exact"
+    },
+    {
+      "index": 217,
+      "label": "proof/alias-binding",
+      "source_sha256": "b7505c4b65021191e3e977abd4f6e6275c6a2ada9c95276e880f29d9d39061d3",
+      "stock_row_sha256": "e76492514de30ee0c442627d216216aa99da57114f281e720cbff345b0786930",
+      "classification": "Exact"
+    },
+    {
+      "index": 218,
+      "label": "proof/shadow-vec",
+      "source_sha256": "d5b9e83201fdf89454b06c6288234053acac4cc33cab783f067415d670582e4b",
+      "stock_row_sha256": "9d2c57fb08da99a661e5f2e0b9a6c6e6b2e92ecb6077ffe7c3b554c5d94cf507",
+      "fresh": {
+        "location": {
+          "end": 92,
+          "source": 0,
+          "start": 84
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 84, end: 92 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 84:92, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 219,
+      "label": "proof/reassign-vec",
+      "source_sha256": "845e97482bfa7cc7337e50a08712a2647abd5ca466a54dacf23be04cc22b8600",
+      "stock_row_sha256": "8c707acff0808f20202ef3ab06713467a14bc57beb4df482f27e4cc2eb11b166",
+      "fresh": {
+        "location": {
+          "end": 90,
+          "source": 0,
+          "start": 82
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 90 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:90, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 220,
+      "label": "proof/reassign-object",
+      "source_sha256": "00649a14381e057974c1898b0385757c0635ba0a993a13c1e6c5fef40e569d5b",
+      "stock_row_sha256": "7c16573778a8f8a80266abd32047953e9bbca75e5fccd7251296409b79b262e8",
+      "classification": "Exact"
+    },
+    {
+      "index": 221,
+      "label": "proof/reassign-in-loop",
+      "source_sha256": "075f0f48a43c4e68c52a1d8173b5925f175c3dc894b551d579fbb293ee135de9",
+      "stock_row_sha256": "d784c573764de87c30cf3f102ac91288deb32360538752a8021df2948dfa974b",
+      "classification": "Exact"
+    },
+    {
+      "index": 222,
+      "label": "proof/block-receiver",
+      "source_sha256": "a98726da73a3bd0cec98a39976cc46a0ade6469232274427e992092a76f3e0ef",
+      "stock_row_sha256": "4f1e9c15903064ddd888dc730f4ecdc07efd405fa27418b18940e57a09ec3987",
+      "classification": "Exact"
+    },
+    {
+      "index": 223,
+      "label": "proof/labeled-block",
+      "source_sha256": "821f0826c2175fbafe255bdfa7fcf853b1730c1d773ade76e5d0d779c178a818",
+      "stock_row_sha256": "ededee665b83f2b6933391489846adb62f758d384a539a0ca05048225988d99e",
+      "fresh": {
+        "location": {
+          "end": 112,
+          "source": 0,
+          "start": 77
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 77, end: 112 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 77:112, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 224,
+      "label": "proof/if-receiver",
+      "source_sha256": "a311ea8ca8164d3921cf951b438e331f90c0942906e79f5f59950528e1ece48c",
+      "stock_row_sha256": "8d386435d2291be440fb871266c86e4806d49a4bb3a23cf9c826003e95617f36",
+      "fresh": {
+        "location": {
+          "end": 107,
+          "source": 0,
+          "start": 75
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 75, end: 107 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:107, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 225,
+      "label": "proof/match-receiver",
+      "source_sha256": "21ebba6c85bd46b9180db1bd6d872991f35b653e86b5842103d4b63cf8665647",
+      "stock_row_sha256": "d21d54059cf37475212a65a344b952e966251e7f9c9aeac317f5ddd12e55934c",
+      "fresh": {
+        "location": {
+          "end": 103,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 103 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:103, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 226,
+      "label": "proof/closure-captured",
+      "source_sha256": "2b2d99d8ebe06eb6d02796a6ed57a7df20c807426498417551156a620d6bbc20",
+      "stock_row_sha256": "3c13857093d80b573821c486266686d4fdff17ddb70b8ff26ad9c6e1135c1f19",
+      "fresh": {
+        "location": {
+          "end": 95,
+          "source": 0,
+          "start": 85
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 85, end: 95 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 85:95, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 227,
+      "label": "proof/closure-reassigns",
+      "source_sha256": "93e329a1336427360ede3eb4af41b6eaf09840403be5f0a89122cf2062893bd2",
+      "stock_row_sha256": "2642b5f5daa431bf8fe814bae43740178ebb61c317c4c43e00d6957ef9dfc6cf",
+      "fresh": {
+        "location": {
+          "end": 108,
+          "source": 0,
+          "start": 98
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 98, end: 108 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:108, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 228,
+      "label": "proof/struct-literal",
+      "source_sha256": "b1d5e03de7ac3edba62be5f46b96f46829eb190dfb6de369f3e1c48758b24400",
+      "stock_row_sha256": "8ec40161d4b09368160df62735e3f4acbd694016bcf1cbeb873f072a6a212178",
+      "fresh": {
+        "location": {
+          "end": 84,
+          "source": 0,
+          "start": 64
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 64, end: 84 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:84, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 229,
+      "label": "proof/clone-receiver",
+      "source_sha256": "03338d106893c7af2081692e6b1884969baec86f72782b2edca9458675f192d0",
+      "stock_row_sha256": "1730ff79dcbc04b1f24157a7701e5a5d3f9ee516c8bb001f6a0840014b3f194e",
+      "fresh": {
+        "location": {
+          "end": 108,
+          "source": 0,
+          "start": 93
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 93, end: 108 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:108, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 230,
+      "label": "proof/tuple-field",
+      "source_sha256": "f4207b52aaf219c464ce19328ee4a53f324da28ab81589667f278c89a785680e",
+      "stock_row_sha256": "74365ccfb5df119fd3bae48251683c5748f113a19bc3e5ac67d406f2312a2f34",
+      "fresh": {
+        "location": {
+          "end": 92,
+          "source": 0,
+          "start": 80
+        },
+        "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 80, end: 92 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "refusal": "Method",
+        "status": "refused"
+      },
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 80:92, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "classification": "Inherited-refusal"
+    },
+    {
+      "index": 231,
+      "label": "is_empty/kinds",
+      "source_sha256": "d0caeb1bd9f13276a03ad2336ffdbba7f152dbf6431c33b2df6a923abd551828",
+      "stock_row_sha256": "f32b7e4175b3bb76f447f0bbef17ba01a7b794caa6f06a55e183f923a1a5359f",
+      "classification": "Exact"
+    },
+    {
+      "index": 232,
+      "label": "is_empty/unit",
+      "source_sha256": "31b39a1d3bb5f8fb6230f963ec07b4f5c7c121c82754b2a5a5f7bef1693c2d7b",
+      "stock_row_sha256": "fbc446ca7100e19e8aabcf83a2a152073ecf6fbd1dc3a76d05772b9c49566c4e",
+      "classification": "Exact"
+    },
+    {
+      "index": 233,
+      "label": "is_empty/iterator",
+      "source_sha256": "43ec818cce031f70ccf65297b34c443f067a68a38e05a64a07d144a1af106bd5",
+      "stock_row_sha256": "17e2111bfe2edc300a68e1e37f6f967fc54df6734c96b6f059db6fbbcebfc5a1",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::slice::Iter` has no method named `is_empty`",
+            "kind": "MissingInstanceFunction { hash: 0x239008c67856082c, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xf42162e28d142851 }) }",
+            "sites": [
+              {
+                "end": 85,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 85,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::slice::Iter` has no method named `is_empty`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::slice::Iter` has no matching method",
+      "fresh_display": "Type `std::slice::Iter` has no method named `is_empty`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 234,
+      "label": "is_empty/range",
+      "source_sha256": "5f0eca3039e07d066b40685b6c571125a36920905ec95d2db129a47e9fc1012e",
+      "stock_row_sha256": "e6a144348fe0238a07921b68a2044f0cc0fa96322671f196562b9c17e3c8ba97",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::ops::Range` has no method named `is_empty`",
+            "kind": "MissingInstanceFunction { hash: 0xa7bb5e9823212cc7, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x700a34bcd6630cba }) }",
+            "sites": [
+              {
+                "end": 81,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 81,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::ops::Range` has no method named `is_empty`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::ops::Range` has no matching method",
+      "fresh_display": "Type `std::ops::Range` has no method named `is_empty`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 235,
+      "label": "is_empty/option",
+      "source_sha256": "97fa194254a1abdeddb591d1c9b7c388f00579cd437844bc4f14f371035bd41f",
+      "stock_row_sha256": "d54fb99b682fa7e50dc594070c58f0564e58cea967107a5439fd6d2c5f6c6166",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::option::Option` has no method named `is_empty`",
+            "kind": "MissingInstanceFunction { hash: 0x1724e5009b5b1e05, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xc0958f246e193e78 }) }",
+            "sites": [
+              {
+                "end": 82,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 82,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::option::Option` has no method named `is_empty`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::option::Option` has no matching method",
+      "fresh_display": "Type `std::option::Option` has no method named `is_empty`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 236,
+      "label": "is_empty/int",
+      "source_sha256": "c0d13de38ddcd22916ac0f64aa23611f7f88feedb9fa0bb57c9591690d7f71a6",
+      "stock_row_sha256": "040aab0ebf54c250aabb30a5c2b0ca61117e43a5fdbe191257daf487d0c3c4d8",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::i64` has no method named `is_empty`",
+            "kind": "MissingInstanceFunction { hash: 0xcb1cfba23c263c32, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1cad9186c9641c4f }) }",
+            "sites": [
+              {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 76,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::i64` has no method named `is_empty`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::i64` has no matching method",
+      "fresh_display": "Type `std::i64` has no method named `is_empty`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 237,
+      "label": "is_empty/struct",
+      "source_sha256": "1d1197c0d1b78b1a4195c615c7e7a8938e66a642f7391fab53f34c8048c0396c",
+      "stock_row_sha256": "53384d31cb73ddab75beec6930032c1c9c88a956d6e092401cfc244273b91da2",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `P` has no method named `is_empty`",
+            "kind": "MissingInstanceFunction { hash: 0x91ceea9a23db691a, instance: Runtime(Rtti { kind: Struct, hash: 0x467f80bed6994967, variant_hash: 0x0, item: P, fields: {\"x\": 0} }) }",
+            "sites": [
+              {
+                "end": 81,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 81,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `P` has no method named `is_empty`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `P` has no matching method",
+      "fresh_display": "Type `P` has no method named `is_empty`",
+      "classification": "Intentional-D1"
+    },
+    {
+      "index": 238,
+      "label": "is_empty/mixed-loop",
+      "source_sha256": "1dbcbe86d2bc6b0ac0ad2da0090f9ba7db65e3aef546e33da8a60fa86b7be5f9",
+      "stock_row_sha256": "f2659c42c4c7dd8965d20502dced652abdb0fe11d8f5614d099b38276baa21ce",
+      "classification": "Exact"
+    },
+    {
+      "index": 239,
+      "label": "is_empty/after-remove",
+      "source_sha256": "83bd2c32418f705ae3c13c6cc6f3270a7a320c93c9fc767e856904ba656f8aa4",
+      "stock_row_sha256": "7c2a07bbb19d44d0c7c7a44b86920834b03f4fd3fb97b01560bd7fc5febe2bc8",
+      "classification": "Exact"
+    },
+    {
+      "index": 240,
+      "label": "contains_key/moved-receiver-param",
+      "source_sha256": "02fa951b7f41d07f255a3c2bb6f1288c1f2d617e13fb06cc9fec12ba4f98ba34",
+      "stock_row_sha256": "5fa2c215daf1c6756ef18d295b41c7f0b897163e53407469079853b789ed703a",
+      "classification": "Exact"
+    },
+    {
+      "index": 241,
+      "label": "contains_key/iterator",
+      "source_sha256": "a7572453967082ac5c4b86066802fa5f3db80bf5ed9cab1f0ea6915d027f79d2",
+      "stock_row_sha256": "737ca6af912fb756da1a2ebd96cd6a5027beeffe32122db21ff41d6e4d2f5a7a",
+      "fresh": {
+        "observation": {
+          "events": [],
+          "outcome": {
+            "chain": [],
+            "class": "Type",
+            "display": "Type `std::object::Iter` has no method named `contains_key`",
+            "kind": "MissingInstanceFunction { hash: 0x77468d4d8a064816, instance: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xf11e73ab2714e6f8 }) }",
+            "sites": [
+              {
+                "end": 95,
+                "source": 0,
+                "start": 64
+              }
+            ],
+            "status": "error"
+          },
+          "reuse": {
+            "graph": {
+              "nodes": [
+                [
+                  "I64",
+                  "0x1cad9186c9641c4f",
+                  "7"
+                ]
+              ],
+              "root": 0
+            },
+            "status": "value"
+          }
+        },
+        "logical": {
+          "context": [],
+          "frames": [
+            {
+              "location": {
+                "end": 95,
+                "source": 0,
+                "start": 64
+              },
+              "role": "Origin"
+            }
+          ],
+          "rendered": "Type `std::object::Iter` has no method named `contains_key`\n  at c17b.rn:1:65"
+        },
+        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "stock_display": "Type `std::object::Iter` has no matching method",
+      "fresh_display": "Type `std::object::Iter` has no method named `contains_key`",
+      "classification": "Intentional-D1"
+    }
+  ]
+}

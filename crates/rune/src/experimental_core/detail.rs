@@ -375,6 +375,11 @@ pub enum Detail {
 		arg: u8,
 		access: MovedAccess,
 	},
+	/// Taking a native argument was refused because iteration holds a read lease.
+	TakeSharedArgument {
+		arg: u8,
+		readers: u32,
+	},
 }
 
 impl Detail {
@@ -385,6 +390,7 @@ impl Detail {
 			| Self::NumericArgumentNumber { cause, arg, .. }
 			| Self::NumericArgumentCoerce { cause, arg, .. } => Some((cause, arg)),
 			Self::SharedArgument { arg, .. }
+			| Self::TakeSharedArgument { arg, .. }
 			| Self::FormatArgumentMoved { arg, .. }
 			| Self::IteratorArgumentMoved { arg, .. }
 			| Self::MovedArgument { arg, .. }
@@ -774,6 +780,9 @@ impl fmt::Display for Message<'_> {
 			TakeBorrowed => access_message(f, MovedAccess::Take, Option::None, "it is being read"),
 			SharedArgument { arg, .. } => {
 				access_message(f, MovedAccess::Write, Some(arg), "it is being read")
+			}
+			TakeSharedArgument { arg, .. } => {
+				access_message(f, MovedAccess::Take, Some(arg), "it is being read")
 			}
 			ExclusiveArgument { access, arg } => {
 				access_message(f, access, Some(arg), "it is being written")

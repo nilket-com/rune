@@ -40,6 +40,7 @@ pub fn module() -> Result<Module, ContextError> {
 	{
 		m.fresh_text = true;
 		m.fresh_iter = crate::function::fresh_iter::marker::ITERATOR;
+		m.fresh_object = crate::function::fresh_object::marker::STRING;
 	}
 	#[cfg(feature = "fresh-core")]
 	{

@@ -88,14 +88,17 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	let c15b: Json = serde_json::from_str(include_str!("c15b_admissions.json")).unwrap();
 	let c17a: Json = serde_json::from_str(include_str!("c17a_admissions.json")).unwrap();
 	assert_eq!(c17a.as_object().unwrap().len(), 2);
-	if let Some(rule) = c17a
+	let c17b: Json = serde_json::from_str(include_str!("c17b_admissions.json")).unwrap();
+	assert_eq!(c17b.as_object().unwrap().len(), 2);
+	if let Some(rule) = c17b
 		.get(case["id"].as_str().unwrap())
+		.or_else(|| c17a.get(case["id"].as_str().unwrap()))
 		.or_else(|| c15b.get(case["id"].as_str().unwrap()))
 		.or_else(|| c14.get(case["id"].as_str().unwrap()))
 		.or_else(|| c15.get(case["id"].as_str().unwrap()))
 	{
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
-		if rule["record"] == "C17a" {
+		if matches!(rule["record"].as_str(), Some("C17a" | "C17b")) {
 			assert_eq!(
 				rule["stock_observation_sha256"],
 				frozen["stock_observation_sha256"]

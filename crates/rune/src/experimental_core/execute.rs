@@ -819,6 +819,11 @@ impl Executor {
 				code, store, function, base, out, method, args_start, args_len,
 			);
 		}
+		if let Some(method) = crate::function::fresh_object::Method::from_id(id) {
+			return self.object_method_call(
+				code, store, function, base, out, method, args_start, args_len,
+			);
+		}
 		if (super::code::SORT_BEGIN..=super::code::SORT_ORDERING).contains(&id) {
 			if args_len != certificate.arity {
 				return Err(invalid());
@@ -2703,6 +2708,7 @@ mod missing_methods;
 
 mod diagnostic_locations;
 mod numeric;
+mod object_methods;
 mod small_forms;
 #[cfg(test)]
 mod small_forms_tests;

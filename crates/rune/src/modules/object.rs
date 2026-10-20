@@ -43,6 +43,7 @@ pub fn module() -> Result<Module, ContextError> {
 	{
 		m.fresh_iter = crate::function::fresh_iter::marker::ITER
 			| crate::function::fresh_iter::marker::ITERATOR;
+		m.fresh_object = crate::function::fresh_object::marker::OBJECT;
 	}
 
 	m.ty::<Object>()?;

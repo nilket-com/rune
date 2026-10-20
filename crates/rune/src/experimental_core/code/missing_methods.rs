@@ -214,3 +214,49 @@ impl CompileTransaction {
 		Ok(())
 	}
 }
+
+impl CompileTransaction {
+	/// Certifies a C17b Object method site. A site whose receiver is statically
+	/// proven Object needs only the certified std provider; any other site also
+	/// needs proof that no other receiver a fresh value or a source item can
+	/// have provides `m`.
+	pub(crate) fn object_method(
+		&mut self,
+		c: &Context,
+		q: &crate::query::QueryInner<'_>,
+		p: &crate::compile::Pool,
+		m: crate::function::fresh_object::Method,
+		proven_object: bool,
+	) -> Result<()> {
+		if !c.fresh_object_method(m) || (!proven_object && m.shared_name()) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		if proven_object || self.checked_object & m.bit() != 0 {
+			return Ok(());
+		}
+		if q.fresh_method_script.closed(m.hash()) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		for receiver in crate::function::fresh_methods::RECEIVERS
+			.iter()
+			.copied()
+			.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
+		{
+			if m.provider(receiver).is_some() {
+				continue;
+			}
+			let h = Hash::associated_function(receiver, m.hash());
+			if c.lookup_function(h).is_some() {
+				return Err(Error::refused(Refusal::Method));
+			}
+			if !self.builder.absent.contains(&h) {
+				if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
+					return Err(invalid());
+				}
+				self.builder.absent.try_push(h)?;
+			}
+		}
+		self.checked_object |= m.bit();
+		Ok(())
+	}
+}

@@ -1081,6 +1081,26 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 		id: crate::function::fresh_variant::Method::IsErr.id(),
 		arity: crate::function::fresh_variant::Method::IsErr.arity(),
 	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_object::Method::Get.id(),
+		arity: crate::function::fresh_object::Method::Get.arity(),
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_object::Method::ContainsKey.id(),
+		arity: crate::function::fresh_object::Method::ContainsKey.arity(),
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_object::Method::Insert.id(),
+		arity: crate::function::fresh_object::Method::Insert.arity(),
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_object::Method::Remove.id(),
+		arity: crate::function::fresh_object::Method::Remove.arity(),
+	},
+	CertifiedIntrinsic {
+		id: crate::function::fresh_object::Method::IsEmpty.id(),
+		arity: crate::function::fresh_object::Method::IsEmpty.arity(),
+	},
 ];
 pub(crate) const ANY_TYPE_OF: u32 = 0x8000_007c;
 pub(crate) const ANY_TYPE_NAME: u32 = 0x8000_007d;
@@ -1326,6 +1346,7 @@ pub(crate) struct CompileTransaction {
 	checked_text: u8,
 	checked_pipeline: u8,
 	checked_variant: u8,
+	checked_object: u8,
 }
 
 impl CompileTransaction {
@@ -3240,8 +3261,8 @@ mod intrinsic_partition_tests {
 		assert!(!reserved_intrinsic_id(FIRST_INTRINSIC_ID - 1));
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
 		// C11c adds the certified cold capture-take intrinsic to the prior 49; C17a
-		// adds the six Option and Result methods.
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 56);
+		// adds the six Option and Result methods and C17b the five Object methods.
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 61);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, CAPTURE_TAKE)
 				.unwrap()

@@ -41,6 +41,22 @@ impl AccessError {
 			readers as usize,
 		)))
 	}
+	#[cfg(all(test, feature = "fresh-core"))]
+	pub(crate) const fn fresh_moved_for_test(mode: u8) -> Option<Self> {
+		Some(Self::new(match mode {
+			0 => AccessErrorKind::NotAccessibleRef(Snapshot(MOVED)),
+			1 => AccessErrorKind::NotAccessibleMut(Snapshot(MOVED)),
+			2 => AccessErrorKind::NotAccessibleTake(Snapshot(MOVED)),
+			_ => return None,
+		}))
+	}
+
+	#[cfg(all(test, feature = "fresh-core"))]
+	pub(crate) const fn fresh_shared_take_for_test(readers: u32) -> Self {
+		Self::new(AccessErrorKind::NotAccessibleTake(Snapshot(
+			readers as usize,
+		)))
+	}
 	#[cfg(feature = "fresh-core")]
 	pub(crate) const fn fresh_moved_read() -> Self {
 		Self::new(AccessErrorKind::NotAccessibleRef(Snapshot(MOVED)))

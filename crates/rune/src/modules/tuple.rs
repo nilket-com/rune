@@ -49,6 +49,7 @@ pub fn module() -> Result<Module, ContextError> {
 	#[cfg(feature = "fresh-core")]
 	{
 		m.fresh_iter = crate::function::fresh_iter::marker::ITER;
+		m.fresh_object = crate::function::fresh_object::marker::TUPLE;
 	}
 	m.ty::<OwnedTuple>()?.docs(docstring! {
 		/// The tuple type.
