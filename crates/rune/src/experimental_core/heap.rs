@@ -16,6 +16,7 @@ mod comparison;
 mod formatting;
 mod hot;
 mod indexing;
+mod iter_terminals;
 mod number_methods;
 mod object_methods;
 pub use formatting::FormatLimits;
@@ -1981,6 +1982,8 @@ impl Store {
 
 #[cfg(test)]
 mod field_iter_tests;
+#[cfg(test)]
+mod iter_terminal_tests;
 #[cfg(test)]
 mod number_method_tests;
 #[cfg(test)]

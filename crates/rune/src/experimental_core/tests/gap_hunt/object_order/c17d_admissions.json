@@ -1,0 +1,117 @@
+{
+ "rule": "C17d admits direct iterator chains (iter() source, collect::<Vec|Object>): each entry pins the whole disposition it replaces (after O1b and C17b) and carries the admitted rule.",
+ "rows": [
+  {
+   "index": 46,
+   "legacy": {
+    "index": 46,
+    "label": "copy/collect",
+    "source_sha256": "182908804aeea9d27fe78570d50465ca43a387c8207d7e455782ffd2502ac6f0",
+    "stock_row_sha256": "6916896ab15e568e554a3fbc488dd328b03bcf076171879e412acd2efd99e06f",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "location": {
+      "end": 127,
+      "source": 0,
+      "start": 75
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 75, end: 127 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:127, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   },
+   "admitted": {
+    "warnings": {
+     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    },
+    "classification": "Exact"
+   }
+  },
+  {
+   "index": 47,
+   "legacy": {
+    "index": 47,
+    "label": "copy/collect-duplicate",
+    "source_sha256": "f3e3eed504e4dca43c12a1b23dc99dc6609380bdac98c7d1afbba4fe4fa0f279",
+    "stock_row_sha256": "e9d5b1665d258bcf73d543deb8dc09fd0e05b670e43446fd9099dfc055017664",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "location": {
+      "end": 130,
+      "source": 0,
+      "start": 78
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 78, end: 130 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:130, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   },
+   "admitted": {
+    "warnings": {
+     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    },
+    "classification": "Exact"
+   }
+  },
+  {
+   "index": 48,
+   "legacy": {
+    "index": 48,
+    "label": "copy/collect-many",
+    "source_sha256": "01de55c5064d0a3e38ba7c488c11f504fa7d6c3f2e5a5387db5c50384e7e88d8",
+    "stock_row_sha256": "a0e9fd44d6793b53cdd83fc93c5c2f26d7c69fd10ae12e8b313948494fa7385e",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "location": {
+      "end": 151,
+      "source": 0,
+      "start": 123
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 123, end: 151 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:151, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   },
+   "admitted": {
+    "warnings": {
+     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    },
+    "classification": "Exact"
+   }
+  },
+  {
+   "index": 49,
+   "legacy": {
+    "index": 49,
+    "label": "iter/iter-collect",
+    "source_sha256": "9de719e6e5988bf9c6acc6462e07bf75ef434a3e373eee11f10f39e5621499b3",
+    "stock_row_sha256": "78476abbef7297f4ee62f73c450e8c1b97a0c6e739d14241e45cd43913a72ebb",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "location": {
+      "end": 110,
+      "source": 0,
+      "start": 72
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 72, end: 110 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   },
+   "admitted": {
+    "warnings": {
+     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    },
+    "classification": "Exact"
+   }
+  }
+ ]
+}

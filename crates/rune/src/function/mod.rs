@@ -349,4 +349,7 @@ pub(crate) mod fresh_variant;
 pub(crate) mod fresh_iter;
 
 #[cfg(feature = "fresh-core")]
+pub(crate) mod iter_terminal;
+
+#[cfg(feature = "fresh-core")]
 pub(crate) mod fresh_numeric;

@@ -1114,6 +1114,17 @@ fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<Certifie
 		.find(|entry| entry.id == id)
 		.copied()
 		.or_else(|| number_intrinsic(id))
+		.or_else(|| terminal_intrinsic(id))
+}
+
+/// The C17d iterator terminal intrinsics.
+#[cold]
+fn terminal_intrinsic(id: u32) -> Option<CertifiedIntrinsic> {
+	let intrinsic = crate::function::iter_terminal::Intrinsic::from_id(id)?;
+	Some(CertifiedIntrinsic {
+		id,
+		arity: intrinsic.arity(),
+	})
 }
 
 /// The C17c numeric intrinsics: one per stock provider and one per method
@@ -1364,6 +1375,7 @@ pub(crate) struct CompileTransaction {
 	checked_variant: u8,
 	checked_object: u8,
 	checked_number: u64,
+	checked_terminal: u16,
 }
 
 impl CompileTransaction {

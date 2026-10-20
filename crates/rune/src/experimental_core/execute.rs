@@ -848,6 +848,9 @@ impl Executor {
 			}
 			return self.numeric_call(store, function, base, out, call, args_start, args_len);
 		}
+		if let Some(intrinsic) = crate::function::iter_terminal::Intrinsic::from_id(id) {
+			return self.terminal_call(store, function, base, out, intrinsic, args_start, args_len);
+		}
 		if args_len != certificate.arity
 			|| !matches!(id, super::code::PRINT_RAW | super::code::VARIANT_SUCCESS)
 		{
@@ -2711,6 +2714,7 @@ mod host_bridge;
 mod missing_methods;
 
 mod diagnostic_locations;
+mod iter_terminals;
 mod number_methods;
 mod numeric;
 mod object_methods;

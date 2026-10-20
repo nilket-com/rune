@@ -1,7 +1,6 @@
 //! Cold text cursors. Adapter traversal is emitted as charged instructions.
 use super::boxed_iterator::{Kind, State};
 use super::*;
-use crate::experimental_core::error::{Detail, HostCause, IntTarget, IntValue};
 #[derive(Debug)]
 pub(super) struct Chars {
 	pub(super) offset: usize,
@@ -85,35 +84,7 @@ impl Store {
 		n: Value,
 		take: bool,
 	) -> Result<Value> {
-		let n = match n {
-			Value::I64(n) => usize::try_from(n).map_err(|_| {
-				err(ErrorKind::IntegerCoercion).with_detail(Detail::NumericArgumentCoerce {
-					cause: HostCause::IntegerCoercion,
-					arg: 1,
-					value: IntValue::Signed(n),
-					to: IntTarget::Usize,
-				})
-			})?,
-			Value::U64(n) => usize::try_from(n).map_err(|_| {
-				err(ErrorKind::IntegerCoercion).with_detail(Detail::NumericArgumentCoerce {
-					cause: HostCause::IntegerCoercion,
-					arg: 1,
-					value: IntValue::Unsigned(n),
-					to: IntTarget::Usize,
-				})
-			})?,
-			_ => {
-				return Err(
-					err(ErrorKind::Type).with_detail(Detail::NumericArgumentNumber {
-						cause: HostCause::ExpectedNumber,
-						arg: 1,
-						found: self
-							.diagnostic_type(n)
-							.ok_or_else(|| err(ErrorKind::InvalidCode))?,
-					}),
-				)
-			}
-		};
+		let n = self.adapter_count(n)?;
 		let Value::Heap(h) = source else {
 			return Err(err(ErrorKind::InvalidCode));
 		};

@@ -1,0 +1,83 @@
+{
+ "rule": "C17d admits direct iterator chains (iter() source, collect::<Vec>): each entry pins the whole disposition it replaces and carries the admitted rule.",
+ "rows": [
+  {
+   "index": 5,
+   "legacy": {
+    "index": 5,
+    "label": "tuple/collect",
+    "source_sha256": "e39981d3392f963f83a0924dd3fa93b7517baff84f628447773bd4f14b3c1f7b",
+    "stock_row_sha256": "d61c5ccee1ca6d0aa26d58166f5c923a0f7d805c95a53be50a739d7147890b02",
+    "stock_fix_both": false,
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "location": {
+      "end": 81,
+      "source": 0,
+      "start": 52
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 52, end: 81 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:81, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   },
+   "admitted": {
+    "stock_fix_both": false,
+    "classification": "Exact"
+   }
+  },
+  {
+   "index": 19,
+   "legacy": {
+    "index": 19,
+    "label": "unit/collect",
+    "source_sha256": "2dd173221a58d9d31db447c209d2aee52998be2acc30e0c77e873453cc111c8d",
+    "stock_row_sha256": "7814291d731cf4b979bd12768c4ee7e94722dcdc62e599c43fa814bd5b546165",
+    "stock_fix_both": false,
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "location": {
+      "end": 78,
+      "source": 0,
+      "start": 52
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 52, end: 78 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   },
+   "admitted": {
+    "stock_fix_both": false,
+    "classification": "Exact"
+   }
+  },
+  {
+   "index": 30,
+   "legacy": {
+    "index": 30,
+    "label": "object/collect",
+    "source_sha256": "c03328f19a8d4f22f70da19d85dfd197f5b124f492f7b467bd965cae2eba1406",
+    "stock_row_sha256": "6a40146ecb044349c953fbef58066e903f42088598ff4cfc8a7b8ba3916dbe11",
+    "stock_fix_both": false,
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "location": {
+      "end": 86,
+      "source": 0,
+      "start": 52
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 52, end: 86 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:86, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   },
+   "admitted": {
+    "stock_fix_both": false,
+    "classification": "Exact"
+   }
+  }
+ ]
+}

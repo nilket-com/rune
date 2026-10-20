@@ -55,8 +55,11 @@ fn verify_fresh_case(
 		serde_json::to_value(&counts).unwrap()
 	);
 	let rule = &admitted(
-		include_str!("c17b_admissions.json"),
-		&admitted(include_str!("o1b_admissions.json"), &rows[index]),
+		include_str!("c17d_admissions.json"),
+		&admitted(
+			include_str!("c17b_admissions.json"),
+			&admitted(include_str!("o1b_admissions.json"), &rows[index]),
+		),
 	);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);

@@ -361,3 +361,6 @@ mod missing_method_tests;
 
 #[cfg(test)]
 mod number_method_tests;
+
+#[cfg(test)]
+mod iter_terminal_tests;

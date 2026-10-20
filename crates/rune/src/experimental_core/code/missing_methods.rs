@@ -306,3 +306,34 @@ impl CompileTransaction {
 		Ok(())
 	}
 }
+
+impl CompileTransaction {
+	/// Certifies a C17d terminal or adapter on its first use in this compile.
+	pub(crate) fn iter_terminal(
+		&mut self,
+		c: &Context,
+		t: crate::function::iter_terminal::Terminal,
+	) -> Result<()> {
+		if self.checked_terminal & t.bit() != 0 {
+			return Ok(());
+		}
+		if !crate::function::iter_terminal::provided(c, t) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		self.checked_terminal |= t.bit();
+		Ok(())
+	}
+
+	/// Certifies `::std::iter::range` on its first use in this compile.
+	pub(crate) fn iter_range(&mut self, c: &Context) -> Result<()> {
+		const RANGE: u16 = 1 << 13;
+		if self.checked_terminal & RANGE != 0 {
+			return Ok(());
+		}
+		if !crate::function::iter_terminal::range_provided(c) {
+			return Err(Error::refused(Refusal::Native));
+		}
+		self.checked_terminal |= RANGE;
+		Ok(())
+	}
+}

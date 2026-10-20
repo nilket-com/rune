@@ -1,0 +1,65 @@
+{
+ "rule": "C17d admits direct iterator chains outside text (iter() sources with skip/take, count): each entry pins the whole frozen disposition it replaces and carries the admitted one.",
+ "rows": {
+  "141": {
+   "legacy": {
+    "label": "refused/141",
+    "source_sha256": "d6a694a970d576a7b0b839403c22c63357b2f932815af5dd3532f8c962dfbb5d",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-surface",
+    "stock_status": "value",
+    "stock_observation_sha256": "98b360b8eb81820439a19ad7fe361a8b63da713799ec16d9b3076e30d45e1470"
+   },
+   "admitted": {
+    "label": "refused/141",
+    "source_sha256": "d6a694a970d576a7b0b839403c22c63357b2f932815af5dd3532f8c962dfbb5d",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "stock_status": "value",
+    "stock_observation_sha256": "98b360b8eb81820439a19ad7fe361a8b63da713799ec16d9b3076e30d45e1470"
+   }
+  },
+  "142": {
+   "legacy": {
+    "label": "refused/142",
+    "source_sha256": "685398313d7f6228a3c4ecc06bd3cb3c89d1faafac40602970d95f8aad40fc9f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-surface",
+    "stock_status": "value",
+    "stock_observation_sha256": "d5b51b3551bfef6dfc35cf73f3a9a88794b50da227bd756dc5dd0aea3feda523"
+   },
+   "admitted": {
+    "label": "refused/142",
+    "source_sha256": "685398313d7f6228a3c4ecc06bd3cb3c89d1faafac40602970d95f8aad40fc9f",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "stock_status": "value",
+    "stock_observation_sha256": "d5b51b3551bfef6dfc35cf73f3a9a88794b50da227bd756dc5dd0aea3feda523"
+   }
+  },
+  "143": {
+   "legacy": {
+    "label": "refused/143",
+    "source_sha256": "5544aa0ed9e07144efd456a15a685bf2ba06a6d3e070e6d381475303e9fd1048",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Refused-surface",
+    "stock_status": "value",
+    "stock_observation_sha256": "4cf0d6f0bc7a0fe095988b14796a2dda1bf5d0d91975a96b9cef16a299de7295"
+   },
+   "admitted": {
+    "label": "refused/143",
+    "source_sha256": "5544aa0ed9e07144efd456a15a685bf2ba06a6d3e070e6d381475303e9fd1048",
+    "fixture": "default",
+    "fuel": 200000,
+    "disposition": "Exact",
+    "stock_status": "value",
+    "stock_observation_sha256": "4cf0d6f0bc7a0fe095988b14796a2dda1bf5d0d91975a96b9cef16a299de7295"
+   }
+  }
+ }
+}

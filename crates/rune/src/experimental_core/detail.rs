@@ -382,6 +382,11 @@ pub enum Detail {
 		arg: u8,
 		readers: u32,
 	},
+	/// A native tuple conversion found the wrong number of elements.
+	TupleLength {
+		actual: usize,
+		expected: usize,
+	},
 }
 
 impl Detail {
@@ -947,6 +952,10 @@ impl fmt::Display for Message<'_> {
 				write!(f, "`{found}` cannot be formatted with `{{}}`")
 			}
 			ExpectedNumber { found } => messages::expected_number(f, found),
+			TupleLength { actual, expected } => write!(
+				f,
+				"Expected a tuple of length `{expected}`, but found one with length `{actual}`"
+			),
 			IndexTarget { target, index } => messages::index_get(f, target, index),
 			IndexSet {
 				target,

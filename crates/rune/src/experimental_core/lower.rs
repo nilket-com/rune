@@ -8,6 +8,7 @@
 //! nothing for the others. Bare locals are read in place where the reference's
 //! `writes_nothing` rule allows; capturing move closures transfer payload ownership and track moved bindings.
 
+mod iter_terminals;
 mod missing_methods;
 mod number_methods;
 mod object_methods;
@@ -1113,6 +1114,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		if self.pipeline_is_origin(for_.iter) {
 			return self.pipeline_for(for_, out, span);
 		}
+		if self.adapted(for_.iter) {
+			return self.terminal_for(for_, out, span);
+		}
 		if let Some(out) = out {
 			self.unit_into(out, span)?;
 		}
@@ -2062,8 +2066,8 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 		}
 
-		if let Some((target, m)) = self.pipeline_site(call) {
-			return self.call_pipeline(call, target, m, out, span);
+		if let Some(site) = self.chain_site(call) {
+			return self.call_chain_site(call, site, out, span);
 		}
 		self.call_non_variant(call, out, span)
 	}
