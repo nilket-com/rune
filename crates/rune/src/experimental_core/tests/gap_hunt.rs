@@ -1686,3 +1686,5 @@ mod numeric_methods;
 mod iter_terminals;
 
 mod object_keys;
+
+mod iter_adapters;
