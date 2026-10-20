@@ -56,6 +56,7 @@ fn verify_fresh_case(
 		hex(Sha256::digest(serde_json::to_vec(&raw_stock).unwrap()).as_ref()),
 		rule["stock_row_sha256"]
 	);
+	let stock = &super::object_order::order_fixed("type_values", index, stock);
 	let audit = &actual["fresh_audit"];
 	for key in ["row_idle", "executor_idle"] {
 		assert_eq!(audit[key], true);

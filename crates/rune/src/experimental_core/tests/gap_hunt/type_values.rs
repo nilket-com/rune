@@ -110,7 +110,10 @@ fn child() {
 	result["projected"] = projection(&result);
 	if std::env::var_os("C16H_REPLAY").is_some() {
 		let frozen: Json = serde_json::from_str(include_str!("type_values/stock.json")).unwrap();
-		assert_eq!(result["projected"], frozen[index]["projected"]);
+		assert_eq!(
+			result["projected"],
+			super::object_order::order_fixed("type_values", index, &frozen[index])["projected"]
+		);
 	}
 	let path = std::env::var_os("C16H_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
@@ -265,6 +268,7 @@ fn run_contract(engine: &str) {
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
 	for (i, (case, expected)) in cases.iter().zip(frozen).enumerate() {
+		let fixed = super::object_order::order_fixed("type_values", i, expected);
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
 		assert_eq!(case["label"], expected["label"]);
@@ -373,10 +377,10 @@ fn run_contract(engine: &str) {
 			continue;
 		}
 		if engine == "stock" {
-			assert_eq!(observed["projected"], expected["projected"], "{label}");
+			assert_eq!(observed["projected"], fixed["projected"], "{label}");
 		}
-		assert_eq!(hex(&stdout), expected["stdout_hex"]);
-		assert_eq!(hex(&stderr), expected["stderr_hex"]);
+		assert_eq!(hex(&stdout), fixed["stdout_hex"]);
+		assert_eq!(hex(&stderr), fixed["stderr_hex"]);
 	}
 	super::contract_completed(engine, cases.len());
 }

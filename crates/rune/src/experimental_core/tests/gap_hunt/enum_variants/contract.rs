@@ -122,9 +122,10 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	}
 	let stock: Json = serde_json::from_str(STOCK).unwrap();
 	let id = case["id"].as_str().unwrap();
+	let fixed = super::object_order::order_fixed("enum_variants", id.parse().unwrap(), &stock[id]);
 	let intentional =
-		super::nominal_clone::intentional_json("enum_variants", case, &stock[id]["observation"]);
-	let expected = intentional.as_ref().unwrap_or(&stock[id]["observation"]);
+		super::nominal_clone::intentional_json("enum_variants", case, &fixed["observation"]);
+	let expected = intentional.as_ref().unwrap_or(&fixed["observation"]);
 	let observed = &actual["observation"];
 	if c16e_admission(case, frozen, actual, expected) {
 		return;
@@ -258,10 +259,11 @@ fn compare_stock(case: &Json, actual: &Json) {
 	] {
 		assert_eq!(actual[key], stock[id][key], "{id} {key}");
 	}
+	let fixed = super::object_order::order_fixed("enum_variants", id.parse().unwrap(), &stock[id]);
 	let intentional =
-		super::nominal_clone::intentional_json("enum_variants", case, &stock[id]["observation"]);
+		super::nominal_clone::intentional_json("enum_variants", case, &fixed["observation"]);
 	let expected = rules.get(id).map_or_else(
-		|| intentional.as_ref().unwrap_or(&stock[id]["observation"]),
+		|| intentional.as_ref().unwrap_or(&fixed["observation"]),
 		|rule| &rule["expected_observation"],
 	);
 	let d1_expected = d1_enum_expectation(case, expected, "stock");

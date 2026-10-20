@@ -113,6 +113,7 @@ pub use self::label::DebugLabel;
 pub(crate) use self::label::Label;
 
 pub(crate) mod object;
+mod object_map;
 pub use self::object::Object;
 
 mod panic;
@@ -253,6 +254,7 @@ impl FunctionHandler {
 
 pub(crate) type FieldMap<K, V> = crate::alloc::HashMap<K, V>;
 
+#[cfg(feature = "fresh-core")]
 #[inline(always)]
 pub(crate) fn new_field_map<K, V>() -> FieldMap<K, V> {
 	FieldMap::new()

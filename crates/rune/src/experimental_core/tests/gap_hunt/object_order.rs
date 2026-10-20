@@ -1,4 +1,4 @@
-//! O1 Object key-order stock oracle. This module is test-only; it does not alter product code.
+//! O1 Object key-order oracle and fix-both contracts.
 use super::*;
 use crate::runtime::{self as stock, Value};
 use serde_json::{json, Value as Json};
@@ -110,7 +110,10 @@ fn child() {
 	result["projected"] = projection(&result);
 	if std::env::var_os("O1_REPLAY").is_some() {
 		let frozen: Json = serde_json::from_str(include_str!("object_order/stock.json")).unwrap();
-		assert_eq!(result["projected"], frozen[index]["projected"]);
+		assert_eq!(
+			result["projected"],
+			super::object_order::order_fixed("object_order", index, &frozen[index])["projected"]
+		);
 	}
 	let path = std::env::var_os("O1_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
@@ -277,7 +280,7 @@ fn stock_contract() {
 
 #[cfg(target_os = "linux")]
 fn run_contract(engine: &str) {
-	assert_eq!(engine, "stock");
+	assert!(matches!(engine, "stock" | "fresh"));
 	let cases: Json = serde_json::from_str(CASES).unwrap();
 	let frozen: Json = serde_json::from_str(include_str!("object_order/stock.json")).unwrap();
 	let cases = cases.as_array().unwrap();
@@ -288,6 +291,7 @@ fn run_contract(engine: &str) {
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
 	for (i, (case, expected)) in cases.iter().zip(frozen).enumerate() {
+		let fixed = super::object_order::order_fixed("object_order", i, expected);
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
 		assert_eq!(case["label"], expected["label"]);
@@ -311,7 +315,11 @@ fn run_contract(engine: &str) {
 		let mut child = command
 			.args([
 				"--exact",
-				"experimental_core::tests::gap_hunt::object_order::child",
+				if engine == "stock" {
+					"experimental_core::tests::gap_hunt::object_order::child"
+				} else {
+					"experimental_core::tests::gap_hunt::object_order::fresh_child"
+				},
 				"--ignored",
 				"--nocapture",
 				"--quiet",
@@ -387,11 +395,38 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["label"], case["label"]);
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["origin"], case["origin"]);
-		if engine == "stock" {
-			assert_eq!(observed["projected"], expected["projected"], "{label}");
+		if engine == "fresh" {
+			verify_fresh_case(i, case, expected, &fixed, &observed, &stdout, &stderr);
+			continue;
 		}
-		assert_eq!(hex(&stdout), expected["stdout_hex"]);
-		assert_eq!(hex(&stderr), expected["stderr_hex"]);
+		if engine == "stock" {
+			assert_eq!(observed["projected"], fixed["projected"], "{label}");
+		}
+		assert_eq!(hex(&stdout), fixed["stdout_hex"]);
+		assert_eq!(hex(&stderr), fixed["stderr_hex"]);
 	}
 	super::contract_completed(engine, cases.len());
 }
+
+/// O1 fix-both rows: frozen observations whose Object key order changes when
+/// both engines iterate in insertion order. The frozen files keep the old
+/// observation; each entry pins it by hash and carries its replacement.
+pub(super) fn order_fixed(module: &str, index: usize, old: &Json) -> Json {
+	use sha2::{Digest, Sha256};
+	static FIXES: std::sync::OnceLock<Json> = std::sync::OnceLock::new();
+	let fixes = FIXES
+		.get_or_init(|| serde_json::from_str(include_str!("object_order/fix_both.json")).unwrap());
+	let Some(fix) = fixes["rows"][module].get(format!("{index:03}")) else {
+		return old.clone();
+	};
+	assert_eq!(
+		hex(Sha256::digest(serde_json::to_vec(old).unwrap()).as_ref()),
+		fix["old_sha256"],
+		"{module} {index}"
+	);
+	fix["new"].clone()
+}
+
+include!("object_order/fresh.rs");
+
+include!("object_order/contract.rs");

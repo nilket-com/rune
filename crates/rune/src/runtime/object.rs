@@ -3,63 +3,94 @@ use core::cmp;
 use core::fmt;
 use core::hash;
 use core::iter;
-
-use rune_alloc::hashbrown::raw::RawIter;
+use core::ptr::NonNull;
+use core::slice;
 
 use crate as rune;
-use crate::alloc::hash_map;
 use crate::alloc::prelude::*;
 use crate::alloc::{self, String};
+use crate::runtime::object_map::ObjectMap;
 use crate::runtime::{
-	Dismantle, FieldMap, FromValue, Handover, ProtocolCaller, RawAnyGuard, Ref, ToValue, Value,
-	VmError, Worklist,
+	Dismantle, FromValue, Handover, ProtocolCaller, RawAnyGuard, Ref, ToValue, Value, VmError,
+	Worklist,
 };
 use crate::Any;
 
-/// An owning iterator over the entries of a `Object`.
-///
-/// This `struct` is created by the [`into_iter`] method on [`Object`]
-/// (provided by the `IntoIterator` trait). See its documentation for more.
-///
-/// [`into_iter`]: struct.Object.html#method.into_iter
-/// [`Object`]: struct.Object.html
-pub type IntoIter = hash_map::IntoIter<String, Value>;
+macro_rules! entry_iterator {
+	($(#[$meta:meta])* $name:ident<$($life:lifetime)?>, $inner:ty, $item:ty, |$entry:pat_param| $map:expr) => {
+		$(#[$meta])*
+		pub struct $name<$($life)?> {
+			inner: $inner,
+		}
 
-/// A mutable iterator over the entries of a `Object`.
-///
-/// This `struct` is created by the [`iter_mut`] method on [`Object`]. See its
-/// documentation for more.
-///
-/// [`iter_mut`]: struct.Object.html#method.iter_mut
-/// [`Object`]: struct.Object.html
-pub type IterMut<'a> = hash_map::IterMut<'a, String, Value>;
+		impl<$($life)?> Iterator for $name<$($life)?> {
+			type Item = $item;
 
-/// An iterator over the entries of a `Object`.
-///
-/// This `struct` is created by the [`iter`] method on [`Object`]. See its
-/// documentation for more.
-///
-/// [`iter`]: struct.Object.html#method.iter
-/// [`Object`]: struct.Object.html
-pub type Iter<'a> = hash_map::Iter<'a, String, Value>;
+			#[inline]
+			fn next(&mut self) -> Option<Self::Item> {
+				let $entry = self.inner.next()?;
+				Some($map)
+			}
 
-/// An iterator over the keys of a `HashMap`.
-///
-/// This `struct` is created by the [`keys`] method on [`Object`]. See its
-/// documentation for more.
-///
-/// [`keys`]: struct.Object.html#method.keys
-/// [`Object`]: struct.Object.html
-pub type Keys<'a> = hash_map::Keys<'a, String, Value>;
+			#[inline]
+			fn size_hint(&self) -> (usize, Option<usize>) {
+				self.inner.size_hint()
+			}
+		}
 
-/// An iterator over the values of a `HashMap`.
-///
-/// This `struct` is created by the [`values`] method on [`Object`]. See its
-/// documentation for more.
-///
-/// [`values`]: struct.Object.html#method.values
-/// [`Object`]: struct.Object.html
-pub type Values<'a> = hash_map::Values<'a, String, Value>;
+		impl<$($life)?> DoubleEndedIterator for $name<$($life)?> {
+			#[inline]
+			fn next_back(&mut self) -> Option<Self::Item> {
+				let $entry = self.inner.next_back()?;
+				Some($map)
+			}
+		}
+
+		impl<$($life)?> ExactSizeIterator for $name<$($life)?> {}
+		impl<$($life)?> iter::FusedIterator for $name<$($life)?> {}
+
+		impl<$($life)?> fmt::Debug for $name<$($life)?> {
+			fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+				f.debug_struct(stringify!($name))
+					.field("remaining", &self.inner.len())
+					.finish()
+			}
+		}
+	};
+}
+
+entry_iterator! {
+	/// An owning iterator over the entries of an [`Object`], in insertion
+	/// order, created by its `into_iter` method.
+	IntoIter<>, alloc::vec::IntoIter<(String, Value)>, (String, Value), |entry| entry
+}
+
+entry_iterator! {
+	/// A mutable iterator over the entries of an [`Object`], in insertion
+	/// order, created by [`Object::iter_mut`].
+	IterMut<'a>, crate::runtime::object_map::IterMut<'a, Value>, (&'a String, &'a mut Value), |entry| entry
+}
+
+entry_iterator! {
+	/// An iterator over the entries of an [`Object`], in insertion order,
+	/// created by [`Object::iter`].
+	#[derive(Clone)]
+	Iter<'a>, slice::Iter<'a, (String, Value)>, (&'a String, &'a Value), |(key, value)| (key, value)
+}
+
+entry_iterator! {
+	/// An iterator over the keys of an [`Object`], in insertion order, created
+	/// by [`Object::keys`].
+	#[derive(Clone)]
+	Keys<'a>, slice::Iter<'a, (String, Value)>, &'a String, |(key, _)| key
+}
+
+entry_iterator! {
+	/// An iterator over the values of an [`Object`], in insertion order,
+	/// created by [`Object::values`].
+	#[derive(Clone)]
+	Values<'a>, slice::Iter<'a, (String, Value)>, &'a Value, |(_, value)| value
+}
 
 /// Struct representing a dynamic anonymous object.
 ///
@@ -84,7 +115,7 @@ pub type Values<'a> = hash_map::Values<'a, String, Value>;
 #[repr(transparent)]
 #[rune(item = ::std::object, dismantle)]
 pub struct Object {
-	inner: FieldMap<String, Value>,
+	inner: ObjectMap<Value>,
 }
 
 /// An object is made of the values put into it, and a script can nest one
@@ -94,7 +125,7 @@ impl Dismantle for Object {
 	fn dismantle(&mut self, out: &mut Handover<'_>) {
 		// The map is emptied rather than walked in place, so that what it holds
 		// is handed over in one pass over it.
-		for (_, value) in core::mem::take(&mut self.inner) {
+		for (_, value) in self.inner.take_entries() {
 			out.push(value);
 		}
 	}
@@ -113,7 +144,7 @@ impl Object {
 	#[rune::function(keep, path = Self::new)]
 	pub fn new() -> Self {
 		Self {
-			inner: crate::runtime::new_field_map(),
+			inner: ObjectMap::new(),
 		}
 	}
 
@@ -129,7 +160,7 @@ impl Object {
 	#[rune::function(keep, path = Self::with_capacity)]
 	pub fn with_capacity(capacity: usize) -> alloc::Result<Self> {
 		Ok(Self {
-			inner: crate::runtime::new_field_hash_map_with_capacity(capacity)?,
+			inner: ObjectMap::try_with_capacity(capacity)?,
 		})
 	}
 
@@ -284,33 +315,41 @@ impl Object {
 		self.dismantle(&mut Worklist::new());
 	}
 
-	/// An iterator visiting all key-value pairs in arbitrary order.
+	/// An iterator visiting all key-value pairs in insertion order.
 	/// The iterator element type is `(&'a String, &'a Value)`.
 	pub fn iter(&self) -> Iter<'_> {
-		self.inner.iter()
+		Iter {
+			inner: self.inner.entries().iter(),
+		}
 	}
 
-	/// An iterator visiting all keys in arbitrary order.
+	/// An iterator visiting all keys in insertion order.
 	/// The iterator element type is `&'a String`.
 	pub fn keys(&self) -> Keys<'_> {
-		self.inner.keys()
+		Keys {
+			inner: self.inner.entries().iter(),
+		}
 	}
 
-	/// An iterator visiting all values in arbitrary order.
+	/// An iterator visiting all values in insertion order.
 	/// The iterator element type is `&'a Value`.
 	pub fn values(&self) -> Values<'_> {
-		self.inner.values()
+		Values {
+			inner: self.inner.entries().iter(),
+		}
 	}
 
-	/// An iterator visiting all key-value pairs in arbitrary order,
-	/// with mutable references to the values.
+	/// An iterator visiting all key-value pairs in insertion order, with
+	/// mutable references to the values.
 	///
 	/// The iterator element type is `(&'a String, &'a mut Value)`.
 	pub fn iter_mut(&mut self) -> IterMut<'_> {
-		self.inner.iter_mut()
+		IterMut {
+			inner: self.inner.iter_mut(),
+		}
 	}
 
-	/// An iterator visiting all keys and values in arbitrary order.
+	/// An iterator visiting all keys and values in insertion order.
 	///
 	/// # Examples
 	///
@@ -329,12 +368,14 @@ impl Object {
 	pub fn rune_iter(this: Ref<Self>) -> RuneIter {
 		// SAFETY: we're holding onto the related reference guard, and making
 		// sure that it's dropped after the iterator.
-		let iter = unsafe { this.inner.raw_table().iter() };
-		let (_, guard) = Ref::into_raw(this);
-		RuneIter { iter, guard }
+		let (object, guard) = Ref::into_raw(this);
+		RuneIter {
+			cursor: Cursor { object, next: 0 },
+			guard,
+		}
 	}
 
-	/// An iterator visiting all keys in arbitrary order.
+	/// An iterator visiting all keys in insertion order.
 	///
 	/// # Examples
 	///
@@ -353,12 +394,14 @@ impl Object {
 	pub fn rune_keys(this: Ref<Self>) -> RuneIterKeys {
 		// SAFETY: we're holding onto the related reference guard, and making
 		// sure that it's dropped after the iterator.
-		let iter = unsafe { this.inner.raw_table().iter() };
-		let (_, guard) = Ref::into_raw(this);
-		RuneIterKeys { iter, guard }
+		let (object, guard) = Ref::into_raw(this);
+		RuneIterKeys {
+			cursor: Cursor { object, next: 0 },
+			guard,
+		}
 	}
 
-	/// An iterator visiting all values in arbitrary order.
+	/// An iterator visiting all values in insertion order.
 	///
 	/// # Examples
 	///
@@ -377,9 +420,11 @@ impl Object {
 	pub fn rune_values(this: Ref<Self>) -> RuneValues {
 		// SAFETY: we're holding onto the related reference guard, and making
 		// sure that it's dropped after the iterator.
-		let iter = unsafe { this.inner.raw_table().iter() };
-		let (_, guard) = Ref::into_raw(this);
-		RuneValues { iter, guard }
+		let (object, guard) = Ref::into_raw(this);
+		RuneValues {
+			cursor: Cursor { object, next: 0 },
+			guard,
+		}
 	}
 
 	pub(crate) fn partial_eq_with(
@@ -414,7 +459,7 @@ impl Object {
 			return Ok(false);
 		}
 
-		for (key, a) in a.inner.iter() {
+		for (key, a) in a.iter() {
 			let Some(b) = b.inner.get(key) else {
 				return Ok(false);
 			};
@@ -459,10 +504,12 @@ impl IntoIterator for Object {
 	type IntoIter = IntoIter;
 
 	/// Creates a consuming iterator, that is, one that moves each key-value
-	/// pair out of the object in arbitrary order. The object cannot be used
+	/// pair out of the object in insertion order. The object cannot be used
 	/// after calling this.
 	fn into_iter(self) -> Self::IntoIter {
-		self.inner.into_iter()
+		IntoIter {
+			inner: self.inner.into_entries().into_iter(),
+		}
 	}
 }
 
@@ -470,7 +517,7 @@ impl fmt::Debug for Object {
 	#[inline]
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
 		let mut entries = alloc::Vec::try_with_capacity(self.len()).map_err(|_| fmt::Error)?;
-		for entry in &self.inner {
+		for entry in self.iter() {
 			entries.try_push(entry).map_err(|_| fmt::Error)?;
 		}
 		entries.sort_unstable_by(|a, b| a.0.cmp(b.0));
@@ -481,7 +528,7 @@ impl fmt::Debug for Object {
 #[derive(Any)]
 #[rune(item = ::std::object, name = Iter, dismantle)]
 pub struct RuneIter {
-	iter: RawIter<(String, Value)>,
+	cursor: Cursor,
 	guard: RawAnyGuard,
 }
 
@@ -496,25 +543,25 @@ impl Dismantle for RuneIter {
 impl RuneIter {
 	#[rune::function(instance, keep, protocol = NEXT)]
 	pub fn next(&mut self) -> Result<Option<(String, Value)>, VmError> {
-		unsafe {
-			let Some(bucket) = self.iter.next() else {
-				return Ok(None);
-			};
+		// SAFETY: the guard keeps the object alive and shared-borrowed.
+		let Some((key, value)) = (unsafe { self.cursor.next() }) else {
+			return Ok(None);
+		};
 
-			let (key, value) = bucket.as_ref();
-			let key = key.try_clone()?;
-			Ok(Some((key, value.clone())))
-		}
+		Ok(Some((key.try_clone()?, value.clone())))
 	}
 
 	#[rune::function(instance, keep, protocol = SIZE_HINT)]
 	pub fn size_hint(&self) -> (usize, Option<usize>) {
-		self.iter.size_hint()
+		// SAFETY: the guard keeps the object alive and shared-borrowed.
+		let remaining = unsafe { self.cursor.remaining() };
+		(remaining, Some(remaining))
 	}
 
 	#[rune::function(instance, keep, protocol = LEN)]
 	pub fn len(&self) -> usize {
-		self.iter.len()
+		// SAFETY: the guard keeps the object alive and shared-borrowed.
+		unsafe { self.cursor.remaining() }
 	}
 }
 
@@ -534,7 +581,7 @@ impl iter::Iterator for RuneIter {
 #[derive(Any)]
 #[rune(item = ::std::object, name = Keys, dismantle)]
 pub struct RuneIterKeys {
-	iter: RawIter<(String, Value)>,
+	cursor: Cursor,
 	guard: RawAnyGuard,
 }
 
@@ -549,25 +596,25 @@ impl Dismantle for RuneIterKeys {
 impl RuneIterKeys {
 	#[rune::function(instance, keep, protocol = NEXT)]
 	pub fn next(&mut self) -> Result<Option<String>, VmError> {
-		unsafe {
-			let Some(bucket) = self.iter.next() else {
-				return Ok(None);
-			};
+		// SAFETY: the guard keeps the object alive and shared-borrowed.
+		let Some((key, _)) = (unsafe { self.cursor.next() }) else {
+			return Ok(None);
+		};
 
-			let (key, _) = bucket.as_ref();
-			let key = key.try_clone()?;
-			Ok(Some(key))
-		}
+		Ok(Some(key.try_clone()?))
 	}
 
 	#[rune::function(instance, keep, protocol = SIZE_HINT)]
 	pub fn size_hint(&self) -> (usize, Option<usize>) {
-		self.iter.size_hint()
+		// SAFETY: the guard keeps the object alive and shared-borrowed.
+		let remaining = unsafe { self.cursor.remaining() };
+		(remaining, Some(remaining))
 	}
 
 	#[rune::function(instance, keep, protocol = LEN)]
 	pub fn len(&self) -> usize {
-		self.iter.len()
+		// SAFETY: the guard keeps the object alive and shared-borrowed.
+		unsafe { self.cursor.remaining() }
 	}
 }
 
@@ -587,7 +634,7 @@ impl iter::Iterator for RuneIterKeys {
 #[derive(Any)]
 #[rune(item = ::std::object, name = Values, dismantle)]
 pub struct RuneValues {
-	iter: RawIter<(String, Value)>,
+	cursor: Cursor,
 	guard: RawAnyGuard,
 }
 
@@ -602,24 +649,25 @@ impl Dismantle for RuneValues {
 impl RuneValues {
 	#[rune::function(instance, keep, protocol = NEXT)]
 	pub fn next(&mut self) -> Result<Option<Value>, VmError> {
-		unsafe {
-			let Some(bucket) = self.iter.next() else {
-				return Ok(None);
-			};
+		// SAFETY: the guard keeps the object alive and shared-borrowed.
+		let Some((_, value)) = (unsafe { self.cursor.next() }) else {
+			return Ok(None);
+		};
 
-			let (_, value) = bucket.as_ref();
-			Ok(Some(value.clone()))
-		}
+		Ok(Some(value.clone()))
 	}
 
 	#[rune::function(instance, keep, protocol = SIZE_HINT)]
 	pub fn size_hint(&self) -> (usize, Option<usize>) {
-		self.iter.size_hint()
+		// SAFETY: the guard keeps the object alive and shared-borrowed.
+		let remaining = unsafe { self.cursor.remaining() };
+		(remaining, Some(remaining))
 	}
 
 	#[rune::function(instance, keep, protocol = LEN)]
 	pub fn len(&self) -> usize {
-		self.iter.len()
+		// SAFETY: the guard keeps the object alive and shared-borrowed.
+		unsafe { self.cursor.remaining() }
 	}
 }
 
@@ -633,5 +681,105 @@ impl iter::Iterator for RuneValues {
 			Ok(None) => None,
 			Err(err) => Some(Err(err)),
 		}
+	}
+}
+
+/// The position of a script iterator in an object it holds a shared guard on.
+struct Cursor {
+	object: NonNull<Object>,
+	next: usize,
+}
+
+impl Cursor {
+	/// # Safety
+	///
+	/// The object must be alive and not mutably borrowed, which the guard held
+	/// next to the cursor ensures.
+	unsafe fn next<'a>(&mut self) -> Option<&'a (String, Value)> {
+		let entry = self.object.as_ref().inner.get_index(self.next)?;
+		self.next += 1;
+		Some(entry)
+	}
+
+	/// # Safety
+	///
+	/// As for [`Cursor::next`].
+	unsafe fn remaining(&self) -> usize {
+		self.object.as_ref().len() - self.next
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	fn key(s: &str) -> String {
+		String::try_from(s).unwrap()
+	}
+
+	fn object(keys: &[&str]) -> Object {
+		let mut object = Object::new();
+
+		for (i, k) in keys.iter().enumerate() {
+			object.insert(key(k), Value::from(i as i64)).unwrap();
+		}
+
+		object
+	}
+
+	fn keys(object: &Object) -> std::vec::Vec<&str> {
+		object.keys().map(|k| k.as_str()).collect()
+	}
+
+	#[test]
+	fn rust_iterators_follow_insertion_order() {
+		let mut object = object(&["c", "a", "b"]);
+		assert_eq!(keys(&object), ["c", "a", "b"]);
+		assert_eq!(object.iter().len(), 3);
+		assert_eq!(object.keys().next_back().unwrap().as_str(), "b");
+		assert!(object.remove("c").is_some());
+		object.insert(key("c"), Value::from(9i64)).unwrap();
+		assert_eq!(keys(&object), ["a", "b", "c"]);
+
+		for (_, value) in object.iter_mut() {
+			*value = Value::from(7i64);
+		}
+
+		let values: std::vec::Vec<i64> = object
+			.values()
+			.map(|v| v.as_integer::<i64>().unwrap())
+			.collect();
+		assert_eq!(values, [7, 7, 7]);
+		let copy = object.try_clone().unwrap();
+		assert_eq!(keys(&copy), ["a", "b", "c"]);
+		let owned: std::vec::Vec<std::string::String> =
+			copy.into_iter().map(|(k, _)| k.as_str().into()).collect();
+		assert_eq!(owned, ["a", "b", "c"]);
+	}
+
+	#[test]
+	fn script_iterators_follow_insertion_order_under_the_guard() {
+		let value = Value::new(object(&["z", "y", "x"])).unwrap();
+		let mut iter = Object::rune_iter(value.clone().into_ref::<Object>().unwrap());
+		assert_eq!(iter.len(), 3);
+		let (k, _) = iter.next().unwrap().unwrap();
+		assert_eq!(k.as_str(), "z");
+		assert_eq!(iter.size_hint(), (2, Some(2)));
+		// The guard keeps the object shared while the iterator lives.
+		assert!(value.borrow_mut::<Object>().is_err());
+		let keys = Object::rune_keys(value.clone().into_ref::<Object>().unwrap())
+			.map(|k| std::string::String::from(k.unwrap().as_str()))
+			.collect::<std::vec::Vec<_>>();
+		assert_eq!(keys, ["z", "y", "x"]);
+		let values = Object::rune_values(value.clone().into_ref::<Object>().unwrap())
+			.map(|v| v.unwrap().as_integer::<i64>().unwrap())
+			.collect::<std::vec::Vec<_>>();
+		assert_eq!(values, [0, 1, 2]);
+		assert_eq!(
+			iter.map(|e| std::string::String::from(e.unwrap().0.as_str()))
+				.collect::<std::vec::Vec<_>>(),
+			["y", "x"]
+		);
+		assert!(value.borrow_mut::<Object>().is_ok());
 	}
 }

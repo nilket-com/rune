@@ -114,24 +114,9 @@ impl FreshGraph {
 			}
 			Type::Object => {
 				let data = store.host_observe_fields(value).unwrap();
-				// Observe the language Object map through Rune's key representation,
-				// while child identity continues to come from the fresh core store.
-				let mut keys = stock::Object::with_capacity(data.len()).unwrap();
-				for (key, _) in data {
-					keys.insert(
-						crate::alloc::String::try_from(key.as_str()).unwrap(),
-						Value::unit(),
-					)
-					.unwrap();
-				}
 				let mut fields = Vec::new();
-				for (key, _) in keys.iter() {
-					let child = data
-						.iter()
-						.find(|(name, _)| name.as_str() == key.as_str())
-						.unwrap()
-						.1;
-					fields.push((hex(key.as_bytes()), self.intern(child)));
+				for (key, child) in data {
+					fields.push((hex(key.as_bytes()), self.intern(*child)));
 				}
 				json!(["Object", stock::Object::HASH.to_string(), fields])
 			}

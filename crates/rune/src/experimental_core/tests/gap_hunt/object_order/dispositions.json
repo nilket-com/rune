@@ -1,0 +1,1137 @@
+{
+ "rule": "O1 fresh dispositions: Exact rows equal the O1 stock row (fix-both replacement where key order changed); Inherited-refusal rows are refused before invocation and pinned",
+ "summary": {
+  "classifications": {
+   "Exact": 28,
+   "Inherited-kind": 2,
+   "Inherited-refusal": 43,
+   "Inherited-runtime-refusal": 1
+  }
+ },
+ "rows": [
+  {
+   "index": 0,
+   "label": "literal/two",
+   "source_sha256": "4d8e97a106c3314751883f0450837bde6c37a3617d55b68448f8e52b0147263b",
+   "stock_row_sha256": "41b3b7d8d8740677f15d27f165e34e2957fb37598f72fdf8ef79c56bb3b748b5",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 1,
+   "label": "literal/xyz",
+   "source_sha256": "e62fd40af95257fea041e10cd95f29ab5f370cadc15f5a56a82d218c8658d3ad",
+   "stock_row_sha256": "8e89ccd574d991715ae36e97eb2218dc644d7c25ae388c39455859dbf1923396",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 2,
+   "label": "literal/bac",
+   "source_sha256": "ebba4f0faaf819cdcacd6d8c43843e1f008992d491e5a60a9138fb8fad96d7e3",
+   "stock_row_sha256": "37cc513d4c4210e089202433b49690b734e9d3df7166b1bb9e66766623e0774c",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 3,
+   "label": "literal/five-reverse",
+   "source_sha256": "ebe403cf7cc3b8a40662439c413b822912e562810df0b156b1af669e686b4b1f",
+   "stock_row_sha256": "cbfd448bbce0d455fe9dcd9fe4023bb398162bc40f3a314741ba112250cd50ed",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 4,
+   "label": "literal/ten",
+   "source_sha256": "0b92c06124732e058e4e9ba8503e91c2db4fba0b23e2ddf9413d6855ee19aa72",
+   "stock_row_sha256": "4a4aa3fcccc11ef1717f7f76d028dde117d689a95a94232236182a38b16ae822",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 5,
+   "label": "literal/twenty-reverse",
+   "source_sha256": "452ae9827fb8833951cfada5854b3fde7367485252a141f4c40c36e1b8b11d80",
+   "stock_row_sha256": "89cf4f24f599e322f884ff0bcc8611e903685bbdc4aaecc4bc8a3ee31ba13566",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 6,
+   "label": "literal/shorthand",
+   "source_sha256": "5af78ef27a792d9273ec432c12527a34584ef27a9730bdefca14fc82664c5666",
+   "stock_row_sha256": "8ac62c0f7dcdb36ca9ead7135e48d3e0e8ca203efcb3eb314c4a52e7406f8db3",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 7,
+   "label": "literal/string-keys",
+   "source_sha256": "095f7b52a1a17753f2755122f500b7c41e0b43d8dff7fd0011058cec246c45f3",
+   "stock_row_sha256": "2fda67aeb4ade3b19d95c77dfa77ef2826d52a88abbb278ee376815a625e9c54",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 8,
+   "label": "literal/graph",
+   "source_sha256": "1e8b52f52f8ff919c9975ec4635140828356bfbbc4828af07db57df23001c7ea",
+   "stock_row_sha256": "13d9cf0e9d312ee54519da46782e9bc4019c018c0ee4094920ca53e2ba3b4413",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 9,
+   "label": "literal/nested-graph",
+   "source_sha256": "7e17e1ad6af39ad00aeb606ecde3dee5015ce0bcde169cda693f330ee43b66b4",
+   "stock_row_sha256": "4a87f7f718667800ccd60f506eedca6ce667a3b53ee059a3fcae67a1b283c1b7",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 10,
+   "label": "literal/in-loop",
+   "source_sha256": "23c74a6cdffdae424d50fbe83df80a9440256654ba0c55a03e06cb17d01b0ca5",
+   "stock_row_sha256": "c57e86103b693bda9756c1e55a698b336e6cdb788b13c83d38aeec005b368411",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 11,
+   "label": "literal/fn-return",
+   "source_sha256": "64af6f73474257df00eb33cfb8acba900d0835ec59ca7bb1aae4da3586d4a46e",
+   "stock_row_sha256": "3d65a030359f8572ad65888085cb4943bb4710167a5ec61056f00a221d96311c",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 12,
+   "label": "literal/repeated-call",
+   "source_sha256": "24db37a5014a4aa53fd24e2d76c0f13ab72a438c89c774da25fb11664a176ed1",
+   "stock_row_sha256": "12cdd70a88d80d6622315411d99aa9253d784a3d439a43bb2c45f06858bfdde0",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 13,
+   "label": "assign/field-add",
+   "source_sha256": "dc6eed43d1db01ef2fb61ef38d87681ed8034120619cb021be67a42e0dc8fd1c",
+   "stock_row_sha256": "0e40219c87e22a4866c397961101aeb8938ec98d60641838866b76a64cc25ef8",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 14,
+   "label": "assign/field-add-after-literal",
+   "source_sha256": "36bae6341a1587f2b43a458010b3e8dca4c434fbd55f5abe641c81d12cb3f190",
+   "stock_row_sha256": "d6fa589b30ba9a24ac5aa543270f0dd1736d1229d9ab4e1198bb66f15f7029af",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 15,
+   "label": "assign/field-existing",
+   "source_sha256": "6205cf19c6e9091474b760873a86aa0de7aa790602f6afa0f12f4160bef49031",
+   "stock_row_sha256": "6d7e30597046a88ae5daea94c18772fa7a01eafaffa837a8f354c23e802b5bbc",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 16,
+   "label": "assign/field-compound",
+   "source_sha256": "9ccdb70371231aebd2642ff729e0977309130f77c828b9d482a7416f633a7a49",
+   "stock_row_sha256": "44ff79ec0ad2a6cd681e8d08d8fffe668760d8e8ea26426a9dc0f9e545a9906d",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 17,
+   "label": "assign/index-add",
+   "source_sha256": "7c793018f0c32e29e1b9ce77615373699f841be8a8084066d3b24b410d83b439",
+   "stock_row_sha256": "73e817611b998d033a808cffc00141236e617f7bcda8168df19dd900b24e7b63",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 18,
+   "label": "assign/index-dynamic",
+   "source_sha256": "6e95e40092285afa10d3dd0132bec56000727a853dc5a1f75a84cf418cb562ef",
+   "stock_row_sha256": "315b7544fef9dd8632a3e009f861c1ade86a3349333ac9cbab4803eaa150b1e9",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 19,
+   "label": "assign/index-existing",
+   "source_sha256": "a842290da6938dd25f2265034e7dd216869cf68e15ee86eb2a330633d6d94d08",
+   "stock_row_sha256": "aa6c51a8e5429fc07cbcc107d904d0e8bd918f24224e62cddf68f748a547618f",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 20,
+   "label": "assign/nested-field-add",
+   "source_sha256": "985e75ff0d85c66a481e5f7aeb180a2d4d41f0a4fb594e8e4499068275a4fb94",
+   "stock_row_sha256": "eb391fb9ee5a8d74da4439e60e0451c49e04188736b482d8b0ce265f1e2b717f",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 21,
+   "label": "insert/sequence",
+   "source_sha256": "5546d2b6e29a0dbc40cdcee025b648b14a40c60fa12ba046fdcec522d8da0e13",
+   "stock_row_sha256": "913d45f05a95e83a1950eafb4cd1d205ec6689d3b6341bbd3c83ce1490a81a03",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 22,
+   "label": "insert/replace-keeps-position",
+   "source_sha256": "981d6373c08e06f584dd856db6906666920f65788f5094c07bc4b4a775fcf844",
+   "stock_row_sha256": "be01b99573d643d55fd7324b74814d5da6e7fe9e175d627bee02309f398fd089",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 23,
+   "label": "insert/after-literal",
+   "source_sha256": "1e8f0372e1b1a485456670e1760e190ff28b00a67b498e01eca42e3485cddbc3",
+   "stock_row_sha256": "9c9495bca38fa3063114c713adcd10228f7b5bccff1fd8d142cb89535878d8d2",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 104,
+     "source": 0,
+     "start": 89
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 89, end: 104 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 89:104, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 24,
+   "label": "insert/forty",
+   "source_sha256": "685793047b2643acc8920ce5023c39094200810faf193473af5032ee1d2e2cf6",
+   "stock_row_sha256": "be8b1c3962ef78370a1f73cad3234466193e4d9ed8e28be217f671cdc5ec168d",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 116,
+     "source": 0,
+     "start": 97
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 97, end: 116 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:116, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 25,
+   "label": "insert/twenty-reverse",
+   "source_sha256": "97febd02357306fea13587bad34fdefeabf9469b246e29edbbee3c9ba45d9a30",
+   "stock_row_sha256": "e3fef8f906c0dae98919489827d2d67b7756536eb732d04704344ef5d317ef78",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 119,
+     "source": 0,
+     "start": 97
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 97, end: 119 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:119, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 26,
+   "label": "insert/thousand",
+   "source_sha256": "3c787b8bfd80783930780e992428678ac6683e9095f4a063ac2c5c1fd930d637",
+   "stock_row_sha256": "d62196fc108cd9f8e868e4bb5503ba14cbba671e21b61d91c165360b7e6baee0",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 118,
+     "source": 0,
+     "start": 99
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 99, end: 118 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 99:118, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 27,
+   "label": "insert/graph",
+   "source_sha256": "9aca730c9450363a9f524deb96000dd3c9a2ce99a0d76a99af80719bdaf13a05",
+   "stock_row_sha256": "2e553aac4146b07cd6d82da8a7242cd839f774e9caf7cd6fcea000d44081f92e",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 28,
+   "label": "insert/fn-param",
+   "source_sha256": "f2b1bdc9866cafd978cc81dd6d0ed90d497323a6a1a8d81ef25b3fdd7a785fed",
+   "stock_row_sha256": "b07a634f54ab08c8a8f882dbc43271679843b49edf276616272b6cd8070348bd",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 81,
+     "source": 0,
+     "start": 68
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 68, end: 81 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 68:81, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 29,
+   "label": "insert/with-capacity",
+   "source_sha256": "a44048b34efc3d257a53a9e3a9ab9d6e7442d1b224ca5c5bd428f10f77eb2d30",
+   "stock_row_sha256": "c29dfb3014f1dd4ed36077de45641b9971a408c8e4a2c5e3b667ec85e804837c",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 102,
+     "source": 0,
+     "start": 78
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 78, end: 102 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+    "refusal": "Native",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:102, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 30,
+   "label": "insert/object-new",
+   "source_sha256": "e8d798906c2a2aafbdae990cab0b7d62339a756c15e64218d98748a81296f261",
+   "stock_row_sha256": "3993574c849e997be5e91878d285835af830f88521c8f77fb795af5903999f79",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 91,
+     "source": 0,
+     "start": 78
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 78, end: 91 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+    "refusal": "Native",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:91, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 31,
+   "label": "remove/middle",
+   "source_sha256": "1f8b5fde8bc066dde7dadc288b37742595afd45d4c31f6ac3e2af07917926ffd",
+   "stock_row_sha256": "5a4f641f0f38a4fe4ea9722e75148cca2eb5bec41fea480f94a9bb688fa4a3b1",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 32,
+   "label": "remove/first",
+   "source_sha256": "489a4340ae2e309ad1ab394974fa1b0a8d7e3cb7b686819805824155122fc556",
+   "stock_row_sha256": "0070c45cdd3a5960441d577232f617fb768ffc24621eaccda2e3695b7b486351",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 33,
+   "label": "remove/last",
+   "source_sha256": "e994e166963b464842cb67ea563c78ebfbe312f51ac4f40a411ddbd3f6eefd65",
+   "stock_row_sha256": "3959315b63c95d4c59a0ae343ac04cfce37b5fa818223ff44d25bc0e91810432",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 34,
+   "label": "remove/missing",
+   "source_sha256": "e533931093fcf7d5f13f0e9ec92e6dbf09a655a078027b8b40dfff0e5083a72a",
+   "stock_row_sha256": "9263d5b57f1e56ac21a73c04ca2473e7b15c3d18aff737c1d61aca525ea5818f",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 35,
+   "label": "remove/reinsert-appends",
+   "source_sha256": "5870f3d7932a2df196ea90a870d36e0b6df0482f18e9ec335d174f0e37516a74",
+   "stock_row_sha256": "0b676bdd921988d0701bb3c0a4ef42be74c04e0d7b163bc14f6014b61af3fba5",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 36,
+   "label": "remove/reinsert-twice",
+   "source_sha256": "521f972c12fee54e730039e4a0bd1bfa6cb38ab9776a9d6d96c2e443d63c61b0",
+   "stock_row_sha256": "efe7fb8f515e261f61153cf8323954df488c4ccc6e923ecf852efea0e089e198",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 37,
+   "label": "remove/all-then-insert",
+   "source_sha256": "4df4adb0935af49c4110552557229ff400157cedf50689d4449a813963ffc83b",
+   "stock_row_sha256": "4466aec4d1cc86582b9acc89ea10412705b44468d108dde889f55a94498d2ec9",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 38,
+   "label": "remove/evens",
+   "source_sha256": "811636237000fe7ccf53327011a8ef804ccb13582e3575a85f6afb1f3e1ce6a3",
+   "stock_row_sha256": "ac7ddc05786dcfa9466f3d377e03670466aa0c51011c206f181eea85953d84e9",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 116,
+     "source": 0,
+     "start": 97
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 97, end: 116 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:116, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 39,
+   "label": "remove/literal-middle",
+   "source_sha256": "8bf07c49d2deed5941a3556b98eae692ff6ffd7ad36a66109b16d370e1732360",
+   "stock_row_sha256": "81d1e57548b7a7a6ab6a2f920b3025096f0bcf6482e0fe150a9ccde040866a4a",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 110,
+     "source": 0,
+     "start": 97
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 97, end: 110 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 40,
+   "label": "remove/thousand-half",
+   "source_sha256": "7025bb151bbace3aaa436e7a6c078e5fa52b5f2e9e208f04aa60433843de5172",
+   "stock_row_sha256": "ab1b38b3b47c760ccfa902a934b9ad3d5cd1447444905f9ae99e39aac9e77bdc",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 118,
+     "source": 0,
+     "start": 99
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 99, end: 118 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 99:118, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 41,
+   "label": "remove/graph",
+   "source_sha256": "74ad09ab47fbf26bc03e87d348f3338f99a5af9bdeb4cb0698b09442d8398ea6",
+   "stock_row_sha256": "c2436fd1f21742e1a474fcb614a952a8a0a18dbc0dd7b10399bb9ee8db53123c",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 42,
+   "label": "copy/clear-then-insert",
+   "source_sha256": "dffd2e9fc90f0953bf32345c21c5143bcd00eff980c1ec5fef6a8c7e7c7507da",
+   "stock_row_sha256": "f5b5095fee955d8ea35e6cddeb5c4d2737a136e707fe1131f02a6b321d689c41",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 98,
+     "source": 0,
+     "start": 89
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 89, end: 98 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 89:98, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 43,
+   "label": "copy/clone",
+   "source_sha256": "81dbf503fd648e29d0a487fa1179fab6c5cde18237f62540c5836e7c92a5d4c7",
+   "stock_row_sha256": "0db1b65dea72904d4910c98142d388cd46f342a21468dc2b4710a3800d72872c",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 44,
+   "label": "copy/clone-after-remove",
+   "source_sha256": "391bab38db5e359b0afd8297deb20681fcef0eb77c8c5f489ba53bb5a5398835",
+   "stock_row_sha256": "982a728ee3da61aabcb83f8651b9dfeca8ccdf0401f62e3476873d96d0c46c8d",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 45,
+   "label": "copy/clone-literal",
+   "source_sha256": "b177f2daa77ae883da549dfbc603578ebfc614b60300bcfb357e7dbe97d10113",
+   "stock_row_sha256": "e875a730316d15cabf82d33f4e9ad9a7804feeff98871d86122fc28cd9980f4b",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 46,
+   "label": "copy/collect",
+   "source_sha256": "182908804aeea9d27fe78570d50465ca43a387c8207d7e455782ffd2502ac6f0",
+   "stock_row_sha256": "6916896ab15e568e554a3fbc488dd328b03bcf076171879e412acd2efd99e06f",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 127,
+     "source": 0,
+     "start": 75
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 75, end: 127 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:127, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 47,
+   "label": "copy/collect-duplicate",
+   "source_sha256": "f3e3eed504e4dca43c12a1b23dc99dc6609380bdac98c7d1afbba4fe4fa0f279",
+   "stock_row_sha256": "e9d5b1665d258bcf73d543deb8dc09fd0e05b670e43446fd9099dfc055017664",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 130,
+     "source": 0,
+     "start": 78
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 78, end: 130 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:130, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 48,
+   "label": "copy/collect-many",
+   "source_sha256": "01de55c5064d0a3e38ba7c488c11f504fa7d6c3f2e5a5387db5c50384e7e88d8",
+   "stock_row_sha256": "a0e9fd44d6793b53cdd83fc93c5c2f26d7c69fd10ae12e8b313948494fa7385e",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 151,
+     "source": 0,
+     "start": 123
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 123, end: 151 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:151, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 49,
+   "label": "iter/iter-collect",
+   "source_sha256": "9de719e6e5988bf9c6acc6462e07bf75ef434a3e373eee11f10f39e5621499b3",
+   "stock_row_sha256": "78476abbef7297f4ee62f73c450e8c1b97a0c6e739d14241e45cd43913a72ebb",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 110,
+     "source": 0,
+     "start": 72
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 72, end: 110 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 50,
+   "label": "iter/keys-collect",
+   "source_sha256": "137d0f5c2a2ae6571e2c38c063597c89fe8584aa50355cb79f75f3eb4a7b5667",
+   "stock_row_sha256": "11322bb1808e8178d7febc2dbf8102ef0dd449e212be8c059fc4e5ae6d6c30b2",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 110,
+     "source": 0,
+     "start": 72
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 72, end: 110 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 51,
+   "label": "iter/values-collect",
+   "source_sha256": "f48c8d42a8af06dd44ee9c772b319a07a3ac8a70f8ca50285b78b05f9c137ad2",
+   "stock_row_sha256": "dc6c168d44078c2700dc12e5b7f678a8d6158e89b2c36acb625875e8498c6837",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 112,
+     "source": 0,
+     "start": 72
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 72, end: 112 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:112, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 52,
+   "label": "iter/iter-map",
+   "source_sha256": "72a29933b01acf597e6dd2bff72da3e18e49577c58f3d2d7a716333b5ba26031",
+   "stock_row_sha256": "9057e06af2b8cc4558032b6399f546a5a6829f62cff6fa4c37c3db6a2f7532f5",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 127,
+     "source": 0,
+     "start": 72
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 72, end: 127 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:127, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 53,
+   "label": "iter/for-pair",
+   "source_sha256": "73e64b8771954fae644af565c2581265fe5c6d8b31d859217f9dfc59a587df26",
+   "stock_row_sha256": "957767636732b013ac7b223142df31e0fa10d23488b1b3b71748cffdd51c54a4",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 54,
+   "label": "iter/first-break",
+   "source_sha256": "0deda180f9dd42334c385d075b419a930533c1bd480c9592b6b42c7e999ccbf8",
+   "stock_row_sha256": "6d9eb55009628168a820f81027db10f301049e720a0ced4c2636e6baca406fd7",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 87:92, context: Some(72:129) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 55,
+   "label": "iter/nested",
+   "source_sha256": "87c4eada93307ddfff0e81ab29bcc39147695886682ed1ab4a763f3aa789b3fa",
+   "stock_row_sha256": "0642256897505d56a8946fa0ddecd37ae7e2292bda2925f41777258fbf03a7c0",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 87:92, context: Some(72:169) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 129:135, context: Some(125:165) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 56,
+   "label": "iter/keys-after-mutation",
+   "source_sha256": "150bdfc42ee52ea112ff174d9e8d17e561663aae2c5967b21bb5bc03e3a67231",
+   "stock_row_sha256": "a39a6665aa12f1c71b91602143b541c1aba29bd325ad14e91c1b654c6ee9a9e0",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 57,
+   "label": "iter/iter-len",
+   "source_sha256": "9b9a707a0db4ad4a141ac35beff579171455d5f79575f3c8deda68038df38c73",
+   "stock_row_sha256": "5c10e480614a3bb918759d36f1c61032059f0903a4602fafa84bc367aba3d647",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 143,
+     "source": 0,
+     "start": 129
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 129, end: 143 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 129:143, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 58,
+   "label": "iter/iter-exhaust",
+   "source_sha256": "aca14a016119d87745c4028c99031b09e158efe0fafd53f742726246fd70549e",
+   "stock_row_sha256": "401fe562fa046e1035091d18e95ddae621c472de37360e9e8aad0024188e72f4",
+   "classification": "Inherited-runtime-refusal",
+   "fresh": {
+    "location": {
+     "end": 92,
+     "source": 0,
+     "start": 79
+    },
+    "operation": "Method",
+    "status": "unsupported"
+   }
+  },
+  {
+   "index": 59,
+   "label": "iter/values-alias",
+   "source_sha256": "2a243d73d89092a8cc379ab5fee14da2a6096e961298960b8b6884227820552e",
+   "stock_row_sha256": "828a5343614dcb7f423076758e49a8ad1b1fc91959d25316320febc5799a9764",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 112,
+     "source": 0,
+     "start": 102
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 102, end: 112 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:112, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 60,
+   "label": "iter/guard-insert",
+   "source_sha256": "90efe004d594bdaf006fd7a989e3d402e8aa3b8939d57c6d913ad7311b44ad48",
+   "stock_row_sha256": "55dc844aa2434de205c3af2428cefa621b0d6f3a6bdf73a0ebc18b09aaf8ee68",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 119,
+     "source": 0,
+     "start": 104
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 104, end: 119 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 104:119, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 61,
+   "label": "iter/guard-remove",
+   "source_sha256": "d5d16fa49787206a94ecc9f3a43457bfbfc39968f5d88a8e14abedb58d079acf",
+   "stock_row_sha256": "97a2c3bfc3c7def18259b6755e9c8a8c81171f3b493e3f62948cd0dfe4fc5c00",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 106,
+     "source": 0,
+     "start": 98
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 98, end: 106 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:106, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 62,
+   "label": "iter/guard-field-set",
+   "source_sha256": "d2d45ebc6472399412cc869406af3c63d5ddb4ca9c3a21e7ca5e60dd3a435522",
+   "stock_row_sha256": "85e869782035ac39d580062ba7109427205cc09f545f57241f68abfbab35d0f3",
+   "classification": "Inherited-kind",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 93:98, context: Some(72:112) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   },
+   "fresh_kind": "WriteBorrowed",
+   "stock_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+  },
+  {
+   "index": 63,
+   "label": "iter/guard-field-add",
+   "source_sha256": "201b841504e10d9cd67a89f06bac51b8fd11ed2997bc356e8bc1646efbe0ee59",
+   "stock_row_sha256": "4ba2fa554c1c29d279f141a0ab982ed46bbb905eb94530fb827df59bb5472f53",
+   "classification": "Inherited-kind",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 93:98, context: Some(72:112) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   },
+   "fresh_kind": "WriteBorrowed",
+   "stock_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+  },
+  {
+   "index": 64,
+   "label": "iter/guard-get",
+   "source_sha256": "f0eca4d2e5946b12c8fa3e878ecbc28573a925d6a3560b7c8616e8bde28adc98",
+   "stock_row_sha256": "12d465ecf5571a371e86ff08189be31b4e5b1bc3e2b44047afe5909a06332cdd",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 123,
+     "source": 0,
+     "start": 115
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 115, end: 123 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:123, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 65,
+   "label": "iter/after-break-mutate",
+   "source_sha256": "804ac437d8ca501308a5cee02d8bd63ef947a7e22bcebe2d3af3c43bcee4d256",
+   "stock_row_sha256": "a5e8f40fd61ebd1c0c50a9d40c88851f48136c861355b7c19b8d07da8eed2bcc",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 126,
+     "source": 0,
+     "start": 111
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 111, end: 126 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 111:126, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 66,
+   "label": "stable/debug-sorted",
+   "source_sha256": "f1d0e40a41e94d4904aaf2e0801462d652bcb6f7c6d22418d10b4724760cb421",
+   "stock_row_sha256": "92a1cc1d018e6c64e153b1a0025220151106de347e5af76438df164029590532",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 67,
+   "label": "stable/debug-nested",
+   "source_sha256": "fe4a36d85d5cb1a1fb10b7623d38bca8394e726044f594ab325d8e3ef04fee8d",
+   "stock_row_sha256": "1b3bb21f7f0e40451764839dbfbe4bd3ce3d2fec51da21e2118c5306ed09a9a4",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  },
+  {
+   "index": 68,
+   "label": "stable/debug-after-insert",
+   "source_sha256": "b310818bd068533955aea429ecd5b7c31e3b058f63c247bc6f34c6e10324ed90",
+   "stock_row_sha256": "d08b30fb32844045dd8c4abdb31da5bf97e140dee440cdea2fb9e251203c0f27",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 69,
+   "label": "stable/debug-after-remove",
+   "source_sha256": "e7ce358511fe47cc77b4d5b08ff52566a6008a03322f30721c5771a92a06161e",
+   "stock_row_sha256": "f7ff71c2a18eb068d69ca75cdffc62ca47be5b5412171759e2e850b01af07889",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 70,
+   "label": "stable/eq",
+   "source_sha256": "4c76d882adfa250dfcd7617d7ac29974dc5a51180a2143b28b0177fdf5f818a3",
+   "stock_row_sha256": "0b11ca40b6cca684987097a309ccb8663b3f203a802c478fb422b5110120cf0d",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 71,
+   "label": "stable/len",
+   "source_sha256": "5793d9fcb13ee77e9a8297086b5319db542468f5344a74d6126676d2342c5dfe",
+   "stock_row_sha256": "973ab1f3665adfee54eff41d8c1fa9927ab240272739d52a2ae27873a3e25f3b",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 72,
+   "label": "stable/contains-get",
+   "source_sha256": "65e0f494dce08b99ffe962a3afce21d494351d731f70933da8499b659d5f87be",
+   "stock_row_sha256": "cc629116d0876d362a29645511682bceeb7d22fd63a468edcb23d719457f66da",
+   "classification": "Inherited-refusal",
+   "fresh": {
+    "location": {
+     "end": 97,
+     "source": 0,
+     "start": 82
+    },
+    "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 82, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+    "refusal": "Method",
+    "status": "refused"
+   },
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+  },
+  {
+   "index": 73,
+   "label": "stable/vec-of-objects",
+   "source_sha256": "77eb84327b1756796f9a267d8343567ca67cfd33f9dbe96f0e21f289055de804",
+   "stock_row_sha256": "25c3d257a659716735dda9c81ba96608f52b2aee8210430217c208358990b08a",
+   "classification": "Exact",
+   "warnings": {
+    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
+    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   }
+  }
+ ]
+}

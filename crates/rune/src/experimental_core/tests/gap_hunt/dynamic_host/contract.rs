@@ -102,6 +102,8 @@ fn c10_contract(engine: &str) {
 	fs::create_dir(&out).unwrap();
 	let total = Instant::now();
 	for (i, row) in c10_rows().iter().enumerate() {
+		let line = super::object_order::order_fixed("dynamic_host", i, &json!(row.join("\t")));
+		let row = line.as_str().unwrap().split('\t').collect::<Vec<_>>();
 		assert!(
 			total.elapsed() < Duration::from_secs(3600),
 			"C10 whole replay bound"
