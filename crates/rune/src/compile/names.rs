@@ -33,10 +33,7 @@ impl Names {
 		let mut current = &mut self.root;
 
 		for c in iter {
-			current = current
-				.children
-				.entry(c.into_component()?)
-				.or_try_default()?;
+			current = current.child(c.into_component()?)?;
 		}
 
 		Ok(replace(&mut current.term, true))
@@ -100,6 +97,22 @@ struct Node {
 	term: bool,
 	/// The children of this node.
 	children: BTreeMap<Component, Node>,
+}
+
+impl Node {
+	/// The child under `component`, inserted empty if missing.
+	///
+	/// Kept out of line so that every `Names::insert` instantiation reaches the
+	/// map's search through this one caller. With one caller the search is
+	/// inlined here whether or not the codegen unit partition places it in the
+	/// same unit.
+	#[inline(never)]
+	fn child(&mut self, component: Component) -> alloc::Result<&mut Node> {
+		match self.children.entry(component) {
+			btree_map::Entry::Occupied(entry) => Ok(entry.into_mut()),
+			btree_map::Entry::Vacant(entry) => Ok(entry.try_insert(Node::default())?),
+		}
+	}
 }
 
 impl TryClone for Node {
