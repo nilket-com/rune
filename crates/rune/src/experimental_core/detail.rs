@@ -89,14 +89,16 @@ pub enum IntTarget {
 	I64,
 	U64,
 	U32,
+	I32,
 	Usize,
 }
 
+/// An integer operand exactly as the script supplied it.
 #[allow(missing_docs)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct IntValue {
-	pub negative: bool,
-	pub magnitude: u64,
+pub enum IntValue {
+	Signed(i64),
+	Unsigned(u64),
 }
 
 /// A constant field name belonging to exactly one compiled program.
@@ -639,25 +641,27 @@ impl fmt::Display for BinarySymbol {
 impl IntValue {
 	pub(crate) fn of(value: Value) -> Option<Self> {
 		Some(match value {
-			Value::I64(n) => Self {
-				negative: n < 0,
-				magnitude: n.unsigned_abs(),
-			},
-			Value::U64(n) => Self {
-				negative: false,
-				magnitude: n,
-			},
+			Value::I64(n) => Self::Signed(n),
+			Value::U64(n) => Self::Unsigned(n),
 			_ => return None,
 		})
+	}
+
+	/// The value as one wide integer; every `i64` and `u64` fits.
+	pub(crate) fn wide(self) -> i128 {
+		match self {
+			Self::Signed(n) => i128::from(n),
+			Self::Unsigned(n) => i128::from(n),
+		}
 	}
 }
 
 impl fmt::Display for IntValue {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		if self.negative {
-			f.write_str("-")?;
+		match self {
+			Self::Signed(n) => n.fmt(f),
+			Self::Unsigned(n) => n.fmt(f),
 		}
-		self.magnitude.fmt(f)
 	}
 }
 
@@ -667,6 +671,7 @@ impl fmt::Display for IntTarget {
 			Self::I64 => "i64",
 			Self::U64 => "u64",
 			Self::U32 => "u32",
+			Self::I32 => "i32",
 			Self::Usize => "usize",
 		})
 	}

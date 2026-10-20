@@ -1105,11 +1105,27 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 pub(crate) const ANY_TYPE_OF: u32 = 0x8000_007c;
 pub(crate) const ANY_TYPE_NAME: u32 = 0x8000_007d;
 
-fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<&CertifiedIntrinsic> {
+fn certified_intrinsic(table: &[CertifiedIntrinsic], id: u32) -> Option<CertifiedIntrinsic> {
 	if !reserved_intrinsic_id(id) {
 		return None;
 	}
-	table.iter().find(|entry| entry.id == id)
+	table
+		.iter()
+		.find(|entry| entry.id == id)
+		.copied()
+		.or_else(|| number_intrinsic(id))
+}
+
+/// The C17c numeric intrinsics: one per stock provider and one per method
+/// dispatched on its run-time receiver.
+#[cold]
+fn number_intrinsic(id: u32) -> Option<CertifiedIntrinsic> {
+	use crate::function::fresh_number::{Method, Pair};
+	let arity = match Pair::from_id(id) {
+		Some(pair) => pair.method().arity(),
+		None => Method::from_dynamic_id(id)?.arity(),
+	};
+	Some(CertifiedIntrinsic { id, arity })
 }
 
 pub struct Code {
@@ -1347,6 +1363,7 @@ pub(crate) struct CompileTransaction {
 	checked_pipeline: u8,
 	checked_variant: u8,
 	checked_object: u8,
+	checked_number: u64,
 }
 
 impl CompileTransaction {
@@ -1974,7 +1991,7 @@ impl Code {
 				arity: u32::from(host.signature.arity),
 			});
 		}
-		certified_intrinsic(CERTIFIED_INTRINSICS, id).copied()
+		certified_intrinsic(CERTIFIED_INTRINSICS, id)
 	}
 	pub(crate) fn host(&self, id: u32) -> Option<&crate::function::fresh_host::HostBinding> {
 		host_binding(&self.hosts, id)
@@ -3262,6 +3279,7 @@ mod intrinsic_partition_tests {
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
 		// C11c adds the certified cold capture-take intrinsic to the prior 49; C17a
 		// adds the six Option and Result methods and C17b the five Object methods.
+		// The C17c numeric intrinsics are certified outside this table.
 		assert_eq!(CERTIFIED_INTRINSICS.len(), 61);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, CAPTURE_TAKE)
@@ -3296,6 +3314,58 @@ mod intrinsic_partition_tests {
 				.iter()
 				.all(|other| other.id != entry.id));
 		}
+	}
+
+	#[test]
+	fn number_intrinsics_are_disjoint_from_every_other_family() {
+		use crate::function::fresh_number::{Method, Pair, PAIRS};
+		let ids = PAIRS
+			.iter()
+			.map(|p| (p.id(), p.method().arity()))
+			.chain(
+				Method::ALL
+					.iter()
+					.filter_map(|m| Some((m.dynamic_id()?, m.arity()))),
+			)
+			.collect::<std::vec::Vec<_>>();
+		assert_eq!(ids.len(), 56 + 29);
+		for (i, &(id, arity)) in ids.iter().enumerate() {
+			assert!(ids[i + 1..].iter().all(|(other, _)| *other != id));
+			assert!(reserved_intrinsic_id(id) && id < FIRST_HOST);
+			assert!(CERTIFIED_INTRINSICS.iter().all(|entry| entry.id != id));
+			assert_eq!(
+				certified_intrinsic(CERTIFIED_INTRINSICS, id).unwrap().arity,
+				arity
+			);
+			// The executor tries these families first.
+			assert!(crate::function::fresh_variant::Method::from_id(id).is_none());
+			assert!(crate::function::fresh_object::Method::from_id(id).is_none());
+			assert!(crate::function::fresh_numeric::Call::from_id(id).is_none());
+			for range in [
+				SORT_BEGIN..=SORT_ORDERING,
+				RANGE_FROM..=ANY_READY,
+				0x8000_0060..=0x8000_007b,
+				ANY_TYPE_OF..=ANY_TYPE_NAME,
+			] {
+				assert!(!range.contains(&id));
+			}
+			for fixed in [
+				PRINT_RAW,
+				VARIANT_SUCCESS,
+				MATCH_VARIANT,
+				CLOSURE_CREATE,
+				CAPTURE_TAKE,
+				MISSING_METHOD,
+			] {
+				assert_ne!(id, fixed);
+			}
+			assert_eq!(
+				Pair::from_id(id).is_some(),
+				Method::from_dynamic_id(id).is_none()
+			);
+		}
+		assert!(certified_intrinsic(CERTIFIED_INTRINSICS, VARIANT_SUCCESS + 1).is_none());
+		assert!(certified_intrinsic(CERTIFIED_INTRINSICS, PAIRS[55].id() + 1).is_none());
 	}
 }
 

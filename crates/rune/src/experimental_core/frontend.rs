@@ -358,3 +358,6 @@ mod numeric_script_tests;
 
 #[cfg(test)]
 mod missing_method_tests;
+
+#[cfg(test)]
+mod number_method_tests;

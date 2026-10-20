@@ -9,6 +9,7 @@
 //! `writes_nothing` rule allows; capturing move closures transfer payload ownership and track moved bindings.
 
 mod missing_methods;
+mod number_methods;
 mod object_methods;
 mod patterns;
 mod text_methods;
@@ -1325,10 +1326,13 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let E::Const(hash) = expr.kind else {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
-		let constant = self
-			.constants
-			.get_const_value(hash)
-			.ok_or_else(|| self.refused(span, Refusal::UnresolvedConstant))?;
+		let Some(constant) = self.constants.get_const_value(hash) else {
+			let value = self
+				.number_constant(hash)
+				.ok_or_else(|| self.refused(span, Refusal::UnresolvedConstant))?;
+			self.emit(Op::Literal { out, value }, span)?;
+			return Ok(());
+		};
 		match super::constants::read(constant)? {
 			super::constants::Scalar::Primitive(value) => {
 				self.emit(Op::Literal { out, value }, span)?;
@@ -2224,6 +2228,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			if let Some(method) = crate::function::fresh_object::Method::from_hash(hash) {
 				return self.call_object_method(call, target, method, out, span);
 			}
+			if let Some(method) = crate::function::fresh_number::Method::from_hash(name_hash) {
+				return self.call_number_method(call, target, method, hash != name_hash, out, span);
+			}
 			if name_hash == Hash::ident("collect") {
 				return self.call_text_collect(call, target, hash, out, span);
 			}
@@ -2357,6 +2364,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				span,
 			)?;
 			return Ok(());
+		}
+
+		if let Some(pair) = crate::function::fresh_number::Pair::from_item(hash) {
+			return self.call_number_path(call, pair, out, span);
 		}
 
 		let at = self.location(span);

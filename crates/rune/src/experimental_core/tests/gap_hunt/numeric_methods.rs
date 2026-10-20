@@ -5,6 +5,7 @@ use serde_json::{json, Value as Json};
 use std::cell::RefCell;
 include!("constructors/graph.rs");
 const CASES: &str = include_str!("numeric_methods/cases.json");
+const ROWS: usize = 370;
 
 /// Stock observations in case order, split across two files.
 fn frozen() -> Vec<Json> {
@@ -185,7 +186,7 @@ fn observer_controls() {
 		);
 	}
 	let rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	assert_eq!(rows.len(), 370);
+	assert_eq!(rows.len(), ROWS);
 	assert_eq!(frozen().len(), rows.len());
 	let mut labels = std::collections::BTreeSet::new();
 	for row in rows {
@@ -264,11 +265,11 @@ fn stock_contract() {
 
 #[cfg(target_os = "linux")]
 fn run_contract(engine: &str) {
-	assert_eq!(engine, "stock");
+	assert!(matches!(engine, "stock" | "fresh"));
 	let cases: Json = serde_json::from_str(CASES).unwrap();
 	let cases = cases.as_array().unwrap();
 	let frozen = frozen();
-	assert_eq!(cases.len(), 370);
+	assert_eq!(cases.len(), ROWS);
 	assert_eq!(cases.len(), frozen.len());
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
@@ -297,7 +298,11 @@ fn run_contract(engine: &str) {
 		let mut child = command
 			.args([
 				"--exact",
-				"experimental_core::tests::gap_hunt::numeric_methods::child",
+				if engine == "stock" {
+					"experimental_core::tests::gap_hunt::numeric_methods::child"
+				} else {
+					"experimental_core::tests::gap_hunt::numeric_methods::fresh_child"
+				},
 				"--ignored",
 				"--nocapture",
 				"--quiet",
@@ -373,6 +378,10 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["label"], case["label"]);
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["origin"], case["origin"]);
+		if engine == "fresh" {
+			verify_fresh_case(i, case, expected, &observed, &stdout, &stderr);
+			continue;
+		}
 		if engine == "stock" {
 			assert_eq!(observed["projected"], expected["projected"], "{label}");
 		}
@@ -381,3 +390,7 @@ fn run_contract(engine: &str) {
 	}
 	super::contract_completed(engine, cases.len());
 }
+
+include!("numeric_methods/fresh.rs");
+
+include!("numeric_methods/contract.rs");

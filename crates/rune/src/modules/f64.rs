@@ -132,6 +132,10 @@ pub mod consts {
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_number = crate::function::fresh_number::marker::F64;
+	}
 	m.function_meta(parse)?
 		.deprecated("Use std::string::parse::<f64> instead")?;
 	m.function_meta(is_nan)?;

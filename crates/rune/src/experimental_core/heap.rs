@@ -16,6 +16,7 @@ mod comparison;
 mod formatting;
 mod hot;
 mod indexing;
+mod number_methods;
 mod object_methods;
 pub use formatting::FormatLimits;
 mod boxed_iterator;
@@ -1980,6 +1981,8 @@ impl Store {
 
 #[cfg(test)]
 mod field_iter_tests;
+#[cfg(test)]
+mod number_method_tests;
 #[cfg(test)]
 mod object_method_tests;
 #[cfg(test)]

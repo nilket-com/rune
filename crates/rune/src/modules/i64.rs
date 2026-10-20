@@ -17,6 +17,7 @@ pub fn module() -> Result<Module, ContextError> {
 	#[cfg(feature = "fresh-core")]
 	{
 		m.fresh_numeric = 0b0001_1000;
+		m.fresh_number = crate::function::fresh_number::marker::I64;
 	}
 	Ok(m)
 }

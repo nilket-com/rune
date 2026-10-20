@@ -82,19 +82,13 @@ fn shift(value: Value, op: Binary) -> Result<u32> {
 	let count = match value {
 		Value::I64(n) => u32::try_from(n).map_err(|_| {
 			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
-				value: IntValue {
-					negative: n < 0,
-					magnitude: n.unsigned_abs(),
-				},
+				value: IntValue::Signed(n),
 				to: IntTarget::U32,
 			})
 		}),
 		Value::U64(n) => u32::try_from(n).map_err(|_| {
 			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
-				value: IntValue {
-					negative: false,
-					magnitude: n,
-				},
+				value: IntValue::Unsigned(n),
 				to: IntTarget::U32,
 			})
 		}),
@@ -125,20 +119,14 @@ pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 		(Shl | Shr, U64(_), I64(_)) => U64(u64::from(shift(b, op)?)),
 		(_, I64(_), U64(n)) => I64(i64::try_from(n).map_err(|_| {
 			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
-				value: IntValue {
-					negative: false,
-					magnitude: n,
-				},
+				value: IntValue::Unsigned(n),
 				to: IntTarget::I64,
 			})
 		})?),
 
 		(_, U64(_), I64(n)) => U64(u64::try_from(n).map_err(|_| {
 			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
-				value: IntValue {
-					negative: n < 0,
-					magnitude: n.unsigned_abs(),
-				},
+				value: IntValue::Signed(n),
 				to: IntTarget::U64,
 			})
 		})?),

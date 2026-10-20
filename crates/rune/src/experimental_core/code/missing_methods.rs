@@ -260,3 +260,49 @@ impl CompileTransaction {
 		Ok(())
 	}
 }
+
+impl CompileTransaction {
+	/// Certifies a C17c numeric method site whose receiver type is not proven:
+	/// every stock provider is its std registration, and no other receiver a
+	/// fresh value or a source item can have provides `m`.
+	pub(crate) fn number_method(
+		&mut self,
+		c: &Context,
+		q: &crate::query::QueryInner<'_>,
+		p: &crate::compile::Pool,
+		m: crate::function::fresh_number::Method,
+	) -> Result<()> {
+		use crate::function::fresh_number::{Pair, Receiver};
+		if m.shared_name() || !m.instance() || !c.fresh_number_method(m) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		let bit = 1u64 << m as u32;
+		if self.checked_number & bit != 0 {
+			return Ok(());
+		}
+		if q.fresh_method_script.closed(m.hash()) {
+			return Err(Error::refused(Refusal::Method));
+		}
+		for receiver in crate::function::fresh_methods::RECEIVERS
+			.iter()
+			.copied()
+			.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
+		{
+			if Receiver::from_hash(receiver).is_some_and(|r| Pair::new(m, r).is_some()) {
+				continue;
+			}
+			let h = Hash::associated_function(receiver, m.hash());
+			if c.lookup_function(h).is_some() {
+				return Err(Error::refused(Refusal::Method));
+			}
+			if !self.builder.absent.contains(&h) {
+				if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
+					return Err(invalid());
+				}
+				self.builder.absent.try_push(h)?;
+			}
+		}
+		self.checked_number |= bit;
+		Ok(())
+	}
+}

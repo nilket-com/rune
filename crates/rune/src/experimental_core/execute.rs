@@ -851,6 +851,10 @@ impl Executor {
 		if args_len != certificate.arity
 			|| !matches!(id, super::code::PRINT_RAW | super::code::VARIANT_SUCCESS)
 		{
+			if id != super::code::CAPTURE_TAKE {
+				return self
+					.number_call(code, store, function, base, out, id, args_start, args_len);
+			}
 			return self.capture_take_call(store, function, base, out, id, args_start, args_len);
 		}
 		let end = args_start.checked_add(args_len).ok_or_else(invalid)?;
@@ -2707,6 +2711,7 @@ mod host_bridge;
 mod missing_methods;
 
 mod diagnostic_locations;
+mod number_methods;
 mod numeric;
 mod object_methods;
 mod small_forms;

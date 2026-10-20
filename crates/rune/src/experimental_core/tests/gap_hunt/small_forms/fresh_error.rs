@@ -143,39 +143,24 @@ pub(super) fn fresh_primary_kind(
 		Detail::NumericArgumentCoerce { value, to, .. } | Detail::Coerce { value, to }
 			if error.kind == ErrorKind::IntegerCoercion =>
 		{
-			use crate::experimental_core::error::IntTarget;
-			match to {
-				IntTarget::I64 if !value.negative && value.magnitude > i64::MAX as u64 => {
-					K::ValueToIntegerCoercionError {
-						from: value.magnitude.into(),
-						to: "i64",
-					}
-				}
-				IntTarget::U64 if value.negative => K::ValueToIntegerCoercionError {
-					from: i64::try_from(-i128::from(value.magnitude)).ok()?.into(),
-					to: "u64",
+			use crate::experimental_core::error::{IntTarget, IntValue};
+			let wide = value.wide();
+			let (fits, to) = match to {
+				IntTarget::I64 => (i64::try_from(wide).is_ok(), "i64"),
+				IntTarget::U64 => (u64::try_from(wide).is_ok(), "u64"),
+				IntTarget::U32 => (u32::try_from(wide).is_ok(), "u32"),
+				IntTarget::I32 => (i32::try_from(wide).is_ok(), "i32"),
+				IntTarget::Usize => (usize::try_from(wide).is_ok(), "usize"),
+			};
+			if fits {
+				return None;
+			}
+			K::ValueToIntegerCoercionError {
+				from: match value {
+					IntValue::Signed(n) => n.into(),
+					IntValue::Unsigned(n) => n.into(),
 				},
-				IntTarget::U32 if value.negative || value.magnitude > u64::from(u32::MAX) => {
-					K::ValueToIntegerCoercionError {
-						from: if value.negative {
-							i64::try_from(-i128::from(value.magnitude)).ok()?.into()
-						} else {
-							value.magnitude.into()
-						},
-						to: "u32",
-					}
-				}
-				IntTarget::Usize if value.negative || usize::try_from(value.magnitude).is_err() => {
-					K::ValueToIntegerCoercionError {
-						from: if value.negative {
-							i64::try_from(-i128::from(value.magnitude)).ok()?.into()
-						} else {
-							value.magnitude.into()
-						},
-						to: "usize",
-					}
-				}
-				_ => return None,
+				to,
 			}
 		}
 		Detail::FloatComparison { lhs_bits, rhs_bits } if error.kind == ErrorKind::Type => {

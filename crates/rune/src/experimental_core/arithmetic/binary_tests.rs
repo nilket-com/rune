@@ -28,20 +28,14 @@ fn binary_inner_reference(op: Binary, a: Value, b: Value) -> Result<Value> {
 		(Shl | Shr, U64(_), I64(_)) => U64(u64::from(shift(b, op)?)),
 		(_, I64(_), U64(n)) => I64(i64::try_from(n).map_err(|_| {
 			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
-				value: IntValue {
-					negative: false,
-					magnitude: n,
-				},
+				value: IntValue::Unsigned(n),
 				to: IntTarget::I64,
 			})
 		})?),
 
 		(_, U64(_), I64(n)) => U64(u64::try_from(n).map_err(|_| {
 			error(ErrorKind::IntegerCoercion).with_detail(Detail::Coerce {
-				value: IntValue {
-					negative: n < 0,
-					magnitude: n.unsigned_abs(),
-				},
+				value: IntValue::Signed(n),
 				to: IntTarget::U64,
 			})
 		})?),

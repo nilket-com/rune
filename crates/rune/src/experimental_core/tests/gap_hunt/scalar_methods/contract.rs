@@ -329,13 +329,19 @@ fn run_contract(engine: &str) {
 					"Retained-arity"
 				}
 				"Refused-sibling" => {
-					assert_eq!(e["outcome"]["status"], "refused");
-					assert_eq!(e["outcome"]["refusal"], "Some(Method)");
-					assert_eq!(audit["invoked"], false);
+					// C17c admits these sibling methods; each is stock-exact.
+					assert_eq!(audit["invoked"], true);
+					let got = project(source, &e["outcome"]);
+					fs::write(
+						folder.join("compared.json"),
+						serde_json::to_vec_pretty(&got).unwrap(),
+					)
+					.unwrap();
+					assert_eq!(got, expected, "fresh {label}");
 					assert!(audit["call_chain"].as_array().unwrap().is_empty());
-					assert_eq!(&stdout, b"\nrunning 1 test\n");
-					assert!(stderr.is_empty());
-					"Refused-sibling"
+					assert_eq!(hex(&stdout), c[4], "stdout {label}");
+					assert_eq!(hex(&stderr), c[5], "stderr {label}");
+					"Admitted-sibling"
 				}
 				"Exact" => {
 					assert_eq!(audit["invoked"], true);
@@ -383,7 +389,7 @@ fn run_contract(engine: &str) {
 			("Exact", 179),
 			("Retained-frame", 1),
 			("Retained-arity", 11),
-			("Refused-sibling", 8),
+			("Admitted-sibling", 8),
 		])
 	};
 	assert_eq!(policies, expected);

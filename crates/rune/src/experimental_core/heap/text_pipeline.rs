@@ -90,10 +90,7 @@ impl Store {
 				err(ErrorKind::IntegerCoercion).with_detail(Detail::NumericArgumentCoerce {
 					cause: HostCause::IntegerCoercion,
 					arg: 1,
-					value: IntValue {
-						negative: n < 0,
-						magnitude: n.unsigned_abs(),
-					},
+					value: IntValue::Signed(n),
 					to: IntTarget::Usize,
 				})
 			})?,
@@ -101,10 +98,7 @@ impl Store {
 				err(ErrorKind::IntegerCoercion).with_detail(Detail::NumericArgumentCoerce {
 					cause: HostCause::IntegerCoercion,
 					arg: 1,
-					value: IntValue {
-						negative: false,
-						magnitude: n,
-					},
+					value: IntValue::Unsigned(n),
 					to: IntTarget::Usize,
 				})
 			})?,

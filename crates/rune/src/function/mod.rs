@@ -335,6 +335,8 @@ pub mod fresh_host;
 #[cfg(feature = "fresh-core")]
 pub(crate) mod fresh_methods;
 #[cfg(feature = "fresh-core")]
+pub(crate) mod fresh_number;
+#[cfg(feature = "fresh-core")]
 pub(crate) mod fresh_object;
 #[cfg(feature = "fresh-core")]
 pub(crate) mod fresh_pipeline;

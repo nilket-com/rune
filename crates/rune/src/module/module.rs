@@ -100,6 +100,10 @@ pub struct Module {
 	/// user registration APIs.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_object: u8,
+	/// Private C17c receiver markers (`function::fresh_number::marker`), never set by
+	/// user registration APIs.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_number: u8,
 	/// Constant constructors.
 	pub(crate) construct: Vec<(Hash, AnyTypeInfo, ConstConstructImpl)>,
 	/// Defines construct hashes.
@@ -295,6 +299,8 @@ impl Module {
 			fresh_variant: 0,
 			#[cfg(feature = "fresh-core")]
 			fresh_object: 0,
+			#[cfg(feature = "fresh-core")]
+			fresh_number: 0,
 			construct: Vec::new(),
 			construct_hash: HashSet::new(),
 			common: ModuleItemCommon {

@@ -347,7 +347,7 @@ fn fresh_contract() {
 	let generated = cases();
 	assert_eq!(rows.len(), 178);
 	assert_eq!(rows.len(), generated.len());
-	let mut refused = 0;
+	let mut nan = 0;
 	let mut budget = 0;
 	let mut semantic = 0;
 	let mut retained = String::from("case\tpolicy\n");
@@ -365,16 +365,6 @@ fn fresh_contract() {
 		assert!(run.complete, "{label}");
 		let actual: Vec<_> = run.record.split('\t').collect();
 		assert_eq!(actual.len(), 5);
-		if label.starts_with("operands/nan/") {
-			assert_eq!(
-				&actual[..2],
-				&["refused", "Some(UnresolvedConstant)"],
-				"{label}"
-			);
-			refused += 1;
-			retained.push_str(&format!("{label}\tUnresolvedConstant\n"));
-			continue;
-		}
 		let parts: Vec<_> = label.split('/').collect();
 		let deep = parts.len() == 4
 			&& parts[0] == "depth"
@@ -387,6 +377,8 @@ fn fresh_contract() {
 		};
 		if !deep {
 			assert_exact(label, &row, &run, &site);
+			// The four `f64::NAN` operand rows run and are stock-exact.
+			nan += usize::from(label.starts_with("operands/nan/"));
 			continue;
 		}
 		// Existing host-configured depth32 budget is never raised for the default run.
@@ -451,7 +443,7 @@ fn fresh_contract() {
 			));
 		}
 	}
-	assert_eq!((refused, budget, semantic), (4, 6, 4));
+	assert_eq!((nan, budget, semantic), (4, 6, 4));
 	fs::write(out.join("RETAINED.tsv"), retained).unwrap();
 	super::contract_completed("fresh", rows.len());
 }

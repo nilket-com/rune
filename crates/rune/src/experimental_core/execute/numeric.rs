@@ -81,10 +81,7 @@ impl Executor {
 					error(ErrorKind::IntegerCoercion).with_detail(Detail::NumericArgumentCoerce {
 						cause: HostCause::IntegerCoercion,
 						arg: 0,
-						value: IntValue {
-							negative: false,
-							magnitude: v,
-						},
+						value: IntValue::Unsigned(v),
 						to: IntTarget::I64,
 					})
 				})?,

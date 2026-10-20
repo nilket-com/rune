@@ -118,10 +118,16 @@ impl TraitContext<'_> {
 			} else {
 				None
 			};
+			#[cfg(feature = "fresh-core")]
+			let number_alias = self.cx.fresh_number.alias(protocol.hash, self.hash);
 			self.function_handler(method, &handler)?;
 			#[cfg(feature = "fresh-core")]
 			if let Some(pair) = cmp_alias {
 				self.cx.fresh_numeric.certify(pair);
+			}
+			#[cfg(feature = "fresh-core")]
+			if let Some(pair) = number_alias {
+				self.cx.fresh_number.forwarded(pair);
 			}
 		}
 
@@ -151,7 +157,13 @@ impl TraitContext<'_> {
 	where
 		F: Function<A, Plain>,
 	{
-		let function = if let Some(function) = self.try_find(protocol)? {
+		let found = self.try_find(protocol)?;
+		// Only a forward of the receiver's own protocol function is an alias.
+		#[cfg(feature = "fresh-core")]
+		let number_alias = found
+			.as_ref()
+			.and_then(|_| self.cx.fresh_number.alias(protocol.hash, self.hash));
+		let function = if let Some(function) = found {
 			function
 		} else {
 			self.function(protocol, function)?
@@ -159,6 +171,10 @@ impl TraitContext<'_> {
 
 		if let Some(method) = protocol.method {
 			self.function_handler(method, &function)?;
+			#[cfg(feature = "fresh-core")]
+			if let Some(pair) = number_alias {
+				self.cx.fresh_number.forwarded(pair);
+			}
 		}
 
 		Ok(function)
@@ -361,6 +377,8 @@ pub struct Context {
 	fresh_variant: crate::function::fresh_variant::State,
 	#[cfg(feature = "fresh-core")]
 	fresh_object: crate::function::fresh_object::State,
+	#[cfg(feature = "fresh-core")]
+	fresh_number: crate::function::fresh_number::State,
 	#[cfg(feature = "fresh-core")]
 	fresh_methods: crate::function::fresh_methods::State,
 	/// Handlers for realizing traits.
@@ -574,6 +592,8 @@ impl Context {
 		let variant_pending = self.fresh_variant.begin_module(module.fresh_variant);
 		#[cfg(feature = "fresh-core")]
 		let object_pending = self.fresh_object.begin_module(module.fresh_object);
+		#[cfg(feature = "fresh-core")]
+		let number_pending = self.fresh_number.begin_module(module.fresh_number);
 		if let Some(ComponentRef::Crate(name)) = module.item.first() {
 			self.crates.try_insert(name.try_into()?)?;
 		}
@@ -681,6 +701,10 @@ impl Context {
 		for t in &module.trait_impls {
 			self.install_trait_impl(t)?;
 		}
+		#[cfg(feature = "fresh-core")]
+		if module.fresh_number != 0 {
+			self.fresh_number.certify_module(module);
+		}
 
 		tracing::trace!(reexports = module.reexports.len(), "reexports");
 		for r in &module.reexports {
@@ -701,6 +725,7 @@ impl Context {
 			self.fresh_pipeline.finish_module(pipeline_pending);
 			self.fresh_variant.finish_module(variant_pending);
 			self.fresh_object.finish_module(object_pending);
+			self.fresh_number.finish_module(number_pending);
 			if sort_builtin {
 				self.fresh_sort_by = true;
 				self.fresh_sort_by_closed = false;
@@ -921,6 +946,16 @@ impl Context {
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_variant_method(&self, m: crate::function::fresh_variant::Method) -> bool {
 		self.fresh_variant.ready(m)
+	}
+	/// Fresh core (C17c): the stock provider `pair` is its std registration.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_number_pair(&self, pair: crate::function::fresh_number::Pair) -> bool {
+		self.fresh_number.ready(pair)
+	}
+	/// Fresh core (C17c): every stock provider of `m` is its std registration.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_number_method(&self, m: crate::function::fresh_number::Method) -> bool {
+		self.fresh_number.method_ready(m)
 	}
 	/// Fresh core (C17b): every certified provider of `m` is its std registration.
 	#[cfg(feature = "fresh-core")]

@@ -60,28 +60,16 @@ impl Store {
 		let result = match lhs {
 			Value::I64(a) => a.cmp(&match rhs {
 				Value::I64(b) => b,
-				Value::U64(b) => i64::try_from(b).map_err(|_| {
-					coerce(
-						IntValue {
-							negative: false,
-							magnitude: b,
-						},
-						IntTarget::I64,
-					)
-				})?,
+				Value::U64(b) => {
+					i64::try_from(b).map_err(|_| coerce(IntValue::Unsigned(b), IntTarget::I64))?
+				}
 				_ => return Err(self.cmp_argument_number(rhs)?),
 			}),
 			Value::U64(a) => a.cmp(&match rhs {
 				Value::U64(b) => b,
-				Value::I64(b) => u64::try_from(b).map_err(|_| {
-					coerce(
-						IntValue {
-							negative: b < 0,
-							magnitude: b.unsigned_abs(),
-						},
-						IntTarget::U64,
-					)
-				})?,
+				Value::I64(b) => {
+					u64::try_from(b).map_err(|_| coerce(IntValue::Signed(b), IntTarget::U64))?
+				}
 				_ => return Err(self.cmp_argument_number(rhs)?),
 			}),
 			Value::F64(a) => {

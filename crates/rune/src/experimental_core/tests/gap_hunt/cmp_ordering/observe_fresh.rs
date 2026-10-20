@@ -175,16 +175,16 @@ fn fresh_primary_kind(
 		Detail::NumericArgumentCoerce { value, to, .. } | Detail::Coerce { value, to }
 			if error.kind == ErrorKind::IntegerCoercion =>
 		{
-			use crate::experimental_core::error::IntTarget;
-			match to {
-				IntTarget::I64 if !value.negative && value.magnitude > i64::MAX as u64 => {
+			use crate::experimental_core::error::{IntTarget, IntValue};
+			match (to, value) {
+				(IntTarget::I64, IntValue::Unsigned(n)) if n > i64::MAX as u64 => {
 					K::ValueToIntegerCoercionError {
-						from: value.magnitude.into(),
+						from: n.into(),
 						to: "i64",
 					}
 				}
-				IntTarget::U64 if value.negative => K::ValueToIntegerCoercionError {
-					from: i64::try_from(-i128::from(value.magnitude)).ok()?.into(),
+				(IntTarget::U64, IntValue::Signed(n)) if n < 0 => K::ValueToIntegerCoercionError {
+					from: n.into(),
 					to: "u64",
 				},
 				_ => return None,

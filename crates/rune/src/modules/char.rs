@@ -13,6 +13,10 @@ use crate as rune;
 #[rune::module(::std::char)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut module = Module::from_meta(self::module__meta)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		module.fresh_number = crate::function::fresh_number::marker::CHAR;
+	}
 
 	module.ty::<ParseCharError>()?;
 	module.function_meta(parse_char_error_display_fmt)?;
