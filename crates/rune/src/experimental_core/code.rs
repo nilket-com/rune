@@ -1,12 +1,13 @@
 //! Owned experimental instructions. Validated code has no old Unit/Value/VM dependency.
 
 use super::arithmetic::{Binary, Unary};
-use super::error::{Error, ErrorKind, Location, Result};
+use super::error::{Error, ErrorKind, Location, Refusal, Result};
 use super::nominal;
 use super::value::{Type, Value};
 use crate::alloc::{String, Vec};
 use core::sync::atomic::{AtomicU32, Ordering};
 
+mod call_arity;
 mod missing_methods;
 
 const MAX_CODE_BYTES: usize = 16 << 20;
@@ -780,6 +781,31 @@ impl Function {
 	pub fn instructions(&self) -> &[Instruction] {
 		&self.code
 	}
+
+	/// The bytes this function counts toward the program's code budget.
+	fn bytes(&self) -> Option<usize> {
+		let strings = self
+			.strings
+			.iter()
+			.try_fold(0usize, |n, s| n.checked_add(s.capacity()))?;
+		self.code
+			.len()
+			.checked_mul(core::mem::size_of::<Instruction>())?
+			.checked_add(self.args.len().checked_mul(4)?)?
+			.checked_add(strings)?
+			.checked_add(
+				self.locations
+					.len()
+					.checked_mul(core::mem::size_of::<Location>())?,
+			)?
+			.checked_add(
+				self.constants
+					.len()
+					.checked_mul(core::mem::size_of::<Value>())?,
+			)?
+			.checked_add(self.types.len().checked_mul(core::mem::size_of::<Type>())?)?
+			.checked_add(self.ranges.len().checked_mul(8)?)
+	}
 }
 
 // D1c: ids in the upper half are never ordinary function indices.
@@ -844,7 +870,7 @@ pub(crate) const FIRST_HOST: u32 = FIRST_INTRINSIC_ID + 0x100;
 pub(crate) const MAX_HOST_DESCRIPTORS: usize = 4096;
 fn host_id(index: usize) -> Result<u32> {
 	if index >= MAX_HOST_DESCRIPTORS {
-		return Err(invalid());
+		return Err(Error::refused(Refusal::CodeLimit));
 	}
 	FIRST_HOST
 		.checked_add(u32::try_from(index).map_err(|_| invalid())?)
@@ -1209,67 +1235,36 @@ impl Builder {
 		if self.functions.len() > FIRST_INTRINSIC_ID as usize {
 			return Err(invalid());
 		}
-		let total = self
-			.functions
-			.iter()
-			.try_fold(0usize, |n, f| {
-				n.checked_add(
-					f.code
-						.len()
-						.checked_mul(core::mem::size_of::<Instruction>())?,
-				)?
-				.checked_add(f.args.len().checked_mul(4)?)
-			})
-			.ok_or_else(invalid)?;
-		let total = self
-			.functions
-			.iter()
-			.try_fold(total, |n, f| {
-				f.strings
-					.iter()
-					.try_fold(n, |n, s| n.checked_add(s.capacity()))
-			})
-			.ok_or_else(invalid)?;
-		let total = self
-			.functions
-			.iter()
-			.try_fold(total, |n, f| {
-				n.checked_add(
-					f.locations
-						.len()
-						.checked_mul(core::mem::size_of::<Location>())?,
-				)?
-				.checked_add(
-					f.constants
-						.len()
-						.checked_mul(core::mem::size_of::<Value>())?,
-				)?
-				.checked_add(f.types.len().checked_mul(core::mem::size_of::<Type>())?)?
-				.checked_add(f.ranges.len().checked_mul(8)?)
-			})
-			.ok_or_else(invalid)?;
 		let host_bytes = self
 			.hosts
 			.capacity()
 			.checked_mul(core::mem::size_of::<crate::function::fresh_host::HostBinding>())
 			.ok_or_else(invalid)?;
-		let total = total
-			.checked_add(host_bytes)
-			.and_then(|n| {
-				n.checked_add(
-					self.absent
-						.capacity()
-						.checked_mul(core::mem::size_of::<crate::Hash>())?,
-				)
-			})
+		let shared = host_bytes
+			.checked_add(
+				self.absent
+					.capacity()
+					.checked_mul(core::mem::size_of::<crate::Hash>())
+					.ok_or_else(invalid)?,
+			)
 			.ok_or_else(invalid)?;
 		if self.hosts.len() > MAX_HOST_DESCRIPTORS
 			|| !self.hosts.iter().all(|host| host.signature.valid())
 		{
 			return Err(invalid());
 		}
-		if total > MAX_CODE_BYTES {
-			return Err(invalid());
+		// The program-wide tables count first, then each function in order, so the
+		// refusal names the function whose code crosses the budget.
+		let mut total = shared;
+		for f in &self.functions {
+			total = total
+				.checked_add(f.bytes().ok_or_else(invalid)?)
+				.ok_or_else(invalid)?;
+			if total > MAX_CODE_BYTES {
+				let mut error = Error::refused(Refusal::CodeLimit);
+				error.location = f.locations.first().copied();
+				return Err(error);
+			}
 		}
 
 		// Stamp only unstamped (code 0) function literals; a literal that already
@@ -1379,9 +1374,8 @@ pub(crate) struct CompileTransaction {
 	checked_closure: u16,
 	/// C17d terminals certified on the C17e iterators; bit 15 is `next`.
 	checked_extended: u16,
-	/// Function values a C17e chain calls, by id: the parameter count each
-	/// must have and where the chain names it. Checked once every function
-	/// is lowered.
+	/// Calls that name a function, by callee id: the parameter count it must
+	/// have and where it is called. Checked once every function is lowered.
 	arities: Vec<(u32, u32, Location)>,
 }
 

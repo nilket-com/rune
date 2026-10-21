@@ -208,7 +208,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// before it was popped, so a fresh allocation starts clean.
 	fn slot(&mut self) -> Result<u32> {
 		if self.next >= 65_536 {
-			return Err(Error::new(ErrorKind::FrameCapacity, "lower slots"));
+			return Err(Error::refused(Refusal::CodeLimit));
 		}
 
 		let slot = self.next;
@@ -2305,7 +2305,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			if call.args.len() != usize::from(binding.signature.arity) {
 				return Err(self.refused(span, Refusal::Arity));
 			}
-			let id = self.transaction.host(binding)?;
+			let id = self
+				.transaction
+				.host(binding)
+				.map_err(|e| e.at(self.location(span)))?;
 			let args = self.operands(call.args)?;
 			let (args_start, args_len) = self.function.arguments(&args)?;
 			self.emit(
@@ -2325,19 +2328,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		let at = self.location(span);
-		let function =
-			(self.resolve)(Resolve::Script(hash), at).map_err(|e| e.at(self.location(span)))?;
+		let function = (self.resolve)(Resolve::Script(hash), at).map_err(|e| e.at(at))?;
 		let args = self.operands(call.args)?;
 		let (args_start, args_len) = self.function.arguments(&args)?;
-		self.emit(
-			Op::Call {
-				out,
-				function,
-				args_start,
-				args_len,
-			},
-			span,
-		)?;
+		let call = self.transaction.script_call(function, args_len, at)?;
+		self.emit(call.op(out, args_start), span)?;
 		Ok(())
 	}
 

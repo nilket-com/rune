@@ -532,7 +532,14 @@ impl Executor {
 				.function(function)
 				.ok_or_else(|| error(ErrorKind::InvalidCode))?;
 			if args.len() != entry.parameters as usize {
-				return Err(error(ErrorKind::InvalidCode));
+				// Stock raises the same error when an embedder calls an entry
+				// with the wrong count.
+				let mut error = error(ErrorKind::ArgumentCount);
+				error.detail = Detail::Arity {
+					given: u32::try_from(args.len()).unwrap_or(u32::MAX),
+					expected: entry.parameters,
+				};
+				return Err(error);
 			}
 			code.validate_hosts(self.configured_host_runtime.as_deref())?;
 			Ok(())

@@ -110,7 +110,20 @@ impl Collector {
 		context: &Context,
 		refused_functions: &[(Hash, Refusal)],
 	) -> Result<()> {
-		let id = self.reserve(hash)?;
+		let function_at = Location {
+			source,
+			revision: self.revision,
+			start: item.span.start.0,
+			end: item.span.end.0,
+		};
+		let id = match self.reserve(hash) {
+			Ok(id) => id,
+			Err(error) => {
+				let error = error.at(function_at);
+				self.failure.get_or_insert(error);
+				return Err(error);
+			}
+		};
 		if self.entries[id as usize].1.is_some() {
 			return Err(Error::new(ErrorKind::InvalidCode, "duplicate function"));
 		}
@@ -130,7 +143,7 @@ impl Collector {
 				let hash = match hash {
 					super::lower::Resolve::Script(hash) => hash,
 					super::lower::Resolve::Constructor { hash, tag, arity } => {
-						let id = reserve(entries, hash)?;
+						let id = reserve(entries, hash).map_err(|e| e.at(at))?;
 						if entries[id as usize].1.is_none() {
 							entries[id as usize].1 =
 								Some(super::lower::constructor_function(tag, arity)?);
@@ -170,7 +183,7 @@ impl Collector {
 					return Err(Error::refused(Refusal::Native).at(at));
 				}
 
-				let id = reserve(entries, hash)?;
+				let id = reserve(entries, hash).map_err(|e| e.at(at))?;
 				entries[id as usize].2.get_or_insert(at);
 				Ok(id)
 			},
@@ -182,7 +195,11 @@ impl Collector {
 		);
 		let function = match result {
 			Ok(function) => function,
-			Err(error) => {
+			Err(mut error) => {
+				// A frame that outgrows its slots is refused at its function.
+				if error.refusal == Some(Refusal::CodeLimit) && error.location.is_none() {
+					error.location = Some(function_at);
+				}
 				self.variable_moved = moved_error.get();
 				self.failure.get_or_insert(error);
 				return Err(error);
@@ -234,7 +251,7 @@ fn reserve(
 	}
 
 	if entries.len() >= 65_536 {
-		return Err(Error::new(ErrorKind::FrameCapacity, "function registry"));
+		return Err(Error::refused(Refusal::CodeLimit));
 	}
 
 	let id = entries.len() as u32;
@@ -378,3 +395,6 @@ mod iter_terminal_tests;
 
 #[cfg(test)]
 mod iter_adapter_tests;
+
+#[cfg(test)]
+mod call_arity_tests;

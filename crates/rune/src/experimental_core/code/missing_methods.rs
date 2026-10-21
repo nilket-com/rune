@@ -3,6 +3,26 @@ use super::super::error::Refusal;
 use super::*;
 use crate::{Context, Hash};
 
+impl Builder {
+	/// Records `hash` as proven absent, once.
+	fn record_absent(&mut self, hash: Hash) -> Result<()> {
+		if self.absent.contains(&hash) {
+			return Ok(());
+		}
+		self.push_absent(hash)
+	}
+
+	/// Appends a hash the caller knows is new. The absence list counts toward
+	/// the code budget, so a full list is the [`Refusal::CodeLimit`] refusal.
+	fn push_absent(&mut self, hash: Hash) -> Result<()> {
+		if self.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
+			return Err(Error::refused(Refusal::CodeLimit));
+		}
+		self.absent.try_push(hash)?;
+		Ok(())
+	}
+}
+
 impl CompileTransaction {
 	pub(crate) fn missing_nominal_method(
 		&mut self,
@@ -21,12 +41,7 @@ impl CompileTransaction {
 		if context.lookup_function(hash).is_some() {
 			return Err(Error::refused(Refusal::Method));
 		}
-		if !self.builder.absent.contains(&hash) {
-			if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
-				return Err(invalid());
-			}
-			self.builder.absent.try_push(hash)?;
-		}
+		self.builder.record_absent(hash)?;
 		Ok(())
 	}
 
@@ -55,10 +70,7 @@ impl CompileTransaction {
 			if context.lookup_function(hash).is_some() {
 				return Err(Error::refused(Refusal::Method));
 			}
-			if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
-				return Err(invalid());
-			}
-			self.builder.absent.try_push(hash)?;
+			self.builder.push_absent(hash)?;
 		}
 		self.checked_absent.try_push(effective)?;
 		Ok(())
@@ -117,12 +129,7 @@ impl CompileTransaction {
 			if c.lookup_function(h).is_some() {
 				return Err(Error::refused(Refusal::Method));
 			}
-			if !self.builder.absent.contains(&h) {
-				if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
-					return Err(invalid());
-				}
-				self.builder.absent.try_push(h)?;
-			}
+			self.builder.record_absent(h)?;
 		}
 		self.checked_text |= m.bit();
 		Ok(())
@@ -162,12 +169,7 @@ impl CompileTransaction {
 				if c.lookup_function(h).is_some() {
 					return Err(Error::refused(Refusal::Method));
 				}
-				if !self.builder.absent.contains(&h) {
-					if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
-						return Err(invalid());
-					}
-					self.builder.absent.try_push(h)?;
-				}
+				self.builder.record_absent(h)?;
 			}
 		}
 		self.checked_pipeline |= 1 << m as u8;
@@ -203,12 +205,7 @@ impl CompileTransaction {
 			if c.lookup_function(h).is_some() {
 				return Err(Error::refused(Refusal::Method));
 			}
-			if !self.builder.absent.contains(&h) {
-				if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
-					return Err(invalid());
-				}
-				self.builder.absent.try_push(h)?;
-			}
+			self.builder.record_absent(h)?;
 		}
 		self.checked_variant |= m.bit();
 		Ok(())
@@ -249,12 +246,7 @@ impl CompileTransaction {
 			if c.lookup_function(h).is_some() {
 				return Err(Error::refused(Refusal::Method));
 			}
-			if !self.builder.absent.contains(&h) {
-				if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
-					return Err(invalid());
-				}
-				self.builder.absent.try_push(h)?;
-			}
+			self.builder.record_absent(h)?;
 		}
 		self.checked_object |= m.bit();
 		Ok(())
@@ -295,12 +287,7 @@ impl CompileTransaction {
 			if c.lookup_function(h).is_some() {
 				return Err(Error::refused(Refusal::Method));
 			}
-			if !self.builder.absent.contains(&h) {
-				if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
-					return Err(invalid());
-				}
-				self.builder.absent.try_push(h)?;
-			}
+			self.builder.record_absent(h)?;
 		}
 		self.checked_number |= bit;
 		Ok(())
@@ -344,12 +331,7 @@ impl CompileTransaction {
 				if c.lookup_function(h).is_some() {
 					return Err(Error::refused(Refusal::Method));
 				}
-				if !self.builder.absent.contains(&h) {
-					if self.builder.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
-						return Err(invalid());
-					}
-					self.builder.absent.try_push(h)?;
-				}
+				self.builder.record_absent(h)?;
 			}
 		}
 		self.checked_closure |= f.bit();
@@ -376,30 +358,6 @@ impl CompileTransaction {
 		}
 		self.checked_extended |= bit;
 		Ok(())
-	}
-
-	/// Records that function `id`, called by a C17e chain at `at`, must take
-	/// `parameters` arguments, captures included.
-	pub(crate) fn require_parameters(
-		&mut self,
-		id: u32,
-		parameters: u32,
-		at: super::super::error::Location,
-	) -> Result<()> {
-		self.arities.try_push((id, parameters, at))?;
-		Ok(())
-	}
-
-	/// A recorded parameter count that `functions` does not have, by where
-	/// the chain names the function.
-	pub(crate) fn wrong_parameters(
-		&self,
-		parameters: impl Fn(u32) -> Option<u32>,
-	) -> Option<super::super::error::Location> {
-		self.arities
-			.iter()
-			.find(|(id, expected, _)| parameters(*id).is_some_and(|n| n != *expected))
-			.map(|(_, _, at)| *at)
 	}
 
 	/// Certifies `::std::iter::range` on its first use in this compile.

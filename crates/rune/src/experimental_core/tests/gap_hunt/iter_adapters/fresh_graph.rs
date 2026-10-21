@@ -183,7 +183,7 @@ impl FreshGraph {
 		}
 	}
 }
-fn fresh_graph(store: &mut Store, root: FreshValue) -> Json {
+pub(super) fn fresh_graph(store: &mut Store, root: FreshValue) -> Json {
 	let mut graph = FreshGraph {
 		memo: std::collections::HashMap::new(),
 		pending: Vec::new(),

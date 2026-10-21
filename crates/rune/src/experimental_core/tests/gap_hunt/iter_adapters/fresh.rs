@@ -63,7 +63,7 @@ fn typed_kind(
 	})
 }
 
-fn fresh_failure(
+pub(super) fn fresh_failure(
 	failure: &crate::experimental_core::execute::Failure,
 	program: &frontend::Program,
 	sources: &Sources,
@@ -89,7 +89,7 @@ fn fresh_failure(
 		typed_kind(error, program)
 			.or_else(|| super::small_forms::fresh_primary_kind(error, program))
 	}
-	.unwrap_or_else(|| panic!("unmapped C17e failure: {failure:?}"));
+	.unwrap_or_else(|| panic!("unmapped fresh failure: {failure:?}"));
 	let class = match kind {
 		stock::VmErrorKind::Panic { .. } => "Panic".to_owned(),
 		stock::VmErrorKind::UnsupportedCallFn { .. } => "Type".to_owned(),

@@ -374,7 +374,11 @@ fn run_contract(engine: &str) {
 				if label == "calling/arity-zero" {
 					assert_eq!(i, 96);
 				}
-				assert_eq!(actual["status"], "compile-error", "{label}");
+				// S4: a statically resolved call with the wrong count is a located
+				// Arity refusal, so stock runs the program and raises its error.
+				assert_eq!(actual["status"], "refused", "{label}");
+				assert_eq!(actual["refusal"], "Arity", "{label}");
+				assert!(actual["location"].is_object(), "{label}");
 				assert_eq!(audit["invoked"], false);
 			} else if label == "calling/method" {
 				assert_eq!(actual["status"], "refused", "{label}");

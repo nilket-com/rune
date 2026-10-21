@@ -85,6 +85,9 @@ pub enum Refusal {
 	Call,
 	/// A closure.
 	CallClosure,
+	/// The program exceeds a fresh-core capacity: 16 MiB of code, 65,536
+	/// functions, 65,536 frame slots or 4,096 host descriptors.
+	CodeLimit,
 	/// A condition form outside the subset.
 	Condition,
 	/// A call of a `const fn`.
@@ -171,6 +174,7 @@ impl Refusal {
 			Self::ByteStr => "ByteStr",
 			Self::Call => "Call",
 			Self::CallClosure => "CallClosure",
+			Self::CodeLimit => "CodeLimit",
 			Self::Condition => "Condition",
 			Self::ConstCall => "ConstCall",
 			Self::ConstCollection => "ConstCollection",
