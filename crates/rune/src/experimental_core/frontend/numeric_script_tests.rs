@@ -40,6 +40,7 @@ fn indexed(text: &str, loader: &mut dyn compile::SourceLoader) -> (Result<Progra
 		transaction: CompileTransaction::default(),
 		sort_helper: None,
 		any_helper: None,
+		native_helpers: crate::hash::Map::default(),
 		failure: None,
 		variable_moved: None,
 	};

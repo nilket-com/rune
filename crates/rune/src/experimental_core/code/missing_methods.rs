@@ -4,6 +4,43 @@ use super::super::error::Refusal;
 use super::*;
 use crate::{Context, Hash};
 
+/// A script method or an ordinary function adapting a certified native method.
+pub(super) struct MethodEntry {
+	hash: Hash,
+	function: u32,
+	native: Option<crate::runtime::FunctionHandler>,
+}
+
+/// A native provider the core already implements, with its receiver included.
+/// Other providers keep the whole dynamic site refused before execution.
+fn native_method(context: &Context, receiver: Hash, name: Hash) -> Option<(u32, u32)> {
+	use crate::function::{fresh_number, fresh_object, fresh_text, fresh_variant};
+	use crate::TypeHash;
+	if let Some(method) = fresh_variant::Method::from_hash(name) {
+		if method.provider(receiver).is_some() && context.fresh_variant_method(method) {
+			return Some((method.id(), method.arity()));
+		}
+	}
+	if let Some(method) = fresh_object::Method::from_hash(name) {
+		if method.provider(receiver).is_some() && context.fresh_object_method(method) {
+			return Some((method.id(), method.arity()));
+		}
+	}
+	if let Some(method) = fresh_text::Method::from_hash(name) {
+		if receiver == crate::alloc::String::HASH && context.fresh_text_method(method) {
+			return Some((method.id(), method.arity()));
+		}
+	}
+	if let Some(method) = fresh_number::Method::from_hash(name) {
+		if method.instance() && context.fresh_number_method(method) {
+			let receiver = fresh_number::Receiver::from_hash(receiver)?;
+			let pair = fresh_number::Pair::new(method, receiver)?;
+			return Some((pair.id(), method.arity()));
+		}
+	}
+	None
+}
+
 impl Builder {
 	/// Records `hash` as proven absent, once. The absence list counts toward
 	/// the code budget, so a full list is the [`Refusal::CodeLimit`] refusal.
@@ -20,14 +57,23 @@ impl Builder {
 	}
 
 	/// Records the script instance function `id` at the associated hash `hash`.
-	fn record_method(&mut self, hash: Hash, id: u32) -> Result<()> {
+	fn record_method(
+		&mut self,
+		hash: Hash,
+		id: u32,
+		native: Option<crate::runtime::FunctionHandler>,
+	) -> Result<()> {
 		match self.methods_seen.get(&hash) {
 			Some(&old) if old == id => return Ok(()),
 			Some(_) => return Err(invalid()),
 			None => (),
 		}
 		self.methods_seen.try_insert(hash, id)?;
-		self.methods.try_push((hash, id))?;
+		self.methods.try_push(MethodEntry {
+			hash,
+			function: id,
+			native,
+		})?;
 		Ok(())
 	}
 
@@ -35,14 +81,17 @@ impl Builder {
 	/// targets an ordinary function.
 	pub(super) fn seal_method_tables(&mut self) -> Result<()> {
 		self.absent.sort_unstable();
-		self.methods.sort_unstable();
+		self.methods.sort_unstable_by_key(|method| method.hash);
 		for pair in self.methods.windows(2) {
-			if pair[0].0 == pair[1].0 {
+			if pair[0].hash == pair[1].hash {
 				return Err(invalid());
 			}
 		}
-		for &(_, id) in &self.methods {
-			if id as usize >= self.functions.len() {
+		for method in &self.methods {
+			if method.function as usize >= self.functions.len() {
+				return Err(invalid());
+			}
+			if method.native.is_some() && self.absent.is_empty() {
 				return Err(invalid());
 			}
 		}
@@ -134,7 +183,7 @@ impl Code {
 				}
 			}
 		}
-		Ok(())
+		self.validate_method_providers(runtime)
 	}
 
 	pub(crate) fn absent_method(&self, hash: Hash) -> bool {
@@ -143,8 +192,33 @@ impl Code {
 
 	/// The script instance function at the associated hash `hash`.
 	pub(crate) fn method(&self, hash: Hash) -> Option<u32> {
-		let at = self.methods.binary_search_by_key(&hash, |&(h, _)| h).ok()?;
-		Some(self.methods[at].1)
+		let at = self
+			.methods
+			.binary_search_by_key(&hash, |method| method.hash)
+			.ok()?;
+		Some(self.methods[at].function)
+	}
+
+	/// A supplied runtime must retain the native handlers certified at compile.
+	/// With no runtime the core uses the compiled builtin implementations, as
+	/// for its other certified native operations.
+	#[cold]
+	#[inline(never)]
+	pub(super) fn validate_method_providers(
+		&self,
+		runtime: Option<&crate::runtime::RuntimeContext>,
+	) -> Result<()> {
+		if let Some(runtime) = runtime {
+			for method in &self.methods {
+				if let Some(expected) = &method.native {
+					let actual = runtime.function(&method.hash).ok_or_else(invalid)?;
+					if !expected.same_allocation(actual) {
+						return Err(invalid());
+					}
+				}
+			}
+		}
+		Ok(())
 	}
 }
 
@@ -424,19 +498,42 @@ impl CompileTransaction {
 }
 
 impl CompileTransaction {
-	/// Proves stock's dispatch for `receiver.name(..)` over every type a value
-	/// can have: the builtin receivers, every source item and every type the
-	/// context registers. A native function at any of those keys refuses the
-	/// name; otherwise every key is proven to have no native function, and a
-	/// key with a script instance function is recorded in the method table
-	/// through `resolve`. Once per name.
+	/// Whether adding dynamic dispatch can preserve every native provider.
+	/// A failed probe must leave existing proven native fast paths available.
+	pub(crate) fn supports_dynamic_method(
+		&self,
+		context: &Context,
+		query: &crate::query::QueryInner<'_>,
+		pool: &crate::compile::Pool,
+		name: Hash,
+	) -> bool {
+		if self.checked_dynamic.contains(&name) {
+			return true;
+		}
+		query.fresh_instances.complete()
+			&& crate::function::fresh_methods::RECEIVERS
+				.iter()
+				.copied()
+				.chain(query.items.keys().map(|id| pool.item_type_hash(*id)))
+				.chain(context.fresh_types())
+				.all(|receiver| {
+					context
+						.lookup_function(Hash::associated_function(receiver, name))
+						.is_none() || native_method(context, receiver, name).is_some()
+				})
+	}
+
+	/// Proves stock's dispatch over builtin, source and context types. A native
+	/// provider must have a certified core implementation; otherwise the site
+	/// is refused. Native adapters take precedence over script instance methods.
+	/// Missing keys carry an absence proof. Once per name.
 	pub(crate) fn dynamic_method(
 		&mut self,
 		context: &Context,
 		query: &crate::query::QueryInner<'_>,
 		pool: &crate::compile::Pool,
 		name: Hash,
-		resolve: &mut dyn FnMut(Hash) -> Result<u32>,
+		resolve: &mut dyn FnMut(Hash, Option<(u32, u32)>) -> Result<u32>,
 	) -> Result<()> {
 		if self.checked_dynamic.contains(&name) {
 			return Ok(());
@@ -451,13 +548,18 @@ impl CompileTransaction {
 			.chain(context.fresh_types())
 		{
 			let hash = Hash::associated_function(receiver, name);
-			if context.lookup_function(hash).is_some() {
-				return Err(Error::refused(Refusal::Method));
+			if let Some(handler) = context.lookup_function(hash) {
+				let native = native_method(context, receiver, name)
+					.ok_or_else(|| Error::refused(Refusal::Method))?;
+				let id = resolve(hash, Some(native))?;
+				self.builder
+					.record_method(hash, id, Some(handler.clone()))?;
+				continue;
 			}
 			self.builder.record_absent(hash)?;
 			if let Some(item) = query.fresh_instances.get(hash) {
-				let id = resolve(item)?;
-				self.builder.record_method(hash, id)?;
+				let id = resolve(item, None)?;
+				self.builder.record_method(hash, id, None)?;
 			}
 		}
 		self.checked_dynamic.try_push(name)?;

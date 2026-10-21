@@ -66,14 +66,12 @@ fn unproven_receivers_need_an_absence_proof() {
 	let context = Context::with_default_modules().unwrap();
 	assert!(compile("pub fn main(x){x.sqrt()}", &context).is_ok());
 	assert!(compile("pub fn main(x){x.checked_add(1)}", &context).is_ok());
-	// A script method of the same name on any type closes the name.
-	assert_eq!(
-		refusal(
-			"struct P{x} impl P{fn sqrt(self){0}} pub fn main(x){x.sqrt()}",
-			&context
-		),
-		Some(Refusal::Method)
-	);
+	// C18b3a: script and certified native providers share runtime dispatch.
+	assert!(compile(
+		"struct P{x} impl P{fn sqrt(self){0}} pub fn main(x){x.sqrt()}",
+		&context
+	)
+	.is_ok());
 	// A proven receiver does not need the absence proof.
 	assert!(compile(
 		"struct P{x} impl P{fn sqrt(self){0}} pub fn main(){4.0.sqrt()}",
@@ -92,6 +90,13 @@ fn unproven_receivers_need_an_absence_proof() {
 		Some(Refusal::Method)
 	);
 	assert!(compile("pub fn main(){4.0.sqrt()}", &context).is_ok());
+	// An unsupported dynamic provider does not close a proven native receiver,
+	// even when a script type also defines the name.
+	assert!(compile(
+		"struct P{x}impl P{fn sqrt(self){self.x}}pub fn main(){4.0.sqrt()}",
+		&context
+	)
+	.is_ok());
 }
 
 #[test]

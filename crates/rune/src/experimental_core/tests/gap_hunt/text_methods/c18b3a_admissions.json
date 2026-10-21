@@ -1,0 +1,22 @@
+{
+  "167": {
+    "source_sha256": "6f750e675138bb48d165b0c3f5c1be0b7015540f1ea741cbd5414f7b256dd9e5",
+    "label": "cert/script-name/replace",
+    "policy": "Exact-stock-admission"
+  },
+  "170": {
+    "source_sha256": "03c219c0f9d52570a957d9922859dbdf018897eb90448467dc5a6efbec7a00d2",
+    "label": "cert/script-name/starts_with",
+    "policy": "Exact-stock-admission"
+  },
+  "173": {
+    "source_sha256": "18fc223d71222cf0bf16e4ece6e1bc12d125e04b50b13263d9d20cf6857bd758",
+    "label": "cert/script-name/ends_with",
+    "policy": "Exact-stock-admission"
+  },
+  "179": {
+    "source_sha256": "edf7a14afeebe4fadce511f49f5b414b3fff79820a901033a0368af69d1afa44",
+    "label": "cert/script-name/trim",
+    "policy": "Exact-stock-admission"
+  }
+}

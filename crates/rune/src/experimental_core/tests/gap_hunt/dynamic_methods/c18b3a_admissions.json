@@ -1,0 +1,31 @@
+{
+  "record": "C18b3a",
+  "policy": "Certified native fallback; exact original stock observation, diagnostics and effects",
+  "rows": [
+    {
+      "index": 236,
+      "legacy": {
+        "index": 236,
+        "label": "shadow/unwrap/param",
+        "source_sha256": "cee4b9a364940d49372edd18b7684ec891db5dc29c2e82bee27043f5ae5cc695",
+        "stock_row_sha256": "c3643ee0a955b2bdabc50a2c9abc25b0f01ad120d96d10224f4b0bedb4feb47c",
+        "classification": "Refused-native",
+        "fresh": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 71,
+            "source": 0,
+            "start": 61
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 61, end: 71 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+          "refusal": "Method",
+          "status": "refused"
+        },
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:71, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "admitted": {
+        "classification": "Exact"
+      }
+    }
+  ]
+}

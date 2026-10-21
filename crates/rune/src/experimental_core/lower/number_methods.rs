@@ -7,6 +7,24 @@ use crate::function::fresh_number::{self as number, Method, Pair, Receiver};
 const DEPTH: usize = 128;
 
 impl Lower<'_, '_> {
+	/// Keep an already proven numeric receiver on its direct native path.
+	pub(super) fn proven_number_method(
+		&self,
+		target: hir::ExprId,
+		hash: Hash,
+		arguments: usize,
+	) -> bool {
+		let Some(method) = Method::from_hash(hash) else {
+			return false;
+		};
+		method.instance()
+			&& arguments + 1 == method.arity() as usize
+			&& self
+				.number_receiver(target, 0, &mut Vec::new())
+				.and_then(|receiver| Pair::new(method, receiver))
+				.is_some()
+	}
+
 	/// The std numeric constant `hash`, if the context still holds the stock value.
 	pub(super) fn number_constant(&self, hash: Hash) -> Option<Value> {
 		let expected = match number::constant(hash)? {

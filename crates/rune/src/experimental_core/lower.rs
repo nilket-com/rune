@@ -9,6 +9,7 @@
 //! `writes_nothing` rule allows; capturing move closures transfer payload ownership and track moved bindings.
 
 mod dynamic_methods;
+pub(super) use dynamic_methods::native_function as native_method_function;
 mod iter_terminals;
 mod missing_methods;
 mod number_methods;
@@ -21,7 +22,16 @@ mod variant_methods;
 #[derive(Clone, Copy)]
 pub(crate) enum Resolve {
 	Script(Hash),
-	Constructor { hash: Hash, tag: Type, arity: u32 },
+	Constructor {
+		hash: Hash,
+		tag: Type,
+		arity: u32,
+	},
+	NativeMethod {
+		hash: Hash,
+		intrinsic: u32,
+		arity: u32,
+	},
 	Sort,
 	Any,
 }
@@ -2357,6 +2367,17 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 		if self.nominal_missing_site(call) {
 			return self.call_missing_method(call, target, name_hash, hash, out, span);
+		}
+		if hash == name_hash
+			&& self.constants.fresh_method_script.closed(hash)
+			&& !self.proven_number_method(target, hash, call.args.len())
+			&& self.transaction.supports_dynamic_method(
+				self.context,
+				self.constants,
+				self.pool,
+				hash,
+			) {
+			return self.call_dynamic_method(call, target, hash, out, span);
 		}
 		if let Some(method) = crate::function::fresh_text::Method::from_hash(hash) {
 			return self.call_text_method(call, target, method, out, span);

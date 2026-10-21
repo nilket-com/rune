@@ -9,6 +9,7 @@ use core::sync::atomic::{AtomicU32, Ordering};
 
 mod call_arity;
 mod missing_methods;
+use missing_methods::MethodEntry;
 
 const MAX_CODE_BYTES: usize = 16 << 20;
 pub const MAX_GAP: usize = 256;
@@ -1177,7 +1178,7 @@ pub struct Code {
 	/// Associated hashes proven to have no native function, sorted.
 	absent: Vec<crate::Hash>,
 	/// Script instance functions by associated hash, sorted by hash.
-	methods: Vec<(crate::Hash, u32)>,
+	methods: Vec<MethodEntry>,
 }
 
 /// Program identities. Exhaustion refuses `finish`; the counter never wraps.
@@ -1195,7 +1196,7 @@ pub struct Builder {
 	absent: Vec<crate::Hash>,
 	/// The hashes in `absent`, so a repeated proof adds nothing.
 	absent_seen: crate::hash::Map<()>,
-	methods: Vec<(crate::Hash, u32)>,
+	methods: Vec<MethodEntry>,
 	/// The function id of each hash in `methods`.
 	methods_seen: crate::hash::Map<u32>,
 }
@@ -1266,7 +1267,7 @@ impl Builder {
 				n.checked_add(
 					self.methods
 						.capacity()
-						.checked_mul(core::mem::size_of::<(crate::Hash, u32)>())?,
+						.checked_mul(core::mem::size_of::<MethodEntry>())?,
 				)
 			})
 			.ok_or_else(invalid)?;
@@ -2586,7 +2587,7 @@ impl Code {
 				n.checked_add(
 					self.methods
 						.capacity()
-						.checked_mul(core::mem::size_of::<(crate::Hash, u32)>())?,
+						.checked_mul(core::mem::size_of::<MethodEntry>())?,
 				)
 			})
 			.ok_or_else(invalid)?;

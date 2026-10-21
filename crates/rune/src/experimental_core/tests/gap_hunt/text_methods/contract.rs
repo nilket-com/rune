@@ -89,6 +89,11 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	assert_eq!(observed["reuse"], expected["reuse"]);
 	let receivers: Json = serde_json::from_str(include_str!("receiver_policy.json")).unwrap();
 	let admissions: Json = serde_json::from_str(include_str!("c14b_admissions.json")).unwrap();
+	let mut admissions = admissions;
+	let native: Json = serde_json::from_str(include_str!("c18b3a_admissions.json")).unwrap();
+	for (id, rule) in native.as_object().unwrap() {
+		assert!(admissions.as_object_mut().unwrap().insert(id.clone(), rule.clone()).is_none());
+	}
 	if let Some(rule) = admissions.get(id) {
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
 		assert_eq!(rule["label"], case["label"]);

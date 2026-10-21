@@ -70,6 +70,7 @@ pub(crate) struct Collector {
 	transaction: CompileTransaction,
 	sort_helper: Option<u32>,
 	any_helper: Option<u32>,
+	native_helpers: crate::hash::Map<u32>,
 	pub(crate) failure: Option<Error>,
 	variable_moved: Option<(Span, Span)>,
 }
@@ -132,6 +133,7 @@ impl Collector {
 		let entries = &mut self.entries;
 		let sort_helper = &mut self.sort_helper;
 		let any_helper = &mut self.any_helper;
+		let native_helpers = &mut self.native_helpers;
 		let moved_error = core::cell::Cell::new(None);
 		let result = super::lower::function(
 			exprs,
@@ -142,6 +144,25 @@ impl Collector {
 			&mut |hash, at| {
 				let hash = match hash {
 					super::lower::Resolve::Script(hash) => hash,
+					super::lower::Resolve::NativeMethod {
+						hash,
+						intrinsic,
+						arity,
+					} => {
+						if let Some(&id) = native_helpers.get(&hash) {
+							return Ok(id);
+						}
+						if entries.len() >= 65_536 {
+							return Err(Error::refused(Refusal::CodeLimit).at(at));
+						}
+						let id = entries.len() as u32;
+						let function = super::lower::native_method_function(intrinsic, arity)?;
+						// Synthetic adapters are not script entry points. Real script
+						// methods remain addressable by their original item hashes.
+						entries.try_push((Hash::EMPTY, Some(function), None))?;
+						native_helpers.try_insert(hash, id)?;
+						return Ok(id);
+					}
 					super::lower::Resolve::Constructor { hash, tag, arity } => {
 						let id = reserve(entries, hash).map_err(|e| e.at(at))?;
 						if entries[id as usize].1.is_none() {
@@ -155,6 +176,7 @@ impl Collector {
 							super::lower::Resolve::Sort => &mut *sort_helper,
 							super::lower::Resolve::Any => &mut *any_helper,
 							super::lower::Resolve::Script(_)
+							| super::lower::Resolve::NativeMethod { .. }
 							| super::lower::Resolve::Constructor { .. } => unreachable!(),
 						};
 						if let Some(id) = *cache {
@@ -168,6 +190,7 @@ impl Collector {
 								super::lower::small_forms::any_function()?
 							}
 							super::lower::Resolve::Script(_)
+							| super::lower::Resolve::NativeMethod { .. }
 							| super::lower::Resolve::Constructor { .. } => unreachable!(),
 						};
 						entries.try_push((Hash::EMPTY, Some(function), None))?;
@@ -319,6 +342,7 @@ pub fn compile(
 		transaction: CompileTransaction::default(),
 		sort_helper: None,
 		any_helper: None,
+		native_helpers: crate::hash::Map::default(),
 		failure: None,
 		variable_moved: None,
 	};
@@ -398,3 +422,6 @@ mod iter_adapter_tests;
 
 #[cfg(test)]
 mod call_arity_tests;
+
+#[cfg(test)]
+mod native_dispatch_tests;

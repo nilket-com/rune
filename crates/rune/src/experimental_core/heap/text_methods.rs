@@ -59,7 +59,14 @@ impl Store {
 			if m == Method::Split && matches!(v, Value::Char(_)) {
 				continue;
 			}
-			if self.tag(v)? != Type::String {
+			let is_string = match self.tag(v) {
+				Ok(tag) => tag == Type::String,
+				// Inline function and type values have no heap tag, but still
+				// need the native argument diagnostic below.
+				Err(error) if error.kind == ErrorKind::Type => false,
+				Err(error) => return Err(error),
+			};
+			if !is_string {
 				let found = self
 					.diagnostic_type(v)
 					.ok_or_else(|| err(ErrorKind::InvalidCode))?;
