@@ -1,0 +1,289 @@
+{
+ "rule": "C18a resolves m.v(..) on a unit-struct local statically: the correct count runs and matches stock, and a wrong count is the located S4 Arity refusal. Each entry pins the whole disposition it replaces and carries the new rule.",
+ "rows": [
+  {
+   "index": 54,
+   "legacy": {
+    "index": 54,
+    "label": "script/method-receiver/correct/called",
+    "source_sha256": "b54069cd3d8f890fe6cfd24757b4eba03885a17802f93ab1061d4cc2e26d278c",
+    "stock_row_sha256": "2b4683269e15177a78e98740f2d17f92b048a567ed6f5ae0cbfa456a32bc13c4",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 95,
+      "source": 0,
+      "start": 87
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 87, end: 95 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 87:95, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   },
+   "admitted": {
+    "classification": "Exact"
+   }
+  },
+  {
+   "index": 55,
+   "legacy": {
+    "index": 55,
+    "label": "script/method-receiver/too-few/called",
+    "source_sha256": "8a85df16ed0a0420f9442b239b712edddcd5da1fe76c2cca26eb93c4ef3e96e5",
+    "stock_row_sha256": "4b7e10a2d5ff69fdebb6ad1dc8cc3079fbffc57125fbfcea1bca7ea666fe5057",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 93,
+      "source": 0,
+      "start": 87
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 87, end: 93 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 87:93, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   },
+   "admitted": {
+    "classification": "Refused-arity",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 93,
+      "source": 0,
+      "start": 87
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 87, end: 93 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+     "refusal": "Arity",
+     "status": "refused"
+    },
+    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   }
+  },
+  {
+   "index": 56,
+   "legacy": {
+    "index": 56,
+    "label": "script/method-receiver/too-few/unused",
+    "source_sha256": "dc309cac0920c4cb2bacab9c11e3a681bc0369f17b3186a9084bba333b9d0825",
+    "stock_row_sha256": "bdf86c98822ea0817e8a49afe761f19827fb938c6e156ef6213f27758ed5aa90",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 91,
+      "source": 0,
+      "start": 85
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 85, end: 91 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 85:91, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   },
+   "admitted": {
+    "classification": "Refused-arity",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 91,
+      "source": 0,
+      "start": 85
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 85, end: 91 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+     "refusal": "Arity",
+     "status": "refused"
+    },
+    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 65:92, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   }
+  },
+  {
+   "index": 57,
+   "legacy": {
+    "index": 57,
+    "label": "script/method-receiver/too-few/dead-branch",
+    "source_sha256": "efb45c45326c56f00fb909c496dd9154cc5311d5297bfc60cab3c20484ced2ba",
+    "stock_row_sha256": "6212a89fb9c9ed8304b36997a8981511ec4d018ca148436f0eaae26e96edbd15",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 108,
+      "source": 0,
+      "start": 102
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 102, end: 108 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:108, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   },
+   "admitted": {
+    "classification": "Refused-arity",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 108,
+      "source": 0,
+      "start": 102
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 102, end: 108 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+     "refusal": "Arity",
+     "status": "refused"
+    },
+    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   }
+  },
+  {
+   "index": 59,
+   "legacy": {
+    "index": 59,
+    "label": "script/method-receiver/none/called",
+    "source_sha256": "2f8fa37f8709a6670bb5715b17cb7bb1300915c360f7a91802727eed615711b3",
+    "stock_row_sha256": "ef00ae1318c388fd68142c7d85aa36c45a83567ba271f1081c41ea2f52b4b23a",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 92,
+      "source": 0,
+      "start": 87
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 87, end: 92 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 87:92, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   },
+   "admitted": {
+    "classification": "Refused-arity",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 92,
+      "source": 0,
+      "start": 87
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 87, end: 92 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+     "refusal": "Arity",
+     "status": "refused"
+    },
+    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   }
+  },
+  {
+   "index": 60,
+   "legacy": {
+    "index": 60,
+    "label": "script/method-receiver/too-many/called",
+    "source_sha256": "03c01d5756e241351564a3259b0b0c1352ed59f626560888a38c2478e1fad2fc",
+    "stock_row_sha256": "fa410f704ad579422e4dbbf4073deb8ca218d8601848c7a49444355e8a8478e5",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 97,
+      "source": 0,
+      "start": 87
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 87, end: 97 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 87:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   },
+   "admitted": {
+    "classification": "Refused-arity",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 97,
+      "source": 0,
+      "start": 87
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 87, end: 97 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+     "refusal": "Arity",
+     "status": "refused"
+    },
+    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   }
+  },
+  {
+   "index": 61,
+   "legacy": {
+    "index": 61,
+    "label": "script/method-receiver/too-many/unused",
+    "source_sha256": "011af5e164bb1fcd9470cbc6fbb2eec31a1dfe28123bae9939840c481937b60b",
+    "stock_row_sha256": "c6d48fe6de266608fb91f30639cdd005e085c6f80d929bfc1f63c79acffbebac",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 95,
+      "source": 0,
+      "start": 85
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 85, end: 95 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 85:95, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   },
+   "admitted": {
+    "classification": "Refused-arity",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 95,
+      "source": 0,
+      "start": 85
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 85, end: 95 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+     "refusal": "Arity",
+     "status": "refused"
+    },
+    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 65:96, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   }
+  },
+  {
+   "index": 62,
+   "legacy": {
+    "index": 62,
+    "label": "script/method-receiver/too-many/dead-branch",
+    "source_sha256": "9e4eb812ce6b1dc0071ec7533ee314f16bfa33f73ced52bf3b743d2eac6089c7",
+    "stock_row_sha256": "9cc5f968f2f9e8d3ea4df8f854c658f8fcfd9b30292340b3a75348f3a0755a10",
+    "classification": "Inherited-refusal",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 112,
+      "source": 0,
+      "start": 102
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 102, end: 112 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+     "refusal": "Method",
+     "status": "refused"
+    },
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:112, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   },
+   "admitted": {
+    "classification": "Refused-arity",
+    "fresh": {
+     "kind": "Unsupported",
+     "location": {
+      "end": 112,
+      "source": 0,
+      "start": 102
+     },
+     "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 102, end: 112 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+     "refusal": "Arity",
+     "status": "refused"
+    },
+    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 48:64, context: None } })]"
+   }
+  }
+ ]
+}

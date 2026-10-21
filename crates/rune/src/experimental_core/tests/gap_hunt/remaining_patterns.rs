@@ -380,10 +380,6 @@ fn run_contract(engine: &str) {
 				assert_eq!(actual["refusal"], "Arity", "{label}");
 				assert!(actual["location"].is_object(), "{label}");
 				assert_eq!(audit["invoked"], false);
-			} else if label == "calling/method" {
-				assert_eq!(actual["status"], "refused", "{label}");
-				assert_eq!(actual["refusal"], "Method", "{label}");
-				assert_eq!(audit["invoked"], false);
 			} else if case["policy"] == "Retain-refusal" {
 				assert_eq!(actual["status"], "refused", "{label}");
 				assert_eq!(actual["refusal"], "Pattern", "{label}");
@@ -403,6 +399,8 @@ fn run_contract(engine: &str) {
 					}
 				}
 			} else {
+				// C18a: `calling/method` (a method on a struct literal) now runs
+				// and matches stock.
 				assert_eq!(audit["invoked"], true, "{label}");
 				assert_eq!(project(actual), expected["projected"], "{label}");
 			}

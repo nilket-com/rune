@@ -180,7 +180,15 @@ impl<'hir> Lower<'_, 'hir> {
 		match expr.kind {
 			E::Group(inner) => self.chain_into(inner, depth + 1, adapters),
 			E::Call(c) => match c.call {
-				hir::Call::Associated { target, hash, .. } => {
+				hir::Call::Associated {
+					target,
+					hash,
+					name_hash,
+				} => {
+					// A script method's result is not a known iterator source.
+					if self.static_method(target, hash, name_hash).is_some() {
+						return None;
+					}
 					let step = match (Terminal::from_hash(hash), Closure::from_hash(hash), c.args) {
 						(Some(Terminal::Skip), _, &[n]) => Step::Skip(n),
 						(Some(Terminal::Take), _, &[n]) => Step::Take(n),

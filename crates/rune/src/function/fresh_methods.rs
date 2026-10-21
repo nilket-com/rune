@@ -61,6 +61,28 @@ impl State {
 	}
 }
 
+/// Script instance functions by `Hash::associated_function(type, name)`, recorded
+/// while indexing. A failed insert makes every lookup miss, so no target is guessed.
+#[derive(Default)]
+pub(crate) struct Instances {
+	items: hash::Map<Hash>,
+	incomplete: bool,
+}
+impl Instances {
+	pub(crate) fn insert(&mut self, associated: Hash, item: Hash) {
+		if !self.incomplete && self.items.try_insert(associated, item).is_err() {
+			self.incomplete = true;
+		}
+	}
+	/// The item hash of the script instance function at `associated`.
+	pub(crate) fn get(&self, associated: Hash) -> Option<Hash> {
+		if self.incomplete {
+			return None;
+		}
+		self.items.get(&associated).copied()
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;

@@ -115,6 +115,13 @@ fn run_contract(engine: &str) {
 		.as_array_mut()
 		.unwrap()
 		.extend(c17c["rows"].as_array().unwrap().iter().cloned());
+	let c18a: Json = serde_json::from_str(include_str!("c18a_admissions.json")).unwrap();
+	assert_eq!(c18a["schema"], 1);
+	assert_eq!(c18a["rows"].as_array().unwrap().len(), 1);
+	stale_admissions["rows"]
+		.as_array_mut()
+		.unwrap()
+		.extend(c18a["rows"].as_array().unwrap().iter().cloned());
 	let archived_dispositions: Json =
 		serde_json::from_str(include_str!("../../cmp_ordering_dispositions.json")).unwrap();
 	assert!(matches!(engine, "stock" | "fresh"));

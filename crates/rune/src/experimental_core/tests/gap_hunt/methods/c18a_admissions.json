@@ -1,0 +1,19 @@
+{
+ "admitted": {
+  "072": {
+   "source_sha256": "c9e7daa018dc0715dda1b5b043b85cedcfd55547b4f213b254def3feb0f716c4",
+   "stock_observation_sha256": "13ec0937acaa04c0358e3f313d960958674720ad24a716d372e42efbc2df67ac",
+   "policy": "Exact original stock observation",
+   "previous_disposition": "Refused-surface",
+   "record": "C18a"
+  }
+ },
+ "moved_refusals": {
+  "074": {
+   "source_sha256": "6358aefc12107fecd49d4792be3bbb8a5d4a31764d99c965d383179c6c1016ad",
+   "site": 1,
+   "record": "C18a",
+   "note": "The script method call on the unit struct is admitted; the refusal moves to the second frozen site."
+  }
+ }
+}

@@ -68,6 +68,8 @@ pub(crate) struct QueryInner<'arena> {
 	pub(crate) fresh_iter_script: u8,
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_method_script: crate::function::fresh_methods::State,
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_instances: crate::function::fresh_methods::Instances,
 	/// Scratch space for parsing numbers.
 	pub(crate) scratch: RefCell<String>,
 	/// How deeply the item being built depends on other items which have to be

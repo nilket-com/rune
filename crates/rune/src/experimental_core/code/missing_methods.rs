@@ -77,6 +77,17 @@ impl CompileTransaction {
 	}
 }
 
+impl CompileTransaction {
+	/// Proves that no native function takes the script instance function's
+	/// place at `associated`: stock looks in the context first.
+	pub(crate) fn static_method(&mut self, context: &Context, associated: Hash) -> Result<()> {
+		if context.lookup_function(associated).is_some() {
+			return Err(Error::refused(Refusal::Method));
+		}
+		self.builder.record_absent(associated)
+	}
+}
+
 impl Code {
 	#[cold]
 	#[inline(never)]

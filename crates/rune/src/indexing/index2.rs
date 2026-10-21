@@ -578,6 +578,19 @@ impl<'a> Processor<'a> {
 					.inner
 					.fresh_method_script
 					.close(crate::Hash::ident(resolved));
+				if is_instance {
+					if let Some(impl_item) = idx.item.impl_item {
+						let receiver = idx.q.pool.item_type_hash(impl_item);
+						let item = idx.q.pool.item_type_hash(item_meta.item);
+						idx.q.inner.fresh_instances.insert(
+							crate::Hash::associated_function(
+								receiver,
+								crate::Hash::ident(resolved),
+							),
+							item,
+						);
+					}
+				}
 				if resolved == "sort_by" {
 					idx.q.inner.fresh_sort_by_script = true;
 				}

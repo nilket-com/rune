@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "note": "C18a lowers a script instance method on a certain receiver (a struct literal) as a direct script call; the script cmp returns the frozen stock value. Frozen stock and legacy refusals remain unchanged.",
+  "rows": [
+    {
+      "index": 206,
+      "label": "refusal/custom-script-cmp",
+      "source_hex": "73747275637420537b787d696d706c20537b666e20636d702873656c662c726873297b39397d7d70756220666e206d61696e28297b537b783a317d2e636d702832297d0a70756220666e2063395f726575736528297b377d",
+      "source_sha256": "08fecd396705f529be49dbf14cc79dfc4a445916926dd729a44fb959a44bc8fa",
+      "legacy_policy": "Refused-surface",
+      "legacy_fresh_refusal": {
+        "status": "refused",
+        "kind": "Unsupported",
+        "operation": "Method",
+        "refusal": "Method",
+        "invoked": false,
+        "source": 0,
+        "start": 53,
+        "end": 66,
+        "span_hex": "537b783a317d2e636d70283229"
+      },
+      "disposition": "Exact",
+      "expected": {
+        "status": "value",
+        "value": {
+          "payload": {
+            "type": "I64",
+            "value": "99"
+          },
+          "type_hash": "0x1cad9186c9641c4f"
+        }
+      },
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": ""
+    }
+  ]
+}

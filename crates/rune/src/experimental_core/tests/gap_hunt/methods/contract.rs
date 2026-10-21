@@ -90,15 +90,19 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	assert_eq!(c17a.as_object().unwrap().len(), 2);
 	let c17b: Json = serde_json::from_str(include_str!("c17b_admissions.json")).unwrap();
 	assert_eq!(c17b.as_object().unwrap().len(), 2);
-	if let Some(rule) = c17b
+	let c18a: Json = serde_json::from_str(include_str!("c18a_admissions.json")).unwrap();
+	assert_eq!(c18a["admitted"].as_object().unwrap().len(), 1);
+	assert_eq!(c18a["moved_refusals"].as_object().unwrap().len(), 1);
+	if let Some(rule) = c18a["admitted"]
 		.get(case["id"].as_str().unwrap())
+		.or_else(|| c17b.get(case["id"].as_str().unwrap()))
 		.or_else(|| c17a.get(case["id"].as_str().unwrap()))
 		.or_else(|| c15b.get(case["id"].as_str().unwrap()))
 		.or_else(|| c14.get(case["id"].as_str().unwrap()))
 		.or_else(|| c15.get(case["id"].as_str().unwrap()))
 	{
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
-		if matches!(rule["record"].as_str(), Some("C17a" | "C17b")) {
+		if matches!(rule["record"].as_str(), Some("C17a" | "C17b" | "C18a")) {
 			assert_eq!(
 				rule["stock_observation_sha256"],
 				frozen["stock_observation_sha256"]
@@ -117,7 +121,15 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 			assert_eq!(observed["outcome"]["status"], "refused");
 			assert_eq!(observed["outcome"]["refusal"], frozen["fresh_refusal"]);
 			let at = &observed["outcome"]["location"];
-			let expected = &frozen["fresh_refusal_sites"][0];
+			// C18a admits an earlier site of some rows; the refusal moves on.
+			let site = match c18a["moved_refusals"].get(case["id"].as_str().unwrap()) {
+				Some(moved) => {
+					assert_eq!(moved["source_sha256"], case["source_sha256"]);
+					moved["site"].as_u64().unwrap() as usize
+				}
+				None => 0,
+			};
+			let expected = &frozen["fresh_refusal_sites"][site];
 			for key in ["source", "start", "end"] {
 				assert_eq!(at[key], expected[key]);
 			}

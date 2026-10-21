@@ -482,7 +482,7 @@ fn nominal_missing_method_proof_rejects_unclosed_receiver_sets() {
 		("struct T(a);pub fn main(t){t.extend()}", false),
 		(
 			"struct T(a);impl T{fn extend(self){true}}pub fn main(){T(7).extend()}",
-			false,
+			true,
 		),
 		("struct T(a);pub fn main(){T(7).collect::<T>()}", false),
 	] {

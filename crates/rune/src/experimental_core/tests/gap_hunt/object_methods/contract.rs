@@ -57,7 +57,10 @@ fn verify_fresh_case(
 		dispositions["summary"]["classifications"],
 		serde_json::to_value(&counts).unwrap()
 	);
-	let rule = &super::object_order::admitted(include_str!("c17e_admissions.json"), &rows[index]);
+	let rule = &super::object_order::admitted(
+		include_str!("c18a_admissions.json"),
+		&super::object_order::admitted(include_str!("c17e_admissions.json"), &rows[index]),
+	);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);

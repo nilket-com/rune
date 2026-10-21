@@ -59,6 +59,10 @@ fn typed_kind(
 			error: stock::AccessError::fresh_shared_take_for_test(readers),
 		},
 		Detail::TupleLength { actual, expected } => K::ExpectedTupleLength { actual, expected },
+		Detail::OutOfRange { index, length } => K::OutOfRange {
+			index: index.into(),
+			length: length.into(),
+		},
 		_ => return None,
 	})
 }

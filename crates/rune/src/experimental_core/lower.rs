@@ -13,6 +13,7 @@ mod missing_methods;
 mod number_methods;
 mod object_methods;
 mod patterns;
+mod static_methods;
 mod text_methods;
 mod text_pipeline;
 mod variant_methods;
@@ -769,7 +770,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				Ok(true)
 			}
 			hir::Call::Associated { target, hash, .. }
-				if hash == Hash::ident("push") && call.args.len() == 1 =>
+				if hash == Hash::ident("push")
+					&& call.args.len() == 1
+					&& !self.constants.fresh_method_script.closed(hash) =>
 			{
 				let slots = self.operands(&[target, call.args[0]])?;
 				self.emit(
@@ -2348,6 +2351,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
+		if let Some(method) = self.static_method(target, hash, name_hash) {
+			return self.call_static_method(call, target, method, out, span);
+		}
 		if self.nominal_missing_site(call) {
 			return self.call_missing_method(call, target, name_hash, hash, out, span);
 		}
@@ -2377,6 +2383,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 		if let Some(method) = crate::function::fresh_numeric::Method::from_hash(hash) {
 			return self.call_numeric_method(call, target, method, out, span);
+		}
+		// A script method of the same name may be the target, so the native
+		// forms below apply only to names no script impl defines.
+		if self.constants.fresh_method_script.closed(hash) {
+			return self.call_missing_method(call, target, name_hash, hash, out, span);
 		}
 		if hash == Hash::ident("len") && call.args.is_empty() {
 			let value = self.operand(target)?;

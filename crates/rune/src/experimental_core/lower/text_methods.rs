@@ -66,7 +66,8 @@ impl Lower<'_, '_> {
 					&& self.text_writes(v, |i| self.nonrange(i, depth + 1))
 			}
 			E::Call(c) => {
-				matches!(c.call,hir::Call::Associated{hash,..} if matches!(Method::from_hash(hash),Some(Method::Trim|Method::Replace)))
+				// A script method of the name may return anything.
+				matches!(c.call,hir::Call::Associated{hash,..} if matches!(Method::from_hash(hash),Some(Method::Trim|Method::Replace)) && !self.constants.fresh_method_script.closed(hash))
 			}
 			_ => false,
 		}
@@ -98,7 +99,9 @@ impl Lower<'_, '_> {
 		match self.exprs.get(id).kind {
 			hir::ExprKind::Call(c) => match c.call {
 				hir::Call::Associated { hash, target, .. }
-					if hash == Method::Split.hash() && c.args.len() == 1 =>
+					if hash == Method::Split.hash()
+						&& c.args.len() == 1
+						&& !self.constants.fresh_method_script.closed(hash) =>
 				{
 					if self.nonstring(target, 0) {
 						Some(Origin::Never)
@@ -110,7 +113,8 @@ impl Lower<'_, '_> {
 				// Split has no iter() method: a successfully compiled call cannot return.
 				hir::Call::Associated { hash, target, .. }
 					if hash == crate::function::fresh_iter::Name::Iter.hash()
-						&& c.args.is_empty() =>
+						&& c.args.is_empty()
+						&& !self.constants.fresh_method_script.closed(hash) =>
 				{
 					self.split_origin(target, depth + 1).map(|_| Origin::Never)
 				}

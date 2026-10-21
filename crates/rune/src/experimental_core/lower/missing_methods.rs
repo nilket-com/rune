@@ -71,13 +71,18 @@ impl Lower<'_, '_> {
 				let hir::Call::Meta { hash } = call.call else {
 					return None;
 				};
-				self.constants
-					.fresh_variant_shape(hash)
-					.map(|shape| shape.enum_hash)
-					.or_else(|| self.constants.fresh_struct_shape(hash).map(|_| hash))
+				self.nominal_type(hash)
 			}
 			_ => None,
 		}
+	}
+
+	/// The runtime type of a value built by the script struct or variant `hash`.
+	pub(super) fn nominal_type(&self, hash: Hash) -> Option<Hash> {
+		self.constants
+			.fresh_variant_shape(hash)
+			.map(|shape| shape.enum_hash)
+			.or_else(|| self.constants.fresh_struct_shape(hash).map(|_| hash))
 	}
 }
 

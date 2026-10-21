@@ -7,10 +7,15 @@ impl<'hir> Lower<'_, 'hir> {
 	#[cold]
 	#[inline(never)]
 	pub(super) fn pipeline_site(&self, c: &hir::ExprCall<'_>) -> Option<(hir::ExprId, Method)> {
-		let hir::Call::Associated { target, hash, .. } = c.call else {
+		let hir::Call::Associated {
+			target,
+			hash,
+			name_hash,
+		} = c.call
+		else {
 			return None;
 		};
-		if self.nominal_missing_site(c) {
+		if self.nominal_missing_site(c) || self.static_method(target, hash, name_hash).is_some() {
 			return None;
 		}
 		self.pipeline_method(target, hash).map(|m| (target, m))
@@ -76,6 +81,10 @@ impl<'hir> Lower<'_, 'hir> {
 				let hir::Call::Associated { target, hash, .. } = c.call else {
 					return None;
 				};
+				// A script method of the name may return anything.
+				if self.constants.fresh_method_script.closed(hash) {
+					return None;
+				}
 				if hash == crate::function::fresh_text::Method::Split.hash() && c.args.len() == 1 {
 					let mut v = Vec::new();
 					v.try_push(if self.delimiter(c.args[0])? { 0 } else { 1 })
