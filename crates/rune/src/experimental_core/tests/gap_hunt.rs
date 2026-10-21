@@ -1697,3 +1697,5 @@ mod object_keys;
 mod iter_adapters;
 
 mod wrong_arity;
+
+mod static_methods;
