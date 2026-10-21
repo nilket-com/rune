@@ -1695,3 +1695,5 @@ mod iter_terminals;
 mod object_keys;
 
 mod iter_adapters;
+
+mod wrong_arity;

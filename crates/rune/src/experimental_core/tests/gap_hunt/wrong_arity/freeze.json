@@ -1,0 +1,35 @@
+{
+ "rows": 385,
+ "production_changes": false,
+ "files": {
+  "cases.json": "ac8e72fa7d038ca2615fe2c2b71ff9f3ab7e0794a62a4a7f3955f918bc9aa039",
+  "stock.json": "e5bd84de3ceea1098e8ad9b7b1fbb56826ec1dc2342512991d390cdf9c428b7f",
+  "stock2.json": "364486941a5b75747bd424731ad72cc87d50cdccb5e17c594fd5a090329e1113",
+  "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
+ },
+ "stock_binary": {
+  "path": "/home/me/work/.reviews/0185-s4-oracle1/rune-tests",
+  "sha256": "f4fc9d7ec567fe75aed9767283b779c0925b9713d31390e449f8ecfb80504330",
+  "pins_sha256": "e360209f679272fd9fca5a22c3d0d17a7d39f0095e6fff56b121510272a64974"
+ },
+ "stock_summary": {
+  "rows": 385,
+  "statuses": {
+   "value": 238,
+   "error": 98,
+   "compile-error": 49
+  },
+  "error_classes": {
+   "ArgumentCount": 96,
+   "Panic": 1,
+   "FuelExhausted": 1
+  },
+  "replay": false,
+  "logical_traces": 98,
+  "cpu_list": "0-7,10-31"
+ },
+ "P1": {
+  "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte exact; raw observations retained unmasked",
+  "rows": []
+ }
+}
