@@ -605,6 +605,7 @@ impl<'a> Processor<'a> {
 				idx.q.inner.fresh_sort_by_script = true;
 				idx.q.inner.fresh_iter_script = u8::MAX;
 				idx.q.inner.fresh_method_script.close_all();
+				idx.q.inner.fresh_instances.mark_incomplete();
 			}
 		}
 		let layer = idx.scopes.pop().with_span(self.span)?;

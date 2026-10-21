@@ -74,6 +74,15 @@ impl Instances {
 			self.incomplete = true;
 		}
 	}
+	/// Records that some script instance function may be missing from the map.
+	pub(crate) fn mark_incomplete(&mut self) {
+		self.incomplete = true;
+	}
+	/// Whether every script instance function is in the map, so a miss proves
+	/// that no script function sits at a key.
+	pub(crate) fn complete(&self) -> bool {
+		!self.incomplete
+	}
 	/// The item hash of the script instance function at `associated`.
 	pub(crate) fn get(&self, associated: Hash) -> Option<Hash> {
 		if self.incomplete {

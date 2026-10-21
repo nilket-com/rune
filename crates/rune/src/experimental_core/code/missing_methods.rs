@@ -1,24 +1,53 @@
-//! Cold absence proofs, owned by the compile and checked before execution.
+//! Cold absence proofs and the script method table, owned by the compile and
+//! checked before execution.
 use super::super::error::Refusal;
 use super::*;
 use crate::{Context, Hash};
 
 impl Builder {
-	/// Records `hash` as proven absent, once.
+	/// Records `hash` as proven absent, once. The absence list counts toward
+	/// the code budget, so a full list is the [`Refusal::CodeLimit`] refusal.
 	fn record_absent(&mut self, hash: Hash) -> Result<()> {
-		if self.absent.contains(&hash) {
+		if self.absent_seen.contains_key(&hash) {
 			return Ok(());
 		}
-		self.push_absent(hash)
-	}
-
-	/// Appends a hash the caller knows is new. The absence list counts toward
-	/// the code budget, so a full list is the [`Refusal::CodeLimit`] refusal.
-	fn push_absent(&mut self, hash: Hash) -> Result<()> {
 		if self.absent.len() >= MAX_CODE_BYTES / core::mem::size_of::<Hash>() {
 			return Err(Error::refused(Refusal::CodeLimit));
 		}
+		self.absent_seen.try_insert(hash, ())?;
 		self.absent.try_push(hash)?;
+		Ok(())
+	}
+
+	/// Records the script instance function `id` at the associated hash `hash`.
+	fn record_method(&mut self, hash: Hash, id: u32) -> Result<()> {
+		match self.methods_seen.get(&hash) {
+			Some(&old) if old == id => return Ok(()),
+			Some(_) => return Err(invalid()),
+			None => (),
+		}
+		self.methods_seen.try_insert(hash, id)?;
+		self.methods.try_push((hash, id))?;
+		Ok(())
+	}
+
+	/// Sorts both tables for binary search and checks that every method
+	/// targets an ordinary function.
+	pub(super) fn seal_method_tables(&mut self) -> Result<()> {
+		self.absent.sort_unstable();
+		self.methods.sort_unstable();
+		for pair in self.methods.windows(2) {
+			if pair[0].0 == pair[1].0 {
+				return Err(invalid());
+			}
+		}
+		for &(_, id) in &self.methods {
+			if id as usize >= self.functions.len() {
+				return Err(invalid());
+			}
+		}
+		self.absent_seen = crate::hash::Map::default();
+		self.methods_seen = crate::hash::Map::default();
 		Ok(())
 	}
 }
@@ -33,11 +62,14 @@ impl CompileTransaction {
 		effective: Hash,
 	) -> Result<()> {
 		// This proof applies only to a statically closed source nominal receiver.
-		// Script/trait installation remains conservatively closed by method name.
-		if query.fresh_method_script.closed(name) {
+		// A script method of the name elsewhere is no target here when the
+		// complete instance index has no function at this receiver's key.
+		let hash = Hash::associated_function(receiver, effective);
+		if query.fresh_method_script.closed(name)
+			&& (!query.fresh_instances.complete() || query.fresh_instances.get(hash).is_some())
+		{
 			return Err(Error::refused(Refusal::Method));
 		}
-		let hash = Hash::associated_function(receiver, effective);
 		if context.lookup_function(hash).is_some() {
 			return Err(Error::refused(Refusal::Method));
 		}
@@ -70,7 +102,7 @@ impl CompileTransaction {
 			if context.lookup_function(hash).is_some() {
 				return Err(Error::refused(Refusal::Method));
 			}
-			self.builder.push_absent(hash)?;
+			self.builder.record_absent(hash)?;
 		}
 		self.checked_absent.try_push(effective)?;
 		Ok(())
@@ -106,7 +138,13 @@ impl Code {
 	}
 
 	pub(crate) fn absent_method(&self, hash: Hash) -> bool {
-		self.absent.contains(&hash)
+		self.absent.binary_search(&hash).is_ok()
+	}
+
+	/// The script instance function at the associated hash `hash`.
+	pub(crate) fn method(&self, hash: Hash) -> Option<u32> {
+		let at = self.methods.binary_search_by_key(&hash, |&(h, _)| h).ok()?;
+		Some(self.methods[at].1)
 	}
 }
 
@@ -381,6 +419,48 @@ impl CompileTransaction {
 			return Err(Error::refused(Refusal::Native));
 		}
 		self.checked_terminal |= RANGE;
+		Ok(())
+	}
+}
+
+impl CompileTransaction {
+	/// Proves stock's dispatch for `receiver.name(..)` over every type a value
+	/// can have: the builtin receivers, every source item and every type the
+	/// context registers. A native function at any of those keys refuses the
+	/// name; otherwise every key is proven to have no native function, and a
+	/// key with a script instance function is recorded in the method table
+	/// through `resolve`. Once per name.
+	pub(crate) fn dynamic_method(
+		&mut self,
+		context: &Context,
+		query: &crate::query::QueryInner<'_>,
+		pool: &crate::compile::Pool,
+		name: Hash,
+		resolve: &mut dyn FnMut(Hash) -> Result<u32>,
+	) -> Result<()> {
+		if self.checked_dynamic.contains(&name) {
+			return Ok(());
+		}
+		if !query.fresh_instances.complete() {
+			return Err(Error::refused(Refusal::Method));
+		}
+		for receiver in crate::function::fresh_methods::RECEIVERS
+			.iter()
+			.copied()
+			.chain(query.items.keys().map(|id| pool.item_type_hash(*id)))
+			.chain(context.fresh_types())
+		{
+			let hash = Hash::associated_function(receiver, name);
+			if context.lookup_function(hash).is_some() {
+				return Err(Error::refused(Refusal::Method));
+			}
+			self.builder.record_absent(hash)?;
+			if let Some(item) = query.fresh_instances.get(hash) {
+				let id = resolve(item)?;
+				self.builder.record_method(hash, id)?;
+			}
+		}
+		self.checked_dynamic.try_push(name)?;
 		Ok(())
 	}
 }

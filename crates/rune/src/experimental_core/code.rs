@@ -849,7 +849,10 @@ pub(crate) const NEXT_METHOD: u32 = FIRST_INTRINSIC_ID + 0x57;
 pub(crate) const ANY_READY: u32 = FIRST_INTRINSIC_ID + 0x58;
 pub(crate) const CLOSURE_CREATE: u32 = FIRST_INTRINSIC_ID + 0x59;
 pub(crate) const CAPTURE_TAKE: u32 = FIRST_INTRINSIC_ID + 0x5c;
-pub(crate) const MISSING_METHOD: u32 = FIRST_INTRINSIC_ID + 0x5a;
+/// The instance function at `Hash::associated_function(receiver type, method)`:
+/// the script function value from the program's method table, or stock's
+/// `MissingInstanceFunction` when no function is there.
+pub(crate) const INSTANCE_METHOD: u32 = FIRST_INTRINSIC_ID + 0x5a;
 pub(crate) const MATCH_VARIANT: u32 = FIRST_INTRINSIC_ID + 0x5b;
 // Staged predicates bind a Struct descriptor in the caller's checked type pool.
 // Sealing replaces that index with the immutable canonical variant identity;
@@ -1000,7 +1003,7 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 		arity: 1,
 	},
 	CertifiedIntrinsic {
-		id: MISSING_METHOD,
+		id: INSTANCE_METHOD,
 		arity: 2,
 	},
 	CertifiedIntrinsic {
@@ -1171,7 +1174,10 @@ pub struct Code {
 	id: u32,
 	functions: Vec<Function>,
 	hosts: Vec<crate::function::fresh_host::HostBinding>,
+	/// Associated hashes proven to have no native function, sorted.
 	absent: Vec<crate::Hash>,
+	/// Script instance functions by associated hash, sorted by hash.
+	methods: Vec<(crate::Hash, u32)>,
 }
 
 /// Program identities. Exhaustion refuses `finish`; the counter never wraps.
@@ -1187,6 +1193,11 @@ pub struct Builder {
 	functions: Vec<Function>,
 	hosts: Vec<crate::function::fresh_host::HostBinding>,
 	absent: Vec<crate::Hash>,
+	/// The hashes in `absent`, so a repeated proof adds nothing.
+	absent_seen: crate::hash::Map<()>,
+	methods: Vec<(crate::Hash, u32)>,
+	/// The function id of each hash in `methods`.
+	methods_seen: crate::hash::Map<u32>,
 }
 
 fn invalid() -> Error {
@@ -1199,6 +1210,9 @@ impl Default for Builder {
 			functions: Vec::new(),
 			hosts: Vec::new(),
 			absent: Vec::new(),
+			absent_seen: crate::hash::Map::default(),
+			methods: Vec::new(),
+			methods_seen: crate::hash::Map::default(),
 		}
 	}
 }
@@ -1235,6 +1249,7 @@ impl Builder {
 		if self.functions.len() > FIRST_INTRINSIC_ID as usize {
 			return Err(invalid());
 		}
+		self.seal_method_tables()?;
 		let host_bytes = self
 			.hosts
 			.capacity()
@@ -1247,6 +1262,13 @@ impl Builder {
 					.checked_mul(core::mem::size_of::<crate::Hash>())
 					.ok_or_else(invalid)?,
 			)
+			.and_then(|n| {
+				n.checked_add(
+					self.methods
+						.capacity()
+						.checked_mul(core::mem::size_of::<(crate::Hash, u32)>())?,
+				)
+			})
 			.ok_or_else(invalid)?;
 		if self.hosts.len() > MAX_HOST_DESCRIPTORS
 			|| !self.hosts.iter().all(|host| host.signature.valid())
@@ -1353,6 +1375,7 @@ impl Builder {
 			functions: self.functions,
 			hosts: self.hosts,
 			absent: self.absent,
+			methods: self.methods,
 		})
 	}
 }
@@ -1365,6 +1388,8 @@ pub(crate) struct CompileTransaction {
 	builder: Builder,
 	staging: nominal::Staging,
 	checked_absent: Vec<crate::Hash>,
+	/// Method names whose dispatch proof is recorded.
+	checked_dynamic: Vec<crate::Hash>,
 	checked_text: u8,
 	checked_pipeline: u8,
 	checked_variant: u8,
@@ -2557,6 +2582,13 @@ impl Code {
 					.checked_mul(core::mem::size_of::<crate::Hash>())
 					.ok_or_else(invalid)?,
 			)
+			.and_then(|n| {
+				n.checked_add(
+					self.methods
+						.capacity()
+						.checked_mul(core::mem::size_of::<(crate::Hash, u32)>())?,
+				)
+			})
 			.ok_or_else(invalid)?;
 		footprint.original_buffers = footprint
 			.original_buffers
@@ -3301,7 +3333,7 @@ mod intrinsic_partition_tests {
 			1
 		);
 		assert_eq!(
-			certified_intrinsic(CERTIFIED_INTRINSICS, MISSING_METHOD)
+			certified_intrinsic(CERTIFIED_INTRINSICS, INSTANCE_METHOD)
 				.unwrap()
 				.arity,
 			2
@@ -3368,7 +3400,7 @@ mod intrinsic_partition_tests {
 				MATCH_VARIANT,
 				CLOSURE_CREATE,
 				CAPTURE_TAKE,
-				MISSING_METHOD,
+				INSTANCE_METHOD,
 			] {
 				assert_ne!(id, fixed);
 			}
@@ -3633,8 +3665,9 @@ mod template_layout_tests {
 			core::mem::size_of::<CachedInstruction>(),
 		];
 		std::println!("C5 layouts Function/Code/Op/Instruction/CachedInstruction: {sizes:?}");
-		// C13 adds one 24-byte absence-proof Vec to Code only.
-		assert_eq!(sizes, [200, 80, 24, 16, 32]);
+		// C13 adds one 24-byte absence-proof Vec to Code only; C18b1 adds the
+		// 24-byte script method table.
+		assert_eq!(sizes, [200, 104, 24, 16, 32]);
 	}
 }
 

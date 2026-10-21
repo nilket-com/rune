@@ -45,7 +45,7 @@ impl Lower<'_, '_> {
 		self.emit(
 			Op::Call {
 				out,
-				function: super::super::code::MISSING_METHOD,
+				function: super::super::code::INSTANCE_METHOD,
 				args_start,
 				args_len,
 			},

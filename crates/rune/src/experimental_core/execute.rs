@@ -817,9 +817,9 @@ impl Executor {
 		if (0x8000_0060..=0x8000_007b).contains(&id) {
 			return self.text_call(store, function, base, out, id, args_start, args_len);
 		}
-		if id == super::code::MISSING_METHOD {
+		if id == super::code::INSTANCE_METHOD {
 			return self
-				.missing_method_call(code, store, function, base, out, args_start, args_len);
+				.instance_method_call(code, store, function, base, out, args_start, args_len);
 		}
 		if let Some(method) = crate::function::fresh_variant::Method::from_id(id) {
 			return self.variant_method_call(

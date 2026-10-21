@@ -856,6 +856,12 @@ impl Context {
 		self.fresh_methods.closed(name)
 	}
 
+	/// Every type the context registers, by type hash.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_types(&self) -> impl Iterator<Item = Hash> + '_ {
+		self.types.keys().copied()
+	}
+
 	/// Lookup the given native function handler in the context.
 	pub(crate) fn lookup_function(&self, hash: Hash) -> Option<&FunctionHandler> {
 		self.functions.get(&hash)

@@ -8,6 +8,7 @@
 //! nothing for the others. Bare locals are read in place where the reference's
 //! `writes_nothing` rule allows; capturing move closures transfer payload ownership and track moved bindings.
 
+mod dynamic_methods;
 mod iter_terminals;
 mod missing_methods;
 mod number_methods;
@@ -2387,6 +2388,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		// A script method of the same name may be the target, so the native
 		// forms below apply only to names no script impl defines.
 		if self.constants.fresh_method_script.closed(hash) {
+			if hash == name_hash {
+				return self.call_dynamic_method(call, target, hash, out, span);
+			}
 			return self.call_missing_method(call, target, name_hash, hash, out, span);
 		}
 		if hash == Hash::ident("len") && call.args.is_empty() {

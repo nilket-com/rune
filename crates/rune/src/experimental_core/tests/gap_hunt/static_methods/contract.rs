@@ -53,7 +53,8 @@ fn verify_fresh_case(
 		dispositions["summary"]["classifications"],
 		serde_json::to_value(&counts).unwrap()
 	);
-	let rule = &rows[index];
+	// C18b1 admits rows through run-time dispatch; each entry pins the rule it replaces.
+	let rule = &super::object_order::admitted(include_str!("c18b1_admissions.json"), &rows[index]);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
@@ -79,7 +80,10 @@ fn verify_fresh_case(
 	}
 	assert_eq!(audit["cleanup_error"], false);
 	let classification = rule["classification"].as_str().unwrap();
-	let refused = !matches!(classification, "Exact" | "Intentional-D1");
+	let refused = !matches!(
+		classification,
+		"Exact" | "Intentional-D1" | "Retained-frame-limit"
+	);
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
 	if classification == "Exact" {
@@ -102,6 +106,31 @@ fn verify_fresh_case(
 		assert_eq!(f["events"], s["events"]);
 		assert_eq!(f["reuse"], s["reuse"]);
 		assert_eq!(fresh["logical"], expected["logical"]);
+		assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+	} else if classification == "Retained-frame-limit" {
+		// Unbounded recursion: fresh charges fuel once per call, so its
+		// 1024-frame limit trips before the fuel runs out, where stock ends in
+		// FuelExhausted. The tapes agree index by index up to the shorter one.
+		let (fresh, expected) = (canonical_record(actual), canonical_record(stock));
+		assert_eq!(fresh, rule["fresh"]);
+		let (f, s) = (&fresh["observation"], &expected["observation"]);
+		assert_eq!(f["outcome"]["status"], "error");
+		assert_eq!(f["outcome"]["class"], "FrameCapacity");
+		assert_eq!(
+			f["outcome"]["depth"],
+			crate::experimental_core::execute::ExecutorLimits::default().frames
+		);
+		assert_eq!(s["outcome"]["status"], "error");
+		assert_eq!(s["outcome"]["class"], "FuelExhausted");
+		for (a, b) in f["events"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.zip(s["events"].as_array().unwrap())
+		{
+			assert_eq!(a, b);
+		}
+		assert_eq!(f["reuse"], s["reuse"]);
 		assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
 	} else {
 		// A located, classified refusal: the program runs on stock instead.

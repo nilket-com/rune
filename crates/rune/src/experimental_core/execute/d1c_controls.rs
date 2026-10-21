@@ -208,8 +208,9 @@ fn existing_codec_layout_stays_fixed() {
 		16
 	);
 	if cfg!(target_pointer_width = "64") {
-		// H1 host descriptors and C13 absence proofs each add a 24-byte Vec; opcode layouts stay fixed.
-		assert_eq!(core::mem::size_of::<Code>(), 80);
+		// H1 host descriptors, C13 absence proofs and the C18b1 script method
+		// table each add a 24-byte Vec; opcode layouts stay fixed.
+		assert_eq!(core::mem::size_of::<Code>(), 104);
 		assert_eq!(core::mem::size_of::<Op>(), 24);
 		assert_eq!(
 			core::mem::size_of::<crate::experimental_core::code::CachedInstruction>(),

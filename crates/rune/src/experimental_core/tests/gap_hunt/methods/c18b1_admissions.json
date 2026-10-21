@@ -1,0 +1,46 @@
+{
+ "073": {
+  "source_sha256": "38f7b50030e6bfee00e8361aca4a2fd79cb2100aa8a5952a63f819417378d02e",
+  "stock_observation_sha256": "272d0aaa30b7dba0ecbff9402dbf7271fc7cfa0803b8900bc469c3a2a9ba789a",
+  "previous_disposition": "Refused-surface",
+  "record": "C18b1",
+  "policy": "Exact original stock observation, except the D1 missing-method message",
+  "display": {
+   "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+   "after": "Type `std::i64` has no method named `unrecognized`"
+  }
+ },
+ "074": {
+  "source_sha256": "6358aefc12107fecd49d4792be3bbb8a5d4a31764d99c965d383179c6c1016ad",
+  "stock_observation_sha256": "d8a854050673c366970c87a82fd4a39f4e7dd3154abc868f4dd6baf23d4227e1",
+  "previous_disposition": "Refused-surface",
+  "record": "C18b1",
+  "policy": "Exact original stock observation, except the D1 missing-method message",
+  "display": {
+   "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+   "after": "Type `std::i64` has no method named `unrecognized`"
+  }
+ },
+ "075": {
+  "source_sha256": "e8d92bc4cfd444d2c41755854a0ed94269ed90661a12d3c994b5ca9569544770",
+  "stock_observation_sha256": "3ddc5eb2a6ddf05e77e8e4a761e1ead39af469e8d056646f13c74791bb252860",
+  "previous_disposition": "Refused-surface",
+  "record": "C18b1",
+  "policy": "Exact original stock observation, except the D1 missing-method message",
+  "display": {
+   "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+   "after": "Type `std::i64` has no method named `unrecognized`"
+  }
+ },
+ "079": {
+  "source_sha256": "a4b97358de5ccdba258e8bc9228b9e44c4ca1ccd368861121cd6d8b35649ee77",
+  "stock_observation_sha256": "e6ceb6baaa33293d3107b9a200f1705db50f1a6c201d929d50fb320c373f6e1c",
+  "previous_disposition": "Refused-surface",
+  "record": "C18b1",
+  "policy": "Exact original stock observation, except the D1 missing-method message",
+  "display": {
+   "before": "Missing instance function `0x3feef4c11536841b` for `std::i64`",
+   "after": "Type `std::i64` has no method named `unrecognized`"
+  }
+ }
+}

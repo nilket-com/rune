@@ -93,8 +93,11 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 	let c18a: Json = serde_json::from_str(include_str!("c18a_admissions.json")).unwrap();
 	assert_eq!(c18a["admitted"].as_object().unwrap().len(), 1);
 	assert_eq!(c18a["moved_refusals"].as_object().unwrap().len(), 1);
-	if let Some(rule) = c18a["admitted"]
+	let c18b1: Json = serde_json::from_str(include_str!("c18b1_admissions.json")).unwrap();
+	assert_eq!(c18b1.as_object().unwrap().len(), 4);
+	if let Some(rule) = c18b1
 		.get(case["id"].as_str().unwrap())
+		.or_else(|| c18a["admitted"].get(case["id"].as_str().unwrap()))
 		.or_else(|| c17b.get(case["id"].as_str().unwrap()))
 		.or_else(|| c17a.get(case["id"].as_str().unwrap()))
 		.or_else(|| c15b.get(case["id"].as_str().unwrap()))
@@ -102,7 +105,7 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 		.or_else(|| c15.get(case["id"].as_str().unwrap()))
 	{
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
-		if matches!(rule["record"].as_str(), Some("C17a" | "C17b" | "C18a")) {
+		if matches!(rule["record"].as_str(), Some("C17a" | "C17b" | "C18a" | "C18b1")) {
 			assert_eq!(
 				rule["stock_observation_sha256"],
 				frozen["stock_observation_sha256"]
@@ -112,7 +115,15 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 		assert_eq!(audit["invoked"], true);
 		assert_eq!(audit["reuse_used_fallback"], false);
 		let expected = &frozen["stock_observation"];
-		assert_eq!(project_observation(observed, expected, ""), *expected);
+		let mut observed = observed.clone();
+		// C18b1 rows are run-time misses: fresh names the method (D1); the
+		// message is the only change, and it is pinned on both sides.
+		if let Some(display) = rule.get("display") {
+			assert_eq!(observed["outcome"]["display"], display["after"]);
+			assert_eq!(expected["outcome"]["display"], display["before"]);
+			observed["outcome"]["display"] = display["before"].clone();
+		}
+		assert_eq!(project_observation(&observed, expected, ""), *expected);
 		return;
 	}
 	match frozen["disposition"].as_str().unwrap() {

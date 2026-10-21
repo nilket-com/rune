@@ -75,6 +75,17 @@ pub(super) fn fresh_failure(
 	super::d1e_diagnostics::fresh(failure, program, sources);
 	use crate::experimental_core::{detail::Detail, error::ErrorKind};
 	let error = &failure.error;
+	if error.kind == ErrorKind::FrameCapacity {
+		// The frame limit has no stock kind: fresh's own class and the depth
+		// reached, in published frames (every caller in the chain plus the
+		// frame that failed to call).
+		let sites = error
+			.location
+			.iter()
+			.map(|at| json!({"source":at.source,"start":at.start,"end":at.end}))
+			.collect::<Vec<_>>();
+		return json!({"status":"error","class":"FrameCapacity","kind":"FrameCapacity","display":failure.message(program).to_string(),"chain":[],"sites":sites,"depth":failure.call_chain.len() + 1,"raw":format!("{failure:?}")});
+	}
 	let kind = if error.kind == ErrorKind::FuelExhausted {
 		Some(stock::VmErrorKind::Halted {
 			halt: stock::VmHaltInfo::Limited,
