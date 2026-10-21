@@ -1,0 +1,73 @@
+// Port of AWFY benchmarks/Lua/queens.lua.
+
+const NAME = "Queens";
+
+struct Queens {
+	free_rows,
+	free_maxs,
+	free_mins,
+	queen_rows,
+}
+
+impl Queens {
+	fn inner_benchmark_loop(self, inner_iterations) {
+		default_inner_benchmark_loop(self, inner_iterations)
+	}
+
+	fn benchmark(self) {
+		let result = true;
+		for _ in 0..10 {
+			result = result && self.queens();
+		}
+		result
+	}
+
+	fn verify_result(self, result) {
+		result
+	}
+
+	fn queens(self) {
+		self.free_rows = [true, true, true, true, true, true, true, true];
+		self.free_maxs = [
+			true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true,
+		];
+		self.free_mins = [
+			true, true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true, true,
+		];
+		self.queen_rows = [-1, -1, -1, -1, -1, -1, -1, -1];
+		self.place_queen(0)
+	}
+
+	fn place_queen(self, c) {
+		for r in 0..8 {
+			if self.get_row_column(r, c) {
+				self.queen_rows[r] = c;
+				self.set_row_column(r, c, false);
+				if c == 7 {
+					return true;
+				}
+				if self.place_queen(c + 1) {
+					return true;
+				}
+				self.set_row_column(r, c, true);
+			}
+		}
+		false
+	}
+
+	fn get_row_column(self, r, c) {
+		self.free_rows[r] && self.free_maxs[c + r] && self.free_mins[c - r + 7]
+	}
+
+	fn set_row_column(self, r, c, v) {
+		self.free_rows[r] = v;
+		self.free_maxs[c + r] = v;
+		self.free_mins[c - r + 7] = v;
+	}
+}
+
+fn new_benchmark() {
+	Queens { free_rows: [], free_maxs: [], free_mins: [], queen_rows: [] }
+}

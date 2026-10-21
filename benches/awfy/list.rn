@@ -1,0 +1,79 @@
+// Port of AWFY benchmarks/Lua/list.lua.
+
+const NAME = "List";
+
+struct Element {
+	val,
+	next,
+}
+
+impl Element {
+	fn new(v) {
+		Element { val: v, next: None }
+	}
+
+	fn length(self) {
+		if let Some(next) = self.next {
+			1 + next.length()
+		} else {
+			1
+		}
+	}
+}
+
+struct List;
+
+impl List {
+	fn inner_benchmark_loop(self, inner_iterations) {
+		default_inner_benchmark_loop(self, inner_iterations)
+	}
+
+	fn benchmark(self) {
+		let result = self.tail(self.make_list(15), self.make_list(10), self.make_list(6));
+		result.unwrap().length()
+	}
+
+	fn make_list(self, length) {
+		if length == 0 {
+			None
+		} else {
+			let e = Element::new(length);
+			e.next = self.make_list(length - 1);
+			Some(e)
+		}
+	}
+
+	fn is_shorter_than(self, x, y) {
+		let x_tail = x;
+		let y_tail = y;
+		while let Some(y) = y_tail {
+			if let Some(x) = x_tail {
+				x_tail = x.next;
+				y_tail = y.next;
+			} else {
+				return true;
+			}
+		}
+		false
+	}
+
+	fn tail(self, x, y, z) {
+		if self.is_shorter_than(y, x) {
+			self.tail(
+				self.tail(x.unwrap().next, y, z),
+				self.tail(y.unwrap().next, z, x),
+				self.tail(z.unwrap().next, x, y),
+			)
+		} else {
+			z
+		}
+	}
+
+	fn verify_result(self, result) {
+		10 == result
+	}
+}
+
+fn new_benchmark() {
+	List
+}

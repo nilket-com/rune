@@ -1,0 +1,678 @@
+// Port of AWFY benchmarks/Lua/havlak.lua.
+
+const NAME = "Havlak";
+
+/// Marker for uninitialized nodes.
+const UNVISITED = 2147483647;
+/// Safeguard against pathological algorithm behavior.
+const MAXNONBACKPREDS = 32 * 1024;
+
+/// The Lua symbols `'BB_NONHEADER'` and so on, as an enum (Java uses one too).
+enum BasicBlockClass {
+	BbTop,
+	BbNonheader,
+	BbReducible,
+	BbSelf,
+	BbIrreducible,
+	BbDead,
+	BbLast,
+}
+
+struct BasicBlock {
+	name,
+	in_edges,
+	out_edges,
+}
+
+impl BasicBlock {
+	fn new(name) {
+		BasicBlock { name, in_edges: Vector::with_size(2), out_edges: Vector::with_size(2) }
+	}
+
+	fn num_pred(self) {
+		self.in_edges.size()
+	}
+
+	fn add_out_edge(self, to) {
+		self.out_edges.append(to);
+	}
+
+	fn add_in_edge(self, from) {
+		self.in_edges.append(from);
+	}
+
+	fn custom_hash(self) {
+		self.name
+	}
+
+	/// Identity: block names are unique within a graph.
+	fn same(self, other) {
+		self.name == other.name
+	}
+}
+
+struct BasicBlockEdge {
+	from,
+	to,
+}
+
+impl BasicBlockEdge {
+	fn new(cfg, from_name, to_name) {
+		let from = cfg.create_node(from_name);
+		let to = cfg.create_node(to_name);
+
+		from.add_out_edge(to);
+		to.add_in_edge(from);
+		let edge = BasicBlockEdge { from, to };
+
+		cfg.add_edge(edge);
+		edge
+	}
+}
+
+/// `basic_block_map` holds `Some(block)` per name, so `at` past the end and an
+/// empty slot both read as `None`, like Lua's `nil`.
+struct ControlFlowGraph {
+	start_node,
+	basic_block_map,
+	edge_list,
+}
+
+impl ControlFlowGraph {
+	fn new() {
+		ControlFlowGraph { start_node: None, basic_block_map: Vector::new(), edge_list: Vector::new() }
+	}
+
+	fn create_node(self, name) {
+		let node = if let Some(node) = self.basic_block_map.at(name) {
+			node
+		} else {
+			let node = BasicBlock::new(name);
+			self.basic_block_map.at_put(name, Some(node));
+			node
+		};
+		if self.num_nodes() == 1 {
+			self.start_node = Some(node);
+		}
+		node
+	}
+
+	fn add_edge(self, edge) {
+		self.edge_list.append(edge);
+	}
+
+	fn num_nodes(self) {
+		self.basic_block_map.size()
+	}
+
+	fn get_start_basic_block(self) {
+		self.start_node
+	}
+
+	fn get_basic_blocks(self) {
+		self.basic_block_map
+	}
+}
+
+struct SimpleLoop {
+	header,
+	is_reducible,
+	parent,
+	is_root,
+	nesting_level,
+	depth_level,
+	counter,
+	basic_blocks,
+	children,
+}
+
+impl SimpleLoop {
+	fn new(bb, is_reducible) {
+		let simple_loop = SimpleLoop {
+			header: bb,
+			is_reducible,
+			parent: None,
+			is_root: false,
+			nesting_level: 0,
+			depth_level: 0,
+			counter: 0,
+			basic_blocks: IdentitySet::new(),
+			children: IdentitySet::new(),
+		};
+		if let Some(bb) = bb {
+			simple_loop.basic_blocks.add(bb);
+		}
+		simple_loop
+	}
+
+	/// Identity: the loop structure graph numbers its loops.
+	fn same(self, other) {
+		self.counter == other.counter
+	}
+
+	fn add_node(self, bb) {
+		self.basic_blocks.add(bb);
+	}
+
+	fn add_child_loop(self, child) {
+		self.children.add(child);
+	}
+
+	fn set_parent(self, parent) {
+		self.parent = Some(parent);
+		parent.add_child_loop(self);
+	}
+
+	fn set_is_root(self) {
+		self.is_root = true;
+	}
+
+	fn set_nesting_level(self, level) {
+		self.nesting_level = level;
+		if level == 0 {
+			self.set_is_root();
+		}
+	}
+}
+
+struct LoopStructureGraph {
+	loop_counter,
+	loops,
+	root,
+}
+
+impl LoopStructureGraph {
+	fn new() {
+		let loops = Vector::new();
+		let root = SimpleLoop::new(None, true);
+		let lsg = LoopStructureGraph { loop_counter: 0, loops, root };
+		root.set_nesting_level(0);
+		root.counter = lsg.loop_counter;
+		lsg.loop_counter = lsg.loop_counter + 1;
+		loops.append(root);
+		lsg
+	}
+
+	fn create_new_loop(self, bb, is_reducible) {
+		let simple_loop = SimpleLoop::new(bb, is_reducible);
+		simple_loop.counter = self.loop_counter;
+		self.loop_counter = self.loop_counter + 1;
+		self.loops.append(simple_loop);
+		simple_loop
+	}
+
+	fn calculate_nesting_level(self) {
+		// link up all 1st level loops to artificial root node.
+		self.loops.each(|it| {
+			if !it.is_root {
+				if it.parent.is_none() {
+					it.set_parent(self.root);
+				}
+			}
+		});
+		// recursively traverse the tree and assign levels.
+		self.calculate_nesting_level_rec(self.root, 0);
+	}
+
+	fn calculate_nesting_level_rec(self, simple_loop, depth) {
+		simple_loop.depth_level = depth;
+		simple_loop.children.each(|it| {
+			self.calculate_nesting_level_rec(it, depth + 1);
+			simple_loop.set_nesting_level(max(simple_loop.nesting_level, 1 + it.nesting_level));
+		});
+	}
+
+	fn num_loops(self) {
+		self.loops.size()
+	}
+}
+
+struct UnionFindNode {
+	dfs_number,
+	parent,
+	bb,
+	simple_loop,
+}
+
+impl UnionFindNode {
+	fn new() {
+		UnionFindNode { dfs_number: 0, parent: None, bb: None, simple_loop: None }
+	}
+
+	/// Identity: only initialized nodes are compared, and `init_node` gives each
+	/// one its unique index as `dfs_number`.
+	fn same(self, other) {
+		self.dfs_number == other.dfs_number
+	}
+
+	fn init_node(self, bb, dfs_number) {
+		self.parent = Some(self);
+		self.bb = Some(bb);
+		self.dfs_number = dfs_number;
+		self.simple_loop = None;
+	}
+
+	fn find_set(self) {
+		let node_list = Vector::new();
+
+		let node = self;
+		while !node.same(node.parent.unwrap()) {
+			let parent = node.parent.unwrap();
+			if !parent.same(parent.parent.unwrap()) {
+				node_list.append(node);
+			}
+			node = parent;
+		}
+
+		// Path Compression, all nodes' parents point to the 1st level parent.
+		node_list.each(|it| {
+			it.union(self.parent.unwrap());
+		});
+		node
+	}
+
+	fn union(self, basic_block) {
+		self.parent = Some(basic_block);
+	}
+}
+
+struct HavlakLoopFinder {
+	cfg,
+	lsg,
+	non_back_preds,
+	back_preds,
+	number,
+	max_size,
+	header,
+	types,
+	last,
+	nodes,
+}
+
+impl HavlakLoopFinder {
+	fn new(cfg, lsg) {
+		HavlakLoopFinder {
+			cfg,
+			lsg,
+			non_back_preds: Vector::new(),
+			back_preds: Vector::new(),
+			number: IdentityDictionary::new(),
+			max_size: 0,
+			header: [],
+			types: [],
+			last: [],
+			nodes: [],
+		}
+	}
+
+	// As described in the paper, determine whether a node 'w' is a
+	// "true" ancestor for node 'v'.
+	//
+	// Dominance can be tested quickly using a pre-order trick
+	// for depth-first spanning trees. This is why DFS is the first
+	// thing we run below.
+	fn is_ancestor(self, w, v) {
+		(w <= v) && (v <= self.last[w])
+	}
+
+	// DFS - Depth-First-Search
+	//
+	// DESCRIPTION:
+	// Simple depth first traversal along out edges with node numbering.
+	fn do_dfs(self, current_node, current) {
+		self.nodes[current].init_node(current_node, current);
+		self.number.at_put(current_node, current);
+
+		let last_id = [current];
+		let outer_blocks = current_node.out_edges;
+
+		outer_blocks.each(|target| {
+			if self.number.at(target).unwrap() == UNVISITED {
+				last_id[0] = self.do_dfs(target, last_id[0] + 1);
+			}
+		});
+
+		self.last[current] = last_id[0];
+		last_id[0]
+	}
+
+	fn init_all_nodes(self) {
+		// Step a:
+		//   - initialize all nodes as unvisited.
+		//   - depth-first traversal and numbering.
+		//   - unreached BB's are marked as dead.
+		self.cfg.get_basic_blocks().each(|bb| {
+			self.number.at_put(bb.unwrap(), UNVISITED);
+		});
+		self.do_dfs(self.cfg.get_start_basic_block().unwrap(), 0);
+	}
+
+	fn identify_edges(self, size) {
+		// Step b:
+		//   - iterate over all nodes.
+		//
+		//   A backedge comes from a descendant in the DFS tree, and non-backedges
+		//   from non-descendants (following Tarjan).
+		//
+		//   - check incoming edges 'v' and add them to either
+		//     - the list of backedges (backPreds) or
+		//     - the list of non-backedges (nonBackPreds)
+		for w in 0..size {
+			self.header[w] = 0;
+			self.types[w] = BasicBlockClass::BbNonheader;
+
+			if let Some(node_w) = self.nodes[w].bb {
+				self.process_edges(node_w, w);
+			} else {
+				self.types[w] = BasicBlockClass::BbDead;
+			}
+		}
+	}
+
+	fn process_edges(self, node_w, w) {
+		let number = self.number;
+		if node_w.num_pred() > 0 {
+			node_w.in_edges.each(|node_v| {
+				let v = number.at(node_v).unwrap();
+				if v != UNVISITED {
+					if self.is_ancestor(w, v) {
+						self.back_preds.at(w).append(v);
+					} else {
+						self.non_back_preds.at(w).add(v);
+					}
+				}
+			});
+		}
+	}
+
+	// Find loops and build loop forest using Havlak's algorithm, which
+	// is derived from Tarjan. Variable names and step numbering has
+	// been chosen to be identical to the nomenclature in Havlak's
+	// paper (which, in turn, is similar to the one used by Tarjan).
+	fn find_loops(self) {
+		if self.cfg.get_start_basic_block().is_none() {
+			return;
+		}
+
+		let size = self.cfg.num_nodes();
+		self.non_back_preds.remove_all();
+		self.back_preds.remove_all();
+		self.number.remove_all();
+
+		if size > self.max_size {
+			self.header = alloc_array(size);
+			self.types = alloc_array(size);
+			self.last = alloc_array(size);
+			self.nodes = alloc_array(size);
+			self.max_size = size;
+		}
+
+		for i in 0..size {
+			self.non_back_preds.append(Set::new());
+			self.back_preds.append(Vector::new());
+			self.nodes[i] = UnionFindNode::new();
+		}
+
+		self.init_all_nodes();
+		self.identify_edges(size);
+
+		// Start node is root of all other loops.
+		self.header[0] = 0;
+
+		// Step c:
+		//
+		// The outer loop, unchanged from Tarjan. It does nothing except
+		// for those nodes which are the destinations of backedges.
+		// For a header node w, we chase backward from the sources of the
+		// backedges adding nodes to the set P, representing the body of
+		// the loop headed by w.
+		//
+		// By running through the nodes in reverse of the DFST preorder,
+		// we ensure that inner loop headers will be processed before the
+		// headers for surrounding loops.
+		let w = size - 1;
+		while w >= 0 {
+			// this is 'P' in Havlak's paper
+			let node_pool = Vector::new();
+			let node_w = self.nodes[w].bb;
+			if node_w.is_some() {
+				self.step_d(w, node_pool);
+
+				// Copy nodePool to workList.
+				let work_list = Vector::new();
+				node_pool.each(|it| {
+					work_list.append(it);
+				});
+
+				if node_pool.size() != 0 {
+					self.types[w] = BasicBlockClass::BbReducible;
+				}
+
+				// work the list...
+				while !work_list.is_empty() {
+					let x = work_list.remove_first().unwrap();
+
+					// Step e:
+					//
+					// Step e represents the main difference from Tarjan's method.
+					// Chasing upwards from the sources of a node w's backedges. If
+					// there is a node y' that is not a descendant of w, w is marked
+					// the header of an irreducible loop, there is another entry
+					// into this loop that avoids w.
+
+					// The algorithm has degenerated. Break and
+					// return in this case.
+					let non_back_size = self.non_back_preds.at(x.dfs_number).size();
+					if non_back_size > MAXNONBACKPREDS {
+						return;
+					}
+					self.step_e_process_non_back_preds(w, node_pool, work_list, x);
+				}
+			}
+
+			// Collapse/Unionize nodes in a SCC to a single node
+			// For every SCC found, create a loop descriptor and link it in.
+			if (node_pool.size() > 0) || (self.types[w] == BasicBlockClass::BbSelf) {
+				let simple_loop = self.lsg.create_new_loop(node_w, self.types[w] != BasicBlockClass::BbIrreducible);
+				self.set_loop_attributes(w, node_pool, simple_loop);
+			}
+			w = w - 1;
+		}
+	}
+
+	fn step_e_process_non_back_preds(self, w, node_pool, work_list, x) {
+		self.non_back_preds.at(x.dfs_number).each(|it| {
+			let y = self.nodes[it];
+			let ydash = y.find_set();
+
+			if !self.is_ancestor(w, ydash.dfs_number) {
+				self.types[w] = BasicBlockClass::BbIrreducible;
+				self.non_back_preds.at(w).add(ydash.dfs_number);
+			} else {
+				if ydash.dfs_number != w {
+					if !node_pool.has_some(|e| e.same(ydash)) {
+						work_list.append(ydash);
+						node_pool.append(ydash);
+					}
+				}
+			}
+		});
+	}
+
+	fn set_loop_attributes(self, w, node_pool, simple_loop) {
+		// At this point, one can set attributes to the loop, such as:
+		//
+		// the bottom node:
+		//    iter  = backPreds[w].begin();
+		//    loop bottom is: nodes[iter].node);
+		//
+		// the number of backedges:
+		//    backPreds[w].size()
+		//
+		// whether this loop is reducible:
+		//    type[w] != BasicBlockClass.BB_IRREDUCIBLE
+		self.nodes[w].simple_loop = Some(simple_loop);
+		node_pool.each(|node| {
+			// Add nodes to loop descriptor.
+			self.header[node.dfs_number] = w;
+			node.union(self.nodes[w]);
+
+			// Nested loops are not added, but linked together.
+			if let Some(node_loop) = node.simple_loop {
+				node_loop.set_parent(simple_loop);
+			} else {
+				simple_loop.add_node(node.bb.unwrap());
+			}
+		});
+	}
+
+	fn step_d(self, w, node_pool) {
+		self.back_preds.at(w).each(|v| {
+			if v != w {
+				node_pool.append(self.nodes[v].find_set());
+			} else {
+				self.types[w] = BasicBlockClass::BbSelf;
+			}
+		});
+	}
+}
+
+struct LoopTesterApp {
+	cfg,
+	lsg,
+}
+
+impl LoopTesterApp {
+	fn new() {
+		let cfg = ControlFlowGraph::new();
+		let lsg = LoopStructureGraph::new();
+		let app = LoopTesterApp { cfg, lsg };
+		cfg.create_node(0);
+		app
+	}
+
+	// Create 4 basic blocks, corresponding to and if/then/else clause
+	// with a CFG that looks like a diamond
+	fn build_diamond(self, start) {
+		let bb0 = start;
+		BasicBlockEdge::new(self.cfg, bb0, bb0 + 1);
+		BasicBlockEdge::new(self.cfg, bb0, bb0 + 2);
+		BasicBlockEdge::new(self.cfg, bb0 + 1, bb0 + 3);
+		BasicBlockEdge::new(self.cfg, bb0 + 2, bb0 + 3);
+		bb0 + 3
+	}
+
+	// Connect two existing nodes
+	fn build_connect(self, start, end) {
+		BasicBlockEdge::new(self.cfg, start, end);
+	}
+
+	// Form a straight connected sequence of n basic blocks
+	fn build_straight(self, start, n) {
+		for i in 0..n {
+			self.build_connect(start + i, start + i + 1);
+		}
+		start + n
+	}
+
+	// Construct a simple loop with two diamonds in it
+	fn build_base_loop(self, from) {
+		let header = self.build_straight(from, 1);
+		let diamond1 = self.build_diamond(header);
+		let d11 = self.build_straight(diamond1, 1);
+		let diamond2 = self.build_diamond(d11);
+		let footer = self.build_straight(diamond2, 1);
+		self.build_connect(diamond2, d11);
+		self.build_connect(diamond1, header);
+		self.build_connect(footer, from);
+		self.build_straight(footer, 1)
+	}
+
+	fn main(self, num_dummy_loops, find_loop_iterations, par_loops, ppar_loops, pppar_loops) {
+		self.construct_simple_cfg();
+		self.add_dummy_loops(num_dummy_loops);
+		self.construct_cfg(par_loops, ppar_loops, pppar_loops);
+
+		// Performing Loop Recognition, 1 Iteration, then findLoopIteration
+		self.find_loops(self.lsg);
+
+		// Lua's `for _ = 0, find_loop_iterations` runs one more time than Java.
+		for _ in 0..find_loop_iterations + 1 {
+			self.find_loops(LoopStructureGraph::new());
+		}
+
+		self.lsg.calculate_nesting_level();
+		[self.lsg.num_loops(), self.cfg.num_nodes()]
+	}
+
+	fn construct_cfg(self, par_loops, ppar_loops, pppar_loops) {
+		let n = 2;
+
+		for _ in 0..par_loops {
+			self.cfg.create_node(n + 1);
+			self.build_connect(2, n + 1);
+			n = n + 1;
+
+			for _ in 0..ppar_loops {
+				let top = n;
+				n = self.build_straight(n, 1);
+				for _ in 0..pppar_loops {
+					n = self.build_base_loop(n);
+				}
+				let bottom = self.build_straight(n, 1);
+				self.build_connect(n, top);
+				n = bottom;
+			}
+			self.build_connect(n, 0);
+		}
+	}
+
+	fn add_dummy_loops(self, num_dummy_loops) {
+		for _ in 0..num_dummy_loops {
+			self.find_loops(self.lsg);
+		}
+	}
+
+	fn find_loops(self, loop_structure) {
+		let finder = HavlakLoopFinder::new(self.cfg, loop_structure);
+		finder.find_loops();
+	}
+
+	fn construct_simple_cfg(self) {
+		self.cfg.create_node(0);
+		self.build_base_loop(0);
+		self.cfg.create_node(1);
+		BasicBlockEdge::new(self.cfg, 0, 2);
+	}
+}
+
+struct Havlak;
+
+impl Havlak {
+	fn inner_benchmark_loop(self, inner_iterations) {
+		let result = LoopTesterApp::new().main(inner_iterations, 50, 10, 10, 5);
+		self.verify_result(result, inner_iterations)
+	}
+
+	fn verify_result(self, result, inner_iterations) {
+		if inner_iterations == 15000 {
+			result[0] == 46602 && result[1] == 5213
+		} else if inner_iterations == 1500 {
+			result[0] == 6102 && result[1] == 5213
+		} else if inner_iterations == 150 {
+			result[0] == 2052 && result[1] == 5213
+		} else if inner_iterations == 15 {
+			result[0] == 1647 && result[1] == 5213
+		} else if inner_iterations == 1 {
+			result[0] == 1605 && result[1] == 5213
+		} else {
+			println!("No verification result for {} found", inner_iterations);
+			println!("Result is: {}, {}", result[0], result[1]);
+			false
+		}
+	}
+}
+
+fn new_benchmark() {
+	Havlak
+}

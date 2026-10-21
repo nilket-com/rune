@@ -1,0 +1,87 @@
+// Port of AWFY benchmarks/Lua/bounce.lua.
+
+const NAME = "Bounce";
+
+struct Ball {
+	x,
+	y,
+	x_vel,
+	y_vel,
+}
+
+impl Ball {
+	fn new(random) {
+		Ball {
+			x: random.next() % 500,
+			y: random.next() % 500,
+			x_vel: (random.next() % 300) - 150,
+			y_vel: (random.next() % 300) - 150,
+		}
+	}
+
+	fn bounce(self) {
+		let x_limit = 500;
+		let y_limit = 500;
+		let bounced = false;
+		self.x = self.x + self.x_vel;
+		self.y = self.y + self.y_vel;
+		if self.x > x_limit {
+			self.x = x_limit;
+			self.x_vel = 0 - self.x_vel.abs();
+			bounced = true;
+		}
+		if self.x < 0 {
+			self.x = 0;
+			self.x_vel = self.x_vel.abs();
+			bounced = true;
+		}
+		if self.y > y_limit {
+			self.y = y_limit;
+			self.y_vel = 0 - self.y_vel.abs();
+			bounced = true;
+		}
+		if self.y < 0 {
+			self.y = 0;
+			self.y_vel = self.y_vel.abs();
+			bounced = true;
+		}
+		bounced
+	}
+}
+
+struct Bounce;
+
+impl Bounce {
+	fn inner_benchmark_loop(self, inner_iterations) {
+		default_inner_benchmark_loop(self, inner_iterations)
+	}
+
+	fn benchmark(self) {
+		let random = Random::new();
+		let ball_count = 100;
+		let bounces = 0;
+		let balls = [];
+
+		for _ in 0..ball_count {
+			balls.push(Ball::new(random));
+		}
+
+		for _ in 0..50 {
+			for i in 0..balls.len() {
+				let ball = balls[i];
+				if ball.bounce() {
+					bounces = bounces + 1;
+				}
+			}
+		}
+		bounces
+	}
+
+	fn verify_result(self, result) {
+		1331 == result
+	}
+}
+
+fn new_benchmark() {
+	Bounce
+}

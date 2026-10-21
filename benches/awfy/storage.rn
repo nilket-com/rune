@@ -1,0 +1,43 @@
+// Port of AWFY benchmarks/Lua/storage.lua.
+
+const NAME = "Storage";
+
+struct Storage {
+	count,
+}
+
+impl Storage {
+	fn inner_benchmark_loop(self, inner_iterations) {
+		default_inner_benchmark_loop(self, inner_iterations)
+	}
+
+	fn benchmark(self) {
+		let random = Random::new();
+		self.count = 0;
+		self.build_tree_depth(7, random);
+		self.count
+	}
+
+	fn verify_result(self, result) {
+		5461 == result
+	}
+
+	fn build_tree_depth(self, depth, random) {
+		self.count = self.count + 1;
+		if depth == 1 {
+			// Lua only records the size; Rune can allocate the array, as the other
+			// languages do.
+			alloc_array(random.next() % 10 + 1)
+		} else {
+			let arr = alloc_array(4);
+			for i in 0..4 {
+				arr[i] = self.build_tree_depth(depth - 1, random);
+			}
+			arr
+		}
+	}
+}
+
+fn new_benchmark() {
+	Storage { count: 0 }
+}

@@ -1,0 +1,49 @@
+// Port of AWFY benchmarks/Lua/harness.lua.
+//
+// The program is harness.rn, benchmark.rn, som.rn when used, and one benchmark file,
+// which defines `NAME` and `new_benchmark()`. Rune has no clock in its default
+// modules, so iteration times are measured outside the process.
+
+struct Run {
+	name,
+	benchmark,
+	num_iterations,
+	inner_iterations,
+}
+
+impl Run {
+	fn new(name, num_iterations, inner_iterations) {
+		Run { name, benchmark: new_benchmark(), num_iterations, inner_iterations }
+	}
+
+	fn run_benchmark(self) {
+		println!("Starting {} benchmark ...", self.name);
+		self.do_runs();
+		self.report_benchmark();
+	}
+
+	fn measure(self) {
+		assert!(self.benchmark.inner_benchmark_loop(self.inner_iterations), "Benchmark failed with incorrect result");
+		self.print_result();
+	}
+
+	fn do_runs(self) {
+		for _ in 0..self.num_iterations {
+			self.measure();
+		}
+	}
+
+	fn report_benchmark(self) {
+		println!("{}: iterations={}", self.name, self.num_iterations);
+	}
+
+	fn print_result(self) {
+		println!("{}: iterations=1", self.name);
+	}
+}
+
+pub fn main(num_iterations, inner_iterations) {
+	let run = Run::new(NAME, num_iterations, inner_iterations);
+	run.run_benchmark();
+	true
+}

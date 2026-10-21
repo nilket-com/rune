@@ -1,0 +1,783 @@
+// Port of AWFY benchmarks/Lua/som.lua: the shared core library.
+
+const INITIAL_SIZE = 10;
+const INITIAL_CAPACITY = 16;
+
+/// A fixed-size array of `n` empty slots. AWFY arrays never grow in place.
+fn alloc_array(n) {
+	let array = Vec::with_capacity(n);
+	array.resize(n, None);
+	array
+}
+
+fn max(a, b) {
+	if a > b { a } else { b }
+}
+
+/// A growable sequence over fixed-size storage. An empty storage stands for
+/// Lua's `nil` storage.
+struct Vector {
+	storage,
+	first_idx,
+	last_idx,
+}
+
+impl Vector {
+	fn new() {
+		Vector { storage: [], first_idx: 0, last_idx: 0 }
+	}
+
+	fn with_size(size) {
+		Vector { storage: alloc_array(size), first_idx: 0, last_idx: 0 }
+	}
+
+	fn with(elem) {
+		let v = Vector::with_size(1);
+		v.append(elem);
+		v
+	}
+
+	/// The element at `idx`, or `None` past the storage, like Lua's `nil`.
+	fn at(self, idx) {
+		if idx >= self.storage.len() {
+			return None;
+		}
+		self.storage[idx]
+	}
+
+	fn at_put(self, idx, val) {
+		if self.storage.len() == 0 {
+			self.storage = alloc_array(max(idx + 1, INITIAL_SIZE));
+		} else if idx >= self.storage.len() {
+			let new_n = self.storage.len();
+			while idx >= new_n {
+				new_n = new_n * 2;
+			}
+
+			let new_storage = alloc_array(new_n);
+			for i in 0..self.storage.len() {
+				new_storage[i] = self.storage[i];
+			}
+			self.storage = new_storage;
+		}
+		self.storage[idx] = val;
+
+		if self.last_idx < idx + 1 {
+			self.last_idx = idx + 1;
+		}
+	}
+
+	fn append(self, elem) {
+		if self.storage.len() == 0 {
+			self.storage = alloc_array(INITIAL_SIZE);
+		} else if self.last_idx >= self.storage.len() {
+			// Need to expand capacity first
+			let new_storage = alloc_array(2 * self.storage.len());
+			for i in 0..self.storage.len() {
+				new_storage[i] = self.storage[i];
+			}
+			self.storage = new_storage;
+		}
+
+		self.storage[self.last_idx] = elem;
+		self.last_idx = self.last_idx + 1;
+	}
+
+	fn is_empty(self) {
+		self.last_idx == self.first_idx
+	}
+
+	fn each(self, f) {
+		for i in self.first_idx..self.last_idx {
+			f(self.storage[i]);
+		}
+	}
+
+	fn has_some(self, f) {
+		for i in self.first_idx..self.last_idx {
+			if f(self.storage[i]) {
+				return true;
+			}
+		}
+		false
+	}
+
+	fn get_one(self, f) {
+		for i in self.first_idx..self.last_idx {
+			let e = self.storage[i];
+			if f(e) {
+				return Some(e);
+			}
+		}
+		None
+	}
+
+	fn remove_first(self) {
+		if self.is_empty() {
+			return None;
+		}
+
+		self.first_idx = self.first_idx + 1;
+		Some(self.storage[self.first_idx - 1])
+	}
+
+	/// Removes `obj` by identity: `same` is the identity test (see README).
+	fn remove(self, obj) {
+		if self.storage.len() == 0 || self.is_empty() {
+			return false;
+		}
+
+		let new_array = alloc_array(self.capacity());
+		// One-element boxes: Rune closures cannot assign captured variables.
+		let new_last = [0];
+		let found = [false];
+
+		self.each(|it| {
+			if it.same(obj) {
+				found[0] = true;
+			} else {
+				new_array[new_last[0]] = it;
+				new_last[0] = new_last[0] + 1;
+			}
+		});
+
+		self.storage = new_array;
+		self.last_idx = new_last[0];
+		self.first_idx = 0;
+		found[0]
+	}
+
+	fn remove_all(self) {
+		self.first_idx = 0;
+		self.last_idx = 0;
+
+		if self.storage.len() != 0 {
+			self.storage = alloc_array(self.capacity());
+		}
+	}
+
+	fn size(self) {
+		self.last_idx - self.first_idx
+	}
+
+	fn capacity(self) {
+		self.storage.len()
+	}
+
+	fn sort(self, f) {
+		// Make the argument, block, be the criterion for ordering elements of
+		// the receiver.
+		// Sort blocks with side effects may not work right.
+		if self.size() > 0 {
+			self.sort_range(self.first_idx, self.last_idx - 1, f);
+		}
+	}
+
+	fn sort_range(self, i, j, f) {
+		// The prefix d means the data at that index.
+		let n = j + 1 - i;
+		if n <= 1 {
+			// Nothing to sort
+			return;
+		}
+
+		let storage = self.storage;
+		// Sort di, dj
+		let di = storage[i];
+		let dj = storage[j];
+
+		// i.e., should di precede dj?
+		if !f(di, dj) {
+			let tmp = storage[i];
+			storage[i] = storage[j];
+			storage[j] = tmp;
+			let tt = di;
+			di = dj;
+			dj = tt;
+		}
+
+		// NOTE: For DeltaBlue, this is never reached.
+		if n > 2 {
+			// More than two elements.
+			let ij = (i + j) / 2; // ij is the midpoint of i and j.
+			let dij = storage[ij]; // Sort di,dij,dj.  Make dij be their median.
+
+			if f(di, dij) {
+				// i.e. should di precede dij?
+				if !f(dij, dj) {
+					// i.e., should dij precede dj?
+					let tmp = storage[j];
+					storage[j] = storage[ij];
+					storage[ij] = tmp;
+					dij = dj;
+				}
+			} else {
+				// i.e. di should come after dij
+				let tmp = storage[i];
+				storage[i] = storage[ij];
+				storage[ij] = tmp;
+				dij = di;
+			}
+
+			if n > 3 {
+				// More than three elements.
+				// Find k>i and l<j such that dk,dij,dl are in reverse order.
+				// Swap k and l.  Repeat this procedure until k and l pass each other.
+				let k = i;
+				let l = j - 1;
+
+				loop {
+					// i.e. while dl succeeds dij
+					while k <= l && f(dij, storage[l]) {
+						l = l - 1;
+					}
+
+					k = k + 1;
+					// i.e. while dij succeeds dk
+					while k <= l && f(storage[k], dij) {
+						k = k + 1;
+					}
+
+					if k > l {
+						break;
+					}
+
+					let tmp = storage[k];
+					storage[k] = storage[l];
+					storage[l] = tmp;
+				}
+
+				// Now l < k (either 1 or 2 less), and di through dl are all
+				// less than or equal to dk through dj.  Sort those two segments.
+				self.sort_range(i, l, f);
+				self.sort_range(k, j, f);
+			}
+		}
+	}
+}
+
+/// A set with equality (`==`) membership.
+struct Set {
+	items,
+}
+
+impl Set {
+	fn new() {
+		Set::with_size(INITIAL_SIZE)
+	}
+
+	fn with_size(size) {
+		Set { items: Vector::with_size(size) }
+	}
+
+	fn size(self) {
+		self.items.size()
+	}
+
+	fn each(self, f) {
+		self.items.each(f);
+	}
+
+	fn has_some(self, f) {
+		self.items.has_some(f)
+	}
+
+	fn get_one(self, f) {
+		self.items.get_one(f)
+	}
+
+	fn add(self, obj) {
+		if !self.contains(obj) {
+			self.items.append(obj);
+		}
+	}
+
+	fn remove_all(self) {
+		self.items.remove_all();
+	}
+
+	fn collect(self, f) {
+		let coll = Vector::new();
+		self.each(|it| {
+			coll.append(f(it));
+		});
+		coll
+	}
+
+	fn contains(self, obj) {
+		self.has_some(|it| it == obj)
+	}
+}
+
+/// A set with identity membership; `same` is the identity test (see README).
+struct IdentitySet {
+	items,
+}
+
+impl IdentitySet {
+	fn new() {
+		IdentitySet::with_size(INITIAL_SIZE)
+	}
+
+	fn with_size(size) {
+		IdentitySet { items: Vector::with_size(size) }
+	}
+
+	fn size(self) {
+		self.items.size()
+	}
+
+	fn each(self, f) {
+		self.items.each(f);
+	}
+
+	fn has_some(self, f) {
+		self.items.has_some(f)
+	}
+
+	fn get_one(self, f) {
+		self.items.get_one(f)
+	}
+
+	fn add(self, obj) {
+		if !self.contains(obj) {
+			self.items.append(obj);
+		}
+	}
+
+	fn remove_all(self) {
+		self.items.remove_all();
+	}
+
+	fn collect(self, f) {
+		let coll = Vector::new();
+		self.each(|it| {
+			coll.append(f(it));
+		});
+		coll
+	}
+
+	fn contains(self, obj) {
+		self.has_some(|it| it.same(obj))
+	}
+}
+
+struct Entry {
+	hash,
+	key,
+	value,
+	next,
+}
+
+impl Entry {
+	fn new(hash, key, value, next) {
+		Entry { hash, key, value, next }
+	}
+
+	fn matches(self, hash, key) {
+		self.hash == hash && self.key == key
+	}
+}
+
+/// A hash table keyed by `custom_hash` and `==`.
+struct Dictionary {
+	buckets,
+	size,
+}
+
+impl Dictionary {
+	fn new() {
+		Dictionary::with_size(INITIAL_CAPACITY)
+	}
+
+	fn with_size(size) {
+		Dictionary { buckets: alloc_array(size), size: 0 }
+	}
+
+	fn hash(self, key) {
+		let hash = key.custom_hash();
+		hash ^ (hash >> 16)
+	}
+
+	fn is_empty(self) {
+		self.size == 0
+	}
+
+	fn get_bucket_idx(self, hash) {
+		(self.buckets.len() - 1) & hash
+	}
+
+	fn get_bucket(self, hash) {
+		self.buckets[self.get_bucket_idx(hash)]
+	}
+
+	fn at(self, key) {
+		let hash = self.hash(key);
+		let e = self.get_bucket(hash);
+
+		while let Some(entry) = e {
+			if entry.matches(hash, key) {
+				return Some(entry.value);
+			}
+			e = entry.next;
+		}
+		None
+	}
+
+	fn contains_key(self, key) {
+		let hash = self.hash(key);
+		let e = self.get_bucket(hash);
+
+		while let Some(entry) = e {
+			if entry.matches(hash, key) {
+				return true;
+			}
+			e = entry.next;
+		}
+		false
+	}
+
+	fn at_put(self, key, value) {
+		let hash = self.hash(key);
+		let i = self.get_bucket_idx(hash);
+		let current = self.buckets[i];
+
+		if let Some(current) = current {
+			self.insert_bucket_entry(key, value, hash, current);
+		} else {
+			self.buckets[i] = Some(self.new_entry(key, value, hash));
+			self.size = self.size + 1;
+		}
+
+		if self.size > self.buckets.len() {
+			self.resize();
+		}
+	}
+
+	fn new_entry(self, key, value, hash) {
+		Entry::new(hash, key, value, None)
+	}
+
+	fn insert_bucket_entry(self, key, value, hash, head) {
+		let current = head;
+
+		loop {
+			if current.matches(hash, key) {
+				current.value = value;
+				return;
+			}
+			if let Some(next) = current.next {
+				current = next;
+			} else {
+				self.size = self.size + 1;
+				current.next = Some(self.new_entry(key, value, hash));
+				return;
+			}
+		}
+	}
+
+	fn resize(self) {
+		let old_storage = self.buckets;
+		self.buckets = alloc_array(old_storage.len() * 2);
+		self.transfer_entries(old_storage);
+	}
+
+	fn transfer_entries(self, old_storage) {
+		let buckets = self.buckets;
+		for i in 0..old_storage.len() {
+			if let Some(current) = old_storage[i] {
+				old_storage[i] = None;
+				if current.next.is_none() {
+					buckets[current.hash & (buckets.len() - 1)] = Some(current);
+				} else {
+					self.split_bucket(old_storage, i, current);
+				}
+			}
+		}
+	}
+
+	fn split_bucket(self, old_storage, i, head) {
+		let lo_head = None;
+		let lo_tail = None;
+		let hi_head = None;
+		let hi_tail = None;
+		let current = Some(head);
+
+		while let Some(entry) = current {
+			if (entry.hash & old_storage.len()) == 0 {
+				if let Some(tail) = lo_tail {
+					tail.next = Some(entry);
+				} else {
+					lo_head = Some(entry);
+				}
+				lo_tail = Some(entry);
+			} else {
+				if let Some(tail) = hi_tail {
+					tail.next = Some(entry);
+				} else {
+					hi_head = Some(entry);
+				}
+				hi_tail = Some(entry);
+			}
+			current = entry.next;
+		}
+
+		if let Some(tail) = lo_tail {
+			tail.next = None;
+			self.buckets[i] = lo_head;
+		}
+		if let Some(tail) = hi_tail {
+			tail.next = None;
+			self.buckets[i + old_storage.len()] = hi_head;
+		}
+	}
+
+	fn remove_all(self) {
+		self.buckets = alloc_array(self.buckets.len());
+		self.size = 0;
+	}
+
+	fn keys(self) {
+		let keys = Vector::with_size(self.size);
+		let buckets = self.buckets;
+		for i in 0..buckets.len() {
+			let current = buckets[i];
+			while let Some(entry) = current {
+				keys.append(entry.key);
+				current = entry.next;
+			}
+		}
+		keys
+	}
+
+	fn values(self) {
+		let vals = Vector::with_size(self.size);
+		let buckets = self.buckets;
+		for i in 0..buckets.len() {
+			let current = buckets[i];
+			while let Some(entry) = current {
+				vals.append(entry.value);
+				current = entry.next;
+			}
+		}
+		vals
+	}
+}
+
+struct IdEntry {
+	hash,
+	key,
+	value,
+	next,
+}
+
+impl IdEntry {
+	fn new(hash, key, value, next) {
+		IdEntry { hash, key, value, next }
+	}
+
+	fn matches(self, hash, key) {
+		self.hash == hash && self.key.same(key)
+	}
+}
+
+/// A hash table keyed by `custom_hash` and identity. Rune has no inheritance, so it
+/// repeats the `Dictionary` methods; only `new_entry` differs.
+struct IdentityDictionary {
+	buckets,
+	size,
+}
+
+impl IdentityDictionary {
+	fn new() {
+		IdentityDictionary::with_size(INITIAL_CAPACITY)
+	}
+
+	fn with_size(size) {
+		IdentityDictionary { buckets: alloc_array(size), size: 0 }
+	}
+
+	fn hash(self, key) {
+		let hash = key.custom_hash();
+		hash ^ (hash >> 16)
+	}
+
+	fn is_empty(self) {
+		self.size == 0
+	}
+
+	fn get_bucket_idx(self, hash) {
+		(self.buckets.len() - 1) & hash
+	}
+
+	fn get_bucket(self, hash) {
+		self.buckets[self.get_bucket_idx(hash)]
+	}
+
+	fn at(self, key) {
+		let hash = self.hash(key);
+		let e = self.get_bucket(hash);
+
+		while let Some(entry) = e {
+			if entry.matches(hash, key) {
+				return Some(entry.value);
+			}
+			e = entry.next;
+		}
+		None
+	}
+
+	fn contains_key(self, key) {
+		let hash = self.hash(key);
+		let e = self.get_bucket(hash);
+
+		while let Some(entry) = e {
+			if entry.matches(hash, key) {
+				return true;
+			}
+			e = entry.next;
+		}
+		false
+	}
+
+	fn at_put(self, key, value) {
+		let hash = self.hash(key);
+		let i = self.get_bucket_idx(hash);
+		let current = self.buckets[i];
+
+		if let Some(current) = current {
+			self.insert_bucket_entry(key, value, hash, current);
+		} else {
+			self.buckets[i] = Some(self.new_entry(key, value, hash));
+			self.size = self.size + 1;
+		}
+
+		if self.size > self.buckets.len() {
+			self.resize();
+		}
+	}
+
+	fn new_entry(self, key, value, hash) {
+		IdEntry::new(hash, key, value, None)
+	}
+
+	fn insert_bucket_entry(self, key, value, hash, head) {
+		let current = head;
+
+		loop {
+			if current.matches(hash, key) {
+				current.value = value;
+				return;
+			}
+			if let Some(next) = current.next {
+				current = next;
+			} else {
+				self.size = self.size + 1;
+				current.next = Some(self.new_entry(key, value, hash));
+				return;
+			}
+		}
+	}
+
+	fn resize(self) {
+		let old_storage = self.buckets;
+		self.buckets = alloc_array(old_storage.len() * 2);
+		self.transfer_entries(old_storage);
+	}
+
+	fn transfer_entries(self, old_storage) {
+		let buckets = self.buckets;
+		for i in 0..old_storage.len() {
+			if let Some(current) = old_storage[i] {
+				old_storage[i] = None;
+				if current.next.is_none() {
+					buckets[current.hash & (buckets.len() - 1)] = Some(current);
+				} else {
+					self.split_bucket(old_storage, i, current);
+				}
+			}
+		}
+	}
+
+	fn split_bucket(self, old_storage, i, head) {
+		let lo_head = None;
+		let lo_tail = None;
+		let hi_head = None;
+		let hi_tail = None;
+		let current = Some(head);
+
+		while let Some(entry) = current {
+			if (entry.hash & old_storage.len()) == 0 {
+				if let Some(tail) = lo_tail {
+					tail.next = Some(entry);
+				} else {
+					lo_head = Some(entry);
+				}
+				lo_tail = Some(entry);
+			} else {
+				if let Some(tail) = hi_tail {
+					tail.next = Some(entry);
+				} else {
+					hi_head = Some(entry);
+				}
+				hi_tail = Some(entry);
+			}
+			current = entry.next;
+		}
+
+		if let Some(tail) = lo_tail {
+			tail.next = None;
+			self.buckets[i] = lo_head;
+		}
+		if let Some(tail) = hi_tail {
+			tail.next = None;
+			self.buckets[i + old_storage.len()] = hi_head;
+		}
+	}
+
+	fn remove_all(self) {
+		self.buckets = alloc_array(self.buckets.len());
+		self.size = 0;
+	}
+
+	fn keys(self) {
+		let keys = Vector::with_size(self.size);
+		let buckets = self.buckets;
+		for i in 0..buckets.len() {
+			let current = buckets[i];
+			while let Some(entry) = current {
+				keys.append(entry.key);
+				current = entry.next;
+			}
+		}
+		keys
+	}
+
+	fn values(self) {
+		let vals = Vector::with_size(self.size);
+		let buckets = self.buckets;
+		for i in 0..buckets.len() {
+			let current = buckets[i];
+			while let Some(entry) = current {
+				vals.append(entry.value);
+				current = entry.next;
+			}
+		}
+		vals
+	}
+}
+
+struct Random {
+	seed,
+}
+
+impl Random {
+	fn new() {
+		Random { seed: 74755 }
+	}
+
+	fn next(self) {
+		self.seed = ((self.seed * 1309) + 13849) & 65535;
+		self.seed
+	}
+}

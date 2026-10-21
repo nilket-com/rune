@@ -1,0 +1,85 @@
+// Port of AWFY benchmarks/Lua/towers.lua.
+
+const NAME = "Towers";
+
+struct Disk {
+	size,
+	next,
+}
+
+fn create_disk(size) {
+	Disk { size, next: None }
+}
+
+struct Towers {
+	piles,
+	moves_done,
+}
+
+impl Towers {
+	fn inner_benchmark_loop(self, inner_iterations) {
+		default_inner_benchmark_loop(self, inner_iterations)
+	}
+
+	fn benchmark(self) {
+		self.piles = [None, None, None];
+		self.build_tower_at(0, 13);
+		self.moves_done = 0;
+		self.move_disks(13, 0, 1);
+		self.moves_done
+	}
+
+	fn verify_result(self, result) {
+		8191 == result
+	}
+
+	fn push_disk(self, disk, pile) {
+		let top = self.piles[pile];
+		if let Some(top) = top {
+			if disk.size >= top.size {
+				panic!("Cannot put a big disk on a smaller one");
+			}
+		}
+		disk.next = top;
+		self.piles[pile] = Some(disk);
+	}
+
+	fn pop_disk_from(self, pile) {
+		let top = self.piles[pile];
+		if top.is_none() {
+			panic!("Attempting to remove a disk from an empty pile");
+		}
+		let top = top.unwrap();
+		self.piles[pile] = top.next;
+		top.next = None;
+		top
+	}
+
+	fn move_top_disk(self, from_pile, to_pile) {
+		self.push_disk(self.pop_disk_from(from_pile), to_pile);
+		self.moves_done = self.moves_done + 1;
+	}
+
+	fn build_tower_at(self, pile, disks) {
+		let i = disks;
+		while i >= 1 {
+			self.push_disk(create_disk(i), pile);
+			i = i - 1;
+		}
+	}
+
+	fn move_disks(self, disks, from_pile, to_pile) {
+		if disks == 1 {
+			self.move_top_disk(from_pile, to_pile);
+		} else {
+			let other_pile = 3 - from_pile - to_pile;
+			self.move_disks(disks - 1, from_pile, other_pile);
+			self.move_top_disk(from_pile, to_pile);
+			self.move_disks(disks - 1, other_pile, to_pile);
+		}
+	}
+}
+
+fn new_benchmark() {
+	Towers { piles: [], moves_done: 0 }
+}

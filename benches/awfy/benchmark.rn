@@ -1,0 +1,12 @@
+// Port of AWFY benchmarks/Lua/benchmark.lua.
+
+/// The inherited `inner_benchmark_loop`. Rune has no inheritance, so each benchmark's
+/// `inner_benchmark_loop` method delegates here unless it overrides the loop.
+fn default_inner_benchmark_loop(benchmark, inner_iterations) {
+	for _ in 0..inner_iterations {
+		if !benchmark.verify_result(benchmark.benchmark()) {
+			return false;
+		}
+	}
+	true
+}

@@ -1,0 +1,86 @@
+// Port of AWFY benchmarks/Lua/mandelbrot.lua and mandelbrot-fn-53.lua.
+
+const NAME = "Mandelbrot";
+
+struct Mandelbrot;
+
+impl Mandelbrot {
+	fn inner_benchmark_loop(self, inner_iterations) {
+		self.verify_result(mandelbrot(inner_iterations), inner_iterations)
+	}
+
+	fn verify_result(self, result, inner_iterations) {
+		if inner_iterations == 500 {
+			result == 191
+		} else if inner_iterations == 750 {
+			result == 50
+		} else if inner_iterations == 1 {
+			result == 128
+		} else {
+			println!("No verification result for {} found", inner_iterations);
+			println!("Result is: {}", result);
+			false
+		}
+	}
+}
+
+fn mandelbrot(size) {
+	let sum = 0;
+	let byte_acc = 0;
+	let bit_num = 0;
+
+	let y = 0;
+	while y < size {
+		let ci = (2.0 * (y as f64) / (size as f64)) - 1.0;
+		let x = 0;
+
+		while x < size {
+			let zrzr = 0.0;
+			let zizi = 0.0;
+			let zi = 0.0;
+			let cr = (2.0 * (x as f64) / (size as f64)) - 1.5;
+
+			let z = 0;
+			let not_done = true;
+			let escape = 0;
+			while not_done && z < 50 {
+				let zr = zrzr - zizi + cr;
+				zi = 2.0 * zr * zi + ci;
+
+				// preserve recalculation
+				zrzr = zr * zr;
+				zizi = zi * zi;
+				if zrzr + zizi > 4.0 {
+					not_done = false;
+					escape = 1;
+				}
+				z = z + 1;
+			}
+
+			byte_acc = (byte_acc << 1) + escape;
+			bit_num = bit_num + 1;
+
+			// Code is very similar for these cases, but using separate blocks
+			// ensures we skip the shifting when it's unnecessary,
+			// which is most cases.
+			if bit_num == 8 {
+				sum = sum ^ byte_acc;
+				byte_acc = 0;
+				bit_num = 0;
+			} else if x == size - 1 {
+				byte_acc = byte_acc << (8 - bit_num);
+				sum = sum ^ byte_acc;
+				byte_acc = 0;
+				bit_num = 0;
+			}
+			x = x + 1;
+		}
+		y = y + 1;
+	}
+
+	sum
+}
+
+fn new_benchmark() {
+	Mandelbrot
+}
