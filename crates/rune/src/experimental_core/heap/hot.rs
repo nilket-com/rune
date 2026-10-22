@@ -45,6 +45,7 @@ impl Store {
 		}
 	}
 
+	#[inline]
 	pub(super) fn mutable(&mut self, h: Handle) -> Result<&mut Payload> {
 		let e = self.entry_mut(h)?;
 		if e.readers != 0 {
