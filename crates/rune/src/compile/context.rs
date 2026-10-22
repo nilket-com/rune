@@ -28,6 +28,8 @@ use crate::{Hash, Item, ItemBuf};
 
 // Compile-time identities. Registration reuses existing effective hashes.
 #[cfg(feature = "fresh-core")]
+const FRESH_VEC_CONSTRUCTOR_RECEIVER: Hash = crate::hash_in!(crate, ::std::vec::Vec);
+#[cfg(feature = "fresh-core")]
 const FRESH_SORT_RECEIVER: Hash = crate::hash_in!(crate, ::std::vec::Vec);
 #[cfg(feature = "fresh-core")]
 const FRESH_SORT_ASSOCIATED: Hash = crate::hash_in!(crate, ::std::vec::Vec.sort_by);
@@ -362,6 +364,8 @@ pub struct Context {
 	#[cfg(feature = "fresh-core")]
 	fresh_string_from: bool,
 	#[cfg(feature = "fresh-core")]
+	fresh_vec_constructors: u8,
+	#[cfg(feature = "fresh-core")]
 	fresh_numeric: crate::function::fresh_numeric::State,
 	#[cfg(feature = "fresh-core")]
 	fresh_sort_by: bool,
@@ -683,6 +687,20 @@ impl Context {
 					self.fresh_numeric.certify(pair);
 				}
 			}
+			#[cfg(feature = "fresh-core")]
+			if module.fresh_vec_constructors
+				&& assoc.container == FRESH_VEC_CONSTRUCTOR_RECEIVER
+				&& assoc.name.function_parameters == Hash::EMPTY
+				&& matches!(&assoc.kind, ModuleAssociatedKind::Function(f) if f.trait_hash.is_none())
+			{
+				if let meta::AssociatedKind::Instance(name) = &assoc.name.kind {
+					self.fresh_vec_constructors |= match name.as_ref() {
+						"new" => 1,
+						"with_capacity" => 2,
+						_ => 0,
+					};
+				}
+			}
 			// String::from is registered as a named type item even with `free`.
 			// install_associated inserts its static item hash and associated hash
 			// before returning; a conflict on either leaves it uncertified.
@@ -925,6 +943,17 @@ impl Context {
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::panic)))
+	}
+
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_vec_constructor(&self, with_capacity: bool) -> bool {
+		let bit = if with_capacity { 2 } else { 1 };
+		let hash = if with_capacity {
+			crate::hash_in!(crate, ::std::vec::Vec::with_capacity)
+		} else {
+			crate::hash_in!(crate, ::std::vec::Vec::new)
+		};
+		self.fresh_vec_constructors & bit != 0 && self.functions.contains_key(&hash)
 	}
 
 	#[cfg(feature = "fresh-core")]
@@ -1995,5 +2024,18 @@ impl Context {
 		handler: FunctionHandler,
 	) -> Result<(), ContextError> {
 		self.insert_native_fn(&"C13 raw fixture", hash, &handler, None)
+	}
+}
+
+#[cfg(all(test, feature = "fresh-core"))]
+mod c18b3c_vec_constructor_certificates {
+	use super::*;
+
+	#[test]
+	fn vec_constructor_receiver_identity_matches_runtime_hash() {
+		assert_eq!(
+			FRESH_VEC_CONSTRUCTOR_RECEIVER,
+			Hash::type_hash(crate::item!(::std::vec::Vec))
+		);
 	}
 }

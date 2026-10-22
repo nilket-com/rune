@@ -1,0 +1,12 @@
+{
+  "scope": "Vec construction with unobservable capacity; stock layout overflow remains exact",
+  "rows": [
+    {"id":"layout-limit","capacity":"stock-layout-limit","classification":"Intentional","rationale":"The valid stock layout requests an environment-dependent allocation. Fresh bounds the unobservable reservation hint instead; allocator availability and overcommit are not language semantics.","source":"pub fn main(){Vec::with_capacity($capacity).len() as i64}","fresh":0},
+    {"id":"layout-limit-plus-one","capacity":"stock-layout-limit-plus-one","classification":"Exact-error","source":"pub fn main(){Vec::with_capacity($capacity).len() as i64}"},
+    {"id":"i64-max","capacity":"9223372036854775807","classification":"Exact-error","source":"pub fn main(){Vec::with_capacity($capacity).len() as i64}"},
+    {"id":"large-hint-three-pushes","capacity":"2000000","classification":"Exact","source":"pub fn main(){let v=Vec::with_capacity($capacity);v.push(1);v.push(2);v.push(3);v[0]+v[1]+v[2]+v.len() as i64}","fresh":9},
+    {"id":"negative","capacity":"-1","classification":"Exact-error","source":"pub fn main(){Vec::with_capacity($capacity).len() as i64}"},
+    {"id":"bool","capacity":"true","classification":"Exact-error","source":"pub fn main(){Vec::with_capacity($capacity).len() as i64}"},
+    {"id":"float","capacity":"1.5","classification":"Exact-error","source":"pub fn main(){Vec::with_capacity($capacity).len() as i64}"}
+  ]
+}

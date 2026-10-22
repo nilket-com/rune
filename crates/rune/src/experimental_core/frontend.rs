@@ -428,3 +428,6 @@ mod native_dispatch_tests;
 
 #[cfg(test)]
 mod receiver_domain_tests;
+
+#[cfg(test)]
+mod vec_constructor_tests;

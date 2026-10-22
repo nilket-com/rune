@@ -79,6 +79,8 @@ pub struct Module {
 	/// Fresh core: this module/context certifies String::from.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_string_from: bool,
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_vec_constructors: bool,
 	/// Private stock numeric pair markers, never set by user registration APIs.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_numeric: u8,
@@ -285,6 +287,8 @@ impl Module {
 			fresh_panic: false,
 			#[cfg(feature = "fresh-core")]
 			fresh_string_from: false,
+			#[cfg(feature = "fresh-core")]
+			fresh_vec_constructors: false,
 			#[cfg(feature = "fresh-core")]
 			fresh_numeric: 0,
 			#[cfg(feature = "fresh-core")]

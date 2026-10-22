@@ -19,6 +19,7 @@ mod static_methods;
 mod text_methods;
 mod text_pipeline;
 mod variant_methods;
+mod vec_constructors;
 #[derive(Clone, Copy)]
 pub(crate) enum Resolve {
 	Script(Hash),
@@ -2247,6 +2248,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			}
 		};
 
+		if let Some(with_capacity) = vec_constructors::constructor(hash) {
+			return self.call_vec_constructor(call, with_capacity, out, span);
+		}
 		if crate::function::fresh_pipeline::any_kind(hash).is_some() {
 			return self.call_any_value(hash, call, out, span);
 		}

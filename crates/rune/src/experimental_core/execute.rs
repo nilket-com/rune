@@ -861,6 +861,10 @@ impl Executor {
 		if args_len != certificate.arity
 			|| !matches!(id, super::code::PRINT_RAW | super::code::VARIANT_SUCCESS)
 		{
+			if matches!(id, super::code::VEC_NEW | super::code::VEC_WITH_CAPACITY) {
+				return self
+					.vec_constructor_call(store, function, base, out, id, args_start, args_len);
+			}
 			if id != super::code::CAPTURE_TAKE {
 				return self
 					.number_call(code, store, function, base, out, id, args_start, args_len);
@@ -2733,6 +2737,7 @@ mod sorting;
 mod sorting_tests;
 mod text_methods;
 mod variant_methods;
+mod vec_constructors;
 
 #[cfg(test)]
 mod numeric_tests;

@@ -19,6 +19,7 @@ mod indexing;
 mod iter_terminals;
 mod number_methods;
 mod object_methods;
+mod vec_constructors;
 pub use formatting::FormatLimits;
 mod boxed_iterator;
 mod ranges;

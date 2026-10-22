@@ -388,6 +388,8 @@ pub enum Detail {
 		actual: usize,
 		expected: usize,
 	},
+	/// Stock Vec constructor layout exceeds the allocator addressable limit.
+	CapacityOverflow,
 }
 
 impl Detail {
@@ -773,6 +775,7 @@ impl fmt::Display for Message<'_> {
 				messages::Operand(&operand),
 			),
 			ExpectedBool { found } => messages::expected_type(f, TypeName::Bool, found),
+			CapacityOverflow => f.write_str("Capacity overflow"),
 			ValueDepth => f.write_str("Value is nested too deeply to walk, limit is 64"),
 			ExpectedType { expected, found } => messages::expected_type(f, expected, found),
 			NumericArgumentType {
