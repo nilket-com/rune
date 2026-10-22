@@ -228,6 +228,7 @@ impl Interner {
 
 	/// Identity is the hash; the first name survives. Never allocates.
 	pub(crate) fn intern(&mut self, hash: u64, name: &str) -> Result<Nominal> {
+		super::receiver_domain::check_nominal(hash, 0)?;
 		if let Some(id) = self.lookup(hash) {
 			return Ok(id);
 		}
@@ -305,6 +306,7 @@ impl Interner {
 		let mut count = 0usize;
 		let mut bytes = 0usize;
 		for (i, entry) in staging.entries.iter().enumerate() {
+			super::receiver_domain::check_nominal(entry.hash, entry.enum_hash)?;
 			if let Some(id) = self.lookup_staged(staging, entry) {
 				remap[i] = id;
 			} else {
@@ -355,6 +357,7 @@ impl Interner {
 		hash: u64,
 		name: core::fmt::Arguments<'_>,
 	) -> Result<Nominal> {
+		super::receiver_domain::check_nominal(hash, 0)?;
 		if let Some(id) = self.lookup(hash) {
 			return Ok(id);
 		}
@@ -446,6 +449,7 @@ impl Staging {
 		ordinal: u32,
 		fields: &[&str],
 	) -> Result<Nominal> {
+		super::receiver_domain::check_nominal(hash, enum_hash)?;
 		let existing = {
 			let guard = GLOBAL.lock().map_err(|_| refused())?;
 			guard
@@ -582,6 +586,10 @@ static READ_ENTRIES: [OnceLock<ReadEntry>; MAX_ENTRIES] = [const { OnceLock::new
 mod construction_micro;
 
 #[cfg(test)]
+#[path = "nominal/receiver_domain_tests.rs"]
+mod receiver_domain_tests;
+
+#[cfg(test)]
 fn published_entry<'a>(
 	entries: &'a [OnceLock<Entry>],
 	published: &AtomicUsize,
@@ -715,6 +723,7 @@ fn with_prepared<T>(
 
 #[cfg_attr(not(test), allow(dead_code))]
 pub fn intern(hash: u64, name: &str) -> Result<Nominal> {
+	super::receiver_domain::check_nominal(hash, 0)?;
 	if let Some(nominal) = lookup(hash)? {
 		return Ok(nominal);
 	}
@@ -728,6 +737,7 @@ pub fn intern(hash: u64, name: &str) -> Result<Nominal> {
 /// Format before acquiring the publication lock; user Display never runs inside it.
 #[cfg_attr(not(test), allow(dead_code))]
 pub(crate) fn intern_fmt(hash: u64, name: core::fmt::Arguments<'_>) -> Result<Nominal> {
+	super::receiver_domain::check_nominal(hash, 0)?;
 	if let Some(id) = lookup(hash)? {
 		return Ok(id);
 	}

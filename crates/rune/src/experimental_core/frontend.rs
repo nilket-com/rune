@@ -425,3 +425,6 @@ mod call_arity_tests;
 
 #[cfg(test)]
 mod native_dispatch_tests;
+
+#[cfg(test)]
+mod receiver_domain_tests;

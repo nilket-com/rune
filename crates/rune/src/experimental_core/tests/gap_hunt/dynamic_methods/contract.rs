@@ -55,6 +55,7 @@ fn verify_fresh_case(
 	);
 	let rule = &rows[index];
 	let rule = &super::object_order::admitted(include_str!("c18b3a_admissions.json"), rule);
+	let rule = &super::object_order::admitted(include_str!("c18b3b_admissions.json"), rule);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);

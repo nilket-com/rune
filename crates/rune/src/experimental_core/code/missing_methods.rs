@@ -517,15 +517,17 @@ impl CompileTransaction {
 				.chain(query.items.keys().map(|id| pool.item_type_hash(*id)))
 				.chain(context.fresh_types())
 				.all(|receiver| {
-					context
-						.lookup_function(Hash::associated_function(receiver, name))
-						.is_none() || native_method(context, receiver, name).is_some()
+					super::super::receiver_domain::unreachable(receiver)
+						|| context
+							.lookup_function(Hash::associated_function(receiver, name))
+							.is_none() || native_method(context, receiver, name).is_some()
 				})
 	}
 
 	/// Proves stock's dispatch over builtin, source and context types. A native
-	/// provider must have a certified core implementation; otherwise the site
-	/// is refused. Native adapters take precedence over script instance methods.
+	/// provider must have a certified core implementation or an exact receiver
+	/// unreachability proof; otherwise the site is refused. Native adapters take
+	/// precedence over script instance methods.
 	/// Missing keys carry an absence proof. Once per name.
 	pub(crate) fn dynamic_method(
 		&mut self,
@@ -547,6 +549,13 @@ impl CompileTransaction {
 			.chain(query.items.keys().map(|id| pool.item_type_hash(*id)))
 			.chain(context.fresh_types())
 		{
+			// This is a value-domain proof, not an absence claim or a native
+			// adapter. Every Context type is still examined, and unknown
+			// providers remain refused. Nominal admission and host import
+			// jointly prevent these exact receiver hashes in every program.
+			if super::super::receiver_domain::unreachable(receiver) {
+				continue;
+			}
 			let hash = Hash::associated_function(receiver, name);
 			if let Some(handler) = context.lookup_function(hash) {
 				let native = native_method(context, receiver, name)

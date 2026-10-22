@@ -72,6 +72,7 @@ pub mod error;
 pub mod execute;
 pub mod heap;
 pub(crate) mod nominal;
+mod receiver_domain;
 pub mod value;
 
 pub(crate) mod lower;

@@ -207,6 +207,70 @@ fn dynamic_cycle_access_and_unsupported_fail_once() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore = "focused C18b3b Miri: exact-name operator only")]
+fn dynamic_native_collections_are_rejected_before_publication() {
+	use crate::modules::collections::{HashMap, HashSet};
+	use crate::runtime::Bytes;
+	use crate::TypeHash;
+
+	let context = context();
+	let mut executor = executor(&context);
+	let mut store = Store::new(Limits::default()).unwrap();
+	let retained = store.root_string("retained").unwrap();
+	let baseline = (store.live_entries(), store.payload_bytes());
+	for (native, hash) in [
+		(stock::Value::new(Bytes::new()).unwrap(), Bytes::HASH),
+		(
+			stock::Value::new(HashMap::with_capacity(0).unwrap()).unwrap(),
+			HashMap::HASH,
+		),
+		(
+			stock::Value::new(HashSet::with_capacity(0).unwrap()).unwrap(),
+			HashSet::HASH,
+		),
+	] {
+		for target in ["dynamic", "result"] {
+			let code = code(&context, target, 0);
+			for nested in [false, true] {
+				// A supported sibling is planned before the unsupported leaf.
+				// Neither it nor the enclosing Vec/Result may reach the Store.
+				set(if nested {
+					list([list([text("supported sibling")]), native.clone()])
+				} else {
+					native.clone()
+				});
+				let before = calls();
+				let trace = Executor::host_trace_begin();
+				let failure = executor
+					.invoke_code(&code, &mut store, 0, &[], 100)
+					.unwrap_err();
+				let trace = trace.finish();
+				assert_eq!(failure.error.kind, ErrorKind::Host);
+				assert_eq!(
+					failure.error.detail,
+					Detail::HostDynamic {
+						reason: Reason::Unsupported,
+						type_hash: Some(hash),
+					}
+				);
+				assert_eq!(calls() - before, 1);
+				assert!(!trace.contains(&"dynamic-build"));
+				assert!(!trace.contains(&"put"));
+				assert!(failure.cleanup_error.is_none());
+				clear();
+				balanced(&store, &executor, baseline);
+				assert_eq!(store.tag(retained.value).unwrap(), Type::String);
+				assert_eq!(store.len(retained.value).unwrap(), 8);
+				reusable(&context, &mut executor, &mut store);
+				balanced(&store, &executor, baseline);
+			}
+		}
+	}
+	store.root_release(retained).unwrap();
+	balanced(&store, &executor, (0, 0));
+}
+
+#[test]
 #[cfg_attr(miri, ignore = "focused C10 Miri: exact-name operator only")]
 fn dynamic_depth_and_scratch_preflight_are_transactional() {
 	let context = context();
