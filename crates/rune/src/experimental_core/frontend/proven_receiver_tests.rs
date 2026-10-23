@@ -388,3 +388,55 @@ fn proven_receiver_test_builtin_macro_m4_is_frozen() {
 		assert_eq!(baseline(row), row["before"], "{}", row["name"]);
 	}
 }
+
+#[test]
+#[ignore = "operator-only conservative return exclusions freeze"]
+fn proven_receiver_freeze_exclusions_oracle() {
+	use std::io::Write;
+	let mut contract: Json =
+		serde_json::from_str(include_str!("proven_receiver_exclusions_contract.json")).unwrap();
+	for row in contract["rows"].as_array_mut().unwrap() {
+		row["stock"] = stock(row);
+		row["before"] = baseline(row);
+		std::println!("C18E_EXCLUSION_ROW {}", row);
+	}
+	let mut output = std::fs::OpenOptions::new()
+		.create_new(true)
+		.write(true)
+		.open(std::env::var_os("C18E_EXCLUSIONS_OUT").unwrap())
+		.unwrap();
+	output
+		.write_all(serde_json::to_string_pretty(&contract).unwrap().as_bytes())
+		.unwrap();
+}
+
+#[test]
+fn proven_receiver_exclusions_stock_is_frozen() {
+	let contract: Json =
+		serde_json::from_str(include_str!("proven_receiver_exclusions_contract.json")).unwrap();
+	for original in contract["rows"].as_array().unwrap() {
+		let mut row = original.clone();
+		let actual = stock(&mut row);
+		let expected = original["stock"].clone();
+		#[cfg(not(feature = "serde"))]
+		let expected = {
+			let mut expected = expected;
+			expected["unit_sha256"] = Json::Null;
+			expected
+		};
+		assert_eq!(actual, expected, "{}", original["name"]);
+	}
+}
+
+#[test]
+fn proven_receiver_exclusions_keep_m4_refusals() {
+	let contract: Json =
+		serde_json::from_str(include_str!("proven_receiver_exclusions_contract.json")).unwrap();
+	for row in contract["rows"].as_array().unwrap() {
+		assert_eq!(
+			digest(row["source"].as_str().unwrap().as_bytes()),
+			row["source_sha256"].as_str().unwrap()
+		);
+		assert_eq!(baseline(row), row["before"], "{}", row["name"]);
+	}
+}

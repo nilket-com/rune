@@ -1,0 +1,82 @@
+{
+  "base": "23bfe0e3",
+  "rows": [
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          81,
+          100
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "associated_return_unmodeled",
+      "source": "struct R; impl R { fn make(self) { R } fn capacity(self) { 7 } } pub fn main() { R.make().capacity() }\n",
+      "source_sha256": "e614fdefec7a2bd2c1eab457368e82489751901a3a79ea3aa89ba7891725a8f9",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "617fe243495824ad441eaa537544d59d8fa232cf6035808528795a2f498b6f09"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          83,
+          100
+        ],
+        "refusal": "Some(Method)"
+      },
+      "name": "async_call_is_not_its_body_tail",
+      "source": "struct R; impl R { fn capacity(self) { 7 } } async fn make() { R } pub fn main() { make().capacity() }\n",
+      "source_sha256": "ae2255ee191482e275c6ae206f7ba6ea9d44fd4ec70b6fcd1d6c977a1cd31b59",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "error": "Type `std::future::Future` has no method named `capacity`",
+          "site": [
+            83,
+            100
+          ]
+        },
+        "unit_sha256": "17f86b78d4714c7d294910ac257b6033d0050879fa93e37ce5d54e740c436646"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          86,
+          103
+        ],
+        "refusal": "Some(Method)"
+      },
+      "name": "generator_call_is_not_its_body_tail",
+      "source": "struct R; impl R { fn capacity(self) { 7 } } fn make() { yield 1; R } pub fn main() { make().capacity() }\n",
+      "source_sha256": "d6478449908907d8a052c1db6b0a85ac6c848c5608b48a9625c51e52d75705f1",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "error": "Type `std::ops::generator::Generator` has no method named `capacity`",
+          "site": [
+            86,
+            103
+          ]
+        },
+        "unit_sha256": "55adb223c7228a832e74b32468396ed837ede3ff72ed5a7ff7d67f13aeb44469"
+      }
+    }
+  ],
+  "ruling": "01a169d9-1c60-73ae-b3d2-a69177fa438e",
+  "scope": "Associated-call return selectors are a non-goal; non-immediate calls return Future/Stream rather than their body tail"
+}
