@@ -851,3 +851,6 @@ fn deferred_refusals_keep_all_body_diagnostics_and_the_closure_span() {
 		rules["rows"][316]["diagnostics"]
 	);
 }
+
+#[path = "field_receiver_tests.rs"]
+mod field_receiver_tests;
