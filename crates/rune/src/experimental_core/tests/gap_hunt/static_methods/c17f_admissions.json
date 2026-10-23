@@ -1,0 +1,31 @@
+{
+  "record": "C17f",
+  "policy": "Additive certified resize admissions and located refusal progression; original cases/stocks/dispositions unchanged",
+  "rows": [
+    {
+      "index": 379,
+      "legacy": {
+        "index": 379,
+        "label": "shadow/resize/param",
+        "source_sha256": "7b90011cd6e9b7f32388a372c01d4b149c4f7d486acb926eb8e6df478f42a1d1",
+        "stock_row_sha256": "714f5d3cd944d60a4f4d89e21f524c7e2a1fe155ac0aec954129002e35ae4ca5",
+        "classification": "Inherited-refusal",
+        "fresh": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 78,
+            "source": 0,
+            "start": 65
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 65, end: 78 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+          "refusal": "Method",
+          "status": "refused"
+        },
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "admitted": {
+        "classification": "Exact"
+      }
+    }
+  ]
+}

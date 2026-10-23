@@ -19,6 +19,11 @@ pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 	#[cfg(feature = "fresh-core")]
 	{
+		m.fresh_clone = crate::function::fresh_clone::Provider::Result.bit();
+	}
+
+	#[cfg(feature = "fresh-core")]
+	{
 		m.fresh_pipeline = 4;
 		m.fresh_variant = crate::function::fresh_variant::marker::RESULT;
 	}

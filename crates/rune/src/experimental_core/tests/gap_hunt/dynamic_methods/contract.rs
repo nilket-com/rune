@@ -56,6 +56,7 @@ fn verify_fresh_case(
 	let rule = &rows[index];
 	let rule = &super::object_order::admitted(include_str!("c18b3a_admissions.json"), rule);
 	let rule = &super::object_order::admitted(include_str!("c18b3b_admissions.json"), rule);
+	let rule = &super::object_order::admitted(include_str!("c17f_admissions.json"), rule);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
@@ -183,6 +184,11 @@ fn verify_fresh_case(
 		match classification {
 			// A native function provides the name on some receiver: fresh
 			// cannot call it, so the dispatch is refused before execution.
+			// C17f advances this pinned resize row to an arity refusal.
+			"Refused-native" if index == 250 => {
+				assert_eq!(case["label"], "shadow/resize/param");
+				assert_eq!(refusal, "Arity");
+			}
 			"Refused-native" => assert_eq!(refusal, "Method"),
 			"Inherited-refusal" => assert_ne!(refusal, "CodeLimit"),
 			_ => panic!("unknown C18b1 disposition"),

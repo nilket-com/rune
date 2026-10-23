@@ -366,6 +366,10 @@ pub struct Context {
 	#[cfg(feature = "fresh-core")]
 	fresh_vec_constructors: u8,
 	#[cfg(feature = "fresh-core")]
+	fresh_vec_resize: bool,
+	#[cfg(feature = "fresh-core")]
+	fresh_clone: u8,
+	#[cfg(feature = "fresh-core")]
 	fresh_numeric: crate::function::fresh_numeric::State,
 	#[cfg(feature = "fresh-core")]
 	fresh_sort_by: bool,
@@ -668,6 +672,28 @@ impl Context {
 		for assoc in &module.associated {
 			self.install_associated(assoc)?;
 			#[cfg(feature = "fresh-core")]
+			if (module.fresh_clone != 0 || module.fresh_vec_resize)
+				&& assoc.name.function_parameters == Hash::EMPTY
+				&& matches!(&assoc.kind, ModuleAssociatedKind::Function(f) if f.trait_hash.is_none())
+			{
+				if module.fresh_clone != 0
+					&& matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == rune::runtime::Protocol::CLONE.hash)
+				{
+					if let Some(provider) =
+						crate::function::fresh_clone::Provider::from_receiver(assoc.container)
+					{
+						self.fresh_clone |= module.fresh_clone & provider.bit();
+					}
+				}
+				if module.fresh_vec_resize
+					&& assoc.container == crate::function::fresh_clone::Provider::Vec.receiver()
+					&& matches!(&assoc.name.kind, meta::AssociatedKind::Instance(name) if name.as_ref() == "resize")
+				{
+					self.fresh_vec_resize = true;
+				}
+			}
+
+			#[cfg(feature = "fresh-core")]
 			for pair in crate::function::fresh_numeric::Pair::ALL {
 				if module.fresh_numeric & pair.bit() != 0
 					&& pair.cmp_protocol().is_some()
@@ -943,6 +969,22 @@ impl Context {
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::panic)))
+	}
+
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_clone_provider(
+		&self,
+		provider: crate::function::fresh_clone::Provider,
+	) -> bool {
+		self.fresh_clone & provider.bit() != 0 && self.functions.contains_key(&provider.protocol())
+	}
+
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_vec_resize(&self) -> bool {
+		self.fresh_vec_resize
+			&& self
+				.functions
+				.contains_key(&crate::function::fresh_clone::RESIZE)
 	}
 
 	#[cfg(feature = "fresh-core")]

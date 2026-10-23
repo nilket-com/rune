@@ -21,6 +21,7 @@ mod text_methods;
 mod text_pipeline;
 mod variant_methods;
 mod vec_constructors;
+mod vec_resize;
 #[derive(Clone, Copy)]
 pub(crate) enum Resolve {
 	Script(Hash),
@@ -2395,6 +2396,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		if let Some(method) = self.self_method(target, hash, name_hash) {
 			self.self_proof.set(Some(self.location(span)));
 			return self.call_static_method(call, target, method, out, span);
+		}
+		if hash == name_hash && hash == crate::function::fresh_clone::RESIZE_NAME {
+			return self.call_vec_resize(call, target, out, span);
 		}
 		if let Some(method) = crate::function::fresh_text::Method::from_hash(hash) {
 			return self.call_text_method(call, target, method, out, span);

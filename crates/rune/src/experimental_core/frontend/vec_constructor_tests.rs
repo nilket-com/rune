@@ -109,11 +109,10 @@ fn vec_constructor_custom_providers_are_not_certified() {
 }
 
 #[test]
-fn vec_capacity_and_resize_stay_compile_time_refused() {
+fn vec_capacity_and_bad_constructor_arity_stay_compile_time_refused() {
 	let context = Context::with_default_modules().unwrap();
 	for source in [
 		"pub fn main(){Vec::new().capacity()}",
-		"pub fn main(){Vec::with_capacity(2).resize(2,None)}",
 		"pub fn main(){Vec::new(1)}",
 		"pub fn main(){Vec::with_capacity()}",
 	] {

@@ -851,6 +851,7 @@ pub(crate) const ANY_READY: u32 = FIRST_INTRINSIC_ID + 0x58;
 pub(crate) const CLOSURE_CREATE: u32 = FIRST_INTRINSIC_ID + 0x59;
 pub(crate) const VEC_NEW: u32 = FIRST_INTRINSIC_ID + 0x5d;
 pub(crate) const VEC_WITH_CAPACITY: u32 = FIRST_INTRINSIC_ID + 0x5e;
+pub(crate) const VEC_RESIZE: u32 = FIRST_INTRINSIC_ID + 0x5f;
 pub(crate) const CAPTURE_TAKE: u32 = FIRST_INTRINSIC_ID + 0x5c;
 /// The instance function at `Hash::associated_function(receiver type, method)`:
 /// the script function value from the program's method table, or stock's
@@ -1132,6 +1133,10 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 	CertifiedIntrinsic {
 		id: crate::function::fresh_object::Method::IsEmpty.id(),
 		arity: crate::function::fresh_object::Method::IsEmpty.arity(),
+	},
+	CertifiedIntrinsic {
+		id: VEC_RESIZE,
+		arity: 3,
 	},
 	CertifiedIntrinsic {
 		id: VEC_NEW,
@@ -3335,8 +3340,15 @@ mod intrinsic_partition_tests {
 		assert!(reserved_intrinsic_id(FIRST_INTRINSIC_ID));
 		// C11c adds the certified cold capture-take intrinsic to the prior 49; C17a
 		// adds the six Option and Result methods and C17b the five Object methods.
-		// C18b3c adds two Vec constructors; C17c numeric intrinsics live outside this table.
-		assert_eq!(CERTIFIED_INTRINSICS.len(), 63);
+		// C18b3c adds two Vec constructors and C17f adds resize.
+		// C17c numeric intrinsics live outside this table.
+		assert_eq!(CERTIFIED_INTRINSICS.len(), 64);
+		assert_eq!(
+			certified_intrinsic(CERTIFIED_INTRINSICS, VEC_RESIZE)
+				.unwrap()
+				.arity,
+			3
+		);
 		assert_eq!(
 			certified_intrinsic(CERTIFIED_INTRINSICS, VEC_NEW)
 				.unwrap()

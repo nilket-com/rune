@@ -1,0 +1,43 @@
+{
+  "record": "C17f",
+  "policy": "Additive certified resize admissions and located refusal progression; original cases/stocks/dispositions unchanged",
+  "rows": [
+    {
+      "index": 250,
+      "legacy": {
+        "index": 250,
+        "label": "shadow/resize/param",
+        "source_sha256": "4fb9c9ce3a1b95bef1c469f65b1bb5d2026be42897c0472a4c98e8203569ce6e",
+        "stock_row_sha256": "68f00ab97b9a4f1d429c09276a86f116ae0e043aff8969bc27fe9997285293c0",
+        "classification": "Refused-native",
+        "fresh": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 72,
+            "source": 0,
+            "start": 61
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 61, end: 72 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+          "refusal": "Method",
+          "status": "refused"
+        },
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:72, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      },
+      "admitted": {
+        "classification": "Refused-native",
+        "fresh": {
+          "kind": "Unsupported",
+          "location": {
+            "end": 72,
+            "source": 0,
+            "start": 61
+          },
+          "raw": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 16, start: 61, end: 72 }), operation: \"Arity\", refusal: Some(Arity), detail: None }",
+          "refusal": "Arity",
+          "status": "refused"
+        },
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:72, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      }
+    }
+  ]
+}

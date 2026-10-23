@@ -24,6 +24,10 @@ static STATE: OnceCell<RandomState> = OnceCell::new();
 #[rune::module(::std::ops)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
+	#[cfg(feature = "fresh-core")]
+	{
+		m.fresh_clone = crate::function::fresh_clone::Provider::Function.bit();
+	}
 
 	// Private C12 provider markers: this std module registers the builtin providers.
 	#[cfg(feature = "fresh-core")]

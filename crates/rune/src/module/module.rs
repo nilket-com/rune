@@ -81,6 +81,10 @@ pub struct Module {
 	pub(crate) fresh_string_from: bool,
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_vec_constructors: bool,
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_vec_resize: bool,
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_clone: u8,
 	/// Private stock numeric pair markers, never set by user registration APIs.
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_numeric: u8,
@@ -289,6 +293,10 @@ impl Module {
 			fresh_string_from: false,
 			#[cfg(feature = "fresh-core")]
 			fresh_vec_constructors: false,
+			#[cfg(feature = "fresh-core")]
+			fresh_vec_resize: false,
+			#[cfg(feature = "fresh-core")]
+			fresh_clone: 0,
 			#[cfg(feature = "fresh-core")]
 			fresh_numeric: 0,
 			#[cfg(feature = "fresh-core")]

@@ -16,6 +16,13 @@ pub(super) struct MethodEntry {
 fn native_method(context: &Context, receiver: Hash, name: Hash) -> Option<(u32, u32)> {
 	use crate::function::{fresh_number, fresh_object, fresh_text, fresh_variant};
 	use crate::TypeHash;
+	if name == crate::function::fresh_clone::RESIZE_NAME
+		&& receiver == crate::function::fresh_clone::Provider::Vec.receiver()
+		&& context.fresh_vec_resize()
+	{
+		return Some((super::VEC_RESIZE, 3));
+	}
+
 	if let Some(method) = fresh_variant::Method::from_hash(name) {
 		if method.provider(receiver).is_some() && context.fresh_variant_method(method) {
 			return Some((method.id(), method.arity()));
@@ -507,6 +514,15 @@ impl CompileTransaction {
 		pool: &crate::compile::Pool,
 		name: Hash,
 	) -> bool {
+		// Keep the pre-C17f script dispatch choice; only the new resize path
+		// may add this provider after proving its fill at the individual site.
+		if name == crate::function::fresh_clone::RESIZE_NAME
+			&& context
+				.lookup_function(crate::function::fresh_clone::RESIZE)
+				.is_some()
+		{
+			return false;
+		}
 		if self.checked_dynamic.contains(&name) {
 			return true;
 		}

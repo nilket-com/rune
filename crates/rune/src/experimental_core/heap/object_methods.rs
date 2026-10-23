@@ -36,7 +36,7 @@ impl Store {
 
 	/// Checks the access a native argument conversion makes. Every argument has
 	/// already passed its type check.
-	fn argument(&mut self, value: Value, arg: u8, access: MovedAccess) -> Result<()> {
+	pub(super) fn argument(&mut self, value: Value, arg: u8, access: MovedAccess) -> Result<()> {
 		let Value::Heap(h) = value else {
 			return Ok(());
 		};

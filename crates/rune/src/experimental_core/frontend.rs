@@ -56,7 +56,7 @@ impl Program {
 
 	/// Whether a function id may be invoked directly by a host.
 	///
-	/// Bodies relying on an exact script receiver are internal entries. On an
+	/// Bodies relying on an exact script receiver or call-site fill proof are internal entries. On an
 	/// Entry refusal, an adapter can run stock from the untouched input; never
 	/// retry after charged execution. This also applies to any future closure
 	/// body whose captured receiver receives an exact-type proof.
@@ -286,6 +286,14 @@ impl Collector {
 
 	fn finish(mut self) -> Result<Program> {
 		let mut entry_ineligible = Vec::new();
+		// A guessed adapter ID cannot bypass its call site's fill proof.
+		if let Some(&id) = self
+			.native_helpers
+			.get(&crate::function::fresh_clone::RESIZE)
+		{
+			entry_ineligible.try_push(id)?;
+		}
+
 		for &(id, item, associated, at) in &self.self_proofs {
 			// A later body can expose an ingress into an earlier provisional proof.
 			if self.source_uses.contains(&item) || self.source_uses.contains(&associated) {

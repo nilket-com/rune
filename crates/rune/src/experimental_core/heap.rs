@@ -20,6 +20,7 @@ mod iter_terminals;
 mod number_methods;
 mod object_methods;
 mod vec_constructors;
+mod vec_resize;
 pub use formatting::FormatLimits;
 mod boxed_iterator;
 mod ranges;

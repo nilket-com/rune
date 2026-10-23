@@ -15,6 +15,9 @@ impl Executor {
 		start: u32,
 		count: u32,
 	) -> Result<()> {
+		if id == super::super::code::VEC_RESIZE {
+			return self.vec_resize_call(store, function, base, out, start, count);
+		}
 		let invalid = || error(ErrorKind::InvalidCode);
 		let capacity = id == super::super::code::VEC_WITH_CAPACITY;
 		if !matches!(
