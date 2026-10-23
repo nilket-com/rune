@@ -1,0 +1,76 @@
+{
+  "base": "dc9315c2",
+  "record": "C18b3f",
+  "rows": [
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          120,
+          137
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "host_policy": "take",
+      "name": "associated-self-formal-relay",
+      "source": "struct R; struct S; struct Box {f} impl R {fn capacity(self){7}} impl S {fn capacity(self){11}} impl Box {fn read(self){self.f.capacity()}} fn take(x){x.read()} pub fn main(){take(Box{f:R})}",
+      "source_sha256": "6453f0d522569045b3035a2116de2483251d358998e3227ea8c3e1df41a2ed45",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "d72eadc7d3dd6403ca25ac88beecd6f475867139b6c905b72824442aaab5fc0b"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          120,
+          137
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "associated-self-captured-relay",
+      "source": "struct R; struct S; struct Box {f} impl R {fn capacity(self){7}} impl S {fn capacity(self){11}} impl Box {fn read(self){self.f.capacity()}} pub fn main(){let b=Box{f:R};let f=||b.read();f()}",
+      "source_sha256": "412be6dfac3167838657e022d373a37f853654c73294172db27c195b6faa7756",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "2d1d7cfb19f1bc4f5cef4e8bc71cde6c6e31b6c397dd391bed46995ee25ed361"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          136,
+          150
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "associated-self-captured-store",
+      "source": "struct R; struct S; struct Box {f} impl R {fn capacity(self){7}} impl S {fn capacity(self){11}} impl R {fn fill(self){let b=Box{f:self};b.f.capacity()}} pub fn main(){let r=R;let f=||r.fill();f()}",
+      "source_sha256": "a8d09e84aada8b9e814312c10ec528dd16e8d8e9e8bd01ea8389d2bef2916413",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "d725829b43054780df2d9836820a438924a7b39d4e29d600d3b28d0a934e7f31"
+      }
+    }
+  ]
+}

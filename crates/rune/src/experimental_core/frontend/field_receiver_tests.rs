@@ -49,3 +49,41 @@ fn field_receiver_existing_admissions_are_frozen() {
 		}
 	}
 }
+
+#[test]
+#[ignore = "operator-only synthetic-self provenance freeze"]
+fn field_receiver_freeze_self_oracle() {
+	use std::io::Write;
+	let mut data: Json =
+		serde_json::from_str(include_str!("field_receiver_self_contract.json")).unwrap();
+	for row in data["rows"].as_array_mut().unwrap() {
+		row["stock"] = stock(row);
+		row["before"] = baseline(row);
+	}
+	let mut out = std::fs::OpenOptions::new()
+		.create_new(true)
+		.write(true)
+		.open(std::env::var_os("C18F_ORACLE_OUT").unwrap())
+		.unwrap();
+	out.write_all(serde_json::to_string_pretty(&data).unwrap().as_bytes())
+		.unwrap();
+}
+
+#[test]
+fn field_receiver_self_stock_is_frozen() {
+	let data: Json =
+		serde_json::from_str(include_str!("field_receiver_self_contract.json")).unwrap();
+	for original in data["rows"].as_array().unwrap() {
+		assert_eq!(
+			digest(original["source"].as_str().unwrap().as_bytes()),
+			original["source_sha256"]
+		);
+		let mut row = original.clone();
+		let actual = stock(&mut row);
+		let mut expected = original["stock"].clone();
+		if !cfg!(feature = "serde") {
+			expected["unit_sha256"] = Json::Null;
+		}
+		assert_eq!(actual, expected, "{}", original["name"]);
+	}
+}
