@@ -1701,3 +1701,6 @@ mod wrong_arity;
 mod static_methods;
 
 mod dynamic_methods;
+
+#[cfg(all(feature = "serde", feature = "musli"))]
+mod stock_unit_receipts;

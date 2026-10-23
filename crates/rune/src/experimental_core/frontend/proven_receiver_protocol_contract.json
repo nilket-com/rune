@@ -1,0 +1,216 @@
+{
+  "rows": [
+    {
+      "after": "refused",
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          103,
+          115
+        ],
+        "refusal": "Some(Method)"
+      },
+      "context_override": "associated",
+      "expected_stock_value": 99,
+      "name": "associated-context-override",
+      "source": "struct R; struct S; impl R { fn capacity(self) { 7 } } fn make() { R } pub fn main() { let r = make(); r.capacity() }",
+      "source_sha256": "1e311adf01d938beceda8fb71701786f55dc43a4a9ec2f023ad52a589292f970",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 99
+        },
+        "unit_sha256": "db58c3301b404cd480c2f08b65cedea413cce55bec1fe6c859de699d15b62c99"
+      }
+    },
+    {
+      "after": "refused",
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          103,
+          115
+        ],
+        "refusal": "Some(Method)"
+      },
+      "context_override": "item",
+      "name": "item-context-override",
+      "source": "struct R; struct S; impl R { fn capacity(self) { 7 } } fn make() { R } pub fn main() { let r = make(); r.capacity() }",
+      "source_sha256": "1e311adf01d938beceda8fb71701786f55dc43a4a9ec2f023ad52a589292f970",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "db58c3301b404cd480c2f08b65cedea413cce55bec1fe6c859de699d15b62c99"
+      }
+    },
+    {
+      "after": "refused",
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          103,
+          116
+        ],
+        "refusal": "Some(Method)"
+      },
+      "name": "proven-receiver-wrong-arity",
+      "source": "struct R; struct S; impl R { fn capacity(self) { 7 } } fn make() { R } pub fn main() { let r = make(); r.capacity(1) }",
+      "source_sha256": "f47567f949192cec5f247cc95bbaebef983d869e5820bf2f80a358126ab2e20b",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "error": "Wrong number of arguments 2, expected 1",
+          "site": [
+            103,
+            116
+          ]
+        },
+        "unit_sha256": "63d521e5721832ef030f98ba796e9ec3626383f1b656ba5d4cbb49065581aa71"
+      }
+    },
+    {
+      "after": "refused",
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          134,
+          146
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "unresolved-method-before-async",
+      "source": "struct R; struct S; impl R { fn capacity(self) { 7 } } fn make(flag) { if flag { R } else { S } } pub fn main() { let r = make(true); r.capacity(); let f = async { 1 }; 7 }",
+      "source_sha256": "9973c3d463d266df76f4a76e7603783e67fd747cc3363e5e7daa12e942c24975",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "d560370a1a2984d701859cf159b8eb7360d9bd2ebbaa35d23f406494d6e452a9"
+      }
+    },
+    {
+      "after": "refused",
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          103,
+          115
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "resolved-method-before-async",
+      "source": "struct R; struct S; impl R { fn capacity(self) { 7 } } fn make() { R } pub fn main() { let r = make(); r.capacity(); let f = async { 1 }; 7 }",
+      "source_sha256": "e0d1b04714db0f389fd5cee07da14f3bc6bb7e49642cd937ba33dbba0de68c24",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "6ef4ea91d8833c34ada434c37f9e6aef1c4349cef069efc73970b69c74faefa1"
+      }
+    },
+    {
+      "after": "admitted",
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          91,
+          103
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "grounded-recursive-parameter",
+      "source": "struct R; struct S; impl R { fn capacity(self) { 7 } } fn walk(r, depth) { if depth == 0 { r.capacity() } else { walk(r, depth - 1) } } pub fn main() { walk(R, 2) }",
+      "source_sha256": "248d6d463e3e89552d796eee56876e4c23dd64101de0fb8630423e0fad6b8f03",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "b4e5534d71f5933858413355a1a68168d5c2d2e9b43060e1c7047a06fc52f226"
+      }
+    },
+    {
+      "after": "refused",
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          91,
+          103
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "recursive-parameter-conflicting-internal-edge",
+      "source": "struct R; struct S; impl R { fn capacity(self) { 7 } } fn walk(r, depth) { if depth == 0 { r.capacity() } else if depth == 99 { walk(S, depth - 1) } else { walk(r, depth - 1) } } pub fn main() { walk(R, 2) }",
+      "source_sha256": "bc9c8539c0ee64075d062f605e832e712acc07347e815322a7395cb3a4b07501",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "c4338f9b8d2d24443dca5c20aba6e1ee1c05f02b1b110b02951eaad8f7d32c29"
+      }
+    },
+    {
+      "after": "admitted",
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          91,
+          103
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "grounded-mutual-parameter",
+      "source": "struct R; struct S; impl R { fn capacity(self) { 7 } } fn left(r, depth) { if depth == 0 { r.capacity() } else { right(r, depth - 1) } } fn right(r, depth) { left(r, depth) } pub fn main() { left(R, 2) }",
+      "source_sha256": "07aca7d3a6f914982d2ceda86e007b29e464eb35ba73ed9e853ff34130230bc8",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "dee5c0b7483ce1cf4efd73bda94e59ccf4672d78458a37b8ec918f1ca8c554a7"
+      }
+    },
+    {
+      "after": "refused",
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          91,
+          103
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "unseeded-recursive-parameter",
+      "source": "struct R; struct S; impl R { fn capacity(self) { 7 } } fn walk(r, depth) { if depth == 0 { r.capacity() } else { walk(r, depth - 1) } } pub fn main() { 7 }",
+      "source_sha256": "13859b4de8eda39b266cd4ccfd14c4799cfaed69181627b7e87544e9857cf60b",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "5d64b57f1e8db7763d9741e712bc7b1d67334e83d5a6735f7d62fb69ea0b3e95"
+      }
+    }
+  ],
+  "schema": 1
+}

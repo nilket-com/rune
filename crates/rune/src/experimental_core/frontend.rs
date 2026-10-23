@@ -507,3 +507,6 @@ mod self_receiver_tests;
 
 #[cfg(test)]
 mod vec_resize_tests;
+
+#[cfg(test)]
+mod proven_receiver_tests;

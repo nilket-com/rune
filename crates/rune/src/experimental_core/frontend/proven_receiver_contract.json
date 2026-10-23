@@ -1,0 +1,1060 @@
+{
+  "base": "092d2cc2",
+  "record": "C18b3e",
+  "rows": [
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": true,
+        "functions": [
+          {
+            "hash": "0x1c69d5964e831fc1",
+            "ops": [
+              "List { out: 0, tag: Struct(Nominal(hash=df17bdfad20a4dd1)), args_start: 0, args_len: 0 }",
+              "Call { out: 1, function: 1, args_start: 0, args_len: 1 }",
+              "Return { value: 1 }"
+            ],
+            "parameters": 0,
+            "slots": 2
+          },
+          {
+            "hash": "0xc516e983835f2dc0",
+            "ops": [
+              "Literal { out: 1, value: I64(7) }",
+              "Return { value: 1 }"
+            ],
+            "parameters": 1,
+            "slots": 2
+          },
+          {
+            "hash": "0x858f422c0975de53",
+            "ops": [
+              "Literal { out: 1, value: I64(11) }",
+              "Return { value: 1 }"
+            ],
+            "parameters": 1,
+            "slots": 2
+          },
+          {
+            "hash": "0xd301f1eac7bc1f05",
+            "ops": [
+              "List { out: 0, tag: Struct(Nominal(hash=df17bdfad20a4dd1)), args_start: 0, args_len: 0 }",
+              "Return { value: 0 }"
+            ],
+            "parameters": 0,
+            "slots": 1
+          }
+        ],
+        "ineligible": []
+      },
+      "expected_stock_value": 7,
+      "name": "literal_local_prior",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){let r=R;r.capacity()}",
+      "source_sha256": "aaf8e9144c25a275a9eec928754bbee87bbbda96665a933bf100c83d62d7c94a",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "3d0f1808f23ac363a7ce317c49d73c74c2fa289d7c5c817e64fad52171450677"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": true,
+        "functions": [
+          {
+            "hash": "0x1c69d5964e831fc1",
+            "ops": [
+              "List { out: 0, tag: Struct(Nominal(hash=df17bdfad20a4dd1)), args_start: 0, args_len: 0 }",
+              "List { out: 1, tag: Struct(Nominal(hash=df17bdfad20a4dd1)), args_start: 0, args_len: 0 }",
+              "Copy { out: 0, value: 1 }",
+              "Release { value: 1 }",
+              "Call { out: 1, function: 1, args_start: 0, args_len: 1 }",
+              "Return { value: 1 }"
+            ],
+            "parameters": 0,
+            "slots": 2
+          },
+          {
+            "hash": "0xc516e983835f2dc0",
+            "ops": [
+              "Literal { out: 1, value: I64(7) }",
+              "Return { value: 1 }"
+            ],
+            "parameters": 1,
+            "slots": 2
+          },
+          {
+            "hash": "0x858f422c0975de53",
+            "ops": [
+              "Literal { out: 1, value: I64(11) }",
+              "Return { value: 1 }"
+            ],
+            "parameters": 1,
+            "slots": 2
+          },
+          {
+            "hash": "0xd301f1eac7bc1f05",
+            "ops": [
+              "List { out: 0, tag: Struct(Nominal(hash=df17bdfad20a4dd1)), args_start: 0, args_len: 0 }",
+              "Return { value: 0 }"
+            ],
+            "parameters": 0,
+            "slots": 1
+          }
+        ],
+        "ineligible": []
+      },
+      "expected_stock_value": 7,
+      "name": "literal_reassignment_prior",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){let r=R;r=R;r.capacity()}",
+      "source_sha256": "1f77be6ad80abc777ff25ef8eec39af6260e124f0a74eabd6e691b880d4329f8",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "f8e8a777a8add30bd17f6f30e1b47872d86dcee54087556f8893da7f38d15872"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          145,
+          157
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "constructor_return",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){let r=R::new();r.capacity()}",
+      "source_sha256": "2fdda00e6d5f6573011a8ad1ae526cb8c8093bfa28aa6aa041326b8857906881",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "e5234b9809e43ee3b7377daa2fa88e6c67d712478db9aab80752dad0f523160b"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          143,
+          160
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "direct_function_return",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(){R} pub fn main(){make().capacity()}",
+      "source_sha256": "b1193d924495984394b2e40f2b075d400eb2a3ce7a1348732fe26a3585d41b63",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "e70641c4f7dfbacb9d8d8f93cd59c44c7a72785b16e17331a17694bfed7ff9bb"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          165,
+          186
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "all_returns_same",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(flag){if flag{return R;}R} pub fn main(){make(true).capacity()}",
+      "source_sha256": "7bc2a3d45f66882e9a3fbb3b774cf3c5520ceb6c0962541a9f896661612109be",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "5b8b21552a987d5e6ed626da983f8b71e64e4b9f3b99405c1b384376dc36e83e"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          163,
+          184
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "two_return_types",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(flag){if flag{R}else{S}} pub fn main(){make(true).capacity()}",
+      "source_sha256": "b66d3319b7048e9a272b13838c8426e3315d078372af8cf0d161207c6218c2e0",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "08ad931af7dd010eb365beae9738d5711f100cfca64195153af2597ab044fc80"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          161,
+          178
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "dead_return_conflict",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(){if true{return R;}S} pub fn main(){make().capacity()}",
+      "source_sha256": "24fde0297f3df8b52d9863353e6e2b43b3c54f5d3a90a2b7c65d54bd06f7ba83",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "6e490a6c19c621ba5365abca2c2a2616a3bc550d312089f4f30c255a76991ef7"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          162,
+          179
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "return_unit_conflict",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(){if true{return R;}()} pub fn main(){make().capacity()}",
+      "source_sha256": "faabeb653c070f989d7138367cab7d0a7efe45a28015f4c72a1ed9a96c6ce6db",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "caffa41c463b4ecf6574ffbe7d88f2ce1c3a35bf5825ba1166749e6486266025"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          149,
+          161
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "same_type_assignment",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){let r=R::new();r=R;r.capacity()}",
+      "source_sha256": "bd85b42bf0b8fcfc6d2d66cb71b91896b2db3af82f42e437715f8e01a669b984",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "839188d2e9fa702bab462f43d586c2e16eb3ecffd00797dc63df2ffc86966c7d"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          149,
+          161
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 11,
+      "name": "conflicting_assignment",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){let r=R::new();r=S;r.capacity()}",
+      "source_sha256": "d22a6da2c28cee9993eec2a4b339031267a2a949322068e47f2a23bca460b770",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 11
+        },
+        "unit_sha256": "2979e0124fd69ef6869f6f974cd7914d8470a04bc7277d59a3ad7db1e3d90b2d"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          154,
+          166
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "shadowing_identity",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){let r=S;{let r=R::new();r.capacity()}}",
+      "source_sha256": "9e4344c141ecd3acd99c9916d1456ccf6c5cd54b5923befcd2bae2944b856775",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "043f1409796d306cc96ff9b3400c298992809333fc2bf6f44fceb97e6ba85106"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          127,
+          139
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 14,
+      "name": "parameter_all_calls_same",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn take(r){r.capacity()} pub fn main(){take(R)+take(R)}",
+      "source_sha256": "e2af2121c71bf6aef039a07440f73067b8406b612390bd7dc3ba2f4b97cd707a",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 14
+        },
+        "unit_sha256": "027690e5a2b53a76377e868828cba486818f0c973e5c37bce39dcd1010771698"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          127,
+          139
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 18,
+      "name": "parameter_different_calls",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn take(r){r.capacity()} pub fn main(){take(R)+take(S)}",
+      "source_sha256": "af6c2e5d56cc0e15a4f1f5783ca7fdc4a53e6bea666fe4ded7a749ccab50f4a3",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 18
+        },
+        "unit_sha256": "92ab642c78f5c12711088dcddd56e5e2cc6caf68ad707d3dc1c678995d7fa867"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          127,
+          139
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "dead_call_conflict",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn take(r){r.capacity()} pub fn main(){if false{take(S);}take(R)}",
+      "source_sha256": "e8da0cfbf446d19029b359364382f2e6825979ef483fe4c35f60a776d2d13af4",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "2d00ab0cf1bd41021efe961197f88b44c5e4e651b48c95c2c441f396c4b6fa4f"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          127,
+          139
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "unused_body_call_conflict",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn take(r){r.capacity()} fn unused(){take(S)} pub fn main(){take(R)}",
+      "source_sha256": "60e0ab15d36b93ce8c54c44b5465357678e6c50a3bb68e3b97a9d175793c3ef9",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "f852cfb0c46575c6348526258ac1114e8ba961b1e724263d1552986ea3ee4ec0"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          148,
+          160
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "forwarded_parameter",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn relay(r){take(r)} fn take(r){r.capacity()} pub fn main(){relay(R)}",
+      "source_sha256": "d022ea714c0a668e8c58c6fed65695ac933e08c95ea1841f4e3f923346199255",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "90bfb7423ac1547171263556387ff3c252f3246917222c109b809e53640ecf8d"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          155,
+          167
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "order_reversed",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){take(make())} fn take(r){r.capacity()} fn make(){R}",
+      "source_sha256": "acf27be6b214d3ec9a523c42df5433e0a569eecc94b6d1e9304b982cfae1bdfd",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "35bbbc4ad7afe18fddfc3e631373c4cfab0dd430437d50db494e138f2ce538d2"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          131,
+          143
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "public_entry_unknown",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn open(r){r.capacity()} pub fn main(){R.capacity()}",
+      "source_sha256": "0f6d19af44290ca6a158943073c8a2522b4d03ac5e58f4c69b0c39f6a6edcbf0",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "6b67dcd31f56a8cee3f109b2b7d0e0d53761a4bdc860d74856b2f8ca6b714693"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          127,
+          139
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "function_value_call",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn take(r){r.capacity()} pub fn main(){let f=take;f(R)}",
+      "source_sha256": "67b769cedb412bde55cf95a0a54a1065270a0f1c6e650c4f19f040ae09763754",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "274a814e9e9364685b6765e37f04dbe80db7dc1e4212b820cb1a27100d364906"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          127,
+          139
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "unused_function_value",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn take(r){r.capacity()} pub fn main(){let f=take;take(R)}",
+      "source_sha256": "dbb91084ce7d2c716d80def01bde8bb4b42d023fd0b994cf1464cc2872d3307a",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "7561546bf7b9d05fdd50be2b0ae8f3244c36f595cee3eec3fdb8181e183eda65"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          168,
+          186
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "recursive_return",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(n){if n==0{R}else{make(n-1)}} pub fn main(){make(2).capacity()}",
+      "source_sha256": "ab98d5ad6ab499288b62f9179389ecfda98119e8f2dd5afe1957f7293af7dbc0",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "23aade9a3fc4e8553159cace1a9d075dcf9c8d7944ae94fb8afb2565a354bace"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          190,
+          208
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "mutual_recursive_return",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(n){if n==0{R}else{other(n-1)}} fn other(n){make(n)} pub fn main(){make(2).capacity()}",
+      "source_sha256": "e3c55d1862836512fbb6282d0ae5471f611f6c12707a8cac7bbc305cbfc2c204",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "3f1d3907478977d031527a50d1495b943577fab9fa3f030df8da1ca0624f879d"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          186,
+          198
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "try_early_return",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(){let n=Some(1)?;Some(R)} pub fn main(){match make(){Some(r)=>r.capacity(),None=>0}}",
+      "source_sha256": "1c255890537d208bd7e5b4e5ab69bd0c60d8120631680b9e87bd3dbb3af5140f",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "fec7d82c8bcf26587aeb47c4cf72225b68a2d9108935d33a96d7dbbe5c595226"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          163,
+          180
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "closure_return_ownership",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(){let f=||{return S;};R} pub fn main(){make().capacity()}",
+      "source_sha256": "f0ac846f0c6090adb8b74254b6424b30c3ea46e8f64b547400be85a642b6895d",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "b57ba260b9360cbf9b62a2e1cd0c5a36582783547171c99556ed24d24786deea"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          146,
+          158
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "capture_from_literal",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){let r=R;let f=||r.capacity();f()}",
+      "source_sha256": "6a3639732b10653284b6903b00562af59bdd08847ae97fcf2a314ddb79627c28",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "e4cac4a3a2bcc19c3ad95f8f225ee75bfe2c388d2be98526c1a808890d36cfa3"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          153,
+          165
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "capture_from_constructor",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){let r=R::new();let f=||r.capacity();f()}",
+      "source_sha256": "b32a34173695dbb03c5cb8f1d75393987d1faeeb4a5a0b8c96ee0c81794364e7",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "e9dad32766e208ccf77943162df80013006ba0e6ad189af15daee861cd0c9121"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          135,
+          147
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 18,
+      "name": "capture_conflicting_callers",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn take(r){let f=||r.capacity();f()} pub fn main(){take(R)+take(S)}",
+      "source_sha256": "6bef2ed4827f79b93f4fa7b1720ec3561c6f616b0ec691655aa0b31a58c3625f",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 18
+        },
+        "unit_sha256": "c8e18384742b36e42e5869277bb968458b4233ff138409d3fb6c419ac40233a4"
+      }
+    },
+    {
+      "after_admitted": true,
+      "args": [
+        3
+      ],
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          127,
+          139
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 10,
+      "name": "scalar_host_parameter",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn take(r){r.capacity()} pub fn main(count){take(R::new())+count}",
+      "source_sha256": "9aa57b43ae1b80fdf49846f35e6a926d3ff0b6323cf047ab63ef6d4395f3d825",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 10
+        },
+        "unit_sha256": "8e6c84c3fd6d9c392b773b3d8576d7c3dfd6d2b34e4bd6f2166c4a4987f491d9"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          160,
+          172
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "self_forwarding",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } impl R{fn run(self){take(self)}} fn take(r){r.capacity()} pub fn main(){R.run()}",
+      "source_sha256": "ab989990dbc3b2ff8373fdd3353f43d70e558c343672d17956bf06e11b087a23",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "bab1f4836202224f43fc7f1124daff1cadb48d850bcc8cf6ef196a2fb4f35a98"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          181,
+          198
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "unrelated_unknown_return",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn unrelated(flag){if flag{R}else{S}} fn make(){R} pub fn main(){make().capacity()}",
+      "source_sha256": "fd222ca43a071166d36765f8f24e1bf662542b06996adc52062eb2b353a94ec4",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "0c63cebc97d1d8772228db75b7aba7af1db68eaa110253965eace600d1804e03"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          155,
+          169
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "field_unknown",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } struct H{r} pub fn main(){let h=H{r:R};h.r.capacity()}",
+      "source_sha256": "7e115f6511710ce22fb301b654613473f35c53099e769b0349f53b070afe7873",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "e10f9bffcc601862bb7e021f7ca17aaf10e825a8b655b6264a5a1d0e51b6d26d"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          148,
+          165
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "self_field_unknown",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } struct H{r} impl H{fn run(self){self.r.capacity()}} pub fn main(){H{r:R}.run()}",
+      "source_sha256": "859340c7d3fcd8ac450ce0a38f068a23e37d7c690a776189be83524406db9085",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "5a375c70f098ed9e07e428866266f1d0d44d155e45721fba5b53636540bbf383"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          177,
+          191
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 11,
+      "name": "field_alias_store",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } struct H{r} pub fn main(){let h=H{r:R};let alias=h;alias.r=S;h.r.capacity()}",
+      "source_sha256": "d4dc5598adcafbae662cb11ef9f22a50fbef286d172a1a75b8b6b16318c954a7",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 11
+        },
+        "unit_sha256": "43851ff47045993472cb335e4f9afd22aad178b20b6570345702923357315e11"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          164,
+          178
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 11,
+      "name": "string_index_struct_store",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } struct H{r} pub fn main(){let h=H{r:R};h[\"r\"]=S;h.r.capacity()}",
+      "source_sha256": "ba9ce63f71e9d45e30c3d09d8b7ddc3b5f220c6d71d0cbdfb7d826f37abd9287",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 11
+        },
+        "unit_sha256": "6283f8a63e8bbcbafecb8ddf5557d87fa02fd3c2d6537720672c60ee390621e4"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          194,
+          208
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 11,
+      "name": "unknown_index_store",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } struct H{r} fn write(h,k,v){h[k]=v} pub fn main(){let h=H{r:R};write(h,\"r\",S);h.r.capacity()}",
+      "source_sha256": "d4fb4c71e3e090c4f6329b35263d05891b16bd935780a22c13d6a6cd06bcad65",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 11
+        },
+        "unit_sha256": "0b79d4432d410c7fe89b6a20c8975d1f3efec03d62a535e0cf81f67881d798a0"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          187,
+          201
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 11,
+      "name": "unknown_dot_store",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } struct H{r} fn write(h,v){h.r=v} pub fn main(){let h=H{r:R};write(h,S);h.r.capacity()}",
+      "source_sha256": "fbceb5716a1bd6b864f86263664e92423949d02e592629774b260909f25d3511",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 11
+        },
+        "unit_sha256": "09467bf71d10b61d0934e3d5f1ea234142b6891ec21b05a50b2547fba175e8c4"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          162,
+          181
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "dead_field_conflict",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } struct H{r} fn unused(){H{r:S}} pub fn main(){H{r:R}.r.capacity()}",
+      "source_sha256": "8e5fe20d07ef029ef364adb2431a96101381a63a7bb332c0507752d146fa02c5",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "79c83a65841eafea76f7f4ee56ce85897182c246067a977ca5c84093cb8322ed"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          170,
+          182
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "field_name_not_binding",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } struct H{r} pub fn main(){let h=H{r:S};let r=R::new();r.capacity()}",
+      "source_sha256": "799588fef34fae6622f64981e79571c3a024283e369ded415c169dacac1ff700",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "e296a9dbab89496318f758b6c2555e2ac511fca048254b15d81eae0f385c845c"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          130,
+          135
+        ],
+        "refusal": "Some(FrontendDiagnostic)"
+      },
+      "expected_stock_value": 7,
+      "macros": true,
+      "name": "macro_call",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){mk!().capacity()}",
+      "source_sha256": "afa92cfe838a88ed6159fa3e63f12719aff16b75a715987802a5dd2bc25f4a3b",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "b29258fc3e0834615c216697e4c2cbb5269ccc6fb4635cb8f82c997dee0b2ddf"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          126,
+          132
+        ],
+        "refusal": "Some(FrontendDiagnostic)"
+      },
+      "expected_stock_value": 7,
+      "macros": true,
+      "name": "macro_return",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(){ret!()} pub fn main(){make().capacity()}",
+      "source_sha256": "9b074946a515bc2313dea7cc3b3e1b372d715233e3cfc45c0395c81f4e7cf9fc",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "62b04ace8abffe5f6e7a1b627ac9fbc9dfce4f6024af34acafd2d87535529dba"
+      }
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          134,
+          146
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 11,
+      "host_policy": "Entry before effects; main remains eligible",
+      "name": "private_host_entry",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn take(r){mark();r.capacity()} pub fn wrong(){S} pub fn main(){take(R)}",
+      "source_sha256": "ad77d1d8a92bce9fb25b74bbdce67e611360569a0b7ebaf385be87eae2408b1a",
+      "stock": {
+        "effects": 1,
+        "result": {
+          "value": 11
+        },
+        "unit_sha256": "d7781b2d928302031a91824d4777ee0b366640c20a31b8af774e0948602b4bc9"
+      },
+      "stock_arg_function": "wrong",
+      "stock_entry": "take"
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          172,
+          184
+        ],
+        "refusal": "Some(Method)"
+      },
+      "entry_hash": 13760420964677243998,
+      "expected_stock_value": null,
+      "guess_closure": true,
+      "host_policy": "Entry before effects and arity; closure body id is not a host boundary",
+      "name": "guessed_closure_host_entry",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn wrong(){S} pub fn main(){let r=R;let f=||{mark();r.capacity()};f()}",
+      "source_sha256": "2fff1306de064f4fa9dd073325c72f51e1746291aff5973ebfbb73ee874a93e3",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "error": "Expected type `std::tuple::Tuple` but found `S`",
+          "site": [
+            164,
+            185
+          ]
+        },
+        "unit_sha256": "e6a7a6c14807157bafcc618fd33e1d7b8695696305b73b969c489e035ea49a3e"
+      },
+      "stock_arg_function": "wrong"
+    }
+  ],
+  "scope": "Exact locals/returns/parameters/captures; no field facts"
+}
