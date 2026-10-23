@@ -1,0 +1,305 @@
+{
+  "record": "C18b3d F1",
+  "baseline_commit": "c4ef4e3a1bfef84c5e7b54513bdb223a45eb02b3",
+  "evidence": ".reviews/0185-c18b3d-family1",
+  "normalization": "Program owner ID normalized; process-local Nominal index normalized only after checking its exact S type hash",
+  "rows": [
+    {
+      "family": "fallback",
+      "name": "len",
+      "source": "struct S;impl S{fn len(self){7}fn run(self){self.len()}}pub fn main(){S.run()}",
+      "stock_expected": 7,
+      "M3": "Refused",
+      "M3_refusal": "Method",
+      "M3_located": true
+    },
+    {
+      "family": "text",
+      "name": "trim",
+      "source": "struct S;impl S{fn trim(self){7}fn run(self){self.trim()}}pub fn main(){S.run()}",
+      "stock_expected": 7,
+      "M3": "Exact",
+      "normalized_ops": [
+        [
+          "0x1c69d5964e831fc1",
+          0,
+          2,
+          [
+            "List { out: 1, tag: Struct(Nominal(S)), args_start: 0, args_len: 0 }",
+            "Call { out: 0, function: 1, args_start: 0, args_len: 1 }",
+            "Release { value: 1 }",
+            "Return { value: 0 }"
+          ]
+        ],
+        [
+          "0xd49fb81e34f83bc4",
+          1,
+          4,
+          [
+            "Literal { out: 2, value: U64(6170106445077060087) }",
+            "Call { out: 3, function: 2147483738, args_start: 0, args_len: 2 }",
+            "CallValue { out: 1, value: 3, args_start: 2, args_len: 1 }",
+            "Release { value: 3 }",
+            "Return { value: 1 }"
+          ]
+        ],
+        [
+          "0xc60da0c4d8481912",
+          1,
+          2,
+          [
+            "Literal { out: 1, value: I64(7) }",
+            "Return { value: 1 }"
+          ]
+        ],
+        [
+          "0x0",
+          1,
+          2,
+          [
+            "Call { out: 1, function: 2147483749, args_start: 0, args_len: 1 }",
+            "Return { value: 1 }"
+          ]
+        ]
+      ]
+    },
+    {
+      "family": "variant",
+      "name": "is_some",
+      "source": "struct S;impl S{fn is_some(self){7}fn run(self){self.is_some()}}pub fn main(){S.run()}",
+      "stock_expected": 7,
+      "M3": "Exact",
+      "normalized_ops": [
+        [
+          "0x1c69d5964e831fc1",
+          0,
+          2,
+          [
+            "List { out: 1, tag: Struct(Nominal(S)), args_start: 0, args_len: 0 }",
+            "Call { out: 0, function: 1, args_start: 0, args_len: 1 }",
+            "Release { value: 1 }",
+            "Return { value: 0 }"
+          ]
+        ],
+        [
+          "0xd49fb81e34f83bc4",
+          1,
+          4,
+          [
+            "Literal { out: 2, value: U64(12197846301906872986) }",
+            "Call { out: 3, function: 2147483738, args_start: 0, args_len: 2 }",
+            "CallValue { out: 1, value: 3, args_start: 2, args_len: 1 }",
+            "Release { value: 3 }",
+            "Return { value: 1 }"
+          ]
+        ],
+        [
+          "0x248d83a6a616d046",
+          1,
+          2,
+          [
+            "Literal { out: 1, value: I64(7) }",
+            "Return { value: 1 }"
+          ]
+        ],
+        [
+          "0x0",
+          1,
+          2,
+          [
+            "Call { out: 1, function: 2147483794, args_start: 0, args_len: 1 }",
+            "Return { value: 1 }"
+          ]
+        ]
+      ]
+    },
+    {
+      "family": "object-get",
+      "name": "get",
+      "source": "struct S;impl S{fn get(self, x){x+7}fn run(self){self.get(1)}}pub fn main(){S.run()}",
+      "stock_expected": 8,
+      "M3": "Refused",
+      "M3_refusal": "Method",
+      "M3_located": true
+    },
+    {
+      "family": "object-key",
+      "name": "contains_key",
+      "source": "struct S;impl S{fn contains_key(self, x){x+7}fn run(self){self.contains_key(1)}}pub fn main(){S.run()}",
+      "stock_expected": 8,
+      "M3": "Exact",
+      "normalized_ops": [
+        [
+          "0x1c69d5964e831fc1",
+          0,
+          2,
+          [
+            "List { out: 1, tag: Struct(Nominal(S)), args_start: 0, args_len: 0 }",
+            "Call { out: 0, function: 1, args_start: 0, args_len: 1 }",
+            "Release { value: 1 }",
+            "Return { value: 0 }"
+          ]
+        ],
+        [
+          "0xd49fb81e34f83bc4",
+          1,
+          5,
+          [
+            "Literal { out: 2, value: I64(1) }",
+            "Literal { out: 3, value: U64(15636358394433461740) }",
+            "Call { out: 4, function: 2147483738, args_start: 0, args_len: 2 }",
+            "CallValue { out: 1, value: 4, args_start: 2, args_len: 2 }",
+            "Release { value: 4 }",
+            "Return { value: 1 }"
+          ]
+        ],
+        [
+          "0x9411874276d16dbf",
+          2,
+          4,
+          [
+            "Literal { out: 3, value: I64(7) }",
+            "Binary { out: 2, op: Add, lhs: 1, rhs: 3 }",
+            "Return { value: 2 }"
+          ]
+        ],
+        [
+          "0x0",
+          2,
+          3,
+          [
+            "Call { out: 2, function: 2147483809, args_start: 0, args_len: 2 }",
+            "Return { value: 2 }"
+          ]
+        ]
+      ]
+    },
+    {
+      "family": "numeric",
+      "name": "abs",
+      "source": "struct S;impl S{fn abs(self){7}fn run(self){self.abs()}}pub fn main(){S.run()}",
+      "stock_expected": 7,
+      "M3": "Refused",
+      "M3_refusal": "Method",
+      "M3_located": true
+    },
+    {
+      "family": "iterator",
+      "name": "map",
+      "source": "struct S;impl S{fn map(self, f){f+7}fn run(self){self.map(1)}}pub fn main(){S.run()}",
+      "stock_expected": 8,
+      "M3": "Refused",
+      "M3_refusal": "Method",
+      "M3_located": true
+    },
+    {
+      "family": "sort",
+      "name": "sort_by",
+      "source": "struct S;impl S{fn sort_by(self, f){f+7}fn run(self){self.sort_by(1)}}pub fn main(){S.run()}",
+      "stock_expected": 8,
+      "M3": "Refused",
+      "M3_refusal": "Method",
+      "M3_located": true
+    },
+    {
+      "family": "numeric-pow",
+      "name": "powf",
+      "source": "struct S;impl S{fn powf(self, x){x+7}fn run(self){self.powf(1)}}pub fn main(){S.run()}",
+      "stock_expected": 8,
+      "M3": "Refused",
+      "M3_refusal": "Method",
+      "M3_located": true
+    },
+    {
+      "family": "number",
+      "name": "sqrt",
+      "source": "struct S;impl S{fn sqrt(self){7}fn run(self){self.sqrt()}}pub fn main(){S.run()}",
+      "stock_expected": 7,
+      "M3": "Exact",
+      "normalized_ops": [
+        [
+          "0x1c69d5964e831fc1",
+          0,
+          2,
+          [
+            "List { out: 1, tag: Struct(Nominal(S)), args_start: 0, args_len: 0 }",
+            "Call { out: 0, function: 1, args_start: 0, args_len: 1 }",
+            "Release { value: 1 }",
+            "Return { value: 0 }"
+          ]
+        ],
+        [
+          "0xd49fb81e34f83bc4",
+          1,
+          4,
+          [
+            "Literal { out: 2, value: U64(6984645437615985171) }",
+            "Call { out: 3, function: 2147483738, args_start: 0, args_len: 2 }",
+            "CallValue { out: 1, value: 3, args_start: 2, args_len: 1 }",
+            "Release { value: 3 }",
+            "Return { value: 1 }"
+          ]
+        ],
+        [
+          "0x69c45f9659b8c1c1",
+          1,
+          2,
+          [
+            "Literal { out: 1, value: I64(7) }",
+            "Return { value: 1 }"
+          ]
+        ],
+        [
+          "0x0",
+          1,
+          2,
+          [
+            "Call { out: 1, function: 2147483652, args_start: 0, args_len: 1 }",
+            "Return { value: 1 }"
+          ]
+        ]
+      ]
+    },
+    {
+      "family": "collect",
+      "name": "collect",
+      "source": "struct S;impl S{fn collect(self){7}fn run(self){self.collect()}}pub fn main(){S.run()}",
+      "stock_expected": 7,
+      "M3": "Exact",
+      "normalized_ops": [
+        [
+          "0x1c69d5964e831fc1",
+          0,
+          2,
+          [
+            "List { out: 1, tag: Struct(Nominal(S)), args_start: 0, args_len: 0 }",
+            "Call { out: 0, function: 1, args_start: 0, args_len: 1 }",
+            "Release { value: 1 }",
+            "Return { value: 0 }"
+          ]
+        ],
+        [
+          "0xd49fb81e34f83bc4",
+          1,
+          4,
+          [
+            "Literal { out: 2, value: U64(1009754866578346187) }",
+            "Call { out: 3, function: 2147483738, args_start: 0, args_len: 2 }",
+            "CallValue { out: 1, value: 3, args_start: 2, args_len: 1 }",
+            "Release { value: 3 }",
+            "Return { value: 1 }"
+          ]
+        ],
+        [
+          "0x6f74d74a60ab317b",
+          1,
+          2,
+          [
+            "Literal { out: 1, value: I64(7) }",
+            "Return { value: 1 }"
+          ]
+        ]
+      ]
+    }
+  ]
+}

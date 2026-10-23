@@ -34,6 +34,7 @@ pub struct SourceRecord {
 pub struct Program {
 	pub(crate) code: Code,
 	functions: Vec<Hash>,
+	entry_ineligible: Vec<u32>,
 	pub(crate) sources: Vec<SourceRecord>,
 }
 
@@ -43,6 +44,7 @@ impl Program {
 		Self {
 			code,
 			functions: Vec::new(),
+			entry_ineligible: Vec::new(),
 			sources: Vec::new(),
 		}
 	}
@@ -52,8 +54,26 @@ impl Program {
 		&self.sources
 	}
 
+	/// Whether a function id may be invoked directly by a host.
+	///
+	/// Bodies relying on an exact script receiver are internal entries. On an
+	/// Entry refusal, an adapter can run stock from the untouched input; never
+	/// retry after charged execution. This also applies to any future closure
+	/// body whose captured receiver receives an exact-type proof.
+	pub fn entry_eligible(&self, id: u32) -> bool {
+		self.code.function(id).is_some() && !self.entry_refused(id)
+	}
+
+	#[inline]
+	pub(crate) fn entry_refused(&self, id: u32) -> bool {
+		// Invocation validates the ID once, after this pre-execution policy check.
+		!self.entry_ineligible.is_empty() && self.entry_ineligible.contains(&id)
+	}
+
 	/// The id of the function whose item hash is `hash`, for
 	/// [`Executor::invoke`](crate::experimental_core::execute::Executor::invoke).
+	///
+	/// Lookup does not imply host entry eligibility; see [`Self::entry_eligible`].
 	///
 	/// For a top-level `pub fn main`, `hash` is `Hash::type_hash(["main"])`.
 	pub fn function(&self, hash: Hash) -> Option<u32> {
@@ -73,6 +93,8 @@ pub(crate) struct Collector {
 	native_helpers: crate::hash::Map<u32>,
 	pub(crate) failure: Option<Error>,
 	variable_moved: Option<(Span, Span)>,
+	source_uses: Vec<Hash>,
+	self_proofs: Vec<(u32, Hash, Hash, Location)>,
 }
 
 impl Collector {
@@ -102,6 +124,7 @@ impl Collector {
 	pub(crate) fn lower(
 		&mut self,
 		hash: Hash,
+		receiver: Option<Hash>,
 		source: u32,
 		exprs: &crate::hir::Exprs<'_>,
 		item: &crate::hir::ItemFn<'_>,
@@ -111,6 +134,25 @@ impl Collector {
 		context: &Context,
 		refused_functions: &[(Hash, Refusal)],
 	) -> Result<()> {
+		for expr in exprs.fresh_expressions() {
+			let used = match expr.kind {
+				crate::hir::ExprKind::Fn(hash) => Some(hash),
+				crate::hir::ExprKind::Call(call) => match call.call {
+					crate::hir::Call::Meta { hash } => Some(hash),
+					_ => None,
+				},
+				_ => None,
+			};
+			if let Some(hash) = used {
+				self.source_uses.try_push(hash)?;
+			}
+		}
+		let method = receiver.and_then(|receiver| {
+			constants
+				.fresh_self_method(hash, receiver)
+				.map(|associated| (receiver, associated))
+		});
+
 		let function_at = Location {
 			source,
 			revision: self.revision,
@@ -135,6 +177,7 @@ impl Collector {
 		let any_helper = &mut self.any_helper;
 		let native_helpers = &mut self.native_helpers;
 		let moved_error = core::cell::Cell::new(None);
+		let self_proof = core::cell::Cell::new(None);
 		let result = super::lower::function(
 			exprs,
 			item,
@@ -215,6 +258,8 @@ impl Collector {
 			context,
 			&mut self.transaction,
 			&moved_error,
+			method.map(|(receiver, _)| receiver),
+			&self_proof,
 		);
 		let function = match result {
 			Ok(function) => function,
@@ -229,11 +274,25 @@ impl Collector {
 			}
 		};
 
+		if let Some(at) = self_proof.get() {
+			let (_, associated) =
+				method.ok_or_else(|| Error::new(ErrorKind::InvalidCode, "self proof"))?;
+			self.self_proofs.try_push((id, hash, associated, at))?;
+		}
+
 		self.entries[id as usize].1 = Some(function);
 		Ok(())
 	}
 
 	fn finish(mut self) -> Result<Program> {
+		let mut entry_ineligible = Vec::new();
+		for &(id, item, associated, at) in &self.self_proofs {
+			// A later body can expose an ingress into an earlier provisional proof.
+			if self.source_uses.contains(&item) || self.source_uses.contains(&associated) {
+				return Err(Error::refused(Refusal::Method).at(at));
+			}
+			entry_ineligible.try_push(id)?;
+		}
 		// A function value a C17e chain calls with the wrong argument count
 		// refuses the program, so stock raises its error only if it is called.
 		let entries = &self.entries;
@@ -260,6 +319,7 @@ impl Collector {
 		Ok(Program {
 			code: self.transaction.finish()?,
 			functions,
+			entry_ineligible,
 			sources: Vec::new(),
 		})
 	}
@@ -345,6 +405,8 @@ pub fn compile(
 		native_helpers: crate::hash::Map::default(),
 		failure: None,
 		variable_moved: None,
+		source_uses: Vec::new(),
+		self_proofs: Vec::new(),
 	};
 
 	let mut unit = UnitBuilder::default();

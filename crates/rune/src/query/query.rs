@@ -182,6 +182,43 @@ impl QueryInner<'_> {
 
 	// Borrowed metadata only: never constructs a stock VM value or invokes a protocol.
 	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_self_method(&self, item: Hash, receiver: Hash) -> Option<Hash> {
+		let ty = self.meta.values().any(|m| {
+			!m.context
+				&& m.hash == receiver
+				&& matches!(
+					m.kind,
+					meta::Kind::Struct {
+						parameters: Hash::EMPTY,
+						enum_hash: Hash::EMPTY,
+						..
+					} | meta::Kind::Enum {
+						parameters: Hash::EMPTY
+					}
+				)
+		});
+		if !ty {
+			return None;
+		}
+		self.meta.values().find_map(|m| {
+			if m.context || m.hash != item {
+				return None;
+			}
+			let meta::Kind::Function {
+				associated: Some(meta::AssociatedKind::Instance(name)),
+				trait_hash: None,
+				parameters: Hash::EMPTY,
+				..
+			} = &m.kind
+			else {
+				return None;
+			};
+			let associated = Hash::associated_function(receiver, Hash::ident(name.as_ref()));
+			(self.fresh_instances.get(associated) == Some(item)).then_some(associated)
+		})
+	}
+
+	#[cfg(feature = "fresh-core")]
 	pub(crate) fn fresh_struct_shape(&self, hash: Hash) -> Option<StructShape<'_>> {
 		self.meta.values().find_map(|m| {
 			if m.context || m.hash != hash {

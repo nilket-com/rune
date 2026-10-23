@@ -1,7 +1,7 @@
 //! Errors of the fresh core.
 //!
 //! An [`Error`] is a small `Copy` value, so reporting an allocation failure allocates
-//! nothing. Compile-time refusals carry a [`Refusal`] category; run-time errors carry
+//! nothing. Refusals before execution carry a [`Refusal`] category; run-time errors carry
 //! an [`ErrorKind`], optional owned [`Detail`], and, when known, a source [`Location`].
 
 pub use super::detail::{
@@ -15,7 +15,7 @@ pub use super::detail::{
 /// to one class (a declared difference).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ErrorKind {
-	/// The program uses something outside the admitted subset (a compile-time refusal; see [`Error::refusal`]).
+	/// The program or host entry is outside the admitted subset; see [`Error::refusal`].
 	Unsupported,
 	/// An operand or value has the wrong type for the operation, including a missing display form.
 	Type,
@@ -65,7 +65,7 @@ pub enum ErrorKind {
 	ArgumentCount,
 }
 
-/// Named compile-time refusal categories. The adapter consumes this enum,
+/// Named refusals before execution (compile-time, or host entry). The adapter consumes this enum,
 /// never parses prose or guesses a category from an error message.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Refusal {
@@ -160,6 +160,8 @@ pub enum Refusal {
 	Variable,
 	/// A `yield` expression.
 	Yield,
+	/// A host entry whose body relies on an internal receiver proof.
+	Entry,
 }
 
 impl Refusal {
@@ -210,6 +212,7 @@ impl Refusal {
 			Self::UnresolvedFunction => "UnresolvedFunction",
 			Self::Variable => "Variable",
 			Self::Yield => "Yield",
+			Self::Entry => "Entry",
 		}
 	}
 }
@@ -237,7 +240,7 @@ impl Location {
 	};
 }
 
-/// An error of the fresh core: a compile-time refusal or a run-time error.
+/// An error of the fresh core: a refusal before execution or a run-time error.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Error {
 	/// The error class.
@@ -246,7 +249,7 @@ pub struct Error {
 	pub location: Option<Location>,
 	/// A short, static name of the operation that failed.
 	pub operation: &'static str,
-	/// The refusal category; `Some` exactly for compile-time refusals.
+	/// The refusal category: compile-time, or [`Refusal::Entry`] before invocation.
 	pub refusal: Option<Refusal>,
 	/// Owned language-error information; absent for generic resource errors.
 	pub detail: Detail,
@@ -264,7 +267,7 @@ impl Error {
 		}
 	}
 
-	/// A compile-time refusal: kind [`ErrorKind::Unsupported`], operation the refusal's
+	/// A refusal before execution: kind [`ErrorKind::Unsupported`], operation the refusal's
 	/// [`name`](Refusal::name).
 	pub const fn refused(refusal: Refusal) -> Self {
 		Self {

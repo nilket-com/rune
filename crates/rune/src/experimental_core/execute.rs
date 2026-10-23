@@ -491,7 +491,12 @@ impl Executor {
 		self.invoke(program, store, function, args, fuel)
 	}
 
-	/// One invocation on a prepared code object and store. The function, its
+	/// One invocation on a prepared code object and store.
+	///
+	/// Internal proof-dependent entries return [`super::error::Refusal::Entry`]
+	/// before argument transfer or any charged instruction. On Entry refusal,
+	/// run stock from the untouched input; never retry after charged execution.
+	/// The function, its
 	/// arity and then every argument root (closed-store policy, store,
 	/// generation) are checked before any argument is retained: a refused
 	/// argument retains nothing. Argument validation and transfer use no
@@ -509,6 +514,17 @@ impl Executor {
 		args: &[&Root],
 		fuel: usize,
 	) -> core::result::Result<Root, Failure> {
+		if program.entry_refused(function) {
+			return Err(Failure {
+				numeric_context: None,
+				error: Error::refused(super::error::Refusal::Entry),
+				missing_key: None,
+				panic_message: None,
+				host_message: None,
+				call_chain: Vec::new(),
+				cleanup_error: None,
+			});
+		}
 		self.invoke_code(&program.code, store, function, args, fuel)
 	}
 

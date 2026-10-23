@@ -5,9 +5,9 @@ use super::*;
 /// [`Lower::static_method`] builds one, from a receiver whose type is certain.
 pub(super) struct StaticMethod {
 	/// `Hash::associated_function(receiver type, name)`, where stock looks it up.
-	associated: Hash,
+	pub(super) associated: Hash,
 	/// The function's item hash.
-	item: Hash,
+	pub(super) item: Hash,
 }
 
 impl Lower<'_, '_> {

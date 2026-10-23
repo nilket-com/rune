@@ -330,6 +330,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 					fresh
 						.lower(
 							hash,
+							type_hash,
 							location.source_id.into_index() as u32,
 							&exprs,
 							&hir,
@@ -363,6 +364,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 								fresh
 									.lower(
 										self.q.pool.item_type_hash(build.item_meta.item),
+										None,
 										location.source_id.into_index() as u32,
 										&exprs,
 										&closure,

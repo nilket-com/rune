@@ -15,6 +15,7 @@ mod missing_methods;
 mod number_methods;
 mod object_methods;
 mod patterns;
+mod self_receiver;
 mod static_methods;
 mod text_methods;
 mod text_pipeline;
@@ -86,8 +87,14 @@ pub(crate) fn function(
 	context: &crate::Context,
 	transaction: &mut CompileTransaction,
 	moved_error: &core::cell::Cell<Option<(Span, Span)>>,
+	self_receiver: Option<Hash>,
+	self_proof: &core::cell::Cell<Option<Location>>,
 ) -> Result<Function> {
 	let mut cx = Lower {
+		self_binding: self_receiver.and_then(|receiver| {
+			self_receiver::binding(exprs, item).map(|binding| (binding, receiver))
+		}),
+		self_proof,
 		exprs,
 		function: Function::new(1, 0)?,
 		variables: Vec::new(),
@@ -179,6 +186,8 @@ struct Loop {
 }
 
 struct Lower<'a, 'hir> {
+	self_binding: Option<(hir::Variable, Hash)>,
+	self_proof: &'a core::cell::Cell<Option<Location>>,
 	exprs: &'a hir::Exprs<'hir>,
 	function: Function,
 	variables: Vec<(hir::Variable, u32)>,
@@ -2382,6 +2391,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				hash,
 			) {
 			return self.call_dynamic_method(call, target, hash, out, span);
+		}
+		if let Some(method) = self.self_method(target, hash, name_hash) {
+			self.self_proof.set(Some(self.location(span)));
+			return self.call_static_method(call, target, method, out, span);
 		}
 		if let Some(method) = crate::function::fresh_text::Method::from_hash(hash) {
 			return self.call_text_method(call, target, method, out, span);

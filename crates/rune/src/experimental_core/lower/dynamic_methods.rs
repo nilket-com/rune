@@ -65,6 +65,10 @@ impl Lower<'_, '_> {
 			span,
 		)?;
 		let callee = self.slot()?;
+		// The lookup token is private scratch, never an operand of the script
+		// target or a host callback. Only the adjacent CallValue consumes it.
+		debug_assert_ne!(out, callee);
+		debug_assert!(!values.contains(&callee));
 		let (lookup_start, lookup_len) = self.function.arguments(&[method, values[0]])?;
 		self.emit(
 			Op::Call {

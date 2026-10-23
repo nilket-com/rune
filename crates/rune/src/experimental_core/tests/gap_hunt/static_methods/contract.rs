@@ -57,6 +57,7 @@ fn verify_fresh_case(
 	let rule = &super::object_order::admitted(include_str!("c18b1_admissions.json"), &rows[index]);
 	let rule = &super::object_order::admitted(include_str!("c18b3a_admissions.json"), rule);
 	let rule = &super::object_order::admitted(include_str!("c18b3b_admissions.json"), rule);
+	let rule = &super::object_order::admitted(include_str!("c18b3d_admissions.json"), rule);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
@@ -84,7 +85,7 @@ fn verify_fresh_case(
 	let classification = rule["classification"].as_str().unwrap();
 	let refused = !matches!(
 		classification,
-		"Exact" | "Intentional-D1" | "Retained-frame-limit"
+		"Exact" | "Intentional-D1" | "Retained-frame-limit" | "Known-gap"
 	);
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
@@ -109,6 +110,19 @@ fn verify_fresh_case(
 		assert_eq!(f["reuse"], s["reuse"]);
 		assert_eq!(fresh["logical"], expected["logical"]);
 		assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+	} else if classification == "Known-gap" {
+		assert_eq!(index, 48);
+		assert_eq!(case["label"], "receiver/in-template");
+		assert_eq!(rule["gap"]["issue"], "fresh compile-warning parity");
+		let (fresh, expected) = (canonical_record(actual), canonical_record(stock));
+		assert_eq!(fresh, rule["fresh"]);
+		assert_eq!(fresh["observation"], expected["observation"]);
+		assert_eq!(fresh["logical"], expected["logical"]);
+		let warning = rule["gap"]["stock_warning"].as_str().unwrap();
+		let diagnostics = expected["diagnostics"].as_str().unwrap();
+		assert_eq!(diagnostics.matches(warning).count(), 1);
+		assert!(diagnostics.starts_with(&format!("[{warning}, ")));
+		assert_eq!(fresh["diagnostics"], diagnostics.replacen(&format!("{warning}, "), "", 1));
 	} else if classification == "Retained-frame-limit" {
 		// Unbounded recursion: fresh charges fuel once per call, so its
 		// 1024-frame limit trips before the fuel runs out, where stock ends in

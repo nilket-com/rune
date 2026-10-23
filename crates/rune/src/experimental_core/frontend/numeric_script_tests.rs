@@ -43,6 +43,8 @@ fn indexed(text: &str, loader: &mut dyn compile::SourceLoader) -> (Result<Progra
 		native_helpers: crate::hash::Map::default(),
 		failure: None,
 		variable_moved: None,
+		source_uses: Vec::new(),
+		self_proofs: Vec::new(),
 	};
 	let result = compile::compile(
 		&mut UnitBuilder::default(),
