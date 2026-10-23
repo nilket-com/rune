@@ -431,3 +431,6 @@ mod receiver_domain_tests;
 
 #[cfg(test)]
 mod vec_constructor_tests;
+
+#[cfg(test)]
+mod self_receiver_tests;

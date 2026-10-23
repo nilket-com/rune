@@ -1,0 +1,24 @@
+{
+  "record": "C18b3d",
+  "base": "c4ef4e3a",
+  "scope": "direct immutable self only",
+  "host_entry": {
+    "wrong_self": "Entry before execution",
+    "right_self": "Entry before execution",
+    "effects": 0,
+    "charged_instructions": 0,
+    "cancellation": "preserved",
+    "roots": "not retained",
+    "adapter": "Run stock from untouched input only on pre-execution Entry refusal"
+  },
+  "context_override": {
+    "stock": "exact associated Context function wins",
+    "fresh": "compile-time Method refusal; never bypass native override"
+  },
+  "closure": {
+    "propagates_self": false,
+    "future_requirement": "Any proof-dependent closure ID must be host-ineligible too"
+  },
+  "dynamic_method_value": "Generated INSTANCE_METHOD value is private scratch consumed only by adjacent CallValue; never output or native argument",
+  "admitted_before": "unchanged lowering and eligibility"
+}
