@@ -1,0 +1,56 @@
+{
+  "base": "44f2f111",
+  "rows": [
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          130,
+          162
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "macros": true,
+      "name": "test_builtin_macro_call",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } pub fn main(){::std::fmt::format!().capacity()}",
+      "source_sha256": "9f54c8b74c2778edac632889d72abc17c7edbce4f32b10194494c1fee799916f",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "53d136548d3ce4426c13a9b2232ffaccc23f2c8a24301d18fb2bdd937c57840c"
+      },
+      "test_builtin": true
+    },
+    {
+      "after_admitted": true,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          164,
+          181
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "macros": true,
+      "name": "test_builtin_macro_return",
+      "source": "struct R; struct S; struct T; impl R { fn new() { R } fn capacity(self) { 7 } } impl S { fn capacity(self) { 11 } } fn make(){::std::test::assert!()} pub fn main(){make().capacity()}",
+      "source_sha256": "17f3c27505a5b05ce89981880170c26b9c9c2ff538f11c6fab38459e5a26a9b6",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "deba17ddca13b7a9e9fcb022e1cf2767867dcc0ef03198686c2bf388d1f9b476"
+      },
+      "test_builtin": true
+    }
+  ],
+  "scope": "Test-only deterministic macro fixtures; ordinary public macro handlers remain refused"
+}

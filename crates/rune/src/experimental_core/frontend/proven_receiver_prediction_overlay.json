@@ -1,0 +1,17 @@
+{
+  "record": "C18b3e",
+  "ruling": "01a1699f-4ed8-759d-9520-91815f146bc2",
+  "reason": "The two original admission predictions were wrong: ordinary custom macro handlers are refused before HIR by the existing macro guard. Frozen observations and source bytes remain unchanged.",
+  "rows": [
+    {
+      "name": "macro_call",
+      "after_admitted": false,
+      "refusal": "FrontendDiagnostic"
+    },
+    {
+      "name": "macro_return",
+      "after_admitted": false,
+      "refusal": "FrontendDiagnostic"
+    }
+  ]
+}

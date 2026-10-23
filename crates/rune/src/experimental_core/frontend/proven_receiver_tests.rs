@@ -44,6 +44,31 @@ fn context(row: &Json) -> Context {
 			.unwrap();
 	}
 	context.install(module).unwrap();
+	if row["test_builtin"] == true {
+		// Test-only handlers occupy existing certified hash slots. The product
+		// hash allowlist and ordinary public macro registration remain intact.
+		let mut call = crate::Module::with_crate_item("std", ["fmt"]).unwrap();
+		call.macro_("format", |cx, _| {
+			let id = cx.insert_source("c18e-call", "R::new()")?;
+			let expr = cx.parse_source::<crate::ast::Expr>(id)?;
+			Ok(crate::macros::quote!(#expr).into_token_stream(cx)?)
+		})
+		.unwrap();
+		call.fresh_mark_builtin_macro();
+		context.install(call).unwrap();
+		let mut returns = crate::Module::with_crate_item("std", ["test"]).unwrap();
+		returns
+			.macro_("assert", |cx, _| {
+				let id = cx.insert_source("c18e-return", "return R")?;
+				let expr = cx.parse_source::<crate::ast::Expr>(id)?;
+				Ok(crate::macros::quote!(#expr).into_token_stream(cx)?)
+			})
+			.unwrap();
+		returns.fresh_mark_builtin_macro();
+		context.install(returns).unwrap();
+		assert!(context.fresh_builtin_macro(Hash::type_hash(crate::item!(::std::fmt::format))));
+		assert!(context.fresh_builtin_macro(Hash::type_hash(crate::item!(::std::test::assert))));
+	}
 	if let Some(kind) = row["context_override"].as_str() {
 		let mut module = crate::Module::with_item(["host"]).unwrap();
 		module
@@ -175,7 +200,8 @@ fn baseline(row: &Json) -> Json {
 	sources
 		.insert(crate::Source::memory(row["source"].as_str().unwrap()).unwrap())
 		.unwrap();
-	match super::compile(&mut sources, &context(row), &mut Diagnostics::new(), 23) {
+	let mut diagnostics = Diagnostics::new();
+	match super::compile(&mut sources, &context(row), &mut diagnostics, 23) {
 		Err(error) => {
 			json!({"admitted":false,"refusal":std::format!("{:?}",error.refusal),"location":error.location.map(|at|json!([at.source,at.start,at.end]))})
 		}
@@ -293,6 +319,72 @@ fn proven_receiver_protocol_m4_lowering_is_frozen() {
 			digest(row["source"].as_str().unwrap().as_bytes()),
 			row["source_sha256"].as_str().unwrap()
 		);
+		assert_eq!(baseline(row), row["before"], "{}", row["name"]);
+	}
+}
+
+#[test]
+fn proven_receiver_public_macro_registration_stays_uncertified() {
+	let row = json!({"macros":true});
+	let context = context(&row);
+	assert!(!context.fresh_builtin_macro(Hash::type_hash(["mk"])));
+	assert!(!context.fresh_builtin_macro(Hash::type_hash(["ret"])));
+	let mut context = context;
+	let mut public = crate::Module::with_crate_item("std", ["fmt"]).unwrap();
+	public
+		.macro_("format", |cx, _| {
+			let value = cx.lit(1i64)?;
+			Ok(crate::macros::quote!(#value).into_token_stream(cx)?)
+		})
+		.unwrap();
+	context.install(public).unwrap();
+	assert!(!context.fresh_builtin_macro(Hash::type_hash(crate::item!(::std::fmt::format))));
+}
+
+#[test]
+#[ignore = "operator-only deterministic builtin-fixture freeze"]
+fn proven_receiver_freeze_macro_oracle() {
+	use std::io::Write;
+	let mut contract: Json =
+		serde_json::from_str(include_str!("proven_receiver_builtin_contract.json")).unwrap();
+	for row in contract["rows"].as_array_mut().unwrap() {
+		row["stock"] = stock(row);
+		row["before"] = baseline(row);
+		std::println!("C18E_MACRO_ROW {}", row);
+	}
+	let mut output = std::fs::OpenOptions::new()
+		.create_new(true)
+		.write(true)
+		.open(std::env::var_os("C18E_MACRO_OUT").unwrap())
+		.unwrap();
+	output
+		.write_all(serde_json::to_string_pretty(&contract).unwrap().as_bytes())
+		.unwrap();
+}
+
+#[test]
+fn proven_receiver_test_builtin_macro_stock_is_frozen() {
+	let contract: Json =
+		serde_json::from_str(include_str!("proven_receiver_builtin_contract.json")).unwrap();
+	for original in contract["rows"].as_array().unwrap() {
+		let mut row = original.clone();
+		let actual = stock(&mut row);
+		let expected = original["stock"].clone();
+		#[cfg(not(feature = "serde"))]
+		let expected = {
+			let mut expected = expected;
+			expected["unit_sha256"] = Json::Null;
+			expected
+		};
+		assert_eq!(actual, expected, "{}", original["name"]);
+	}
+}
+
+#[test]
+fn proven_receiver_test_builtin_macro_m4_is_frozen() {
+	let contract: Json =
+		serde_json::from_str(include_str!("proven_receiver_builtin_contract.json")).unwrap();
+	for row in contract["rows"].as_array().unwrap() {
 		assert_eq!(baseline(row), row["before"], "{}", row["name"]);
 	}
 }
