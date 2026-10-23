@@ -90,12 +90,16 @@ pub(crate) fn function(
 	moved_error: &core::cell::Cell<Option<(Span, Span)>>,
 	self_receiver: Option<Hash>,
 	self_proof: &core::cell::Cell<Option<Location>>,
+	proofs: &mut super::frontend::receiver_proofs::Proofs,
+	body_hash: Hash,
 ) -> Result<Function> {
 	let mut cx = Lower {
 		self_binding: self_receiver.and_then(|receiver| {
 			self_receiver::binding(exprs, item).map(|binding| (binding, receiver))
 		}),
 		self_proof,
+		proofs,
+		body_hash,
 		exprs,
 		function: Function::new(1, 0)?,
 		variables: Vec::new(),
@@ -187,6 +191,8 @@ struct Loop {
 }
 
 struct Lower<'a, 'hir> {
+	proofs: &'a mut super::frontend::receiver_proofs::Proofs,
+	body_hash: Hash,
 	self_binding: Option<(hir::Variable, Hash)>,
 	self_proof: &'a core::cell::Cell<Option<Location>>,
 	exprs: &'a hir::Exprs<'hir>,
@@ -2368,6 +2374,83 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// frame, which every nested plain call holds while its arguments lower.
 	#[inline(never)]
 	fn call_associated(
+		&mut self,
+		call: &hir::ExprCall<'_>,
+		target: hir::ExprId,
+		hash: Hash,
+		name_hash: Hash,
+		out: u32,
+		span: Span,
+	) -> Result<()> {
+		let before = (
+			self.function.code.len(),
+			self.function.args.len(),
+			self.next,
+			self.dirty.len(),
+		);
+		let original = self.call_associated_original(call, target, hash, name_hash, out, span);
+		let Err(error) = original else {
+			return original;
+		};
+		let at = self.location(span);
+		// Only the original site's own Method refusal may use a new proof. An
+		// operand's error, an admitted native path, and generic calls stay intact.
+		if error.refusal != Some(Refusal::Method)
+			|| error.location != Some(at)
+			|| hash != name_hash
+			|| self.proofs.disabled
+			|| before
+				!= (
+					self.function.code.len(),
+					self.function.args.len(),
+					self.next,
+					self.dirty.len(),
+				) {
+			return Err(error);
+		}
+		let Some(receiver) = self.proofs.expression(self.body_hash, target) else {
+			return Err(error);
+		};
+		let methods = match self.proofs.methods(self.constants, self.pool, hash) {
+			Err(failure) if failure.refusal == Some(Refusal::CodeLimit) => return Err(error),
+			result => result?,
+		};
+		if methods.is_empty() {
+			return Err(error);
+		}
+		let site = self.proofs.sites.len();
+		self.proofs
+			.sites
+			.try_push(super::frontend::receiver_proofs::Site {
+				diagnostic_checkpoint: self.proofs.diagnostic_checkpoint,
+				diagnostic_owner: self.proofs.diagnostic_owner,
+				diagnostic_span: self.proofs.diagnostic_span,
+				body: self.body_hash,
+				receiver,
+				methods,
+				at,
+				instruction: None,
+			})?;
+		let mut ids = Vec::try_with_capacity(call.args.len() + 1)?;
+		ids.try_push(target)?;
+		ids.try_extend_from_slice(call.args)?;
+		let values = self.operands(&ids)?;
+		let (args_start, args_len) = self.function.arguments(&values)?;
+		let pc = self.function.code.len() as u32;
+		self.emit(
+			Op::Call {
+				out,
+				function: 0,
+				args_start,
+				args_len,
+			},
+			span,
+		)?;
+		self.proofs.sites[site].instruction = Some((pc, out, args_start, args_len));
+		Ok(())
+	}
+
+	fn call_associated_original(
 		&mut self,
 		call: &hir::ExprCall<'_>,
 		target: hir::ExprId,

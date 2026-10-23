@@ -45,6 +45,8 @@ fn indexed(text: &str, loader: &mut dyn compile::SourceLoader) -> (Result<Progra
 		variable_moved: None,
 		source_uses: Vec::new(),
 		self_proofs: Vec::new(),
+		proofs: receiver_proofs::Proofs::default(),
+		proof_entries: Vec::new(),
 	};
 	let result = compile::compile(
 		&mut UnitBuilder::default(),
@@ -75,7 +77,23 @@ fn indexed(text: &str, loader: &mut dyn compile::SourceLoader) -> (Result<Progra
 		assert!(collector.entries.iter().all(|entry| entry.1.is_none()));
 		return (Err(Error::refused(Refusal::FrontendDiagnostic)), true);
 	}
-	(collector.finish(), false)
+	let result = collector.finish(&context, &mut diagnostics);
+	if let Err(error) = &result {
+		if error.refusal == Some(Refusal::Method) {
+			let at = error.location.unwrap();
+			assert!(diagnostics.diagnostics().iter().any(|diagnostic| {
+				let crate::diagnostics::Diagnostic::Fatal(fatal) = diagnostic else {
+					return false;
+				};
+				fatal.source_id() == crate::SourceId::new(at.source)
+					&& fatal
+						.as_compile_error()
+						.is_some_and(|compile| compile.span() == Span::new(at.start, at.end))
+			}));
+		}
+	}
+	// The flag names an indexing failure, as it did before deferred lowering.
+	(result, false)
 }
 
 #[test]
@@ -152,4 +170,16 @@ fn rename(source: &str, name: &str) -> std::string::String {
 			&std::format!(".{}({})", name, if name == "powf" { "2.0" } else { "" }),
 		)
 		.replace("fn abs(", &std::format!("fn {name}("))
+}
+
+#[test]
+fn custom_collector_keeps_unresolved_receiver_sites_as_located_method_refusals() {
+	let source = "struct Foo; impl Foo { fn abs(self) { 1 } } pub fn main() { (-2.0).abs() }";
+	let (result, diagnostic) = indexed(source, &mut NoopSourceLoader::default());
+	assert!(!diagnostic);
+	let error = result.err().unwrap();
+	assert_eq!(error.kind, ErrorKind::Unsupported);
+	assert_eq!(error.refusal, Some(Refusal::Method));
+	let at = error.location.unwrap();
+	assert_eq!(&source[at.start as usize..at.end as usize], "(-2.0).abs()");
 }

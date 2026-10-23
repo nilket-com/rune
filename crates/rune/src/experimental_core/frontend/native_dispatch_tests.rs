@@ -238,8 +238,10 @@ fn native_provider_is_revalidated_before_execution() {
 	assert_eq!(failure.error.kind, ErrorKind::DivisionByZero);
 }
 
-#[test]
-fn unsupported_native_provider_keeps_the_site_refused() {
+const C18E_EXACT_NATIVE_PROVIDER_SOURCE: &str =
+	"struct S;impl S{fn is_some(self){true}}fn f(x){x.is_some()}pub fn main(){f(S)}";
+
+fn unsupported_is_some_context() -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["c18b3"]).unwrap();
 	module
@@ -247,19 +249,60 @@ fn unsupported_native_provider_keeps_the_site_refused() {
 		.build_associated::<crate::runtime::Vec>()
 		.unwrap();
 	context.install(module).unwrap();
+	context
+}
+
+#[test]
+fn unsupported_native_provider_keeps_an_unknown_parameter_site_refused() {
+	let context = unsupported_is_some_context();
+	let source = std::format!("{C18E_EXACT_NATIVE_PROVIDER_SOURCE} pub fn expose(){{f}}");
 	let mut sources = Sources::new();
 	sources
-		.insert(
-			crate::Source::memory(
-				"struct S;impl S{fn is_some(self){true}}fn f(x){x.is_some()}pub fn main(){f(S)}",
-			)
-			.unwrap(),
-		)
+		.insert(crate::Source::memory(source).unwrap())
 		.unwrap();
 	let error = super::compile(&mut sources, &context, &mut Diagnostics::new(), 18)
 		.err()
 		.unwrap();
 	assert_eq!(error.refusal, Some(Refusal::Method));
+	assert!(error.location.is_some());
+}
+
+#[test]
+fn exact_parameter_skips_an_unrelated_unsupported_native_provider() {
+	// C18b3e overlay of the original source; the Unknown control above keeps
+	// the unsupported-provider boundary under the exact same Context.
+	let context = unsupported_is_some_context();
+	let mut sources = Sources::new();
+	sources
+		.insert(crate::Source::memory(C18E_EXACT_NATIVE_PROVIDER_SOURCE).unwrap())
+		.unwrap();
+	let mut vm = crate::prepare(&mut sources)
+		.with_context(&context)
+		.build_vm()
+		.unwrap();
+	assert!(crate::from_value::<bool>(vm.call(["main"], ()).unwrap()).unwrap());
+	let program = super::compile(&mut sources, &context, &mut Diagnostics::new(), 18).unwrap();
+	let f = program.function(Hash::type_hash(["f"])).unwrap();
+	assert_eq!(program.entry_ineligible.as_slice(), &[f]);
+	let main = program.function(Hash::type_hash(["main"])).unwrap();
+	assert!(program.entry_eligible(main));
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	executor
+		.set_host_runtime(Some(
+			crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
+		))
+		.unwrap();
+	let result = executor
+		.invoke(&program, &mut store, main, &[], 1000)
+		.unwrap();
+	assert!(matches!(
+		store.import(&result).unwrap(),
+		crate::experimental_core::value::Value::Bool(true)
+	));
+	store.root_release(result).unwrap();
+	assert!(executor.is_idle());
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 }
 
 #[test]

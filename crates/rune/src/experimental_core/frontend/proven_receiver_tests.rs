@@ -265,7 +265,9 @@ fn proven_receiver_m4_lowering_is_frozen() {
 			digest(row["source"].as_str().unwrap().as_bytes()),
 			row["source_sha256"].as_str().unwrap()
 		);
-		assert_eq!(baseline(row), row["before"], "{}", row["name"]);
+		if row["before"]["admitted"] == true {
+			assert_eq!(baseline(row), row["before"], "{}", row["name"]);
+		}
 	}
 	assert_eq!(contract["rows"].as_array().unwrap().len(), 42);
 }
@@ -311,7 +313,7 @@ fn proven_receiver_protocol_stock_is_frozen() {
 }
 
 #[test]
-fn proven_receiver_protocol_m4_lowering_is_frozen() {
+fn proven_receiver_protocol_frontier() {
 	let contract: Json =
 		serde_json::from_str(include_str!("proven_receiver_protocol_contract.json")).unwrap();
 	for row in contract["rows"].as_array().unwrap() {
@@ -319,7 +321,134 @@ fn proven_receiver_protocol_m4_lowering_is_frozen() {
 			digest(row["source"].as_str().unwrap().as_bytes()),
 			row["source_sha256"].as_str().unwrap()
 		);
-		assert_eq!(baseline(row), row["before"], "{}", row["name"]);
+		let actual = baseline(row);
+		if row["after"] == "admitted" {
+			assert_eq!(actual["admitted"], true, "{}: {}", row["name"], actual);
+		} else {
+			let mut expected = row["before"].clone();
+			match row["name"].as_str().unwrap() {
+				"item-context-override" => expected["refusal"] = json!("Some(Native)"),
+				"proven-receiver-wrong-arity" => expected["refusal"] = json!("Some(Arity)"),
+				"resolved-method-before-async" => {
+					expected["refusal"] = json!("Some(AsyncBlock)");
+					let source = row["source"].as_str().unwrap();
+					let start = source.find("async { 1 }").unwrap();
+					expected["location"] = json!([0, start, start + "async { 1 }".len()]);
+				}
+				_ => (),
+			}
+			assert_eq!(actual, expected, "{}", row["name"]);
+		}
+	}
+}
+
+#[test]
+#[ignore = "operator-only receiver proof frontier report"]
+fn proven_receiver_observe_frontier() {
+	for fixture in [
+		include_str!("proven_receiver_contract.json"),
+		include_str!("proven_receiver_protocol_contract.json"),
+		include_str!("proven_receiver_exclusions_contract.json"),
+		include_str!("proven_receiver_builtin_contract.json"),
+	] {
+		let contract: Json = serde_json::from_str(fixture).unwrap();
+		for row in contract["rows"].as_array().unwrap() {
+			std::println!(
+				"C18E_FRONTIER {}",
+				json!({"name":row["name"],"after":baseline(row)})
+			);
+		}
+	}
+}
+
+fn fresh(row: &Json) -> (Program, Context) {
+	let mut sources = Sources::new();
+	sources
+		.insert(crate::Source::memory(row["source"].as_str().unwrap()).unwrap())
+		.unwrap();
+	let context = context(row);
+	let program = super::compile(&mut sources, &context, &mut Diagnostics::new(), 23).unwrap();
+	(program, context)
+}
+
+#[test]
+fn proven_receiver_private_and_closure_entries_refuse_before_work() {
+	use crate::experimental_core::{
+		execute::Executor,
+		heap::{Limits, Store},
+		value::Value,
+	};
+	let contract: Json =
+		serde_json::from_str(include_str!("proven_receiver_contract.json")).unwrap();
+	for row in contract["rows"]
+		.as_array()
+		.unwrap()
+		.iter()
+		.filter(|row| !row["host_policy"].is_null())
+	{
+		let (program, context) = fresh(row);
+		let hash = row["entry_hash"]
+			.as_u64()
+			.map(Hash::new)
+			.unwrap_or_else(|| Hash::type_hash(["take"]));
+		let target = program.function(hash).unwrap();
+		let main = program.function(Hash::type_hash(["main"])).unwrap();
+		assert!(!program.entry_eligible(target));
+		assert!(program.entry_eligible(main));
+		let mut executor = Executor::new().unwrap();
+		executor
+			.set_host_runtime(Some(
+				crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
+			))
+			.unwrap();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let wrong = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["wrong"])).unwrap(),
+				&[],
+				1000,
+			)
+			.unwrap();
+		let foreign_store = Store::new(Limits::default()).unwrap();
+		let foreign = foreign_store.root_i64(1);
+		let baseline = (store.live_entries(), store.payload_bytes());
+		EFFECTS.with(|count| count.set(0));
+		executor.request_cancel();
+		for fuel in [0, 1000] {
+			for args in [
+				std::vec![],
+				std::vec![&wrong],
+				std::vec![&foreign],
+				std::vec![&wrong, &wrong],
+			] {
+				let failure = executor
+					.invoke(&program, &mut store, target, &args, fuel)
+					.unwrap_err();
+				assert_eq!(failure.error.refusal, Some(Refusal::Entry));
+				assert!(
+					failure.call_chain.is_empty()
+						&& failure.cleanup_error.is_none()
+						&& executor.is_idle()
+				);
+				assert_eq!((store.live_entries(), store.payload_bytes()), baseline);
+				assert_eq!(EFFECTS.with(Cell::get), 0);
+			}
+		}
+		let failure = executor
+			.invoke(&program, &mut store, main, &[], 1000)
+			.unwrap_err();
+		assert_eq!(failure.error.kind, ErrorKind::Cancelled);
+		assert_eq!(EFFECTS.with(Cell::get), 0);
+		let result = executor
+			.invoke(&program, &mut store, main, &[], 1000)
+			.unwrap();
+		assert!(matches!(store.import(&result).unwrap(), Value::I64(7)));
+		assert_eq!(EFFECTS.with(Cell::get), 1);
+		store.root_release(result).unwrap();
+		store.root_release(wrong).unwrap();
+		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 	}
 }
 
@@ -381,11 +510,211 @@ fn proven_receiver_test_builtin_macro_stock_is_frozen() {
 }
 
 #[test]
-fn proven_receiver_test_builtin_macro_m4_is_frozen() {
+fn proven_receiver_test_builtin_macro_frontier() {
 	let contract: Json =
 		serde_json::from_str(include_str!("proven_receiver_builtin_contract.json")).unwrap();
 	for row in contract["rows"].as_array().unwrap() {
-		assert_eq!(baseline(row), row["before"], "{}", row["name"]);
+		assert_eq!(baseline(row)["admitted"], true, "{}", row["name"]);
+	}
+}
+
+fn expected_admission(row: &Json) -> bool {
+	let overlay: Json =
+		serde_json::from_str(include_str!("proven_receiver_prediction_overlay.json")).unwrap();
+	overlay["rows"]
+		.as_array()
+		.unwrap()
+		.iter()
+		.find(|entry| entry["name"] == row["name"])
+		.map_or_else(
+			|| {
+				row["after_admitted"]
+					.as_bool()
+					.unwrap_or_else(|| row["after"] == "admitted")
+			},
+			|entry| entry["after_admitted"].as_bool().unwrap(),
+		)
+}
+
+#[test]
+fn proven_receiver_frozen_frontier_and_execution() {
+	use crate::experimental_core::{
+		execute::Executor,
+		heap::{Limits, Store},
+		value::Value,
+	};
+	for fixture in [
+		include_str!("proven_receiver_contract.json"),
+		include_str!("proven_receiver_builtin_contract.json"),
+		include_str!("proven_receiver_protocol_contract.json"),
+		include_str!("proven_receiver_exclusions_contract.json"),
+	] {
+		let contract: Json = serde_json::from_str(fixture).unwrap();
+		for row in contract["rows"].as_array().unwrap() {
+			let actual = baseline(row);
+			assert_eq!(
+				actual["admitted"],
+				expected_admission(row),
+				"{}: {}",
+				row["name"],
+				actual
+			);
+			if !expected_admission(row) {
+				if row["after_admitted"].is_boolean() {
+					assert_eq!(actual, row["before"], "{}", row["name"]);
+				}
+				continue;
+			}
+			let (program, context) = fresh(row);
+			let main = program.function(Hash::type_hash(["main"])).unwrap();
+			assert!(program.entry_eligible(main), "{}", row["name"]);
+			let mut executor = Executor::new().unwrap();
+			executor
+				.set_host_runtime(Some(
+					crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
+				))
+				.unwrap();
+			let mut store = Store::new(Limits::default()).unwrap();
+			let argument = row["args"]
+				.get(0)
+				.and_then(Json::as_i64)
+				.map(|n| store.root_i64(n));
+			let arguments = argument.iter().collect::<std::vec::Vec<_>>();
+			EFFECTS.with(|count| count.set(0));
+			let result = executor
+				.invoke(&program, &mut store, main, &arguments, 10000)
+				.unwrap();
+			let expected = if row["host_policy"].is_null() {
+				row["stock"]["result"]["value"].as_i64().unwrap()
+			} else {
+				7
+			};
+			assert!(
+				matches!(store.import(&result).unwrap(), Value::I64(value) if value == expected),
+				"{}",
+				row["name"]
+			);
+			assert_eq!(
+				EFFECTS.with(Cell::get),
+				usize::from(!row["host_policy"].is_null()),
+				"{}",
+				row["name"]
+			);
+			store.root_release(result).unwrap();
+			if let Some(argument) = argument {
+				store.root_release(argument).unwrap();
+			}
+			assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+		}
+	}
+}
+
+#[test]
+#[ignore = "operator-only unmodified AWFY compilation frontier"]
+fn proven_receiver_awfy_frontier() {
+	let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../benches/awfy");
+	for name in [
+		"bounce",
+		"cd",
+		"havlak",
+		"json",
+		"list",
+		"mandelbrot",
+		"nbody",
+		"permute",
+		"queens",
+		"sieve",
+		"storage",
+		"towers",
+	] {
+		let files = std::vec![
+			std::string::String::from("harness.rn"),
+			std::string::String::from("benchmark.rn")
+		];
+		let mut files = files;
+		if matches!(name, "bounce" | "cd" | "havlak" | "json" | "storage") {
+			files.push(std::string::String::from("som.rn"));
+		}
+		files.push(std::format!("{name}.rn"));
+		let mut sources = Sources::new();
+		let mut inputs = std::vec::Vec::new();
+		for file in files {
+			let text = std::fs::read_to_string(root.join(&file)).unwrap();
+			inputs.push((file.clone(), text.clone()));
+			sources
+				.insert(crate::Source::new(std::format!("awfy/{file}"), text).unwrap())
+				.unwrap();
+		}
+		let result = super::compile(
+			&mut sources,
+			&Context::with_default_modules().unwrap(),
+			&mut Diagnostics::new(),
+			23,
+		);
+		let observation = match result {
+			Ok(program) => {
+				let ineligible: std::vec::Vec<_> = program.entry_ineligible.iter().map(|&id| {
+					let f = program.code.function(id).unwrap();
+					json!({"id":id,"hash":std::format!("{:?}",program.functions[id as usize]),"parameters":f.parameters,"first_location":f.locations.first().map(|at|json!([at.source,at.start,at.end]))})
+				}).collect();
+				json!({"admitted":true,"functions":program.functions.len(),"ineligible":ineligible,"main_eligible":program.entry_eligible(program.function(Hash::type_hash(["main"])).unwrap())})
+			}
+			Err(error) => {
+				let location = error.location.map(|at| {
+					let input = inputs.get(at.source as usize);
+					json!({"source":at.source,"span":[at.start,at.end],"file":input.map(|(file,_)|file),"text":input.and_then(|(_,text)|text.get(at.start as usize..at.end as usize))})
+				});
+				json!({"admitted":false,"refusal":std::format!("{:?}",error.refusal),"location":location})
+			}
+		};
+		std::println!(
+			"C18E_AWFY {}",
+			json!({"program":name,"observation":observation})
+		);
+	}
+}
+
+#[test]
+fn proven_receiver_both_context_absences_are_checked_before_execution() {
+	use crate::experimental_core::{
+		execute::Executor,
+		heap::{Limits, Store},
+	};
+	for key in [
+		Hash::associated_function(Hash::type_hash(["R"]), Hash::ident("capacity")),
+		Hash::type_hash(["R", "capacity"]),
+	] {
+		let row = json!({"source":"struct R; impl R { fn capacity(self) { 7 } } fn make() { R } pub fn main() { mark(); make().capacity() }"});
+		let (program, mut context) = fresh(&row);
+		let main = program.function(Hash::type_hash(["main"])).unwrap();
+		let original = crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap();
+		let handler = context
+			.lookup_function(Hash::type_hash(["mark"]))
+			.unwrap()
+			.clone();
+		context.c13_insert_raw_fixture(key, handler).unwrap();
+		let mut executor = Executor::new().unwrap();
+		executor
+			.set_host_runtime(Some(
+				crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
+			))
+			.unwrap();
+		let mut store = Store::new(Limits::default()).unwrap();
+		EFFECTS.with(|count| count.set(0));
+		let failure = executor
+			.invoke(&program, &mut store, main, &[], 1000)
+			.unwrap_err();
+		assert_eq!(failure.error.kind, ErrorKind::InvalidCode);
+		assert_eq!(EFFECTS.with(Cell::get), 0);
+		assert!(executor.is_idle());
+		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+		executor.set_host_runtime(Some(original)).unwrap();
+		let result = executor
+			.invoke(&program, &mut store, main, &[], 1000)
+			.unwrap();
+		assert_eq!(EFFECTS.with(Cell::get), 1);
+		store.root_release(result).unwrap();
+		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 	}
 }
 
@@ -439,4 +768,86 @@ fn proven_receiver_exclusions_keep_m4_refusals() {
 		);
 		assert_eq!(baseline(row), row["before"], "{}", row["name"]);
 	}
+}
+
+#[test]
+fn deferred_refusal_keeps_the_frozen_object_diagnostic() {
+	let source = "use c17b::tap;struct P{x}struct T(a)enum E{A,B(x)}impl T{fn len(self){99}fn is_empty(self){false}}pub fn main(){(T(1).len(),T(1).is_empty(),#{}.len(),#{}.is_empty())}pub fn c17b_reuse(){7}";
+	let mut context = Context::with_default_modules().unwrap();
+	let mut module = crate::Module::with_item(["c17b"]).unwrap();
+	module
+		.fresh_host_function("tap", |_: i64, value: i64| value)
+		.unwrap();
+	context.install(module).unwrap();
+	let mut sources = Sources::new();
+	sources
+		.insert(crate::Source::new("c17b.rn", source).unwrap())
+		.unwrap();
+	let mut diagnostics = Diagnostics::new();
+	let error = super::compile(&mut sources, &context, &mut diagnostics, 16)
+		.err()
+		.unwrap();
+	assert_eq!(error.refusal, Some(Refusal::Method));
+	assert_eq!(error.location.unwrap().start, 140);
+	assert_eq!(error.location.unwrap().end, 149);
+	assert_eq!(std::format!("{:?}", diagnostics.diagnostics()), "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 140:149, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]");
+}
+
+#[test]
+fn deferred_refusal_paths_always_emit_the_compile_diagnostic() {
+	for source in [
+		"struct R;impl R{fn capacity(self){7}}fn make(x){x}pub fn main(){make(1).capacity()}",
+		"struct R;impl R{fn capacity(self){7}}fn probe(x){x.capacity()}pub fn main(){probe(R)}fn later(){probe(1)}",
+	] {
+		let context = Context::with_default_modules().unwrap();
+		let mut sources = Sources::new();
+		sources.insert(crate::Source::memory(source).unwrap()).unwrap();
+		let mut diagnostics = Diagnostics::new();
+		let error = super::compile(&mut sources, &context, &mut diagnostics, 23).err().unwrap();
+		assert_eq!(error.refusal, Some(Refusal::Method));
+		let at = error.location.unwrap();
+		assert!(diagnostics.has_error());
+		assert!(diagnostics.diagnostics().iter().any(|diagnostic| {
+			let crate::diagnostics::Diagnostic::Fatal(fatal) = diagnostic else { return false };
+			fatal.source_id() == crate::SourceId::new(at.source)
+				&& fatal.as_compile_error().is_some_and(|compile| {
+					compile.span() == Span::new(at.start, at.end)
+						&& compile.to_string() == "Method"
+				})
+		}), "{source}: {:?}", diagnostics.diagnostics());
+	}
+}
+
+#[test]
+fn deferred_refusals_keep_all_body_diagnostics_and_the_closure_span() {
+	let cases: Json =
+		serde_json::from_str(include_str!("../tests/gap_hunt/numeric_methods/cases.json")).unwrap();
+	let rules: Json = serde_json::from_str(include_str!(
+		"../tests/gap_hunt/numeric_methods/dispositions.json"
+	))
+	.unwrap();
+	let row = &cases[316];
+	assert_eq!(row["label"], "script/impl-partial_cmp-sort");
+	let source = row["source"].as_str().unwrap();
+	let mut context = Context::with_default_modules().unwrap();
+	let mut module = crate::Module::with_item(["c17c"]).unwrap();
+	module
+		.fresh_host_function("tap", |_: i64, value: i64| value)
+		.unwrap();
+	context.install(module).unwrap();
+	let mut sources = Sources::new();
+	sources
+		.insert(crate::Source::new("c17c.rn", source).unwrap())
+		.unwrap();
+	let mut diagnostics = Diagnostics::new();
+	let error = super::compile(&mut sources, &context, &mut diagnostics, 16)
+		.err()
+		.unwrap();
+	assert_eq!(error.refusal, Some(Refusal::Method));
+	assert_eq!(error.location.unwrap().start, 156);
+	assert_eq!(error.location.unwrap().end, 172);
+	assert_eq!(
+		json!(std::format!("{:?}", diagnostics.diagnostics())),
+		rules["rows"][316]["diagnostics"]
+	);
 }

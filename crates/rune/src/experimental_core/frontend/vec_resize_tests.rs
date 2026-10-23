@@ -212,7 +212,6 @@ fn vec_resize_fresh_matches_the_frozen_contract() {
 			.as_str()
 			.unwrap()
 			.starts_with("Refused")
-			|| name == "script-parameter"
 		{
 			let error = compiled.err().expect(name);
 			assert!(
@@ -222,6 +221,14 @@ fn vec_resize_fresh_matches_the_frozen_contract() {
 			continue;
 		}
 		let program = compiled.unwrap_or_else(|e| panic!("{name}: {e:?}"));
+		// C18b3e additive overlay: the frozen script-parameter row now has
+		// Exact(S), so the range operand is passed to script without cloning.
+		if name == "script-parameter" {
+			let call = program.function(Hash::type_hash(["call"])).unwrap();
+			assert_eq!(program.entry_ineligible.as_slice(), &[call]);
+			assert!(program.entry_eligible(program.function(Hash::type_hash(["main"])).unwrap()));
+		}
+
 		let mut store = Store::new(Limits::default()).unwrap();
 		let mut executor = Executor::new().unwrap();
 		executor

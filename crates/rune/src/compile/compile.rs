@@ -325,8 +325,56 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 						))?;
 					}
 					let hash = self.q.pool.item_type_hash(item_meta.item);
+					// Copy bounded summaries while every body in this HIR arena is
+					// available, before lowering can stop at its first refusal.
+					fresh
+						.observe(
+							hash,
+							hash,
+							type_hash,
+							matches!(f.call, crate::runtime::Call::Immediate),
+							&exprs,
+							&hir,
+							&[],
+							self.q.inner,
+							self.q.pool,
+							self.q.context,
+						)
+						.map_err(|e| fresh.compile_error(e, location.span))?;
+					for build in &secondary_builds {
+						if let SecondaryBuild::Closure(c) = &build.build {
+							if matches!(c.call, crate::runtime::Call::Immediate) {
+								let closure = hir::ItemFn {
+									span: c.hir.span,
+									args: c.hir.args,
+									body: hir::Block {
+										span: c.hir.span,
+										label: None,
+										statements: &[],
+										value: Some(c.hir.body),
+										drop: &[],
+									},
+								};
+								fresh
+									.observe(
+										hash,
+										self.q.pool.item_type_hash(build.item_meta.item),
+										None,
+										true,
+										&exprs,
+										&closure,
+										c.hir.captures,
+										self.q.inner,
+										self.q.pool,
+										self.q.context,
+									)
+									.map_err(|e| fresh.compile_error(e, c.hir.span))?;
+							}
+						}
+					}
 					// Preserve the first named expression refusal (e.g. Yield),
 					// before classifying a whole non-immediate function.
+					fresh.checkpoint_diagnostics(self.q.diagnostics, hash, None);
 					fresh
 						.lower(
 							hash,
@@ -361,6 +409,11 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 										drop: &[],
 									},
 								};
+								fresh.checkpoint_diagnostics(
+									self.q.diagnostics,
+									hash,
+									Some(c.hir.span),
+								);
 								fresh
 									.lower(
 										self.q.pool.item_type_hash(build.item_meta.item),
@@ -393,7 +446,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 								end: at.end.0,
 							},
 						);
-						fresh.failure.get_or_insert(error);
+						fresh.record_failure(error);
 						return Err(compile::Error::msg(span, operation.name()));
 					}
 					if !self.q.is_used(&item_meta) {

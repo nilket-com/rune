@@ -195,8 +195,9 @@ fn receiver_dependent_arity_preserves_receiver_and_argument_effects() {
 #[rune(item = ::receiver_domain)]
 struct ContextOnly;
 
-#[test]
-fn context_only_native_provider_still_refuses_the_whole_site() {
+const C18E_CONTEXT_ONLY_SOURCE: &str = "struct Local;impl Local{fn is_empty(self){true}}fn probe(x){x.is_empty()}pub fn main(){if probe(Local){1}else{0}}";
+
+fn context_only_provider() -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["receiver_domain"]).unwrap();
 	module.ty::<ContextOnly>().unwrap();
@@ -205,12 +206,38 @@ fn context_only_native_provider_still_refuses_the_whole_site() {
 		.build_associated::<ContextOnly>()
 		.unwrap();
 	context.install(module).unwrap();
-	// ContextOnly never appears in source and cannot reach this call. The
-	// absence of its unsupported handler from a source scan is not a proof.
-	let source = "struct Local;impl Local{fn is_empty(self){true}}fn probe(x){x.is_empty()}pub fn main(){if probe(Local){1}else{0}}";
-	assert_eq!(stock_i64(source, &context), 1);
-	let error = compile_source(source, &context).err().unwrap();
+	context
+}
+
+#[test]
+fn context_only_native_provider_keeps_an_unknown_parameter_site_refused() {
+	let context = context_only_provider();
+	let source = std::format!("{C18E_CONTEXT_ONLY_SOURCE} pub fn expose(){{probe}}");
+	assert_eq!(stock_i64(&source, &context), 1);
+	let error = compile_source(&source, &context).err().unwrap();
 	assert_eq!(error.refusal, Some(Refusal::Method));
+	assert!(error.location.is_some());
+}
+
+#[test]
+fn exact_parameter_skips_an_unrelated_context_only_native_provider() {
+	// C18b3e overlay keeps the original source and its stock value intact.
+	let context = context_only_provider();
+	assert_eq!(stock_i64(C18E_CONTEXT_ONLY_SOURCE, &context), 1);
+	let program = compile_source(C18E_CONTEXT_ONLY_SOURCE, &context).unwrap();
+	let probe = program.function(Hash::type_hash(["probe"])).unwrap();
+	assert_eq!(program.entry_ineligible.as_slice(), &[probe]);
+	let main = program.function(Hash::type_hash(["main"])).unwrap();
+	assert!(program.entry_eligible(main));
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = executor(&context);
+	let result = executor
+		.invoke(&program, &mut store, main, &[], 1000)
+		.unwrap();
+	assert_i64(&store, &result, 1);
+	store.root_release(result).unwrap();
+	assert!(executor.is_idle());
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 }
 
 #[test]

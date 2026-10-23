@@ -195,6 +195,13 @@ pub(crate) struct Expr<'hir> {
 #[repr(transparent)]
 pub(crate) struct ExprId(#[try_clone(copy)] u32);
 
+impl ExprId {
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_index(self) -> usize {
+		self.0 as usize
+	}
+}
+
 impl fmt::Display for ExprId {
 	#[inline]
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

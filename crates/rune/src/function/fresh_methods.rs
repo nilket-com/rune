@@ -69,6 +69,11 @@ pub(crate) struct Instances {
 	incomplete: bool,
 }
 impl Instances {
+	/// The complete source index has at least one possible script target.
+	pub(crate) fn has_functions(&self) -> bool {
+		!self.incomplete && !self.items.is_empty()
+	}
+
 	pub(crate) fn insert(&mut self, associated: Hash, item: Hash) {
 		if !self.incomplete && self.items.try_insert(associated, item).is_err() {
 			self.incomplete = true;

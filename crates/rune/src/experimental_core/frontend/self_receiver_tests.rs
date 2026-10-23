@@ -59,9 +59,47 @@ fn self_receiver_frozen_frontier() {
 	let context = Context::with_default_modules().unwrap();
 	for c in CASES {
 		let result = compile_source(c.source, &context);
-		assert_eq!(result.is_ok(), c.admitted_after, "{}", c.name);
+		// C18b3e's approved additive overlay leaves the frozen CASES intact.
+		let progressed = matches!(c.name, "reassigned" | "closure" | "alias");
+		assert_eq!(result.is_ok(), c.admitted_after || progressed, "{}", c.name);
 		assert!(!c.admitted_before || c.admitted_after);
 		if let Ok(program) = result {
+			if progressed {
+				let run = program.function(Hash::type_hash(["S", "run"])).unwrap();
+				let main = program.function(Hash::type_hash(["main"])).unwrap();
+				let capacity = program
+					.function(Hash::type_hash(["S", "capacity"]))
+					.unwrap();
+				let mut expected = std::vec![run];
+				if c.name == "closure" {
+					let closures: std::vec::Vec<_> = (0..program.code.functions() as u32)
+						.filter(|&id| {
+							id != run
+								&& id != main && id != capacity
+								&& program.functions[id as usize] != Hash::EMPTY
+								&& program.code.function(id).unwrap().parameters == 1
+						})
+						.collect();
+					assert_eq!(closures.len(), 1);
+					expected.extend(closures);
+				}
+				let mut actual: std::vec::Vec<_> =
+					program.entry_ineligible.iter().copied().collect();
+				expected.sort_unstable();
+				actual.sort_unstable();
+				assert_eq!(actual, expected, "{}", c.name);
+				assert!(program.entry_eligible(main));
+				let ids: std::vec::Vec<_> = actual
+					.iter()
+					.map(
+						|&id| serde_json::json!({"id":id,"hash":std::format!("{:?}",program.functions[id as usize])}),
+					)
+					.collect();
+				std::println!(
+					"C18E_SELF_POLICY {}",
+					serde_json::json!({"case":c.name,"denied":ids})
+				);
+			}
 			if c.admitted_before {
 				assert!(
 					program.entry_ineligible.is_empty(),
@@ -268,15 +306,20 @@ fn self_receiver_generated_method_values_cannot_escape() {
 }
 
 #[test]
-fn self_receiver_closures_receive_no_exact_capture_fact() {
+fn self_receiver_closure_capture_proof_fulfills_the_entry_policy_pin() {
 	let context = Context::with_default_modules().unwrap();
-	assert!(compile_source(
+	let program = compile_source(
 		CASES.iter().find(|c| c.name == "closure").unwrap().source,
-		&context
+		&context,
 	)
-	.is_err());
-	// A future exact-capture proof must mark the closure ID host-ineligible,
-	// since a host can supply arbitrary values for its capture parameters.
+	.unwrap();
+	let main = program.function(Hash::type_hash(["main"])).unwrap();
+	let run = program.function(Hash::type_hash(["S", "run"])).unwrap();
+	assert!(program.entry_eligible(main));
+	assert!(!program.entry_eligible(run));
+	assert_eq!(program.entry_ineligible.len(), 2);
+	// C18b3d pinned the future capture entry-policy obligation. C18b3e
+	// fulfills that forward obligation on the same frozen source.
 	let mut program = compile_source("pub fn main(){let n=7;let f=||n;f}", &context).unwrap();
 	let closure = (0..program.code.functions() as u32)
 		.find(|&id| program.code.function(id).unwrap().parameters == 1)

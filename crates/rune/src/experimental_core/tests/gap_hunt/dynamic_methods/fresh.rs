@@ -24,6 +24,22 @@ fn fresh_child() {
 		.unwrap();
 	let mut diagnostics = Diagnostics::new();
 	let built = frontend::compile(&mut sources, &context, &mut diagnostics, 16);
+	#[cfg(all(feature = "std", not(miri)))]
+	if let Some(path) = std::env::var_os("C18E_OPS_RESULT") {
+		use std::io::Write;
+		let text = match &built {
+			Ok(program) => {
+				let mut text = format!("functions={}\n", program.code.functions());
+				for id in 0..program.code.functions() as u32 {
+					text.push_str(&format!("function{id} entry={}\n{}", program.entry_eligible(id), program.code.function(id).unwrap().emission_snapshot()));
+				}
+				text
+			}
+			Err(error) => format!("refused:{error:?}\n"),
+		};
+		std::fs::OpenOptions::new().create_new(true).write(true).open(path).unwrap().write_all(text.as_bytes()).unwrap();
+	}
+
 	let mut store = Store::new(Limits {
 		entries: 4096,
 		bytes: 4 << 20,

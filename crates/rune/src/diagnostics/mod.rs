@@ -354,6 +354,23 @@ impl Diagnostics {
 		Ok(())
 	}
 
+	/// Emit through the ordinary error hook at an earlier fresh lowering handoff.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn error_at<T>(
+		&mut self,
+		checkpoint: usize,
+		source_id: SourceId,
+		kind: T,
+	) -> alloc::Result<()>
+	where
+		FatalDiagnosticKind: From<T>,
+	{
+		debug_assert!(checkpoint <= self.diagnostics.len());
+		self.error(source_id, kind)?;
+		self.diagnostics[checkpoint..].rotate_right(1);
+		Ok(())
+	}
+
 	/// Report an error.
 	pub(crate) fn error<T>(&mut self, source_id: SourceId, kind: T) -> alloc::Result<()>
 	where

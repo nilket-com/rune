@@ -56,10 +56,12 @@ impl Program {
 
 	/// Whether a function id may be invoked directly by a host.
 	///
-	/// Bodies relying on an exact script receiver or call-site fill proof are internal entries. On an
-	/// Entry refusal, an adapter can run stock from the untouched input; never
-	/// retry after charged execution. This also applies to any future closure
-	/// body whose captured receiver receives an exact-type proof.
+	/// Functions whose exact script receiver proof assumes nominal parameters or
+	/// captures are internal entries, as are adapters for a call-site fill proof.
+	/// On an Entry refusal, an adapter can run stock from the untouched input;
+	/// never retry after charged execution. Scalar parameters that do not feed
+	/// a receiver proof keep their existing entry policy. An exact capture proof
+	/// also makes its closure body id an internal entry.
 	pub fn entry_eligible(&self, id: u32) -> bool {
 		self.code.function(id).is_some() && !self.entry_refused(id)
 	}
@@ -84,6 +86,8 @@ impl Program {
 	}
 }
 
+pub(crate) mod receiver_proofs;
+
 pub(crate) struct Collector {
 	revision: u64,
 	entries: Vec<(Hash, Option<Function>, Option<Location>)>,
@@ -95,9 +99,93 @@ pub(crate) struct Collector {
 	variable_moved: Option<(Span, Span)>,
 	source_uses: Vec<Hash>,
 	self_proofs: Vec<(u32, Hash, Hash, Location)>,
+	proofs: receiver_proofs::Proofs,
+	proof_entries: Vec<u32>,
 }
 
 impl Collector {
+	pub(crate) fn record_failure(&mut self, error: Error) {
+		if self.failure.is_none() {
+			self.proofs.failure_after = Some(self.proofs.sites.len());
+			self.failure = Some(error);
+		}
+	}
+
+	pub(crate) fn observe(
+		&mut self,
+		arena: Hash,
+		hash: Hash,
+		receiver: Option<Hash>,
+		immediate: bool,
+		exprs: &crate::hir::Exprs<'_>,
+		item: &crate::hir::ItemFn<'_>,
+		captures: &[crate::hir::Variable],
+		query: &crate::query::QueryInner<'_>,
+		pool: &Pool,
+		context: &Context,
+	) -> Result<()> {
+		if self.proofs.disabled {
+			return Ok(());
+		}
+		// The source index is complete before the HIR handoff. With no script
+		// instance target, no formerly refused method can need a nominal proof.
+		if !query.fresh_instances.has_functions() {
+			self.proofs.disabled = true;
+			return Ok(());
+		}
+
+		match self.proofs.observe(
+			arena, hash, receiver, immediate, exprs, item, captures, query, pool, context,
+		) {
+			Err(error) if error.refusal == Some(Refusal::CodeLimit) => {
+				self.proofs.disabled = true;
+				Ok(())
+			}
+			result => result,
+		}
+	}
+
+	pub(crate) fn checkpoint_diagnostics(
+		&mut self,
+		diagnostics: &Diagnostics,
+		owner: Hash,
+		span: Option<Span>,
+	) {
+		self.proofs.diagnostic_checkpoint = diagnostics.diagnostics().len();
+		self.proofs.diagnostic_owner = owner;
+		self.proofs.diagnostic_span = span;
+	}
+
+	fn resolve_with_diagnostics(
+		&mut self,
+		context: &Context,
+		diagnostics: &mut Diagnostics,
+	) -> Result<()> {
+		let result = self.resolve_proofs(context);
+		// Independent bodies are all checked by the ordinary compiler. Keep its
+		// diagnostic stream even when an earlier body determines the returned refusal.
+		let failures = core::mem::take(&mut self.proofs.failures);
+		for (offset, failure) in failures.into_iter().enumerate() {
+			let at = failure.error.location.expect("deferred failure location");
+			let compile = self.compile_error(failure.error, failure.span);
+			diagnostics.error_at(
+				failure.checkpoint + offset,
+				crate::SourceId::new(at.source),
+				compile,
+			)?;
+		}
+		result
+	}
+
+	fn resolve_proofs(&mut self, context: &Context) -> Result<()> {
+		self.proofs.resolve(
+			&mut self.entries,
+			&mut self.transaction,
+			context,
+			&mut self.proof_entries,
+		)
+	}
+
 	pub(crate) fn compile_error(&mut self, error: Error, fallback: Span) -> crate::compile::Error {
 		if let Some((at, moved_at)) = self.variable_moved.take() {
 			#[cfg(not(feature = "emit"))]
@@ -163,7 +251,7 @@ impl Collector {
 			Ok(id) => id,
 			Err(error) => {
 				let error = error.at(function_at);
-				self.failure.get_or_insert(error);
+				self.record_failure(error);
 				return Err(error);
 			}
 		};
@@ -260,6 +348,8 @@ impl Collector {
 			&moved_error,
 			method.map(|(receiver, _)| receiver),
 			&self_proof,
+			&mut self.proofs,
+			hash,
 		);
 		let function = match result {
 			Ok(function) => function,
@@ -269,7 +359,7 @@ impl Collector {
 					error.location = Some(function_at);
 				}
 				self.variable_moved = moved_error.get();
-				self.failure.get_or_insert(error);
+				self.record_failure(error);
 				return Err(error);
 			}
 		};
@@ -284,8 +374,16 @@ impl Collector {
 		Ok(())
 	}
 
-	fn finish(mut self) -> Result<Program> {
-		let mut entry_ineligible = Vec::new();
+	fn finish(mut self, context: &Context, diagnostics: &mut Diagnostics) -> Result<Program> {
+		self.resolve_with_diagnostics(context, diagnostics)?;
+		if let Some(error) = self.failure {
+			return Err(error);
+		}
+		debug_assert!(
+			self.proofs.ready_to_seal(),
+			"unresolved receiver site at sealing"
+		);
+		let mut entry_ineligible = self.proof_entries;
 		// A guessed adapter ID cannot bypass its call site's fill proof.
 		if let Some(&id) = self
 			.native_helpers
@@ -415,6 +513,8 @@ pub fn compile(
 		variable_moved: None,
 		source_uses: Vec::new(),
 		self_proofs: Vec::new(),
+		proofs: receiver_proofs::Proofs::default(),
+		proof_entries: Vec::new(),
 	};
 
 	let mut unit = UnitBuilder::default();
@@ -446,6 +546,8 @@ pub fn compile(
 		Some(&mut collector),
 	)?;
 
+	collector.resolve_with_diagnostics(context, diagnostics)?;
+
 	if let Some(error) = collector.failure {
 		return Err(error);
 	}
@@ -470,7 +572,7 @@ pub fn compile(
 		return Err(error);
 	}
 
-	let mut program = collector.finish()?;
+	let mut program = collector.finish(context, diagnostics)?;
 	program.sources = retained;
 	Ok(program)
 }
