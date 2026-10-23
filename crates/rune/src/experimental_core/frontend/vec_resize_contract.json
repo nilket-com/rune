@@ -1,0 +1,973 @@
+{
+  "base": "dde821fd",
+  "record": "C17f",
+  "rows": [
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "grow-int",
+      "source": "pub fn main(){let v=[];v.resize(3,7);v[0]+v[2]}",
+      "source_sha256": "9cce0b175fe8de4c2868532b48f263bb669b2311b578f6af9a8e1d32f5b79dc6",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 14
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "grow-bool",
+      "source": "pub fn main(){let v=[];v.resize(3,true);if v[0]&&v[2]{1}else{0}}",
+      "source_sha256": "eba50d96c819a75e8fc62605e8dda139c662b71023d4ef5c5283ddfbeb6210c7",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 1
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "grow-unit",
+      "source": "pub fn main(){let v=[];v.resize(3,());v.len() as i64}",
+      "source_sha256": "5de9ccc67d0548b766211eb69bc95cbc5f154490777a4c070c4c8cebdc544be2",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 3
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "grow-none",
+      "source": "pub fn main(){let v=[];v.resize(3,None);if v[0].is_none()&&v[2].is_none(){1}else{0}}",
+      "source_sha256": "81f1d640f136da1422eadd4461feb3adebfa07ce4cbb66ffcb4ae7050deb0dea",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 1
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "grow-string",
+      "source": "pub fn main(){let v=[];v.resize(3,\"hi\");v[0].len() as i64+v[2].len() as i64}",
+      "source_sha256": "cc04cedb6143b2b6507baad997b8f03858bc5f28702482107ee23c1bd5db2c11",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 4
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "struct-independent",
+      "source": "struct P{x}pub fn main(){let fill=P{x:1};let v=[];v.resize(2,fill);v[0].x=9;fill.x*100+v[0].x*10+v[1].x}",
+      "source_sha256": "8753485a0a0215251698a533add049ee7e56fa88f04582e6ab9c77eb6ad9b4be",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 191
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "struct-child-retained",
+      "source": "struct P{x}pub fn main(){let fill=P{x:[1]};let v=[];v.resize(2,fill);v[0].x.push(9);fill.x.len() as i64*100+v[0].x.len() as i64*10+v[1].x.len() as i64}",
+      "source_sha256": "97719edd3d2aec5899bb85b8b258223e0680cc03883e3ab3c56148cd220ab8c3",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 222
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "nested-vec-doc",
+      "source": "pub fn main(){let inner=[1];let v=[2];v.resize(3,inner);inner.push(3);v[1].push(4);inner.len() as i64*100+v[1].len() as i64*10+v[2].len() as i64}",
+      "source_sha256": "93140d442d815ff3edc7a262d854d8f6ba0563f85c2f13ab9355c4b62bb707ea",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 221
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "object-independent",
+      "source": "pub fn main(){let fill=#{x:1};let v=[];v.resize(2,fill);v[0].x=9;fill.x*100+v[0].x*10+v[1].x}",
+      "source_sha256": "688ac6fd2d0d8cce0757377b89c0b519b9e1fb962e384fd96957b6b12b885cf0",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 191
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "tuple-recursive",
+      "source": "pub fn main(){let fill=([1],);let v=[];v.resize(2,fill);v[0].0.push(9);fill.0.len() as i64*100+v[0].0.len() as i64*10+v[1].0.len() as i64}",
+      "source_sha256": "8356e8fd6df733235f5914d87b1eec295bac72939407e8d7ef5d90b565e1f746",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 121
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "some-recursive",
+      "source": "pub fn main(){let fill=Some([1]);let v=[];v.resize(2,fill);v[0].0.push(9);fill.0.len() as i64*100+v[0].0.len() as i64*10+v[1].0.len() as i64}",
+      "source_sha256": "c8660c4c2b3637c757e88828e27db01e084c8f56a7e81c8f628a7704f787d7c9",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 121
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "ok-recursive",
+      "source": "pub fn main(){let fill=Ok([1]);let v=[];v.resize(2,fill);v[0].0.push(9);fill.0.len() as i64*100+v[0].0.len() as i64*10+v[1].0.len() as i64}",
+      "source_sha256": "9c0f9c758e333e07863ab707613505e19566d590c5f1b132985f6f090a2e1ebe",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 121
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "err-recursive",
+      "source": "pub fn main(){let fill=Err([1]);let v=[];v.resize(2,fill);v[0].0.push(9);fill.0.len() as i64*100+v[0].0.len() as i64*10+v[1].0.len() as i64}",
+      "source_sha256": "825e127d1c8f7c40b0c32d27bb587203f92ed4cf66829b618c977a97b7a29561",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 121
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "shrink",
+      "source": "pub fn main(){let v=[1,2,3,4];v.resize(2,None);v.len() as i64}",
+      "source_sha256": "3f689d3a07ecf2ba54cb531e00c40e0505bc8d824ee4be798e8b59bd9d4e4ea7",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 2
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "same",
+      "source": "pub fn main(){let v=[1,2,3,4];v.resize(4,None);v.len() as i64}",
+      "source_sha256": "237ec16b2daf361b6ae359f45d31b5d5ba4a6e2e32766c7854461be3fb9175ae",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 4
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "zero",
+      "source": "pub fn main(){let v=[1,2,3,4];v.resize(0,None);v.len() as i64}",
+      "source_sha256": "7216a9ac970f97bb79c52d073080a44db1770cb7201cdfe283ca0690d7919c93",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 0
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "alias-receiver",
+      "source": "pub fn main(){let v=[1];let a=v;a.resize(3,7);v[0]+v[1]+v[2]}",
+      "source_sha256": "f3292aa3b560e90ffab7bdc5d3023b51e3e8cc843ddfa32e9bf454e662330681",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 15
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact-error",
+      "context": "default",
+      "name": "self-fill-direct",
+      "source": "pub fn main(){let v=[1];v.resize(3,v);v.len() as i64}",
+      "source_sha256": "db8bf717253ec62a00e4752750c88c8a8d7ab92543d3ef3bdaee41b4761e7112",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Cannot read the receiver: it is being written",
+          "site": [
+            24,
+            37
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact-error",
+      "context": "default",
+      "name": "self-fill-some",
+      "source": "pub fn main(){let v=[1];v.resize(3,Some(v));v.len() as i64}",
+      "source_sha256": "596b1bcb99fe22ac4bf4299263c45a767b2a107c3f082621225b79a81e31c1bf",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Cannot read the receiver: it is being written",
+          "site": [
+            24,
+            43
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact-error",
+      "context": "default",
+      "name": "self-fill-tuple",
+      "source": "pub fn main(){let v=[1];v.resize(3,(0,v));v.len() as i64}",
+      "source_sha256": "f9a0dce4fd4500537024600b744d1af4dc84832f4ba25493ada764ee26f4a60e",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Cannot read the receiver: it is being written",
+          "site": [
+            24,
+            41
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact-error",
+      "context": "default",
+      "name": "self-fill-nested",
+      "source": "pub fn main(){let v=[1];v.resize(3,Some((0,v)));v.len() as i64}",
+      "source_sha256": "aba462dc938428b3d183bf40b291ad941f4c47d744ec49e3ea705d9f48be4a0e",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Cannot read the receiver: it is being written",
+          "site": [
+            24,
+            47
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "self-fill-shrink",
+      "source": "pub fn main(){let v=[1,2,3];v.resize(1,v);v.len() as i64}",
+      "source_sha256": "8f07d5c726e6be2a1335b3f6f049fa33be2f4ee23c56e1fe698ab3236e8baea6",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 1
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "self-fill-same",
+      "source": "pub fn main(){let v=[1];v.resize(1,v);v.len() as i64}",
+      "source_sha256": "f8acb9245470688f17caa366a57744ffa560b622cdc04abc611f4b112cae203f",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 1
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "self-retained-child",
+      "source": "pub fn main(){let v=[1];let fill=[v];v.resize(2,fill);v.len() as i64}",
+      "source_sha256": "b603c60f94931e998cd0ef476641d7f073f79d2312cd3e3dd3816c51c87db3ed",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 2
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact-error",
+      "context": "default",
+      "name": "negative",
+      "source": "pub fn main(){let v=[];v.resize(-1,0);v.len() as i64}",
+      "source_sha256": "ffbf59395d9717f87db61b866d9b7ee7fc73954e3c58aa352a3305efc359129d",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Failed to convert value `-1` to integer `usize`",
+          "site": [
+            23,
+            37
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact-error",
+      "context": "default",
+      "name": "float",
+      "source": "pub fn main(){let v=[];v.resize(1.5,0);v.len() as i64}",
+      "source_sha256": "302e2982a8db92dd4eec055ca57ca7b89be9bd6896f6ec0af2ebcfaa9c25537e",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Expected number type, but found `std::f64`",
+          "site": [
+            23,
+            38
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact-error",
+      "context": "default",
+      "name": "bool-length",
+      "source": "pub fn main(){let v=[];v.resize(true,0);v.len() as i64}",
+      "source_sha256": "5e4bf6c550c2c2d973e4b02c5d269fdb9f8e9c05d7cb4cf94d00817e8ea11157",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Expected number type, but found `std::bool`",
+          "site": [
+            23,
+            39
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact-error",
+      "context": "default",
+      "name": "overflow",
+      "source": "pub fn main(){let v=[];v.resize(9223372036854775807,0);v.len() as i64}",
+      "source_sha256": "9faba573293a65ea385356a1e06c2f59d2aaad4d45c8ced9c12e734235bb55a6",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Capacity overflow",
+          "site": [
+            23,
+            54
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Known-gap",
+      "context": "default",
+      "name": "budget-boundary",
+      "source": "pub fn main(){let v=[];v.resize(2000000,0);v.len() as i64}",
+      "source_sha256": "12c0d1a4ac61b2763b6a32182b1f443568bd946d01db63b55589b37473e99126",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 2000000
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Known-gap",
+      "context": "default",
+      "name": "entry-boundary",
+      "source": "pub fn main(){let v=[];v.resize(65537,None);v.len() as i64}",
+      "source_sha256": "ea2516bf99c104cc318b51b58b98d42cc02ea84287ca758a4a681cf25400dfc7",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 65537
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Refused-fill",
+      "context": "default",
+      "name": "range-fill",
+      "source": "pub fn main(){let v=[];v.resize(2,0..2);v.len() as i64}",
+      "source_sha256": "047dfa38a4d5775e3bcc7e9b1e21f400e3f1c8bd642add965c6abbcb6e486ef5",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Missing protocol function `CLONE` for `std::ops::Range`",
+          "site": [
+            23,
+            39
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Refused-fill",
+      "context": "default",
+      "name": "iterator-fill",
+      "source": "pub fn main(){let v=[];v.resize(2,[1].iter());v.len() as i64}",
+      "source_sha256": "e351f469d427a4132ea24dab2ce9b02de16c5ced5d3d34c9752ac70c71518e9f",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Missing protocol function `CLONE` for `std::slice::Iter`",
+          "site": [
+            23,
+            45
+          ]
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Native)"
+      },
+      "classification": "Refused-provider",
+      "context": "custom-range-clone",
+      "name": "clone-fails-third",
+      "source": "pub fn main(){let v=[];c17f::keep(v);v.resize(4,0..2);v.len() as i64}",
+      "source_sha256": "e8d8625ed480a1c0d0e9a173f3d64dd65447a185d51783553d3ed5be4ce6dbce",
+      "stock": {
+        "clones": 3,
+        "diagnostics": "[]",
+        "result": {
+          "error": "Panicked: third clone",
+          "site": [
+            37,
+            53
+          ]
+        },
+        "witness": [
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "callable-function",
+      "source": "fn g(){7}pub fn main(){let v=[];v.resize(2,g);v[0]()+v[1]()}",
+      "source_sha256": "94401b4d354bd745e7a2ea8fb7ee25ae81f78b90b55434d9045c67dcb7f9d4ff",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 14
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Exact",
+      "context": "default",
+      "name": "callable-capture",
+      "source": "pub fn main(){let x=[1];let f=||x.len() as i64;let v=[];v.resize(2,f);x.push(9);v[0]()+v[1]()}",
+      "source_sha256": "dd74cdb2d7ebc2bf89c368ca11e9a7cd17e7b3f127eee6a24d75c66d7f5c390c",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 4
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": true,
+        "ineligible": [
+          1
+        ],
+        "ops": [
+          [
+            "0x1c69d5964e831fc1",
+            0,
+            2,
+            [
+              "List { out: 1, tag: Struct(Nominal(S)), args_start: 0, args_len: 0 }",
+              "Call { out: 0, function: 1, args_start: 0, args_len: 1 }",
+              "Release { value: 1 }",
+              "Return { value: 0 }"
+            ]
+          ],
+          [
+            "0xd49fb81e34f83bc4",
+            1,
+            7,
+            [
+              "Copy { out: 2, value: 0 }",
+              "Literal { out: 3, value: I64(3) }",
+              "Literal { out: 5, value: I64(0) }",
+              "Literal { out: 6, value: I64(2) }",
+              "Range { out: 4, start: 5, end: 6 }",
+              "Call { out: 1, function: 2, args_start: 0, args_len: 3 }",
+              "Release { value: 4 }",
+              "Release { value: 2 }",
+              "Return { value: 1 }"
+            ]
+          ],
+          [
+            "0x1dd2919e2d77f0a6",
+            3,
+            5,
+            [
+              "Literal { out: 4, value: I64(4) }",
+              "Binary { out: 3, op: Add, lhs: 1, rhs: 4 }",
+              "Return { value: 3 }"
+            ]
+          ]
+        ]
+      },
+      "classification": "Unchanged",
+      "context": "default",
+      "name": "script-self-unknown-fill",
+      "source": "struct S;impl S{fn resize(self,n,x){n+4}fn run(self){self.resize(3,0..2)}}pub fn main(){S.run()}",
+      "source_sha256": "079ae8e50fa7b84e9ba4819b06487c709ef10cefd4a2bb3e3220dcf647713dec",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 7
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": true,
+        "ineligible": [],
+        "ops": [
+          [
+            "0x1c69d5964e831fc1",
+            0,
+            6,
+            [
+              "List { out: 1, tag: Struct(Nominal(S)), args_start: 0, args_len: 0 }",
+              "Literal { out: 2, value: I64(3) }",
+              "Literal { out: 4, value: I64(0) }",
+              "Literal { out: 5, value: I64(2) }",
+              "Range { out: 3, start: 4, end: 5 }",
+              "Call { out: 0, function: 1, args_start: 0, args_len: 3 }",
+              "Release { value: 3 }",
+              "Release { value: 1 }",
+              "Return { value: 0 }"
+            ]
+          ],
+          [
+            "0x1dd2919e2d77f0a6",
+            3,
+            5,
+            [
+              "Literal { out: 4, value: I64(4) }",
+              "Binary { out: 3, op: Add, lhs: 1, rhs: 4 }",
+              "Return { value: 3 }"
+            ]
+          ]
+        ]
+      },
+      "classification": "Unchanged",
+      "context": "default",
+      "name": "script-literal-unknown-fill",
+      "source": "struct S;impl S{fn resize(self,n,x){n+4}}pub fn main(){S.resize(3,0..2)}",
+      "source_sha256": "19f34b9c277947e9866fb377ab4c42847db9adb018029a99478e735ab06b5039",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 7
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Unchanged",
+      "context": "default",
+      "name": "script-parameter",
+      "source": "struct S;impl S{fn resize(self,n,x){n+4}}fn call(x,v){x.resize(3,v)}pub fn main(){call(S,0..2)}",
+      "source_sha256": "86be0a88f7e74b38702b02b5abc9c0642eb4151d85bb6d7c099ec21ccc84fd80",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 7
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": false,
+        "located": true,
+        "refusal": "Some(Method)"
+      },
+      "classification": "Unchanged",
+      "context": "default",
+      "name": "mixed-script-receivers",
+      "source": "struct S;struct T;impl S{fn resize(self,n,x){n+4}}impl T{fn resize(self,n,x){n+5}}fn call(flag){let x=if flag{S}else{T};x.resize(3,None)}pub fn main(){call(true)+call(false)}",
+      "source_sha256": "c7f09e02e0ed26d2018d576cc6e3afb7eebc75b4546b3a110d6121f65fc992fe",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 15
+        },
+        "witness": null
+      }
+    },
+    {
+      "before": {
+        "admitted": true,
+        "ineligible": [],
+        "ops": [
+          [
+            "0x1c69d5964e831fc1",
+            0,
+            8,
+            [
+              "List { out: 3, tag: Struct(Nominal(S)), args_start: 0, args_len: 0 }",
+              "Literal { out: 4, value: I64(3) }",
+              "Literal { out: 6, value: I64(0) }",
+              "Literal { out: 7, value: I64(2) }",
+              "Range { out: 5, start: 6, end: 7 }",
+              "Call { out: 2, function: 1, args_start: 0, args_len: 3 }",
+              "Release { value: 5 }",
+              "Release { value: 3 }",
+              "List { out: 4, tag: Struct(Nominal(T)), args_start: 3, args_len: 0 }",
+              "Literal { out: 5, value: I64(3) }",
+              "Variant { out: 6, tag: Option, success: false, payload: None }",
+              "Call { out: 3, function: 2, args_start: 3, args_len: 3 }",
+              "Release { value: 6 }",
+              "Release { value: 4 }",
+              "Binary { out: 1, op: Add, lhs: 2, rhs: 3 }",
+              "Release { value: 3 }",
+              "Release { value: 2 }",
+              "Literal { out: 5, value: I64(1) }",
+              "List { out: 4, tag: Vec, args_start: 6, args_len: 1 }",
+              "Len { out: 3, value: 4 }",
+              "Release { value: 4 }",
+              "Cast { out: 2, value: 3, tag: I64 }",
+              "Binary { out: 0, op: Add, lhs: 1, rhs: 2 }",
+              "Release { value: 1 }",
+              "Return { value: 0 }"
+            ]
+          ],
+          [
+            "0x1dd2919e2d77f0a6",
+            3,
+            5,
+            [
+              "Literal { out: 4, value: I64(4) }",
+              "Binary { out: 3, op: Add, lhs: 1, rhs: 4 }",
+              "Return { value: 3 }"
+            ]
+          ],
+          [
+            "0xf85a8ee086b8c3a4",
+            3,
+            5,
+            [
+              "Literal { out: 4, value: I64(5) }",
+              "Binary { out: 3, op: Add, lhs: 1, rhs: 4 }",
+              "Return { value: 3 }"
+            ]
+          ]
+        ]
+      },
+      "classification": "Unchanged",
+      "context": "default",
+      "name": "mixed-static-receivers",
+      "source": "struct S;struct T;impl S{fn resize(self,n,x){n+4}}impl T{fn resize(self,n,x){n+5}}pub fn main(){S.resize(3,0..2)+T.resize(3,None)+[1].len() as i64}",
+      "source_sha256": "90abe91a5909f60e74d4943e20ce91f3013d99acd2be5b1d657a1bb81ce222d2",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 16
+        },
+        "witness": null
+      }
+    }
+  ]
+}

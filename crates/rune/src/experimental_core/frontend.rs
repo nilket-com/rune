@@ -496,3 +496,6 @@ mod vec_constructor_tests;
 
 #[cfg(test)]
 mod self_receiver_tests;
+
+#[cfg(test)]
+mod vec_resize_tests;
