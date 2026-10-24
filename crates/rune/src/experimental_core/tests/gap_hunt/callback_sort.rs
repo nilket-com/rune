@@ -125,3 +125,5 @@ include!("callback_sort/fresh.rs");
 include!("callback_sort/fresh_contract.rs");
 
 include!("callback_sort/retained_enforce.rs");
+
+include!("callback_sort/s7a_runtime_progression.rs");

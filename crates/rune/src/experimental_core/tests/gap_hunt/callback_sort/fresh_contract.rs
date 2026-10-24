@@ -164,6 +164,9 @@ fn compare_fresh_row(
 	if c11_check_stale_refusal_admission(label, source, observation, counts, disposition)? {
 		return Ok(());
 	}
+	if c11_s7a_runtime_progression(label, source, fixture, policy, observation, disposition)? {
+		return Ok(());
+	}
 	if matches!(policy, "Refused-surface" | "Refused-runtime") {
 		let spans = read_json(include_str!("../../callback_sort_refusal_spans.json"));
 		let expected = &spans[label];

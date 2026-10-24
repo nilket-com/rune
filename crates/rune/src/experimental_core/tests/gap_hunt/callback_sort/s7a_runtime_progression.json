@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "approval": "01a16e74-0eb8-75b6-8cd7-e15964e1108e",
+  "rows": [
+    {
+      "index": 99,
+      "label": "type/non-vector",
+      "fixture": "non-vector",
+      "source_sha256": "6c08150b4c2e3c02d258560af4d2c880e2193cd07360b1c41e49ae88959c062d",
+      "legacy_policy": "Refused-runtime",
+      "classification": "Stock-exact via the existing P1 and D1 API-view projections",
+      "legacy_refusal_sha256": "27f3b830280c5855d23197ab0f901bdb79f4613145b7000231158139c17bfa2c",
+      "legacy_stock_common_sha256": "512589036fb8ea63a9c79e038c29b4869a8a82e5ec939d7522cb48df6ea5bca0",
+      "legacy_span": {
+        "source_sha256": "6c08150b4c2e3c02d258560af4d2c880e2193cd07360b1c41e49ae88959c062d",
+        "source": 0,
+        "start": 62,
+        "end": 80,
+        "span_hex": "762e736f72745f627928636f6d7061726529"
+      },
+      "stock_common": {
+        "outcome": {
+          "chain": [],
+          "class": "Type",
+          "display": "Type `std::i64` has no matching method",
+          "kind": "MissingInstanceFunction { hash: 0xbe008198f0c7d3a2, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }",
+          "sites": [
+            {
+              "end": 80,
+              "frames": "[]",
+              "source": 0,
+              "start": 62
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "MissingInstanceFunction { hash: 0xbe008198f0c7d3a2, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x1cad9186c9641c4f }) }"
+          }
+        },
+        "before": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ]
+          ],
+          "root": 0
+        },
+        "post": {
+          "nodes": [
+            [
+              "Tuple",
+              "0xfeb65b3f4755aef0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ],
+            [
+              "Vec",
+              "0xc11b1e769aea94f2",
+              []
+            ]
+          ],
+          "root": 0
+        },
+        "events": [],
+        "events_after_reuse": [
+          {
+            "event": "mark",
+            "hex": "7265757365"
+          }
+        ],
+        "reuse": {
+          "graph": {
+            "nodes": [
+              [
+                "I64",
+                "0x1cad9186c9641c4f",
+                "7"
+              ]
+            ],
+            "root": 0
+          },
+          "status": "value"
+        },
+        "invoked": true
+      },
+      "stock_common_sha256": "89edc07f6c52a96721cd1e7357720e74bb0813b5e219d35d39436d34c364207c",
+      "public_display": "Type `std::i64` has no method named `sort_by`",
+      "kind_display": "Type `std::i64` has no matching method",
+      "p1_counts": {
+        "/outcome/kind": 1,
+        "/outcome/typed/raw_kind": 1
+      },
+      "raw_stock_sha256": "aedbd12206a073c4cf5a5a6eedb5147540c39e2f0e8ab1ea5b608f5da991c0c3",
+      "raw_fresh_sha256": "8d2bfc2b13ed0751110f7d85c0f19ec4b6077ba0427db9b3d047b59b2e93b406"
+    }
+  ]
+}
