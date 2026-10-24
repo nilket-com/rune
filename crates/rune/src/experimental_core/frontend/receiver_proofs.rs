@@ -2,7 +2,8 @@
 //!
 //! The HIR handoff copies each body's expression dependencies and call edges.
 //! A body owns its return expressions; a shared closure arena supplies writes
-//! and function-value uses, never another body's returns. Fields stay Unknown.
+//! and function-value uses, never another body's returns. A separate field phase
+//! joins all named stores without changing successful nominal-only proofs.
 //!
 //! Binding facts join every initializer and assignment by variable identity.
 //! Parameter facts join all script incoming edges. Genuine opaque closures
@@ -20,6 +21,8 @@
 //! programs that use only existing lowering keep their admission and code.
 use super::*;
 use crate::hir;
+
+mod fields;
 
 const LIMIT: usize = 262_144;
 type Id = usize;
@@ -41,6 +44,8 @@ enum Kind {
 	Return,
 	End,
 	Call(Hash),
+	// The first edge is a provenance obligation; the second supplies the tag.
+	Projection,
 }
 
 struct Edge {
@@ -86,7 +91,7 @@ pub(crate) struct Site {
 	pub(crate) instruction: Option<(u32, u32, u32, u32)>,
 }
 
-pub(crate) struct Failure {
+pub(crate) struct Unproven {
 	pub(crate) error: Error,
 	pub(crate) checkpoint: usize,
 	pub(crate) span: crate::ast::Span,
@@ -94,7 +99,7 @@ pub(crate) struct Failure {
 
 #[derive(Default)]
 pub(crate) struct Proofs {
-	pub(crate) failures: Vec<Failure>,
+	pub(crate) failures: Vec<Unproven>,
 	resolution_error: Option<Error>,
 	pub(crate) diagnostic_owner: Hash,
 	pub(crate) diagnostic_span: Option<crate::ast::Span>,
@@ -112,6 +117,7 @@ pub(crate) struct Proofs {
 	arenas: Vec<Hash>,
 	pub(crate) sites: Vec<Site>,
 	pub(crate) failure_after: Option<usize>,
+	fields: fields::Fields,
 }
 
 fn limit() -> Error {
@@ -369,6 +375,11 @@ impl Proofs {
 		// Walking each body's tree rather than its shared arena keeps a closure's
 		// calls and returns out of its enclosing function's summary.
 		builder.calls()?;
+		// Field summaries have their own budget. Losing them never disables the
+		// preexisting nominal proof graph or changes an old admission.
+		if !builder.proofs.fields.disabled && builder.fields().is_err() {
+			builder.proofs.fields.disabled = true;
+		}
 		builder.proofs.bodies.try_push(builder.body)?;
 		Ok(())
 	}
@@ -757,7 +768,9 @@ impl Builder<'_, '_, '_> {
 							})?
 						}
 						hir::Call::Associated {
-							hash, name_hash, ..
+							hash,
+							name_hash,
+							target,
 						} if hash == name_hash && self.query.fresh_method_script.closed(hash) => {
 							for method in self.proofs.methods(self.query, self.pool, hash)? {
 								if self.context.lookup_function(method.associated).is_some()
@@ -766,7 +779,19 @@ impl Builder<'_, '_, '_> {
 									continue;
 								}
 								let mut inputs = Vec::new();
-								inputs.try_push(self.proofs.node(Kind::Exact(method.receiver))?)?;
+								let seed = self.proofs.node(Kind::Exact(method.receiver))?;
+								inputs.try_push(seed)?;
+								// This seed proves only the dispatch tag. Preserve the actual
+								// target separately for field contents, including captures.
+								let actual = self.term(target, 0)?;
+								if self
+									.proofs
+									.fields
+									.associated(seed, actual, method.receiver)
+									.is_err()
+								{
+									self.proofs.fields.disabled = true;
+								}
 								inputs.try_extend_from_slice(&arguments)?;
 								self.proofs.calls.try_push(Call {
 									target: method.item,
@@ -810,6 +835,10 @@ impl Proofs {
 	/// of unmodified parameter-forwarding edges can use external nominal seeds.
 	fn solve(&mut self) -> Result<Vec<Fact>> {
 		self.connect()?;
+		self.solve_graph()
+	}
+
+	fn solve_graph(&self) -> Result<Vec<Fact>> {
 		let count = self.nodes.len();
 		let mut reverse = Vec::new();
 		reverse.try_resize_with(count, Vec::<Id>::new)?;
@@ -911,6 +940,7 @@ impl Proofs {
 							Fact::Unknown
 						}
 					}
+					Kind::Projection => node.edges.get(1).map_or(Fact::Unknown, |e| facts[e.node]),
 					Kind::Join | Kind::Parameter(_) | Kind::Return => {
 						if node.edges.is_empty() {
 							Fact::Unknown
@@ -947,8 +977,31 @@ impl Proofs {
 				result => Some(result?),
 			}
 		};
-		let mut used = Vec::new();
-		used.try_resize(self.nodes.len(), false)?;
+		let field_proof = match &facts {
+			Some(facts)
+				if self
+					.sites
+					.iter()
+					.any(|s| !matches!(facts[s.receiver], Fact::Exact(_))) =>
+			{
+				self.field_graph(facts)
+					.ok()
+					.flatten()
+					.and_then(|graph| graph.solve_graph().ok().map(|facts| (graph, facts)))
+			}
+			_ => None,
+		};
+		let mut old_used = Vec::new();
+		old_used.try_resize(self.nodes.len(), false)?;
+		let mut field_used = Vec::new();
+		// Optional field scratch must not turn a successful old proof into an
+		// allocation error. An unavailable second phase keeps Method refused.
+		let field_proof = field_proof.and_then(|proof| {
+			field_used
+				.try_resize(proof.0.nodes.len(), false)
+				.ok()
+				.map(|()| proof)
+		});
 		let mut work = Vec::new();
 		let mut failed_owners = crate::hash::Map::<()>::default();
 		let mut first = None;
@@ -958,6 +1011,14 @@ impl Proofs {
 			}
 			let result = (|| {
 				let Some(facts) = &facts else {
+					return Err(Error::refused(Refusal::Method).at(site.at));
+				};
+				let old = matches!(facts[site.receiver], Fact::Exact(_));
+				let (facts, nodes, used) = if old {
+					(facts, &self.nodes, &mut old_used)
+				} else if let Some((graph, facts)) = &field_proof {
+					(facts, &graph.nodes, &mut field_used)
+				} else {
 					return Err(Error::refused(Refusal::Method).at(site.at));
 				};
 				let Fact::Exact(receiver) = facts[site.receiver] else {
@@ -1010,7 +1071,7 @@ impl Proofs {
 						continue;
 					}
 					used[node] = true;
-					if let Kind::Parameter(body) = self.nodes[node].kind {
+					if let Kind::Parameter(body) = nodes[node].kind {
 						let id = entries
 							.iter()
 							.position(|(hash, _, _)| *hash == body)
@@ -1021,7 +1082,7 @@ impl Proofs {
 							ineligible.try_push(id)?;
 						}
 					}
-					for edge in &self.nodes[node].edges {
+					for edge in &nodes[node].edges {
 						work.try_push(edge.node)?;
 					}
 				}
@@ -1030,7 +1091,7 @@ impl Proofs {
 			if let Err(error) = result {
 				let error = error.at(site.at);
 				failed_owners.try_insert(site.diagnostic_owner, ())?;
-				self.failures.try_push(Failure {
+				self.failures.try_push(Unproven {
 					error,
 					checkpoint: site.diagnostic_checkpoint,
 					span: site

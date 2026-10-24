@@ -1,0 +1,17 @@
+{
+  "record": "C18b3f",
+  "ruling": "01a16b3c-d747-76dd-bbf4-b9de654e24e2",
+  "rows": [
+    {
+      "name": "field_unknown",
+      "source_sha256": "7e115f6511710ce22fb301b654613473f35c53099e769b0349f53b070afe7873",
+      "after_admitted": true
+    },
+    {
+      "name": "self_field_unknown",
+      "source_sha256": "859340c7d3fcd8ac450ce0a38f068a23e37d7c690a776189be83524406db9085",
+      "after_admitted": true,
+      "ruling": "01a16b47-7d96-7067-b60d-848f17660a91"
+    }
+  ]
+}

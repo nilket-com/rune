@@ -519,6 +519,17 @@ fn proven_receiver_test_builtin_macro_frontier() {
 }
 
 fn expected_admission(row: &Json) -> bool {
+	let fields: Json =
+		serde_json::from_str(include_str!("field_receiver_progressions.json")).unwrap();
+	if let Some(entry) = fields["rows"]
+		.as_array()
+		.unwrap()
+		.iter()
+		.find(|entry| entry["name"] == row["name"])
+	{
+		assert_eq!(entry["source_sha256"], row["source_sha256"]);
+		return entry["after_admitted"].as_bool().unwrap();
+	}
 	let overlay: Json =
 		serde_json::from_str(include_str!("proven_receiver_prediction_overlay.json")).unwrap();
 	overlay["rows"]
