@@ -1,4 +1,4 @@
-//! One source-bound runtime-refusal progression; immutable C11 inputs stay intact.
+// One source-bound runtime-refusal progression; immutable C11 inputs stay intact.
 fn c11_s7a_runtime_progression(
 	label: &str,
 	source: &str,

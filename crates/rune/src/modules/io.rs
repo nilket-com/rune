@@ -85,6 +85,8 @@ pub fn module(
 	m.macro_meta(println_macro)?;
 	#[cfg(feature = "fresh-core")]
 	m.fresh_mark_builtin_macro();
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 

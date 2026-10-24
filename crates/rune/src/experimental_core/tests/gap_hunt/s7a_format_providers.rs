@@ -61,7 +61,7 @@ fn frozen_modified_provider_contract() {
 	for row in rows {
 		let source = row["source"].as_str().unwrap();
 		assert_eq!(
-			format!("{:x}", Sha256::digest(source.as_bytes())),
+			hex(&Sha256::digest(source.as_bytes())),
 			row["source_sha256"]
 		);
 		calls.store(0, Ordering::SeqCst);
@@ -89,7 +89,7 @@ fn frozen_modified_provider_contract() {
 		assert_eq!(calls.load(Ordering::SeqCst), 0);
 	}
 	assert_eq!(
-		format!("{:x}", Sha256::digest(capture.as_bytes())),
+		hex(&Sha256::digest(capture.as_bytes())),
 		document["capture_sha256"]
 	);
 	contract_completed("s7a-modified-provider", rows.len());
@@ -153,7 +153,9 @@ fn trait_and_failed_provider_installs_fail_closed() {
 			Ok(())
 		})
 		.unwrap();
-	module.implement_trait::<Range>(["FormatProvider"]).unwrap();
+	module
+		.implement_trait::<Range>(crate::item!(FormatProvider))
+		.unwrap();
 	context.install(module).unwrap();
 	refused(&context, "pub fn main(){format!(\"{:?}\",[1..3])}");
 	let mut context = Context::with_default_modules().unwrap();
