@@ -20,7 +20,9 @@
 //! Native coverage (entries, exits by kind) is reported separately from intentional
 //! refusals (Tag, Iter, Room, cancel, compile refusals). Output lines prefixed `B1COV`,
 //! `B1CASE` and `B1GOLDEN` are machine-readable report rows.
-use super::exec_tests::{compile_source, invoke, Arg, Observed, Outcome, Src, BIG_FUEL, MAX_SWEEP};
+use super::exec_tests::{
+	compile_source, invoke_with_limits, Arg, Observed, Outcome, Src, BIG_FUEL, MAX_SWEEP,
+};
 use super::{
 	audit, audit::AccessMap, audit::Finding, boundary::NativeRegion, lower, NativeRefusal,
 };
@@ -50,6 +52,23 @@ use std::prelude::rust_2021::*;
 use std::println;
 use std::process::{Command, Stdio};
 use std::time::{Duration, Instant};
+
+// The historical frame-boundary worker keeps its explicit sandbox in every mode.
+std::thread_local! { static HISTORICAL_FRAME_CONTROL: core::cell::Cell<bool> = const { core::cell::Cell::new(false) }; }
+
+fn invoke(code: &Code, function: u32, args: &[Arg], fuel: usize) -> Observed {
+	let limits = HISTORICAL_FRAME_CONTROL.with(|control| {
+		if control.get() {
+			crate::experimental_core::execute::ExecutorLimits {
+				frames: 1024,
+				slots: 65_536,
+			}
+		} else {
+			Default::default()
+		}
+	});
+	invoke_with_limits(code, function, args, fuel, limits)
+}
 
 const CHILD_ENV: &str = "RUNE_B1_NATIVE_CHILD";
 const DEADLINE: Duration = Duration::from_secs(1200);
@@ -1604,6 +1623,7 @@ fn b1_frame_cap_boundary() {
 #[ignore = "B1 native worker: run by its parent test in a child process"]
 fn child_frame_cap() {
 	require_child();
+	HISTORICAL_FRAME_CONTROL.with(|control| control.set(true));
 	let program = compile_source(DEEP);
 	let code = &program.code;
 	let main = program.function(Hash::type_hash(["main"])).unwrap();

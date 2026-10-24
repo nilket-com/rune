@@ -418,13 +418,17 @@ fn configured_depth_exceeds_old_limit_and_warmed_scalar_calls_allocate_nothing()
 	let code = recursive_code();
 	let mut s = store();
 	let x = s.root_i64(1100);
-	let mut default = Executor::new().unwrap();
+	let mut default = Executor::with_limits(ExecutorLimits {
+		frames: 1024,
+		slots: 65_536,
+	})
+	.unwrap();
 	let failed = default
 		.invoke_code(&code, &mut s, 0, &[&x], 10000)
 		.unwrap_err();
 	assert_eq!(failed.error.kind, ErrorKind::FrameCapacity);
 	assert_eq!(failed.error.location.unwrap().start, 4);
-	assert_eq!(failed.call_chain.len(), MAX_FRAMES - 1);
+	assert_eq!(failed.call_chain.len(), 1023);
 	assert!(failed.cleanup_error.is_none());
 	assert!(default.is_idle());
 	let mut e = Executor::with_limits(ExecutorLimits {
@@ -629,4 +633,31 @@ fn f1_fix2_limits_precede_arity_without_any_reservation() {
 			e.leave(&mut s).unwrap();
 		}
 	}
+}
+
+#[test]
+fn default_limits_are_representable_and_initial_buffers_stay_small() {
+	let limits = ExecutorLimits::default();
+	assert_eq!(
+		limits.frames,
+		(isize::MAX as usize / core::mem::size_of::<Frame>())
+			.min(isize::MAX as usize / core::mem::size_of::<Location>())
+	);
+	assert_eq!(
+		limits.slots,
+		isize::MAX as usize / core::mem::size_of::<Value>()
+	);
+	let executor = Executor::new().unwrap();
+	assert_eq!(executor.capacities(), (8, 64, 8));
+	assert!(Executor::with_limits(ExecutorLimits {
+		frames: limits.frames + 1,
+		slots: limits.slots
+	})
+	.is_err());
+	assert!(Executor::with_limits(ExecutorLimits {
+		frames: limits.frames,
+		slots: limits.slots + 1
+	})
+	.is_err());
+	assert!(rune_alloc::limit::with(0, Executor::new).call().is_err());
 }

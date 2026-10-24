@@ -58,6 +58,7 @@ fn verify_fresh_case(
 	let rule = &super::object_order::admitted(include_str!("c18b3b_admissions.json"), rule);
 	let rule = &super::object_order::admitted(include_str!("c17f_admissions.json"), rule);
 	let rule = &super::object_order::admitted(include_str!("c18b3e_admissions.json"), rule);
+	let rule = &super::object_order::admitted(include_str!("s6_progressions.json"), rule);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
@@ -160,7 +161,7 @@ fn verify_fresh_case(
 		assert_eq!(f["outcome"]["class"], "FrameCapacity");
 		assert_eq!(
 			f["outcome"]["depth"],
-			crate::experimental_core::execute::ExecutorLimits::default().frames
+			1024
 		);
 		assert_eq!(s["outcome"]["status"], "error");
 		assert_eq!(s["outcome"]["class"], "FuelExhausted");

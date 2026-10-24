@@ -244,7 +244,11 @@ fn call_frame_capacity_is_at_the_call_and_cleanup_allows_reuse() {
 	builder.push(success).unwrap();
 	let code = builder.finish().unwrap();
 	let mut store = Store::new(Limits::default()).unwrap();
-	let mut executor = Executor::new().unwrap();
+	let mut executor = Executor::with_limits(super::super::execute::ExecutorLimits {
+		frames: 1024,
+		slots: 65_536,
+	})
+	.unwrap();
 	let baseline = (store.live_entries(), store.payload_bytes());
 	let failure = executor
 		.invoke_code(&code, &mut store, 0, &[], 10_000)

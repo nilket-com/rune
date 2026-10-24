@@ -146,6 +146,17 @@ fn observe_fresh(
 	fuel: usize,
 	cancel: Option<usize>,
 ) -> Json {
+	observe_fresh_with_limits(source, fixture_name, mode, fuel, cancel, Default::default())
+}
+
+fn observe_fresh_with_limits(
+	source: &str,
+	fixture_name: &str,
+	mode: &str,
+	fuel: usize,
+	cancel: Option<usize>,
+	limits: crate::experimental_core::execute::ExecutorLimits,
+) -> Json {
 	reset_tape();
 	let context = fresh_context();
 	let mut sources = Sources::new();
@@ -159,7 +170,7 @@ fn observe_fresh(
 		bytes: 4 << 20,
 	})
 	.unwrap();
-	let mut executor = Executor::new().unwrap();
+	let mut executor = Executor::with_limits(limits).unwrap();
 	executor
 		.set_host_runtime(Some(
 			crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),

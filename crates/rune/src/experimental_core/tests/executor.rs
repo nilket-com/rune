@@ -187,11 +187,14 @@ fn explicit_recursive_frames_and_return() {
 			.ok(),
 		Some(Value::I64(32))
 	);
-	let error = Executor::new()
-		.unwrap()
-		.run_values(&code, &mut store(), 0, &[Value::I64(1100)], 5000)
-		.err()
-		.unwrap();
+	let error = Executor::with_limits(crate::experimental_core::execute::ExecutorLimits {
+		frames: 1024,
+		slots: 65_536,
+	})
+	.unwrap()
+	.run_values(&code, &mut store(), 0, &[Value::I64(1100)], 5000)
+	.err()
+	.unwrap();
 	assert_eq!(error.error.kind, ErrorKind::FrameCapacity);
 	assert_eq!(error.call_chain.len(), 1023);
 }

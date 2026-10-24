@@ -53,6 +53,17 @@ fn supplement_fresh(
 	core::result::Result<(), crate::experimental_core::execute::Failure>,
 	crate::experimental_core::error::Error,
 > {
+	supplement_fresh_with_limits(program, fuel, None)
+}
+
+fn supplement_fresh_with_limits(
+	program: &str,
+	fuel: usize,
+	limits: Option<crate::experimental_core::execute::ExecutorLimits>,
+) -> core::result::Result<
+	core::result::Result<(), crate::experimental_core::execute::Failure>,
+	crate::experimental_core::error::Error,
+> {
 	let context = supplement_context(true);
 	let mut sources = Sources::new();
 	sources
@@ -60,7 +71,7 @@ fn supplement_fresh(
 		.unwrap();
 	let built = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 16)?;
 	let mut store = Store::new(Limits::default()).unwrap();
-	let mut executor = Executor::new().unwrap();
+	let mut executor = Executor::with_limits(limits.unwrap_or_default()).unwrap();
 	executor
 		.set_host_runtime(Some(
 			crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
@@ -78,7 +89,7 @@ fn supplement_fresh(
 #[test]
 fn plain_recursion_meets_the_frame_limit_like_dispatch() {
 	use crate::experimental_core::error::ErrorKind;
-	let frames = crate::experimental_core::execute::ExecutorLimits::default().frames;
+	let frames = 1024;
 	for program in [
 		"fn spin(n){spin(n+1)}pub fn main(){spin(0)}",
 		"struct P{x}impl P{fn spin(self){self.spin()}}fn f(p){p.spin()}pub fn main(){f(P{x:1})}",
@@ -88,7 +99,7 @@ fn plain_recursion_meets_the_frame_limit_like_dispatch() {
 			stock.error().kind(),
 			crate::runtime::VmErrorKind::Halted { .. }
 		));
-		let failure = supplement_fresh(program, 2000).unwrap().unwrap_err();
+		let failure = supplement_fresh_with_limits(program, 2000, Some(crate::experimental_core::execute::ExecutorLimits { frames: 1024, slots: 65_536 })).unwrap().unwrap_err();
 		assert_eq!(failure.error.kind, ErrorKind::FrameCapacity, "{program}");
 		// Every caller is in the chain; the frame that failed to call is not.
 		assert_eq!(failure.call_chain.len() + 1, frames, "{program}");

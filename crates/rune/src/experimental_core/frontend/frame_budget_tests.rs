@@ -132,3 +132,197 @@ fn frame_budget_callback_progressions_are_narrow() {
 		);
 	}
 }
+
+fn run_default_row(
+	row: &Json,
+	stack_bytes: Option<usize>,
+	native: bool,
+	limits: Option<crate::experimental_core::execute::ExecutorLimits>,
+) {
+	use crate::experimental_core::{
+		execute::Executor,
+		heap::{Limits, Store},
+		value::Value,
+	};
+	let context = Context::with_default_modules().unwrap();
+	let mut sources = sources(row);
+	let mut diagnostics = Diagnostics::new();
+	let program = super::compile(&mut sources, &context, &mut diagnostics, 6).unwrap();
+	assert!(diagnostics.diagnostics().is_empty());
+	let expected = row["expected_i64"].as_i64().unwrap();
+	let run = move || {
+		#[cfg(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		))]
+		if native {
+			crate::experimental_core::region::cache::clear_for_test();
+			crate::experimental_core::region::cache::enable_for_test(true);
+		}
+		#[cfg(not(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		)))]
+		assert!(!native);
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::with_limits(limits.unwrap_or_default()).unwrap();
+		let main = program.function(Hash::type_hash(["main"])).unwrap();
+		for _ in 0..2 {
+			let root = executor
+				.invoke(&program, &mut store, main, &[], 200_000_000)
+				.unwrap();
+			assert!(matches!(store.import(&root).unwrap(), Value::I64(n) if n == expected));
+			store.root_release(root).unwrap();
+			assert!(executor.is_idle());
+			assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+		}
+		#[cfg(all(
+			feature = "fresh-core-native",
+			target_arch = "x86_64",
+			target_os = "linux"
+		))]
+		if native {
+			let entries =
+				crate::experimental_core::region::cache::regions_for_test(program.code.id())
+					.unwrap();
+			assert!(entries.iter().any(|region| region.entries > 0));
+			assert_eq!(crate::experimental_core::region::cache::invalid_exits(), 0);
+			crate::experimental_core::region::cache::clear_for_test();
+			crate::experimental_core::region::cache::enable_for_test(false);
+		}
+	};
+	if let Some(bytes) = stack_bytes {
+		// Compilation of Rune source is complete before entering the runtime stack.
+		std::thread::Builder::new()
+			.stack_size(bytes)
+			.spawn(run)
+			.unwrap()
+			.join()
+			.unwrap();
+	} else {
+		run();
+	}
+}
+
+#[test]
+fn frame_budget_defaults_match_values_and_named_callback_policy() {
+	for row in rows() {
+		let stock = &row["stock"]["outcome"];
+		if row["classification"] == "Exact" {
+			assert_eq!(stock["status"], "value");
+			assert_eq!(stock["value"], row["expected_i64"]);
+		} else {
+			assert_eq!(
+				row["classification"],
+				"Intentional resource-policy divergence"
+			);
+			assert_eq!(stock["kind"], "MaxExecutionDepth { max: 32 }");
+		}
+		run_default_row(&row, None, false, None);
+	}
+}
+
+#[test]
+fn frame_budget_deep_runtime_uses_a_small_machine_stack() {
+	for row in rows().into_iter().filter(|row| row["depth"] == 100_000) {
+		run_default_row(&row, Some(256 * 1024), false, None);
+	}
+}
+
+#[test]
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
+#[ignore = "operator-only isolated cold native 512 KiB stack child"]
+fn frame_budget_native_adequate_stack_child() {
+	let row = rows()
+		.into_iter()
+		.find(|row| row["kind"] == "native-loop" && row["depth"] == 100_000)
+		.unwrap();
+	run_default_row(&row, Some(512 * 1024), true, None);
+}
+
+#[test]
+#[cfg(all(
+	feature = "fresh-core-native",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
+#[ignore = "operator-only isolated native stack attribution"]
+fn frame_budget_native_stack_probe_child() {
+	let depth: i64 = std::env::var("S6_NATIVE_DEPTH").unwrap().parse().unwrap();
+	let mut row = rows()
+		.into_iter()
+		.find(|row| row["kind"] == "native-loop" && row["depth"] == 100_000)
+		.unwrap();
+	row["source"] = json!(row["source"]
+		.as_str()
+		.unwrap()
+		.replace("100000", &std::format!("{depth}")));
+	row["expected_i64"] = json!(depth);
+	let limits = std::env::var_os("S6_NATIVE_HISTORICAL").map(|_| {
+		crate::experimental_core::execute::ExecutorLimits {
+			frames: 1024,
+			slots: 65_536,
+		}
+	});
+	run_default_row(
+		&row,
+		std::env::var_os("S6_NATIVE_SMALL").map(|_| {
+			std::env::var("S6_NATIVE_STACK_BYTES")
+				.ok()
+				.map(|n| n.parse().unwrap())
+				.unwrap_or(256 * 1024)
+		}),
+		true,
+		limits,
+	);
+}
+
+#[test]
+fn frame_budget_slot_sandbox_is_independent_of_the_frame_sandbox() {
+	use crate::experimental_core::{
+		error::ErrorKind,
+		execute::{Executor, ExecutorLimits},
+		heap::{Limits, Store},
+	};
+	let row = rows()
+		.into_iter()
+		.find(|row| row["kind"] == "wide")
+		.unwrap();
+	let context = Context::with_default_modules().unwrap();
+	let mut sources = sources(&row);
+	let program = super::compile(&mut sources, &context, &mut Diagnostics::new(), 6).unwrap();
+	let main = program.function(Hash::type_hash(["main"])).unwrap();
+	let mut depths = std::vec::Vec::new();
+	for limits in [
+		ExecutorLimits {
+			slots: 65_536,
+			..Default::default()
+		},
+		ExecutorLimits {
+			frames: 1024,
+			..Default::default()
+		},
+	] {
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::with_limits(limits).unwrap();
+		for _ in 0..2 {
+			let failure = executor
+				.invoke(&program, &mut store, main, &[], 200_000_000)
+				.unwrap_err();
+			assert_eq!(failure.error.kind, ErrorKind::FrameCapacity);
+			assert!(failure.cleanup_error.is_none());
+			assert!(executor.is_idle());
+			assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+			depths.push(failure.call_chain.len());
+		}
+	}
+	assert!(depths[0] < depths[2]);
+	assert_eq!(depths[0], depths[1]);
+	assert_eq!(&depths[2..], &[1023, 1023]);
+}

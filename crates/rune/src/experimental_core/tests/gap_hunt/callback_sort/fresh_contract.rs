@@ -203,7 +203,8 @@ fn compare_fresh_row(
 	}
 	let actual = common(&project_p1(observation, counts)?);
 	if policy == "Retained-depth" {
-		let expected = binding["rows"].get(label).ok_or("missing derived row")?;
+		let progression = s6_depth_progression(label, source, binding)?;
+		let expected = progression.as_ref().or_else(|| binding["rows"].get(label)).ok_or("missing derived row")?;
 		if audit["typed_failure_kind"]
 			!= if expected["outcome"]["status"] == "error" {
 				json!("FrameCapacity")
@@ -718,4 +719,44 @@ fn c11_mixed_frame_controls() {
 	short_stock["outcome"]["sites"][1]["frames"] =
 		json!("[CallFrame { ip: 3, top: 0, isolated: None, out: discard }]");
 	assert!(c11_retained_frame_shape(source, &actual, &short_stock, &chain).is_err());
+}
+
+// Only these two source-pinned rows outgrow the explicit historical frame cap.
+// Stock retains its independent nested-VM limit; these are not Exact rows.
+fn s6_depth_progression(label: &str, source: &str, binding: &Json) -> Result<Option<Json>, String> {
+	let overlay = read_json(include_str!("../../../frontend/frame_budget_c11_contract.json"));
+	let Some(row) = overlay["rows"].as_array().unwrap().iter().find(|row| row["label"] == label) else { return Ok(None); };
+	if row["source_sha256"] != digest(source.as_bytes()) || row["classification"] != "Retained-depth" || row["stock_limit"] != 32 { return Err("S6 depth identity drift".into()); }
+	let depth: usize = label.strip_prefix("depth/").unwrap().parse().unwrap();
+	let mut expected = binding["rows"]["depth/510"].clone();
+	for path in ["/outcome/graph/nodes", "/before/nodes", "/post/nodes"] {
+		for node in expected.pointer_mut(path).unwrap().as_array_mut().unwrap() {
+			if node[0] == "I64" && node[2] == "510" { node[2] = json!(depth.to_string()); }
+		}
+	}
+	let events: Vec<_> = (0..=depth).map(|n| json!({"event":"compare","n":n+1,"a":(depth-n).to_string(),"b":(depth-n).to_string()})).collect();
+	expected["events"] = json!(events);
+	let mut after = events;
+	after.push(json!({"event":"mark","hex":"7265757365"}));
+	expected["events_after_reuse"] = json!(after);
+	Ok(Some(expected))
+}
+
+#[test]
+fn s6_callback_depth_preserves_historical_limits_and_checks_default_progressions() {
+	let manifest = c11_retained_manifest().unwrap();
+	let binding = &manifest["depth"];
+	c11_check_depth_binding(binding).unwrap();
+	let counts = read_json(include_str!("../../callback_sort_p1_counts.json"));
+	for &(label, source, fixture, _, mode, fuel, cancel) in CASES.iter().filter(|row| row.0.starts_with("depth/")) {
+		let historical = observe_fresh_with_limits(source, fixture, mode, fuel, cancel, crate::experimental_core::execute::ExecutorLimits { frames: 1024, slots: 65_536 });
+		if let Some(expected) = binding["rows"].get(label) {
+			assert_eq!(&common(&project_p1(&historical, &counts[label]).unwrap()), expected, "{label}");
+		}
+		if let Some(expected) = s6_depth_progression(label, source, binding).unwrap() {
+			let current = observe_fresh(source, fixture, mode, fuel, cancel);
+			assert_eq!(common(&project_p1(&current, &counts[label]).unwrap()), expected, "{label}");
+			assert_eq!(current["fresh_audit"]["typed_failure_kind"], Json::Null);
+		}
+	}
 }

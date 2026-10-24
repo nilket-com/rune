@@ -221,6 +221,16 @@ pub(super) struct Observed {
 }
 
 pub(super) fn invoke(code: &Code, function: u32, args: &[Arg], fuel: usize) -> Observed {
+	invoke_with_limits(code, function, args, fuel, Default::default())
+}
+
+pub(super) fn invoke_with_limits(
+	code: &Code,
+	function: u32,
+	args: &[Arg],
+	fuel: usize,
+	limits: crate::experimental_core::execute::ExecutorLimits,
+) -> Observed {
 	let mut s = store();
 	let roots: Vec<Root> = args
 		.iter()
@@ -233,7 +243,7 @@ pub(super) fn invoke(code: &Code, function: u32, args: &[Arg], fuel: usize) -> O
 		.collect();
 	let refs: Vec<&Root> = roots.iter().collect();
 
-	let mut executor = Executor::new().unwrap();
+	let mut executor = Executor::with_limits(limits).unwrap();
 	hook::take_final_fuel();
 	let outcome = match executor.invoke_code(code, &mut s, function, &refs, fuel) {
 		Ok(root) => Outcome::Value(s.root_scalar(&root).unwrap()),

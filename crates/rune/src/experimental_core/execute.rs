@@ -21,12 +21,26 @@ use super::{
 };
 use crate::alloc::{Box, Vec};
 
-const MAX_FRAMES: usize = 1024;
+const MAX_FRAMES: usize = {
+	let frames = isize::MAX as usize / core::mem::size_of::<Frame>();
+	let locations = isize::MAX as usize / core::mem::size_of::<Location>();
+	if frames < locations {
+		frames
+	} else {
+		locations
+	}
+};
 const INITIAL_FRAMES: usize = 8;
 const INITIAL_SLOTS: usize = 64;
 
 /// Logical invocation limits; bookkeeping grows with use. Allocator overgrowth
 /// can exceed these limits physically. Payloads and output are separate.
+/// Defaults allow platform-representable frame and slot buffers without reserving
+/// them up front. Script calls and admitted callbacks use iterative heap frames.
+/// These limits do not bound trusted Rust callbacks that create their own executor
+/// or stock VM and recurse through Rust outside this executor.
+/// The optional native tier compiles on the invoking thread and needs an adequate
+/// machine stack for the JIT compiler, independently of script call depth.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ExecutorLimits {
 	/// Maximum simultaneously published call frames.
@@ -87,7 +101,7 @@ impl Args<'_> {
 	}
 }
 
-const MAX_SLOTS: usize = 65_536;
+const MAX_SLOTS: usize = isize::MAX as usize / core::mem::size_of::<Value>();
 
 /// Native room is bounded by logical limits and actual frame, slot and
 /// diagnostic capacities. Native execution and commit never grow them.

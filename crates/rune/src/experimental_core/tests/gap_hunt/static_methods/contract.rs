@@ -60,6 +60,7 @@ fn verify_fresh_case(
 	let rule = &super::object_order::admitted(include_str!("c18b3d_admissions.json"), rule);
 	let rule = &super::object_order::admitted(include_str!("c17f_admissions.json"), rule);
 	let rule = &super::object_order::admitted(include_str!("c18b3e_admissions.json"), rule);
+	let rule = &super::object_order::admitted(include_str!("s6_progressions.json"), rule);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
@@ -87,7 +88,7 @@ fn verify_fresh_case(
 	let classification = rule["classification"].as_str().unwrap();
 	let refused = !matches!(
 		classification,
-		"Exact" | "Intentional-D1" | "Retained-frame-limit" | "Known-gap"
+		"Exact" | "Intentional-D1" | "Retained-fuel" | "Retained-frame-limit" | "Known-gap"
 	);
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
@@ -125,6 +126,18 @@ fn verify_fresh_case(
 		assert_eq!(diagnostics.matches(warning).count(), 1);
 		assert!(diagnostics.starts_with(&format!("[{warning}, ")));
 		assert_eq!(fresh["diagnostics"], diagnostics.replacen(&format!("{warning}, "), "", 1));
+
+	} else if classification == "Retained-fuel" {
+		let (fresh, expected) = (canonical_record(actual), canonical_record(stock));
+		assert_eq!(fresh, rule["fresh"]);
+		let (f, s) = (&fresh["observation"], &expected["observation"]);
+		for record in [f, s] {
+			assert_eq!(record["outcome"]["status"], "error");
+			assert_eq!(record["outcome"]["class"], "FuelExhausted");
+		}
+		assert_eq!(f["events"], json!([]));
+		assert_eq!(f["reuse"], s["reuse"]);
+		assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
 	} else if classification == "Retained-frame-limit" {
 		// Unbounded recursion: fresh charges fuel once per call, so its
 		// 1024-frame limit trips before the fuel runs out, where stock ends in
@@ -136,7 +149,7 @@ fn verify_fresh_case(
 		assert_eq!(f["outcome"]["class"], "FrameCapacity");
 		assert_eq!(
 			f["outcome"]["depth"],
-			crate::experimental_core::execute::ExecutorLimits::default().frames
+			1024
 		);
 		assert_eq!(s["outcome"]["status"], "error");
 		assert_eq!(s["outcome"]["class"], "FuelExhausted");

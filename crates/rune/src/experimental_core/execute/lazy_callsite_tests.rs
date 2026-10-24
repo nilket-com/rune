@@ -227,13 +227,17 @@ fn d14_frame_capacity_chain_has_every_published_callsite_in_order() {
 	rec.push(Op::Return { value: 0 }, loc(702)).unwrap();
 	let c = code(std::vec![main, rec]);
 	let mut s = store();
-	let mut e = Executor::new().unwrap();
+	let mut e = Executor::with_limits(ExecutorLimits {
+		frames: 1024,
+		slots: 65_536,
+	})
+	.unwrap();
 	let failure = e.invoke_code(&c, &mut s, 0, &[], 100_000).unwrap_err();
 	assert_eq!(failure.error.kind, ErrorKind::FrameCapacity);
 	assert_eq!(failure.error.location, Some(loc(701)));
 
 	// 1024 published frames: main (no callsite), rec from main, 1022 recursive.
-	let mut want = std::vec![loc(701); MAX_FRAMES - 2];
+	let mut want = std::vec![loc(701); 1024 - 2];
 	want.push(loc(601));
 	assert_eq!(&failure.call_chain[..], &want[..]);
 	assert!(failure.cleanup_error.is_none() && e.is_idle());
