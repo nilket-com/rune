@@ -173,7 +173,7 @@ impl Module {
 	/// The closed signature excludes dynamic error payload.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", || -> Result<rune::Value, rune::Value> { Err(rune::Value::unit()) }).unwrap();
+	/// module.fresh_host_function("unsupported", || -> Result<rune::Value, rune::Value> { Err(rune::Value::from(())) }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes nested dynamic output.
@@ -203,7 +203,7 @@ impl Module {
 	/// The closed signature excludes async dynamic output.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", || async { rune::Value::unit() }).unwrap();
+	/// module.fresh_host_function("unsupported", || async { rune::Value::from(()) }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes five inputs.
@@ -246,7 +246,7 @@ impl Module {
 	/// let mut module = rune::Module::new();
 	/// module.fresh_host_function_with_output(
 	///     "document",
-	///     || Ok::<rune::Value, std::string::String>(rune::Value::unit()),
+	///     || Ok::<rune::Value, std::string::String>(rune::Value::from(())),
 	///     rune::fresh_host::OutputCertificate::JSON_RESULT,
 	/// )?;
 	/// # Ok(())
