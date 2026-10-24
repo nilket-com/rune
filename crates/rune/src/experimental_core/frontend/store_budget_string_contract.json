@@ -1,0 +1,12 @@
+{
+  "bytes": 33554432,
+  "callback": "s5::large_text",
+  "content_byte": 115,
+  "record": "S5",
+  "source": "use s5::large_text;pub fn main(){let s=large_text();s.len() as i64}",
+  "source_sha256": "61727f6559609853c7e051a8c63f95b2d2a096a2772dfee343cb42f3c6c463a9",
+  "stock": {
+    "diagnostics": "[]",
+    "value": 33554432
+  }
+}

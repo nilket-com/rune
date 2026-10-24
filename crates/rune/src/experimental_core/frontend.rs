@@ -614,3 +614,6 @@ mod vec_resize_tests;
 
 #[cfg(test)]
 mod proven_receiver_tests;
+
+#[cfg(test)]
+mod store_budget_string_tests;

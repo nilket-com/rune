@@ -1,0 +1,15 @@
+{
+  "record": "S5",
+  "approved_message": "01a16c0b-3c75-7066-900d-39b15f99a547",
+  "rows": [
+    {
+      "name": "string-byte-growth",
+      "source_sha256": "2d06127907ff6f759b9440aafb1a753d9b72c8997fd38605bb61ba57417a9ff1",
+      "refusal": "Method",
+      "span": [
+        47,
+        93
+      ]
+    }
+  ]
+}
