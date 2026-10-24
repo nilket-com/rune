@@ -156,7 +156,7 @@ fn tuple_and_unit_constructors_are_admitted_and_release_cleanly() {
 }
 
 #[test]
-fn unknown_nominal_debug_is_a_named_error() {
+fn unpublished_nominal_debug_is_an_internal_invariant() {
 	use crate::experimental_core::{
 		error::ErrorKind,
 		value::{Nominal, Type, Value},
@@ -167,7 +167,7 @@ fn unknown_nominal_debug_is_a_named_error() {
 		.record(Type::Struct(Nominal(u32::MAX)), &[("x", Value::I64(1))])
 		.unwrap();
 	let error = store.format_value(value, true).unwrap_err();
-	assert_eq!(error.kind, ErrorKind::Unsupported);
+	assert_eq!(error.kind, ErrorKind::InvalidCode);
 	assert_eq!(error.operation, "struct name");
 }
 

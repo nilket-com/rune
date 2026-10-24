@@ -12,14 +12,14 @@ impl Store {
 				arg: 1,
 				found: self
 					.diagnostic_type(value)
-					.ok_or_else(|| Error::new(ErrorKind::Unsupported, "Method"))?,
+					.ok_or_else(|| Error::new(ErrorKind::InvalidCode, "Method"))?,
 			}),
 		)
 	}
 	fn cmp_argument_type(&self, expected: TypeName, value: Value) -> Result<Error> {
 		let found = self
 			.diagnostic_type(value)
-			.ok_or_else(|| Error::new(ErrorKind::Unsupported, "Method"))?;
+			.ok_or_else(|| Error::new(ErrorKind::InvalidCode, "Method"))?;
 		Ok(
 			err(ErrorKind::Type).with_detail(Detail::NumericArgumentType {
 				cause: HostCause::ExpectedType,
@@ -86,7 +86,7 @@ impl Store {
 			_ => {
 				let target = self
 					.diagnostic_type(lhs)
-					.ok_or_else(|| Error::new(ErrorKind::Unsupported, "Method"))?;
+					.ok_or_else(|| Error::new(ErrorKind::InvalidCode, "Method"))?;
 				match target {
 					TypeName::String => {
 						// Borrow the receiver first; a moved receiver wins over a bad rhs.
@@ -110,7 +110,7 @@ impl Store {
 								.map(crate::Hash::new),
 							_ => target.builtin_hash(),
 						}
-						.ok_or_else(|| Error::new(ErrorKind::Unsupported, "Method"))?;
+						.ok_or_else(|| Error::new(ErrorKind::InvalidCode, "Method"))?;
 						return Err(err(ErrorKind::Type).with_detail(
 							Detail::MissingInstanceFunction {
 								target,
@@ -291,7 +291,7 @@ mod diagnostic_coverage_tests {
 		}
 	}
 	#[test]
-	fn missing_heap_metadata_never_turns_method_arguments_into_invalid_code() {
+	fn missing_heap_metadata_is_an_internal_invariant() {
 		let mut store = Store::new(Limits::default()).unwrap();
 		let stale = store.string("stale").unwrap();
 		store.release(stale).unwrap();
@@ -304,7 +304,7 @@ mod diagnostic_coverage_tests {
 			let e = store.method_cmp(lhs, rhs).unwrap_err();
 			assert_eq!(
 				(e.kind, e.operation, e.refusal),
-				(ErrorKind::Unsupported, "Method", None)
+				(ErrorKind::InvalidCode, "Method", None)
 			);
 		}
 	}

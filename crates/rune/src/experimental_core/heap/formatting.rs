@@ -248,8 +248,8 @@ fn type_value(tag: Type, sink: &mut Sink<'_>) -> Result<()> {
 	sink.formatted(format_args!("{:?}", crate::runtime::Type::new(hash)))
 }
 
-fn unsupported() -> Error {
-	Error::new(ErrorKind::Unsupported, "value formatting form")
+fn invalid() -> Error {
+	Error::new(ErrorKind::InvalidCode, "value formatting form")
 }
 
 impl Store {
@@ -363,7 +363,7 @@ impl Store {
 		if sink.bytes != size {
 			return Err(Error::new(ErrorKind::InvalidCode, "format two-pass size"));
 		}
-		sink.text.ok_or_else(unsupported)
+		sink.text.ok_or_else(invalid)
 	}
 
 	fn render_spec(
@@ -419,7 +419,7 @@ impl Store {
 			Body::Text(handle) => {
 				// Preserve start_value's node-budget-before-payload-read ordering.
 				let Payload::String(text) = self.payload(handle)? else {
-					return Err(unsupported());
+					return Err(invalid());
 				};
 				Some(text.as_str())
 			}
@@ -529,7 +529,7 @@ impl Store {
 			}
 			Ok(())
 		})();
-		result.map_err(|_| writer.0.failure.unwrap_or_else(unsupported))
+		result.map_err(|_| writer.0.failure.unwrap_or_else(invalid))
 	}
 
 	fn render(&self, value: Value, debug: bool, sink: &mut Sink<'_>) -> Result<()> {
@@ -644,6 +644,34 @@ impl Store {
 			return Err(limit());
 		}
 		sink.nodes += 1;
+		if let Value::Heap(h) = value {
+			let entry = self.entry(h)?;
+			if matches!(entry.payload.as_ref(), Some(Payload::SortGuard(_))) {
+				return Err(invalid());
+			}
+			if matches!(
+				entry.tag()?,
+				Type::Range
+					| Type::RangeInclusive
+					| Type::RangeFrom
+					| Type::RangeTo | Type::RangeToInclusive
+					| Type::RangeFull
+					| Type::Iterator
+			) {
+				// Opaque protocols select by retained type, even after explicit drop.
+				if !debug {
+					return Err(self.no_display(value));
+				}
+				let name = self
+					.diagnostic_type(value)
+					.and_then(super::opaque::full_name)
+					.ok_or_else(invalid)?;
+				// Named Intentional divergence: the address is fresh's own object
+				// identity. Keep stock's full text and nested generic spelling.
+				sink.formatted(format_args!("<{name} object at {:p}>", entry))?;
+				return Ok(None);
+			}
+		}
 		// Method/protocol selection precedes access to an invalidated payload.
 		if !debug {
 			if let Value::Heap(h) = value {
@@ -710,7 +738,7 @@ impl Store {
 					let (open, close) = match tag {
 						Type::Vec => ("[", "]"),
 						Type::Tuple => ("(", ")"),
-						_ => return Err(unsupported()),
+						_ => return Err(invalid()),
 					};
 					sink.push(open)?;
 					sink.frame(
@@ -813,7 +841,7 @@ impl Store {
 					fields,
 				} if debug => {
 					let mut buffer = [0; 256];
-					let invalid = || Error::new(ErrorKind::Unsupported, "struct name");
+					let invalid = || Error::new(ErrorKind::InvalidCode, "struct name");
 					let len = super::super::nominal::name_copy(*nominal, &mut buffer)
 						.ok_or_else(invalid)?;
 					let name = core::str::from_utf8(&buffer[..len]).map_err(|_| invalid())?;
@@ -839,7 +867,7 @@ impl Store {
 						(Type::Option, false) => "None",
 						(Type::Result, true) => "Ok",
 						(Type::Result, false) => "Err",
-						_ => return Err(unsupported()),
+						_ => return Err(invalid()),
 					};
 					sink.push(name)?;
 					if let Some(value) = payload {
@@ -859,7 +887,7 @@ impl Store {
 					tag: Type::Option | Type::Result,
 					..
 				} if !debug => return Err(self.no_display(value)),
-				_ => return Err(unsupported()),
+				_ => return Err(invalid()),
 			},
 			Value::Type(tag) => type_value(tag, sink)?,
 			// Stock prints its bytecode offset here; fresh names the function index,
@@ -867,7 +895,7 @@ impl Store {
 			Value::Function { id, .. } if debug => {
 				sink.formatted(format_args!("immediate function (function: {id})"))?
 			}
-			_ => return Err(unsupported()),
+			Value::Function { .. } => return Err(self.no_display(value)),
 		}
 		Ok(None)
 	}
@@ -1032,8 +1060,10 @@ mod tests {
 				let child = if invalid {
 					store.string("stale").unwrap()
 				} else {
-					// A range has no fresh formatting form.
-					store.range(0, 1).unwrap()
+					// Keep the earlier failure independent of opaque Debug admission.
+					let moved = store.string("moved").unwrap();
+					store.invalidate(moved).unwrap();
+					moved
 				};
 				let key = "z".repeat(if over { 65_536 } else { 1 });
 				let object = store
@@ -1056,7 +1086,7 @@ mod tests {
 					} else if invalid {
 						ErrorKind::InvalidHandle
 					} else {
-						ErrorKind::Unsupported
+						ErrorKind::AccessConflict
 					}
 				);
 				assert_eq!(stats.sort_allocations, usize::from(!over));
@@ -1081,12 +1111,13 @@ mod tests {
 			ErrorKind::FormatLimit
 		);
 		// A later oversized sibling does not globally outrank an earlier failure.
-		let range = store.range(0, 1).unwrap();
-		let earlier = store.list(Type::Vec, &[range, object]).unwrap();
-		store.release(range).unwrap();
+		let moved = store.string("moved").unwrap();
+		store.invalidate(moved).unwrap();
+		let earlier = store.list(Type::Vec, &[moved, object]).unwrap();
+		store.release(moved).unwrap();
 		assert_eq!(
 			store.format_value(earlier, true).unwrap_err().kind,
-			ErrorKind::Unsupported
+			ErrorKind::AccessConflict
 		);
 		let small = store.list(Type::Vec, &[Value::Unit]).unwrap();
 		let limits = FormatLimits {

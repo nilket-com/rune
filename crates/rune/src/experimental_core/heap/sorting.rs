@@ -147,7 +147,23 @@ impl Store {
 	}
 	pub(crate) fn sort_receiver(&mut self, value: Value) -> Result<()> {
 		if !matches!(value, Value::Heap(_)) || self.tag(value)? != Type::Vec {
-			return Err(Error::new(ErrorKind::Unsupported, "Method"));
+			let target = self
+				.diagnostic_type(value)
+				.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+			let instance = match target {
+				crate::experimental_core::error::TypeName::Struct(n) => {
+					crate::experimental_core::nominal::hash_copy(n).map(crate::Hash::new)
+				}
+				_ => target.builtin_hash(),
+			}
+			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+			return Err(
+				err(ErrorKind::Type).with_detail(Detail::MissingInstanceFunction {
+					target,
+					instance,
+					hash: crate::Hash::associated_function(instance, crate::Hash::ident("sort_by")),
+				}),
+			);
 		}
 		let Value::Heap(parent) = value else {
 			return Err(err(ErrorKind::InvalidCode));

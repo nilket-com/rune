@@ -1,0 +1,41 @@
+{
+  "reason": "Already compile-refused on the exact pre-change9b baseline; frozen stock and before observations are unchanged",
+  "rows": [
+    {
+      "name": "extra-41",
+      "source_sha256": "49450cd4eead2436d5469d2399bfdb632923e0974d5ae37e80d26d2ddca4d845",
+      "original_policy": "Stock-exact",
+      "refusal": "Method",
+      "before": {
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 27:47, kind: Custom { error: \"Method\" } }) })]",
+        "error": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 9, start: 27, end: 47 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "location": {
+          "end": 47,
+          "source": 0,
+          "start": 27
+        },
+        "operation": "Method",
+        "refusal": "Some(Method)",
+        "status": "refused"
+      }
+    },
+    {
+      "name": "extra-42",
+      "source_sha256": "fea4512bc862a9bb814a445879e325b7fb66f70d19869ec6cb2f9f88b7ae594b",
+      "original_policy": "Intentional opaque Debug address",
+      "refusal": "Method",
+      "before": {
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 29:49, kind: Custom { error: \"Method\" } }) })]",
+        "error": "Error { kind: Unsupported, location: Some(Location { source: 0, revision: 9, start: 29, end: 49 }), operation: \"Method\", refusal: Some(Method), detail: None }",
+        "location": {
+          "end": 49,
+          "source": 0,
+          "start": 29
+        },
+        "operation": "Method",
+        "refusal": "Some(Method)",
+        "status": "refused"
+      }
+    }
+  ]
+}

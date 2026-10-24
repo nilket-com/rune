@@ -7,6 +7,7 @@
 use super::*;
 use crate::experimental_core::{
 	code::{Builder, Function},
+	error::TypeName,
 	heap::Limits,
 };
 
@@ -95,11 +96,9 @@ fn first_failure(parts: &[u32], expected: Error) {
 	let failure = executor
 		.invoke_args_for_test(&code, &mut store, 0, Args::Values(&[]), 1024)
 		.unwrap_err();
-	// D2 adds detail; the legacy oracle still checks every pre-D2 field.
-	assert_eq!(
-		failure.error.with_detail(Detail::None),
-		expected.with_detail(Detail::None)
-	);
+	// S7a gives both forms stock Type errors; typed detail still identifies
+	// which part failed first, while all earlier fields remain exact.
+	assert_eq!(failure.error, expected);
 	assert!(failure.call_chain.is_empty());
 	assert!(failure.cleanup_error.is_none());
 	assert!(executor.is_idle());
@@ -109,10 +108,14 @@ fn first_failure(parts: &[u32], expected: Error) {
 #[test]
 fn d18_template_reports_the_first_failing_part_unit_display_first() {
 	// The string part renders first, then Unit has no display form (Type) before
-	// the function token (Unsupported) is reached.
+	// the function token (Type) is reached.
 	first_failure(
 		&[4, 0, 3, 0, 5, 0],
-		Error::new(ErrorKind::Type, "missing display form").at(loc(60)),
+		Error::new(ErrorKind::Type, "missing display form")
+			.with_detail(Detail::NoDisplay {
+				found: TypeName::Unit,
+			})
+			.at(loc(60)),
 	);
 }
 
@@ -121,7 +124,11 @@ fn d18_template_reports_the_first_failing_part_function_first() {
 	// Same two failures in the other order: the function token fails first.
 	first_failure(
 		&[4, 0, 5, 0, 3, 0],
-		Error::new(ErrorKind::Unsupported, "value formatting form").at(loc(60)),
+		Error::new(ErrorKind::Type, "missing display form")
+			.with_detail(Detail::NoDisplay {
+				found: TypeName::Function,
+			})
+			.at(loc(60)),
 	);
 }
 

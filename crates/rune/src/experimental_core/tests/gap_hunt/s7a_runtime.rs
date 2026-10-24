@@ -319,7 +319,7 @@ fn assert_stock_observation(row: &Json, actual: &Json) {
 		if before.contains(" object at 0x") {
 			assert!(
 				row["policy"].as_str().unwrap().contains("opaque Debug")
-					|| row["policy"] == "Known-gap moved iterator"
+					|| row["before_fresh"][0]["status"] == "refused"
 			);
 			assert_eq!(
 				opaque_text_parts(&after),
@@ -344,5 +344,53 @@ fn s7a_stock_contract() {
 			&row,
 			&observe_stock(row["source"].as_str().unwrap(), "c5-main"),
 		);
+	}
+}
+
+#[test]
+fn s7a_fresh_contract() {
+	use crate::experimental_core::error::Refusal;
+	for row in rows() {
+		let (actual, audit) = observe_fresh(row["source"].as_str().unwrap(), "c5-main");
+		assert_eq!(audit["no_cleanup_error"], true, "{}", row["name"]);
+		assert_eq!(audit["reuse"], true);
+		let supplement: Json =
+			serde_json::from_str(include_str!("s7a_compile_controls.json")).unwrap();
+		assert_eq!(supplement["rows"].as_array().unwrap().len(), 2);
+		let overlay = supplement["rows"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.find(|v| v["name"] == row["name"]);
+		if let Some(overlay) = overlay {
+			assert_eq!(overlay["source_sha256"], row["source_sha256"]);
+			assert_eq!(overlay["original_policy"], row["policy"]);
+			assert_eq!(overlay["before"], row["before_fresh"][0]);
+			assert_eq!(actual["status"], "refused");
+			assert_eq!(actual["refusal"], "Some(Method)");
+			continue;
+		}
+		let policy = row["policy"].as_str().unwrap();
+		if let Some(reason) = policy.strip_prefix("Compile-refused ") {
+			let expected = match reason {
+				"Method" => Refusal::Method,
+				"Native" => Refusal::Native,
+				"TypeTable" => Refusal::TypeTable,
+				_ => panic!("unknown refusal control"),
+			};
+			assert_eq!(actual["status"], "refused", "{} {actual}", row["name"]);
+			assert_eq!(
+				actual["refusal"],
+				format!("{:?}", Some(expected)),
+				"{}",
+				row["name"]
+			);
+		} else {
+			assert!(matches!(
+				policy,
+				"Stock-exact" | "Intentional opaque Debug address"
+			));
+			assert_stock_observation(&row, &actual);
+		}
 	}
 }

@@ -19,6 +19,9 @@ mod indexing;
 mod iter_terminals;
 mod number_methods;
 mod object_methods;
+mod opaque;
+#[cfg(test)]
+mod opaque_tests;
 mod vec_constructors;
 mod vec_resize;
 pub use formatting::FormatLimits;
@@ -346,6 +349,9 @@ pub struct Store {
 	slots: Vec<Slot>,
 	free: Vec<u32>,
 	work: Vec<Value>,
+	// Cold moved-iterator diagnostic identity; never read by heap accessors.
+	opaque_names: Vec<(Handle, super::error::TypeName)>,
+	opaque_sweep_at: usize,
 	/// Heap child edges held by all admitted payloads (scalars do not count).
 	edges: usize,
 	first: Option<u32>,
@@ -392,6 +398,8 @@ impl Store {
 			slots: Vec::try_with_capacity(limits.entries.min(INITIAL_ENTRIES))?,
 			free: Vec::try_with_capacity(limits.entries.min(INITIAL_ENTRIES))?,
 			work: Vec::try_with_capacity(INITIAL_WORK)?,
+			opaque_names: Vec::new(),
+			opaque_sweep_at: 8,
 			edges: 0,
 			first: None,
 			last: None,
@@ -486,6 +494,13 @@ impl Store {
 			.checked_mul(size_of::<Slot>())
 			.and_then(|n| n.checked_add(self.free.capacity().checked_mul(size_of::<u32>())?))
 			.and_then(|n| n.checked_add(self.work.capacity().checked_mul(size_of::<Value>())?))
+			.and_then(|n| {
+				n.checked_add(
+					self.opaque_names
+						.capacity()
+						.checked_mul(size_of::<(Handle, super::error::TypeName)>())?,
+				)
+			})
 			.ok_or_else(|| err(ErrorKind::Overflow))
 	}
 
@@ -494,6 +509,7 @@ impl Store {
 		self.slots.capacity() * size_of::<Slot>()
 			+ self.free.capacity() * size_of::<u32>()
 			+ self.work.capacity() * size_of::<Value>()
+			+ self.opaque_names.capacity() * size_of::<(Handle, super::error::TypeName)>()
 	}
 
 	fn heap_edge(value: Value) -> usize {
@@ -1168,6 +1184,7 @@ impl Store {
 				..
 			}) => TypeName::CharRangeIter,
 			Some(Payload::ValueRangeIterator { .. }) => TypeName::RangeIter,
+			Some(Payload::Moved(Type::Iterator)) => self.moved_iterator_name(h)?,
 			Some(Payload::Moved(tag)) => TypeName::from_type(*tag),
 			Some(Payload::VectorIterator(iter)) => match self.payload(iter.handle).ok()?.tag() {
 				Type::Object => TypeName::ObjectIter,
@@ -1926,6 +1943,7 @@ impl Store {
 			.bytes
 			.checked_sub(entry.charged_bytes())
 			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
+		let opaque_name = self.prepare_opaque_drop(h)?;
 		let entry = self.entry_mut(h)?;
 		let tag = entry.tag()?;
 		let payload = entry
@@ -1933,6 +1951,11 @@ impl Store {
 			.replace(Payload::Moved(tag))
 			.ok_or_else(|| err(ErrorKind::InvalidCode))?;
 		entry.set_charged_bytes(0);
+		if let Some(name) = opaque_name {
+			self.opaque_names
+				.try_push((h, name))
+				.expect("opaque identity was reserved before the move");
+		}
 		self.bytes = bytes;
 		let failure = self.enqueue_children(payload).err();
 		self.drain_work(failure)
@@ -1961,6 +1984,7 @@ impl Store {
 
 	fn drain(&mut self) {
 		self.closed = true;
+		self.opaque_names.clear();
 
 		// Handle edges are inert bits. Do not decrement/follow them while draining.
 		while let Some(index) = self.last {
