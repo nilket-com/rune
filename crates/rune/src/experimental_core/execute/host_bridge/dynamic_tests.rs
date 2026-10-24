@@ -519,3 +519,81 @@ fn dynamic_every_real_budget_balances_and_recovers() {
 	// acyclic admitted graphs release uses pre-reserved work/free metadata.
 	assert_eq!(secondary, 0, "STOP: unexpected real cleanup failure");
 }
+
+/// The audit's reference-count equation applies to every represented stock kind.
+#[test]
+#[cfg_attr(miri, ignore = "focused S7b1 Miri: exact-name operator only")]
+fn dynamic_all_noninline_kinds_are_owned_any_roots_trees_and_dags() {
+	fn sample(kind: usize) -> stock::Value {
+		match kind {
+			0 => text(""),
+			1 => text("same"),
+			2 => list([]),
+			3 => list([stock::Value::from(7i64)]),
+			4 => stock::Value::tuple(crate::alloc::Vec::<stock::Value>::new()).unwrap(),
+			5 => {
+				let mut fields = crate::alloc::Vec::new();
+				fields.try_push(stock::Value::from(7i64)).unwrap();
+				stock::Value::tuple(fields).unwrap()
+			}
+			6 | 7 => {
+				let mut object = stock::Object::new();
+				if kind == 7 {
+					object
+						.insert(
+							crate::alloc::String::try_from("n").unwrap(),
+							stock::Value::from(7i64),
+						)
+						.unwrap();
+				}
+				stock::Value::new(object).unwrap()
+			}
+			8 => stock::Value::new(None::<stock::Value>).unwrap(),
+			9 => stock::Value::new(Some(stock::Value::from(7i64))).unwrap(),
+			10 => stock::Value::new(Ok::<stock::Value, stock::Value>(stock::Value::from(7i64)))
+				.unwrap(),
+			11 => stock::Value::new(Err::<stock::Value, stock::Value>(stock::Value::from(7i64)))
+				.unwrap(),
+			_ => unreachable!(),
+		}
+	}
+	let context = context();
+	let code = code(&context, "dynamic", 0);
+	let mut executor = executor(&context);
+	let mut store = Store::new(Limits::default()).unwrap();
+	for kind in 0..12 {
+		for placement in 0..3 {
+			let child = sample(kind);
+			let stock::Repr::Any(any) = child.as_ref() else {
+				panic!("kind {kind} is not Any");
+			};
+			assert_eq!(any.owned_ref_count(), Some(1), "kind {kind} root");
+			let value = match placement {
+				0 => child,
+				1 => list([child]),
+				_ => {
+					let copy = child.clone();
+					let stock::Repr::Any(any) = child.as_ref() else {
+						unreachable!()
+					};
+					assert_eq!(any.owned_ref_count(), Some(2), "kind {kind} DAG");
+					list([child, copy])
+				}
+			};
+			set(value);
+			let root = executor
+				.invoke_code(&code, &mut store, 0, &[], 100)
+				.unwrap();
+			if placement == 2 {
+				let a = store.get(root.value, 0).unwrap();
+				let b = store.get(root.value, 1).unwrap();
+				assert_eq!(a, b, "kind {kind} shared child");
+				store.release(a).unwrap();
+				store.release(b).unwrap();
+			}
+			store.root_release(root).unwrap();
+			clear();
+			balanced(&store, &executor, (0, 0));
+		}
+	}
+}

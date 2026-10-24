@@ -40,3 +40,44 @@ fn observer_scalar_bits_and_empty_tuple_are_not_coerced() {
 		assert_eq!(graph(&value)["nodes"][0][2], format!("{bits:016x}"));
 	}
 }
+
+#[test]
+fn certified_json_repeated_equal_strings_keep_distinct_allocations() {
+	let source = r#"pub fn main(){c10::parse("[\"same\",\"same\",{\"s\":\"same\"}]").unwrap()}"#;
+	let context = fresh_context();
+	let mut sources = Sources::new();
+	sources.insert(Source::memory(source).unwrap()).unwrap();
+	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 1).unwrap();
+	let mut executor = Executor::new().unwrap();
+	executor
+		.set_host_runtime(Some(
+			crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
+		))
+		.unwrap();
+	let mut store = Store::new(Limits::default()).unwrap();
+	let root = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["main"])).unwrap(),
+			&[],
+			FUEL,
+		)
+		.unwrap();
+	let first = store.get(root.value, 0).unwrap();
+	let second = store.get(root.value, 1).unwrap();
+	assert_ne!(first, second);
+	assert_eq!(store.text(first).unwrap(), "same");
+	assert_eq!(store.text(second).unwrap(), "same");
+	let object = store.get(root.value, 2).unwrap();
+	let third = store.field(object, "s").unwrap();
+	assert_ne!(first, third);
+	assert_ne!(second, third);
+	assert_eq!(store.text(third).unwrap(), "same");
+	for value in [first, second, object, third] {
+		store.release(value).unwrap();
+	}
+	store.root_release(root).unwrap();
+	assert!(executor.is_idle());
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+}
