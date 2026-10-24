@@ -58,6 +58,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(Values::size_hint)?;
 	m.implement_trait::<Values>(rune::item!(::std::iter::Iterator))?;
 
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 

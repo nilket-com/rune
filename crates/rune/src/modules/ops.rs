@@ -221,6 +221,8 @@ pub fn module() -> Result<Module, ContextError> {
 		["GeneratorState"],
 		item!(::std::ops::generator::GeneratorState),
 	)?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 

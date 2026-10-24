@@ -39,6 +39,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(format_clone__meta)?;
 	m.implement_trait::<Format>(rune::item!(::std::clone::Clone))?;
 
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 

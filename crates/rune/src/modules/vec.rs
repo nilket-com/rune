@@ -117,6 +117,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.implement_trait::<Vec>(rune::item!(::std::cmp::Ord))?;
 
 	m.function_meta(hash)?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 

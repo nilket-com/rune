@@ -31,6 +31,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(type_of_val)?;
 	m.function_meta(type_name_of_val)?;
 	m.function_meta(format_type)?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 

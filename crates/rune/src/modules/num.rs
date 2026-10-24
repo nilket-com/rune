@@ -24,6 +24,8 @@ pub fn module() -> Result<Module, ContextError> {
 	module.function_meta(parse_int_error_display_fmt)?;
 	module.function_meta(parse_int_error_debug_fmt)?;
 
+	#[cfg(feature = "fresh-core")]
+	module.fresh_mark_format_defaults();
 	Ok(module)
 }
 

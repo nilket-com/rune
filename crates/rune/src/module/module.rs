@@ -1325,6 +1325,8 @@ impl Module {
 			hash,
 			common: ModuleItemCommon { docs, deprecated },
 			kind: ModuleItemKind::Function(ModuleFunction {
+				#[cfg(feature = "fresh-core")]
+				fresh_format_default: false,
 				handler: data.handler,
 				#[cfg(feature = "fresh-core")]
 				fresh_host: data.fresh_host,
@@ -1380,6 +1382,8 @@ impl Module {
 			name: data.associated.name,
 			common: ModuleItemCommon { docs, deprecated },
 			kind: ModuleAssociatedKind::Function(ModuleFunction {
+				#[cfg(feature = "fresh-core")]
+				fresh_format_default: false,
 				#[cfg(feature = "fresh-core")]
 				fresh_host: None,
 				handler: data.handler,
@@ -1551,6 +1555,20 @@ impl AsRef<Module> for Module {
 }
 
 impl Module {
+	// Each std factory marks only handlers already registered before returning.
+	// Later public registrations retain false, even on a returned std module.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_mark_format_defaults(&mut self) {
+		for assoc in &mut self.associated {
+			if matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::DEBUG_FMT.hash || p.hash == Protocol::DISPLAY_FMT.hash)
+			{
+				if let ModuleAssociatedKind::Function(f) = &mut assoc.kind {
+					f.fresh_format_default = true;
+				}
+			}
+		}
+	}
+
 	// Called immediately after a pinned std formatting or assertion macro registration.
 	// External macro registration APIs never set this marker.
 	#[cfg(feature = "fresh-core")]

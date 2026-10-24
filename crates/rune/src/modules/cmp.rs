@@ -671,6 +671,8 @@ pub fn module() -> Result<Module, ContextError> {
 			/// ```
 		})?;
 
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 

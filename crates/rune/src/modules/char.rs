@@ -31,6 +31,8 @@ pub fn module() -> Result<Module, ContextError> {
 	module.function_meta(is_uppercase)?;
 	module.function_meta(is_whitespace)?;
 	module.function_meta(to_digit)?;
+	#[cfg(feature = "fresh-core")]
+	module.fresh_mark_format_defaults();
 	Ok(module)
 }
 

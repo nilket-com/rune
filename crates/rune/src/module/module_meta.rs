@@ -224,6 +224,8 @@ pub(crate) struct DocFunction {
 #[derive(TryClone)]
 pub(crate) struct ModuleFunction {
 	#[cfg(feature = "fresh-core")]
+	pub(crate) fresh_format_default: bool,
+	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_host: Option<crate::function::fresh_host::HostSignature>,
 	/// The handler for the function.
 	pub(crate) handler: FunctionHandler,

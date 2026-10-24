@@ -1707,3 +1707,6 @@ mod stock_unit_receipts;
 
 #[cfg(all(feature = "sha2", feature = "serde"))]
 mod s7a_runtime;
+
+#[cfg(all(feature = "sha2", feature = "serde"))]
+mod s7a_format_providers;

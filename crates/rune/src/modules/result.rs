@@ -86,6 +86,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(debug_fmt__meta)?;
 
 	m.function_meta(result_try__meta)?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 

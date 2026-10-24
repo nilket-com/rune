@@ -233,6 +233,8 @@ impl TraitContext<'_> {
 	) -> Result<(), ContextError> {
 		let function = ModuleFunction {
 			#[cfg(feature = "fresh-core")]
+			fresh_format_default: false,
+			#[cfg(feature = "fresh-core")]
 			fresh_host: None,
 			handler: handler.clone(),
 			trait_hash: Some(self.trait_hash),
@@ -337,6 +339,8 @@ pub struct Context {
 	functions: hash::Map<FunctionHandler>,
 	#[cfg(feature = "fresh-core")]
 	fresh_hosts: hash::Map<crate::function::fresh_host::HostBinding>,
+	#[cfg(feature = "fresh-core")]
+	fresh_format_modified: bool,
 	/// Registered deprecation mesages for native functions.
 	deprecations: hash::Map<String>,
 	/// Information on associated types.
@@ -406,6 +410,11 @@ pub struct Context {
 }
 
 impl Context {
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn fresh_format_defaults(&self) -> bool {
+		!self.fresh_format_modified
+	}
+
 	/// Construct a new empty [Context].
 	#[inline]
 	pub fn new() -> Self {
@@ -1595,6 +1604,14 @@ impl Context {
 	}
 
 	fn install_associated(&mut self, assoc: &ModuleAssociated) -> Result<(), ContextError> {
+		// Refuse after any untrusted provider registration, including failed installs.
+		// Module/raw/trait registration all enter here; no runtime path is changed.
+		#[cfg(feature = "fresh-core")]
+		if matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::DEBUG_FMT.hash || p.hash == Protocol::DISPLAY_FMT.hash)
+			&& matches!(&assoc.kind, ModuleAssociatedKind::Function(f) if !f.fresh_format_default)
+		{
+			self.fresh_format_modified = true;
+		}
 		let base = assoc.name.kind.hash(assoc.container);
 		let hash = base.with_function_parameters(assoc.name.function_parameters);
 		#[cfg(feature = "fresh-core")]

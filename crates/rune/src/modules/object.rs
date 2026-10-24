@@ -98,6 +98,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.implement_trait::<RuneValues>(rune::item!(::std::iter::Iterator))?;
 	m.function_meta(RuneValues::len__meta)?;
 	m.implement_trait::<RuneValues>(rune::item!(::std::iter::ExactSizeIterator))?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 

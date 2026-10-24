@@ -819,7 +819,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			{
 				// The same host IO policy as the value position in `call`: a statement
 				// `println!` must not bypass it.
-				if !self.context.fresh_stdio_println() {
+				if !self.context.fresh_stdio_println() || !self.context.fresh_format_defaults() {
 					return Err(self.refused(span, Refusal::Native));
 				}
 
@@ -841,7 +841,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	}
 
 	fn print_call(&mut self, call: &hir::ExprCall<'_>, out: u32, span: Span) -> Result<()> {
-		if !self.context.fresh_stdio_print() {
+		if !self.context.fresh_stdio_print() || !self.context.fresh_format_defaults() {
 			return Err(self.refused(span, Refusal::Native));
 		}
 		if call.args.len() != 1 {
@@ -1794,6 +1794,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 	#[inline(never)]
 	fn inner_template(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
+		if !self.context.fresh_format_defaults() {
+			return Err(self.refused(expr.span, Refusal::Native));
+		}
 		use hir::ExprKind as E;
 		let span = expr.span;
 		let E::Template(template) = expr.kind else {

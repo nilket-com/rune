@@ -66,6 +66,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.ty::<Union>()?;
 	m.function_meta(Union::next__meta)?;
 	m.implement_trait::<Union>(rune::item!(::std::iter::Iterator))?;
+	#[cfg(feature = "fresh-core")]
+	m.fresh_mark_format_defaults();
 	Ok(m)
 }
 
