@@ -411,7 +411,7 @@ pub struct Context {
 
 impl Context {
 	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_format_defaults(&self) -> bool {
+	pub(crate) fn fresh_formatting(&self) -> bool {
 		!self.fresh_format_modified
 	}
 

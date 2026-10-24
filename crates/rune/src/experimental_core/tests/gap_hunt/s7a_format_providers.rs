@@ -55,9 +55,9 @@ fn frozen_modified_provider_contract() {
 	assert_eq!(rows.len(), 8);
 	let calls = Arc::new(AtomicUsize::new(0));
 	let mut context = Context::with_default_modules().unwrap();
-	assert!(context.fresh_format_defaults());
+	assert!(context.fresh_formatting());
 	providers(&mut context, &calls);
-	assert!(!context.fresh_format_defaults());
+	assert!(!context.fresh_formatting());
 	let mut capture = String::new();
 	for row in rows {
 		let source = row["source"].as_str().unwrap();
@@ -167,4 +167,115 @@ fn trait_and_failed_provider_installs_fail_closed() {
 		.unwrap();
 	assert!(context.install(module).is_err());
 	refused(&context, "pub fn main(){format!(\"{:?}\",\"x\")}");
+}
+
+fn stock_ingress(context: &Context, source: &str) -> String {
+	let mut sources = input(source);
+	let mut vm = match crate::prepare(&mut sources)
+		.with_context(context)
+		.build_vm()
+	{
+		Ok(vm) => vm,
+		Err(error) => return format!("compile-error:{error:?}"),
+	};
+	match vm.call(["main"], ()) {
+		Ok(value) => match value.borrow_string_ref() {
+			Ok(text) => format!("value:{:?}", &*text),
+			Err(_) => format!("value:{value:?}"),
+		},
+		Err(error) => format!("error:{error}"),
+	}
+}
+
+fn fresh_neutral(context: &Context, source: &str) -> String {
+	let mut sources = input(source);
+	let program = frontend::compile(&mut sources, context, &mut Diagnostics::new(), 77).unwrap();
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let observation = match executor.invoke(
+		&program,
+		&mut store,
+		program.function(Hash::type_hash(["main"])).unwrap(),
+		&[],
+		2_000_000,
+	) {
+		Ok(root) => {
+			let text = format!("value:{:?}", store.root_text(&root).unwrap());
+			store.root_release(root).unwrap();
+			text
+		}
+		Err(error) => format!("error:{}", error.message(&program)),
+	};
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	observation
+}
+
+#[test]
+fn frozen_diagnostic_and_dynamic_formatting_ingresses_close() {
+	let document: Json = serde_json::from_str(include_str!("s7a_format_ingresses.json")).unwrap();
+	assert_eq!(document["schema"], 1);
+	assert_eq!(
+		hex(&Sha256::digest(
+			document["raw_capture"].as_str().unwrap().as_bytes()
+		)),
+		document["raw_capture_sha256"]
+	);
+	let rows = document["rows"].as_array().unwrap();
+	assert_eq!(rows.len(), 26);
+	let calls = Arc::new(AtomicUsize::new(0));
+	let default = Context::with_default_modules().unwrap();
+	let mut context = Context::with_default_modules().unwrap();
+	providers(&mut context, &calls);
+	for row in rows {
+		let source = row["source"].as_str().unwrap();
+		assert_eq!(
+			hex(&Sha256::digest(source.as_bytes())),
+			row["source_sha256"]
+		);
+		calls.store(0, Ordering::SeqCst);
+		assert_eq!(
+			stock_ingress(&context, source),
+			row["stock"]["observation"],
+			"{}",
+			row["name"]
+		);
+		assert_eq!(
+			calls.load(Ordering::SeqCst),
+			row["stock"]["provider_calls"].as_u64().unwrap() as usize
+		);
+		calls.store(0, Ordering::SeqCst);
+		match row["policy"].as_str().unwrap() {
+			"Native" => refused(&context, source),
+			"FrontendDiagnostic" => {
+				let Err(error) =
+					frontend::compile(&mut input(source), &context, &mut Diagnostics::new(), 77)
+				else {
+					panic!("previously refused ingress admitted");
+				};
+				assert_eq!(error.refusal, Some(Refusal::FrontendDiagnostic));
+			}
+			"Retained-neutral" => {
+				assert_eq!(fresh_neutral(&context, source), row["stock"]["observation"])
+			}
+			_ => panic!("unknown ingress policy"),
+		}
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+		if !row["before_fresh"]["observation"]
+			.as_str()
+			.unwrap()
+			.starts_with("compile-refused:")
+		{
+			assert!(
+				frontend::compile(&mut input(source), &default, &mut Diagnostics::new(), 77)
+					.is_ok(),
+				"default admission lost: {}",
+				row["name"]
+			);
+		}
+	}
+	// An exact script method with the same name does not enter native dispatch.
+	let source = "struct S;impl S{fn unwrap(self){\"safe\"}fn to_string(self){\"safe\"}}pub fn main(){S.unwrap()+S.to_string()}";
+	assert_eq!(fresh_neutral(&context, source), "value:\"safesafe\"");
+	assert_eq!(calls.load(Ordering::SeqCst), 0);
+	contract_completed("s7a-format-ingress", rows.len());
 }

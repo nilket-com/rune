@@ -180,6 +180,9 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
+		if method == Method::ToString && !self.context.fresh_formatting() {
+			return Err(self.refused(span, Refusal::Native));
+		}
 		// A method turbofish names a parameterized stock hash nothing provides.
 		if generic {
 			return Err(self.refused(span, Refusal::Method));
@@ -225,7 +228,9 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if !self.context.fresh_number_pair(pair) {
+		if !self.context.fresh_number_pair(pair)
+			|| (pair.method() == Method::ToString && !self.context.fresh_formatting())
+		{
 			return Err(self.refused(span, Refusal::Native));
 		}
 		if call.args.len() != pair.method().arity() as usize {

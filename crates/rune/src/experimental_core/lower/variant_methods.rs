@@ -13,6 +13,9 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
+		if matches!(method, Method::Unwrap | Method::Expect) && !self.context.fresh_formatting() {
+			return Err(self.refused(span, Refusal::Native));
+		}
 		if call.args.len() + 1 != method.arity() as usize {
 			return Err(self.refused(span, Refusal::Arity));
 		}

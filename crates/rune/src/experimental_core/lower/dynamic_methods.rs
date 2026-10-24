@@ -18,6 +18,13 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
+		if !self.context.fresh_formatting()
+			&& ["unwrap", "expect", "to_string"]
+				.into_iter()
+				.any(|s| Hash::ident(s) == name)
+		{
+			return Err(self.refused(span, Refusal::Native));
+		}
 		// Stock also accepts callable split patterns. The core implements only
 		// string and char delimiters, so keep the existing operand proof even
 		// when the receiver is dispatched at run time.
