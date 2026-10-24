@@ -53,11 +53,11 @@ use std::println;
 use std::process::{Command, Stdio};
 use std::time::{Duration, Instant};
 
-// The historical frame-boundary worker keeps its explicit sandbox in every mode.
-std::thread_local! { static HISTORICAL_FRAME_CONTROL: core::cell::Cell<bool> = const { core::cell::Cell::new(false) }; }
+// The historical frame and slot workers keeps its explicit sandbox in every mode.
+std::thread_local! { static HISTORICAL_LIMIT_CONTROL: core::cell::Cell<bool> = const { core::cell::Cell::new(false) }; }
 
 fn invoke(code: &Code, function: u32, args: &[Arg], fuel: usize) -> Observed {
-	let limits = HISTORICAL_FRAME_CONTROL.with(|control| {
+	let limits = HISTORICAL_LIMIT_CONTROL.with(|control| {
 		if control.get() {
 			crate::experimental_core::execute::ExecutorLimits {
 				frames: 1024,
@@ -1623,7 +1623,7 @@ fn b1_frame_cap_boundary() {
 #[ignore = "B1 native worker: run by its parent test in a child process"]
 fn child_frame_cap() {
 	require_child();
-	HISTORICAL_FRAME_CONTROL.with(|control| control.set(true));
+	HISTORICAL_LIMIT_CONTROL.with(|control| control.set(true));
 	let program = compile_source(DEEP);
 	let code = &program.code;
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
@@ -1706,6 +1706,7 @@ fn b1_slot_cap_boundary() {
 #[ignore = "B1 native worker: run by its parent test in a child process"]
 fn child_slot_cap() {
 	require_child();
+	HISTORICAL_LIMIT_CONTROL.with(|control| control.set(true));
 	// When the loop runs: main's frame (`slots`) plus the loop's 6 slots are reserved, and
 	// add needs 3 more: slots + 6 + 3 <= 65,536 enters.
 	let fit = 65_536 - 6 - 3;

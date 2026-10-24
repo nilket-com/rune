@@ -300,7 +300,7 @@ fn d14_cancellation_inside_nested_callees_has_the_exact_chain() {
 		assert_eq!(&failure.call_chain[..], &chain[..], "charge {n}");
 		assert!(failure.cleanup_error.is_none() && e.is_idle());
 
-		// The request is consumed: the next invocation is not cancelled.
+		// The request is consumed: the next invocation is not canceled.
 		let next = run(&mut e, &c, &mut s, &[1], 1_000).unwrap_err();
 		assert_eq!(next.error.kind, ErrorKind::DivisionByZero);
 		assert_eq!(&next.call_chain[..], &[loc(505), loc(401)]);
