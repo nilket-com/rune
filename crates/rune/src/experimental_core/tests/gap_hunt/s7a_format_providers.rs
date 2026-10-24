@@ -1,5 +1,6 @@
 //! Modified-provider contexts refuse formatting before execution, including nested values.
 use super::*;
+use crate as rune;
 use crate::experimental_core::error::{ErrorKind, Refusal};
 use crate::runtime::{Formatter, Protocol, Range};
 use serde_json::Value as Json;
