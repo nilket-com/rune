@@ -1,0 +1,374 @@
+{
+  "schema": 1,
+  "before_head": "f03cfd5528b1df5284255014dd99fbd17630a702",
+  "context": "default modules plus custom Range DEBUG_FMT/DISPLAY_FMT returning Unit, incrementing CALLS, writing no text",
+  "classification": "Modified-provider Context refuses every formatting ingress, including unwrap/expect diagnostic formatting and numeric to_string; finer call/receiver provenance is deferred. Existing non-admissions and neutral non-formatting controls are retained.",
+  "raw_capture": "PROVIDER assert-message stock error:Panicked: assertion failed:  calls=1\nPROVIDER assert-message fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 28, end: 39 }), operation: \"Native\", refusal: Some(Native), detail: None } calls=0\nPROVIDER assert-eq stock error:Panicked: assertion failed (left == right):\nleft: 1\nright: 2 calls=0\nPROVIDER assert-eq fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 29 }), operation: \"Native\", refusal: Some(Native), detail: None } calls=0\nPROVIDER assert-ne stock error:Panicked: assertion failed (left != right):\nleft: 1\nright: 1 calls=0\nPROVIDER assert-ne fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 29 }), operation: \"Native\", refusal: Some(Native), detail: None } calls=0\nPROVIDER panic-format stock error:Panicked:  calls=1\nPROVIDER panic-format fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 21, end: 32 }), operation: \"Native\", refusal: Some(Native), detail: None } calls=0\nPROVIDER unreachable stock compile-error:BuildError { kind: Default } calls=0\nPROVIDER unreachable fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 39 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None } calls=0\nPROVIDER todo stock compile-error:BuildError { kind: Default } calls=0\nPROVIDER todo fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 32 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None } calls=0\n\nPROVIDER dbg stock value:() calls=1\nPROVIDER dbg fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 24 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None } calls=0\nPROVIDER to-string-i64 stock value:\"3\" calls=0\nPROVIDER to-string-i64 fresh value:\"3\" calls=0\nPROVIDER to-string-u64 stock value:\"3\" calls=0\nPROVIDER to-string-u64 fresh value:\"3\" calls=0\nPROVIDER to-string-f64 stock value:\"3.5\" calls=0\nPROVIDER to-string-f64 fresh value:\"3.5\" calls=0\nPROVIDER to-string-path stock value:\"3\" calls=0\nPROVIDER to-string-path fresh value:\"3\" calls=0\nPROVIDER result-unwrap stock error:Panicked: Called `Result::unwrap()` on an `Err` value:  calls=1\nPROVIDER result-unwrap fresh error:Panicked: Called `Result::unwrap()` on an `Err` value: <::std::ops::Range object at 0x61ab32e15bf0> calls=0\nPROVIDER result-expect stock error:Panicked: failed:  calls=1\nPROVIDER result-expect fresh error:Panicked: failed: <::std::ops::Range object at 0x61ab32e15cd0> calls=0\nPROVIDER option-expect stock error:Panicked: failed calls=0\nPROVIDER option-expect fresh error:Panicked: failed calls=0\nPROVIDER ok-unwrap stock value:1 calls=0\nPROVIDER ok-unwrap fresh value:1 calls=0\nPROVIDER format-args stock compile-error:BuildError { kind: Default } calls=0\nPROVIDER format-args fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 39 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None } calls=0\nPROVIDER fmt-function stock compile-error:BuildError { kind: Default } calls=0\nPROVIDER fmt-function fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 30 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None } calls=0\nPROVIDER concat stock value:\"ab\" calls=0\nPROVIDER concat fresh value:\"ab\" calls=0\nPROVIDER direct-panic stock error:Panicked: message calls=0\nPROVIDER direct-panic fresh error:Panicked: message calls=0\nPROVIDER panic-type-error stock error:Expected type `std::string::String` but found `std::ops::Range` calls=0\nPROVIDER panic-type-error fresh error:Expected type `std::string::String` but found `std::ops::Range` calls=0\nPROVIDER dynamic-unwrap stock error:Panicked: Called `Result::unwrap()` on an `Err` value:  calls=1\nPROVIDER dynamic-unwrap fresh error:Panicked: Called `Result::unwrap()` on an `Err` value: <::std::ops::Range object at 0x61ab32e16c50> calls=0\nPROVIDER dynamic-expect stock error:Panicked: failed:  calls=1\nPROVIDER dynamic-expect fresh error:Panicked: failed: <::std::ops::Range object at 0x61ab32e15a40> calls=0\nPROVIDER dynamic-to-string stock value:\"3\" calls=0\nPROVIDER dynamic-to-string fresh value:\"3\" calls=0\nPROVIDER result-path stock error:Panicked: Called `Result::unwrap()` on an `Err` value:  calls=1\nPROVIDER result-path fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 39 }), operation: \"Native\", refusal: Some(Native), detail: None } calls=0\nPROVIDER result-function-value stock error:Panicked: Called `Result::unwrap()` on an `Err` value:  calls=1\nPROVIDER result-function-value fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 20, end: 34 }), operation: \"Native\", refusal: Some(Native), detail: None } calls=0\nPROVIDER number-function-value stock value:\"3\" calls=0\nPROVIDER number-function-value fresh compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 20, end: 34 }), operation: \"Native\", refusal: Some(Native), detail: None } calls=0\n",
+  "raw_capture_sha256": "52699986d2646fffe885f7bd7dc4129d17f6decd7f173c50b0ee8f8293f3206a",
+  "rows": [
+    {
+      "name": "assert-message",
+      "source": "pub fn main(){assert!(false,\"{:?}\",1..3)}",
+      "source_sha256": "4dc3967f26283707ceaea1f3f0e42dd3cb8956f36e82a4492df727b61b5cae21",
+      "stock": {
+        "observation": "error:Panicked: assertion failed: ",
+        "provider_calls": 1
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 28, end: 39 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "assert-eq",
+      "source": "pub fn main(){assert_eq!(1,2)}",
+      "source_sha256": "14b857c6dbaee5d8784515b8d27a5dd64fa653c22849a36e93dc3da353dfdaa2",
+      "stock": {
+        "observation": "error:Panicked: assertion failed (left == right):\nleft: 1\nright: 2",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 29 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "assert-ne",
+      "source": "pub fn main(){assert_ne!(1,1)}",
+      "source_sha256": "37ae58d779e61ab73adb7ac139afb918094339704d3999c2dd7ce9313dd32dc0",
+      "stock": {
+        "observation": "error:Panicked: assertion failed (left != right):\nleft: 1\nright: 1",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 29 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "panic-format",
+      "source": "pub fn main(){panic!(\"{:?}\",1..3)}",
+      "source_sha256": "165bf95fea2d71aa754dcaf1d03dbab7cfb4ac904b3701c298ae7e91448b0107",
+      "stock": {
+        "observation": "error:Panicked: ",
+        "provider_calls": 1
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 21, end: 32 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "unreachable",
+      "source": "pub fn main(){unreachable!(\"{:?}\",1..3)}",
+      "source_sha256": "56303e86d205f3bf706b5e67bb478ba65e722745f94c9af024995895fe4085eb",
+      "stock": {
+        "observation": "compile-error:BuildError { kind: Default }",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 39 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "FrontendDiagnostic"
+    },
+    {
+      "name": "todo",
+      "source": "pub fn main(){todo!(\"{:?}\",1..3)}",
+      "source_sha256": "d442a85a300850648c4c5511157c20fe5ad80b2ee16f1f7b0e76d5e8f5187e68",
+      "stock": {
+        "observation": "compile-error:BuildError { kind: Default }",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 32 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "FrontendDiagnostic"
+    },
+    {
+      "name": "dbg",
+      "source": "pub fn main(){dbg!(1..3)}",
+      "source_sha256": "5d0957fd7ba5a77b1139ecd2d51e6358234ccd5bddd3db89eb8cc7600bde20a4",
+      "stock": {
+        "observation": "value:()",
+        "provider_calls": 1
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 24 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "FrontendDiagnostic"
+    },
+    {
+      "name": "to-string-i64",
+      "source": "pub fn main(){(3i64).to_string()}",
+      "source_sha256": "5b06fad9f1774cb80b5e5a2d9e4a4264d210f87909c3d4ededfb1a1da951f5f1",
+      "stock": {
+        "observation": "value:\"3\"",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "value:\"3\"",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "to-string-u64",
+      "source": "pub fn main(){(3u64).to_string()}",
+      "source_sha256": "9aa975300461f98a3ab88b1db57d44f91cdbee2cda0e26d59a3da6880300bce6",
+      "stock": {
+        "observation": "value:\"3\"",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "value:\"3\"",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "to-string-f64",
+      "source": "pub fn main(){(3.5).to_string()}",
+      "source_sha256": "78f558f2249378d9079ea3e29e22ff32ecd44a6ad976a5b4e9f94a9f16c99c64",
+      "stock": {
+        "observation": "value:\"3.5\"",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "value:\"3.5\"",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "to-string-path",
+      "source": "pub fn main(){i64::to_string(3)}",
+      "source_sha256": "ee51cc998c6cbf67fe7c468f267a0155d9419c69fa10bcee4d338173450d8c2f",
+      "stock": {
+        "observation": "value:\"3\"",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "value:\"3\"",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "result-unwrap",
+      "source": "pub fn main(){Err(1..3).unwrap()}",
+      "source_sha256": "75fc61dfaa5183b301c30fb2cc7f6f9a54249dce6439cb3f1f120d70e34bd644",
+      "stock": {
+        "observation": "error:Panicked: Called `Result::unwrap()` on an `Err` value: ",
+        "provider_calls": 1
+      },
+      "before_fresh": {
+        "observation": "error:Panicked: Called `Result::unwrap()` on an `Err` value: <::std::ops::Range object at 0x61ab32e15bf0>",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "result-expect",
+      "source": "pub fn main(){Err(1..3).expect(\"failed\")}",
+      "source_sha256": "e01f4069dfcc3a2b6399720c63de744aa423ac8591c6b10e6aeefb7ac9e14087",
+      "stock": {
+        "observation": "error:Panicked: failed: ",
+        "provider_calls": 1
+      },
+      "before_fresh": {
+        "observation": "error:Panicked: failed: <::std::ops::Range object at 0x61ab32e15cd0>",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "option-expect",
+      "source": "pub fn main(){None.expect(\"failed\")}",
+      "source_sha256": "a0dc1b8378978a6ead86ae0e31f264ef0af8ec69d0ea40c294d1efd850ae6e6d",
+      "stock": {
+        "observation": "error:Panicked: failed",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "error:Panicked: failed",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "ok-unwrap",
+      "source": "pub fn main(){Ok(1).unwrap()}",
+      "source_sha256": "352f838cfeea78f53eda898b8a7d35c2a62ad65032eeceae1186e7295bff5545",
+      "stock": {
+        "observation": "value:1",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "value:1",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "format-args",
+      "source": "pub fn main(){format_args!(\"{:?}\",1..3)}",
+      "source_sha256": "4f73274d43fbc4e51abd07621caaa9ec844af7619091ff4356ecb8030bec8c52",
+      "stock": {
+        "observation": "compile-error:BuildError { kind: Default }",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 39 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "FrontendDiagnostic"
+    },
+    {
+      "name": "fmt-function",
+      "source": "pub fn main(){std::fmt::format(1..3)}",
+      "source_sha256": "ff4dbf1579dedcd91e49b950095a2bffcae2162f3e05f0e3e0f8a9c6a8052ade",
+      "stock": {
+        "observation": "compile-error:BuildError { kind: Default }",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 30 }), operation: \"FrontendDiagnostic\", refusal: Some(FrontendDiagnostic), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "FrontendDiagnostic"
+    },
+    {
+      "name": "concat",
+      "source": "pub fn main(){\"a\"+\"b\"}",
+      "source_sha256": "284f07e0a3321927734740e70bcf98b6620361364ce402efaa0c3beb72e3dddf",
+      "stock": {
+        "observation": "value:\"ab\"",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "value:\"ab\"",
+        "provider_calls": 0
+      },
+      "policy": "Retained-neutral"
+    },
+    {
+      "name": "direct-panic",
+      "source": "pub fn main(){panic(\"message\")}",
+      "source_sha256": "ea002fc49c4ab4d6fecc5a53cd172945ecea252219e0357e86349ef0d6cbcc41",
+      "stock": {
+        "observation": "error:Panicked: message",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "error:Panicked: message",
+        "provider_calls": 0
+      },
+      "policy": "Retained-neutral"
+    },
+    {
+      "name": "panic-type-error",
+      "source": "pub fn main(){panic(1..3)}",
+      "source_sha256": "d7cbdd0dd84760308d7042d43a61cc991fb717001683f42176a1da8c6d1d7d46",
+      "stock": {
+        "observation": "error:Expected type `std::string::String` but found `std::ops::Range`",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "error:Expected type `std::string::String` but found `std::ops::Range`",
+        "provider_calls": 0
+      },
+      "policy": "Retained-neutral"
+    },
+    {
+      "name": "dynamic-unwrap",
+      "source": "struct S;impl S{fn unwrap(self){1}}fn f(x){x.unwrap()}pub fn main(){f(Err(1..3))}",
+      "source_sha256": "0cfd2ab5486931d2aa23df0c6b67dece7fda49b5237f23cd3f077b2b562a8ccf",
+      "stock": {
+        "observation": "error:Panicked: Called `Result::unwrap()` on an `Err` value: ",
+        "provider_calls": 1
+      },
+      "before_fresh": {
+        "observation": "error:Panicked: Called `Result::unwrap()` on an `Err` value: <::std::ops::Range object at 0x61ab32e16c50>",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "dynamic-expect",
+      "source": "struct S;impl S{fn expect(self,m){m}}fn f(x){x.expect(\"failed\")}pub fn main(){f(Err(1..3))}",
+      "source_sha256": "a87e8eb8dd19fb49cad2cf576f51fc62a675df8d2c0768df524d5d0f89d9b5ce",
+      "stock": {
+        "observation": "error:Panicked: failed: ",
+        "provider_calls": 1
+      },
+      "before_fresh": {
+        "observation": "error:Panicked: failed: <::std::ops::Range object at 0x61ab32e15a40>",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "dynamic-to-string",
+      "source": "struct S;impl S{fn to_string(self){\"s\"}}fn f(x){x.to_string()}pub fn main(){f(3i64)}",
+      "source_sha256": "27c66fbd0102f05615ee8be86a4437375cd89dace1e8f8340df527bd2a93fe7f",
+      "stock": {
+        "observation": "value:\"3\"",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "value:\"3\"",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "result-path",
+      "source": "pub fn main(){Result::unwrap(Err(1..3))}",
+      "source_sha256": "10d9692f92bf4170b49dc5f2059590773a065b80f452a5e2013da8bfb57c5d4d",
+      "stock": {
+        "observation": "error:Panicked: Called `Result::unwrap()` on an `Err` value: ",
+        "provider_calls": 1
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 14, end: 39 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "result-function-value",
+      "source": "pub fn main(){let f=Result::unwrap;f(Err(1..3))}",
+      "source_sha256": "0fa3fda834031801c3936cce317cb7f82e001dd1276ed71afd1c75e94c1284c0",
+      "stock": {
+        "observation": "error:Panicked: Called `Result::unwrap()` on an `Err` value: ",
+        "provider_calls": 1
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 20, end: 34 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    },
+    {
+      "name": "number-function-value",
+      "source": "pub fn main(){let f=i64::to_string;f(3)}",
+      "source_sha256": "f3cda1b5fb2ca8d8ee030ff4593ca8f52eb7e5acbeb329b644f5d60c29a3bd84",
+      "stock": {
+        "observation": "value:\"3\"",
+        "provider_calls": 0
+      },
+      "before_fresh": {
+        "observation": "compile-refused:Error { kind: Unsupported, location: Some(Location { source: 0, revision: 1, start: 20, end: 34 }), operation: \"Native\", refusal: Some(Native), detail: None }",
+        "provider_calls": 0
+      },
+      "policy": "Native"
+    }
+  ]
+}
