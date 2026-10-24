@@ -36,6 +36,55 @@ const FRESH_SORT_ASSOCIATED: Hash = crate::hash_in!(crate, ::std::vec::Vec.sort_
 #[cfg(feature = "fresh-core")]
 const FRESH_SORT_ITEM: Hash = crate::hash_in!(crate, ::std::vec::Vec::sort_by);
 
+// Only registrations on values rendered by fresh can change its formatting.
+// Other native types remain behind the host boundary (S7b).
+#[cfg(feature = "fresh-core")]
+fn fresh_formats_container(hash: Hash) -> bool {
+	use crate::experimental_core::error::TypeName::*;
+	[
+		Unit,
+		Bool,
+		I64,
+		U64,
+		F64,
+		Char,
+		Ordering,
+		String,
+		Vec,
+		Tuple,
+		Object,
+		Option,
+		Result,
+		Range,
+		RangeInclusive,
+		RangeFrom,
+		RangeFull,
+		RangeTo,
+		RangeToInclusive,
+		Function,
+		Type,
+		VecIter,
+		ObjectIter,
+		OptionIter,
+		RangeIter,
+		UnsignedRangeIter,
+		CharRangeIter,
+		RangeInclusiveIter,
+		UnsignedRangeInclusiveIter,
+		CharRangeInclusiveIter,
+		RangeFromIter,
+		UnsignedRangeFromIter,
+		CharRangeFromIter,
+		StringSplit,
+		CharSplit,
+		Chars,
+		Skip,
+		Take,
+	]
+	.into_iter()
+	.any(|name| name.builtin_hash() == Some(hash))
+}
+
 crate::declare_dyn_fn! {
 	struct MacroHandlerVtable;
 
@@ -1604,11 +1653,12 @@ impl Context {
 	}
 
 	fn install_associated(&mut self, assoc: &ModuleAssociated) -> Result<(), ContextError> {
-		// Refuse after any untrusted provider registration, including failed installs.
+		// Refuse after an untrusted provider for a fresh-rendered type, even on failure.
 		// Module/raw/trait registration all enter here; no runtime path is changed.
 		#[cfg(feature = "fresh-core")]
 		if matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::DEBUG_FMT.hash || p.hash == Protocol::DISPLAY_FMT.hash)
 			&& matches!(&assoc.kind, ModuleAssociatedKind::Function(f) if !f.fresh_format_default)
+			&& fresh_formats_container(assoc.container)
 		{
 			self.fresh_format_modified = true;
 		}

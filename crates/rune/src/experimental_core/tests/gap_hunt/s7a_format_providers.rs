@@ -466,3 +466,32 @@ fn formatter_key_alias_and_foreign_root_cases_stay_named_known_gaps() {
 	}
 	contract_completed("s7a-format-key-Known-gap", rows.len());
 }
+
+#[derive(crate::Any)]
+struct ForeignFormat;
+
+#[test]
+fn unrelated_native_formatters_preserve_builtin_formatting() {
+	let calls = Arc::new(AtomicUsize::new(0));
+	let mut context = Context::with_default_modules().unwrap();
+	let mut module = crate::Module::new();
+	module.ty::<ForeignFormat>().unwrap();
+	let counter = calls.clone();
+	module
+		.associated_function(
+			&Protocol::DISPLAY_FMT,
+			move |_: &ForeignFormat, _: &mut Formatter| {
+				counter.fetch_add(1, Ordering::SeqCst);
+			},
+		)
+		.unwrap();
+	context.install(module).unwrap();
+	assert!(context.fresh_formatting());
+	let source = "pub fn main(){format!(\"{}\", 42)}";
+	assert_eq!(alias_fresh(&context, source, None), "value:\"42\"");
+	assert_eq!(calls.load(Ordering::SeqCst), 0);
+	providers(&mut context, &calls);
+	assert!(!context.fresh_formatting());
+	refused(&context, source);
+	assert_eq!(calls.load(Ordering::SeqCst), 0);
+}
