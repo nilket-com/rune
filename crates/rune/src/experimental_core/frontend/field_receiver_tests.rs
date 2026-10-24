@@ -87,3 +87,41 @@ fn field_receiver_self_stock_is_frozen() {
 		assert_eq!(actual, expected, "{}", original["name"]);
 	}
 }
+
+#[test]
+#[ignore = "operator-only grouped-write stock freeze"]
+fn field_receiver_freeze_group_oracle() {
+	use std::io::Write;
+	let mut data: Json =
+		serde_json::from_str(include_str!("field_receiver_group_contract.json")).unwrap();
+	for row in data["rows"].as_array_mut().unwrap() {
+		row["stock"] = grouped_stock(row);
+		row["before"] = baseline(row);
+	}
+	let mut out = std::fs::OpenOptions::new()
+		.create_new(true)
+		.write(true)
+		.open(std::env::var_os("C18F_ORACLE_OUT").unwrap())
+		.unwrap();
+	out.write_all(serde_json::to_string_pretty(&data).unwrap().as_bytes())
+		.unwrap();
+}
+
+fn grouped_stock(row: &mut Json) -> Json {
+	let context = context(row);
+	let mut sources = Sources::new();
+	sources
+		.insert(crate::Source::memory(row["source"].as_str().unwrap()).unwrap())
+		.unwrap();
+	let mut diagnostics = Diagnostics::new();
+	match crate::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(&mut diagnostics)
+		.build_vm()
+	{
+		Ok(_) => stock(row),
+		Err(error) => {
+			json!({"compile_error":error.to_string(),"diagnostics":std::format!("{diagnostics:?}")})
+		}
+	}
+}

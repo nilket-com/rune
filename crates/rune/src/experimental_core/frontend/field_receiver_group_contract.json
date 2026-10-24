@@ -1,0 +1,130 @@
+{
+  "base": "dc9315c2",
+  "record": "C18b3f-F1",
+  "rows": [
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          135,
+          142
+        ],
+        "refusal": "Some(Assignment)"
+      },
+      "expected_stock_value": 7,
+      "name": "grouped-dot",
+      "source": "struct R; struct S; struct Box {f} impl R {fn capacity(self){7}} impl S {fn capacity(self){11}} pub fn main(){let b=Box{f:R};if false {(b.f)=S;}b.f.capacity()}",
+      "source_sha256": "abb02dbd28669f5e1979b8ff55d2645701b6a54115f5796a23a5695e37cb66c5",
+      "stock": {
+        "compile_error": "Failed to build rune sources (see diagnostics for details)",
+        "diagnostics": "Diagnostics { diagnostics: [Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:142, kind: UnsupportedAssignExpr }) })], mode: All, has_error: true, has_warning: false }"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          135,
+          145
+        ],
+        "refusal": "Some(Assignment)"
+      },
+      "expected_stock_value": 7,
+      "name": "grouped-index",
+      "source": "struct R; struct S; struct Box {f} impl R {fn capacity(self){7}} impl S {fn capacity(self){11}} pub fn main(){let b=Box{f:R};if false {(b[\"f\"])=S;}b.f.capacity()}",
+      "source_sha256": "0cbbb63038348cf22eddb9399d9df19f543921312179625c0a46038814ed4172",
+      "stock": {
+        "compile_error": "Failed to build rune sources (see diagnostics for details)",
+        "diagnostics": "Diagnostics { diagnostics: [Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:145, kind: UnsupportedAssignExpr }) })], mode: All, has_error: true, has_warning: false }"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          135,
+          143
+        ],
+        "refusal": "Some(Assignment)"
+      },
+      "expected_stock_value": 7,
+      "name": "grouped-compound",
+      "source": "struct R; struct S; struct Box {f} impl R {fn capacity(self){7}} impl S {fn capacity(self){11}} pub fn main(){let b=Box{f:R};if false {(b.f)+=1;}b.f.capacity()}",
+      "source_sha256": "6ff7545dc494193c531f0f5bfb392334358307cfe74f015357eda7f66d3b09fc",
+      "stock": {
+        "compile_error": "Failed to build rune sources (see diagnostics for details)",
+        "diagnostics": "Diagnostics { diagnostics: [Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:143, kind: UnsupportedBinaryExpr }) })], mode: All, has_error: true, has_warning: false }"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          146,
+          160
+        ],
+        "refusal": "Some(Method)"
+      },
+      "expected_stock_value": 7,
+      "name": "grouped-receiver",
+      "source": "struct R; struct S; struct Box {f} impl R {fn capacity(self){7}} impl S {fn capacity(self){11}} pub fn main(){let b=Box{f:R};if false {((b)).f=S;}b.f.capacity()}",
+      "source_sha256": "3717347c4177a648ce54630d04c33691d26211c549e8541d491a696549f56acb",
+      "stock": {
+        "effects": 0,
+        "result": {
+          "value": 7
+        },
+        "unit_sha256": "63952ade7641966746c7aad81603606b8f00f5e1301bd39ec842a054d7425d24"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          125,
+          132
+        ],
+        "refusal": "Some(Assignment)"
+      },
+      "expected_stock_value": 11,
+      "name": "grouped-dot-live",
+      "source": "struct R; struct S; struct Box {f} impl R {fn capacity(self){7}} impl S {fn capacity(self){11}} pub fn main(){let b=Box{f:R};(b.f)=S;b.f.capacity()}",
+      "source_sha256": "d6c65fa44824f43b1031bbe920f30cc3275c278f74941f4fc6fa8bfa7ff797ca",
+      "stock": {
+        "compile_error": "Failed to build rune sources (see diagnostics for details)",
+        "diagnostics": "Diagnostics { diagnostics: [Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 125:132, kind: UnsupportedAssignExpr }) })], mode: All, has_error: true, has_warning: false }"
+      }
+    },
+    {
+      "after_admitted": false,
+      "before": {
+        "admitted": false,
+        "location": [
+          0,
+          125,
+          135
+        ],
+        "refusal": "Some(Assignment)"
+      },
+      "expected_stock_value": 11,
+      "name": "grouped-index-live",
+      "source": "struct R; struct S; struct Box {f} impl R {fn capacity(self){7}} impl S {fn capacity(self){11}} pub fn main(){let b=Box{f:R};(b[\"f\"])=S;b.f.capacity()}",
+      "source_sha256": "17c54207d09129702681dcb7f7de7ccc0662d6924b769c85379bab0fa51fe403",
+      "stock": {
+        "compile_error": "Failed to build rune sources (see diagnostics for details)",
+        "diagnostics": "Diagnostics { diagnostics: [Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 125:135, kind: UnsupportedAssignExpr }) })], mode: All, has_error: true, has_warning: false }"
+      }
+    }
+  ],
+  "ruling": "01a16b3c-d747-76dd-bbf4-b9de654e24e2"
+}
