@@ -154,12 +154,10 @@ pub enum HostCause {
 #[allow(missing_docs)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum HostDynamicReason {
+	ExternalAlias,
 	Unsupported,
 	Cycle,
 	OutputAccess,
-	DepthLimit,
-	VisitLimit,
-	ScratchLimit,
 }
 
 #[allow(missing_docs)]
@@ -823,24 +821,26 @@ impl fmt::Display for Message<'_> {
 			HostDynamic { reason, type_hash } => {
 				use HostDynamicReason as R;
 				match reason {
+					R::ExternalAlias => f.write_str(
+						"host output contract violation: externally aliased or borrowed value",
+					),
 					R::Unsupported => {
-						f.write_str("host returned an unsupported value")?;
+						f.write_str(
+							"host output contract violation: value outside the importable domain",
+						)?;
 						if let Some(hash) = type_hash {
 							write!(f, " of type {hash}")?;
 						}
 						Ok(())
 					}
-					R::Cycle => f.write_str("host returned a cyclic value"),
+					R::Cycle => f.write_str("host output contract violation: cyclic value"),
 					R::OutputAccess => {
-						f.write_str("host returned an unreadable value")?;
+						f.write_str("host output contract violation: unreadable value")?;
 						if let Some(hash) = type_hash {
 							write!(f, " of type {hash}")?;
 						}
 						Ok(())
 					}
-					R::DepthLimit => f.write_str("host value nesting exceeds 128"),
-					R::VisitLimit => f.write_str("host value exceeds 65536 visits"),
-					R::ScratchLimit => f.write_str("host value conversion exceeds scratch limit"),
 				}
 			}
 			FloatComparison { lhs_bits, rhs_bits } => core::fmt::Display::fmt(

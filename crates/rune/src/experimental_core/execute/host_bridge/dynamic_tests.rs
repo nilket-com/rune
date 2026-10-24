@@ -11,7 +11,7 @@ thread_local! {
 }
 fn output() -> stock::Value {
 	CALLS.with(|c| c.set(c.get() + 1));
-	OUTPUT.with(|v| v.borrow().as_ref().unwrap().clone())
+	OUTPUT.with(|v| v.borrow_mut().take().unwrap())
 }
 fn calls() -> usize {
 	CALLS.with(Cell::get)
@@ -34,15 +34,32 @@ fn text(value: &str) -> stock::Value {
 }
 fn context() -> Context {
 	let mut module = Module::with_item(["tiny"]).unwrap();
-	module.fresh_host_function("dynamic", output).unwrap();
+	module.function("dynamic", output).build().unwrap();
 	module
-		.fresh_host_function(
+		.function(
 			"result",
 			|| -> core::result::Result<stock::Value, std::string::String> { Ok(output()) },
 		)
+		.build()
 		.unwrap();
 	module.fresh_host_function("ok", || 7i64).unwrap();
-	installed(module)
+	let mut context = installed(module);
+	for (name, output) in [
+		("dynamic", HostOutput::Dynamic),
+		("result", HostOutput::ResultDynamicString),
+	] {
+		context
+			.fresh_host_for_test(
+				crate::Hash::type_hash(["tiny", name]),
+				HostSignature {
+					arity: 0,
+					arguments: [HostType::Unit; 4],
+					output,
+				},
+			)
+			.unwrap();
+	}
+	context
 }
 fn balanced(store: &Store, executor: &Executor, baseline: (usize, usize)) {
 	assert_eq!((store.live_entries(), store.payload_bytes()), baseline);
@@ -107,13 +124,14 @@ fn dynamic_scalars_empty_tuple_and_float_bits() {
 
 #[test]
 #[cfg_attr(miri, ignore = "focused C10 Miri: exact-name operator only")]
-fn dynamic_dag_identity_and_external_snapshots() {
+fn dynamic_dag_identity_and_external_alias_contract() {
 	let shared = list([stock::Value::from(7i64)]);
 	set(list([
 		shared.clone(),
 		shared.clone(),
 		list([stock::Value::from(7i64)]),
 	]));
+	drop(shared);
 	let context = context();
 	let code = code(&context, "dynamic", 0);
 	let mut executor = executor(&context);
@@ -128,25 +146,29 @@ fn dynamic_dag_identity_and_external_snapshots() {
 	assert_ne!(a, c);
 	store.set(a, 0, Value::I64(42)).unwrap();
 	assert_eq!(store.get(b, 0).unwrap(), Value::I64(42));
+	for value in [a, b, c] {
+		store.release(value).unwrap();
+	}
+	store.root_release(root).unwrap();
+	let external = list([stock::Value::from(7i64)]);
+	set(list([external.clone()]));
+	let failure = executor
+		.invoke_code(&code, &mut store, 0, &[], 100)
+		.unwrap_err();
+	assert_eq!(failure.error.kind, ErrorKind::Host);
+	assert!(matches!(
+		failure.error.detail,
+		Detail::HostDynamic {
+			reason: Reason::ExternalAlias,
+			..
+		}
+	));
 	assert_eq!(
-		shared.borrow_ref::<stock::Vec>().unwrap()[0]
+		external.borrow_ref::<stock::Vec>().unwrap()[0]
 			.as_integer::<i64>()
 			.unwrap(),
 		7
 	);
-	shared.borrow_mut::<stock::Vec>().unwrap()[0] = stock::Value::from(99i64);
-	assert_eq!(store.get(b, 0).unwrap(), Value::I64(42));
-	let second = executor
-		.invoke_code(&code, &mut store, 0, &[], 100)
-		.unwrap();
-	let later = store.get(second.value, 0).unwrap();
-	assert_ne!(later, a);
-	assert_eq!(store.get(later, 0).unwrap(), Value::I64(99));
-	for value in [a, b, c, later] {
-		store.release(value).unwrap();
-	}
-	store.root_release(root).unwrap();
-	store.root_release(second).unwrap();
 	clear();
 	balanced(&store, &executor, (0, 0));
 	reusable(&context, &mut executor, &mut store);
@@ -272,55 +294,58 @@ fn dynamic_native_collections_are_rejected_before_publication() {
 
 #[test]
 #[cfg_attr(miri, ignore = "focused C10 Miri: exact-name operator only")]
-fn dynamic_depth_and_scratch_preflight_are_transactional() {
+fn dynamic_depth_and_scratch_are_memory_bound() {
 	let context = context();
 	let code = code(&context, "dynamic", 0);
 	let mut executor = executor(&context);
-	for (depth, reason) in [(128, None), (129, Some(Reason::DepthLimit))] {
+	for depth in [128, 129, 256] {
 		let mut value = stock::Value::unit();
 		for _ in 0..depth {
 			value = list([value]);
 		}
 		set(value);
 		let mut store = Store::new(Limits::default()).unwrap();
-		let result = executor.invoke_code(&code, &mut store, 0, &[], 100);
-		match reason {
-			None => store.root_release(result.unwrap()).unwrap(),
-			Some(reason) => assert_eq!(
-				result.unwrap_err().error.detail,
-				Detail::HostDynamic {
-					reason,
-					type_hash: None
-				}
-			),
-		}
+		let root = executor
+			.invoke_code(&code, &mut store, 0, &[], 100)
+			.unwrap();
+		store.root_release(root).unwrap();
 		clear();
 		balanced(&store, &executor, (0, 0));
 	}
-	// Payload fits, scratch does not. No Store node may be allocated/published.
+	// Scratch no longer consumes the payload budget. This payload fits 32 bytes.
 	set(list([stock::Value::unit()]));
 	let mut store = Store::new(Limits {
 		entries: 8,
 		bytes: 32,
 	})
 	.unwrap();
-	let trace = Executor::host_trace_begin();
-	let failure = executor
+	let root = executor
 		.invoke_code(&code, &mut store, 0, &[], 100)
-		.unwrap_err();
-	let trace = trace.finish();
-	assert_eq!(
-		failure.error.detail,
-		Detail::HostDynamic {
-			reason: Reason::ScratchLimit,
-			type_hash: None
-		}
-	);
-	assert!(!trace.contains(&"dynamic-build"));
-	assert!(!trace.contains(&"put"));
+		.unwrap();
+	store.root_release(root).unwrap();
 	clear();
 	balanced(&store, &executor, (0, 0));
 	reusable(&context, &mut executor, &mut store);
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "large graph capacity witness; small graph importer defenses run under Miri"
+)]
+fn dynamic_visit_and_scratch_caps_do_not_refuse_valid_outputs() {
+	let context = context();
+	let code = code(&context, "dynamic", 0);
+	let mut executor = executor(&context);
+	let mut store = Store::new(Limits::default()).unwrap();
+	set(list((0..300_000).map(|_| stock::Value::unit())));
+	let root = executor
+		.invoke_code(&code, &mut store, 0, &[], 100)
+		.unwrap();
+	assert_eq!(store.len(root.value).unwrap(), 300_000);
+	store.root_release(root).unwrap();
+	clear();
+	balanced(&store, &executor, (0, 0));
 }
 
 #[test]
@@ -383,13 +408,16 @@ fn dynamic_every_real_budget_balances_and_recovers() {
 	for target in ["dynamic", "result"] {
 		// All stock graph allocations precede the guard, so conversion failures
 		// are distinguishable from the Result adapter allocation.
-		let shared = list([text("host output")]);
-		set(list([shared.clone(), shared, text("other")]));
+		let prepare = || {
+			let shared = list([text("host output")]);
+			set(list([shared.clone(), shared, text("other")]));
+		};
 		let context = context();
 		let code = code(&context, target, 0);
 		let mut failed = std::vec::Vec::new();
 		let mut success = None;
 		for budget in 0..=65536 {
+			prepare();
 			let mut store = Store::new(Limits::default()).unwrap();
 			let mut executor = executor(&context);
 			let mut roots = std::vec::Vec::new();
@@ -461,6 +489,7 @@ fn dynamic_every_real_budget_balances_and_recovers() {
 		let b = success.expect("STOP: no success at or below 65536 bytes");
 		assert_eq!(failed.len(), b);
 		for (mut store, mut executor, roots, baseline) in failed {
+			prepare();
 			let before = calls();
 			let root = crate::alloc::limit::with(65536, || {
 				executor

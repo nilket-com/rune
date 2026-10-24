@@ -316,7 +316,12 @@ fn fresh_context() -> Context {
 	m.function_meta(marker_clone).unwrap();
 	m.fresh_host_function("make", make).unwrap();
 	m.fresh_host_function("fallible", fallible).unwrap();
-	m.fresh_host_function("parse", parse).unwrap();
+	m.fresh_host_function_with_output(
+		"parse",
+		parse,
+		crate::function::fresh_host::OutputCertificate::JSON_RESULT,
+	)
+	.unwrap();
 	m.fresh_host_function("mutate", mutate).unwrap();
 	m.fresh_host_function("inspect", inspect).unwrap();
 	c.install(m).unwrap();

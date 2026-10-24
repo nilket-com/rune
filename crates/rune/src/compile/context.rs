@@ -669,13 +669,14 @@ impl Context {
 			let mut hosts = self.fresh_hosts.try_clone()?;
 			for item in &module.items {
 				if let rune::module::ModuleItemKind::Function(function) = &item.kind {
-					if let Some(signature) = function.fresh_host {
+					if let Some(enrollment) = function.fresh_host.filter(|e| e.admitted()) {
 						hosts.try_insert(
 							item.hash,
 							crate::function::fresh_host::HostBinding {
 								hash: item.hash,
 								handler: function.handler.clone(),
-								signature,
+								signature: enrollment.signature,
+								certificate: enrollment.certificate,
 							},
 						)?;
 					}
@@ -948,6 +949,7 @@ impl Context {
 				hash,
 				handler,
 				signature,
+				certificate: None,
 			},
 		)?;
 		Ok(())

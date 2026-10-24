@@ -197,6 +197,33 @@ fn c10_contract(engine: &str) {
 		assert_eq!(hex(&stdout), row[4]);
 		assert_eq!(hex(&stderr), row[5]);
 		if engine == "fresh" {
+			let certificate: Json =
+				serde_json::from_str(include_str!("../s7b1_host_outputs.json")).unwrap();
+			let rule = &certificate["rows"][i];
+			assert_eq!(rule["index"], i);
+			assert_eq!(rule["label"], row[0]);
+			assert_eq!(
+				rule["source_sha256"],
+				c10_sha(&c10_hex_bytes(row[2]).unwrap())
+			);
+			if rule["policy"] == "Refused-compile" {
+				let observed = &envelope["observation"];
+				assert_eq!(
+					observed["outcome"],
+					json!({"status":"refused","kind":"Unsupported","operation":"Native","refusal":"Native","primary":rule["primary"]}),
+					"{i} {}",
+					row[0]
+				);
+				assert_eq!(observed["invoked"], false);
+				assert_eq!(observed["events"], json!([]));
+				assert_eq!(observed["events_after_reuse"], json!([]));
+				assert_eq!(observed["host_calls"], 0);
+				assert_eq!(observed["protocol_calls"], 0);
+				assert_eq!(observed["reuse"]["status"], "value");
+				assert_eq!(observed["reuse"]["graph"], graph(&Value::from(7i64)));
+				c10_fresh_audit(&envelope["audit"], "Refused-compile", row[0]);
+				continue;
+			}
 			c10_fresh_audit(&envelope["audit"], row[6], row[0]);
 			let expected =
 				c10_arity_expected(i, row[0], row[2], row[6], c10_decode(row[7])).unwrap();

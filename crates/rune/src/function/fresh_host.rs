@@ -37,6 +37,99 @@ pub enum HostOutput {
 	/// Exactly Rust Result<Value, std::string::String>.
 	ResultDynamicString,
 }
+/// One node in a static output-shape graph. Every declared node must be importable.
+/// Indices refer to nodes in the same certificate; recursive containers describe
+/// arbitrarily large finite graphs. A union promises that every alternative is safe.
+#[doc(hidden)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum OutputShape {
+	Scalar(HostType),
+	Ordering,
+	Vec(usize),
+	Tuple(&'static [usize]),
+	Object(usize),
+	Option(usize),
+	Result(usize, usize),
+	Union(&'static [usize]),
+	/// Declare a type outside the closed importer domain. Fresh refuses the call.
+	Unsupported(Hash),
+}
+
+/// A trusted host promise about all outputs, bound to the installed handler.
+/// Outputs must be readable, acyclic owned snapshots. Internal DAGs are allowed;
+/// externally mutable and cross-call aliases are excluded. A broken promise is a
+/// host bug, never a reason to retry execution on stock after effects have occurred.
+#[doc(hidden)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct OutputCertificate {
+	pub nodes: &'static [OutputShape],
+	pub root: usize,
+}
+impl OutputCertificate {
+	fn importable(self) -> bool {
+		let valid = |i: usize| i < self.nodes.len();
+		valid(self.root)
+			&& self.nodes.iter().all(|node| match node {
+				OutputShape::Scalar(_) | OutputShape::Ordering => true,
+				OutputShape::Vec(i) | OutputShape::Object(i) | OutputShape::Option(i) => valid(*i),
+				OutputShape::Tuple(items) => items.iter().all(|i| valid(*i)),
+				OutputShape::Union(items) => !items.is_empty() && items.iter().all(|i| valid(*i)),
+				OutputShape::Result(ok, err) => valid(*ok) && valid(*err),
+				OutputShape::Unsupported(_) => false,
+			})
+	}
+	fn certifies(self, output: HostOutput) -> bool {
+		if !self.importable() {
+			return false;
+		}
+		match output {
+			HostOutput::Dynamic => true,
+			HostOutput::ResultDynamicString => {
+				matches!(self.nodes[self.root], OutputShape::Result(_, err) if self.nodes[err] == OutputShape::Scalar(HostType::String))
+			}
+			_ => false,
+		}
+	}
+
+	/// JSON trees wrapped in Rust `Result<Value, String>`.
+	pub const JSON_RESULT: Self = Self {
+		nodes: &[
+			OutputShape::Result(1, 7),
+			OutputShape::Union(&[2, 3, 4, 5, 6, 7, 8, 9]),
+			OutputShape::Scalar(HostType::Unit),
+			OutputShape::Scalar(HostType::Bool),
+			OutputShape::Scalar(HostType::I64),
+			OutputShape::Scalar(HostType::U64),
+			OutputShape::Scalar(HostType::F64),
+			OutputShape::Scalar(HostType::String),
+			OutputShape::Vec(1),
+			OutputShape::Object(1),
+		],
+		root: 0,
+	};
+}
+
+#[derive(Clone, Copy)]
+pub(crate) struct HostEnrollment {
+	pub(crate) signature: HostSignature,
+	pub(crate) certificate: Option<OutputCertificate>,
+}
+impl TryClone for HostEnrollment {
+	fn try_clone(&self) -> crate::alloc::Result<Self> {
+		Ok(*self)
+	}
+}
+impl HostEnrollment {
+	pub(crate) fn admitted(self) -> bool {
+		match self.signature.output {
+			HostOutput::Dynamic | HostOutput::ResultDynamicString => self
+				.certificate
+				.is_some_and(|c| c.certifies(self.signature.output)),
+			_ => self.certificate.is_none(),
+		}
+	}
+}
+
 /// Immutable signature created only by the sealed typed API.
 #[doc(hidden)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -70,7 +163,7 @@ pub trait FreshHostArgument: sealed::Argument {
 pub trait FreshHostScalar: sealed::Scalar {
 	const KIND: HostType;
 }
-/// Sealed return certificate; dynamic payloads use a bounded runtime import.
+/// Sealed return signature; dynamic payloads require an explicit output certificate.
 #[doc(hidden)]
 pub trait FreshHostOutput: sealed::Output {
 	const SHAPE: HostOutput;
@@ -196,6 +289,7 @@ pub(crate) struct HostBinding {
 	pub(crate) hash: Hash,
 	pub(crate) handler: FunctionHandler,
 	pub(crate) signature: HostSignature,
+	pub(crate) certificate: Option<OutputCertificate>,
 }
 impl TryClone for HostBinding {
 	fn try_clone(&self) -> crate::alloc::Result<Self> {
@@ -205,12 +299,16 @@ impl TryClone for HostBinding {
 #[cfg(target_pointer_width = "64")]
 const _: () = {
 	assert!(core::mem::size_of::<HostSignature>() == 7);
-	assert!(core::mem::size_of::<HostBinding>() == 32);
+	assert!(core::mem::size_of::<HostBinding>() == 56);
 };
 impl HostBinding {
 	pub(crate) fn same(&self, other: &Self) -> bool {
 		self.hash == other.hash
 			&& self.signature == other.signature
+			&& self.certificate == other.certificate
 			&& self.handler.same_allocation(&other.handler)
 	}
 }
+
+#[cfg(test)]
+mod tests;

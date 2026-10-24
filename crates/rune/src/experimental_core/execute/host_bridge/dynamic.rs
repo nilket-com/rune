@@ -5,9 +5,6 @@ use crate::runtime::{Inline, Ref, Repr};
 use core::mem::size_of;
 
 type NativeResult = core::result::Result<stock::Value, stock::Value>;
-const DEPTH: usize = 128;
-const VISITS: usize = 65536;
-const SCRATCH: usize = 4 << 20;
 fn failed(reason: Reason, type_hash: Option<crate::Hash>) -> Error {
 	error(ErrorKind::Host).with_detail(Detail::HostDynamic { reason, type_hash })
 }
@@ -127,11 +124,11 @@ enum Link {
 	Node(usize),
 }
 struct Node {
+	original: stock::Value,
 	source: Source,
 	start: usize,
 	len: usize,
 	active: bool,
-	height: usize,
 	owned: Option<Value>,
 }
 #[derive(Clone, Copy)]
@@ -150,19 +147,15 @@ struct Budget {
 }
 impl Budget {
 	fn check(&self, extra: usize) -> Result<()> {
+		// Conversion scratch is ordinary temporary allocation, not Store payload.
+		// Checked arithmetic and fallible reservations provide the resource bound.
+		add(self.scratch, extra)?;
 		if self.payload > self.remaining {
 			return Err(error(ErrorKind::StoreCapacity));
 		}
-		if add(self.scratch, extra)?
-			> SCRATCH.min(
-				self.remaining
-					.checked_sub(self.payload)
-					.ok_or_else(overflow)?,
-			) {
-			return Err(failed(Reason::ScratchLimit, None));
-		}
 		Ok(())
 	}
+
 	fn reserve<T>(&mut self, vector: &mut Vec<T>, additional: usize) -> Result<()> {
 		let needed = add(vector.len(), additional)?;
 		if needed <= vector.capacity() {
@@ -187,9 +180,8 @@ struct Plan {
 	edges: Vec<Link>,
 	memo: Vec<Memo>,
 	order: Vec<usize>,
-	frames: Vec<(usize, usize, usize)>,
+	frames: Vec<(usize, usize)>,
 	budget: Budget,
-	visits: usize,
 }
 impl Plan {
 	fn new(store: &Store) -> Result<Self> {
@@ -199,7 +191,6 @@ impl Plan {
 			memo: Vec::new(),
 			order: Vec::new(),
 			frames: Vec::new(),
-			visits: 0,
 			budget: Budget {
 				remaining: store.host_remaining_bytes()?,
 				payload: 0,
@@ -224,7 +215,7 @@ impl Plan {
 		}
 		at
 	}
-	fn intern(&mut self, source: Source, depth: usize, store: &Store) -> Result<Link> {
+	fn intern(&mut self, source: Source, original: stock::Value, store: &Store) -> Result<Link> {
 		let key = source.identity();
 		if !self.memo.is_empty() {
 			let prior = self.memo[Self::slot(&self.memo, key)].id;
@@ -232,9 +223,6 @@ impl Plan {
 				let node = &self.nodes[prior];
 				if node.active {
 					return Err(failed(Reason::Cycle, None));
-				}
-				if add(depth, node.height)? > DEPTH {
-					return Err(failed(Reason::DepthLimit, None));
 				}
 				return Ok(Link::Node(prior));
 			}
@@ -271,25 +259,18 @@ impl Plan {
 		source.append(&mut self.edges)?;
 		let id = self.nodes.len();
 		self.nodes.try_push(Node {
+			original,
 			source,
 			start,
 			len,
 			active: true,
-			height: 0,
 			owned: None,
 		})?;
 		let at = Self::slot(&self.memo, key);
 		self.memo[at] = Memo { key, id };
 		Ok(Link::Node(id))
 	}
-	fn enter(&mut self, value: stock::Value, depth: usize, store: &Store) -> Result<Link> {
-		self.visits = add(self.visits, 1)?;
-		if self.visits > VISITS {
-			return Err(failed(Reason::VisitLimit, None));
-		}
-		if depth > DEPTH {
-			return Err(failed(Reason::DepthLimit, None));
-		}
+	fn enter(&mut self, value: stock::Value, store: &Store) -> Result<Link> {
 		if let Repr::Inline(value) = value.as_ref() {
 			return Ok(Link::Leaf(match value {
 				Inline::Unit => Value::Unit,
@@ -304,15 +285,15 @@ impl Plan {
 				}
 			}));
 		}
-		self.intern(Source::read(value)?, depth, store)
+		self.intern(Source::read(value.clone())?, value, store)
 	}
 	fn walk(&mut self, value: &stock::Value, store: &Store) -> Result<Link> {
-		let root = self.enter(value.clone(), 0, store)?;
+		let root = self.enter(value.clone(), store)?;
 		if let Link::Node(id) = root {
 			self.budget.reserve(&mut self.frames, 1)?;
-			self.frames.try_push((id, 0, 0))?;
+			self.frames.try_push((id, 0))?;
 		}
-		while let Some(&(id, next, depth)) = self.frames.last() {
+		while let Some(&(id, next)) = self.frames.last() {
 			if next < self.nodes[id].len {
 				self.frames.last_mut().unwrap().1 += 1;
 				let at = self.nodes[id].start + next;
@@ -321,7 +302,7 @@ impl Plan {
 				else {
 					return Err(error(ErrorKind::InvalidCode));
 				};
-				let link = self.enter(child, depth + 1, store)?;
+				let link = self.enter(child, store)?;
 				let child = match link {
 					Link::Node(id) if self.nodes[id].active => Some(id),
 					_ => None,
@@ -329,24 +310,35 @@ impl Plan {
 				self.edges[at] = link;
 				if let Some(child) = child {
 					self.budget.reserve(&mut self.frames, 1)?;
-					self.frames.try_push((child, 0, depth + 1))?;
+					self.frames.try_push((child, 0))?;
 				}
 			} else {
-				let node = &self.nodes[id];
-				let mut height = 0;
-				for link in &self.edges[node.start..node.start + node.len] {
-					let child_height = match link {
-						Link::Leaf(_) => 0,
-						Link::Node(id) => self.nodes[*id].height,
-						Link::Pending(_) => return Err(error(ErrorKind::InvalidCode)),
-					};
-					height = height.max(add(child_height, 1)?);
-				}
-				self.nodes[id].height = height;
 				self.nodes[id].active = false;
 				self.budget.reserve(&mut self.order, 1)?;
 				self.order.try_push(id)?;
 				self.frames.pop();
+			}
+		}
+		// At this point each graph allocation has one original stock edge per
+		// incoming link, one retained Source guard, and one audit handle. Any
+		// excess owner is an external alias or a live guard, violating enrollment.
+		let mut incoming = Vec::try_with_capacity(self.nodes.len())?;
+		incoming.try_resize_with(self.nodes.len(), || 0usize)?;
+		for link in self.edges.iter().chain(core::iter::once(&root)) {
+			if let Link::Node(id) = link {
+				incoming[*id] = add(incoming[*id], 1)?;
+			}
+		}
+		for (node, incoming) in self.nodes.iter().zip(incoming) {
+			let count = match node.original.as_ref() {
+				Repr::Any(any) => any.owned_ref_count(),
+				_ => None,
+			};
+			if count != Some(add(incoming, 2)?) {
+				return Err(failed(
+					Reason::ExternalAlias,
+					Some(node.original.type_hash()),
+				));
 			}
 		}
 		Ok(root)

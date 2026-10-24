@@ -124,10 +124,9 @@ impl Module {
 	/// No certificate is published until the complete Context installation succeeds.
 	/// Host duration and capture allocations are outside script fuel/store budgets.
 	/// Borrowed strings use call-local snapshots; pointer identity across calls is not promised.
-	/// Dynamic Value outputs are owned snapshots of supported acyclic builtins.
-	/// Sharing within one output is preserved; external and cross-call aliases are isolated.
-	/// Cycles, unsupported payloads, unreadable values and conversion limits fail after
-	/// the single host call. No stock protocols run during the import.
+	/// Dynamic Value outputs install the stock handler but remain undeclared for fresh.
+	/// Use [`Self::fresh_host_function_with_output`] to certify every possible output.
+	/// An undeclared host binding refuses before argument arity or type checks.
 	///
 	/// The closed signature excludes owned input.
 	/// ```compile_fail,E0277
@@ -225,7 +224,39 @@ impl Module {
 	{
 		let signature = F::signature();
 		let mut data = FunctionData::new::<N, F, A, crate::function::Plain>(name, f)?;
-		data.fresh_host = Some(signature);
+		data.fresh_host = Some(crate::function::fresh_host::HostEnrollment {
+			signature,
+			certificate: None,
+		});
+		self.function_inner(data, Docs::EMPTY, None)
+	}
+
+	/// Enroll a dynamic output with an immutable, trusted shape certificate.
+	/// Every declared shape must be importable. `Result<Value, String>` requires
+	/// an explicit outer `Result(shape, String)` node. Invalid declarations still
+	/// install the stock handler; fresh calls refuse before execution.
+	///
+	/// The host promises readable, owned, acyclic snapshots with no externally
+	/// mutable aliases. Internal DAG sharing is preserved. Contract violations
+	/// detected by the cold importer are Host errors after the host call, never
+	/// unsupported-program signals and never permission to retry on stock.
+	#[cfg(feature = "fresh-core")]
+	pub fn fresh_host_function_with_output<F, A, N>(
+		&mut self,
+		name: N,
+		f: F,
+		certificate: crate::function::fresh_host::OutputCertificate,
+	) -> Result<ItemFnMut<'_>, ContextError>
+	where
+		F: crate::function::fresh_host::FreshHostFunction<A, Return: MaybeTypeOf>,
+		A: FunctionArgs,
+		N: IntoComponent,
+	{
+		let mut data = FunctionData::new::<N, F, A, crate::function::Plain>(name, f)?;
+		data.fresh_host = Some(crate::function::fresh_host::HostEnrollment {
+			signature: F::signature(),
+			certificate: Some(certificate),
+		});
 		self.function_inner(data, Docs::EMPTY, None)
 	}
 

@@ -226,7 +226,7 @@ pub(crate) struct ModuleFunction {
 	#[cfg(feature = "fresh-core")]
 	pub(crate) fresh_format_default: bool,
 	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_host: Option<crate::function::fresh_host::HostSignature>,
+	pub(crate) fresh_host: Option<crate::function::fresh_host::HostEnrollment>,
 	/// The handler for the function.
 	pub(crate) handler: FunctionHandler,
 	/// If the function is associated with a trait, this is the hash of that trait.

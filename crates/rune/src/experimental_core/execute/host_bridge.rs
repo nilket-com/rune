@@ -280,14 +280,15 @@ impl Executor {
 		match shape {
 			HostOutput::Dynamic => dynamic::convert(self, store, value),
 			HostOutput::ResultDynamicString => {
-				// A malformed certificate/raw adapter is corruption, unlike a valid
-				// dynamic payload which is simply outside the runtime allowlist.
+				// A malformed raw adapter is corruption. A value outside its declared
+				// dynamic domain is a host contract violation, never a fallback signal.
 				let outer = value
 					.borrow_ref::<core::result::Result<stock::Value, stock::Value>>()
 					.map_err(|_| error(ErrorKind::InvalidCode))?;
 				if let Err(err) = &*outer {
 					leaf_type(err, HostType::String)?;
 				}
+				drop(outer);
 				dynamic::convert(self, store, value)
 			}
 			HostOutput::Scalar(kind) => {

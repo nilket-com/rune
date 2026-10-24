@@ -126,6 +126,17 @@ impl AnyObj {
 		unsafe { vtable(self).is_owned() && self.shared.as_ref().count.get() == 1 }
 	}
 
+	/// Cold host-import ownership audit. Borrowed native storage has no owned count.
+	#[cfg(feature = "fresh-core")]
+	pub(crate) fn owned_ref_count(&self) -> Option<usize> {
+		// SAFETY: This live handle keeps the allocation and its vtable alive.
+		unsafe {
+			vtable(self)
+				.is_owned()
+				.then(|| self.shared.as_ref().count.get())
+		}
+	}
+
 	/// Hand over the values which the stored value is made of.
 	///
 	/// This is how a graph of values is taken apart without recursing into it:

@@ -51,7 +51,7 @@ pub struct FunctionData {
 	pub(crate) item: ItemBuf,
 	pub(crate) handler: FunctionHandler,
 	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_host: Option<crate::function::fresh_host::HostSignature>,
+	pub(crate) fresh_host: Option<crate::function::fresh_host::HostEnrollment>,
 	#[cfg(feature = "doc")]
 	pub(crate) is_async: bool,
 	#[cfg(feature = "doc")]

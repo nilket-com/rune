@@ -99,7 +99,16 @@ fn plain_recursion_meets_the_frame_limit_like_dispatch() {
 			stock.error().kind(),
 			crate::runtime::VmErrorKind::Halted { .. }
 		));
-		let failure = supplement_fresh_with_limits(program, 2000, Some(crate::experimental_core::execute::ExecutorLimits { frames: 1024, slots: 65_536 })).unwrap().unwrap_err();
+		let failure = supplement_fresh_with_limits(
+			program,
+			2000,
+			Some(crate::experimental_core::execute::ExecutorLimits {
+				frames: 1024,
+				slots: 65_536,
+			}),
+		)
+		.unwrap()
+		.unwrap_err();
 		assert_eq!(failure.error.kind, ErrorKind::FrameCapacity, "{program}");
 		// Every caller is in the chain; the frame that failed to call is not.
 		assert_eq!(failure.call_chain.len() + 1, frames, "{program}");
@@ -108,33 +117,27 @@ fn plain_recursion_meets_the_frame_limit_like_dispatch() {
 
 #[test]
 fn host_returned_context_type_reaches_dispatch_only_through_the_boundary() {
-	use crate::experimental_core::detail::Detail;
-	use crate::experimental_core::error::HostDynamicReason;
-	use crate::experimental_core::error::{ErrorKind, Refusal};
+	use crate::experimental_core::error::Refusal;
 	// No native `twist` anywhere: stock misses on Gadget; fresh refuses the
-	// Gadget at the host boundary (C10), before any dispatch.
-	let twist = "struct P{x}impl P{fn twist(self){1}}fn f(x){x.twist()}pub fn main(){f(c18b::gadget())}";
+	// undeclared Gadget output at compile time, before any host call.
+	let twist =
+		"struct P{x}impl P{fn twist(self){1}}fn f(x){x.twist()}pub fn main(){f(c18b::gadget())}";
 	let stock = supplement_stock(twist, 200_000).unwrap_err();
 	assert!(matches!(
 		stock.error().kind(),
 		crate::runtime::VmErrorKind::MissingInstanceFunction { .. }
 	));
-	let failure = supplement_fresh(twist, 200_000).unwrap().unwrap_err();
-	assert_eq!(failure.error.kind, ErrorKind::Host);
-	assert!(matches!(
-		failure.error.detail,
-		Detail::HostDynamic {
-			reason: HostDynamicReason::Unsupported,
-			..
-		}
-	));
+	let failure = supplement_fresh(twist, 200_000).unwrap_err();
+	assert_eq!(failure.refusal, Some(Refusal::Native));
+
 	// A native `knob` on the context type: stock calls it; fresh refuses the
-	// name at compile time, a proof that covers context types.
-	let knob = "struct P{x}impl P{fn knob(self){1}}fn f(x){x.knob()}pub fn main(){f(c18b::gadget())}";
+	// undeclared output first at compile time, before method proof resolution.
+	let knob =
+		"struct P{x}impl P{fn knob(self){1}}fn f(x){x.knob()}pub fn main(){f(c18b::gadget())}";
 	assert_eq!(
 		crate::from_value::<i64>(supplement_stock(knob, 200_000).unwrap()).unwrap(),
 		500
 	);
 	let refused = supplement_fresh(knob, 200_000).unwrap_err();
-	assert_eq!(refused.refusal, Some(Refusal::Method));
+	assert_eq!(refused.refusal, Some(Refusal::Native));
 }

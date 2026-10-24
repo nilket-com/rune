@@ -296,7 +296,10 @@ fn c10_fresh_audit(audit: &Json, policy: &str, label: &str) {
 		audit["cleanup_error"].is_null(),
 		"{label} secondary cleanup"
 	);
-	assert_eq!(audit["same_program_reuse"], policy != "Retained-arity");
+	assert_eq!(
+		audit["same_program_reuse"],
+		!matches!(policy, "Retained-arity" | "Refused-compile")
+	);
 	if policy == "Refused-runtime" {
 		assert_eq!(audit["returned_root"], false);
 		assert!(
