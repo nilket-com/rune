@@ -42,6 +42,8 @@ mod allocation_tests;
 #[cfg(test)]
 mod children_tests;
 #[cfg(test)]
+mod default_limits_tests;
+#[cfg(test)]
 mod growth_tests;
 #[cfg(test)]
 mod range_iterator_tests;
@@ -52,17 +54,42 @@ mod scalar_release_tests;
 
 static NEXT_STORE: AtomicU64 = AtomicU64::new(1);
 
-const DEFAULT_ENTRIES: usize = 65_536;
 const MAX_ENTRIES: usize = (u32::MAX - 1) as usize;
 const INITIAL_ENTRIES: usize = 64;
 const INITIAL_WORK: usize = 64;
-const DEFAULT_BYTES: usize = 16 << 20;
 const MAX_BYTES: usize = isize::MAX as usize;
+const DEFAULT_ENTRIES: usize = {
+	let slots = MAX_BYTES / size_of::<Slot>();
+	let free = MAX_BYTES / size_of::<u32>();
+	let entries = if MAX_ENTRIES < slots {
+		MAX_ENTRIES
+	} else {
+		slots
+	};
+	if entries < free {
+		entries
+	} else {
+		free
+	}
+};
+const DEFAULT_BYTES: usize = MAX_BYTES;
 
 /// Capacity limits of a [`Store`].
 ///
-/// Defaults are 65,536 entries and 16 MiB of payload. Bookkeeping is
-/// separate and grows with use; limits never cause proportional preallocation.
+/// Defaults impose no artificial Store limit below the representable maxima.
+/// The entry maximum also respects the platform's slot and free-list layouts.
+/// Bookkeeping is separate and grows with use; limits never cause proportional
+/// preallocation. Pass explicit limits to retain a smaller sandbox budget.
+///
+/// Store-owned allocations are fallible and fail with Allocation. This does not
+/// promise failure at the same physical-memory point as the stock VM: layouts
+/// differ. It does not protect against host-callback, platform, or OS-level
+/// allocation failures, including overcommit and OOM kills.
+///
+/// Generations start at one. After `u32::MAX - 1` final releases a slot reaches
+/// the last generation; its next final release permanently retires the slot.
+/// Retired slots still count against the entry limit. This bound is finite;
+/// generation checking never wraps to reuse an old handle.
 #[derive(Clone, Copy, Debug)]
 pub struct Limits {
 	/// Maximum entry slots, including permanently retired generations (1..=u32::MAX-1).

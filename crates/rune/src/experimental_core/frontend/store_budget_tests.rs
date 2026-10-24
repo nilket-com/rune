@@ -54,3 +54,81 @@ fn store_budget_sources_and_stock_are_frozen() {
 		assert_eq!(stock(row), row["stock"], "{}", row["name"]);
 	}
 }
+
+#[test]
+fn store_budget_progressions_are_exactly_the_two_frozen_budget_gaps() {
+	let original: Json = serde_json::from_str(include_str!("vec_resize_contract.json")).unwrap();
+	let overlay: Json =
+		serde_json::from_str(include_str!("store_budget_progressions.json")).unwrap();
+	let rows = overlay["rows"].as_array().unwrap();
+	assert_eq!(rows.len(), 2);
+	for name in ["budget-boundary", "entry-boundary"] {
+		let row = original["rows"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.find(|r| r["name"] == name)
+			.unwrap();
+		let progression = rows.iter().find(|r| r["name"] == name).unwrap();
+		assert_eq!(row["classification"], "Known-gap");
+		assert_eq!(progression["classification"], "Exact");
+		assert_eq!(progression["source_sha256"], row["source_sha256"]);
+		assert_eq!(progression["stock"], row["stock"]);
+	}
+}
+
+#[test]
+fn default_store_matches_stock_beyond_both_historical_limits() {
+	use crate::experimental_core::{
+		execute::Executor,
+		heap::{Limits, Store},
+		value::Value,
+	};
+	let contract: Json = serde_json::from_str(include_str!("store_budget_contract.json")).unwrap();
+	for row in contract["rows"].as_array().unwrap() {
+		let context = Context::with_default_modules().unwrap();
+		let mut sources = Sources::new();
+		sources
+			.insert(crate::Source::memory(row["source"].as_str().unwrap()).unwrap())
+			.unwrap();
+		let mut diagnostics = Diagnostics::new();
+		let compiled = super::compile(&mut sources, &context, &mut diagnostics, 22);
+		let controls: Json =
+			serde_json::from_str(include_str!("store_budget_refusals.json")).unwrap();
+		if let Some(control) = controls["rows"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.find(|c| c["name"] == row["name"] && c["source_sha256"] == row["source_sha256"])
+		{
+			let error = compiled.err().unwrap();
+			assert_eq!(std::format!("{:?}", error.refusal), "Some(Method)");
+			let at = error.location.unwrap();
+			assert_eq!(json!([at.start, at.end]), control["span"]);
+			continue;
+		}
+		let program = compiled.unwrap();
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut executor = Executor::new().unwrap();
+		let result = executor
+			.invoke(
+				&program,
+				&mut store,
+				program.function(Hash::type_hash(["main"])).unwrap(),
+				&[],
+				200_000_000,
+			)
+			.unwrap_or_else(|e| panic!("{}: {e:?}", row["name"]));
+		let Value::I64(value) = store.import(&result).unwrap() else {
+			panic!("{}", row["name"]);
+		};
+		assert_eq!(
+			json!({"value":value,"diagnostics":std::format!("{:?}", diagnostics.diagnostics())}),
+			row["stock"],
+			"{}",
+			row["name"]
+		);
+		store.root_release(result).unwrap();
+		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	}
+}

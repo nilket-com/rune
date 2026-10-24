@@ -267,8 +267,12 @@ mod tests {
 mod default_budget_tests {
 	use super::*;
 	#[test]
-	fn resize_default_entry_boundary_has_an_exact_charged_peak() {
-		let mut store = Store::new(Limits::default()).unwrap();
+	fn resize_explicit_historical_entry_boundary_has_an_exact_charged_peak() {
+		let mut store = Store::new(Limits {
+			entries: 65_536,
+			bytes: 16 << 20,
+		})
+		.unwrap();
 		let value = store.list(Type::Vec, &[]).unwrap();
 		let fill = store.variant(Type::Option, false, None).unwrap();
 		let error = store

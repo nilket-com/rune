@@ -243,7 +243,15 @@ fn vec_resize_fresh_matches_the_frozen_contract() {
 			&[],
 			100000,
 		);
-		if row["classification"] == "Known-gap" {
+		let progressions: Json =
+			serde_json::from_str(include_str!("store_budget_progressions.json")).unwrap();
+		let progressed = progressions["rows"].as_array().unwrap().iter().any(|p| {
+			p["name"] == row["name"]
+				&& p["source_sha256"] == row["source_sha256"]
+				&& p["stock"] == row["stock"]
+				&& p["classification"] == "Exact"
+		});
+		if row["classification"] == "Known-gap" && !progressed {
 			let failure = result.unwrap_err();
 			assert_eq!(failure.error.kind, ErrorKind::StoreCapacity, "{name}");
 			assert!(failure.error.refusal.is_none());
