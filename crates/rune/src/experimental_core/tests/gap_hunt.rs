@@ -1704,3 +1704,6 @@ mod dynamic_methods;
 
 #[cfg(all(feature = "serde", feature = "musli"))]
 mod stock_unit_receipts;
+
+#[cfg(all(feature = "sha2", feature = "serde"))]
+mod s7a_runtime;
