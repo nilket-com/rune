@@ -240,6 +240,18 @@ impl Module {
 	/// mutable aliases. Internal DAG sharing is preserved. Contract violations
 	/// detected by the cold importer are Host errors after the host call, never
 	/// unsupported-program signals and never permission to retry on stock.
+	///
+	/// ```
+	/// # fn main() -> Result<(), rune::ContextError> {
+	/// let mut module = rune::Module::new();
+	/// module.fresh_host_function_with_output(
+	///     "document",
+	///     || Ok::<rune::Value, std::string::String>(rune::Value::unit()),
+	///     rune::fresh_host::OutputCertificate::JSON_RESULT,
+	/// )?;
+	/// # Ok(())
+	/// # }
+	/// ```
 	#[cfg(feature = "fresh-core")]
 	pub fn fresh_host_function_with_output<F, A, N>(
 		&mut self,

@@ -225,6 +225,10 @@ mod function_meta;
 
 mod function;
 
+#[cfg(feature = "fresh-core")]
+#[doc(hidden)]
+pub use self::function::fresh_host;
+
 pub mod module;
 #[doc(inline)]
 pub use self::module::module::Module;
@@ -653,7 +657,7 @@ pub use rune_macros::attribute_macro;
 ///
 /// By default, the name of the function is mangled and the metadata is given
 /// the original name. This means you can't easily call the function from both
-/// Rune and Rust. This behaviour can be changed by using the `keep` attribute, in
+/// Rune and Rust. This behavior can be changed by using the `keep` attribute, in
 /// which case you must refer to the meta object by a mangled name
 /// (specifically the function name with `__meta` appended):
 ///
