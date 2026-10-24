@@ -1,10 +1,12 @@
-//! Modified-provider contexts refuse formatting before execution, including nested values.
+//! Ordinary protocol-kind registrations refuse formatting before execution.
+//! Actual-key aliases and foreign roots remain named S7b gaps; see s7a_format_key_gaps.
 use super::*;
 use crate as rune;
 use crate::experimental_core::error::{ErrorKind, Refusal};
 use crate::runtime::{Formatter, Protocol, Range};
 use serde_json::Value as Json;
 use sha2::{Digest, Sha256};
+use std::boxed::Box;
 use std::sync::atomic::AtomicUsize;
 
 fn input(source: &str) -> Sources {
@@ -278,4 +280,189 @@ fn frozen_diagnostic_and_dynamic_formatting_ingresses_close() {
 	assert_eq!(fresh_neutral(&context, source), "value:\"safesafe\"");
 	assert_eq!(calls.load(Ordering::SeqCst), 0);
 	contract_completed("s7a-format-ingress", rows.len());
+}
+
+fn alias_context(setup: &str, calls: &Arc<AtomicUsize>) -> Context {
+	let mut context = Context::with_default_modules().unwrap();
+	let mut module = crate::Module::new();
+	let receiver = <i64 as crate::TypeHash>::HASH;
+	let (target, formatter) = match setup {
+		"field" | "raw-range" => (<Range as crate::TypeHash>::HASH, Protocol::DEBUG_FMT.hash),
+		"raw-nominal" => (Hash::type_hash(["S"]), Protocol::DISPLAY_FMT.hash),
+		"raw-late-nominal" => (Hash::type_hash(["LateOnly"]), Protocol::DISPLAY_FMT.hash),
+		_ => panic!("unknown alias setup"),
+	};
+	let mut protocol = Protocol::GET;
+	let counter = calls.clone();
+	if setup == "field" {
+		protocol.hash = Hash::new(formatter.into_inner() ^ Hash::ident("field").into_inner());
+		assert_eq!(
+			Hash::field_function(protocol.hash, target, "field"),
+			Hash::associated_function(target, formatter)
+		);
+		let protocol = Box::leak(Box::new(protocol));
+		module
+			.field_function(protocol, "field", move |_: &Range, _: &mut Formatter| {
+				counter.fetch_add(1, Ordering::SeqCst);
+			})
+			.unwrap();
+	} else {
+		protocol.hash =
+			Hash::new(receiver.into_inner() ^ target.into_inner() ^ formatter.into_inner());
+		assert_ne!(protocol.hash, Protocol::DEBUG_FMT.hash);
+		assert_ne!(protocol.hash, Protocol::DISPLAY_FMT.hash);
+		assert_eq!(
+			Hash::associated_function(receiver, protocol.hash),
+			Hash::associated_function(target, formatter)
+		);
+		let protocol = Box::leak(Box::new(protocol));
+		module
+			.raw_function(&*protocol, move |memory, _, len, out| {
+				assert_eq!(len, 2);
+				counter.fetch_add(1, Ordering::SeqCst);
+				memory.store(out, ())?;
+				Ok(())
+			})
+			.build_associated::<i64>()
+			.unwrap();
+	}
+	context.install(module).unwrap();
+	// This is deliberately the blind spot, not proof of an Exact Context.
+	assert!(context.fresh_formatting());
+	context
+}
+
+fn alias_fresh(context: &Context, source: &str, producer: Option<&str>) -> String {
+	let render =
+		frontend::compile(&mut input(source), context, &mut Diagnostics::new(), 77).unwrap();
+	// Keep the renderer-first order: a foreign nominal can arrive later.
+	let make = producer
+		.map(|s| frontend::compile(&mut input(s), context, &mut Diagnostics::new(), 77).unwrap());
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let argument = make.as_ref().map(|p| {
+		executor
+			.invoke(
+				p,
+				&mut store,
+				p.function(Hash::type_hash(["main"])).unwrap(),
+				&[],
+				2_000_000,
+			)
+			.unwrap()
+	});
+	let args: Vec<_> = argument.iter().collect();
+	let result = match executor.invoke(
+		&render,
+		&mut store,
+		render.function(Hash::type_hash(["main"])).unwrap(),
+		&args,
+		2_000_000,
+	) {
+		Ok(root) => {
+			let text = format!("value:{:?}", store.root_text(&root).unwrap());
+			store.root_release(root).unwrap();
+			text
+		}
+		Err(error) => format!("error:{}", error.message(&render)),
+	};
+	if let Some(root) = argument {
+		store.root_release(root).unwrap();
+	}
+	assert!(executor.is_idle());
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	result
+}
+
+fn alias_stock(context: &Context, source: &str, producer: Option<&str>) -> String {
+	let Some(producer) = producer else {
+		return stock_ingress(context, source);
+	};
+	let mut render_input = input(source);
+	let mut render = crate::prepare(&mut render_input)
+		.with_context(context)
+		.build_vm()
+		.unwrap();
+	let mut make_input = input(producer);
+	let mut make = crate::prepare(&mut make_input)
+		.with_context(context)
+		.build_vm()
+		.unwrap();
+	let value = make.call(["main"], ()).unwrap();
+	match render.call(["main"], (value,)) {
+		Ok(value) => format!("value:{:?}", &*value.borrow_string_ref().unwrap()),
+		Err(error) => format!("error:{error}"),
+	}
+}
+
+#[test]
+fn formatter_key_alias_and_foreign_root_cases_stay_named_known_gaps() {
+	let document: Json = serde_json::from_str(include_str!("s7a_format_key_gaps.json")).unwrap();
+	assert_eq!(document["schema"], 1);
+	assert_eq!(document["policy"], "Known-gap");
+	assert_eq!(document["closure_record"], "S7b host-boundary certificate");
+	assert_eq!(document["default_switch_prerequisite_complete"], false);
+	assert!(Context::new().fresh_formatting());
+	assert!(Context::with_default_modules().unwrap().fresh_formatting());
+	for capture in document["captures"].as_array().unwrap() {
+		assert_eq!(
+			hex(&Sha256::digest(capture["raw"].as_str().unwrap().as_bytes())),
+			capture["raw_sha256"]
+		);
+	}
+	let rows = document["rows"].as_array().unwrap();
+	assert_eq!(rows.len(), 5);
+	for row in rows {
+		assert_eq!(row["policy"], "Known-gap");
+		let source = row["source"].as_str().unwrap();
+		assert_eq!(
+			hex(&Sha256::digest(source.as_bytes())),
+			row["source_sha256"]
+		);
+		let producer = row["producer_source"].as_str();
+		if let Some(p) = producer {
+			assert_eq!(hex(&Sha256::digest(p.as_bytes())), row["producer_sha256"]);
+			assert_eq!(
+				row["compile_order"],
+				serde_json::json!(["renderer", "producer"])
+			);
+		}
+		let calls = Arc::new(AtomicUsize::new(0));
+		let context = alias_context(row["setup"].as_str().unwrap(), &calls);
+		// Run fresh first so the late producer is not compiled by stock beforehand.
+		let fresh = alias_fresh(&context, source, producer);
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+		let stock = alias_stock(&context, source, producer);
+		assert_eq!(stock, row["stock"]["observation"]);
+		assert_eq!(calls.load(Ordering::SeqCst), 1);
+		assert_eq!(row["stock"]["provider_calls"], 1);
+		assert_eq!(row["before_fresh"]["provider_calls"], 0);
+		assert_ne!(fresh, stock, "must not label this Context Exact");
+		if row["setup"] == "raw-nominal" || row["setup"] == "raw-late-nominal" {
+			assert_eq!(fresh, row["before_fresh"]["observation"]);
+		} else {
+			// Shape check ONLY for this Known-gap witness, never an equality mask.
+			let text = fresh
+				.strip_prefix("value:\"")
+				.unwrap()
+				.strip_suffix('"')
+				.unwrap();
+			let text = if row["name"] == "field-key-nested" {
+				text.strip_prefix('[').unwrap().strip_suffix(']').unwrap()
+			} else {
+				text
+			};
+			let pointer = text
+				.strip_prefix("<::std::ops::Range object at 0x")
+				.unwrap()
+				.strip_suffix('>')
+				.unwrap();
+			assert!(
+				!pointer.is_empty()
+					&& pointer.len() <= 16
+					&& pointer.bytes().all(|b| b.is_ascii_hexdigit())
+			);
+		}
+	}
+	contract_completed("s7a-format-key-Known-gap", rows.len());
 }
