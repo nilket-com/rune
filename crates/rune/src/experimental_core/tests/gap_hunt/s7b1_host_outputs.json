@@ -13,8 +13,14 @@
       "source_sha256": "1bf5d7699b9ba5991cde77d28607ca49dadb00780674403f733e6c083aad3e65",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "span_hex": "6331303a3a6d616b652822756e69742229"
+      }
     },
     {
       "index": 1,
@@ -22,8 +28,14 @@
       "source_sha256": "19f9a5caf2c049ae1613950139f484806dfdd92b736e924a01a5074795874aaa",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 35,
+        "span_hex": "6331303a3a66616c6c69626c652822756e69742229"
+      }
     },
     {
       "index": 2,
@@ -31,8 +43,14 @@
       "source_sha256": "abf51add53a46b61252ae15a16cc709d9a61e87acee4bbe7a22dea363e40a0dc",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "span_hex": "6331303a3a6d616b652822626f6f6c2229"
+      }
     },
     {
       "index": 3,
@@ -40,8 +58,14 @@
       "source_sha256": "9a495c05ee8b2e0d119bf9b40233d9083bd5446877929ae5f0c8ffaafe75215d",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 35,
+        "span_hex": "6331303a3a66616c6c69626c652822626f6f6c2229"
+      }
     },
     {
       "index": 4,
@@ -49,8 +73,14 @@
       "source_sha256": "a0495252b6eaa2849a45f501a56835b12448cbc034c6440dc1d7998ccf44d9fe",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a6d616b6528226936342d6d696e2229"
+      }
     },
     {
       "index": 5,
@@ -58,8 +88,14 @@
       "source_sha256": "5e1051f1f5d27d4d3ef7772e5268fde4484e589744fc45ae429cc6f4cf0bf125",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a66616c6c69626c6528226936342d6d696e2229"
+      }
     },
     {
       "index": 6,
@@ -67,8 +103,14 @@
       "source_sha256": "233efda04ab06c425f35cadac01eeae3bb6f0a2cd0d3513e624e138baa02a707",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a6d616b6528226936342d6d61782229"
+      }
     },
     {
       "index": 7,
@@ -76,8 +118,14 @@
       "source_sha256": "9373acf1edd2d238e87641156fe56b84b531b1e220542b0afc7d98bcee39a1e0",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a66616c6c69626c6528226936342d6d61782229"
+      }
     },
     {
       "index": 8,
@@ -85,8 +133,14 @@
       "source_sha256": "4792c20774919c51c7959c040c2903352d899e41e6016455517a9757c9d76d84",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a6d616b6528227536342d6d61782229"
+      }
     },
     {
       "index": 9,
@@ -94,8 +148,14 @@
       "source_sha256": "a815ca875e1ae6ca5233cb4c6477a14606a12566fe794b516c5b027069f2aaba",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a66616c6c69626c6528227536342d6d61782229"
+      }
     },
     {
       "index": 10,
@@ -103,8 +163,14 @@
       "source_sha256": "bbc5255d27c5750886ba6fdeaa54759f38fc32d96c0c69a48b16ac7cabf7e024",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "span_hex": "6331303a3a6d616b652822636861722229"
+      }
     },
     {
       "index": 11,
@@ -112,8 +178,14 @@
       "source_sha256": "f2cc271e9746f2ece9ad858ba80985be68a76e9e969e1c534b0c908a2698aa6a",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 35,
+        "span_hex": "6331303a3a66616c6c69626c652822636861722229"
+      }
     },
     {
       "index": 12,
@@ -121,8 +193,14 @@
       "source_sha256": "8fc1dd668e4580d429dfb67a7c616bc74a3392f63b8ebf4dc4319ccdaa1c3297",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "span_hex": "6331303a3a6d616b6528226c6573732229"
+      }
     },
     {
       "index": 13,
@@ -130,8 +208,14 @@
       "source_sha256": "b8ae911ec40b2a324f62704280f18665239a7e4e5a3c748ab8588c66f2ca506a",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 35,
+        "span_hex": "6331303a3a66616c6c69626c6528226c6573732229"
+      }
     },
     {
       "index": 14,
@@ -139,8 +223,14 @@
       "source_sha256": "ba30a51d53d5f75719013ab7311c58c852780c1c3d010b0dc2cd51ec95481101",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 32,
+        "span_hex": "6331303a3a6d616b652822657175616c2229"
+      }
     },
     {
       "index": 15,
@@ -148,8 +238,14 @@
       "source_sha256": "4829e68ffb8673eb421be1b0d673e539ec90b43bc57b1ed668d9e5af1a13fea9",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a66616c6c69626c652822657175616c2229"
+      }
     },
     {
       "index": 16,
@@ -157,8 +253,14 @@
       "source_sha256": "50f199a738121433984e230b43767b2ff64c57d2293deb0ae7b6e1e1b374c968",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a6d616b652822677265617465722229"
+      }
     },
     {
       "index": 17,
@@ -166,8 +268,14 @@
       "source_sha256": "e6c39ff7cd95c04a4b7c40685ab71a89c03513f5c3af9341754102114ce00e4f",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a66616c6c69626c652822677265617465722229"
+      }
     },
     {
       "index": 18,
@@ -175,8 +283,14 @@
       "source_sha256": "3b0b39bda632546e9061332afcfaf2c829aa51b43aa55266e5875563803e4aec",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "6331303a3a6d616b652822737472696e672d656d7074792229"
+      }
     },
     {
       "index": 19,
@@ -184,8 +298,14 @@
       "source_sha256": "a7d2a1b87314fd866b29eec65766fd2aae01de28fd47c00b29d00c30eb576f0d",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 43,
+        "span_hex": "6331303a3a66616c6c69626c652822737472696e672d656d7074792229"
+      }
     },
     {
       "index": 20,
@@ -193,8 +313,14 @@
       "source_sha256": "684bb4c9a98e7aa451bc884867e8b108f1c136b7c0008a9609712cab06f2c6f6",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 33,
+        "span_hex": "6331303a3a6d616b652822737472696e672229"
+      }
     },
     {
       "index": 21,
@@ -202,8 +328,14 @@
       "source_sha256": "1495dc90d15f872dab1cff162fdf9f30c52b723a932e1f0be569e43b2d67a74f",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 37,
+        "span_hex": "6331303a3a66616c6c69626c652822737472696e672229"
+      }
     },
     {
       "index": 22,
@@ -211,8 +343,14 @@
       "source_sha256": "cd50614dfa2fa88fa642426f277a06345f5ca67f4e0cce83ffe9ba3eb3617717",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a6d616b6528227665632d656d7074792229"
+      }
     },
     {
       "index": 23,
@@ -220,8 +358,14 @@
       "source_sha256": "7f6f8d5778f2bd7bdbf8971d921e1ec8ca9ab50b0ae26266bc602e7e15df9b76",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 40,
+        "span_hex": "6331303a3a66616c6c69626c6528227665632d656d7074792229"
+      }
     },
     {
       "index": 24,
@@ -229,8 +373,14 @@
       "source_sha256": "c91d271fcb903f3b5ef7e2c5f623f1f926924b5b10d8cab304ba250ae74f8c78",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a6d616b6528227475706c652d656d7074792229"
+      }
     },
     {
       "index": 25,
@@ -238,8 +388,14 @@
       "source_sha256": "96c3cdef0e9c7d1d0ad75703116c19f546d7ec4e5f484bff08a1bf8b6ebd9c24",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 42,
+        "span_hex": "6331303a3a66616c6c69626c6528227475706c652d656d7074792229"
+      }
     },
     {
       "index": 26,
@@ -247,8 +403,14 @@
       "source_sha256": "7234c02b0072ae7a3cdba945ccaf99847960fafdc13f3d6e70e0c3807e3083e6",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "6331303a3a6d616b6528226f626a6563742d656d7074792229"
+      }
     },
     {
       "index": 27,
@@ -256,8 +418,14 @@
       "source_sha256": "e030ec4c90fafe9f51672393c0d5d4e3aeaff20a95abd7090dd31eb5ccbfe242",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 43,
+        "span_hex": "6331303a3a66616c6c69626c6528226f626a6563742d656d7074792229"
+      }
     },
     {
       "index": 28,
@@ -265,8 +433,14 @@
       "source_sha256": "0ec6fca4f3a5bacfaa092849cc10e51894786d83057522163c81e132f6a13651",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "span_hex": "6331303a3a6d616b6528226e6f6e652229"
+      }
     },
     {
       "index": 29,
@@ -274,8 +448,14 @@
       "source_sha256": "793df2d4ede1912651f99806007d718a7dfa32b1d463b8c915e9499eaf064ef3",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 35,
+        "span_hex": "6331303a3a66616c6c69626c6528226e6f6e652229"
+      }
     },
     {
       "index": 30,
@@ -283,8 +463,14 @@
       "source_sha256": "0cb4cc580586462e20a8ca8826437b31b7d8ed0ca49e424f937f0e1371894c58",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "span_hex": "6331303a3a6d616b652822736f6d652229"
+      }
     },
     {
       "index": 31,
@@ -292,8 +478,14 @@
       "source_sha256": "cc7d350d44619a281b09fdcb6635da7e5508f4590659da24feec229b3d68c833",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 35,
+        "span_hex": "6331303a3a66616c6c69626c652822736f6d652229"
+      }
     },
     {
       "index": 32,
@@ -301,8 +493,14 @@
       "source_sha256": "3fda037e4bbb9edbf2b39d1353fc52aee0eea57ada616c473e97bb4d4913784d",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 29,
+        "span_hex": "6331303a3a6d616b6528226f6b2229"
+      }
     },
     {
       "index": 33,
@@ -310,8 +508,14 @@
       "source_sha256": "1143235a615e17dd287f88e4965e222502ec09318432d15615a67ef2033bcd7b",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 33,
+        "span_hex": "6331303a3a66616c6c69626c6528226f6b2229"
+      }
     },
     {
       "index": 34,
@@ -319,8 +523,14 @@
       "source_sha256": "68ca69baa3a3611dfa18f1911275c849a9fa06696bd7156aed957d7e881c9791",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 30,
+        "span_hex": "6331303a3a6d616b6528226572722229"
+      }
     },
     {
       "index": 35,
@@ -328,8 +538,14 @@
       "source_sha256": "0b03ce1ea7063ee9f540acd763ff1004612cefb8f2cd5c0ababa59a964191a69",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a66616c6c69626c6528226572722229"
+      }
     },
     {
       "index": 36,
@@ -337,8 +553,14 @@
       "source_sha256": "8bb4869ce51deb3d9f9dd525fbf1e534a7a61d513d2f4365b95781912b96d326",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 32,
+        "span_hex": "6331303a3a6d616b6528226d697865642229"
+      }
     },
     {
       "index": 37,
@@ -346,8 +568,14 @@
       "source_sha256": "e0d8e0fd7dbcfbb0e4d4d3963f825be38d7cff7abed9163438387f12e5879e91",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a66616c6c69626c6528226d697865642229"
+      }
     },
     {
       "index": 38,
@@ -355,8 +583,14 @@
       "source_sha256": "46d23854a72ad6c648931dec32c36a1aa5606363afa67de79b8433a8481481e9",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b6528226636342f303030303030303030303030303030302229"
+      }
     },
     {
       "index": 39,
@@ -364,8 +598,14 @@
       "source_sha256": "7943ad680e5c5dc00d168d418ab3442191edf849ff73414b531eb2d7ce4eb600",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b6528226636342f383030303030303030303030303030302229"
+      }
     },
     {
       "index": 40,
@@ -373,8 +613,14 @@
       "source_sha256": "c2f8d6b4069e018242aae804003191606a158cf46fd4d2f22277db7843226909",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b6528226636342f336666303030303030303030303030302229"
+      }
     },
     {
       "index": 41,
@@ -382,8 +628,14 @@
       "source_sha256": "0de3b9667e0386a8d2ef0fdc3b31e4dde145ca1e0e5cceb1125ec01a1b4da409",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b6528226636342f303030303030303030303030303030312229"
+      }
     },
     {
       "index": 42,
@@ -391,8 +643,14 @@
       "source_sha256": "4a841e7b06e805bc66517a0b8ee36f87ffe14c01fb34b320ec1d224ee5e37da4",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b6528226636342f376666303030303030303030303030302229"
+      }
     },
     {
       "index": 43,
@@ -400,8 +658,14 @@
       "source_sha256": "da473ef96c7fefd61d1864f557a633d3648d20be9e2345d3981d81ea697d89d5",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b6528226636342f666666303030303030303030303030302229"
+      }
     },
     {
       "index": 44,
@@ -409,8 +673,14 @@
       "source_sha256": "bac8bbbbfadad0989c7f61d9953fd2b60d73e06efaebe375531a0019890146a2",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b6528226636342f376666383030303030303030303034322229"
+      }
     },
     {
       "index": 45,
@@ -418,8 +688,14 @@
       "source_sha256": "485c30c7f283bd59f5acc72411fd3738112bd16b666080a44cdb486fa22ef36d",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b6528226636342f666666383030303030303030303032612229"
+      }
     },
     {
       "index": 46,
@@ -427,8 +703,14 @@
       "source_sha256": "b6e3f00cccfcc56b677e4e1a4fd9c50f7d2d8e4a617ed790ea49d3c14ada3cae",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b6528226636342f376666303030303030303030303030312229"
+      }
     },
     {
       "index": 47,
@@ -436,8 +718,14 @@
       "source_sha256": "220e6a297620e838870f173ae6094594f38f47c43024071166ea2c0b1cf8159d",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a66616c6c69626c6528226572726f722229"
+      }
     },
     {
       "index": 48,
@@ -445,8 +733,14 @@
       "source_sha256": "f709c52b968e417e41e913ed81d2790fd0d9899f54beddd6e41fdf9f0eb237bf",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 37,
+        "span_hex": "6331303a3a66616c6c69626c6528226572726f7222293f"
+      }
     },
     {
       "index": 49,
@@ -454,8 +748,14 @@
       "source_sha256": "004dc6aa5e803a1c117b8fae961a2bfa39b98156b3f5c39fc23362e38996255d",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a6d616b6528226461672d7665632229"
+      }
     },
     {
       "index": 50,
@@ -463,8 +763,14 @@
       "source_sha256": "e98dec7e2dfc1ff55d04a4d56e3d5f878e0b75ea740b128b70ec41c32fa4b486",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 37,
+        "span_hex": "6331303a3a6d616b6528226461672d6f626a6563742229"
+      }
     },
     {
       "index": 51,
@@ -472,8 +778,14 @@
       "source_sha256": "689d4d7dec8fb4e7b847618cbf5759bf4c8a3264f6287ae043a98fac8830bf37",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 37,
+        "span_hex": "6331303a3a6d616b6528226461672d737472696e672229"
+      }
     },
     {
       "index": 52,
@@ -481,8 +793,14 @@
       "source_sha256": "a1b31d7e4b774783fefe35157b766bcc76b4decb600df7628a8d6441b697b362",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a6d616b6528226469616d6f6e642229"
+      }
     },
     {
       "index": 53,
@@ -490,8 +808,14 @@
       "source_sha256": "7e13e7561c569afa94a548a9db23d22944624f0a541e17fd35bd727c719608fa",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 41,
+        "span_hex": "6331303a3a6d616b65282264697374696e63742d657175616c2229"
+      }
     },
     {
       "index": 54,
@@ -499,8 +823,14 @@
       "source_sha256": "b34d05a6ed6eb1597597bc978f8b86c353d03423277dfbb2345ee8ae42c9212c",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a66616c6c69626c6528226461672d7665632229"
+      }
     },
     {
       "index": 55,
@@ -508,8 +838,14 @@
       "source_sha256": "f9b6278e6cac884167bf09945a1b8b8f6f5dfef535b053c95fddf6fc0b5aba46",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 41,
+        "span_hex": "6331303a3a66616c6c69626c6528226461672d6f626a6563742229"
+      }
     },
     {
       "index": 56,
@@ -517,8 +853,14 @@
       "source_sha256": "0bc8b0082097ac4aeea83a371d55814bc1fe2786b9b15439e545713fbfdf9023",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 41,
+        "span_hex": "6331303a3a66616c6c69626c6528226461672d737472696e672229"
+      }
     },
     {
       "index": 57,
@@ -526,8 +868,14 @@
       "source_sha256": "c043d3bf75cdce260c04bec269068608497e99d129f46f4f9695887c45632fb3",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a66616c6c69626c6528226469616d6f6e642229"
+      }
     },
     {
       "index": 58,
@@ -535,8 +883,14 @@
       "source_sha256": "fa9428f7470462336c0d3609d365d27caed344219cead767397e98f3ef2fb195",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 45,
+        "span_hex": "6331303a3a66616c6c69626c65282264697374696e63742d657175616c2229"
+      }
     },
     {
       "index": 59,
@@ -544,8 +898,14 @@
       "source_sha256": "6c601ef61e85c8a77371915007b996c7b10bc7488b8a7a2a855254c814e70a99",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 40,
+        "span_hex": "6331303a3a6d616b6528226461672d7665632229"
+      }
     },
     {
       "index": 60,
@@ -553,8 +913,14 @@
       "source_sha256": "b28739108624606a024728f10583cce53471f459a65b103df17508db611f5177",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 43,
+        "span_hex": "6331303a3a6d616b6528226461672d6f626a6563742229"
+      }
     },
     {
       "index": 61,
@@ -562,8 +928,14 @@
       "source_sha256": "4838a9008841f70027b7c3b00319a1db7f6949a5861f5e0cbf2e2c97eee14a8a",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 40,
+        "span_hex": "6331303a3a6d616b6528226469616d6f6e642229"
+      }
     },
     {
       "index": 62,
@@ -571,8 +943,14 @@
       "source_sha256": "b9a655650e49667f19fa7f5a5d4a25c9e06ec9eb9242760405477cc394de34b4",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 47,
+        "span_hex": "6331303a3a6d616b65282264697374696e63742d657175616c2229"
+      }
     },
     {
       "index": 63,
@@ -580,8 +958,14 @@
       "source_sha256": "8bea23420a9c04a52a9fa99de63b9f8b4ab9ba6f0285d6e48d4a92e01a50c1f7",
       "prior_policy": "Retained-isolation",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 41,
+        "span_hex": "6331303a3a6d616b65282265787465726e616c2229"
+      }
     },
     {
       "index": 64,
@@ -589,8 +973,14 @@
       "source_sha256": "0d5da757f4fbe4f0d2091b26beca4d8bdf712bf900aea29015f7a51484c9ac9a",
       "prior_policy": "Retained-isolation",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 41,
+        "span_hex": "6331303a3a6d616b65282265787465726e616c2229"
+      }
     },
     {
       "index": 65,
@@ -598,8 +988,14 @@
       "source_sha256": "e9301c87a314ba2e6ede1111e2be43bdd26d948a50ed5fce0c63fe060780cd8a",
       "prior_policy": "Retained-isolation",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 41,
+        "span_hex": "6331303a3a6d616b65282265787465726e616c2229"
+      }
     },
     {
       "index": 66,
@@ -607,8 +1003,14 @@
       "source_sha256": "114e6c7e004d3e2deb22e4bf888c0e516aa9f0458fd53a7cc6a924e9b2baebf4",
       "prior_policy": "Retained-isolation",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 41,
+        "span_hex": "6331303a3a6d616b65282265787465726e616c2229"
+      }
     },
     {
       "index": 67,
@@ -616,8 +1018,14 @@
       "source_sha256": "c3b90b1a60c3167852618693d13be596e86af2dfc631b22fddcafb8a35ac8c28",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a6d616b6528226379636c652d7665632229"
+      }
     },
     {
       "index": 68,
@@ -625,8 +1033,14 @@
       "source_sha256": "dad711cd1e19b8fc2f0f253406f829bc792ee5fe41b246636080b2a90a30029a",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "6331303a3a6d616b6528226379636c652d6f626a6563742229"
+      }
     },
     {
       "index": 69,
@@ -634,8 +1048,14 @@
       "source_sha256": "9912b8e8c02b4a16c3eca60521632b17b9c0a1aaef85c0b233000eb742ce4f99",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a6d616b6528226379636c652d74776f2229"
+      }
     },
     {
       "index": 70,
@@ -643,8 +1063,14 @@
       "source_sha256": "99ee30c94661c2e3726c8d6e015f9c0cbc1bbb9bf7312154ed162853c8ab2efc",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a6d616b6528226379636c652d7475706c652229"
+      }
     },
     {
       "index": 71,
@@ -652,8 +1078,14 @@
       "source_sha256": "50e5206b95638ce98d16941cb475683f3c1a5d1d7c40fa70b9f9713d730c2af4",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "6331303a3a6d616b6528226379636c652d6f7074696f6e2229"
+      }
     },
     {
       "index": 72,
@@ -661,8 +1093,14 @@
       "source_sha256": "44709df915aec41f5ad4e98134383836c62bb5b6388293352eb01785dce718e0",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "6331303a3a6d616b6528226379636c652d726573756c742229"
+      }
     },
     {
       "index": 73,
@@ -670,8 +1108,14 @@
       "source_sha256": "7eaae71e1b84e275fab074725aeaa63f746376387e24b1531b5e8fd76ce757aa",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 42,
+        "span_hex": "6331303a3a6d616b6528226379636c652d7665632229"
+      }
     },
     {
       "index": 74,
@@ -679,8 +1123,14 @@
       "source_sha256": "a86f468dd331b75676426c1b1599bf92e04d6a147bc8484b999ea641b3e18eb4",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 20,
+        "end": 39,
+        "span_hex": "6331303a3a6d616b652822637573746f6d2229"
+      }
     },
     {
       "index": 75,
@@ -688,8 +1138,14 @@
       "source_sha256": "ed35ecf0f1bfb3c62959a4b5a4b05e5b8e775aa54f8592b47c6aa9f21eee89ce",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a6d616b6528227368617265642d726561642229"
+      }
     },
     {
       "index": 76,
@@ -697,8 +1153,14 @@
       "source_sha256": "a2add78a19cbc19bc11605cbbeb8d5f66992ab6d68b6443d3e5db5d3a62a1280",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a6d616b6528226578636c75736976652229"
+      }
     },
     {
       "index": 77,
@@ -706,8 +1168,14 @@
       "source_sha256": "a70bc7310a674203706dd0ef7a371b944a1e2aa1288900bf118e829695a2d096",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 32,
+        "span_hex": "6331303a3a6d616b6528226d6f7665642229"
+      }
     },
     {
       "index": 78,
@@ -715,8 +1183,14 @@
       "source_sha256": "d7a0707bf10df93cd75443c3bb0bc1e0534ccf720af203aa33dbd66329d76c46",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 41,
+        "span_hex": "6331303a3a6d616b652822646565702d6578636c75736976652229"
+      }
     },
     {
       "index": 79,
@@ -724,8 +1198,14 @@
       "source_sha256": "a78285deda04979227b85dd4037a3b458c6a2b5f52f1ba2813a4217c82172ff3",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 37,
+        "span_hex": "6331303a3a6d616b652822646565702d6d6f7665642229"
+      }
     },
     {
       "index": 80,
@@ -733,8 +1213,14 @@
       "source_sha256": "2326b4f4ac547622ac9eea790ac24d5678cbbb0d525ec02c8153d935293134e9",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 32,
+        "span_hex": "6331303a3a6d616b652822656d7074792229"
+      }
     },
     {
       "index": 81,
@@ -742,8 +1228,14 @@
       "source_sha256": "c1f14a0bf1ae7521da9468d5c0448bf5198a27583cccb6c1f59b3775ff87596a",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "span_hex": "6331303a3a6d616b652822747970652229"
+      }
     },
     {
       "index": 82,
@@ -751,8 +1243,14 @@
       "source_sha256": "a18cf69fddc81a338300c90262da634919c6b123405e5e599d5e0d1842b8488c",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 31,
+        "span_hex": "6331303a3a6d616b652822686173682229"
+      }
     },
     {
       "index": 83,
@@ -760,8 +1258,14 @@
       "source_sha256": "b478e733ef5830db4163b814193875d3dbe3ed5fd49a8146da4b99cabecf0eaa",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 32,
+        "span_hex": "6331303a3a6d616b65282262797465732229"
+      }
     },
     {
       "index": 84,
@@ -769,8 +1273,14 @@
       "source_sha256": "bcf07001c41d7f88c4adcd1c6df5db24def89658e1ff0b0e62db2efb7b486223",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a6d616b65282262797465732d656d7074792229"
+      }
     },
     {
       "index": 85,
@@ -778,8 +1288,14 @@
       "source_sha256": "1e3ae6758de8b5e7a980fe5f6f96be429d901e61ce67a70a551c09251c6cd544",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 33,
+        "span_hex": "6331303a3a6d616b652822637573746f6d2229"
+      }
     },
     {
       "index": 86,
@@ -787,8 +1303,14 @@
       "source_sha256": "621d510aab2fe6710d82b752bf8238ad95000c01ce27df11f1efefc9a8ae674b",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 35,
+        "span_hex": "6331303a3a6d616b65282266756e6374696f6e2229"
+      }
     },
     {
       "index": 87,
@@ -796,8 +1318,14 @@
       "source_sha256": "ce7af47cbc03deb4649eb84bd30340221d2758423c36f7199ea04078087285c5",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 33,
+        "span_hex": "6331303a3a6d616b6528226675747572652229"
+      }
     },
     {
       "index": 88,
@@ -805,8 +1333,14 @@
       "source_sha256": "cdadabd5338f11f85c905975ba95a69c659788ac0100bf79f32ca88a558d3c2d",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 32,
+        "span_hex": "6331303a3a6d616b65282272616e67652229"
+      }
     },
     {
       "index": 89,
@@ -814,8 +1348,14 @@
       "source_sha256": "5de335dfdc72f72533d5b6011a133b8f6e3bd9896e25afe06bce0ffb9efd862f",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a6d616b6528226e6f6d696e616c2229"
+      }
     },
     {
       "index": 90,
@@ -823,8 +1363,14 @@
       "source_sha256": "85c3dd684d43f9bf93c343c0c8f78de76c4d1ab906324e6d75d244550df8ea92",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 40,
+        "span_hex": "6331303a3a6d616b6528226e65737465642d637573746f6d2229"
+      }
     },
     {
       "index": 91,
@@ -832,8 +1378,14 @@
       "source_sha256": "bf40e03fad03cfb27ff1417777d24686edd6af67074aa0222f0d4131d15d6ab1",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a6d616b65282264657074682f302229"
+      }
     },
     {
       "index": 92,
@@ -841,8 +1393,14 @@
       "source_sha256": "5305765d3166fb0ce30660f1498e46448346356bab42e26518c6d56b2b568446",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 34,
+        "span_hex": "6331303a3a6d616b65282264657074682f312229"
+      }
     },
     {
       "index": 93,
@@ -850,8 +1408,14 @@
       "source_sha256": "c73dfc807b00e48a1437b09c00aa2f1bb9696a40567215e8d911086017290022",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a6d616b65282264657074682f3132372229"
+      }
     },
     {
       "index": 94,
@@ -859,8 +1423,14 @@
       "source_sha256": "733d6482b4c86da69b6b39632473c9ffd8b85c966ae65d3099881f1b80d4dd2e",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a6d616b65282264657074682f3132382229"
+      }
     },
     {
       "index": 95,
@@ -868,8 +1438,14 @@
       "source_sha256": "6936d7b2a42b2de96ad56ee6f7b53d493763d69f07b4e8770a86c704c0f78edc",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 36,
+        "span_hex": "6331303a3a6d616b65282264657074682f3132392229"
+      }
     },
     {
       "index": 96,
@@ -877,8 +1453,14 @@
       "source_sha256": "6b225be3a4de12661a6785ad5edc7be2d569f440ddbd4b1db47e03e4ce99afe0",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 40,
+        "span_hex": "6331303a3a66616c6c69626c65282264657074682f3132362229"
+      }
     },
     {
       "index": 97,
@@ -886,8 +1468,14 @@
       "source_sha256": "7ceda554e694ef1e68f4a4392ed503ddf45c22bcced8d562ace92fc2667ebdb1",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 40,
+        "span_hex": "6331303a3a66616c6c69626c65282264657074682f3132372229"
+      }
     },
     {
       "index": 98,
@@ -895,8 +1483,14 @@
       "source_sha256": "1bd66b424ebc0ee5842a13034222c50907656513b530e0bf20762af9fc5cf8f0",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 40,
+        "span_hex": "6331303a3a66616c6c69626c65282264657074682f3132382229"
+      }
     },
     {
       "index": 99,
@@ -904,8 +1498,14 @@
       "source_sha256": "02c2a5957ae6420115bcd7856c32a6d979181e74851e0f0c8df51c64322ead18",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "6331303a3a6d616b6528227669736974732f36353533342229"
+      }
     },
     {
       "index": 100,
@@ -913,8 +1513,14 @@
       "source_sha256": "20f5958a55b48f667696dcac0801274efb9d93ccd62a46d78d7a28cdb7e6c11b",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "6331303a3a6d616b6528227669736974732f36353533352229"
+      }
     },
     {
       "index": 101,
@@ -922,8 +1528,14 @@
       "source_sha256": "def8a8ecbf1ad13ed22da5bf9f45d935b80003bbd82dfffd19c9421eefa1e1ca",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "6331303a3a6d616b6528227669736974732f36353533362229"
+      }
     },
     {
       "index": 102,
@@ -931,8 +1543,14 @@
       "source_sha256": "d15fc6e1cae35727a3dc2a06ae8847a26be4bc372f4ee35ddb8c481bdb2655b9",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 43,
+        "span_hex": "6331303a3a66616c6c69626c6528227669736974732f36353533332229"
+      }
     },
     {
       "index": 103,
@@ -940,8 +1558,14 @@
       "source_sha256": "37acffe5512953777d7fe9643e00ce772787d3959859ea08f86bada2da7f666f",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 43,
+        "span_hex": "6331303a3a66616c6c69626c6528227669736974732f36353533342229"
+      }
     },
     {
       "index": 104,
@@ -949,8 +1573,14 @@
       "source_sha256": "4d23f49158029bec51c40a698b6c5dfe94e4010b7458a6e94da1fee2ea6dd866",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 43,
+        "span_hex": "6331303a3a66616c6c69626c6528227669736974732f36353533352229"
+      }
     },
     {
       "index": 105,
@@ -958,8 +1588,14 @@
       "source_sha256": "c01a5709cdabe936b6d7d2d57aa81c12438af9c7ad4589e7d30f1de12ec29f3b",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 38,
+        "span_hex": "6331303a3a6d616b6528226b65792f313034383537362229"
+      }
     },
     {
       "index": 106,
@@ -1120,8 +1756,14 @@
       "source_sha256": "209c6fd1465a70b396a824592ef1f28c6743425e5b82e2d3ed343ce5c4ea866c",
       "prior_policy": "Exact",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 26,
+        "span_hex": "6331303a3a6d616b65283129"
+      }
     },
     {
       "index": 124,
@@ -1129,8 +1771,14 @@
       "source_sha256": "869001f1820a64e9e45a69efeb6bf9bb8563d25e9284bec66a746f6835900cb0",
       "prior_policy": "Retained-arity",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 14,
+        "end": 25,
+        "span_hex": "6331303a3a6d616b652829"
+      }
     },
     {
       "index": 125,
@@ -1138,8 +1786,14 @@
       "source_sha256": "92564a652a632273407980167be60bd3df93a6a9c67bb5ee2e0171ea3703f2db",
       "prior_policy": "Refused-runtime",
       "policy": "Refused-compile",
-      "refusal": "NativeFunction",
-      "effects": "fresh: no execution, host calls, or output"
+      "refusal": "Native",
+      "effects": "fresh: no execution, host calls, or output",
+      "primary": {
+        "source": 0,
+        "start": 11,
+        "end": 30,
+        "span_hex": "6331303a3a6d616b652822637573746f6d2229"
+      }
     }
   ],
   "follow_up": "rnx json::parse needs a JSON certificate when updating its Rune pin; no rnx changes in S7b1"
