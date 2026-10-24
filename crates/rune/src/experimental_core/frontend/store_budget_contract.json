@@ -1,0 +1,41 @@
+{
+  "record": "S5",
+  "rows": [
+    {
+      "name": "resize-large-plus-pushes",
+      "source": "pub fn main(){let v=[];v.resize(2000000,0);v.push(1);v.push(2);v.push(3);v.len() as i64+v[2000000]+v[2000001]+v[2000002]}",
+      "source_sha256": "76c6b7fd5adc43f82b299e8bcfabb322f8fbb3876b91233d59b96a18a33261c1",
+      "stock": {
+        "diagnostics": "[]",
+        "value": 2000009
+      }
+    },
+    {
+      "name": "boxed-entry-growth",
+      "source": "pub fn main(){let v=[];let i=0;while i<100000{v.push(Some(i));i+=1;}v.len() as i64}",
+      "source_sha256": "725065f789ceeeba76372edcecdeaec1846de5c10fa088586b091c5bfe570862",
+      "stock": {
+        "diagnostics": "[]",
+        "value": 100000
+      }
+    },
+    {
+      "name": "string-byte-growth",
+      "source": "pub fn main(){let s=\"\";let i=0;while i<1048576{s.push_str(\"0123456789abcdef0123456789abcdef\");i+=1;}s.len() as i64}",
+      "source_sha256": "2d06127907ff6f759b9440aafb1a753d9b72c8997fd38605bb61ba57417a9ff1",
+      "stock": {
+        "diagnostics": "[]",
+        "value": 33554432
+      }
+    },
+    {
+      "name": "vector-byte-growth",
+      "source": "pub fn main(){let v=[];v.resize(2097152,7);v.len() as i64+v[2097151]}",
+      "source_sha256": "77a08e5e378d6851424f25ec8663b65f07f719daf911b5a25f52c6fa529a5f1f",
+      "stock": {
+        "diagnostics": "[]",
+        "value": 2097159
+      }
+    }
+  ]
+}

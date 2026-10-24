@@ -1,0 +1,32 @@
+{
+  "record": "S5",
+  "approved_message": "01a16c03-d46e-704d-b59d-c1393f792241",
+  "rows": [
+    {
+      "name": "budget-boundary",
+      "source_sha256": "12c0d1a4ac61b2763b6a32182b1f443568bd946d01db63b55589b37473e99126",
+      "classification": "Exact",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 2000000
+        },
+        "witness": null
+      }
+    },
+    {
+      "name": "entry-boundary",
+      "source_sha256": "ea2516bf99c104cc318b51b58b98d42cc02ea84287ca758a4a681cf25400dfc7",
+      "classification": "Exact",
+      "stock": {
+        "clones": 0,
+        "diagnostics": "[]",
+        "result": {
+          "value": 65537
+        },
+        "witness": null
+      }
+    }
+  ]
+}

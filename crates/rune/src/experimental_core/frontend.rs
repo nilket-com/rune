@@ -608,6 +608,8 @@ mod vec_constructor_tests;
 mod self_receiver_tests;
 
 #[cfg(test)]
+mod store_budget_tests;
+#[cfg(test)]
 mod vec_resize_tests;
 
 #[cfg(test)]
