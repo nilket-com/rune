@@ -1,0 +1,886 @@
+{
+  "record": "S6",
+  "base": "f14362cfacd81ccb1288358bd213f821c0072234",
+  "rows": [
+    {
+      "name": "plain-1022",
+      "kind": "plain",
+      "depth": 1022,
+      "source": "fn f(n){if n==0{0}else{f(n-1)+1}}pub fn main(){f(1022)}",
+      "source_sha256": "9dc26ac4b5655e86abdd5fe3d616a31b54f4d3b2cce8246a34cb525156eb2793",
+      "expected_i64": 1022,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 1022
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 1022
+        },
+        "slots": [
+          2,
+          6
+        ]
+      }
+    },
+    {
+      "name": "plain-1023",
+      "kind": "plain",
+      "depth": 1023,
+      "source": "fn f(n){if n==0{0}else{f(n-1)+1}}pub fn main(){f(1023)}",
+      "source_sha256": "cea329fd0bb8d10b84e89a4d112842e26c77053c12efa7b1fe72a3aca5e26495",
+      "expected_i64": 1023,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 1023
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 23, end: 29 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          6
+        ]
+      }
+    },
+    {
+      "name": "plain-1024",
+      "kind": "plain",
+      "depth": 1024,
+      "source": "fn f(n){if n==0{0}else{f(n-1)+1}}pub fn main(){f(1024)}",
+      "source_sha256": "eef9f5a706de54ea4fd99bc422cdacaefd4c16842fd8d9a0916ecac9ec7e8e2c",
+      "expected_i64": 1024,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 1024
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 23, end: 29 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          6
+        ]
+      }
+    },
+    {
+      "name": "plain-1025",
+      "kind": "plain",
+      "depth": 1025,
+      "source": "fn f(n){if n==0{0}else{f(n-1)+1}}pub fn main(){f(1025)}",
+      "source_sha256": "8a4a790d0fcdab0835fbe6733c47ac543e67211b2641ad47c2bed78730579805",
+      "expected_i64": 1025,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 1025
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 23, end: 29 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          6
+        ]
+      }
+    },
+    {
+      "name": "plain-10000",
+      "kind": "plain",
+      "depth": 10000,
+      "source": "fn f(n){if n==0{0}else{f(n-1)+1}}pub fn main(){f(10000)}",
+      "source_sha256": "63c84051c7b01803dff1fb1bd55b8d4320ed101c2d94f44b3f49be08e29ebb25",
+      "expected_i64": 10000,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 10000
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 23, end: 29 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          6
+        ]
+      }
+    },
+    {
+      "name": "plain-100000",
+      "kind": "plain",
+      "depth": 100000,
+      "source": "fn f(n){if n==0{0}else{f(n-1)+1}}pub fn main(){f(100000)}",
+      "source_sha256": "b4e761ea5b0e3a153f35b1a97cc3f4c4ada0ee1cb5986d6debd2d4a4b28a6c61",
+      "expected_i64": 100000,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 100000
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 23, end: 29 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          6
+        ]
+      }
+    },
+    {
+      "name": "mutual-1025",
+      "kind": "mutual",
+      "depth": 1025,
+      "source": "fn f(n){if n==0{0}else{g(n-1)+1}}fn g(n){if n==0{0}else{f(n-1)+1}}pub fn main(){f(1025)}",
+      "source_sha256": "cc9138f72cc9c9644799333d68c9039442fbe214ff7fddaf102010c1345a1871",
+      "expected_i64": 1025,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 1025
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 23, end: 29 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          6,
+          6
+        ]
+      }
+    },
+    {
+      "name": "mutual-100000",
+      "kind": "mutual",
+      "depth": 100000,
+      "source": "fn f(n){if n==0{0}else{g(n-1)+1}}fn g(n){if n==0{0}else{f(n-1)+1}}pub fn main(){f(100000)}",
+      "source_sha256": "0190081368190d663b5d04db34237c19082422f92b96c9dab64ff2a5dedc89c9",
+      "expected_i64": 100000,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 100000
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 23, end: 29 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          6,
+          6
+        ]
+      }
+    },
+    {
+      "name": "closure-1025",
+      "kind": "closure",
+      "depth": 1025,
+      "source": "fn f(n){if n==0{0}else{let step=1;let next=|x|f(x-step)+1;next(n)}}pub fn main(){f(1025)}",
+      "source_sha256": "a49b4ca67dd9829ee8a44ab8cea5aaf330fbced95c03b86033317a987fa91ee6",
+      "expected_i64": 1025,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 1025
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 58, end: 65 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          7,
+          5
+        ]
+      }
+    },
+    {
+      "name": "closure-100000",
+      "kind": "closure",
+      "depth": 100000,
+      "source": "fn f(n){if n==0{0}else{let step=1;let next=|x|f(x-step)+1;next(n)}}pub fn main(){f(100000)}",
+      "source_sha256": "ffe751508acea5fe928ddeda2abbedd6f066a6ec8b1a2b138e1dcfd709b5551c",
+      "expected_i64": 100000,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 100000
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 58, end: 65 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          7,
+          5
+        ]
+      }
+    },
+    {
+      "name": "sort-callback-8",
+      "kind": "sort-callback",
+      "depth": 8,
+      "source": "fn f(n){if n==0{0}else{let v=[0,1];v.sort_by(|a,b|{f(n-1);a.cmp(b)});n}}pub fn main(){f(8)}",
+      "source_sha256": "8d54ba0cf0886403213df12b37c4db2324aaa7089e816faf4c357a80190ed74b",
+      "expected_i64": 8,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 8
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 8
+        },
+        "slots": [
+          2,
+          9,
+          7,
+          25
+        ]
+      }
+    },
+    {
+      "name": "sort-callback-1025",
+      "kind": "sort-callback",
+      "depth": 1025,
+      "source": "fn f(n){if n==0{0}else{let v=[0,1];v.sort_by(|a,b|{f(n-1);a.cmp(b)});n}}pub fn main(){f(1025)}",
+      "source_sha256": "0861bf4cb89a067d297679e65a6244bdeee915b79ac41d70be906c24a90458b0",
+      "expected_i64": 1025,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "display": "Executions are nested too deeply, limit is 32",
+          "kind": "MaxExecutionDepth { max: 32 }",
+          "status": "error"
+        }
+      },
+      "classification": "Intentional resource-policy divergence",
+      "resource_policy": "stock nested-VM callback limit of32; fresh callbacks are iterative and bounded only by memory",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 682,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 51, end: 57 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          9,
+          7,
+          25
+        ]
+      }
+    },
+    {
+      "name": "sort-callback-100000",
+      "kind": "sort-callback",
+      "depth": 100000,
+      "source": "fn f(n){if n==0{0}else{let v=[0,1];v.sort_by(|a,b|{f(n-1);a.cmp(b)});n}}pub fn main(){f(100000)}",
+      "source_sha256": "4a14e97776587124428e6d05e0302261c82bea0c688d60d3b6b9dee441bbaf6d",
+      "expected_i64": 100000,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "display": "Executions are nested too deeply, limit is 32",
+          "kind": "MaxExecutionDepth { max: 32 }",
+          "status": "error"
+        }
+      },
+      "classification": "Intentional resource-policy divergence",
+      "resource_policy": "stock nested-VM callback limit of32; fresh callbacks are iterative and bounded only by memory",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 682,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 51, end: 57 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          9,
+          7,
+          25
+        ]
+      }
+    },
+    {
+      "name": "iterator-callback-8",
+      "kind": "iterator-callback",
+      "depth": 8,
+      "source": "fn f(n){if n==0{0}else{[1].iter().fold(0,|a,x|a+x+f(n-1))}}pub fn main(){f(8)}",
+      "source_sha256": "8c0e1967789171f4aafcec20faa2abe54f26e8dccb350e2d0ce45c77a1c3d9d7",
+      "expected_i64": 8,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 8
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 8
+        },
+        "slots": [
+          2,
+          11,
+          8
+        ]
+      }
+    },
+    {
+      "name": "iterator-callback-1025",
+      "kind": "iterator-callback",
+      "depth": 1025,
+      "source": "fn f(n){if n==0{0}else{[1].iter().fold(0,|a,x|a+x+f(n-1))}}pub fn main(){f(1025)}",
+      "source_sha256": "bd18faf16f1a19b4294db7bd7398ce2a159465766d92c21c6761741ab2239c00",
+      "expected_i64": 1025,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "display": "Executions are nested too deeply, limit is 32",
+          "kind": "MaxExecutionDepth { max: 32 }",
+          "status": "error"
+        }
+      },
+      "classification": "Intentional resource-policy divergence",
+      "resource_policy": "stock nested-VM callback limit of32; fresh callbacks are iterative and bounded only by memory",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 23, end: 57 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          11,
+          8
+        ]
+      }
+    },
+    {
+      "name": "iterator-callback-100000",
+      "kind": "iterator-callback",
+      "depth": 100000,
+      "source": "fn f(n){if n==0{0}else{[1].iter().fold(0,|a,x|a+x+f(n-1))}}pub fn main(){f(100000)}",
+      "source_sha256": "b89ae5b0b35803e76f93654eca45db3254533b0b4890943cdc393a23d18b0895",
+      "expected_i64": 100000,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "display": "Executions are nested too deeply, limit is 32",
+          "kind": "MaxExecutionDepth { max: 32 }",
+          "status": "error"
+        }
+      },
+      "classification": "Intentional resource-policy divergence",
+      "resource_policy": "stock nested-VM callback limit of32; fresh callbacks are iterative and bounded only by memory",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 23, end: 57 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          11,
+          8
+        ]
+      }
+    },
+    {
+      "name": "native-loop-1025",
+      "kind": "native-loop",
+      "depth": 1025,
+      "source": "fn f(n){if n==0{0}else{let s=0;for x in 0..3{s+=x;}f(n-1)+s-2}}pub fn main(){f(1025)}",
+      "source_sha256": "e42e15218cb4decbaf53e745b35610bb6e151c2ddf9e51c976f3eeeb7379824b",
+      "expected_i64": 1025,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 1025
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 51, end: 57 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          8
+        ]
+      }
+    },
+    {
+      "name": "native-loop-100000",
+      "kind": "native-loop",
+      "depth": 100000,
+      "source": "fn f(n){if n==0{0}else{let s=0;for x in 0..3{s+=x;}f(n-1)+s-2}}pub fn main(){f(100000)}",
+      "source_sha256": "28715dea7aea2f60dfeda3730f00edd7d0e174bf582d33beab97873a5015f267",
+      "expected_i64": 100000,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 100000
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 51, end: 57 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          8
+        ]
+      }
+    },
+    {
+      "name": "wide-2000",
+      "kind": "wide",
+      "depth": 2000,
+      "source": "fn f(n){let a0=n+0;let a1=n+1;let a2=n+2;let a3=n+3;let a4=n+4;let a5=n+5;let a6=n+6;let a7=n+7;let a8=n+8;let a9=n+9;let a10=n+10;let a11=n+11;let a12=n+12;let a13=n+13;let a14=n+14;let a15=n+15;let a16=n+16;let a17=n+17;let a18=n+18;let a19=n+19;let a20=n+20;let a21=n+21;let a22=n+22;let a23=n+23;let a24=n+24;let a25=n+25;let a26=n+26;let a27=n+27;let a28=n+28;let a29=n+29;let a30=n+30;let a31=n+31;let sum=a0+a1+a2+a3+a4+a5+a6+a7+a8+a9+a10+a11+a12+a13+a14+a15+a16+a17+a18+a19+a20+a21+a22+a23+a24+a25+a26+a27+a28+a29+a30+a31;if n==0{sum}else{f(n-1)}}pub fn main(){f(2000)}",
+      "source_sha256": "cc35f4b003185feec17bba26da3859765b20aa8b36672380e43017ff40430b72",
+      "expected_i64": 496,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 496
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "callers": 1023,
+          "cleanup_error": false,
+          "kind": "FrameCapacity",
+          "location": "Some(Location { source: 0, revision: 6, start: 547, end: 553 })",
+          "status": "error"
+        },
+        "slots": [
+          2,
+          64
+        ]
+      }
+    },
+    {
+      "name": "sort-callback-30",
+      "kind": "sort-callback",
+      "depth": 30,
+      "source": "fn f(n){if n==0{0}else{let v=[0,1];v.sort_by(|a,b|{f(n-1);a.cmp(b)});n}}pub fn main(){f(30)}",
+      "source_sha256": "59a30668a3d697a2937f23e8073a1b0dbcbea24304fd3e1a4326f18df95c9a3e",
+      "expected_i64": 30,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 30
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 30
+        },
+        "slots": [
+          2,
+          9,
+          7,
+          25
+        ]
+      }
+    },
+    {
+      "name": "sort-callback-31",
+      "kind": "sort-callback",
+      "depth": 31,
+      "source": "fn f(n){if n==0{0}else{let v=[0,1];v.sort_by(|a,b|{f(n-1);a.cmp(b)});n}}pub fn main(){f(31)}",
+      "source_sha256": "59a5c59e3f50a9b1fc9dda6c178669d7254b6abe4b08d83ff7c12b55a1bb7254",
+      "expected_i64": 31,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 31
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 31
+        },
+        "slots": [
+          2,
+          9,
+          7,
+          25
+        ]
+      }
+    },
+    {
+      "name": "sort-callback-32",
+      "kind": "sort-callback",
+      "depth": 32,
+      "source": "fn f(n){if n==0{0}else{let v=[0,1];v.sort_by(|a,b|{f(n-1);a.cmp(b)});n}}pub fn main(){f(32)}",
+      "source_sha256": "4080a03e1ce6152689ca6ca19cb8d63a727dbb25a2040d19be69bfce6d9654c7",
+      "expected_i64": 32,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "display": "Executions are nested too deeply, limit is 32",
+          "kind": "MaxExecutionDepth { max: 32 }",
+          "status": "error"
+        }
+      },
+      "classification": "Intentional resource-policy divergence",
+      "resource_policy": "stock nested-VM callback limit of32; fresh callbacks are iterative and bounded only by memory",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 32
+        },
+        "slots": [
+          2,
+          9,
+          7,
+          25
+        ]
+      }
+    },
+    {
+      "name": "sort-callback-33",
+      "kind": "sort-callback",
+      "depth": 33,
+      "source": "fn f(n){if n==0{0}else{let v=[0,1];v.sort_by(|a,b|{f(n-1);a.cmp(b)});n}}pub fn main(){f(33)}",
+      "source_sha256": "98de65aa45ab414cdfbb4ee7ea9928834346862e632ac96c584cba5e5a863a8e",
+      "expected_i64": 33,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "display": "Executions are nested too deeply, limit is 32",
+          "kind": "MaxExecutionDepth { max: 32 }",
+          "status": "error"
+        }
+      },
+      "classification": "Intentional resource-policy divergence",
+      "resource_policy": "stock nested-VM callback limit of32; fresh callbacks are iterative and bounded only by memory",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 33
+        },
+        "slots": [
+          2,
+          9,
+          7,
+          25
+        ]
+      }
+    },
+    {
+      "name": "iterator-callback-30",
+      "kind": "iterator-callback",
+      "depth": 30,
+      "source": "fn f(n){if n==0{0}else{[1].iter().fold(0,|a,x|a+x+f(n-1))}}pub fn main(){f(30)}",
+      "source_sha256": "b2d201ce08035087201bbb5e1da961d327d9461da3d3e73fafa28a8e1494eff3",
+      "expected_i64": 30,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 30
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 30
+        },
+        "slots": [
+          2,
+          11,
+          8
+        ]
+      }
+    },
+    {
+      "name": "iterator-callback-31",
+      "kind": "iterator-callback",
+      "depth": 31,
+      "source": "fn f(n){if n==0{0}else{[1].iter().fold(0,|a,x|a+x+f(n-1))}}pub fn main(){f(31)}",
+      "source_sha256": "dc938ad1c573cddc47a68675573281e3504f8fe29f29af78464b088c82c41d1d",
+      "expected_i64": 31,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 31
+        }
+      },
+      "classification": "Exact",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 31
+        },
+        "slots": [
+          2,
+          11,
+          8
+        ]
+      }
+    },
+    {
+      "name": "iterator-callback-32",
+      "kind": "iterator-callback",
+      "depth": 32,
+      "source": "fn f(n){if n==0{0}else{[1].iter().fold(0,|a,x|a+x+f(n-1))}}pub fn main(){f(32)}",
+      "source_sha256": "f282570ae460ca5df3756457f8c46f63b88b9b3331493a83ac507ef52e993538",
+      "expected_i64": 32,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "display": "Executions are nested too deeply, limit is 32",
+          "kind": "MaxExecutionDepth { max: 32 }",
+          "status": "error"
+        }
+      },
+      "classification": "Intentional resource-policy divergence",
+      "resource_policy": "stock nested-VM callback limit of32; fresh callbacks are iterative and bounded only by memory",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 32
+        },
+        "slots": [
+          2,
+          11,
+          8
+        ]
+      }
+    },
+    {
+      "name": "iterator-callback-33",
+      "kind": "iterator-callback",
+      "depth": 33,
+      "source": "fn f(n){if n==0{0}else{[1].iter().fold(0,|a,x|a+x+f(n-1))}}pub fn main(){f(33)}",
+      "source_sha256": "02dc9574d00d514b32ef0eaac791933bcc97cb4758d303a3c93adb6fe1e0ccf1",
+      "expected_i64": 33,
+      "stock": {
+        "diagnostics": "[]",
+        "outcome": {
+          "display": "Executions are nested too deeply, limit is 32",
+          "kind": "MaxExecutionDepth { max: 32 }",
+          "status": "error"
+        }
+      },
+      "classification": "Intentional resource-policy divergence",
+      "resource_policy": "stock nested-VM callback limit of32; fresh callbacks are iterative and bounded only by memory",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba",
+      "before": {
+        "clean": true,
+        "compiled": true,
+        "diagnostics": "[]",
+        "outcome": {
+          "status": "value",
+          "value": 33
+        },
+        "slots": [
+          2,
+          11,
+          8
+        ]
+      }
+    }
+  ]
+}

@@ -617,3 +617,6 @@ mod proven_receiver_tests;
 
 #[cfg(test)]
 mod store_budget_string_tests;
+
+#[cfg(test)]
+mod frame_budget_tests;

@@ -1,0 +1,39 @@
+{
+  "record": "S6",
+  "rows": [
+    {
+      "index": 106,
+      "label": "depth/511",
+      "source_sha256": "439465a86c3ee721280200e97c934cc7d629910a96ef20c605e2f80fecd6c9aa",
+      "classification": "Retained-depth",
+      "old_fresh_class": "FrameCapacity",
+      "new_fresh_expected": "value",
+      "stock_class": "MaxExecutionDepth",
+      "stock_limit": 32,
+      "stock_events": 31,
+      "stock_receipt_sha256": "0859d2bf03260d718668e2a40b4f9300009d87b257cf9646399cdfa89e321151",
+      "difference": "stock nested-VM callback limit32; fresh callbacks use iterative heap frames",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba"
+    },
+    {
+      "index": 107,
+      "label": "depth/512",
+      "source_sha256": "439465a86c3ee721280200e97c934cc7d629910a96ef20c605e2f80fecd6c9aa",
+      "classification": "Retained-depth",
+      "old_fresh_class": "FrameCapacity",
+      "new_fresh_expected": "value",
+      "stock_class": "MaxExecutionDepth",
+      "stock_limit": 32,
+      "stock_events": 31,
+      "stock_receipt_sha256": "133475b81ab9fa8efd3f1fe1dc7e126926348d44a9d0789ca12347b399bfcd67",
+      "difference": "stock nested-VM callback limit32; fresh callbacks use iterative heap frames",
+      "approval": "01a16ce5-5f9f-743e-b013-b7e07e92afba"
+    }
+  ],
+  "original_binding_sha256": "3b8d2e4bfa2eeb8a8bd604833aaad8de1fda761654f30a50787a6839b33179d7",
+  "original_literal_pins_sha256": "eee3c2c01800e490aa6aa577d203db0849660b4707bd1c2689927886b364fde9",
+  "explicit_historical_limits": {
+    "frames": 1024,
+    "slots": 65536
+  }
+}
