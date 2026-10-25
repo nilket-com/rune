@@ -1,0 +1,25 @@
+S7b2 plan (Claude, 2026-10-25): certify formatter dispatch keys and foreign nominal ingress (a default-switch prerequisite)
+
+BASE. Rune f736a56b (R2, ledger 23; the second record after M6). rnx 9bb28ebb (pinned to f736a56b, json::parse certified). Use the R2 names throughout (execution engine, legacy_ only for old-engine-only items); add no new fresh_ names.
+
+CONTEXT. S7b was split (backlog 2026-10-24). S7b1 closed dynamic host outputs. Part B of .reviews/0185-s7b-host-boundary-plan-claude.txt remains open, and S7a pins it as Known-gap rows (s7a_format_key_gaps.json):
+1. Actual formatter keys: an embedder can install a DEBUG_FMT/DISPLAY_FMT handler whose real lookup key, Hash::associated_function(type, DEBUG_FMT/DISPLAY_FMT), belongs to a std or script type, through registration kinds the S7a kind-based certificate does not inspect (alias keys).
+2. Foreign/late nominal roots: a struct value whose type the program never declared can arrive as a host argument (the process-wide nominal interner) and reach formatting.
+The S7a fix that restricted the certificate to engine-rendered containers was forced by rnx's Dense DISPLAY_FMT, which poisoned every rnx Context. Whatever S7b2 does must keep rnx's real Contexts admitting what they admit today (census 244/244 on the real registration, now including json).
+
+GOAL. An admitted program never formats, at run time, a value whose formatter dispatch differs from what the legacy VM would do. Either it is refused at compile time, or the invocation is refused before execution (the Entry style), or it is handled exactly. No mid-execution refusal.
+
+DIRECTION (ruled at the split; you design the mechanics after reading):
+A. A certificate over the ACTUAL dispatch keys the legacy VM reads, computed from the Context's real registrations (all kinds, including aliases), not from registration kinds.
+B. A pre-execution reachable-graph walk over the invocation's argument roots, run ONLY when the Context has non-default formatter keys. It checks every nominal type reachable from the arguments against the certified key set and refuses before execution on a miss. A Context with only default keys pays nothing (prove it: the default path is one branch, no walk).
+Explain the cost of B on rnx's real Context. rnx installs Dense DISPLAY_FMT, so rnx is a non-default Context. Measure the walk on realistic argument graphs (the census and the demos), and say whether it belongs on Executor::invoke or at Program preparation.
+
+STEP 0 (read-only, the decision point before any change):
+- every registration path that can install a formatter key (Module::associated_function, aliases, protocol impls, derive, install_with, rnx adapters), and which ones the S7a certificate misses;
+- every path by which a nominal value unknown at compile time reaches a program (host arguments, host returns are already closed by S7b1, globals or constants, callbacks), each with the check that would close it;
+- the walk design: bound, cycle handling (graphs may share), cost per node, where the check runs, and how it stays off the hot path;
+- the admissions that would change (old rows that become refused), each listed for a ruling. The target is zero rnx census losses.
+
+CONSTRAINTS. No hot-path change on default-key Contexts. Pre-execution refusals are allowed; mid-execution refusals are not. Flip the S7a Known-gap rows to Exact or to compile/pre-execution refusals; list each. Preservation: the 722 emissions, L1 2941, the legacy Units, the census on rnx's REAL registration (244/244, unchanged), AWFY 10/12. Protocol v2: the second record after M6. Linker/rustc identity preflight on all measurements (gate adoption item 5). Wait on your own jobs with direct blocking calls; ack in the same turn; message me only at decision points.
+
+APPROVED STEP 0. rune-s7b2 seq23030, 01a173b0-9d73-7401-83a9-754b39b0299c. Any native insertion without private exact-key/handler std provenance activates the pre-execution argument graph walk. Runtime authority is compatible only when both are default or certificates have identical identity; incompatible non-default authority is Entry before effects. Unsafe reachable nominal arguments can Entry-refuse even when an entry never formats. Preserve default/empty one-branch/no-walk behavior. Use an exhaustive admission-child view, iterative fallible growth without fixed caps, and no Store/slot layout changes. Allocation failure is pre-execution Allocation. Five Known-gap dispositions are approved: four compile Native refusals; foreign late nominal Entry refusal with a safe producer. No other Exact loss. Freeze the oracle before implementation.
