@@ -1,0 +1,52 @@
+R2: remove engine naming markers
+
+Base: 7168ed0378102b6ac143f372c1468a48318203a1 (S7b1, M6).
+Approved plan: /home/me/work/.reviews/0185-r2-rename-plan-claude.txt.
+Rulings: chatd rune-r2 seq22961, message01a170ed-0f77-748e-9e8d-7af88cc08edf.
+
+Rename the execution engine's names without changing behavior. The execution
+core receives plain names. Apply legacy_/Legacy only to an item that would be
+deleted with the old execution engine. Shared runtime values, Vm, Module::function,
+compiler front-end services and embedder APIs keep plain names. When classification
+is uncertain, retain the plain name and list the item in the report.
+
+Mechanics:
+- Rename the two opt-in features to execution and native-code. Preserve dependency
+  sets and defaults; native-code implies execution. Provide no obsolete aliases.
+- Expose Module::host_function, Module::host_function_with_output and rune::host.
+  Strip the obsolete engine prefix from private provider modules and marker traits.
+- Disambiguate the return classification enum as HostOutputKind and its sealed
+  Rust marker trait as HostOutput. Keep HostType, HostSignature, OutputShape and
+  OutputCertificate. Mark HostType and OutputShape non_exhaustive.
+- Where both value representations coexist, use Value for the execution value
+  and RuntimeValue for shared runtime::Value. Give shared test drivers role names;
+  only old-only execution observers receive the legacy_ marker.
+- Name the optional compiler Collector collector and its active flag collecting.
+  Preserve every branch and field; state aggregation and cfg reduction are R2b.
+- Rename live files, test targets, selectors, diagnostics, tracing and documentation
+  consistently. Keep experimental_core and experimental_native module paths.
+- Preserve frozen goldens, serialized observations, user script inputs, upstream
+  names, ordinary uses of new-instance terminology, and all historical evidence.
+  Compare renamed live text through an exact recorded name projection only.
+- Bring touched prose and doc indentation into STYLE.md. Do not tune code layout.
+
+Evidence:
+Produce a residual list for every remaining obsolete naming token in tracked
+source, with its reason. Produce an itemized legacy-rename list with the deletion
+criterion justification. Bind all evidence to the final signed source and accepted
+lock file. Preserve failed attempts and original observations.
+
+Gates:
+Run the S7b1-strength native suites, all32 contracts, L1, complete stock Units,
+census,722 emissions, AWFY, external doctests and67 Miri helpers with the new
+feature names. Use only exact name projections for frozen text. Run the unchanged
+CGU1 cost rules and both serial counter profiles; report CGU16 movement. This is
+the first record after M6. Retain the prior off/fib cycle observation and M7
+follow-up. Wait on long jobs with blocking sluice, without notifiers or polling.
+
+Publication:
+Commit implementation with a signed subject-only commit, obtain Claude's review,
+complete gates/seals/counters, then request publication. Preserve all old ledger
+entries and milestone data. After the Rune push, a separate Rnx record updates its
+Rune pin, feature and seven registration files together with JSON_RESULT enrollment;
+that record must restore all244 census observations and must not change routing.

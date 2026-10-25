@@ -34,14 +34,16 @@ Pick the established term and keep it. Don't rotate synonyms for variety: a new 
 
 | Term | Meaning | Don't say |
 |---|---|---|
-| fresh core | the new execution engine (`experimental_core`) | new VM, v2 engine |
-| stock VM | the reference Rune VM | old engine, legacy VM (until removal) |
-| admit / admission | fresh compiles and runs a construct | support, enable |
-| refuse / refusal | fresh declines at compile time | reject, fail, bail |
+| execution core | the execution engine (`experimental_core`) | engine generation labels |
+| legacy VM | the execution backend removed with the old engine | stock VM, delete_me_ |
+| admit / admission | the execution core compiles and runs a construct | support, enable |
+| refuse / refusal | the execution core declines at compile time | reject, fail, bail |
 | oracle | frozen stock observations a record is checked against | baseline (that word is for measurements) |
 | record | one numbered unit of work (plan + impl) | ticket, task, PR |
 | gate | a required check with a pass/fail rule | test step, CI |
 | counter2 | the instruction/cycle workload measurement | benchmark (alone) |
+
+Use `legacy_` / `Legacy` only for an item deleted together with the legacy execution engine. Shared `Vm`, runtime values, compiler front-end services and embedder APIs keep plain names. The opt-in capabilities are `execution` and `native-code`; neither is enabled by default.
 
 Add a term here before introducing it.
 
