@@ -306,7 +306,7 @@ fn cases() -> Vec<Case> {
 pub(super) fn observe_patterns(path: &Path, mode: &str, engine: &str) -> Observation {
 	assert!(matches!(engine, "stock" | "fresh"));
 	let fuel = if engine == "fresh" {
-		FUEL // Frozen stock budgets are not fresh budgets.
+		FUEL // Frozen stock budgets are not new budgets.
 	} else if let Some(fuel) = mode.strip_prefix("c3-fuel-") {
 		fuel.parse::<usize>().unwrap()
 	} else {
@@ -368,13 +368,13 @@ fn supplement_cases() -> Vec<Case> {
 
 #[test]
 #[ignore = "C3 stock oracle SOURCE CHECKPOINT; peer GO required, new GAP_OUT"]
-fn stock_probe() {
+fn legacy_probe() {
 	probe(cases(), 328);
 }
 
 #[test]
 #[ignore = "C3 exact 14-row supplement; peer GO required, separate new GAP_OUT"]
-fn stock_supplement_probe() {
+fn legacy_supplement_probe() {
 	probe(supplement_cases(), 14);
 }
 
@@ -447,13 +447,13 @@ fn probe(generated: Vec<Case>, expected: usize) {
 		fs::write(out.join(format!("{id}.stock.diagnostics")), &diagnostics).unwrap();
 		fs::write(out.join("stock-patterns.tsv"), &table).unwrap();
 	}
-	fs::write(out.join("summary.txt"),format!("{} stock rows: {counts:?}\nCompile failures are separate from eligible runtime cases. Address observations are retained raw, never normalized. Stock fuel is not fresh fuel parity.\n",generated.len())).unwrap();
+	fs::write(out.join("summary.txt"),format!("{} stock rows: {counts:?}\nCompile failures are separate from eligible runtime cases. Address observations are retained raw, never normalized. Stock fuel is not execution fuel parity.\n",generated.len())).unwrap();
 	contract_completed("stock", generated.len());
 }
 
 #[test]
 #[ignore = "C3 exact 348-row frozen stock contract; bounded children, new GAP_OUT"]
-fn stock_contract() {
+fn legacy_contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
 	let scratch = Scratch(
@@ -541,18 +541,19 @@ fn supplement2_cases() -> Vec<Case> {
 
 #[test]
 #[ignore = "C3 exact six-row alias/access supplement; peer GO required, new GAP_OUT"]
-fn stock_supplement2_probe() {
+fn legacy_supplement2_probe() {
 	probe(supplement2_cases(), 6);
 }
 
 #[test]
-#[ignore = "C3 development inventory only: source reviewed before final fresh contract"]
-fn fresh_inventory() {
+#[ignore = "C3 development inventory only: source reviewed before final execution contract"]
+fn inventory() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).unwrap();
-	let scratch = Scratch(
-		std::env::temp_dir().join(format!("rune-c3-fresh-inventory-{}", std::process::id())),
-	);
+	let scratch = Scratch(std::env::temp_dir().join(format!(
+		"rune-c3-execution-inventory-{}",
+		std::process::id()
+	)));
 	fs::create_dir(&scratch.0).unwrap();
 	let mut generated = cases();
 	generated.extend(supplement_cases());
@@ -582,19 +583,19 @@ fn fresh_inventory() {
 		}
 		let run = launch(&path, &path, &case.mode, "fresh", &scratch.0, &out, &id);
 		assert!(run.complete, "{}: {}", case.label, run.record);
-		let fresh: Vec<_> = run.record.split('\t').collect();
+		let execution: Vec<_> = run.record.split('\t').collect();
 		let stock = unhex(row[3]);
 		let stock: Vec<_> = stock.split('\t').collect();
-		let site = if fresh[0] == "error" {
+		let site = if execution[0] == "error" {
 			fs::read(scratch.0.join("result.site")).unwrap()
 		} else {
 			Vec::new()
 		};
-		fs::write(out.join(format!("{id}.fresh.site")), &site).unwrap();
-		let verdict = if fresh[0] == "refused" {
+		fs::write(out.join(format!("{id}.execution.site")), &site).unwrap();
+		let verdict = if execution[0] == "refused" {
 			"refused"
-		} else if fresh[..2] == stock[..2]
-			&& fresh[3..] == stock[3..]
+		} else if execution[..2] == stock[..2]
+			&& execution[3..] == stock[3..]
 			&& hex(&run.stdout) == row[4]
 			&& hex(&run.stderr) == row[5]
 			&& hex(&site) == row[6]
@@ -616,12 +617,12 @@ fn fresh_inventory() {
 	}
 	fs::write(
 		out.join("summary.txt"),
-		format!("{counts:?};63 stock-only fuel rows skipped (fresh invariants separate)\n"),
+		format!("{counts:?};63 stock-only fuel rows skipped (execution invariants separate)\n"),
 	)
 	.unwrap();
 }
 
-fn expected_fresh_refusal(label: &str) -> Option<&'static str> {
+fn expected_refusal(label: &str) -> Option<&'static str> {
 	if matches!(
 		label,
 		"flow/mixed-result"
@@ -659,12 +660,12 @@ fn expected_fresh_refusal(label: &str) -> Option<&'static str> {
 }
 
 #[test]
-#[ignore = "C3 exact fresh contract plus declared refusals; new GAP_OUT; stock budgets never reused"]
-fn fresh_contract() {
+#[ignore = "C3 exact execution contract plus declared refusals; new GAP_OUT; stock budgets never reused"]
+fn contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).unwrap();
 	let scratch = Scratch(
-		std::env::temp_dir().join(format!("rune-c3-fresh-contract-{}", std::process::id())),
+		std::env::temp_dir().join(format!("rune-c3-execution-contract-{}", std::process::id())),
 	);
 	fs::create_dir(&scratch.0).unwrap();
 	let mut generated = cases();
@@ -711,7 +712,7 @@ fn fresh_contract() {
 			assert_eq!(rule["policy"], "Exact");
 			assert_eq!(
 				rule["previous_refusal"],
-				expected_fresh_refusal(&case.label).unwrap()
+				expected_refusal(&case.label).unwrap()
 			);
 		}
 		let admitted = c17a_rule
@@ -720,7 +721,7 @@ fn fresh_contract() {
 		if let Some(rule) = c16e_rule {
 			assert_eq!(
 				rule["previous_refusal"],
-				expected_fresh_refusal(&case.label).unwrap()
+				expected_refusal(&case.label).unwrap()
 			);
 		}
 		if let Some(rule) = admitted {
@@ -734,7 +735,7 @@ fn fresh_contract() {
 				hex(&Sha256::digest(line.as_bytes()))
 			);
 		}
-		if let Some(class) = expected_fresh_refusal(&case.label).filter(|_| admitted.is_none()) {
+		if let Some(class) = expected_refusal(&case.label).filter(|_| admitted.is_none()) {
 			assert_eq!(
 				(&actual[0], &actual[1]),
 				(&"refused", &class),
@@ -747,7 +748,7 @@ fn fresh_contract() {
 			continue;
 		}
 		if case.label.starts_with("fuel/") {
-			// This checks the same SOURCE at full fresh fuel. Exact fresh frontiers
+			// This checks the same SOURCE at full new fuel. Exact new frontiers
 			// are covered separately; the stock N is intentionally ignored here.
 			let family = case.label.split('/').nth(1).unwrap();
 			let (value, stdout) = match family {
@@ -803,7 +804,7 @@ fn fresh_contract() {
 		} else {
 			Vec::new()
 		};
-		fs::write(out.join(format!("{id}.fresh.site")), &site).unwrap();
+		fs::write(out.join(format!("{id}.execution.site")), &site).unwrap();
 		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
 		if c16e_rule.is_some_and(|r| r["policy"] == "Policy-presentation") {
 			presentation += 1;
@@ -815,7 +816,7 @@ fn fresh_contract() {
 		(equal, presentation, refused, full_budget),
 		(271, 3, 11, 63)
 	);
-	fs::write(out.join("summary.txt"),format!("{equal} exact stock parity;{presentation} source-pinned policy-presentation;{refused} declared refusals;{full_budget} full-fresh-budget source checks (no numeric budget parity)\n")).unwrap();
+	fs::write(out.join("summary.txt"),format!("{equal} exact stock parity;{presentation} source-pinned policy-presentation;{refused} declared refusals;{full_budget} full-execution-budget source checks (no numeric budget parity)\n")).unwrap();
 	contract_completed("fresh", 348);
 }
 

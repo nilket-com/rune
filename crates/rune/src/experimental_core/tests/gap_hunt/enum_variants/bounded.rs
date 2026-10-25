@@ -19,15 +19,15 @@ fn c15b_drain(
 }
 
 #[test]
-#[ignore = "C15b strict fresh contract; explicit new C15B_FRESH_OUT, bounded children"]
-fn fresh_contract() {
+#[ignore = "C15b strict execution contract; explicit new C15B_OUT, bounded children"]
+fn contract() {
 	use std::process::{Command, Stdio};
 	use std::sync::{
 		atomic::{AtomicBool, Ordering},
 		Arc,
 	};
 	use std::time::{Duration, Instant};
-	let out = PathBuf::from(std::env::var_os("C15B_FRESH_OUT").expect("new C15B_FRESH_OUT"));
+	let out = PathBuf::from(std::env::var_os("C15B_OUT").expect("new C15B_OUT"));
 	fs::create_dir(&out).unwrap();
 	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
 	let frozen: Json = serde_json::from_str(DISPOSITIONS).unwrap();
@@ -92,12 +92,12 @@ fn fresh_contract() {
 		);
 		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
 		actual["observation"]["outcome"] = super::d1c_diagnostics::before("enum_variants", case["label"].as_str().unwrap(), case["source"].as_str().unwrap(), "fresh", &actual["observation"]["outcome"]);
-		compare_fresh(case, &frozen[format!("{i:03}")], &actual);
+		compare(case, &frozen[format!("{i:03}")], &actual);
 		assert!(stderr.is_empty(), "C15b stderr {i}");
 	}
 	fs::write(
 		out.join("COMPLETE"),
-		"fresh166 strict; frozen P1, pre-effect refusal and fuel policy only\n",
+		"execution166 strict; frozen P1, pre-effect refusal and fuel policy only\n",
 	)
 	.unwrap();
 	println!("\nCONTRACT ENGINE fresh\nCONTRACT ROWS {}", cases.len());
@@ -105,7 +105,7 @@ fn fresh_contract() {
 
 #[test]
 #[ignore = "C15b strict stock VM contract; explicit new C15B_STOCK_OUT, bounded children"]
-fn stock_contract() {
+fn legacy_contract() {
 	use std::process::{Command, Stdio};
 	use std::sync::{
 		atomic::{AtomicBool, Ordering},

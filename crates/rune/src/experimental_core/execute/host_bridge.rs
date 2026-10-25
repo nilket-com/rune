@@ -1,12 +1,12 @@
-//! Cold, closed-shape host bridge. No stock VM/environment is installed.
+//! Cold, closed-shape host bridge. No legacy VM/environment is installed.
 use super::super::value::Type;
 use super::*;
 use crate as rune;
 
-use crate::function::fresh_host::{HostOutput, HostSignature, HostType};
+use crate::function::host::{HostOutputKind, HostSignature, HostType};
 use crate::runtime::{self as stock, FromValue};
 
-// Fresh core Iterator diagnostics retain the listed differences from stock VM diagnostics.
+// Execution core Iterator diagnostics retain the listed differences from legacy VM diagnostics.
 #[derive(crate::Any)]
 #[rune(item = ::std::iter, name = Iterator)]
 struct IteratorWitness;
@@ -275,11 +275,11 @@ impl Executor {
 		&mut self,
 		store: &mut Store,
 		value: &stock::Value,
-		shape: HostOutput,
+		shape: HostOutputKind,
 	) -> Result<Value> {
 		match shape {
-			HostOutput::Dynamic => dynamic::convert(self, store, value),
-			HostOutput::ResultDynamicString => {
+			HostOutputKind::Dynamic => dynamic::convert(self, store, value),
+			HostOutputKind::ResultDynamicString => {
 				// A malformed raw adapter is corruption. A value outside its declared
 				// dynamic domain is a host contract violation, never a fallback signal.
 				let outer = value
@@ -291,14 +291,14 @@ impl Executor {
 				drop(outer);
 				dynamic::convert(self, store, value)
 			}
-			HostOutput::Scalar(kind) => {
+			HostOutputKind::Scalar(kind) => {
 				let (bytes, entries) = leaf_type(value, kind)?;
 				store.host_room(bytes, entries)?;
 				#[cfg(test)]
 				fault_tests::observe("leaf-start");
 				leaf(store, value, kind)
 			}
-			HostOutput::Option(kind) => {
+			HostOutputKind::Option(kind) => {
 				let option = value
 					.borrow_ref::<Option<stock::Value>>()
 					.map_err(|_| error(ErrorKind::InvalidCode))?;
@@ -309,7 +309,7 @@ impl Executor {
 					(*option).as_ref().map(|value| (value, kind)),
 				)
 			}
-			HostOutput::Result(ok, err) => {
+			HostOutputKind::Result(ok, err) => {
 				let result = value
 					.borrow_ref::<core::result::Result<stock::Value, stock::Value>>()
 					.map_err(|_| error(ErrorKind::InvalidCode))?;
@@ -464,7 +464,7 @@ impl Executor {
 							) =>
 					{
 						let native = stock::VmError::new(stock::VmErrorKind::AccessError {
-							error: stock::AccessError::fresh_moved_read(),
+							error: stock::AccessError::moved_read(),
 						})
 						.with_error(stock::VmErrorKind::BadArgument { arg: at });
 						clear(&mut scratch);
@@ -529,23 +529,21 @@ mod tests {
 	fn context() -> Context {
 		let mut context = Context::with_default_modules().unwrap();
 		let mut module = Module::with_item(["h1focused"]).unwrap();
+		module.host_function("add", |a: i64, b: i64| a + b).unwrap();
 		module
-			.fresh_host_function("add", |a: i64, b: i64| a + b)
+			.host_function("greet", |s: &str| -> std::string::String { s.into() })
 			.unwrap();
 		module
-			.fresh_host_function("greet", |s: &str| -> std::string::String { s.into() })
+			.host_function("pair", |a: i64, s: &str| -> i64 { a + s.len() as i64 })
 			.unwrap();
 		module
-			.fresh_host_function("pair", |a: i64, s: &str| -> i64 { a + s.len() as i64 })
+			.host_function("none", || -> Option<i64> { None })
 			.unwrap();
 		module
-			.fresh_host_function("none", || -> Option<i64> { None })
+			.host_function("err", || -> core::result::Result<i64, bool> { Err(false) })
 			.unwrap();
 		module
-			.fresh_host_function("err", || -> core::result::Result<i64, bool> { Err(false) })
-			.unwrap();
-		module
-			.fresh_host_function("four", |a: i64, b: &str, c: bool, d: &str| -> i64 {
+			.host_function("four", |a: i64, b: &str, c: bool, d: &str| -> i64 {
 				a + b.len() as i64 + c as i64 + d.len() as i64
 			})
 			.unwrap();
@@ -774,14 +772,14 @@ mod tests {
 		first.function("conflict", || 1i64).build().unwrap();
 		context.install(first).unwrap();
 		let mut second = Module::with_item(["transaction"]).unwrap();
-		second.fresh_host_function("new", || 2i64).unwrap();
-		second.fresh_host_function("conflict", || 3i64).unwrap();
+		second.host_function("new", || 2i64).unwrap();
+		second.host_function("conflict", || 3i64).unwrap();
 		assert!(context.install(second).is_err());
 		assert!(context
-			.fresh_host(Hash::type_hash(["transaction", "new"]))
+			.host(Hash::type_hash(["transaction", "new"]))
 			.is_none());
 		assert!(context
-			.fresh_host(Hash::type_hash(["transaction", "conflict"]))
+			.host(Hash::type_hash(["transaction", "conflict"]))
 			.is_none());
 	}
 
@@ -800,7 +798,7 @@ mod tests {
 		let mut context = Context::with_default_modules().unwrap();
 		let mut module = Module::with_item(["unwind"]).unwrap();
 		module
-			.fresh_host_function("fail", move || -> i64 {
+			.host_function("fail", move || -> i64 {
 				captured.fetch_add(1, Ordering::SeqCst);
 				panic!("native payload");
 			})
@@ -846,7 +844,7 @@ mod tests {
 		let mut context = Context::with_default_modules().unwrap();
 		let mut module = Module::with_item(["caps"]).unwrap();
 		module
-			.fresh_host_function("text", move || -> std::string::String {
+			.host_function("text", move || -> std::string::String {
 				captured.fetch_add(1, Ordering::SeqCst);
 				"payload".into()
 			})
@@ -1017,7 +1015,7 @@ mod tests {
 		fn installed() -> Context {
 			let mut context = Context::with_default_modules().unwrap();
 			let mut module = Module::with_item(["samefn"]).unwrap();
-			module.fresh_host_function("id", identity).unwrap();
+			module.host_function("id", identity).unwrap();
 			context.install(module).unwrap();
 			context
 		}
@@ -1067,14 +1065,14 @@ mod tests {
 		let context = context();
 		let other = self::context();
 		let mut a = context
-			.fresh_host(Hash::type_hash(["h1focused", "add"]))
+			.host(Hash::type_hash(["h1focused", "add"]))
 			.unwrap()
 			.clone();
 		a.hash = Hash::type_hash(["alias", "a"]);
 		let mut b = a.clone();
 		b.hash = Hash::type_hash(["alias", "b"]);
 		let mut replacement = other
-			.fresh_host(Hash::type_hash(["h1focused", "add"]))
+			.host(Hash::type_hash(["h1focused", "add"]))
 			.unwrap()
 			.clone();
 		replacement.hash = b.hash;
@@ -1095,7 +1093,7 @@ mod tests {
 		builder.push(f).unwrap();
 		let code = builder.finish().unwrap();
 		fn runtime(
-			bindings: &[crate::function::fresh_host::HostBinding],
+			bindings: &[crate::function::host::HostBinding],
 		) -> crate::sync::Arc<stock::RuntimeContext> {
 			let mut functions = crate::hash::Map::default();
 			for binding in bindings {
@@ -1150,7 +1148,7 @@ mod tests {
 		let mut context = Context::with_default_modules().unwrap();
 		let mut module = Module::with_item(["snapshot"]).unwrap();
 		module
-			.fresh_host_function("same", |a: &str, b: &str| -> bool {
+			.host_function("same", |a: &str, b: &str| -> bool {
 				a.as_ptr() == b.as_ptr() && a.len() == b.len()
 			})
 			.unwrap();
@@ -1196,7 +1194,7 @@ mod tests {
 		let mut context = Context::with_default_modules().unwrap();
 		let mut module = Module::with_item(["budgetpanic"]).unwrap();
 		module
-			.fresh_host_function("fail", move || -> i64 {
+			.host_function("fail", move || -> i64 {
 				captured.fetch_add(1, Ordering::SeqCst);
 				panic!("owned payload");
 			})

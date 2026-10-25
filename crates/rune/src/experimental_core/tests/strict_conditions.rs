@@ -36,8 +36,8 @@ fn both_engines_agree_on_strict_conditions_locations_and_effects() {
 			std::format!("pub fn target(w) {{ {body} }}\nfn mark(w, x) {{ w.push(0); x }}");
 		let (mut stock, program) =
 			super::differential::compile_unit(&context, "strict", &source, "target");
-		let stock_w = crate::to_value(crate::runtime::Vec::new()).unwrap();
-		let error = stock.call(["target"], (stock_w.clone(),)).unwrap_err();
+		let legacy_w = crate::to_value(crate::runtime::Vec::new()).unwrap();
+		let error = stock.call(["target"], (legacy_w.clone(),)).unwrap_err();
 		let at = error.first_location().unwrap();
 		let span = at
 			.unit
@@ -53,7 +53,7 @@ fn both_engines_agree_on_strict_conditions_locations_and_effects() {
 		let start = source.find(operand).unwrap();
 		assert_eq!(span.range(), start..start + operand.len(), "{body}");
 		assert_eq!(
-			stock_w.borrow_ref::<crate::runtime::Vec>().unwrap().len(),
+			legacy_w.borrow_ref::<crate::runtime::Vec>().unwrap().len(),
 			marks
 		);
 		let mut store = Store::new(Limits::default()).unwrap();
@@ -103,15 +103,15 @@ fn both_engines_preserve_short_circuit_and_single_rhs_evaluation() {
 			std::format!("pub fn target(w) {{ {body} }}\nfn mark(w, x) {{ w.push(0); x }}");
 		let (mut stock, program) =
 			super::differential::compile_unit(&context, "strict", &source, "target");
-		let stock_w = crate::to_value(crate::runtime::Vec::new()).unwrap();
-		let value = stock.call(["target"], (stock_w.clone(),)).unwrap();
+		let legacy_w = crate::to_value(crate::runtime::Vec::new()).unwrap();
+		let value = stock.call(["target"], (legacy_w.clone(),)).unwrap();
 		assert_eq!(
 			crate::from_value::<bool>(value).unwrap(),
 			expected,
 			"{body}"
 		);
 		assert_eq!(
-			stock_w.borrow_ref::<crate::runtime::Vec>().unwrap().len(),
+			legacy_w.borrow_ref::<crate::runtime::Vec>().unwrap().len(),
 			marks
 		);
 		let mut store = Store::new(Limits::default()).unwrap();

@@ -19,7 +19,7 @@ fn missing_arguments_and_runtime_context_preflight() {
 	let mut module = crate::Module::with_item(["c13_test"]).unwrap();
 	let tape = events.clone();
 	module
-		.fresh_host_function("tap", move |n: i64| -> i64 {
+		.host_function("tap", move |n: i64| -> i64 {
 			tape.lock().unwrap().push(n);
 			n
 		})
@@ -134,7 +134,7 @@ fn dispatch_proof_is_checked_against_the_runtime_context() {
 	// the invocation before execution, like any absence proof.
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["c18b_test"]).unwrap();
-	module.fresh_host_function("seven", || 7i64).unwrap();
+	module.host_function("seven", || 7i64).unwrap();
 	context.install(module).unwrap();
 	let program = compile(
 		"struct P{x}impl P{fn twist(self){self.x}}fn f(p){p.twist()}pub fn main(){f(P{x:3})+f(P{x:4})}",
@@ -270,7 +270,7 @@ fn every_builtin_identity_is_a_proven_receiver() {
 		}
 		let hash = name.builtin_hash().unwrap();
 		assert!(
-			crate::function::fresh_methods::RECEIVERS.contains(&hash),
+			crate::function::methods::RECEIVERS.contains(&hash),
 			"{name:?}"
 		);
 	}

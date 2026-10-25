@@ -66,11 +66,7 @@ impl Fields {
 impl Builder<'_, '_, '_> {
 	// All body terms already exist. No field summary adds nodes to phase one.
 	fn field_term(&self, id: hir::ExprId) -> Option<Id> {
-		self.body
-			.expressions
-			.get(id.fresh_index())
-			.copied()
-			.flatten()
+		self.body.expressions.get(id.index()).copied().flatten()
 	}
 
 	pub(super) fn fields(&mut self) -> Result<()> {
@@ -87,8 +83,8 @@ impl Builder<'_, '_, '_> {
 					}
 					hir::ExprObjectKind::Struct { hash } => {
 						// Enum variants never share their parent enum's field domain.
-						let Some(shape) = self.query.fresh_struct_shape(hash) else {
-							if self.query.fresh_variant_shape(hash).is_some() {
+						let Some(shape) = self.query.struct_shape(hash) else {
+							if self.query.variant_shape(hash).is_some() {
 								continue;
 							}
 							// A missing early declaration must not make a conflicting

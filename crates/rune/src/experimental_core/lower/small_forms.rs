@@ -106,11 +106,11 @@ impl Lower<'_, '_> {
 		&mut self,
 		call: &hir::ExprCall<'_>,
 		target: hir::ExprId,
-		name: crate::function::fresh_iter::Name,
+		name: crate::function::iter::Name,
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		use crate::function::fresh_iter::Name;
+		use crate::function::iter::Name;
 		if name == Name::Any
 			&& self
 				.pipeline_shape(target, 0)
@@ -118,9 +118,7 @@ impl Lower<'_, '_> {
 		{
 			return Err(self.refused(span, Refusal::Method));
 		}
-		if !self.context.fresh_iter_method(name)
-			|| self.constants.fresh_iter_script & name.bit() != 0
-		{
+		if !self.context.iter_method(name) || self.constants.iter_script & name.bit() != 0 {
 			return Err(self.refused(span, Refusal::Method));
 		}
 		let arity = usize::from(name == Name::Any);

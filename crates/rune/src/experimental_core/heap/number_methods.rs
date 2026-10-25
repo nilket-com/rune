@@ -2,7 +2,7 @@
 //! result for every value.
 use super::super::error::{Detail, HostCause, IntTarget, IntValue, TypeName};
 use super::*;
-use crate::function::fresh_number::{Method, Operand, Pair};
+use crate::function::number::{Method, Operand, Pair};
 
 /// A converted operand.
 #[derive(Clone, Copy)]

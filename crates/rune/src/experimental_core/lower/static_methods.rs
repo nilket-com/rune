@@ -20,12 +20,12 @@ impl Lower<'_, '_> {
 		name_hash: Hash,
 	) -> Option<StaticMethod> {
 		// Only a name some script impl defines can have a script target.
-		if hash != name_hash || !self.constants.fresh_method_script.closed(hash) {
+		if hash != name_hash || !self.constants.method_script.closed(hash) {
 			return None;
 		}
 		let receiver = self.receiver_type(target, 0)?;
 		let associated = Hash::associated_function(receiver, hash);
-		let item = self.constants.fresh_instances.get(associated)?;
+		let item = self.constants.instances.get(associated)?;
 		Some(StaticMethod { associated, item })
 	}
 

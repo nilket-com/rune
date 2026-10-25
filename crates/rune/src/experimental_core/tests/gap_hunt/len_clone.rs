@@ -221,17 +221,17 @@ pub(super) fn assert_no_addresses(label: &str, record: &str, stdout: &[u8], stde
 
 #[test]
 #[ignore = "explicit bounded S-len/clone stock study; requires new GAP_OUT"]
-fn stock_probe() {
-	probe("stock");
+fn legacy_probe() {
+	run_probe("stock");
 }
 
 #[test]
-#[ignore = "explicit bounded S-len/clone fresh inventory; requires new GAP_OUT"]
-fn fresh_probe() {
-	probe("fresh");
+#[ignore = "explicit bounded S-len/clone execution inventory; requires new GAP_OUT"]
+fn probe() {
+	run_probe("fresh");
 }
 
-fn probe(engine: &str) {
+fn run_probe(engine: &str) {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("GAP_OUT required"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
 	let scratch =
@@ -271,7 +271,7 @@ fn probe(engine: &str) {
 }
 #[test]
 #[ignore = "explicit frozen stock method/clone/invalidation contract; bounded children"]
-fn stock_contract() {
+fn legacy_contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
 	let scratch = Scratch(
@@ -327,12 +327,12 @@ fn stock_contract() {
 }
 
 #[test]
-#[ignore = "explicit fresh method/clone/invalidation contract with exact coverage refusals; bounded children"]
-fn fresh_contract() {
+#[ignore = "explicit execution method/clone/invalidation contract with exact coverage refusals; bounded children"]
+fn contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
 	let scratch = Scratch(std::env::temp_dir().join(format!(
-		"rune-len-clone-fresh-contract-{}",
+		"rune-len-clone-execution-contract-{}",
 		std::process::id()
 	)));
 	fs::create_dir(&scratch.0).unwrap();
@@ -395,7 +395,7 @@ fn fresh_contract() {
 			continue;
 		}
 		if label == "method/function/clone" {
-			// Policy presentation: stock Debug prints its bytecode offset, fresh the
+			// Policy presentation: stock Debug prints its bytecode offset, new the
 			// function index (C17a). Both strings are pinned.
 			let stock = unhex(row[2]);
 			let stock: Vec<_> = stock.split('\t').collect();
@@ -524,7 +524,7 @@ fn global_cases() -> Vec<(String, String)> {
 
 #[test]
 #[ignore = "bounded stock-first global/associated clone witnesses; requires new GAP_OUT"]
-fn global_stock_probe() {
+fn legacy_global_probe() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).unwrap();
 	let scratch =
@@ -556,7 +556,7 @@ fn clone_op_layout() {
 }
 
 #[test]
-#[ignore = "stock/fresh supplementary global clone contract; bounded children"]
+#[ignore = "stock/execution supplementary global clone contract; bounded children"]
 fn global_contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).unwrap();

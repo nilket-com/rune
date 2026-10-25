@@ -37,7 +37,7 @@ fn d1_cmp_expectation(label: &str, source: &str, expected: &Json, engine: &str) 
 	expected
 }
 
-// Stock replay is a normal green test. No strict fresh test is registered here.
+// Stock replay is a normal green test. No strict new test is registered here.
 const REPLAY_CAP: usize = 2 << 20;
 fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 	let mut bytes = Vec::new();
@@ -58,13 +58,13 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 
 #[test]
 #[cfg(target_os = "linux")]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 
 #[test]
 #[cfg(target_os = "linux")]
-fn fresh_contract() {
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -327,9 +327,9 @@ fn run_contract(engine: &str) {
 				assert_eq!(audit[name], 0);
 			}
 			assert_eq!(audit["call_chain"], json!([]));
-			// The fresh observer pins reuse as audit["reuse"] == true above.
+			// The new observer pins reuse as audit["reuse"] == true above.
 		} else {
-			compare_fresh_envelope(source, label, &e, &stdout, &stderr).unwrap();
+			compare_envelope(source, label, &e, &stdout, &stderr).unwrap();
 		}
 
 		assert_eq!(hex(&stdout), c[4]);
@@ -345,9 +345,9 @@ fn run_contract(engine: &str) {
 	}
 }
 
-// Called only by the implementation's future registered fresh contract.
+// Called only by the implementation's future registered new contract.
 #[allow(dead_code)]
-fn compare_fresh_envelope(
+fn compare_envelope(
 	source: &str,
 	label: &str,
 	envelope: &Json,
@@ -425,7 +425,7 @@ fn compare_fresh_envelope(
 					label,
 					source,
 					"fresh",
-					&semantic_projection(outcome).map_err(|_| "fresh projection failed")?,
+					&semantic_projection(outcome).map_err(|_| "execution projection failed")?,
 				),
 				expected,
 				&counts[label],

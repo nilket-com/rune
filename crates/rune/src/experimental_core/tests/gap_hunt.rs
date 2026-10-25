@@ -4,7 +4,7 @@
 //! per output stream. Corpus roles are fixed in gap_corpus.tsv; external roles
 //! are inventoried explicitly at runtime. Missing host modules are coverage gaps.
 //! Debug is the bounded value observation, not a proof of arbitrary value equality.
-//! No ordering normalization is performed. Module loading differs: the fresh core refuses
+//! No ordering normalization is performed. Module loading differs: the execution core refuses
 //! filesystem module loading. Support/no-main files are compiled but not invoked.
 use super::super::{
 	execute::Executor,
@@ -102,7 +102,7 @@ fn sources(path: &Path, mode: &str) -> Sources {
 	sources
 }
 
-fn stock_class(k: &crate::runtime::VmErrorKind) -> String {
+fn runtime_error_class(k: &crate::runtime::VmErrorKind) -> String {
 	use crate::runtime::VmErrorKind as K;
 	let class = match k {
 		K::Overflow | K::Underflow => "Overflow",
@@ -135,7 +135,7 @@ fn stock_class(k: &crate::runtime::VmErrorKind) -> String {
 	class.into()
 }
 
-fn stock_scalar(value: &crate::runtime::Value) -> String {
+fn runtime_scalar(value: &crate::runtime::Value) -> String {
 	use crate::runtime::Inline;
 	match value.as_inline() {
 		Some(Inline::Signed(n)) => format!("i64:{n}:"),
@@ -147,7 +147,7 @@ fn stock_scalar(value: &crate::runtime::Value) -> String {
 	}
 }
 
-fn fresh_scalar(store: &Store, root: &super::super::value::Root) -> String {
+fn scalar(store: &Store, root: &super::super::value::Root) -> String {
 	use super::super::value::Scalar;
 	match store.root_scalar(root).unwrap() {
 		Some(Scalar::I64(n)) => format!("i64:{n}:"),
@@ -226,7 +226,7 @@ fn observe_with_context(
 						"",
 						"",
 						String::new(),
-						format!("{}{text}", stock_scalar(&value)),
+						format!("{}{text}", runtime_scalar(&value)),
 					),
 					Err(e) => Observation::new(
 						"observation-error",
@@ -238,7 +238,7 @@ fn observe_with_context(
 				}
 			}
 			Err(e) => {
-				// Assertion oracle opt-in: preserve exact stock VM failure metadata without
+				// Assertion oracle opt-in: preserve exact legacy VM failure metadata without
 				// changing any existing frozen observation or running the case twice.
 				if mode == "assert-main" || mode == "output-main" || mode.starts_with("patterns-") {
 					let site = match e.first_location() {
@@ -260,7 +260,7 @@ fn observe_with_context(
 					let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
 					fs::write(result.with_extension("site"), site).unwrap();
 				}
-				let message = d1c_diagnostics::stock_display(&e);
+				let message = d1c_diagnostics::runtime_error_display(&e);
 				if matches!(
 					e.error().kind(),
 					crate::runtime::VmErrorKind::AccessError { .. }
@@ -280,7 +280,7 @@ fn observe_with_context(
 				let k = e.into_kind();
 				Observation::new(
 					"error",
-					&stock_class(&k),
+					&runtime_error_class(&k),
 					"stock runtime",
 					message,
 					String::new(),
@@ -340,7 +340,7 @@ fn observe_with_context(
 					"",
 					"",
 					String::new(),
-					format!("{}{text}", fresh_scalar(&store, &value)),
+					format!("{}{text}", scalar(&store, &value)),
 				),
 				Err(e) => Observation::new(
 					"observation-error",
@@ -373,7 +373,7 @@ fn observe_with_context(
 				let site = match f.error.location {
 					Some(at) => format!("{}:{}:{}", at.source, at.start, at.end),
 					None if mode == "output-main" || mode.starts_with("patterns-") => "none".into(),
-					None => panic!("fresh error location"),
+					None => panic!("execution error location"),
 				};
 				let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
 				fs::write(result.with_extension("site"), site).unwrap();
@@ -555,12 +555,12 @@ fn launch(
 	}
 }
 
-fn compare(stock: &Run, fresh: &Run) -> &'static str {
-	if !stock.complete || !fresh.complete {
+fn compare(stock: &Run, execution: &Run) -> &'static str {
+	if !stock.complete || !execution.complete {
 		return "coverage-child";
 	}
 	let s: Vec<_> = stock.record.split('\t').collect();
-	let f: Vec<_> = fresh.record.split('\t').collect();
+	let f: Vec<_> = execution.record.split('\t').collect();
 	assert_eq!(s.len(), 5);
 	assert_eq!(f.len(), 5);
 	if f[0] == "refused" {
@@ -582,8 +582,8 @@ fn compare(stock: &Run, fresh: &Run) -> &'static str {
 				&& s[1].starts_with("stock:Panic { reason: Panic { inner: ")
 				&& s[1].ends_with(" } }")))
 		&& s[3..] == f[3..]
-		&& stock.stdout == fresh.stdout
-		&& stock.stderr == fresh.stderr
+		&& stock.stdout == execution.stdout
+		&& stock.stderr == execution.stderr
 	{
 		"equal"
 	} else {
@@ -778,17 +778,17 @@ fn corpus() {
 		assert!(input.len() <= 2 * 1024 * 1024, "source size");
 		fs::write(&snapshot, input).unwrap();
 		let stock = launch(&snapshot, path, mode, "stock", &scratch.0, &out, &id);
-		let fresh = launch(&snapshot, path, mode, "fresh", &scratch.0, &out, &id);
-		let class = compare(&stock, &fresh);
+		let execution = launch(&snapshot, path, mode, "fresh", &scratch.0, &out, &id);
+		let class = compare(&stock, &execution);
 		*counts.entry(class).or_insert(0usize) += 1;
 		if class == "divergence" {
-			let site = fresh.record.split('\t').nth(2).unwrap().to_owned();
+			let site = execution.record.split('\t').nth(2).unwrap().to_owned();
 			groups.entry(site).or_default().push(label.clone());
 		}
 		table.push_str(&format!(
 			"{id}\t{label}\t{class}\t{}\t{}\n",
 			hex(stock.record.as_bytes()),
-			hex(fresh.record.as_bytes())
+			hex(execution.record.as_bytes())
 		));
 		fs::write(out.join("outcomes.tsv"), &table).unwrap();
 	}
@@ -822,21 +822,21 @@ fn controls() {
 	let stock = launch(
 		&path, &path, "main", "stock", &scratch.0, &scratch.0, "good",
 	);
-	let fresh = launch(
+	let execution = launch(
 		&path, &path, "main", "fresh", &scratch.0, &scratch.0, "good",
 	);
-	assert_eq!(compare(&stock, &fresh), "equal");
+	assert_eq!(compare(&stock, &execution), "equal");
 	assert!(stock.stdout.ends_with(b"before\n"));
 	let changed = Run {
-		record: fresh.record.clone(),
+		record: execution.record.clone(),
 		stdout: b"different".to_vec(),
-		stderr: fresh.stderr.clone(),
+		stderr: execution.stderr.clone(),
 		complete: true,
 	};
 	assert_eq!(compare(&stock, &changed), "divergence");
 	let changed = Run {
-		record: fresh.record.clone(),
-		stdout: fresh.stdout.clone(),
+		record: execution.record.clone(),
+		stdout: execution.stdout.clone(),
 		stderr: b"different".to_vec(),
 		complete: true,
 	};
@@ -1013,7 +1013,7 @@ fn comparison_cases() -> Vec<(String, String)> {
 
 #[test]
 #[ignore = "explicit bounded stock comparison contract study; requires new GAP_OUT"]
-fn stock_comparison_probe() {
+fn legacy_comparison_probe() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("GAP_OUT required"));
 	fs::create_dir(&out).expect("GAP_OUT must be new");
 	let scratch =
@@ -1231,10 +1231,10 @@ fn comparison_contract() {
 		let actual_message = unhex(actual[3]);
 		let actual_value = unhex(actual[4]);
 		if *policy == "exact" {
-			// Only these stock VM resource/coercion classes have fresh core names.
+			// Only these legacy VM resource/coercion classes have execution core names.
 			let expected_class = if engine == "fresh" && class.starts_with("stock:MaxValueDepth ") {
 				"ValueDepth"
-			// S-index gave the stock VM classifier this same public class.
+			// S-index gave the legacy VM classifier this same public class.
 			// Preserve the frozen Debug label and equate only its coercion rows.
 			} else if class.starts_with("stock:ValueToIntegerCoercionError ") {
 				"IntegerCoercion"
@@ -1416,7 +1416,7 @@ fn index_cases() -> Vec<(String, String)> {
 
 #[test]
 #[ignore = "explicit bounded stock indexing contract study; requires new GAP_OUT"]
-fn stock_index_probe() {
+fn legacy_index_probe() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("GAP_OUT required"));
 	fs::create_dir(&out).expect("GAP_OUT must be new");
 	let scratch =
@@ -1575,8 +1575,8 @@ fn panic_class_alias_preserves_exact_message_stream_kind_and_phase_checks() {
 		"stock:Panic { reason: Panic { inner: \"x\" } }",
 		"Panicked: x",
 	);
-	let fresh = row("error", "Panic", "Panicked: x");
-	assert_eq!(compare(&stock, &fresh), "equal");
+	let execution = row("error", "Panic", "Panicked: x");
+	assert_eq!(compare(&stock, &execution), "equal");
 	for changed in [
 		row("error", "Panic", "Panicked: y"),
 		row("value", "Panic", "Panicked: x"),
@@ -1596,7 +1596,7 @@ fn panic_class_alias_preserves_exact_message_stream_kind_and_phase_checks() {
 		"stock:Panic { reason: other }",
 	] {
 		assert_eq!(
-			compare(&row("error", class, "Panicked: x"), &fresh),
+			compare(&row("error", class, "Panicked: x"), &execution),
 			"divergence"
 		);
 	}
@@ -1638,19 +1638,19 @@ mod captures;
 #[path = "gap_hunt/methods.rs"]
 mod methods;
 
-#[cfg(feature = "fresh-core")]
+#[cfg(feature = "execution")]
 #[path = "gap_hunt/text_methods.rs"]
 mod text_methods;
 
-#[cfg(feature = "fresh-core")]
+#[cfg(feature = "execution")]
 #[path = "gap_hunt/text_pipeline.rs"]
 mod text_pipeline;
 
-#[cfg(feature = "fresh-core")]
+#[cfg(feature = "execution")]
 #[path = "gap_hunt/constructors.rs"]
 mod constructors;
 
-#[cfg(feature = "fresh-core")]
+#[cfg(feature = "execution")]
 #[path = "gap_hunt/enum_variants.rs"]
 mod enum_variants;
 
@@ -1703,7 +1703,7 @@ mod static_methods;
 mod dynamic_methods;
 
 #[cfg(all(feature = "serde", feature = "musli"))]
-mod stock_unit_receipts;
+mod legacy_unit_receipts;
 
 #[cfg(all(feature = "sha2", feature = "serde"))]
 mod s7a_runtime;

@@ -88,9 +88,9 @@ pub(crate) enum PatPathKind<'hir> {
 	Kind(&'hir PatSequenceKind),
 	Ident {
 		variable: Variable,
-		// Preserve the already-resolved borrowed spelling for fresh local
+		// Preserve the already-resolved borrowed spelling for new local
 		// duplicate checks, including synthetic identifiers from macros.
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		name: Name<'hir>,
 	},
 }
@@ -196,8 +196,8 @@ pub(crate) struct Expr<'hir> {
 pub(crate) struct ExprId(#[try_clone(copy)] u32);
 
 impl ExprId {
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_index(self) -> usize {
+	#[cfg(feature = "execution")]
+	pub(crate) fn index(self) -> usize {
 		self.0 as usize
 	}
 }
@@ -234,8 +234,8 @@ impl<'hir> Exprs<'hir> {
 		Ok(ExprId(index))
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_expressions(&self) -> impl Iterator<Item = &Expr<'hir>> {
+	#[cfg(feature = "execution")]
+	pub(crate) fn expressions(&self) -> impl Iterator<Item = &Expr<'hir>> {
 		self.exprs.iter()
 	}
 
@@ -506,8 +506,8 @@ pub(crate) enum Call {
 		target: ExprId,
 		/// Hash of the fn being called.
 		hash: Hash,
-		/// Unparameterized identifier, used only by fresh absence certification.
-		#[cfg(feature = "fresh-core")]
+		/// Unparameterized identifier, used only by new absence certification.
+		#[cfg(feature = "execution")]
 		name_hash: Hash,
 	},
 	Meta {

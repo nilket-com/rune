@@ -838,7 +838,7 @@ pub(crate) const SORT_VALUE: u32 = FIRST_INTRINSIC_ID + 0x43;
 pub(crate) const SORT_STORE: u32 = FIRST_INTRINSIC_ID + 0x44;
 pub(crate) const SORT_COMMIT: u32 = FIRST_INTRINSIC_ID + 0x45;
 pub(crate) const SORT_ORDERING: u32 = FIRST_INTRINSIC_ID + 0x46;
-pub(crate) const METHOD_CMP: u32 = crate::function::fresh_numeric::Call::MethodCmp.id();
+pub(crate) const METHOD_CMP: u32 = crate::function::numeric::Call::MethodCmp.id();
 pub(crate) const RANGE_FROM: u32 = FIRST_INTRINSIC_ID + 0x50;
 pub(crate) const RANGE_FULL: u32 = FIRST_INTRINSIC_ID + 0x51;
 pub(crate) const RANGE_INCLUSIVE: u32 = FIRST_INTRINSIC_ID + 0x52;
@@ -884,9 +884,9 @@ fn host_id(index: usize) -> Result<u32> {
 		.ok_or_else(invalid)
 }
 fn host_binding(
-	hosts: &[crate::function::fresh_host::HostBinding],
+	hosts: &[crate::function::host::HostBinding],
 	id: u32,
-) -> Option<&crate::function::fresh_host::HostBinding> {
+) -> Option<&crate::function::host::HostBinding> {
 	hosts.get(id.checked_sub(FIRST_HOST)? as usize)
 }
 const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
@@ -903,31 +903,31 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 		arity: 2,
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_numeric::Call::MethodAbs.id(),
+		id: crate::function::numeric::Call::MethodAbs.id(),
 		arity: 1,
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_numeric::Call::MethodRound.id(),
+		id: crate::function::numeric::Call::MethodRound.id(),
 		arity: 1,
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_numeric::Call::MethodPowf.id(),
+		id: crate::function::numeric::Call::MethodPowf.id(),
 		arity: 2,
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_numeric::Call::F64Abs.id(),
+		id: crate::function::numeric::Call::F64Abs.id(),
 		arity: 1,
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_numeric::Call::F64Round.id(),
+		id: crate::function::numeric::Call::F64Round.id(),
 		arity: 1,
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_numeric::Call::F64Powf.id(),
+		id: crate::function::numeric::Call::F64Powf.id(),
 		arity: 2,
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_numeric::Call::I64Abs.id(),
+		id: crate::function::numeric::Call::I64Abs.id(),
 		arity: 1,
 	},
 	CertifiedIntrinsic {
@@ -1091,48 +1091,48 @@ const CERTIFIED_INTRINSICS: &[CertifiedIntrinsic] = &[
 		arity: 1,
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_variant::Method::Unwrap.id(),
-		arity: crate::function::fresh_variant::Method::Unwrap.arity(),
+		id: crate::function::variant::Method::Unwrap.id(),
+		arity: crate::function::variant::Method::Unwrap.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_variant::Method::Expect.id(),
-		arity: crate::function::fresh_variant::Method::Expect.arity(),
+		id: crate::function::variant::Method::Expect.id(),
+		arity: crate::function::variant::Method::Expect.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_variant::Method::IsSome.id(),
-		arity: crate::function::fresh_variant::Method::IsSome.arity(),
+		id: crate::function::variant::Method::IsSome.id(),
+		arity: crate::function::variant::Method::IsSome.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_variant::Method::IsNone.id(),
-		arity: crate::function::fresh_variant::Method::IsNone.arity(),
+		id: crate::function::variant::Method::IsNone.id(),
+		arity: crate::function::variant::Method::IsNone.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_variant::Method::IsOk.id(),
-		arity: crate::function::fresh_variant::Method::IsOk.arity(),
+		id: crate::function::variant::Method::IsOk.id(),
+		arity: crate::function::variant::Method::IsOk.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_variant::Method::IsErr.id(),
-		arity: crate::function::fresh_variant::Method::IsErr.arity(),
+		id: crate::function::variant::Method::IsErr.id(),
+		arity: crate::function::variant::Method::IsErr.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_object::Method::Get.id(),
-		arity: crate::function::fresh_object::Method::Get.arity(),
+		id: crate::function::object::Method::Get.id(),
+		arity: crate::function::object::Method::Get.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_object::Method::ContainsKey.id(),
-		arity: crate::function::fresh_object::Method::ContainsKey.arity(),
+		id: crate::function::object::Method::ContainsKey.id(),
+		arity: crate::function::object::Method::ContainsKey.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_object::Method::Insert.id(),
-		arity: crate::function::fresh_object::Method::Insert.arity(),
+		id: crate::function::object::Method::Insert.id(),
+		arity: crate::function::object::Method::Insert.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_object::Method::Remove.id(),
-		arity: crate::function::fresh_object::Method::Remove.arity(),
+		id: crate::function::object::Method::Remove.id(),
+		arity: crate::function::object::Method::Remove.arity(),
 	},
 	CertifiedIntrinsic {
-		id: crate::function::fresh_object::Method::IsEmpty.id(),
-		arity: crate::function::fresh_object::Method::IsEmpty.arity(),
+		id: crate::function::object::Method::IsEmpty.id(),
+		arity: crate::function::object::Method::IsEmpty.arity(),
 	},
 	CertifiedIntrinsic {
 		id: VEC_RESIZE,
@@ -1176,7 +1176,7 @@ fn terminal_intrinsic(id: u32) -> Option<CertifiedIntrinsic> {
 /// dispatched on its run-time receiver.
 #[cold]
 fn number_intrinsic(id: u32) -> Option<CertifiedIntrinsic> {
-	use crate::function::fresh_number::{Method, Pair};
+	use crate::function::number::{Method, Pair};
 	let arity = match Pair::from_id(id) {
 		Some(pair) => pair.method().arity(),
 		None => Method::from_dynamic_id(id)?.arity(),
@@ -1189,7 +1189,7 @@ pub struct Code {
 	/// reused: a function token names the program it indexes by this.
 	id: u32,
 	functions: Vec<Function>,
-	hosts: Vec<crate::function::fresh_host::HostBinding>,
+	hosts: Vec<crate::function::host::HostBinding>,
 	/// Associated hashes proven to have no native function, sorted.
 	absent: Vec<crate::Hash>,
 	/// Script instance functions by associated hash, sorted by hash.
@@ -1207,7 +1207,7 @@ pub(crate) fn allocate_code_id(counter: &AtomicU32) -> Result<u32> {
 
 pub struct Builder {
 	functions: Vec<Function>,
-	hosts: Vec<crate::function::fresh_host::HostBinding>,
+	hosts: Vec<crate::function::host::HostBinding>,
 	absent: Vec<crate::Hash>,
 	/// The hashes in `absent`, so a repeated proof adds nothing.
 	absent_seen: crate::hash::Map<()>,
@@ -1234,10 +1234,7 @@ impl Default for Builder {
 }
 
 impl Builder {
-	pub(crate) fn host(
-		&mut self,
-		binding: &crate::function::fresh_host::HostBinding,
-	) -> Result<u32> {
+	pub(crate) fn host(&mut self, binding: &crate::function::host::HostBinding) -> Result<u32> {
 		if !binding.signature.valid() {
 			return Err(invalid());
 		}
@@ -1269,7 +1266,7 @@ impl Builder {
 		let host_bytes = self
 			.hosts
 			.capacity()
-			.checked_mul(core::mem::size_of::<crate::function::fresh_host::HostBinding>())
+			.checked_mul(core::mem::size_of::<crate::function::host::HostBinding>())
 			.ok_or_else(invalid)?;
 		let shared = host_bytes
 			.checked_add(
@@ -1421,10 +1418,7 @@ pub(crate) struct CompileTransaction {
 }
 
 impl CompileTransaction {
-	pub(crate) fn host(
-		&mut self,
-		binding: &crate::function::fresh_host::HostBinding,
-	) -> Result<u32> {
+	pub(crate) fn host(&mut self, binding: &crate::function::host::HostBinding) -> Result<u32> {
 		self.builder.host(binding)
 	}
 	#[cfg_attr(not(test), allow(dead_code))]
@@ -1753,7 +1747,7 @@ fn template_args_prefix(f: &Function) -> Result<usize> {
 fn validate_operands(
 	f: &Function,
 	functions: &[Function],
-	hosts: &[crate::function::fresh_host::HostBinding],
+	hosts: &[crate::function::host::HostBinding],
 	code_id: u32,
 	valid: &dyn Fn(Type) -> bool,
 ) -> Result<()> {
@@ -2047,7 +2041,7 @@ impl Code {
 		}
 		certified_intrinsic(CERTIFIED_INTRINSICS, id)
 	}
-	pub(crate) fn host(&self, id: u32) -> Option<&crate::function::fresh_host::HostBinding> {
+	pub(crate) fn host(&self, id: u32) -> Option<&crate::function::host::HostBinding> {
 		host_binding(&self.hosts, id)
 	}
 	pub(crate) fn validate_hosts(
@@ -2589,7 +2583,7 @@ impl Code {
 		let hosts = self
 			.hosts
 			.capacity()
-			.checked_mul(core::mem::size_of::<crate::function::fresh_host::HostBinding>())
+			.checked_mul(core::mem::size_of::<crate::function::host::HostBinding>())
 			.ok_or_else(invalid)?;
 		let hosts = hosts
 			.checked_add(
@@ -3398,7 +3392,7 @@ mod intrinsic_partition_tests {
 
 	#[test]
 	fn number_intrinsics_are_disjoint_from_every_other_family() {
-		use crate::function::fresh_number::{Method, Pair, PAIRS};
+		use crate::function::number::{Method, Pair, PAIRS};
 		let ids = PAIRS
 			.iter()
 			.map(|p| (p.id(), p.method().arity()))
@@ -3418,9 +3412,9 @@ mod intrinsic_partition_tests {
 				arity
 			);
 			// The executor tries these families first.
-			assert!(crate::function::fresh_variant::Method::from_id(id).is_none());
-			assert!(crate::function::fresh_object::Method::from_id(id).is_none());
-			assert!(crate::function::fresh_numeric::Call::from_id(id).is_none());
+			assert!(crate::function::variant::Method::from_id(id).is_none());
+			assert!(crate::function::object::Method::from_id(id).is_none());
+			assert!(crate::function::numeric::Call::from_id(id).is_none());
 			for range in [
 				SORT_BEGIN..=SORT_ORDERING,
 				RANGE_FROM..=ANY_READY,

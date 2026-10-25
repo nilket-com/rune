@@ -15,7 +15,7 @@ fn location() -> Location {
 	}
 }
 pub(super) fn code(context: &Context, name: &str, parameters: u32) -> Code {
-	let binding = context.fresh_host(Hash::type_hash(["tiny", name])).unwrap();
+	let binding = context.host(Hash::type_hash(["tiny", name])).unwrap();
 	let mut builder = Builder::default();
 	let id = builder.host(binding).unwrap();
 	let mut function = Function::new(parameters + 1, parameters).unwrap();
@@ -57,9 +57,7 @@ pub(super) fn installed(module: Module) -> Context {
 #[cfg_attr(miri, ignore = "focused host Miri: exact-name operator run only")]
 fn minimal_scalar_memory_call() {
 	let mut module = Module::with_item(["tiny"]).unwrap();
-	module
-		.fresh_host_function("add", |a: i64, b: i64| a + b)
-		.unwrap();
+	module.host_function("add", |a: i64, b: i64| a + b).unwrap();
 	let context = installed(module);
 	let code = code(&context, "add", 2);
 	let mut executor = executor(&context);
@@ -82,7 +80,7 @@ fn minimal_scalar_memory_call() {
 fn minimal_string_alias_memory_call() {
 	let mut module = Module::with_item(["tiny"]).unwrap();
 	module
-		.fresh_host_function("cat", |a: &str, b: &str| -> std::string::String {
+		.host_function("cat", |a: &str, b: &str| -> std::string::String {
 			assert_eq!(a.as_ptr(), b.as_ptr());
 			format!("{a}{b}")
 		})
@@ -107,10 +105,10 @@ fn minimal_string_alias_memory_call() {
 fn minimal_owned_variants() {
 	let mut module = Module::with_item(["tiny"]).unwrap();
 	module
-		.fresh_host_function("o", || -> Option<std::string::String> { Some("x".into()) })
+		.host_function("o", || -> Option<std::string::String> { Some("x".into()) })
 		.unwrap();
 	module
-		.fresh_host_function("e", || -> core::result::Result<i64, std::string::String> {
+		.host_function("e", || -> core::result::Result<i64, std::string::String> {
 			Err("y".into())
 		})
 		.unwrap();
@@ -139,9 +137,9 @@ fn minimal_owned_variants() {
 fn minimal_unwind_clears_scratch_and_is_reusable() {
 	let mut module = Module::with_item(["tiny"]).unwrap();
 	module
-		.fresh_host_function("panic", |_: &str| -> i64 { panic!("tiny panic") })
+		.host_function("panic", |_: &str| -> i64 { panic!("tiny panic") })
 		.unwrap();
-	module.fresh_host_function("ok", || 7i64).unwrap();
+	module.host_function("ok", || 7i64).unwrap();
 	let context = installed(module);
 	let failing = code(&context, "panic", 1);
 	let good = code(&context, "ok", 0);
@@ -176,7 +174,7 @@ fn minimal_identity_mismatch_has_no_effect() {
 	fn context(calls: Arc<AtomicUsize>) -> Context {
 		let mut module = Module::with_item(["tiny"]).unwrap();
 		module
-			.fresh_host_function("f", move || {
+			.host_function("f", move || {
 				calls.fetch_add(1, Ordering::SeqCst);
 				1i64
 			})
@@ -206,10 +204,10 @@ fn minimal_malformed_shapes_drop_outputs_and_allow_reuse() {
 		Arc,
 	};
 	for (which, shape) in [
-		(0u8, HostOutput::Option(HostType::I64)),
-		(1, HostOutput::Result(HostType::I64, HostType::I64)),
-		(2, HostOutput::Scalar(HostType::I64)),
-		(3, HostOutput::Scalar(HostType::String)),
+		(0u8, HostOutputKind::Option(HostType::I64)),
+		(1, HostOutputKind::Result(HostType::I64, HostType::I64)),
+		(2, HostOutputKind::Scalar(HostType::I64)),
+		(3, HostOutputKind::Scalar(HostType::String)),
 	] {
 		let calls = Arc::new(AtomicUsize::new(0));
 		let captured = calls.clone();
@@ -231,10 +229,10 @@ fn minimal_malformed_shapes_drop_outputs_and_allow_reuse() {
 			})
 			.build()
 			.unwrap();
-		module.fresh_host_function("ok", || 7i64).unwrap();
+		module.host_function("ok", || 7i64).unwrap();
 		let mut context = installed(module);
 		context
-			.fresh_host_for_test(
+			.host_for_test(
 				Hash::type_hash(["tiny", "bad"]),
 				HostSignature {
 					arity: 0,
@@ -321,12 +319,8 @@ fn failure_display_keeps_native_type_and_number_conversion_messages() {
 	use crate::experimental_core::frontend::Program;
 	use std::string::ToString;
 	let mut module = Module::with_item(["tiny"]).unwrap();
-	module
-		.fresh_host_function("expect_bool", |_: bool| ())
-		.unwrap();
-	module
-		.fresh_host_function("expect_i64", |_: i64| ())
-		.unwrap();
+	module.host_function("expect_bool", |_: bool| ()).unwrap();
+	module.host_function("expect_i64", |_: i64| ()).unwrap();
 	let context = installed(module);
 	for (name, expected) in [
 		(

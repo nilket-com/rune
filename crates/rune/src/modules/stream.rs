@@ -14,7 +14,7 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(Stream::debug__meta)?;
 	m.function_meta(Stream::clone__meta)?;
 	m.implement_trait::<Stream>(rune::item!(::std::clone::Clone))?;
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }

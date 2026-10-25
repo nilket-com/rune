@@ -203,17 +203,17 @@ fn probe_cases(cases: Vec<(String, String)>, name: &str) {
 
 #[test]
 #[ignore = "bounded frozen stock range-index contract; requires new GAP_OUT"]
-fn stock_contract() {
-	contract("stock");
+fn legacy_contract() {
+	check_contract("stock");
 }
 
 #[test]
-#[ignore = "bounded fresh range-index convergence contract; requires new GAP_OUT"]
-fn fresh_contract() {
-	contract("fresh");
+#[ignore = "bounded execution range-index convergence contract; requires new GAP_OUT"]
+fn contract() {
+	check_contract("fresh");
 }
 
-fn contract(engine: &str) {
+fn check_contract(engine: &str) {
 	contract_cases(engine, cases(), include_str!("../range_index_stock.tsv"));
 }
 
@@ -254,7 +254,7 @@ fn contract_cases(engine: &str, generated: Vec<(String, String)>, table: &str) {
 		let expected = unhex(row[2]);
 		let mut expected: Vec<_> = expected.split('\t').collect();
 		// Nine frozen string-slice rows recorded stock's Debug fallback class.
-		// Equate only those rows to fresh's public Panic class; preserve the
+		// Equate only those rows to new's public Panic class; preserve the
 		// original table and compare the exact panic message and streams below.
 		if engine == "fresh"
 			&& matches!(
@@ -379,7 +379,7 @@ fn endpoint_probe() {
 
 #[test]
 #[ignore = "bounded frozen stock endpoint supplement; requires new GAP_OUT"]
-fn endpoint_stock_contract() {
+fn legacy_endpoint_contract() {
 	contract_cases(
 		"stock",
 		endpoint_cases(),
@@ -388,8 +388,8 @@ fn endpoint_stock_contract() {
 }
 
 #[test]
-#[ignore = "bounded fresh endpoint supplement convergence; requires new GAP_OUT"]
-fn endpoint_fresh_contract() {
+#[ignore = "bounded execution endpoint supplement convergence; requires new GAP_OUT"]
+fn endpoint_contract() {
 	contract_cases(
 		"fresh",
 		endpoint_cases(),

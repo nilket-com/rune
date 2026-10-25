@@ -3,7 +3,7 @@ use super::{FormatLimits, Payload, Store};
 use crate::alloc::{Box, String};
 use crate::experimental_core::error::{Error, ErrorKind, Result};
 use crate::experimental_core::value::{Type, Value};
-use crate::function::fresh_variant::{Family, Method};
+use crate::function::variant::{Family, Method};
 
 /// What a certified Option or Result method produced. A panic carries its
 /// complete stock message; every other failure is an ordinary error.

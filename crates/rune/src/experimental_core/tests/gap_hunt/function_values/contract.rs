@@ -1,7 +1,7 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C16f frozen fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C16f frozen execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -37,7 +37,7 @@ fn canonical_record(index: usize, record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
-fn verify_fresh_case(index: usize, case: &Json, stock: &Json, actual: &Json, stdout: &[u8], stderr: &[u8]) {
+fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json, stdout: &[u8], stderr: &[u8]) {
 	use sha2::{Digest, Sha256};
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	assert_eq!(dispositions["authority"], 21337);

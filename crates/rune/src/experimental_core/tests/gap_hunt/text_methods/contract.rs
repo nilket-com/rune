@@ -53,7 +53,7 @@ fn project_observation(value: &Json, expected: &Json, path: &str) -> Json {
 	}
 }
 
-fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
+fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	for key in ["label", "source_sha256", "fixture", "fuel"] {
 		assert_eq!(actual[key], case[key]);
 		assert_eq!(actual[key], frozen[key]);
@@ -145,9 +145,9 @@ fn contract_controls_reject_output_tape_and_lifecycle_drift() {
 	let frozen: Json = serde_json::from_str(DISPOSITIONS).unwrap();
 	for index in [0usize, 184, 185] {
 		TAPE.with(|t| t.borrow_mut().clear());
-		let actual = observe_fresh(&cases[index]);
+		let actual = observe(&cases[index]);
 		let id = cases[index]["id"].as_str().unwrap();
-		compare_fresh(&cases[index], &frozen[id], &actual);
+		compare(&cases[index], &frozen[id], &actual);
 		for path in [
 			"/observation/reuse/graph/nodes/0/2",
 			"/fresh_audit/live_entries",
@@ -156,7 +156,7 @@ fn contract_controls_reject_output_tape_and_lifecycle_drift() {
 			let mut bad = actual.clone();
 			*bad.pointer_mut(path).unwrap() = json!("drift");
 			assert!(
-				std::panic::catch_unwind(|| compare_fresh(&cases[index], &frozen[id], &bad))
+				std::panic::catch_unwind(|| compare(&cases[index], &frozen[id], &bad))
 					.is_err()
 			);
 		}

@@ -330,29 +330,29 @@ impl_function_traits!(4, {A, a, Ref<A>, 0, {&}, {?Sized + UnsafeToRef}, unsafe_t
 permute!(impl_function_traits);
 repeat_macro!(impl_instance_function_traits);
 
-#[cfg(feature = "fresh-core")]
-pub mod fresh_host;
-#[cfg(feature = "fresh-core")]
-pub(crate) mod fresh_methods;
-#[cfg(feature = "fresh-core")]
-pub(crate) mod fresh_number;
-#[cfg(feature = "fresh-core")]
-pub(crate) mod fresh_object;
-#[cfg(feature = "fresh-core")]
-pub(crate) mod fresh_pipeline;
-#[cfg(feature = "fresh-core")]
-pub(crate) mod fresh_text;
-#[cfg(feature = "fresh-core")]
-pub(crate) mod fresh_variant;
+#[cfg(feature = "execution")]
+pub mod host;
+#[cfg(feature = "execution")]
+pub(crate) mod methods;
+#[cfg(feature = "execution")]
+pub(crate) mod number;
+#[cfg(feature = "execution")]
+pub(crate) mod object;
+#[cfg(feature = "execution")]
+pub(crate) mod pipeline;
+#[cfg(feature = "execution")]
+pub(crate) mod text;
+#[cfg(feature = "execution")]
+pub(crate) mod variant;
 
-#[cfg(feature = "fresh-core")]
-pub(crate) mod fresh_iter;
+#[cfg(feature = "execution")]
+pub(crate) mod iter;
 
-#[cfg(feature = "fresh-core")]
+#[cfg(feature = "execution")]
 pub(crate) mod iter_terminal;
 
-#[cfg(feature = "fresh-core")]
-pub(crate) mod fresh_numeric;
+#[cfg(feature = "execution")]
+pub(crate) mod numeric;
 
-#[cfg(feature = "fresh-core")]
-pub(crate) mod fresh_clone;
+#[cfg(feature = "execution")]
+pub(crate) mod clone;

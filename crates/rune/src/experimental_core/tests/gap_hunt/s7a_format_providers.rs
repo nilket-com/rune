@@ -57,9 +57,9 @@ fn frozen_modified_provider_contract() {
 	assert_eq!(rows.len(), 8);
 	let calls = Arc::new(AtomicUsize::new(0));
 	let mut context = Context::with_default_modules().unwrap();
-	assert!(context.fresh_formatting());
+	assert!(context.formatting());
 	providers(&mut context, &calls);
-	assert!(!context.fresh_formatting());
+	assert!(!context.formatting());
 	let mut capture = String::new();
 	for row in rows {
 		let source = row["source"].as_str().unwrap();
@@ -125,14 +125,14 @@ fn every_formatting_ingress_closes_but_unrelated_programs_remain_admitted() {
 fn std_factory_marks_only_existing_handlers_and_raw_providers_close() {
 	let mut module = crate::modules::ops::module().unwrap();
 	assert!(module.associated.iter().any(
-		|a| matches!(&a.kind, crate::module::ModuleAssociatedKind::Function(f) if f.fresh_format_default)
+		|a| matches!(&a.kind, crate::module::ModuleAssociatedKind::Function(f) if f.format_default)
 	));
 	module
 		.raw_function(&Protocol::DISPLAY_FMT, |_, _, _, _| Ok(()))
 		.build_associated::<crate::runtime::Function>()
 		.unwrap();
 	assert!(
-		matches!(&module.associated.last().unwrap().kind, crate::module::ModuleAssociatedKind::Function(f) if !f.fresh_format_default)
+		matches!(&module.associated.last().unwrap().kind, crate::module::ModuleAssociatedKind::Function(f) if !f.format_default)
 	);
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::new();
@@ -171,7 +171,7 @@ fn trait_and_failed_provider_installs_fail_closed() {
 	refused(&context, "pub fn main(){format!(\"{:?}\",\"x\")}");
 }
 
-fn stock_ingress(context: &Context, source: &str) -> String {
+fn legacy_ingress(context: &Context, source: &str) -> String {
 	let mut sources = input(source);
 	let mut vm = match crate::prepare(&mut sources)
 		.with_context(context)
@@ -189,7 +189,7 @@ fn stock_ingress(context: &Context, source: &str) -> String {
 	}
 }
 
-fn fresh_neutral(context: &Context, source: &str) -> String {
+fn neutral(context: &Context, source: &str) -> String {
 	let mut sources = input(source);
 	let program = frontend::compile(&mut sources, context, &mut Diagnostics::new(), 77).unwrap();
 	let mut store = Store::new(Limits::default()).unwrap();
@@ -236,7 +236,7 @@ fn frozen_diagnostic_and_dynamic_formatting_ingresses_close() {
 		);
 		calls.store(0, Ordering::SeqCst);
 		assert_eq!(
-			stock_ingress(&context, source),
+			legacy_ingress(&context, source),
 			row["stock"]["observation"],
 			"{}",
 			row["name"]
@@ -257,7 +257,7 @@ fn frozen_diagnostic_and_dynamic_formatting_ingresses_close() {
 				assert_eq!(error.refusal, Some(Refusal::FrontendDiagnostic));
 			}
 			"Retained-neutral" => {
-				assert_eq!(fresh_neutral(&context, source), row["stock"]["observation"])
+				assert_eq!(neutral(&context, source), row["stock"]["observation"])
 			}
 			_ => panic!("unknown ingress policy"),
 		}
@@ -277,7 +277,7 @@ fn frozen_diagnostic_and_dynamic_formatting_ingresses_close() {
 	}
 	// An exact script method with the same name does not enter native dispatch.
 	let source = "struct S;impl S{fn unwrap(self){\"safe\"}fn to_string(self){\"safe\"}}pub fn main(){S.unwrap()+S.to_string()}";
-	assert_eq!(fresh_neutral(&context, source), "value:\"safesafe\"");
+	assert_eq!(neutral(&context, source), "value:\"safesafe\"");
 	assert_eq!(calls.load(Ordering::SeqCst), 0);
 	contract_completed("s7a-format-ingress", rows.len());
 }
@@ -328,11 +328,11 @@ fn alias_context(setup: &str, calls: &Arc<AtomicUsize>) -> Context {
 	}
 	context.install(module).unwrap();
 	// This is deliberately the blind spot, not proof of an Exact Context.
-	assert!(context.fresh_formatting());
+	assert!(context.formatting());
 	context
 }
 
-fn alias_fresh(context: &Context, source: &str, producer: Option<&str>) -> String {
+fn alias(context: &Context, source: &str, producer: Option<&str>) -> String {
 	let render =
 		frontend::compile(&mut input(source), context, &mut Diagnostics::new(), 77).unwrap();
 	// Keep the renderer-first order: a foreign nominal can arrive later.
@@ -374,9 +374,9 @@ fn alias_fresh(context: &Context, source: &str, producer: Option<&str>) -> Strin
 	result
 }
 
-fn alias_stock(context: &Context, source: &str, producer: Option<&str>) -> String {
+fn legacy_alias(context: &Context, source: &str, producer: Option<&str>) -> String {
 	let Some(producer) = producer else {
-		return stock_ingress(context, source);
+		return legacy_ingress(context, source);
 	};
 	let mut render_input = input(source);
 	let mut render = crate::prepare(&mut render_input)
@@ -402,8 +402,8 @@ fn formatter_key_alias_and_foreign_root_cases_stay_named_known_gaps() {
 	assert_eq!(document["policy"], "Known-gap");
 	assert_eq!(document["closure_record"], "S7b host-boundary certificate");
 	assert_eq!(document["default_switch_prerequisite_complete"], false);
-	assert!(Context::new().fresh_formatting());
-	assert!(Context::with_default_modules().unwrap().fresh_formatting());
+	assert!(Context::new().formatting());
+	assert!(Context::with_default_modules().unwrap().formatting());
 	for capture in document["captures"].as_array().unwrap() {
 		assert_eq!(
 			hex(&Sha256::digest(capture["raw"].as_str().unwrap().as_bytes())),
@@ -429,20 +429,20 @@ fn formatter_key_alias_and_foreign_root_cases_stay_named_known_gaps() {
 		}
 		let calls = Arc::new(AtomicUsize::new(0));
 		let context = alias_context(row["setup"].as_str().unwrap(), &calls);
-		// Run fresh first so the late producer is not compiled by stock beforehand.
-		let fresh = alias_fresh(&context, source, producer);
+		// Run new first so the late producer is not compiled by stock beforehand.
+		let execution = alias(&context, source, producer);
 		assert_eq!(calls.load(Ordering::SeqCst), 0);
-		let stock = alias_stock(&context, source, producer);
+		let stock = legacy_alias(&context, source, producer);
 		assert_eq!(stock, row["stock"]["observation"]);
 		assert_eq!(calls.load(Ordering::SeqCst), 1);
 		assert_eq!(row["stock"]["provider_calls"], 1);
 		assert_eq!(row["before_fresh"]["provider_calls"], 0);
-		assert_ne!(fresh, stock, "must not label this Context Exact");
+		assert_ne!(execution, stock, "must not label this Context Exact");
 		if row["setup"] == "raw-nominal" || row["setup"] == "raw-late-nominal" {
-			assert_eq!(fresh, row["before_fresh"]["observation"]);
+			assert_eq!(execution, row["before_fresh"]["observation"]);
 		} else {
 			// Shape check ONLY for this Known-gap witness, never an equality mask.
-			let text = fresh
+			let text = execution
 				.strip_prefix("value:\"")
 				.unwrap()
 				.strip_suffix('"')
@@ -486,12 +486,12 @@ fn unrelated_native_formatters_preserve_builtin_formatting() {
 		)
 		.unwrap();
 	context.install(module).unwrap();
-	assert!(context.fresh_formatting());
+	assert!(context.formatting());
 	let source = "pub fn main(){format!(\"{}\", 42)}";
-	assert_eq!(alias_fresh(&context, source, None), "value:\"42\"");
+	assert_eq!(alias(&context, source, None), "value:\"42\"");
 	assert_eq!(calls.load(Ordering::SeqCst), 0);
 	providers(&mut context, &calls);
-	assert!(!context.fresh_formatting());
+	assert!(!context.formatting());
 	refused(&context, source);
 	assert_eq!(calls.load(Ordering::SeqCst), 0);
 }

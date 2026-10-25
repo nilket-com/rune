@@ -1,7 +1,7 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C17d frozen fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C17d frozen execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -31,7 +31,7 @@ fn canonical_record(record: &Json) -> Json {
 
 /// `frozen` is the pinned stock row; `stock` is its S2 replacement, or the same
 /// row where no Object key was moved.
-fn verify_fresh_case(
+fn verify_case(
 	index: usize,
 	case: &Json,
 	frozen: &Json,
@@ -85,23 +85,23 @@ fn verify_fresh_case(
 	let refused = classification == "Inherited-refusal";
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
-	let mut fresh = canonical_record(actual);
+	let mut execution = canonical_record(actual);
 	let mut expected = canonical_record(stock);
 	if let Some(pin) = rule.get("warnings") {
-		// Stock warns that a `for (a, b)` pattern might panic; the fresh frontend
+		// Stock warns that a `for (a, b)` pattern might panic; the new frontend
 		// does not report that warning.
-		assert_eq!(fresh["diagnostics"], pin["fresh"]);
+		assert_eq!(execution["diagnostics"], pin["fresh"]);
 		assert_eq!(expected["diagnostics"], pin["stock"]);
-		fresh["diagnostics"] = Json::Null;
+		execution["diagnostics"] = Json::Null;
 		expected["diagnostics"] = Json::Null;
 	}
-	let (f, s) = (&fresh["observation"], &expected["observation"]);
+	let (f, s) = (&execution["observation"], &expected["observation"]);
 	match classification {
-		"Exact" => assert_eq!(fresh, expected),
+		"Exact" => assert_eq!(execution, expected),
 		"Intentional-D1" => {
-			// A wrong receiver: fresh names the missing method (D1). Kind, class,
+			// A wrong receiver: new names the missing method (D1). Kind, class,
 			// tape, sites, logical frames and reuse stay stock-exact.
-			assert_eq!(fresh, rule["fresh"]);
+			assert_eq!(execution, rule["fresh"]);
 			for key in ["status", "class", "kind", "sites", "chain"] {
 				assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
 			}
@@ -115,20 +115,20 @@ fn verify_fresh_case(
 				.ends_with("has no matching method"));
 			assert_eq!(f["events"], s["events"]);
 			assert_eq!(f["reuse"], s["reuse"]);
-			assert_eq!(fresh["logical"], expected["logical"]);
-			assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+			assert_eq!(execution["logical"], expected["logical"]);
+			assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 		}
 		"Retained-fuel" => {
-			// Fuel is charged per expanded instruction: fresh halts on its own
+			// Fuel is charged per expanded instruction: new halts on its own
 			// count, with the stock class, an empty tape and stock reuse.
-			assert_eq!(fresh, rule["fresh"]);
+			assert_eq!(execution, rule["fresh"]);
 			for record in [f, s] {
 				assert_eq!(record["outcome"]["status"], "error");
 				assert_eq!(record["outcome"]["class"], "FuelExhausted");
 			}
 			assert_eq!(f["events"], json!([]));
 			assert_eq!(f["reuse"], s["reuse"]);
-			assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+			assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 		}
 		"Inherited-refusal" => {
 			assert_eq!(actual["observation"]["outcome"], rule["fresh"]);
@@ -136,7 +136,7 @@ fn verify_fresh_case(
 			assert_eq!(actual["observation"]["events"], json!([]));
 			assert_eq!(actual["logical"], Json::Null);
 			if stock["observation"]["outcome"]["status"] == "compile-error" {
-				// Stock builds no VM, so it records no reuse; fresh reuses a
+				// Stock builds no VM, so it records no reuse; new reuses a
 				// fallback program and must still return 7.
 				assert_eq!(stock["observation"]["reuse"], Json::Null);
 				assert_eq!(actual["observation"]["reuse"]["graph"]["nodes"][0][2], "7");

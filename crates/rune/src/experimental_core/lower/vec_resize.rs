@@ -1,6 +1,6 @@
 //! Cold fill proofs never speculate about untyped parameters or mutable wrappers.
 use super::*;
-use crate::function::fresh_clone::{self, Provider};
+use crate::function::clone::{self, Provider};
 
 #[derive(Clone, Copy)]
 struct Fill {
@@ -59,7 +59,7 @@ impl Lower<'_, '_> {
 			E::Object(object) => match object.kind {
 				hir::ExprObjectKind::Anonymous => Some(Fill::leaf(Some(Provider::Object))),
 				hir::ExprObjectKind::Struct { hash }
-					if self.constants.fresh_value_shape(hash).is_some() =>
+					if self.constants.value_shape(hash).is_some() =>
 				{
 					Some(Fill::leaf(None))
 				}
@@ -78,7 +78,7 @@ impl Lower<'_, '_> {
 			E::Fn(_) | E::CallClosure(_) => Some(Fill::leaf(Some(Provider::Function))),
 			E::Variable(v) => {
 				let mut proof = self.resize_fill(self.text_init(v)?, depth + 1)?;
-				for expr in self.exprs.fresh_expressions() {
+				for expr in self.exprs.expressions() {
 					match expr.kind {
 						E::Assign(a) if matches!(self.exprs.get(ungroup(self.exprs,a.lhs)).kind,E::Variable(x)if x==v) => {
 							proof = proof.merge(self.resize_fill(a.rhs, depth + 1)?)
@@ -102,7 +102,7 @@ impl Lower<'_, '_> {
 				if super::vec_constructors::constructor(hash).is_some() {
 					return Some(Fill::leaf(Some(Provider::Vec)));
 				}
-				if self.constants.fresh_value_shape(hash).is_some() {
+				if self.constants.value_shape(hash).is_some() {
 					return Some(Fill::leaf(None));
 				}
 				let (provider, arity) =
@@ -158,11 +158,11 @@ impl Lower<'_, '_> {
 	fn resize_prefix_unchanged(&self, current: &hir::ExprCall<'_>, span: Span) -> bool {
 		use hir::ExprKind as E;
 		let site = span.range();
-		self.exprs.fresh_expressions().all(|expr| {
+		self.exprs.expressions().all(|expr| {
 			let range = expr.span.range();
 			// Constructing a closure does not execute its body. A preceding call
 			// still reaches the unknown-call check outside this dormant range.
-			if self.exprs.fresh_expressions().any(|definition| {
+			if self.exprs.expressions().any(|definition| {
 				let E::CallClosure(_) = definition.kind else {
 					return false;
 				};
@@ -204,7 +204,7 @@ impl Lower<'_, '_> {
 				E::Call(call) => match call.call {
 					hir::Call::Meta { hash } => {
 						super::vec_constructors::constructor(hash).is_some()
-							|| self.constants.fresh_value_shape(hash).is_some()
+							|| self.constants.value_shape(hash).is_some()
 							|| [
 								crate::hash_in!(crate, ::std::option::Option::None),
 								crate::hash_in!(crate, ::std::option::Option::Some),
@@ -232,7 +232,7 @@ impl Lower<'_, '_> {
 		if call.args.len() != 2 {
 			return Err(self.refused(span, Refusal::Arity));
 		}
-		if !self.context.fresh_vec_resize() {
+		if !self.context.vec_resize() {
 			return Err(self.refused(span, Refusal::Native));
 		}
 		let fill = self
@@ -241,13 +241,13 @@ impl Lower<'_, '_> {
 		if fill.aliased && !self.resize_prefix_unchanged(call, span) {
 			return Err(self.refused(span, Refusal::Method));
 		}
-		if !self.constants.fresh_instances.complete() {
+		if !self.constants.instances.complete() {
 			return Err(self.refused(span, Refusal::Method));
 		}
 		for provider in Provider::ALL {
 			if fill.providers & provider.bit() != 0
-				&& (!self.context.fresh_clone_provider(provider)
-					|| !provider.unit_absent(&self.constants.fresh_instances))
+				&& (!self.context.clone_provider(provider)
+					|| !provider.unit_absent(&self.constants.instances))
 			{
 				return Err(self.refused(span, Refusal::Method));
 			}
@@ -257,7 +257,7 @@ impl Lower<'_, '_> {
 			.resize_fill(target, 0)
 			.is_some_and(|proof| proof.vec_only)
 		{
-			return self.call_dynamic_method(call, target, fresh_clone::RESIZE_NAME, out, span);
+			return self.call_dynamic_method(call, target, clone::RESIZE_NAME, out, span);
 		}
 		let values = self.operands(&[target, call.args[0], call.args[1]])?;
 		let (args_start, args_len) = self.function.arguments(&values)?;

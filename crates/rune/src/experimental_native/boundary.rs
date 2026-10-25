@@ -1,5 +1,5 @@
 //! THE UNSAFE BOUNDARY of the native tier. Since P2a the production region cache
-//! (`experimental_core::region::cache`, feature `fresh-core-native`) loads and calls it;
+//! (`experimental_core::region::cache`, feature `native-code`) loads and calls it;
 //! before that only tests did.
 //!
 //! Ownership and lifetime:
@@ -69,7 +69,7 @@ pub(crate) struct NativeRegion {
 }
 
 impl NativeRegion {
-	/// Copies audited bytes into fresh executable memory. Any error (allocation, `mmap` or
+	/// Copies audited bytes into new executable memory. Any error (allocation, `mmap` or
 	/// `mprotect` failure) is an interpreter fallback; memory allocated before the failure
 	/// is freed here, since nothing from it was finalized or called.
 	pub(crate) fn load(compiled: &Compiled) -> Result<Self, NativeRefusal> {

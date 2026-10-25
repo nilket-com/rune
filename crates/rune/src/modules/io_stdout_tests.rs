@@ -319,12 +319,12 @@ fn volume_matches_stock_and_stock_partial_line_is_preserved() {
 
 #[test]
 #[ignore = "C2 stock-only bounded descriptor oracle; explicit new GAP_OUT"]
-fn stock_c2_probe() {
+fn legacy_c2_probe() {
 	let out = std::path::PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
-	stock_c2_at(&out);
+	legacy_c2_at(&out);
 }
 
-pub(crate) fn stock_c2_at(out: &std::path::Path) {
+pub(crate) fn legacy_c2_at(out: &std::path::Path) {
 	std::fs::create_dir(out).unwrap();
 	let mut table = String::from("case\tstdout_hex\tstderr_hex\n");
 	let hex = |bytes: &[u8]| bytes.iter().map(|b| format!("{b:02x}")).collect::<String>();
@@ -350,13 +350,13 @@ pub(crate) fn stock_c2_at(out: &std::path::Path) {
 }
 
 #[test]
-#[ignore = "C2 fresh descriptor comparison, explicit new GAP_OUT"]
-fn fresh_c2_contract() {
+#[ignore = "C2 execution descriptor comparison, explicit new GAP_OUT"]
+fn c2_contract() {
 	let out = std::path::PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
-	fresh_c2_at(&out);
+	c2_at(&out);
 }
 
-pub(crate) fn fresh_c2_at(out: &std::path::Path) {
+pub(crate) fn c2_at(out: &std::path::Path) {
 	std::fs::create_dir(out).unwrap();
 	let rows: Vec<_> = include_str!("../experimental_core/tests/output_descriptors_stock.tsv")
 		.lines()

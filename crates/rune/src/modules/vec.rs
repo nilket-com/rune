@@ -46,18 +46,18 @@ use crate::{docstring, ContextError, Module};
 #[rune::module(::std::vec)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_clone = crate::function::fresh_clone::Provider::Vec.bit();
-		m.fresh_vec_resize = true;
+		m.clone = crate::function::clone::Provider::Vec.bit();
+		m.vec_resize = true;
 	}
 
 	// Private C12 provider markers: this std module registers the builtin providers.
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_vec_constructors = true;
-		m.fresh_iter = crate::function::fresh_iter::marker::ITER;
-		m.fresh_object = crate::function::fresh_object::marker::VEC;
+		m.vec_constructors = true;
+		m.iter = crate::function::iter::marker::ITER;
+		m.object = crate::function::object::marker::VEC;
 	}
 
 	m.ty::<Vec>()?.docs(docstring! {
@@ -90,9 +90,9 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(remove)?;
 	m.function_meta(insert)?;
 	m.function_meta(sort_by)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_sort_by = true;
+		m.sort_by = true;
 	}
 	m.function_meta(sort)?;
 	m.function_meta(into_iter__meta)?;
@@ -117,8 +117,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.implement_trait::<Vec>(rune::item!(::std::cmp::Ord))?;
 
 	m.function_meta(hash)?;
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }
 

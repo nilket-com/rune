@@ -2,7 +2,7 @@
 
 Base: 0a02c809. Production admission unchanged while this table is frozen.
 178 cases: 74 values, 104 runtime errors; all cases compile on stock.
-Fresh baseline: 178 FrontendDiagnostic macro-certification refusals.
+Execution baseline: 178 FrontendDiagnostic macro-certification refusals.
 
 The six TSV fields bind label, source, full stock observation, stdout, stderr,
 and stock first-error source ID/start/end. Hex fields are UTF-8 bytes, not escaped
@@ -33,9 +33,9 @@ Observed semantics:
 - At depth63 self-equality succeeds, but failure rendering for assert_ne raises
   MaxValueDepth for Vec/Tuple/Option/Result; Object still renders its panic text.
 
-Fresh default FormatLimits.depth32 is a deliberate resource policy. Deep failure
+Execution default FormatLimits.depth32 is a deliberate resource policy. Deep failure
 rendering needs an explicit, reviewed retained-policy contract and a separately
 configured-depth proof; these stock rows are never edited to conceal that policy
 or any independent formatter semantic difference. Panic class labels in the stock
-observation include the stock Debug payload; a future fresh contract may map only
-that exact class spelling to fresh Panic, without weakening text/site checks.
+observation include the stock Debug payload; a future execution contract may map only
+that exact class spelling to execution Panic, without weakening text/site checks.

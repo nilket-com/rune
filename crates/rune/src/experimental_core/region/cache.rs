@@ -1,9 +1,9 @@
-//! P2a production region cache (feature `fresh-core-native`, x86-64 Linux only). UNSTABLE.
+//! P2a production region cache (feature `native-code`, x86-64 Linux only). UNSTABLE.
 //!
 //! Compiled regions live in a **thread-local** cache keyed by [`Code::id`], so `Program`,
 //! `Code` and `Executor` stay `Send` and unchanged in meaning: a [`NativeRegion`] (raw
 //! pointer, `!Send`/`!Sync`) never leaves the thread that loaded it. There is no unsafe
-//! code here (the fresh core is `forbid(unsafe_code)`); only `NativeRegion`'s safe API is
+//! code here (the execution core is `forbid(unsafe_code)`); only `NativeRegion`'s safe API is
 //! used, and the only constructor of a loadable artifact stays `lower::compile`.
 //!
 //! # Life cycle of one entry
@@ -21,7 +21,7 @@
 //!   unwinding drops the partial build (freeing loaded code and releasing its process
 //!   reservations) and its `Building` marker, so nothing stays stuck.
 //! - **Negative entries.** A code with no loaded region keeps a small `Empty` entry (counts
-//!   only, no text): it is never re-analysed or recompiled while resident. When analysis
+//!   only, no text): it is never re-analyzed or recompiled while resident. When analysis
 //!   admitted no region at all, the executor also remembers the code id (a property of the
 //!   code alone), so later invocations skip the cache entirely.
 //! - **Eviction and retry.** At most [`MAX_CACHED_PROGRAMS`] entries (positive or
@@ -32,13 +32,13 @@
 //!
 //! # Bounds (P3a; every value is one field of [`Limits`])
 //!
-//! - **Build is streamed per function.** Each function is scanned, analysed header by
+//! - **Build is streamed per function.** Each function is scanned, analyzed header by
 //!   header, and every admitted region is compiled, audited and loaded before the next
-//!   header is analysed. Once the per-program region or compile cap is reached nothing
-//!   further is analysed (`skipped_after_caps`). Below the caps the loaded set and every
+//!   header is analyzed. Once the per-program region or compile cap is reached nothing
+//!   further is analyzed (`skipped_after_caps`). Below the caps the loaded set and every
 //!   refusal count equal the earlier batch build (the selection golden).
 //! - **Per program:** functions attempted (every function reaching the gates is charged,
-//!   [`MAX_PROGRAM_ATTEMPTED_FUNCTIONS`]), functions analysed, function length, candidate
+//!   [`MAX_PROGRAM_ATTEMPTED_FUNCTIONS`]), functions analyzed, function length, candidate
 //!   headers per function, an analysis-work ESTIMATE (the header scan's `len` is charged
 //!   before the scan), compile attempts, loaded regions, machine-code bytes (the P0 1 MiB
 //!   bound inside `lower::compile`) and retained metadata bytes.
@@ -127,13 +127,13 @@ pub(crate) const MAX_PROGRAM_METADATA_BYTES: usize = 1 << 20;
 pub(crate) const MAX_PROGRAM_REGIONS: usize = 64;
 /// Most compile attempts per program (refused compiles cost as much as loaded ones).
 pub(crate) const MAX_PROGRAM_COMPILES: usize = 128;
-/// Most functions analysed per program; later functions get no regions.
-pub(crate) const MAX_PROGRAM_ANALYSED_FUNCTIONS: usize = 1024;
+/// Most functions analyzed per program; later functions get no regions.
+pub(crate) const MAX_PROGRAM_ANALYZED_FUNCTIONS: usize = 1024;
 /// Most functions attempted per program, whatever gate then skips them (a conservative
 /// prototype choice, not an empirically optimal ceiling).
 pub(crate) const MAX_PROGRAM_ATTEMPTED_FUNCTIONS: usize = 4096;
 /// Functions longer than this get no regions.
-pub(crate) const MAX_ANALYSED_FUNCTION_LEN: usize = 65_536;
+pub(crate) const MAX_ANALYZED_FUNCTION_LEN: usize = 65_536;
 /// Functions with more candidate headers than this get no regions (bounds the header
 /// search, which is linear in the headers found per back edge).
 pub(crate) const MAX_FUNCTION_CANDIDATE_HEADERS: usize = 256;
@@ -174,7 +174,7 @@ pub(crate) struct Limits {
 	pub(crate) program_compiles: usize,
 	/// At most [`MAX_PROGRAM_CODE_BYTES`], the bound `lower::compile` itself enforces.
 	pub(crate) program_code_bytes: usize,
-	pub(crate) program_analysed_functions: usize,
+	pub(crate) program_analyzed_functions: usize,
 	pub(crate) program_attempted_functions: usize,
 	pub(crate) function_len: usize,
 	pub(crate) function_candidate_headers: usize,
@@ -194,9 +194,9 @@ impl Limits {
 		program_regions: MAX_PROGRAM_REGIONS,
 		program_compiles: MAX_PROGRAM_COMPILES,
 		program_code_bytes: MAX_PROGRAM_CODE_BYTES,
-		program_analysed_functions: MAX_PROGRAM_ANALYSED_FUNCTIONS,
+		program_analyzed_functions: MAX_PROGRAM_ANALYZED_FUNCTIONS,
 		program_attempted_functions: MAX_PROGRAM_ATTEMPTED_FUNCTIONS,
-		function_len: MAX_ANALYSED_FUNCTION_LEN,
+		function_len: MAX_ANALYZED_FUNCTION_LEN,
 		function_candidate_headers: MAX_FUNCTION_CANDIDATE_HEADERS,
 		program_analysis_work: MAX_PROGRAM_ANALYSIS_WORK,
 		transient_analysis_bytes: MAX_TRANSIENT_ANALYSIS_BYTES,
@@ -237,12 +237,12 @@ pub(crate) struct NativeSummary {
 	pub(crate) analysed_functions: u32,
 	pub(crate) skipped_length: u32,
 	pub(crate) skipped_headers: u32,
-	/// Skipped by the per-program attempted or analysed function count or the
+	/// Skipped by the per-program attempted or analyzed function count or the
 	/// analysis-work budget.
 	pub(crate) skipped_budget: u32,
 	/// `analyze` returned `Err` (allocation or invalid code): no regions for that function.
 	pub(crate) analysis_errors: u32,
-	/// Candidate headers analysed.
+	/// Candidate headers analyzed.
 	pub(crate) candidates: u32,
 	/// Regions admitted by the analysis.
 	pub(crate) regions: u32,
@@ -274,7 +274,7 @@ pub(crate) struct NativeSummary {
 	/// P3a: functions that reached the gates (each is charged to
 	/// [`MAX_PROGRAM_ATTEMPTED_FUNCTIONS`]).
 	pub(crate) attempted_functions: u32,
-	/// P3a: functions not analysed (or not finished) because the region or compile cap was
+	/// P3a: functions not analyzed (or not finished) because the region or compile cap was
 	/// reached; `region_cap`/`compile_cap` are then 1, naming the cap.
 	pub(crate) skipped_after_caps: u32,
 	/// P3a: functions or headers refused by the transient analysis-bytes bound.
@@ -504,7 +504,7 @@ impl Ready {
 		self.state.set(State::Poisoned);
 		INVALID_EXITS.with(|c| c.set(c.get() + 1));
 		std::eprintln!(
-			"rune fresh-core-native: INVALID native region exit ({refused:?}) in function {} at header pc {}: region poisoned, interpreter fallback with the original state",
+			"rune native-code: INVALID native region exit ({refused:?}) in function {} at header pc {}: region poisoned, interpreter fallback with the original state",
 			self.region.function,
 			self.region.header
 		);
@@ -944,7 +944,7 @@ pub(crate) fn region_metadata(region: &Region) -> usize {
 		+ core::mem::size_of::<(u32, u32, u32)>()
 }
 
-/// The analysis-work estimate of one function, charged before it is analysed: one pass
+/// The analysis-work estimate of one function, charged before it is analyzed: one pass
 /// per candidate header plus the header search over the whole function, and the
 /// function-level inference cells when that inference runs. An estimate of the dominant
 /// terms, not a proven worst case of the fixpoints (those have the transfer cutoff).
@@ -1190,7 +1190,7 @@ fn unreserve(id: u32, mapped: usize, metadata: usize) {
 /// Below the caps this equals the earlier batch build (analysis of every function, then
 /// every admitted region in order): the order of compile attempts is function ascending,
 /// then header ascending, in both. Differences, by design: (1) once a cap is reached the
-/// rest is not analysed (`skipped_after_caps`; `region_cap`/`compile_cap` become flags);
+/// rest is not analyzed (`skipped_after_caps`; `region_cap`/`compile_cap` become flags);
 /// (2) an analysis error in a header stops that function's later headers but keeps the
 /// regions already loaded from it (the batch build dropped the whole function's regions; both are
 /// fallbacks, and such errors are allocation failures or invalid code).
@@ -1232,7 +1232,7 @@ fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 		let Some(f) = code.function(function) else {
 			continue;
 		};
-		if b.summary.analysed_functions as usize >= limits.program_analysed_functions {
+		if b.summary.analysed_functions as usize >= limits.program_analyzed_functions {
 			b.summary.skipped_budget += 1;
 			continue;
 		}
@@ -1313,7 +1313,7 @@ fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 				}
 				Err(Stop::Error(_)) => {
 					// The failed header's buffers are already freed and released; the
-					// function's later headers are not analysed, its loaded regions stay.
+					// function's later headers are not analyzed, its loaded regions stay.
 					b.summary.analysis_errors += 1;
 
 					#[cfg(test)]
@@ -1385,7 +1385,7 @@ fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 pub(crate) struct TestCounters {
 	pub(crate) checkouts: Cell<u64>,
 	pub(crate) builds: Cell<u64>,
-	/// Candidate headers analysed by builds (P3a streaming tests).
+	/// Candidate headers analyzed by builds (P3a streaming tests).
 	pub(crate) analyzed_headers: Cell<u64>,
 	/// The most fixpoint transfers one admitted header used.
 	pub(crate) max_transfers: Cell<usize>,

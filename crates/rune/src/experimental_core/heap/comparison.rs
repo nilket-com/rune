@@ -501,7 +501,7 @@ pub(super) fn type_hash(tag: Type) -> Result<u64> {
 		Type::RangeToInclusive => rt::RangeToInclusive::HASH.into_inner(),
 		Type::Struct(nominal) => crate::experimental_core::nominal::hash_copy(nominal)
 			.ok_or_else(|| error(ErrorKind::InvalidCode))?,
-		// One fresh tag stands for several stock iterator types.
+		// One new tag stands for several stock iterator types.
 		Type::Iterator => return Err(error(ErrorKind::InvalidCode)),
 	})
 }

@@ -58,7 +58,7 @@ fn named_arg<'hir>(
 			span: span.span(),
 			kind: hir::PatKind::Path(alloc!(hir::PatPathKind::Ident {
 				variable,
-				#[cfg(feature = "fresh-core")]
+				#[cfg(feature = "execution")]
 				name: hir::Name::Str(name)
 			})),
 		},
@@ -3320,7 +3320,7 @@ impl<'hir> ExprInner<'hir, '_> {
 						Ok(hir::Call::Associated {
 							target,
 							hash,
-							#[cfg(feature = "fresh-core")]
+							#[cfg(feature = "execution")]
 							name_hash: _name_hash,
 						})
 					}
@@ -5231,7 +5231,7 @@ fn pat_path<'hir>(
 				cx.pattern_bindings.try_push(name)?;
 				break 'path hir::PatPathKind::Ident {
 					variable: name,
-					#[cfg(feature = "fresh-core")]
+					#[cfg(feature = "execution")]
 					name: hir::Name::SelfValue,
 				};
 			}
@@ -5241,7 +5241,7 @@ fn pat_path<'hir>(
 				cx.pattern_bindings.try_push(variable)?;
 				break 'path hir::PatPathKind::Ident {
 					variable,
-					#[cfg(feature = "fresh-core")]
+					#[cfg(feature = "execution")]
 					name: hir::Name::Str(name),
 				};
 			}

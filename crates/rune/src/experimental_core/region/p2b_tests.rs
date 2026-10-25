@@ -930,11 +930,7 @@ fn p2b_copy_does_not_make_a_constant_divisor() {
 	// Copy's out variable to the literal's `iconst 17`, so the IR gate sees a constant
 	// divisor outside {0, -1}, the mid-end turns the `srem` into a multiply, and every gate
 	// passes. That is exact (`e` is 17 on every path); the Retry exit is unreachable.
-	#[cfg(all(
-		feature = "fresh-core-native",
-		target_arch = "x86_64",
-		target_os = "linux"
-	))]
+	#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 	{
 		use crate::experimental_native::lower;
 		let compiled = lower::compile(region, 0).expect("every gate passes");

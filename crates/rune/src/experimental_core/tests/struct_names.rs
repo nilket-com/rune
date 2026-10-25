@@ -79,11 +79,11 @@ fn names_layout_snapshots_and_nested_debug_match_stock() {
 		let mut store = Store::new(Limits::default()).unwrap();
 		let root = invoke(&program, &mut store);
 		let actual = store.root_format(&root, true).unwrap();
-		let stock_source = std::format!("{defs} pub fn main() {{ format!(\"{{:?}}\", {expr}) }}");
+		let legacy_source = std::format!("{defs} pub fn main() {{ format!(\"{{:?}}\", {expr}) }}");
 		let stock: crate::alloc::String =
-			crate::tests::run(&context, &stock_source, (), false).unwrap();
+			crate::tests::run(&context, &legacy_source, (), false).unwrap();
 		assert_eq!(stock, expected, "stock {source}");
-		assert_eq!(actual, stock, "fresh {source}");
+		assert_eq!(actual, stock, "execution {source}");
 		drop(program);
 		assert_eq!(
 			store.root_format(&root, true).unwrap(),

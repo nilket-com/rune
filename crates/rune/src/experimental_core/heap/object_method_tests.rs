@@ -2,7 +2,7 @@
 //! the stock oracle.
 use super::*;
 use crate::experimental_core::error::Detail;
-use crate::function::fresh_object::Method;
+use crate::function::object::Method;
 
 fn object(s: &mut Store, pairs: &[(&str, Value)]) -> Value {
 	s.record(Type::Object, pairs).unwrap()
@@ -132,7 +132,7 @@ fn argument_order_types_and_leases() {
 	let text = s.string("x y").unwrap();
 	let space = s.string(" ").unwrap();
 	let split = s
-		.text_method(crate::function::fresh_text::Method::Split, &[text, space])
+		.text_method(crate::function::text::Method::Split, &[text, space])
 		.unwrap();
 	let inserted = s
 		.object_method(Method::Insert, &[o, text, Value::Unit])

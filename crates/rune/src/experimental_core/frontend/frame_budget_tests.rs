@@ -151,20 +151,12 @@ fn run_default_row(
 	assert!(diagnostics.diagnostics().is_empty());
 	let expected = row["expected_i64"].as_i64().unwrap();
 	let run = move || {
-		#[cfg(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		))]
+		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 		if native {
 			crate::experimental_core::region::cache::clear_for_test();
 			crate::experimental_core::region::cache::enable_for_test(true);
 		}
-		#[cfg(not(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		)))]
+		#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
 		assert!(!native);
 		let mut store = Store::new(Limits::default()).unwrap();
 		let mut executor = Executor::with_limits(limits.unwrap_or_default()).unwrap();
@@ -178,11 +170,7 @@ fn run_default_row(
 			assert!(executor.is_idle());
 			assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 		}
-		#[cfg(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		))]
+		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 		if native {
 			let entries =
 				crate::experimental_core::region::cache::regions_for_test(program.code.id())
@@ -232,11 +220,7 @@ fn frame_budget_deep_runtime_uses_a_small_machine_stack() {
 }
 
 #[test]
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 #[ignore = "operator-only isolated cold native 512 KiB stack child"]
 fn frame_budget_native_adequate_stack_child() {
 	let row = rows()
@@ -247,11 +231,7 @@ fn frame_budget_native_adequate_stack_child() {
 }
 
 #[test]
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 #[ignore = "operator-only isolated native stack attribution"]
 fn frame_budget_native_stack_probe_child() {
 	let depth: i64 = std::env::var("S6_NATIVE_DEPTH").unwrap().parse().unwrap();

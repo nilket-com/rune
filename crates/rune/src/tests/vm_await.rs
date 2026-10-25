@@ -6,7 +6,7 @@
 //! call which has not happened, so the machine which awaits it takes it over -
 //! its values move to the top of the awaiting stack and an ordinary call frame
 //! opens over them. `bounded_recursion` covers what that buys; these cover the
-//! cases where the future is *not* a fresh call, and so must keep behaving the
+//! cases where the future is *not* a new call, and so must keep behaving the
 //! way they always did.
 
 prelude!();

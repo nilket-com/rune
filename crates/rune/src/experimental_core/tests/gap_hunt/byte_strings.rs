@@ -47,7 +47,7 @@ fn error(error: &stock::VmError, sources: &Sources) -> Json {
 	let class = match kind {
 		crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
 		crate::runtime::VmErrorKind::UnsupportedCallFn { .. } => "Type".into(),
-		_ => stock_class(kind),
+		_ => runtime_error_class(kind),
 	};
 	let sites = error.stacktrace().iter().map(|at| {
 		let inst = at.unit.debug_info().expect("debug unit").instruction_at(at.ip).expect("debug instruction");
@@ -59,7 +59,7 @@ fn error(error: &stock::VmError, sources: &Sources) -> Json {
 		.iter()
 		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
 		.collect::<Vec<_>>();
-	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
+	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
 #[test]
@@ -210,7 +210,7 @@ fn compile_child() {
 	let row = &cases[index];
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["c16g"]).unwrap();
-	module.fresh_host_function("tap", tap).unwrap();
+	module.host_function("tap", tap).unwrap();
 	context.install(module).unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -251,7 +251,7 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[test]
 #[cfg(target_os = "linux")]
 #[ignore = "C16g frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 

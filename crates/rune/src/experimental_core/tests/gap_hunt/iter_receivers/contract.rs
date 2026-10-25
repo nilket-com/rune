@@ -1,7 +1,7 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "O1b frozen fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "O1b frozen execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -31,7 +31,7 @@ fn canonical_record(record: &Json) -> Json {
 
 /// `frozen` is the pinned prior stock row; `stock` is its fix-both
 /// replacement, or the same row where the release was never observable.
-fn verify_fresh_case(
+fn verify_case(
 	index: usize,
 	case: &Json,
 	frozen: &Json,
@@ -87,7 +87,7 @@ fn verify_fresh_case(
 	assert_eq!(json!(frozen != stock), rule["stock_fix_both"]);
 	let (mut f, mut s) = (canonical_record(actual), canonical_record(stock));
 	if let Some(pin) = rule.get("warnings") {
-		// Stock warns that a `for (k, v)` pattern might panic; the fresh
+		// Stock warns that a `for (k, v)` pattern might panic; the new
 		// frontend does not report that warning.
 		assert_eq!(f["diagnostics"], pin["fresh"]);
 		assert_eq!(s["diagnostics"], pin["stock"]);
@@ -103,7 +103,7 @@ fn verify_fresh_case(
 			assert_eq!(f, s);
 		}
 		"Intentional-D1" => {
-			// A missing method: fresh names it (D1). Everything else is exact.
+			// A missing method: new names it (D1). Everything else is exact.
 			assert_eq!(f["observation"]["outcome"]["display"], rule["fresh_display"]);
 			assert_eq!(s["observation"]["outcome"]["display"], rule["stock_display"]);
 			f["observation"]["outcome"]["display"] = Json::Null;
@@ -112,7 +112,7 @@ fn verify_fresh_case(
 		}
 		"Inherited-kind" => {
 			// Writes while an iterator is live: stock's typed kind names a borrow
-			// snapshot, which has no fresh counterpart. Everything else is exact.
+			// snapshot, which has no new counterpart. Everything else is exact.
 			assert_eq!(f["observation"]["outcome"]["kind"], rule["fresh_kind"]);
 			assert_eq!(s["observation"]["outcome"]["kind"], rule["stock_kind"]);
 			f["observation"]["outcome"]["kind"] = Json::Null;

@@ -10,9 +10,9 @@ The TSV stores source, complete observation, stdout and stderr as hex. Scalar
 observations include their type. No object iteration or Debug order is normalized.
 Multi-key Object method rows observe only their count or method error.
 
-`len_clone::stock_contract` checks exact frozen sources, outcomes and streams;
-run explicitly with `--ignored --exact` and a new `GAP_OUT`. `stock_probe` and
-`fresh_probe` write inventories into new directories. Fresh conformance and
+`len_clone::legacy_contract` checks exact frozen sources, outcomes and streams;
+run explicitly with `--ignored --exact` and a new `GAP_OUT`. `legacy_probe` and
+`probe` write inventories into new directories. Execution conformance and
 coverage refusals are not asserted at this tests-first checkpoint. Existing
 field/index/S0 fixtures stay frozen and unchanged.
 
@@ -34,8 +34,8 @@ The stock table establishes:
 - At depths 1, 2, 8 and 64, Some/Ok/Err clone and mutation produce `(1, 2)` leaf
   lengths. This observes copy semantics without invoking Debug's separate depth cap.
 
-Recursive-cycle rejection and scratch/result budget rollback belong in fresh-only
-heap tests. Deep stock aborts are not repeated. Any 100k fresh stress stays opt-in
+Recursive-cycle rejection and scratch/result budget rollback belong in execution-only
+heap tests. Deep stock aborts are not repeated. Any 100k execution stress stays opt-in
 and child-bounded, outside the ordinary suite and Miri.
 
 A first frozen-contract check found that Object Debug of an invalidated child

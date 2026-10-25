@@ -132,9 +132,9 @@ pub mod consts {
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_number = crate::function::fresh_number::marker::F64;
+		m.number = crate::function::number::marker::F64;
 	}
 	m.function_meta(parse)?
 		.deprecated("Use std::string::parse::<f64> instead")?;
@@ -173,9 +173,9 @@ pub fn module() -> Result<Module, ContextError> {
 		m.function_meta(sin)?;
 		m.function_meta(sqrt)?;
 		m.function_meta(tan)?;
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		{
-			m.fresh_numeric = 0b0111;
+			m.numeric = 0b0111;
 		}
 	}
 	m.function_meta(to_integer)?;
@@ -195,9 +195,9 @@ pub fn module() -> Result<Module, ContextError> {
 	m.implement_trait::<f64>(rune::item!(::std::cmp::PartialOrd))?;
 
 	m.function_meta(cmp__meta)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_numeric |= 0b0100_0000;
+		m.numeric |= 0b0100_0000;
 	}
 	m.implement_trait::<f64>(rune::item!(::std::cmp::Ord))?;
 

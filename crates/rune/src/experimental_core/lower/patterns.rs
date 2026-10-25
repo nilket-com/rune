@@ -325,7 +325,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					if variant_hash != Hash::EMPTY {
 						let shape = self
 							.constants
-							.fresh_variant_shape(variant_hash)
+							.variant_shape(variant_hash)
 							.ok_or_else(|| self.refused(span, Refusal::Pattern))?;
 						if shape.enum_hash != hash {
 							return Err(self.refused(span, Refusal::Pattern));
@@ -348,7 +348,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					}
 					let _shape = self
 						.constants
-						.fresh_struct_shape(hash)
+						.struct_shape(hash)
 						.ok_or_else(|| self.refused(span, Refusal::Pattern))?;
 					let tag = self.struct_tag(hash, span)?;
 					self.pattern_is(value, tag, misses, span)?;

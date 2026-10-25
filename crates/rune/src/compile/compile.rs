@@ -31,7 +31,7 @@ pub(crate) fn compile(
 	args: &[String],
 	statics: &Statics,
 	unit_storage: &mut dyn UnitEncoder,
-	#[cfg(feature = "fresh-core")] mut fresh: Option<
+	#[cfg(feature = "execution")] mut collector: Option<
 		&mut crate::experimental_core::frontend::Collector,
 	>,
 ) -> alloc::Result<()> {
@@ -41,9 +41,9 @@ pub(crate) fn compile(
 	let mut consts = Consts::default();
 	let mut storage = Storage::default();
 	let mut inner = crate::query::QueryInner::default();
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		inner.fresh_mode = fresh.is_some();
+		inner.collecting = collector.is_some();
 	}
 
 	let q = Query::new(
@@ -114,8 +114,8 @@ pub(crate) fn compile(
 			let task = CompileBuildEntry {
 				options,
 				q: worker.q.borrow(),
-				#[cfg(feature = "fresh-core")]
-				fresh: fresh.as_deref_mut(),
+				#[cfg(feature = "execution")]
+				collector: collector.as_deref_mut(),
 			};
 
 			if let Err(error) = task.compile(entry, unit_storage) {
@@ -140,8 +140,8 @@ pub(crate) fn compile(
 struct CompileBuildEntry<'a, 'arena> {
 	options: &'a Options,
 	q: Query<'a, 'arena>,
-	#[cfg(feature = "fresh-core")]
-	fresh: Option<&'a mut crate::experimental_core::frontend::Collector>,
+	#[cfg(feature = "execution")]
+	collector: Option<&'a mut crate::experimental_core::frontend::Collector>,
 }
 
 impl<'arena> CompileBuildEntry<'_, 'arena> {
@@ -304,8 +304,8 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 				// over to assembly.
 				let exprs = cx.take_exprs();
 
-				#[cfg(feature = "fresh-core")]
-				if let Some(fresh) = self.fresh.as_deref_mut() {
+				#[cfg(feature = "execution")]
+				if let Some(collector) = self.collector.as_deref_mut() {
 					let mut refused_functions = Vec::new();
 					for build in &secondary_builds {
 						let operation = match &build.build {
@@ -327,7 +327,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 					let hash = self.q.pool.item_type_hash(item_meta.item);
 					// Copy bounded summaries while every body in this HIR arena is
 					// available, before lowering can stop at its first refusal.
-					fresh
+					collector
 						.observe(
 							hash,
 							hash,
@@ -340,7 +340,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 							self.q.pool,
 							self.q.context,
 						)
-						.map_err(|e| fresh.compile_error(e, location.span))?;
+						.map_err(|e| collector.compile_error(e, location.span))?;
 					for build in &secondary_builds {
 						if let SecondaryBuild::Closure(c) = &build.build {
 							if matches!(c.call, crate::runtime::Call::Immediate) {
@@ -355,7 +355,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 										drop: &[],
 									},
 								};
-								fresh
+								collector
 									.observe(
 										hash,
 										self.q.pool.item_type_hash(build.item_meta.item),
@@ -368,14 +368,14 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 										self.q.pool,
 										self.q.context,
 									)
-									.map_err(|e| fresh.compile_error(e, c.hir.span))?;
+									.map_err(|e| collector.compile_error(e, c.hir.span))?;
 							}
 						}
 					}
 					// Preserve the first named expression refusal (e.g. Yield),
 					// before classifying a whole non-immediate function.
-					fresh.checkpoint_diagnostics(self.q.diagnostics, hash, None);
-					fresh
+					collector.checkpoint_diagnostics(self.q.diagnostics, hash, None);
+					collector
 						.lower(
 							hash,
 							type_hash,
@@ -393,7 +393,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 								.location
 								.map(|l| Span::new(l.start, l.end))
 								.unwrap_or(location.span);
-							fresh.compile_error(e, at)
+							collector.compile_error(e, at)
 						})?;
 					for build in &secondary_builds {
 						if let SecondaryBuild::Closure(c) = &build.build {
@@ -409,12 +409,12 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 										drop: &[],
 									},
 								};
-								fresh.checkpoint_diagnostics(
+								collector.checkpoint_diagnostics(
 									self.q.diagnostics,
 									hash,
 									Some(c.hir.span),
 								);
-								fresh
+								collector
 									.lower(
 										self.q.pool.item_type_hash(build.item_meta.item),
 										None,
@@ -427,7 +427,7 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 										self.q.context,
 										&refused_functions,
 									)
-									.map_err(|e| fresh.compile_error(e, c.hir.span))?;
+									.map_err(|e| collector.compile_error(e, c.hir.span))?;
 							}
 						}
 					}
@@ -441,12 +441,12 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 						let error = crate::experimental_core::error::Error::refused(operation).at(
 							crate::experimental_core::error::Location {
 								source: location.source_id.into_index() as u32,
-								revision: fresh.revision(),
+								revision: collector.revision(),
 								start: at.start.0,
 								end: at.end.0,
 							},
 						);
-						fresh.record_failure(error);
+						collector.record_failure(error);
 						return Err(compile::Error::msg(span, operation.name()));
 					}
 					if !self.q.is_used(&item_meta) {

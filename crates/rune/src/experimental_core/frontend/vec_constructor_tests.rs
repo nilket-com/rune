@@ -99,8 +99,8 @@ fn vec_constructor_custom_providers_are_not_certified() {
 	module.function("new", || 42i64).build().unwrap();
 	let mut context = Context::new();
 	context.install(module).unwrap();
-	assert!(!context.fresh_vec_constructor(false));
-	assert!(!context.fresh_vec_constructor(true));
+	assert!(!context.vec_constructor(false));
+	assert!(!context.vec_constructor(true));
 	let error = compile_source("pub fn main(){std::vec::Vec::new()}", &context)
 		.err()
 		.unwrap();
@@ -143,15 +143,15 @@ fn vec_constructor_capacity_contract_matches_stock_or_declares_allocator_diverge
 			.with_context(&context)
 			.build_vm()
 			.unwrap();
-		let stock_result = stock.call(["main"], ());
+		let legacy_result = stock.call(["main"], ());
 		if row["classification"] == "Intentional" {
 			assert!(matches!(
-				stock_result.as_ref().unwrap_err().error().kind(),
+				legacy_result.as_ref().unwrap_err().error().kind(),
 				crate::runtime::VmErrorKind::AllocError { .. }
 			));
 			assert!(!row["rationale"].as_str().unwrap().is_empty());
 		}
-		let expected = stock_result
+		let expected = legacy_result
 			.map(|v| crate::from_value::<i64>(v).unwrap())
 			.map_err(|e| e.to_string());
 		let program = compile_source(&source, &context).unwrap();
@@ -189,7 +189,7 @@ fn vec_constructor_capacity_contract_matches_stock_or_declares_allocator_diverge
 			other => panic!("unknown constructor contract classification: {other}"),
 		}
 		std::eprintln!(
-			"C18B3C_VEC_ORACLE {} {} stock={expected:?} fresh={actual:?}",
+			"C18B3C_VEC_ORACLE {} {} stock={expected:?} execution={actual:?}",
 			row["id"],
 			row["classification"]
 		);

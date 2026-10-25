@@ -8,8 +8,8 @@ use crate as rune;
 #[rune(item = ::c18b)]
 struct Gadget;
 
-fn gadget() -> Value {
-	Value::new(Gadget).unwrap()
+fn gadget() -> RuntimeValue {
+	RuntimeValue::new(Gadget).unwrap()
 }
 
 /// A native instance method on `Gadget`, a name the script below also defines.
@@ -18,13 +18,13 @@ fn knob(_: &Gadget) -> i64 {
 	500
 }
 
-fn supplement_context(fresh: bool) -> Context {
+fn supplement_context(certify: bool) -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["c18b"]).unwrap();
 	module.ty::<Gadget>().unwrap();
 	module.function_meta(knob).unwrap();
-	if fresh {
-		module.fresh_host_function("gadget", gadget).unwrap();
+	if certify {
+		module.host_function("gadget", gadget).unwrap();
 	} else {
 		module.function("gadget", gadget).build().unwrap();
 	}
@@ -32,7 +32,7 @@ fn supplement_context(fresh: bool) -> Context {
 	context
 }
 
-fn supplement_stock(program: &str, fuel: usize) -> Result<Value, stock::VmError> {
+fn legacy_supplement(program: &str, fuel: usize) -> Result<RuntimeValue, stock::VmError> {
 	let context = supplement_context(false);
 	let mut sources = Sources::new();
 	sources
@@ -46,17 +46,17 @@ fn supplement_stock(program: &str, fuel: usize) -> Result<Value, stock::VmError>
 	crate::runtime::budget::with(fuel, || vm.call(["main"], ())).call()
 }
 
-fn supplement_fresh(
+fn supplement(
 	program: &str,
 	fuel: usize,
 ) -> core::result::Result<
 	core::result::Result<(), crate::experimental_core::execute::Failure>,
 	crate::experimental_core::error::Error,
 > {
-	supplement_fresh_with_limits(program, fuel, None)
+	supplement_with_limits(program, fuel, None)
 }
 
-fn supplement_fresh_with_limits(
+fn supplement_with_limits(
 	program: &str,
 	fuel: usize,
 	limits: Option<crate::experimental_core::execute::ExecutorLimits>,
@@ -94,12 +94,12 @@ fn plain_recursion_meets_the_frame_limit_like_dispatch() {
 		"fn spin(n){spin(n+1)}pub fn main(){spin(0)}",
 		"struct P{x}impl P{fn spin(self){self.spin()}}fn f(p){p.spin()}pub fn main(){f(P{x:1})}",
 	] {
-		let stock = supplement_stock(program, 2000).unwrap_err();
+		let stock = legacy_supplement(program, 2000).unwrap_err();
 		assert!(matches!(
 			stock.error().kind(),
 			crate::runtime::VmErrorKind::Halted { .. }
 		));
-		let failure = supplement_fresh_with_limits(
+		let failure = supplement_with_limits(
 			program,
 			2000,
 			Some(crate::experimental_core::execute::ExecutorLimits {
@@ -118,26 +118,26 @@ fn plain_recursion_meets_the_frame_limit_like_dispatch() {
 #[test]
 fn host_returned_context_type_reaches_dispatch_only_through_the_boundary() {
 	use crate::experimental_core::error::Refusal;
-	// No native `twist` anywhere: stock misses on Gadget; fresh refuses the
+	// No native `twist` anywhere: stock misses on Gadget; new refuses the
 	// undeclared Gadget output at compile time, before any host call.
 	let twist =
 		"struct P{x}impl P{fn twist(self){1}}fn f(x){x.twist()}pub fn main(){f(c18b::gadget())}";
-	let stock = supplement_stock(twist, 200_000).unwrap_err();
+	let stock = legacy_supplement(twist, 200_000).unwrap_err();
 	assert!(matches!(
 		stock.error().kind(),
 		crate::runtime::VmErrorKind::MissingInstanceFunction { .. }
 	));
-	let failure = supplement_fresh(twist, 200_000).unwrap_err();
+	let failure = supplement(twist, 200_000).unwrap_err();
 	assert_eq!(failure.refusal, Some(Refusal::Native));
 
-	// A native `knob` on the context type: stock calls it; fresh refuses the
+	// A native `knob` on the context type: stock calls it; new refuses the
 	// undeclared output first at compile time, before method proof resolution.
 	let knob =
 		"struct P{x}impl P{fn knob(self){1}}fn f(x){x.knob()}pub fn main(){f(c18b::gadget())}";
 	assert_eq!(
-		crate::from_value::<i64>(supplement_stock(knob, 200_000).unwrap()).unwrap(),
+		crate::from_value::<i64>(legacy_supplement(knob, 200_000).unwrap()).unwrap(),
 		500
 	);
-	let refused = supplement_fresh(knob, 200_000).unwrap_err();
+	let refused = supplement(knob, 200_000).unwrap_err();
 	assert_eq!(refused.refusal, Some(Refusal::Native));
 }

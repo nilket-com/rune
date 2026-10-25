@@ -20,9 +20,9 @@ pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 
 	// Private C12 provider markers: this std module registers the builtin providers.
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_iter = crate::function::fresh_iter::marker::ITERATOR;
+		m.iter = crate::function::iter::marker::ITERATOR;
 	}
 
 	m.ty::<Iter>()?;

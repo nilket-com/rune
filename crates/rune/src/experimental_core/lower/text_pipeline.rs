@@ -1,7 +1,7 @@
 //! Statically proven text iterator shapes, expanded into ordinary charged code.
 use super::super::code;
 use super::*;
-use crate::function::fresh_pipeline::Method;
+use crate::function::pipeline::Method;
 // Bottom-up: StringSplit=0, CharSplit=1, Chars=2, Skip=3, Take=4.
 impl<'hir> Lower<'_, 'hir> {
 	#[cold]
@@ -82,10 +82,10 @@ impl<'hir> Lower<'_, 'hir> {
 					return None;
 				};
 				// A script method of the name may return anything.
-				if self.constants.fresh_method_script.closed(hash) {
+				if self.constants.method_script.closed(hash) {
 					return None;
 				}
-				if hash == crate::function::fresh_text::Method::Split.hash() && c.args.len() == 1 {
+				if hash == crate::function::text::Method::Split.hash() && c.args.len() == 1 {
 					let mut v = Vec::new();
 					v.try_push(if self.delimiter(c.args[0])? { 0 } else { 1 })
 						.ok()?;

@@ -44,8 +44,8 @@ pub fn module() -> Result<Module, ContextError> {
 		m.implement_trait::<GeneratorState>(rune::item!(::std::clone::Clone))?;
 	}
 
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }
 

@@ -1,4 +1,4 @@
-//! Closed comparison schemas. No expected bytes are used by the fresh observer.
+//! Closed comparison schemas. No expected bytes are used by the new observer.
 use super::*;
 
 fn selected_primary(primary: &str) -> Option<&'static str> {
@@ -34,7 +34,7 @@ fn selected_primary(primary: &str) -> Option<&'static str> {
 	}
 }
 
-fn stock_error_semantic(record: &str) -> Option<String> {
+fn runtime_error_semantic(record: &str) -> Option<String> {
 	let mut lines = record.lines();
 	let primary = selected_primary(lines.next()?.strip_prefix("primary:")?)?;
 	let chain = lines.next()?.strip_prefix("chain:")?;
@@ -98,7 +98,7 @@ fn native_argument_failure_matches_frozen_kind_message_site_and_effects() {
 		"pub fn main(){h1::add(h1::mark(\"left\",7),1/0)}"
 	);
 	let tape = fixture::Recorder::new();
-	let context = fixture::fresh_context(&tape);
+	let context = fixture::context(&tape);
 	let mut sources = Sources::new();
 	sources
 		.insert(Source::memory(unhex(frozen[2])).unwrap())
@@ -125,7 +125,7 @@ fn native_argument_failure_matches_frozen_kind_message_site_and_effects() {
 	);
 	let site = failure.error.location.unwrap();
 	let stable = unhex(frozen[8]);
-	let projected = stock_error_semantic(&stable).unwrap();
+	let projected = runtime_error_semantic(&stable).unwrap();
 	assert!(projected.contains(&format!(
 		"site:{}:{}:{}\n",
 		site.source, site.start, site.end
@@ -197,7 +197,7 @@ fn semantic_schema_refuses_unreviewed_payloads_and_auxiliary_chains() {
 		assert!(selected_primary(bad).is_none());
 	}
 	let good = "primary:ExpectedType\nchain:[VmErrorAt { index: 0, kind: BadArgument { arg: 0 } }]\nauxiliary:42616420617267756d656e74202330\nlocation:9:0:1:2\nframes:[]\n";
-	assert!(stock_error_semantic(good).is_some());
+	assert!(runtime_error_semantic(good).is_some());
 	for bad in [
 		good.replace("index: 0", "index: 1"),
 		good.replace("frames:[]", "frames:[9]"),
@@ -205,13 +205,13 @@ fn semantic_schema_refuses_unreviewed_payloads_and_auxiliary_chains() {
 		good.replace("ExpectedType", "Unknown"),
 		good.replace("auxiliary:4261", "auxiliary:00"),
 	] {
-		assert!(stock_error_semantic(&bad).is_none());
+		assert!(runtime_error_semantic(&bad).is_none());
 	}
 }
 
 #[test]
-#[ignore = "ONE bounded fresh H1 144-row contract; frozen stock rows remain read-only"]
-fn fresh_contract() {
+#[ignore = "ONE bounded execution H1 144-row contract; frozen stock rows remain read-only"]
+fn contract() {
 	let mut rows: Vec<Vec<&str>> = include_str!("stock.tsv")
 		.lines()
 		.skip(1)
@@ -233,7 +233,7 @@ fn fresh_contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
 	let scratch =
-		Scratch(std::env::temp_dir().join(format!("rune-h1-fresh-{}", std::process::id())));
+		Scratch(std::env::temp_dir().join(format!("rune-h1-execution-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
 	let started = Instant::now();
 	let mut counts = std::collections::BTreeMap::new();
@@ -255,8 +255,8 @@ fn fresh_contract() {
 		for ext in ["typed", "effects", "error", "diagnostics", "semantic-error"] {
 			let _ = fs::remove_file(scratch.0.join(format!("result.{ext}")));
 		}
-		// Every stock-compared row runs at full fresh fuel. The separate sweep is fresh-only.
-		fs::write(out.join(format!("{id}.argv")),format!("{:?} --exact {CHILD} --ignored --nocapture --quiet\nGAP_CASE={path:?}\nGAP_ORIGIN={path:?}\nGAP_MODE=h1-normal\nGAP_ENGINE=fresh\nGAP_RESULT={:?}\nstdin=/dev/null\n",std::env::current_exe().unwrap(),scratch.0.join("result"))).unwrap();
+		// Every stock-compared row runs at full new fuel. The separate sweep is new-only.
+		fs::write(out.join(format!("{id}.argv")),format!("{:?} --exact {CHILD} --ignored --nocapture --quiet\nGAP_CASE={path:?}\nGAP_ORIGIN={path:?}\nGAP_MODE=h1-normal\nGAP_ENGINE=execution\nGAP_RESULT={:?}\nstdin=/dev/null\n",std::env::current_exe().unwrap(),scratch.0.join("result"))).unwrap();
 		let run = launch(&path, &path, "h1-normal", "fresh", &scratch.0, &out, &id);
 		assert!(run.complete, "{}: {}", frozen[0], run.record);
 		fs::write(out.join(format!("{id}.rc")), "0\n").unwrap();
@@ -269,8 +269,8 @@ fn fresh_contract() {
 			sides.insert(ext, value);
 		}
 		let actual: Vec<_> = run.record.split('\t').collect();
-		let stock_observation = unhex(expected[3]);
-		let stock: Vec<_> = stock_observation.split('\t').collect();
+		let oracle_observation = unhex(expected[3]);
+		let stock: Vec<_> = oracle_observation.split('\t').collect();
 		assert_eq!(actual.len(), 5);
 		assert_eq!(stock.len(), 5);
 		let policy = if frozen[0] == "h1/wrong/unit/7" {
@@ -278,7 +278,7 @@ fn fresh_contract() {
 			assert!(retained_unit_arity(
 				frozen[0],
 				frozen[2],
-				&stock_observation,
+				&oracle_observation,
 				&unhex(frozen[8])
 			));
 			"compile-refusal-Arity-vs-stock-error"
@@ -330,7 +330,7 @@ fn fresh_contract() {
 						frozen[0]
 					);
 					if stock[0] == "error" {
-						let projected = stock_error_semantic(&unhex(expected[8]))
+						let projected = runtime_error_semantic(&unhex(expected[8]))
 							.expect("closed frozen error schema");
 						assert_eq!(
 							sides["semantic-error"], projected,

@@ -1,4 +1,4 @@
-//! The fresh-core heap: a bounded, generational [`Store`].
+//! The execution heap: a bounded, generational [`Store`].
 //!
 //! Values inside a store refer to each other by handle, never by Rust-owned child trees.
 //! Cleanup uses storage reserved before child edges are published, and never grows
@@ -37,7 +37,7 @@ mod text_pipeline;
 mod variant_methods;
 pub(crate) use variant_methods::VariantOutcome;
 
-#[cfg(feature = "fresh-core-native")]
+#[cfg(feature = "native-code")]
 pub(crate) mod native;
 
 #[cfg(test)]
@@ -85,7 +85,7 @@ const DEFAULT_BYTES: usize = MAX_BYTES;
 /// preallocation. Pass explicit limits to retain a smaller sandbox budget.
 ///
 /// Store-owned allocations are fallible and fail with Allocation. This does not
-/// promise failure at the same physical-memory point as the stock VM: layouts
+/// promise failure at the same physical-memory point as the legacy VM: layouts
 /// differ. It does not protect against host-callback, platform, or OS-level
 /// allocation failures, including overcommit and OOM kills.
 ///
@@ -457,7 +457,7 @@ impl Store {
 		}
 		Ok(())
 	}
-	// Both entry and payload limits precede fresh output allocation.
+	// Both entry and payload limits precede new output allocation.
 	pub(crate) fn host_room(&self, bytes: usize, entries: usize) -> Result<()> {
 		if self.closed {
 			return Err(err(ErrorKind::ClosedStore));

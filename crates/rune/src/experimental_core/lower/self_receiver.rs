@@ -19,7 +19,7 @@ pub(super) fn binding(exprs: &hir::Exprs<'_>, item: &hir::ItemFn<'_>) -> Option<
 	};
 	let variable = *variable;
 	// Future closure capture assignment must keep every closure arena in this scan.
-	let safe = exprs.fresh_expressions().all(|expr| {
+	let safe = exprs.expressions().all(|expr| {
 		let lhs = match expr.kind {
 			hir::ExprKind::Assign(assign) => assign.lhs,
 			hir::ExprKind::Binary(binary) if binary.op.is_assign() => binary.lhs,
@@ -49,7 +49,7 @@ impl Lower<'_, '_> {
 		}
 		// A parameter has no initializer: existing native-origin proofs cannot
 		// admit it. Preserve already-admitted dynamic dispatch before this path.
-		if !self.constants.fresh_method_script.closed(hash)
+		if !self.constants.method_script.closed(hash)
 			|| self.transaction.supports_dynamic_method(
 				self.context,
 				self.constants,
@@ -59,8 +59,8 @@ impl Lower<'_, '_> {
 			return None;
 		}
 		let associated = Hash::associated_function(receiver, hash);
-		let item = self.constants.fresh_instances.get(associated)?;
-		(self.constants.fresh_self_method(item, receiver) == Some(associated))
+		let item = self.constants.instances.get(associated)?;
+		(self.constants.self_method(item, receiver) == Some(associated))
 			.then_some(static_methods::StaticMethod { associated, item })
 	}
 }

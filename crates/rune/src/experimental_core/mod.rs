@@ -1,4 +1,4 @@
-//! Opt-in fresh execution core (feature `fresh-core`). UNSTABLE: no semver promise.
+//! Opt-in new execution core (feature `execution`). UNSTABLE: no semver promise.
 //!
 //! The core runs an admitted subset of Rune. [`frontend::compile`](crate::experimental_core::frontend::compile) turns sources into a
 //! [`frontend::Program`](crate::experimental_core::frontend::Program); an [`execute::Executor`](crate::experimental_core::execute::Executor) invokes its functions against a
@@ -17,7 +17,7 @@
 //! Width counts Unicode characters; formatting limits count UTF-8 bytes.
 //! The executor's formatting limits still apply before any formatted output.
 //!
-//! # Declared differences from the stock VM
+//! # Declared differences from the legacy VM
 //!
 //! - `&&` and `||` require `bool` operands; a non-`bool` operand is a
 //!   [`error::ErrorKind::Type`](crate::experimental_core::error::ErrorKind::Type) error.
@@ -48,7 +48,7 @@
 //!
 //! Cancellation needs an exclusive borrow of the executor, which every invocation holds for
 //! its whole duration, so no request can arrive while an invocation runs. The
-//! `fresh-core-native` tier checks a pending request once, at region entry, and relies on
+//! `native-code` tier checks a pending request once, at region entry, and relies on
 //! this. This tripwire stops compiling (and the test fails) if cancellation ever becomes
 //! reachable through a shared borrow; the native tier's cancellation contract must then be
 //! redesigned first.
@@ -81,7 +81,7 @@ pub mod frontend;
 
 pub(crate) mod constants;
 
-#[cfg(feature = "fresh-core-native")]
+#[cfg(feature = "native-code")]
 pub(crate) mod region;
 
 #[cfg(test)]

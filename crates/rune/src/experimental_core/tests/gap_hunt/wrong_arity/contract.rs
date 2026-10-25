@@ -1,7 +1,7 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "S4 frozen fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "S4 frozen execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -34,7 +34,7 @@ fn canonical_record(record: &Json) -> Json {
 const STOCK_DEFECTS: [&str; 3] = ["too-many-runs", "too-few-leaks-empty", "unbounded-recursion"];
 
 /// `stock` is the pinned stock row.
-fn verify_fresh_case(
+fn verify_case(
 	index: usize,
 	case: &Json,
 	stock: &Json,
@@ -102,11 +102,11 @@ fn verify_fresh_case(
 		assert_eq!(canonical_record(actual), canonical_record(stock));
 	} else if classification == "Intentional-D1" {
 		// A capturing closure called with the wrong count: stock counts its
-		// environment as one more argument on both sides, fresh reports the
+		// environment as one more argument on both sides, new reports the
 		// counts the caller wrote. Everything else is stock-exact.
-		let (fresh, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(fresh, rule["fresh"]);
-		let (f, s) = (&fresh["observation"], &expected["observation"]);
+		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
+		assert_eq!(execution, rule["fresh"]);
+		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for key in ["status", "class", "sites", "chain"] {
 			assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
 		}
@@ -121,7 +121,7 @@ fn verify_fresh_case(
 		assert_eq!(counts(&s["outcome"]["kind"]), (given + 1, wanted + 1));
 		assert_eq!(f["events"], s["events"]);
 		assert_eq!(f["reuse"], s["reuse"]);
-		assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+		assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 	} else {
 		// A located, classified refusal: the program runs on stock instead.
 		let outcome = &actual["observation"]["outcome"];
@@ -140,7 +140,7 @@ fn verify_fresh_case(
 		assert_eq!(actual["observation"]["events"], json!([]));
 		assert_eq!(actual["logical"], Json::Null);
 		if stock["observation"]["outcome"]["status"] == "compile-error" {
-			// Stock builds no VM, so it records no reuse; fresh reuses a
+			// Stock builds no VM, so it records no reuse; new reuses a
 			// fallback program and must still return 7.
 			assert_eq!(stock["observation"]["reuse"], Json::Null);
 			assert_eq!(actual["observation"]["reuse"]["graph"]["nodes"][0][2], "7");

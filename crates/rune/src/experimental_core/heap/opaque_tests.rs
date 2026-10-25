@@ -51,17 +51,17 @@ fn stale_opaque_metadata_cannot_name_a_released_or_reused_slot() {
 	assert_eq!(s.diagnostic_type(it), Some(TypeName::ObjectIter));
 	s.release(it).unwrap();
 	assert_eq!(s.moved_iterator_name(old), None);
-	let fresh = s.range_iterator(Value::I64(0), Value::I64(2)).unwrap();
-	let Value::Heap(new) = fresh else {
+	let execution = s.range_iterator(Value::I64(0), Value::I64(2)).unwrap();
+	let Value::Heap(new) = execution else {
 		panic!("iterator handle")
 	};
 	assert_eq!(old.slot, new.slot);
 	assert_ne!(old.generation, new.generation);
-	assert_eq!(s.diagnostic_type(fresh), Some(TypeName::RangeIter));
-	s.invalidate(fresh).unwrap();
-	assert_eq!(s.diagnostic_type(fresh), Some(TypeName::RangeIter));
+	assert_eq!(s.diagnostic_type(execution), Some(TypeName::RangeIter));
+	s.invalidate(execution).unwrap();
+	assert_eq!(s.diagnostic_type(execution), Some(TypeName::RangeIter));
 	assert_eq!(s.moved_iterator_name(old), None);
-	s.release(fresh).unwrap();
+	s.release(execution).unwrap();
 	for _ in 0..128 {
 		let it = s.range_iterator(Value::I64(0), Value::I64(1)).unwrap();
 		s.invalidate(it).unwrap();

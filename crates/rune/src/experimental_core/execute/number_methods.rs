@@ -1,6 +1,6 @@
 //! C17c numeric calls. Operands were evaluated in source order.
 use super::*;
-use crate::function::fresh_number::{Method, Pair, Receiver};
+use crate::function::number::{Method, Pair, Receiver};
 
 impl Executor {
 	/// A provider id calls its stock provider; a method id first selects the

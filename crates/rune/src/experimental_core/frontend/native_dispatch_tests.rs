@@ -57,7 +57,7 @@ fn proven_native_receivers_keep_their_frame_requirement() {
 }
 
 #[test]
-fn stock_contract() {
+fn legacy_contract() {
 	for &(source, expected) in CASES {
 		let context = Context::with_default_modules().unwrap();
 		let mut sources = Sources::new();
@@ -164,7 +164,7 @@ fn native_string_function_argument_errors_match_stock() {
 			.unwrap();
 		let stock = vm.call(["main"], ()).unwrap_err();
 		let trace = stock.stacktrace().first().unwrap();
-		let stock_span = trace
+		let legacy_span = trace
 			.unit
 			.debug_info()
 			.unwrap()
@@ -193,7 +193,7 @@ fn native_string_function_argument_errors_match_stock() {
 			stock.error().kind().to_string()
 		);
 		let at = failure.error.location.unwrap();
-		assert_eq!(at.start as usize..at.end as usize, stock_span);
+		assert_eq!(at.start as usize..at.end as usize, legacy_span);
 		assert!(failure.call_chain.is_empty());
 		let contexts = failure.invocation_context().collect::<std::vec::Vec<_>>();
 		assert!(matches!(

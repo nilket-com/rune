@@ -88,7 +88,7 @@ fn value(store: &mut Store, class: Class) -> Value {
 	}
 }
 
-/// Slots 0 and 1 are the operands; `out` is 0, 1 or the fresh slot 2.
+/// Slots 0 and 1 are the operands; `out` is 0, 1 or the new slot 2.
 fn program(assign: bool, op: Binary, out: u32) -> Code {
 	let mut f = Function::new(3, 2).unwrap();
 	let instruction = if assign {

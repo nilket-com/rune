@@ -1,9 +1,9 @@
 //! C15 stock oracle. This module is test-only; it does not alter product code.
 use super::*;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
-include!("constructors/graph.rs");
+include!("constructors/runtime_graph.rs");
 const CASES: &str = include_str!("constructors/cases.json");
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
 
@@ -16,8 +16,8 @@ fn tap(tag: i64, value: i64) -> i64 {
 }
 include!("constructors/fixture.rs");
 
-fn observed(value: &Value) -> Json {
-	let out = graph(value);
+fn observed(value: &RuntimeValue) -> Json {
+	let out = runtime_graph(value);
 	for node in out["nodes"].as_array().unwrap() {
 		assert!(
 			!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")),
@@ -39,7 +39,7 @@ fn error(error: &stock::VmError) -> Json {
 		.iter()
 		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
 		.collect::<Vec<_>>();
-	json!({"status":"error","missing":missing,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
+	json!({"status":"error","missing":missing,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
 #[test]
@@ -61,7 +61,7 @@ fn child() {
 	TAPE.with(|t| t.borrow_mut().clear());
 
 	if engine == "fresh" {
-		let result = observe_fresh(row);
+		let result = observe(row);
 		let path = std::env::var_os("C15_RESULT").unwrap();
 		let mut file = std::fs::OpenOptions::new()
 			.create_new(true)
@@ -133,10 +133,13 @@ fn observer_controls() {
 			r["source_sha256"]
 		);
 	}
-	assert_ne!(observed(&Value::from(1i64)), observed(&Value::from(2i64)));
 	assert_ne!(
-		observed(&Value::try_from("a").unwrap()),
-		observed(&Value::try_from("b").unwrap())
+		observed(&RuntimeValue::from(1i64)),
+		observed(&RuntimeValue::from(2i64))
+	);
+	assert_ne!(
+		observed(&RuntimeValue::try_from("a").unwrap()),
+		observed(&RuntimeValue::try_from("b").unwrap())
 	);
 	assert_ne!(
 		error(&stock::VmError::new(stock::VmErrorKind::Overflow)),
@@ -178,7 +181,7 @@ fn nominal_observer_controls() {
 }
 
 #[test]
-fn stock_replay_controls() {
+fn oracle_controls() {
 	use sha2::{Digest, Sha256};
 	let freeze: Json = serde_json::from_str(include_str!("constructors/freeze.json")).unwrap();
 	for (name, data) in [
@@ -195,7 +198,10 @@ fn stock_replay_controls() {
 		("p1.json", include_str!("constructors/p1.json")),
 	] {
 		assert_eq!(
-			hex(Sha256::digest(data.as_bytes()).as_ref()),
+			hex(Sha256::digest(
+				crate::experimental_core::tests::name_projection::observer_bytes(name, data)
+			)
+			.as_ref()),
 			freeze["files"][name]
 		);
 	}
@@ -294,7 +300,7 @@ fn stock_replay_controls() {
 
 #[test]
 fn single_field_tuple_struct_slice() {
-	use crate::experimental_core::value::{Scalar, Type, Value as FreshValue};
+	use crate::experimental_core::value::{Scalar, Type, Value};
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -345,7 +351,7 @@ fn single_field_tuple_struct_slice() {
 		assert_eq!(store.payload_bytes(), 0);
 	}
 	assert_eq!(std::mem::size_of::<Type>(), 8);
-	assert_eq!(std::mem::size_of::<FreshValue>(), 16);
+	assert_eq!(std::mem::size_of::<Value>(), 16);
 	println!("C15 SLICE: T(7).0=7; lifecycle closed; reuse7; C16f constructor value admitted; unit/pair widened; Type8 Value16; heap static asserts Payload40 Entry72 Slot80");
 }
 
@@ -397,24 +403,24 @@ fn nominal_shape_survives_foreign_program_arguments() {
 	assert_eq!(store.payload_bytes(), 0);
 }
 
-include!("constructors/fresh_graph.rs");
-include!("constructors/fresh.rs");
+include!("constructors/graph.rs");
+include!("constructors/run.rs");
 include!("constructors/contract.rs");
 include!("constructors/bounded.rs");
 
 #[test]
 fn type_observation_registry_controls() {
-	use crate::function::fresh_pipeline as a;
+	use crate::function::pipeline as a;
 	let c = Context::with_default_modules().unwrap();
 	for hash in [a::TYPE_OF, a::TYPE_OF_ASSOC, a::TYPE_NAME] {
 		println!(
 			"ANY REGISTRY {hash} present={} certified={}",
 			c.lookup_function(hash).is_some(),
-			c.fresh_any_function(hash)
+			c.any_function(hash)
 		);
 	}
-	assert!(c.fresh_any_function(a::TYPE_NAME));
-	assert!(c.fresh_any_function(a::TYPE_OF_ASSOC) || c.fresh_any_function(a::TYPE_OF));
+	assert!(c.any_function(a::TYPE_NAME));
+	assert!(c.any_function(a::TYPE_OF_ASSOC) || c.any_function(a::TYPE_OF));
 	use crate::experimental_core::error::TypeName as N;
 	for name in [
 		N::Unit,

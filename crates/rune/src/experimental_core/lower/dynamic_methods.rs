@@ -18,7 +18,7 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if !self.context.fresh_formatting()
+		if !self.context.formatting()
 			&& ["unwrap", "expect", "to_string"]
 				.into_iter()
 				.any(|s| Hash::ident(s) == name)
@@ -28,7 +28,7 @@ impl Lower<'_, '_> {
 		// Stock also accepts callable split patterns. The core implements only
 		// string and char delimiters, so keep the existing operand proof even
 		// when the receiver is dispatched at run time.
-		if name == crate::function::fresh_text::Method::Split.hash()
+		if name == crate::function::text::Method::Split.hash()
 			&& call.args.len() == 1
 			&& self.delimiter(call.args[0]).is_none()
 		{

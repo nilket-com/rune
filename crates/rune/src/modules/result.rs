@@ -17,15 +17,15 @@ use crate::{hash_in, ContextError, Hash, Module};
 #[rune::module(::std::result)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_clone = crate::function::fresh_clone::Provider::Result.bit();
+		m.clone = crate::function::clone::Provider::Result.bit();
 	}
 
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_pipeline = 4;
-		m.fresh_variant = crate::function::fresh_variant::marker::RESULT;
+		m.pipeline = 4;
+		m.variant = crate::function::variant::marker::RESULT;
 	}
 
 	// Sorted for ease of finding
@@ -86,8 +86,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(debug_fmt__meta)?;
 
 	m.function_meta(result_try__meta)?;
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }
 

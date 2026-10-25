@@ -63,10 +63,7 @@ impl Store {
 	#[inline(never)]
 	pub(crate) fn pipeline_chars(&mut self, source: Value) -> Result<Value> {
 		if self.tag(source)? != Type::String {
-			return Err(self.text_missing(
-				source,
-				crate::function::fresh_pipeline::Method::Chars.hash(),
-			)?);
+			return Err(self.text_missing(source, crate::function::pipeline::Method::Chars.hash())?);
 		}
 		self.text(source)?;
 		self.pipeline_admit(
@@ -179,10 +176,7 @@ impl Store {
 	#[inline(never)]
 	pub(crate) fn pipeline_unwrap(&mut self, value: Value, default: Value) -> Result<Value> {
 		let Value::Heap(h) = value else {
-			return Err(self.text_missing(
-				value,
-				crate::function::fresh_pipeline::Method::Unwrap.hash(),
-			)?);
+			return Err(self.text_missing(value, crate::function::pipeline::Method::Unwrap.hash())?);
 		};
 		let selected = match self.payload(h)? {
 			Payload::Variant {
@@ -197,10 +191,9 @@ impl Store {
 				}
 			}
 			_ => {
-				return Err(self.text_missing(
-					value,
-					crate::function::fresh_pipeline::Method::Unwrap.hash(),
-				)?)
+				return Err(
+					self.text_missing(value, crate::function::pipeline::Method::Unwrap.hash())?
+				)
 			}
 		};
 		self.retain(selected)?;

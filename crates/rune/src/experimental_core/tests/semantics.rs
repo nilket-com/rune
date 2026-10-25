@@ -76,7 +76,7 @@ fn effects_keep_argument_order_aliases_failures_and_reset() {
 	] {
 		let p = compile(&std::format!("{EFFECTS} {text}"));
 
-		// A fresh witness per invocation is the reset.
+		// A new witness per invocation is the reset.
 		let w = store.root_list(Type::Vec, &[]).unwrap();
 		let out = ex
 			.invoke(&p, &mut store, main_of(&p), &[&n, &w], 1000)
@@ -128,7 +128,7 @@ fn effects_keep_argument_order_aliases_failures_and_reset() {
 	assert_eq!(store.live_entries(), 0);
 }
 
-/// Was `short_circuit_records_only_executed_rhs`. The fresh core's `&&` is strict-bool
+/// Was `short_circuit_records_only_executed_rhs`. The execution core's `&&` is strict-bool
 /// (a declared difference): a non-bool left operand is a Type error.
 #[test]
 #[cfg_attr(

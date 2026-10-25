@@ -33,7 +33,7 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if !self.context.fresh_vec_constructor(capacity) {
+		if !self.context.vec_constructor(capacity) {
 			return Err(self.refused(span, Refusal::Native));
 		}
 		if call.args.len() != usize::from(capacity) {

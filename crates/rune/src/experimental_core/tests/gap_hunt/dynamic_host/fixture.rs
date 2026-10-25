@@ -1,12 +1,12 @@
 use crate as rune;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use std::cell::RefCell;
 
 #[derive(Default)]
 struct State {
 	events: Vec<String>,
-	aliases: Vec<Value>,
-	cycles: Vec<Value>,
+	aliases: Vec<RuntimeValue>,
+	cycles: Vec<RuntimeValue>,
 	read: Option<stock::Ref<stock::Vec>>,
 	write: Option<stock::Mut<stock::Vec>>,
 }
@@ -34,32 +34,32 @@ fn cleanup() {
 		s.aliases.clear();
 	});
 }
-fn values(items: impl IntoIterator<Item = Value>) -> crate::alloc::Vec<Value> {
+fn values(items: impl IntoIterator<Item = RuntimeValue>) -> crate::alloc::Vec<RuntimeValue> {
 	let mut out = crate::alloc::Vec::new();
 	for value in items {
 		out.try_push(value).unwrap();
 	}
 	out
 }
-fn vector(items: impl IntoIterator<Item = Value>) -> Value {
-	Value::vec(values(items)).unwrap()
+fn vector(items: impl IntoIterator<Item = RuntimeValue>) -> RuntimeValue {
+	RuntimeValue::vec(values(items)).unwrap()
 }
-fn tuple(items: impl IntoIterator<Item = Value>) -> Value {
-	Value::tuple(values(items)).unwrap()
+fn tuple(items: impl IntoIterator<Item = RuntimeValue>) -> RuntimeValue {
+	RuntimeValue::tuple(values(items)).unwrap()
 }
-fn text(value: &str) -> Value {
-	Value::try_from(crate::alloc::String::try_from(value).unwrap()).unwrap()
+fn text(value: &str) -> RuntimeValue {
+	RuntimeValue::try_from(crate::alloc::String::try_from(value).unwrap()).unwrap()
 }
-fn object(items: impl IntoIterator<Item = (String, Value)>) -> Value {
+fn object(items: impl IntoIterator<Item = (String, RuntimeValue)>) -> RuntimeValue {
 	let mut out = stock::Object::new();
 	for (key, value) in items {
 		out.insert(crate::alloc::String::try_from(key).unwrap(), value)
 			.unwrap();
 	}
-	Value::new(out).unwrap()
+	RuntimeValue::new(out).unwrap()
 }
-fn nested(depth: usize) -> Value {
-	let mut value = Value::unit();
+fn nested(depth: usize) -> RuntimeValue {
+	let mut value = RuntimeValue::unit();
 	for _ in 0..depth {
 		value = vector([value]);
 	}
@@ -85,45 +85,45 @@ fn marker_clone(_: &ProtocolMarker) -> ProtocolMarker {
 	ProtocolMarker
 }
 
-// All factories are shared by the later stock/fresh fixtures. Only registration changes.
-fn make(name: &str) -> Value {
+// All factories are shared by the later stock/new fixtures. Only registration changes.
+fn make(name: &str) -> RuntimeValue {
 	event(&format!("make/{name}"));
 	match name {
-		"unit" => Value::unit(),
-		"bool" => Value::from(true),
-		"i64-min" => Value::from(i64::MIN),
-		"i64-max" => Value::from(i64::MAX),
-		"u64-max" => Value::from(u64::MAX),
-		"char" => Value::from('🦀'),
-		"less" => Value::from(core::cmp::Ordering::Less),
-		"equal" => Value::from(core::cmp::Ordering::Equal),
-		"greater" => Value::from(core::cmp::Ordering::Greater),
+		"unit" => RuntimeValue::unit(),
+		"bool" => RuntimeValue::from(true),
+		"i64-min" => RuntimeValue::from(i64::MIN),
+		"i64-max" => RuntimeValue::from(i64::MAX),
+		"u64-max" => RuntimeValue::from(u64::MAX),
+		"char" => RuntimeValue::from('🦀'),
+		"less" => RuntimeValue::from(core::cmp::Ordering::Less),
+		"equal" => RuntimeValue::from(core::cmp::Ordering::Equal),
+		"greater" => RuntimeValue::from(core::cmp::Ordering::Greater),
 		"string-empty" => text(""),
 		"string" => text("α\0🦀"),
 		"vec-empty" => vector([]),
 		"tuple-empty" => tuple([]),
 		"object-empty" => object([]),
-		"none" => Value::new(Option::<Value>::None).unwrap(),
-		"some" => Value::new(Some(text("α"))).unwrap(),
-		"ok" => Value::new(Ok::<Value, Value>(vector([Value::from(7i64)]))).unwrap(),
-		"err" => Value::new(Err::<Value, Value>(text("payload"))).unwrap(),
+		"none" => RuntimeValue::new(Option::<RuntimeValue>::None).unwrap(),
+		"some" => RuntimeValue::new(Some(text("α"))).unwrap(),
+		"ok" => RuntimeValue::new(Ok::<RuntimeValue, RuntimeValue>(vector([RuntimeValue::from(7i64)]))).unwrap(),
+		"err" => RuntimeValue::new(Err::<RuntimeValue, RuntimeValue>(text("payload"))).unwrap(),
 		"mixed" => object([
-			("α\0".into(), vector([Value::from(u64::MAX), text("🦀")])),
-			("tuple".into(), tuple([Value::unit(), Value::from(false)])),
+			("α\0".into(), vector([RuntimeValue::from(u64::MAX), text("🦀")])),
+			("tuple".into(), tuple([RuntimeValue::unit(), RuntimeValue::from(false)])),
 			(
 				"result".into(),
-				Value::new(Ok::<Value, Value>(
-					Value::new(Some(Value::from(core::cmp::Ordering::Less))).unwrap(),
+				RuntimeValue::new(Ok::<RuntimeValue, RuntimeValue>(
+					RuntimeValue::new(Some(RuntimeValue::from(core::cmp::Ordering::Less))).unwrap(),
 				))
 				.unwrap(),
 			),
 		]),
 		"dag-vec" => {
-			let v = vector([Value::from(7i64)]);
+			let v = vector([RuntimeValue::from(7i64)]);
 			vector([v.clone(), v])
 		}
 		"dag-object" => {
-			let v = object([("n".into(), Value::from(7i64))]);
+			let v = object([("n".into(), RuntimeValue::from(7i64))]);
 			vector([v.clone(), v])
 		}
 		"dag-string" => {
@@ -131,14 +131,14 @@ fn make(name: &str) -> Value {
 			vector([v.clone(), v])
 		}
 		"diamond" => {
-			let leaf = vector([Value::from(7i64)]);
+			let leaf = vector([RuntimeValue::from(7i64)]);
 			vector([vector([leaf.clone()]), vector([leaf])])
 		}
-		"distinct-equal" => vector([vector([Value::from(7i64)]), vector([Value::from(7i64)])]),
+		"distinct-equal" => vector([vector([RuntimeValue::from(7i64)]), vector([RuntimeValue::from(7i64)])]),
 		"external" => STATE.with(|s| {
 			let mut s = s.borrow_mut();
 			if s.aliases.is_empty() {
-				s.aliases.push(vector([Value::from(7i64)]));
+				s.aliases.push(vector([RuntimeValue::from(7i64)]));
 			}
 			s.aliases[0].clone()
 		}),
@@ -165,15 +165,15 @@ fn make(name: &str) -> Value {
 			let next = match name {
 				"cycle-two" => object([("back".into(), v.clone())]),
 				"cycle-tuple" => tuple([v.clone()]),
-				"cycle-option" => Value::new(Some(v.clone())).unwrap(),
-				_ => Value::new(Ok::<Value, Value>(v.clone())).unwrap(),
+				"cycle-option" => RuntimeValue::new(Some(v.clone())).unwrap(),
+				_ => RuntimeValue::new(Ok::<RuntimeValue, RuntimeValue>(v.clone())).unwrap(),
 			};
 			v.borrow_mut::<stock::Vec>().unwrap().push(next).unwrap();
 			STATE.with(|s| s.borrow_mut().cycles.push(v.clone()));
 			v
 		}
 		"shared-read" | "exclusive" | "moved" | "deep-exclusive" | "deep-moved" => {
-			let v = vector([Value::from(7i64)]);
+			let v = vector([RuntimeValue::from(7i64)]);
 			match name {
 				"shared-read" => STATE.with(|s| {
 					s.borrow_mut().read = Some(v.clone().into_ref::<stock::Vec>().unwrap())
@@ -191,14 +191,14 @@ fn make(name: &str) -> Value {
 				v
 			}
 		}
-		"empty" => Value::empty(),
-		"type" => Value::from(stock::Type::new(crate::Hash::EMPTY)),
-		"hash" => Value::from(crate::Hash::new(7)),
-		"bytes" => Value::new(stock::Bytes::from_slice([0, 1, 255]).unwrap()).unwrap(),
-		"bytes-empty" => Value::new(stock::Bytes::new()).unwrap(),
-		"custom" => Value::new(ProtocolMarker).unwrap(),
-		"nested-custom" => vector([Value::new(ProtocolMarker).unwrap()]),
-		"function" => Value::new(
+		"empty" => RuntimeValue::empty(),
+		"type" => RuntimeValue::from(stock::Type::new(crate::Hash::EMPTY)),
+		"hash" => RuntimeValue::from(crate::Hash::new(7)),
+		"bytes" => RuntimeValue::new(stock::Bytes::from_slice([0, 1, 255]).unwrap()).unwrap(),
+		"bytes-empty" => RuntimeValue::new(stock::Bytes::new()).unwrap(),
+		"custom" => RuntimeValue::new(ProtocolMarker).unwrap(),
+		"nested-custom" => vector([RuntimeValue::new(ProtocolMarker).unwrap()]),
+		"function" => RuntimeValue::new(
 			stock::Function::new(|| {
 				event("forbidden/function");
 				7i64
@@ -206,16 +206,16 @@ fn make(name: &str) -> Value {
 			.unwrap(),
 		)
 		.unwrap(),
-		"future" => Value::new(
+		"future" => RuntimeValue::new(
 			stock::Future::new(async {
 				event("forbidden/poll");
-				Ok::<_, stock::VmError>(Value::unit())
+				Ok::<_, stock::VmError>(RuntimeValue::unit())
 			})
 			.unwrap(),
 		)
 		.unwrap(),
-		"range" => Value::new(stock::Range::new(Value::from(1i64), Value::from(3i64))).unwrap(),
-		"nominal" => Value::empty_struct(
+		"range" => RuntimeValue::new(stock::Range::new(RuntimeValue::from(1i64), RuntimeValue::from(3i64))).unwrap(),
+		"nominal" => RuntimeValue::empty_struct(
 			crate::sync::Arc::try_new(stock::Rtti {
 				variant_index: 0,
 				kind: stock::RttiKind::Empty,
@@ -228,19 +228,19 @@ fn make(name: &str) -> Value {
 		)
 		.unwrap(),
 		_ if name.starts_with("f64/") => {
-			Value::from(f64::from_bits(u64::from_str_radix(&name[4..], 16).unwrap()))
+			RuntimeValue::from(f64::from_bits(u64::from_str_radix(&name[4..], 16).unwrap()))
 		}
 		_ if name.starts_with("depth/") => nested(name[6..].parse().unwrap()),
 		_ if name.starts_with("visits/") => {
-			vector((0..name[7..].parse::<usize>().unwrap()).map(|_| Value::unit()))
+			vector((0..name[7..].parse::<usize>().unwrap()).map(|_| RuntimeValue::unit()))
 		}
 		_ if name.starts_with("key/") => {
-			object([("k".repeat(name[4..].parse().unwrap()), Value::unit())])
+			object([("k".repeat(name[4..].parse().unwrap()), RuntimeValue::unit())])
 		}
 		_ => panic!("unknown C10 factory name"),
 	}
 }
-fn fallible(name: &str) -> Result<Value, String> {
+fn fallible(name: &str) -> Result<RuntimeValue, String> {
 	if name == "error" {
 		event("fallible/error");
 		Err("host error α\0".into())
@@ -248,17 +248,17 @@ fn fallible(name: &str) -> Result<Value, String> {
 		Ok(make(name))
 	}
 }
-fn document(value: serde_json::Value) -> Value {
+fn document(value: serde_json::Value) -> RuntimeValue {
 	match value {
-		serde_json::Value::Null => Value::unit(),
-		serde_json::Value::Bool(v) => Value::from(v),
+		serde_json::Value::Null => RuntimeValue::unit(),
+		serde_json::Value::Bool(v) => RuntimeValue::from(v),
 		serde_json::Value::Number(v) => {
 			if let Some(n) = v.as_i64() {
-				Value::from(n)
+				RuntimeValue::from(n)
 			} else if let Some(n) = v.as_u64() {
-				Value::from(n)
+				RuntimeValue::from(n)
 			} else {
-				Value::from(v.as_f64().unwrap())
+				RuntimeValue::from(v.as_f64().unwrap())
 			}
 		}
 		serde_json::Value::String(v) => text(&v),
@@ -266,7 +266,7 @@ fn document(value: serde_json::Value) -> Value {
 		serde_json::Value::Object(v) => object(v.into_iter().map(|(k, v)| (k, document(v)))),
 	}
 }
-fn parse(text: &str) -> Result<Value, String> {
+fn parse(text: &str) -> Result<RuntimeValue, String> {
 	event("parse");
 	serde_json::from_str(text)
 		.map(document)
@@ -275,7 +275,7 @@ fn parse(text: &str) -> Result<Value, String> {
 fn mutate() -> i64 {
 	event("mutate");
 	STATE.with(|s| {
-		s.borrow().aliases[0].borrow_mut::<stock::Vec>().unwrap()[0] = Value::from(99i64)
+		s.borrow().aliases[0].borrow_mut::<stock::Vec>().unwrap()[0] = RuntimeValue::from(99i64)
 	});
 	99
 }
@@ -287,7 +287,7 @@ fn inspect() -> i64 {
 			.unwrap()
 	})
 }
-fn context() -> Context {
+fn legacy_context() -> Context {
 	cleanup();
 	STATE.with(|s| *s.borrow_mut() = State::default());
 	let mut c = Context::with_default_modules().unwrap();
@@ -305,7 +305,7 @@ fn context() -> Context {
 	c
 }
 
-fn fresh_context() -> Context {
+fn context() -> Context {
 	cleanup();
 	STATE.with(|s| *s.borrow_mut() = State::default());
 	let mut c = Context::with_default_modules().unwrap();
@@ -314,16 +314,16 @@ fn fresh_context() -> Context {
 	m.function_meta(marker_display).unwrap();
 	m.function_meta(marker_debug).unwrap();
 	m.function_meta(marker_clone).unwrap();
-	m.fresh_host_function("make", make).unwrap();
-	m.fresh_host_function("fallible", fallible).unwrap();
-	m.fresh_host_function_with_output(
+	m.host_function("make", make).unwrap();
+	m.host_function("fallible", fallible).unwrap();
+	m.host_function_with_output(
 		"parse",
 		parse,
-		crate::function::fresh_host::OutputCertificate::JSON_RESULT,
+		crate::function::host::OutputCertificate::JSON_RESULT,
 	)
 	.unwrap();
-	m.fresh_host_function("mutate", mutate).unwrap();
-	m.fresh_host_function("inspect", inspect).unwrap();
+	m.host_function("mutate", mutate).unwrap();
+	m.host_function("inspect", inspect).unwrap();
 	c.install(m).unwrap();
 	c
 }

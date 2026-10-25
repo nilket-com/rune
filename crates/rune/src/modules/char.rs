@@ -13,9 +13,9 @@ use crate as rune;
 #[rune::module(::std::char)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut module = Module::from_meta(self::module__meta)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		module.fresh_number = crate::function::fresh_number::marker::CHAR;
+		module.number = crate::function::number::marker::CHAR;
 	}
 
 	module.ty::<ParseCharError>()?;
@@ -31,8 +31,8 @@ pub fn module() -> Result<Module, ContextError> {
 	module.function_meta(is_uppercase)?;
 	module.function_meta(is_whitespace)?;
 	module.function_meta(to_digit)?;
-	#[cfg(feature = "fresh-core")]
-	module.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	module.mark_format_defaults();
 	Ok(module)
 }
 

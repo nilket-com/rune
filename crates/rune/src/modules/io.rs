@@ -47,13 +47,13 @@ pub fn module(
 	#[cfg(feature = "std")]
 	if stdio {
 		m.function_meta(print_impl)?;
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		{
-			m.fresh_stdio_print = true;
+			m.stdio_print = true;
 		}
 		m.function_meta(println_impl)?;
-		#[cfg(feature = "fresh-core")]
-		m.fresh_mark_stdio_println();
+		#[cfg(feature = "execution")]
+		m.mark_stdio_println();
 
 		m.raw_function("dbg", dbg_impl).build()?.docs(docstring! {
 			/// Debug to output.
@@ -80,13 +80,13 @@ pub fn module(
 	// compilation error unless `::std::io::*` functions are provided somehow.
 	m.macro_meta(dbg_macro)?;
 	m.macro_meta(print_macro)?;
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_builtin_macro();
+	#[cfg(feature = "execution")]
+	m.mark_builtin_macro();
 	m.macro_meta(println_macro)?;
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_builtin_macro();
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_builtin_macro();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }
 
@@ -114,7 +114,7 @@ fn dbg_impl(
 
 	for value in memory.slice_at(addr, args)? {
 		writeln!(stdout, "{value:?}").map_err(print_error)?;
-		#[cfg(all(test, feature = "fresh-core", target_os = "linux"))]
+		#[cfg(all(test, feature = "execution", target_os = "linux"))]
 		stdout_tests::after_print();
 	}
 
@@ -229,7 +229,7 @@ fn println_impl(message: &str) -> Result<(), VmError> {
 	let stdout = io::stdout();
 	let mut stdout = stdout.lock();
 	writeln!(stdout, "{message}").map_err(print_error)?;
-	#[cfg(all(test, feature = "fresh-core", target_os = "linux"))]
+	#[cfg(all(test, feature = "execution", target_os = "linux"))]
 	stdout_tests::after_print();
 	Ok(())
 }
@@ -243,6 +243,6 @@ fn print_error(error: io::Error) -> VmError {
 	}
 }
 
-#[cfg(all(test, feature = "fresh-core", target_os = "linux"))]
+#[cfg(all(test, feature = "execution", target_os = "linux"))]
 #[path = "io_stdout_tests.rs"]
 pub(crate) mod stdout_tests;

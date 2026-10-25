@@ -1,6 +1,6 @@
-//! P0 native loop regions (feature `fresh-core-native`): eligibility, type inference, the
+//! P0 native loop regions (feature `native-code`): eligibility, type inference, the
 //! exit contract and a safe simulator of the native semantics. Everything here is safe
-//! Rust under the fresh core's `forbid(unsafe_code)`; the Cranelift backend and the one
+//! Rust under the execution core's `forbid(unsafe_code)`; the Cranelift backend and the one
 //! unsafe boundary live outside this module (`crate::experimental_native`).
 //!
 //! # Contract (summary; the full text is the P0 contract document)
@@ -51,11 +51,7 @@ pub(crate) mod budget;
 pub(crate) mod commit;
 pub(crate) mod simulate;
 
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 pub(crate) mod cache;
 
 #[cfg(test)]

@@ -6,7 +6,7 @@
 //! 120 s deadline. A signal or a timeout is a failure with the signal recorded.
 //!
 //! Per case and per fuel value 0..=total_charged+1 (at most 20,000), three engines run on
-//! fresh stores: the plain interpreter (no install at all), the simulator install and the
+//! new stores: the plain interpreter (no install at all), the simulator install and the
 //! native install. Their observations must be equal: value or full error (kind, location,
 //! operation, refusal), call chain, cleanup error, executor idle state, live store entries,
 //! the store's whole state, and the remaining fuel. On every native entry the hook also
@@ -932,7 +932,7 @@ fn child_refusals() {
 	}
 }
 
-/// Harness pre-check, no native execution: every case's analysed regions compile (or are
+/// Harness pre-check, no native execution: every case's analyzed regions compile (or are
 /// refused by the expected kind) without loading anything, and every input's total charge
 /// fits the sweep bound.
 #[test]

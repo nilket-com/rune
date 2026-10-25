@@ -1,9 +1,9 @@
 //! O1b iterator receiver oracle, release rows and fix-both contracts.
 use super::*;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
-include!("constructors/graph.rs");
+include!("constructors/runtime_graph.rs");
 const CASES: &str = include_str!("iter_receivers/cases.json");
 /// Rows added by the O1b implementation. They observe, through a later write,
 /// that a `for` loop releases its temporary iterable on every exit path.
@@ -70,8 +70,8 @@ fn context() -> Context {
 
 	context
 }
-fn observed(value: &Value) -> Json {
-	let out = graph(value);
+fn observed(value: &RuntimeValue) -> Json {
+	let out = runtime_graph(value);
 	for node in out["nodes"].as_array().unwrap() {
 		assert!(
 			!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")),
@@ -86,7 +86,7 @@ fn error(error: &stock::VmError, sources: &Sources) -> Json {
 	let class = match kind {
 		crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
 		crate::runtime::VmErrorKind::UnsupportedCallFn { .. } => "Type".into(),
-		_ => stock_class(kind),
+		_ => runtime_error_class(kind),
 	};
 	let sites = error.stacktrace().iter().map(|at| {
 		let inst = at.unit.debug_info().expect("debug unit").instruction_at(at.ip).expect("debug instruction");
@@ -98,12 +98,12 @@ fn error(error: &stock::VmError, sources: &Sources) -> Json {
 		.iter()
 		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
 		.collect::<Vec<_>>();
-	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
+	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
 #[test]
 #[ignore = "O1b stock-oracle child; explicit bounded external operator only"]
-fn child() {
+fn legacy_child() {
 	let engine = std::env::var("O1B_ENGINE").unwrap();
 	assert_eq!(engine, "stock");
 	let index: usize = std::env::var("O1B_CASE").unwrap().parse().unwrap();
@@ -215,11 +215,14 @@ fn observer_controls() {
 		("stock.json", include_str!("iter_receivers/stock.json")),
 		(
 			"constructors/graph.rs",
-			include_str!("constructors/graph.rs"),
+			include_str!("constructors/runtime_graph.rs"),
 		),
 	] {
 		assert_eq!(
-			hex(Sha256::digest(bytes.as_bytes()).as_ref()),
+			hex(Sha256::digest(
+				crate::experimental_core::tests::name_projection::observer_bytes(name, bytes)
+			)
+			.as_ref()),
 			freeze["files"][name]
 		);
 	}
@@ -236,7 +239,10 @@ fn observer_controls() {
 		let mut object = crate::runtime::Object::new();
 		for (k, v) in pairs {
 			object
-				.insert(crate::alloc::String::try_from(*k).unwrap(), Value::from(*v))
+				.insert(
+					crate::alloc::String::try_from(*k).unwrap(),
+					RuntimeValue::from(*v),
+				)
 				.unwrap();
 		}
 		crate::to_value(object).unwrap()
@@ -278,7 +284,7 @@ fn compile_child() {
 	let row = &cases[index];
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["o1b"]).unwrap();
-	module.fresh_host_function("tap", tap).unwrap();
+	module.host_function("tap", tap).unwrap();
 	context.install(module).unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -319,7 +325,7 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[test]
 #[cfg(target_os = "linux")]
 #[ignore = "O1b frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 
@@ -353,13 +359,13 @@ fn run_contract(engine: &str) {
 			.arg(std::env::current_exe().unwrap());
 		command.process_group(0);
 		command.env_clear();
-		let mut child = command
+		let mut child_process = command
 			.args([
 				"--exact",
 				if engine == "stock" {
-					"experimental_core::tests::gap_hunt::iter_receivers::child"
+					"experimental_core::tests::gap_hunt::iter_receivers::legacy_child"
 				} else {
-					"experimental_core::tests::gap_hunt::iter_receivers::fresh_child"
+					"experimental_core::tests::gap_hunt::iter_receivers::child"
 				},
 				"--ignored",
 				"--nocapture",
@@ -381,16 +387,16 @@ fn run_contract(engine: &str) {
 			.unwrap();
 		let exceeded = Arc::new(AtomicBool::new(false));
 		let flag = exceeded.clone();
-		let pipe = child.stdout.take().unwrap();
+		let pipe = child_process.stdout.take().unwrap();
 		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
 		let flag = exceeded.clone();
-		let pipe = child.stderr.take().unwrap();
+		let pipe = child_process.stderr.take().unwrap();
 		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
 		let start = Instant::now();
 		let mut stop = false;
 		let mut exited = false;
 		loop {
-			if child.try_wait().unwrap().is_some() {
+			if child_process.try_wait().unwrap().is_some() {
 				exited = true;
 			}
 			if !exceeded.load(Ordering::Relaxed)
@@ -402,7 +408,7 @@ fn run_contract(engine: &str) {
 			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
 				stop = true;
 				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child.id())])
+					.args(["-KILL", "--", &format!("-{}", child_process.id())])
 					.stdout(Stdio::null())
 					.stderr(Stdio::null())
 					.status();
@@ -412,7 +418,7 @@ fn run_contract(engine: &str) {
 		}
 		// wait() also returns the cached status when try_wait() already reaped
 		// the child. Every exit path explicitly collects it before joining.
-		let status = child.wait().unwrap();
+		let status = child_process.wait().unwrap();
 		let stdout = stdout.join().unwrap();
 		let stderr = stderr.join().unwrap();
 		fs::write(folder.join("stdout"), &stdout).unwrap();
@@ -437,7 +443,7 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["origin"], case["origin"]);
 		if engine == "fresh" {
-			verify_fresh_case(i, case, expected, &fixed, &observed, &stdout, &stderr);
+			verify_case(i, case, expected, &fixed, &observed, &stdout, &stderr);
 			continue;
 		}
 		if engine == "stock" {
@@ -449,6 +455,6 @@ fn run_contract(engine: &str) {
 	super::contract_completed(engine, cases.len());
 }
 
-include!("iter_receivers/fresh.rs");
+include!("iter_receivers/run.rs");
 
 include!("iter_receivers/contract.rs");

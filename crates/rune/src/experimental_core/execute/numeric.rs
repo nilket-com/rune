@@ -1,7 +1,7 @@
 //! Numeric builtins on the existing cold certified Call miss path only.
 use super::super::error::HostCause;
 use super::*;
-use crate::function::fresh_numeric::{Call, Method};
+use crate::function::numeric::{Call, Method};
 impl Executor {
 	#[cold]
 	#[inline(never)]

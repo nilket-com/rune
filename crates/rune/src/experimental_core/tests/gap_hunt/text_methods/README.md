@@ -6,7 +6,7 @@ Stock observations are immutable. `stock_raw.json` is the audit archive;
 `stock.json` is the portable semantic projection. Only the enumerated
 `full_name` pointer tokens in `p1.json` are replaced. No hashes, messages,
 argument chains, graphs, event tapes or callsite spans are normalized.
-`freeze.json` records the catalogue digest and per-row binary/observation provenance.
+`freeze.json` records the catalog digest and per-row binary/observation provenance.
 The first 186 observations came from one collection; four approved ownership
 witnesses were collected separately without replaying those original rows.
 
@@ -31,5 +31,5 @@ collection, skip/take/count, chars, unwrap_or and Function delimiters remain
 outside C14. No whole-program admission is inferred from one removed blocker.
 
 The stock child and observer controls run under `gap_hunt::text_methods`.
-The independent fresh contract lands with the implementation so this test-only
+The independent execution contract lands with the implementation so this test-only
 commit remains green before those methods are implemented.

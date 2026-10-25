@@ -1,4 +1,4 @@
-//! Resolved-HIR to independent instructions. No stock VM assembly or execution.
+//! Resolved-HIR to independent instructions. No legacy VM assembly or execution.
 //! Construction subset: unsupported forms fail with their original source span.
 //!
 //! Slot discipline (A1): the frame is a stack. Every expression allocates its
@@ -234,7 +234,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	}
 
 	/// Allocate the next slot on the frame stack. A popped slot was released
-	/// before it was popped, so a fresh allocation starts clean.
+	/// before it was popped, so a new allocation starts clean.
 	fn slot(&mut self) -> Result<u32> {
 		if self.next >= 65_536 {
 			return Err(Error::refused(Refusal::CodeLimit));
@@ -517,7 +517,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		Ok(expr)
 	}
 
-	/// Evaluate into a fresh slot, which is returned. Operand temporaries are
+	/// Evaluate into a new slot, which is returned. Operand temporaries are
 	/// released (if dirty) and popped; the result stays allocated for the caller.
 	fn expr(&mut self, id: hir::ExprId) -> Result<u32> {
 		let expr = self.enter(id)?;
@@ -607,7 +607,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Ok(Some(tag));
 		}
 
-		if let Some(item) = self.constants.fresh_enum_item(hash) {
+		if let Some(item) = self.constants.enum_item(hash) {
 			return self
 				.transaction
 				.stage(hash.into_inner(), format_args!("{}", self.pool.item(item)))
@@ -616,7 +616,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				.map_err(|e| e.at(self.location(span)));
 		}
 
-		if self.constants.fresh_struct_shape(hash).is_none() {
+		if self.constants.struct_shape(hash).is_none() {
 			return Ok(None);
 		}
 
@@ -626,12 +626,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// Identity is the type hash; presentation uses its real item path. The
 	/// append-only table keeps the first published name for that identity.
 	fn struct_tag(&mut self, hash: Hash, span: Span) -> Result<Type> {
-		if self.constants.fresh_variant_shape(hash).is_some() {
+		if self.constants.variant_shape(hash).is_some() {
 			return self.variant_tag(hash, span);
 		}
 		let shape = self
 			.constants
-			.fresh_struct_shape(hash)
+			.struct_shape(hash)
 			.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
 		let kind = match shape.fields {
 			crate::compile::meta::Fields::Empty => super::nominal::Shape::Empty,
@@ -653,7 +653,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	fn variant_tag(&mut self, hash: Hash, span: Span) -> Result<Type> {
 		let shape = self
 			.constants
-			.fresh_variant_shape(hash)
+			.variant_shape(hash)
 			.ok_or_else(|| self.refused(span, Refusal::Pattern))?;
 		let kind = match shape.fields {
 			crate::compile::meta::Fields::Empty => super::nominal::Shape::Empty,
@@ -787,7 +787,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				Ok(true)
 			}
 			hir::Call::Meta { hash } if hash == Hash::type_hash(crate::item!(::std::panic)) => {
-				if !self.context.fresh_panic() {
+				if !self.context.panic() {
 					return Err(self.refused(span, Refusal::Native));
 				}
 				if call.args.len() != 1 {
@@ -800,7 +800,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			hir::Call::Associated { target, hash, .. }
 				if hash == Hash::ident("push")
 					&& call.args.len() == 1
-					&& !self.constants.fresh_method_script.closed(hash) =>
+					&& !self.constants.method_script.closed(hash) =>
 			{
 				let slots = self.operands(&[target, call.args[0]])?;
 				self.emit(
@@ -819,7 +819,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			{
 				// The same host IO policy as the value position in `call`: a statement
 				// `println!` must not bypass it.
-				if !self.context.fresh_stdio_println() || !self.context.fresh_formatting() {
+				if !self.context.stdio_println() || !self.context.formatting() {
 					return Err(self.refused(span, Refusal::Native));
 				}
 
@@ -841,7 +841,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	}
 
 	fn print_call(&mut self, call: &hir::ExprCall<'_>, out: u32, span: Span) -> Result<()> {
-		if !self.context.fresh_stdio_print() || !self.context.fresh_formatting() {
+		if !self.context.stdio_print() || !self.context.formatting() {
 			return Err(self.refused(span, Refusal::Native));
 		}
 		if call.args.len() != 1 {
@@ -1436,7 +1436,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				return Ok(Some(tag));
 			}
 		}
-		let Some(shape) = self.constants.fresh_variant_shape(hash) else {
+		let Some(shape) = self.constants.variant_shape(hash) else {
 			return Ok(None);
 		};
 		self.transaction
@@ -1511,7 +1511,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Err(Error::new(ErrorKind::InvalidCode, "lowering arm"));
 		};
 		let at = self.location(span);
-		let resolve = match self.constants.fresh_struct_shape(hash) {
+		let resolve = match self.constants.struct_shape(hash) {
 			Some(shape) => match shape.fields {
 				crate::compile::meta::Fields::Unnamed(arity) if *arity > 0 => {
 					let arity =
@@ -1524,7 +1524,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 				}
 				_ => Resolve::Script(hash),
 			},
-			None => match self.constants.fresh_variant_shape(hash) {
+			None => match self.constants.variant_shape(hash) {
 				Some(shape) => match shape.fields {
 					crate::compile::meta::Fields::Unnamed(arity) if *arity > 0 => {
 						let arity = u32::try_from(*arity)
@@ -1689,7 +1689,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		let order = if let hir::ExprObjectKind::Struct { hash } = object.kind {
 			let shape = self
 				.constants
-				.fresh_value_shape(hash)
+				.value_shape(hash)
 				.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
 			let crate::compile::meta::Fields::Named(fields) = shape.fields else {
 				return Err(self.refused(span, Refusal::ObjectConstructor));
@@ -1794,7 +1794,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 	#[inline(never)]
 	fn inner_template(&mut self, expr: &hir::Expr<'hir>, out: u32) -> Result<()> {
-		if !self.context.fresh_formatting() {
+		if !self.context.formatting() {
 			return Err(self.refused(expr.span, Refusal::Native));
 		}
 		use hir::ExprKind as E;
@@ -1983,7 +1983,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 
 		if matches!(binary.op, BinOp::And(..) | BinOp::Or(..)) {
 			// `out` holds the left value while the right side is decided. It is a
-			// fresh slot, so the right side cannot observe it through a local.
+			// new slot, so the right side cannot observe it through a local.
 			self.expr_into(binary.lhs, out)?;
 			let branch = self.emit(Op::Jump { target: 0 }, self.exprs.get(binary.lhs).span)?;
 			let rhs_pc = self.pc();
@@ -2095,7 +2095,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			if self.tuple_struct_site(hash) {
 				return self.call_tuple_struct(hash, call, out, span);
 			}
-			if self.constants.fresh_variant_shape(hash).is_some() {
+			if self.constants.variant_shape(hash).is_some() {
 				return self.call_tuple_variant(hash, call, out, span);
 			}
 		}
@@ -2135,12 +2135,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		&mut self,
 		call: &hir::ExprCall<'_>,
 		target: hir::ExprId,
-		method: crate::function::fresh_numeric::Method,
+		method: crate::function::numeric::Method,
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if !self.context.fresh_numeric_method(method)
-			|| self.constants.fresh_numeric_script & method.bit() != 0
+		if !self.context.numeric_method(method) || self.constants.numeric_script & method.bit() != 0
 		{
 			return Err(self.refused(span, Refusal::Method));
 		}
@@ -2157,7 +2156,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		self.emit(
 			Op::Call {
 				out,
-				function: crate::function::fresh_numeric::Call::method(method).id(),
+				function: crate::function::numeric::Call::method(method).id(),
 				args_start,
 				args_len,
 			},
@@ -2170,11 +2169,11 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	fn call_numeric_direct(
 		&mut self,
 		call: &hir::ExprCall<'_>,
-		pair: crate::function::fresh_numeric::Pair,
+		pair: crate::function::numeric::Pair,
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if !self.context.fresh_numeric_direct(pair) {
+		if !self.context.numeric_direct(pair) {
 			return Err(self.refused(span, Refusal::Native));
 		}
 		if call.args.len() != pair.method().arity() as usize {
@@ -2185,7 +2184,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		self.emit(
 			Op::Call {
 				out,
-				function: crate::function::fresh_numeric::Call::direct(pair).id(),
+				function: crate::function::numeric::Call::direct(pair).id(),
 				args_start,
 				args_len,
 			},
@@ -2270,10 +2269,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		if let Some(with_capacity) = vec_constructors::constructor(hash) {
 			return self.call_vec_constructor(call, with_capacity, out, span);
 		}
-		if crate::function::fresh_pipeline::any_kind(hash).is_some() {
+		if crate::function::pipeline::any_kind(hash).is_some() {
 			return self.call_any_value(hash, call, out, span);
 		}
-		if let Some(pair) = crate::function::fresh_numeric::Pair::from_item(hash) {
+		if let Some(pair) = crate::function::numeric::Pair::from_item(hash) {
 			return self.call_numeric_direct(call, pair, out, span);
 		}
 		if hash == Hash::type_hash(crate::item!(::std::string::String::from))
@@ -2282,7 +2281,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 					Hash::type_hash(crate::item!(::std::string::String)),
 					Hash::ident("from"),
 				) {
-			if !self.context.fresh_string_from() {
+			if !self.context.string_from() {
 				return Err(self.refused(span, Refusal::Native));
 			}
 			if call.args.len() != 1 {
@@ -2302,10 +2301,10 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		if hash == Hash::type_hash(crate::item!(::std::io::println))
-			&& !self.context.fresh_stdio_println()
+			&& !self.context.stdio_println()
 		{
 			// Host IO policy (capture, disable, custom or none): explicit compile-time
-			// refusal before any fresh core execution or output; the caller decides fallback.
+			// refusal before any execution core execution or output; the caller decides fallback.
 			return Err(self.refused(span, Refusal::Native));
 		}
 
@@ -2338,7 +2337,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Ok(());
 		}
 
-		if let Some(binding) = self.context.fresh_host(hash) {
+		if let Some(binding) = self.context.host(hash) {
 			if call.args.len() != usize::from(binding.signature.arity) {
 				return Err(self.refused(span, Refusal::Arity));
 			}
@@ -2360,7 +2359,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return Ok(());
 		}
 
-		if let Some(pair) = crate::function::fresh_number::Pair::from_item(hash) {
+		if let Some(pair) = crate::function::number::Pair::from_item(hash) {
 			return self.call_number_path(call, pair, out, span);
 		}
 
@@ -2469,7 +2468,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			return self.call_missing_method(call, target, name_hash, hash, out, span);
 		}
 		if hash == name_hash
-			&& self.constants.fresh_method_script.closed(hash)
+			&& self.constants.method_script.closed(hash)
 			&& !self.proven_number_method(target, hash, call.args.len())
 			&& self.transaction.supports_dynamic_method(
 				self.context,
@@ -2483,25 +2482,25 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			self.self_proof.set(Some(self.location(span)));
 			return self.call_static_method(call, target, method, out, span);
 		}
-		if hash == name_hash && hash == crate::function::fresh_clone::RESIZE_NAME {
+		if hash == name_hash && hash == crate::function::clone::RESIZE_NAME {
 			return self.call_vec_resize(call, target, out, span);
 		}
-		if let Some(method) = crate::function::fresh_text::Method::from_hash(hash) {
+		if let Some(method) = crate::function::text::Method::from_hash(hash) {
 			return self.call_text_method(call, target, method, out, span);
 		}
-		if let Some(method) = crate::function::fresh_variant::Method::from_hash(hash) {
+		if let Some(method) = crate::function::variant::Method::from_hash(hash) {
 			return self.call_variant_method(call, target, method, out, span);
 		}
-		if let Some(method) = crate::function::fresh_object::Method::from_hash(hash) {
+		if let Some(method) = crate::function::object::Method::from_hash(hash) {
 			return self.call_object_method(call, target, method, out, span);
 		}
-		if let Some(method) = crate::function::fresh_number::Method::from_hash(name_hash) {
+		if let Some(method) = crate::function::number::Method::from_hash(name_hash) {
 			return self.call_number_method(call, target, method, hash != name_hash, out, span);
 		}
 		if name_hash == Hash::ident("collect") {
 			return self.call_text_collect(call, target, hash, out, span);
 		}
-		if let Some(name) = crate::function::fresh_iter::Name::ALL
+		if let Some(name) = crate::function::iter::Name::ALL
 			.into_iter()
 			.find(|name| hash == name.hash())
 		{
@@ -2510,12 +2509,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		if hash == Hash::ident("sort_by") {
 			return self.call_sort_by(call, target, out, span);
 		}
-		if let Some(method) = crate::function::fresh_numeric::Method::from_hash(hash) {
+		if let Some(method) = crate::function::numeric::Method::from_hash(hash) {
 			return self.call_numeric_method(call, target, method, out, span);
 		}
 		// A script method of the same name may be the target, so the native
 		// forms below apply only to names no script impl defines.
-		if self.constants.fresh_method_script.closed(hash) {
+		if self.constants.method_script.closed(hash) {
 			if hash == name_hash {
 				return self.call_dynamic_method(call, target, hash, out, span);
 			}
@@ -2547,14 +2546,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	#[cold]
 	#[inline(never)]
 	fn tuple_struct_site(&self, hash: Hash) -> bool {
-		self.constants
-			.fresh_struct_shape(hash)
-			.is_some_and(|shape| {
-				matches!(
-					shape.fields,
-					crate::compile::meta::Fields::Unnamed(_) | crate::compile::meta::Fields::Empty
-				)
-			})
+		self.constants.struct_shape(hash).is_some_and(|shape| {
+			matches!(
+				shape.fields,
+				crate::compile::meta::Fields::Unnamed(_) | crate::compile::meta::Fields::Empty
+			)
+		})
 	}
 
 	#[cold]
@@ -2568,7 +2565,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	) -> Result<()> {
 		let shape = self
 			.constants
-			.fresh_variant_shape(hash)
+			.variant_shape(hash)
 			.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
 		let arity = match shape.fields {
 			crate::compile::meta::Fields::Empty => 0,
@@ -2605,7 +2602,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	) -> Result<()> {
 		let shape = self
 			.constants
-			.fresh_struct_shape(hash)
+			.struct_shape(hash)
 			.ok_or_else(|| self.refused(span, Refusal::ObjectConstructor))?;
 		let arity = match shape.fields {
 			crate::compile::meta::Fields::Empty => 0,
@@ -2638,17 +2635,17 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if !self.context.fresh_any_function(hash) {
+		if !self.context.any_function(hash) {
 			return Err(self.refused(span, Refusal::Native));
 		}
-		if hash == crate::function::fresh_pipeline::TYPE_NAME {
+		if hash == crate::function::pipeline::TYPE_NAME {
 			self.check_type_names(span)?;
 		}
 		if call.args.len() != 1 {
 			return Err(self.refused(span, Refusal::Arity));
 		}
 		let mut values = self.operands(call.args)?;
-		let function = if crate::function::fresh_pipeline::any_kind(hash) == Some(true) {
+		let function = if crate::function::pipeline::any_kind(hash) == Some(true) {
 			let nominal = self.metatype(span)?;
 			let meta = self.slot()?;
 			self.emit(
@@ -2739,7 +2736,7 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 		for item in self.constants.items.keys() {
 			let hash = self.pool.item_type_hash(*item);
-			if let Some(shape) = self.constants.fresh_struct_shape(hash) {
+			if let Some(shape) = self.constants.struct_shape(hash) {
 				let key =
 					Hash::associated_function(hash, &crate::runtime::Protocol::INTO_TYPE_NAME);
 				if let Some(v) = self.context.get_const_value(key) {

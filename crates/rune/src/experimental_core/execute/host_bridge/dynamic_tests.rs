@@ -42,14 +42,14 @@ fn context() -> Context {
 		)
 		.build()
 		.unwrap();
-	module.fresh_host_function("ok", || 7i64).unwrap();
+	module.host_function("ok", || 7i64).unwrap();
 	let mut context = installed(module);
 	for (name, output) in [
-		("dynamic", HostOutput::Dynamic),
-		("result", HostOutput::ResultDynamicString),
+		("dynamic", HostOutputKind::Dynamic),
+		("result", HostOutputKind::ResultDynamicString),
 	] {
 		context
-			.fresh_host_for_test(
+			.host_for_test(
 				crate::Hash::type_hash(["tiny", name]),
 				HostSignature {
 					arity: 0,
@@ -369,15 +369,15 @@ fn dynamic_malformed_outer_and_error_are_invalid_code() {
 			})
 			.build()
 			.unwrap();
-		module.fresh_host_function("ok", || 7i64).unwrap();
+		module.host_function("ok", || 7i64).unwrap();
 		let mut context = installed(module);
 		context
-			.fresh_host_for_test(
+			.host_for_test(
 				crate::Hash::type_hash(["tiny", "bad"]),
 				HostSignature {
 					arity: 0,
 					arguments: [HostType::Unit; 4],
-					output: HostOutput::ResultDynamicString,
+					output: HostOutputKind::ResultDynamicString,
 				},
 			)
 			.unwrap();

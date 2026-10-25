@@ -1,4 +1,4 @@
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use std::cell::RefCell;
 
 #[derive(Default)]
@@ -33,24 +33,24 @@ fn mark(name: &str) -> i64 {
 	});
 	7
 }
-fn context() -> Context {
-	let mut context = Context::with_default_modules().unwrap();
+fn legacy_context() -> Context {
+	let mut legacy_context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["c11"]).unwrap();
 	module.function("tick", tick).build().unwrap();
 	module.function("mark", mark).build().unwrap();
-	context.install(module).unwrap();
-	context
+	legacy_context.install(module).unwrap();
+	legacy_context
 }
-fn vector(items: impl IntoIterator<Item = Value>) -> Value {
+fn vector(items: impl IntoIterator<Item = RuntimeValue>) -> RuntimeValue {
 	let mut values = crate::alloc::Vec::new();
 	for value in items {
 		values.try_push(value).unwrap();
 	}
-	Value::vec(values).unwrap()
+	RuntimeValue::vec(values).unwrap()
 }
-fn fixture(name: &str) -> (Value, Value) {
+fn input_fixture(name: &str) -> (RuntimeValue, RuntimeValue) {
 	if name == "non-vector" {
-		return (Value::from(7i64), vector([]));
+		return (RuntimeValue::from(7i64), vector([]));
 	}
 	if name == "self-cycle" {
 		let v = vector([]);
@@ -63,19 +63,19 @@ fn fixture(name: &str) -> (Value, Value) {
 	}
 	if name == "tagged" {
 		return (
-			vector((0..17i64).map(|id| vector([Value::from(id % 3), Value::from(id)]))),
+			vector((0..17i64).map(|id| vector([RuntimeValue::from(id % 3), RuntimeValue::from(id)]))),
 			vector([]),
 		);
 	}
 	if matches!(name, "children-shared" | "children-distinct") {
-		let shared = vector([Value::from(0i64)]);
+		let shared = vector([RuntimeValue::from(0i64)]);
 		let v = vector((0..5i64).map(|i| {
 			vector([
-				Value::from(4 - i),
+				RuntimeValue::from(4 - i),
 				if name == "children-shared" {
 					shared.clone()
 				} else {
-					vector([Value::from(0i64)])
+					vector([RuntimeValue::from(0i64)])
 				},
 			])
 		}));
@@ -83,7 +83,7 @@ fn fixture(name: &str) -> (Value, Value) {
 	}
 	if let Some(depth) = name.strip_prefix("depth/") {
 		let n: i64 = depth.parse().unwrap();
-		return (vector([Value::from(n), Value::from(n)]), vector([]));
+		return (vector([RuntimeValue::from(n), RuntimeValue::from(n)]), vector([]));
 	}
 	let name = if name == "ints" {
 		"ints/5/descending"
@@ -96,7 +96,7 @@ fn fixture(name: &str) -> (Value, Value) {
 	let order = parts.next().unwrap();
 	assert!(parts.next().is_none() && (0..=64).contains(&n));
 	let values = (0..n).map(|i| {
-		Value::from(match order {
+		RuntimeValue::from(match order {
 			"ascending" => i,
 			"descending" => n - 1 - i,
 			"duplicates" => (n - 1 - i) % 3,
@@ -105,9 +105,9 @@ fn fixture(name: &str) -> (Value, Value) {
 	});
 	(vector(values), vector([]))
 }
-fn roots_graph(v: &Value, state: &Value) -> Json {
-	graph(
-		&Value::tuple({
+fn roots_graph(v: &RuntimeValue, state: &RuntimeValue) -> Json {
+	runtime_graph(
+		&RuntimeValue::tuple({
 			let mut values = crate::alloc::Vec::new();
 			values.try_push(v.clone()).unwrap();
 			values.try_push(state.clone()).unwrap();
@@ -116,7 +116,7 @@ fn roots_graph(v: &Value, state: &Value) -> Json {
 		.unwrap(),
 	)
 }
-fn cleanup_fixture(name: &str, v: &Value) -> Json {
+fn cleanup_fixture(name: &str, v: &RuntimeValue) -> Json {
 	if name == "self-cycle" {
 		match v.borrow_mut::<stock::Vec>() {
 			Ok(mut values) => {

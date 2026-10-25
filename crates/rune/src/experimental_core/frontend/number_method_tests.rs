@@ -1,7 +1,7 @@
 //! C17c: provider certificates, the static receiver proof and std constants.
 use super::*;
 use crate::experimental_core::error::Refusal;
-use crate::function::fresh_number::{Method, PAIRS};
+use crate::function::number::{Method, PAIRS};
 
 fn compile(source: &str, context: &Context) -> Result<Program> {
 	let mut sources = Sources::new();
@@ -17,10 +17,10 @@ fn refusal(source: &str, context: &Context) -> Option<Refusal> {
 fn default_modules_certify_every_provider() {
 	let context = Context::with_default_modules().unwrap();
 	for pair in PAIRS {
-		assert!(context.fresh_number_pair(pair), "{pair:?}");
+		assert!(context.number_pair(pair), "{pair:?}");
 	}
 	for m in Method::ALL {
-		assert!(context.fresh_number_method(m), "{m:?}");
+		assert!(context.number_method(m), "{m:?}");
 	}
 }
 

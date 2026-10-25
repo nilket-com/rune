@@ -20,7 +20,7 @@ fn synthetic_raw(common: &Json) -> Json {
 	}
 	value
 }
-fn stock_cell(cells: &[&str], dispositions: &Json) -> Json {
+fn oracle_cell(cells: &[&str], dispositions: &Json) -> Json {
 	let stored: Json = serde_json::from_slice(&decode(cells[3])).unwrap();
 	if stored.get("storage").is_some() {
 		assert_eq!(cells[6], "Exact");
@@ -43,9 +43,9 @@ fn frozen_cells_and_python_canonical_crosscheck() {
 		assert_eq!(c[0], CASES[rows].0);
 		assert_eq!(decode(c[2]), CASES[rows].1.as_bytes());
 		assert_eq!(c[6], dispositions[c[0]]["policy"].as_str().unwrap());
-		let stock = stock_cell(&c, &dispositions);
-		let fresh = &dispositions[c[0]]["fresh_expectation"];
-		for (side, cell, value) in [("stock", c[3], &stock), ("fresh", c[7], fresh)] {
+		let stock = oracle_cell(&c, &dispositions);
+		let execution = &dispositions[c[0]]["fresh_expectation"];
+		for (side, cell, value) in [("stock", c[3], &stock), ("fresh", c[7], execution)] {
 			let stored: Json = serde_json::from_slice(&decode(cell)).unwrap();
 			check_cell(&stored, value).unwrap();
 			digests += usize::from(stored.get("storage").is_some());
@@ -74,7 +74,7 @@ fn p1_digest_and_semantic_drift_are_rejected() {
 	let mut checked = 0;
 	for line in FROZEN.lines().skip(1) {
 		let c = line.split('\t').collect::<Vec<_>>();
-		let stock = stock_cell(&c, &dispositions);
+		let stock = oracle_cell(&c, &dispositions);
 		let raw = synthetic_raw(&stock);
 		for field in [
 			"before",
@@ -161,8 +161,8 @@ fn resource_and_refusal_constraints_reject_drift() {
 	let refusals = read_json(include_str!("../../callback_sort_refusals.json"));
 	let mut resource_rows = 0;
 	for (label, row) in resources.as_object().unwrap() {
-		let (_, source, fixture, _, _, _, _) = *CASES.iter().find(|c| c.0 == label).unwrap();
-		let (complete, _) = resource_completion(label, source, fixture, &resources).unwrap();
+		let (_, source, input_fixture, _, _, _, _) = *CASES.iter().find(|c| c.0 == label).unwrap();
+		let (complete, _) = resource_completion(label, source, input_fixture, &resources).unwrap();
 		let stock = &complete;
 		let kind = if label.starts_with("cancel/") {
 			"Cancelled"
@@ -170,16 +170,16 @@ fn resource_and_refusal_constraints_reject_drift() {
 			"FuelExhausted"
 		};
 		let audit = json!({"typed_failure_kind":kind,"cleanup_error":null,"executor_idle":true,"live_entries":0,"payload_bytes":0,"reuse_i64":7});
-		let mut fresh = stock.clone();
-		fresh["outcome"] = json!({"status":"error","class":kind});
-		fresh["post"] = stock["before"].clone();
-		fresh["events"] = json!([]);
-		fresh["events_after_reuse"] = json!([{"event":"mark","hex":"7265757365"}]);
-		assert!(resource_valid(stock, &fresh, &audit, kind));
+		let mut execution = stock.clone();
+		execution["outcome"] = json!({"status":"error","class":kind});
+		execution["post"] = stock["before"].clone();
+		execution["events"] = json!([]);
+		execution["events_after_reuse"] = json!([{"event":"mark","hex":"7265757365"}]);
+		assert!(resource_valid(stock, &execution, &audit, kind));
 		// Empty and full prefixes are both allowed; after-last-callback exhaustion is valid.
-		fresh["events"] = stock["events"].clone();
-		fresh["events_after_reuse"] = stock["events_after_reuse"].clone();
-		assert!(resource_valid(stock, &fresh, &audit, kind));
+		execution["events"] = stock["events"].clone();
+		execution["events_after_reuse"] = stock["events_after_reuse"].clone();
+		assert!(resource_valid(stock, &execution, &audit, kind));
 		for field in [
 			"typed_failure_kind",
 			"cleanup_error",
@@ -190,12 +190,12 @@ fn resource_and_refusal_constraints_reject_drift() {
 		] {
 			let mut bad = audit.clone();
 			bad[field] = json!("drift");
-			assert!(!resource_valid(stock, &fresh, &bad, kind));
+			assert!(!resource_valid(stock, &execution, &bad, kind));
 		}
-		let mut bad = fresh.clone();
+		let mut bad = execution.clone();
 		bad["post"] = Json::Null;
 		assert!(!resource_valid(stock, &bad, &audit, kind));
-		bad = fresh.clone();
+		bad = execution.clone();
 		bad["events"] = json!([{"event":"invented"}]);
 		assert!(!resource_valid(stock, &bad, &audit, kind));
 		if stock["outcome"]["status"] == "value" {
@@ -206,8 +206,8 @@ fn resource_and_refusal_constraints_reject_drift() {
 		resource_rows += 1;
 	}
 	assert_eq!(resource_rows, 17);
-	let (_, source, fixture, _, _, _, _) = CASES[112];
-	let (complete, _) = resource_completion("fuel/16", source, fixture, &resources).unwrap();
+	let (_, source, input_fixture, _, _, _, _) = CASES[112];
+	let (complete, _) = resource_completion("fuel/16", source, input_fixture, &resources).unwrap();
 	assert_eq!(
 		resources["fuel/16"]["stock_common"]["events"]
 			.as_array()
@@ -215,43 +215,43 @@ fn resource_and_refusal_constraints_reject_drift() {
 			.len(),
 		2
 	);
-	let mut fresh = complete.clone();
-	fresh["outcome"] = json!({"status":"error","class":"FuelExhausted"});
-	fresh["post"] = complete["before"].clone();
+	let mut execution = complete.clone();
+	execution["outcome"] = json!({"status":"error","class":"FuelExhausted"});
+	execution["post"] = complete["before"].clone();
 	let tape = &complete["events"].as_array().unwrap()[..3];
-	fresh["events"] = json!(tape);
+	execution["events"] = json!(tape);
 	let mut after = tape.to_vec();
 	after.push(json!({"event":"mark","hex":"7265757365"}));
-	fresh["events_after_reuse"] = json!(after);
+	execution["events_after_reuse"] = json!(after);
 	let audit = json!({"typed_failure_kind":"FuelExhausted","cleanup_error":null,"executor_idle":true,"live_entries":0,"payload_bytes":0,"reuse_i64":7});
-	assert!(resource_valid(&complete, &fresh, &audit, "FuelExhausted")); // 3 > same-budget stock 2.
+	assert!(resource_valid(&complete, &execution, &audit, "FuelExhausted")); // 3 > same-budget stock 2.
 	for events in [
 		json!([complete["events"][1], complete["events"][2]]),
 		json!([complete["events"][0], complete["events"][2]]),
 		json!([complete["events"][0],{"event":"invented"}]),
 	] {
-		let mut bad = fresh.clone();
+		let mut bad = execution.clone();
 		let mut after = events.as_array().unwrap().clone();
 		after.push(json!({"event":"mark","hex":"7265757365"}));
 		bad["events"] = events;
 		bad["events_after_reuse"] = json!(after);
 		assert!(!resource_valid(&complete, &bad, &audit, "FuelExhausted"));
 	}
-	assert!(resource_completion("fuel/16", &format!("{source} "), fixture, &resources).is_err());
+	assert!(resource_completion("fuel/16", &format!("{source} "), input_fixture, &resources).is_err());
 	assert!(resource_completion("fuel/16", source, "wrong-fixture", &resources).is_err());
 
 	for (label, row) in refusals.as_object().unwrap() {
 		let source = CASES.iter().find(|c| c.0 == label).unwrap().1;
-		let mut fresh = row["fresh_constraint"].clone();
-		fresh["refusal"] = if fresh["invoked"] == false {
-			fresh["operation"].clone()
+		let mut execution = row["fresh_constraint"].clone();
+		execution["refusal"] = if execution["invoked"] == false {
+			execution["operation"].clone()
 		} else {
 			Json::Null
 		};
 		let audit = json!({"cleanup_error":null,"executor_idle":true,"live_entries":0,"payload_bytes":0,"reuse_i64":7});
-		assert!(refusal_valid(label, source, &fresh, &audit));
-		assert!(!refusal_valid("unlisted", source, &fresh, &audit));
-		assert!(!refusal_valid(label, &format!("{source} "), &fresh, &audit));
+		assert!(refusal_valid(label, source, &execution, &audit));
+		assert!(!refusal_valid("unlisted", source, &execution, &audit));
+		assert!(!refusal_valid(label, &format!("{source} "), &execution, &audit));
 		for field in [
 			"status",
 			"kind",
@@ -260,13 +260,13 @@ fn resource_and_refusal_constraints_reject_drift() {
 			"source_sha256",
 			"invoked",
 		] {
-			let mut bad = fresh.clone();
+			let mut bad = execution.clone();
 			bad[field] = json!("drift");
 			assert!(!refusal_valid(label, source, &bad, &audit));
 		}
 		let mut bad = audit.clone();
 		bad["live_entries"] = 1.into();
-		assert!(!refusal_valid(label, source, &fresh, &bad));
+		assert!(!refusal_valid(label, source, &execution, &bad));
 	}
 	assert_eq!(refusals.as_object().unwrap().len(), 8);
 }

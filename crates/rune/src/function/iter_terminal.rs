@@ -172,7 +172,7 @@ const HASHES: [Hash; 13] = {
 };
 
 /// The iterator types a direct chain can apply a terminal to: every iterator
-/// `iter()` or `std::iter::range` returns for a fresh value, and the two
+/// `iter()` or `std::iter::range` returns for a new value, and the two
 /// adapters.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Container {
@@ -364,7 +364,7 @@ pub(crate) fn range_provided(context: &crate::Context) -> bool {
 }
 
 fn settled(context: &crate::Context) -> bool {
-	context.fresh_iter_method(super::fresh_iter::Name::Next)
+	context.iter_method(super::iter::Name::Next)
 }
 
 const ITERATOR: Hash = crate::hash_in!(crate, ::std::iter::Iterator);
@@ -584,7 +584,7 @@ pub(crate) fn extended_next_provided(context: &crate::Context) -> bool {
 		&& EXTENDED[3..].iter().all(|&container| {
 			trait_provided(
 				context,
-				Hash::associated_function(container, super::fresh_iter::Name::Next.hash()),
+				Hash::associated_function(container, super::iter::Name::Next.hash()),
 				ITERATOR,
 			)
 		})

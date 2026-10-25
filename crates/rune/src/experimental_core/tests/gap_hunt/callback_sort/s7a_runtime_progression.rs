@@ -2,7 +2,7 @@
 fn c11_s7a_runtime_progression(
 	label: &str,
 	source: &str,
-	fixture: &str,
+	input_fixture: &str,
 	policy: &str,
 	observation: &Json,
 	disposition: &Json,
@@ -16,7 +16,7 @@ fn c11_s7a_runtime_progression(
 		return Err("S7a progression schema drift".into());
 	}
 	let row = &rows[0];
-	if row["index"] != 99 || row["label"] != label || row["fixture"] != fixture
+	if row["index"] != 99 || row["label"] != label || row["fixture"] != input_fixture
 		|| row["source_sha256"] != digest(source.as_bytes())
 		|| policy != "Refused-runtime" || disposition["policy"] != policy
 		|| disposition["index"] != 99 || CASES[99].0 != label || CASES[99].1 != source
@@ -34,7 +34,7 @@ fn c11_s7a_runtime_progression(
 	}
 	// Use precisely the existing P1 fn-pointer projection on the common view.
 	// The diagnostic APIs differ: stock's archived observer renders the kind,
-	// while fresh renders the source-aware public failure. Validate both texts
+	// while new renders the source-aware public failure. Validate both texts
 	// before translating this one row into the archived API view.
 	let mut actual = project_p1(&common(observation), &row["p1_counts"])?;
 	if actual["outcome"]["display"] != row["public_display"]

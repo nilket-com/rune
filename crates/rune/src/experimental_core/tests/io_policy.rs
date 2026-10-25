@@ -1,7 +1,7 @@
 //! IO policy: refuse unless the certified stdio builtin is installed.
 //!
 //! Invariant under test: the core admits `println!` iff
-//! `Context::fresh_stdio_println()` is true, which holds iff the handler stored at
+//! `Context::stdio_println()` is true, which holds iff the handler stored at
 //! `::std::io::println` was inserted by an item of a module marked by
 //! `modules::io::module(true)`. Functions are insert-once (`ConflictingFunction`), and a
 //! module whose `unique` id was already installed is skipped entirely, so the marker cannot
@@ -76,7 +76,7 @@ fn custom_println() -> Module {
 )]
 fn default_modules_certify_the_stdio_builtin() {
 	let context = Context::with_default_modules().unwrap();
-	assert!(context.fresh_stdio_println());
+	assert!(context.stdio_println());
 	assert!(admitted(&context));
 }
 
@@ -87,7 +87,7 @@ fn default_modules_certify_the_stdio_builtin() {
 )]
 fn no_printer_installed_is_refused() {
 	let context = Context::with_config(false).unwrap();
-	assert!(!context.fresh_stdio_println());
+	assert!(!context.stdio_println());
 	refused_as_unresolved(&context);
 }
 
@@ -103,7 +103,7 @@ fn unique_skip_does_not_install_or_certify() {
 	context
 		.install(crate::modules::io::module(true).unwrap())
 		.unwrap();
-	assert!(!context.fresh_stdio_println());
+	assert!(!context.stdio_println());
 	refused_as_unresolved(&context);
 }
 
@@ -155,7 +155,7 @@ fn custom_first_then_builtin_conflicts_and_stays_uncertified() {
 	assert!(context
 		.install(crate::modules::io::module(true).unwrap())
 		.is_err());
-	assert!(!context.fresh_stdio_println());
+	assert!(!context.stdio_println());
 
 	// `Context::new()` has no `println!` macro, and the partial install stopped before
 	// it; call the custom function directly.
@@ -174,7 +174,7 @@ fn builtin_first_then_capture_conflicts_and_builtin_remains() {
 	assert!(context
 		.install(crate::modules::capture_io::module(&io).unwrap())
 		.is_err());
-	assert!(context.fresh_stdio_println());
+	assert!(context.stdio_println());
 	assert!(admitted(&context));
 }
 
@@ -299,13 +299,13 @@ fn repeated_output_preserves_order() {
 fn print_macro_admits_only_the_certified_stdio_handler() {
 	let source = r#"pub fn main() { print!("a"); 42 }"#;
 	let context = Context::with_default_modules().unwrap();
-	assert!(context.fresh_stdio_print());
+	assert!(context.stdio_print());
 	assert_eq!(outcome(&context, source), Ok(()));
 	let mut absent = Context::with_config(false).unwrap();
 	absent
 		.install(crate::modules::io::module(true).unwrap())
 		.unwrap();
-	assert!(!absent.fresh_stdio_print());
+	assert!(!absent.stdio_print());
 	assert_eq!(
 		outcome(&absent, source),
 		Err(Some(Refusal::FrontendDiagnostic))
@@ -313,7 +313,7 @@ fn print_macro_admits_only_the_certified_stdio_handler() {
 	let mut module = Module::with_crate_item("std", ["io"]).unwrap();
 	module.function("print", |_: &str| {}).build().unwrap();
 	absent.install(module).unwrap();
-	assert!(!absent.fresh_stdio_print());
+	assert!(!absent.stdio_print());
 	assert_eq!(outcome(&absent, source), Err(Some(Refusal::Native)));
 	#[cfg(feature = "capture-io")]
 	{
@@ -322,7 +322,7 @@ fn print_macro_admits_only_the_certified_stdio_handler() {
 		context
 			.install(crate::modules::capture_io::module(&capture).unwrap())
 			.unwrap();
-		assert!(!context.fresh_stdio_print());
+		assert!(!context.stdio_print());
 		assert_eq!(outcome(&context, source), Err(Some(Refusal::Native)));
 		assert!(capture.is_empty());
 	}
@@ -332,7 +332,7 @@ fn print_macro_admits_only_the_certified_stdio_handler() {
 		context
 			.install(crate::modules::disable_io::module().unwrap())
 			.unwrap();
-		assert!(!context.fresh_stdio_print());
+		assert!(!context.stdio_print());
 		assert_eq!(outcome(&context, source), Err(Some(Refusal::Native)));
 	}
 }

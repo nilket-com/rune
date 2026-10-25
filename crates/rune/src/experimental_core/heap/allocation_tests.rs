@@ -76,8 +76,8 @@ fn payload_copy_refusals_publish_nothing_and_keep_children_owned() {
 	s.release(child).unwrap();
 	assert_eq!(s.live_entries(), 0);
 	assert_eq!(s.payload_bytes(), 0);
-	let fresh = s.string("reused").unwrap();
-	s.release(fresh).unwrap();
+	let execution = s.string("reused").unwrap();
+	s.release(execution).unwrap();
 }
 
 #[test]

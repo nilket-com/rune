@@ -1,6 +1,6 @@
 //! C17a Option and Result methods: one certified cold call per site.
 use super::*;
-use crate::function::fresh_variant::Method;
+use crate::function::variant::Method;
 
 impl Lower<'_, '_> {
 	#[cold]
@@ -13,7 +13,7 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if matches!(method, Method::Unwrap | Method::Expect) && !self.context.fresh_formatting() {
+		if matches!(method, Method::Unwrap | Method::Expect) && !self.context.formatting() {
 			return Err(self.refused(span, Refusal::Native));
 		}
 		if call.args.len() + 1 != method.arity() as usize {

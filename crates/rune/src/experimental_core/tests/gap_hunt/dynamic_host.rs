@@ -5,7 +5,7 @@ include!("dynamic_host/cases.rs");
 include!("dynamic_host/fixture.rs");
 
 const OBSERVER_NODES: usize = 70_000;
-struct Graph {
+struct RuntimeGraph {
 	memo: std::collections::HashMap<(u8, usize), usize>,
 	pending: Vec<crate::runtime::Value>,
 }
@@ -25,7 +25,7 @@ fn identity(value: &crate::runtime::Value) -> Option<(u8, usize)> {
 	key!(5,Result<crate::runtime::Value,crate::runtime::Value>);
 	None
 }
-impl Graph {
+impl RuntimeGraph {
 	fn intern(&mut self, value: crate::runtime::Value) -> usize {
 		let key = identity(&value);
 		if let Some(id) = key.and_then(|k| self.memo.get(&k).copied()) {
@@ -119,8 +119,8 @@ impl Graph {
 		}
 	}
 }
-fn graph(value: &crate::runtime::Value) -> Json {
-	let mut g = Graph {
+fn runtime_graph(value: &crate::runtime::Value) -> Json {
+	let mut g = RuntimeGraph {
 		memo: std::collections::HashMap::new(),
 		pending: Vec::new(),
 	};
@@ -145,10 +145,10 @@ fn error_observation(error: &crate::runtime::VmError) -> Json {
 		let inst=at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();let span=inst.span.range();
 		json!({"source":inst.source_id.into_index(),"start":span.start,"end":span.end,"frames":format!("{:?}",at.frames)})
 	}).collect::<Vec<_>>();
-	json!({"status":"error","class":stock_class(kind),"kind":format!("{kind:?}"),"display":kind.to_string(),"chain":chain,"sites":sites,"raw":format!("{error:?}")})
+	json!({"status":"error","class":runtime_error_class(kind),"kind":format!("{kind:?}"),"display":kind.to_string(),"chain":chain,"sites":sites,"raw":format!("{error:?}")})
 }
-fn observe(source: &str) -> Json {
-	let context = context();
+fn legacy_observe(source: &str) -> Json {
+	let context = legacy_context();
 	let mut sources = Sources::new();
 	sources
 		.insert(Source::new("c10.rn", source).unwrap())
@@ -173,7 +173,7 @@ fn observe(source: &str) -> Json {
 	}).collect::<Vec<_>>();
 	let result = crate::runtime::budget::with(FUEL, || vm.call(["main"], ())).call();
 	let outcome = match result {
-		Ok(value) => json!({"status":"value","graph":graph(&value)}),
+		Ok(value) => json!({"status":"value","graph":runtime_graph(&value)}),
 		Err(e) => error_observation(&e),
 	};
 	let before_cleanup = events();
@@ -191,7 +191,7 @@ fn observe(source: &str) -> Json {
 		.count();
 	cleanup(); // explicitly breaks stock cycles and releases held guards before reuse/drop.
 	let reuse = match crate::runtime::budget::with(FUEL, || vm.call(["c10_reuse"], ())).call() {
-		Ok(value) => json!({"status":"value","graph":graph(&value)}),
+		Ok(value) => json!({"status":"value","graph":runtime_graph(&value)}),
 		Err(e) => error_observation(&e),
 	};
 	json!({"outcome":outcome,"host_calls":host_calls,"protocol_calls":protocol_calls,"events":before_cleanup,"events_after_reuse":events(),"reuse":reuse,"host_sites":host_sites,"invoked":true,"diagnostics":format!("{:?}",diagnostics.diagnostics()),"cleanup":"fixture cycles cleared and borrow guards dropped"})
@@ -204,9 +204,9 @@ fn child() {
 	let (label, source, policy) = CASES[index];
 	let engine = std::env::var("C10_ENGINE").unwrap();
 	let (observation, audit) = match engine.as_str() {
-		"stock" => (observe(source), Json::Null),
+		"stock" => (legacy_observe(source), Json::Null),
 		#[cfg(target_os = "linux")]
-		"fresh" => observe_dynamic_fresh(source),
+		"fresh" => observe_dynamic(source),
 		_ => panic!("unknown C10 engine"),
 	};
 	let envelope = json!({"schema":1,"engine":engine,"audit":audit,"index":index,"label":label,"source_hex":hex(source.as_bytes()),"policy":policy,"fuel":FUEL,"observation":observation});
@@ -223,7 +223,7 @@ fn child() {
 include!("dynamic_host/controls.rs");
 
 #[cfg(target_os = "linux")]
-include!("dynamic_host/observe_fresh.rs");
+include!("dynamic_host/observe.rs");
 
 #[cfg(target_os = "linux")]
 include!("dynamic_host/projection.rs");

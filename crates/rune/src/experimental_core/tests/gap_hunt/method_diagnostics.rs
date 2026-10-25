@@ -12,12 +12,12 @@ fn tap(tag: i64, value: i64) -> i64 {
 	});
 	value
 }
-fn context(fresh: bool) -> Context {
+fn context(certify: bool) -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	for name in ["c13", "c15b"] {
 		let mut module = crate::Module::with_item([name]).unwrap();
-		if fresh {
-			module.fresh_host_function("tap", tap).unwrap();
+		if certify {
+			module.host_function("tap", tap).unwrap();
 		} else {
 			module.function("tap", tap).build().unwrap();
 		}
@@ -25,7 +25,7 @@ fn context(fresh: bool) -> Context {
 	}
 	context
 }
-fn stock_error(error: &stock::VmError, sources: &Sources) -> Json {
+fn runtime_error(error: &stock::VmError, sources: &Sources) -> Json {
 	let identity = error.missing_instance_function().map(|m|json!({"variant":"MissingInstanceFunction","hash":m.hash.to_string(),"instance":m.instance.to_string(),"target":m.instance_name().to_string()}));
 	let mut output = crate::termcolor::NoColor::new(std::vec::Vec::new());
 	error.emit(&mut output, sources).unwrap();
@@ -35,7 +35,7 @@ fn stock_error(error: &stock::VmError, sources: &Sources) -> Json {
 	}).collect::<Vec<_>>();
 	json!({"status":"error","identity":identity,"primary_display":error.to_string(),"kind_display":error.error().kind().to_string(),"kind_debug":format!("{:?}",error.error().kind()),"rich_emit":String::from_utf8(output.into_inner()).unwrap(),"sites":sites})
 }
-fn stock_observe(row: &Json) -> Json {
+fn legacy_observe(row: &Json) -> Json {
 	let context = context(false);
 	let mut sources = Sources::new();
 	sources
@@ -58,13 +58,13 @@ fn stock_observe(row: &Json) -> Json {
 		.unwrap();
 	let outcome = match stock::budget::with(200_000, || vm.call(["main"], ())).call() {
 		Ok(value) => json!({"status":"value","i64":crate::from_value::<i64>(value).unwrap()}),
-		Err(error) => stock_error(&error, &sources),
+		Err(error) => runtime_error(&error, &sources),
 	};
 	let reuse =
 		crate::from_value::<i64>(vm.call([row["reuse"].as_str().unwrap()], ()).unwrap()).unwrap();
 	json!({"outcome":outcome,"reuse":reuse,"diagnostics":format!("{:?}",diagnostics.diagnostics())})
 }
-fn fresh_observe(row: &Json) -> Json {
+fn observe(row: &Json) -> Json {
 	let context = context(true);
 	let mut sources = Sources::new();
 	sources
@@ -137,8 +137,8 @@ fn child() {
 	let row = &cases[index];
 	TAPE.with(|tape| tape.borrow_mut().clear());
 	let observed = match engine.as_str() {
-		"stock" => stock_observe(row),
-		"fresh" => fresh_observe(row),
+		"stock" => legacy_observe(row),
+		"fresh" => observe(row),
 		_ => panic!("D1 engine"),
 	};
 	let events = TAPE.with(|tape| tape.borrow().clone());

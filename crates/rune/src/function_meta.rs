@@ -50,8 +50,8 @@ pub type MacroMeta = fn() -> alloc::Result<MacroMetaData>;
 pub struct FunctionData {
 	pub(crate) item: ItemBuf,
 	pub(crate) handler: FunctionHandler,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_host: Option<crate::function::fresh_host::HostEnrollment>,
+	#[cfg(feature = "execution")]
+	pub(crate) host: Option<crate::function::host::HostEnrollment>,
 	#[cfg(feature = "doc")]
 	pub(crate) is_async: bool,
 	#[cfg(feature = "doc")]
@@ -67,8 +67,8 @@ impl FunctionData {
 		Self {
 			item,
 			handler,
-			#[cfg(feature = "fresh-core")]
-			fresh_host: None,
+			#[cfg(feature = "execution")]
+			host: None,
 			#[cfg(feature = "doc")]
 			is_async: false,
 			#[cfg(feature = "doc")]
@@ -93,8 +93,8 @@ impl FunctionData {
 			handler: FunctionHandler::new(move |stack, addr, args, output| {
 				f.call(stack, addr, args, output)
 			})?,
-			#[cfg(feature = "fresh-core")]
-			fresh_host: None,
+			#[cfg(feature = "execution")]
+			host: None,
 			#[cfg(feature = "doc")]
 			is_async: K::IS_ASYNC,
 			#[cfg(feature = "doc")]

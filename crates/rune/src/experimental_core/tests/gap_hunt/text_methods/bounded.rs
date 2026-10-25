@@ -19,15 +19,15 @@ fn c14_drain(
 }
 
 #[test]
-#[ignore = "C14 strict fresh contract; explicit new C14_FRESH_OUT, bounded children"]
-fn fresh_contract() {
+#[ignore = "C14 strict execution contract; explicit new C14_OUT, bounded children"]
+fn contract() {
 	use std::process::{Command, Stdio};
 	use std::sync::{
 		atomic::{AtomicBool, Ordering},
 		Arc,
 	};
 	use std::time::{Duration, Instant};
-	let out = PathBuf::from(std::env::var_os("C14_FRESH_OUT").expect("new C14_FRESH_OUT"));
+	let out = PathBuf::from(std::env::var_os("C14_OUT").expect("new C14_OUT"));
 	fs::create_dir(&out).unwrap();
 	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
 	let frozen: Json = serde_json::from_str(DISPOSITIONS).unwrap();
@@ -98,12 +98,12 @@ fn fresh_contract() {
 		);
 		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
 		actual["observation"]["outcome"] = super::d1c_diagnostics::before("text_methods", case["label"].as_str().unwrap(), case["source"].as_str().unwrap(), "fresh", &actual["observation"]["outcome"]);
-		compare_fresh(case, &frozen[format!("{i:03}")], &actual);
+		compare(case, &frozen[format!("{i:03}")], &actual);
 		assert!(stderr.is_empty(), "C14 stderr {i}");
 	}
 	fs::write(
 		out.join("COMPLETE"),
-		"fresh190 strict; P1 pointers, receiver policy and literal resource sidecar only\n",
+		"execution190 strict; P1 pointers, receiver policy and literal resource sidecar only\n",
 	)
 	.unwrap();
 	println!("\nCONTRACT ENGINE fresh\nCONTRACT ROWS {}", cases.len());

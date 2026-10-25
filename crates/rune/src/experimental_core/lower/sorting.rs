@@ -13,7 +13,7 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if !self.context.fresh_sort_by() || self.constants.fresh_sort_by_script {
+		if !self.context.sort_by() || self.constants.sort_by_script {
 			return Err(self.refused(span, Refusal::Method));
 		}
 		if call.args.len() != 1 {

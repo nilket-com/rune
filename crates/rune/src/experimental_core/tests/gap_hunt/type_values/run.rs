@@ -1,0 +1,117 @@
+// Independent new observations. This module reads no frozen outcome or policy.
+include!("../enum_variants/graph.rs");
+
+/// Typed stock kinds for the new details that operations on a type value
+/// raise. Never consults frozen observations.
+fn type_value_kind(
+	error: &crate::experimental_core::error::Error,
+	program: &frontend::Program,
+) -> Option<stock::VmErrorKind> {
+	use crate::experimental_core::detail::Detail;
+	use stock::VmErrorKind as K;
+	let info = |name| super::small_forms::type_info(name, program);
+	Some(match error.detail {
+		Detail::NotCallable { found } => K::UnsupportedCallFn {
+			actual: info(found)?,
+		},
+		Detail::FieldOnNonRecord { target, field } => K::UnsupportedObjectSlotIndexGet {
+			target: info(target)?,
+			field: crate::sync::Arc::try_new(
+				stock::StaticString::new(field.resolve(program)?).ok()?,
+			)
+			.ok()?,
+		},
+		Detail::IndexTarget { target, index } => K::UnsupportedIndexGet {
+			target: info(target)?,
+			index: info(index)?,
+		},
+		Detail::TryOperand { found } => K::UnsupportedTryOperand {
+			actual: info(found)?,
+		},
+		Detail::Cast {
+			found,
+			to_numeric: true,
+		} => K::UnsupportedAs {
+			value: info(found)?,
+		},
+		_ => return None,
+	})
+}
+
+fn failure(
+	failure: &crate::experimental_core::execute::Failure,
+	program: &frontend::Program,
+	sources: &Sources,
+) -> Json {
+	super::d1e_diagnostics::execution(failure, program, sources);
+	let kind = type_value_kind(&failure.error, program)
+		.or_else(|| super::small_forms::primary_kind(&failure.error, program))
+		.unwrap_or_else(|| panic!("unmapped C16h failure: {failure:?}"));
+	let class = match kind {
+		stock::VmErrorKind::UnsupportedCallFn { .. } => "Type".to_owned(),
+		_ => runtime_error_class(&kind),
+	};
+	let chain = failure.invocation_context().map(|at| match at {
+		stock::InvocationContext::BadArgument { arg } => json!({"kind":format!("BadArgument {{ arg: {arg} }}"),"display":format!("Bad argument #{arg}")}),
+	}).collect::<Vec<_>>();
+	let frames = serde_json::to_string(&failure.call_chain.iter().map(|at| json!({"source":at.source,"start":at.start,"end":at.end})).collect::<Vec<_>>()).unwrap();
+	let sites = failure.error.location.iter().map(|at| json!({"source":at.source,"start":at.start,"end":at.end,"frames":frames})).collect::<Vec<_>>();
+	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":failure.message(program).to_string(),"chain":chain,"sites":sites,"raw":format!("{failure:?}")})
+}
+
+#[test]
+#[ignore = "C16h execution observation; bounded external operator only"]
+fn child() {
+	let index: usize = std::env::var("C16H_CASE").unwrap().parse().unwrap();
+	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	let row = &cases[index];
+	TAPE.with(|t| t.borrow_mut().clear());
+	let mut context = Context::with_default_modules().unwrap();
+	let mut module = crate::Module::with_item(["c16h"]).unwrap();
+	module.host_function("tap", tap).unwrap();
+	context.install(module).unwrap();
+	let mut sources = Sources::new();
+	sources.insert(Source::new("c16h.rn", row["source"].as_str().unwrap()).unwrap()).unwrap();
+	let mut diagnostics = Diagnostics::new();
+	let built = frontend::compile(&mut sources, &context, &mut diagnostics, 16);
+	let mut store = Store::new(Limits { entries: 4096, bytes: 4 << 20 }).unwrap();
+	let mut executor = Executor::new().unwrap();
+	executor.set_host_runtime(Some(crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap())).unwrap();
+	let mut cleanup_error = false;
+	let outcome = match &built {
+		Err(error) => json!({"status":"refused","refusal":error.refusal.map(|r|r.name()),"location":error.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"raw":format!("{error:?}")}),
+		Ok(program) => match executor.invoke(program, &mut store, program.function(Hash::type_hash(["main"])).unwrap(), &[], row["fuel"].as_u64().unwrap() as usize) {
+			Ok(root) => {
+				let value = store.import(&root).unwrap();
+				let graph = graph(&mut store, value);
+				store.root_release(root).unwrap();
+				json!({"status":"value","graph":graph})
+			}
+			Err(failure) => {
+				cleanup_error = failure.cleanup_error.is_some();
+				self::failure(&failure, program, &sources)
+			}
+		},
+	};
+	let row_idle = executor.is_idle();
+	let row_live_entries = store.live_entries();
+	let row_payload_bytes = store.payload_bytes();
+	let fallback = if built.is_err() {
+		let mut sources = Sources::new();
+		sources.insert(Source::memory("pub fn c16h_reuse(){7}").unwrap()).unwrap();
+		Some(frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 17).unwrap())
+	} else { None };
+	let program = built.as_ref().ok().or(fallback.as_ref()).unwrap();
+	let root = executor.invoke(program, &mut store, program.function(Hash::type_hash(["c16h_reuse"])).unwrap(), &[], 200000).unwrap();
+	let value = store.import(&root).unwrap();
+	let reuse_graph = graph(&mut store, value);
+	store.root_release(root).unwrap();
+	let reuse = if row["reuse_enabled"] == true { json!({"status":"value","graph":reuse_graph}) } else { Json::Null };
+	let events = TAPE.with(|t| t.borrow().clone());
+	let logical = std::env::var_os("D1E_TRACE_OUT").and_then(|p| fs::read(p).ok()).map(|b| serde_json::from_slice::<Json>(&b).unwrap()).unwrap_or(Json::Null);
+	let result = json!({"schema":1,"engine":"fresh","index":index,"label":row["label"],"source":row["source"],"origin":row["origin"],"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"logical":logical,"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"invoked":built.is_ok(),"cleanup_error":cleanup_error,"row_idle":row_idle,"row_live_entries":row_live_entries,"row_payload_bytes":row_payload_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"reuse_used_fallback":fallback.is_some()}});
+	fs::write(std::env::var_os("C16H_RESULT").unwrap(), serde_json::to_vec_pretty(&result).unwrap()).unwrap();
+	std::io::stdout().flush().unwrap();
+	std::io::stderr().flush().unwrap();
+	std::process::exit(0);
+}

@@ -2,7 +2,7 @@
 //! independent of the stock oracle.
 use super::*;
 use crate::experimental_core::error::{Detail, HostCause, IntTarget, IntValue, TypeName};
-use crate::function::fresh_number::{Method, Pair, Receiver};
+use crate::function::number::{Method, Pair, Receiver};
 
 fn pair(m: Method, r: Receiver) -> Pair {
 	Pair::new(m, r).unwrap()

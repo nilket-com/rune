@@ -1,4 +1,4 @@
-//! Allocation-free diagnostic text shared by the stock and fresh executors.
+//! Allocation-free diagnostic text shared by the stock and new executors.
 use core::fmt::{self, Display, Write};
 
 /// Shorten type paths only when presenting a runtime diagnostic.

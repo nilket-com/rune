@@ -113,9 +113,9 @@ fn c10_summary_record(node: &Json) -> Result<Json, String> {
 	Ok(result)
 }
 fn c10_summary(common: &Json) -> Result<Json, String> {
-	let graph = &common["outcome"]["graph"];
-	let nodes = graph["nodes"].as_array().ok_or("missing graph nodes")?;
-	let root = graph["root"]
+	let runtime_graph = &common["outcome"]["graph"];
+	let nodes = runtime_graph["nodes"].as_array().ok_or("missing graph nodes")?;
+	let root = runtime_graph["root"]
 		.as_u64()
 		.and_then(|n| usize::try_from(n).ok())
 		.ok_or("invalid graph root")?;

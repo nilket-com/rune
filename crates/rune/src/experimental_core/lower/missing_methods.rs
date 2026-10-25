@@ -80,9 +80,9 @@ impl Lower<'_, '_> {
 	/// The runtime type of a value built by the script struct or variant `hash`.
 	pub(super) fn nominal_type(&self, hash: Hash) -> Option<Hash> {
 		self.constants
-			.fresh_variant_shape(hash)
+			.variant_shape(hash)
 			.map(|shape| shape.enum_hash)
-			.or_else(|| self.constants.fresh_struct_shape(hash).map(|_| hash))
+			.or_else(|| self.constants.struct_shape(hash).map(|_| hash))
 	}
 }
 

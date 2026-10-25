@@ -97,7 +97,7 @@ fn c16e_admission(case: &Json, frozen: &Json, actual: &Json, expected: &Json) ->
 	true
 }
 
-fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
+fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	for key in ["label", "source_sha256", "fixture", "fuel"] {
 		assert_eq!(actual[key], case[key]);
 		assert_eq!(actual[key], frozen[key]);

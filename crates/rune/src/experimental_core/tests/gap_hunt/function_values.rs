@@ -1,9 +1,9 @@
 //! C16f function-value stock oracle. This module is test-only; it does not alter product code.
 use super::*;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
-include!("constructors/graph.rs");
+include!("constructors/runtime_graph.rs");
 const CASES: &str = include_str!("function_values/cases.json");
 
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
@@ -33,8 +33,8 @@ fn context() -> Context {
 	context.install(old_module).unwrap();
 	context
 }
-fn observed(value: &Value) -> Json {
-	let out = graph(value);
+fn observed(value: &RuntimeValue) -> Json {
+	let out = runtime_graph(value);
 	for node in out["nodes"].as_array().unwrap() {
 		assert!(
 			!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")),
@@ -49,7 +49,7 @@ fn error(error: &stock::VmError, sources: &Sources) -> Json {
 	let class = match kind {
 		crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
 		crate::runtime::VmErrorKind::UnsupportedCallFn { .. } => "Type".into(),
-		_ => stock_class(kind),
+		_ => runtime_error_class(kind),
 	};
 	let sites = error.stacktrace().iter().map(|at| {
 		let inst = at.unit.debug_info().expect("debug unit").instruction_at(at.ip).expect("debug instruction");
@@ -61,12 +61,12 @@ fn error(error: &stock::VmError, sources: &Sources) -> Json {
 		.iter()
 		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
 		.collect::<Vec<_>>();
-	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
+	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
 #[test]
 #[ignore = "C16f stock-oracle child; explicit bounded external operator only"]
-fn child() {
+fn legacy_child() {
 	let engine = std::env::var("C16F_ENGINE").unwrap();
 	assert_eq!(engine, "stock");
 	let index: usize = std::env::var("C16F_CASE").unwrap().parse().unwrap();
@@ -157,7 +157,10 @@ fn observer_controls() {
 		("stock.json", include_str!("function_values/stock.json")),
 	] {
 		assert_eq!(
-			hex(Sha256::digest(bytes.as_bytes()).as_ref()),
+			hex(Sha256::digest(
+				crate::experimental_core::tests::name_projection::observer_bytes(name, bytes)
+			)
+			.as_ref()),
 			freeze["files"][name]
 		);
 	}
@@ -171,7 +174,10 @@ fn observer_controls() {
 			row["source_sha256"]
 		);
 	}
-	assert_ne!(observed(&Value::from(1i64)), observed(&Value::from(2i64)));
+	assert_ne!(
+		observed(&RuntimeValue::from(1i64)),
+		observed(&RuntimeValue::from(2i64))
+	);
 }
 const REPLAY_CAP: usize = 2 << 20;
 fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
@@ -194,7 +200,7 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[test]
 #[cfg(target_os = "linux")]
 #[ignore = "C16f frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 
@@ -231,13 +237,13 @@ fn run_contract(engine: &str) {
 			.arg(std::env::current_exe().unwrap());
 		command.process_group(0);
 		command.env_clear();
-		let mut child = command
+		let mut child_process = command
 			.args([
 				"--exact",
 				if engine == "stock" {
-					"experimental_core::tests::gap_hunt::function_values::child"
+					"experimental_core::tests::gap_hunt::function_values::legacy_child"
 				} else {
-					"experimental_core::tests::gap_hunt::function_values::fresh_child"
+					"experimental_core::tests::gap_hunt::function_values::child"
 				},
 				"--ignored",
 				"--nocapture",
@@ -259,16 +265,16 @@ fn run_contract(engine: &str) {
 			.unwrap();
 		let exceeded = Arc::new(AtomicBool::new(false));
 		let flag = exceeded.clone();
-		let pipe = child.stdout.take().unwrap();
+		let pipe = child_process.stdout.take().unwrap();
 		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
 		let flag = exceeded.clone();
-		let pipe = child.stderr.take().unwrap();
+		let pipe = child_process.stderr.take().unwrap();
 		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
 		let start = Instant::now();
 		let mut stop = false;
 		let mut exited = false;
 		loop {
-			if child.try_wait().unwrap().is_some() {
+			if child_process.try_wait().unwrap().is_some() {
 				exited = true;
 			}
 			if !exceeded.load(Ordering::Relaxed)
@@ -280,7 +286,7 @@ fn run_contract(engine: &str) {
 			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
 				stop = true;
 				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child.id())])
+					.args(["-KILL", "--", &format!("-{}", child_process.id())])
 					.stdout(Stdio::null())
 					.stderr(Stdio::null())
 					.status();
@@ -290,7 +296,7 @@ fn run_contract(engine: &str) {
 		}
 		// wait() also returns the cached status when try_wait() already reaped
 		// the child. Every exit path explicitly collects it before joining.
-		let status = child.wait().unwrap();
+		let status = child_process.wait().unwrap();
 		let stdout = stdout.join().unwrap();
 		let stderr = stderr.join().unwrap();
 		fs::write(folder.join("stdout"), &stdout).unwrap();
@@ -315,15 +321,15 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["origin"], case["origin"]);
 		if engine == "fresh" {
-			verify_fresh_case(i, case, expected, &observed, &stdout, &stderr);
+			verify_case(i, case, expected, &observed, &stdout, &stderr);
 			continue;
 		}
 		if engine == "stock" {
 			assert_eq!(observed["projected"], expected["projected"], "{label}");
 		}
 		assert_eq!(
-			stock_kind(i, case, &observed["observation"]["outcome"]),
-			stock_kind(i, case, &expected["observation"]["outcome"])
+			runtime_error_kind(i, case, &observed["observation"]["outcome"]),
+			runtime_error_kind(i, case, &expected["observation"]["outcome"])
 		);
 		assert_eq!(
 			observed["observation"]["reuse"]["kind"],
@@ -344,7 +350,7 @@ fn compile_child() {
 	let mut context = Context::with_default_modules().unwrap();
 	for name in ["c16f", "c15"] {
 		let mut module = crate::Module::with_item([name]).unwrap();
-		module.fresh_host_function("tap", tap).unwrap();
+		module.host_function("tap", tap).unwrap();
 		context.install(module).unwrap();
 	}
 	let mut sources = Sources::new();
@@ -367,7 +373,7 @@ fn compile_child() {
 
 // P1: only this source's diagnostic AnyTypeInfo::full_name address is process-local.
 // The public type hash, typed primary variant and every other byte stay exact.
-fn stock_kind(index: usize, case: &Json, outcome: &Json) -> Json {
+fn runtime_error_kind(index: usize, case: &Json, outcome: &Json) -> Json {
 	if index != 95 {
 		return outcome["kind"].clone();
 	}
@@ -389,6 +395,6 @@ fn stock_kind(index: usize, case: &Json, outcome: &Json) -> Json {
 	json!(format!("{prefix}ADDRESS{suffix}"))
 }
 
-include!("function_values/fresh.rs");
+include!("function_values/run.rs");
 
 include!("function_values/contract.rs");

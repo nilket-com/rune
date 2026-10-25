@@ -4,7 +4,7 @@ fn retained_expected(
 	label: &str,
 	source: &str,
 	stock: &Json,
-	fresh: &Json,
+	execution: &Json,
 	audit: &Json,
 	outcome: &Json,
 ) -> Json {
@@ -16,11 +16,11 @@ fn retained_expected(
 		.iter()
 		.find(|r| r["label"] == label)
 	else {
-		return fresh.clone();
+		return execution.clone();
 	};
 	assert_eq!(source, policy_decode(row["source_hex"].as_str().unwrap()));
 	assert_eq!(*stock, row["stock"]);
-	assert_eq!(*fresh, *stock);
+	assert_eq!(*execution, *stock);
 	assert_eq!(audit["returned_root"], false);
 	match row["policy"].as_str().unwrap() {
 		"Retained-depth" => {

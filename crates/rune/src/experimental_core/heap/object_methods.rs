@@ -1,7 +1,7 @@
 //! C17b Object methods and `is_empty`, with stock native argument order.
 use super::super::error::{Detail, HostCause, MovedAccess, TypeName};
 use super::*;
-use crate::function::fresh_object::Method;
+use crate::function::object::Method;
 
 /// Attaches the native argument index to a store access failure.
 fn argument_access(error: Error, arg: u8, readers: u32) -> Error {

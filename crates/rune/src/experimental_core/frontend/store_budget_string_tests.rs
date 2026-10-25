@@ -9,9 +9,7 @@ fn large_text() -> std::string::String {
 fn context() -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["s5"]).unwrap();
-	module
-		.fresh_host_function("large_text", large_text)
-		.unwrap();
+	module.host_function("large_text", large_text).unwrap();
 	context.install(module).unwrap();
 	context
 }

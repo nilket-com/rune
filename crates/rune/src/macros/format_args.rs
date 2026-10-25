@@ -101,23 +101,23 @@ impl FormatArgs {
 		cx: &mut MacroContext<'_, '_, '_>,
 		template_span: Option<Span>,
 	) -> compile::Result<Quote<'_>> {
-		#[cfg(not(feature = "fresh-core"))]
+		#[cfg(not(feature = "execution"))]
 		let format = cx.eval_stream(&self.format)?;
-		#[cfg(feature = "fresh-core")]
-		let literal = if cx.idx.q.inner.fresh_mode {
+		#[cfg(feature = "execution")]
+		let literal = if cx.idx.q.inner.collecting {
 			let mut parser =
 				crate::parse::Parser::from_token_stream(&self.format, self.format_span);
 			let literal = parser.parse_all::<ast::LitStr>().map_err(|_| {
 				compile::Error::msg(
 					self.format_span,
-					"fresh core: format string must be a literal",
+					"execution core: format string must be a literal",
 				)
 			})?;
 			Some(String::try_from(cx.resolve(literal)?.as_ref())?)
 		} else {
 			None
 		};
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let format = if literal.is_none() {
 			Some(cx.eval_stream(&self.format)?)
 		} else {
@@ -145,9 +145,9 @@ impl FormatArgs {
 			}
 		}
 
-		#[cfg(not(feature = "fresh-core"))]
+		#[cfg(not(feature = "execution"))]
 		let format = format.downcast::<String>().with_span(self.format_span)?;
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let format = match literal {
 			Some(literal) => literal,
 			None => format
@@ -846,11 +846,11 @@ fn expand_format_spec<'a>(
 
 			unused_pos.remove(count);
 
-			#[cfg(feature = "fresh-core")]
-			if cx.idx.q.inner.fresh_mode {
+			#[cfg(feature = "execution")]
+			if cx.idx.q.inner.collecting {
 				return Err(compile::Error::msg(
 					span,
-					"fresh core: dynamic precision is not admitted",
+					"execution core: dynamic precision is not admitted",
 				));
 			}
 			let value = cx.eval_stream(&arg.value)?;

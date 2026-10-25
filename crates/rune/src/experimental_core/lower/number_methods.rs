@@ -1,7 +1,7 @@
 //! C17c numeric methods, `char::from_i64` and std numeric constants: one
 //! certified cold call per site, or a literal.
 use super::*;
-use crate::function::fresh_number::{self as number, Method, Pair, Receiver};
+use crate::function::number::{self as number, Method, Pair, Receiver};
 
 /// Proof recursion depth, as for the other origin proofs.
 const DEPTH: usize = 128;
@@ -25,7 +25,7 @@ impl Lower<'_, '_> {
 				.is_some()
 	}
 
-	/// The std numeric constant `hash`, if the context still holds the stock value.
+	/// The std numeric constant `hash`, if the context still holds the runtime value.
 	pub(super) fn number_constant(&self, hash: Hash) -> Option<Value> {
 		let expected = match number::constant(hash)? {
 			number::Constant::I64(v) => Value::I64(v),
@@ -134,7 +134,7 @@ impl Lower<'_, '_> {
 						_ => None,
 					};
 				}
-				use crate::function::fresh_numeric::Method as Old;
+				use crate::function::numeric::Method as Old;
 				match (Old::from_hash(hash)?, receiver) {
 					(Old::Abs, Receiver::I64 | Receiver::F64) => Some(receiver),
 					(Old::Round | Old::Powf, Receiver::F64) => Some(receiver),
@@ -147,7 +147,7 @@ impl Lower<'_, '_> {
 				}
 				let r = self.number_receiver(self.text_init(v)?, depth + 1, assumed)?;
 				assumed.try_push((v, r)).ok()?;
-				let kept = self.exprs.fresh_expressions().all(|e| match e.kind {
+				let kept = self.exprs.expressions().all(|e| match e.kind {
 					E::Assign(a) if matches!(self.exprs.get(a.lhs).kind, E::Variable(x) if x == v) => {
 						self.number_receiver(a.rhs, depth + 1, assumed) == Some(r)
 					}
@@ -180,7 +180,7 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if method == Method::ToString && !self.context.fresh_formatting() {
+		if method == Method::ToString && !self.context.formatting() {
 			return Err(self.refused(span, Refusal::Native));
 		}
 		// A method turbofish names a parameterized stock hash nothing provides.
@@ -195,7 +195,7 @@ impl Lower<'_, '_> {
 			.and_then(|r| Pair::new(method, r));
 		let function = match proven {
 			Some(pair) => {
-				if !self.context.fresh_number_pair(pair) {
+				if !self.context.number_pair(pair) {
 					return Err(self.refused(span, Refusal::Method));
 				}
 				pair.id()
@@ -228,8 +228,8 @@ impl Lower<'_, '_> {
 		out: u32,
 		span: Span,
 	) -> Result<()> {
-		if !self.context.fresh_number_pair(pair)
-			|| (pair.method() == Method::ToString && !self.context.fresh_formatting())
+		if !self.context.number_pair(pair)
+			|| (pair.method() == Method::ToString && !self.context.formatting())
 		{
 			return Err(self.refused(span, Refusal::Native));
 		}

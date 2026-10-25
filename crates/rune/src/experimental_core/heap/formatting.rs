@@ -666,7 +666,7 @@ impl Store {
 					.diagnostic_type(value)
 					.and_then(super::opaque::full_name)
 					.ok_or_else(invalid)?;
-				// Named Intentional divergence: the address is fresh's own object
+				// Named Intentional divergence: the address is new's own object
 				// identity. Keep stock's full text and nested generic spelling.
 				sink.formatted(format_args!("<{name} object at {:p}>", entry))?;
 				return Ok(None);
@@ -890,7 +890,7 @@ impl Store {
 				_ => return Err(invalid()),
 			},
 			Value::Type(tag) => type_value(tag, sink)?,
-			// Stock prints its bytecode offset here; fresh names the function index,
+			// Stock prints its bytecode offset here; new names the function index,
 			// as the closure form does.
 			Value::Function { id, .. } if debug => {
 				sink.formatted(format_args!("immediate function (function: {id})"))?

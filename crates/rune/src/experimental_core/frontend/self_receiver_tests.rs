@@ -150,7 +150,7 @@ fn self_receiver_host_entry_is_refused_without_effects_or_cancellation_consumpti
 	let mut module = crate::Module::with_item(["host"]).unwrap();
 	let count = effects.clone();
 	module
-		.fresh_host_function("mark", move || {
+		.host_function("mark", move || {
 			count.fetch_add(1, Ordering::SeqCst);
 		})
 		.unwrap();
@@ -247,9 +247,7 @@ fn self_receiver_exact_context_override_is_not_bypassed() {
 fn self_receiver_generated_method_values_cannot_escape() {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["host"]).unwrap();
-	module
-		.fresh_host_function("observe", |n: i64| n + 1)
-		.unwrap();
+	module.host_function("observe", |n: i64| n + 1).unwrap();
 	context.install(module).unwrap();
 	let program=compile_source("struct S;impl S{fn capacity(self){7}fn run(self){self.capacity()}}fn dispatch(x){x.run()}pub fn main(){host::observe(dispatch(S))}",&context).unwrap();
 	let mut lookups = 0;

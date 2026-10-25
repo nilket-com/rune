@@ -17,7 +17,7 @@
 //!   implies (W3: 1 on the yes edge, 0 on the no edge), then jumps to the successor. It is
 //!   the same integer because admission types every Branch read `Bool` and every `Bool`
 //!   producer and entry fill is canonical (exactly 0 or 1); commit validation is not a
-//!   second proof of that (W3 would already have normalised a non-canonical value);
+//!   second proof of that (W3 would already have normalized a non-canonical value);
 //! - P2b: a `Unit` literal (also `Release`) is the constant 0 tagged Unit; a `Copy` defines
 //!   its out variable as the source variable, tagged with the source's static type;
 //! - exit block (W1: marked cold, as is a W3 edge into it, an IR layout hint the backend
@@ -41,7 +41,7 @@
 //!   the only writer of `out` and of `next`, and nothing clears a written bit, so wherever
 //!   the bit is set `out == x` and `next == x + 1` for the last IterNext's `x` (exact:
 //!   `x < end <= i64::MAX`). Wherever the bit is clear `out` still holds its entry value,
-//!   which is 0 for a `Scalar` cell: this lowering initialises it with `iconst 0` and never
+//!   which is 0 for a `Scalar` cell: this lowering initializes it with `iconst 0` and never
 //!   loads it, and the canonical entry buffer comes from the commit module's entry fill,
 //!   which writes 0 into every `Scalar` cell (the simulator does not establish this; it
 //!   consumes the buffer it is given). `next - 1` is a plain wrapping `iadd` of -1, not a
@@ -120,7 +120,7 @@ std::thread_local! {
 }
 
 /// The thread's shared ISA ([`isa`] built once). During thread teardown, when the
-/// thread-local is gone, a fresh [`isa`] is built instead (same flags, same code).
+/// thread-local is gone, a new [`isa`] is built instead (same flags, same code).
 pub(crate) fn shared_isa() -> Result<OwnedTargetIsa, NativeRefusal> {
 	SHARED_ISA
 		.try_with(|cell| cell.get_or_init(isa).clone())
@@ -876,14 +876,14 @@ pub(crate) fn diagnose_machine_only(region: &Region) -> Result<Listing, NativeRe
 	Ok(lower(region, 0, Gates::MachineOnly)?.2)
 }
 
-/// P3a agreement tests: every gate, with a FRESH ISA (`fresh`) or the thread's shared one.
+/// P3a agreement tests: every gate, with an uncached ISA (`new`) or the thread's shared one.
 /// Returns the bytes, alignment and listing; never a loadable [`Compiled`].
 #[cfg(test)]
 pub(crate) fn diagnose_isa(
 	region: &Region,
-	fresh: bool,
+	uncached_isa: bool,
 ) -> Result<(Vec<u8>, u64, Listing), NativeRefusal> {
-	let isa = if fresh { isa()? } else { shared_isa()? };
+	let isa = if uncached_isa { isa()? } else { shared_isa()? };
 	lower_with(region, 0, Gates::All, &isa)
 }
 

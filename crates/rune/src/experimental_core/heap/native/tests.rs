@@ -14,7 +14,7 @@ fn store() -> Store {
 	.unwrap()
 }
 
-/// A fresh RangeIterator over `start..end` (the Range itself stays alive, as in a script).
+/// A new RangeIterator over `start..end` (the Range itself stays alive, as in a script).
 fn range_iterator(s: &mut Store, start: i64, end: i64) -> (Value, Value) {
 	let range = s.range(start, end).unwrap();
 	let iterator = s.iterator(range).unwrap();
@@ -140,7 +140,7 @@ fn b1_store_range_setter_refusals_mutate_nothing() {
 	);
 	assert_eq!(s.state_for_test(), before);
 
-	// Unreachable `new` at the boundaries (checked on fresh stores; no panic with overflow
+	// Unreachable `new` at the boundaries (checked on new stores; no panic with overflow
 	// checks on).
 	let unreachable_cases: [((i64, i64), i64); 6] = [
 		((0, 10), -1),

@@ -1,7 +1,7 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "S2 frozen fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "S2 frozen execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -31,7 +31,7 @@ fn canonical_record(record: &Json) -> Json {
 
 /// `frozen` is the pinned stock row; `stock` is its S2 replacement, or the same
 /// row where no Object key was moved.
-fn verify_fresh_case(
+fn verify_case(
 	index: usize,
 	case: &Json,
 	frozen: &Json,

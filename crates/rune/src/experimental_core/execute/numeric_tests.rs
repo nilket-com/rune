@@ -2,7 +2,7 @@
 use super::*;
 use crate::experimental_core::code::{Builder, FIRST_INTRINSIC_ID};
 use crate::experimental_core::heap::Limits;
-use crate::function::fresh_numeric::Call;
+use crate::function::numeric::Call;
 
 fn loc() -> Location {
 	Location {

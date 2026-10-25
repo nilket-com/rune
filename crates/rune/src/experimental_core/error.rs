@@ -1,4 +1,4 @@
-//! Errors of the fresh core.
+//! Errors of the execution core.
 //!
 //! An [`Error`] is a small `Copy` value, so reporting an allocation failure allocates
 //! nothing. Refusals before execution carry a [`Refusal`] category; run-time errors carry
@@ -11,7 +11,7 @@ pub use super::detail::{
 
 /// The class of an error.
 ///
-/// Run-time classes are coarser than the stock VM's error kinds: several stock kinds map
+/// Run-time classes are coarser than the legacy VM's error kinds: several stock kinds map
 /// to one class (a declared difference).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ErrorKind {
@@ -85,7 +85,7 @@ pub enum Refusal {
 	Call,
 	/// A closure.
 	CallClosure,
-	/// The program exceeds a fresh-core capacity: 16 MiB of code, 65,536
+	/// The program exceeds a execution capacity: 16 MiB of code, 65,536
 	/// functions, 65,536 frame slots or 4,096 host descriptors.
 	CodeLimit,
 	/// A condition form outside the subset.
@@ -118,7 +118,7 @@ pub enum Refusal {
 	Impl,
 	/// An import. Reserved: not currently produced.
 	Import,
-	/// A labelled block.
+	/// A labeled block.
 	LabelledBlock,
 	/// A `break` or `continue` outside a loop it can reach.
 	LoopControl,
@@ -152,7 +152,7 @@ pub enum Refusal {
 	/// identities, 256-byte names, 256 KiB of names per process, never reclaimed; see
 	/// [`Nominal`](crate::experimental_core::value::Nominal)).
 	TypeTable,
-	/// A constant that cannot be resolved for the fresh core.
+	/// A constant that cannot be resolved for the execution core.
 	UnresolvedConstant,
 	/// A call of a function that is not part of the program.
 	UnresolvedFunction,
@@ -240,7 +240,7 @@ impl Location {
 	};
 }
 
-/// An error of the fresh core: a refusal before execution or a run-time error.
+/// An error of the execution core: a refusal before execution or a run-time error.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Error {
 	/// The error class.
@@ -306,5 +306,5 @@ impl From<crate::alloc::Error> for Error {
 	}
 }
 
-/// The result type of the fresh core.
+/// The result type of the execution core.
 pub type Result<T> = core::result::Result<T, Error>;

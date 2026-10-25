@@ -1,4 +1,4 @@
-//! D2 catalogue: compile both engines first, then compare owned diagnostics.
+//! D2 catalog: compile both engines first, then compare owned diagnostics.
 //!
 //! Both: the 50 pinned message/span rows in diagnostics_messages.tsv, all ten
 //! assignment symbols, and the mutation/read-lease case. Runtime classes remain
@@ -15,7 +15,7 @@
 //! retained-scratch preflights: they can precede later child errors, without
 //! globally outranking earlier errors. S owns dynamic missing-key storage.
 //! Existing hand-built-code oracle tests retain all pre-D2 metadata assertions;
-//! this catalogue and pure rendering tests check the newly added detail field.
+//! this catalog and pure rendering tests check the newly added detail field.
 use crate::experimental_core::{
 	error::ErrorKind,
 	execute::Executor,
@@ -34,9 +34,9 @@ fn compile(context: &Context, text: &str) -> (crate::runtime::Vm, frontend::Prog
 		.unwrap_or_else(|e| panic!("stock must compile {text}: {e:?}"));
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(text).unwrap()).unwrap();
-	let fresh = frontend::compile(&mut sources, context, &mut Diagnostics::new(), 73)
-		.unwrap_or_else(|e| panic!("fresh must admit {text}: {e:?}"));
-	(stock, fresh)
+	let execution = frontend::compile(&mut sources, context, &mut Diagnostics::new(), 73)
+		.unwrap_or_else(|e| panic!("execution must admit {text}: {e:?}"));
+	(stock, execution)
 }
 
 #[test]
@@ -44,10 +44,10 @@ fn compile(context: &Context, text: &str) -> (crate::runtime::Vm, frontend::Prog
 	miri,
 	ignore = "full default-module frontend compilation; opt in explicitly"
 )]
-fn diagnostic_catalogue_both_engines() {
+fn diagnostic_catalog_both_engines() {
 	use ErrorKind::*;
 	let context = Context::with_default_modules().unwrap();
-	// Every row below is Both: no silent stock-only or fresh-only escape hatch.
+	// Every row below is Both: no silent stock-only or new-only escape hatch.
 	let rows = [
 		("binary", "1 + true", Type, "primitive operation"),
 		("multiline", "1 +\n true", Type, "primitive operation"),
@@ -139,7 +139,7 @@ fn diagnostic_catalogue_both_engines() {
 		("condition", "if 1 {}", Type, "execute"),
 		("type-condition", "if i64 {}", Type, "execute"),
 		("function-condition", "let f = g; if f {}", Type, "execute"),
-		// S-index: stock ValueToIntegerCoercionError remains a coercion class.
+		// S-index: runtime ValueToIntegerCoercionError remains a coercion class.
 		("negative-index", "[1][-1]", IntegerCoercion, "execute"),
 		("non-number-index", "[1][1.5]", Type, "execute"),
 		("bounds", "[1, 2][5]", IndexOutOfBounds, "store"),
@@ -189,21 +189,21 @@ fn diagnostic_catalogue_both_engines() {
 		let source =
 			std::format!("pub fn target() {{\n\tlet unused = ();\n\t{body}\n}}\nfn g(a) {{ a }}");
 		let (mut stock, program) = compile(&context, &source);
-		let stock_error = stock.call(["target"], ()).unwrap_err();
-		let at = stock_error.first_location().unwrap();
+		let runtime_error = stock.call(["target"], ()).unwrap_err();
+		let at = runtime_error.first_location().unwrap();
 		let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
-		let stock_span = inst.span.range();
+		let legacy_span = inst.span.range();
 		let source_id = inst.source_id.into_index();
-		let text = stock_error.to_string();
+		let legacy_text = runtime_error.to_string();
 		let pinned = include_str!("diagnostics_messages.tsv")
 			.lines()
 			.skip(1)
 			.map(|line| line.split('\t').collect::<std::vec::Vec<_>>())
 			.find(|row| row[0] == id)
 			.unwrap();
-		assert_eq!(text, pinned[1], "pinned stock text: {id}");
+		assert_eq!(legacy_text, pinned[1], "pinned stock text: {id}");
 		assert_eq!(
-			stock_span,
+			legacy_span,
 			pinned[2].parse::<usize>().unwrap()..pinned[3].parse::<usize>().unwrap(),
 			"pinned span: {id}"
 		);
@@ -218,25 +218,25 @@ fn diagnostic_catalogue_both_engines() {
 				100_000,
 			)
 			.unwrap_err();
-		let fresh_text = failure.message(&program).to_string();
+		let text = failure.message(&program).to_string();
 		let at = failure.error.location.unwrap();
 		if (
-			fresh_text.as_str(),
+			text.as_str(),
 			failure.error.kind,
 			failure.error.operation,
 			at.start as usize..at.end as usize,
 			at.source as usize,
 			at.revision,
 		) != (
-			text.as_str(),
+			legacy_text.as_str(),
 			kind,
 			operation,
-			stock_span.clone(),
+			legacy_span.clone(),
 			source_id,
 			73,
 		) {
 			failures.push(std::format!(
-				"{id}: stock={text:?} {stock_span:?}; fresh={fresh_text:?} {:?} {at:?} op={}",
+				"{id}: stock={legacy_text:?} {legacy_span:?}; execution={text:?} {:?} {at:?} op={}",
 				failure.error.kind,
 				failure.error.operation
 			));
@@ -278,7 +278,7 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 		let (mut stock, program) = compile(&context, &source);
 		let stock = stock.call(["target"], ()).unwrap_err();
 		let at = stock.first_location().unwrap();
-		let span = at
+		let legacy_actual_span = at
 			.unit
 			.debug_info()
 			.unwrap()
@@ -309,8 +309,8 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 			d1_expected,
 			"{id}"
 		);
-		let (stock_text, stock_span, fresh_span, reason) = match id {
-			"iter" => ("Missing instance function `0x57a2b2f073daaf28` for `std::i64`",28..29,19..32,"stock points at iterable; fresh points at the for expression; hash wording retained"),
+		let (legacy_text, legacy_span, span, reason) = match id {
+			"iter" => ("Missing instance function `0x57a2b2f073daaf28` for `std::i64`",28..29,19..32,"stock points at iterable; execution points at the for expression; hash wording retained"),
 			"len" => ("Missing instance function `0x201f597bd58fafa8` for `std::i64`",30..37,30..37,"instance-function hash converged exactly"),
 			"push" => ("Missing instance function `0x3fd16e7ebc3afb1a` for `std::i64`",30..39,30..39,"instance-function hash converged exactly"),
 			"display" => ("Missing protocol function `DISPLAY_FMT` for `std::vec::Vec`",33..36,33..36,"D1b maps the failing expression inside format!"),
@@ -321,21 +321,21 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 			"len" | "push" => "Type `std::i64` has no matching method",
 			"iter" => "Cannot iterate over `std::i64`",
 			"display" => "`std::vec::Vec` cannot be formatted with `{}`",
-			_ => stock_text,
+			_ => legacy_text,
 		};
 		assert_eq!(stock.into_kind().to_string(), d1_stock, "{id}");
-		assert_eq!(span, stock_span, "{id}");
+		assert_eq!(legacy_actual_span, legacy_span, "{id}");
 		let at = failure.error.location.unwrap();
 		#[cfg(not(miri))]
 		if id == "display" {
-			let stock_site = std::format!("0:{}:{}", stock_span.start, stock_span.end);
-			let fresh_site = std::format!("0:{}:{}", at.start, at.end);
+			let legacy_site = std::format!("0:{}:{}", legacy_span.start, legacy_span.end);
+			let site = std::format!("0:{}:{}", at.start, at.end);
 			assert!(super::gap_hunt::d1b_diagnostics::intentional_site_before(
 				"diagnostics",
 				"display",
 				&source,
 				"stock",
-				&stock_site,
+				&legacy_site,
 				"0:0:36",
 			)
 			.is_some());
@@ -344,15 +344,15 @@ fn retained_diagnostics_and_semantic_gaps_are_explicit() {
 				"display",
 				&source,
 				"fresh",
-				&fresh_site,
+				&site,
 				"0:19:37",
 			)
 			.is_some());
 		}
-		assert_eq!(at.start as usize..at.end as usize, fresh_span, "{id}");
+		assert_eq!(at.start as usize..at.end as usize, span, "{id}");
 		assert_eq!((at.source, at.revision), (0, 73));
 	}
-	// Function clone succeeds. Stock Debug prints an instruction offset; fresh
+	// Function clone succeeds. Stock Debug prints an instruction offset; new
 	// prints the function index instead, as its closure form does.
 	let source="fn g(a) {a} pub fn target() { let f=g; f.clone() } pub fn call_clone() { let f=g.clone(); f(7) }";
 	let (mut stock, program) = compile(&context, source);
@@ -409,7 +409,7 @@ fn diagnostics_in_a_callee_keep_full_spans_and_call_chain_after_cleanup() {
 	let at = error.first_location().unwrap();
 	let info = at.unit.debug_info().unwrap();
 	let span = info.instruction_at(at.ip).unwrap().span.range();
-	let chain: std::vec::Vec<_> = at
+	let legacy_chain: std::vec::Vec<_> = at
 		.frames
 		.iter()
 		.rev()
@@ -446,7 +446,7 @@ fn diagnostics_in_a_callee_keep_full_spans_and_call_chain_after_cleanup() {
 	assert_eq!(failure.error.message(&program).to_string(), expected);
 	let at = failure.error.location.unwrap();
 	assert_eq!(at.start as usize..at.end as usize, span);
-	let fresh_chain: std::vec::Vec<_> = failure
+	let chain: std::vec::Vec<_> = failure
 		.call_chain
 		.iter()
 		.map(|at| {
@@ -454,19 +454,15 @@ fn diagnostics_in_a_callee_keep_full_spans_and_call_chain_after_cleanup() {
 			at.start as usize..at.end as usize
 		})
 		.collect();
-	assert_eq!(fresh_chain, chain);
-	assert_eq!(fresh_chain.len(), 2);
+	assert_eq!(chain, legacy_chain);
+	assert_eq!(chain.len(), 2);
 	assert!(executor.is_idle());
 	assert_eq!(store.live_entries(), 0);
 	store.close().unwrap();
 	assert_eq!(failure.error.message(&program).to_string(), expected);
 }
 
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 #[test]
 #[cfg_attr(miri, ignore = "native generated execution and frontend compilation")]
 fn native_replay_preserves_diagnostic_detail() {
@@ -524,7 +520,7 @@ fn native_replay_preserves_diagnostic_detail() {
 	miri,
 	ignore = "full default-module frontend compilation; opt in explicitly"
 )]
-fn compile_time_refusals_are_catalogued_before_execution() {
+fn compile_time_refusals_are_cataloged_before_execution() {
 	use crate::experimental_core::error::Refusal;
 	let context = Context::with_default_modules().unwrap();
 	let (source, refusal) = ("pub fn target() { async { 1 } }", Refusal::AsyncBlock);
@@ -541,7 +537,7 @@ fn compile_time_refusals_are_catalogued_before_execution() {
 	sources.insert(Source::memory(source).unwrap()).unwrap();
 	let error = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 73)
 		.err()
-		.expect("fresh refusal");
+		.expect("execution refusal");
 	assert_eq!(error.refusal, Some(refusal), "{source}");
 	assert_eq!(error.kind, ErrorKind::Unsupported);
 }
@@ -558,12 +554,12 @@ fn access_conflict_wording_distinguishes_mutation_and_invalidated_payload() {
 		"pub fn target() { let v = [1]; for x in v { v.push(2); } }",
 	);
 	let stock = stock.call(["target"], ()).unwrap_err();
-	let stock_span = stock.first_location().unwrap();
-	let stock_span = stock_span
+	let legacy_span = stock.first_location().unwrap();
+	let legacy_span = legacy_span
 		.unit
 		.debug_info()
 		.unwrap()
-		.instruction_at(stock_span.ip)
+		.instruction_at(legacy_span.ip)
 		.unwrap()
 		.span
 		.range();
@@ -587,7 +583,7 @@ fn access_conflict_wording_distinguishes_mutation_and_invalidated_payload() {
 		stock.to_string()
 	);
 	let at = failure.error.location.unwrap();
-	assert_eq!(at.start as usize..at.end as usize, stock_span);
+	assert_eq!(at.start as usize..at.end as usize, legacy_span);
 	let value = store.string("invalidated").unwrap();
 	store.invalidate(value).unwrap();
 	let error = store.text(value).unwrap_err();
@@ -687,16 +683,16 @@ fn a_compile_error_is_not_compared_as_a_runtime_error() {
 	assert_eq!(fatal.span().unwrap().range(), start..start + 7);
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(source).unwrap()).unwrap();
-	let mut fresh_diagnostics = Diagnostics::new();
-	let error = frontend::compile(&mut sources, &context, &mut fresh_diagnostics, 73)
+	let mut diagnostics = Diagnostics::new();
+	let error = frontend::compile(&mut sources, &context, &mut diagnostics, 73)
 		.err()
 		.expect("frontend refusal");
 	assert_eq!(error.refusal, Some(Refusal::FrontendDiagnostic));
-	let Diagnostic::Fatal(fresh) = &fresh_diagnostics.diagnostics()[0] else {
-		panic!("fresh frontend fatal");
+	let Diagnostic::Fatal(execution) = &diagnostics.diagnostics()[0] else {
+		panic!("execution frontend fatal");
 	};
-	assert_eq!(fresh.to_string(), fatal.to_string());
-	assert_eq!(fresh.span().unwrap(), fatal.span().unwrap());
+	assert_eq!(execution.to_string(), fatal.to_string());
+	assert_eq!(execution.span().unwrap(), fatal.span().unwrap());
 }
 
 #[test]
@@ -934,7 +930,7 @@ fn vector_dynamic_set_borrows_before_converting_the_index() {
 #[test]
 #[cfg_attr(
 	miri,
-	ignore = "stock/fresh frontend witness; pure ownership checks cover Miri"
+	ignore = "stock/execution frontend witness; pure ownership checks cover Miri"
 )]
 fn field_compound_leased_nonrecords_and_string_alias_match_stock() {
 	let context = Context::with_default_modules().unwrap();
@@ -944,13 +940,13 @@ fn field_compound_leased_nonrecords_and_string_alias_match_stock() {
 	] {
 		let source = std::format!("pub fn target() {{ {body} }}");
 		let (mut stock, program) = compile(&context, &source);
-		let stock_error = stock.call(["target"], ()).unwrap_err();
-		let expected = stock_error.into_kind().to_string();
+		let runtime_error = stock.call(["target"], ()).unwrap_err();
+		let expected = runtime_error.into_kind().to_string();
 		println!("stock {body}: {expected}");
 		assert!(expected.starts_with("Field `f` not available on `std::"));
 		let mut store = Store::new(Limits::default()).unwrap();
 		let mut executor = Executor::new().unwrap();
-		let fresh = executor
+		let execution = executor
 			.invoke(
 				&program,
 				&mut store,
@@ -959,8 +955,8 @@ fn field_compound_leased_nonrecords_and_string_alias_match_stock() {
 				1000,
 			)
 			.unwrap_err();
-		assert_eq!(fresh.error.kind, ErrorKind::Type);
-		assert_eq!(fresh.message(&program).to_string(), expected);
+		assert_eq!(execution.error.kind, ErrorKind::Type);
+		assert_eq!(execution.message(&program).to_string(), expected);
 		assert_eq!(store.live_entries(), 0);
 	}
 	let source = "pub fn target() { let x=#{f:\"a\"}; let alias=x.f; x.f += \"b\"; alias }";
@@ -985,7 +981,7 @@ fn field_compound_leased_nonrecords_and_string_alias_match_stock() {
 }
 
 #[test]
-#[cfg_attr(miri, ignore = "stock/fresh frontend identity witness")]
+#[cfg_attr(miri, ignore = "stock/execution frontend identity witness")]
 fn iteration_nominal_and_function_hashes_match_lowered_stock_values() {
 	let context = Context::with_default_modules().unwrap();
 	for source in [
@@ -993,7 +989,7 @@ fn iteration_nominal_and_function_hashes_match_lowered_stock_values() {
 		"pub fn target() { target }",
 	] {
 		let (mut stock, program) = compile(&context, source);
-		let stock_value = stock.call(["target"], ()).unwrap();
+		let legacy_value = stock.call(["target"], ()).unwrap();
 		let mut store = Store::new(Limits::default()).unwrap();
 		let mut executor = Executor::new().unwrap();
 		let root = executor
@@ -1012,7 +1008,7 @@ fn iteration_nominal_and_function_hashes_match_lowered_stock_values() {
 			}
 			_ => name.builtin_hash().unwrap(),
 		};
-		assert_eq!(hash, stock_value.type_hash());
+		assert_eq!(hash, legacy_value.type_hash());
 		store.root_release(root).unwrap();
 		assert_eq!(store.live_entries(), 0);
 	}
@@ -1167,7 +1163,7 @@ fn d1d_numeric_context_slice_both_engines() {
 		assert_eq!(
 			failure.message(&program).to_string(),
 			expected,
-			"fresh {source}"
+			"execution {source}"
 		);
 		assert!(matches!(
 			failure.error.kind,
@@ -1229,16 +1225,16 @@ fn d1e_logical_frames_and_rendering_slice() {
 					.map(|at| (at.source_id.into_index(), at.span.range())),
 			)
 		};
-		let stock_frames = stock
+		let legacy_frames = stock
 			.logical_frames()
 			.map(project)
 			.collect::<std::vec::Vec<_>>();
-		let fresh_frames = failure
+		let frames = failure
 			.logical_frames()
 			.map(project)
 			.collect::<std::vec::Vec<_>>();
-		assert_eq!(stock_frames, fresh_frames, "{source}");
-		assert_eq!(stock_frames[0].0, LogicalFrameRole::Origin);
+		assert_eq!(legacy_frames, frames, "{source}");
+		assert_eq!(legacy_frames[0].0, LogicalFrameRole::Origin);
 		if source.contains("b.len()") {
 			// Existing unrelated method provenance is not manufactured by D1e.
 			assert!(failure.invocation_context().next().is_none());
@@ -1261,11 +1257,11 @@ fn d1e_logical_frames_and_rendering_slice() {
 		}
 		let mut sources = Sources::new();
 		sources.insert(Source::memory(source).unwrap()).unwrap();
-		let stock_text = stock.diagnostic(&sources).to_string();
-		let fresh_text = failure.diagnostic(&program, &sources).to_string();
-		assert_eq!(stock_text, fresh_text, "{source}");
-		assert!(stock_text.contains("\n  at "));
-		std::println!("D1E source={source}\n{stock_text}");
+		let legacy_text = stock.diagnostic(&sources).to_string();
+		let text = failure.diagnostic(&program, &sources).to_string();
+		assert_eq!(legacy_text, text, "{source}");
+		assert!(legacy_text.contains("\n  at "));
+		std::println!("D1E source={source}\n{legacy_text}");
 		assert!(failure.cleanup_error.is_none());
 		assert_eq!(store.live_entries(), 0);
 		let again = executor
@@ -1277,7 +1273,7 @@ fn d1e_logical_frames_and_rendering_slice() {
 				100_000,
 			)
 			.unwrap_err();
-		assert_eq!(again.diagnostic(&program, &sources).to_string(), fresh_text);
+		assert_eq!(again.diagnostic(&program, &sources).to_string(), text);
 		assert_eq!(store.live_entries(), 0);
 	}
 	assert_eq!(

@@ -128,7 +128,7 @@ fn script_numeric_names_close_method_admission_in_every_indexing_scope() {
 	miri,
 	ignore = "compiles source and standard Context; native CI checks indexing"
 )]
-fn later_loaded_impl_closes_name_before_any_fresh_lowering() {
+fn later_loaded_impl_closes_name_before_any_lowering() {
 	for name in ["abs", "round", "powf"] {
 		let mut loader = Loader { loads: 0, name };
 		let (result, diagnostic) = indexed(

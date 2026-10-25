@@ -1,4 +1,4 @@
-// Live differential over every method name a fresh fast path recognizes: a
+// Live differential over every method name a new fast path recognizes: a
 // program that defines a script method of that name either refuses or matches
 // stock. It reads no frozen observation.
 
@@ -12,23 +12,23 @@ fn fast_path_names() -> Vec<&'static str> {
 		"fold", "reduce", "find", "any", "all", "iter",
 	];
 	names.extend(
-		crate::function::fresh_text::Method::ALL
+		crate::function::text::Method::ALL
 			.iter()
 			.map(|m| m.name()),
 	);
 	names.extend(
-		crate::function::fresh_number::Method::ALL
+		crate::function::number::Method::ALL
 			.iter()
 			.map(|m| m.name()),
 	);
-	names.extend(crate::function::fresh_iter::Name::ALL.iter().map(|n| n.as_str()));
+	names.extend(crate::function::iter::Name::ALL.iter().map(|n| n.as_str()));
 	names.sort_unstable();
 	names.dedup();
 	names
 }
 
 /// One engine's outcome, reduced to what both engines must agree on.
-fn shadow_stock(program: &str) -> Json {
+fn legacy_shadow(program: &str) -> Json {
 	let mut sources = Sources::new();
 	sources
 		.insert(Source::new("shadow.rn", program).unwrap())
@@ -41,12 +41,12 @@ fn shadow_stock(program: &str) -> Json {
 		.build_vm()
 		.unwrap();
 	match crate::runtime::budget::with(200_000, || vm.call(["main"], ())).call() {
-		Ok(value) => json!({"value":graph(&value)}),
+		Ok(value) => json!({"value":runtime_graph(&value)}),
 		Err(e) => json!({"error":error(&e, &sources)["class"]}),
 	}
 }
 
-fn shadow_fresh(program: &str) -> Option<Json> {
+fn shadow(program: &str) -> Option<Json> {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -68,11 +68,11 @@ fn shadow_fresh(program: &str) -> Option<Json> {
 	Some(match executor.invoke(&built, &mut store, main, &[], 200_000) {
 		Ok(root) => {
 			let value = store.import(&root).unwrap();
-			let graph = fresh_graph(&mut store, value);
+			let runtime_graph = graph(&mut store, value);
 			store.root_release(root).unwrap();
-			json!({"value":graph})
+			json!({"value":runtime_graph})
 		}
-		Err(failure) => json!({"error":fresh_failure(&failure, &built, &sources)["class"]}),
+		Err(failure) => json!({"error":self::failure(&failure, &built, &sources)["class"]}),
 	})
 }
 
@@ -111,11 +111,11 @@ fn shadow_contract() {
 				format!("{named}pub fn main(){{H{{h:1}}.{call}.map(|v|v).collect::<Vec>()}}"),
 				format!("{named}pub fn main(){{H{{h:1}}.{call}.contains(3)}}"),
 			] {
-				let Some(fresh) = shadow_fresh(&program) else {
+				let Some(execution) = shadow(&program) else {
 					continue;
 				};
 				admitted += 1;
-				assert_eq!(fresh, shadow_stock(&program), "{program}");
+				assert_eq!(execution, legacy_shadow(&program), "{program}");
 			}
 		}
 	}

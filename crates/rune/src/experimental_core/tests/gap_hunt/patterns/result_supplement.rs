@@ -295,12 +295,12 @@ fn matrix_labels_are_unique_and_disjoint_from_frozen_c3() {
 }
 #[test]
 #[ignore = "C4 stock supplement source checkpoint: explicit peer GO and new GAP_OUT"]
-fn stock_probe() {
+fn legacy_probe() {
 	probe(cases(), COUNT);
 }
 #[test]
 #[ignore = "C4 stock replay: pinned GAP_FROZEN, explicit peer GO and new GAP_OUT"]
-fn stock_replay() {
+fn legacy_replay() {
 	let frozen =
 		fs::read_to_string(std::env::var_os("GAP_FROZEN").expect("pinned frozen TSV required"))
 			.unwrap();
@@ -309,7 +309,7 @@ fn stock_replay() {
 
 #[test]
 #[ignore = "C4 exact frozen stock contract; bounded children, new GAP_OUT"]
-fn stock_contract() {
+fn legacy_contract() {
 	replay(include_str!("../../result_patterns_stock.tsv"));
 }
 
@@ -358,7 +358,7 @@ fn replay(frozen: &str) {
 }
 
 // Expectations are label-exact; no wildcard nominal/refusal exemption.
-fn fresh_refusal(label: &str) -> Option<&'static str> {
+fn refusal(label: &str) -> Option<&'static str> {
 	match label {
 		"c4/shape/Ok/Ok()" | "c4/shape/Err/Err()" => Some("Some(FrontendDiagnostic)"),
 		"c4/shape/Ok/Ok(x,y)" | "c4/shape/Err/Err(x,y)" => Some("Some(Match)"),
@@ -373,12 +373,12 @@ fn fresh_refusal(label: &str) -> Option<&'static str> {
 	}
 }
 #[test]
-#[ignore = "C4 fresh supplement contract; bounded children, new GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C4 execution supplement contract; bounded children, new GAP_OUT"]
+fn contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
 	let scratch = Scratch(
-		std::env::temp_dir().join(format!("rune-c4-fresh-contract-{}", std::process::id())),
+		std::env::temp_dir().join(format!("rune-c4-execution-contract-{}", std::process::id())),
 	);
 	fs::create_dir(&scratch.0).unwrap();
 	let frozen: Vec<_> = include_str!("../../result_patterns_stock.tsv")
@@ -422,7 +422,7 @@ fn fresh_contract() {
 				rule["stock_row_sha256"],
 				hex(&Sha256::digest(row.join("\t").as_bytes()))
 			);
-			assert_eq!(rule["previous_refusal"], fresh_refusal(label).unwrap());
+			assert_eq!(rule["previous_refusal"], refusal(label).unwrap());
 		}
 		if let Some(rule) = c15b.get(*label) {
 			use sha2::{Digest, Sha256};
@@ -437,9 +437,9 @@ fn fresh_contract() {
 				rule["source_sha256"],
 				hex(&sha2::Sha256::digest(source.as_bytes()))
 			);
-			assert!(fresh_refusal(label).is_some());
+			assert!(refusal(label).is_some());
 		}
-		if let Some(class) = fresh_refusal(label).filter(|_| admitted.is_none()) {
+		if let Some(class) = refusal(label).filter(|_| admitted.is_none()) {
 			assert_eq!((actual[0], actual[1]), ("refused", class), "{label}");
 			assert_eq!(run.stdout, b"\nrunning 1 test\n");
 			assert!(run.stderr.is_empty());
@@ -447,7 +447,7 @@ fn fresh_contract() {
 			continue;
 		}
 		if label.starts_with("c4/fuel/") {
-			// Stock N is deliberately not used as fresh fuel: this is full-budget source behavior.
+			// Stock N is deliberately not used as new fuel: this is full-budget source behavior.
 			let (value, stdout) = match label.split('/').nth(2).unwrap() {
 				"guards" => ("i64:7:7", b"\nrunning 1 test\nfirst\nsecond\n".as_slice()),
 				"nested" => ("i64:15:15", b"\nrunning 1 test\n".as_slice()),
@@ -488,7 +488,7 @@ fn fresh_contract() {
 		} else {
 			Vec::new()
 		};
-		fs::write(out.join(format!("{id}.fresh.site")), &site).unwrap();
+		fs::write(out.join(format!("{id}.execution.site")), &site).unwrap();
 		assert_eq!(hex(&site), row[6], "{label}: site");
 		if c16e_rule.is_some_and(|r| r["policy"] == "Policy-presentation") {
 			presentation += 1;
@@ -497,15 +497,15 @@ fn fresh_contract() {
 		}
 	}
 	assert_eq!((exact, presentation, refused, full_budget), (183, 2, 4, 75));
-	fs::write(out.join("summary.txt"),"183 exact;2 source-pinned policy-presentation;4 explicit refusals;75 full-fresh-budget source checks (no numeric stock fuel parity)\n").unwrap();
+	fs::write(out.join("summary.txt"),"183 exact;2 source-pinned policy-presentation;4 explicit refusals;75 full-execution-budget source checks (no numeric stock fuel parity)\n").unwrap();
 	contract_completed("fresh", COUNT);
 }
 #[test]
 #[ignore = "C4 both-engine frozen contract; bounded children, new GAP_OUT"]
-fn contract() {
+fn check_contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
-	for (engine, test) in [("stock", "stock_contract"), ("fresh", "fresh_contract")] {
+	for (engine, test) in [("stock", "legacy_contract"), ("fresh", "contract")] {
 		let result = Command::new(std::env::current_exe().unwrap())
 			.args([
 				"--exact",

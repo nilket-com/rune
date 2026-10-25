@@ -1,9 +1,9 @@
 //! Macro certification under replacement.
 //!
-//! The fresh core admits selected std formatting and assertion macros, certified
+//! The execution core admits selected std formatting and assertion macros, certified
 //! when the std modules register their actual handlers. A host may install
 //! another module with a macro at the same path afterwards; the stock `Context` then stores
-//! the replacing handler. The fresh core must refuse such a call at compile time, before the
+//! the replacing handler. The execution core must refuse such a call at compile time, before the
 //! uncertified handler can run.
 //!
 //! Each custom macro counts its calls, so a test can tell whether the host callback ran.
@@ -34,7 +34,7 @@ fn counting_macro(path: &str, name: &'static str, calls: &Arc<AtomicUsize>) -> M
 	module
 }
 
-fn fresh_compile(context: &Context, text: &str) -> bool {
+fn compile(context: &Context, text: &str) -> bool {
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(text).unwrap()).unwrap();
 	frontend::compile(&mut sources, context, &mut Diagnostics::new(), 1).is_ok()
@@ -86,7 +86,7 @@ fn output_macro(name: &'static str, calls: Option<&Arc<AtomicUsize>>) -> Module 
 			}
 			_ => unreachable!(),
 		}
-		module.fresh_mark_builtin_macro();
+		module.mark_builtin_macro();
 	}
 	module
 }
@@ -102,9 +102,9 @@ fn output_macro_replacement_restore_partial_failure_and_unique_skip() {
 		let calls = Arc::new(AtomicUsize::new(0));
 		let source = output_source(name);
 		let mut context = Context::with_default_modules().unwrap();
-		assert!(fresh_compile(&context, &source));
+		assert!(compile(&context, &source));
 		context.install(output_macro(name, Some(&calls))).unwrap();
-		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		refusal(&context, &source, Refusal::FrontendDiagnostic);
 		if name == "panic" {
 			context
 				.install(crate::modules::core::module().unwrap())
@@ -114,9 +114,9 @@ fn output_macro_replacement_restore_partial_failure_and_unique_skip() {
 				.install(crate::modules::io::module(true).unwrap())
 				.unwrap();
 		}
-		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		refusal(&context, &source, Refusal::FrontendDiagnostic);
 		context.install(output_macro(name, None)).unwrap();
-		assert!(fresh_compile(&context, &source));
+		assert!(compile(&context, &source));
 		let mut collision = if name == "panic" {
 			Module::with_crate("std").unwrap()
 		} else {
@@ -127,7 +127,7 @@ fn output_macro_replacement_restore_partial_failure_and_unique_skip() {
 		let mut partial = output_macro(name, Some(&calls));
 		partial.function("c2_collision", || {}).build().unwrap();
 		assert!(context.install(partial).is_err());
-		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		refusal(&context, &source, Refusal::FrontendDiagnostic);
 		assert_eq!(calls.load(Ordering::SeqCst), 0);
 	}
 }
@@ -146,9 +146,9 @@ fn output_custom_macro_first_is_overwritten_only_by_actual_builtin() {
 		} else {
 			crate::Hash::type_hash(crate::item!(::std::io::dbg))
 		};
-		assert!(!context.fresh_builtin_macro(hash));
+		assert!(!context.builtin_macro(hash));
 		context.install(output_macro(name, None)).unwrap();
-		assert!(context.fresh_builtin_macro(hash));
+		assert!(context.builtin_macro(hash));
 		assert_eq!(calls.load(Ordering::SeqCst), 0);
 	}
 }
@@ -190,15 +190,15 @@ fn output_callee_custom_first_and_failed_replacement_stay_identity_bound() {
 				.is_err());
 		}
 		first.install(output_macro(name, None)).unwrap();
-		fresh_refusal(&first, &output_source(name), Refusal::Native);
+		refusal(&first, &output_source(name), Refusal::Native);
 		assert!(!match name {
-			"panic" => first.fresh_panic(),
-			"print" => first.fresh_stdio_print(),
+			"panic" => first.panic(),
+			"print" => first.stdio_print(),
 			_ => unreachable!(),
 		});
 		let mut after = Context::with_default_modules().unwrap();
 		assert!(after.install(output_callee(name, &calls)).is_err());
-		assert!(fresh_compile(&after, &output_source(name)));
+		assert!(compile(&after, &output_source(name)));
 		assert_eq!(calls.load(Ordering::SeqCst), 0);
 	}
 }
@@ -223,9 +223,9 @@ fn output_panic_admitted_but_alternate_print_and_dbg_contexts_refuse_before_outp
 				.install(crate::modules::capture_io::module(&capture).unwrap())
 				.unwrap();
 		}
-		assert!(fresh_compile(&context, &output_source("panic")));
+		assert!(compile(&context, &output_source("panic")));
 		for name in ["print", "dbg"] {
-			fresh_refusal(
+			refusal(
 				&context,
 				&output_source(name),
 				if name == "print" {
@@ -235,7 +235,7 @@ fn output_panic_admitted_but_alternate_print_and_dbg_contexts_refuse_before_outp
 				},
 			);
 		}
-		fresh_refusal(
+		refusal(
 			&context,
 			"pub fn main(){print!(\"before\");panic!(\"after\");}",
 			Refusal::Native,
@@ -257,10 +257,7 @@ fn builtin_then_custom_format_is_refused_before_the_custom_handler_runs() {
 	context
 		.install(counting_macro("fmt", "format", &calls))
 		.unwrap();
-	assert!(
-		!fresh_compile(&context, FORMAT),
-		"fresh compile admitted it"
-	);
+	assert!(!compile(&context, FORMAT), "execution compile admitted it");
 	assert_eq!(calls.load(Ordering::SeqCst), 0, "the custom handler ran");
 }
 
@@ -275,10 +272,7 @@ fn builtin_then_custom_println_is_refused_before_the_custom_handler_runs() {
 	context
 		.install(counting_macro("io", "println", &calls))
 		.unwrap();
-	assert!(
-		!fresh_compile(&context, PRINTLN),
-		"fresh compile admitted it"
-	);
+	assert!(!compile(&context, PRINTLN), "execution compile admitted it");
 	assert_eq!(calls.load(Ordering::SeqCst), 0, "the custom handler ran");
 }
 
@@ -298,10 +292,7 @@ fn a_partial_replacing_install_is_refused_before_the_custom_handler_runs() {
 		context.install(module).is_err(),
 		"the conflicting install succeeded"
 	);
-	assert!(
-		!fresh_compile(&context, PRINTLN),
-		"fresh compile admitted it"
-	);
+	assert!(!compile(&context, PRINTLN), "execution compile admitted it");
 	assert_eq!(calls.load(Ordering::SeqCst), 0, "the custom handler ran");
 }
 
@@ -348,8 +339,8 @@ fn custom_then_builtin_format_admits_the_builtin() {
 	// No std prelude on this Context, so the macro is named by its full path.
 	let text = "pub fn main() { ::std::fmt::format!(\"{}\", 42) }";
 	assert!(
-		fresh_compile(&context, text),
-		"fresh compile refused the builtin"
+		compile(&context, text),
+		"execution compile refused the builtin"
 	);
 	assert_eq!(calls.load(Ordering::SeqCst), 0, "the custom handler ran");
 }
@@ -398,20 +389,20 @@ fn custom_then_builtin_println_admits_the_builtin() {
 
 	let text = "pub fn main() { ::std::io::println!(\"{}\", 42); 1 }";
 	assert!(
-		fresh_compile(&context, text),
-		"fresh compile refused the builtin"
+		compile(&context, text),
+		"execution compile refused the builtin"
 	);
 	assert_eq!(calls.load(Ordering::SeqCst), 0, "the custom handler ran");
 }
 
-/// Stock behaviour, recorded and unchanged: the ordinary (non-fresh) build expands the call
+/// Stock behavior, recorded and unchanged: the ordinary (non-new) build expands the call
 /// with the replacing custom handler.
 #[test]
 #[cfg_attr(
 	miri,
 	ignore = "Miri: builds a std-module Context and compiles Rune source (minutes per build); native CI runs it; opt in with --ignored"
 )]
-fn stock_build_uses_the_replacing_custom_macro() {
+fn legacy_build_uses_the_replacing_custom_macro() {
 	let calls = Arc::new(AtomicUsize::new(0));
 	let mut context = Context::with_default_modules().unwrap();
 	context
@@ -433,8 +424,8 @@ fn stock_build_uses_the_replacing_custom_macro() {
 )]
 fn assertion_callees_are_certified_only_as_actual_std_registrations() {
 	let context = Context::with_default_modules().unwrap();
-	assert!(context.fresh_panic());
-	assert!(context.fresh_string_from());
+	assert!(context.panic());
+	assert!(context.string_from());
 }
 
 fn assertion_source(name: &str) -> std::string::String {
@@ -446,11 +437,7 @@ fn assertion_source(name: &str) -> std::string::String {
 	};
 	std::format!("pub fn main() {{ ::std::test::{name}!({args}); 7 }}")
 }
-fn fresh_refusal(
-	context: &Context,
-	text: &str,
-	expected: crate::experimental_core::error::Refusal,
-) {
+fn refusal(context: &Context, text: &str, expected: crate::experimental_core::error::Refusal) {
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(text).unwrap()).unwrap();
 	let error = frontend::compile(&mut sources, context, &mut Diagnostics::new(), 1)
@@ -472,7 +459,7 @@ fn builtin_assertion(name: &str) -> Module {
 		}
 		_ => unreachable!(),
 	}
-	m.fresh_mark_builtin_macro();
+	m.mark_builtin_macro();
 	m
 }
 #[test]
@@ -486,26 +473,26 @@ fn assertion_macro_identity_replacement_partial_install_restore_and_unique_skip(
 		let source = assertion_source(name);
 		let calls = Arc::new(AtomicUsize::new(0));
 		let mut context = Context::with_default_modules().unwrap();
-		assert!(fresh_compile(&context, &source));
+		assert!(compile(&context, &source));
 		context
 			.install(counting_macro("test", name, &calls))
 			.unwrap();
-		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		refusal(&context, &source, Refusal::FrontendDiagnostic);
 		// The unique std::test module was already installed: skipping it cannot
 		// recertify the replacing callback now stored at the macro hash.
 		context
 			.install(crate::modules::test::module().unwrap())
 			.unwrap();
-		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		refusal(&context, &source, Refusal::FrontendDiagnostic);
 		context.install(builtin_assertion(name)).unwrap();
-		assert!(fresh_compile(&context, &source));
+		assert!(compile(&context, &source));
 		let mut collision = Module::with_crate_item("std", ["test"]).unwrap();
 		collision.function("collision", || {}).build().unwrap();
 		context.install(collision).unwrap();
 		let mut partial = counting_macro("test", name, &calls);
 		partial.function("collision", || {}).build().unwrap();
 		assert!(context.install(partial).is_err());
-		fresh_refusal(&context, &source, Refusal::FrontendDiagnostic);
+		refusal(&context, &source, Refusal::FrontendDiagnostic);
 		assert_eq!(calls.load(Ordering::SeqCst), 0, "custom {name} executed");
 	}
 }
@@ -534,14 +521,14 @@ fn insert_once_panic_custom_first_is_never_certified() {
 	context
 		.install(crate::modules::test::module().unwrap())
 		.unwrap();
-	assert!(!context.fresh_panic());
+	assert!(!context.panic());
 	// The failed core installation already consumed its unique-module id.
 	// Skipping it later must not certify the custom handler that remains stored.
 	context
 		.install(crate::modules::core::module().unwrap())
 		.unwrap();
-	assert!(!context.fresh_panic());
-	fresh_refusal(&context, &assertion_source("assert"), Refusal::Native);
+	assert!(!context.panic());
+	refusal(&context, &assertion_source("assert"), Refusal::Native);
 	assert_eq!(calls.load(Ordering::SeqCst), 0);
 }
 
@@ -562,8 +549,8 @@ fn insert_once_panic_custom_after_builtin_preserves_builtin_identity() {
 		.build()
 		.unwrap();
 	assert!(context.install(custom).is_err());
-	assert!(context.fresh_panic());
-	assert!(fresh_compile(&context, &assertion_source("assert")));
+	assert!(context.panic());
+	assert!(compile(&context, &assertion_source("assert")));
 	assert_eq!(calls.load(Ordering::SeqCst), 0);
 }
 
@@ -675,8 +662,8 @@ fn string_constructor_custom_after_builtin_preserves_builtin_identity() {
 		matches!(error, crate::ContextError::ConflictingFunction { .. }),
 		"{error:?}"
 	);
-	assert!(context.fresh_string_from());
-	assert!(fresh_compile(&context, &assertion_source("assert_eq")));
+	assert!(context.string_from());
+	assert!(compile(&context, &assertion_source("assert_eq")));
 	assert_eq!(calls.load(Ordering::SeqCst), 0);
 }
 
@@ -708,8 +695,8 @@ fn string_constructor_custom_first_failed_builtin_never_certifies() {
 		matches!(error, crate::ContextError::ConflictingFunction { .. }),
 		"{error:?}"
 	);
-	assert!(!context.fresh_string_from());
-	fresh_refusal(
+	assert!(!context.string_from());
+	refusal(
 		&context,
 		"pub fn main() { ::std::string::String::from(\"x\") }",
 		Refusal::Native,
@@ -745,13 +732,13 @@ fn certified_string_constructor_copies_and_checks_its_argument() {
 			100,
 		)
 		.unwrap();
-	let fresh = store.root_format(&root, true).unwrap();
+	let execution = store.root_format(&root, true).unwrap();
 	let mut text = crate::alloc::String::new();
 	stock
 		.with(|| crate::runtime::Formatter::format_with(&mut text, |f| expected.debug_fmt(f)))
 		.unwrap();
-	assert_eq!(fresh, text);
-	assert_eq!(fresh.as_str(), "(\"a\", \"ab\")");
+	assert_eq!(execution, text);
+	assert_eq!(execution.as_str(), "(\"a\", \"ab\")");
 	store.root_release(root).unwrap();
 	assert_eq!(store.live_entries(), 0);
 	for operand in ["1", "()", "[1]"] {
@@ -796,9 +783,9 @@ fn stdio_false_module_cannot_certify_publicly_added_custom_functions() {
 	}
 	let mut context = Context::new();
 	context.install(module).unwrap();
-	assert!(!context.fresh_stdio_print());
+	assert!(!context.stdio_print());
 	for name in ["print", "dbg"] {
-		fresh_refusal(
+		refusal(
 			&context,
 			&output_source(name),
 			if name == "dbg" {
@@ -823,8 +810,8 @@ fn failed_dbg_install_certifies_only_the_print_handlers_already_inserted() {
 	assert!(context
 		.install(crate::modules::io::module(true).unwrap())
 		.is_err());
-	assert!(context.fresh_stdio_print());
-	assert!(context.fresh_stdio_println());
+	assert!(context.stdio_print());
+	assert!(context.stdio_println());
 	assert_eq!(calls.load(Ordering::SeqCst), 0);
 }
 
@@ -841,7 +828,7 @@ fn print_intrinsic_value_and_statement_positions_have_one_call_and_no_unit_overw
 		value::Scalar,
 	};
 	let context = Context::with_default_modules().unwrap();
-	assert!(context.fresh_stdio_print());
+	assert!(context.stdio_print());
 	for text in [
 		"pub fn main(){print!(\"x\");}",
 		"pub fn main(){let result=print!(\"x\");result}",

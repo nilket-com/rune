@@ -1,4 +1,4 @@
-//! Fresh-only setup controls. Names/sources are from the immutable H1 catalogue.
+//! Execution-only setup controls. Names/sources are from the immutable H1 catalog.
 use super::*;
 use crate::experimental_core::{code::FIRST_HOST, error::ErrorKind};
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -13,7 +13,7 @@ fn static_mark(_: &str, value: i64) -> i64 {
 fn same_fn_context() -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["h1"]).unwrap();
-	module.fresh_host_function("mark", static_mark).unwrap();
+	module.host_function("mark", static_mark).unwrap();
 	context.install(module).unwrap();
 	context
 }
@@ -40,13 +40,13 @@ fn ten_frozen_identity_modes_check_admission_ownership_and_recovery() {
 		let context_a = if is_fn {
 			same_fn_context()
 		} else {
-			fixture::fresh_context(&tape)
+			fixture::context(&tape)
 		};
 		let other_tape = fixture::Recorder::new();
 		let context_b = if is_fn {
 			same_fn_context()
 		} else {
-			fixture::fresh_context(&other_tape)
+			fixture::context(&other_tape)
 		};
 		let source = if case.mode == "unused-host-descriptor" {
 			format!("{} pub fn idle(){{7}}", case.source)
@@ -84,7 +84,7 @@ fn ten_frozen_identity_modes_check_admission_ownership_and_recovery() {
 				let wrong = if is_fn {
 					same_fn_context()
 				} else {
-					fixture::fresh_context(&other_tape)
+					fixture::context(&other_tape)
 				};
 				Some(crate::sync::Arc::try_new(wrong.runtime().unwrap()).unwrap())
 			}
@@ -143,10 +143,10 @@ fn ten_frozen_identity_modes_check_admission_ownership_and_recovery() {
 			assert!(executor.is_idle());
 			// Correct binding admits; preserved cancellation must then fire at charge.
 			executor.set_host_runtime(Some(correct.clone())).unwrap();
-			let cancelled = executor
+			let canceled = executor
 				.invoke(&compiled, &mut store, function, &[], FUEL)
 				.unwrap_err();
-			assert_eq!(cancelled.error.kind, ErrorKind::Cancelled);
+			assert_eq!(canceled.error.kind, ErrorKind::Cancelled);
 			assert_eq!(STATIC_CALLS.load(Ordering::SeqCst), 0);
 			let root = executor
 				.invoke(&compiled, &mut store, function, &[], FUEL)
@@ -203,7 +203,7 @@ fn fuel_frontiers_keep_complete_host_call_effect_prefixes_and_clean_state() {
 	let mut succeeded = false;
 	for budget in 0..=16 {
 		let tape = fixture::Recorder::new();
-		let context = fixture::fresh_context(&tape);
+		let context = fixture::context(&tape);
 		let compiled = program(&context, &unhex(rows[0][2]));
 		let main = compiled.function(Hash::type_hash(["main"])).unwrap();
 		let mut executor = Executor::new().unwrap();

@@ -1,8 +1,8 @@
 //! C16b test-only loop-binder stock oracle. No production admission changes.
 use super::*;
 use serde_json::{json, Value as Json};
-include!("tuple_let/observe_fresh.rs");
-fn observe_stock(source: &str, mode: &str) -> Json {
+include!("tuple_let/observe.rs");
+fn legacy_observe(source: &str, mode: &str) -> Json {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -47,7 +47,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 			let kind = e.error().kind();
 			let class = match kind {
 				crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
-				_ => stock_class(kind),
+				_ => runtime_error_class(kind),
 			};
 			let chain = e
 				.chain()
@@ -59,7 +59,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 				let range = inst.span.range();
 				json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 			}).collect::<Vec<_>>();
-			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
 		}
 	}
 }
@@ -160,9 +160,9 @@ fn child() {
 	let source = row["source"].as_str().unwrap();
 	let engine = std::env::var("C16_ENGINE").unwrap_or_else(|_| "stock".into());
 	let (observation, audit) = match engine.as_str() {
-		"stock" => (observe_stock(source, "c8-main"), None),
+		"stock" => (legacy_observe(source, "c8-main"), None),
 		"fresh" => {
-			let (observation, audit) = observe_fresh(source, "c8-main");
+			let (observation, audit) = observe(source, "c8-main");
 			(observation, Some(audit))
 		}
 		_ => panic!("unknown C16 engine"),
@@ -209,14 +209,14 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[test]
 #[cfg(target_os = "linux")]
 #[ignore = "C16b frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C16b strict fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C16b strict execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -388,9 +388,9 @@ fn run_contract(engine: &str) {
 					assert_eq!(actual[key], expected[key], "{label}: {key}");
 				}
 				let sites = actual["sites"].as_array().unwrap();
-				let stock_sites = expected["sites"].as_array().unwrap();
-				assert_eq!(sites.len(), stock_sites.len());
-				for (a, b) in sites.iter().zip(stock_sites) {
+				let oracle_sites = expected["sites"].as_array().unwrap();
+				assert_eq!(sites.len(), oracle_sites.len());
+				for (a, b) in sites.iter().zip(oracle_sites) {
 					for key in ["source", "start", "end"] {
 						assert_eq!(a[key], b[key]);
 					}

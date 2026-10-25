@@ -29,11 +29,7 @@ use core::cell::{Cell, RefCell};
 use std::string::String;
 use std::vec::Vec as StdVec;
 
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 use crate::experimental_native::{audit::Finding, boundary::NativeRegion, lower, NativeRefusal};
 
 /// How installed regions run.
@@ -132,12 +128,8 @@ pub(crate) struct NativeInstall {
 
 pub(crate) use super::{division_kind, DivisionKind};
 
-/// One loaded region and the identity of the analysed region it was compiled from.
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+/// One loaded region and the identity of the analyzed region it was compiled from.
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 struct Loaded {
 	code: u32,
 	function: u32,
@@ -151,11 +143,7 @@ struct Installed {
 	mode: Mode,
 	regions: StdVec<Region>,
 	/// Parallel to `regions`: `Some` for each region whose native code is loaded.
-	#[cfg(all(
-		feature = "fresh-core-native",
-		target_arch = "x86_64",
-		target_os = "linux"
-	))]
+	#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 	native: StdVec<Option<Loaded>>,
 	stats: Stats,
 }
@@ -166,7 +154,7 @@ std::thread_local! {
 	/// An install set aside by `suspend`, so a plain-interpreter run sees no install at all.
 	static SUSPENDED: RefCell<Option<Installed>> = const { RefCell::new(None) };
 
-	/// B1 test protocol: a transform applied to every analysed region at install.
+	/// B1 test protocol: a transform applied to every analyzed region at install.
 	static TRANSFORM: Cell<Option<fn(&mut Region)>> = const { Cell::new(None) };
 
 	/// The first native/simulator mismatch since the last `take_mismatch`.
@@ -176,7 +164,7 @@ std::thread_local! {
 	static FINAL_FUEL: Cell<Option<usize>> = const { Cell::new(None) };
 }
 
-fn analysed(code: &Code) -> StdVec<Region> {
+fn analyzed(code: &Code) -> StdVec<Region> {
 	let mut regions = StdVec::new();
 	let transform = TRANSFORM.with(|t| t.get());
 	for id in 0..code.functions() as u32 {
@@ -230,14 +218,10 @@ pub(crate) fn force_replay(region: &mut Region) {
 /// Analyses every function of `code` and installs its admitted regions for this thread,
 /// run by the simulator.
 pub(crate) fn install(code: &Code) -> usize {
-	let regions = analysed(code);
+	let regions = analyzed(code);
 	let count = regions.len();
 
-	#[cfg(all(
-		feature = "fresh-core-native",
-		target_arch = "x86_64",
-		target_os = "linux"
-	))]
+	#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 	let native = regions.iter().map(|_| None).collect();
 
 	INSTALLED.with(|i| {
@@ -245,11 +229,7 @@ pub(crate) fn install(code: &Code) -> usize {
 			code: code.id(),
 			mode: Mode::Simulate,
 			regions,
-			#[cfg(all(
-				feature = "fresh-core-native",
-				target_arch = "x86_64",
-				target_os = "linux"
-			))]
+			#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 			native,
 			stats: Stats {
 				regions: count,
@@ -263,13 +243,9 @@ pub(crate) fn install(code: &Code) -> usize {
 /// As [`install`], and compiles and loads every region's native code; the mode is
 /// `Native`. With `dump`, the exact loaded bytes and listings of each region are written
 /// there as `f{function}_h{header}.{bin,clif,opt.clif,vcode}`.
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 pub(crate) fn install_native(code: &Code, dump: Option<&std::path::Path>) -> NativeInstall {
-	let regions = analysed(code);
+	let regions = analyzed(code);
 	let mut summary = NativeInstall {
 		regions: regions.len(),
 		..NativeInstall::default()
@@ -625,11 +601,7 @@ fn trace_check(
 /// Native mode entry. `None`: the region has no loaded code (its compile or load was
 /// refused) or the call refused its arguments; the interpreter runs the instruction. With
 /// the outcome, the native record the commit validated.
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 #[allow(clippy::too_many_arguments)]
 fn enter_native(
 	installed: &mut Installed,
@@ -708,11 +680,7 @@ fn enter_native(
 	Some((outcome, seen, traced))
 }
 
-#[cfg(not(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-)))]
+#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
 #[allow(clippy::too_many_arguments)]
 fn enter_native(
 	_: &mut Installed,
@@ -729,11 +697,7 @@ fn enter_native(
 /// The native run of one entry, checked against the simulator on an independent copy of
 /// the same pre-entry buffer and record. `mismatch` receives `(description, 0)` on a
 /// mismatch, or `("", n)` with the count of differing unwritten (unspecified) entries.
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 fn native_run(
 	region: &Region,
 	native: &NativeRegion,

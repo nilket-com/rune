@@ -51,7 +51,7 @@ pub(super) fn stock(error: &crate::runtime::VmError, sources: &Sources) {
 		sources,
 	);
 }
-pub(super) fn fresh(
+pub(super) fn execution(
 	failure: &crate::experimental_core::execute::Failure,
 	program: &frontend::Program,
 	sources: &Sources,

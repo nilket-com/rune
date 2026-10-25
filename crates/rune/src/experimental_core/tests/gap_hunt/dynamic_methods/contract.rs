@@ -1,7 +1,7 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C18b1 frozen fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C18b1 frozen execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -30,7 +30,7 @@ fn canonical_record(record: &Json) -> Json {
 }
 
 /// `stock` is the pinned stock row.
-fn verify_fresh_case(
+fn verify_case(
 	index: usize,
 	case: &Json,
 	stock: &Json,
@@ -97,11 +97,11 @@ fn verify_fresh_case(
 	if classification == "Exact" {
 		assert_eq!(canonical_record(actual), canonical_record(stock));
 	} else if classification == "Intentional-D1" {
-		// A missing method: fresh names the method in its message. Everything
+		// A missing method: new names the method in its message. Everything
 		// else, including the kind, class, sites and chain, is stock-exact.
-		let (fresh, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(fresh, rule["fresh"]);
-		let (f, s) = (&fresh["observation"], &expected["observation"]);
+		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
+		assert_eq!(execution, rule["fresh"]);
+		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for key in ["status", "class", "kind", "sites", "chain"] {
 			assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
 		}
@@ -113,29 +113,29 @@ fn verify_fresh_case(
 		assert_ne!(f["outcome"]["display"], s["outcome"]["display"]);
 		assert_eq!(f["events"], s["events"]);
 		assert_eq!(f["reuse"], s["reuse"]);
-		assert_eq!(fresh["logical"], expected["logical"]);
-		assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+		assert_eq!(execution["logical"], expected["logical"]);
+		assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 	} else if classification == "Retained-fuel" {
-		// Fuel is charged per expanded instruction: fresh halts on its own
+		// Fuel is charged per expanded instruction: new halts on its own
 		// count, with the stock class, an empty tape and stock reuse.
-		let (fresh, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(fresh, rule["fresh"]);
-		let (f, s) = (&fresh["observation"], &expected["observation"]);
+		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
+		assert_eq!(execution, rule["fresh"]);
+		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for record in [f, s] {
 			assert_eq!(record["outcome"]["status"], "error");
 			assert_eq!(record["outcome"]["class"], "FuelExhausted");
 		}
 		assert_eq!(f["events"], json!([]));
 		assert_eq!(f["reuse"], s["reuse"]);
-		assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+		assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 	} else if classification == "Retained-fuel-effects" {
 		// As Retained-fuel, for a loop with effects: both engines end in
 		// FuelExhausted, and the two event sequences agree index by index up to
 		// the shorter length. Only the number of iterations before the halt
 		// differs.
-		let (fresh, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(fresh, rule["fresh"]);
-		let (f, s) = (&fresh["observation"], &expected["observation"]);
+		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
+		assert_eq!(execution, rule["fresh"]);
+		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for record in [f, s] {
 			assert_eq!(record["outcome"]["status"], "error");
 			assert_eq!(record["outcome"]["class"], "FuelExhausted");
@@ -149,14 +149,14 @@ fn verify_fresh_case(
 			assert_eq!(a, b);
 		}
 		assert_eq!(f["reuse"], s["reuse"]);
-		assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+		assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 	} else if classification == "Retained-frame-limit" {
-		// Unbounded recursion: fresh charges fuel once per call, so its
+		// Unbounded recursion: new charges fuel once per call, so its
 		// 1024-frame limit trips before the fuel runs out, where stock ends in
 		// FuelExhausted. The tapes agree index by index up to the shorter one.
-		let (fresh, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(fresh, rule["fresh"]);
-		let (f, s) = (&fresh["observation"], &expected["observation"]);
+		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
+		assert_eq!(execution, rule["fresh"]);
+		let (f, s) = (&execution["observation"], &expected["observation"]);
 		assert_eq!(f["outcome"]["status"], "error");
 		assert_eq!(f["outcome"]["class"], "FrameCapacity");
 		assert_eq!(
@@ -174,7 +174,7 @@ fn verify_fresh_case(
 			assert_eq!(a, b);
 		}
 		assert_eq!(f["reuse"], s["reuse"]);
-		assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+		assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 	} else {
 		// A located, classified refusal: the program runs on stock instead.
 		let outcome = &actual["observation"]["outcome"];
@@ -184,7 +184,7 @@ fn verify_fresh_case(
 		assert!(outcome["location"].is_object());
 		let refusal = outcome["refusal"].as_str().unwrap();
 		match classification {
-			// A native function provides the name on some receiver: fresh
+			// A native function provides the name on some receiver: new
 			// cannot call it, so the dispatch is refused before execution.
 			// C17f advances this pinned resize row to an arity refusal.
 			"Refused-native" if index == 250 => {
@@ -199,7 +199,7 @@ fn verify_fresh_case(
 		assert_eq!(actual["observation"]["events"], json!([]));
 		assert_eq!(actual["logical"], Json::Null);
 		if stock["observation"]["outcome"]["status"] == "compile-error" {
-			// Stock builds no VM, so it records no reuse; fresh reuses a
+			// Stock builds no VM, so it records no reuse; new reuses a
 			// fallback program and must still return 7.
 			assert_eq!(stock["observation"]["reuse"], Json::Null);
 			assert_eq!(actual["observation"]["reuse"]["graph"]["nodes"][0][2], "7");

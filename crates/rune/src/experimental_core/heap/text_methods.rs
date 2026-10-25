@@ -1,7 +1,7 @@
 //! Stock String/char Split state machine, borrowing its source and copying its pattern.
 use super::super::error::{Detail, HostCause, TypeName};
 use super::*;
-use crate::function::fresh_text::Method;
+use crate::function::text::Method;
 #[derive(Debug)]
 pub(super) enum Pattern {
 	String(String),

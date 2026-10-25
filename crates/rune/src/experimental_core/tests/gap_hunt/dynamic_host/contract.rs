@@ -1,4 +1,4 @@
-// Frozen stock replay plus the strict fresh contract; no discovery or waiver.
+// Frozen stock replay plus the strict new contract; no discovery or waiver.
 const C10_TSV: &str = include_str!("../../dynamic_host_stock.tsv");
 const C10_REPLAY_CAP: usize = 64 << 20;
 fn c10_rows() -> Vec<Vec<&'static str>> {
@@ -26,7 +26,7 @@ fn c10_data_seals() {
 	assert_eq!(COUNT, 126);
 	let mut counts = BTreeMap::new();
 	let mut digest_rows = Vec::new();
-	let mut fresh_digests = 0;
+	let mut digests = 0;
 	for (i, row) in rows.iter().enumerate() {
 		assert_eq!(row[0], CASES[i].0);
 		assert_eq!(row[1], "c10-main");
@@ -45,11 +45,11 @@ fn c10_data_seals() {
 		if expected["encoding"] == "sha256-common-v1" {
 			assert_eq!(row[6], "Exact");
 			assert!(expected["bytes"].as_u64().unwrap() > 65536);
-			fresh_digests += 1;
+			digests += 1;
 		}
 	}
 	assert_eq!(digest_rows, C10_LARGE);
-	assert_eq!(fresh_digests, 5);
+	assert_eq!(digests, 5);
 	assert_eq!(
 		counts,
 		BTreeMap::from([
@@ -77,11 +77,11 @@ fn c10_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 	bytes
 }
 #[test]
-fn stock_contract() {
+fn legacy_contract() {
 	c10_contract("stock");
 }
 #[test]
-fn fresh_contract() {
+fn contract() {
 	c10_contract("fresh");
 }
 fn c10_contract(engine: &str) {
@@ -220,16 +220,16 @@ fn c10_contract(engine: &str) {
 				assert_eq!(observed["host_calls"], 0);
 				assert_eq!(observed["protocol_calls"], 0);
 				assert_eq!(observed["reuse"]["status"], "value");
-				assert_eq!(observed["reuse"]["graph"], graph(&Value::from(7i64)));
-				c10_fresh_audit(&envelope["audit"], "Refused-compile", row[0]);
+				assert_eq!(observed["reuse"]["graph"], runtime_graph(&RuntimeValue::from(7i64)));
+				c10_audit(&envelope["audit"], "Refused-compile", row[0]);
 				continue;
 			}
-			c10_fresh_audit(&envelope["audit"], row[6], row[0]);
+			c10_audit(&envelope["audit"], row[6], row[0]);
 			let expected =
 				c10_arity_expected(i, row[0], row[2], row[6], c10_decode(row[7])).unwrap();
 			c10_compare(&envelope["observation"], &expected, row[0]).unwrap_or_else(|e| {
 				panic!(
-					"strict fresh row {i} {}: {e}; raw at {}",
+					"strict execution row {i} {}: {e}; raw at {}",
 					row[0],
 					folder.display()
 				)

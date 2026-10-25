@@ -1,4 +1,4 @@
-//! Callback ownership tests without frontend compilation or a stock VM.
+//! Callback ownership tests without frontend compilation or a legacy VM.
 use super::super::{
 	code::{Builder, Function},
 	value::Type,

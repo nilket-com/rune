@@ -24,16 +24,15 @@ static STATE: OnceCell<RandomState> = OnceCell::new();
 #[rune::module(::std::ops)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_clone = crate::function::fresh_clone::Provider::Function.bit();
+		m.clone = crate::function::clone::Provider::Function.bit();
 	}
 
 	// Private C12 provider markers: this std module registers the builtin providers.
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_iter = crate::function::fresh_iter::marker::ITER
-			| crate::function::fresh_iter::marker::ITERATOR;
+		m.iter = crate::function::iter::marker::ITER | crate::function::iter::marker::ITERATOR;
 	}
 
 	macro_rules! iter {
@@ -221,8 +220,8 @@ pub fn module() -> Result<Module, ContextError> {
 		["GeneratorState"],
 		item!(::std::ops::generator::GeneratorState),
 	)?;
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }
 

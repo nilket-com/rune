@@ -112,16 +112,16 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C5 frozen stock replay on Linux; explicit fresh GAP_OUT; bounded children"]
+#[ignore = "C5 frozen stock replay on Linux; explicit execution GAP_OUT; bounded children"]
 #[allow(clippy::assertions_on_constants)]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C5 bounded fresh contract; explicit new GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C5 bounded execution contract; explicit new GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -293,7 +293,7 @@ fn run_contract(engine: &str) {
 					}
 					assert_eq!(
 						projected, expected,
-						"fresh exact fields/sites/argument chain: {label}"
+						"execution exact fields/sites/argument chain: {label}"
 					);
 				}
 				"Compile-error" => {
@@ -311,7 +311,7 @@ fn run_contract(engine: &str) {
 					assert_eq!(outcome["status"], "compile-error");
 					assert_eq!(outcome["refusal"], "Some(FrontendDiagnostic)");
 					assert_eq!(outcome["location"], json!({"source":0,"start":22,"end":29}));
-					assert_eq!(outcome["diagnostics"],"[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 22:29, kind: Custom { error: \"fresh core: dynamic precision is not admitted\" } }) })]");
+					assert_eq!(outcome["diagnostics"],"[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 22:29, kind: Custom { error: \"execution core: dynamic precision is not admitted\" } }) })]");
 				}
 				"Retained-resource" => {
 					assert_eq!(outcome["status"], "error");

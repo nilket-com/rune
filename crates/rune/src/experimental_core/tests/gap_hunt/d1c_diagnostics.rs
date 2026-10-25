@@ -33,7 +33,7 @@ pub(super) fn before(family: &str, label: &str, source: &str, engine: &str, actu
 	before
 }
 
-pub(super) fn stock_display(error: &crate::runtime::VmError) -> std::string::String {
+pub(super) fn runtime_error_display(error: &crate::runtime::VmError) -> std::string::String {
 	let kind = error.error().kind();
 	if matches!(
 		kind,

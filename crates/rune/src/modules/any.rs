@@ -15,9 +15,9 @@ use crate::{docstring, ContextError, Hash, Module};
 #[rune::module(::std::any)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_pipeline = 16;
+		m.pipeline = 16;
 	}
 
 	m.ty::<Type>()?.docs(docstring! {
@@ -31,8 +31,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(type_of_val)?;
 	m.function_meta(type_name_of_val)?;
 	m.function_meta(format_type)?;
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }
 

@@ -126,11 +126,11 @@ pub(crate) fn eval_stream(
 	stream: &TokenStream,
 	span: Span,
 ) -> compile::Result<Value> {
-	#[cfg(feature = "fresh-core")]
-	if cx.idx.q.inner.fresh_mode {
+	#[cfg(feature = "execution")]
+	if cx.idx.q.inner.collecting {
 		return Err(compile::Error::msg(
 			span,
-			"fresh core: macro constant evaluation is not admitted",
+			"execution core: macro constant evaluation is not admitted",
 		));
 	}
 	let location = cx.item_meta.location;

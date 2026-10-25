@@ -1,4 +1,4 @@
-//! C3 construction, ownership and fresh-fuel checks; no stock-budget parity.
+//! C3 construction, ownership and new-fuel checks; no stock-budget parity.
 use crate::experimental_core::{
 	code::{Builder, Function},
 	error::{ErrorKind, Location},
@@ -370,7 +370,7 @@ fn pc_locations(program: &Program) -> Program {
 	miri,
 	ignore = "C3 source fuel-frontier sweep is native-only; focused cleanup Miri separate"
 )]
-fn exact_fresh_fuel_frontiers_keep_pc_and_balanced_state() {
+fn exact_fuel_frontiers_keep_pc_and_balanced_state() {
 	let mut wide = std::string::String::from("pub fn main(){match 999{");
 	for n in 0..80 {
 		wide.push_str(&std::format!("{n}=>{n},"));
@@ -421,7 +421,7 @@ fn exact_fresh_fuel_frontiers_keep_pc_and_balanced_state() {
 			}
 			idle(&executor, &store);
 		}
-		let minimum = minimum.expect("finite fresh fuel bound");
+		let minimum = minimum.expect("finite execution fuel bound");
 		assert_eq!(frontiers.len(), minimum);
 		std::println!("C3 FUEL {name} minimum={minimum} pcs={frontiers:?}");
 		match name {

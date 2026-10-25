@@ -3,7 +3,7 @@ use super::*;
 use serde_json::{json, Value as Json};
 include!("tuple_let/cases.rs");
 
-fn observe_stock(source: &str, mode: &str) -> Json {
+fn legacy_observe(source: &str, mode: &str) -> Json {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -48,7 +48,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 			let kind = e.error().kind();
 			let class = match kind {
 				crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
-				_ => stock_class(kind),
+				_ => runtime_error_class(kind),
 			};
 			let chain = e
 				.chain()
@@ -60,7 +60,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 				let range = inst.span.range();
 				json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 			}).collect::<Vec<_>>();
-			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
 		}
 	}
 }
@@ -73,9 +73,9 @@ fn child() {
 	let (label, source, mode, policy) = CASES[index];
 	let engine = std::env::var("C8_ENGINE").unwrap();
 	let (observation, audit) = match engine.as_str() {
-		"stock" => (observe_stock(source, mode), None),
+		"stock" => (legacy_observe(source, mode), None),
 		"fresh" => {
-			let (o, a) = observe_fresh(source, mode);
+			let (o, a) = observe(source, mode);
 			(o, Some(a))
 		}
 		_ => panic!("unknown C8 engine"),
@@ -94,7 +94,7 @@ fn child() {
 	std::process::exit(0);
 }
 
-include!("tuple_let/observe_fresh.rs");
+include!("tuple_let/observe.rs");
 include!("tuple_let/contract.rs");
 
 include!("tuple_let/policy.rs");

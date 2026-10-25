@@ -18,22 +18,21 @@ use crate::{hash_in, ContextError, Hash, Module};
 #[rune::module(::std::option)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_clone = crate::function::fresh_clone::Provider::Option.bit();
+		m.clone = crate::function::clone::Provider::Option.bit();
 	}
 
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_pipeline = 2;
-		m.fresh_variant = crate::function::fresh_variant::marker::OPTION;
+		m.pipeline = 2;
+		m.variant = crate::function::variant::marker::OPTION;
 	}
 
 	// Private C12 provider markers: this std module registers the builtin providers.
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_iter = crate::function::fresh_iter::marker::ITER
-			| crate::function::fresh_iter::marker::ITERATOR;
+		m.iter = crate::function::iter::marker::ITER | crate::function::iter::marker::ITERATOR;
 	}
 	let mut option = m.ty::<Option<Value>>()?.make_enum(&["Some", "None"])?;
 
@@ -103,8 +102,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(Iter::clone__meta)?;
 	m.implement_trait::<Iter>(rune::item!(::std::clone::Clone))?;
 
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }
 

@@ -1,5 +1,5 @@
 //! B1: the native tier's read of a RangeIterator at region entry and validation, and its
-//! one Store mutation, the commit of `next`. Safe Rust (the fresh core is
+//! one Store mutation, the commit of `next`. Safe Rust (the execution core is
 //! `forbid(unsafe_code)`).
 //!
 //! Every check of the setter runs before its single write, on the same exclusive borrow

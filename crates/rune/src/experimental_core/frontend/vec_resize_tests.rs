@@ -37,7 +37,7 @@ fn context(row: &Json) -> Context {
 	context
 }
 
-fn stock_observation(row: &Json) -> Json {
+fn legacy_observation(row: &Json) -> Json {
 	let context = context(row);
 	let mut sources = Sources::new();
 	sources
@@ -152,7 +152,7 @@ fn vec_resize_freeze_stock_oracle() {
 	let mut contract: Json =
 		serde_json::from_str(include_str!("vec_resize_contract.json")).unwrap();
 	for row in contract["rows"].as_array_mut().unwrap() {
-		row["stock"] = stock_observation(row);
+		row["stock"] = legacy_observation(row);
 		row["before"] = baseline(row);
 		std::println!("C17F_ORACLE_ROW {}", row["name"]);
 	}
@@ -169,7 +169,7 @@ fn vec_resize_freeze_stock_oracle() {
 fn vec_resize_stock_oracle_is_frozen() {
 	let contract: Json = serde_json::from_str(include_str!("vec_resize_contract.json")).unwrap();
 	for row in contract["rows"].as_array().unwrap() {
-		assert_eq!(stock_observation(row), row["stock"], "{}", row["name"]);
+		assert_eq!(legacy_observation(row), row["stock"], "{}", row["name"]);
 	}
 }
 
@@ -197,7 +197,7 @@ fn vec_resize_sources_and_prior_lowering_are_pinned() {
 }
 
 #[test]
-fn vec_resize_fresh_matches_the_frozen_contract() {
+fn vec_resize_matches_the_frozen_contract() {
 	use crate::experimental_core::{
 		execute::Executor,
 		heap::{Limits, Store},
@@ -358,7 +358,7 @@ fn vec_resize_moved_heap_fills_refuse_before_execution() {
 	for fill in ["[1]", "\"x\"", "#{x:1}", "Some([1])", "([1],)"] {
 		let source=std::format!("pub fn main(){{let fill={fill};let alias=fill;std::mem::drop(alias);let v=[];v.resize(2,fill);v.len() as i64}}");
 		let row = json!({"source":source,"context":"default"});
-		let stock = stock_observation(&row);
+		let stock = legacy_observation(&row);
 		assert!(
 			stock["result"]["error"].as_str().unwrap().contains("moved"),
 			"{fill}: {stock}"

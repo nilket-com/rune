@@ -570,19 +570,19 @@ impl<'a> Processor<'a> {
 		self.span = node.span();
 
 		let (is_instance, args) = is_instance(&node).with_span(&node)?;
-		#[cfg(feature = "fresh-core")]
-		if idx.q.inner.fresh_mode && idx.item.impl_item.is_some() {
+		#[cfg(feature = "execution")]
+		if idx.q.inner.collecting && idx.item.impl_item.is_some() {
 			if let Some(name) = name {
 				let resolved = name.resolve(resolve_context!(idx.q))?;
 				idx.q
 					.inner
-					.fresh_method_script
+					.method_script
 					.close(crate::Hash::ident(resolved));
 				if is_instance {
 					if let Some(impl_item) = idx.item.impl_item {
 						let receiver = idx.q.pool.item_type_hash(impl_item);
 						let item = idx.q.pool.item_type_hash(item_meta.item);
-						idx.q.inner.fresh_instances.insert(
+						idx.q.inner.instances.insert(
 							crate::Hash::associated_function(
 								receiver,
 								crate::Hash::ident(resolved),
@@ -592,20 +592,20 @@ impl<'a> Processor<'a> {
 					}
 				}
 				if resolved == "sort_by" {
-					idx.q.inner.fresh_sort_by_script = true;
+					idx.q.inner.sort_by_script = true;
 				}
-				if let Some(method) = crate::function::fresh_numeric::Method::from_name(resolved) {
-					idx.q.inner.fresh_numeric_script |= method.bit();
+				if let Some(method) = crate::function::numeric::Method::from_name(resolved) {
+					idx.q.inner.numeric_script |= method.bit();
 				}
-				if let Some(name) = crate::function::fresh_iter::Name::from_name(resolved) {
-					idx.q.inner.fresh_iter_script |= name.bit();
+				if let Some(name) = crate::function::iter::Name::from_name(resolved) {
+					idx.q.inner.iter_script |= name.bit();
 				}
 			} else {
-				idx.q.inner.fresh_numeric_script |= 0b1111;
-				idx.q.inner.fresh_sort_by_script = true;
-				idx.q.inner.fresh_iter_script = u8::MAX;
-				idx.q.inner.fresh_method_script.close_all();
-				idx.q.inner.fresh_instances.mark_incomplete();
+				idx.q.inner.numeric_script |= 0b1111;
+				idx.q.inner.sort_by_script = true;
+				idx.q.inner.iter_script = u8::MAX;
+				idx.q.inner.method_script.close_all();
+				idx.q.inner.instances.mark_incomplete();
 			}
 		}
 		let layer = idx.scopes.pop().with_span(self.span)?;

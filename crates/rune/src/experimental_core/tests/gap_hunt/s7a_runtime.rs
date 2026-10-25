@@ -7,7 +7,7 @@ fn rows() -> Vec<Json> {
 	document["rows"].as_array().unwrap().clone()
 }
 
-fn stock_typed(kind: &crate::runtime::VmErrorKind) -> Json {
+fn legacy_typed(kind: &crate::runtime::VmErrorKind) -> Json {
 	use crate::runtime::VmErrorKind as K;
 	match kind {
 		K::MissingProtocolFunction { protocol, instance } => {
@@ -24,7 +24,7 @@ fn stock_typed(kind: &crate::runtime::VmErrorKind) -> Json {
 	}
 }
 
-fn fresh_typed(error: &crate::experimental_core::error::Error) -> Json {
+fn typed(error: &crate::experimental_core::error::Error) -> Json {
 	use crate::experimental_core::error::{Detail, ErrorKind, MovedAccess};
 	match error.detail {
 		Detail::NoDisplay { found } if error.kind == ErrorKind::Type => {
@@ -45,7 +45,7 @@ fn fresh_typed(error: &crate::experimental_core::error::Error) -> Json {
 			access: MovedAccess::Read,
 			..
 		} => {
-			json!({"tag":"AccessError","access":format!("{:?}",crate::runtime::AccessError::fresh_moved_read())})
+			json!({"tag":"AccessError","access":format!("{:?}",crate::runtime::AccessError::moved_read())})
 		}
 		_ => {
 			json!({"unmapped_kind":format!("{:?}",error.kind),"detail":format!("{:?}",error.detail)})
@@ -53,7 +53,7 @@ fn fresh_typed(error: &crate::experimental_core::error::Error) -> Json {
 	}
 }
 
-fn fresh_compile_status(refusal: Option<crate::experimental_core::error::Refusal>) -> &'static str {
+fn compile_status(refusal: Option<crate::experimental_core::error::Refusal>) -> &'static str {
 	if refusal.is_some() {
 		"refused"
 	} else {
@@ -61,7 +61,7 @@ fn fresh_compile_status(refusal: Option<crate::experimental_core::error::Refusal
 	}
 }
 
-fn observe_stock(source: &str, mode: &str) -> Json {
+fn legacy_observe(source: &str, mode: &str) -> Json {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -103,7 +103,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 			super::d1e_diagnostics::stock(&e, &sources);
 			// Capture metadata directly inside the crate, no parsing Display/Debug.
 			let kind = e.error().kind();
-			let class = stock_class(kind);
+			let class = runtime_error_class(kind);
 			let chain = e
 				.chain()
 				.iter()
@@ -114,12 +114,12 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 				let range = inst.span.range();
 				json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 			}).collect::<Vec<_>>();
-			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":e.to_string(),"typed":stock_typed(kind),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":e.to_string(),"typed":legacy_typed(kind),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
 		}
 	}
 }
 
-fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
+fn observe(source: &str, mode: &str) -> (Json, Json) {
 	use crate::experimental_core::{
 		error::{Detail, ErrorKind},
 		value::{Scalar, Type},
@@ -141,7 +141,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 	let mut no_cleanup_error = true;
 	let observation = match compiled {
 		Err(e) => {
-			json!({"status":fresh_compile_status(e.refusal),"error":format!("{e:?}"),"refusal":format!("{:?}",e.refusal),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
+			json!({"status":compile_status(e.refusal),"error":format!("{e:?}"),"refusal":format!("{:?}",e.refusal),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
 		}
 		Ok(program) => {
 			let main = program.function(Hash::type_hash(["main"])).unwrap();
@@ -174,7 +174,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 					observation
 				}
 				Err(failure) => {
-					super::d1e_diagnostics::fresh(&failure, &program, &sources);
+					super::d1e_diagnostics::execution(&failure, &program, &sources);
 					no_cleanup_error = failure.cleanup_error.is_none();
 					// Closed map: these are the only three exact frozen runtime classes,
 					// plus the explicitly retained resource class. Unknown remains raw.
@@ -187,16 +187,16 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 					};
 					let chain = match failure.error.detail {
 						Detail::FormatArgumentMoved { arg, .. } => vec![
-							json!({"kind":"fresh formatter argument","display":format!("Bad argument #{arg}")}),
+							json!({"kind":"execution formatter argument","display":format!("Bad argument #{arg}")}),
 						],
 						Detail::HostMessage { arg: Some(arg), .. }
 						| Detail::HostExpectedType { arg: Some(arg), .. }
 						| Detail::HostExpectedNumber { arg: Some(arg), .. } => vec![
-							json!({"kind":"fresh HostMessage argument","display":format!("Bad argument #{arg}")}),
+							json!({"kind":"execution HostMessage argument","display":format!("Bad argument #{arg}")}),
 						],
 						_ => vec![],
 					};
-					// Fresh has source callsite locations, not stock VM stack windows.
+					// Execution has source callsite locations, not legacy VM stack windows.
 					// Empty chain is represented as []; a nonempty chain is serialized
 					// explicitly and will STOP against the frozen empty frames.
 					let frames = if failure.call_chain.is_empty() {
@@ -220,7 +220,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 							|at| json!({"source":at.source,"start":at.start,"end":at.end,"frames":frames}),
 						)
 						.collect::<Vec<_>>();
-					json!({"status":"error","class":class,"kind":format!("{:?}",failure.error.kind),"display":failure.message(&program).to_string(),"chain":chain,"sites":sites,"raw":format!("{failure:?}"),"typed":fresh_typed(&failure.error)})
+					json!({"status":"error","class":class,"kind":format!("{:?}",failure.error.kind),"display":failure.message(&program).to_string(),"chain":chain,"sites":sites,"raw":format!("{failure:?}"),"typed":typed(&failure.error)})
 				}
 			};
 			if let Some(root) = input {
@@ -230,7 +230,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 		}
 	};
 	let clean = store.live_entries() == 0 && store.payload_bytes() == 0 && executor.is_idle();
-	assert!(clean, "C5 fresh balance");
+	assert!(clean, "C5 execution balance");
 	let mut sources = Sources::new();
 	sources
 		.insert(Source::memory("pub fn main() { 7 }").unwrap())
@@ -258,9 +258,9 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 
 #[test]
 #[ignore = "S7a bounded stock collector; S7A_RESULT must be a new path"]
-fn s7a_collect_stock() {
+fn legacy_s7a_collect() {
 	use std::io::Write;
-	let observed: Vec<_> = rows().into_iter().map(|row|json!({"name":row["name"],"source_sha256":row["source_sha256"],"stock":observe_stock(row["source"].as_str().unwrap(),"c5-main"),"before_fresh":observe_fresh(row["source"].as_str().unwrap(),"c5-main")})).collect();
+	let observed: Vec<_> = rows().into_iter().map(|row|json!({"name":row["name"],"source_sha256":row["source_sha256"],"stock":legacy_observe(row["source"].as_str().unwrap(),"c5-main"),"before_fresh":observe(row["source"].as_str().unwrap(),"c5-main")})).collect();
 	let mut file = fs::OpenOptions::new()
 		.create_new(true)
 		.write(true)
@@ -340,20 +340,20 @@ fn assert_stock_observation(row: &Json, actual: &Json) {
 }
 
 #[test]
-fn s7a_stock_contract() {
+fn legacy_s7a_contract() {
 	for row in rows() {
 		assert_stock_observation(
 			&row,
-			&observe_stock(row["source"].as_str().unwrap(), "c5-main"),
+			&legacy_observe(row["source"].as_str().unwrap(), "c5-main"),
 		);
 	}
 }
 
 #[test]
-fn s7a_fresh_contract() {
+fn s7a_contract() {
 	use crate::experimental_core::error::Refusal;
 	for row in rows() {
-		let (actual, audit) = observe_fresh(row["source"].as_str().unwrap(), "c5-main");
+		let (actual, audit) = observe(row["source"].as_str().unwrap(), "c5-main");
 		assert_eq!(audit["no_cleanup_error"], true, "{}", row["name"]);
 		assert_eq!(audit["reuse"], true);
 		let supplement: Json =

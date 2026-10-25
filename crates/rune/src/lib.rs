@@ -225,9 +225,9 @@ mod function_meta;
 
 mod function;
 
-#[cfg(feature = "fresh-core")]
+#[cfg(feature = "execution")]
 #[doc(hidden)]
-pub use self::function::fresh_host;
+pub use self::function::host;
 
 pub mod module;
 #[doc(inline)]
@@ -262,16 +262,12 @@ pub mod query;
 
 pub mod runtime;
 
-/// Opt-in fresh execution core (feature `fresh-core`); unstable, no semver promise.
-#[cfg(feature = "fresh-core")]
+/// Opt-in new execution core (feature `execution`); unstable, no semver promise.
+#[cfg(feature = "execution")]
 pub mod experimental_core;
-/// Cranelift backend for fresh-core loop regions: lowering, audit and the sealed unsafe
-/// boundary (called only through the fresh core's thread-local region cache).
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+/// Cranelift backend for execution loop regions: lowering, audit and the sealed unsafe
+/// boundary (called only through the execution core's thread-local region cache).
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 pub(crate) mod experimental_native;
 #[doc(inline)]
 pub use self::runtime::{

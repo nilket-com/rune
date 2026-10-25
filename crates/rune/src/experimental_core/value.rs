@@ -1,4 +1,4 @@
-//! Values of the fresh core, as a host sees them: [`Root`]s, [`Scalar`]s and [`Type`]s.
+//! Values of the execution core, as a host sees them: [`Root`]s, [`Scalar`]s and [`Type`]s.
 //!
 //! Internally values are plain tagged slots, with explicit store-mediated retain and
 //! release for handles. Inside the core a value belongs to exactly one store by construction, so a

@@ -18,7 +18,7 @@ impl Executor {
 		if id >= 0x8000_0070 {
 			return self.pipeline_call(store, f, base, out, id, start, len);
 		}
-		let m = crate::function::fresh_text::Method::ALL
+		let m = crate::function::text::Method::ALL
 			.into_iter()
 			.find(|m| m.id() == id)
 			.ok_or_else(invalid)?;

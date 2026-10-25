@@ -8,7 +8,7 @@ fn c10_sample_common(name: &str) -> Json {
 	STATE.with(|s| *s.borrow_mut() = State::default());
 	let value = make(name);
 	let tape = events();
-	json!({"diagnostics":"[]","events":tape,"events_after_reuse":events(),"host_calls":1,"invoked":true,"outcome":{"status":"value","graph":graph(&value)},"protocol_calls":0,"reuse":{"status":"value","graph":graph(&Value::from(7i64))}})
+	json!({"diagnostics":"[]","events":tape,"events_after_reuse":events(),"host_calls":1,"invoked":true,"outcome":{"status":"value","graph":runtime_graph(&value)},"protocol_calls":0,"reuse":{"status":"value","graph":runtime_graph(&RuntimeValue::from(7i64))}})
 }
 #[test]
 fn frozen_schema_and_digest_full_projection_controls() {
@@ -33,7 +33,7 @@ fn frozen_schema_and_digest_full_projection_controls() {
 		STATE.with(|s| *s.borrow_mut() = State::default());
 		let value = crate::to_value(fallible(name)).unwrap();
 		let tape = events();
-		let actual = json!({"diagnostics":"[]","events":tape,"events_after_reuse":events(),"host_calls":1,"invoked":true,"outcome":{"status":"value","graph":graph(&value)},"protocol_calls":0,"reuse":{"status":"value","graph":graph(&Value::from(7i64))}});
+		let actual = json!({"diagnostics":"[]","events":tape,"events_after_reuse":events(),"host_calls":1,"invoked":true,"outcome":{"status":"value","graph":runtime_graph(&value)},"protocol_calls":0,"reuse":{"status":"value","graph":runtime_graph(&RuntimeValue::from(7i64))}});
 		c10_compare(&actual, &c10_frozen_stock(label), label).unwrap();
 	}
 }

@@ -354,7 +354,7 @@ impl Plan {
 	}
 	fn build(&mut self, store: &mut Store) -> Result<()> {
 		store.host_room(self.budget.payload, self.nodes.len())?;
-		// Preflight the maximum temporary capacity jointly before ANY fresh entry.
+		// Preflight the maximum temporary capacity jointly before ANY new entry.
 		// Keys are borrowed from guarded objects; their final copies are payload.
 		let mut temporary = 0;
 		for node in &self.nodes {

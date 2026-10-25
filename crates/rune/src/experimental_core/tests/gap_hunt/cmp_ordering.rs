@@ -74,7 +74,7 @@ fn error_projection(error: &crate::runtime::VmError) -> Json {
 	) {
 		"IllegalFloatComparison".into()
 	} else {
-		stock_class(kind)
+		runtime_error_class(kind)
 	};
 	let chain = error.chain().iter().map(|at|json!({"kind":format!("{:?}",at.kind()),"typed":typed_kind(at.kind()),"display":at.to_string()})).collect::<Vec<_>>();
 	let sites = error.stacktrace().iter().map(|at| {
@@ -90,7 +90,7 @@ fn error_projection(error: &crate::runtime::VmError) -> Json {
 	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"typed":typed_kind(kind),"display":display,"chain":chain,"sites":sites,"raw":format!("{error:?}")})
 }
 
-fn observe_stock(source: &str, mode: &str) -> Json {
+fn legacy_observe(source: &str, mode: &str) -> Json {
 	let (context, calls) = c9_context();
 	let mut sources = Sources::new();
 	sources
@@ -151,8 +151,8 @@ fn child() {
 	let (label, source, mode, policy) = CASES[index];
 	let engine = std::env::var("C9_ENGINE").unwrap();
 	let observation = match engine.as_str() {
-		"stock" => observe_stock(source, mode),
-		"fresh" => observe_fresh(source, mode),
+		"stock" => legacy_observe(source, mode),
+		"fresh" => observe(source, mode),
 		_ => panic!("unknown C9 engine"),
 	};
 	let envelope = json!({"schema":1,"engine":engine,"index":index,"label":label,"source_hex":hex(source.as_bytes()),"mode":mode,"policy":policy,"fuel":FUEL,"observation":observation});
@@ -169,7 +169,7 @@ fn child() {
 include!("cmp_ordering/p1.rs");
 include!("cmp_ordering/pins.rs");
 include!("cmp_ordering/p1_controls.rs");
-include!("cmp_ordering/observe_fresh.rs");
+include!("cmp_ordering/observe.rs");
 include!("cmp_ordering/contract.rs");
 
 include!("cmp_ordering/retained.rs");

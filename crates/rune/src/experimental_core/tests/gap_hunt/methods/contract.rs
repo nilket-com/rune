@@ -54,7 +54,7 @@ fn project_observation(value: &Json, expected: &Json, path: &str) -> Json {
 	}
 }
 
-fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
+fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	for key in ["label", "source_sha256", "fixture", "fuel"] {
 		assert_eq!(actual[key], case[key]);
 		assert_eq!(actual[key], frozen[key]);
@@ -116,7 +116,7 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 		assert_eq!(audit["reuse_used_fallback"], false);
 		let expected = &frozen["stock_observation"];
 		let mut observed = observed.clone();
-		// C18b1 rows are run-time misses: fresh names the method (D1); the
+		// C18b1 rows are run-time misses: new names the method (D1); the
 		// message is the only change, and it is pinned on both sides.
 		if let Some(display) = rule.get("display") {
 			assert_eq!(observed["outcome"]["display"], display["after"]);
@@ -202,8 +202,8 @@ fn retained_frame_controls() {
 	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
 	let frozen: Json = serde_json::from_str(DISPOSITIONS).unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
-	let actual = observe_fresh(&cases[0]);
-	compare_fresh(&cases[0], &frozen["000"], &actual);
+	let actual = observe(&cases[0]);
+	compare(&cases[0], &frozen["000"], &actual);
 	for frames in [
 		json!([]),
 		json!([{"source":0,"start":0,"end":1}]),
@@ -213,7 +213,7 @@ fn retained_frame_controls() {
 		bad["observation"]["outcome"]["sites"][0]["frames"] =
 			json!(serde_json::to_string(&frames).unwrap());
 		assert!(
-			std::panic::catch_unwind(|| compare_fresh(&cases[0], &frozen["000"], &bad)).is_err()
+			std::panic::catch_unwind(|| compare(&cases[0], &frozen["000"], &bad)).is_err()
 		);
 	}
 }

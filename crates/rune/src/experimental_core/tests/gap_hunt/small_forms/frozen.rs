@@ -159,7 +159,7 @@ fn c12_drain(
 }
 #[test]
 #[ignore = "C12 frozen stock replay; explicit new C12_REPLAY_OUT, bounded children"]
-fn stock_contract() {
+fn legacy_contract() {
 	use std::process::{Command, Stdio};
 	use std::sync::{
 		atomic::{AtomicBool, Ordering},

@@ -283,7 +283,7 @@ fn nominal_script_clones_remain_readable_after_program_drop() {
 }
 
 #[test]
-fn stock_nominal_copy_preserves_rtti_child_aliases_and_borrow_failure_after_unit_drop() {
+fn runtime_nominal_copy_preserves_rtti_child_aliases_and_borrow_failure_after_unit_drop() {
 	use crate::runtime::{Repr, Vec as StockVec};
 	let context = crate::Context::with_default_modules().unwrap();
 	let mut sources = crate::Sources::new();

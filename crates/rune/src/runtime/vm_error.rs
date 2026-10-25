@@ -403,7 +403,7 @@ impl VmErrorAt {
 		self.index
 	}
 
-	#[cfg(any(feature = "emit", feature = "fresh-core"))]
+	#[cfg(any(feature = "emit", feature = "execution"))]
 	pub(crate) fn kind(&self) -> &VmErrorKind {
 		&self.kind
 	}

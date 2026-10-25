@@ -1,5 +1,5 @@
 //! S4: a statically resolved call with the wrong argument count and a
-//! program over a fresh-core capacity are located refusals, never
+//! program over a execution capacity are located refusals, never
 //! `InvalidCode` from code validation.
 use super::*;
 use crate::experimental_core::code::{Builder, Op};
@@ -67,7 +67,7 @@ fn the_host_descriptor_table_refuses_its_overflow_at_the_call() {
 	let mut module = crate::Module::with_item(["s4"]).unwrap();
 	for i in 0..=crate::experimental_core::code::MAX_HOST_DESCRIPTORS {
 		module
-			.fresh_host_function(format!("h{i}").as_str(), host)
+			.host_function(format!("h{i}").as_str(), host)
 			.unwrap();
 	}
 	context.install(module).unwrap();

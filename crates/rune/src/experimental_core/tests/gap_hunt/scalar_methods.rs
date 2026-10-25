@@ -3,7 +3,7 @@ use super::*;
 use serde_json::{json, Value as Json};
 include!("scalar_methods/cases.rs");
 
-fn observe_stock(source: &str, mode: &str) -> Json {
+fn legacy_observe(source: &str, mode: &str) -> Json {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -66,7 +66,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 		Err(e) => {
 			// Capture metadata directly inside the crate, no parsing Display/Debug.
 			let kind = e.error().kind();
-			let class = stock_class(kind);
+			let class = runtime_error_class(kind);
 			let chain = e
 				.chain()
 				.iter()
@@ -90,9 +90,9 @@ fn child() {
 	let (label, source, mode, policy) = CASES[index];
 	let engine = std::env::var("C6_ENGINE").unwrap_or_else(|_| "stock".into());
 	let (observation, audit) = match engine.as_str() {
-		"stock" => (observe_stock(source, mode), None),
+		"stock" => (legacy_observe(source, mode), None),
 		"fresh" => {
-			let (o, a) = observe_fresh(source, mode);
+			let (o, a) = observe(source, mode);
 			(o, Some(a))
 		}
 		_ => panic!("unknown C6 engine"),
@@ -111,4 +111,4 @@ fn child() {
 
 include!("scalar_methods/contract.rs");
 
-include!("scalar_methods/observe_fresh.rs");
+include!("scalar_methods/observe.rs");

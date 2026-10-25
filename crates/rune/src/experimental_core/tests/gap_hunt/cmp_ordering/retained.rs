@@ -32,7 +32,7 @@ fn compare_c9_retained(
 		return Err("C9 retained count manifest drift".into());
 	}
 	if *counts != pin["p1_fresh_counts"] {
-		return Err("C9 retained fresh count drift".into());
+		return Err("C9 retained execution count drift".into());
 	}
 	compare_p1(actual, &declared, counts)
 }
@@ -50,14 +50,14 @@ fn c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 		.collect::<Vec<_>>();
 	let source = std::str::from_utf8(&source_bytes).unwrap();
 	let stock = &dispositions[label]["fresh_expectation"];
-	let mut fresh = stock.clone();
-	fresh["display"] = json!(D1C_ACCESS_DISPLAY);
+	let mut execution = stock.clone();
+	execution["display"] = json!(D1C_ACCESS_DISPLAY);
 	for field in ["kind", "typed", "chain"] {
-		fresh[field] = pin["fresh"][field].clone();
+		execution[field] = pin["fresh"][field].clone();
 	}
-	assert!(compare_c9_retained(label, source, &fresh, stock, &counts[label]).is_ok());
-	assert!(compare_c9_retained("other", source, &fresh, stock, &counts[label]).is_err());
-	assert!(compare_c9_retained(label, "different source", &fresh, stock, &counts[label]).is_err());
+	assert!(compare_c9_retained(label, source, &execution, stock, &counts[label]).is_ok());
+	assert!(compare_c9_retained("other", source, &execution, stock, &counts[label]).is_err());
+	assert!(compare_c9_retained(label, "different source", &execution, stock, &counts[label]).is_err());
 	for (path, value) in [
 		("kind", json!("Other")),
 		("typed", json!({"raw_kind":"Other"})),
@@ -67,7 +67,7 @@ fn c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 		("sites", json!([])),
 		("status", json!("value")),
 	] {
-		let mut bad = fresh.clone();
+		let mut bad = execution.clone();
 		bad[path] = value;
 		assert!(
 			compare_c9_retained(label, source, &bad, stock, &counts[label]).is_err(),
@@ -76,7 +76,7 @@ fn c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 	}
 	let mut bad_stock = stock.clone();
 	bad_stock["kind"] = json!("Other");
-	assert!(compare_c9_retained(label, source, &fresh, &bad_stock, &counts[label]).is_err());
+	assert!(compare_c9_retained(label, source, &execution, &bad_stock, &counts[label]).is_err());
 	// The envelope's existing lifecycle/site/frame/host checks remain outside this helper.
 }
 
@@ -97,14 +97,14 @@ fn miri_c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 	let source = std::str::from_utf8(&source_bytes).unwrap();
 	assert_eq!(label, "access/leased-parent-mutate");
 	let stock = &fixture["disposition"]["fresh_expectation"];
-	let mut fresh = stock.clone();
-	fresh["display"] = json!(D1C_ACCESS_DISPLAY);
+	let mut execution = stock.clone();
+	execution["display"] = json!(D1C_ACCESS_DISPLAY);
 	for field in ["kind", "typed", "chain"] {
-		fresh[field] = pin["fresh"][field].clone();
+		execution[field] = pin["fresh"][field].clone();
 	}
-	assert!(compare_c9_retained(label, source, &fresh, stock, counts).is_ok());
-	assert!(compare_c9_retained("other", source, &fresh, stock, counts).is_err());
-	assert!(compare_c9_retained(label, "different source", &fresh, stock, counts).is_err());
+	assert!(compare_c9_retained(label, source, &execution, stock, counts).is_ok());
+	assert!(compare_c9_retained("other", source, &execution, stock, counts).is_err());
+	assert!(compare_c9_retained(label, "different source", &execution, stock, counts).is_err());
 	for (path, value) in [
 		("kind", json!("Other")),
 		("typed", json!({"raw_kind":"Other"})),
@@ -114,7 +114,7 @@ fn miri_c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 		("sites", json!([])),
 		("status", json!("value")),
 	] {
-		let mut bad = fresh.clone();
+		let mut bad = execution.clone();
 		bad[path] = value;
 		assert!(
 			compare_c9_retained(label, source, &bad, stock, counts).is_err(),
@@ -123,6 +123,6 @@ fn miri_c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 	}
 	let mut bad_stock = stock.clone();
 	bad_stock["kind"] = json!("Other");
-	assert!(compare_c9_retained(label, source, &fresh, &bad_stock, counts).is_err());
+	assert!(compare_c9_retained(label, source, &execution, &bad_stock, counts).is_err());
 	// The envelope's existing lifecycle/site/frame/host checks remain outside this helper.
 }

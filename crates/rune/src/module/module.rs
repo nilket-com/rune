@@ -68,48 +68,48 @@ pub struct Module {
 	pub(crate) trait_impls: Vec<ModuleTraitImpl>,
 	/// A re-export in the current module.
 	pub(crate) reexports: Vec<ModuleReexport>,
-	/// Fresh core: this module registers the std stdio `println` builtin.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_stdio_println: bool,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_stdio_print: bool,
-	/// Fresh core: this module/context certifies the std panic builtin.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_panic: bool,
-	/// Fresh core: this module/context certifies String::from.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_string_from: bool,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_vec_constructors: bool,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_vec_resize: bool,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_clone: u8,
+	/// Execution core: this module registers the std stdio `println` builtin.
+	#[cfg(feature = "execution")]
+	pub(crate) stdio_println: bool,
+	#[cfg(feature = "execution")]
+	pub(crate) stdio_print: bool,
+	/// Execution core: this module/context certifies the std panic builtin.
+	#[cfg(feature = "execution")]
+	pub(crate) panic: bool,
+	/// Execution core: this module/context certifies String::from.
+	#[cfg(feature = "execution")]
+	pub(crate) string_from: bool,
+	#[cfg(feature = "execution")]
+	pub(crate) vec_constructors: bool,
+	#[cfg(feature = "execution")]
+	pub(crate) vec_resize: bool,
+	#[cfg(feature = "execution")]
+	pub(crate) clone: u8,
 	/// Private stock numeric pair markers, never set by user registration APIs.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_numeric: u8,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_sort_by: bool,
-	/// Private C12 iterator provider markers (`function::fresh_iter::marker`), never set by
+	#[cfg(feature = "execution")]
+	pub(crate) numeric: u8,
+	#[cfg(feature = "execution")]
+	pub(crate) sort_by: bool,
+	/// Private C12 iterator provider markers (`function::iter::marker`), never set by
 	/// user registration APIs.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_iter: u8,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_text: bool,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_pipeline: u8,
-	/// Private C17a provider markers (`function::fresh_variant::marker`), never set by
+	#[cfg(feature = "execution")]
+	pub(crate) iter: u8,
+	#[cfg(feature = "execution")]
+	pub(crate) text: bool,
+	#[cfg(feature = "execution")]
+	pub(crate) pipeline: u8,
+	/// Private C17a provider markers (`function::variant::marker`), never set by
 	/// user registration APIs.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_variant: u8,
-	/// Private C17b provider markers (`function::fresh_object::marker`), never set by
+	#[cfg(feature = "execution")]
+	pub(crate) variant: u8,
+	/// Private C17b provider markers (`function::object::marker`), never set by
 	/// user registration APIs.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_object: u8,
-	/// Private C17c receiver markers (`function::fresh_number::marker`), never set by
+	#[cfg(feature = "execution")]
+	pub(crate) object: u8,
+	/// Private C17c receiver markers (`function::number::marker`), never set by
 	/// user registration APIs.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_number: u8,
+	#[cfg(feature = "execution")]
+	pub(crate) number: u8,
 	/// Constant constructors.
 	pub(crate) construct: Vec<(Hash, AnyTypeInfo, ConstConstructImpl)>,
 	/// Defines construct hashes.
@@ -118,113 +118,111 @@ pub struct Module {
 	pub(crate) common: ModuleItemCommon,
 }
 
+// Keep examples aligned with the repository's tab indentation convention.
+#[allow(clippy::tabs_in_doc_comments)]
 impl Module {
-	/// Enroll an environment-free synchronous Rust Fn for the unstable fresh core.
+	/// Enroll an environment-free synchronous Rust Fn for the unstable execution core.
 	/// The host promises no callbacks, stock interface-environment use or reentry.
 	/// No certificate is published until the complete Context installation succeeds.
 	/// Host duration and capture allocations are outside script fuel/store budgets.
 	/// Borrowed strings use call-local snapshots; pointer identity across calls is not promised.
-	/// Dynamic Value outputs install the stock handler but remain undeclared for fresh.
-	/// Use [`Self::fresh_host_function_with_output`] to certify every possible output.
+	/// Dynamic Value outputs install the stock handler but remain undeclared for new.
+	/// Use [`Self::host_function_with_output`] to certify every possible output.
 	/// An undeclared host binding refuses before argument arity or type checks.
 	///
 	/// The closed signature excludes owned input.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", |s: std::string::String| -> i64 { s.len() as i64 }).unwrap();
+	/// module.host_function("unsupported", |s: std::string::String| -> i64 { s.len() as i64 }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes mutable input.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", |s: &mut str| -> i64 { s.len() as i64 }).unwrap();
+	/// module.host_function("unsupported", |s: &mut str| -> i64 { s.len() as i64 }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes aggregate input.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", |v: std::vec::Vec<i64>| -> i64 { v.len() as i64 }).unwrap();
+	/// module.host_function("unsupported", |v: std::vec::Vec<i64>| -> i64 { v.len() as i64 }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes nested output.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", || -> Option<Option<i64>> { Some(Some(1)) }).unwrap();
+	/// module.host_function("unsupported", || -> Option<Option<i64>> { Some(Some(1)) }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes async output.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", || async { 1i64 }).unwrap();
+	/// module.host_function("unsupported", || async { 1i64 }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes optional dynamic output.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", || -> Option<rune::Value> { None }).unwrap();
+	/// module.host_function("unsupported", || -> Option<rune::Value> { None }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes dynamic non-String error.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", || -> Result<rune::Value, bool> { Err(false) }).unwrap();
+	/// module.host_function("unsupported", || -> Result<rune::Value, bool> { Err(false) }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes dynamic error payload.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", || -> Result<rune::Value, rune::Value> { Err(rune::Value::from(())) }).unwrap();
+	/// module.host_function("unsupported", || -> Result<rune::Value, rune::Value> { Err(rune::Value::from(())) }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes nested dynamic output.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", || -> Result<Result<rune::Value, std::string::String>, std::string::String> { Err("no".into()) }).unwrap();
+	/// module.host_function("unsupported", || -> Result<Result<rune::Value, std::string::String>, std::string::String> { Err("no".into()) }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes owned dynamic input.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", |_: rune::Value| ()).unwrap();
+	/// module.host_function("unsupported", |_: rune::Value| ()).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes borrowed dynamic input.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", |_: &rune::Value| ()).unwrap();
+	/// module.host_function("unsupported", |_: &rune::Value| ()).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes mutable dynamic input.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", |_: &mut rune::Value| ()).unwrap();
+	/// module.host_function("unsupported", |_: &mut rune::Value| ()).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes async dynamic output.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", || async { rune::Value::from(()) }).unwrap();
+	/// module.host_function("unsupported", || async { rune::Value::from(()) }).unwrap();
 	/// ```
 	///
 	/// The closed signature excludes five inputs.
 	/// ```compile_fail,E0277
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function("unsupported", |a: i64, b: i64, c: i64, d: i64, e: i64| a+b+c+d+e).unwrap();
+	/// module.host_function("unsupported", |a: i64, b: i64, c: i64, d: i64, e: i64| a+b+c+d+e).unwrap();
 	/// ```
-	#[cfg(feature = "fresh-core")]
-	pub fn fresh_host_function<F, A, N>(
-		&mut self,
-		name: N,
-		f: F,
-	) -> Result<ItemFnMut<'_>, ContextError>
+	#[cfg(feature = "execution")]
+	pub fn host_function<F, A, N>(&mut self, name: N, f: F) -> Result<ItemFnMut<'_>, ContextError>
 	where
-		F: crate::function::fresh_host::FreshHostFunction<A, Return: MaybeTypeOf>,
+		F: crate::function::host::HostFunction<A, Return: MaybeTypeOf>,
 		A: FunctionArgs,
 		N: IntoComponent,
 	{
 		let signature = F::signature();
 		let mut data = FunctionData::new::<N, F, A, crate::function::Plain>(name, f)?;
-		data.fresh_host = Some(crate::function::fresh_host::HostEnrollment {
+		data.host = Some(crate::function::host::HostEnrollment {
 			signature,
 			certificate: None,
 		});
@@ -234,38 +232,38 @@ impl Module {
 	/// Enroll a dynamic output with an immutable, trusted shape certificate.
 	/// Every declared shape must be importable. `Result<Value, String>` requires
 	/// an explicit outer `Result(shape, String)` node. Invalid declarations still
-	/// install the stock handler; fresh calls refuse before execution.
+	/// install the runtime handler; execution calls refuse before execution.
 	///
 	/// The host promises readable, owned, acyclic snapshots with no externally
 	/// mutable aliases. Internal DAG sharing is preserved. Contract violations
 	/// detected by the cold importer are Host errors after the host call, never
-	/// unsupported-program signals and never permission to retry on stock.
+	/// unsupported-program signals and never permission to retry on the legacy VM.
 	///
 	/// ```
 	/// # fn main() -> Result<(), rune::ContextError> {
 	/// let mut module = rune::Module::new();
-	/// module.fresh_host_function_with_output(
-	///     "document",
-	///     || Ok::<rune::Value, std::string::String>(rune::Value::from(())),
-	///     rune::fresh_host::OutputCertificate::JSON_RESULT,
+	/// module.host_function_with_output(
+	/// 	"document",
+	/// 	|| Ok::<rune::Value, std::string::String>(rune::Value::from(())),
+	/// 	rune::host::OutputCertificate::JSON_RESULT,
 	/// )?;
 	/// # Ok(())
 	/// # }
 	/// ```
-	#[cfg(feature = "fresh-core")]
-	pub fn fresh_host_function_with_output<F, A, N>(
+	#[cfg(feature = "execution")]
+	pub fn host_function_with_output<F, A, N>(
 		&mut self,
 		name: N,
 		f: F,
-		certificate: crate::function::fresh_host::OutputCertificate,
+		certificate: crate::function::host::OutputCertificate,
 	) -> Result<ItemFnMut<'_>, ContextError>
 	where
-		F: crate::function::fresh_host::FreshHostFunction<A, Return: MaybeTypeOf>,
+		F: crate::function::host::HostFunction<A, Return: MaybeTypeOf>,
 		A: FunctionArgs,
 		N: IntoComponent,
 	{
 		let mut data = FunctionData::new::<N, F, A, crate::function::Plain>(name, f)?;
-		data.fresh_host = Some(crate::function::fresh_host::HostEnrollment {
+		data.host = Some(crate::function::host::HostEnrollment {
 			signature: F::signature(),
 			certificate: Some(certificate),
 		});
@@ -326,36 +324,36 @@ impl Module {
 			trait_impls: Vec::new(),
 			types_hash: HashMap::new(),
 			reexports: Vec::new(),
-			#[cfg(feature = "fresh-core")]
-			fresh_stdio_println: false,
-			#[cfg(feature = "fresh-core")]
-			fresh_stdio_print: false,
-			#[cfg(feature = "fresh-core")]
-			fresh_panic: false,
-			#[cfg(feature = "fresh-core")]
-			fresh_string_from: false,
-			#[cfg(feature = "fresh-core")]
-			fresh_vec_constructors: false,
-			#[cfg(feature = "fresh-core")]
-			fresh_vec_resize: false,
-			#[cfg(feature = "fresh-core")]
-			fresh_clone: 0,
-			#[cfg(feature = "fresh-core")]
-			fresh_numeric: 0,
-			#[cfg(feature = "fresh-core")]
-			fresh_sort_by: false,
-			#[cfg(feature = "fresh-core")]
-			fresh_iter: 0,
-			#[cfg(feature = "fresh-core")]
-			fresh_text: false,
-			#[cfg(feature = "fresh-core")]
-			fresh_pipeline: 0,
-			#[cfg(feature = "fresh-core")]
-			fresh_variant: 0,
-			#[cfg(feature = "fresh-core")]
-			fresh_object: 0,
-			#[cfg(feature = "fresh-core")]
-			fresh_number: 0,
+			#[cfg(feature = "execution")]
+			stdio_println: false,
+			#[cfg(feature = "execution")]
+			stdio_print: false,
+			#[cfg(feature = "execution")]
+			panic: false,
+			#[cfg(feature = "execution")]
+			string_from: false,
+			#[cfg(feature = "execution")]
+			vec_constructors: false,
+			#[cfg(feature = "execution")]
+			vec_resize: false,
+			#[cfg(feature = "execution")]
+			clone: 0,
+			#[cfg(feature = "execution")]
+			numeric: 0,
+			#[cfg(feature = "execution")]
+			sort_by: false,
+			#[cfg(feature = "execution")]
+			iter: 0,
+			#[cfg(feature = "execution")]
+			text: false,
+			#[cfg(feature = "execution")]
+			pipeline: 0,
+			#[cfg(feature = "execution")]
+			variant: 0,
+			#[cfg(feature = "execution")]
+			object: 0,
+			#[cfg(feature = "execution")]
+			number: 0,
 			construct: Vec::new(),
 			construct_hash: HashSet::new(),
 			common: ModuleItemCommon {
@@ -387,14 +385,14 @@ impl Module {
 	///
 	/// #[derive(Any)]
 	/// struct MyBytes {
-	///     queue: Vec<String>,
+	/// 	queue: Vec<String>,
 	/// }
 	///
 	/// impl MyBytes {
-	///     #[rune::function]
-	///     fn len(&self) -> usize {
-	///         self.queue.len()
-	///     }
+	/// 	#[rune::function]
+	/// 	fn len(&self) -> usize {
+	/// 		self.queue.len()
+	/// 	}
 	/// }
 	///
 	/// // Register `len` without registering a type.
@@ -539,19 +537,19 @@ impl Module {
 	/// struct MyType;
 	///
 	/// module.constant("TEN", 10)
-	///     .build()?
-	///     .docs(docstring! {
-	///         /// A global ten value.
-	///     });
+	/// 	.build()?
+	/// 	.docs(docstring! {
+	/// 		/// A global ten value.
+	/// 	});
 	///
 	/// module.constant("VEC", [1, 2, 3].as_slice())
-	///     .build()?;
+	/// 	.build()?;
 	///
 	/// module.constant("TEN", 10)
-	///     .build_associated::<MyType>()?
-	///     .docs(docstring! {
-	///         /// Ten which looks like an associated constant.
-	///     });
+	/// 	.build_associated::<MyType>()?
+	/// 	.docs(docstring! {
+	/// 		/// Ten which looks like an associated constant.
+	/// 	});
 	/// # Ok::<_, rune::support::Error>(())
 	/// ```
 	pub fn constant<N, V>(&mut self, name: N, value: V) -> ModuleConstantBuilder<'_, N, V>
@@ -697,11 +695,11 @@ impl Module {
 	/// /// ```
 	/// #[rune::macro_]
 	/// fn ident_to_string(cx: &mut MacroContext<'_, '_, '_>, stream: &TokenStream) -> compile::Result<TokenStream> {
-	///     let mut p = Parser::from_token_stream(stream, cx.input_span());
-	///     let ident = p.parse_all::<ast::Ident>()?;
-	///     let ident = cx.resolve(ident)?.try_to_owned()?;
-	///     let string = cx.lit(&ident)?;
-	///     Ok(quote!(#string).into_token_stream(cx)?)
+	/// 	let mut p = Parser::from_token_stream(stream, cx.input_span());
+	/// 	let ident = p.parse_all::<ast::Ident>()?;
+	/// 	let ident = cx.resolve(ident)?.try_to_owned()?;
+	/// 	let string = cx.lit(&ident)?;
+	/// 	Ok(quote!(#string).into_token_stream(cx)?)
 	/// }
 	///
 	/// let mut m = Module::new();
@@ -733,8 +731,8 @@ impl Module {
 					},
 					kind: ModuleItemKind::Macro(ModuleMacro {
 						handler: data.handler,
-						#[cfg(feature = "fresh-core")]
-						fresh_builtin_macro: false,
+						#[cfg(feature = "execution")]
+						builtin_macro: false,
 					}),
 				})?;
 
@@ -790,11 +788,11 @@ impl Module {
 	/// use rune::alloc::prelude::*;
 	///
 	/// fn ident_to_string(cx: &mut MacroContext<'_, '_, '_>, stream: &TokenStream) -> compile::Result<TokenStream> {
-	///     let mut p = Parser::from_token_stream(stream, cx.input_span());
-	///     let ident = p.parse_all::<ast::Ident>()?;
-	///     let ident = cx.resolve(ident)?.try_to_owned()?;
-	///     let string = cx.lit(&ident)?;
-	///     Ok(quote!(#string).into_token_stream(cx)?)
+	/// 	let mut p = Parser::from_token_stream(stream, cx.input_span());
+	/// 	let ident = p.parse_all::<ast::Ident>()?;
+	/// 	let ident = cx.resolve(ident)?.try_to_owned()?;
+	/// 	let string = cx.lit(&ident)?;
+	/// 	Ok(quote!(#string).into_token_stream(cx)?)
 	/// }
 	///
 	/// let mut m = Module::new();
@@ -824,8 +822,8 @@ impl Module {
 			common: ModuleItemCommon::default(),
 			kind: ModuleItemKind::Macro(ModuleMacro {
 				handler,
-				#[cfg(feature = "fresh-core")]
-				fresh_builtin_macro: false,
+				#[cfg(feature = "execution")]
+				builtin_macro: false,
 			}),
 		})?;
 
@@ -853,12 +851,12 @@ impl Module {
 	/// use rune::parse::Parser;
 	///
 	/// fn rename_fn(cx: &mut MacroContext<'_, '_, '_>, input: &TokenStream, item: &TokenStream) -> compile::Result<TokenStream> {
-	///     let mut item = Parser::from_token_stream(item, cx.macro_span());
-	///     let mut fun = item.parse_all::<ast::ItemFn>()?;
+	/// 	let mut item = Parser::from_token_stream(item, cx.macro_span());
+	/// 	let mut fun = item.parse_all::<ast::ItemFn>()?;
 	///
-	///     let mut input = Parser::from_token_stream(input, cx.input_span());
-	///     fun.name = input.parse_all::<ast::EqValue<_>>()?.value;
-	///     Ok(quote!(#fun).into_token_stream(cx)?)
+	/// 	let mut input = Parser::from_token_stream(input, cx.input_span());
+	/// 	fun.name = input.parse_all::<ast::EqValue<_>>()?.value;
+	/// 	Ok(quote!(#fun).into_token_stream(cx)?)
 	/// }
 	///
 	/// let mut m = Module::new();
@@ -922,20 +920,20 @@ impl Module {
 	/// /// This is a pretty neat function.
 	/// #[rune::function]
 	/// fn to_string(string: &str) -> String {
-	///     string.to_string()
+	/// 	string.to_string()
 	/// }
 	///
 	/// /// This is a pretty neat download function
 	/// #[rune::function]
 	/// async fn download(url: Ref<str>) -> rune::support::Result<String> {
-	///     # todo!()
+	/// 	# todo!()
 	/// }
 	///
 	/// fn module() -> Result<Module, ContextError> {
-	///     let mut m = Module::new();
-	///     m.function_meta(to_string)?;
-	///     m.function_meta(download)?;
-	///     Ok(m)
+	/// 	let mut m = Module::new();
+	/// 	m.function_meta(to_string)?;
+	/// 	m.function_meta(download)?;
+	/// 	Ok(m)
 	/// }
 	/// ```
 	///
@@ -946,25 +944,25 @@ impl Module {
 	///
 	/// #[derive(Any)]
 	/// struct MyBytes {
-	///     queue: Vec<String>,
+	/// 	queue: Vec<String>,
 	/// }
 	///
 	/// impl MyBytes {
-	///     fn new() -> Self {
-	///         Self {
-	///             queue: Vec::new(),
-	///         }
-	///     }
+	/// 	fn new() -> Self {
+	/// 		Self {
+	/// 			queue: Vec::new(),
+	/// 		}
+	/// 	}
 	///
-	///     #[rune::function]
-	///     fn len(&self) -> usize {
-	///         self.queue.len()
-	///     }
+	/// 	#[rune::function]
+	/// 	fn len(&self) -> usize {
+	/// 		self.queue.len()
+	/// 	}
 	///
-	///     #[rune::function(instance, path = Self::download)]
-	///     async fn download(this: Ref<Self>, url: Ref<str>) -> rune::support::Result<()> {
-	///         # todo!()
-	///     }
+	/// 	#[rune::function(instance, path = Self::download)]
+	/// 	async fn download(this: Ref<Self>, url: Ref<str>) -> rune::support::Result<()> {
+	/// 		# todo!()
+	/// 	}
 	/// }
 	///
 	/// let mut m = Module::default();
@@ -1014,16 +1012,16 @@ impl Module {
 	/// use rune::{docstring, Module};
 	///
 	/// fn add_ten(value: i64) -> i64 {
-	///     value + 10
+	/// 	value + 10
 	/// }
 	///
 	/// let mut module = Module::default();
 	///
 	/// module.function("add_ten", add_ten)
-	///     .build()?
-	///     .docs(docstring! {
-	///         /// Adds 10 to any integer passed in.
-	///     });
+	/// 	.build()?
+	/// 	.docs(docstring! {
+	/// 		/// Adds 10 to any integer passed in.
+	/// 	});
 	/// # Ok::<_, rune::support::Error>(())
 	/// ```
 	///
@@ -1035,20 +1033,20 @@ impl Module {
 	///
 	/// #[derive(Any)]
 	/// struct DownloadError {
-	///     /* .. */
+	/// 	/* .. */
 	/// }
 	///
 	/// async fn download_quote() -> Result<String, DownloadError> {
-	///     download("https://api.quotable.io/random").await
+	/// 	download("https://api.quotable.io/random").await
 	/// }
 	///
 	/// let mut module = Module::default();
 	///
 	/// module.function("download_quote", download_quote)
-	///     .build()?
-	///     .docs(docstring! {
-	///         /// Download a random quote from the internet.
-	///     });
+	/// 	.build()?
+	/// 	.docs(docstring! {
+	/// 		/// Download a random quote from the internet.
+	/// 	});
 	/// # Ok::<_, rune::support::Error>(())
 	/// ```
 	pub fn function<F, A, N, K>(&mut self, name: N, f: F) -> ModuleFunctionBuilder<'_, F, A, N, K>
@@ -1080,16 +1078,16 @@ impl Module {
 	/// # use rune::Any;
 	/// #[derive(Any)]
 	/// struct Struct {
-	///     /* .. */
+	/// 	/* .. */
 	/// }
 	///
 	/// impl Struct {
-	///     /// Get the length of the `Struct`.
-	///     #[rune::function]
-	///     fn len(&self) -> usize {
-	///         /* .. */
-	///         # todo!()
-	///     }
+	/// 	/// Get the length of the `Struct`.
+	/// 	#[rune::function]
+	/// 	fn len(&self) -> usize {
+	/// 		/* .. */
+	/// 		# todo!()
+	/// 	}
 	/// }
 	/// ```
 	///
@@ -1101,14 +1099,14 @@ impl Module {
 	/// # use rune::Any;
 	/// #[derive(Any)]
 	/// struct Struct {
-	///     /* .. */
+	/// 	/* .. */
 	/// }
 	///
 	/// /// Get the length of the `Struct`.
 	/// #[rune::function(instance)]
 	/// fn len(this: &Struct) -> usize {
-	///     /* .. */
-	///     # todo!()
+	/// 	/* .. */
+	/// 	# todo!()
 	/// }
 	/// ```
 	///
@@ -1120,17 +1118,17 @@ impl Module {
 	/// # use rune::Any;
 	/// #[derive(Any)]
 	/// struct Struct {
-	///     /* .. */
+	/// 	/* .. */
 	/// }
 	///
 	/// impl Struct {
-	///     /// Construct a new [`Struct`].
-	///     #[rune::function(path = Self::new)]
-	///     fn new() -> Struct {
-	///         Struct {
-	///            /* .. */
-	///         }
-	///     }
+	/// 	/// Construct a new [`Struct`].
+	/// 	#[rune::function(path = Self::new)]
+	/// 	fn new() -> Struct {
+	/// 		Struct {
+	/// 		   /* .. */
+	/// 		}
+	/// 	}
 	/// }
 	/// ```
 	///
@@ -1140,15 +1138,15 @@ impl Module {
 	/// # use rune::Any;
 	/// #[derive(Any)]
 	/// struct Struct {
-	///     /* .. */
+	/// 	/* .. */
 	/// }
 	///
 	/// /// Construct a new [`Struct`].
 	/// #[rune::function(free, path = Struct::new)]
 	/// fn new() -> Struct {
-	///     Struct {
-	///        /* .. */
-	///     }
+	/// 	Struct {
+	/// 	   /* .. */
+	/// 	}
 	/// }
 	/// ```
 	///
@@ -1163,13 +1161,13 @@ impl Module {
 	/// # use rune::runtime::Formatter;
 	/// #[derive(Any)]
 	/// struct Struct {
-	///     /* .. */
+	/// 	/* .. */
 	/// }
 	///
 	/// #[rune::function(instance, protocol = DISPLAY_FMT)]
 	/// fn display_fmt(this: &Struct, f: &mut Formatter) -> std::fmt::Result {
-	///     /* .. */
-	///     # todo!()
+	/// 	/* .. */
+	/// 	# todo!()
 	/// }
 	/// ```
 	///
@@ -1180,23 +1178,23 @@ impl Module {
 	///
 	/// #[derive(Any)]
 	/// struct MyBytes {
-	///     queue: Vec<String>,
+	/// 	queue: Vec<String>,
 	/// }
 	///
 	/// impl MyBytes {
-	///     /// Construct a new empty bytes container.
-	///     #[rune::function(path = Self::new)]
-	///     fn new() -> Self {
-	///         Self {
-	///             queue: Vec::new(),
-	///         }
-	///     }
+	/// 	/// Construct a new empty bytes container.
+	/// 	#[rune::function(path = Self::new)]
+	/// 	fn new() -> Self {
+	/// 		Self {
+	/// 			queue: Vec::new(),
+	/// 		}
+	/// 	}
 	///
-	///     /// Get the number of bytes.
-	///     #[rune::function]
-	///     fn len(&self) -> usize {
-	///         self.queue.len()
-	///     }
+	/// 	/// Get the number of bytes.
+	/// 	#[rune::function]
+	/// 	fn len(&self) -> usize {
+	/// 		self.queue.len()
+	/// 	}
 	/// }
 	///
 	/// let mut m = Module::default();
@@ -1217,21 +1215,21 @@ impl Module {
 	///
 	/// #[derive(Clone, Debug, Any)]
 	/// struct Client {
-	///     value: Arc<AtomicU32>,
+	/// 	value: Arc<AtomicU32>,
 	/// }
 	///
 	/// #[derive(Any)]
 	/// struct DownloadError {
-	///     /* .. */
+	/// 	/* .. */
 	/// }
 	///
 	/// impl Client {
-	///     /// Download a thing.
-	///     #[rune::function(instance, path = Self::download)]
-	///     async fn download(this: Ref<Self>) -> Result<(), DownloadError> {
-	///         /* .. */
-	///         # Ok(())
-	///     }
+	/// 	/// Download a thing.
+	/// 	#[rune::function(instance, path = Self::download)]
+	/// 	async fn download(this: Ref<Self>) -> Result<(), DownloadError> {
+	/// 		/* .. */
+	/// 		# Ok(())
+	/// 	}
 	/// }
 	///
 	/// let mut module = Module::default();
@@ -1316,23 +1314,23 @@ impl Module {
 	/// use rune::{docstring, vm_try};
 	///
 	/// fn sum(memory: &mut dyn Memory, addr: Address, args: usize, out: Output) -> Result<(), VmError> {
-	///     let mut number = 0;
+	/// 	let mut number = 0;
 	///
-	///     for value in memory.slice_at(addr, args)? {
-	///         number += value.as_integer::<i64>()?;
-	///     }
+	/// 	for value in memory.slice_at(addr, args)? {
+	/// 		number += value.as_integer::<i64>()?;
+	/// 	}
 	///
-	///     memory.store(out, number)?;
-	///     Ok(())
+	/// 	memory.store(out, number)?;
+	/// 	Ok(())
 	/// }
 	///
 	/// let mut module = Module::default();
 	///
 	/// module.raw_function("sum", sum)
-	///     .build()?
-	///     .docs(docstring! {
-	///         /// Sum all numbers provided to the function.
-	///     })?;
+	/// 	.build()?
+	/// 	.docs(docstring! {
+	/// 		/// Sum all numbers provided to the function.
+	/// 	})?;
 	///
 	/// # Ok::<_, rune::support::Error>(())
 	/// ```
@@ -1368,11 +1366,11 @@ impl Module {
 			hash,
 			common: ModuleItemCommon { docs, deprecated },
 			kind: ModuleItemKind::Function(ModuleFunction {
-				#[cfg(feature = "fresh-core")]
-				fresh_format_default: false,
+				#[cfg(feature = "execution")]
+				format_default: false,
 				handler: data.handler,
-				#[cfg(feature = "fresh-core")]
-				fresh_host: data.fresh_host,
+				#[cfg(feature = "execution")]
+				host: data.host,
 				trait_hash: None,
 				doc: DocFunction {
 					#[cfg(feature = "doc")]
@@ -1425,10 +1423,10 @@ impl Module {
 			name: data.associated.name,
 			common: ModuleItemCommon { docs, deprecated },
 			kind: ModuleAssociatedKind::Function(ModuleFunction {
-				#[cfg(feature = "fresh-core")]
-				fresh_format_default: false,
-				#[cfg(feature = "fresh-core")]
-				fresh_host: None,
+				#[cfg(feature = "execution")]
+				format_default: false,
+				#[cfg(feature = "execution")]
+				host: None,
 				handler: data.handler,
 				trait_hash: None,
 				doc: DocFunction {
@@ -1600,13 +1598,13 @@ impl AsRef<Module> for Module {
 impl Module {
 	// Each std factory marks only handlers already registered before returning.
 	// Later public registrations retain false, even on a returned std module.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_mark_format_defaults(&mut self) {
+	#[cfg(feature = "execution")]
+	pub(crate) fn mark_format_defaults(&mut self) {
 		for assoc in &mut self.associated {
 			if matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::DEBUG_FMT.hash || p.hash == Protocol::DISPLAY_FMT.hash)
 			{
 				if let ModuleAssociatedKind::Function(f) = &mut assoc.kind {
-					f.fresh_format_default = true;
+					f.format_default = true;
 				}
 			}
 		}
@@ -1614,22 +1612,22 @@ impl Module {
 
 	// Called immediately after a pinned std formatting or assertion macro registration.
 	// External macro registration APIs never set this marker.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_mark_builtin_macro(&mut self) {
+	#[cfg(feature = "execution")]
+	pub(crate) fn mark_builtin_macro(&mut self) {
 		if let Some(ModuleItem {
 			kind: ModuleItemKind::Macro(macro_),
 			..
 		}) = self.items.last_mut()
 		{
-			macro_.fresh_builtin_macro = true;
+			macro_.builtin_macro = true;
 		}
 	}
 
 	// Called only by `modules::io::module(true)` after registering `println_impl`.
 	// External registration APIs never set this; `Context::install` certifies it
-	// per item (see `Context::fresh_stdio_println`).
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_mark_stdio_println(&mut self) {
-		self.fresh_stdio_println = true;
+	// per item (see `Context::stdio_println`).
+	#[cfg(feature = "execution")]
+	pub(crate) fn mark_stdio_println(&mut self) {
+		self.stdio_println = true;
 	}
 }

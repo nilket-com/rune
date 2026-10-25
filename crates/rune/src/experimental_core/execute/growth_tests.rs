@@ -281,7 +281,7 @@ fn logical_limits_validate_without_allocating_the_maximum() {
 	assert!(e.is_idle());
 }
 
-#[cfg(feature = "fresh-core-native")]
+#[cfg(feature = "native-code")]
 #[test]
 fn native_room_accounts_for_every_physical_buffer_and_logical_limit() {
 	let limits = ExecutorLimits {
@@ -308,11 +308,7 @@ fn native_room_accounts_for_every_physical_buffer_and_logical_limit() {
 	assert_eq!(region_room(3, 16, 15, limits, (8, 200, 8)).slots, 0);
 }
 
-#[cfg(all(
-	feature = "fresh-core-native",
-	target_arch = "x86_64",
-	target_os = "linux"
-))]
+#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 #[test]
 #[cfg_attr(miri, ignore = "Miri: executes generated native code")]
 fn tight_native_room_falls_back_then_warmed_native_path_keeps_capacities() {

@@ -29,7 +29,7 @@ impl Store {
 		if capacity > isize::MAX as usize / size_of::<crate::runtime::Value>() {
 			return Err(err(ErrorKind::Allocation).with_detail(Detail::CapacityOverflow));
 		}
-		// Capacity is not observable in the fresh subset. Treat the reservation as
+		// Capacity is not observable in the new subset. Treat the reservation as
 		// a bounded hint, so unused space cannot exhaust the payload budget.
 		// The usual closed-store and entry-slot limits still apply to the vector.
 		self.admission_room(0)?;

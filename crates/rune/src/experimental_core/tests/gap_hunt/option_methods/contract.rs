@@ -1,7 +1,7 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C17a frozen fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C17a frozen execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -29,7 +29,7 @@ fn canonical_record(record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
-fn verify_fresh_case(
+fn verify_case(
 	index: usize,
 	case: &Json,
 	stock: &Json,
@@ -98,24 +98,24 @@ fn verify_fresh_case(
 	let refused = matches!(classification, "Inherited-refusal" | "Frontend-refusal");
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
-	let fresh = canonical_record(actual);
+	let execution = canonical_record(actual);
 	let expected = canonical_record(stock);
 	match classification {
-		"Exact" => assert_eq!(fresh, expected),
+		"Exact" => assert_eq!(execution, expected),
 		"Retained-frame (callback)" => {
 			// C17e: an error inside a direct chain's function value. Stock reports
-			// one site per nested VM execution; fresh the origin with its callers.
+			// one site per nested VM execution; new the origin with its callers.
 			assert!(super::iter_adapters::callback_frames(actual, stock));
-			let mut fresh = fresh.clone();
-			fresh["observation"]["outcome"]["sites"] =
+			let mut execution = execution.clone();
+			execution["observation"]["outcome"]["sites"] =
 				expected["observation"]["outcome"]["sites"].clone();
-			assert_eq!(fresh, expected);
+			assert_eq!(execution, expected);
 		}
 		"Intentional-D1" => {
-			// A wrong receiver: fresh names the missing method (D1). Kind, class,
+			// A wrong receiver: new names the missing method (D1). Kind, class,
 			// tape, sites, logical frames and reuse stay stock-exact.
-			assert_eq!(fresh, rule["fresh"]);
-			let (f, s) = (&fresh["observation"], &expected["observation"]);
+			assert_eq!(execution, rule["fresh"]);
+			let (f, s) = (&execution["observation"], &expected["observation"]);
 			for key in ["status", "class", "kind", "sites", "chain"] {
 				assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
 			}
@@ -123,22 +123,22 @@ fn verify_fresh_case(
 			assert!(s["outcome"]["display"].as_str().unwrap().ends_with("has no matching method"));
 			assert_eq!(f["events"], s["events"]);
 			assert_eq!(f["reuse"], s["reuse"]);
-			assert_eq!(fresh["logical"], expected["logical"]);
-			assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+			assert_eq!(execution["logical"], expected["logical"]);
+			assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 		}
 		"Policy-presentation" => {
 			// Unwrapping an Err that holds a function: stock Debug prints its bytecode
-			// offset, fresh the function index. Both panic texts are pinned.
-			assert_eq!(fresh, rule["fresh"]);
-			let (f, s) = (&fresh["observation"], &expected["observation"]);
+			// offset, new the function index. Both panic texts are pinned.
+			assert_eq!(execution, rule["fresh"]);
+			let (f, s) = (&execution["observation"], &expected["observation"]);
 			assert_eq!(s["outcome"]["display"], rule["stock_display"]);
 			for key in ["status", "class", "sites", "chain"] {
 				assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
 			}
 			assert_eq!(f["events"], s["events"]);
 			assert_eq!(f["reuse"], s["reuse"]);
-			assert_eq!(fresh["logical"]["frames"], expected["logical"]["frames"]);
-			assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+			assert_eq!(execution["logical"]["frames"], expected["logical"]["frames"]);
+			assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 		}
 		"Inherited-refusal" | "Frontend-refusal" => {
 			assert_eq!(actual["observation"]["outcome"], rule["fresh"]);
@@ -150,7 +150,7 @@ fn verify_fresh_case(
 				assert_eq!(actual["diagnostics"], stock["diagnostics"]);
 			}
 			if stock["observation"]["outcome"]["status"] == "compile-error" {
-				// Stock builds no VM, so it records no reuse; fresh reuses a
+				// Stock builds no VM, so it records no reuse; new reuses a
 				// fallback program and must still return 7.
 				assert_eq!(stock["observation"]["reuse"], Json::Null);
 				assert_eq!(actual["observation"]["reuse"]["graph"]["nodes"][0][2], "7");

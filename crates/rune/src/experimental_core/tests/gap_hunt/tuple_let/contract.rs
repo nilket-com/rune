@@ -106,13 +106,13 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[test]
 #[cfg(target_os = "linux")]
 #[ignore = "C8 frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C8 strict fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C8 strict execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -292,17 +292,17 @@ fn run_contract(engine: &str) {
 		assert_eq!(e["policy"], *policy);
 		assert_eq!(e["source_hex"], c[2]);
 		assert_eq!(e["fuel"], FUEL);
-		let stock_expected: Json = serde_json::from_str(&unhex(c[3])).unwrap();
-		let fresh_expected: Json = serde_json::from_str(&unhex(c[7])).unwrap();
+		let oracle_expected: Json = serde_json::from_str(&unhex(c[3])).unwrap();
+		let expected: Json = serde_json::from_str(&unhex(c[7])).unwrap();
 		let ruling: Json = serde_json::from_str(&unhex(c[8])).unwrap();
 		fs::write(
 			folder.join("stock-expected.json"),
-			serde_json::to_vec_pretty(&stock_expected).unwrap(),
+			serde_json::to_vec_pretty(&oracle_expected).unwrap(),
 		)
 		.unwrap();
 		fs::write(
-			folder.join("fresh-expected.json"),
-			serde_json::to_vec_pretty(&fresh_expected).unwrap(),
+			folder.join("execution-expected.json"),
+			serde_json::to_vec_pretty(&expected).unwrap(),
 		)
 		.unwrap();
 		fs::write(
@@ -312,30 +312,30 @@ fn run_contract(engine: &str) {
 		.unwrap();
 		match *policy {
 			"Intentional-divergence" => {
-				check_intentional(label, source, &stock_expected, &fresh_expected, &ruling)
+				check_intentional(label, source, &oracle_expected, &expected, &ruling)
 			}
 			"Exact" | "Depth-audit" => {
-				assert_eq!(fresh_expected, stock_expected);
+				assert_eq!(expected, oracle_expected);
 				assert!(ruling.is_null());
 			}
 			"Refused-Pattern" | "Refused-Range" => {
 				assert!(ruling.is_null());
-				assert_eq!(fresh_expected["status"], "refused");
-				assert_eq!(fresh_expected["kind"], "Unsupported");
-				assert_eq!(fresh_expected["invoked"], false);
+				assert_eq!(expected["status"], "refused");
+				assert_eq!(expected["kind"], "Unsupported");
+				assert_eq!(expected["invoked"], false);
 				assert_eq!(
-					fresh_expected["refusal"],
+					expected["refusal"],
 					if *policy == "Refused-Pattern" {
 						"Pattern"
 					} else {
 						"Range"
 					}
 				);
-				let start = fresh_expected["start"].as_u64().unwrap() as usize;
-				let end = fresh_expected["end"].as_u64().unwrap() as usize;
+				let start = expected["start"].as_u64().unwrap() as usize;
+				let end = expected["end"].as_u64().unwrap() as usize;
 				assert_eq!(
 					hex(source.as_bytes().get(start..end).unwrap()),
-					fresh_expected["span_hex"]
+					expected["span_hex"]
 				);
 			}
 			_ => panic!("unreviewed C8 policy"),
@@ -350,15 +350,15 @@ fn run_contract(engine: &str) {
 			assert_eq!(rule["stock_row_sha256"], hex(&Sha256::digest(line.as_bytes())));
 		}
 		// C12, C16a, C16b and C16e admissions retain the historical freeze above and now
-		// owe their exact independently frozen stock values.
-		let fresh_expected = if c16e_admission.is_some() || *policy == "Refused-Range"
+		// owe their exact independently frozen runtime values.
+		let expected = if c16e_admission.is_some() || *policy == "Refused-Range"
 			|| matches!(
 				*label,
 				"refusal/vec-pattern" | "refusal/for-pair" | "refusal/for-nested"
 			) {
-			stock_expected.clone()
+			oracle_expected.clone()
 		} else {
-			fresh_expected
+			expected
 		};
 		let got = if engine == "stock" {
 			project(&e["outcome"])
@@ -414,7 +414,7 @@ fn run_contract(engine: &str) {
 			audit["call_chain"].as_array().unwrap();
 			audit["failure_site_ops"].as_array().unwrap();
 			assert_ne!(e["outcome"]["class"], "UNMAPPED");
-			if fresh_expected["status"] == "refused" || matches!(*label, "depth/128" | "depth/129")
+			if expected["status"] == "refused" || matches!(*label, "depth/128" | "depth/129")
 			{
 				assert_eq!(audit["invoked"], false);
 				assert_eq!(audit["returned_root"], false);
@@ -426,7 +426,7 @@ fn run_contract(engine: &str) {
 					audit["invoked"], true,
 					"C8 compile/depth refusal STOP {label}"
 				);
-				assert_eq!(audit["returned_root"], fresh_expected["status"] == "value");
+				assert_eq!(audit["returned_root"], expected["status"] == "value");
 				project(&e["outcome"])
 			}
 		};
@@ -436,7 +436,7 @@ fn run_contract(engine: &str) {
 		)
 		.unwrap();
 		let expected = if engine == "stock" {
-			stock_expected
+			oracle_expected
 		} else {
 			let manifest: Json =
 				serde_json::from_str(include_str!("../../tuple_let_retained.json")).unwrap();
@@ -444,8 +444,8 @@ fn run_contract(engine: &str) {
 				&manifest,
 				label,
 				source,
-				&stock_expected,
-				&fresh_expected,
+				&oracle_expected,
+				&expected,
 				&e["fresh_audit"],
 				&e["outcome"],
 			)

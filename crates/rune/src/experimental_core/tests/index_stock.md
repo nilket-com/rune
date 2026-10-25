@@ -13,7 +13,7 @@ Abrupt evaluation uses division by zero, admitted by both frontends.
 Columns are case label, source, observation, stdout, stderr. All except the
 label are UTF-8/byte hex. Observations retain phase, error class, site, message,
 and value. The contract compares phase/class/message/value and both streams
-exactly; stock and fresh runtime site labels differ, and source spans have
+exactly; stock and execution runtime site labels differ, and source spans have
 focused diagnostic tests. The libtest child prefix is retained in stdout.
 No error-message, value, or stream normalization is allowed.
 

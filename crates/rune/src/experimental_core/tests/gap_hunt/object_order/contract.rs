@@ -1,7 +1,7 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "O1 frozen fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "O1 frozen execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -31,7 +31,7 @@ fn canonical_record(record: &Json) -> Json {
 
 /// `frozen` is the pinned pre-O1 stock row; `stock` is its O1 replacement, or
 /// the same row where key order was never observable.
-fn verify_fresh_case(
+fn verify_case(
 	index: usize,
 	case: &Json,
 	frozen: &Json,
@@ -95,7 +95,7 @@ fn verify_fresh_case(
 	let (mut f, mut s) = (canonical_record(actual), canonical_record(stock));
 	if let Some(pin) = rule.get("warnings") {
 		// Stock warns that the `ks` helper's `for (k, _)` pattern might panic;
-		// the fresh frontend does not report that warning.
+		// the new frontend does not report that warning.
 		assert_eq!(f["diagnostics"], pin["fresh"]);
 		assert_eq!(s["diagnostics"], pin["stock"]);
 		f["diagnostics"] = Json::Null;
@@ -105,7 +105,7 @@ fn verify_fresh_case(
 		"Exact" => assert_eq!(f, s),
 		"Inherited-kind" => {
 			// Field writes during iteration: stock's typed kind names a borrow
-			// snapshot, which has no fresh counterpart. Everything else is exact.
+			// snapshot, which has no new counterpart. Everything else is exact.
 			assert_eq!(f["observation"]["outcome"]["kind"], rule["fresh_kind"]);
 			assert_eq!(s["observation"]["outcome"]["kind"], rule["stock_kind"]);
 			f["observation"]["outcome"]["kind"] = Json::Null;
@@ -113,7 +113,7 @@ fn verify_fresh_case(
 			assert_eq!(f, s);
 		}
 		"Inherited-runtime-refusal" => {
-			// Pre-O1 fresh behavior, unchanged here: admitted, then refused while
+			// Pre-O1 new behavior, unchanged here: admitted, then refused while
 			// running. Pinned so any change is visible.
 			assert_eq!(actual["observation"]["outcome"], rule["fresh"]);
 			assert_eq!(

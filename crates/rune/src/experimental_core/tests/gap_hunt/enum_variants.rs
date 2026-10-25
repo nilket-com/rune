@@ -1,9 +1,9 @@
-//! C15b stock VM oracle. This module is test-only; it does not alter product code.
+//! C15b legacy VM oracle. This module is test-only; it does not alter product code.
 use super::*;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
-include!("enum_variants/graph.rs");
+include!("enum_variants/runtime_graph.rs");
 const CASES: &str = include_str!("enum_variants/cases.json");
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
 
@@ -16,8 +16,8 @@ fn tap(tag: i64, value: i64) -> i64 {
 }
 include!("enum_variants/fixture.rs");
 
-fn observed(value: &Value) -> Json {
-	let out = graph(value);
+fn observed(value: &RuntimeValue) -> Json {
+	let out = runtime_graph(value);
 	for node in out["nodes"].as_array().unwrap() {
 		assert!(
 			!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")),
@@ -39,11 +39,11 @@ fn error(error: &stock::VmError) -> Json {
 		.iter()
 		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
 		.collect::<Vec<_>>();
-	json!({"status":"error","missing":missing,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
+	json!({"status":"error","missing":missing,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
-include!("enum_variants/fresh_graph.rs");
-include!("enum_variants/fresh.rs");
+include!("enum_variants/graph.rs");
+include!("enum_variants/run.rs");
 include!("enum_variants/contract.rs");
 include!("enum_variants/bounded.rs");
 
@@ -66,7 +66,7 @@ fn child() {
 	TAPE.with(|t| t.borrow_mut().clear());
 
 	if engine == "fresh" {
-		let result = observe_fresh(row);
+		let result = observe(row);
 		let path = std::env::var_os("C15B_RESULT").unwrap();
 		let mut file = std::fs::OpenOptions::new()
 			.create_new(true)
@@ -140,10 +140,13 @@ fn observer_controls() {
 			r["source_sha256"]
 		);
 	}
-	assert_ne!(observed(&Value::from(1i64)), observed(&Value::from(2i64)));
 	assert_ne!(
-		observed(&Value::try_from("a").unwrap()),
-		observed(&Value::try_from("b").unwrap())
+		observed(&RuntimeValue::from(1i64)),
+		observed(&RuntimeValue::from(2i64))
+	);
+	assert_ne!(
+		observed(&RuntimeValue::try_from("a").unwrap()),
+		observed(&RuntimeValue::try_from("b").unwrap())
 	);
 	assert_ne!(
 		error(&stock::VmError::new(stock::VmErrorKind::Overflow)),
@@ -198,7 +201,7 @@ fn nominal_observer_controls() {
 
 #[test]
 fn tuple_variant_match_slice() {
-	use crate::experimental_core::value::{Scalar, Type, Value as FreshValue};
+	use crate::experimental_core::value::{Scalar, Type, Value};
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources.insert(Source::memory("enum E{U,T(a)} enum F{T(a)} pub fn main(){match E::T(7){E::U=>0,E::T(x)=>x,_=>9}} pub fn repeat(){let value=E::T(7);let sum=0;for _ in 0..1000{sum+=match value{E::U=>0,E::T(x)=>x,_=>9};}sum} pub fn wrong_type(){match F::T(7){E::U=>0,E::T(x)=>x,_=>9}} pub fn scalar(){match 7{E::U=>0,E::T(x)=>x,_=>9}} pub fn reuse(){7}").unwrap()).unwrap();
@@ -237,7 +240,7 @@ fn tuple_variant_match_slice() {
 	}
 
 	assert_eq!(std::mem::size_of::<Type>(), 8);
-	assert_eq!(std::mem::size_of::<FreshValue>(), 16);
+	assert_eq!(std::mem::size_of::<Value>(), 16);
 	println!("C15b slice: two-arm match=7; 1000 misses and hits=7000; wrong types miss; lifecycle and reuse pass; Type8 Value16");
 }
 
@@ -370,11 +373,11 @@ fn context_variants_are_refused_before_effects() {
 		.insert(Source::memory("pub fn main(){c15b::tap(1,1);HostEnum::V(7)}").unwrap())
 		.unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
-	let mut stock_sources = Sources::new();
-	stock_sources
+	let mut legacy_sources = Sources::new();
+	legacy_sources
 		.insert(Source::memory("pub fn main(){c15b::tap(1,1);HostEnum::V(7)}").unwrap())
 		.unwrap();
-	assert!(crate::prepare(&mut stock_sources)
+	assert!(crate::prepare(&mut legacy_sources)
 		.with_context(&context)
 		.build_vm()
 		.is_ok());
@@ -397,7 +400,7 @@ fn same_variant_compares_across_tuple_and_named_programs() {
 		"enum C15bShape{V{x}} pub fn main(){C15bShape::V{x:7}}",
 	];
 	let mut roots = Vec::new();
-	let mut stock_values = Vec::new();
+	let mut legacy_values = Vec::new();
 	let mut store = Store::new(Limits {
 		entries: 32,
 		bytes: 4096,
@@ -426,9 +429,9 @@ fn same_variant_compares_across_tuple_and_named_programs() {
 			.with_context(&context)
 			.build_vm()
 			.unwrap();
-		stock_values.push(vm.call(["main"], ()).unwrap());
+		legacy_values.push(vm.call(["main"], ()).unwrap());
 	}
-	assert!(stock::Value::partial_eq(&stock_values[0], &stock_values[1]).unwrap());
+	assert!(stock::Value::partial_eq(&legacy_values[0], &legacy_values[1]).unwrap());
 	let mut sources = Sources::new();
 	sources
 		.insert(Source::memory("pub fn main(a,b){a==b}").unwrap())
@@ -457,7 +460,7 @@ fn same_variant_compares_across_tuple_and_named_programs() {
 }
 
 #[test]
-fn stock_replay_controls() {
+fn oracle_controls() {
 	use sha2::{Digest, Sha256};
 	let freeze: Json = serde_json::from_str(include_str!("enum_variants/freeze.json")).unwrap();
 	for (name, data) in [
@@ -482,7 +485,10 @@ fn stock_replay_controls() {
 		),
 	] {
 		assert_eq!(
-			hex(Sha256::digest(data.as_bytes()).as_ref()),
+			hex(Sha256::digest(
+				crate::experimental_core::tests::name_projection::observer_bytes(name, data)
+			)
+			.as_ref()),
 			freeze["files"][name]
 		);
 	}

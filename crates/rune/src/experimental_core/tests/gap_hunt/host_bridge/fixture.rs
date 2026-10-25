@@ -1,4 +1,4 @@
-//! H1 shared test fixture. Stock handlers and fresh enrolled handlers share bodies.
+//! H1 shared test fixture. Stock handlers and new enrolled handlers share bodies.
 use crate::runtime::ProtocolCaller;
 use crate::{Context, Module};
 use std::{
@@ -32,21 +32,21 @@ impl Recorder {
 	}
 }
 // A new Recorder per child/context; no global events leak between tests.
-pub(super) fn stock_context(tape: &Recorder) -> Context {
+pub(super) fn legacy_context(tape: &Recorder) -> Context {
 	fixture_context(tape, false)
 }
 
-pub(super) fn fresh_context(tape: &Recorder) -> Context {
+pub(super) fn context(tape: &Recorder) -> Context {
 	fixture_context(tape, true)
 }
 
-fn fixture_context(tape: &Recorder, fresh: bool) -> Context {
+fn fixture_context(tape: &Recorder, certify: bool) -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = Module::with_item(["h1"]).unwrap();
 	macro_rules! enrolled {
 		($name:literal, $f:expr) => {
-			if fresh {
-				module.fresh_host_function($name, $f).unwrap();
+			if certify {
+				module.host_function($name, $f).unwrap();
 			} else {
 				module.function($name, $f).build().unwrap();
 			}
@@ -490,15 +490,15 @@ fn fixture_context(tape: &Recorder, fresh: bool) -> Context {
 			.unwrap();
 	}
 	context.install(module).unwrap();
-	if fresh {
-		use crate::function::fresh_host::{HostOutput, HostSignature, HostType};
+	if certify {
+		use crate::function::host::{HostOutputKind, HostSignature, HostType};
 		context
-			.fresh_host_for_test(
+			.host_for_test(
 				crate::Hash::type_hash(["h1", "vm_error_control"]),
 				HostSignature {
 					arity: 0,
 					arguments: [HostType::Unit; 4],
-					output: HostOutput::Scalar(HostType::I64),
+					output: HostOutputKind::Scalar(HostType::I64),
 				},
 			)
 			.unwrap();

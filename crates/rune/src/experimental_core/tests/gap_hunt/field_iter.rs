@@ -171,17 +171,17 @@ fn cases() -> Vec<(String, String)> {
 
 #[test]
 #[ignore = "explicit bounded S-field stock study; requires new GAP_OUT"]
-fn stock_probe() {
-	probe("stock");
+fn legacy_probe() {
+	run_probe("stock");
 }
 
 #[test]
-#[ignore = "explicit bounded S-field fresh inventory; requires new GAP_OUT"]
-fn fresh_probe() {
-	probe("fresh");
+#[ignore = "explicit bounded S-field execution inventory; requires new GAP_OUT"]
+fn probe() {
+	run_probe("fresh");
 }
 
-fn probe(engine: &str) {
+fn run_probe(engine: &str) {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("GAP_OUT required"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
 	let scratch =

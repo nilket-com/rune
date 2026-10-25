@@ -289,8 +289,8 @@ fn release_drains_valid_siblings_after_an_invalid_edge_and_allows_reuse() {
 	);
 	assert_eq!(store.live_entries(), 0);
 	assert_eq!(store.payload_bytes(), 0);
-	let fresh = store.string("fresh").unwrap();
-	store.release(fresh).unwrap();
+	let execution = store.string("fresh").unwrap();
+	store.release(execution).unwrap();
 	assert_eq!(store.live_entries(), 0);
 }
 
@@ -317,8 +317,8 @@ fn invalidation_drains_valid_siblings_after_an_invalid_edge() {
 	assert_eq!(store.payload_bytes(), 0);
 	store.release(parent).unwrap();
 	assert_eq!(store.live_entries(), 0);
-	let fresh = store.string("fresh").unwrap();
-	store.release(fresh).unwrap();
+	let execution = store.string("fresh").unwrap();
+	store.release(execution).unwrap();
 }
 
 #[test]
@@ -368,6 +368,6 @@ fn drainage_reports_the_first_error_and_still_releases_other_edges() {
 	store.release(iterator).unwrap();
 	assert_eq!(store.live_entries(), 0);
 	assert_eq!(store.payload_bytes(), 0);
-	let fresh = store.string("fresh").unwrap();
-	store.release(fresh).unwrap();
+	let execution = store.string("fresh").unwrap();
+	store.release(execution).unwrap();
 }

@@ -1,7 +1,7 @@
 //! C17a Option and Result method calls. Operands were evaluated in source order.
 use super::*;
 use crate::experimental_core::heap::VariantOutcome;
-use crate::function::fresh_variant::Method;
+use crate::function::variant::Method;
 
 impl Executor {
 	#[cold]

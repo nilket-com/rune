@@ -127,7 +127,7 @@ impl AnyObj {
 	}
 
 	/// Cold host-import ownership audit. Borrowed native storage has no owned count.
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	pub(crate) fn owned_ref_count(&self) -> Option<usize> {
 		// SAFETY: This live handle keeps the allocation and its vtable alive.
 		unsafe {

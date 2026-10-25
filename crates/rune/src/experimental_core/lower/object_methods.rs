@@ -1,6 +1,6 @@
 //! C17b Object methods and `is_empty`: one certified cold call per site.
 use super::*;
-use crate::function::fresh_object::Method;
+use crate::function::object::Method;
 
 impl Lower<'_, '_> {
 	/// Whether `id` always evaluates to an anonymous Object: an object literal,

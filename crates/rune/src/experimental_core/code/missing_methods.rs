@@ -14,34 +14,34 @@ pub(super) struct MethodEntry {
 /// A native provider the core already implements, with its receiver included.
 /// Other providers keep the whole dynamic site refused before execution.
 fn native_method(context: &Context, receiver: Hash, name: Hash) -> Option<(u32, u32)> {
-	use crate::function::{fresh_number, fresh_object, fresh_text, fresh_variant};
+	use crate::function::{number, object, text, variant};
 	use crate::TypeHash;
-	if name == crate::function::fresh_clone::RESIZE_NAME
-		&& receiver == crate::function::fresh_clone::Provider::Vec.receiver()
-		&& context.fresh_vec_resize()
+	if name == crate::function::clone::RESIZE_NAME
+		&& receiver == crate::function::clone::Provider::Vec.receiver()
+		&& context.vec_resize()
 	{
 		return Some((super::VEC_RESIZE, 3));
 	}
 
-	if let Some(method) = fresh_variant::Method::from_hash(name) {
-		if method.provider(receiver).is_some() && context.fresh_variant_method(method) {
+	if let Some(method) = variant::Method::from_hash(name) {
+		if method.provider(receiver).is_some() && context.variant_method(method) {
 			return Some((method.id(), method.arity()));
 		}
 	}
-	if let Some(method) = fresh_object::Method::from_hash(name) {
-		if method.provider(receiver).is_some() && context.fresh_object_method(method) {
+	if let Some(method) = object::Method::from_hash(name) {
+		if method.provider(receiver).is_some() && context.object_method(method) {
 			return Some((method.id(), method.arity()));
 		}
 	}
-	if let Some(method) = fresh_text::Method::from_hash(name) {
-		if receiver == crate::alloc::String::HASH && context.fresh_text_method(method) {
+	if let Some(method) = text::Method::from_hash(name) {
+		if receiver == crate::alloc::String::HASH && context.text_method(method) {
 			return Some((method.id(), method.arity()));
 		}
 	}
-	if let Some(method) = fresh_number::Method::from_hash(name) {
-		if method.instance() && context.fresh_number_method(method) {
-			let receiver = fresh_number::Receiver::from_hash(receiver)?;
-			let pair = fresh_number::Pair::new(method, receiver)?;
+	if let Some(method) = number::Method::from_hash(name) {
+		if method.instance() && context.number_method(method) {
+			let receiver = number::Receiver::from_hash(receiver)?;
+			let pair = number::Pair::new(method, receiver)?;
 			return Some((pair.id(), method.arity()));
 		}
 	}
@@ -121,8 +121,8 @@ impl CompileTransaction {
 		// A script method of the name elsewhere is no target here when the
 		// complete instance index has no function at this receiver's key.
 		let hash = Hash::associated_function(receiver, effective);
-		if query.fresh_method_script.closed(name)
-			&& (!query.fresh_instances.complete() || query.fresh_instances.get(hash).is_some())
+		if query.method_script.closed(name)
+			&& (!query.instances.complete() || query.instances.get(hash).is_some())
 		{
 			return Err(Error::refused(Refusal::Method));
 		}
@@ -141,15 +141,15 @@ impl CompileTransaction {
 		name: Hash,
 		effective: Hash,
 	) -> Result<()> {
-		if context.fresh_method_closed(name) || query.fresh_method_script.closed(name) {
+		if context.method_closed(name) || query.method_script.closed(name) {
 			return Err(Error::refused(Refusal::Method));
 		}
 		if self.checked_absent.contains(&effective) {
 			return Ok(());
 		}
 		// Source item hashes are a conservative superset of source nominal hashes.
-		// The complete index is available before fresh lowering begins.
-		for receiver in crate::function::fresh_methods::RECEIVERS
+		// The complete index is available before new lowering begins.
+		for receiver in crate::function::methods::RECEIVERS
 			.iter()
 			.copied()
 			.chain(query.items.keys().map(|id| pool.item_type_hash(*id)))
@@ -235,23 +235,23 @@ impl CompileTransaction {
 		c: &Context,
 		q: &crate::query::QueryInner<'_>,
 		p: &crate::compile::Pool,
-		m: crate::function::fresh_text::Method,
+		m: crate::function::text::Method,
 	) -> Result<()> {
 		use crate::TypeHash;
 		if self.checked_text & m.bit() != 0 {
 			return Ok(());
 		}
-		if !c.fresh_text_method(m) || q.fresh_method_script.closed(m.hash()) {
+		if !c.text_method(m) || q.method_script.closed(m.hash()) {
 			return Err(Error::refused(Refusal::Method));
 		}
-		for receiver in crate::function::fresh_methods::RECEIVERS
+		for receiver in crate::function::methods::RECEIVERS
 			.iter()
 			.copied()
 			.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
 		{
 			if receiver == crate::alloc::String::HASH
-				|| (m == crate::function::fresh_text::Method::Contains
-					&& crate::function::fresh_text::range(receiver))
+				|| (m == crate::function::text::Method::Contains
+					&& crate::function::text::range(receiver))
 			{
 				continue;
 			}
@@ -272,22 +272,21 @@ impl CompileTransaction {
 		c: &Context,
 		q: &crate::query::QueryInner<'_>,
 		p: &crate::compile::Pool,
-		m: crate::function::fresh_pipeline::Method,
+		m: crate::function::pipeline::Method,
 	) -> Result<()> {
 		if self.checked_pipeline & (1 << m as u8) != 0 {
 			return Ok(());
 		}
-		if !c.fresh_pipeline_method(m) || q.fresh_method_script.closed(m.hash()) {
+		if !c.pipeline_method(m) || q.method_script.closed(m.hash()) {
 			return Err(Error::refused(Refusal::Method));
 		}
 		// Non-origin registered iterator methods remain outside this new surface. For the
 		// two plain native names, close over every representable receiver before effects.
 		if matches!(
 			m,
-			crate::function::fresh_pipeline::Method::Chars
-				| crate::function::fresh_pipeline::Method::Unwrap
+			crate::function::pipeline::Method::Chars | crate::function::pipeline::Method::Unwrap
 		) {
-			for receiver in crate::function::fresh_methods::RECEIVERS
+			for receiver in crate::function::methods::RECEIVERS
 				.iter()
 				.copied()
 				.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
@@ -309,21 +308,21 @@ impl CompileTransaction {
 
 impl CompileTransaction {
 	/// Proves that only the certified std Option and Result registrations provide
-	/// `m` for every receiver a fresh value or a source item can have.
+	/// `m` for every receiver a new value or a source item can have.
 	pub(crate) fn variant_method(
 		&mut self,
 		c: &Context,
 		q: &crate::query::QueryInner<'_>,
 		p: &crate::compile::Pool,
-		m: crate::function::fresh_variant::Method,
+		m: crate::function::variant::Method,
 	) -> Result<()> {
 		if self.checked_variant & m.bit() != 0 {
 			return Ok(());
 		}
-		if !c.fresh_variant_method(m) || q.fresh_method_script.closed(m.hash()) {
+		if !c.variant_method(m) || q.method_script.closed(m.hash()) {
 			return Err(Error::refused(Refusal::Method));
 		}
-		for receiver in crate::function::fresh_methods::RECEIVERS
+		for receiver in crate::function::methods::RECEIVERS
 			.iter()
 			.copied()
 			.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
@@ -345,26 +344,26 @@ impl CompileTransaction {
 impl CompileTransaction {
 	/// Certifies a C17b Object method site. A site whose receiver is statically
 	/// proven Object needs only the certified std provider; any other site also
-	/// needs proof that no other receiver a fresh value or a source item can
+	/// needs proof that no other receiver a new value or a source item can
 	/// have provides `m`.
 	pub(crate) fn object_method(
 		&mut self,
 		c: &Context,
 		q: &crate::query::QueryInner<'_>,
 		p: &crate::compile::Pool,
-		m: crate::function::fresh_object::Method,
+		m: crate::function::object::Method,
 		proven_object: bool,
 	) -> Result<()> {
-		if !c.fresh_object_method(m) || (!proven_object && m.shared_name()) {
+		if !c.object_method(m) || (!proven_object && m.shared_name()) {
 			return Err(Error::refused(Refusal::Method));
 		}
 		if proven_object || self.checked_object & m.bit() != 0 {
 			return Ok(());
 		}
-		if q.fresh_method_script.closed(m.hash()) {
+		if q.method_script.closed(m.hash()) {
 			return Err(Error::refused(Refusal::Method));
 		}
-		for receiver in crate::function::fresh_methods::RECEIVERS
+		for receiver in crate::function::methods::RECEIVERS
 			.iter()
 			.copied()
 			.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
@@ -386,26 +385,26 @@ impl CompileTransaction {
 impl CompileTransaction {
 	/// Certifies a C17c numeric method site whose receiver type is not proven:
 	/// every stock provider is its std registration, and no other receiver a
-	/// fresh value or a source item can have provides `m`.
+	/// new value or a source item can have provides `m`.
 	pub(crate) fn number_method(
 		&mut self,
 		c: &Context,
 		q: &crate::query::QueryInner<'_>,
 		p: &crate::compile::Pool,
-		m: crate::function::fresh_number::Method,
+		m: crate::function::number::Method,
 	) -> Result<()> {
-		use crate::function::fresh_number::{Pair, Receiver};
-		if m.shared_name() || !m.instance() || !c.fresh_number_method(m) {
+		use crate::function::number::{Pair, Receiver};
+		if m.shared_name() || !m.instance() || !c.number_method(m) {
 			return Err(Error::refused(Refusal::Method));
 		}
 		let bit = 1u64 << m as u32;
 		if self.checked_number & bit != 0 {
 			return Ok(());
 		}
-		if q.fresh_method_script.closed(m.hash()) {
+		if q.method_script.closed(m.hash()) {
 			return Err(Error::refused(Refusal::Method));
 		}
-		for receiver in crate::function::fresh_methods::RECEIVERS
+		for receiver in crate::function::methods::RECEIVERS
 			.iter()
 			.copied()
 			.chain(q.items.keys().map(|id| p.item_type_hash(*id)))
@@ -516,9 +515,9 @@ impl CompileTransaction {
 	) -> bool {
 		// Keep the pre-C17f script dispatch choice; only the new resize path
 		// may add this provider after proving its fill at the individual site.
-		if name == crate::function::fresh_clone::RESIZE_NAME
+		if name == crate::function::clone::RESIZE_NAME
 			&& context
-				.lookup_function(crate::function::fresh_clone::RESIZE)
+				.lookup_function(crate::function::clone::RESIZE)
 				.is_some()
 		{
 			return false;
@@ -526,12 +525,12 @@ impl CompileTransaction {
 		if self.checked_dynamic.contains(&name) {
 			return true;
 		}
-		query.fresh_instances.complete()
-			&& crate::function::fresh_methods::RECEIVERS
+		query.instances.complete()
+			&& crate::function::methods::RECEIVERS
 				.iter()
 				.copied()
 				.chain(query.items.keys().map(|id| pool.item_type_hash(*id)))
-				.chain(context.fresh_types())
+				.chain(context.types())
 				.all(|receiver| {
 					super::super::receiver_domain::unreachable(receiver)
 						|| context
@@ -556,14 +555,14 @@ impl CompileTransaction {
 		if self.checked_dynamic.contains(&name) {
 			return Ok(());
 		}
-		if !query.fresh_instances.complete() {
+		if !query.instances.complete() {
 			return Err(Error::refused(Refusal::Method));
 		}
-		for receiver in crate::function::fresh_methods::RECEIVERS
+		for receiver in crate::function::methods::RECEIVERS
 			.iter()
 			.copied()
 			.chain(query.items.keys().map(|id| pool.item_type_hash(*id)))
-			.chain(context.fresh_types())
+			.chain(context.types())
 		{
 			// This is a value-domain proof, not an absence claim or a native
 			// adapter. Every Context type is still examined, and unknown
@@ -582,7 +581,7 @@ impl CompileTransaction {
 				continue;
 			}
 			self.builder.record_absent(hash)?;
-			if let Some(item) = query.fresh_instances.get(hash) {
+			if let Some(item) = query.instances.get(hash) {
 				let id = resolve(item, None)?;
 				self.builder.record_method(hash, id, None)?;
 			}

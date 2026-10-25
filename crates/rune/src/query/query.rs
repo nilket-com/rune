@@ -55,21 +55,21 @@ const MAX_ITEM_RECURSION: usize = 8;
 
 #[derive(Default)]
 pub(crate) struct QueryInner<'arena> {
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_mode: bool,
+	#[cfg(feature = "execution")]
+	pub(crate) collecting: bool,
 	/// Monotonic script-associated numeric-name collision mask, set while indexing.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_numeric_script: u8,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_sort_by_script: bool,
-	/// Monotonic script-associated `iter`/`next`/`any` collision mask (`fresh_iter::Name::bit`),
+	#[cfg(feature = "execution")]
+	pub(crate) numeric_script: u8,
+	#[cfg(feature = "execution")]
+	pub(crate) sort_by_script: bool,
+	/// Monotonic script-associated `iter`/`next`/`any` collision mask (`iter::Name::bit`),
 	/// set while indexing.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_iter_script: u8,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_method_script: crate::function::fresh_methods::State,
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fresh_instances: crate::function::fresh_methods::Instances,
+	#[cfg(feature = "execution")]
+	pub(crate) iter_script: u8,
+	#[cfg(feature = "execution")]
+	pub(crate) method_script: crate::function::methods::State,
+	#[cfg(feature = "execution")]
+	pub(crate) instances: crate::function::methods::Instances,
 	/// Scratch space for parsing numbers.
 	pub(crate) scratch: RefCell<String>,
 	/// How deeply the item being built depends on other items which have to be
@@ -124,13 +124,13 @@ pub(crate) struct QueryInner<'arena> {
 	pub(crate) defer_queue: VecDeque<DeferEntry>,
 }
 
-#[cfg(feature = "fresh-core")]
+#[cfg(feature = "execution")]
 pub(crate) struct StructShape<'a> {
 	pub(crate) item: ItemId,
 	pub(crate) fields: &'a meta::Fields,
 }
 
-#[cfg(feature = "fresh-core")]
+#[cfg(feature = "execution")]
 pub(crate) struct VariantShape<'a> {
 	pub(crate) item: ItemId,
 	pub(crate) fields: &'a meta::Fields,
@@ -139,8 +139,8 @@ pub(crate) struct VariantShape<'a> {
 }
 
 impl QueryInner<'_> {
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_variant_shape(&self, hash: Hash) -> Option<VariantShape<'_>> {
+	#[cfg(feature = "execution")]
+	pub(crate) fn variant_shape(&self, hash: Hash) -> Option<VariantShape<'_>> {
 		self.meta.values().find_map(|m| {
 			if m.context || m.hash != hash {
 				return None;
@@ -163,26 +163,26 @@ impl QueryInner<'_> {
 		})
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_value_shape(&self, hash: Hash) -> Option<StructShape<'_>> {
-		self.fresh_struct_shape(hash).or_else(|| {
-			self.fresh_variant_shape(hash).map(|v| StructShape {
+	#[cfg(feature = "execution")]
+	pub(crate) fn value_shape(&self, hash: Hash) -> Option<StructShape<'_>> {
+		self.struct_shape(hash).or_else(|| {
+			self.variant_shape(hash).map(|v| StructShape {
 				item: v.item,
 				fields: v.fields,
 			})
 		})
 	}
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_enum_item(&self, hash: Hash) -> Option<ItemId> {
+	#[cfg(feature = "execution")]
+	pub(crate) fn enum_item(&self, hash: Hash) -> Option<ItemId> {
 		self.meta
 			.values()
 			.find(|m| !m.context && m.hash == hash && matches!(m.kind, meta::Kind::Enum { .. }))
 			.map(|m| m.item_meta.item)
 	}
 
-	// Borrowed metadata only: never constructs a stock VM value or invokes a protocol.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_self_method(&self, item: Hash, receiver: Hash) -> Option<Hash> {
+	// Borrowed metadata only: never constructs a legacy VM value or invokes a protocol.
+	#[cfg(feature = "execution")]
+	pub(crate) fn self_method(&self, item: Hash, receiver: Hash) -> Option<Hash> {
 		let ty = self.meta.values().any(|m| {
 			!m.context
 				&& m.hash == receiver
@@ -214,12 +214,12 @@ impl QueryInner<'_> {
 				return None;
 			};
 			let associated = Hash::associated_function(receiver, Hash::ident(name.as_ref()));
-			(self.fresh_instances.get(associated) == Some(item)).then_some(associated)
+			(self.instances.get(associated) == Some(item)).then_some(associated)
 		})
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_struct_shape(&self, hash: Hash) -> Option<StructShape<'_>> {
+	#[cfg(feature = "execution")]
+	pub(crate) fn struct_shape(&self, hash: Hash) -> Option<StructShape<'_>> {
 		self.meta.values().find_map(|m| {
 			if m.context || m.hash != hash {
 				return None;
@@ -1126,12 +1126,12 @@ impl<'a, 'arena> Query<'a, 'arena> {
 		span: &dyn Spanned,
 		entry: Entry<'_>,
 	) -> compile::Result<ConstValueBuf> {
-		#[cfg(feature = "fresh-core")]
-		if self.inner.fresh_mode {
+		#[cfg(feature = "execution")]
+		if self.inner.collecting {
 			let Entry::Expr(exprs, expr) = entry else {
 				return Err(compile::Error::msg(
 					span,
-					"fresh core: constant blocks/calls refused",
+					"execution core: constant blocks/calls refused",
 				));
 			};
 			return crate::experimental_core::constants::eval(self.inner, exprs, expr)
@@ -1177,11 +1177,11 @@ impl<'a, 'arena> Query<'a, 'arena> {
 		id: ItemId,
 		args: &[ConstValueBuf],
 	) -> compile::Result<ConstValueBuf> {
-		#[cfg(feature = "fresh-core")]
-		if self.inner.fresh_mode {
+		#[cfg(feature = "execution")]
+		if self.inner.collecting {
 			return Err(compile::Error::msg(
 				span,
-				"fresh core: constant function calls refused",
+				"execution core: constant function calls refused",
 			));
 		}
 		let const_fn = self.const_fn_for(id).with_span(span)?;
@@ -1955,11 +1955,11 @@ impl<'a, 'arena> Query<'a, 'arena> {
 				meta::Kind::Const
 			}
 			Indexed::Static(s) => {
-				#[cfg(feature = "fresh-core")]
-				if self.inner.fresh_mode {
+				#[cfg(feature = "execution")]
+				if self.inner.collecting {
 					return Err(compile::Error::msg(
 						item_meta.location.span,
-						"fresh core: statics, constant blocks and constant functions refused",
+						"execution core: statics, constant blocks and constant functions refused",
 					));
 				}
 				if let Some(c) = s.init {
@@ -1990,11 +1990,11 @@ impl<'a, 'arena> Query<'a, 'arena> {
 				meta::Kind::Static
 			}
 			Indexed::ConstBlock(c) => {
-				#[cfg(feature = "fresh-core")]
-				if self.inner.fresh_mode {
+				#[cfg(feature = "execution")]
+				if self.inner.collecting {
 					return Err(compile::Error::msg(
 						item_meta.location.span,
-						"fresh core: statics, constant blocks and constant functions refused",
+						"execution core: statics, constant blocks and constant functions refused",
 					));
 				}
 				let (hir, exprs) = {
@@ -2027,11 +2027,11 @@ impl<'a, 'arena> Query<'a, 'arena> {
 				meta::Kind::Const
 			}
 			Indexed::ConstFn(c) => {
-				#[cfg(feature = "fresh-core")]
-				if self.inner.fresh_mode {
+				#[cfg(feature = "execution")]
+				if self.inner.collecting {
 					return Err(compile::Error::msg(
 						item_meta.location.span,
-						"fresh core: statics, constant blocks and constant functions refused",
+						"execution core: statics, constant blocks and constant functions refused",
 					));
 				}
 				// The body may call the function it belongs to, directly or

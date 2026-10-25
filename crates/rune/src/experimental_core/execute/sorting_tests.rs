@@ -201,10 +201,10 @@ pub fn c11_reuse(){c11::mark("reuse");7}"########;
 	let mut cx = crate::Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["c11"]).unwrap();
 	module
-		.fresh_host_function("tick", |_: i64, _: i64| -> i64 { 7 })
+		.host_function("tick", |_: i64, _: i64| -> i64 { 7 })
 		.unwrap();
 	module
-		.fresh_host_function("mark", |_: &str| -> i64 { 7 })
+		.host_function("mark", |_: &str| -> i64 { 7 })
 		.unwrap();
 	cx.install(module).unwrap();
 	let mut sources = crate::Sources::new();

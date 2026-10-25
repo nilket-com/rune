@@ -14,10 +14,10 @@ use crate::{ContextError, Module};
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
 	signed!(m, i64);
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_numeric = 0b0001_1000;
-		m.fresh_number = crate::function::fresh_number::marker::I64;
+		m.numeric = 0b0001_1000;
+		m.number = crate::function::number::marker::I64;
 	}
 	Ok(m)
 }

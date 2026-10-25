@@ -73,9 +73,9 @@ fn c11_retained_frame_shape_d1b(
 	let site = &actual["outcome"]["sites"][0];
 	let actual_site = format!(
 		"{}:{}:{}",
-		site["source"].as_u64().ok_or("fresh site source")?,
-		site["start"].as_u64().ok_or("fresh site start")?,
-		site["end"].as_u64().ok_or("fresh site end")?
+		site["source"].as_u64().ok_or("execution site source")?,
+		site["start"].as_u64().ok_or("execution site start")?,
+		site["end"].as_u64().ok_or("execution site end")?
 	);
 	let frozen = format!(
 		"{}:{}:{}",
@@ -104,7 +104,7 @@ fn c11_retained_frame_shape_d1b(
 fn c11_enforce_resource(
 	label: &str,
 	source: &str,
-	fixture: &str,
+	input_fixture: &str,
 	actual: &Json,
 	audit: &Json,
 	anchor: &Json,
@@ -124,8 +124,8 @@ fn c11_enforce_resource(
 		|| row["source_sha256"] != digest(source.as_bytes())
 		|| row["source_hex"] != hex(source.as_bytes())
 		|| source != CASES[index].1
-		|| row["fixture"] != fixture
-		|| fixture != CASES[index].2
+		|| row["fixture"] != input_fixture
+		|| input_fixture != CASES[index].2
 		|| row["anchor"] != *anchor
 		|| row["fresh_expectation"] != *actual
 		|| row["fresh_resource_audit"] != *audit

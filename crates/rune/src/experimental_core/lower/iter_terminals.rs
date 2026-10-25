@@ -6,7 +6,7 @@
 //! `flat_map` converts exists. A chain that is stored, passed or returned is
 //! not direct and keeps its earlier refusal.
 use super::*;
-use crate::function::fresh_iter::Name;
+use crate::function::iter::Name;
 use crate::function::iter_terminal::{Closure, Collection, Intrinsic, Number, Terminal, RANGE};
 
 /// Chain recursion bound, as for the other origin proofs.
@@ -76,7 +76,7 @@ pub(super) enum Site {
 	/// The consumer of a direct chain.
 	Terminal(End, hir::ExprId),
 	/// A C14b text pipeline method.
-	Text(hir::ExprId, crate::function::fresh_pipeline::Method),
+	Text(hir::ExprId, crate::function::pipeline::Method),
 }
 
 /// What consumes a chain at a call site.
@@ -390,7 +390,7 @@ impl<'hir> Lower<'_, 'hir> {
 						self.context,
 						self.constants,
 						self.pool,
-						crate::function::fresh_pipeline::Method::Next,
+						crate::function::pipeline::Method::Next,
 					)
 					.map_err(|e| e.at(at))?;
 				if extended {
@@ -463,7 +463,7 @@ impl<'hir> Lower<'_, 'hir> {
 		};
 		let constructor = self
 			.constants
-			.fresh_value_shape(hash)
+			.value_shape(hash)
 			.map(|shape| match shape.fields {
 				crate::compile::meta::Fields::Unnamed(n) => *n,
 				_ => 0,

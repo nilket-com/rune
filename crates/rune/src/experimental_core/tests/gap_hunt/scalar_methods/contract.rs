@@ -128,14 +128,14 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[test]
 #[cfg(target_os = "linux")]
 #[ignore = "C6 frozen stock replay; explicit unique GAP_OUT, bounded children"]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C6 bounded fresh replay; explicit unique GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C6 bounded execution replay; explicit unique GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -337,7 +337,7 @@ fn run_contract(engine: &str) {
 						serde_json::to_vec_pretty(&got).unwrap(),
 					)
 					.unwrap();
-					assert_eq!(got, expected, "fresh {label}");
+					assert_eq!(got, expected, "execution {label}");
 					assert!(audit["call_chain"].as_array().unwrap().is_empty());
 					assert_eq!(hex(&stdout), c[4], "stdout {label}");
 					assert_eq!(hex(&stderr), c[5], "stderr {label}");
@@ -360,7 +360,7 @@ fn run_contract(engine: &str) {
 						));
 						"Retained-frame"
 					} else {
-						assert_eq!(got, expected, "fresh {label}");
+						assert_eq!(got, expected, "execution {label}");
 						assert!(audit["call_chain"].as_array().unwrap().is_empty());
 						"Exact"
 					};

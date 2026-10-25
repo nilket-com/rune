@@ -513,11 +513,11 @@ impl<'a, 'arena> Worker<'a, 'arena> {
 
 		let hash = self.q.pool.item_type_hash(named.item);
 
-		#[cfg(feature = "fresh-core")]
-		if self.q.inner.fresh_mode && !self.q.context.fresh_builtin_macro(hash) {
+		#[cfg(feature = "execution")]
+		if self.q.inner.collecting && !self.q.context.builtin_macro(hash) {
 			return Err(compile::Error::msg(
 				this.location.span,
-				"fresh core: macro handler not admitted",
+				"execution core: macro handler not admitted",
 			));
 		}
 
@@ -682,11 +682,11 @@ impl<'a, 'arena> Worker<'a, 'arena> {
 
 		let hash = self.q.pool.item_type_hash(named.item);
 
-		#[cfg(feature = "fresh-core")]
-		if self.q.inner.fresh_mode {
+		#[cfg(feature = "execution")]
+		if self.q.inner.collecting {
 			return Err(compile::Error::msg(
 				this.location.span,
-				"fresh core: macro handler not admitted",
+				"execution core: macro handler not admitted",
 			));
 		}
 

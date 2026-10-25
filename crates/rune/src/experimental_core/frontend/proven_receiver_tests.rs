@@ -21,7 +21,7 @@ fn context(row: &Json) -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::new();
 	module
-		.fresh_host_function("mark", || {
+		.host_function("mark", || {
 			EFFECTS.with(|count| count.set(count.get() + 1));
 			0i64
 		})
@@ -54,7 +54,7 @@ fn context(row: &Json) -> Context {
 			Ok(crate::macros::quote!(#expr).into_token_stream(cx)?)
 		})
 		.unwrap();
-		call.fresh_mark_builtin_macro();
+		call.mark_builtin_macro();
 		context.install(call).unwrap();
 		let mut returns = crate::Module::with_crate_item("std", ["test"]).unwrap();
 		returns
@@ -64,10 +64,10 @@ fn context(row: &Json) -> Context {
 				Ok(crate::macros::quote!(#expr).into_token_stream(cx)?)
 			})
 			.unwrap();
-		returns.fresh_mark_builtin_macro();
+		returns.mark_builtin_macro();
 		context.install(returns).unwrap();
-		assert!(context.fresh_builtin_macro(Hash::type_hash(crate::item!(::std::fmt::format))));
-		assert!(context.fresh_builtin_macro(Hash::type_hash(crate::item!(::std::test::assert))));
+		assert!(context.builtin_macro(Hash::type_hash(crate::item!(::std::fmt::format))));
+		assert!(context.builtin_macro(Hash::type_hash(crate::item!(::std::test::assert))));
 	}
 	if let Some(kind) = row["context_override"].as_str() {
 		let mut module = crate::Module::with_item(["host"]).unwrap();
@@ -361,7 +361,7 @@ fn proven_receiver_observe_frontier() {
 	}
 }
 
-fn fresh(row: &Json) -> (Program, Context) {
+fn execution(row: &Json) -> (Program, Context) {
 	let mut sources = Sources::new();
 	sources
 		.insert(crate::Source::memory(row["source"].as_str().unwrap()).unwrap())
@@ -386,7 +386,7 @@ fn proven_receiver_private_and_closure_entries_refuse_before_work() {
 		.iter()
 		.filter(|row| !row["host_policy"].is_null())
 	{
-		let (program, context) = fresh(row);
+		let (program, context) = execution(row);
 		let hash = row["entry_hash"]
 			.as_u64()
 			.map(Hash::new)
@@ -456,8 +456,8 @@ fn proven_receiver_private_and_closure_entries_refuse_before_work() {
 fn proven_receiver_public_macro_registration_stays_uncertified() {
 	let row = json!({"macros":true});
 	let context = context(&row);
-	assert!(!context.fresh_builtin_macro(Hash::type_hash(["mk"])));
-	assert!(!context.fresh_builtin_macro(Hash::type_hash(["ret"])));
+	assert!(!context.builtin_macro(Hash::type_hash(["mk"])));
+	assert!(!context.builtin_macro(Hash::type_hash(["ret"])));
 	let mut context = context;
 	let mut public = crate::Module::with_crate_item("std", ["fmt"]).unwrap();
 	public
@@ -467,7 +467,7 @@ fn proven_receiver_public_macro_registration_stays_uncertified() {
 		})
 		.unwrap();
 	context.install(public).unwrap();
-	assert!(!context.fresh_builtin_macro(Hash::type_hash(crate::item!(::std::fmt::format))));
+	assert!(!context.builtin_macro(Hash::type_hash(crate::item!(::std::fmt::format))));
 }
 
 #[test]
@@ -576,7 +576,7 @@ fn proven_receiver_frozen_frontier_and_execution() {
 				}
 				continue;
 			}
-			let (program, context) = fresh(row);
+			let (program, context) = execution(row);
 			let main = program.function(Hash::type_hash(["main"])).unwrap();
 			assert!(program.entry_eligible(main), "{}", row["name"]);
 			let mut executor = Executor::new().unwrap();
@@ -696,7 +696,7 @@ fn proven_receiver_both_context_absences_are_checked_before_execution() {
 		Hash::type_hash(["R", "capacity"]),
 	] {
 		let row = json!({"source":"struct R; impl R { fn capacity(self) { 7 } } fn make() { R } pub fn main() { mark(); make().capacity() }"});
-		let (program, mut context) = fresh(&row);
+		let (program, mut context) = execution(&row);
 		let main = program.function(Hash::type_hash(["main"])).unwrap();
 		let original = crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap();
 		let handler = context
@@ -787,7 +787,7 @@ fn deferred_refusal_keeps_the_frozen_object_diagnostic() {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["c17b"]).unwrap();
 	module
-		.fresh_host_function("tap", |_: i64, value: i64| value)
+		.host_function("tap", |_: i64, value: i64| value)
 		.unwrap();
 	context.install(module).unwrap();
 	let mut sources = Sources::new();
@@ -843,7 +843,7 @@ fn deferred_refusals_keep_all_body_diagnostics_and_the_closure_span() {
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["c17c"]).unwrap();
 	module
-		.fresh_host_function("tap", |_: i64, value: i64| value)
+		.host_function("tap", |_: i64, value: i64| value)
 		.unwrap();
 	context.install(module).unwrap();
 	let mut sources = Sources::new();

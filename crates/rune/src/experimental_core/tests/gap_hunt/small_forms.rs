@@ -1,9 +1,9 @@
-//! C12 frozen stock oracle and independent fresh observations.
+//! C12 frozen stock oracle and independent new observations.
 use super::*;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
-include!("small_forms/graph.rs");
+include!("small_forms/runtime_graph.rs");
 const C12_CASES: &str = include_str!("small_forms/cases.json");
 const C12_ADMISSIONS: &str = include_str!("small_forms/admissions.json");
 thread_local! {static C12_TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
@@ -29,21 +29,24 @@ fn c12_context() -> Context {
 	context.install(module).unwrap();
 	context
 }
-fn c12_vec(values: impl IntoIterator<Item = Value>) -> Value {
+fn c12_vec(values: impl IntoIterator<Item = RuntimeValue>) -> RuntimeValue {
 	let mut out = crate::alloc::Vec::new();
 	for value in values {
 		out.try_push(value).unwrap();
 	}
-	Value::vec(out).unwrap()
+	RuntimeValue::vec(out).unwrap()
 }
-fn c12_input(name: &str) -> (Value, Value) {
+fn c12_input(name: &str) -> (RuntimeValue, RuntimeValue) {
 	let state = c12_vec([]);
 	let value = match name {
-		"none" => Value::unit(),
+		"none" => RuntimeValue::unit(),
 		"empty" => c12_vec([]),
-		"one" => c12_vec([Value::from(2i64)]),
-		"ints" => c12_vec((1..=4i64).map(Value::from)),
-		"nested" => c12_vec([c12_vec([Value::from(1i64)]), c12_vec([Value::from(2i64)])]),
+		"one" => c12_vec([RuntimeValue::from(2i64)]),
+		"ints" => c12_vec((1..=4i64).map(RuntimeValue::from)),
+		"nested" => c12_vec([
+			c12_vec([RuntimeValue::from(1i64)]),
+			c12_vec([RuntimeValue::from(2i64)]),
+		]),
 		"cycle" => {
 			let value = c12_vec([]);
 			value
@@ -57,8 +60,8 @@ fn c12_input(name: &str) -> (Value, Value) {
 	};
 	(value, state)
 }
-fn c12_graph(value: &Value) -> Json {
-	let out = graph(value);
+fn c12_graph(value: &RuntimeValue) -> Json {
+	let out = runtime_graph(value);
 	for node in out["nodes"].as_array().unwrap() {
 		assert!(
 			!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")),
@@ -67,7 +70,7 @@ fn c12_graph(value: &Value) -> Json {
 	}
 	out
 }
-fn c12_error(error: &stock::VmError) -> Json {
+fn legacy_c12_error(error: &stock::VmError) -> Json {
 	let kind = error.error().kind();
 	let sites=error.stacktrace().iter().map(|at|{
 		let inst=at.unit.debug_info().expect("debug unit").instruction_at(at.ip).expect("debug instruction");
@@ -79,9 +82,9 @@ fn c12_error(error: &stock::VmError) -> Json {
 		.iter()
 		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
 		.collect::<Vec<_>>();
-	json!({"status":"error","class":stock_class(kind),"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
+	json!({"status":"error","class":runtime_error_class(kind),"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
-fn c12_cleanup(name: &str, v: &Value) -> Json {
+fn c12_cleanup(name: &str, v: &RuntimeValue) -> Json {
 	if name != "cycle" {
 		return Json::Null;
 	}
@@ -102,7 +105,7 @@ fn child() {
 	let cases: Vec<Json> = serde_json::from_str(C12_CASES).unwrap();
 	let row = &cases[index];
 	if engine == "fresh" {
-		let mut result = c12_observe_fresh(row);
+		let mut result = c12_observe(row);
 		result["schema"] = json!(1);
 		result["engine"] = json!("fresh");
 		result["index"] = json!(index);
@@ -156,12 +159,12 @@ fn child() {
 				.call();
 			let outcome = match result {
 				Ok(value) => json!({"status":"value","graph":c12_graph(&value)}),
-				Err(e) => c12_error(&e),
+				Err(e) => legacy_c12_error(&e),
 			};
 			let reuse =
 				match crate::runtime::budget::with(200_000, || vm.call(["c12_reuse"], ())).call() {
 					Ok(value) => json!({"status":"value","graph":c12_graph(&value)}),
-					Err(e) => c12_error(&e),
+					Err(e) => legacy_c12_error(&e),
 				};
 			(outcome, reuse)
 		}
@@ -192,15 +195,18 @@ fn observer_controls() {
 			.len(),
 		111
 	);
-	assert_ne!(c12_graph(&Value::from(1i64)), c12_graph(&Value::from(2i64)));
-	let a = Value::new(stock::RangeInclusive::new(
-		Value::from(1i64),
-		Value::from(2i64),
+	assert_ne!(
+		c12_graph(&RuntimeValue::from(1i64)),
+		c12_graph(&RuntimeValue::from(2i64))
+	);
+	let a = RuntimeValue::new(stock::RangeInclusive::new(
+		RuntimeValue::from(1i64),
+		RuntimeValue::from(2i64),
 	))
 	.unwrap();
-	let b = Value::new(stock::RangeInclusive::new(
-		Value::from(1i64),
-		Value::from(3i64),
+	let b = RuntimeValue::new(stock::RangeInclusive::new(
+		RuntimeValue::from(1i64),
+		RuntimeValue::from(3i64),
 	))
 	.unwrap();
 	assert_ne!(c12_graph(&a), c12_graph(&b));
@@ -218,9 +224,9 @@ fn observer_controls() {
 include!("small_forms/p1.rs");
 include!("small_forms/frozen.rs");
 
-include!("small_forms/fresh_graph.rs");
-include!("small_forms/fresh_error.rs");
-include!("small_forms/fresh.rs");
-include!("small_forms/fresh_contract.rs");
+include!("small_forms/graph.rs");
+include!("small_forms/error.rs");
+include!("small_forms/run.rs");
+include!("small_forms/contract.rs");
 
 include!("small_forms/retained.rs");

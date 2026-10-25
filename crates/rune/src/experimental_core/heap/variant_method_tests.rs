@@ -2,7 +2,7 @@
 //! of the stock oracle.
 use super::*;
 use crate::experimental_core::error::Detail;
-use crate::function::fresh_variant::Method;
+use crate::function::variant::Method;
 use rune_alloc::limit;
 
 fn run(

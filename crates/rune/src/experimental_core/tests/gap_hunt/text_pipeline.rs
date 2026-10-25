@@ -1,9 +1,9 @@
 //! C14B stock oracle. This module is test-only; it does not alter product code.
 use super::*;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
-include!("text_pipeline/graph.rs");
+include!("text_pipeline/runtime_graph.rs");
 const CASES: &str = include_str!("text_pipeline/cases.json");
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
 
@@ -15,11 +15,11 @@ fn tap(tag: i64, value: i64) -> i64 {
 	value
 }
 include!("text_pipeline/fixture.rs");
-include!("text_pipeline/fresh_graph.rs");
-include!("text_pipeline/fresh.rs");
+include!("text_pipeline/graph.rs");
+include!("text_pipeline/run.rs");
 
-fn observed(value: &Value) -> Json {
-	let out = graph(value);
+fn observed(value: &RuntimeValue) -> Json {
+	let out = runtime_graph(value);
 	for node in out["nodes"].as_array().unwrap() {
 		assert!(
 			!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")),
@@ -41,7 +41,7 @@ fn error(error: &stock::VmError) -> Json {
 		.iter()
 		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
 		.collect::<Vec<_>>();
-	json!({"status":"error","missing":missing,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
+	json!({"status":"error","missing":missing,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
 #[test]
@@ -63,7 +63,7 @@ fn child() {
 	TAPE.with(|t| t.borrow_mut().clear());
 
 	if engine == "fresh" {
-		let result = observe_fresh(row);
+		let result = observe(row);
 		let path = std::env::var_os("C14B_RESULT").unwrap();
 		let mut file = std::fs::OpenOptions::new()
 			.create_new(true)
@@ -136,10 +136,13 @@ fn observer_controls() {
 			r["source_sha256"]
 		);
 	}
-	assert_ne!(observed(&Value::from(1i64)), observed(&Value::from(2i64)));
 	assert_ne!(
-		observed(&Value::try_from("a").unwrap()),
-		observed(&Value::try_from("b").unwrap())
+		observed(&RuntimeValue::from(1i64)),
+		observed(&RuntimeValue::from(2i64))
+	);
+	assert_ne!(
+		observed(&RuntimeValue::try_from("a").unwrap()),
+		observed(&RuntimeValue::try_from("b").unwrap())
 	);
 	assert_ne!(
 		error(&stock::VmError::new(stock::VmErrorKind::Overflow)),
@@ -155,7 +158,7 @@ fn observer_controls() {
 }
 
 #[test]
-fn stock_replay_controls() {
+fn oracle_controls() {
 	use sha2::{Digest, Sha256};
 	let freeze: Json = serde_json::from_str(include_str!("text_pipeline/freeze.json")).unwrap();
 	for (name, data) in [
@@ -172,7 +175,10 @@ fn stock_replay_controls() {
 		("p1.json", include_str!("text_pipeline/p1.json")),
 	] {
 		assert_eq!(
-			hex(Sha256::digest(data.as_bytes()).as_ref()),
+			hex(Sha256::digest(
+				crate::experimental_core::tests::name_projection::observer_bytes(name, data)
+			)
+			.as_ref()),
 			freeze["files"][name]
 		);
 	}

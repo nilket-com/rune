@@ -1,7 +1,7 @@
 #[test]
 fn observer_graph_alias_cycle_cleanup() {
-	let (value, _) = fixture("children-shared");
-	let observed = graph(&value);
+	let (value, _) = input_fixture("children-shared");
+	let observed = runtime_graph(&value);
 	let rows = observed["nodes"][0][2].as_array().unwrap();
 	let children = rows
 		.iter()
@@ -12,20 +12,20 @@ fn observer_graph_alias_cycle_cleanup() {
 		})
 		.collect::<Vec<_>>();
 	assert!(children.iter().all(|id| *id == children[0]));
-	let (value, _) = fixture("self-cycle");
-	let observed = graph(&value);
+	let (value, _) = input_fixture("self-cycle");
+	let observed = runtime_graph(&value);
 	assert_eq!(observed["nodes"].as_array().unwrap().len(), 1);
 	assert_eq!(observed["nodes"][0][2], json!([0, 0]));
 	assert_eq!(cleanup_fixture("self-cycle", &value)["cycle_cleared"], true);
-	assert_eq!(graph(&value)["nodes"][0][2], json!([]));
+	assert_eq!(runtime_graph(&value)["nodes"][0][2], json!([]));
 }
 #[test]
 fn observer_before_and_post_are_independent_snapshots() {
-	let (v, state) = fixture("ints/3/descending");
+	let (v, state) = input_fixture("ints/3/descending");
 	let before = roots_graph(&v, &state);
 	v.borrow_mut::<stock::Vec>()
 		.unwrap()
-		.push(Value::from(9i64))
+		.push(RuntimeValue::from(9i64))
 		.unwrap();
 	let post = roots_graph(&v, &state);
 	assert_ne!(before, post);

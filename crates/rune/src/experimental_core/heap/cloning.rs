@@ -648,7 +648,7 @@ mod tests {
 	}
 }
 
-/// Operator-only child workload: launch the exact ignored test in a fresh process
+/// Operator-only child workload: launch the exact ignored test in a new process
 /// with RUNE_CLONE_STRESS_CHILD=1 and explicit wall/output caps. Never ordinary CI
 /// or Miri; 100,000 host construction steps and one iterative clone are fixed.
 #[test]

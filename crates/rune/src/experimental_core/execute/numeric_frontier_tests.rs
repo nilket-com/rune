@@ -1,7 +1,7 @@
 //! C6 source-free loop/native/fuel controls. Small integer fixtures are Miri eligible.
 use super::*;
 use crate::experimental_core::{arithmetic::Binary, code::Builder, heap::Limits};
-use crate::function::fresh_numeric::Call;
+use crate::function::numeric::Call;
 
 fn at(n: u32) -> Location {
 	Location {
@@ -179,7 +179,7 @@ fn integer_numeric_loop_every_fuel_and_midloop_cancellation_are_balanced() {
 	assert_eq!(store.payload_bytes(), 0);
 }
 #[test]
-#[cfg(feature = "fresh-core-native")]
+#[cfg(feature = "native-code")]
 #[cfg_attr(
 	miri,
 	ignore = "native analysis proof; integer frontier runs separately under Miri"
@@ -209,7 +209,7 @@ fn every_numeric_reserved_call_refuses_its_enclosing_native_region() {
 	}
 }
 #[test]
-#[cfg(feature = "fresh-core-native")]
+#[cfg(feature = "native-code")]
 #[cfg_attr(
 	miri,
 	ignore = "native cache/analysis proof; integer frontier runs separately under Miri"

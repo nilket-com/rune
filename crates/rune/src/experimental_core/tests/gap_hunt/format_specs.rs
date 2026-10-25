@@ -3,7 +3,7 @@ use super::*;
 use serde_json::{json, Value as Json};
 include!("format_specs/cases.rs");
 
-fn observe_stock(source: &str, mode: &str) -> Json {
+fn legacy_observe(source: &str, mode: &str) -> Json {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -45,7 +45,7 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 			super::d1e_diagnostics::stock(&e, &sources);
 			// Capture metadata directly inside the crate, no parsing Display/Debug.
 			let kind = e.error().kind();
-			let class = stock_class(kind);
+			let class = runtime_error_class(kind);
 			let chain = e
 				.chain()
 				.iter()
@@ -56,13 +56,13 @@ fn observe_stock(source: &str, mode: &str) -> Json {
 				let range = inst.span.range();
 				json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 			}).collect::<Vec<_>>();
-			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
 		}
 	}
 }
 
-// C5 fresh observer reads source/input only; policy is consulted after observation.
-fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
+// C5 new observer reads source/input only; policy is consulted after observation.
+fn observe(source: &str, mode: &str) -> (Json, Json) {
 	use crate::experimental_core::{
 		error::{Detail, ErrorKind},
 		value::{Scalar, Type},
@@ -84,7 +84,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 	let mut no_cleanup_error = true;
 	let observation = match compiled {
 		Err(e) => {
-			json!({"status":fresh_compile_status(e.refusal),"error":format!("{e:?}"),"refusal":format!("{:?}",e.refusal),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
+			json!({"status":compile_status(e.refusal),"error":format!("{e:?}"),"refusal":format!("{:?}",e.refusal),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
 		}
 		Ok(program) => {
 			let main = program.function(Hash::type_hash(["main"])).unwrap();
@@ -117,7 +117,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 					observation
 				}
 				Err(failure) => {
-					super::d1e_diagnostics::fresh(&failure, &program, &sources);
+					super::d1e_diagnostics::execution(&failure, &program, &sources);
 					no_cleanup_error = failure.cleanup_error.is_none();
 					// Closed map: these are the only three exact frozen runtime classes,
 					// plus the explicitly retained resource class. Unknown remains raw.
@@ -130,16 +130,16 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 					};
 					let chain = match failure.error.detail {
 						Detail::FormatArgumentMoved { arg, .. } => vec![
-							json!({"kind":"fresh formatter argument","display":format!("Bad argument #{arg}")}),
+							json!({"kind":"execution formatter argument","display":format!("Bad argument #{arg}")}),
 						],
 						Detail::HostMessage { arg: Some(arg), .. }
 						| Detail::HostExpectedType { arg: Some(arg), .. }
 						| Detail::HostExpectedNumber { arg: Some(arg), .. } => vec![
-							json!({"kind":"fresh HostMessage argument","display":format!("Bad argument #{arg}")}),
+							json!({"kind":"execution HostMessage argument","display":format!("Bad argument #{arg}")}),
 						],
 						_ => vec![],
 					};
-					// Fresh has source callsite locations, not stock VM stack windows.
+					// Execution has source callsite locations, not legacy VM stack windows.
 					// Empty chain is represented as []; a nonempty chain is serialized
 					// explicitly and will STOP against the frozen empty frames.
 					let frames = if failure.call_chain.is_empty() {
@@ -173,7 +173,7 @@ fn observe_fresh(source: &str, mode: &str) -> (Json, Json) {
 		}
 	};
 	let clean = store.live_entries() == 0 && store.payload_bytes() == 0 && executor.is_idle();
-	assert!(clean, "C5 fresh balance");
+	assert!(clean, "C5 execution balance");
 	let mut sources = Sources::new();
 	sources
 		.insert(Source::memory("pub fn main() { 7 }").unwrap())
@@ -207,9 +207,9 @@ fn child() {
 	let (label, source, mode, policy) = CASES[index];
 	let engine = std::env::var("C5_ENGINE").unwrap_or_else(|_| "stock".into());
 	let (observation, audit) = match engine.as_str() {
-		"stock" => (observe_stock(source, mode), None),
+		"stock" => (legacy_observe(source, mode), None),
 		"fresh" => {
-			let (observation, audit) = observe_fresh(source, mode);
+			let (observation, audit) = observe(source, mode);
 			(observation, Some(audit))
 		}
 		_ => panic!("unknown C5 engine"),
@@ -228,7 +228,7 @@ fn child() {
 
 include!("format_specs/contract.rs");
 
-fn fresh_compile_status(refusal: Option<crate::experimental_core::error::Refusal>) -> &'static str {
+fn compile_status(refusal: Option<crate::experimental_core::error::Refusal>) -> &'static str {
 	if refusal == Some(crate::experimental_core::error::Refusal::FrontendDiagnostic) {
 		"compile-error"
 	} else {
@@ -245,9 +245,9 @@ fn compile_status_uses_typed_refusal_even_with_a_diagnostic_wrapper() {
 		.as_str()
 		.unwrap()
 		.is_empty());
-	assert_eq!(fresh_compile_status(Some(Refusal::FormatSpec)), "refused");
+	assert_eq!(compile_status(Some(Refusal::FormatSpec)), "refused");
 	assert_eq!(
-		fresh_compile_status(Some(Refusal::FrontendDiagnostic)),
+		compile_status(Some(Refusal::FrontendDiagnostic)),
 		"compile-error"
 	);
 }

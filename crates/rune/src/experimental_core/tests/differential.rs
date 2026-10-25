@@ -1,4 +1,4 @@
-//! Bounded stock-VM versus fresh-core differential smoke test.
+//! Bounded stock-VM versus execution differential smoke test.
 //!
 //! Case data: `differential/differential_cases.tsv` and `differential/programs/*.rn`
 //! (origin in `differential/PROVENANCE.txt`). It is frozen: this file never edits it.
@@ -8,7 +8,7 @@
 //!
 //! Every row carries a fixed expectation for BOTH engines. For a declared difference the
 //! two expectations differ except the explicit F1 `CONVERGED` rows below. A stock
-//! regression still fails like a fresh one. The test fails
+//! regression still fails like a new one. The test fails
 //! closed:
 //! - a stock error kind without an entry in the site table for its batch and function
 //!   is reported as `unmapped` and fails the row;
@@ -134,7 +134,7 @@ struct Case<'a> {
 	id: &'a str,
 	function: &'a str,
 	operands: std::vec::Vec<&'a str>,
-	fresh: (&'a str, &'a str, &'a str),
+	execution: (&'a str, &'a str, &'a str),
 	stock: (&'a str, &'a str, &'a str),
 	rule: &'a str,
 }
@@ -157,7 +157,7 @@ fn cases() -> std::vec::Vec<Case<'static>> {
 				} else {
 					f[4].split(';').collect()
 				},
-				fresh: (f[5], f[6], f[7]),
+				execution: (f[5], f[6], f[7]),
 				stock: (f[8], f[9], f[10]),
 				rule: f[11],
 			}
@@ -170,7 +170,7 @@ fn cases() -> std::vec::Vec<Case<'static>> {
 /// Operators: the site tables of OPERATOR_AMENDMENT.md (`operators_amended.py` `SITE`
 /// plus `COMMON`), keyed by the function's site. Every other batch: the explicit
 /// (batch, function) entries of CANDIDATE_REPLAY.md R1; nothing is borrowed between sites.
-fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'static str> {
+fn runtime_error_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'static str> {
 	use VmErrorKind as K;
 	if batch == "operators" {
 		let base = match function.split_once("_assign") {
@@ -246,7 +246,7 @@ fn stock_class(batch: &str, function: &str, kind: &VmErrorKind) -> Option<&'stat
 }
 
 /// Operand grammar of the replay: `i:` `u:` `f:`(64-bit hex) `b:0|1` `c:`(hex) `s:`(hex|-) `n`.
-fn stock_operand(text: &str) -> Value {
+fn runtime_operand(text: &str) -> Value {
 	if text == "n" {
 		return crate::to_value(()).unwrap();
 	}
@@ -264,7 +264,7 @@ fn stock_operand(text: &str) -> Value {
 	}
 }
 
-fn fresh_operand(store: &mut Store, text: &str) -> Root {
+fn operand(store: &mut Store, text: &str) -> Root {
 	if text == "n" {
 		return store.root_unit();
 	}
@@ -319,9 +319,9 @@ fn enc_str(s: &str) -> std::string::String {
 	out
 }
 
-/// Encodes a fresh result in the replay grammar by its own tag (scalars, strings and
+/// Encodes a new result in the replay grammar by its own tag (scalars, strings and
 /// flat vectors); anything else is reported as unencodable and fails the row.
-fn fresh_encode(store: &mut Store, root: &Root) -> std::string::String {
+fn encode(store: &mut Store, root: &Root) -> std::string::String {
 	match store.root_tag(root).unwrap() {
 		Type::String => enc_str(store.root_text(root).unwrap()),
 		Type::Vec => {
@@ -330,7 +330,7 @@ fn fresh_encode(store: &mut Store, root: &Root) -> std::string::String {
 
 			for i in 0..n {
 				let item = store.root_get(root, i).unwrap();
-				parts.push(fresh_encode(store, &item));
+				parts.push(encode(store, &item));
 				store.root_release(item).unwrap();
 			}
 
@@ -351,7 +351,7 @@ fn fresh_encode(store: &mut Store, root: &Root) -> std::string::String {
 
 /// Encodes a stock result by its own runtime type, never by the expected encoding, so a
 /// tag mismatch cannot be hidden by a conversion.
-fn stock_encode(value: &Value) -> std::string::String {
+fn legacy_encode(value: &Value) -> std::string::String {
 	if let Some(inline) = value.as_inline() {
 		return match *inline {
 			Inline::Signed(n) => std::format!("i:{n}"),
@@ -368,7 +368,7 @@ fn stock_encode(value: &Value) -> std::string::String {
 	}
 
 	if let Ok(vec) = value.borrow_ref::<crate::runtime::Vec>() {
-		let parts: std::vec::Vec<_> = vec.iter().map(stock_encode).collect();
+		let parts: std::vec::Vec<_> = vec.iter().map(legacy_encode).collect();
 		return std::format!("v[{}]", parts.join(","));
 	}
 
@@ -490,7 +490,7 @@ pub(super) fn compile_unit(
 	let mut sources = Sources::new();
 	sources.insert(Source::memory(&source).unwrap()).unwrap();
 	let program = frontend::compile(&mut sources, context, &mut Diagnostics::new(), 1)
-		.unwrap_or_else(|e| panic!("fresh compile of {batch} {function}: {e:?}"));
+		.unwrap_or_else(|e| panic!("execution compile of {batch} {function}: {e:?}"));
 	(vm, program)
 }
 
@@ -556,14 +556,17 @@ fn run(miri_only: bool) {
 				.iter()
 				.any(|row| (row.0, row.1) == (case.batch, case.id));
 			let sorted = if converged && case.batch == "addendum" {
-				assert_eq!(case.fresh.1, case.stock.1, "{at}: frozen object content");
-				let text = hex_text(case.fresh.1.strip_prefix("s:").unwrap());
+				assert_eq!(
+					case.execution.1, case.stock.1,
+					"{at}: frozen object content"
+				);
+				let text = hex_text(case.execution.1.strip_prefix("s:").unwrap());
 				let sorted = sorted_scalar_object(&text)
 					.unwrap_or_else(|| panic!("{at}: ambiguous frozen object"));
 				Some(enc_str(&sorted))
 			} else if converged && case.batch == "objfmt" {
 				// Expected text comes only from the frozen content, never runtime output.
-				let content = object_content(case.fresh.1);
+				let content = object_content(case.execution.1);
 				assert_eq!(content, object_content(case.stock.1));
 				let fields: std::vec::Vec<_> = content
 					.iter()
@@ -576,13 +579,14 @@ fn run(miri_only: bool) {
 			let index_converged =
 				converged && case.batch == "operators" && matches!(case.id, "088710" | "088725");
 			if index_converged {
-				assert_eq!(case.fresh, ("err", "IndexOutOfBounds", "marks=0"));
-				assert_eq!(case.stock, case.fresh);
+				assert_eq!(case.execution, ("err", "IndexOutOfBounds", "marks=0"));
+				assert_eq!(case.stock, case.execution);
 			}
 			// C12 refines eight historical coarse InvalidShift expectations.
 			// Derive the required class only from the immutable frozen operands,
 			// never from either engine's observed result. Preserve the TSV.
-			let shift_converged = case.fresh.1 == "InvalidShift" && case.stock.1 == "InvalidShift";
+			let shift_converged =
+				case.execution.1 == "InvalidShift" && case.stock.1 == "InvalidShift";
 			if shift_converged {
 				assert_eq!(case.batch, "operators");
 				assert!(case.function.starts_with("shl") || case.function.starts_with("shr"));
@@ -596,18 +600,18 @@ fn run(miri_only: bool) {
 					count < 0,
 					"only frozen negative signed counts enter this refinement"
 				);
-				assert_eq!((case.fresh.0, case.stock.0), ("err", "err"));
+				assert_eq!((case.execution.0, case.stock.0), ("err", "err"));
 			}
-			let want_fresh = match &sorted {
-				_ if shift_converged => ("err", "IntegerCoercion", case.fresh.2),
-				_ if index_converged => ("err", "IntegerCoercion", case.fresh.2),
-				Some(value) => ("ok", value.as_str(), case.fresh.2),
-				None => case.fresh,
+			let want = match &sorted {
+				_ if shift_converged => ("err", "IntegerCoercion", case.execution.2),
+				_ if index_converged => ("err", "IntegerCoercion", case.execution.2),
+				Some(value) => ("ok", value.as_str(), case.execution.2),
+				None => case.execution,
 			};
 			let want_stock = if shift_converged || index_converged {
 				("err", "IntegerCoercion", case.stock.2)
 			} else if converged && case.batch == "operators" {
-				case.fresh
+				case.execution
 			} else if let Some(value) = &sorted {
 				("ok", value.as_str(), case.stock.2)
 			} else {
@@ -618,7 +622,7 @@ fn run(miri_only: bool) {
 				.entry(case.function)
 				.or_insert_with(|| compile_unit(&context, batch, text, case.function));
 			if !witness {
-				for effects in [case.fresh.2, case.stock.2] {
+				for effects in [case.execution.2, case.stock.2] {
 					assert!(
 						expected_witness(effects).is_empty(),
 						"{at}: effects {effects} owed without a witness"
@@ -629,19 +633,19 @@ fn run(miri_only: bool) {
 			// ---- stock side ----
 			let mut args: crate::alloc::Vec<Value> = crate::alloc::Vec::new();
 			for op in &case.operands {
-				args.try_push(stock_operand(op)).unwrap();
+				args.try_push(runtime_operand(op)).unwrap();
 			}
 
-			let stock_w = crate::to_value(crate::runtime::Vec::new()).unwrap();
+			let legacy_w = crate::to_value(crate::runtime::Vec::new()).unwrap();
 			if witness {
-				args.try_push(stock_w.clone()).unwrap();
+				args.try_push(legacy_w.clone()).unwrap();
 			}
 
 			let got_stock = match vm.call(Hash::type_hash([case.function]), args) {
-				Ok(v) => ("ok", stock_encode(&v)),
+				Ok(v) => ("ok", legacy_encode(&v)),
 				Err(e) => {
 					let kind = e.into_kind();
-					match stock_class(case.batch, case.function, &kind) {
+					match runtime_error_class(case.batch, case.function, &kind) {
 						Some(class) => ("err", class.into()),
 						None => ("err", std::format!("unmapped:{kind:?}")),
 					}
@@ -649,16 +653,16 @@ fn run(miri_only: bool) {
 			};
 
 			let (want_kind, want_value, want_effects) = want_stock;
-			let stock_ok = (got_stock.0, got_stock.1.as_str()) == (want_kind, want_value);
+			let legacy_ok = (got_stock.0, got_stock.1.as_str()) == (want_kind, want_value);
 
-			if !stock_ok {
+			if !legacy_ok {
 				mismatches.push(std::format!(
 					"stock {at}: got {got_stock:?}, want ({want_kind}, {want_value})"
 				));
 			}
 
 			if witness {
-				let w = stock_w.borrow_ref::<crate::runtime::Vec>().unwrap();
+				let w = legacy_w.borrow_ref::<crate::runtime::Vec>().unwrap();
 				let got: std::vec::Vec<i64> = w
 					.iter()
 					.map(|v| match v.as_inline() {
@@ -673,61 +677,60 @@ fn run(miri_only: bool) {
 				}
 			}
 
-			// ---- fresh side ----
+			// ---- new side ----
 			let roots: std::vec::Vec<Root> = case
 				.operands
 				.iter()
-				.map(|op| fresh_operand(&mut store, op))
+				.map(|op| operand(&mut store, op))
 				.collect();
-			let fresh_w = store.root_list(Type::Vec, &[]).unwrap();
+			let w = store.root_list(Type::Vec, &[]).unwrap();
 			let mut refs: std::vec::Vec<&Root> = roots.iter().collect();
 
 			if witness {
-				refs.push(&fresh_w);
+				refs.push(&w);
 			}
 
 			let function = program
 				.function(Hash::type_hash([case.function]))
-				.unwrap_or_else(|| panic!("{at}: no fresh function"));
-			let got_fresh = match executor.invoke(program, &mut store, function, &refs, 10_000_000)
-			{
+				.unwrap_or_else(|| panic!("{at}: no execution function"));
+			let got = match executor.invoke(program, &mut store, function, &refs, 10_000_000) {
 				Ok(root) => {
-					let s = fresh_encode(&mut store, &root);
+					let s = encode(&mut store, &root);
 					store.root_release(root).unwrap();
 					("ok", s)
 				}
 				Err(failure) => ("err", std::format!("{:?}", failure.error.kind)),
 			};
 
-			if (got_fresh.0, got_fresh.1.as_str()) != (want_fresh.0, want_fresh.1) {
+			if (got.0, got.1.as_str()) != (want.0, want.1) {
 				mismatches.push(std::format!(
-					"fresh {at}: got {got_fresh:?}, want ({}, {})",
-					want_fresh.0,
-					want_fresh.1
+					"execution {at}: got {got:?}, want ({}, {})",
+					want.0,
+					want.1
 				));
 			}
 
 			if witness {
 				let mut got = std::vec::Vec::new();
-				for i in 0..store.root_len(&fresh_w).unwrap() {
-					let item = store.root_get(&fresh_w, i).unwrap();
+				for i in 0..store.root_len(&w).unwrap() {
+					let item = store.root_get(&w, i).unwrap();
 					match store.root_scalar(&item).unwrap() {
 						Some(Scalar::I64(x)) => got.push(x),
-						other => panic!("{at}: fresh witness item {other:?}"),
+						other => panic!("{at}: execution witness item {other:?}"),
 					}
 
 					store.root_release(item).unwrap();
 				}
 
-				if got != expected_witness(want_fresh.2) {
+				if got != expected_witness(want.2) {
 					mismatches.push(std::format!(
-						"fresh effects {at}: got {got:?}, want {}",
-						want_fresh.2
+						"execution effects {at}: got {got:?}, want {}",
+						want.2
 					));
 				}
 			}
 
-			store.root_release(fresh_w).unwrap();
+			store.root_release(w).unwrap();
 			for root in roots {
 				store.root_release(root).unwrap();
 			}
@@ -764,7 +767,7 @@ fn differential_full_corpus() {
 #[test]
 #[cfg_attr(
 	miri,
-	ignore = "Miri: 20-row stock-vs-fresh differential tier builds a std Context and compiles each case on both engines (~20 min); opt in with --ignored"
+	ignore = "Miri: 20-row stock-vs-execution differential tier builds a std Context and compiles each case on both engines (~20 min); opt in with --ignored"
 )]
 fn differential_miri_tier() {
 	run(true);

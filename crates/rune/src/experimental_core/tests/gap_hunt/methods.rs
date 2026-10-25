@@ -22,7 +22,7 @@ fn tap_bool(tag: i64, value: bool) -> bool {
 	value
 }
 include!("methods/fixture.rs");
-include!("methods/fresh.rs");
+include!("methods/run.rs");
 include!("methods/contract.rs");
 include!("methods/bounded.rs");
 
@@ -63,7 +63,7 @@ fn child() {
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
 	if engine == "fresh" {
-		let result = observe_fresh(row);
+		let result = observe(row);
 		let path = std::env::var_os("C13_RESULT").unwrap();
 		let mut file = std::fs::OpenOptions::new()
 			.create_new(true)

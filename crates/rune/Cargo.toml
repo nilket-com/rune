@@ -21,16 +21,16 @@ default = ["emit", "std", "anyhow"]
 tracing = ["tracing/enabled"]
 emit = ["std", "anyhow", "codespan-reporting"]
 bench = []
-# Opt-in fresh execution core (unstable API); never enabled by default.
+# Opt-in execution core (unstable API); never enabled by default.
 # Needs `anyhow`: the stock compiler front end it drives uses `anyhow` under `std`.
-fresh-core = ["std", "anyhow"]
-# P0 native loop-region tier for the fresh core (unstable, experimental, off by default).
+execution = ["std", "anyhow"]
+# P0 native loop-region tier for the execution core (unstable, experimental, off by default).
 # Analysis and exit simulator build everywhere; the Cranelift backend exists only on
 # x86_64 Linux. Cranelift is Apache-2.0 WITH LLVM-exception and pinned to the 0.135.x
 # line, whose rust-version (1.95.0) equals this crate's MSRV.
 # `region` (MIT, pinned at the version cranelift-jit already locks) is used only for the
 # safe system page-size query.
-fresh-core-native = ["fresh-core", "dep:cranelift-codegen", "dep:cranelift-frontend", "dep:cranelift-module", "dep:cranelift-jit", "dep:region"]
+native-code = ["execution", "dep:cranelift-codegen", "dep:cranelift-frontend", "dep:cranelift-module", "dep:cranelift-jit", "dep:region"]
 workspace = ["std", "anyhow", "toml", "semver", "relative-path", "serde-hashkey", "linked-hash-map"]
 doc = ["std", "anyhow", "rust-embed", "handlebars", "pulldown-cmark", "pulldown-cmark-escape", "syntect", "sha2", "base64", "rune-core/doc", "relative-path"]
 cli = ["std", "anyhow", "emit", "doc", "tracing-subscriber", "clap", "webbrowser", "capture-io", "disable-io", "languageserver", "fmt", "similar", "rand", "musli/storage"]
@@ -103,14 +103,14 @@ static_assertions = "1.1.0"
 futures-executor = "0.3.28"
 trybuild = "1.0.80"
 # P3a heap measurement only (MIT; builds on 1.95.0): the allocator of the dedicated
-# `fresh_core_native_heap` test binary, never of the library or its other tests.
+# `core_native_heap` test binary, never of the library or its other tests.
 stats_alloc = "=0.1.10"
 
 [[test]]
-name = "fresh_core_native_heap"
-path = "tests/fresh_core_native_heap.rs"
+name = "core_native_heap"
+path = "tests/core_native_heap.rs"
 harness = false
-required-features = ["fresh-core-native"]
+required-features = ["native-code"]
 
 [package.metadata.docs.rs]
 all-features = true

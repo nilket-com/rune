@@ -1,9 +1,9 @@
 //! C11b stock oracle. This module is test-only; it does not alter product code.
 use super::*;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
-include!("captures/graph.rs");
+include!("captures/runtime_graph.rs");
 const CASES: &str = include_str!("captures/cases.json");
 const DISPOSITIONS: &str = include_str!("captures/dispositions.json");
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
@@ -30,8 +30,8 @@ fn context() -> Context {
 	context.install(module).unwrap();
 	context
 }
-fn observed(value: &Value) -> Json {
-	let out = graph(value);
+fn observed(value: &RuntimeValue) -> Json {
+	let out = runtime_graph(value);
 	for node in out["nodes"].as_array().unwrap() {
 		assert!(
 			!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")),
@@ -150,7 +150,10 @@ fn observer_controls() {
 			.len(),
 		cases.len()
 	);
-	assert_ne!(observed(&Value::from(1i64)), observed(&Value::from(2i64)));
+	assert_ne!(
+		observed(&RuntimeValue::from(1i64)),
+		observed(&RuntimeValue::from(2i64))
+	);
 	TAPE.with(|t| t.borrow_mut().clear());
 	assert_eq!(tap(1, 7), 7);
 	assert!(!tap_bool(2, false));

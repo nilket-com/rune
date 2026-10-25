@@ -12,7 +12,7 @@
 //! - `SUMMARY`: every counter of the batch build's summary, except the
 //!   timings (production `cache::prepare`);
 //! - `LOADED`: the loaded regions in load order, `(function, header, code bytes)`;
-//! - `ANALYSIS`: the outcome of every analysed candidate header from `region::analyze`, an
+//! - `ANALYSIS`: the outcome of every analyzed candidate header from `region::analyze`, an
 //!   admitted region as an FNV-1a 64 fingerprint of all its fields;
 //! - `COMPILE`: the classification of every admitted region by an independent
 //!   `lower::compile(region, 0)`.
@@ -111,9 +111,9 @@ fn require_child() {
 	);
 }
 
-/// A fresh thread state: no P1 install, no cached regions, production on, production
+/// A new thread state: no P1 install, no cached regions, production on, production
 /// limits, the system page size.
-fn fresh() {
+fn execution() {
 	hook::uninstall();
 	cache::set_limits_for_test(None);
 	cache::set_page_size_for_test(None);
@@ -157,7 +157,7 @@ fn scaled(change: impl FnOnce(&mut Limits)) -> Limits {
 	limits
 }
 
-/// A fresh build of `code` under `limits` on this thread (the cache is cleared first).
+/// A new build of `code` under `limits` on this thread (the cache is cleared first).
 fn prep_with(limits: Option<Limits>, code: &Code) -> NativeSummary {
 	cache::set_limits_for_test(limits);
 	cache::clear_for_test();
@@ -508,7 +508,7 @@ fn compile_class(region: &Region) -> String {
 /// independent analysis and compile classification of every candidate header. Also returns
 /// the full P3a summary.
 fn golden_of(name: &str, code: &Code) -> (String, NativeSummary) {
-	fresh();
+	execution();
 	let mut out = String::new();
 	let summary = cache::prepare(code).expect("summary");
 	out.push_str(&format!("PROGRAM\t{name}\n"));
@@ -651,9 +651,9 @@ fn p3a_streaming_and_attempt_bounds() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_streaming() {
 	require_child();
-	fresh();
+	execution();
 
-	// (a) The region cap stops the analysis: 64 headers analysed, not 70.
+	// (a) The region cap stops the analysis: 64 headers analyzed, not 70.
 	let program = seventy_loops();
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	cache::clear_for_test();
@@ -667,7 +667,7 @@ fn child_streaming() {
 	);
 	assert_eq!(
 		s.analysed_functions, 65,
-		"main and f1..f64; the batch build analysed all 71"
+		"main and f1..f64; the batch build analyzed all 71"
 	);
 	same(&program.code, main, &[Arg::I(30)], "seventy_loops");
 
@@ -721,11 +721,11 @@ fn child_streaming() {
 	);
 	assert_eq!(
 		s.analysed_functions as usize,
-		cache::MAX_PROGRAM_ANALYSED_FUNCTIONS
+		cache::MAX_PROGRAM_ANALYZED_FUNCTIONS
 	);
 	assert_eq!(
 		s.skipped_budget as usize,
-		cache::MAX_PROGRAM_ATTEMPTED_FUNCTIONS - cache::MAX_PROGRAM_ANALYSED_FUNCTIONS + 1
+		cache::MAX_PROGRAM_ATTEMPTED_FUNCTIONS - cache::MAX_PROGRAM_ANALYZED_FUNCTIONS + 1
 	);
 	cache::set_limits_for_test(None);
 	cache::clear_for_test();
@@ -744,7 +744,7 @@ fn p3a_transient_analysis_bound() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_transient() {
 	require_child();
-	fresh();
+	execution();
 
 	// (a) Scaled: the exact peak P of a program, then the limit at P - 1, P, P + 1.
 	let code = build(vec![fat_loop(40, 60), many_headers(20), fat_loop(8, 200)]);
@@ -835,7 +835,7 @@ fn p3a_transfer_cutoff() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_steps() {
 	require_child();
-	fresh();
+	execution();
 	let code = build(vec![fat_loop(16, 64)]);
 	let region = region_of(&code);
 	let cutoff = 8 * (region.nodes.len()) * region.slots.len();
@@ -890,7 +890,7 @@ fn p3a_process_mapping_cap_across_threads() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_process_threads() {
 	require_child();
-	fresh();
+	execution();
 	assert_eq!(cache::process_reserved_for_test(), (0, 0));
 
 	// Four threads, process cap 3: exactly three loads, one process_bound, while every
@@ -900,7 +900,7 @@ fn child_process_threads() {
 		.map(|t| {
 			let barrier = barrier.clone();
 			std::thread::spawn(move || {
-				fresh();
+				execution();
 				cache::set_limits_for_test(Some(scaled(|l| l.process_mappings = 3)));
 				let code = build(vec![fat_loop(2 + t, 3)]);
 				let s = cache::prepare(&code).unwrap();
@@ -931,7 +931,7 @@ fn child_process_threads() {
 	let handles: Vec<_> = (0..8)
 		.map(|t| {
 			std::thread::spawn(move || {
-				fresh();
+				execution();
 				cache::set_limits_for_test(Some(scaled(|l| l.process_mappings = 5)));
 				let codes: Vec<Code> = (0..3)
 					.map(|k| build(vec![fat_loop(1 + (t + k) % 4, 2)]))
@@ -1004,7 +1004,7 @@ fn p3a_reservation_released_on_every_path() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_reservation_paths() {
 	require_child();
-	fresh();
+	execution();
 	let one = build(vec![fat_loop(2, 2)]);
 	let page = cache::PAGE_BYTES;
 
@@ -1088,7 +1088,7 @@ fn child_reservation_paths() {
 
 	// Thread exit: the thread-local cache is dropped, releasing every token.
 	std::thread::spawn(move || {
-		fresh();
+		execution();
 		let code = build(vec![fat_loop(3, 3)]);
 		assert_eq!(cache::prepare(&code).unwrap().loaded, 1);
 		assert_eq!(cache::process_reserved_for_test(), (1, page));
@@ -1129,7 +1129,7 @@ fn p3a_page_size_fails_closed() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_page_size() {
 	require_child();
-	fresh();
+	execution();
 	let code = build(vec![fat_loop(2, 2)]);
 
 	// The real query (once per process, production code path).
@@ -1161,7 +1161,7 @@ fn p3a_mapped_bytes_equal_anon_exec_delta() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_mapped_exact() {
 	require_child();
-	fresh();
+	execution();
 	let page = cache::PAGE_BYTES;
 	let (a1, b1lo, b1hi) = adds_crossing(16, page, 1, 16);
 	let (a2, b2lo, b2hi) = adds_crossing(16, 2 * page, a1, 32);
@@ -1224,7 +1224,7 @@ fn divisor_loops(count: usize) -> Program {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_compile_cap() {
 	require_child();
-	fresh();
+	execution();
 
 	// Real constant, 128: k - 1, k, k + 1 attempts.
 	for (count, cap) in [(127usize, 0u32), (128, 0), (129, 1)] {
@@ -1271,7 +1271,7 @@ fn p3a_program_code_bound_boundary() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_program_code() {
 	require_child();
-	fresh();
+	execution();
 
 	// Real constant (1 MiB): identical regions just under the 64 KiB region bound.
 	let (adds, _, _) = adds_crossing(56, super::MAX_REGION_CODE_BYTES, 64, 128);
@@ -1321,7 +1321,7 @@ fn charged_metadata(f: impl Fn() -> Function) -> usize {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_program_metadata() {
 	require_child();
-	fresh();
+	execution();
 
 	// Real constant (1 MiB): exit-heavy, code-light regions.
 	let heavy = || fat_loop(1, 129);
@@ -1378,7 +1378,7 @@ fn p3a_thread_metadata_bound_boundary() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_thread_metadata() {
 	require_child();
-	fresh();
+	execution();
 	let base = cache::thread_reserve_bytes(&Limits::PRODUCTION);
 
 	// Real constant (4 MiB): programs of just under 1 MiB metadata each, built in order.
@@ -1434,7 +1434,7 @@ fn p3a_thread_mapped_bound_boundary() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_thread_mapped() {
 	require_child();
-	fresh();
+	execution();
 	let page = cache::PAGE_BYTES;
 
 	// Real constant (4 MiB): 64 regions of two pages per program, so 8 programs fill it
@@ -1500,7 +1500,7 @@ fn child_thread_mapped() {
 
 #[test]
 #[cfg_attr(miri, ignore = "Miri: runs Cranelift")]
-fn p3a_shared_isa_matches_fresh_isa() {
+fn p3a_shared_isa_matches_isa() {
 	let a = lower::shared_isa().unwrap();
 	let b = lower::shared_isa().unwrap();
 	assert!(std::sync::Arc::ptr_eq(&a, &b), "one ISA per thread");
@@ -1509,14 +1509,14 @@ fn p3a_shared_isa_matches_fresh_isa() {
 	for (name, src) in golden_programs() {
 		let code = src.code();
 		for id in 0..code.functions() as u32 {
-			if code.function(id).unwrap().len() > cache::MAX_ANALYSED_FUNCTION_LEN {
+			if code.function(id).unwrap().len() > cache::MAX_ANALYZED_FUNCTION_LEN {
 				continue;
 			}
 			for (header, region) in analyze(code, id).unwrap() {
 				let Ok(region) = region else { continue };
-				let fresh = lower::diagnose_isa(&region, true);
+				let execution = lower::diagnose_isa(&region, true);
 				let shared = lower::diagnose_isa(&region, false);
-				match (fresh, shared) {
+				match (execution, shared) {
 					(Ok((fb, fa, fl)), Ok((sb, sa, sl))) => {
 						assert_eq!((fb, fa), (sb, sa), "{name} f{id} h{header}: bytes");
 						assert_eq!(fl.clif, sl.clif);
@@ -1531,7 +1531,7 @@ fn p3a_shared_isa_matches_fresh_isa() {
 			}
 		}
 	}
-	println!("P3AISA\tregions compared fresh vs shared ISA: {compared}, bytes/alignment/listings/audit identical");
+	println!("P3AISA\tregions compared uncached vs shared ISA: {compared}, bytes/alignment/listings/audit identical");
 	assert!(compared > 200);
 }
 
@@ -1572,7 +1572,7 @@ fn p3a_partial_analysis_failure() {
 #[ignore = "P3a native worker: run by its parent test in a child process"]
 fn child_partial_analysis() {
 	require_child();
-	fresh();
+	execution();
 	let program = compile_source(PARTIAL);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let code = &program.code;
@@ -1614,16 +1614,16 @@ fn child_partial_analysis() {
 
 	// The injected build: `main`'s first region loads, then the analysis of its second
 	// header fails mid-way (body, ops and slots charged).
-	let analysed = cache::analyzed_headers_for_test();
+	let analyzed = cache::analyzed_headers_for_test();
 	inject_analysis_error_for_test(Some(second as u32));
 	let s = cache::prepare(code).unwrap();
 	inject_analysis_error_for_test(None);
 	row("follow1_partial_injected", &s);
 
-	// Later affected work refuses cleanly: `main`'s third header is never analysed, the
+	// Later affected work refuses cleanly: `main`'s third header is never analyzed, the
 	// failed header admits nothing; `g` (another function) is unaffected.
 	assert_eq!(
-		cache::analyzed_headers_for_test() - analysed,
+		cache::analyzed_headers_for_test() - analyzed,
 		3,
 		"main h1, main h2 (failed), g"
 	);
@@ -1666,9 +1666,9 @@ fn child_partial_analysis() {
 	assert_eq!(cache::process_reserved_for_test(), (0, 0));
 	assert_eq!(cache::cache_state_for_test(), (0, 0, 0, 0));
 
-	// Thread exit balances them too (the same injected build on a fresh thread).
+	// Thread exit balances them too (the same injected build on a new thread).
 	let source = std::thread::spawn(move || {
-		fresh();
+		execution();
 		let program = compile_source(PARTIAL);
 		let main = program.function(Hash::type_hash(["main"])).unwrap();
 		inject_analysis_error_for_test(Some(second as u32));
@@ -1691,7 +1691,7 @@ fn child_partial_analysis() {
 	);
 
 	println!(
-		"P3APARTIAL\tmain h{} loaded, h{} injected error (charged {used} == scan+context {expected}), h{} not analysed; g loaded; loaded=2 mapped={mapped} (thread run {source}); native == interpreter at every fuel 0..={}; evict and thread exit -> (0, 0)",
+		"P3APARTIAL\tmain h{} loaded, h{} injected error (charged {used} == scan+context {expected}), h{} not analyzed; g loaded; loaded=2 mapped={mapped} (thread run {source}); native == interpreter at every fuel 0..={}; evict and thread exit -> (0, 0)",
 		main_headers[0],
 		main_headers[1],
 		main_headers[2],

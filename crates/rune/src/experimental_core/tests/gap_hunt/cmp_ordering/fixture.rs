@@ -7,7 +7,7 @@ fn c9_context() -> (Context, std::sync::Arc<std::sync::atomic::AtomicUsize>) {
 		($name:literal,$ty:ty) => {{
 			let calls = calls.clone();
 			module
-				.fresh_host_function($name, move |_: $ty| -> i64 {
+				.host_function($name, move |_: $ty| -> i64 {
 					calls.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
 					7
 				})

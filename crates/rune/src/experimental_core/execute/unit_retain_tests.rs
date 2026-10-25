@@ -77,9 +77,9 @@ fn d11_duplicate_prefix_admit_rolls_back_and_roots_remain_usable() {
 	s.root_release(alias).unwrap();
 	s.test_set_strong(full, 1);
 	s.release(full).unwrap();
-	let fresh = s.string("reuse").unwrap();
-	assert_eq!(s.text(fresh).unwrap(), "reuse");
-	s.release(fresh).unwrap();
+	let execution = s.string("reuse").unwrap();
+	assert_eq!(s.text(execution).unwrap(), "reuse");
+	s.release(execution).unwrap();
 	assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
 }
 

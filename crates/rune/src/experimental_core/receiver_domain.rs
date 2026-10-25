@@ -1,4 +1,4 @@
-//! Receiver identities that no admitted fresh value can carry.
+//! Receiver identities that no admitted new value can carry.
 //!
 //! These exact stock types have no builtin payload, constructor or host import
 //! representation. Nominal admission also reserves their hashes, including enum
@@ -35,7 +35,7 @@ mod tests {
 	#[test]
 	fn excluded_receivers_are_disjoint_from_represented_builtins() {
 		for receiver in UNREPRESENTED {
-			assert!(!crate::function::fresh_methods::RECEIVERS.contains(&receiver));
+			assert!(!crate::function::methods::RECEIVERS.contains(&receiver));
 			assert!(unreachable(receiver));
 			assert_eq!(
 				check_nominal(receiver.into_inner(), 0).unwrap_err().refusal,

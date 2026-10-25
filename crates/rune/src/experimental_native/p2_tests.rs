@@ -101,8 +101,8 @@ fn require_child() {
 	);
 }
 
-/// A fresh thread state: no P1 install, no cached regions, production on.
-fn fresh() {
+/// A new thread state: no P1 install, no cached regions, production on.
+fn execution() {
 	hook::uninstall();
 	cache::clear_for_test();
 	cache::enable_for_test(true);
@@ -197,7 +197,7 @@ fn total_charge(code: &Code, main: u32, args: &[Arg], name: &str) -> usize {
 pub(super) fn production_case(case: &Case) -> (usize, Totals, Totals) {
 	let code = case.src.code();
 	let main = case.src.main();
-	fresh();
+	execution();
 
 	let summary = cache::prepare(code).expect("summary");
 	let refused = [
@@ -412,7 +412,7 @@ fn child_bench_kernel_admission() {
 		("stage/fib", STAGE_FIB, 0),
 		("stage/shared_rows", STAGE_SHARED_ROWS, 0),
 	] {
-		fresh();
+		execution();
 		let program = compile_source(text);
 		let s = cache::prepare(&program.code).expect("summary");
 		println!(
@@ -439,7 +439,7 @@ fn child_bench_kernel_admission() {
 		}
 	}
 	// The `% 17` constant: numeric has no runtime division refusal and no divide.
-	fresh();
+	execution();
 	let program = compile_source(V2_NUMERIC);
 	let s = cache::prepare(&program.code).unwrap();
 	assert_eq!(
@@ -463,7 +463,7 @@ fn p2_production_never_runs_with_test_hook_installed() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_hook_exclusion() {
 	require_child();
-	fresh();
+	execution();
 	let program = compile_source(V2_WHILE);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let args = [Arg::I(20)];
@@ -550,7 +550,7 @@ fn p2_cache_is_thread_local() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_thread_local() {
 	require_child();
-	fresh();
+	execution();
 	let program = compile_source(V2_NUMERIC);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let id = program.code.id();
@@ -635,7 +635,7 @@ fn p2_prepare_touches_neither_store_nor_program() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_prepare_pure() {
 	require_child();
-	fresh();
+	execution();
 	let program = compile_source(
 		"fn inner(n) { let s = 0; let i = 0; while i < n { s += i % 5; i += 1; } s }
 		pub fn main(a) { let t = 0; let k = 0; while k < a { t += inner(k); k += 1; } t }",
@@ -678,7 +678,7 @@ fn p2_invalid_exit_poisons_region_and_falls_back() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_invalid_exit() {
 	require_child();
-	fresh();
+	execution();
 	let program = compile_source(V2_WHILE);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let code = &program.code;
@@ -756,7 +756,7 @@ fn p2_cancel_pending_at_header_pc0_is_consumed_by_interpreter() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_cancel_pc0() {
 	require_child();
-	fresh();
+	execution();
 	let code = header_at_pc0();
 	let s = cache::prepare(&code).unwrap();
 	assert_eq!(s.loaded, 1, "{s:?}");
@@ -814,7 +814,7 @@ fn p2_cancel_tick_armed_disables_production_entry() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_cancel_tick() {
 	require_child();
-	fresh();
+	execution();
 	let program = compile_source(V2_WHILE);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let code = &program.code;
@@ -860,7 +860,7 @@ fn child_resume_rule() {
 	for case in &cases {
 		let code = case.src.code();
 		let main = case.src.main();
-		fresh();
+		execution();
 		// The P1 install stays aside (suspended) while production runs: never both.
 		hook::install_native(code, None);
 		hook::set_mode(Mode::Native);
@@ -944,7 +944,7 @@ fn child_cold() {
 	let code = case.src.code();
 	let main = case.src.main();
 
-	fresh();
+	execution();
 	assert_eq!(cache::prepare(code).unwrap().loaded, 1);
 	let big = [Arg::I(100), Arg::F(1.5)];
 	assert_eq!(
@@ -998,7 +998,7 @@ fn p2_lru_eviction_frees_code() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_lru() {
 	require_child();
-	fresh();
+	execution();
 	let programs: Vec<frontend::Program> = (0..LRU_PROGRAMS)
 		.map(|k| {
 			compile_source(&format!(
@@ -1122,7 +1122,7 @@ fn child_perf_env() {
 		std::env::var_os("PERF_BUILDID_DIR").is_some(),
 		"the parent sets it"
 	);
-	fresh();
+	execution();
 	let program = compile_source(V2_WHILE);
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let exec_before = anon_exec_kib(&read_maps());
@@ -1159,7 +1159,7 @@ fn p2_catch_unwind_maps_compile_panic() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_compile_panic() {
 	require_child();
-	fresh();
+	execution();
 	let program = compile_source(
 		"pub fn main(a) { let i = 0; let s = 0; let j = 0; while i < a { j -= j; while j < i { s += j; j += 1; } i += 1; } s }",
 	);
@@ -1199,7 +1199,7 @@ fn p2_in_flight_markers_and_unwinding() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_in_flight() {
 	require_child();
-	fresh();
+	execution();
 	let program = compile_source(V2_WHILE);
 	let code = &program.code;
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
@@ -1365,7 +1365,7 @@ fn p2_negative_caches_and_program_bounds() {
 #[ignore = "P2 native worker: run by its parent test in a child process"]
 fn child_bounds() {
 	require_child();
-	fresh();
+	execution();
 
 	// (a) No admitted region: an Empty entry, and the executor hint skips the cache.
 	let program = compile_source("pub fn main(a) { a + 1 }");
@@ -1434,7 +1434,7 @@ fn child_bounds() {
 	let many = compile_source(&text);
 	let s = summary_of(&many.code);
 	limit_row("program_regions", &s);
-	// P3a streaming: the six regions past the cap are no longer analysed (batch build:
+	// P3a streaming: the six regions past the cap are no longer analyzed (batch build:
 	// regions 70, region_cap 6); `region_cap` is now the flag that the cap stopped it.
 	assert_eq!(
 		(s.regions, s.loaded, s.region_cap, s.skipped_after_caps),
@@ -1449,7 +1449,7 @@ fn child_bounds() {
 	);
 
 	// (d) Function length.
-	let long = build(vec![padded_loop(cache::MAX_ANALYSED_FUNCTION_LEN)]);
+	let long = build(vec![padded_loop(cache::MAX_ANALYZED_FUNCTION_LEN)]);
 	let s = summary_of(&long);
 	limit_row("function_length", &s);
 	assert_eq!((s.skipped_length, s.regions, s.loaded), (1, 0, 0));
@@ -1487,14 +1487,14 @@ fn child_bounds() {
 	limit_row("analysis_work", &s);
 	assert_eq!((s.analysed_functions as usize, s.skipped_budget), (fit, 5));
 
-	// (g) Functions analysed per program.
-	let count = cache::MAX_PROGRAM_ANALYSED_FUNCTIONS + 7;
+	// (g) Functions analyzed per program.
+	let count = cache::MAX_PROGRAM_ANALYZED_FUNCTIONS + 7;
 	let functions = build((0..count).map(|_| straight(2, 1)).collect());
 	let s = summary_of(&functions);
 	limit_row("analysed_functions", &s);
 	assert_eq!(
 		(s.analysed_functions as usize, s.skipped_budget),
-		(cache::MAX_PROGRAM_ANALYSED_FUNCTIONS, 7)
+		(cache::MAX_PROGRAM_ANALYZED_FUNCTIONS, 7)
 	);
 
 	// (h) One region's mapping is one page: the summary's mapped bytes against
@@ -1535,7 +1535,7 @@ fn child_b3_kernel_room_gate() {
 		("fib", STAGE_FIB),
 		("shared_rows", STAGE_SHARED_ROWS),
 	] {
-		fresh();
+		execution();
 		let program = compile_source(text);
 		let main = program.function(Hash::type_hash(["main"])).unwrap();
 		cache::prepare(&program.code).unwrap();
@@ -1599,7 +1599,7 @@ fn raw_print_beside_a_loop_preserves_native_entry() {
 #[ignore = "native worker invoked only by parent"]
 fn child_raw_print_beside_loop() {
 	require_child();
-	fresh();
+	execution();
 	let program = compile_source(
 		"pub fn main(n) { print!(\"\"); let i=0; while i<n { i+=1; } print!(\"\"); i }",
 	);

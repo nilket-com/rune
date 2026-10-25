@@ -25,8 +25,8 @@ pub struct AccessError {
 }
 
 impl AccessError {
-	#[cfg(all(test, feature = "fresh-core", not(miri)))]
-	pub(crate) const fn fresh_exclusive_for_test(mode: u8) -> Option<Self> {
+	#[cfg(all(test, feature = "execution", not(miri)))]
+	pub(crate) const fn exclusive_for_test(mode: u8) -> Option<Self> {
 		Some(Self::new(match mode {
 			0 => AccessErrorKind::NotAccessibleRef(Snapshot(EXCLUSIVE)),
 			1 => AccessErrorKind::NotAccessibleMut(Snapshot(EXCLUSIVE)),
@@ -35,14 +35,14 @@ impl AccessError {
 		}))
 	}
 
-	#[cfg(all(test, feature = "fresh-core"))]
-	pub(crate) const fn fresh_shared_for_test(readers: u32) -> Self {
+	#[cfg(all(test, feature = "execution"))]
+	pub(crate) const fn shared_for_test(readers: u32) -> Self {
 		Self::new(AccessErrorKind::NotAccessibleMut(Snapshot(
 			readers as usize,
 		)))
 	}
-	#[cfg(all(test, feature = "fresh-core"))]
-	pub(crate) const fn fresh_moved_for_test(mode: u8) -> Option<Self> {
+	#[cfg(all(test, feature = "execution"))]
+	pub(crate) const fn moved_for_test(mode: u8) -> Option<Self> {
 		Some(Self::new(match mode {
 			0 => AccessErrorKind::NotAccessibleRef(Snapshot(MOVED)),
 			1 => AccessErrorKind::NotAccessibleMut(Snapshot(MOVED)),
@@ -51,14 +51,14 @@ impl AccessError {
 		}))
 	}
 
-	#[cfg(all(test, feature = "fresh-core"))]
-	pub(crate) const fn fresh_shared_take_for_test(readers: u32) -> Self {
+	#[cfg(all(test, feature = "execution"))]
+	pub(crate) const fn shared_take_for_test(readers: u32) -> Self {
 		Self::new(AccessErrorKind::NotAccessibleTake(Snapshot(
 			readers as usize,
 		)))
 	}
-	#[cfg(feature = "fresh-core")]
-	pub(crate) const fn fresh_moved_read() -> Self {
+	#[cfg(feature = "execution")]
+	pub(crate) const fn moved_read() -> Self {
 		Self::new(AccessErrorKind::NotAccessibleRef(Snapshot(MOVED)))
 	}
 	#[inline]

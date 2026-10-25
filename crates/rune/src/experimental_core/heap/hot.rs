@@ -1,6 +1,6 @@
 //! Heap execution roots and their immediate checked accessors.
 //! Kept together so their existing fast checks can share a compilation neighborhood.
-#[cfg(feature = "fresh-core-native")]
+#[cfg(feature = "native-code")]
 use super::native::{range_next_reachable, RangeCommitRefused};
 use super::*;
 
@@ -183,7 +183,7 @@ impl Store {
 	}
 }
 
-#[cfg(feature = "fresh-core-native")]
+#[cfg(feature = "native-code")]
 impl Store {
 	/// B1 entry and validation read. `Some((next, end))` iff `value` is a handle to a
 	/// live entry of this open store, of the handle's generation, whose payload is

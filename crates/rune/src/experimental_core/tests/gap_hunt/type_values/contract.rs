@@ -1,7 +1,7 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C16h frozen fresh replay; bounded children and exclusive GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C16h frozen execution replay; bounded children and exclusive GAP_OUT"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -29,7 +29,7 @@ fn canonical_record(record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
-fn verify_fresh_case(
+fn verify_case(
 	index: usize,
 	case: &Json,
 	stock: &Json,
@@ -74,21 +74,21 @@ fn verify_fresh_case(
 	let refused = matches!(classification, "Inherited-refusal" | "Frontend-refusal");
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
-	let fresh = canonical_record(actual);
+	let execution = canonical_record(actual);
 	let expected = canonical_record(stock);
 	match classification {
-		"Exact" => assert_eq!(fresh, expected),
+		"Exact" => assert_eq!(execution, expected),
 		"Inherited-diagnostic" | "Intentional-D1" => {
-			assert_eq!(fresh, rule["fresh"]);
+			assert_eq!(execution, rule["fresh"]);
 			// Only the primary diagnostic differs: tape, sites, logical
 			// frames and reuse stay stock-exact.
-			let (f, s) = (&fresh["observation"], &expected["observation"]);
+			let (f, s) = (&execution["observation"], &expected["observation"]);
 			assert_eq!(f["events"], s["events"]);
 			assert_eq!(f["reuse"], s["reuse"]);
 			assert_eq!(f["outcome"]["sites"], s["outcome"]["sites"]);
 			assert_eq!(f["outcome"]["chain"], s["outcome"]["chain"]);
-			assert_eq!(fresh["logical"]["frames"], expected["logical"]["frames"]);
-			assert_eq!(fresh["diagnostics"], expected["diagnostics"]);
+			assert_eq!(execution["logical"]["frames"], expected["logical"]["frames"]);
+			assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 			if classification == "Intentional-D1" {
 				assert_eq!(f["outcome"]["kind"], s["outcome"]["kind"]);
 				assert_eq!(f["outcome"]["class"], s["outcome"]["class"]);
@@ -109,7 +109,7 @@ fn verify_fresh_case(
 				assert_eq!(actual["diagnostics"], stock["diagnostics"]);
 			}
 			if stock["observation"]["outcome"]["status"] == "compile-error" {
-				// Stock builds no VM, so it records no reuse; fresh reuses a
+				// Stock builds no VM, so it records no reuse; new reuses a
 				// fallback program and must still return 7.
 				assert_eq!(stock["observation"]["reuse"], Json::Null);
 				assert_eq!(actual["observation"]["reuse"]["graph"]["nodes"][0][2], "7");

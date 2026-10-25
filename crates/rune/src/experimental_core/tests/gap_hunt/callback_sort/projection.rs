@@ -196,7 +196,7 @@ fn decode(text: &str) -> Vec<u8> {
 		.map(|pair| u8::from_str_radix(std::str::from_utf8(pair).unwrap(), 16).unwrap())
 		.collect()
 }
-fn resource_valid(stock: &Json, fresh: &Json, audit: &Json, kind: &str) -> bool {
+fn resource_valid(stock: &Json, execution: &Json, audit: &Json, kind: &str) -> bool {
 	if stock["outcome"]["status"] != "value" {
 		return false;
 	}
@@ -204,28 +204,28 @@ fn resource_valid(stock: &Json, fresh: &Json, audit: &Json, kind: &str) -> bool 
 		return false;
 	}
 	let clean = json!({"typed_failure_kind":kind,"cleanup_error":null,"executor_idle":true,"live_entries":0,"payload_bytes":0,"reuse_i64":7});
-	if fresh == stock && stock["outcome"]["status"] == "value" {
+	if execution == stock && stock["outcome"]["status"] == "value" {
 		return audit
 			== &json!({"typed_failure_kind":null,"cleanup_error":null,"executor_idle":true,"live_entries":0,"payload_bytes":0,"reuse_i64":7});
 	}
-	let (Some(tape), Some(baseline)) = (fresh["events"].as_array(), stock["events"].as_array())
+	let (Some(tape), Some(baseline)) = (execution["events"].as_array(), stock["events"].as_array())
 	else {
 		return false;
 	};
 	let mut after = tape.clone();
 	after.push(json!({"event":"mark","hex":"7265757365"}));
-	fresh["outcome"]["status"] == "error"
-		&& fresh["outcome"]["class"] == kind
+	execution["outcome"]["status"] == "error"
+		&& execution["outcome"]["class"] == kind
 		&& audit == &clean
-		&& fresh["before"] == stock["before"]
-		&& fresh["post"] == stock["before"]
+		&& execution["before"] == stock["before"]
+		&& execution["post"] == stock["before"]
 		&& tape.len() <= baseline.len()
 		&& tape == &baseline[..tape.len()]
-		&& fresh["reuse"] == stock["reuse"]
-		&& fresh["invoked"] == true
-		&& fresh["events_after_reuse"] == json!(after)
+		&& execution["reuse"] == stock["reuse"]
+		&& execution["invoked"] == true
+		&& execution["events_after_reuse"] == json!(after)
 }
-fn refusal_valid(label: &str, source: &str, fresh: &Json, audit: &Json) -> bool {
+fn refusal_valid(label: &str, source: &str, execution: &Json, audit: &Json) -> bool {
 	let rows: Json =
 		serde_json::from_str(include_str!("../../callback_sort_refusals.json")).unwrap();
 	let Some(row) = rows.get(label) else {
@@ -240,16 +240,16 @@ fn refusal_valid(label: &str, source: &str, fresh: &Json, audit: &Json) -> bool 
 	if source != *pinned || digest(source.as_bytes()) != dispositions[label]["source_sha256"] {
 		return false;
 	}
-	fresh["refusal"]
+	execution["refusal"]
 		== if expected["invoked"] == false {
 			expected["operation"].clone()
 		} else {
 			Json::Null
-		} && fresh["status"] == expected["status"]
-		&& fresh["kind"] == expected["kind"]
-		&& fresh["operation"] == expected["operation"]
-		&& fresh["source_sha256"] == expected["source_sha256"]
-		&& fresh["invoked"] == expected["invoked"]
+		} && execution["status"] == expected["status"]
+		&& execution["kind"] == expected["kind"]
+		&& execution["operation"] == expected["operation"]
+		&& execution["source_sha256"] == expected["source_sha256"]
+		&& execution["invoked"] == expected["invoked"]
 		&& audit
 			== &json!({"cleanup_error":null,"executor_idle":true,"live_entries":0,"payload_bytes":0,"reuse_i64":7})
 }
@@ -258,7 +258,7 @@ fn refusal_valid(label: &str, source: &str, fresh: &Json, audit: &Json) -> bool 
 fn resource_completion(
 	label: &str,
 	source: &str,
-	fixture: &str,
+	input_fixture: &str,
 	resources: &Json,
 ) -> Result<(Json, Json), String> {
 	let anchors = read_json(include_str!("../../callback_sort_resource_anchors.json"));
@@ -283,7 +283,7 @@ fn resource_completion(
 	let stock = &resources[anchor_label]["stock_common"];
 	let before = &resources[label]["stock_common"]["before"];
 	let fixture_hash = digest(
-		&serde_json::to_vec(&json!({"name":fixture,"mode":case.4,"before":before}))
+		&serde_json::to_vec(&json!({"name":input_fixture,"mode":case.4,"before":before}))
 			.map_err(|_| "fixture encoding")?,
 	);
 	let anchor_fixture_hash = digest(
@@ -293,15 +293,15 @@ fn resource_completion(
 		.map_err(|_| "fixture encoding")?,
 	);
 	if source != case.1
-		|| fixture != case.2
+		|| input_fixture != case.2
 		|| source != anchor_case.1
-		|| fixture != anchor_case.2
+		|| input_fixture != anchor_case.2
 		|| case.4 != anchor_case.4
 		|| stock["outcome"]["status"] != "value"
 		|| stock["events"].as_array().ok_or("complete tape")?.len() != 12
 		|| binding["index"] != json!(index)
 		|| binding["source_sha256"] != digest(source.as_bytes())
-		|| binding["fixture"] != fixture
+		|| binding["fixture"] != input_fixture
 		|| binding["fixture_sha256"] != fixture_hash
 		|| binding["anchor_label"] != anchor_label
 		|| binding["anchor_index"] != json!(anchor_index)

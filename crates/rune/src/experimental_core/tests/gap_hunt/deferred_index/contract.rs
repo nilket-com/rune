@@ -101,14 +101,14 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[test]
 #[cfg(target_os = "linux")]
 #[ignore = "C7 frozen stock replay; explicit unique GAP_OUT, bounded children"]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C7 strict fresh replay; explicit unique GAP_OUT, bounded children"]
-fn fresh_contract() {
+#[ignore = "C7 strict execution replay; explicit unique GAP_OUT, bounded children"]
+fn contract() {
 	run_contract("fresh");
 }
 
@@ -424,11 +424,11 @@ fn run_contract(engine: &str) {
 							retained_matches(label, source, &expected, &got, &audit["call_chain"])
 								.unwrap_or_else(|| {
 									panic!(
-										"retained pin drift {label}: stock={expected} fresh={got}"
+										"retained pin drift {label}: stock={expected} execution={got}"
 									)
 								});
 					} else {
-						assert_eq!(got, expected, "fresh {label}");
+						assert_eq!(got, expected, "execution {label}");
 					}
 					assert_eq!(hex(&stdout), c[4], "stdout {label}");
 					assert_eq!(hex(&stderr), c[5], "stderr {label}");

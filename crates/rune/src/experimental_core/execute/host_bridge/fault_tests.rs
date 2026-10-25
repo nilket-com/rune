@@ -116,7 +116,7 @@ fn every_real_allocation_budget_balances_and_recovers() {
 		match target {
 			"s" => {
 				module
-					.fresh_host_function(target, move || -> std::string::String {
+					.host_function(target, move || -> std::string::String {
 						captured.fetch_add(1, Ordering::SeqCst);
 						"host output".into()
 					})
@@ -124,7 +124,7 @@ fn every_real_allocation_budget_balances_and_recovers() {
 			}
 			"o" => {
 				module
-					.fresh_host_function(target, move || -> Option<std::string::String> {
+					.host_function(target, move || -> Option<std::string::String> {
 						captured.fetch_add(1, Ordering::SeqCst);
 						Some("host output".into())
 					})
@@ -132,7 +132,7 @@ fn every_real_allocation_budget_balances_and_recovers() {
 			}
 			"r" => {
 				module
-					.fresh_host_function(
+					.host_function(
 						target,
 						move || -> core::result::Result<std::string::String, i64> {
 							captured.fetch_add(1, Ordering::SeqCst);
@@ -143,7 +143,7 @@ fn every_real_allocation_budget_balances_and_recovers() {
 			}
 			"e" => {
 				module
-					.fresh_host_function(
+					.host_function(
 						target,
 						move || -> core::result::Result<i64, std::string::String> {
 							captured.fetch_add(1, Ordering::SeqCst);

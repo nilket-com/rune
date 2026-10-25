@@ -1,4 +1,4 @@
-#[cfg(feature = "fresh-core")]
+#[cfg(feature = "execution")]
 use crate::TypeHash;
 use core::fmt;
 
@@ -27,19 +27,19 @@ use crate::sync::Arc;
 use crate::{Hash, Item, ItemBuf};
 
 // Compile-time identities. Registration reuses existing effective hashes.
-#[cfg(feature = "fresh-core")]
-const FRESH_VEC_CONSTRUCTOR_RECEIVER: Hash = crate::hash_in!(crate, ::std::vec::Vec);
-#[cfg(feature = "fresh-core")]
-const FRESH_SORT_RECEIVER: Hash = crate::hash_in!(crate, ::std::vec::Vec);
-#[cfg(feature = "fresh-core")]
-const FRESH_SORT_ASSOCIATED: Hash = crate::hash_in!(crate, ::std::vec::Vec.sort_by);
-#[cfg(feature = "fresh-core")]
-const FRESH_SORT_ITEM: Hash = crate::hash_in!(crate, ::std::vec::Vec::sort_by);
+#[cfg(feature = "execution")]
+const VEC_CONSTRUCTOR_RECEIVER: Hash = crate::hash_in!(crate, ::std::vec::Vec);
+#[cfg(feature = "execution")]
+const SORT_RECEIVER: Hash = crate::hash_in!(crate, ::std::vec::Vec);
+#[cfg(feature = "execution")]
+const SORT_ASSOCIATED: Hash = crate::hash_in!(crate, ::std::vec::Vec.sort_by);
+#[cfg(feature = "execution")]
+const SORT_ITEM: Hash = crate::hash_in!(crate, ::std::vec::Vec::sort_by);
 
-// Only registrations on values rendered by fresh can change its formatting.
+// Only registrations on values rendered by new can change its formatting.
 // Other native types remain behind the host boundary (S7b).
-#[cfg(feature = "fresh-core")]
-fn fresh_formats_container(hash: Hash) -> bool {
+#[cfg(feature = "execution")]
+fn formats_container(hash: Hash) -> bool {
 	use crate::experimental_core::error::TypeName::*;
 	[
 		Unit,
@@ -163,22 +163,22 @@ impl TraitContext<'_> {
 		let handler = handler.clone();
 
 		if let Some(method) = protocol.method {
-			#[cfg(feature = "fresh-core")]
+			#[cfg(feature = "execution")]
 			let cmp_alias = if protocol.hash == Protocol::CMP.hash {
-				self.cx.fresh_numeric.cmp_alias(self.hash)
+				self.cx.numeric.cmp_alias(self.hash)
 			} else {
 				None
 			};
-			#[cfg(feature = "fresh-core")]
-			let number_alias = self.cx.fresh_number.alias(protocol.hash, self.hash);
+			#[cfg(feature = "execution")]
+			let number_alias = self.cx.number.alias(protocol.hash, self.hash);
 			self.function_handler(method, &handler)?;
-			#[cfg(feature = "fresh-core")]
+			#[cfg(feature = "execution")]
 			if let Some(pair) = cmp_alias {
-				self.cx.fresh_numeric.certify(pair);
+				self.cx.numeric.certify(pair);
 			}
-			#[cfg(feature = "fresh-core")]
+			#[cfg(feature = "execution")]
 			if let Some(pair) = number_alias {
-				self.cx.fresh_number.forwarded(pair);
+				self.cx.number.forwarded(pair);
 			}
 		}
 
@@ -210,10 +210,10 @@ impl TraitContext<'_> {
 	{
 		let found = self.try_find(protocol)?;
 		// Only a forward of the receiver's own protocol function is an alias.
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let number_alias = found
 			.as_ref()
-			.and_then(|_| self.cx.fresh_number.alias(protocol.hash, self.hash));
+			.and_then(|_| self.cx.number.alias(protocol.hash, self.hash));
 		let function = if let Some(function) = found {
 			function
 		} else {
@@ -222,9 +222,9 @@ impl TraitContext<'_> {
 
 		if let Some(method) = protocol.method {
 			self.function_handler(method, &function)?;
-			#[cfg(feature = "fresh-core")]
+			#[cfg(feature = "execution")]
 			if let Some(pair) = number_alias {
-				self.cx.fresh_number.forwarded(pair);
+				self.cx.number.forwarded(pair);
 			}
 		}
 
@@ -281,10 +281,10 @@ impl TraitContext<'_> {
 		handler: &FunctionHandler,
 	) -> Result<(), ContextError> {
 		let function = ModuleFunction {
-			#[cfg(feature = "fresh-core")]
-			fresh_format_default: false,
-			#[cfg(feature = "fresh-core")]
-			fresh_host: None,
+			#[cfg(feature = "execution")]
+			format_default: false,
+			#[cfg(feature = "execution")]
+			host: None,
 			handler: handler.clone(),
 			trait_hash: Some(self.trait_hash),
 			doc: DocFunction {
@@ -386,10 +386,10 @@ pub struct Context {
 	item_to_hash: HashMap<ItemBuf, BTreeSet<Hash>>,
 	/// Registered native function handlers.
 	functions: hash::Map<FunctionHandler>,
-	#[cfg(feature = "fresh-core")]
-	fresh_hosts: hash::Map<crate::function::fresh_host::HostBinding>,
-	#[cfg(feature = "fresh-core")]
-	fresh_format_modified: bool,
+	#[cfg(feature = "execution")]
+	hosts: hash::Map<crate::function::host::HostBinding>,
+	#[cfg(feature = "execution")]
+	format_modified: bool,
 	/// Registered deprecation mesages for native functions.
 	deprecations: hash::Map<String>,
 	/// Information on associated types.
@@ -400,48 +400,48 @@ pub struct Context {
 	implemented_traits: hash::Map<Vec<Hash>>,
 	/// Registered native macro handlers.
 	macros: hash::Map<MacroHandler>,
-	/// Fresh core: certified std formatting and assertion macros. A hash here implies that the handler stored
+	/// Execution core: certified std formatting and assertion macros. A hash here implies that the handler stored
 	/// in `macros` at that hash is the marked std builtin; a builtin may be absent from it
 	/// after an allocation failure (fail closed).
-	#[cfg(feature = "fresh-core")]
-	fresh_builtin_macros: HashSet<Hash>,
-	/// Fresh core: the handler installed at `::std::io::println` is the std stdio builtin.
-	#[cfg(feature = "fresh-core")]
-	fresh_stdio_println: bool,
-	#[cfg(feature = "fresh-core")]
-	fresh_stdio_print: bool,
-	/// Fresh core: this module/context certifies the std panic builtin.
-	#[cfg(feature = "fresh-core")]
-	fresh_panic: bool,
-	/// Fresh core: this module/context certifies String::from.
-	#[cfg(feature = "fresh-core")]
-	fresh_string_from: bool,
-	#[cfg(feature = "fresh-core")]
-	fresh_vec_constructors: u8,
-	#[cfg(feature = "fresh-core")]
-	fresh_vec_resize: bool,
-	#[cfg(feature = "fresh-core")]
-	fresh_clone: u8,
-	#[cfg(feature = "fresh-core")]
-	fresh_numeric: crate::function::fresh_numeric::State,
-	#[cfg(feature = "fresh-core")]
-	fresh_sort_by: bool,
-	#[cfg(feature = "fresh-core")]
-	fresh_sort_by_closed: bool,
-	#[cfg(feature = "fresh-core")]
-	fresh_iter: crate::function::fresh_iter::State,
-	#[cfg(feature = "fresh-core")]
-	fresh_text: crate::function::fresh_text::State,
-	#[cfg(feature = "fresh-core")]
-	fresh_pipeline: crate::function::fresh_pipeline::State,
-	#[cfg(feature = "fresh-core")]
-	fresh_variant: crate::function::fresh_variant::State,
-	#[cfg(feature = "fresh-core")]
-	fresh_object: crate::function::fresh_object::State,
-	#[cfg(feature = "fresh-core")]
-	fresh_number: crate::function::fresh_number::State,
-	#[cfg(feature = "fresh-core")]
-	fresh_methods: crate::function::fresh_methods::State,
+	#[cfg(feature = "execution")]
+	builtin_macros: HashSet<Hash>,
+	/// Execution core: the handler installed at `::std::io::println` is the std stdio builtin.
+	#[cfg(feature = "execution")]
+	stdio_println: bool,
+	#[cfg(feature = "execution")]
+	stdio_print: bool,
+	/// Execution core: this module/context certifies the std panic builtin.
+	#[cfg(feature = "execution")]
+	panic: bool,
+	/// Execution core: this module/context certifies String::from.
+	#[cfg(feature = "execution")]
+	string_from: bool,
+	#[cfg(feature = "execution")]
+	vec_constructors: u8,
+	#[cfg(feature = "execution")]
+	vec_resize: bool,
+	#[cfg(feature = "execution")]
+	clone: u8,
+	#[cfg(feature = "execution")]
+	numeric: crate::function::numeric::State,
+	#[cfg(feature = "execution")]
+	sort_by: bool,
+	#[cfg(feature = "execution")]
+	sort_by_closed: bool,
+	#[cfg(feature = "execution")]
+	iter: crate::function::iter::State,
+	#[cfg(feature = "execution")]
+	text: crate::function::text::State,
+	#[cfg(feature = "execution")]
+	pipeline: crate::function::pipeline::State,
+	#[cfg(feature = "execution")]
+	variant: crate::function::variant::State,
+	#[cfg(feature = "execution")]
+	object: crate::function::object::State,
+	#[cfg(feature = "execution")]
+	number: crate::function::number::State,
+	#[cfg(feature = "execution")]
+	methods: crate::function::methods::State,
 	/// Handlers for realizing traits.
 	traits: hash::Map<Option<TraitHandler>>,
 	/// Registered native attribute macro handlers.
@@ -459,9 +459,9 @@ pub struct Context {
 }
 
 impl Context {
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_formatting(&self) -> bool {
-		!self.fresh_format_modified
+	#[cfg(feature = "execution")]
+	pub(crate) fn formatting(&self) -> bool {
+		!self.format_modified
 	}
 
 	/// Construct a new empty [Context].
@@ -580,13 +580,12 @@ impl Context {
 			}
 		}
 
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let (numeric_pending, sort_builtin) = {
-			use crate::function::fresh_numeric::{Method, Pair};
+			use crate::function::numeric::{Method, Pair};
 			let mut methods = 0u8;
 			let mut pairs = 0u8;
-			let sort_candidate =
-				module.fresh_sort_by && !self.fresh_sort_by_closed && !self.fresh_sort_by;
+			let sort_candidate = module.sort_by && !self.sort_by_closed && !self.sort_by;
 			let mut sort_touches = false;
 			let mut sort_names = 0usize;
 			let mut sort_trusted = false;
@@ -603,10 +602,10 @@ impl Context {
 					.hash(assoc.container)
 					.with_function_parameters(assoc.name.function_parameters);
 				let named_sort = matches!(&assoc.name.kind, meta::AssociatedKind::Instance(n) if n.as_ref() == "sort_by");
-				sort_touches |= named_sort || effective == FRESH_SORT_ASSOCIATED;
+				sort_touches |= named_sort || effective == SORT_ASSOCIATED;
 				if named_sort {
 					sort_names = sort_names.saturating_add(1);
-					sort_trusted |= assoc.container == FRESH_SORT_RECEIVER
+					sort_trusted |= assoc.container == SORT_RECEIVER
 						&& assoc.name.function_parameters == Hash::EMPTY
 						&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_));
 				}
@@ -615,7 +614,7 @@ impl Context {
 						|| effective
 							== Hash::associated_function(
 								assoc.container,
-								self.fresh_numeric.name_hash(m),
+								self.numeric.name_hash(m),
 							)) && m.closes_for(assoc.container)
 					{
 						methods |= m.bit();
@@ -628,8 +627,7 @@ impl Context {
 				}
 			}
 			for item in &module.items {
-				sort_item_collision |=
-					item.hash == FRESH_SORT_ASSOCIATED || item.hash == FRESH_SORT_ITEM;
+				sort_item_collision |= item.hash == SORT_ASSOCIATED || item.hash == SORT_ITEM;
 				for p in Pair::ALL {
 					if item.hash == p.item() || item.hash == p.associated() {
 						pairs |= p.bit();
@@ -638,41 +636,38 @@ impl Context {
 				}
 			}
 			if sort_touches || sort_item_collision {
-				self.fresh_sort_by = false;
-				self.fresh_sort_by_closed = true;
+				self.sort_by = false;
+				self.sort_by_closed = true;
 			}
 			let sort_builtin =
 				sort_candidate && !sort_item_collision && sort_names == 1 && sort_trusted;
-			(
-				self.fresh_numeric.begin_module(methods, pairs),
-				sort_builtin,
-			)
+			(self.numeric.begin_module(methods, pairs), sort_builtin)
 		};
-		#[cfg(feature = "fresh-core")]
-		let iter_pending = self.fresh_iter.begin_module(module.fresh_iter);
-		#[cfg(feature = "fresh-core")]
-		let text_pending = self.fresh_text.begin_module(module.fresh_text);
-		#[cfg(feature = "fresh-core")]
-		let pipeline_pending = self.fresh_pipeline.begin_module(module.fresh_pipeline);
-		#[cfg(feature = "fresh-core")]
-		let variant_pending = self.fresh_variant.begin_module(module.fresh_variant);
-		#[cfg(feature = "fresh-core")]
-		let object_pending = self.fresh_object.begin_module(module.fresh_object);
-		#[cfg(feature = "fresh-core")]
-		let number_pending = self.fresh_number.begin_module(module.fresh_number);
+		#[cfg(feature = "execution")]
+		let iter_pending = self.iter.begin_module(module.iter);
+		#[cfg(feature = "execution")]
+		let text_pending = self.text.begin_module(module.text);
+		#[cfg(feature = "execution")]
+		let pipeline_pending = self.pipeline.begin_module(module.pipeline);
+		#[cfg(feature = "execution")]
+		let variant_pending = self.variant.begin_module(module.variant);
+		#[cfg(feature = "execution")]
+		let object_pending = self.object.begin_module(module.object);
+		#[cfg(feature = "execution")]
+		let number_pending = self.number.begin_module(module.number);
 		if let Some(ComponentRef::Crate(name)) = module.item.first() {
 			self.crates.try_insert(name.try_into()?)?;
 		}
 
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let prepared_hosts = {
-			let mut hosts = self.fresh_hosts.try_clone()?;
+			let mut hosts = self.hosts.try_clone()?;
 			for item in &module.items {
 				if let rune::module::ModuleItemKind::Function(function) = &item.kind {
-					if let Some(enrollment) = function.fresh_host.filter(|e| e.admitted()) {
+					if let Some(enrollment) = function.host.filter(|e| e.admitted()) {
 						hosts.try_insert(
 							item.hash,
-							crate::function::fresh_host::HostBinding {
+							crate::function::host::HostBinding {
 								hash: item.hash,
 								handler: function.handler.clone(),
 								signature: enrollment.signature,
@@ -702,84 +697,84 @@ impl Context {
 			self.install_item(item)?;
 			// Each private marker belongs to the std module registration. Certify only
 			// after this exact item was installed. Native functions are insert-once.
-			#[cfg(feature = "fresh-core")]
+			#[cfg(feature = "execution")]
 			if matches!(item.kind, rune::module::ModuleItemKind::Function(..))
-				&& module.fresh_panic
+				&& module.panic
 				&& item.hash == Hash::type_hash(crate::item!(::std::panic))
 			{
-				self.fresh_panic = true;
+				self.panic = true;
 			}
 			// Certified only after this item's handler was inserted: functions are
 			// insert-once (ConflictingFunction), so the stored handler is this one.
-			#[cfg(feature = "fresh-core")]
-			if module.fresh_stdio_println
+			#[cfg(feature = "execution")]
+			if module.stdio_println
 				&& item.hash == Hash::type_hash(crate::item!(::std::io::println))
 				&& matches!(item.kind, rune::module::ModuleItemKind::Function(..))
 			{
-				self.fresh_stdio_println = true;
+				self.stdio_println = true;
 			}
-			#[cfg(feature = "fresh-core")]
-			if module.fresh_stdio_print
+			#[cfg(feature = "execution")]
+			if module.stdio_print
 				&& item.hash == Hash::type_hash(crate::item!(::std::io::print))
 				&& matches!(item.kind, rune::module::ModuleItemKind::Function(..))
 			{
-				self.fresh_stdio_print = true;
+				self.stdio_print = true;
 			}
 		}
 
 		tracing::trace!(associated = module.associated.len(), "associated");
 		for assoc in &module.associated {
 			self.install_associated(assoc)?;
-			#[cfg(feature = "fresh-core")]
-			if (module.fresh_clone != 0 || module.fresh_vec_resize)
+			#[cfg(feature = "execution")]
+			if (module.clone != 0 || module.vec_resize)
 				&& assoc.name.function_parameters == Hash::EMPTY
 				&& matches!(&assoc.kind, ModuleAssociatedKind::Function(f) if f.trait_hash.is_none())
 			{
-				if module.fresh_clone != 0
+				if module.clone != 0
 					&& matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == rune::runtime::Protocol::CLONE.hash)
 				{
 					if let Some(provider) =
-						crate::function::fresh_clone::Provider::from_receiver(assoc.container)
+						crate::function::clone::Provider::from_receiver(assoc.container)
 					{
-						self.fresh_clone |= module.fresh_clone & provider.bit();
+						self.clone |= module.clone & provider.bit();
 					}
 				}
-				if module.fresh_vec_resize
-					&& assoc.container == crate::function::fresh_clone::Provider::Vec.receiver()
+				if module.vec_resize
+					&& assoc.container == crate::function::clone::Provider::Vec.receiver()
 					&& matches!(&assoc.name.kind, meta::AssociatedKind::Instance(name) if name.as_ref() == "resize")
 				{
-					self.fresh_vec_resize = true;
+					self.vec_resize = true;
 				}
 			}
 
-			#[cfg(feature = "fresh-core")]
-			for pair in crate::function::fresh_numeric::Pair::ALL {
-				if module.fresh_numeric & pair.bit() != 0
+			#[cfg(feature = "execution")]
+			for pair in crate::function::numeric::Pair::ALL {
+				if module.numeric & pair.bit() != 0
 					&& pair.cmp_protocol().is_some()
 					&& assoc.container == pair.receiver()
 					&& assoc.name.function_parameters == Hash::EMPTY
 					&& matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::CMP.hash)
 					&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_))
 				{
-					self.fresh_numeric.certify_cmp_protocol(pair);
+					self.numeric.certify_cmp_protocol(pair);
 				}
-				if module.fresh_numeric & pair.bit() != 0
+				if module.numeric & pair.bit() != 0
 					&& assoc.container == pair.receiver()
 					&& assoc.name.function_parameters == Hash::EMPTY
 					&& matches!(&assoc.name.kind, meta::AssociatedKind::Instance(n) if n.as_ref()==pair.method().name())
 					&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_))
 				{
-					self.fresh_numeric.certify(pair);
+					self.numeric.certify(pair);
 				}
 			}
-			#[cfg(feature = "fresh-core")]
-			if module.fresh_vec_constructors
-				&& assoc.container == FRESH_VEC_CONSTRUCTOR_RECEIVER
+			#[cfg(feature = "execution")]
+			if module.vec_constructors
+				&& assoc.container == VEC_CONSTRUCTOR_RECEIVER
 				&& assoc.name.function_parameters == Hash::EMPTY
 				&& matches!(&assoc.kind, ModuleAssociatedKind::Function(f) if f.trait_hash.is_none())
 			{
 				if let meta::AssociatedKind::Instance(name) = &assoc.name.kind {
-					self.fresh_vec_constructors |= match name.as_ref() {
+					self.vec_constructors |= match name.as_ref() {
 						"new" => 1,
 						"with_capacity" => 2,
 						_ => 0,
@@ -789,14 +784,14 @@ impl Context {
 			// String::from is registered as a named type item even with `free`.
 			// install_associated inserts its static item hash and associated hash
 			// before returning; a conflict on either leaves it uncertified.
-			#[cfg(feature = "fresh-core")]
-			if module.fresh_string_from
+			#[cfg(feature = "execution")]
+			if module.string_from
 				&& assoc.container == Hash::type_hash(crate::item!(::std::string::String))
 				&& assoc.name.function_parameters == Hash::EMPTY
 				&& matches!(&assoc.name.kind, meta::AssociatedKind::Instance(name) if name.as_ref() == "from")
 				&& matches!(assoc.kind, ModuleAssociatedKind::Function(..))
 			{
-				self.fresh_string_from = true;
+				self.string_from = true;
 			}
 		}
 
@@ -804,9 +799,9 @@ impl Context {
 		for t in &module.trait_impls {
 			self.install_trait_impl(t)?;
 		}
-		#[cfg(feature = "fresh-core")]
-		if module.fresh_number != 0 {
-			self.fresh_number.certify_module(module);
+		#[cfg(feature = "execution")]
+		if module.number != 0 {
+			self.number.certify_module(module);
 		}
 
 		tracing::trace!(reexports = module.reexports.len(), "reexports");
@@ -819,19 +814,19 @@ impl Context {
 			self.install_construct(*hash, type_info, construct)?;
 		}
 
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		{
-			self.fresh_hosts = prepared_hosts;
-			self.fresh_numeric.finish_module(numeric_pending);
-			self.fresh_iter.finish_module(iter_pending);
-			self.fresh_text.finish_module(text_pending);
-			self.fresh_pipeline.finish_module(pipeline_pending);
-			self.fresh_variant.finish_module(variant_pending);
-			self.fresh_object.finish_module(object_pending);
-			self.fresh_number.finish_module(number_pending);
+			self.hosts = prepared_hosts;
+			self.numeric.finish_module(numeric_pending);
+			self.iter.finish_module(iter_pending);
+			self.text.finish_module(text_pending);
+			self.pipeline.finish_module(pipeline_pending);
+			self.variant.finish_module(variant_pending);
+			self.object.finish_module(object_pending);
+			self.number.finish_module(number_pending);
 			if sort_builtin {
-				self.fresh_sort_by = true;
-				self.fresh_sort_by_closed = false;
+				self.sort_by = true;
+				self.sort_by_closed = false;
 			}
 		}
 		Ok(())
@@ -895,7 +890,7 @@ impl Context {
 		feature = "cli",
 		feature = "languageserver",
 		feature = "emit",
-		feature = "fresh-core"
+		feature = "execution"
 	))]
 	pub(crate) fn lookup_meta_by_hash(
 		&self,
@@ -920,22 +915,19 @@ impl Context {
 		self.names.contains_prefix(item)
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_host(
-		&self,
-		hash: Hash,
-	) -> Option<&crate::function::fresh_host::HostBinding> {
-		let binding = self.fresh_hosts.get(&hash)?;
+	#[cfg(feature = "execution")]
+	pub(crate) fn host(&self, hash: Hash) -> Option<&crate::function::host::HostBinding> {
+		let binding = self.hosts.get(&hash)?;
 		let handler = self.functions.get(&hash)?;
 		binding.handler.same_allocation(handler).then_some(binding)
 	}
 
 	// Unit-test-only synthetic certificate for raw VM error controls. Never exported.
-	#[cfg(all(test, feature = "fresh-core"))]
-	pub(crate) fn fresh_host_for_test(
+	#[cfg(all(test, feature = "execution"))]
+	pub(crate) fn host_for_test(
 		&mut self,
 		hash: Hash,
-		signature: crate::function::fresh_host::HostSignature,
+		signature: crate::function::host::HostSignature,
 	) -> alloc::Result<()> {
 		assert!(signature.valid());
 		let handler = self
@@ -943,9 +935,9 @@ impl Context {
 			.get(&hash)
 			.expect("installed test handler")
 			.clone();
-		self.fresh_hosts.try_insert(
+		self.hosts.try_insert(
 			hash,
-			crate::function::fresh_host::HostBinding {
+			crate::function::host::HostBinding {
 				hash,
 				handler,
 				signature,
@@ -955,14 +947,14 @@ impl Context {
 		Ok(())
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_method_closed(&self, name: Hash) -> bool {
-		self.fresh_methods.closed(name)
+	#[cfg(feature = "execution")]
+	pub(crate) fn method_closed(&self, name: Hash) -> bool {
+		self.methods.closed(name)
 	}
 
 	/// Every type the context registers, by type hash.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_types(&self) -> impl Iterator<Item = Hash> + '_ {
+	#[cfg(feature = "execution")]
+	pub(crate) fn types(&self) -> impl Iterator<Item = Hash> + '_ {
 		self.types.keys().copied()
 	}
 
@@ -993,9 +985,9 @@ impl Context {
 			.copied()
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_builtin_macro(&self, hash: Hash) -> bool {
-		self.fresh_builtin_macros.contains(&hash)
+	#[cfg(feature = "execution")]
+	pub(crate) fn builtin_macro(&self, hash: Hash) -> bool {
+		self.builtin_macros.contains(&hash)
 			&& (hash == Hash::type_hash(crate::item!(::std::fmt::format))
 				|| hash == Hash::type_hash(crate::item!(::std::io::println))
 				|| hash == Hash::type_hash(crate::item!(::std::io::print))
@@ -1005,123 +997,114 @@ impl Context {
 				|| hash == Hash::type_hash(crate::item!(::std::test::assert_ne)))
 	}
 
-	/// Fresh core: whether `::std::io::println` resolves to the certified std
+	/// Execution core: whether `::std::io::println` resolves to the certified std
 	/// stdio builtin (not capture, disable, custom or absent).
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_stdio_println(&self) -> bool {
-		self.fresh_stdio_println
+	#[cfg(feature = "execution")]
+	pub(crate) fn stdio_println(&self) -> bool {
+		self.stdio_println
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::io::println)))
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_stdio_print(&self) -> bool {
-		self.fresh_stdio_print
+	#[cfg(feature = "execution")]
+	pub(crate) fn stdio_print(&self) -> bool {
+		self.stdio_print
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::io::print)))
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_panic(&self) -> bool {
-		self.fresh_panic
+	#[cfg(feature = "execution")]
+	pub(crate) fn panic(&self) -> bool {
+		self.panic
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::panic)))
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_clone_provider(
-		&self,
-		provider: crate::function::fresh_clone::Provider,
-	) -> bool {
-		self.fresh_clone & provider.bit() != 0 && self.functions.contains_key(&provider.protocol())
+	#[cfg(feature = "execution")]
+	pub(crate) fn clone_provider(&self, provider: crate::function::clone::Provider) -> bool {
+		self.clone & provider.bit() != 0 && self.functions.contains_key(&provider.protocol())
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_vec_resize(&self) -> bool {
-		self.fresh_vec_resize
-			&& self
-				.functions
-				.contains_key(&crate::function::fresh_clone::RESIZE)
+	#[cfg(feature = "execution")]
+	pub(crate) fn vec_resize(&self) -> bool {
+		self.vec_resize && self.functions.contains_key(&crate::function::clone::RESIZE)
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_vec_constructor(&self, with_capacity: bool) -> bool {
+	#[cfg(feature = "execution")]
+	pub(crate) fn vec_constructor(&self, with_capacity: bool) -> bool {
 		let bit = if with_capacity { 2 } else { 1 };
 		let hash = if with_capacity {
 			crate::hash_in!(crate, ::std::vec::Vec::with_capacity)
 		} else {
 			crate::hash_in!(crate, ::std::vec::Vec::new)
 		};
-		self.fresh_vec_constructors & bit != 0 && self.functions.contains_key(&hash)
+		self.vec_constructors & bit != 0 && self.functions.contains_key(&hash)
 	}
 
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_string_from(&self) -> bool {
-		self.fresh_string_from
+	#[cfg(feature = "execution")]
+	pub(crate) fn string_from(&self) -> bool {
+		self.string_from
 			&& self
 				.functions
 				.contains_key(&Hash::type_hash(crate::item!(::std::string::String::from)))
 	}
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_sort_by(&self) -> bool {
-		self.fresh_sort_by && !self.fresh_sort_by_closed
+	#[cfg(feature = "execution")]
+	pub(crate) fn sort_by(&self) -> bool {
+		self.sort_by && !self.sort_by_closed
 	}
 
-	/// Fresh core (C12): `name` resolves to the certified std providers for every receiver a
-	/// fresh value can have. Script methods of the same name are checked by the lowerer.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_any_function(&self, h: Hash) -> bool {
-		self.fresh_pipeline.any_ready(h)
+	/// Execution core (C12): `name` resolves to the certified std providers for every receiver a
+	/// new value can have. Script methods of the same name are checked by the lowerer.
+	#[cfg(feature = "execution")]
+	pub(crate) fn any_function(&self, h: Hash) -> bool {
+		self.pipeline.any_ready(h)
 	}
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_pipeline_method(&self, m: crate::function::fresh_pipeline::Method) -> bool {
-		self.fresh_pipeline.ready(m)
+	#[cfg(feature = "execution")]
+	pub(crate) fn pipeline_method(&self, m: crate::function::pipeline::Method) -> bool {
+		self.pipeline.ready(m)
 	}
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_text_method(&self, m: crate::function::fresh_text::Method) -> bool {
-		self.fresh_text.ready(m)
+	#[cfg(feature = "execution")]
+	pub(crate) fn text_method(&self, m: crate::function::text::Method) -> bool {
+		self.text.ready(m)
 	}
-	/// Fresh core (C17a): every stock provider of `m` is the certified std registration.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_variant_method(&self, m: crate::function::fresh_variant::Method) -> bool {
-		self.fresh_variant.ready(m)
+	/// Execution core (C17a): every stock provider of `m` is the certified std registration.
+	#[cfg(feature = "execution")]
+	pub(crate) fn variant_method(&self, m: crate::function::variant::Method) -> bool {
+		self.variant.ready(m)
 	}
-	/// Fresh core (C17c): the stock provider `pair` is its std registration.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_number_pair(&self, pair: crate::function::fresh_number::Pair) -> bool {
-		self.fresh_number.ready(pair)
+	/// Execution core (C17c): the stock provider `pair` is its std registration.
+	#[cfg(feature = "execution")]
+	pub(crate) fn number_pair(&self, pair: crate::function::number::Pair) -> bool {
+		self.number.ready(pair)
 	}
-	/// Fresh core (C17c): every stock provider of `m` is its std registration.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_number_method(&self, m: crate::function::fresh_number::Method) -> bool {
-		self.fresh_number.method_ready(m)
+	/// Execution core (C17c): every stock provider of `m` is its std registration.
+	#[cfg(feature = "execution")]
+	pub(crate) fn number_method(&self, m: crate::function::number::Method) -> bool {
+		self.number.method_ready(m)
 	}
-	/// Fresh core (C17b): every certified provider of `m` is its std registration.
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_object_method(&self, m: crate::function::fresh_object::Method) -> bool {
-		self.fresh_object.ready(m)
+	/// Execution core (C17b): every certified provider of `m` is its std registration.
+	#[cfg(feature = "execution")]
+	pub(crate) fn object_method(&self, m: crate::function::object::Method) -> bool {
+		self.object.ready(m)
 	}
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_text_collect(&self) -> bool {
-		self.fresh_text.collect_ready()
+	#[cfg(feature = "execution")]
+	pub(crate) fn text_collect(&self) -> bool {
+		self.text.collect_ready()
 	}
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_iter_method(&self, name: crate::function::fresh_iter::Name) -> bool {
-		self.fresh_iter.certified(name)
+	#[cfg(feature = "execution")]
+	pub(crate) fn iter_method(&self, name: crate::function::iter::Name) -> bool {
+		self.iter.certified(name)
 	}
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_numeric_method(
-		&self,
-		method: crate::function::fresh_numeric::Method,
-	) -> bool {
-		self.fresh_numeric.method(method)
+	#[cfg(feature = "execution")]
+	pub(crate) fn numeric_method(&self, method: crate::function::numeric::Method) -> bool {
+		self.numeric.method(method)
 	}
-	#[cfg(feature = "fresh-core")]
-	pub(crate) fn fresh_numeric_direct(&self, pair: crate::function::fresh_numeric::Pair) -> bool {
-		self.fresh_numeric.direct(pair)
+	#[cfg(feature = "execution")]
+	pub(crate) fn numeric_direct(&self, pair: crate::function::numeric::Pair) -> bool {
+		self.numeric.direct(pair)
 	}
 
 	/// Lookup the given macro handler.
@@ -1428,8 +1411,8 @@ impl Context {
 			});
 		}
 
-		#[cfg(feature = "fresh-core")]
-		self.fresh_iter.trait_installed(t.hash);
+		#[cfg(feature = "execution")]
+		self.iter.trait_installed(t.hash);
 
 		self.install_meta(ContextMeta {
 			hash: t.hash,
@@ -1618,19 +1601,19 @@ impl Context {
 				}
 			}
 			rune::module::ModuleItemKind::Macro(macro_) => {
-				// Fresh core: certification implies that the handler stored at this hash is
+				// Execution core: certification implies that the handler stored at this hash is
 				// the marked std builtin. A non-builtin macro drops it before replacing the
 				// handler, and the builtin is certified only after it is stored. The reverse
 				// is not guaranteed: after an allocation failure a stored builtin may stay
 				// uncertified, which only refuses (fail closed).
-				#[cfg(feature = "fresh-core")]
-				if !macro_.fresh_builtin_macro {
-					self.fresh_builtin_macros.remove(&m.hash);
+				#[cfg(feature = "execution")]
+				if !macro_.builtin_macro {
+					self.builtin_macros.remove(&m.hash);
 				}
 				self.macros.try_insert(m.hash, macro_.handler.clone())?;
-				#[cfg(feature = "fresh-core")]
-				if macro_.fresh_builtin_macro {
-					self.fresh_builtin_macros.try_insert(m.hash)?;
+				#[cfg(feature = "execution")]
+				if macro_.builtin_macro {
+					self.builtin_macros.try_insert(m.hash)?;
 				}
 				meta::Kind::Macro
 			}
@@ -1655,90 +1638,87 @@ impl Context {
 	}
 
 	fn install_associated(&mut self, assoc: &ModuleAssociated) -> Result<(), ContextError> {
-		// Refuse after an untrusted provider for a fresh-rendered type, even on failure.
+		// Refuse after an untrusted provider for a new-rendered type, even on failure.
 		// Module/raw/trait registration all enter here; no runtime path is changed.
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		if matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::DEBUG_FMT.hash || p.hash == Protocol::DISPLAY_FMT.hash)
-			&& matches!(&assoc.kind, ModuleAssociatedKind::Function(f) if !f.fresh_format_default)
-			&& fresh_formats_container(assoc.container)
+			&& matches!(&assoc.kind, ModuleAssociatedKind::Function(f) if !f.format_default)
+			&& formats_container(assoc.container)
 		{
-			self.fresh_format_modified = true;
+			self.format_modified = true;
 		}
 		let base = assoc.name.kind.hash(assoc.container);
 		let hash = base.with_function_parameters(assoc.name.function_parameters);
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		if matches!(&assoc.name.kind, meta::AssociatedKind::Instance(_))
 			&& matches!(&assoc.kind, ModuleAssociatedKind::Function(_))
 		{
-			self.fresh_methods.associated(assoc.container, base);
+			self.methods.associated(assoc.container, base);
 		}
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		if matches!(&assoc.name.kind, meta::AssociatedKind::Instance(n) if n.as_ref() == "sort_by")
-			|| hash == FRESH_SORT_ASSOCIATED
+			|| hash == SORT_ASSOCIATED
 		{
-			self.fresh_sort_by = false;
-			self.fresh_sort_by_closed = true;
+			self.sort_by = false;
+			self.sort_by_closed = true;
 		}
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let pipeline_touch = {
 			let name = match &assoc.name.kind {
 				meta::AssociatedKind::Instance(n) => Some(n.as_ref()),
 				_ => None,
 			};
 			name.and_then(|n| {
-				crate::function::fresh_pipeline::Method::from_name(
-					n,
-					assoc.name.function_parameters,
-				)
+				crate::function::pipeline::Method::from_name(n, assoc.name.function_parameters)
 			})
 			.and_then(|m| {
 				let (plain, trait_hash) = match &assoc.kind {
 					ModuleAssociatedKind::Function(f) => (true, f.trait_hash),
 					_ => (false, None),
 				};
-				self.fresh_pipeline
+				self.pipeline
 					.begin(
 						m,
 						assoc.container,
 						plain,
 						trait_hash,
-						self.fresh_iter.builtin_trait(),
+						self.iter.builtin_trait(),
 					)
 					.map(|bit| (m, bit))
 			})
 		};
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let plain = || match &assoc.kind {
 			ModuleAssociatedKind::Function(f) => {
 				(assoc.name.function_parameters == Hash::EMPTY, f.trait_hash)
 			}
 			ModuleAssociatedKind::Constant(..) => (false, None),
 		};
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let variant_touch = match &assoc.name.kind {
 			meta::AssociatedKind::Instance(name) => {
-				crate::function::fresh_variant::Method::from_name(name).and_then(|m| {
+				crate::function::variant::Method::from_name(name).and_then(|m| {
 					let (plain, trait_hash) = plain();
-					self.fresh_variant
+					self.variant
 						.begin(m, assoc.container, plain, trait_hash)
 						.map(|bit| (m, bit))
 				})
 			}
 			_ => None,
 		};
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let object_touch = match &assoc.name.kind {
 			meta::AssociatedKind::Instance(name) => {
-				crate::function::fresh_object::Method::from_name(name).and_then(|m| {
+				crate::function::object::Method::from_name(name).and_then(|m| {
 					let (plain, trait_hash) = plain();
-					self.fresh_object
+					self.object
 						.begin(m, assoc.container, plain, trait_hash)
 						.map(|bit| (m, bit))
 				})
 			}
 			_ => None,
 		};
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let (text_touch, text_collect) = {
 			let instance = match &assoc.name.kind {
 				meta::AssociatedKind::Instance(n) => Some(n.as_ref()),
@@ -1747,7 +1727,7 @@ impl Context {
 			let (m, collect) = match instance.map(str::as_bytes) {
 				Some(b"collect") => (None, true),
 				Some(_) => (
-					instance.and_then(crate::function::fresh_text::Method::from_name),
+					instance.and_then(crate::function::text::Method::from_name),
 					false,
 				),
 				None => (None, false),
@@ -1756,18 +1736,18 @@ impl Context {
 				m.map(|m| {
 					let plain = assoc.name.function_parameters == Hash::EMPTY
 						&& matches!(&assoc.kind,ModuleAssociatedKind::Function(f) if f.trait_hash.is_none());
-					(m, self.fresh_text.begin(m, assoc.container, plain))
+					(m, self.text.begin(m, assoc.container, plain))
 				}),
 				collect,
 			)
 		};
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let iter_touch = {
 			let instance = match &assoc.name.kind {
 				meta::AssociatedKind::Instance(name) => Some(name.as_ref()),
 				_ => None,
 			};
-			match crate::function::fresh_iter::touched_name(instance, hash, assoc.container) {
+			match crate::function::iter::touched_name(instance, hash, assoc.container) {
 				None => None,
 				Some(name) => {
 					let (plain, trait_hash) = match &assoc.kind {
@@ -1776,14 +1756,14 @@ impl Context {
 						}
 						ModuleAssociatedKind::Constant(..) => (false, None),
 					};
-					self.fresh_iter
+					self.iter
 						.begin_associated(name, assoc.container, plain, trait_hash)
 				}
 			}
 		};
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		let numeric = {
-			use crate::function::fresh_numeric::{Method, Pair};
+			use crate::function::numeric::{Method, Pair};
 			let effective = hash;
 			let selected = match &assoc.name.kind {
 				meta::AssociatedKind::Instance(name) => Method::from_name(name),
@@ -1796,12 +1776,12 @@ impl Context {
 						effective
 							== Hash::associated_function(
 								assoc.container,
-								self.fresh_numeric.name_hash(*m),
+								self.numeric.name_hash(*m),
 							)
 					}),
 			};
 			selected.map(|method| {
-				let previous = self.fresh_numeric.begin(method, assoc.container);
+				let previous = self.numeric.begin(method, assoc.container);
 				let pair = Pair::ALL
 					.into_iter()
 					.find(|p| p.receiver() == assoc.container && p.method() == method);
@@ -1838,9 +1818,9 @@ impl Context {
 
 		let kind = match &assoc.kind {
 			ModuleAssociatedKind::Constant(value) => {
-				#[cfg(feature = "fresh-core")]
+				#[cfg(feature = "execution")]
 				if hash == Hash::associated_function(assoc.container, &Protocol::INTO_TYPE_NAME) {
-					self.fresh_pipeline.close_type_names();
+					self.pipeline.close_type_names();
 				}
 				if let Some((hash, ..)) = item {
 					self.constants.try_insert(hash, value.try_clone()?)?;
@@ -1900,34 +1880,34 @@ impl Context {
 			docs: assoc.common.docs.try_clone()?,
 		})?;
 
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		if let Some((Some(pair), previous)) = numeric {
-			self.fresh_numeric.installed(pair, previous);
+			self.numeric.installed(pair, previous);
 		}
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		if let Some(touch) = iter_touch {
-			self.fresh_iter.associated_installed(touch);
+			self.iter.associated_installed(touch);
 		}
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		{
 			if let Some((m, bit)) = pipeline_touch {
-				self.fresh_pipeline.installed(m, bit);
+				self.pipeline.installed(m, bit);
 			}
 			if let Some((m, bit)) = variant_touch {
-				self.fresh_variant.installed(m, bit);
+				self.variant.installed(m, bit);
 			}
 			if let Some((m, bit)) = object_touch {
-				self.fresh_object.installed(m, bit);
+				self.object.installed(m, bit);
 			}
 			if let Some((m, true)) = text_touch {
-				self.fresh_text.installed(m);
+				self.text.installed(m);
 			}
 			if text_collect
 				&& assoc.name.function_parameters == Hash::parameters([crate::runtime::Vec::HASH])
 			{
 				let plain = matches!(&assoc.kind,ModuleAssociatedKind::Function(f) if f.trait_hash==Some(crate::hash_in!(crate,::std::iter::Iterator)))
-					&& self.fresh_iter.builtin_trait();
-				self.fresh_text.collect_installed(assoc.container, plain);
+					&& self.iter.builtin_trait();
+				self.text.collect_installed(assoc.container, plain);
 			}
 		}
 		Ok(())
@@ -1940,14 +1920,14 @@ impl Context {
 		handler: &FunctionHandler,
 		deprecation: Option<&str>,
 	) -> Result<(), ContextError> {
-		#[cfg(feature = "fresh-core")]
-		self.fresh_numeric.invalidate_hash(hash);
-		#[cfg(feature = "fresh-core")]
-		let any_touch = self.fresh_pipeline.begin_any(hash);
-		#[cfg(feature = "fresh-core")]
-		if hash == FRESH_SORT_ASSOCIATED || hash == FRESH_SORT_ITEM {
-			self.fresh_sort_by = false;
-			self.fresh_sort_by_closed = true;
+		#[cfg(feature = "execution")]
+		self.numeric.invalidate_hash(hash);
+		#[cfg(feature = "execution")]
+		let any_touch = self.pipeline.begin_any(hash);
+		#[cfg(feature = "execution")]
+		if hash == SORT_ASSOCIATED || hash == SORT_ITEM {
+			self.sort_by = false;
+			self.sort_by_closed = true;
 		}
 		if self.functions.contains_key(&hash) {
 			return Err(ContextError::ConflictingFunction {
@@ -1957,9 +1937,9 @@ impl Context {
 		}
 
 		self.functions.try_insert(hash, handler.clone())?;
-		#[cfg(feature = "fresh-core")]
+		#[cfg(feature = "execution")]
 		if let Some(bit) = any_touch {
-			self.fresh_pipeline.finish_any(bit);
+			self.pipeline.finish_any(bit);
 		}
 
 		if let Some(msg) = deprecation {
@@ -2024,30 +2004,30 @@ fn fields_to_arguments(fields: &Fields) -> alloc::Result<Box<[meta::DocArgument]
 #[cfg(test)]
 static_assertions::assert_impl_all!(Context: Send, Sync);
 
-#[cfg(all(test, feature = "fresh-core"))]
+#[cfg(all(test, feature = "execution"))]
 mod numeric_tests;
 
-#[cfg(all(test, feature = "fresh-core"))]
+#[cfg(all(test, feature = "execution"))]
 mod c11_sort_certificates {
 	use super::*;
 	#[test]
 	#[cfg_attr(miri, ignore = "default-module Context; native certificate control")]
 	fn missing_trusted_conflicting_and_unrelated_sort_names_are_closed() {
 		assert_eq!(
-			FRESH_SORT_RECEIVER,
+			SORT_RECEIVER,
 			Hash::type_hash(crate::item!(::std::vec::Vec))
 		);
 		assert_eq!(
-			FRESH_SORT_ASSOCIATED,
-			Hash::associated_function(FRESH_SORT_RECEIVER, Hash::ident("sort_by"))
+			SORT_ASSOCIATED,
+			Hash::associated_function(SORT_RECEIVER, Hash::ident("sort_by"))
 		);
 		assert_eq!(
-			FRESH_SORT_ITEM,
+			SORT_ITEM,
 			Hash::type_hash(crate::item!(::std::vec::Vec::sort_by))
 		);
-		assert!(!Context::new().fresh_sort_by());
+		assert!(!Context::new().sort_by());
 		let mut cx = Context::with_default_modules().unwrap();
-		assert!(cx.fresh_sort_by());
+		assert!(cx.sort_by());
 		let mut conflicting = Module::new();
 		conflicting
 			.associated_function(
@@ -2056,33 +2036,33 @@ mod c11_sort_certificates {
 			)
 			.unwrap();
 		assert!(cx.install(conflicting).is_err());
-		assert!(!cx.fresh_sort_by());
+		assert!(!cx.sort_by());
 		let mut cx = Context::with_default_modules().unwrap();
 		let mut unrelated = Module::new();
 		unrelated
 			.associated_function("sort_by", |_: i64, _: i64| {})
 			.unwrap();
 		cx.install(unrelated).unwrap();
-		assert!(!cx.fresh_sort_by());
+		assert!(!cx.sort_by());
 	}
 }
 
-#[cfg(all(test, feature = "fresh-core"))]
+#[cfg(all(test, feature = "execution"))]
 mod c12_iter_certificates {
 	use super::*;
-	use crate::function::fresh_iter::Name;
+	use crate::function::iter::Name;
 
 	#[test]
 	#[cfg_attr(miri, ignore = "default-module Context; native certificate control")]
 	fn default_modules_certify_and_foreign_names_close() {
 		let empty = Context::new();
 		for name in Name::ALL {
-			assert!(!empty.fresh_iter_method(name), "{name:?}");
+			assert!(!empty.iter_method(name), "{name:?}");
 		}
 
 		let cx = Context::with_default_modules().unwrap();
 		for name in Name::ALL {
-			assert!(cx.fresh_iter_method(name), "{name:?}");
+			assert!(cx.iter_method(name), "{name:?}");
 		}
 
 		// A foreign `iter` on a representable receiver that stock leaves without one.
@@ -2090,9 +2070,9 @@ mod c12_iter_certificates {
 		let mut foreign = Module::new();
 		foreign.associated_function("iter", |_: i64| 0i64).unwrap();
 		cx.install(foreign).unwrap();
-		assert!(!cx.fresh_iter_method(Name::Iter));
-		assert!(cx.fresh_iter_method(Name::Next));
-		assert!(cx.fresh_iter_method(Name::Any));
+		assert!(!cx.iter_method(Name::Iter));
+		assert!(cx.iter_method(Name::Next));
+		assert!(cx.iter_method(Name::Any));
 
 		// A foreign `any` on Vec, which stock does not give one.
 		let mut cx = Context::with_default_modules().unwrap();
@@ -2101,8 +2081,8 @@ mod c12_iter_certificates {
 			.associated_function("any", |_: &crate::runtime::Vec, _: i64| false)
 			.unwrap();
 		cx.install(foreign).unwrap();
-		assert!(!cx.fresh_iter_method(Name::Any));
-		assert!(cx.fresh_iter_method(Name::Iter));
+		assert!(!cx.iter_method(Name::Any));
+		assert!(cx.iter_method(Name::Iter));
 
 		// A conflicting `next` on the slice iterator fails and leaves `next` closed.
 		let mut cx = Context::with_default_modules().unwrap();
@@ -2111,7 +2091,7 @@ mod c12_iter_certificates {
 			.associated_function("next", |_: &mut crate::runtime::slice::Iter| None::<i64>)
 			.unwrap();
 		assert!(cx.install(conflicting).is_err());
-		assert!(!cx.fresh_iter_method(Name::Next));
+		assert!(!cx.iter_method(Name::Next));
 
 		// A conflicting `iter` on Vec after the builtin: insert-once refuses it, and its
 		// pre-insert touch closes `iter` (no per-insert provider scan is involved).
@@ -2121,13 +2101,13 @@ mod c12_iter_certificates {
 			.associated_function("iter", |_: &crate::runtime::Vec| 0i64)
 			.unwrap();
 		assert!(cx.install(conflicting).is_err());
-		assert!(!cx.fresh_iter_method(Name::Iter));
-		assert!(cx.fresh_iter_method(Name::Next));
+		assert!(!cx.iter_method(Name::Iter));
+		assert!(cx.iter_method(Name::Next));
 	}
 }
 
 // C13 stock-oracle raw-hash insertion fixture. Test-only; no product API.
-#[cfg(all(test, feature = "fresh-core"))]
+#[cfg(all(test, feature = "execution"))]
 impl Context {
 	pub(crate) fn c13_insert_raw_fixture(
 		&mut self,
@@ -2138,14 +2118,14 @@ impl Context {
 	}
 }
 
-#[cfg(all(test, feature = "fresh-core"))]
+#[cfg(all(test, feature = "execution"))]
 mod c18b3c_vec_constructor_certificates {
 	use super::*;
 
 	#[test]
 	fn vec_constructor_receiver_identity_matches_runtime_hash() {
 		assert_eq!(
-			FRESH_VEC_CONSTRUCTOR_RECEIVER,
+			VEC_CONSTRUCTOR_RECEIVER,
 			Hash::type_hash(crate::item!(::std::vec::Vec))
 		);
 	}

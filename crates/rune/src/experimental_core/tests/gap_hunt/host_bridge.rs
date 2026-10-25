@@ -3,10 +3,10 @@ use super::*;
 use std::boxed::Box;
 #[path = "host_bridge/contract.rs"]
 mod contract;
+#[path = "host_bridge/run.rs"]
+mod execution;
 #[path = "host_bridge/fixture.rs"]
 mod fixture;
-#[path = "host_bridge/fresh.rs"]
-mod fresh;
 #[path = "host_bridge/identity.rs"]
 mod identity;
 struct Case {
@@ -56,19 +56,19 @@ fn typed(value: &crate::runtime::Value, depth: usize) -> String {
 				.join(",")
 		);
 	}
-	// Catalogue includes aggregate alias witnesses; Debug is separately retained.
+	// Catalog includes aggregate alias witnesses; Debug is separately retained.
 	format!("other:{}", value.type_info())
 }
 
 pub(super) fn observe_h1(path: &Path, mode: &str, engine: &str) -> Observation {
 	if engine == "fresh" {
-		return fresh::observe(path, mode);
+		return execution::observe(path, mode);
 	}
 	assert_eq!(engine, "stock", "H1 observer engine");
 	let mode = mode.strip_prefix("h1-").unwrap();
 	let result_path = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
 	let tape = fixture::Recorder::new();
-	let context = fixture::stock_context(&tape);
+	let context = fixture::legacy_context(&tape);
 	let mut src = sources(path, "main");
 	let mut diagnostics = Diagnostics::new();
 	let built = crate::prepare(&mut src)
@@ -170,7 +170,7 @@ pub(super) fn observe_h1(path: &Path, mode: &str, engine: &str) -> Observation {
 					fs::write(result_path.with_extension("error"), metadata).unwrap();
 					Observation::new(
 						"error",
-						&stock_class(e.error().kind()),
+						&runtime_error_class(e.error().kind()),
 						"stock runtime",
 						e.error().kind().to_string(),
 						String::new(),
@@ -187,7 +187,7 @@ pub(super) fn observe_h1(path: &Path, mode: &str, engine: &str) -> Observation {
 							"",
 							"",
 							String::new(),
-							format!("{}{text}", stock_scalar(&value)),
+							format!("{}{text}", runtime_scalar(&value)),
 						),
 						Err(e) => Observation::new(
 							"observation-error",
@@ -211,7 +211,7 @@ pub(super) fn observe_h1(path: &Path, mode: &str, engine: &str) -> Observation {
 }
 
 #[test]
-fn catalogue_invariants() {
+fn catalog_invariants() {
 	assert_eq!(CASES.len(), 150);
 	assert_eq!(CASES.iter().filter(|c| c.stock).count(), 140);
 	let mut labels = std::collections::BTreeSet::new();
@@ -224,12 +224,12 @@ fn catalogue_invariants() {
 
 #[test]
 #[ignore = "ONE bounded H1 stock probe; new GAP_OUT required"]
-fn stock_probe() {
-	catalogue_invariants();
+fn legacy_probe() {
+	catalog_invariants();
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
 	fs::write(
-		out.join("catalogue.json"),
+		out.join("catalog.json"),
 		include_str!("host_bridge/cases.json"),
 	)
 	.unwrap();
@@ -288,8 +288,8 @@ fn stock_probe() {
 
 #[test]
 #[ignore = "ONE bounded byte-exact stock replay; explicit projected table and baseline origin"]
-fn stock_replay() {
-	catalogue_invariants();
+fn legacy_replay() {
+	catalog_invariants();
 	let expected_path = PathBuf::from(std::env::var_os("H1_EXPECTED").expect("projected table"));
 	let expected = fs::read_to_string(expected_path).unwrap();
 	let mut lines = expected.lines();
@@ -357,13 +357,13 @@ fn stock_replay() {
 
 #[test]
 #[ignore = "H1 source-first precedence supplement; exactly four new stock children"]
-fn stock_precedence_supplement() {
+fn legacy_precedence_supplement() {
 	precedence_run(false);
 }
 
 #[test]
 #[ignore = "ONE bounded byte-exact replay of four frozen host precedence rows"]
-fn stock_precedence_replay() {
+fn legacy_precedence_replay() {
 	precedence_run(true);
 }
 
@@ -469,9 +469,9 @@ fn precedence_run(replay: bool) {
 	miri,
 	ignore = "frontend-heavy host control; native gates cover it; focused Miri uses minimal fixtures"
 )]
-fn fresh_fixture_certifies_only_closed_supported_handlers() {
+fn fixture_certifies_only_closed_supported_handlers() {
 	let tape = fixture::Recorder::new();
-	let context = fixture::fresh_context(&tape);
+	let context = fixture::context(&tape);
 	for name in [
 		"id_unit",
 		"id_bool",
@@ -522,10 +522,7 @@ fn fresh_fixture_certifies_only_closed_supported_handlers() {
 		"rust_panic",
 	] {
 		let hash = Hash::type_hash(["h1", name]);
-		assert!(
-			context.fresh_host(hash).is_some(),
-			"missing enrollment {name}"
-		);
+		assert!(context.host(hash).is_some(), "missing enrollment {name}");
 	}
 	for name in [
 		"plain_unenrolled",
@@ -537,12 +534,12 @@ fn fresh_fixture_certifies_only_closed_supported_handlers() {
 		"raw_unknown",
 	] {
 		assert!(
-			context.fresh_host(Hash::type_hash(["h1", name])).is_none(),
+			context.host(Hash::type_hash(["h1", name])).is_none(),
 			"untrusted enrollment {name}"
 		);
 	}
 	assert!(context
-		.fresh_host(Hash::type_hash(["h1", "vm_error_control"]))
+		.host(Hash::type_hash(["h1", "vm_error_control"]))
 		.is_some());
 	assert_eq!(tape.snapshot(), (0, Vec::new()));
 }

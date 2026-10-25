@@ -32,32 +32,32 @@ use crate::{Any, ContextError, Module, TypeHash};
 #[rune::module(::std::string)]
 pub fn module() -> Result<Module, ContextError> {
 	let mut m = Module::from_meta(self::module__meta)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_clone = crate::function::fresh_clone::Provider::String.bit();
+		m.clone = crate::function::clone::Provider::String.bit();
 	}
 
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_pipeline = 1;
+		m.pipeline = 1;
 	}
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_text = true;
-		m.fresh_iter = crate::function::fresh_iter::marker::ITERATOR;
-		m.fresh_object = crate::function::fresh_object::marker::STRING;
+		m.text = true;
+		m.iter = crate::function::iter::marker::ITERATOR;
+		m.object = crate::function::object::marker::STRING;
 	}
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_numeric = 0b1000_0000;
+		m.numeric = 0b1000_0000;
 	}
 
 	m.ty::<String>()?;
 
 	m.function_meta(string_from)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		m.fresh_string_from = true;
+		m.string_from = true;
 	}
 	m.function_meta(string_from_str)?;
 	m.function_meta(string_new)?;
@@ -133,8 +133,8 @@ pub fn module() -> Result<Module, ContextError> {
 	split!(Function);
 	split!(String);
 	split!(char);
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }
 

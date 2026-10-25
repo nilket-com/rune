@@ -1,10 +1,10 @@
 //! C15c nominal clone observations. The operator binds each stock binary and source.
 use super::*;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
 
-include!("constructors/graph.rs");
+include!("constructors/runtime_graph.rs");
 const CASES: &str = include_str!("nominal_clone/cases.json");
 thread_local! {static TAPE: RefCell<Vec<Json>> = const {RefCell::new(Vec::new())};}
 
@@ -13,12 +13,12 @@ fn tap(tag: i64, value: i64) -> i64 {
 	value
 }
 
-fn context(fresh: bool) -> Context {
+fn context(certify: bool) -> Context {
 	let mut context = Context::with_default_modules().unwrap();
 	for name in ["c15", "c15b", "c15c"] {
 		let mut module = crate::Module::with_item([name]).unwrap();
-		if fresh {
-			module.fresh_host_function("tap", tap).unwrap();
+		if certify {
+			module.host_function("tap", tap).unwrap();
 		} else {
 			module.function("tap", tap).build().unwrap();
 		}
@@ -27,15 +27,15 @@ fn context(fresh: bool) -> Context {
 	context
 }
 
-fn observed(value: &Value) -> Json {
-	let graph = graph(value);
-	for node in graph["nodes"].as_array().unwrap() {
+fn observed(value: &RuntimeValue) -> Json {
+	let runtime_graph = runtime_graph(value);
+	for node in runtime_graph["nodes"].as_array().unwrap() {
 		assert!(
 			!matches!(node[0].as_str(), Some("Dynamic" | "OpaqueAny")),
 			"unmapped C15c node: {node}"
 		);
 	}
-	graph
+	runtime_graph
 }
 
 fn error(error: &stock::VmError) -> Json {
@@ -60,7 +60,7 @@ fn child() {
 	let engine = std::env::var("C15C_ENGINE").unwrap_or_else(|_| "stock".to_owned());
 	assert!(["stock", "fresh"].contains(&engine.as_str()));
 	if engine == "fresh" {
-		let result = observe_fresh(row, &phase);
+		let result = observe(row, &phase);
 		write_result(&result);
 		return;
 	}
@@ -175,23 +175,23 @@ pub(super) fn intentional_record(family: &str, label: &str, source: &str, old: S
 
 #[test]
 #[ignore = "C15c stock contract; new C15C_STOCK_OUT and source-bound native binary"]
-fn stock_contract() {
-	contract("stock", false);
+fn legacy_contract() {
+	check_contract("stock", false);
 }
 
 #[test]
-#[ignore = "C15c fresh contract; bounded source-bound native children"]
-fn fresh_contract() {
-	contract("fresh", false);
+#[ignore = "C15c execution contract; bounded source-bound native children"]
+fn contract() {
+	check_contract("fresh", false);
 }
 
 #[test]
 #[ignore = "C15c tuple-shaped nominal slice; bounded source-bound native children"]
 fn slice_contract() {
-	contract("fresh", true);
+	check_contract("fresh", true);
 }
 
-fn contract(engine: &str, slice: bool) {
+fn check_contract(engine: &str, slice: bool) {
 	use sha2::{Digest, Sha256};
 	use std::process::{Command, Stdio};
 	use std::time::{Duration, Instant};
@@ -199,7 +199,7 @@ fn contract(engine: &str, slice: bool) {
 		std::env::var_os(if engine == "stock" {
 			"C15C_STOCK_OUT"
 		} else {
-			"C15C_FRESH_OUT"
+			"C15C_OUT"
 		})
 		.unwrap(),
 	);
@@ -366,8 +366,8 @@ fn intentional_rows_preserve_original_observations() {
 }
 
 // Independent observations: this function never reads frozen expectations.
-include!("enum_variants/fresh_graph.rs");
-fn observe_fresh(row: &Json, phase: &str) -> Json {
+include!("enum_variants/graph.rs");
+fn observe(row: &Json, phase: &str) -> Json {
 	let source = row["source"].as_str().unwrap();
 	let context = context(true);
 	let mut sources = Sources::new();
@@ -398,7 +398,7 @@ fn observe_fresh(row: &Json, phase: &str) -> Json {
 		)
 		.unwrap();
 	let value = store.import(&root).unwrap();
-	let outcome = json!({"status":"value","graph":fresh_graph(&mut store, value)});
+	let outcome = json!({"status":"value","graph":graph(&mut store, value)});
 	store.root_release(root).unwrap();
 	let events = TAPE.with(|tape| tape.borrow().clone());
 	let row_idle = executor.is_idle();
@@ -416,9 +416,9 @@ fn observe_fresh(row: &Json, phase: &str) -> Json {
 		)
 		.unwrap();
 	let value = store.import(&root).unwrap();
-	let reuse = json!({"status":"value","graph":fresh_graph(&mut store, value)});
+	let reuse = json!({"status":"value","graph":graph(&mut store, value)});
 	store.root_release(root).unwrap();
-	// Keep a fresh result alive across compiler metadata destruction. Compare
+	// Keep a new result alive across compiler metadata destruction. Compare
 	// actual observations from the same script, without consulting the oracle.
 	let held = executor
 		.invoke(
@@ -431,7 +431,7 @@ fn observe_fresh(row: &Json, phase: &str) -> Json {
 		.unwrap();
 	drop(program);
 	let value = store.import(&held).unwrap();
-	assert_eq!(fresh_graph(&mut store, value), outcome["graph"]);
+	assert_eq!(graph(&mut store, value), outcome["graph"]);
 	store.root_release(held).unwrap();
 	json!({"schema":1,"engine":"fresh","phase":phase,"index":row["id"].as_str().unwrap().parse::<usize>().unwrap(),"label":row["label"],"source_sha256":row["source_sha256"],"source_hex":hex(source.as_bytes()),"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"post_code_drop":true,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes()}})
 }

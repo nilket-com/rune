@@ -31,17 +31,17 @@ pub fn module() -> Result<Module, ContextError> {
 	})?;
 
 	module.function_meta(panic)?;
-	#[cfg(feature = "fresh-core")]
+	#[cfg(feature = "execution")]
 	{
-		module.fresh_panic = true;
+		module.panic = true;
 	}
 	module.function_meta(is_readable)?;
 	module.function_meta(is_writable)?;
 
 	module.macro_meta(stringify_macro)?;
 	module.macro_meta(panic_macro)?;
-	#[cfg(feature = "fresh-core")]
-	module.fresh_mark_builtin_macro();
+	#[cfg(feature = "execution")]
+	module.mark_builtin_macro();
 	Ok(module)
 }
 

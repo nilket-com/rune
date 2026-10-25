@@ -273,7 +273,7 @@ pub(super) fn observe_c2(path: &Path, mode: &str, engine: &str) -> Observation {
 #[test]
 #[ignore = "C2 stock oracle, explicit new GAP_OUT; capture-io and disable-io required"]
 #[allow(clippy::assertions_on_constants)]
-fn stock_probe() {
+fn legacy_probe() {
 	// Runtime admission for an ignored oracle: ordinary feature configurations
 	// must compile, while an explicit invocation without the two contexts fails.
 	assert!(
@@ -364,8 +364,8 @@ fn address_fields(bytes: &[u8]) -> (&[u8], &[u8]) {
 
 #[test]
 #[ignore = "C2 frozen stock replay, explicit new GAP_OUT; both IO features required"]
-fn stock_contract() {
-	stock_probe();
+fn legacy_contract() {
+	legacy_probe();
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	let actual = fs::read_to_string(out.join("stock-output-macros.tsv")).unwrap();
 	let expected = include_str!("../output_macros_stock.tsv");
@@ -420,7 +420,7 @@ fn stock_contract() {
 	assert_eq!((exact, observations), (351, 16));
 	#[cfg(target_os = "linux")]
 	{
-		crate::modules::io::stdout_tests::stock_c2_at(&out.join("descriptors"));
+		crate::modules::io::stdout_tests::legacy_c2_at(&out.join("descriptors"));
 		assert_eq!(
 			fs::read_to_string(out.join("descriptors/stock-output-descriptors.tsv")).unwrap(),
 			include_str!("../output_descriptors_stock.tsv")
@@ -438,12 +438,12 @@ fn observation(record: &str) -> (&str, &str, String, String) {
 }
 
 #[test]
-#[ignore = "C2 fresh contract with explicit retained/refusal/fuel policies; new GAP_OUT"]
-fn fresh_contract() {
+#[ignore = "C2 execution contract with explicit retained/refusal/fuel policies; new GAP_OUT"]
+fn contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
 	let scratch =
-		Scratch(std::env::temp_dir().join(format!("rune-c2-fresh-{}", std::process::id())));
+		Scratch(std::env::temp_dir().join(format!("rune-c2-execution-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
 	let expected: Vec<_> = include_str!("../output_macros_stock.tsv")
 		.lines()
@@ -493,7 +493,7 @@ fn fresh_contract() {
 			));
 			no_output(&run);
 		} else if case.label.starts_with("fuel/print/") {
-			disposition = "fresh print fuel invariants (not VM fuel parity)";
+			disposition = "execution print fuel invariants (not VM fuel parity)";
 			let fuel: u32 = case.mode.strip_prefix("c2-fuel-").unwrap().parse().unwrap();
 			assert!(matches!(actual.0, "value" | "error"));
 			if actual.0 == "error" {
@@ -530,7 +530,7 @@ fn fresh_contract() {
 				);
 			}
 		} else if case.label.starts_with("fuel/") {
-			disposition = "fresh fuel invariants (not VM fuel parity)";
+			disposition = "execution fuel invariants (not VM fuel parity)";
 			let fuel: u32 = case.mode.strip_prefix("c2-fuel-").unwrap().parse().unwrap();
 			if fuel < 3 {
 				assert_eq!((actual.0, actual.1), ("error", "FuelExhausted"));
@@ -596,7 +596,7 @@ fn fresh_contract() {
 			assert_eq!((actual.0, actual.1), ("refused", "Some(Native)"));
 			no_output(&run);
 		} else {
-			disposition = "exact admitted behaviour";
+			disposition = "exact admitted behavior";
 			assert_eq!(actual.0, stock.0, "{}", case.label);
 			if stock.1.starts_with("stock:Panic ") {
 				assert_eq!(actual.1, "Panic");
@@ -620,21 +620,21 @@ fn fresh_contract() {
 		fs::write(out.join("dispositions.tsv"), &policies).unwrap();
 	}
 	assert_eq!(
-		counts.get("fresh fuel invariants (not VM fuel parity)"),
+		counts.get("execution fuel invariants (not VM fuel parity)"),
 		Some(&81)
 	);
 	assert_eq!(
-		counts.get("fresh print fuel invariants (not VM fuel parity)"),
+		counts.get("execution print fuel invariants (not VM fuel parity)"),
 		Some(&81)
 	);
 	fs::write(
 		out.join("summary.txt"),
-		format!("{} C2 fresh rows; {counts:?}\n", cases.len()),
+		format!("{} C2 execution rows; {counts:?}\n", cases.len()),
 	)
 	.unwrap();
 	direct_print_supplement(&out.join("direct-print"));
 	#[cfg(target_os = "linux")]
-	crate::modules::io::stdout_tests::fresh_c2_at(&out.join("descriptors"));
+	crate::modules::io::stdout_tests::c2_at(&out.join("descriptors"));
 	contract_completed("fresh", cases.len());
 }
 
@@ -669,29 +669,29 @@ fn direct_print_supplement(out: &Path) {
 			out,
 			&format!("{n}-stock"),
 		);
-		let fresh = launch(
+		let execution = launch(
 			&path,
 			&path,
 			"c2-default",
 			"fresh",
 			&scratch.0,
 			out,
-			&format!("{n}-fresh"),
+			&format!("{n}-execution"),
 		);
-		assert!(stock.complete && fresh.complete);
+		assert!(stock.complete && execution.complete);
 		let a = observation(&stock.record);
-		let b = observation(&fresh.record);
-		assert!(stock.stderr.is_empty() && fresh.stderr.is_empty());
+		let b = observation(&execution.record);
+		assert!(stock.stderr.is_empty() && execution.stderr.is_empty());
 		if arity {
 			assert_eq!(a.0, "error");
 		}
 		if arity {
 			assert_eq!((b.0, b.1), ("refused", "Some(Arity)"));
-			assert_eq!(fresh.stdout, b"\nrunning 1 test\n");
+			assert_eq!(execution.stdout, b"\nrunning 1 test\n");
 		} else {
 			assert_eq!(b.0, a.0);
 			assert_eq!((&b.2, &b.3), (&a.2, &a.3));
-			assert_eq!(fresh.stdout, stock.stdout);
+			assert_eq!(execution.stdout, stock.stdout);
 			if a.0 == "error" {
 				assert_eq!(b.1, "Type");
 			}
@@ -701,10 +701,10 @@ fn direct_print_supplement(out: &Path) {
 
 #[test]
 #[ignore = "C2 both-engine frozen contract, both IO features; new GAP_OUT"]
-fn contract() {
+fn contract_matrix() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
-	for (engine, test) in [("stock", "stock_contract"), ("fresh", "fresh_contract")] {
+	for (engine, test) in [("stock", "legacy_contract"), ("fresh", "contract")] {
 		let result = Command::new(std::env::current_exe().unwrap())
 			.args([
 				"--exact",

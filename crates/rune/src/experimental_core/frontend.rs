@@ -1,7 +1,7 @@
-//! The fresh-core frontend: compiles Rune sources into a [`Program`].
+//! The execution frontend: compiles Rune sources into a [`Program`].
 //!
 //! The ordinary Rune compiler front end resolves and checks the sources; each admitted
-//! function is then lowered to fresh-core code. The legacy `UnitBuilder` is metadata
+//! function is then lowered to execution code. The legacy `UnitBuilder` is metadata
 //! scratch only: no function is assembled into a legacy unit.
 
 use super::code::{Code, CompileTransaction, Function};
@@ -129,7 +129,7 @@ impl Collector {
 		}
 		// The source index is complete before the HIR handoff. With no script
 		// instance target, no formerly refused method can need a nominal proof.
-		if !query.fresh_instances.has_functions() {
+		if !query.instances.has_functions() {
 			self.proofs.disabled = true;
 			return Ok(());
 		}
@@ -222,7 +222,7 @@ impl Collector {
 		context: &Context,
 		refused_functions: &[(Hash, Refusal)],
 	) -> Result<()> {
-		for expr in exprs.fresh_expressions() {
+		for expr in exprs.expressions() {
 			let used = match expr.kind {
 				crate::hir::ExprKind::Fn(hash) => Some(hash),
 				crate::hir::ExprKind::Call(call) => match call.call {
@@ -237,7 +237,7 @@ impl Collector {
 		}
 		let method = receiver.and_then(|receiver| {
 			constants
-				.fresh_self_method(hash, receiver)
+				.self_method(hash, receiver)
 				.map(|associated| (receiver, associated))
 		});
 
@@ -385,10 +385,7 @@ impl Collector {
 		);
 		let mut entry_ineligible = self.proof_entries;
 		// A guessed adapter ID cannot bypass its call site's fill proof.
-		if let Some(&id) = self
-			.native_helpers
-			.get(&crate::function::fresh_clone::RESIZE)
-		{
+		if let Some(&id) = self.native_helpers.get(&crate::function::clone::RESIZE) {
 			entry_ineligible.try_push(id)?;
 		}
 
@@ -448,12 +445,12 @@ fn reserve(
 	Ok(id)
 }
 
-/// Compiles `sources` against `context` for the fresh core.
+/// Compiles `sources` against `context` for the execution core.
 ///
 /// Anything outside the admitted subset is a compile-time refusal: an [`Error`] with
 /// kind [`ErrorKind::Unsupported`] and a [`Refusal`] category. Compiler errors are
 /// reported to `diagnostics` and returned as [`Refusal::FrontendDiagnostic`]. Nothing
-/// falls back to the stock VM; that choice is the caller's.
+/// falls back to the legacy VM; that choice is the caller's.
 ///
 /// `println!` is admitted only when the context's `::std::io::println` is the std
 /// stdio builtin (as installed by [`Context::with_default_modules`]). A capture, disable

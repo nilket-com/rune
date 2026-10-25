@@ -2,7 +2,7 @@
 use super::*;
 use crate as rune;
 use crate::experimental_core::{code::Op, error::Refusal, frontend};
-use crate::function::fresh_numeric::{Call, Method, Pair};
+use crate::function::numeric::{Call, Method, Pair};
 use crate::{Diagnostics, Source, Sources};
 use core::sync::atomic::{AtomicUsize, Ordering};
 
@@ -93,7 +93,7 @@ fn matrix(cx: &Context, methods: [bool; 3], pairs: [bool; 4]) {
 		.into_iter()
 		.zip(methods)
 	{
-		assert_eq!(cx.fresh_numeric_method(m), admit);
+		assert_eq!(cx.numeric_method(m), admit);
 		compile(
 			cx,
 			Call::method(m),
@@ -101,7 +101,7 @@ fn matrix(cx: &Context, methods: [bool; 3], pairs: [bool; 4]) {
 		);
 	}
 	for (pair, admit) in Pair::DIRECT.into_iter().zip(pairs) {
-		assert_eq!(cx.fresh_numeric_direct(pair), admit);
+		assert_eq!(cx.numeric_direct(pair), admit);
 		compile(
 			cx,
 			Call::direct(pair),
@@ -155,7 +155,7 @@ fn uncertified_and_partial_numeric_modules_fail_closed() {
 	let mut cx = core();
 	cx.install(crate::modules::i64::module().unwrap()).unwrap();
 	let mut f64 = crate::modules::f64::module().unwrap();
-	f64.fresh_numeric = 0;
+	f64.numeric = 0;
 	cx.install(f64).unwrap();
 	matrix(&cx, [false; 3], [false, false, false, true]);
 	let mut cx = core();
@@ -227,7 +227,7 @@ fn absent_and_partial_numeric_modules_are_not_implicitly_certified() {
 )]
 fn cmp_requires_all_providers_and_unshadowed_handler_aliases() {
 	let cx = Context::with_default_modules().unwrap();
-	assert!(cx.fresh_numeric_method(Method::Cmp));
+	assert!(cx.numeric_method(Method::Cmp));
 	compile(&cx, Call::MethodCmp, None);
 	let mut partial = core();
 	partial
@@ -239,18 +239,18 @@ fn cmp_requires_all_providers_and_unshadowed_handler_aliases() {
 	partial
 		.install(crate::modules::f64::module().unwrap())
 		.unwrap();
-	assert!(!partial.fresh_numeric_method(Method::Cmp));
+	assert!(!partial.numeric_method(Method::Cmp));
 	compile(&partial, Call::MethodCmp, Some(Refusal::Method));
 	let mut cx = Context::with_default_modules().unwrap();
 	cx.install(extra("cmp")).unwrap();
-	assert!(cx.fresh_numeric_method(Method::Cmp));
+	assert!(cx.numeric_method(Method::Cmp));
 	compile(&cx, Call::MethodCmp, None);
 	let mut cx = Context::with_default_modules().unwrap();
 	let mut m = Module::new();
 	m.associated_function(&crate::runtime::Protocol::CMP, |a: i64, b: i64| a.cmp(&b))
 		.unwrap();
 	assert!(cx.install(m).is_err());
-	assert!(!cx.fresh_numeric_method(Method::Cmp));
+	assert!(!cx.numeric_method(Method::Cmp));
 	compile(&cx, Call::MethodCmp, Some(Refusal::Method));
 }
 
@@ -349,25 +349,25 @@ fn cmp_i64_module(kind: CmpInstall) -> Module {
 )]
 fn cmp_custom_i64_named_protocol_and_trait_fail_closed_in_both_orders() {
 	for kind in [CmpInstall::Named, CmpInstall::Protocol, CmpInstall::Trait] {
-		let mut stock_first = Context::with_default_modules().unwrap();
-		assert!(stock_first.fresh_numeric_method(Method::Cmp));
+		let mut default_first = Context::with_default_modules().unwrap();
+		assert!(default_first.numeric_method(Method::Cmp));
 		assert!(
-			stock_first.install(cmp_i64_module(kind)).is_err(),
+			default_first.install(cmp_i64_module(kind)).is_err(),
 			"{kind:?}"
 		);
-		assert!(!stock_first.fresh_numeric_method(Method::Cmp), "{kind:?}");
-		compile(&stock_first, Call::MethodCmp, Some(Refusal::Method));
+		assert!(!default_first.numeric_method(Method::Cmp), "{kind:?}");
+		compile(&default_first, Call::MethodCmp, Some(Refusal::Method));
 		let mut custom_first = cmp_without_i64_and_vec();
-		assert!(!custom_first.fresh_numeric_method(Method::Cmp)); // i64 stock provider absent.
+		assert!(!custom_first.numeric_method(Method::Cmp)); // i64 stock provider absent.
 		custom_first.install(cmp_i64_module(kind)).unwrap();
-		assert!(!custom_first.fresh_numeric_method(Method::Cmp), "{kind:?}");
+		assert!(!custom_first.numeric_method(Method::Cmp), "{kind:?}");
 		assert!(
 			custom_first
 				.install(crate::modules::i64::module().unwrap())
 				.is_err(),
 			"{kind:?}"
 		);
-		assert!(!custom_first.fresh_numeric_method(Method::Cmp), "{kind:?}");
+		assert!(!custom_first.numeric_method(Method::Cmp), "{kind:?}");
 		compile(&custom_first, Call::MethodCmp, Some(Refusal::Method));
 	}
 	assert_eq!(INVOCATIONS.load(Ordering::SeqCst), 0);
@@ -390,7 +390,7 @@ fn cmp_missing_receivers_close_on_names_and_protocols() {
 				.unwrap();
 		}
 		cx.install(m).unwrap();
-		assert!(!cx.fresh_numeric_method(Method::Cmp));
+		assert!(!cx.numeric_method(Method::Cmp));
 		compile(&cx, Call::MethodCmp, Some(Refusal::Method));
 		let mut cx = Context::with_default_modules().unwrap();
 		let mut m = Module::with_item(["c9_ordering"]).unwrap();
@@ -403,7 +403,7 @@ fn cmp_missing_receivers_close_on_names_and_protocols() {
 				.unwrap();
 		}
 		cx.install(m).unwrap();
-		assert!(!cx.fresh_numeric_method(Method::Cmp));
+		assert!(!cx.numeric_method(Method::Cmp));
 		compile(&cx, Call::MethodCmp, Some(Refusal::Method));
 	}
 	assert_eq!(INVOCATIONS.load(Ordering::SeqCst), 0);
@@ -422,7 +422,7 @@ fn cmp_custom_vec_names_and_protocols_stay_open_and_refuse_at_runtime() {
 	for protocol in [false, true] {
 		let mut cx = cmp_without_i64_and_vec();
 		cx.install(crate::modules::i64::module().unwrap()).unwrap();
-		assert!(cx.fresh_numeric_method(Method::Cmp));
+		assert!(cx.numeric_method(Method::Cmp));
 		let mut m = Module::with_crate_item("std", ["vec"]).unwrap();
 		m.ty::<crate::runtime::Vec>().unwrap();
 		if protocol {
@@ -436,17 +436,17 @@ fn cmp_custom_vec_names_and_protocols_stay_open_and_refuse_at_runtime() {
 		m.define_trait(["CmpPendingOther"])
 			.unwrap()
 			.handler(|cx| {
-				let pending = cx.cx.fresh_numeric.begin_module(0, 0);
+				let pending = cx.cx.numeric.begin_module(0, 0);
 				assert_eq!(pending.0 & Method::Cmp.bit(), 0);
-				assert!(cx.cx.fresh_numeric_method(Method::Cmp));
-				cx.cx.fresh_numeric.finish_module(pending);
+				assert!(cx.cx.numeric_method(Method::Cmp));
+				cx.cx.numeric.finish_module(pending);
 				Ok(())
 			})
 			.unwrap();
 		let item = m.item.join(["CmpPendingOther"]).unwrap();
 		m.implement_trait::<crate::runtime::Vec>(&item).unwrap();
 		cx.install(m).unwrap();
-		assert!(cx.fresh_numeric_method(Method::Cmp));
+		assert!(cx.numeric_method(Method::Cmp));
 		compile(&cx, Call::MethodCmp, None);
 		let mut store = Store::new(Limits::default()).unwrap();
 		let value = store.list(Type::Vec, &[Value::I64(1)]).unwrap();
@@ -483,17 +483,17 @@ fn cmp_relevant_pending_module_is_visible_during_trait_registration() {
 		m.define_trait(["CmpPendingRelevant"])
 			.unwrap()
 			.handler(|cx| {
-				let pending = cx.cx.fresh_numeric.begin_module(0, 0);
+				let pending = cx.cx.numeric.begin_module(0, 0);
 				assert_ne!(pending.0 & Method::Cmp.bit(), 0);
-				assert!(!cx.cx.fresh_numeric_method(Method::Cmp));
-				cx.cx.fresh_numeric.finish_module(pending);
+				assert!(!cx.cx.numeric_method(Method::Cmp));
+				cx.cx.numeric.finish_module(pending);
 				Ok(())
 			})
 			.unwrap();
 		let item = m.item.join(["CmpPendingRelevant"]).unwrap();
 		m.implement_trait::<bool>(&item).unwrap();
 		cx.install(m).unwrap();
-		assert!(!cx.fresh_numeric_method(Method::Cmp));
+		assert!(!cx.numeric_method(Method::Cmp));
 		compile(&cx, Call::MethodCmp, Some(Refusal::Method));
 	}
 	assert_eq!(INVOCATIONS.load(Ordering::SeqCst), 0);

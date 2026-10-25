@@ -104,7 +104,7 @@ fn shift(value: Value, op: Binary) -> Result<u32> {
 	Ok(count)
 }
 
-// Bool ordering follows the script contract, as on the stock VM.
+// Bool ordering follows the script contract, as on the legacy VM.
 #[allow(clippy::bool_comparison)]
 pub fn binary(op: Binary, a: Value, b: Value) -> Result<Value> {
 	use Binary::*;

@@ -276,11 +276,11 @@ impl<'a, 'b, 'arena> MacroContext<'a, 'b, 'arena> {
 	/// ```
 	pub fn eval_stream(&mut self, stream: &TokenStream) -> compile::Result<Value> {
 		let span = self.stream_span(stream);
-		#[cfg(feature = "fresh-core")]
-		if self.idx.q.inner.fresh_mode {
+		#[cfg(feature = "execution")]
+		if self.idx.q.inner.collecting {
 			return Err(compile::Error::msg(
 				span,
-				"fresh core: macro constant evaluation is not admitted",
+				"execution core: macro constant evaluation is not admitted",
 			));
 		}
 		crate::compile::const_eval::eval_stream(self, stream, span)

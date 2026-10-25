@@ -19,7 +19,7 @@ fn compile_source(source: &str, context: &Context) -> Result<Program> {
 	super::compile(&mut sources, context, &mut Diagnostics::new(), 19)
 }
 
-fn stock_i64(source: &str, context: &Context) -> i64 {
+fn legacy_i64(source: &str, context: &Context) -> i64 {
 	let mut sources = Sources::new();
 	sources
 		.insert(crate::Source::memory(source).unwrap())
@@ -62,7 +62,7 @@ fn mixed_default_context_receivers_match_live_stock() {
 		}
 	"#;
 	let context = Context::with_default_modules().unwrap();
-	let expected = stock_i64(source, &context);
+	let expected = legacy_i64(source, &context);
 	assert_eq!(expected, 1365);
 	let program = compile_source(source, &context).unwrap();
 	let mut store = Store::new(Limits::default()).unwrap();
@@ -126,7 +126,7 @@ fn receiver_dependent_arity_preserves_receiver_and_argument_effects() {
 	let mut module = crate::Module::with_item(["receiver_domain"]).unwrap();
 	let tape = events.clone();
 	module
-		.fresh_host_function("tap", move |n: i64| -> i64 {
+		.host_function("tap", move |n: i64| -> i64 {
 			tape.lock().unwrap().push(n);
 			n
 		})
@@ -149,7 +149,7 @@ fn receiver_dependent_arity_preserves_receiver_and_argument_effects() {
 		let program = compile_source(&source, &context).unwrap();
 		let mut store = Store::new(Limits::default()).unwrap();
 		let mut executor = executor(&context);
-		let fresh = executor.invoke(
+		let execution = executor.invoke(
 			&program,
 			&mut store,
 			program.function(Hash::type_hash(["main"])).unwrap(),
@@ -161,12 +161,12 @@ fn receiver_dependent_arity_preserves_receiver_and_argument_effects() {
 		match stock {
 			Ok(value) => {
 				assert_eq!(crate::from_value::<i64>(value).unwrap(), 3);
-				let root = fresh.unwrap();
+				let root = execution.unwrap();
 				assert_i64(&store, &root, 3);
 				store.root_release(root).unwrap();
 			}
 			Err(stock) => {
-				let failure = fresh.unwrap_err();
+				let failure = execution.unwrap_err();
 				assert_ne!(failure.error.kind, ErrorKind::InvalidCode);
 				assert_eq!(
 					failure.message(&program).to_string(),
@@ -213,7 +213,7 @@ fn context_only_provider() -> Context {
 fn context_only_native_provider_keeps_an_unknown_parameter_site_refused() {
 	let context = context_only_provider();
 	let source = std::format!("{C18E_CONTEXT_ONLY_SOURCE} pub fn expose(){{probe}}");
-	assert_eq!(stock_i64(&source, &context), 1);
+	assert_eq!(legacy_i64(&source, &context), 1);
 	let error = compile_source(&source, &context).err().unwrap();
 	assert_eq!(error.refusal, Some(Refusal::Method));
 	assert!(error.location.is_some());
@@ -221,9 +221,9 @@ fn context_only_native_provider_keeps_an_unknown_parameter_site_refused() {
 
 #[test]
 fn exact_parameter_skips_an_unrelated_context_only_native_provider() {
-	// C18b3e overlay keeps the original source and its stock value intact.
+	// C18b3e overlay keeps the original source and its runtime value intact.
 	let context = context_only_provider();
-	assert_eq!(stock_i64(C18E_CONTEXT_ONLY_SOURCE, &context), 1);
+	assert_eq!(legacy_i64(C18E_CONTEXT_ONLY_SOURCE, &context), 1);
 	let program = compile_source(C18E_CONTEXT_ONLY_SOURCE, &context).unwrap();
 	let probe = program.function(Hash::type_hash(["probe"])).unwrap();
 	assert_eq!(program.entry_ineligible.as_slice(), &[probe]);
@@ -293,7 +293,7 @@ fn ordinary_nominal_roots_can_cross_programs_with_the_same_published_shape() {
 		.with_diagnostics(&mut Diagnostics::new())
 		.build_vm()
 		.unwrap();
-	let stock_input = producer_vm.call(["main"], ()).unwrap();
+	let legacy_input = producer_vm.call(["main"], ()).unwrap();
 	let mut consumer_sources = Sources::new();
 	consumer_sources
 		.insert(crate::Source::memory(consumer).unwrap())
@@ -304,7 +304,7 @@ fn ordinary_nominal_roots_can_cross_programs_with_the_same_published_shape() {
 		.build_vm()
 		.unwrap();
 	let expected =
-		crate::from_value::<i64>(consumer_vm.call(["inspect"], (stock_input,)).unwrap()).unwrap();
+		crate::from_value::<i64>(consumer_vm.call(["inspect"], (legacy_input,)).unwrap()).unwrap();
 	assert_eq!(expected, 1);
 	let producer = compile_source(producer, &context).unwrap();
 	let consumer = compile_source(consumer, &context).unwrap();

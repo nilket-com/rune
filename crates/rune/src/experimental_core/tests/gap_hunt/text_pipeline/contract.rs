@@ -70,7 +70,7 @@ fn admitted(id: &str, frozen: &Json) -> Json {
 	rule
 }
 
-fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
+fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	let frozen = &admitted(case["id"].as_str().unwrap(), frozen);
 	for key in ["label", "source_sha256", "fixture", "fuel"] {
 		assert_eq!(actual[key], case[key]);
@@ -128,7 +128,7 @@ fn compare_fresh(case: &Json, frozen: &Json, actual: &Json) {
 			} else {
 				let complete: Json =
 					serde_json::from_str(include_str!("resource_complete.json")).unwrap();
-				let rule=complete.get(id).expect("Fresh completed: collect ONE pre-authorized stock counterfactual before accepting");
+				let rule=complete.get(id).expect("Execution completed: collect ONE pre-authorized stock counterfactual before accepting");
 				assert_eq!(rule["source_sha256"], case["source_sha256"]);
 				assert_eq!(rule["stock_fuel"], 200000);
 				assert_eq!(rule["fresh_fuel"], case["fuel"]);
@@ -154,9 +154,9 @@ fn contract_controls_reject_output_tape_and_lifecycle_drift() {
 	let frozen: Json = serde_json::from_str(DISPOSITIONS).unwrap();
 	for index in [0usize, 128, 163] {
 		TAPE.with(|t| t.borrow_mut().clear());
-		let actual = observe_fresh(&cases[index]);
+		let actual = observe(&cases[index]);
 		let id = cases[index]["id"].as_str().unwrap();
-		compare_fresh(&cases[index], &frozen[id], &actual);
+		compare(&cases[index], &frozen[id], &actual);
 		for path in [
 			"/observation/reuse/graph/nodes/0/2",
 			"/fresh_audit/live_entries",
@@ -166,7 +166,7 @@ fn contract_controls_reject_output_tape_and_lifecycle_drift() {
 			let mut bad = actual.clone();
 			*bad.pointer_mut(path).unwrap() = json!("drift");
 			assert!(
-				std::panic::catch_unwind(|| compare_fresh(&cases[index], &frozen[id], &bad))
+				std::panic::catch_unwind(|| compare(&cases[index], &frozen[id], &bad))
 					.is_err()
 			);
 		}
@@ -174,7 +174,7 @@ fn contract_controls_reject_output_tape_and_lifecycle_drift() {
 			let mut bad = actual.clone();
 			bad["observation"]["outcome"]["graph"]["root"] = json!(999);
 			assert!(
-				std::panic::catch_unwind(|| compare_fresh(&cases[index], &frozen[id], &bad))
+				std::panic::catch_unwind(|| compare(&cases[index], &frozen[id], &bad))
 					.is_err()
 			);
 		}

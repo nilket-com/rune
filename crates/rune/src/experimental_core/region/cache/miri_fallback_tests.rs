@@ -84,7 +84,7 @@ fn counted(op: Binary, step: i64) -> Code {
 	b.finish().unwrap()
 }
 
-/// One invocation on a fresh executor and store: the returned scalar or the error kind.
+/// One invocation on a new executor and store: the returned scalar or the error kind.
 fn run(code: &Code, limit: i64, fuel: usize) -> Result<Option<Scalar>, ErrorKind> {
 	let mut store = Store::new(Limits {
 		entries: 256,

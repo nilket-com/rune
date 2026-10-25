@@ -1,8 +1,8 @@
-//! Native tier backend for fresh-core loop regions (x86-64 Linux, feature
-//! `fresh-core-native`). UNSTABLE. Wired into execution (P2a) only through the thread-local
+//! Native tier backend for execution loop regions (x86-64 Linux, feature
+//! `native-code`). UNSTABLE. Wired into execution (P2a) only through the thread-local
 //! region cache in `experimental_core::region::cache`; there is no public API.
 //!
-//! - [`lower`]: safe translation of an analysed [`Region`](crate::experimental_core::region::Region)
+//! - [`lower`]: safe translation of an analyzed [`Region`](crate::experimental_core::region::Region)
 //!   into Cranelift IR with the exit protocol of
 //!   [`ExitRecord`](crate::experimental_core::region::abi::ExitRecord), and compilation to
 //!   machine code with a fixed baseline x86-64 ISA (no host feature detection).
@@ -12,7 +12,7 @@
 //! - [`boundary`]: the only module allowed `unsafe` (executable memory ownership, the
 //!   function-pointer conversion and the call).
 //!
-//! Everything except `boundary` is `deny(unsafe_code)`; the fresh core itself stays
+//! Everything except `boundary` is `deny(unsafe_code)`; the execution core itself stays
 //! `forbid(unsafe_code)`.
 #![deny(unsafe_code)]
 // Some items (listings, test diagnostics) are used by tests only.

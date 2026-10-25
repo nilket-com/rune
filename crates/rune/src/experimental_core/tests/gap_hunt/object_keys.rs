@@ -1,10 +1,10 @@
 //! S2 aliased Object key oracle and fix-both contracts for `collect::<Object>`
 //! and `Object::insert`.
 use super::*;
-use crate::runtime::{self as stock, Value};
+use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};
 use std::cell::RefCell;
-include!("constructors/graph.rs");
+include!("constructors/runtime_graph.rs");
 const CASES: &str = include_str!("object_keys/cases.json");
 const ROWS: usize = 70;
 
@@ -32,8 +32,8 @@ fn context() -> Context {
 }
 /// A moved handle is observed as an inaccessible `OpaqueAny` node; every other
 /// value must be mapped.
-fn observed(value: &Value) -> Json {
-	let out = graph(value);
+fn observed(value: &RuntimeValue) -> Json {
+	let out = runtime_graph(value);
 	for node in out["nodes"].as_array().unwrap() {
 		let moved = node[0] == "OpaqueAny" && node[2] == false && node[3] == false;
 		assert!(
@@ -49,7 +49,7 @@ fn error(error: &stock::VmError, sources: &Sources) -> Json {
 	let class = match kind {
 		crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
 		crate::runtime::VmErrorKind::UnsupportedCallFn { .. } => "Type".into(),
-		_ => stock_class(kind),
+		_ => runtime_error_class(kind),
 	};
 	let sites = error.stacktrace().iter().map(|at| {
 		let inst = at.unit.debug_info().expect("debug unit").instruction_at(at.ip).expect("debug instruction");
@@ -61,12 +61,12 @@ fn error(error: &stock::VmError, sources: &Sources) -> Json {
 		.iter()
 		.map(|e| json!({"kind":format!("{:?}",e.kind()),"display":e.to_string()}))
 		.collect::<Vec<_>>();
-	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::stock_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
+	json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
 #[test]
 #[ignore = "S2 stock-oracle child; explicit bounded external operator only"]
-fn child() {
+fn legacy_child() {
 	let engine = std::env::var("S2_ENGINE").unwrap();
 	assert_eq!(engine, "stock");
 	let index: usize = std::env::var("S2_CASE").unwrap().parse().unwrap();
@@ -178,11 +178,14 @@ fn observer_controls() {
 		("stock.json", include_str!("object_keys/stock.json")),
 		(
 			"constructors/graph.rs",
-			include_str!("constructors/graph.rs"),
+			include_str!("constructors/runtime_graph.rs"),
 		),
 	] {
 		assert_eq!(
-			hex(Sha256::digest(bytes.as_bytes()).as_ref()),
+			hex(Sha256::digest(
+				crate::experimental_core::tests::name_projection::observer_bytes(name, bytes)
+			)
+			.as_ref()),
 			freeze["files"][name]
 		);
 	}
@@ -198,13 +201,25 @@ fn observer_controls() {
 		);
 	}
 	// Float bits, integer kinds and chars are observable exactly.
-	let one = |v: Value| observed(&v);
-	assert_ne!(one(Value::from(0.0f64)), one(Value::from(-0.0f64)));
-	assert_ne!(one(Value::from(f64::NAN)), one(Value::from(-f64::NAN)));
-	assert_ne!(one(Value::from(1i64)), one(Value::from(1u64)));
-	assert_ne!(one(Value::from(1i64)), one(Value::from(1.0f64)));
-	assert_ne!(one(Value::from('a')), one(Value::from(97i64)));
-	assert_eq!(one(Value::from(0.5f64)), one(Value::from(0.5f64)));
+	let one = |v: RuntimeValue| observed(&v);
+	assert_ne!(
+		one(RuntimeValue::from(0.0f64)),
+		one(RuntimeValue::from(-0.0f64))
+	);
+	assert_ne!(
+		one(RuntimeValue::from(f64::NAN)),
+		one(RuntimeValue::from(-f64::NAN))
+	);
+	assert_ne!(one(RuntimeValue::from(1i64)), one(RuntimeValue::from(1u64)));
+	assert_ne!(
+		one(RuntimeValue::from(1i64)),
+		one(RuntimeValue::from(1.0f64))
+	);
+	assert_ne!(one(RuntimeValue::from('a')), one(RuntimeValue::from(97i64)));
+	assert_eq!(
+		one(RuntimeValue::from(0.5f64)),
+		one(RuntimeValue::from(0.5f64))
+	);
 	// Aliasing is observable: one shared element versus two equal elements.
 	let vec = || crate::to_value(crate::runtime::Vec::new()).unwrap();
 	let shared = vec();
@@ -235,7 +250,7 @@ fn compile_child() {
 	let row = &cases[index];
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::with_item(["s2"]).unwrap();
-	module.fresh_host_function("tap", tap).unwrap();
+	module.host_function("tap", tap).unwrap();
 	context.install(module).unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -276,7 +291,7 @@ fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 #[test]
 #[cfg(target_os = "linux")]
 #[ignore = "S2 frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn stock_contract() {
+fn legacy_contract() {
 	run_contract("stock");
 }
 
@@ -313,13 +328,13 @@ fn run_contract(engine: &str) {
 			.arg(std::env::current_exe().unwrap());
 		command.process_group(0);
 		command.env_clear();
-		let mut child = command
+		let mut child_process = command
 			.args([
 				"--exact",
 				if engine == "stock" {
-					"experimental_core::tests::gap_hunt::object_keys::child"
+					"experimental_core::tests::gap_hunt::object_keys::legacy_child"
 				} else {
-					"experimental_core::tests::gap_hunt::object_keys::fresh_child"
+					"experimental_core::tests::gap_hunt::object_keys::child"
 				},
 				"--ignored",
 				"--nocapture",
@@ -341,16 +356,16 @@ fn run_contract(engine: &str) {
 			.unwrap();
 		let exceeded = Arc::new(AtomicBool::new(false));
 		let flag = exceeded.clone();
-		let pipe = child.stdout.take().unwrap();
+		let pipe = child_process.stdout.take().unwrap();
 		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
 		let flag = exceeded.clone();
-		let pipe = child.stderr.take().unwrap();
+		let pipe = child_process.stderr.take().unwrap();
 		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
 		let start = Instant::now();
 		let mut stop = false;
 		let mut exited = false;
 		loop {
-			if child.try_wait().unwrap().is_some() {
+			if child_process.try_wait().unwrap().is_some() {
 				exited = true;
 			}
 			if !exceeded.load(Ordering::Relaxed)
@@ -362,7 +377,7 @@ fn run_contract(engine: &str) {
 			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
 				stop = true;
 				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child.id())])
+					.args(["-KILL", "--", &format!("-{}", child_process.id())])
 					.stdout(Stdio::null())
 					.stderr(Stdio::null())
 					.status();
@@ -372,7 +387,7 @@ fn run_contract(engine: &str) {
 		}
 		// wait() also returns the cached status when try_wait() already reaped
 		// the child. Every exit path explicitly collects it before joining.
-		let status = child.wait().unwrap();
+		let status = child_process.wait().unwrap();
 		let stdout = stdout.join().unwrap();
 		let stderr = stderr.join().unwrap();
 		fs::write(folder.join("stdout"), &stdout).unwrap();
@@ -397,7 +412,7 @@ fn run_contract(engine: &str) {
 		assert_eq!(observed["source"], case["source"]);
 		assert_eq!(observed["origin"], case["origin"]);
 		if engine == "fresh" {
-			verify_fresh_case(i, case, expected, &fixed, &observed, &stdout, &stderr);
+			verify_case(i, case, expected, &fixed, &observed, &stdout, &stderr);
 			continue;
 		}
 		assert_eq!(observed["projected"], fixed["projected"], "{label}");
@@ -427,6 +442,6 @@ pub(super) fn key_fixed(module: &str, index: usize, old: &Json) -> Json {
 	fix["new"].clone()
 }
 
-include!("object_keys/fresh.rs");
+include!("object_keys/run.rs");
 
 include!("object_keys/contract.rs");

@@ -1,6 +1,6 @@
 //! C17b Object method and `is_empty` calls. Operands were evaluated in source order.
 use super::*;
-use crate::function::fresh_object::Method;
+use crate::function::object::Method;
 
 impl Executor {
 	#[cold]

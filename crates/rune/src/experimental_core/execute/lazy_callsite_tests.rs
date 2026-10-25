@@ -449,17 +449,9 @@ fn d14_diagnostics_exhaustion_breaks_after_the_last_pushed_site() {
 	// This synthetic non-idle diagnostic state exercises the inner failure
 	// builder directly; public H1 admission correctly refuses such a state.
 	let failure = rune_alloc::limit::with(0, || {
-		#[cfg(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		))]
+		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 		let result = e.invoke_args::<false>(&c, &mut s, 0, Args::Roots(&[&a, &b]), 100, None);
-		#[cfg(not(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		)))]
+		#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
 		let result = e.invoke_args(&c, &mut s, 0, Args::Roots(&[&a, &b]), 100);
 		result
 	})

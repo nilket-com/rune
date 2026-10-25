@@ -5,7 +5,7 @@ Measured against fork c875ab03571bdd1b41553f12a5f055cb7a5a2cc5, before S-eq prod
 The generators in `gap_hunt.rs` define the executable sources by case id.
 The original measurements used `f64::NAN` and inserted a new field to create an
 object cycle. The current sources produce NaN with `0.0 / 0.0` and precreate the
-cycle's field, avoiding unrelated fresh constant/missing-field limitations.
+cycle's field, avoiding unrelated new constant/missing-field limitations.
 A full stock replay validates the unchanged frozen expectations on these sources. Local raw
 sources, observations and streams are retained in `0185-s-eq-stock1` and
 `0185-s-eq-stock-supplement2` under the campaign review directory.
@@ -25,8 +25,8 @@ never admit resource failures or unrelated Type errors. Source spans are covered
 by focused diagnostics tests, rather than normalized by this table runner.
 
 The probe and oracle tests are ignored in ordinary test runs. Invoke explicitly
-with a new `GAP_OUT`, `GAP_COMPARE_ENGINE=stock` or `fresh`, and features
-`fmt,workspace,fresh-core,fresh-core-native`. Select `comparison_contract` and
+with a new `GAP_OUT`, `GAP_COMPARE_ENGINE=stock` or `new`, and features
+`fmt,workspace,execution,native-code`. Select `comparison_contract` and
 `--ignored`. The ordinary metadata control test guards the exception policies.
 
 This is a finite semantic oracle, not a performance claim or exhaustive proof.

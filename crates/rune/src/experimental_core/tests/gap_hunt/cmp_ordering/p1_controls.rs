@@ -56,31 +56,31 @@ fn p1_frozen_rows_and_adversarial_controls() {
 		assert_eq!(expected, dispositions[label]["fresh_expectation"]);
 		let raw = raw_fixture(&portable);
 		assert_eq!(project_p1(&raw, &counts[label]).unwrap(), portable);
-		let stock_expected = semantic_projection(&portable).unwrap();
-		compare_p1(&raw, &stock_expected, &counts[label]).unwrap();
+		let oracle_expected = semantic_projection(&portable).unwrap();
+		compare_p1(&raw, &oracle_expected, &counts[label]).unwrap();
 		if raw["status"] == "error" {
 			for field in ["kind", "display"] {
 				let mut drift = raw.clone();
 				drift[field] = json!(format!("{}!", drift[field].as_str().unwrap()));
-				assert!(compare_p1(&drift, &stock_expected, &counts[label]).is_err());
+				assert!(compare_p1(&drift, &oracle_expected, &counts[label]).is_err());
 				rejected += 1;
 			}
 			let mut drift = raw.clone();
 			drift["sites"][0]["start"] = json!(999999);
-			assert!(compare_p1(&drift, &stock_expected, &counts[label]).is_err());
+			assert!(compare_p1(&drift, &oracle_expected, &counts[label]).is_err());
 			rejected += 1;
 			let mut drift = raw.clone();
 			drift["sites"][0]["frames"] = json!("drift");
-			assert!(compare_p1(&drift, &stock_expected, &counts[label]).is_err());
+			assert!(compare_p1(&drift, &oracle_expected, &counts[label]).is_err());
 			rejected += 1;
 			let mut drift = raw.clone();
 			drift["chain"].as_array_mut().unwrap().push(json!({"kind":"BadArgument { arg: 9 }","typed":{"tag":"BadArgument","arg":9},"display":"Bad argument #9"}));
-			assert!(compare_p1(&drift, &stock_expected, &counts[label]).is_err());
+			assert!(compare_p1(&drift, &oracle_expected, &counts[label]).is_err());
 			rejected += 1;
 			if !raw["chain"].as_array().unwrap().is_empty() {
 				let mut drift = raw.clone();
 				drift["chain"].as_array_mut().unwrap().clear();
-				assert!(compare_p1(&drift, &stock_expected, &counts[label]).is_err());
+				assert!(compare_p1(&drift, &oracle_expected, &counts[label]).is_err());
 				rejected += 1;
 			}
 			if counts[label]["/kind"].as_u64().unwrap() > 0 {
@@ -93,26 +93,26 @@ fn p1_frozen_rows_and_adversarial_controls() {
 				] {
 					let mut drift = raw.clone();
 					drift["kind"] = json!(changed);
-					assert!(compare_p1(&drift, &stock_expected, &counts[label]).is_err());
+					assert!(compare_p1(&drift, &oracle_expected, &counts[label]).is_err());
 					rejected += 1;
 				}
 			}
 			if raw["typed"]["tag"] == "IllegalFloatComparison" {
 				let mut drift = raw.clone();
 				drift["typed"]["lhs_bits"] = json!("0000000000000000");
-				assert!(compare_p1(&drift, &stock_expected, &counts[label]).is_err());
+				assert!(compare_p1(&drift, &oracle_expected, &counts[label]).is_err());
 				rejected += 1;
 			}
 		} else {
 			let mut drift = raw.clone();
 			drift["value"]["type_hash"] = json!("0x123");
-			assert!(compare_p1(&drift, &stock_expected, &counts[label]).is_err());
+			assert!(compare_p1(&drift, &oracle_expected, &counts[label]).is_err());
 			rejected += 1;
 		}
 		match cells[6] {
 			"Exact" => {
 				policies[0] += 1;
-				assert_eq!(expected, stock_expected);
+				assert_eq!(expected, oracle_expected);
 			}
 			"Refused-surface" | "Retained-arity" | "Refused-runtime" => {
 				policies[match cells[6] {
@@ -198,31 +198,31 @@ fn miri_p1_rows(selected: &[&str], expected_policies: [usize; 4], expected_rejec
 		let expected: Json = serde_json::from_str(&pins_decode(cells[7])).unwrap();
 		let raw = raw_fixture(&portable);
 		assert_eq!(project_p1(&raw, &counts).unwrap(), portable);
-		let stock_expected = semantic_projection(&portable).unwrap();
-		compare_p1(&raw, &stock_expected, &counts).unwrap();
+		let oracle_expected = semantic_projection(&portable).unwrap();
+		compare_p1(&raw, &oracle_expected, &counts).unwrap();
 		if raw["status"] == "error" {
 			for field in ["kind", "display"] {
 				let mut drift = raw.clone();
 				drift[field] = json!(format!("{}!", drift[field].as_str().unwrap()));
-				assert!(compare_p1(&drift, &stock_expected, &counts).is_err());
+				assert!(compare_p1(&drift, &oracle_expected, &counts).is_err());
 				rejected += 1;
 			}
 			let mut drift = raw.clone();
 			drift["sites"][0]["start"] = json!(999999);
-			assert!(compare_p1(&drift, &stock_expected, &counts).is_err());
+			assert!(compare_p1(&drift, &oracle_expected, &counts).is_err());
 			rejected += 1;
 			let mut drift = raw.clone();
 			drift["sites"][0]["frames"] = json!("drift");
-			assert!(compare_p1(&drift, &stock_expected, &counts).is_err());
+			assert!(compare_p1(&drift, &oracle_expected, &counts).is_err());
 			rejected += 1;
 			let mut drift = raw.clone();
 			drift["chain"].as_array_mut().unwrap().push(json!({"kind":"BadArgument { arg: 9 }","typed":{"tag":"BadArgument","arg":9},"display":"Bad argument #9"}));
-			assert!(compare_p1(&drift, &stock_expected, &counts).is_err());
+			assert!(compare_p1(&drift, &oracle_expected, &counts).is_err());
 			rejected += 1;
 			if !raw["chain"].as_array().unwrap().is_empty() {
 				let mut drift = raw.clone();
 				drift["chain"].as_array_mut().unwrap().clear();
-				assert!(compare_p1(&drift, &stock_expected, &counts).is_err());
+				assert!(compare_p1(&drift, &oracle_expected, &counts).is_err());
 				rejected += 1;
 			}
 			if counts["/kind"].as_u64().unwrap() > 0 {
@@ -235,26 +235,26 @@ fn miri_p1_rows(selected: &[&str], expected_policies: [usize; 4], expected_rejec
 				] {
 					let mut drift = raw.clone();
 					drift["kind"] = json!(changed);
-					assert!(compare_p1(&drift, &stock_expected, &counts).is_err());
+					assert!(compare_p1(&drift, &oracle_expected, &counts).is_err());
 					rejected += 1;
 				}
 			}
 			if raw["typed"]["tag"] == "IllegalFloatComparison" {
 				let mut drift = raw.clone();
 				drift["typed"]["lhs_bits"] = json!("0000000000000000");
-				assert!(compare_p1(&drift, &stock_expected, &counts).is_err());
+				assert!(compare_p1(&drift, &oracle_expected, &counts).is_err());
 				rejected += 1;
 			}
 		} else {
 			let mut drift = raw.clone();
 			drift["value"]["type_hash"] = json!("0x123");
-			assert!(compare_p1(&drift, &stock_expected, &counts).is_err());
+			assert!(compare_p1(&drift, &oracle_expected, &counts).is_err());
 			rejected += 1;
 		}
 		match cells[6] {
 			"Exact" => {
 				policies[0] += 1;
-				assert_eq!(expected, stock_expected);
+				assert_eq!(expected, oracle_expected);
 			}
 			"Refused-surface" | "Retained-arity" | "Refused-runtime" => {
 				policies[match cells[6] {

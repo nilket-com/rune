@@ -135,9 +135,9 @@ fn join(a: Fact, b: Fact) -> Fact {
 
 fn nominal(query: &crate::query::QueryInner<'_>, hash: Hash) -> Option<Hash> {
 	query
-		.fresh_variant_shape(hash)
+		.variant_shape(hash)
 		.map(|shape| shape.enum_hash)
-		.or_else(|| query.fresh_struct_shape(hash).map(|_| hash))
+		.or_else(|| query.struct_shape(hash).map(|_| hash))
 }
 
 pub(crate) fn methods(
@@ -146,15 +146,15 @@ pub(crate) fn methods(
 	name: Hash,
 ) -> Result<Vec<Method>> {
 	let mut out = Vec::new();
-	if !query.fresh_instances.complete() {
+	if !query.instances.complete() {
 		return Ok(out);
 	}
 	for receiver in query.items.keys().map(|id| pool.item_type_hash(*id)) {
 		let associated = Hash::associated_function(receiver, name);
-		let Some(item) = query.fresh_instances.get(associated) else {
+		let Some(item) = query.instances.get(associated) else {
 			continue;
 		};
-		if query.fresh_self_method(item, receiver) != Some(associated)
+		if query.self_method(item, receiver) != Some(associated)
 			|| out.iter().any(|m: &Method| m.associated == associated)
 		{
 			continue;
@@ -225,7 +225,7 @@ impl Proofs {
 			.iter()
 			.find(|b| b.hash == body)?
 			.expressions
-			.get(expr.fresh_index())
+			.get(expr.index())
 			.copied()
 			.flatten()
 	}
@@ -251,7 +251,7 @@ impl Proofs {
 				return Err(limit());
 			}
 			self.arenas.try_push(arena)?;
-			for expr in exprs.fresh_expressions() {
+			for expr in exprs.expressions() {
 				if let hir::ExprKind::Fn(hash) = expr.kind {
 					if self.source_uses.len() >= LIMIT {
 						return Err(limit());
@@ -260,7 +260,7 @@ impl Proofs {
 				}
 			}
 		}
-		let count = exprs.fresh_expressions().count();
+		let count = exprs.expressions().count();
 		if count > LIMIT.saturating_sub(self.expression_slots) {
 			return Err(limit());
 		}
@@ -273,7 +273,7 @@ impl Proofs {
 			context,
 			body: Body {
 				hash,
-				associated: receiver.and_then(|receiver| query.fresh_self_method(hash, receiver)),
+				associated: receiver.and_then(|receiver| query.self_method(hash, receiver)),
 				parameters: Vec::new(),
 				captures: captures.len(),
 				returns: 0,
@@ -310,7 +310,7 @@ impl Proofs {
 		// This makes aliases independent of the order in which the tree was walked.
 		let mut assignments: crate::alloc::HashMap<hir::Variable, (Vec<hir::ExprId>, bool)> =
 			crate::alloc::HashMap::default();
-		for expr in exprs.fresh_expressions() {
+		for expr in exprs.expressions() {
 			let (variable, rhs) = match expr.kind {
 				hir::ExprKind::Assign(a) => (variable_at(exprs, a.lhs), Some(a.rhs)),
 				hir::ExprKind::Binary(b) if b.op.is_assign() => (variable_at(exprs, b.lhs), None),
@@ -535,10 +535,10 @@ impl Builder<'_, '_, '_> {
 		// Retain the visited IDs as a separate list after the heap work stack drains.
 		let mut visited = Vec::new();
 		while let Some(id) = self.pending.pop() {
-			if self.owned[id.fresh_index()] {
+			if self.owned[id.index()] {
 				continue;
 			}
-			self.owned[id.fresh_index()] = true;
+			self.owned[id.index()] = true;
 			visited.try_push(id)?;
 			use hir::ExprKind as E;
 			match self.exprs.get(id).kind {
@@ -688,14 +688,14 @@ impl Builder<'_, '_, '_> {
 	}
 
 	fn term(&mut self, id: hir::ExprId, depth: usize) -> Result<Id> {
-		if depth >= 128 || !self.owned[id.fresh_index()] {
+		if depth >= 128 || !self.owned[id.index()] {
 			return self.proofs.node(Kind::Unknown);
 		}
-		if let Some(node) = self.body.expressions[id.fresh_index()] {
+		if let Some(node) = self.body.expressions[id.index()] {
 			return Ok(node);
 		}
 		let placeholder = self.proofs.node(Kind::Unknown)?;
-		self.body.expressions[id.fresh_index()] = Some(placeholder);
+		self.body.expressions[id.index()] = Some(placeholder);
 		use hir::ExprKind as E;
 		let node = match self.exprs.get(id).kind {
 			E::Variable(v) => self.binding(v).unwrap_or(placeholder),
@@ -743,7 +743,7 @@ impl Builder<'_, '_, '_> {
 			E::Return(_) => self.proofs.node(Kind::Never)?,
 			_ => placeholder,
 		};
-		self.body.expressions[id.fresh_index()] = Some(node);
+		self.body.expressions[id.index()] = Some(node);
 		Ok(node)
 	}
 
@@ -771,7 +771,7 @@ impl Builder<'_, '_, '_> {
 							hash,
 							name_hash,
 							target,
-						} if hash == name_hash && self.query.fresh_method_script.closed(hash) => {
+						} if hash == name_hash && self.query.method_script.closed(hash) => {
 							for method in self.proofs.methods(self.query, self.pool, hash)? {
 								if self.context.lookup_function(method.associated).is_some()
 									|| self.context.lookup_function(method.item).is_some()

@@ -1,6 +1,6 @@
 //! Conservative binding-identity proof and cold text-method lowering.
 use super::*;
-use crate::function::fresh_text::{self, Method};
+use crate::function::text::{self, Method};
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Origin {
 	String,
@@ -28,7 +28,7 @@ impl Lower<'_, '_> {
 		mut accept: impl FnMut(hir::ExprId) -> bool,
 	) -> bool {
 		use hir::ExprKind as E;
-		self.exprs.fresh_expressions().all(|e| match e.kind {
+		self.exprs.expressions().all(|e| match e.kind {
 			E::Assign(a) if matches!(self.exprs.get(a.lhs).kind,E::Variable(x) if x==v) => {
 				accept(a.rhs)
 			}
@@ -67,7 +67,7 @@ impl Lower<'_, '_> {
 			}
 			E::Call(c) => {
 				// A script method of the name may return anything.
-				matches!(c.call,hir::Call::Associated{hash,..} if matches!(Method::from_hash(hash),Some(Method::Trim|Method::Replace)) && !self.constants.fresh_method_script.closed(hash))
+				matches!(c.call,hir::Call::Associated{hash,..} if matches!(Method::from_hash(hash),Some(Method::Trim|Method::Replace)) && !self.constants.method_script.closed(hash))
 			}
 			_ => false,
 		}
@@ -101,7 +101,7 @@ impl Lower<'_, '_> {
 				hir::Call::Associated { hash, target, .. }
 					if hash == Method::Split.hash()
 						&& c.args.len() == 1
-						&& !self.constants.fresh_method_script.closed(hash) =>
+						&& !self.constants.method_script.closed(hash) =>
 				{
 					if self.nonstring(target, 0) {
 						Some(Origin::Never)
@@ -112,9 +112,9 @@ impl Lower<'_, '_> {
 				}
 				// Split has no iter() method: a successfully compiled call cannot return.
 				hir::Call::Associated { hash, target, .. }
-					if hash == crate::function::fresh_iter::Name::Iter.hash()
+					if hash == crate::function::iter::Name::Iter.hash()
 						&& c.args.is_empty()
-						&& !self.constants.fresh_method_script.closed(hash) =>
+						&& !self.constants.method_script.closed(hash) =>
 				{
 					self.split_origin(target, depth + 1).map(|_| Origin::Never)
 				}
@@ -181,13 +181,10 @@ impl Lower<'_, '_> {
 		if !c.args.is_empty() {
 			return Err(self.refused(span, Refusal::Arity));
 		}
-		if hash != fresh_text::collect_hash()
+		if hash != text::collect_hash()
 			|| self.split_origin(target, 0).is_none()
-			|| !self.context.fresh_text_collect()
-			|| self
-				.constants
-				.fresh_method_script
-				.closed(Hash::ident("collect"))
+			|| !self.context.text_collect()
+			|| self.constants.method_script.closed(Hash::ident("collect"))
 		{
 			return Err(self.refused(span, Refusal::Method));
 		}

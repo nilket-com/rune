@@ -354,8 +354,8 @@ impl Diagnostics {
 		Ok(())
 	}
 
-	/// Emit through the ordinary error hook at an earlier fresh lowering handoff.
-	#[cfg(feature = "fresh-core")]
+	/// Emit through the ordinary error hook at an earlier new lowering handoff.
+	#[cfg(feature = "execution")]
 	pub(crate) fn error_at<T>(
 		&mut self,
 		checkpoint: usize,

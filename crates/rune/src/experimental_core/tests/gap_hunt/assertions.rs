@@ -151,17 +151,17 @@ fn cases() -> Vec<(String, String)> {
 
 #[test]
 #[ignore = "bounded C1 stock oracle; requires new GAP_OUT"]
-fn stock_probe() {
-	probe("stock");
+fn legacy_probe() {
+	run_probe("stock");
 }
 
 #[test]
 #[ignore = "bounded C1 refusal inventory; requires new GAP_OUT"]
-fn fresh_probe() {
-	probe("fresh");
+fn probe() {
+	run_probe("fresh");
 }
 
-fn probe(engine: &str) {
+fn run_probe(engine: &str) {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
 	let scratch =
@@ -212,7 +212,7 @@ fn probe(engine: &str) {
 
 #[test]
 #[ignore = "explicit frozen C1 stock contract; bounded children"]
-fn stock_contract() {
+fn legacy_contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).unwrap();
 	let scratch =
@@ -303,7 +303,7 @@ fn raised_depth_probe() {
 			hex(&run.stderr)
 		));
 	}
-	fs::write(out.join("fresh-depth64.tsv"), table).unwrap();
+	fs::write(out.join("execution-depth64.tsv"), table).unwrap();
 }
 
 fn expected_record(row: &[&str]) -> Vec<String> {
@@ -332,13 +332,14 @@ fn assert_exact(label: &str, row: &[&str], run: &Run, site: &str) {
 }
 
 #[test]
-#[ignore = "explicit C1 fresh assertion contract and depth64 resource/semantic supplement"]
-fn fresh_contract() {
+#[ignore = "explicit C1 execution assertion contract and depth64 resource/semantic supplement"]
+fn contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).unwrap();
-	let scratch = Scratch(
-		std::env::temp_dir().join(format!("rune-assert-fresh-contract-{}", std::process::id())),
-	);
+	let scratch = Scratch(std::env::temp_dir().join(format!(
+		"rune-assert-execution-contract-{}",
+		std::process::id()
+	)));
 	fs::create_dir(&scratch.0).unwrap();
 	let rows: Vec<_> = include_str!("../assertions_stock.tsv")
 		.lines()

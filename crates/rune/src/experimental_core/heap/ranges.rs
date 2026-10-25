@@ -394,7 +394,7 @@ mod tests {
 		let mut s = store(4096);
 		let r = s.range_values(Value::I64(0), Value::U64(2)).unwrap();
 		let it = s.iterator(r).unwrap();
-		#[cfg(feature = "fresh-core-native")]
+		#[cfg(feature = "native-code")]
 		assert_eq!(s.range_iterator_for_native(it), None);
 		s.set_field(r, "end", Value::I64(99)).unwrap();
 		s.release(r).unwrap();
@@ -404,7 +404,7 @@ mod tests {
 		s.release(it).unwrap();
 		let r = s.range(0, 2).unwrap();
 		let it = s.iterator(r).unwrap();
-		#[cfg(feature = "fresh-core-native")]
+		#[cfg(feature = "native-code")]
 		assert_eq!(s.range_iterator_for_native(it), Some((0, 2)));
 		s.release(it).unwrap();
 		s.release(r).unwrap();

@@ -1,5 +1,5 @@
-//! The fresh core executor: an explicit-frame interpreter over a compiled
-//! [`Program`]. It uses no stock VM `Value`, `Vm` or protocol caller.
+//! The execution core executor: an explicit-frame interpreter over a compiled
+//! [`Program`]. It uses no legacy VM `Value`, `Vm` or protocol caller.
 //!
 //! # Output
 //!
@@ -38,7 +38,7 @@ const INITIAL_SLOTS: usize = 64;
 /// Defaults allow platform-representable frame and slot buffers without reserving
 /// them up front. Script calls and admitted callbacks use iterative heap frames.
 /// These limits do not bound trusted Rust callbacks that create their own executor
-/// or stock VM and recurse through Rust outside this executor.
+/// or legacy VM and recurse through Rust outside this executor.
 /// The optional native tier compiles on the invoking thread and needs an adequate
 /// machine stack for the JIT compiler, independently of script call depth.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -105,7 +105,7 @@ const MAX_SLOTS: usize = isize::MAX as usize / core::mem::size_of::<Value>();
 
 /// Native room is bounded by logical limits and actual frame, slot and
 /// diagnostic capacities. Native execution and commit never grow them.
-#[cfg(feature = "fresh-core-native")]
+#[cfg(feature = "native-code")]
 #[cfg_attr(
 	not(any(test, all(target_arch = "x86_64", target_os = "linux"))),
 	allow(dead_code)
@@ -161,7 +161,7 @@ pub struct Failure {
 	pub missing_key: Option<Box<str>>,
 	/// Complete panic text, copied before cleanup and independent of Store lifetime.
 	pub panic_message: Option<Box<str>>,
-	/// Complete native failure text, independent of stock VM scratch and Store lifetime.
+	/// Complete native failure text, independent of legacy VM scratch and Store lifetime.
 	pub host_message: Option<Box<str>>,
 	/// The callsite locations of the active calls, innermost caller first; empty when the
 	/// failure happened in the entry function or before it ran. An unresolved
@@ -365,11 +365,7 @@ pub struct Executor {
 	/// P2a native tier: the last code id whose analysis admitted no region at all (a
 	/// property of the code alone, valid on any thread); 0 is never a code id. Plain data,
 	/// so `Executor` stays `Send`.
-	#[cfg(all(
-		feature = "fresh-core-native",
-		target_arch = "x86_64",
-		target_os = "linux"
-	))]
+	#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 	no_region_code: u32,
 }
 
@@ -425,11 +421,7 @@ impl Executor {
 			test_after_print: None,
 			#[cfg(test)]
 			test_fail_key_copy: false,
-			#[cfg(all(
-				feature = "fresh-core-native",
-				target_arch = "x86_64",
-				target_os = "linux"
-			))]
+			#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 			no_region_code: 0,
 		})
 	}
@@ -587,17 +579,9 @@ impl Executor {
 		}
 		self.active_host_runtime = self.configured_host_runtime.clone();
 		let result = {
-			#[cfg(not(all(
-				feature = "fresh-core-native",
-				target_arch = "x86_64",
-				target_os = "linux"
-			)))]
+			#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
 			let value = self.invoke_args(code, store, function, Args::Roots(args), fuel);
-			#[cfg(all(
-				feature = "fresh-core-native",
-				target_arch = "x86_64",
-				target_os = "linux"
-			))]
+			#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 			let value = self.invoke_native(code, store, function, Args::Roots(args), fuel);
 			value
 		};
@@ -851,12 +835,12 @@ impl Executor {
 			return self
 				.instance_method_call(code, store, function, base, out, args_start, args_len);
 		}
-		if let Some(method) = crate::function::fresh_variant::Method::from_id(id) {
+		if let Some(method) = crate::function::variant::Method::from_id(id) {
 			return self.variant_method_call(
 				code, store, function, base, out, method, args_start, args_len,
 			);
 		}
-		if let Some(method) = crate::function::fresh_object::Method::from_id(id) {
+		if let Some(method) = crate::function::object::Method::from_id(id) {
 			return self.object_method_call(
 				code, store, function, base, out, method, args_start, args_len,
 			);
@@ -879,7 +863,7 @@ impl Executor {
 			}
 			return self.match_variant_call(store, function, base, out, args_start);
 		}
-		if let Some(call) = crate::function::fresh_numeric::Call::from_id(id) {
+		if let Some(call) = crate::function::numeric::Call::from_id(id) {
 			if args_len != certificate.arity {
 				return Err(invalid());
 			}
@@ -995,11 +979,7 @@ impl Executor {
 	// (slot, flag) pairs from the argument table.
 	#[allow(clippy::chunks_exact_to_as_chunks)]
 	fn invoke_args<
-		#[cfg(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		))] const NATIVE: bool,
+		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))] const NATIVE: bool,
 	>(
 		&mut self,
 		code: &Code,
@@ -1007,11 +987,7 @@ impl Executor {
 		function: u32,
 		args: Args<'_>,
 		mut fuel: usize,
-		#[cfg(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		))]
+		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 		regions: Option<&super::region::cache::ProgramRegions>,
 	) -> core::result::Result<Value, Failure> {
 		let mut setup_cleanup_error = None;
@@ -1043,27 +1019,19 @@ impl Executor {
 				// No borrowed frame/slot reference crosses those mutations.
 				let frame_index = self.frames.len() - 1;
 				let mut pc = frame.pc;
-				// P0 region simulator hook (tests with `fresh-core-native` only): never
+				// P0 region simulator hook (tests with `native-code` only): never
 				// consulted at the pc an exit resumes at.
-				#[cfg(all(test, feature = "fresh-core-native"))]
+				#[cfg(all(test, feature = "native-code"))]
 				let mut region_resume = false;
 				// P2a production tier: this frame's header table (empty in the NATIVE =
 				// false instance) and the resume pc of the last region exit, which is never
 				// a header consulted again before the next charged instruction.
-				#[cfg(all(
-					feature = "fresh-core-native",
-					target_arch = "x86_64",
-					target_os = "linux"
-				))]
+				#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 				let table: &[(u32, u32)] = match regions {
 					Some(regions) if NATIVE => regions.function(frame.function),
 					_ => &[],
 				};
-				#[cfg(all(
-					feature = "fresh-core-native",
-					target_arch = "x86_64",
-					target_os = "linux"
-				))]
+				#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 				let mut resume_pc = usize::MAX;
 
 				loop {
@@ -1077,7 +1045,7 @@ impl Executor {
 							return Err(error(ErrorKind::InvalidCode));
 						}
 					};
-					#[cfg(all(test, feature = "fresh-core-native"))]
+					#[cfg(all(test, feature = "native-code"))]
 					{
 						let resume = core::mem::take(&mut region_resume);
 						let end = frame.base + function.slots as usize;
@@ -1111,7 +1079,7 @@ impl Executor {
 					// P2a production tier: at a charged instruction it did not just resume
 					// at, before that instruction's own cancel and fuel step.
 					#[cfg(all(
-						feature = "fresh-core-native",
+						feature = "native-code",
 						target_arch = "x86_64",
 						target_os = "linux"
 					))]
@@ -1690,7 +1658,7 @@ impl Executor {
 			}
 		})();
 		// P1 tests only: the remaining fuel, compared across engines.
-		#[cfg(all(test, feature = "fresh-core-native"))]
+		#[cfg(all(test, feature = "native-code"))]
 		super::region::hook::record_final_fuel(fuel);
 
 		match result {
@@ -1734,11 +1702,7 @@ impl Executor {
 	/// are checked out of the thread-local cache for the invocation and put back after it
 	/// (also on unwind); a code with no loaded region runs the `NATIVE = false` loop, whose
 	/// body is the feature-off loop.
-	#[cfg(all(
-		feature = "fresh-core-native",
-		target_arch = "x86_64",
-		target_os = "linux"
-	))]
+	#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 	fn invoke_native(
 		&mut self,
 		code: &Code,
@@ -1777,11 +1741,7 @@ impl Executor {
 
 	#[cfg(any(
 		test,
-		all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		)
+		all(feature = "native-code", target_arch = "x86_64", target_os = "linux")
 	))]
 	fn capacities(&self) -> (usize, usize, usize) {
 		(
@@ -2571,17 +2531,9 @@ impl Executor {
 		args: Args<'_>,
 		fuel: usize,
 	) -> core::result::Result<Value, Failure> {
-		#[cfg(not(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		)))]
+		#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
 		return self.invoke_args(code, store, function, args, fuel);
-		#[cfg(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		))]
+		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 		return self.invoke_native(code, store, function, args, fuel);
 	}
 
@@ -2594,17 +2546,9 @@ impl Executor {
 		args: &[Value],
 		fuel: usize,
 	) -> core::result::Result<Value, Failure> {
-		#[cfg(not(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		)))]
+		#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
 		return self.invoke_args(code, store, function, Args::Values(args), fuel);
-		#[cfg(all(
-			feature = "fresh-core-native",
-			target_arch = "x86_64",
-			target_os = "linux"
-		))]
+		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 		return self.invoke_native(code, store, function, Args::Values(args), fuel);
 	}
 }
@@ -2643,7 +2587,7 @@ pub(crate) fn cancel_at_charge_for_test(n: Option<usize>) {
 }
 /// Whether the D14 cancel-at-charge test hook is armed: a region would skip its ticks, so
 /// the region hook stays out while it is.
-#[cfg(all(test, feature = "fresh-core-native"))]
+#[cfg(all(test, feature = "native-code"))]
 pub(crate) fn cancel_hook_armed_for_test() -> bool {
 	CANCEL_AT_CHARGE.with(|c| c.get().is_some())
 }

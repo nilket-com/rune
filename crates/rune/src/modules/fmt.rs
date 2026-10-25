@@ -30,8 +30,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.ty::<fmt::Error>()?;
 	m.function_meta(fmt_error_display_fmt)?;
 	m.macro_meta(format)?;
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_builtin_macro();
+	#[cfg(feature = "execution")]
+	m.mark_builtin_macro();
 
 	m.ty::<Format>()?;
 	m.function_meta(format_display_fmt__meta)?;
@@ -39,8 +39,8 @@ pub fn module() -> Result<Module, ContextError> {
 	m.function_meta(format_clone__meta)?;
 	m.implement_trait::<Format>(rune::item!(::std::clone::Clone))?;
 
-	#[cfg(feature = "fresh-core")]
-	m.fresh_mark_format_defaults();
+	#[cfg(feature = "execution")]
+	m.mark_format_defaults();
 	Ok(m)
 }
 
