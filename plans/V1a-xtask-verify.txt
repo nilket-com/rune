@@ -1,0 +1,86 @@
+V1a: versioned Rune correctness verification
+
+Anchor: published S7b2 f0baf933382039f2b8c44b84a04532ba5703b459.
+Authority: Claude V1 plan 2026-10-25 and Step 0 approval seq23100,
+01a176a0-b439-718d-8539-c9cabab38229. The complete plan, parallelism
+addendum and Step 0 inventory were read before implementation.
+
+Problem and result
+The acceptance checks already contain Rust tests, but unversioned copies of
+controllers choose them, compare frozen bytes and decide acceptance. This slice
+moves that recurring Rune correctness logic into tools/xtask. One checked-in
+command selects named suites and emits immutable raw output plus typed receipts.
+Historical scripts, inputs and sealed receipts are never deleted or rewritten.
+
+Scope
+Add tools/xtask and a Cargo alias without linker/build configuration changes.
+Expose cargo xtask verify --suite all|native|contracts|emissions|l1|legacy-units|
+awfy|miri|clippy|layouts --fixtures-root PATH --out NEW, with explicit toolchain,
+build-job and test-thread options. Support listing suites and checking manifests
+without compiling. Keep argument parsing, process execution, suite definitions,
+comparison and reporting separate and small enough to review independently.
+
+Use existing Rune test entry points. Add only test-only observers where an
+external correctness harness has no equivalent repository child (notably AWFY).
+The runner builds and copies the exact test binary, checks source/binary identity
+and prevents a reused Cargo artifact from masquerading as another source tree.
+It records the tool revision, complete arguments, source/input/output hashes,
+features, status, elapsed time and selected/passed counts. Missing fixtures,
+unknown suites, preexisting output directories, failed children, malformed output,
+zero or multiple selected tests fail clearly. Failures retain their raw evidence.
+
+Native/contracts: preserve the S7b2 native library, full32, strict, structural,
+legacy-contract and focused regression selection, feature matrix and required
+layout/source checks. A versioned suite registry replaces copied Python lists.
+Emissions: observe all722 cases; compare every one of551 prior admitted code
+artifacts byte-for-byte and retain the existing classification decisions.
+L1: compare all2941 records and preserve their existing admission/frontier policy.
+Legacy Units: compare all2953 serialized Units with complete float-bit fidelity.
+AWFY: preserve10/12 boundary,24 candidate observations,6 resource controls and2
+fatal-diagnostic checks against the pinned frozen reference, not throughput data.
+Miri: check in the final73-helper bounded manifest, pin fixture content/selection,
+refuse zero/missing/multiple selections, preserve reviewed bounds/history and
+require one passed test per helper. No more than2 actual interpreters; use blocking
+process completion and execution-event evidence, no process status polling.
+Clippy/layouts: preserve exact feature sets, strict warnings and frozen layout
+contracts, distinguishing correctness from numerical cost measurements.
+
+Frozen input data stays at its current location. Checked-in manifests identify
+relative fixture paths, digests, expected counts and policies; --fixtures-root
+selects the external root explicitly. Inputs may not silently migrate to an old
+harness, change registration or be normalized to obtain a pass. Source identity,
+comparison and selector guards receive negative tests as well as passing cases.
+
+Ownership and exclusions
+V1a owns only Rune correctness and its checked-in manifest/documentation. Rnx
+census/enrollment belongs to V1b with checked-in Rust observers and an explicit
+dev child target; gate orchestration, export/build/seal/record schemas and the
+30-CPU resource DAG belong to V1c. Do not implement those slices here.
+Do not change Rune/rnx runtime behavior, public APIs, default features/routes,
+existing frozen oracle bytes, measurement thresholds or counter2-v1 templates.
+This tooling-only record does not count toward M7. P11 is next product record.
+
+Concurrency
+Independent native/static checks may use separate Cargo targets and bounded
+worker allocations, with build jobs and test threads recorded. Miri stays capped
+at2 actual interpreters. The native/Miri overlap policy changes only in V1c,
+together with scheduler regression tests; V1a does not silently weaken it.
+Nano builds/measurements remain under the existing single lock. No performance
+sampling is required merely to prove a correctness runner equivalent.
+
+Implementation and review sequence
+1. Commit this plan, subject only and signed, before implementation.
+2. Add the shared CLI/process/receipt/input layer and versioned suite registry.
+3. Migrate native/contracts/clippy/layouts, preservation comparisons and AWFY,
+   plus the73-helper Miri manifest/runner. Parallelize independent development.
+4. Test failure handling, source and fixture mismatch, invalid/missing/duplicate
+   selections, output immutability and exact byte comparisons. Run formatting,
+   strict Clippy and focused tooling tests appropriate to the changes.
+5. On immutable tooling source over S7b2 product code, run each new suite against
+   the completed S7b2 evidence. Require identical counts, acceptance decisions,
+   source/binary identities and frozen bytes. Execute final Miri subset with its
+   reviewed bounds; do not replace the real verification with receipt replay.
+   Preserve all failed attempts. Compare elapsed wall time from completed receipts.
+6. Obtain Claude code/equivalence review, then signed implementation commit and
+   publication approval. Report the recurring families retired by V1a and stop
+   copying them in later records. Leave V1b/V1c explicitly pending.
