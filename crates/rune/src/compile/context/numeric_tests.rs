@@ -275,6 +275,91 @@ fn script_cmp_anywhere_in_the_unit_disables_the_intrinsic() {
 	assert_eq!(INVOCATIONS.load(Ordering::SeqCst), 0);
 }
 
+fn p11_decisions(cx: &Context) -> ([bool; 4], [bool; 8], [Option<Pair>; 4]) {
+	let methods = [Method::Abs, Method::Round, Method::Powf, Method::Cmp]
+		.map(|method| cx.numeric_method(method));
+	let direct = Pair::ALL.map(|pair| cx.numeric_direct(pair));
+	let aliases = [Pair::I64Cmp, Pair::U64Cmp, Pair::F64Cmp, Pair::StringCmp]
+		.map(|pair| cx.numeric.cmp_alias(pair.receiver()));
+	(methods, direct, aliases)
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "constructs two standard Contexts and compiles numeric calls"
+)]
+fn p11_trusted_epoch_and_untrusted_marked_insertions_keep_numeric_decisions() {
+	for stdio in [false, true] {
+		let mut trusted = Context::with_config(stdio).unwrap();
+		let mut marked = Context::with_config(stdio).unwrap();
+		let handler = trusted.functions.get(&Pair::F64Abs.item()).unwrap().clone();
+		assert_eq!(p11_decisions(&trusted), p11_decisions(&marked));
+		assert!(trusted.numeric_method(Method::Abs));
+		assert!(trusted.numeric_method(Method::Cmp));
+		assert!(trusted.format_snapshot().is_none());
+		assert!(marked.format_snapshot().is_none());
+
+		let insertions = [
+			Hash::ident("p11_unrelated"),
+			Pair::F64Abs.item(),
+			Pair::I64Abs.associated(),
+			Pair::I64Cmp.cmp_protocol().unwrap(),
+			Pair::F64Cmp.cmp_protocol().unwrap(),
+		];
+		{
+			let mut epoch = StdFormatEpoch::enter(&mut trusted);
+			for (step, hash) in insertions.into_iter().enumerate() {
+				let fast =
+					epoch.insert_native_fn(&"P11 paired insertion", hash, &handler, None, true);
+				let reference =
+					marked.insert_native_fn(&"P11 paired insertion", hash, &handler, None, true);
+				assert_eq!(
+					fast.is_ok(),
+					reference.is_ok(),
+					"stdio={stdio}, step={step}"
+				);
+				assert_eq!(
+					p11_decisions(&epoch),
+					p11_decisions(&marked),
+					"stdio={stdio}, step={step}"
+				);
+				assert!(epoch.format_snapshot().is_none());
+				assert!(marked.format_snapshot().is_none());
+				if step == 0 {
+					assert!(fast.is_ok());
+				}
+				if step == 1 {
+					assert!(matches!(&fast,
+						Err(ContextError::ConflictingFunction { hash: conflict, .. }) if *conflict == hash));
+					assert!(matches!(&reference,
+						Err(ContextError::ConflictingFunction { hash: conflict, .. }) if *conflict == hash));
+					assert!(!epoch.numeric_method(Method::Abs));
+					assert!(!epoch.numeric_direct(Pair::F64Abs));
+				}
+				if step == 3 {
+					assert_eq!(epoch.numeric.cmp_alias(Pair::I64Cmp.receiver()), None);
+				}
+			}
+		}
+
+		assert!(!trusted.format.trusted_install);
+		assert!(!marked.format.trusted_install);
+		assert!(trusted.numeric_method(Method::Round));
+		trusted.install(extra("round")).unwrap();
+		marked.install(extra("round")).unwrap();
+		assert_eq!(p11_decisions(&trusted), p11_decisions(&marked));
+		assert!(!trusted.numeric_method(Method::Round));
+		let left = trusted.format_snapshot().unwrap();
+		let right = marked.format_snapshot().unwrap();
+		assert!(left.equivalent(&right));
+		for cx in [&trusted, &marked] {
+			matrix(cx, [false, false, true], [false, true, true, false]);
+			compile(cx, Call::MethodCmp, Some(Refusal::Method));
+		}
+	}
+}
+
 // C9 receiver relevance: custom handlers are install-only, never invoked.
 fn cmp_forbidden_i64(_: i64, _: i64) -> core::cmp::Ordering {
 	INVOCATIONS.fetch_add(1, Ordering::SeqCst);

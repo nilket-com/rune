@@ -126,7 +126,7 @@ pub struct TraitContext<'a> {
 	type_info: &'a TypeInfo,
 	/// The trait being implemented for.
 	trait_item: &'a Item,
-	/// Hash of the trait being impleemnted.
+	/// Hash of the trait being implemented.
 	trait_hash: Hash,
 }
 
@@ -1994,7 +1994,9 @@ impl Context {
 		#[cfg(feature = "execution")] format_default: bool,
 	) -> Result<(), ContextError> {
 		#[cfg(feature = "execution")]
-		self.format.begin(hash, format_default)?;
+		if !self.format.trusted_install {
+			self.format.begin(hash, format_default)?;
+		}
 		#[cfg(feature = "execution")]
 		self.numeric.invalidate_hash(hash);
 		#[cfg(feature = "execution")]

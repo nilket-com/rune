@@ -5,7 +5,7 @@
     {
       "name": "execution-serde",
       "features": "fmt,workspace,execution,capture-io,disable-io,sha2,serde",
-      "passed": 1455
+      "passed": 1456
     },
     {
       "name": "legacy",
@@ -15,7 +15,7 @@
     {
       "name": "native",
       "features": "fmt,workspace,native-code,capture-io,disable-io,sha2",
-      "passed": 1653
+      "passed": 1654
     }
   ],
   "clippy_features": [

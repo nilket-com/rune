@@ -12,7 +12,7 @@ pub(crate) struct State {
 }
 impl State {
 	pub(crate) fn begin(&mut self, key: Hash, marked: bool) -> alloc::Result<()> {
-		if self.trusted_install || (marked && self.certificate.is_none()) {
+		if marked && self.certificate.is_none() {
 			return Ok(());
 		}
 		// A published certificate is immutable. Copy before the attempted insertion,
