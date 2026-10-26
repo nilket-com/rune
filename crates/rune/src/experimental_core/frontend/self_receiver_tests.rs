@@ -323,6 +323,7 @@ fn self_receiver_closure_capture_proof_fulfills_the_entry_policy_pin() {
 		.find(|&id| program.code.function(id).unwrap().parameters == 1)
 		.unwrap();
 	program.entry_ineligible.try_push(closure).unwrap();
+	program.refresh_entry_guard_for_test();
 	let mut store = Store::new(Limits::default()).unwrap();
 	let wrong = store.root_i64(1);
 	let failure = Executor::new()
@@ -369,6 +370,7 @@ fn entry_policy_fixture() -> Program {
 	builder.push(entry).unwrap();
 	let mut program = Program::for_diagnostics_test(builder.finish().unwrap());
 	program.entry_ineligible.try_push(0).unwrap();
+	program.refresh_entry_guard_for_test();
 	program
 }
 
@@ -422,6 +424,7 @@ fn self_entry_policy_also_covers_future_capture_parameters() {
 fn self_entry_policy_empty_set_checks_code_only_in_invoke_code() {
 	let mut program = entry_policy_fixture();
 	program.entry_ineligible.clear();
+	program.refresh_entry_guard_for_test();
 	assert!(!program.entry_refused(1));
 	assert!(!program.entry_refused(u32::MAX));
 	assert!(program.entry_eligible(1));
@@ -434,7 +437,14 @@ fn self_entry_policy_empty_set_checks_code_only_in_invoke_code() {
 	let execute = include_str!("../execute.rs");
 	let invoke = execute.split("pub fn invoke(").nth(1).unwrap();
 	let invoke = invoke.split("\n\t}").next().unwrap();
-	assert!(invoke.contains("program.entry_refused(function)"));
+	assert!(invoke.contains("program.formatting.guard() | self.runtime_format_guard"));
+	assert!(invoke.contains("self.validate_format_entry("));
+	let cold = execute.split("fn validate_format_entry(").nth(1).unwrap();
+	let cold = cold.split("\n\t}").next().unwrap();
+	let exact_policy = cold.find("program.entry_refused(entry.1)").unwrap();
+	assert!(exact_policy < cold.find("store.is_closed()").unwrap());
+	assert!(exact_policy < cold.find(".function(function)").unwrap());
+	assert!(exact_policy < cold.find("code.host_validation_parts(").unwrap());
 	assert!(!invoke.contains("program.code.function") && !invoke.contains("entry_eligible"));
 
 	let mut executor = Executor::new().unwrap();
@@ -544,4 +554,24 @@ fn self_receiver_native_families_preserve_m3_lowering_or_match_stock() {
 		store.root_release(root).unwrap();
 		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 	}
+}
+
+#[test]
+fn stale_fixture_policy_is_caught_until_the_cached_tag_is_refreshed() {
+	let context = Context::with_default_modules().unwrap();
+	let mut program = compile_source("pub fn main(){7}", &context).unwrap();
+	let main = program.function(Hash::type_hash(["main"])).unwrap();
+	program.entry_ineligible.try_push(main).unwrap();
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let stale = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+		let _ = executor.invoke(&program, &mut store, main, &[], 1000);
+	}));
+	assert!(stale.is_err());
+	program.refresh_entry_guard_for_test();
+	let failure = executor
+		.invoke(&program, &mut store, main, &[], 1000)
+		.unwrap_err();
+	assert_eq!(failure.error.refusal, Some(Refusal::Entry));
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 }

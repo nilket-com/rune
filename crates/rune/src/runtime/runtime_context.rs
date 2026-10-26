@@ -25,6 +25,8 @@ pub struct RuntimeContext {
 	construct: hash::Map<ConstConstructImpl>,
 	/// Registered deprecation messages for native functions.
 	deprecations: hash::Map<String>,
+	#[cfg(feature = "execution")]
+	pub(crate) formatting: Option<crate::sync::Arc<crate::function::formatting::Certificate>>,
 }
 
 assert_impl!(RuntimeContext: Send + Sync);
@@ -35,12 +37,17 @@ impl RuntimeContext {
 		constants: hash::Map<ConstValueBuf>,
 		construct: hash::Map<ConstConstructImpl>,
 		deprecations: hash::Map<String>,
+		#[cfg(feature = "execution")] formatting: Option<
+			crate::sync::Arc<crate::function::formatting::Certificate>,
+		>,
 	) -> Self {
 		Self {
 			functions,
 			constants,
 			construct,
 			deprecations,
+			#[cfg(feature = "execution")]
+			formatting,
 		}
 	}
 

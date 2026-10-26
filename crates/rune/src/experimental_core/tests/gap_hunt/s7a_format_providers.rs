@@ -1,5 +1,5 @@
 //! Ordinary protocol-kind registrations refuse formatting before execution.
-//! Actual-key aliases and foreign roots remain named S7b gaps; see s7a_format_key_gaps.
+//! S7b2 closes actual-key aliases and foreign roots; the S7a data remains frozen.
 use super::*;
 use crate as rune;
 use crate::experimental_core::error::{ErrorKind, Refusal};
@@ -125,14 +125,14 @@ fn every_formatting_ingress_closes_but_unrelated_programs_remain_admitted() {
 fn std_factory_marks_only_existing_handlers_and_raw_providers_close() {
 	let mut module = crate::modules::ops::module().unwrap();
 	assert!(module.associated.iter().any(
-		|a| matches!(&a.kind, crate::module::ModuleAssociatedKind::Function(f) if f.format_default)
+		|a| matches!(&a.kind, crate::module::ModuleAssociatedKind::Function(f) if f.format_default.is_some())
 	));
 	module
 		.raw_function(&Protocol::DISPLAY_FMT, |_, _, _, _| Ok(()))
 		.build_associated::<crate::runtime::Function>()
 		.unwrap();
 	assert!(
-		matches!(&module.associated.last().unwrap().kind, crate::module::ModuleAssociatedKind::Function(f) if !f.format_default)
+		matches!(&module.associated.last().unwrap().kind, crate::module::ModuleAssociatedKind::Function(f) if f.format_default.is_none())
 	);
 	let mut context = Context::with_default_modules().unwrap();
 	let mut module = crate::Module::new();
@@ -288,6 +288,11 @@ fn alias_context(setup: &str, calls: &Arc<AtomicUsize>) -> Context {
 	let receiver = <i64 as crate::TypeHash>::HASH;
 	let (target, formatter) = match setup {
 		"field" | "raw-range" => (<Range as crate::TypeHash>::HASH, Protocol::DEBUG_FMT.hash),
+		"raw-variant-display" => (Hash::type_hash(["E", "A"]), Protocol::DISPLAY_FMT.hash),
+		"raw-debug-nominal" => (Hash::type_hash(["S"]), Protocol::DEBUG_FMT.hash),
+		"raw-debug-late" => (Hash::type_hash(["LateOnly"]), Protocol::DEBUG_FMT.hash),
+		"inline-debug" => (receiver, Protocol::DEBUG_FMT.hash),
+		"inline-display" => (receiver, Protocol::DISPLAY_FMT.hash),
 		"raw-nominal" => (Hash::type_hash(["S"]), Protocol::DISPLAY_FMT.hash),
 		"raw-late-nominal" => (Hash::type_hash(["LateOnly"]), Protocol::DISPLAY_FMT.hash),
 		_ => panic!("unknown alias setup"),
@@ -309,8 +314,10 @@ fn alias_context(setup: &str, calls: &Arc<AtomicUsize>) -> Context {
 	} else {
 		protocol.hash =
 			Hash::new(receiver.into_inner() ^ target.into_inner() ^ formatter.into_inner());
-		assert_ne!(protocol.hash, Protocol::DEBUG_FMT.hash);
-		assert_ne!(protocol.hash, Protocol::DISPLAY_FMT.hash);
+		if !setup.starts_with("inline-") {
+			assert_ne!(protocol.hash, Protocol::DEBUG_FMT.hash);
+			assert_ne!(protocol.hash, Protocol::DISPLAY_FMT.hash);
+		}
 		assert_eq!(
 			Hash::associated_function(receiver, protocol.hash),
 			Hash::associated_function(target, formatter)
@@ -327,17 +334,30 @@ fn alias_context(setup: &str, calls: &Arc<AtomicUsize>) -> Context {
 			.unwrap();
 	}
 	context.install(module).unwrap();
-	// This is deliberately the blind spot, not proof of an Exact Context.
-	assert!(context.formatting());
+	// Actual keys close builtin aliases, independently of metadata kinds.
+	assert_eq!(
+		context.formatting(),
+		setup != "field" && setup != "raw-range"
+	);
 	context
 }
 
 fn alias(context: &Context, source: &str, producer: Option<&str>) -> String {
-	let render =
-		frontend::compile(&mut input(source), context, &mut Diagnostics::new(), 77).unwrap();
+	let render = match frontend::compile(&mut input(source), context, &mut Diagnostics::new(), 77) {
+		Ok(program) => program,
+		Err(error) => return format!("compile-refused:{:?}", error.refusal),
+	};
+	let producer_context = Context::with_default_modules().unwrap();
 	// Keep the renderer-first order: a foreign nominal can arrive later.
-	let make = producer
-		.map(|s| frontend::compile(&mut input(s), context, &mut Diagnostics::new(), 77).unwrap());
+	let make = producer.map(|s| {
+		frontend::compile(
+			&mut input(s),
+			&producer_context,
+			&mut Diagnostics::new(),
+			77,
+		)
+		.unwrap()
+	});
 	let mut store = Store::new(Limits::default()).unwrap();
 	let mut executor = Executor::new().unwrap();
 	let argument = make.as_ref().map(|p| {
@@ -363,6 +383,11 @@ fn alias(context: &Context, source: &str, producer: Option<&str>) -> String {
 			let text = format!("value:{:?}", store.root_text(&root).unwrap());
 			store.root_release(root).unwrap();
 			text
+		}
+		Err(error)
+			if error.error.refusal == Some(crate::experimental_core::error::Refusal::Entry) =>
+		{
+			"entry-refused:Some(Entry)".into()
 		}
 		Err(error) => format!("error:{}", error.message(&render)),
 	};
@@ -396,7 +421,7 @@ fn legacy_alias(context: &Context, source: &str, producer: Option<&str>) -> Stri
 }
 
 #[test]
-fn formatter_key_alias_and_foreign_root_cases_stay_named_known_gaps() {
+fn formatter_key_alias_and_foreign_root_gaps_close_before_execution() {
 	let document: Json = serde_json::from_str(include_str!("s7a_format_key_gaps.json")).unwrap();
 	assert_eq!(document["schema"], 1);
 	assert_eq!(document["policy"], "Known-gap");
@@ -410,6 +435,10 @@ fn formatter_key_alias_and_foreign_root_cases_stay_named_known_gaps() {
 			capture["raw_sha256"]
 		);
 	}
+	let migration: Json =
+		serde_json::from_str(include_str!("s7b2_format_key_oracle.json")).unwrap();
+	assert_eq!(migration["before"], document);
+	assert_eq!(migration["approval_seq"], 23030);
 	let rows = document["rows"].as_array().unwrap();
 	assert_eq!(rows.len(), 5);
 	for row in rows {
@@ -438,31 +467,28 @@ fn formatter_key_alias_and_foreign_root_cases_stay_named_known_gaps() {
 		assert_eq!(row["stock"]["provider_calls"], 1);
 		assert_eq!(row["before_fresh"]["provider_calls"], 0);
 		assert_ne!(execution, stock, "must not label this Context Exact");
-		if row["setup"] == "raw-nominal" || row["setup"] == "raw-late-nominal" {
-			assert_eq!(execution, row["before_fresh"]["observation"]);
+		let expected = if row["name"] == "late-foreign-nominal-display" {
+			"entry-refused:Some(Entry)"
 		} else {
-			// Shape check ONLY for this Known-gap witness, never an equality mask.
-			let text = execution
-				.strip_prefix("value:\"")
-				.unwrap()
-				.strip_suffix('"')
-				.unwrap();
-			let text = if row["name"] == "field-key-nested" {
-				text.strip_prefix('[').unwrap().strip_suffix(']').unwrap()
+			"compile-refused:Some(Native)"
+		};
+		assert_eq!(execution, expected, "{}", row["name"]);
+		let frozen = migration["approved_after"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.find(|r| r["name"] == row["name"])
+			.unwrap();
+		assert_eq!(frozen["source_sha256"], row["source_sha256"]);
+		assert_eq!(frozen["provider_calls"], 0);
+		assert_eq!(
+			frozen["refusal"],
+			if producer.is_some() {
+				"Entry"
 			} else {
-				text
-			};
-			let pointer = text
-				.strip_prefix("<::std::ops::Range object at 0x")
-				.unwrap()
-				.strip_suffix('>')
-				.unwrap();
-			assert!(
-				!pointer.is_empty()
-					&& pointer.len() <= 16
-					&& pointer.bytes().all(|b| b.is_ascii_hexdigit())
-			);
-		}
+				"Native"
+			}
+		);
 	}
 	contract_completed("s7a-format-key-Known-gap", rows.len());
 }
@@ -494,4 +520,505 @@ fn unrelated_native_formatters_preserve_builtin_formatting() {
 	assert!(!context.formatting());
 	refused(&context, source);
 	assert_eq!(calls.load(Ordering::SeqCst), 0);
+}
+
+#[cfg(test)]
+mod s7b2_entry_controls {
+	use super::*;
+	use crate::experimental_core::{
+		frontend::Program,
+		value::{Root, Type},
+	};
+	fn compile(cx: &Context, source: &str) -> Program {
+		frontend::compile(&mut input(source), cx, &mut Diagnostics::new(), 77).unwrap()
+	}
+	fn main(p: &Program) -> u32 {
+		p.function(Hash::type_hash(["main"])).unwrap()
+	}
+	fn default() -> Context {
+		Context::with_default_modules().unwrap()
+	}
+	fn run(
+		e: &mut Executor,
+		p: &Program,
+		s: &mut Store,
+		a: &[&Root],
+		fuel: usize,
+	) -> core::result::Result<Root, Box<crate::experimental_core::execute::Failure>> {
+		e.invoke(p, s, main(p), a, fuel).map_err(Box::new)
+	}
+	#[test]
+	fn named_static_insertions_record_both_effective_native_keys() {
+		let calls = Arc::new(AtomicUsize::new(0));
+		let mut cx = default();
+		let mut module = crate::Module::new();
+		let counter = calls.clone();
+		module
+			.raw_function("s7b2_named", move |_, _, _, _| {
+				counter.fetch_add(1, Ordering::SeqCst);
+				Ok(())
+			})
+			.build_associated::<i64>()
+			.unwrap();
+		cx.install(module).unwrap();
+		let authority = cx.format_snapshot().unwrap();
+		for key in [
+			Hash::associated_function(<i64 as crate::TypeHash>::HASH, Hash::ident("s7b2_named")),
+			Hash::type_hash(crate::item!(::std::i64::s7b2_named)),
+		] {
+			assert!(cx.lookup_function(key).is_some());
+			// Invert the effective key to name a synthetic nominal receiver.
+			// Neither the associated nor its free static alias may escape capture.
+			let receiver = Hash::associated_function(key, &Protocol::DISPLAY_FMT);
+			assert!(!authority.permits(receiver));
+		}
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+	}
+
+	#[test]
+	fn function_parameters_cannot_hide_an_actual_formatter_key() {
+		let calls = Arc::new(AtomicUsize::new(0));
+		let mut cx = default();
+		let mut module = crate::Module::new();
+		let receiver = <i64 as crate::TypeHash>::HASH;
+		let target = <Range as crate::TypeHash>::HASH;
+		let parameters = [<u64 as crate::TypeHash>::HASH];
+		let salt = Hash::EMPTY.with_function_parameters(Hash::parameters(parameters));
+		let mut protocol = Protocol::GET;
+		protocol.hash = Hash::new(
+			receiver.into_inner()
+				^ target.into_inner()
+				^ Protocol::DEBUG_FMT.hash.into_inner()
+				^ salt.into_inner(),
+		);
+		assert_eq!(
+			Hash::associated_function(receiver, protocol.hash)
+				.with_function_parameters(Hash::parameters(parameters)),
+			Hash::associated_function(target, &Protocol::DEBUG_FMT)
+		);
+		let protocol = Box::leak(Box::new(protocol));
+		let counter = calls.clone();
+		module
+			.raw_function(
+				crate::Params::new(&*protocol, parameters),
+				move |_, _, _, _| {
+					counter.fetch_add(1, Ordering::SeqCst);
+					Ok(())
+				},
+			)
+			.build_associated::<i64>()
+			.unwrap();
+		cx.install(module).unwrap();
+		refused(&cx, "pub fn main(){format!(\"{:?}\",[1..3])}");
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+	}
+
+	static DERIVED_PROVIDER_CALLS: AtomicUsize = AtomicUsize::new(0);
+	#[derive(crate::Any)]
+	#[rune(item = ::s7b2_derived, install_with = install_derived_formatter)]
+	struct DerivedFormatterProvider;
+	fn install_derived_formatter(
+		module: &mut crate::Module,
+	) -> core::result::Result<(), crate::ContextError> {
+		module
+			.raw_function(&Protocol::DEBUG_FMT, |_, _, _, _| {
+				DERIVED_PROVIDER_CALLS.fetch_add(1, Ordering::SeqCst);
+				Ok(())
+			})
+			.build_associated::<Range>()?;
+		Ok(())
+	}
+	#[test]
+	fn a_derived_install_with_formatter_enters_the_effective_key_certificate() {
+		DERIVED_PROVIDER_CALLS.store(0, Ordering::SeqCst);
+		let mut cx = default();
+		let mut module = crate::Module::with_crate("s7b2_derived").unwrap();
+		module.ty::<DerivedFormatterProvider>().unwrap();
+		cx.install(module).unwrap();
+		refused(&cx, "pub fn main(){format!(\"{:?}\",[1..3])}");
+		assert_eq!(DERIVED_PROVIDER_CALLS.load(Ordering::SeqCst), 0);
+	}
+
+	#[test]
+	fn a_variant_key_alias_cannot_poison_its_safe_parent_enum() {
+		let calls = Arc::new(AtomicUsize::new(0));
+		let cx = alias_context("raw-variant-display", &calls);
+		let source = "enum E{A{x}}pub fn main(){format!(\"{:?}\",E::A{x:7})}";
+		let expected = legacy_alias(&default(), source, None);
+		assert_eq!(legacy_alias(&cx, source, None), expected);
+		assert_eq!(alias(&cx, source, None), expected);
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+	}
+
+	#[test]
+	fn independently_built_server_contexts_and_slots_accept_equal_authority() {
+		fn server_context(extra: bool) -> Context {
+			let mut cx = default();
+			let mut module = crate::Module::with_crate("server_shape").unwrap();
+			module.host_function("tap", || 7i64).unwrap();
+			if extra {
+				module.host_function("extra", || 8i64).unwrap();
+			}
+			cx.install(module).unwrap();
+			cx
+		}
+		let a = server_context(false);
+		let p = compile(&a, "pub fn main(){format!(\"{}\",7)}");
+		for extra in [false, false, true] {
+			let b = server_context(extra);
+			assert!(!crate::sync::Arc::ptr_eq(
+				p.formatting.as_ref().unwrap(),
+				b.format_snapshot().as_ref().unwrap()
+			));
+			let runtime = crate::sync::Arc::try_new(b.runtime().unwrap()).unwrap();
+			let mut e = Executor::new().unwrap();
+			e.set_host_runtime(Some(runtime)).unwrap();
+			let mut s = Store::new(Limits::default()).unwrap();
+			for _ in 0..2 {
+				if extra {
+					assert_eq!(
+						run(&mut e, &p, &mut s, &[], 100).unwrap_err().error.refusal,
+						Some(Refusal::Entry)
+					);
+				} else {
+					let out = run(&mut e, &p, &mut s, &[], 100).unwrap();
+					assert_eq!(s.root_text(&out).unwrap(), "7");
+					s.root_release(out).unwrap();
+				}
+			}
+			assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
+		}
+	}
+
+	#[test]
+	fn ineffective_nominal_debug_and_inline_keys_preserve_exact_formatting() {
+		for (setup, source, producer) in [
+			(
+				"raw-debug-nominal",
+				"struct S;pub fn main(){format!(\"{:?}\",S)}",
+				None,
+			),
+			(
+				"raw-debug-late",
+				"pub fn main(x){format!(\"{:?}\",x)}",
+				Some("struct LateOnly;pub fn main(){LateOnly}"),
+			),
+			("inline-debug", "pub fn main(){format!(\"{:?}\",42)}", None),
+			("inline-display", "pub fn main(){format!(\"{}\",42)}", None),
+		] {
+			let calls = Arc::new(AtomicUsize::new(0));
+			let cx = alias_context(setup, &calls);
+			assert_eq!(
+				alias(&cx, source, producer),
+				alias(&default(), source, producer)
+			);
+			assert_eq!(
+				legacy_alias(&cx, source, producer),
+				legacy_alias(&default(), source, producer)
+			);
+			assert_eq!(calls.load(Ordering::SeqCst), 0);
+		}
+	}
+	#[test]
+	fn structural_nominal_debug_rejects_an_unsafe_any_backed_field() {
+		let calls = Arc::new(AtomicUsize::new(0));
+		let cx = alias_context("raw-range", &calls);
+		let source = "struct S{field}pub fn main(){format!(\"{:?}\",S{field:0..2})}";
+		let failure = frontend::compile(&mut input(source), &cx, &mut Diagnostics::new(), 77)
+			.err()
+			.unwrap();
+		assert_eq!(
+			failure.refusal,
+			Some(crate::experimental_core::error::Refusal::Native)
+		);
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+	}
+	#[test]
+	fn default_authority_never_enters_the_walk_or_allocates_its_scratch() {
+		for cx in [Context::new(), default()] {
+			let p = compile(&cx, "pub fn main(x){7}");
+			assert!(p.formatting.as_ref().is_none());
+			let mut e = Executor::new().unwrap();
+			let mut s = Store::new(Limits::default()).unwrap();
+			let x = s.root_list(Type::Vec, &[]).unwrap();
+			Store::format_admission_probe(true);
+			let out = run(&mut e, &p, &mut s, &[&x], 100).unwrap();
+			assert_eq!(Store::format_admission_probe(false), 0);
+			s.root_release(out).unwrap();
+			s.root_release(x).unwrap();
+			assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
+		}
+	}
+	#[test]
+	fn pure_format_runtime_mismatch_is_entry_before_print_and_binding_error_keeps_precedence() {
+		let calls = Arc::new(AtomicUsize::new(0));
+		let mut a = default();
+		let mut m = crate::Module::with_crate("authority").unwrap();
+		let counter = calls.clone();
+		m.host_function("tap", move || {
+			counter.fetch_add(1, Ordering::SeqCst);
+			7i64
+		})
+		.unwrap();
+		a.install(m).unwrap();
+		let mut b = default();
+		let mut m = crate::Module::with_crate("authority").unwrap();
+		m.host_function("tap", || 8i64).unwrap();
+		m.host_function("extra", || 9i64).unwrap();
+		b.install(m).unwrap();
+		let p = compile(
+			&a,
+			"pub fn main(){println!(\"sentinel\");format!(\"{:?}\",7)}",
+		);
+		let used = compile(&a, "pub fn main(){authority::tap()}");
+		let mut e = Executor::new().unwrap();
+		e.test_output = Some(std::vec::Vec::new());
+		let mut s = Store::new(Limits::default()).unwrap();
+		e.set_host_runtime(Some(
+			crate::sync::Arc::try_new(b.runtime().unwrap()).unwrap(),
+		))
+		.unwrap();
+		assert_eq!(
+			run(&mut e, &p, &mut s, &[], 0).unwrap_err().error.refusal,
+			Some(Refusal::Entry)
+		);
+		let invalid_binding = run(&mut e, &used, &mut s, &[], 0).unwrap_err();
+		assert_eq!(invalid_binding.error.kind, ErrorKind::InvalidCode);
+		assert_eq!(invalid_binding.error.operation, "validate code");
+		assert!(e.test_output.as_ref().unwrap().is_empty());
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+		e.set_host_runtime(Some(
+			crate::sync::Arc::try_new(a.runtime().unwrap()).unwrap(),
+		))
+		.unwrap();
+		let out = run(&mut e, &p, &mut s, &[], 1000).unwrap();
+		assert_eq!(s.root_text(&out).unwrap(), "7");
+		s.root_release(out).unwrap();
+		assert_eq!(e.test_output.as_ref().unwrap(), b"sentinel\n");
+		assert!(e.is_idle());
+		assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
+	}
+	#[test]
+	fn foreign_nominals_nested_shared_cyclic_and_unused_refuse_in_both_compile_orders() {
+		for producer_first in [false, true] {
+			let calls = Arc::new(AtomicUsize::new(0));
+			let cx = alias_context("raw-late-nominal", &calls);
+			let safe = default();
+			let producer_source = "struct LateOnly;pub fn main(){LateOnly}";
+			let renderer_source = "pub fn main(x){7}";
+			let (producer, renderer) = if producer_first {
+				(
+					compile(&safe, producer_source),
+					compile(&cx, renderer_source),
+				)
+			} else {
+				let r = compile(&cx, renderer_source);
+				(compile(&safe, producer_source), r)
+			};
+			let mut e = Executor::new().unwrap();
+			let mut s = Store::new(Limits::default()).unwrap();
+			let bad = run(&mut e, &producer, &mut s, &[], 1000).unwrap();
+			let shared = s.root_list(Type::Tuple, &[&bad, &bad]).unwrap();
+			let object = s.root_record(None, &[("nested", &shared)]).unwrap();
+			let option = s.root_variant(Type::Option, true, Some(&object)).unwrap();
+			let cycle = s.root_list(Type::Vec, &[&option]).unwrap();
+			s.root_push(&cycle, &cycle).unwrap();
+			let live = (s.live_entries(), s.payload_bytes());
+			e.request_cancel();
+			assert_eq!(
+				run(&mut e, &renderer, &mut s, &[&cycle], 0)
+					.unwrap_err()
+					.error
+					.refusal,
+				Some(Refusal::Entry)
+			);
+			assert_eq!((s.live_entries(), s.payload_bytes()), live);
+			assert!(e.is_idle());
+			assert_eq!(calls.load(Ordering::SeqCst), 0);
+			let unit = s.root_unit();
+			assert_eq!(
+				run(&mut e, &renderer, &mut s, &[&unit], 1000)
+					.unwrap_err()
+					.error
+					.kind,
+				ErrorKind::Cancelled
+			);
+			let out = run(&mut e, &renderer, &mut s, &[&unit], 1000).unwrap();
+			s.root_release(out).unwrap();
+			let _ = s.close();
+			assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
+		}
+	}
+	#[test]
+	fn foreign_closure_iterator_enum_and_host_constructed_record_cannot_hide_the_receiver() {
+		for source in [
+			"struct LateOnly;pub fn main(){let s=LateOnly;||s}",
+			"struct LateOnly;pub fn main(){[LateOnly].iter()}",
+			"enum LateOnly{A}pub fn main(){LateOnly::A}",
+			"struct LateOnly{a}pub fn main(){LateOnly{a:1}}",
+		] {
+			let calls = Arc::new(AtomicUsize::new(0));
+			let cx = alias_context("raw-late-nominal", &calls);
+			let safe = default();
+			let renderer = compile(&cx, "pub fn main(x){7}");
+			let producer = compile(&safe, source);
+			let mut e = Executor::new().unwrap();
+			let mut s = Store::new(Limits::default()).unwrap();
+			let bad = run(&mut e, &producer, &mut s, &[], 1000).unwrap();
+			assert_eq!(
+				run(&mut e, &renderer, &mut s, &[&bad], 0)
+					.unwrap_err()
+					.error
+					.refusal,
+				Some(Refusal::Entry)
+			);
+			if source.contains("LateOnly{a}") {
+				let Type::Struct(n) = s.root_tag(&bad).unwrap() else {
+					panic!()
+				};
+				let unit = s.root_unit();
+				let made = s.root_record(Some(n), &[("a", &unit)]).unwrap();
+				assert_eq!(
+					run(&mut e, &renderer, &mut s, &[&made], 0)
+						.unwrap_err()
+						.error
+						.refusal,
+					Some(Refusal::Entry)
+				);
+				s.root_release(made).unwrap();
+			}
+			s.root_release(bad).unwrap();
+			assert_eq!(calls.load(Ordering::SeqCst), 0);
+			assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
+		}
+	}
+	#[test]
+	fn argument_mutation_rechecks_and_allocation_failure_precedes_every_effect() {
+		let calls = Arc::new(AtomicUsize::new(0));
+		let cx = alias_context("raw-late-nominal", &calls);
+		let safe = default();
+		let renderer = compile(&cx, "pub fn main(x){7}");
+		let producer = compile(&safe, "struct LateOnly;pub fn main(){LateOnly}");
+		let mut e = Executor::new().unwrap();
+		let mut s = Store::new(Limits::default()).unwrap();
+		let graph = s.root_list(Type::Vec, &[]).unwrap();
+		Store::format_admission_probe(true);
+		let live = (s.live_entries(), s.payload_bytes());
+		assert_eq!(
+			run(&mut e, &renderer, &mut s, &[&graph], 0)
+				.unwrap_err()
+				.error
+				.kind,
+			ErrorKind::Allocation
+		);
+		assert_eq!((s.live_entries(), s.payload_bytes()), live);
+		assert_eq!(Store::format_admission_probe(false), 1);
+		let out = run(&mut e, &renderer, &mut s, &[&graph], 100).unwrap();
+		s.root_release(out).unwrap();
+		let bad = run(&mut e, &producer, &mut s, &[], 100).unwrap();
+		s.root_push(&graph, &bad).unwrap();
+		assert_eq!(
+			run(&mut e, &renderer, &mut s, &[&graph], 0)
+				.unwrap_err()
+				.error
+				.refusal,
+			Some(Refusal::Entry)
+		);
+		s.root_release(graph).unwrap();
+		s.root_release(bad).unwrap();
+		assert!(e.is_idle());
+		assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
+	}
+	#[test]
+	fn index_alias_closes_the_actual_range_debug_key() {
+		let calls = Arc::new(AtomicUsize::new(0));
+		let mut cx = default();
+		let mut m = crate::Module::new();
+		let mut protocol = Protocol::GET;
+		protocol.hash =
+			Hash::new(Protocol::DEBUG_FMT.hash.into_inner() ^ Hash::index(4).into_inner());
+		let protocol = Box::leak(Box::new(protocol));
+		let counter = calls.clone();
+		m.index_function(protocol, 4, move |_: &Range, _: &mut Formatter| {
+			counter.fetch_add(1, Ordering::SeqCst);
+		})
+		.unwrap();
+		cx.install(m).unwrap();
+		refused(&cx, "pub fn main(){format!(\"{:?}\",[1..3])}");
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+	}
+	#[test]
+	fn authority_snapshots_survive_context_mutation_and_reject_stale_runtime_pairs() {
+		let mut cx = default();
+		let mut module = crate::Module::with_crate("epoch_a").unwrap();
+		module.host_function("a", || 1i64).unwrap();
+		cx.install(module).unwrap();
+		let first = compile(&cx, "pub fn main(){7}");
+		let before = crate::sync::Arc::try_new(cx.runtime().unwrap()).unwrap();
+		let mut module = crate::Module::with_crate("epoch_b").unwrap();
+		module.host_function("b", || 2i64).unwrap();
+		cx.install(module).unwrap();
+		let second = compile(&cx, "pub fn main(){7}");
+		let after = crate::sync::Arc::try_new(cx.runtime().unwrap()).unwrap();
+		let mut e = Executor::new().unwrap();
+		let mut s = Store::new(Limits::default()).unwrap();
+		e.set_host_runtime(Some(before)).unwrap();
+		let out = run(&mut e, &first, &mut s, &[], 100).unwrap();
+		s.root_release(out).unwrap();
+		e.set_host_runtime(Some(after)).unwrap();
+		assert_eq!(
+			run(&mut e, &first, &mut s, &[], 0)
+				.unwrap_err()
+				.error
+				.refusal,
+			Some(Refusal::Entry)
+		);
+		let out = run(&mut e, &second, &mut s, &[], 100).unwrap();
+		s.root_release(out).unwrap();
+		assert!(e.is_idle());
+		assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
+	}
+	#[test]
+	fn every_root_is_owner_and_generation_checked_before_walk_scratch() {
+		let calls = Arc::new(AtomicUsize::new(0));
+		let cx = alias_context("raw-late-nominal", &calls);
+		let renderer = compile(&cx, "pub fn main(x){7}");
+		let ordinary = compile(&default(), "pub fn main(x){7}");
+		let runtime = crate::sync::Arc::try_new(cx.runtime().unwrap()).unwrap();
+		assert!(crate::sync::Arc::ptr_eq(
+			renderer.formatting.as_ref().unwrap(),
+			runtime.formatting.as_ref().unwrap()
+		));
+		let mut e = Executor::new().unwrap();
+		e.set_host_runtime(Some(runtime)).unwrap();
+		let mut baseline = Executor::new().unwrap();
+		let mut s = Store::new(Limits::default()).unwrap();
+		let other = Store::new(Limits::default()).unwrap();
+		let wrong = other.root_unit();
+		let root = s.root_string("stale").unwrap();
+		let stale = Root {
+			store: root.store,
+			value: root.value,
+		};
+		s.root_release(root).unwrap();
+		for root in [&wrong, &stale] {
+			let before = (s.live_entries(), s.payload_bytes());
+			Store::format_admission_probe(true);
+			let ordinary_kind = run(&mut baseline, &ordinary, &mut s, &[root], 0)
+				.unwrap_err()
+				.error
+				.kind;
+			let guarded_kind = run(&mut e, &renderer, &mut s, &[root], 0)
+				.unwrap_err()
+				.error
+				.kind;
+			assert_eq!(ordinary_kind, ErrorKind::InvalidHandle);
+			assert_eq!(guarded_kind, ordinary_kind);
+			assert_eq!(Store::format_admission_probe(false), 0);
+			assert_eq!((s.live_entries(), s.payload_bytes()), before);
+			assert!(baseline.is_idle() && e.is_idle());
+		}
+		assert_eq!(calls.load(Ordering::SeqCst), 0);
+		assert_eq!((s.live_entries(), s.payload_bytes()), (0, 0));
+	}
 }

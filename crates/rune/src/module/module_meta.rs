@@ -224,7 +224,7 @@ pub(crate) struct DocFunction {
 #[derive(TryClone)]
 pub(crate) struct ModuleFunction {
 	#[cfg(feature = "execution")]
-	pub(crate) format_default: bool,
+	pub(crate) format_default: Option<Hash>,
 	#[cfg(feature = "execution")]
 	pub(crate) host: Option<crate::function::host::HostEnrollment>,
 	/// The handler for the function.

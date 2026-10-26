@@ -36,18 +36,14 @@ const SORT_ASSOCIATED: Hash = crate::hash_in!(crate, ::std::vec::Vec.sort_by);
 #[cfg(feature = "execution")]
 const SORT_ITEM: Hash = crate::hash_in!(crate, ::std::vec::Vec::sort_by);
 
-// Only registrations on values rendered by new can change its formatting.
-// Other native types remain behind the host boundary (S7b).
+// Mirror runtime/value.rs::{debug_fmt_with, display_fmt_with}: Inline debug
+// bypasses protocols; scalar display does too. Any-backed values read both keys.
+// The host importer rejects Any-backed primitive scalars before enrollment.
 #[cfg(feature = "execution")]
-fn formats_container(hash: Hash) -> bool {
+pub(crate) fn formats_key(hash: Hash) -> bool {
 	use crate::experimental_core::error::TypeName::*;
 	[
 		Unit,
-		Bool,
-		I64,
-		U64,
-		F64,
-		Char,
 		Ordering,
 		String,
 		Vec,
@@ -82,7 +78,13 @@ fn formats_container(hash: Hash) -> bool {
 		Take,
 	]
 	.into_iter()
-	.any(|name| name.builtin_hash() == Some(hash))
+	.any(|name| {
+		name.builtin_hash().is_some_and(|receiver| {
+			(!matches!(name, Unit | Ordering | Type)
+				&& hash == Hash::associated_function(receiver, &Protocol::DEBUG_FMT))
+				|| hash == Hash::associated_function(receiver, &Protocol::DISPLAY_FMT)
+		})
+	})
 }
 
 crate::declare_dyn_fn! {
@@ -282,7 +284,7 @@ impl TraitContext<'_> {
 	) -> Result<(), ContextError> {
 		let function = ModuleFunction {
 			#[cfg(feature = "execution")]
-			format_default: false,
+			format_default: None,
 			#[cfg(feature = "execution")]
 			host: None,
 			handler: handler.clone(),
@@ -389,7 +391,7 @@ pub struct Context {
 	#[cfg(feature = "execution")]
 	hosts: hash::Map<crate::function::host::HostBinding>,
 	#[cfg(feature = "execution")]
-	format_modified: bool,
+	format: crate::function::formatting::State,
 	/// Registered deprecation mesages for native functions.
 	deprecations: hash::Map<String>,
 	/// Information on associated types.
@@ -458,10 +460,59 @@ pub struct Context {
 	construct: hash::Map<ConstConstructImpl>,
 }
 
+// Only with_config owns this guard. Its factory list accepts only the stdio
+// boolean and calls Rune's closed std factories: no embedder callback can run
+// while exact native insertions inherit this private std provenance.
+#[cfg(feature = "execution")]
+struct StdFormatEpoch<'a> {
+	context: &'a mut Context,
+}
+#[cfg(feature = "execution")]
+impl<'a> StdFormatEpoch<'a> {
+	fn enter(context: &'a mut Context) -> Self {
+		assert!(
+			!context.format.trusted_install,
+			"default formatter installation epoch is not reentrant"
+		);
+		context.format.trusted_install = true;
+		Self { context }
+	}
+}
+#[cfg(feature = "execution")]
+impl core::ops::Deref for StdFormatEpoch<'_> {
+	type Target = Context;
+	fn deref(&self) -> &Context {
+		self.context
+	}
+}
+#[cfg(feature = "execution")]
+impl core::ops::DerefMut for StdFormatEpoch<'_> {
+	fn deref_mut(&mut self) -> &mut Context {
+		self.context
+	}
+}
+#[cfg(feature = "execution")]
+impl Drop for StdFormatEpoch<'_> {
+	fn drop(&mut self) {
+		self.context.format.trusted_install = false;
+	}
+}
+
 impl Context {
 	#[cfg(feature = "execution")]
 	pub(crate) fn formatting(&self) -> bool {
-		!self.format_modified
+		!self.format.modified
+	}
+
+	#[cfg(feature = "execution")]
+	pub(crate) fn format_snapshot(
+		&self,
+	) -> Option<crate::sync::Arc<crate::function::formatting::Certificate>> {
+		self.format.snapshot()
+	}
+	#[cfg(feature = "execution")]
+	pub(crate) fn permits_nominal_format(&self, hash: Hash) -> bool {
+		self.format.permits(hash)
 	}
 
 	/// Construct a new empty [Context].
@@ -485,48 +536,56 @@ impl Context {
 	/// * `::std::io::println`
 	pub fn with_config(#[allow(unused)] stdio: bool) -> Result<Self, ContextError> {
 		let mut this = Self::new();
+		{
+			#[cfg(feature = "execution")]
+			let mut epoch = StdFormatEpoch::enter(&mut this);
+			#[cfg(feature = "execution")]
+			let this = &mut *epoch;
+			#[cfg(not(feature = "execution"))]
+			let this = &mut this;
 
-		// NB: Order is important, since later modules might use types defined
-		// in previous modules.
+			// NB: Order is important, since later modules might use types defined
+			// in previous modules.
 
-		this.install(crate::modules::iter::module()?)?;
-		this.install(crate::modules::core::module()?)?;
-		this.install(crate::modules::cmp::module()?)?;
-		this.install(crate::modules::any::module()?)?;
-		this.install(crate::modules::clone::module()?)?;
-		this.install(crate::modules::num::module()?)?;
-		this.install(crate::modules::hash::module()?)?;
+			this.install(crate::modules::iter::module()?)?;
+			this.install(crate::modules::core::module()?)?;
+			this.install(crate::modules::cmp::module()?)?;
+			this.install(crate::modules::any::module()?)?;
+			this.install(crate::modules::clone::module()?)?;
+			this.install(crate::modules::num::module()?)?;
+			this.install(crate::modules::hash::module()?)?;
 
-		this.install(crate::modules::string::module()?)?;
-		this.install(crate::modules::bytes::module()?)?;
+			this.install(crate::modules::string::module()?)?;
+			this.install(crate::modules::bytes::module()?)?;
 
-		this.install(crate::modules::collections::module()?)?;
-		this.install(crate::modules::collections::hash_map::module()?)?;
-		this.install(crate::modules::collections::hash_set::module()?)?;
-		this.install(crate::modules::collections::vec_deque::module()?)?;
+			this.install(crate::modules::collections::module()?)?;
+			this.install(crate::modules::collections::hash_map::module()?)?;
+			this.install(crate::modules::collections::hash_set::module()?)?;
+			this.install(crate::modules::collections::vec_deque::module()?)?;
 
-		this.install(crate::modules::char::module()?)?;
-		this.install(crate::modules::f64::module()?)?;
-		this.install(crate::modules::f64::consts::module()?)?;
-		this.install(crate::modules::tuple::module()?)?;
-		this.install(crate::modules::fmt::module()?)?;
-		this.install(crate::modules::future::module()?)?;
-		this.install(crate::modules::i64::module()?)?;
-		this.install(crate::modules::u64::module()?)?;
-		this.install(crate::modules::io::module(stdio)?)?;
-		this.install(crate::modules::macros::module()?)?;
-		this.install(crate::modules::macros::builtin::module()?)?;
-		this.install(crate::modules::mem::module()?)?;
-		this.install(crate::modules::object::module()?)?;
-		this.install(crate::modules::ops::module()?)?;
-		this.install(crate::modules::ops::generator::module()?)?;
-		this.install(crate::modules::option::module()?)?;
-		this.install(crate::modules::result::module()?)?;
-		this.install(crate::modules::stream::module()?)?;
-		this.install(crate::modules::test::module()?)?;
-		this.install(crate::modules::vec::module()?)?;
-		this.install(crate::modules::slice::module()?)?;
-		this.has_default_modules = true;
+			this.install(crate::modules::char::module()?)?;
+			this.install(crate::modules::f64::module()?)?;
+			this.install(crate::modules::f64::consts::module()?)?;
+			this.install(crate::modules::tuple::module()?)?;
+			this.install(crate::modules::fmt::module()?)?;
+			this.install(crate::modules::future::module()?)?;
+			this.install(crate::modules::i64::module()?)?;
+			this.install(crate::modules::u64::module()?)?;
+			this.install(crate::modules::io::module(stdio)?)?;
+			this.install(crate::modules::macros::module()?)?;
+			this.install(crate::modules::macros::builtin::module()?)?;
+			this.install(crate::modules::mem::module()?)?;
+			this.install(crate::modules::object::module()?)?;
+			this.install(crate::modules::ops::module()?)?;
+			this.install(crate::modules::ops::generator::module()?)?;
+			this.install(crate::modules::option::module()?)?;
+			this.install(crate::modules::result::module()?)?;
+			this.install(crate::modules::stream::module()?)?;
+			this.install(crate::modules::test::module()?)?;
+			this.install(crate::modules::vec::module()?)?;
+			this.install(crate::modules::slice::module()?)?;
+			this.has_default_modules = true;
+		}
 		Ok(this)
 	}
 
@@ -558,6 +617,8 @@ impl Context {
 			self.constants.try_clone()?,
 			self.construct.try_clone()?,
 			self.deprecations.try_clone()?,
+			#[cfg(feature = "execution")]
+			self.format.snapshot(),
 		))
 	}
 
@@ -1261,7 +1322,14 @@ impl Context {
 								});
 							}
 
-							self.insert_native_fn(&ty.type_info, ty.hash, &c.handler, None)?;
+							self.insert_native_fn(
+								&ty.type_info,
+								ty.hash,
+								&c.handler,
+								None,
+								#[cfg(feature = "execution")]
+								false,
+							)?;
 							Some(signature)
 						}
 						None => None,
@@ -1343,6 +1411,8 @@ impl Context {
 								hash,
 								&c.handler,
 								variant.deprecated.as_deref(),
+								#[cfg(feature = "execution")]
+								false,
 							)?;
 							Some(signature)
 						} else {
@@ -1585,7 +1655,14 @@ impl Context {
 
 				let signature = meta::Signature::from_context(&f.doc, &m.common)?;
 
-				self.insert_native_fn(&m.item, m.hash, &f.handler, m.common.deprecated.as_deref())?;
+				self.insert_native_fn(
+					&m.item,
+					m.hash,
+					&f.handler,
+					m.common.deprecated.as_deref(),
+					#[cfg(feature = "execution")]
+					false,
+				)?;
 
 				meta::Kind::Function {
 					associated: None,
@@ -1638,15 +1715,6 @@ impl Context {
 	}
 
 	fn install_associated(&mut self, assoc: &ModuleAssociated) -> Result<(), ContextError> {
-		// Refuse after an untrusted provider for a new-rendered type, even on failure.
-		// Module/raw/trait registration all enter here; no runtime path is changed.
-		#[cfg(feature = "execution")]
-		if matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::DEBUG_FMT.hash || p.hash == Protocol::DISPLAY_FMT.hash)
-			&& matches!(&assoc.kind, ModuleAssociatedKind::Function(f) if !f.format_default)
-			&& formats_container(assoc.container)
-		{
-			self.format_modified = true;
-		}
 		let base = assoc.name.kind.hash(assoc.container);
 		let hash = base.with_function_parameters(assoc.name.function_parameters);
 		#[cfg(feature = "execution")]
@@ -1843,6 +1911,8 @@ impl Context {
 						*hash,
 						&f.handler,
 						assoc.common.deprecated.as_deref(),
+						#[cfg(feature = "execution")]
+						(f.format_default == Some(*hash)),
 					)?;
 				}
 
@@ -1851,6 +1921,8 @@ impl Context {
 					hash,
 					&f.handler,
 					assoc.common.deprecated.as_deref(),
+					#[cfg(feature = "execution")]
+					(f.format_default == Some(hash)),
 				)?;
 
 				meta::Kind::Function {
@@ -1919,7 +1991,10 @@ impl Context {
 		hash: Hash,
 		handler: &FunctionHandler,
 		deprecation: Option<&str>,
+		#[cfg(feature = "execution")] format_default: bool,
 	) -> Result<(), ContextError> {
+		#[cfg(feature = "execution")]
+		self.format.begin(hash, format_default)?;
 		#[cfg(feature = "execution")]
 		self.numeric.invalidate_hash(hash);
 		#[cfg(feature = "execution")]
@@ -2114,7 +2189,14 @@ impl Context {
 		hash: Hash,
 		handler: FunctionHandler,
 	) -> Result<(), ContextError> {
-		self.insert_native_fn(&"C13 raw fixture", hash, &handler, None)
+		self.insert_native_fn(
+			&"C13 raw fixture",
+			hash,
+			&handler,
+			None,
+			#[cfg(feature = "execution")]
+			false,
+		)
 	}
 }
 
@@ -2128,5 +2210,135 @@ mod c18b3c_vec_constructor_certificates {
 			VEC_CONSTRUCTOR_RECEIVER,
 			Hash::type_hash(crate::item!(::std::vec::Vec))
 		);
+	}
+}
+
+#[cfg(all(test, feature = "execution"))]
+mod formatter_epoch_tests {
+	use super::*;
+	fn public_install_is_untrusted(context: &mut Context) {
+		assert!(!context.format.trusted_install);
+		let mut module = Module::with_crate("after_epoch").unwrap();
+		module.host_function("probe", || 7i64).unwrap();
+		context.install(module).unwrap();
+		assert!(context.format_snapshot().is_some());
+	}
+	#[test]
+	fn public_installs_after_default_construction_do_not_inherit_the_epoch() {
+		for stdio in [false, true] {
+			let mut context = Context::with_config(stdio).unwrap();
+			assert!(context.format_snapshot().is_none());
+			public_install_is_untrusted(&mut context);
+		}
+	}
+	#[test]
+	fn partial_failure_and_unwind_clear_the_non_reentrant_guard() {
+		let mut failed = Context::new();
+		let mut fail = || -> core::result::Result<(), ()> {
+			let mut epoch = StdFormatEpoch::enter(&mut failed);
+			epoch
+				.install(crate::modules::core::module().unwrap())
+				.unwrap();
+			epoch
+				.install(crate::modules::char::module().unwrap())
+				.unwrap();
+			Err(())
+		};
+		let result = fail();
+		assert!(result.is_err());
+		public_install_is_untrusted(&mut failed);
+		let mut panicked = Context::new();
+		let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+			let mut epoch = StdFormatEpoch::enter(&mut panicked);
+			epoch
+				.install(crate::modules::core::module().unwrap())
+				.unwrap();
+			epoch
+				.install(crate::modules::char::module().unwrap())
+				.unwrap();
+			panic!("epoch unwind control");
+		}));
+		assert!(result.is_err());
+		public_install_is_untrusted(&mut panicked);
+		let mut context = Context::new();
+		{
+			let mut epoch = StdFormatEpoch::enter(&mut context);
+			let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+				let _nested = StdFormatEpoch::enter(&mut epoch);
+			}));
+			assert!(result.is_err());
+			assert!(epoch.format.trusted_install);
+		}
+		public_install_is_untrusted(&mut context);
+	}
+	#[test]
+	fn appended_functions_on_returned_std_modules_never_inherit_default_provenance() {
+		let mut module = crate::modules::char::module().unwrap();
+		module.host_function("external", || 7i64).unwrap();
+		let mut context = Context::with_default_modules().unwrap();
+		assert!(context.format_snapshot().is_none());
+		// Use the production item-install path for the new appended function,
+		// without replaying std type declarations already installed above.
+		context.install_item(module.items.last().unwrap()).unwrap();
+		assert!(context.format_snapshot().is_some());
+		assert!(!context.format.trusted_install);
+	}
+
+	#[test]
+	fn constructor_calls_only_the_reviewed_closed_std_factory_list() {
+		let source = include_str!("context.rs");
+		let begin = source.find("pub fn with_config(").unwrap();
+		let end = source[begin..]
+			.find("pub fn with_default_modules(")
+			.unwrap() + begin;
+		let actual: std::vec::Vec<_> = source[begin..end]
+			.lines()
+			.filter_map(|line| {
+				line.trim()
+					.strip_prefix("this.install(")
+					.map(|v| v.strip_suffix(")?;").unwrap())
+			})
+			.collect();
+		let expected = [
+			"crate::modules::iter::module()?",
+			"crate::modules::core::module()?",
+			"crate::modules::cmp::module()?",
+			"crate::modules::any::module()?",
+			"crate::modules::clone::module()?",
+			"crate::modules::num::module()?",
+			"crate::modules::hash::module()?",
+			"crate::modules::string::module()?",
+			"crate::modules::bytes::module()?",
+			"crate::modules::collections::module()?",
+			"crate::modules::collections::hash_map::module()?",
+			"crate::modules::collections::hash_set::module()?",
+			"crate::modules::collections::vec_deque::module()?",
+			"crate::modules::char::module()?",
+			"crate::modules::f64::module()?",
+			"crate::modules::f64::consts::module()?",
+			"crate::modules::tuple::module()?",
+			"crate::modules::fmt::module()?",
+			"crate::modules::future::module()?",
+			"crate::modules::i64::module()?",
+			"crate::modules::u64::module()?",
+			"crate::modules::io::module(stdio)?",
+			"crate::modules::macros::module()?",
+			"crate::modules::macros::builtin::module()?",
+			"crate::modules::mem::module()?",
+			"crate::modules::object::module()?",
+			"crate::modules::ops::module()?",
+			"crate::modules::ops::generator::module()?",
+			"crate::modules::option::module()?",
+			"crate::modules::result::module()?",
+			"crate::modules::stream::module()?",
+			"crate::modules::test::module()?",
+			"crate::modules::vec::module()?",
+			"crate::modules::slice::module()?",
+		];
+		assert_eq!(actual, expected);
+		assert!(expected
+			.iter()
+			.all(|factory| factory.starts_with("crate::modules::")
+				&& (factory.ends_with("module()?") || factory.ends_with("module(stdio)?"))));
 	}
 }

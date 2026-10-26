@@ -2044,6 +2044,10 @@ impl Code {
 	pub(crate) fn host(&self, id: u32) -> Option<&crate::function::host::HostBinding> {
 		host_binding(&self.hosts, id)
 	}
+	/// Immutable inputs for the cold entry boundary's equivalent host validation.
+	pub(crate) fn host_validation_parts(&self) -> (&[crate::function::host::HostBinding], bool) {
+		(&self.hosts, !self.absent.is_empty())
+	}
 	pub(crate) fn validate_hosts(
 		&self,
 		runtime: Option<&crate::runtime::RuntimeContext>,
@@ -3722,4 +3726,16 @@ pub(crate) fn c11_depth_metadata(program: &super::frontend::Program) -> serde_js
 		found.unwrap()
 	};
 	json!({"main_id":main,"compare_id":compare,"helper_id":helper,"main_sort_site":location(main),"compare_sort_site":location(compare),"helper_transparent":program.code.function(helper).unwrap().is_transparent_sort(),"functions":(0..program.code.functions()).map(|id|{let f=program.code.function(id as u32).unwrap();json!({"id":id,"slots":f.slots,"parameters":f.parameters})}).collect::<std::vec::Vec<_>>()})
+}
+
+#[cfg(test)]
+impl Code {
+	/// Corrupt a sealed fixture only, to compare both entry validators' defenses.
+	pub(crate) fn invalidate_host_signature_for_test(&mut self) {
+		self.hosts
+			.first_mut()
+			.expect("fixture host binding")
+			.signature
+			.arity = 5;
+	}
 }

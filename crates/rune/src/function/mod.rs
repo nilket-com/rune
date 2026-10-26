@@ -356,3 +356,6 @@ pub(crate) mod numeric;
 
 #[cfg(feature = "execution")]
 pub(crate) mod clone;
+
+#[cfg(feature = "execution")]
+pub(crate) mod formatting;

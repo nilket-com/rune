@@ -7,7 +7,7 @@
 
 /// An entry of one store. Crate-private fields: nothing outside the crate can
 /// construct or inspect one.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct Handle {
 	pub(crate) slot: u32,
 	pub(crate) generation: u32,

@@ -187,7 +187,7 @@ fn duplicate_function_insert_and_nonfunction_alias_close_selected_names() {
 	let hash = Pair::F64Abs.item();
 	let handler = cx.functions.get(&hash).unwrap().clone();
 	assert!(cx
-		.insert_native_fn(&f64::type_info(), hash, &handler, None)
+		.insert_native_fn(&f64::type_info(), hash, &handler, None, false)
 		.is_err());
 	matrix(&cx, [false, true, true], [false, true, true, true]);
 	let mut cx = Context::with_default_modules().unwrap();

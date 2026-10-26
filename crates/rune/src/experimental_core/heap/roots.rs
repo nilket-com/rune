@@ -8,7 +8,8 @@
 //! tags, keys and roots WITHOUT allocating, and only then copies into a
 //! scratch buffer that is never larger than the payload it has just checked
 //! against the store's byte cap (so scratch plus payload stay within twice
-//! the cap for the duration of one call). Invocation arguments need no proportional scratch;
+//! the cap for the duration of one call). Default-authority invocation arguments need no proportional scratch;
+//! non-default formatter admission uses fallible graph scratch before effects;
 //! existing diagnostic and program allocation sites remain in the inventory.
 
 use super::{err, Store};

@@ -608,6 +608,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 		}
 
 		if let Some(item) = self.constants.enum_item(hash) {
+			if !self.context.permits_nominal_format(hash) {
+				return Err(self.refused(span, Refusal::Native));
+			}
 			return self
 				.transaction
 				.stage(hash.into_inner(), format_args!("{}", self.pool.item(item)))
@@ -626,8 +629,12 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 	/// Identity is the type hash; presentation uses its real item path. The
 	/// append-only table keeps the first published name for that identity.
 	fn struct_tag(&mut self, hash: Hash, span: Span) -> Result<Type> {
+		// Legacy Dynamic dispatch uses an enum's hash, never its variant hash.
 		if self.constants.variant_shape(hash).is_some() {
 			return self.variant_tag(hash, span);
+		}
+		if !self.context.permits_nominal_format(hash) {
+			return Err(self.refused(span, Refusal::Native));
 		}
 		let shape = self
 			.constants
@@ -655,6 +662,9 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			.constants
 			.variant_shape(hash)
 			.ok_or_else(|| self.refused(span, Refusal::Pattern))?;
+		if !self.context.permits_nominal_format(shape.enum_hash) {
+			return Err(self.refused(span, Refusal::Native));
+		}
 		let kind = match shape.fields {
 			crate::compile::meta::Fields::Empty => super::nominal::Shape::Empty,
 			crate::compile::meta::Fields::Unnamed(n) => super::nominal::Shape::Tuple(

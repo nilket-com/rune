@@ -27,11 +27,41 @@ pub struct SourceRecord {
 	pub text: String,
 }
 
+/// Immutable compile authority and entry policy with their tag computed once at preparation.
+/// The tag and certificate cannot be changed independently after construction.
+pub(crate) struct FormatAuthority {
+	certificate: Option<crate::sync::Arc<crate::function::formatting::Certificate>>,
+	guard: u8,
+}
+
+impl FormatAuthority {
+	pub(super) fn new(
+		certificate: Option<crate::sync::Arc<crate::function::formatting::Certificate>>,
+		has_entry_policy: bool,
+	) -> Self {
+		Self {
+			guard: u8::from(certificate.is_some() | has_entry_policy),
+			certificate,
+		}
+	}
+
+	pub(super) fn guard(&self) -> u8 {
+		self.guard
+	}
+
+	pub(crate) fn as_ref(
+		&self,
+	) -> Option<&crate::sync::Arc<crate::function::formatting::Certificate>> {
+		self.certificate.as_ref()
+	}
+}
+
 /// A compiled program, run by an
 /// [`Executor`](crate::experimental_core::execute::Executor).
 ///
 /// Function values made by one program are foreign to every other program.
 pub struct Program {
+	pub(crate) formatting: FormatAuthority,
 	pub(crate) code: Code,
 	functions: Vec<Hash>,
 	entry_ineligible: Vec<u32>,
@@ -43,10 +73,28 @@ impl Program {
 	pub(crate) fn for_diagnostics_test(code: Code) -> Self {
 		Self {
 			code,
+			formatting: FormatAuthority::new(None, false),
 			functions: Vec::new(),
 			entry_ineligible: Vec::new(),
 			sources: Vec::new(),
 		}
+	}
+
+	#[cfg(test)]
+	fn refresh_entry_guard_for_test(&mut self) {
+		self.formatting = FormatAuthority::new(
+			self.formatting.certificate.clone(),
+			!self.entry_ineligible.is_empty(),
+		);
+	}
+
+	#[cfg(test)]
+	pub(super) fn assert_entry_guard_for_test(&self) {
+		assert_eq!(
+			self.formatting.guard(),
+			u8::from(self.formatting.as_ref().is_some() | !self.entry_ineligible.is_empty()),
+			"stale fixture entry guard; refresh after changing entry policy"
+		);
 	}
 
 	/// Source records for rendering error locations after frontend teardown.
@@ -76,6 +124,8 @@ impl Program {
 	/// [`Executor::invoke`](crate::experimental_core::execute::Executor::invoke).
 	///
 	/// Lookup does not imply host entry eligibility; see [`Self::entry_eligible`].
+	/// Non-default formatter authority can also refuse an invocation before
+	/// execution based on its runtime certificate or reachable argument graph.
 	///
 	/// For a top-level `pub fn main`, `hash` is `Hash::type_hash(["main"])`.
 	pub fn function(&self, hash: Hash) -> Option<u32> {
@@ -419,7 +469,10 @@ impl Collector {
 			self.transaction.push(function)?;
 		}
 
+		let formatting =
+			FormatAuthority::new(context.format_snapshot(), !entry_ineligible.is_empty());
 		Ok(Program {
+			formatting,
 			code: self.transaction.finish()?,
 			functions,
 			entry_ineligible,

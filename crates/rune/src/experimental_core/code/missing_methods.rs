@@ -179,7 +179,7 @@ impl CompileTransaction {
 impl Code {
 	#[cold]
 	#[inline(never)]
-	pub(super) fn validate_absence(
+	pub(crate) fn validate_absence(
 		&self,
 		runtime: Option<&crate::runtime::RuntimeContext>,
 	) -> Result<()> {

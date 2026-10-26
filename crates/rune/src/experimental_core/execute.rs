@@ -349,6 +349,8 @@ pub struct Executor {
 	format_limits: FormatLimits,
 	limits: ExecutorLimits,
 	configured_host_runtime: Option<crate::sync::Arc<crate::runtime::RuntimeContext>>,
+	// Integer tag so the cold-arm predicate combines both authorities before branching.
+	runtime_format_guard: u8,
 	active_host_runtime: Option<crate::sync::Arc<crate::runtime::RuntimeContext>>,
 	pending_host_message: Option<Box<str>>,
 	pending_host_cleanup: Option<Error>,
@@ -410,6 +412,7 @@ impl Executor {
 			format_limits: FormatLimits::default(),
 			limits,
 			configured_host_runtime: None,
+			runtime_format_guard: 0,
 			active_host_runtime: None,
 			pending_host_message: None,
 			pending_host_cleanup: None,
@@ -462,6 +465,8 @@ impl Executor {
 		if !self.is_idle() || self.active_host_runtime.is_some() {
 			return Err(error(ErrorKind::InvalidCode));
 		}
+		self.runtime_format_guard =
+			u8::from(runtime.as_ref().is_some_and(|r| r.formatting.is_some()));
 		self.configured_host_runtime = runtime;
 		Ok(())
 	}
@@ -505,8 +510,11 @@ impl Executor {
 	/// The function, its
 	/// arity and then every argument root (closed-store policy, store,
 	/// generation) are checked before any argument is retained: a refused
-	/// argument retains nothing. Argument validation and transfer use no
+	/// argument retains nothing. With default formatter authority, argument validation and transfer use no
 	/// proportional scratch: arguments go straight from roots into the frame.
+	/// Non-default authority first validates the reachable argument graph with
+	/// fallible scratch bounded by its unique nodes. Unsafe nominal dispatch
+	/// returns Entry before effects; scratch failure returns Allocation.
 	/// Invocation setup can still reserve diagnostics after a previous failure. The returned root owns the
 	/// frame's single return reference. The executor is left clean and may be
 	/// invoked again after success, a run-time error, a fuel halt or
@@ -520,21 +528,36 @@ impl Executor {
 		args: &[&Root],
 		fuel: usize,
 	) -> core::result::Result<Root, Failure> {
-		if program.entry_refused(function) {
-			return Err(Failure {
-				numeric_context: None,
-				error: Error::refused(super::error::Refusal::Entry),
-				missing_key: None,
-				panic_message: None,
-				host_message: None,
-				call_chain: Vec::new(),
-				cleanup_error: None,
-			});
+		#[cfg(test)]
+		program.assert_entry_guard_for_test();
+		// The former entry-policy branch also guards non-default formatting.
+		// Both tags are cached at preparation; default authority with no internal
+		// entry policy takes one branch and keeps the ordinary Code-only path.
+		if (program.formatting.guard() | self.runtime_format_guard) != 0 {
+			if let Err(error) = self.validate_format_entry(
+				Some(program),
+				(&program.code, function),
+				program.formatting.as_ref(),
+				store,
+				args,
+			) {
+				return Err(Failure {
+					numeric_context: None,
+					error,
+					missing_key: None,
+					panic_message: None,
+					host_message: None,
+					call_chain: Vec::new(),
+					cleanup_error: None,
+				});
+			}
 		}
-		self.invoke_code(&program.code, store, function, args, fuel)
+		self.invoke_checked(&program.code, store, function, args, fuel)
 	}
 
-	/// Crate-internal entry over hand-built `Code` (tests); same checked path.
+	/// Test-only hand-built Code has no compile Context. Use the explicitly
+	/// configured runtime's certificate, and run the same checked entry path.
+	#[cfg(test)]
 	pub(crate) fn invoke_code(
 		&mut self,
 		code: &Code,
@@ -543,6 +566,37 @@ impl Executor {
 		args: &[&Root],
 		fuel: usize,
 	) -> core::result::Result<Root, Failure> {
+		let authority = self
+			.configured_host_runtime
+			.as_ref()
+			.and_then(|r| r.formatting.clone());
+		if authority.is_some() {
+			if let Err(error) =
+				self.validate_format_entry(None, (code, function), authority.as_ref(), store, args)
+			{
+				return Err(Failure {
+					numeric_context: None,
+					error,
+					missing_key: None,
+					panic_message: None,
+					host_message: None,
+					call_chain: Vec::new(),
+					cleanup_error: None,
+				});
+			}
+		}
+		self.invoke_checked(code, store, function, args, fuel)
+	}
+
+	fn invoke_checked(
+		&mut self,
+		code: &Code,
+		store: &mut Store,
+		function: u32,
+		args: &[&Root],
+		fuel: usize,
+	) -> core::result::Result<Root, Failure> {
+		// Keep the ordinary Code-only admission path independent of cold policy work.
 		let admission = (|| {
 			if store.is_closed() {
 				return Err(error(ErrorKind::ClosedStore));
@@ -587,6 +641,78 @@ impl Executor {
 		};
 		self.active_host_runtime = None;
 		result.map(|value| store.export(value))
+	}
+
+	#[cold]
+	#[inline(never)]
+	fn validate_format_entry(
+		&self,
+		program: Option<&Program>,
+		entry: (&Code, u32),
+		expected: Option<&crate::sync::Arc<crate::function::formatting::Certificate>>,
+		store: &Store,
+		args: &[&Root],
+	) -> Result<()> {
+		use super::error::Refusal;
+		if program.is_some_and(|program| program.entry_refused(entry.1)) {
+			return Err(Error::refused(Refusal::Entry));
+		}
+		// A default-authority program may arrive only for its internal entry policy.
+		// Keep that policy check alone; ordinary admission still happens below.
+		if expected.is_none() && self.runtime_format_guard == 0 {
+			return Ok(());
+		}
+		// Guarded formatting repeats this read-only preflight so the ordinary
+		// Code-only admission path remains independent of cold policy work.
+		// Preserve used-host InvalidCode before formatter authority refusals.
+		let (code, function) = entry;
+		if store.is_closed() {
+			return Err(error(ErrorKind::ClosedStore));
+		}
+		if !self.is_idle() || self.active_host_runtime.is_some() {
+			return Err(error(ErrorKind::InvalidCode));
+		}
+		let entry = code
+			.function(function)
+			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+		if args.len() != entry.parameters as usize {
+			// Stock raises the same error when an embedder calls an entry
+			// with the wrong count.
+			let mut error = error(ErrorKind::ArgumentCount);
+			error.detail = Detail::Arity {
+				given: u32::try_from(args.len()).unwrap_or(u32::MAX),
+				expected: entry.parameters,
+			};
+			return Err(error);
+		}
+		// Keep the ordinary validator's hot call graph unchanged. These immutable
+		// inputs repeat its binding, signature, handler identity and absence checks.
+		let runtime = self.configured_host_runtime.as_deref();
+		let invalid = || Error::new(ErrorKind::InvalidCode, "validate code");
+		let (bindings, has_absent) = code.host_validation_parts();
+		for binding in bindings {
+			let actual = runtime
+				.and_then(|runtime| runtime.function(&binding.hash))
+				.ok_or_else(invalid)?;
+			if !binding.signature.valid() || !binding.handler.same_allocation(actual) {
+				return Err(invalid());
+			}
+		}
+		if has_absent {
+			code.validate_absence(runtime)?;
+		}
+
+		if let Some(runtime) = self.configured_host_runtime.as_ref() {
+			match (expected, runtime.formatting.as_ref()) {
+				(Some(a), Some(b)) if crate::sync::Arc::ptr_eq(a, b) || a.equivalent(b) => {}
+				(None, None) => {}
+				_ => return Err(Error::refused(Refusal::Entry)),
+			}
+		}
+		if let Some(certificate) = expected {
+			store.validate_format_roots(args, certificate)?;
+		}
+		Ok(())
 	}
 
 	#[inline(never)]
@@ -2902,3 +3028,6 @@ mod d1e_frame_tests {
 		assert_eq!(frames[2].role, crate::runtime::LogicalFrameRole::Caller);
 	}
 }
+
+#[cfg(test)]
+mod entry_authority_tests;

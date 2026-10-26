@@ -11,6 +11,7 @@ use crate::alloc::{Box, String, Vec};
 use core::mem::size_of;
 use core::sync::atomic::{AtomicU64, Ordering};
 
+mod admission;
 mod cloning;
 mod comparison;
 mod formatting;

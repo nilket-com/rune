@@ -1367,7 +1367,7 @@ impl Module {
 			common: ModuleItemCommon { docs, deprecated },
 			kind: ModuleItemKind::Function(ModuleFunction {
 				#[cfg(feature = "execution")]
-				format_default: false,
+				format_default: None,
 				handler: data.handler,
 				#[cfg(feature = "execution")]
 				host: data.host,
@@ -1424,7 +1424,7 @@ impl Module {
 			common: ModuleItemCommon { docs, deprecated },
 			kind: ModuleAssociatedKind::Function(ModuleFunction {
 				#[cfg(feature = "execution")]
-				format_default: false,
+				format_default: None,
 				#[cfg(feature = "execution")]
 				host: None,
 				handler: data.handler,
@@ -1604,7 +1604,13 @@ impl Module {
 			if matches!(&assoc.name.kind, meta::AssociatedKind::Protocol(p) if p.hash == Protocol::DEBUG_FMT.hash || p.hash == Protocol::DISPLAY_FMT.hash)
 			{
 				if let ModuleAssociatedKind::Function(f) = &mut assoc.kind {
-					f.format_default = true;
+					f.format_default = Some(
+						assoc
+							.name
+							.kind
+							.hash(assoc.container)
+							.with_function_parameters(assoc.name.function_parameters),
+					);
 				}
 			}
 		}
