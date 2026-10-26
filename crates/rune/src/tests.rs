@@ -621,3 +621,6 @@ mod vm_try;
 mod wildcard_imports;
 #[cfg(not(miri))]
 mod workspace;
+
+#[cfg(all(feature = "native-code", unix))]
+mod verification_awfy;

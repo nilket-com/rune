@@ -1,0 +1,151 @@
+{
+ "core::option::Option<rune::experimental_core::detail::Detail>": {
+  "align": 8,
+  "fields": [
+   {
+    "artificial": true,
+    "bitpos": 0,
+    "name": null,
+    "size": 1,
+    "type": "u8"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "name": "None",
+    "size": 32,
+    "type": "core::option::Option<rune::experimental_core::detail::Detail>::None"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "name": "Some",
+    "size": 32,
+    "type": "core::option::Option<rune::experimental_core::detail::Detail>::Some"
+   }
+  ],
+  "size": 32
+ },
+ "rune::experimental_core::detail::Detail::Coerce": {
+  "align": 8,
+  "fields": [
+   {
+    "artificial": false,
+    "bitpos": 64,
+    "name": "value",
+    "size": 16,
+    "type": "rune::experimental_core::detail::IntValue"
+   },
+   {
+    "artificial": false,
+    "bitpos": 8,
+    "name": "to",
+    "size": 1,
+    "type": "rune::experimental_core::detail::IntTarget"
+   }
+  ],
+  "size": 32
+ },
+ "rune::experimental_core::detail::Detail::NumericArgumentCoerce": {
+  "align": 8,
+  "fields": [
+   {
+    "artificial": false,
+    "bitpos": 16,
+    "name": "cause",
+    "size": 1,
+    "type": "rune::experimental_core::detail::HostCause"
+   },
+   {
+    "artificial": false,
+    "bitpos": 8,
+    "name": "arg",
+    "size": 1,
+    "type": "u8"
+   },
+   {
+    "artificial": false,
+    "bitpos": 64,
+    "name": "value",
+    "size": 16,
+    "type": "rune::experimental_core::detail::IntValue"
+   },
+   {
+    "artificial": false,
+    "bitpos": 24,
+    "name": "to",
+    "size": 1,
+    "type": "rune::experimental_core::detail::IntTarget"
+   }
+  ],
+  "size": 32
+ },
+ "rune::experimental_core::detail::IntTarget": {
+  "align": 1,
+  "fields": [
+   {
+    "artificial": false,
+    "bitpos": null,
+    "name": "rune::experimental_core::detail::IntTarget::I64",
+    "size": null,
+    "type": "None"
+   },
+   {
+    "artificial": false,
+    "bitpos": null,
+    "name": "rune::experimental_core::detail::IntTarget::U64",
+    "size": null,
+    "type": "None"
+   },
+   {
+    "artificial": false,
+    "bitpos": null,
+    "name": "rune::experimental_core::detail::IntTarget::U32",
+    "size": null,
+    "type": "None"
+   },
+   {
+    "artificial": false,
+    "bitpos": null,
+    "name": "rune::experimental_core::detail::IntTarget::I32",
+    "size": null,
+    "type": "None"
+   },
+   {
+    "artificial": false,
+    "bitpos": null,
+    "name": "rune::experimental_core::detail::IntTarget::Usize",
+    "size": null,
+    "type": "None"
+   }
+  ],
+  "size": 1
+ },
+ "rune::experimental_core::detail::IntValue": {
+  "align": 8,
+  "fields": [
+   {
+    "artificial": true,
+    "bitpos": 0,
+    "name": null,
+    "size": 8,
+    "type": "u64"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "name": "Signed",
+    "size": 16,
+    "type": "rune::experimental_core::detail::IntValue::Signed"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "name": "Unsigned",
+    "size": 16,
+    "type": "rune::experimental_core::detail::IntValue::Unsigned"
+   }
+  ],
+  "size": 16
+ }
+}

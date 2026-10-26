@@ -1,0 +1,4036 @@
+{
+  "base": "1743ba88fedab49c735f1b9d7d4589ffb71b7375",
+  "authority": 20056,
+  "stage": "STEP0_PROPOSAL",
+  "class5_panic_rows": 7,
+  "callback_frame_rows": 19,
+  "overlap": 3,
+  "moved_parent_chain_rows": 1,
+  "unique_rows": 24,
+  "rows": [
+    {
+      "family": "callback_sort",
+      "key": "44",
+      "label": "failure/panic",
+      "source": "fn compare(a,b){c11::tick(a,b);panic!(\"c11 comparator\")}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "71c4118e5f2a40d640f35fa1853b809d93610810d78649b039bbfd6953a84d13",
+      "scope": [
+        "class5-panic",
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: c11 comparator",
+          "kind": "Panic { reason: Panic { inner: \"c11 comparator\" } }",
+          "sites": [
+            {
+              "end": 55,
+              "frames": "[]",
+              "source": 0,
+              "start": 31
+            },
+            {
+              "end": 96,
+              "frames": "[]",
+              "source": 0,
+              "start": 78
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "Panic { reason: Panic { inner: \"c11 comparator\" } }"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: c11 comparator",
+          "kind": "Panic { reason: Panic { inner: \"c11 comparator\" } }",
+          "sites": [
+            {
+              "end": 55,
+              "frames": "[{\"end\":96,\"source\":0,\"start\":78}]",
+              "source": 0,
+              "start": 31
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "Panic { reason: Panic { inner: \"c11 comparator\" } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/044/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 55
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 96,
+              "source": 0,
+              "start": 78
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 55
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 96,
+              "source": 0,
+              "start": 78
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Panicked: c11 comparator",
+          "fresh": "Panicked: c11 comparator"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 44,
+          "label": "failure/panic",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "71c4118e5f2a40d640f35fa1853b809d93610810d78649b039bbfd6953a84d13",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28612c62293b70616e696321282263313120636f6d70617261746f7222297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 96,
+                "source": 0,
+                "start": 78
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 55,
+                "frames": "[{\"end\":96,\"source\":0,\"start\":78}]",
+                "source": 0,
+                "start": 31
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 96,
+                "frames": "[]",
+                "source": 0,
+                "start": 78
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 55,
+                "frames": "[]",
+                "source": 0,
+                "start": 31
+              },
+              {
+                "end": 96,
+                "frames": "[]",
+                "source": 0,
+                "start": 78
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "89",
+      "label": "frames/caller-chain",
+      "source": "fn compare(a,b){c11::tick(a,b);panic!(\"inner failure\")}\npub fn main(v,state){outer(v);v}\nfn inner(v){v.sort_by(compare);} fn outer(v){inner(v);}\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "0a50e5ca140f081223fa3bf83d60a36d6c7dcf8de95345e787b7c8cc63511714",
+      "scope": [
+        "class5-panic",
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: inner failure",
+          "kind": "Panic { reason: Panic { inner: \"inner failure\" } }",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[]",
+              "source": 0,
+              "start": 31
+            },
+            {
+              "end": 119,
+              "frames": "[CallFrame { ip: 3, top: 0, isolated: None, out: discard }, CallFrame { ip: 12, top: 3, isolated: None, out: discard }]",
+              "source": 0,
+              "start": 101
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "Panic { reason: Panic { inner: \"inner failure\" } }"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: inner failure",
+          "kind": "Panic { reason: Panic { inner: \"inner failure\" } }",
+          "sites": [
+            {
+              "end": 54,
+              "frames": "[{\"end\":119,\"source\":0,\"start\":101},{\"end\":142,\"source\":0,\"start\":134},{\"end\":85,\"source\":0,\"start\":77}]",
+              "source": 0,
+              "start": 31
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "Panic { reason: Panic { inner: \"inner failure\" } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/089/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 54
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 119,
+              "source": 0,
+              "start": 101
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 142,
+              "source": 0,
+              "start": 134
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 85,
+              "source": 0,
+              "start": 77
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 54
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 119,
+              "source": 0,
+              "start": 101
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 142,
+              "source": 0,
+              "start": 134
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 85,
+              "source": 0,
+              "start": 77
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Panicked: inner failure",
+          "fresh": "Panicked: inner failure"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)",
+        "inner(v)",
+        "outer(v)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 89,
+          "label": "frames/caller-chain",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "0a50e5ca140f081223fa3bf83d60a36d6c7dcf8de95345e787b7c8cc63511714",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28612c62293b70616e6963212822696e6e6572206661696c75726522297d0a70756220666e206d61696e28762c7374617465297b6f757465722876293b767d0a666e20696e6e65722876297b762e736f72745f627928636f6d70617265293b7d20666e206f757465722876297b696e6e65722876293b7d0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 119,
+                "source": 0,
+                "start": 101
+              },
+              {
+                "end": 142,
+                "source": 0,
+                "start": 134
+              },
+              {
+                "end": 85,
+                "source": 0,
+                "start": 77
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529",
+              "696e6e6572287629",
+              "6f75746572287629"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 54,
+                "frames": "[{\"end\":119,\"source\":0,\"start\":101},{\"end\":142,\"source\":0,\"start\":134},{\"end\":85,\"source\":0,\"start\":77}]",
+                "source": 0,
+                "start": 31
+              }
+            ],
+            "legacy_counts": [
+              2
+            ],
+            "mapped_callers": [
+              {
+                "end": 119,
+                "frames": "[]",
+                "source": 0,
+                "start": 101
+              },
+              {
+                "end": 142,
+                "frames": "[]",
+                "source": 0,
+                "start": 134
+              },
+              {
+                "end": 85,
+                "frames": "[]",
+                "source": 0,
+                "start": 77
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 54,
+                "frames": "[]",
+                "source": 0,
+                "start": 31
+              },
+              {
+                "end": 119,
+                "frames": "[CallFrame { ip: 3, top: 0, isolated: None, out: discard }, CallFrame { ip: 12, top: 3, isolated: None, out: discard }]",
+                "source": 0,
+                "start": 101
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "98",
+      "label": "nested/different-error",
+      "source": "fn compare(a,b){c11::tick(a,b);let w=[3,1,2];w.sort_by(inner);a.cmp(b)}\npub fn main(v,state){v.sort_by(compare);v}\nfn inner(a,b){c11::mark(\"inner\");panic!(\"nested\")}\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "198fdfb013c2261bacd33705752b46ffc42b18b4cf478a5109f288387a9c8264",
+      "scope": [
+        "class5-panic",
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: nested",
+          "kind": "Panic { reason: Panic { inner: \"nested\" } }",
+          "sites": [
+            {
+              "end": 164,
+              "frames": "[]",
+              "source": 0,
+              "start": 148
+            },
+            {
+              "end": 61,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            },
+            {
+              "end": 111,
+              "frames": "[]",
+              "source": 0,
+              "start": 93
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "Panic { reason: Panic { inner: \"nested\" } }"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: nested",
+          "kind": "Panic { reason: Panic { inner: \"nested\" } }",
+          "sites": [
+            {
+              "end": 164,
+              "frames": "[{\"end\":61,\"source\":0,\"start\":45},{\"end\":111,\"source\":0,\"start\":93}]",
+              "source": 0,
+              "start": 148
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "Panic { reason: Panic { inner: \"nested\" } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/098/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 148,
+              "end": 164
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 61,
+              "source": 0,
+              "start": 45
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 111,
+              "source": 0,
+              "start": 93
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 148,
+              "end": 164
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 61,
+              "source": 0,
+              "start": 45
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 111,
+              "source": 0,
+              "start": 93
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Panicked: nested",
+          "fresh": "Panicked: nested"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "w.sort_by(inner)",
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 98,
+          "label": "nested/different-error",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "198fdfb013c2261bacd33705752b46ffc42b18b4cf478a5109f288387a9c8264",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28612c62293b6c657420773d5b332c312c325d3b772e736f72745f627928696e6e6572293b612e636d702862297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a666e20696e6e657228612c62297b6331313a3a6d61726b2822696e6e657222293b70616e69632128226e657374656422297d0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 61,
+                "source": 0,
+                "start": 45
+              },
+              {
+                "end": 111,
+                "source": 0,
+                "start": 93
+              }
+            ],
+            "caller_hex": [
+              "772e736f72745f627928696e6e657229",
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 164,
+                "frames": "[{\"end\":61,\"source\":0,\"start\":45},{\"end\":111,\"source\":0,\"start\":93}]",
+                "source": 0,
+                "start": 148
+              }
+            ],
+            "legacy_counts": [
+              0,
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 61,
+                "frames": "[]",
+                "source": 0,
+                "start": 45
+              },
+              {
+                "end": 111,
+                "frames": "[]",
+                "source": 0,
+                "start": 93
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 164,
+                "frames": "[]",
+                "source": 0,
+                "start": 148
+              },
+              {
+                "end": 61,
+                "frames": "[]",
+                "source": 0,
+                "start": 45
+              },
+              {
+                "end": 111,
+                "frames": "[]",
+                "source": 0,
+                "start": 93
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "tuple_let",
+      "key": "effects/rhs-panic",
+      "label": "effects/rhs-panic",
+      "source": "fn rhs(){println!(\"rhs\");panic!(\"rhs failure\")}pub fn main(){let(a,b)=rhs();7}",
+      "source_sha256": "dc68924281830357c081dd37222cde49abba5132c776af5b4b36bb30d34c6402",
+      "scope": [
+        "class5-panic"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: rhs failure",
+          "kind": "Panic { reason: Panic { inner: \"rhs failure\" } }",
+          "sites": [
+            {
+              "end": 46,
+              "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(2) }]",
+              "source": 0,
+              "start": 25
+            }
+          ],
+          "status": "error"
+        },
+        "fresh": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: rhs failure",
+          "kind": "Panic",
+          "sites": [
+            {
+              "end": 46,
+              "frames": "[{\"end\":75,\"source\":0,\"start\":70}]",
+              "source": 0,
+              "start": 25
+            }
+          ],
+          "status": "error"
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/tuple-let-stock/055/observation.json"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/tuple-let-fresh/055/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 25,
+              "end": 46
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 75,
+              "source": 0,
+              "start": 70
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 25,
+              "end": 46
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 75,
+              "source": 0,
+              "start": 70
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Panicked: rhs failure",
+          "fresh": "Panicked: rhs failure"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "rhs()"
+      ],
+      "retained_rule_evidence": []
+    },
+    {
+      "family": "tuple_let",
+      "key": "frames/nested-failure",
+      "label": "frames/nested-failure",
+      "source": "fn inner(){let(a,b)=1;7}fn outer(){inner()}pub fn main(){outer()}",
+      "source_sha256": "6d991c019c7dd1263593452826952ced10a2cbde82282494373d4bd0b129998b",
+      "scope": [
+        "class5-panic"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: pattern did not match",
+          "kind": "Panic { reason: Panic { inner: UnmatchedPattern } }",
+          "sites": [
+            {
+              "end": 19,
+              "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 5, top: 1, isolated: None, out: keep(0) }]",
+              "source": 0,
+              "start": 14
+            }
+          ],
+          "status": "error"
+        },
+        "fresh": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: pattern did not match",
+          "kind": "Panic",
+          "sites": [
+            {
+              "end": 19,
+              "frames": "[{\"end\":42,\"source\":0,\"start\":35},{\"end\":64,\"source\":0,\"start\":57}]",
+              "source": 0,
+              "start": 14
+            }
+          ],
+          "status": "error"
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/tuple-let-stock/056/observation.json"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/tuple-let-fresh/056/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 14,
+              "end": 19
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 42,
+              "source": 0,
+              "start": 35
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 64,
+              "source": 0,
+              "start": 57
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 14,
+              "end": 19
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 42,
+              "source": 0,
+              "start": 35
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 64,
+              "source": 0,
+              "start": 57
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Panicked: pattern did not match",
+          "fresh": "Panicked: pattern did not match"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "inner()",
+        "outer()"
+      ],
+      "retained_rule_evidence": []
+    },
+    {
+      "family": "deferred_index",
+      "key": "151",
+      "label": "effects/receiver-panic",
+      "source": "fn receiver(){println!(\"receiver\");panic!(\"receiver\")} pub fn main(){receiver()[{println!(\"start\");0}..{println!(\"end\");2}];()}",
+      "source_sha256": "149ebc3918f707e73e915222db44ffac6242f1029d586fd53803d9984428c583",
+      "scope": [
+        "class5-panic"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: receiver",
+          "kind": "Panic { reason: Panic { inner: \"receiver\" } }",
+          "sites": [
+            {
+              "end": 53,
+              "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }]",
+              "source": 0,
+              "start": 35
+            }
+          ],
+          "status": "error"
+        },
+        "fresh": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: receiver",
+          "kind": "Panic",
+          "sites": [
+            {
+              "end": 53,
+              "frames": "[{\"end\":79,\"source\":0,\"start\":69}]",
+              "source": 0,
+              "start": 35
+            }
+          ],
+          "status": "error"
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/deferred-index-stock/151/observation.json"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/deferred-index-fresh/151/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 35,
+              "end": 53
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 79,
+              "source": 0,
+              "start": 69
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 35,
+              "end": 53
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 79,
+              "source": 0,
+              "start": 69
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Panicked: receiver",
+          "fresh": "Panicked: receiver"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "receiver()"
+      ],
+      "retained_rule_evidence": []
+    },
+    {
+      "family": "deferred_index",
+      "key": "154",
+      "label": "nested/get-error",
+      "source": "fn inner(){\"a\u00e9z\"[1..2];()} fn outer(){inner()} pub fn main(){outer()}",
+      "source_sha256": "e2971220d82348be073f52e0f076d36e0b45eca5062aac354b17c19489c127d1",
+      "scope": [
+        "class5-panic"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: missing string slice",
+          "kind": "Panic { reason: Panic { inner: \"missing string slice\" } }",
+          "sites": [
+            {
+              "end": 23,
+              "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 5, top: 1, isolated: None, out: keep(0) }]",
+              "source": 0,
+              "start": 11
+            }
+          ],
+          "status": "error"
+        },
+        "fresh": {
+          "chain": [],
+          "class": "Panic",
+          "display": "Panicked: missing string slice",
+          "kind": "Panic",
+          "sites": [
+            {
+              "end": 23,
+              "frames": "[{\"end\":46,\"source\":0,\"start\":39},{\"end\":69,\"source\":0,\"start\":62}]",
+              "source": 0,
+              "start": 11
+            }
+          ],
+          "status": "error"
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/deferred-index-stock/154/observation.json"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/deferred-index-fresh/154/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 11,
+              "end": 23
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 46,
+              "source": 0,
+              "start": 39
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 69,
+              "source": 0,
+              "start": 62
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 11,
+              "end": 23
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 46,
+              "source": 0,
+              "start": 39
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 69,
+              "source": 0,
+              "start": 62
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Panicked: missing string slice",
+          "fresh": "Panicked: missing string slice"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "inner()",
+        "outer()"
+      ],
+      "retained_rule_evidence": []
+    },
+    {
+      "family": "callback_sort",
+      "key": "40",
+      "label": "failure/first-call-failure",
+      "source": "fn compare(a,b){let n=c11::tick(a,b);if n==1{a/(b-b);};a.cmp(b)}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "49704f9ed795f4294c6ebd9d7ee9941cb0d5195e6541ea6da6ec552510b435dd",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            },
+            {
+              "end": 104,
+              "frames": "[]",
+              "source": 0,
+              "start": 86
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[{\"end\":104,\"source\":0,\"start\":86}]",
+              "source": 0,
+              "start": 45
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/040/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 45,
+              "end": 52
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 104,
+              "source": 0,
+              "start": 86
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 45,
+              "end": 52
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 104,
+              "source": 0,
+              "start": 86
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Division by zero in `i64` division (`/`)",
+          "fresh": "Division by zero in `i64` division (`/`)"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 40,
+          "label": "failure/first-call-failure",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "49704f9ed795f4294c6ebd9d7ee9941cb0d5195e6541ea6da6ec552510b435dd",
+          "source_hex": "666e20636f6d7061726528612c62297b6c6574206e3d6331313a3a7469636b28612c62293b6966206e3d3d317b612f28622d62293b7d3b612e636d702862297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 104,
+                "source": 0,
+                "start": 86
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 52,
+                "frames": "[{\"end\":104,\"source\":0,\"start\":86}]",
+                "source": 0,
+                "start": 45
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 104,
+                "frames": "[]",
+                "source": 0,
+                "start": 86
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 52,
+                "frames": "[]",
+                "source": 0,
+                "start": 45
+              },
+              {
+                "end": 104,
+                "frames": "[]",
+                "source": 0,
+                "start": 86
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "41",
+      "label": "failure/later-failure",
+      "source": "fn compare(a,b){let n=c11::tick(a,b);if n==3{a/(b-b);};a.cmp(b)}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "cf3db37d2ea350f844b3d4995a5884e2dfe8c2ed325c244c2665b07b221ab93b",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[]",
+              "source": 0,
+              "start": 45
+            },
+            {
+              "end": 104,
+              "frames": "[]",
+              "source": 0,
+              "start": 86
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 52,
+              "frames": "[{\"end\":104,\"source\":0,\"start\":86}]",
+              "source": 0,
+              "start": 45
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/041/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 45,
+              "end": 52
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 104,
+              "source": 0,
+              "start": 86
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 45,
+              "end": 52
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 104,
+              "source": 0,
+              "start": 86
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Division by zero in `i64` division (`/`)",
+          "fresh": "Division by zero in `i64` division (`/`)"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 41,
+          "label": "failure/later-failure",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "cf3db37d2ea350f844b3d4995a5884e2dfe8c2ed325c244c2665b07b221ab93b",
+          "source_hex": "666e20636f6d7061726528612c62297b6c6574206e3d6331313a3a7469636b28612c62293b6966206e3d3d337b612f28622d62293b7d3b612e636d702862297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 104,
+                "source": 0,
+                "start": 86
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 52,
+                "frames": "[{\"end\":104,\"source\":0,\"start\":86}]",
+                "source": 0,
+                "start": 45
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 104,
+                "frames": "[]",
+                "source": 0,
+                "start": 86
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 52,
+                "frames": "[]",
+                "source": 0,
+                "start": 45
+              },
+              {
+                "end": 104,
+                "frames": "[]",
+                "source": 0,
+                "start": 86
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "42",
+      "label": "failure/all-failing",
+      "source": "fn compare(a,b){c11::tick(a,b);a/(b-b)}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "39b8ddf8b136e3c34f2a9cea4898b12a58b2ac30dddbecfb91093d29d06fe56a",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 38,
+              "frames": "[]",
+              "source": 0,
+              "start": 31
+            },
+            {
+              "end": 79,
+              "frames": "[]",
+              "source": 0,
+              "start": 61
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 38,
+              "frames": "[{\"end\":79,\"source\":0,\"start\":61}]",
+              "source": 0,
+              "start": 31
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/042/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 38
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 79,
+              "source": 0,
+              "start": 61
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 38
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 79,
+              "source": 0,
+              "start": 61
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Division by zero in `i64` division (`/`)",
+          "fresh": "Division by zero in `i64` division (`/`)"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 42,
+          "label": "failure/all-failing",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "39b8ddf8b136e3c34f2a9cea4898b12a58b2ac30dddbecfb91093d29d06fe56a",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28612c62293b612f28622d62297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 79,
+                "source": 0,
+                "start": 61
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 38,
+                "frames": "[{\"end\":79,\"source\":0,\"start\":61}]",
+                "source": 0,
+                "start": 31
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 79,
+                "frames": "[]",
+                "source": 0,
+                "start": 61
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 38,
+                "frames": "[]",
+                "source": 0,
+                "start": 31
+              },
+              {
+                "end": 79,
+                "frames": "[]",
+                "source": 0,
+                "start": 61
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "75",
+      "label": "parent/read-len",
+      "source": "fn compare(a,b){c11::tick(1,2);a.len();std::cmp::Ordering::Equal}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "84515bc65c820adb56476e51192d2f56b52de2aea54e6e67a114f970096ef61b",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 38,
+              "frames": "[]",
+              "source": 0,
+              "start": 31
+            },
+            {
+              "end": 105,
+              "frames": "[]",
+              "source": 0,
+              "start": 87
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 38,
+              "frames": "[{\"end\":105,\"source\":0,\"start\":87}]",
+              "source": 0,
+              "start": 31
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/075/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 38
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 105,
+              "source": 0,
+              "start": 87
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 38
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 105,
+              "source": 0,
+              "start": 87
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot read the receiver: it is being written",
+          "fresh": "Cannot read the receiver: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 75,
+          "label": "parent/read-len",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "84515bc65c820adb56476e51192d2f56b52de2aea54e6e67a114f970096ef61b",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b612e6c656e28293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 105,
+                "source": 0,
+                "start": 87
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 38,
+                "frames": "[{\"end\":105,\"source\":0,\"start\":87}]",
+                "source": 0,
+                "start": 31
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 105,
+                "frames": "[]",
+                "source": 0,
+                "start": 87
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 38,
+                "frames": "[]",
+                "source": 0,
+                "start": 31
+              },
+              {
+                "end": 105,
+                "frames": "[]",
+                "source": 0,
+                "start": 87
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "76",
+      "label": "parent/read-clone",
+      "source": "fn compare(a,b){c11::tick(1,2);let x=a.clone();std::cmp::Ordering::Equal}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "2767e55e48ed380b56b0e373ae3f08c29b92f570009cc7c153b67e79d088d803",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 46,
+              "frames": "[]",
+              "source": 0,
+              "start": 37
+            },
+            {
+              "end": 113,
+              "frames": "[]",
+              "source": 0,
+              "start": 95
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 46,
+              "frames": "[{\"end\":113,\"source\":0,\"start\":95}]",
+              "source": 0,
+              "start": 37
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/076/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 37,
+              "end": 46
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 113,
+              "source": 0,
+              "start": 95
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 37,
+              "end": 46
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 113,
+              "source": 0,
+              "start": 95
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot read the receiver: it is being written",
+          "fresh": "Cannot read the receiver: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 76,
+          "label": "parent/read-clone",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "2767e55e48ed380b56b0e373ae3f08c29b92f570009cc7c153b67e79d088d803",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b6c657420783d612e636c6f6e6528293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 113,
+                "source": 0,
+                "start": 95
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 46,
+                "frames": "[{\"end\":113,\"source\":0,\"start\":95}]",
+                "source": 0,
+                "start": 37
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 113,
+                "frames": "[]",
+                "source": 0,
+                "start": 95
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 46,
+                "frames": "[]",
+                "source": 0,
+                "start": 37
+              },
+              {
+                "end": 113,
+                "frames": "[]",
+                "source": 0,
+                "start": 95
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "77",
+      "label": "parent/read-index",
+      "source": "fn compare(a,b){c11::tick(1,2);let x=a[0];std::cmp::Ordering::Equal}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "41ee2baf35728bec14dffbd2cd2bce94a8d3cbf5b60f836876cc8e6dca9c8049",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "AccessConflict",
+          "display": "Cannot read the value: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 41,
+              "frames": "[]",
+              "source": 0,
+              "start": 37
+            },
+            {
+              "end": 108,
+              "frames": "[]",
+              "source": 0,
+              "start": 90
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "AccessConflict",
+          "display": "Cannot read the value: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 41,
+              "frames": "[{\"end\":108,\"source\":0,\"start\":90}]",
+              "source": 0,
+              "start": 37
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/077/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 37,
+              "end": 41
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 108,
+              "source": 0,
+              "start": 90
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 37,
+              "end": 41
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 108,
+              "source": 0,
+              "start": 90
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot read the value: it is being written",
+          "fresh": "Cannot read the value: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 77,
+          "label": "parent/read-index",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "41ee2baf35728bec14dffbd2cd2bce94a8d3cbf5b60f836876cc8e6dca9c8049",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b6c657420783d615b305d3b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 108,
+                "source": 0,
+                "start": 90
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 41,
+                "frames": "[{\"end\":108,\"source\":0,\"start\":90}]",
+                "source": 0,
+                "start": 37
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 108,
+                "frames": "[]",
+                "source": 0,
+                "start": 90
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 41,
+                "frames": "[]",
+                "source": 0,
+                "start": 37
+              },
+              {
+                "end": 108,
+                "frames": "[]",
+                "source": 0,
+                "start": 90
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "78",
+      "label": "parent/read-format",
+      "source": "fn compare(a,b){c11::tick(1,2);let x=format!(\"{:?}\",a);std::cmp::Ordering::Equal}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "a11207a5ecec963552529dfc417a9bbe8aee1c050e50311ea35984b73001bed1",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "source": 0,
+              "start": 52,
+              "end": 53,
+              "frames": "[]"
+            },
+            {
+              "source": 0,
+              "start": 103,
+              "end": 121,
+              "frames": "[]"
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 53,
+              "frames": "[{\"end\":121,\"source\":0,\"start\":103}]",
+              "source": 0,
+              "start": 52
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/078/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 52,
+              "end": 53
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 121,
+              "source": 0,
+              "start": 103
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 52,
+              "end": 53
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 121,
+              "source": 0,
+              "start": 103
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot read the receiver: it is being written",
+          "fresh": "Cannot read the receiver: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 78,
+          "label": "parent/read-format",
+          "categories": [
+            "Retained-site",
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "a11207a5ecec963552529dfc417a9bbe8aee1c050e50311ea35984b73001bed1",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b6c657420783d666f726d61742128227b3a3f7d222c61293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 121,
+                "source": 0,
+                "start": 103
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-site",
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 54,
+                "frames": "[{\"end\":121,\"source\":0,\"start\":103}]",
+                "source": 0,
+                "start": 37
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 121,
+                "frames": "[]",
+                "source": 0,
+                "start": 103
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 54,
+                "frames": "[]",
+                "source": 0,
+                "start": 0
+              },
+              {
+                "end": 121,
+                "frames": "[]",
+                "source": 0,
+                "start": 103
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "79",
+      "label": "parent/read-iterate",
+      "source": "fn compare(a,b){c11::tick(1,2);for x in a{break;}std::cmp::Ordering::Equal}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "0f6c62e93ba1716e81bca7c0daff20bdeb208638043dbc7bb69c1de0ec155ef5",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 41,
+              "frames": "[]",
+              "source": 0,
+              "start": 40
+            },
+            {
+              "end": 115,
+              "frames": "[]",
+              "source": 0,
+              "start": 97
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 41,
+              "frames": "[{\"end\":115,\"source\":0,\"start\":97}]",
+              "source": 0,
+              "start": 40
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/079/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 40,
+              "end": 41
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 115,
+              "source": 0,
+              "start": 97
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 40,
+              "end": 41
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 115,
+              "source": 0,
+              "start": 97
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot read the receiver: it is being written",
+          "fresh": "Cannot read the receiver: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 79,
+          "label": "parent/read-iterate",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "0f6c62e93ba1716e81bca7c0daff20bdeb208638043dbc7bb69c1de0ec155ef5",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b666f72207820696e20617b627265616b3b7d7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 115,
+                "source": 0,
+                "start": 97
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 41,
+                "frames": "[{\"end\":115,\"source\":0,\"start\":97}]",
+                "source": 0,
+                "start": 40
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 115,
+                "frames": "[]",
+                "source": 0,
+                "start": 97
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 41,
+                "frames": "[]",
+                "source": 0,
+                "start": 40
+              },
+              {
+                "end": 115,
+                "frames": "[]",
+                "source": 0,
+                "start": 97
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "80",
+      "label": "parent/write-push",
+      "source": "fn compare(a,b){c11::tick(1,2);a.push(3);std::cmp::Ordering::Equal}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "204a1e62e7d3dc680ccff2cdc307d168551853dcf1cc0fd3f7beafe77a6d5de8",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 40,
+              "frames": "[]",
+              "source": 0,
+              "start": 31
+            },
+            {
+              "end": 107,
+              "frames": "[]",
+              "source": 0,
+              "start": 89
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 40,
+              "frames": "[{\"end\":107,\"source\":0,\"start\":89}]",
+              "source": 0,
+              "start": 31
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/080/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 40
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 107,
+              "source": 0,
+              "start": 89
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 40
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 107,
+              "source": 0,
+              "start": 89
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot write the receiver: it is being written",
+          "fresh": "Cannot write the receiver: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 80,
+          "label": "parent/write-push",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "204a1e62e7d3dc680ccff2cdc307d168551853dcf1cc0fd3f7beafe77a6d5de8",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b612e707573682833293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 107,
+                "source": 0,
+                "start": 89
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 40,
+                "frames": "[{\"end\":107,\"source\":0,\"start\":89}]",
+                "source": 0,
+                "start": 31
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 107,
+                "frames": "[]",
+                "source": 0,
+                "start": 89
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 40,
+                "frames": "[]",
+                "source": 0,
+                "start": 31
+              },
+              {
+                "end": 107,
+                "frames": "[]",
+                "source": 0,
+                "start": 89
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "81",
+      "label": "parent/write-index",
+      "source": "fn compare(a,b){c11::tick(1,2);a[0]=3;std::cmp::Ordering::Equal}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "98db3766395b578458e0da724f15776ccf8abb4eda089a78f84d05cd9c897f5c",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 37,
+              "frames": "[]",
+              "source": 0,
+              "start": 31
+            },
+            {
+              "end": 104,
+              "frames": "[]",
+              "source": 0,
+              "start": 86
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 37,
+              "frames": "[{\"end\":104,\"source\":0,\"start\":86}]",
+              "source": 0,
+              "start": 31
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/081/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 37
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 104,
+              "source": 0,
+              "start": 86
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 37
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 104,
+              "source": 0,
+              "start": 86
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot write the receiver: it is being written",
+          "fresh": "Cannot write the receiver: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 81,
+          "label": "parent/write-index",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "98db3766395b578458e0da724f15776ccf8abb4eda089a78f84d05cd9c897f5c",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b615b305d3d333b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 104,
+                "source": 0,
+                "start": 86
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 37,
+                "frames": "[{\"end\":104,\"source\":0,\"start\":86}]",
+                "source": 0,
+                "start": 31
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 104,
+                "frames": "[]",
+                "source": 0,
+                "start": 86
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 37,
+                "frames": "[]",
+                "source": 0,
+                "start": 31
+              },
+              {
+                "end": 104,
+                "frames": "[]",
+                "source": 0,
+                "start": 86
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "82",
+      "label": "parent/take-drop",
+      "source": "fn compare(a,b){c11::tick(1,2);drop(a);std::cmp::Ordering::Equal}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "9696dd4f8488db9f1278437a7067b13456c57d80b0cf4c642ec62ef749eccca1",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "AccessConflict",
+          "display": "Cannot take the value: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 38,
+              "frames": "[]",
+              "source": 0,
+              "start": 31
+            },
+            {
+              "end": 105,
+              "frames": "[]",
+              "source": 0,
+              "start": 87
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "AccessConflict",
+          "display": "Cannot take the value: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 38,
+              "frames": "[{\"end\":105,\"source\":0,\"start\":87}]",
+              "source": 0,
+              "start": 31
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleTake(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/082/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 38
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 105,
+              "source": 0,
+              "start": 87
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 38
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 105,
+              "source": 0,
+              "start": 87
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot take the value: it is being written",
+          "fresh": "Cannot take the value: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 82,
+          "label": "parent/take-drop",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "9696dd4f8488db9f1278437a7067b13456c57d80b0cf4c642ec62ef749eccca1",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b64726f702861293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 105,
+                "source": 0,
+                "start": 87
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 38,
+                "frames": "[{\"end\":105,\"source\":0,\"start\":87}]",
+                "source": 0,
+                "start": 31
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 105,
+                "frames": "[]",
+                "source": 0,
+                "start": 87
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 38,
+                "frames": "[]",
+                "source": 0,
+                "start": 31
+              },
+              {
+                "end": 105,
+                "frames": "[]",
+                "source": 0,
+                "start": 87
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "83",
+      "label": "parent/nested-same",
+      "source": "fn compare(a,b){c11::tick(1,2);a.sort_by(compare);std::cmp::Ordering::Equal}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "be41bbceebd2d3b45ee9a0c8b61bc1b27ef3463bffd4b564a8ce4c636c8ce00b",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 49,
+              "frames": "[]",
+              "source": 0,
+              "start": 31
+            },
+            {
+              "end": 116,
+              "frames": "[]",
+              "source": 0,
+              "start": 98
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot write the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 49,
+              "frames": "[{\"end\":116,\"source\":0,\"start\":98}]",
+              "source": 0,
+              "start": 31
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/083/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 49
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 116,
+              "source": 0,
+              "start": 98
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 31,
+              "end": 49
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 116,
+              "source": 0,
+              "start": 98
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot write the receiver: it is being written",
+          "fresh": "Cannot write the receiver: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 83,
+          "label": "parent/nested-same",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "be41bbceebd2d3b45ee9a0c8b61bc1b27ef3463bffd4b564a8ce4c636c8ce00b",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28312c32293b612e736f72745f627928636f6d70617265293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 116,
+                "source": 0,
+                "start": 98
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 49,
+                "frames": "[{\"end\":116,\"source\":0,\"start\":98}]",
+                "source": 0,
+                "start": 31
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 116,
+                "frames": "[]",
+                "source": 0,
+                "start": 98
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 49,
+                "frames": "[]",
+                "source": 0,
+                "start": 31
+              },
+              {
+                "end": 116,
+                "frames": "[]",
+                "source": 0,
+                "start": 98
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "85",
+      "label": "parent/noncapturing-closure-read",
+      "source": "fn compare(a,b){c11::tick(a,b);a.cmp(b)}\npub fn main(v,state){v.sort_by(|a,b|{c11::tick(1,2);a.len();std::cmp::Ordering::Equal});v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "1120322941e129ebabe183ece9a1c291fec4573211f63160b0797d622287154a",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 100,
+              "frames": "[]",
+              "source": 0,
+              "start": 93
+            },
+            {
+              "end": 128,
+              "frames": "[]",
+              "source": 0,
+              "start": 62
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 100,
+              "frames": "[{\"end\":128,\"source\":0,\"start\":62}]",
+              "source": 0,
+              "start": 93
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/085/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 93,
+              "end": 100
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 128,
+              "source": 0,
+              "start": 62
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 93,
+              "end": 100
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 128,
+              "source": 0,
+              "start": 62
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot read the receiver: it is being written",
+          "fresh": "Cannot read the receiver: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(|a,b|{c11::tick(1,2);a.len();std::cmp::Ordering::Equal})"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 85,
+          "label": "parent/noncapturing-closure-read",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "1120322941e129ebabe183ece9a1c291fec4573211f63160b0797d622287154a",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28612c62293b612e636d702862297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f6279287c612c627c7b6331313a3a7469636b28312c32293b612e6c656e28293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 128,
+                "source": 0,
+                "start": 62
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f6279287c612c627c7b6331313a3a7469636b28312c32293b612e6c656e28293b7374643a3a636d703a3a4f72646572696e673a3a457175616c7d29"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 100,
+                "frames": "[{\"end\":128,\"source\":0,\"start\":62}]",
+                "source": 0,
+                "start": 93
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 128,
+                "frames": "[]",
+                "source": 0,
+                "start": 62
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 100,
+                "frames": "[]",
+                "source": 0,
+                "start": 93
+              },
+              {
+                "end": 128,
+                "frames": "[]",
+                "source": 0,
+                "start": 62
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "96",
+      "label": "failure/child-mutation",
+      "source": "fn compare(a,b){c11::tick(a[0],b[0]);a[1].push(9);a[0]/(b[0]-b[0])}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "a16f7c5e41990c1604d8d01b6d8f228d280d31166d022164f178ba61a6c20fb3",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 66,
+              "frames": "[]",
+              "source": 0,
+              "start": 50
+            },
+            {
+              "end": 107,
+              "frames": "[]",
+              "source": 0,
+              "start": 89
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 66,
+              "frames": "[{\"end\":107,\"source\":0,\"start\":89}]",
+              "source": 0,
+              "start": 50
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/096/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 50,
+              "end": 66
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 107,
+              "source": 0,
+              "start": 89
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 50,
+              "end": 66
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 107,
+              "source": 0,
+              "start": 89
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Division by zero in `i64` division (`/`)",
+          "fresh": "Division by zero in `i64` division (`/`)"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 96,
+          "label": "failure/child-mutation",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "a16f7c5e41990c1604d8d01b6d8f228d280d31166d022164f178ba61a6c20fb3",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28615b305d2c625b305d293b615b315d2e707573682839293b615b305d2f28625b305d2d625b305d297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 107,
+                "source": 0,
+                "start": 89
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 66,
+                "frames": "[{\"end\":107,\"source\":0,\"start\":89}]",
+                "source": 0,
+                "start": 50
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 107,
+                "frames": "[]",
+                "source": 0,
+                "start": 89
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 66,
+                "frames": "[]",
+                "source": 0,
+                "start": 50
+              },
+              {
+                "end": 107,
+                "frames": "[]",
+                "source": 0,
+                "start": 89
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "97",
+      "label": "failure/shared-child-mutation",
+      "source": "fn compare(a,b){c11::tick(a[0],b[0]);a[1].push(9);a[0]/(b[0]-b[0])}\npub fn main(v,state){v.sort_by(compare);v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "a16f7c5e41990c1604d8d01b6d8f228d280d31166d022164f178ba61a6c20fb3",
+      "scope": [
+        "callback-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 66,
+              "frames": "[]",
+              "source": 0,
+              "start": 50
+            },
+            {
+              "end": 107,
+              "frames": "[]",
+              "source": 0,
+              "start": 89
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        },
+        "fresh": {
+          "chain": [],
+          "class": "DivisionByZero",
+          "display": "Division by zero in `i64` division (`/`)",
+          "kind": "DivideByZero",
+          "sites": [
+            {
+              "end": 66,
+              "frames": "[{\"end\":107,\"source\":0,\"start\":89}]",
+              "source": 0,
+              "start": 50
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "DivideByZero"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/097/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 50,
+              "end": 66
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 107,
+              "source": 0,
+              "start": 89
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 50,
+              "end": 66
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 107,
+              "source": 0,
+              "start": 89
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Division by zero in `i64` division (`/`)",
+          "fresh": "Division by zero in `i64` division (`/`)"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(compare)"
+      ],
+      "retained_rule_evidence": [
+        {
+          "index": 97,
+          "label": "failure/shared-child-mutation",
+          "categories": [
+            "Retained-frame (callback)"
+          ],
+          "source_sha256": "a16f7c5e41990c1604d8d01b6d8f228d280d31166d022164f178ba61a6c20fb3",
+          "source_hex": "666e20636f6d7061726528612c62297b6331313a3a7469636b28615b305d2c625b305d293b615b315d2e707573682839293b615b305d2f28625b305d2d625b305d297d0a70756220666e206d61696e28762c7374617465297b762e736f72745f627928636f6d70617265293b767d0a0a70756220666e206331315f726575736528297b6331313a3a6d61726b2822726575736522293b377d",
+          "retained": {
+            "call_chain": [
+              {
+                "end": 107,
+                "source": 0,
+                "start": 89
+              }
+            ],
+            "caller_hex": [
+              "762e736f72745f627928636f6d7061726529"
+            ],
+            "categories": [
+              "Retained-frame (callback)"
+            ],
+            "fresh_sites": [
+              {
+                "end": 66,
+                "frames": "[{\"end\":107,\"source\":0,\"start\":89}]",
+                "source": 0,
+                "start": 50
+              }
+            ],
+            "legacy_counts": [
+              0
+            ],
+            "mapped_callers": [
+              {
+                "end": 107,
+                "frames": "[]",
+                "source": 0,
+                "start": 89
+              }
+            ],
+            "stock_sites": [
+              {
+                "end": 66,
+                "frames": "[]",
+                "source": 0,
+                "start": 50
+              },
+              {
+                "end": 107,
+                "frames": "[]",
+                "source": 0,
+                "start": 89
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "family": "callback_sort",
+      "key": "90",
+      "label": "refused/captures-parent",
+      "source": "fn compare(a,b){c11::tick(a,b);a.cmp(b)}\npub fn main(v,state){v.sort_by(|a,b|{v.len();a.cmp(b)});v}\n\npub fn c11_reuse(){c11::mark(\"reuse\");7}",
+      "source_sha256": "4c31b288147360803ee49fcf1fd8144120009f075723ad0895620e0c5b6d04a9",
+      "scope": [
+        "callback-admitted-closure-frame-rule"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 85,
+              "frames": "[]",
+              "source": 0,
+              "start": 78
+            },
+            {
+              "end": 96,
+              "frames": "[]",
+              "source": 0,
+              "start": 62
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        },
+        "fresh": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }",
+              "typed": {
+                "arg": 0,
+                "tag": "BadArgument"
+              }
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the receiver: it is being written",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+          "sites": [
+            {
+              "end": 85,
+              "frames": "[{\"end\":96,\"source\":0,\"start\":62}]",
+              "source": 0,
+              "start": 78
+            }
+          ],
+          "status": "error",
+          "typed": {
+            "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }"
+          }
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "frozen stock plus accepted Intentional D1b/c/d migrations; not a D1e replay",
+          "path": "/home/me/work/.worktrees/rune-0185-f1c/crates/rune/src/experimental_core/tests/callback_sort_stock.tsv"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates1/legacy-gates5/strict131/090/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 78,
+              "end": 85
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 96,
+              "source": 0,
+              "start": 62
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 78,
+              "end": 85
+            }
+          },
+          {
+            "role": "caller",
+            "location": {
+              "end": 96,
+              "source": 0,
+              "start": 62
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot read the receiver: it is being written",
+          "fresh": "Cannot read the receiver: it is being written"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": "preserve"
+      },
+      "caller_source_snippets": [
+        "v.sort_by(|a,b|{v.len();a.cmp(b)})"
+      ],
+      "retained_rule_evidence": [
+        {
+          "fresh_site": {
+            "end": 85,
+            "frames": "[{\"end\":96,\"source\":0,\"start\":62}]",
+            "source": 0,
+            "start": 78
+          },
+          "call_chain": [
+            {
+              "source": 0,
+              "start": 62,
+              "end": 96
+            }
+          ],
+          "categories": [
+            "Retained-frame (callback)"
+          ]
+        }
+      ]
+    },
+    {
+      "family": "format_specs",
+      "key": "254",
+      "label": "access/moved-parent/?",
+      "source": " pub fn main(){let a=Some([1]);let b=a;drop(a);format!(\"{:>7?}\",b)}",
+      "source_sha256": "d4c196232c9ea9e6673845135da09ded6956cf9cc89650f25aa3ad28a86a7ce1",
+      "scope": [
+        "D1b-moved-parent-argument-chain"
+      ],
+      "before": {
+        "stock": {
+          "chain": [
+            {
+              "display": "Bad argument #0",
+              "kind": "BadArgument { arg: 0 }"
+            }
+          ],
+          "class": "AccessConflict",
+          "display": "Cannot read the value: it has been moved",
+          "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(M-000000)) } }",
+          "sites": [
+            {
+              "end": 65,
+              "frames": "[]",
+              "source": 0,
+              "start": 64
+            }
+          ],
+          "status": "error"
+        },
+        "fresh": {
+          "chain": [],
+          "class": "AccessConflict",
+          "display": "Cannot read the value: it has been moved",
+          "kind": "AccessConflict",
+          "sites": [
+            {
+              "end": 65,
+              "frames": "[]",
+              "source": 0,
+              "start": 64
+            }
+          ],
+          "status": "error"
+        }
+      },
+      "before_provenance": {
+        "stock": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/format-specs-stock/254/observation.json"
+        },
+        "fresh": {
+          "kind": "accepted D1d raw receipt",
+          "path": "/home/me/work/.reviews/0185-d1d-final-gates3/full32-resume/format-specs-fresh/254/observation.json"
+        }
+      },
+      "proposed_after": {
+        "status": "PROPOSED; not implemented or replayed",
+        "stock_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 64,
+              "end": 65
+            }
+          }
+        ],
+        "fresh_logical_frames": [
+          {
+            "role": "origin",
+            "location": {
+              "source": 0,
+              "start": 64,
+              "end": 65
+            }
+          }
+        ],
+        "primary_message": {
+          "stock": "Cannot read the value: it has been moved",
+          "fresh": "Cannot read the value: it has been moved"
+        },
+        "native_primary_kind": "preserve each engine-native kind and payload",
+        "typed_argument_chain": {
+          "stock": [
+            {
+              "tag": "BadArgument",
+              "arg": 0
+            }
+          ],
+          "fresh": [
+            {
+              "tag": "BadArgument",
+              "arg": 0
+            }
+          ],
+          "old_stock_display": [
+            "Bad argument #0"
+          ],
+          "old_fresh_display": [],
+          "display_after": [
+            "Bad argument #0"
+          ],
+          "proof_required": "Actual formatter/native argument boundary metadata, captured on error; argument0 naming is not inferred from source or frame count."
+        }
+      },
+      "caller_source_snippets": [],
+      "retained_rule_evidence": []
+    }
+  ]
+}

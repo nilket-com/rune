@@ -1,0 +1,1256 @@
+{
+  "version": 1,
+  "reference": "0185-s7b2-validation16",
+  "libraries": [
+    {
+      "name": "execution-serde",
+      "features": "fmt,workspace,execution,capture-io,disable-io,sha2,serde",
+      "passed": 1455
+    },
+    {
+      "name": "legacy",
+      "features": "fmt,workspace",
+      "passed": 612
+    },
+    {
+      "name": "native",
+      "features": "fmt,workspace,native-code,capture-io,disable-io,sha2",
+      "passed": 1653
+    }
+  ],
+  "clippy_features": [
+    "fmt,workspace",
+    "fmt,workspace,execution,capture-io,disable-io,sha2",
+    "fmt,workspace,execution,capture-io,disable-io,sha2,serde",
+    "fmt,workspace,native-code,capture-io,disable-io,sha2"
+  ],
+  "fixtures": [
+    {
+      "path": "tools/xtask/fixtures/native/DEPTH-BINDING.json",
+      "sha256": "a402f08aee6f0152ef141945418111068e0abef9df191a5af3589192eea50a43"
+    },
+    {
+      "path": "tools/xtask/fixtures/native/TABLE.json",
+      "sha256": "d391588a8a2202d060c51883abbd9286e21a8e8fed8fff5042235421e52c357a"
+    },
+    {
+      "path": "tools/xtask/fixtures/native/LAYOUT-FIXED-tip-layout_probe.json",
+      "sha256": "39526355ecef5fd5ca3aac52767be4c5ae8aef3ecac040ee8eb32d7bb59857b4"
+    },
+    {
+      "path": "tools/xtask/fixtures/native/LAYOUT-FIXED-tip-layout_variants.json",
+      "sha256": "b2d14be1b30065583fb8d94b3233acaf7c7b797e34c3f37961475a4dd1d15fdf"
+    },
+    {
+      "path": "tools/xtask/fixtures/native/LAYOUT-FIXED-tip-layout_niche.json",
+      "sha256": "78f0c54a356a5bd833e523eebe4e0c5e3bc091e8e5780e39bd8f847100c6cc6d"
+    },
+    {
+      "path": "tools/xtask/fixtures/native/EXTERNAL-EXPORT.json",
+      "sha256": "cb6e5cfc12a58ca65ef3a90119b032ccf57bddfc30d932808def5f1c218f41c1"
+    }
+  ],
+  "full32": {
+    "selector": "experimental_core::tests::gap_hunt::contracts::all_frozen_contracts",
+    "contracts": 32,
+    "external": "0185-s7b2-rnx-current16/repo",
+    "pins": "tools/xtask/fixtures/native/EXTERNAL-EXPORT.json"
+  },
+  "excluded_legacy": [
+    "experimental_core::tests::gap_hunt::small_forms::legacy_contract"
+  ],
+  "cases": [
+    {
+      "name": "vec_local-stock",
+      "selector": "experimental_core::tests::gap_hunt::vec_local::legacy_contract",
+      "rows": 92,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "vec_local-fresh",
+      "selector": "experimental_core::tests::gap_hunt::vec_local::contract",
+      "rows": 92,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "loop_binders-stock",
+      "selector": "experimental_core::tests::gap_hunt::loop_binders::legacy_contract",
+      "rows": 118,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "loop_binders-fresh",
+      "selector": "experimental_core::tests::gap_hunt::loop_binders::contract",
+      "rows": 118,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "loop_iterator-stock",
+      "selector": "experimental_core::tests::gap_hunt::loop_iterator::legacy_contract",
+      "rows": 18,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "loop_iterator-fresh",
+      "selector": "experimental_core::tests::gap_hunt::loop_iterator::contract",
+      "rows": 18,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "labeled_blocks-stock",
+      "selector": "experimental_core::tests::gap_hunt::labeled_blocks::legacy_contract",
+      "rows": 97,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "labeled_blocks-fresh",
+      "selector": "experimental_core::tests::gap_hunt::labeled_blocks::contract",
+      "rows": 97,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "remaining_patterns-stock",
+      "selector": "experimental_core::tests::gap_hunt::remaining_patterns::legacy_contract",
+      "rows": 137,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "remaining_patterns-fresh",
+      "selector": "experimental_core::tests::gap_hunt::remaining_patterns::contract",
+      "rows": 137,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "function_values-stock",
+      "selector": "experimental_core::tests::gap_hunt::function_values::legacy_contract",
+      "rows": 101,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "function_values-fresh",
+      "selector": "experimental_core::tests::gap_hunt::function_values::contract",
+      "rows": 101,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "type_values-stock",
+      "selector": "experimental_core::tests::gap_hunt::type_values::legacy_contract",
+      "rows": 120,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "type_values-fresh",
+      "selector": "experimental_core::tests::gap_hunt::type_values::contract",
+      "rows": 120,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "option_methods-stock",
+      "selector": "experimental_core::tests::gap_hunt::option_methods::legacy_contract",
+      "rows": 166,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "option_methods-fresh",
+      "selector": "experimental_core::tests::gap_hunt::option_methods::contract",
+      "rows": 166,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "object_methods-stock",
+      "selector": "experimental_core::tests::gap_hunt::object_methods::legacy_contract",
+      "rows": 242,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "object_methods-fresh",
+      "selector": "experimental_core::tests::gap_hunt::object_methods::contract",
+      "rows": 242,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "object_order-stock",
+      "selector": "experimental_core::tests::gap_hunt::object_order::legacy_contract",
+      "rows": 74,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "object_order-fresh",
+      "selector": "experimental_core::tests::gap_hunt::object_order::contract",
+      "rows": 74,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "iter_receivers-stock",
+      "selector": "experimental_core::tests::gap_hunt::iter_receivers::legacy_contract",
+      "rows": 80,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "iter_receivers-fresh",
+      "selector": "experimental_core::tests::gap_hunt::iter_receivers::contract",
+      "rows": 80,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "numeric_methods-stock",
+      "selector": "experimental_core::tests::gap_hunt::numeric_methods::legacy_contract",
+      "rows": 370,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "numeric_methods-fresh",
+      "selector": "experimental_core::tests::gap_hunt::numeric_methods::contract",
+      "rows": 370,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "iter_terminals-stock",
+      "selector": "experimental_core::tests::gap_hunt::iter_terminals::legacy_contract",
+      "rows": 580,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "iter_terminals-fresh",
+      "selector": "experimental_core::tests::gap_hunt::iter_terminals::contract",
+      "rows": 580,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "object_keys-stock",
+      "selector": "experimental_core::tests::gap_hunt::object_keys::legacy_contract",
+      "rows": 70,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "object_keys-fresh",
+      "selector": "experimental_core::tests::gap_hunt::object_keys::contract",
+      "rows": 70,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "iter_adapters-stock",
+      "selector": "experimental_core::tests::gap_hunt::iter_adapters::legacy_contract",
+      "rows": 1134,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "iter_adapters-fresh",
+      "selector": "experimental_core::tests::gap_hunt::iter_adapters::contract",
+      "rows": 1134,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "wrong_arity-stock",
+      "selector": "experimental_core::tests::gap_hunt::wrong_arity::legacy_contract",
+      "rows": 385,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "wrong_arity-fresh",
+      "selector": "experimental_core::tests::gap_hunt::wrong_arity::contract",
+      "rows": 385,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "static_methods-stock",
+      "selector": "experimental_core::tests::gap_hunt::static_methods::legacy_contract",
+      "rows": 463,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "static_methods-fresh",
+      "selector": "experimental_core::tests::gap_hunt::static_methods::contract",
+      "rows": 463,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "dynamic_methods-stock",
+      "selector": "experimental_core::tests::gap_hunt::dynamic_methods::legacy_contract",
+      "rows": 259,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "dynamic_methods-fresh",
+      "selector": "experimental_core::tests::gap_hunt::dynamic_methods::contract",
+      "rows": 259,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "struct-methods",
+      "selector": "experimental_core::tests::gap_hunt::methods::contract",
+      "rows": 84,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "struct-constructors",
+      "selector": "experimental_core::tests::gap_hunt::constructors::contract",
+      "rows": 133,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "struct-enum_variants",
+      "selector": "experimental_core::tests::gap_hunt::enum_variants::contract",
+      "rows": 166,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "struct-nominal_clone",
+      "selector": "experimental_core::tests::gap_hunt::nominal_clone::contract",
+      "rows": 73,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "struct-small_forms",
+      "selector": "experimental_core::tests::gap_hunt::small_forms::contract",
+      "rows": 111,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "struct-text_methods",
+      "selector": "experimental_core::tests::gap_hunt::text_methods::contract",
+      "rows": 190,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "struct-text_pipeline",
+      "selector": "experimental_core::tests::gap_hunt::text_pipeline::contract",
+      "rows": 165,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "fresh73",
+      "selector": "experimental_core::tests::gap_hunt::nominal_clone::contract",
+      "rows": 73,
+      "ignored": true,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "strict133",
+      "selector": "experimental_core::tests::gap_hunt::constructors::contract",
+      "rows": 133,
+      "ignored": true,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock166",
+      "selector": "experimental_core::tests::gap_hunt::enum_variants::legacy_contract",
+      "rows": 166,
+      "ignored": true,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "fresh166",
+      "selector": "experimental_core::tests::gap_hunt::enum_variants::contract",
+      "rows": 166,
+      "ignored": true,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "strict165",
+      "selector": "experimental_core::tests::gap_hunt::text_pipeline::contract",
+      "rows": 165,
+      "ignored": true,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "strict190",
+      "selector": "experimental_core::tests::gap_hunt::text_methods::contract",
+      "rows": 190,
+      "ignored": true,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "strict84",
+      "selector": "experimental_core::tests::gap_hunt::methods::contract",
+      "rows": 84,
+      "ignored": true,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "strict111",
+      "selector": "experimental_core::tests::gap_hunt::small_forms::contract",
+      "rows": 111,
+      "ignored": true,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "strict131",
+      "selector": "experimental_core::tests::gap_hunt::callback_sort::contract",
+      "rows": 131,
+      "ignored": true,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "pipeline-stack2MiB",
+      "selector": "experimental_core::tests::gap_hunt::text_pipeline::deep_pipeline_lowering_keeps_the_normal_stack_boundary",
+      "rows": null,
+      "ignored": false,
+      "exact": true,
+      "sandbox": true,
+      "empty_stderr": true,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "format-specs-stock",
+      "selector": "experimental_core::tests::gap_hunt::format_specs::legacy_contract",
+      "rows": 266,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "format-specs-fresh",
+      "selector": "experimental_core::tests::gap_hunt::format_specs::contract",
+      "rows": 266,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "IndexSet-negatives",
+      "selector": "experimental_core::tests::patterns_safety::moved_index_set_context_is_vec_only",
+      "rows": null,
+      "ignored": false,
+      "exact": false,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "expression100",
+      "selector": "experimental_core::tests::gap_hunt::expression_calls::contract",
+      "rows": null,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "root71",
+      "selector": "experimental_core::tests::gap_hunt::move_captures::contract",
+      "rows": null,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "copy8",
+      "selector": "experimental_core::tests::gap_hunt::move_captures::function_copy_contract",
+      "rows": null,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "migration",
+      "selector": "experimental_core::tests::frontend::c11c_stopgap",
+      "rows": null,
+      "ignored": false,
+      "exact": false,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "expression-ownership",
+      "selector": "experimental_core::tests::patterns_safety::expression_calls_order_failures_and_reuse",
+      "rows": null,
+      "ignored": false,
+      "exact": false,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "shadow",
+      "selector": "experimental_core::tests::gap_hunt::static_methods::shadow_contract",
+      "rows": null,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-assertions",
+      "selector": "experimental_core::tests::gap_hunt::assertions::legacy_contract",
+      "rows": 178,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-byte_strings",
+      "selector": "experimental_core::tests::gap_hunt::byte_strings::legacy_contract",
+      "rows": 109,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-callback_sort",
+      "selector": "experimental_core::tests::gap_hunt::callback_sort::legacy_contract",
+      "rows": 131,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-deferred_index",
+      "selector": "experimental_core::tests::gap_hunt::deferred_index::legacy_contract",
+      "rows": 318,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-dynamic_methods",
+      "selector": "experimental_core::tests::gap_hunt::dynamic_methods::legacy_contract",
+      "rows": 259,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-enum_variants",
+      "selector": "experimental_core::tests::gap_hunt::enum_variants::legacy_contract",
+      "rows": 166,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-expression_calls",
+      "selector": "experimental_core::tests::gap_hunt::expression_calls::legacy_contract",
+      "rows": 100,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-format_specs",
+      "selector": "experimental_core::tests::gap_hunt::format_specs::legacy_contract",
+      "rows": 266,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-function_values",
+      "selector": "experimental_core::tests::gap_hunt::function_values::legacy_contract",
+      "rows": 101,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-iter_adapters",
+      "selector": "experimental_core::tests::gap_hunt::iter_adapters::legacy_contract",
+      "rows": 1134,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-iter_receivers",
+      "selector": "experimental_core::tests::gap_hunt::iter_receivers::legacy_contract",
+      "rows": 80,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-iter_terminals",
+      "selector": "experimental_core::tests::gap_hunt::iter_terminals::legacy_contract",
+      "rows": 580,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-labeled_blocks",
+      "selector": "experimental_core::tests::gap_hunt::labeled_blocks::legacy_contract",
+      "rows": 97,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-len_clone",
+      "selector": "experimental_core::tests::gap_hunt::len_clone::legacy_contract",
+      "rows": 310,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-loop_binders",
+      "selector": "experimental_core::tests::gap_hunt::loop_binders::legacy_contract",
+      "rows": 118,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-loop_iterator",
+      "selector": "experimental_core::tests::gap_hunt::loop_iterator::legacy_contract",
+      "rows": 18,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-move_captures",
+      "selector": "experimental_core::tests::gap_hunt::move_captures::legacy_contract",
+      "rows": 71,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-nominal_clone",
+      "selector": "experimental_core::tests::gap_hunt::nominal_clone::legacy_contract",
+      "rows": 73,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-numeric_methods",
+      "selector": "experimental_core::tests::gap_hunt::numeric_methods::legacy_contract",
+      "rows": 370,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-object_keys",
+      "selector": "experimental_core::tests::gap_hunt::object_keys::legacy_contract",
+      "rows": 70,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-object_methods",
+      "selector": "experimental_core::tests::gap_hunt::object_methods::legacy_contract",
+      "rows": 242,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-object_order",
+      "selector": "experimental_core::tests::gap_hunt::object_order::legacy_contract",
+      "rows": 74,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-option_methods",
+      "selector": "experimental_core::tests::gap_hunt::option_methods::legacy_contract",
+      "rows": 166,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-output_macros",
+      "selector": "experimental_core::tests::gap_hunt::output_macros::legacy_contract",
+      "rows": 367,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-patterns",
+      "selector": "experimental_core::tests::gap_hunt::patterns::legacy_contract",
+      "rows": 348,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-result_supplement",
+      "selector": "experimental_core::tests::gap_hunt::patterns::result_supplement::legacy_contract",
+      "rows": 264,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-range_index",
+      "selector": "experimental_core::tests::gap_hunt::range_index::legacy_contract",
+      "rows": 522,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-remaining_patterns",
+      "selector": "experimental_core::tests::gap_hunt::remaining_patterns::legacy_contract",
+      "rows": 137,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-scalar_methods",
+      "selector": "experimental_core::tests::gap_hunt::scalar_methods::legacy_contract",
+      "rows": 199,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-scalar_methods_supplement",
+      "selector": "experimental_core::tests::gap_hunt::scalar_methods_supplement::legacy_contract",
+      "rows": 7,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-static_methods",
+      "selector": "experimental_core::tests::gap_hunt::static_methods::legacy_contract",
+      "rows": 463,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-tuple_let",
+      "selector": "experimental_core::tests::gap_hunt::tuple_let::legacy_contract",
+      "rows": 98,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-type_values",
+      "selector": "experimental_core::tests::gap_hunt::type_values::legacy_contract",
+      "rows": 120,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-vec_local",
+      "selector": "experimental_core::tests::gap_hunt::vec_local::legacy_contract",
+      "rows": 92,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "stock-wrong_arity",
+      "selector": "experimental_core::tests::gap_hunt::wrong_arity::legacy_contract",
+      "rows": 385,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "range-range_index-legacy_contract",
+      "selector": "experimental_core::tests::gap_hunt::range_index::legacy_contract",
+      "rows": 522,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "range-range_index-contract",
+      "selector": "experimental_core::tests::gap_hunt::range_index::contract",
+      "rows": 522,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "range-range_index-legacy_endpoint_contract",
+      "selector": "experimental_core::tests::gap_hunt::range_index::legacy_endpoint_contract",
+      "rows": 100,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "range-range_index-endpoint_contract",
+      "selector": "experimental_core::tests::gap_hunt::range_index::endpoint_contract",
+      "rows": 100,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "range-loop_iterator-legacy_contract",
+      "selector": "experimental_core::tests::gap_hunt::loop_iterator::legacy_contract",
+      "rows": 18,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "range-loop_iterator-contract",
+      "selector": "experimental_core::tests::gap_hunt::loop_iterator::contract",
+      "rows": 18,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "range-field_iter-contract-stock",
+      "selector": "experimental_core::tests::gap_hunt::field_iter::contract",
+      "rows": 228,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {
+        "GAP_COMPARE_ENGINE": "stock"
+      },
+      "timeout": 1800
+    },
+    {
+      "name": "range-field_iter-contract-fresh",
+      "selector": "experimental_core::tests::gap_hunt::field_iter::contract",
+      "rows": 228,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {
+        "GAP_COMPARE_ENGINE": "fresh"
+      },
+      "timeout": 1800
+    },
+    {
+      "name": "range-experimental_core-heap-ranges-",
+      "selector": "experimental_core::heap::ranges::",
+      "rows": null,
+      "ignored": false,
+      "exact": false,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "range-experimental_core-heap-range_iterator_tests-",
+      "selector": "experimental_core::heap::range_iterator_tests::",
+      "rows": null,
+      "ignored": false,
+      "exact": false,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    },
+    {
+      "name": "range-experimental_core-heap-children_tests-",
+      "selector": "experimental_core::heap::children_tests::",
+      "rows": null,
+      "ignored": false,
+      "exact": false,
+      "sandbox": false,
+      "empty_stderr": false,
+      "env": {},
+      "timeout": 1800
+    }
+  ]
+}

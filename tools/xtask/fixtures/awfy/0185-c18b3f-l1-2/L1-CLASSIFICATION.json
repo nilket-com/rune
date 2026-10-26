@@ -1,0 +1,35 @@
+{
+  "status": "PASS",
+  "cases": 2941,
+  "old_admissions": 2612,
+  "old_admissions_identical": 2612,
+  "all_records_identical": 2941,
+  "new_refusal_progressions": [],
+  "named_refusal_progressions": [
+    {
+      "case": "00063",
+      "source_sha256": "107f3a3577878a86e0204d64b987470e3033810cbdd40fd9f75866415619de0f",
+      "before": [
+        1057,
+        1072
+      ],
+      "after": [
+        1189,
+        1198
+      ]
+    },
+    {
+      "case": "00357",
+      "source_sha256": "107f3a3577878a86e0204d64b987470e3033810cbdd40fd9f75866415619de0f",
+      "before": [
+        1057,
+        1072
+      ],
+      "after": [
+        1189,
+        1198
+      ]
+    }
+  ],
+  "note": "Named progressions are inherited M4-to-C18b3e observations only; no new C18b3e-to-C18b3f delta."
+}

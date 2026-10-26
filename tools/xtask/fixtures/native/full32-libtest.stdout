@@ -1,0 +1,38 @@
+
+running 1 test
+test experimental_core::tests::gap_hunt::contracts::all_frozen_contracts ... PASS differential
+PASS comparison-stock
+PASS comparison-execution
+PASS index-stock
+PASS index-execution
+PASS field-stock
+PASS field-execution
+PASS len-stock
+PASS len-execution
+PASS global-both
+PASS range-stock
+PASS range-execution
+PASS endpoints-stock
+PASS endpoints-execution
+PASS assertions-stock
+PASS assertions-execution
+PASS patterns-stock
+PASS result-patterns-both
+PASS patterns-execution
+PASS host-execution
+PASS format-specs-stock
+PASS format-specs-execution
+PASS scalar-methods-stock
+PASS scalar-methods-execution
+PASS scalar-supplement-stock
+PASS scalar-supplement-execution
+PASS deferred-index-stock
+PASS deferred-index-execution
+PASS tuple-let-stock
+PASS tuple-let-execution
+PASS s0
+PASS output-both
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 1659 filtered out; finished in 687.85s
+

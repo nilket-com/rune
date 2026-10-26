@@ -1,0 +1,606 @@
+{
+ "core::option::Option<rune::experimental_core::error::Error>": {
+  "align": 8,
+  "fields": [
+   {
+    "artificial": true,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": null,
+    "type": "u64"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "None",
+    "type": "core::option::Option<rune::experimental_core::error::Error>::None"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Some",
+    "type": "core::option::Option<rune::experimental_core::error::Error>::Some"
+   }
+  ],
+  "size": 88
+ },
+ "core::result::Result<rune::experimental_core::value::Value, rune::experimental_core::error::Error>": {
+  "align": 8,
+  "fields": [
+   {
+    "artificial": true,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": null,
+    "type": "u64"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Ok",
+    "type": "core::result::Result<rune::experimental_core::value::Value, rune::experimental_core::error::Error>::Ok"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Err",
+    "type": "core::result::Result<rune::experimental_core::value::Value, rune::experimental_core::error::Error>::Err"
+   }
+  ],
+  "size": 88
+ },
+ "rune::experimental_core::detail::Detail": {
+  "align": 8,
+  "fields": [
+   {
+    "artificial": true,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": null,
+    "type": "u8"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "None",
+    "type": "rune::experimental_core::detail::Detail::None"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Io",
+    "type": "rune::experimental_core::detail::Detail::Io"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Binary",
+    "type": "rune::experimental_core::detail::Detail::Binary"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Unary",
+    "type": "rune::experimental_core::detail::Detail::Unary"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "ExpectedBool",
+    "type": "rune::experimental_core::detail::Detail::ExpectedBool"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "ValueDepth",
+    "type": "rune::experimental_core::detail::Detail::ValueDepth"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "ExpectedType",
+    "type": "rune::experimental_core::detail::Detail::ExpectedType"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "MissingIntoIter",
+    "type": "rune::experimental_core::detail::Detail::MissingIntoIter"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "StringOperand",
+    "type": "rune::experimental_core::detail::Detail::StringOperand"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Coerce",
+    "type": "rune::experimental_core::detail::Detail::Coerce"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "ShiftWidth",
+    "type": "rune::experimental_core::detail::Detail::ShiftWidth"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "WriteBorrowed",
+    "type": "rune::experimental_core::detail::Detail::WriteBorrowed"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "TakeBorrowed",
+    "type": "rune::experimental_core::detail::Detail::TakeBorrowed"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "SharedArgument",
+    "type": "rune::experimental_core::detail::Detail::SharedArgument"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "ReadExclusive",
+    "type": "rune::experimental_core::detail::Detail::ReadExclusive"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "WriteExclusive",
+    "type": "rune::experimental_core::detail::Detail::WriteExclusive"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "TakeExclusive",
+    "type": "rune::experimental_core::detail::Detail::TakeExclusive"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "ExclusiveArgument",
+    "type": "rune::experimental_core::detail::Detail::ExclusiveArgument"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "OutOfRange",
+    "type": "rune::experimental_core::detail::Detail::OutOfRange"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "MissingKey",
+    "type": "rune::experimental_core::detail::Detail::MissingKey"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "MissingIndex",
+    "type": "rune::experimental_core::detail::Detail::MissingIndex"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "MissingStringSlice",
+    "type": "rune::experimental_core::detail::Detail::MissingStringSlice"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "PanicMessage",
+    "type": "rune::experimental_core::detail::Detail::PanicMessage"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "UnsupportedIterRangeInclusive",
+    "type": "rune::experimental_core::detail::Detail::UnsupportedIterRangeInclusive"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "UnsupportedIterRangeFrom",
+    "type": "rune::experimental_core::detail::Detail::UnsupportedIterRangeFrom"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "UnsupportedIterRange",
+    "type": "rune::experimental_core::detail::Detail::UnsupportedIterRange"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "MissingInteger",
+    "type": "rune::experimental_core::detail::Detail::MissingInteger"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "MissingField",
+    "type": "rune::experimental_core::detail::Detail::MissingField"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "FieldSetUnsupported",
+    "type": "rune::experimental_core::detail::Detail::FieldSetUnsupported"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "FieldOnNonRecord",
+    "type": "rune::experimental_core::detail::Detail::FieldOnNonRecord"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "NotCallable",
+    "type": "rune::experimental_core::detail::Detail::NotCallable"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Arity",
+    "type": "rune::experimental_core::detail::Detail::Arity"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "ForeignFunction",
+    "type": "rune::experimental_core::detail::Detail::ForeignFunction"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Moved",
+    "type": "rune::experimental_core::detail::Detail::Moved"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "ExpectedChar",
+    "type": "rune::experimental_core::detail::Detail::ExpectedChar"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "NoCloneProtocol",
+    "type": "rune::experimental_core::detail::Detail::NoCloneProtocol"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Cast",
+    "type": "rune::experimental_core::detail::Detail::Cast"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "Underflow",
+    "type": "rune::experimental_core::detail::Detail::Underflow"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "MissingInstanceFunction",
+    "type": "rune::experimental_core::detail::Detail::MissingInstanceFunction"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "NotIterable",
+    "type": "rune::experimental_core::detail::Detail::NotIterable"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "TryOperand",
+    "type": "rune::experimental_core::detail::Detail::TryOperand"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "NoDisplay",
+    "type": "rune::experimental_core::detail::Detail::NoDisplay"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "ExpectedNumber",
+    "type": "rune::experimental_core::detail::Detail::ExpectedNumber"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "IndexTarget",
+    "type": "rune::experimental_core::detail::Detail::IndexTarget"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "IndexSet",
+    "type": "rune::experimental_core::detail::Detail::IndexSet"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "TupleIndexGet",
+    "type": "rune::experimental_core::detail::Detail::TupleIndexGet"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "TupleIndexSet",
+    "type": "rune::experimental_core::detail::Detail::TupleIndexSet"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "HostMessage",
+    "type": "rune::experimental_core::detail::Detail::HostMessage"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "NumericArgumentType",
+    "type": "rune::experimental_core::detail::Detail::NumericArgumentType"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "NumericArgumentNumber",
+    "type": "rune::experimental_core::detail::Detail::NumericArgumentNumber"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "NumericArgumentCoerce",
+    "type": "rune::experimental_core::detail::Detail::NumericArgumentCoerce"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "HostExpectedType",
+    "type": "rune::experimental_core::detail::Detail::HostExpectedType"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "HostExpectedNumber",
+    "type": "rune::experimental_core::detail::Detail::HostExpectedNumber"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "HostPanicked",
+    "type": "rune::experimental_core::detail::Detail::HostPanicked"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "HostDynamic",
+    "type": "rune::experimental_core::detail::Detail::HostDynamic"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "FloatComparison",
+    "type": "rune::experimental_core::detail::Detail::FloatComparison"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "CmpArgumentAccess",
+    "type": "rune::experimental_core::detail::Detail::CmpArgumentAccess"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "FormatArgumentMoved",
+    "type": "rune::experimental_core::detail::Detail::FormatArgumentMoved"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "IteratorArgumentMoved",
+    "type": "rune::experimental_core::detail::Detail::IteratorArgumentMoved"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "MovedArgument",
+    "type": "rune::experimental_core::detail::Detail::MovedArgument"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "TakeSharedArgument",
+    "type": "rune::experimental_core::detail::Detail::TakeSharedArgument"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "TupleLength",
+    "type": "rune::experimental_core::detail::Detail::TupleLength"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "CapacityOverflow",
+    "type": "rune::experimental_core::detail::Detail::CapacityOverflow"
+   }
+  ],
+  "size": 32
+ },
+ "rune::experimental_core::error::Error": {
+  "align": 8,
+  "fields": [
+   {
+    "artificial": false,
+    "bitpos": 640,
+    "bitsize": 0,
+    "name": "kind",
+    "type": "rune::experimental_core::error::ErrorKind"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "location",
+    "type": "core::option::Option<rune::experimental_core::error::Location>"
+   },
+   {
+    "artificial": false,
+    "bitpos": 512,
+    "bitsize": 0,
+    "name": "operation",
+    "type": "&str"
+   },
+   {
+    "artificial": false,
+    "bitpos": 648,
+    "bitsize": 0,
+    "name": "refusal",
+    "type": "core::option::Option<rune::experimental_core::error::Refusal>"
+   },
+   {
+    "artificial": false,
+    "bitpos": 256,
+    "bitsize": 0,
+    "name": "detail",
+    "type": "rune::experimental_core::detail::Detail"
+   }
+  ],
+  "size": 88
+ },
+ "rune::experimental_core::execute::Failure": {
+  "align": 8,
+  "fields": [
+   {
+    "artificial": false,
+    "bitpos": 1984,
+    "bitsize": 0,
+    "name": "numeric_context",
+    "type": "core::option::Option<rune::experimental_core::execute::NumericContext>"
+   },
+   {
+    "artificial": false,
+    "bitpos": 0,
+    "bitsize": 0,
+    "name": "error",
+    "type": "rune::experimental_core::error::Error"
+   },
+   {
+    "artificial": false,
+    "bitpos": 1600,
+    "bitsize": 0,
+    "name": "missing_key",
+    "type": "core::option::Option<rune_alloc::boxed::Box<str, rune_alloc::alloc::global::Global>>"
+   },
+   {
+    "artificial": false,
+    "bitpos": 1728,
+    "bitsize": 0,
+    "name": "panic_message",
+    "type": "core::option::Option<rune_alloc::boxed::Box<str, rune_alloc::alloc::global::Global>>"
+   },
+   {
+    "artificial": false,
+    "bitpos": 1856,
+    "bitsize": 0,
+    "name": "host_message",
+    "type": "core::option::Option<rune_alloc::boxed::Box<str, rune_alloc::alloc::global::Global>>"
+   },
+   {
+    "artificial": false,
+    "bitpos": 1408,
+    "bitsize": 0,
+    "name": "call_chain",
+    "type": "rune_alloc::vec::Vec<rune::experimental_core::error::Location, rune_alloc::alloc::global::Global>"
+   },
+   {
+    "artificial": false,
+    "bitpos": 704,
+    "bitsize": 0,
+    "name": "cleanup_error",
+    "type": "core::option::Option<rune::experimental_core::error::Error>"
+   }
+  ],
+  "size": 272
+ }
+}

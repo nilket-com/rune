@@ -1,0 +1,393 @@
+{
+ "Option<rune::experimental_core::detail::Detail>": {
+  "align": 8,
+  "discriminant": {
+   "offset": 0,
+   "type": "u8"
+  },
+  "size": 32,
+  "variants": [
+   {
+    "discr": "0xff",
+    "name": "None"
+   },
+   {
+    "discr": null,
+    "name": "Some"
+   }
+  ]
+ },
+ "Option<rune::experimental_core::error::Error>": {
+  "align": 8,
+  "discriminant": {
+   "offset": 0,
+   "type": "u64"
+  },
+  "size": 88,
+  "variants": [
+   {
+    "discr": "0x02",
+    "name": "None"
+   },
+   {
+    "discr": null,
+    "name": "Some"
+   }
+  ]
+ },
+ "Result<(), rune::experimental_core::error::Error>": {
+  "align": 8,
+  "discriminant": {
+   "offset": 0,
+   "type": "u64"
+  },
+  "size": 88,
+  "variants": [
+   {
+    "discr": "0x02",
+    "name": "Ok"
+   },
+   {
+    "discr": null,
+    "name": "Err"
+   }
+  ]
+ },
+ "Result<rune::experimental_core::value::Value, rune::experimental_core::error::Error>": {
+  "align": 8,
+  "discriminant": {
+   "offset": 0,
+   "type": "u64"
+  },
+  "size": 88,
+  "variants": [
+   {
+    "discr": "0x02",
+    "name": "Ok"
+   },
+   {
+    "discr": null,
+    "name": "Err"
+   }
+  ]
+ },
+ "Result<rune::experimental_core::value::Value, rune::experimental_core::execute::Failure>": {
+  "align": 8,
+  "discriminant": {
+   "offset": 0,
+   "type": "u64"
+  },
+  "size": 272,
+  "variants": [
+   {
+    "discr": "0x02",
+    "name": "Ok"
+   },
+   {
+    "discr": null,
+    "name": "Err"
+   }
+  ]
+ },
+ "rune::experimental_core::detail::Detail": {
+  "align": 8,
+  "discriminant": {
+   "offset": 0,
+   "type": "u8"
+  },
+  "size": 32,
+  "variants": [
+   {
+    "discr": "0x00",
+    "name": "None"
+   },
+   {
+    "discr": "0x01",
+    "name": "Io"
+   },
+   {
+    "discr": "0x02",
+    "name": "Binary"
+   },
+   {
+    "discr": "0x03",
+    "name": "Unary"
+   },
+   {
+    "discr": "0x04",
+    "name": "ExpectedBool"
+   },
+   {
+    "discr": "0x05",
+    "name": "ValueDepth"
+   },
+   {
+    "discr": "0x06",
+    "name": "ExpectedType"
+   },
+   {
+    "discr": "0x07",
+    "name": "MissingIntoIter"
+   },
+   {
+    "discr": "0x08",
+    "name": "StringOperand"
+   },
+   {
+    "discr": "0x09",
+    "name": "Coerce"
+   },
+   {
+    "discr": "0x0a",
+    "name": "ShiftWidth"
+   },
+   {
+    "discr": "0x0b",
+    "name": "WriteBorrowed"
+   },
+   {
+    "discr": "0x0c",
+    "name": "TakeBorrowed"
+   },
+   {
+    "discr": "0x0d",
+    "name": "SharedArgument"
+   },
+   {
+    "discr": "0x0e",
+    "name": "ReadExclusive"
+   },
+   {
+    "discr": "0x0f",
+    "name": "WriteExclusive"
+   },
+   {
+    "discr": "0x10",
+    "name": "TakeExclusive"
+   },
+   {
+    "discr": "0x11",
+    "name": "ExclusiveArgument"
+   },
+   {
+    "discr": "0x12",
+    "name": "OutOfRange"
+   },
+   {
+    "discr": "0x13",
+    "name": "MissingKey"
+   },
+   {
+    "discr": "0x14",
+    "name": "MissingIndex"
+   },
+   {
+    "discr": "0x15",
+    "name": "MissingStringSlice"
+   },
+   {
+    "discr": "0x16",
+    "name": "PanicMessage"
+   },
+   {
+    "discr": "0x17",
+    "name": "UnsupportedIterRangeInclusive"
+   },
+   {
+    "discr": "0x18",
+    "name": "UnsupportedIterRangeFrom"
+   },
+   {
+    "discr": "0x19",
+    "name": "UnsupportedIterRange"
+   },
+   {
+    "discr": "0x1a",
+    "name": "MissingInteger"
+   },
+   {
+    "discr": "0x1b",
+    "name": "MissingField"
+   },
+   {
+    "discr": "0x1c",
+    "name": "FieldSetUnsupported"
+   },
+   {
+    "discr": "0x1d",
+    "name": "FieldOnNonRecord"
+   },
+   {
+    "discr": "0x1e",
+    "name": "NotCallable"
+   },
+   {
+    "discr": "0x1f",
+    "name": "Arity"
+   },
+   {
+    "discr": "0x20",
+    "name": "ForeignFunction"
+   },
+   {
+    "discr": "0x21",
+    "name": "Moved"
+   },
+   {
+    "discr": "0x22",
+    "name": "ExpectedChar"
+   },
+   {
+    "discr": "0x23",
+    "name": "NoCloneProtocol"
+   },
+   {
+    "discr": "0x24",
+    "name": "Cast"
+   },
+   {
+    "discr": "0x25",
+    "name": "Underflow"
+   },
+   {
+    "discr": "0x26",
+    "name": "MissingInstanceFunction"
+   },
+   {
+    "discr": "0x27",
+    "name": "NotIterable"
+   },
+   {
+    "discr": "0x28",
+    "name": "TryOperand"
+   },
+   {
+    "discr": "0x29",
+    "name": "NoDisplay"
+   },
+   {
+    "discr": "0x2a",
+    "name": "ExpectedNumber"
+   },
+   {
+    "discr": "0x2b",
+    "name": "IndexTarget"
+   },
+   {
+    "discr": "0x2c",
+    "name": "IndexSet"
+   },
+   {
+    "discr": "0x2d",
+    "name": "TupleIndexGet"
+   },
+   {
+    "discr": "0x2e",
+    "name": "TupleIndexSet"
+   },
+   {
+    "discr": "0x2f",
+    "name": "HostMessage"
+   },
+   {
+    "discr": "0x30",
+    "name": "NumericArgumentType"
+   },
+   {
+    "discr": "0x31",
+    "name": "NumericArgumentNumber"
+   },
+   {
+    "discr": "0x32",
+    "name": "NumericArgumentCoerce"
+   },
+   {
+    "discr": "0x33",
+    "name": "HostExpectedType"
+   },
+   {
+    "discr": "0x34",
+    "name": "HostExpectedNumber"
+   },
+   {
+    "discr": "0x35",
+    "name": "HostPanicked"
+   },
+   {
+    "discr": "0x36",
+    "name": "HostDynamic"
+   },
+   {
+    "discr": "0x37",
+    "name": "FloatComparison"
+   },
+   {
+    "discr": "0x38",
+    "name": "CmpArgumentAccess"
+   },
+   {
+    "discr": "0x39",
+    "name": "FormatArgumentMoved"
+   },
+   {
+    "discr": "0x3a",
+    "name": "IteratorArgumentMoved"
+   },
+   {
+    "discr": "0x3b",
+    "name": "MovedArgument"
+   },
+   {
+    "discr": "0x3c",
+    "name": "TakeSharedArgument"
+   },
+   {
+    "discr": "0x3d",
+    "name": "TupleLength"
+   },
+   {
+    "discr": "0x3e",
+    "name": "CapacityOverflow"
+   }
+  ]
+ },
+ "rune::experimental_core::error::Error": {
+  "align": 8,
+  "discriminant": null,
+  "members": [
+   [
+    "kind",
+    "rune::experimental_core::error::ErrorKind",
+    "0x50"
+   ],
+   [
+    "location",
+    "core::option::Option<rune::experimental_core::error::Location>",
+    "0x00"
+   ],
+   [
+    "operation",
+    "&str",
+    "0x40"
+   ],
+   [
+    "refusal",
+    "core::option::Option<rune::experimental_core::error::Refusal>",
+    "0x51"
+   ],
+   [
+    "detail",
+    "rune::experimental_core::detail::Detail",
+    "0x20"
+   ]
+  ],
+  "size": 88,
+  "variants": []
+ },
+ "rune::experimental_core::execute::Failure": {
+  "align": 8,
+  "discriminant": null,
+  "size": 272,
+  "variants": []
+ }
+}

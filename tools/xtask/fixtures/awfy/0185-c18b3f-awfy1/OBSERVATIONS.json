@@ -1,0 +1,530 @@
+[
+  {
+    "program": "bounce",
+    "outer": 1,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Bounce benchmark ...\nBounce: iterations=1\nBounce: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Bounce benchmark ...\nBounce: iterations=1\nBounce: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Bounce benchmark ...\nBounce: iterations=1\nBounce: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "bounce",
+    "outer": 2,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Bounce benchmark ...\nBounce: iterations=1\nBounce: iterations=1\nBounce: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Bounce benchmark ...\nBounce: iterations=1\nBounce: iterations=1\nBounce: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Bounce benchmark ...\nBounce: iterations=1\nBounce: iterations=1\nBounce: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "list",
+    "outer": 1,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "list",
+    "outer": 2,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nList: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nList: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nList: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "mandelbrot",
+    "outer": 1,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "mandelbrot",
+    "outer": 2,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nMandelbrot: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nMandelbrot: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nMandelbrot: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "nbody",
+    "outer": 1,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "nbody",
+    "outer": 2,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nNBody: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nNBody: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nNBody: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "permute",
+    "outer": 1,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "permute",
+    "outer": 2,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nPermute: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nPermute: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nPermute: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "queens",
+    "outer": 1,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "queens",
+    "outer": 2,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nQueens: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nQueens: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nQueens: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "sieve",
+    "outer": 1,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "sieve",
+    "outer": 2,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nSieve: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nSieve: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nSieve: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "storage",
+    "outer": 1,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Storage benchmark ...\nStorage: iterations=1\nStorage: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Storage benchmark ...\nStorage: iterations=1\nStorage: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Storage benchmark ...\nStorage: iterations=1\nStorage: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "storage",
+    "outer": 2,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Storage benchmark ...\nStorage: iterations=1\nStorage: iterations=1\nStorage: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Storage benchmark ...\nStorage: iterations=1\nStorage: iterations=1\nStorage: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Storage benchmark ...\nStorage: iterations=1\nStorage: iterations=1\nStorage: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "towers",
+    "outer": 1,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "towers",
+    "outer": 2,
+    "classification": "Exact",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nTowers: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 0,
+        "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nTowers: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      },
+      "candidate": {
+        "rc": 0,
+        "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nTowers: iterations=2\nRESULT ok\n",
+        "stderr": "fresh live_entries=0\n"
+      }
+    }
+  },
+  {
+    "program": "havlak",
+    "outer": 1,
+    "classification": "Known-gap",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Havlak benchmark ...\nHavlak: iterations=1\nHavlak: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 7,
+        "stdout": "Starting Havlak benchmark ...\n",
+        "stderr": "error: Error { kind: StoreCapacity, location: Some(Location { source: 2, revision: 1, start: 254, end: 275 }), operation: \"store\", refusal: None, detail: None }\n"
+      },
+      "candidate": {
+        "rc": 7,
+        "stdout": "Starting Havlak benchmark ...\n",
+        "stderr": "error: Error { kind: StoreCapacity, location: Some(Location { source: 2, revision: 1, start: 254, end: 275 }), operation: \"store\", refusal: None, detail: None }\n"
+      }
+    }
+  },
+  {
+    "program": "havlak",
+    "outer": 2,
+    "classification": "Known-gap",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Havlak benchmark ...\nHavlak: iterations=1\nHavlak: iterations=1\nHavlak: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 7,
+        "stdout": "Starting Havlak benchmark ...\n",
+        "stderr": "error: Error { kind: StoreCapacity, location: Some(Location { source: 2, revision: 1, start: 254, end: 275 }), operation: \"store\", refusal: None, detail: None }\n"
+      },
+      "candidate": {
+        "rc": 7,
+        "stdout": "Starting Havlak benchmark ...\n",
+        "stderr": "error: Error { kind: StoreCapacity, location: Some(Location { source: 2, revision: 1, start: 254, end: 275 }), operation: \"store\", refusal: None, detail: None }\n"
+      }
+    }
+  },
+  {
+    "program": "json",
+    "outer": 1,
+    "classification": "Refused",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Json benchmark ...\nJson: iterations=1\nJson: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 3,
+        "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15 \"self.table.get(name)\"\n",
+        "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15\n    \u2502\n327 \u2502         let index = self.table.get(name);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:656:19\n    \u2502\n656 \u2502             self.current = self.input.get(self.index..self.index + 1);\n    \u2502                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:668:47\n    \u2502\n668 \u2502         self.capture_buffer = self.capture_buffer + self.input.get(self.capture_start..end + 1).unwrap();\n    \u2502                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:676:4\n    \u2502\n676 \u2502             self.input.get(self.capture_start..end + 1).unwrap()\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:740:7\n    \u2502\n740 \u2502         if !result.as_object().get(\"head\").unwrap().is_object() {\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n"
+      },
+      "candidate": {
+        "rc": 3,
+        "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15 \"self.table.get(name)\"\n",
+        "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15\n    \u2502\n327 \u2502         let index = self.table.get(name);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:656:19\n    \u2502\n656 \u2502             self.current = self.input.get(self.index..self.index + 1);\n    \u2502                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:668:47\n    \u2502\n668 \u2502         self.capture_buffer = self.capture_buffer + self.input.get(self.capture_start..end + 1).unwrap();\n    \u2502                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:676:4\n    \u2502\n676 \u2502             self.input.get(self.capture_start..end + 1).unwrap()\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:740:7\n    \u2502\n740 \u2502         if !result.as_object().get(\"head\").unwrap().is_object() {\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n"
+      }
+    }
+  },
+  {
+    "program": "json",
+    "outer": 2,
+    "classification": "Refused",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting Json benchmark ...\nJson: iterations=1\nJson: iterations=1\nJson: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 3,
+        "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15 \"self.table.get(name)\"\n",
+        "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15\n    \u2502\n327 \u2502         let index = self.table.get(name);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:656:19\n    \u2502\n656 \u2502             self.current = self.input.get(self.index..self.index + 1);\n    \u2502                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:668:47\n    \u2502\n668 \u2502         self.capture_buffer = self.capture_buffer + self.input.get(self.capture_start..end + 1).unwrap();\n    \u2502                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:676:4\n    \u2502\n676 \u2502             self.input.get(self.capture_start..end + 1).unwrap()\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:740:7\n    \u2502\n740 \u2502         if !result.as_object().get(\"head\").unwrap().is_object() {\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n"
+      },
+      "candidate": {
+        "rc": 3,
+        "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15 \"self.table.get(name)\"\n",
+        "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15\n    \u2502\n327 \u2502         let index = self.table.get(name);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:656:19\n    \u2502\n656 \u2502             self.current = self.input.get(self.index..self.index + 1);\n    \u2502                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:668:47\n    \u2502\n668 \u2502         self.capture_buffer = self.capture_buffer + self.input.get(self.capture_start..end + 1).unwrap();\n    \u2502                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:676:4\n    \u2502\n676 \u2502             self.input.get(self.capture_start..end + 1).unwrap()\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:740:7\n    \u2502\n740 \u2502         if !result.as_object().get(\"head\").unwrap().is_object() {\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n"
+      }
+    }
+  },
+  {
+    "program": "cd",
+    "outer": 1,
+    "classification": "Refused",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting CD benchmark ...\nCD: iterations=1\nCD: iterations=1\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 3,
+        "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:725:4 \"self.state.remove(e)\"\n",
+        "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:724:22\n    \u2502  \n724 \u2502           to_remove.each(|e| {\n    \u2502 \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^\n725 \u2502 \u2502             self.state.remove(e);\n726 \u2502 \u2502         });\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:895:72\n    \u2502\n895 \u2502             frame.append(Aircraft::new(self.aircraft.at(i), Vector3D::new(time, time.cos() * 2.0 + ((i * 3) as f64), 10.0)));\n    \u2502                                                                                 ^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n"
+      },
+      "candidate": {
+        "rc": 3,
+        "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:725:4 \"self.state.remove(e)\"\n",
+        "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:724:22\n    \u2502  \n724 \u2502           to_remove.each(|e| {\n    \u2502 \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^\n725 \u2502 \u2502             self.state.remove(e);\n726 \u2502 \u2502         });\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:895:72\n    \u2502\n895 \u2502             frame.append(Aircraft::new(self.aircraft.at(i), Vector3D::new(time, time.cos() * 2.0 + ((i * 3) as f64), 10.0)));\n    \u2502                                                                                 ^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n"
+      }
+    }
+  },
+  {
+    "program": "cd",
+    "outer": 2,
+    "classification": "Refused",
+    "observations": {
+      "stock": {
+        "rc": 0,
+        "stdout": "Starting CD benchmark ...\nCD: iterations=1\nCD: iterations=1\nCD: iterations=2\nRESULT ok\n",
+        "stderr": ""
+      },
+      "published_c18b3e": {
+        "rc": 3,
+        "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:725:4 \"self.state.remove(e)\"\n",
+        "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:724:22\n    \u2502  \n724 \u2502           to_remove.each(|e| {\n    \u2502 \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^\n725 \u2502 \u2502             self.state.remove(e);\n726 \u2502 \u2502         });\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:895:72\n    \u2502\n895 \u2502             frame.append(Aircraft::new(self.aircraft.at(i), Vector3D::new(time, time.cos() * 2.0 + ((i * 3) as f64), 10.0)));\n    \u2502                                                                                 ^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n"
+      },
+      "candidate": {
+        "rc": 3,
+        "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:725:4 \"self.state.remove(e)\"\n",
+        "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:724:22\n    \u2502  \n724 \u2502           to_remove.each(|e| {\n    \u2502 \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^\n725 \u2502 \u2502             self.state.remove(e);\n726 \u2502 \u2502         });\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:895:72\n    \u2502\n895 \u2502             frame.append(Aircraft::new(self.aircraft.at(i), Vector3D::new(time, time.cos() * 2.0 + ((i * 3) as f64), 10.0)));\n    \u2502                                                                                 ^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n"
+      }
+    }
+  }
+]

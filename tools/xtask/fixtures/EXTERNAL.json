@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "anchor": "f0baf933382039f2b8c44b84a04532ba5703b459",
+  "per_suite": {
+    "native": {
+      "external_files": 0,
+      "external_bytes": 0
+    },
+    "contracts": {
+      "external_files": 65,
+      "external_bytes": 158864
+    },
+    "emissions": {
+      "external_files": 12207,
+      "external_bytes": 23011816
+    },
+    "l1": {
+      "external_files": 12207,
+      "external_bytes": 23011816
+    },
+    "legacy-units": {
+      "external_files": 12207,
+      "external_bytes": 23011816
+    },
+    "awfy": {
+      "external_files": 0,
+      "external_bytes": 0
+    },
+    "clippy": {
+      "external_files": 0,
+      "external_bytes": 0
+    },
+    "layouts": {
+      "external_files": 0,
+      "external_bytes": 0
+    },
+    "miri": {
+      "external_files": 0,
+      "external_bytes": 0
+    }
+  },
+  "unique_files": 12272,
+  "unique_bytes": 23170680,
+  "followup": "V1d: portable frozen correctness inputs; content-addressed fetch/unpack and review of small corpus data; Rnx ownership coordinated with V1b",
+  "archive": "0185-v1a-fixtures-v1.tar.gz",
+  "archive_bytes": 3513671,
+  "archive_sha256": "bec78b195ce1ab320361439fd9f51a823ee51dfd7b691aeba94551fa82827b84",
+  "index_sha256": "5d566c732b102f9b9b0e792a150c508469a651a4c20f8d028d693bfd0865cc23"
+}

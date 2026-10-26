@@ -1,0 +1,1300 @@
+{
+  "status": "NEEDS-RULING",
+  "scope": "Unmodified AWFY, same default budgets both before/after; no timing",
+  "programs": {
+    "bounce": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Bounce benchmark ...\nBounce: iterations=1\nBounce: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "21360fa2e26d96b99a9c52226df9c19047f5f92ea69be072b6491d3af8f27447",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2 \"array.resize(n, None)\"\n",
+          "stderr": "error: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn:15:7\n   \u2502\n15 \u2502             x: random.next() % 500,\n   \u2502                ^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "a7730e0efe22abc28ab200bf5350a71305e239c33d9d3209e77a1ef66d3a5db4",
+          "stderr_sha256": "bf67c3e8a28dc9c6ff29636c92628bd7cc3bfaef6e8d3e86472ada917eb9e07d",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn:15:7 \"random.next()\"\n",
+          "stderr": "error: Method\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn:15:7\n   \u2502\n15 \u2502             x: random.next() % 500,\n   \u2502                ^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "d608c9ae0165879b7f7a4551c33d38ea988d288e0ba1c04eeea8ad1e5bd0268d",
+          "stderr_sha256": "67285e5e206f262ca9efbddf076dd6cc39fa699fc4ea9dca2cb7aa3ec16f0dae",
+          "classification": "Refused"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Bounce benchmark ...\nBounce: iterations=1\nBounce: iterations=1\nBounce: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "97110ce84c432b2e5cef22a24a73fc0ad52b312a2e746e9a2777e57e321adbcf",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2 \"array.resize(n, None)\"\n",
+          "stderr": "error: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn:15:7\n   \u2502\n15 \u2502             x: random.next() % 500,\n   \u2502                ^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "a7730e0efe22abc28ab200bf5350a71305e239c33d9d3209e77a1ef66d3a5db4",
+          "stderr_sha256": "bf67c3e8a28dc9c6ff29636c92628bd7cc3bfaef6e8d3e86472ada917eb9e07d",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn:15:7 \"random.next()\"\n",
+          "stderr": "error: Method\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/bounce.rn:15:7\n   \u2502\n15 \u2502             x: random.next() % 500,\n   \u2502                ^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "d608c9ae0165879b7f7a4551c33d38ea988d288e0ba1c04eeea8ad1e5bd0268d",
+          "stderr_sha256": "67285e5e206f262ca9efbddf076dd6cc39fa699fc4ea9dca2cb7aa3ec16f0dae",
+          "classification": "Refused"
+        }
+      }
+    },
+    "list": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/list.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "a702dbcf40acd80739fe04ceb4942ada8c8af9d9c0615dd6454684245358be68",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/list.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "a702dbcf40acd80739fe04ceb4942ada8c8af9d9c0615dd6454684245358be68",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/list.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "a702dbcf40acd80739fe04ceb4942ada8c8af9d9c0615dd6454684245358be68",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/list.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nList: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "53a7c8744c284068eb598cc6b6192236ce6da7fc6f956d0a6f3b2e4fe4d99b16",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/list.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nList: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "53a7c8744c284068eb598cc6b6192236ce6da7fc6f956d0a6f3b2e4fe4d99b16",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/list.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting List benchmark ...\nList: iterations=1\nList: iterations=1\nList: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "53a7c8744c284068eb598cc6b6192236ce6da7fc6f956d0a6f3b2e4fe4d99b16",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      }
+    },
+    "mandelbrot": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/mandelbrot.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "c017df533a1b66808ef2d4ab577a0bb9e18f8f6358f4fcab8332de2faa479b9d",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/mandelbrot.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "c017df533a1b66808ef2d4ab577a0bb9e18f8f6358f4fcab8332de2faa479b9d",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/mandelbrot.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "c017df533a1b66808ef2d4ab577a0bb9e18f8f6358f4fcab8332de2faa479b9d",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/mandelbrot.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nMandelbrot: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "c48abce4f00ab7db8d3c22b9ce7546ac603afdfb0c7e47557e1fa96dc19c0e4e",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/mandelbrot.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nMandelbrot: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "c48abce4f00ab7db8d3c22b9ce7546ac603afdfb0c7e47557e1fa96dc19c0e4e",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/mandelbrot.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Mandelbrot benchmark ...\nMandelbrot: iterations=1\nMandelbrot: iterations=1\nMandelbrot: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "c48abce4f00ab7db8d3c22b9ce7546ac603afdfb0c7e47557e1fa96dc19c0e4e",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      }
+    },
+    "nbody": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/nbody.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "8262bf67a0b440ae693ad1ed276e67604f7b9fda5c7b7e0f0f0f32e42668a6e7",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/nbody.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "8262bf67a0b440ae693ad1ed276e67604f7b9fda5c7b7e0f0f0f32e42668a6e7",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/nbody.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "8262bf67a0b440ae693ad1ed276e67604f7b9fda5c7b7e0f0f0f32e42668a6e7",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/nbody.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nNBody: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "69c53fe173254e0a68e337c60de9e4d549227c003e51b49fbe978f0bd7f48e05",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/nbody.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nNBody: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "69c53fe173254e0a68e337c60de9e4d549227c003e51b49fbe978f0bd7f48e05",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/nbody.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting NBody benchmark ...\nNBody: iterations=1\nNBody: iterations=1\nNBody: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "69c53fe173254e0a68e337c60de9e4d549227c003e51b49fbe978f0bd7f48e05",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      }
+    },
+    "permute": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/permute.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "4d366d314ec45fd59ea955df1996d0a8a7be9d735297231a07a0fc15ce51fc97",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/permute.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "4d366d314ec45fd59ea955df1996d0a8a7be9d735297231a07a0fc15ce51fc97",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/permute.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "4d366d314ec45fd59ea955df1996d0a8a7be9d735297231a07a0fc15ce51fc97",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/permute.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nPermute: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "39585f757dcd887b3a79784e042ef6e532354d2d2ca824c0f9b689eb9cf71c66",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/permute.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nPermute: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "39585f757dcd887b3a79784e042ef6e532354d2d2ca824c0f9b689eb9cf71c66",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/permute.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Permute benchmark ...\nPermute: iterations=1\nPermute: iterations=1\nPermute: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "39585f757dcd887b3a79784e042ef6e532354d2d2ca824c0f9b689eb9cf71c66",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      }
+    },
+    "queens": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/queens.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "356c50173710a655a7f48036fa10fdbe6db4d0668ebdcd8639588124e83d445c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/queens.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "356c50173710a655a7f48036fa10fdbe6db4d0668ebdcd8639588124e83d445c",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/queens.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "356c50173710a655a7f48036fa10fdbe6db4d0668ebdcd8639588124e83d445c",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/queens.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nQueens: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "f85dfeab6a232b4e78512f760d25851d0eae368c74b5b8057f2c6caee76c90b1",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/queens.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nQueens: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "f85dfeab6a232b4e78512f760d25851d0eae368c74b5b8057f2c6caee76c90b1",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/queens.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Queens benchmark ...\nQueens: iterations=1\nQueens: iterations=1\nQueens: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "f85dfeab6a232b4e78512f760d25851d0eae368c74b5b8057f2c6caee76c90b1",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      }
+    },
+    "sieve": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/sieve.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "430648035787036d249fb7ce13bc24468ee07ea05aa54caebb9f130592144ce8",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/sieve.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "430648035787036d249fb7ce13bc24468ee07ea05aa54caebb9f130592144ce8",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/sieve.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "430648035787036d249fb7ce13bc24468ee07ea05aa54caebb9f130592144ce8",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/sieve.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nSieve: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "2cebc242e45951b0c738d54bfcaa40e1ceeef544b2dc4b8d417abe8ca2e6501f",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/sieve.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nSieve: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "2cebc242e45951b0c738d54bfcaa40e1ceeef544b2dc4b8d417abe8ca2e6501f",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/sieve.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Sieve benchmark ...\nSieve: iterations=1\nSieve: iterations=1\nSieve: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "2cebc242e45951b0c738d54bfcaa40e1ceeef544b2dc4b8d417abe8ca2e6501f",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      }
+    },
+    "storage": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Storage benchmark ...\nStorage: iterations=1\nStorage: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "6b21f9d648cd3dfc7ed8f3e13e200926e1dafe66fc77495483109ac1b01844da",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn:30:16 \"random.next()\"\n",
+          "stderr": "error: Method\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn:30:16\n   \u2502\n30 \u2502             alloc_array(random.next() % 10 + 1)\n   \u2502                         ^^^^^^^^^^^^^ Method\n\nerror: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "f1a89aea336d40129530d4756ffe8ac27f80805ff4813db1f3e16a6e9b2f7603",
+          "stderr_sha256": "d5aeab1973454d96b6eb2a91bb2d508779a61370c7a9e2cd3f74473461f9c20e",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn:30:16 \"random.next()\"\n",
+          "stderr": "error: Method\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn:30:16\n   \u2502\n30 \u2502             alloc_array(random.next() % 10 + 1)\n   \u2502                         ^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "f1a89aea336d40129530d4756ffe8ac27f80805ff4813db1f3e16a6e9b2f7603",
+          "stderr_sha256": "747b3c43240b85d6a8315a7a0402736c0be4b91fbc47238f6a91bdb18f0c9a7e",
+          "classification": "Refused"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Storage benchmark ...\nStorage: iterations=1\nStorage: iterations=1\nStorage: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "c74f16863e8e41fcb21f613b6e8d06e0fc6a602abb507efb033861800554f33c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn:30:16 \"random.next()\"\n",
+          "stderr": "error: Method\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn:30:16\n   \u2502\n30 \u2502             alloc_array(random.next() % 10 + 1)\n   \u2502                         ^^^^^^^^^^^^^ Method\n\nerror: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "f1a89aea336d40129530d4756ffe8ac27f80805ff4813db1f3e16a6e9b2f7603",
+          "stderr_sha256": "d5aeab1973454d96b6eb2a91bb2d508779a61370c7a9e2cd3f74473461f9c20e",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn:30:16 \"random.next()\"\n",
+          "stderr": "error: Method\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/storage.rn:30:16\n   \u2502\n30 \u2502             alloc_array(random.next() % 10 + 1)\n   \u2502                         ^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "f1a89aea336d40129530d4756ffe8ac27f80805ff4813db1f3e16a6e9b2f7603",
+          "stderr_sha256": "747b3c43240b85d6a8315a7a0402736c0be4b91fbc47238f6a91bdb18f0c9a7e",
+          "classification": "Refused"
+        }
+      }
+    },
+    "towers": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/towers.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "c28da52059e4ddf007c9e1d661a5c577da49803e8341a9928f78f6f80a3e55fb",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/towers.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "c28da52059e4ddf007c9e1d661a5c577da49803e8341a9928f78f6f80a3e55fb",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/towers.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "c28da52059e4ddf007c9e1d661a5c577da49803e8341a9928f78f6f80a3e55fb",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/towers.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nTowers: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "9b67f05c2a9116a49d2c9c0b6b4d8a0254c4fee0cc5518c7d19dff5139402742",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/towers.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nTowers: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "9b67f05c2a9116a49d2c9c0b6b4d8a0254c4fee0cc5518c7d19dff5139402742",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/towers.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Towers benchmark ...\nTowers: iterations=1\nTowers: iterations=1\nTowers: iterations=2\nRESULT ok\n",
+          "stderr": "fresh live_entries=0\n",
+          "stdout_sha256": "9b67f05c2a9116a49d2c9c0b6b4d8a0254c4fee0cc5518c7d19dff5139402742",
+          "stderr_sha256": "39b1c55b0796d93cd548b6f74b99e214a58ed0ba4a6b139f677072f14f1fa9c0",
+          "classification": "Exact"
+        }
+      }
+    },
+    "havlak": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/havlak.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Havlak benchmark ...\nHavlak: iterations=1\nHavlak: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "0eda5d334f0c0446aa33b9c6d1e8e61a1eddc3621b1633bf41f092f0ef9546fc",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/havlak.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2 \"array.resize(n, None)\"\n",
+          "stderr": "error: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "a7730e0efe22abc28ab200bf5350a71305e239c33d9d3209e77a1ef66d3a5db4",
+          "stderr_sha256": "d0d2aca38fcd6f497f752c054c4d78afcdb8c93dea4b6d65be2787477143b4e9",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/havlak.rn"
+          ],
+          "rc": 7,
+          "stdout": "Starting Havlak benchmark ...\n",
+          "stderr": "error: Error { kind: StoreCapacity, location: Some(Location { source: 2, revision: 1, start: 254, end: 275 }), operation: \"store\", refusal: None, detail: None }\n",
+          "stdout_sha256": "1fcebc85f55926c8246e0bec5b6d9f32df50179bc9a702254d5bb05198d56013",
+          "stderr_sha256": "fadaa012d9955b02e1ccfb2182edc1145d62c0ac3a89256fab74ac64b2e3b8ea",
+          "classification": "NEEDS-RULING"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/havlak.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Havlak benchmark ...\nHavlak: iterations=1\nHavlak: iterations=1\nHavlak: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "6671ceee710bd04ef6668f6e3d672ab8097dddf30b40aa77aa340a05096aadb5",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/havlak.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2 \"array.resize(n, None)\"\n",
+          "stderr": "error: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "a7730e0efe22abc28ab200bf5350a71305e239c33d9d3209e77a1ef66d3a5db4",
+          "stderr_sha256": "d0d2aca38fcd6f497f752c054c4d78afcdb8c93dea4b6d65be2787477143b4e9",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/havlak.rn"
+          ],
+          "rc": 7,
+          "stdout": "Starting Havlak benchmark ...\n",
+          "stderr": "error: Error { kind: StoreCapacity, location: Some(Location { source: 2, revision: 1, start: 254, end: 275 }), operation: \"store\", refusal: None, detail: None }\n",
+          "stdout_sha256": "1fcebc85f55926c8246e0bec5b6d9f32df50179bc9a702254d5bb05198d56013",
+          "stderr_sha256": "fadaa012d9955b02e1ccfb2182edc1145d62c0ac3a89256fab74ac64b2e3b8ea",
+          "classification": "NEEDS-RULING"
+        }
+      }
+    },
+    "json": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Json benchmark ...\nJson: iterations=1\nJson: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "ec629ac72627d2f22f6ec3ba0dcdc29d65daa28be770e8ae52e63f247e92ae5c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15 \"self.table.get(name)\"\n",
+          "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15\n    \u2502\n327 \u2502         let index = self.table.get(name);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:656:19\n    \u2502\n656 \u2502             self.current = self.input.get(self.index..self.index + 1);\n    \u2502                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:668:47\n    \u2502\n668 \u2502         self.capture_buffer = self.capture_buffer + self.input.get(self.capture_start..end + 1).unwrap();\n    \u2502                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:676:4\n    \u2502\n676 \u2502             self.input.get(self.capture_start..end + 1).unwrap()\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:740:7\n    \u2502\n740 \u2502         if !result.as_object().get(\"head\").unwrap().is_object() {\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "81ed28a77f802112a2b8ffecca185c6cd31f5536dd664d9c1b61179498e6da88",
+          "stderr_sha256": "99fb456b73c223e51b556eb533b17895b31fa8b1a00eccbb8ec1ed67a81d9ef2",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15 \"self.table.get(name)\"\n",
+          "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15\n    \u2502\n327 \u2502         let index = self.table.get(name);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:656:19\n    \u2502\n656 \u2502             self.current = self.input.get(self.index..self.index + 1);\n    \u2502                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:668:47\n    \u2502\n668 \u2502         self.capture_buffer = self.capture_buffer + self.input.get(self.capture_start..end + 1).unwrap();\n    \u2502                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:676:4\n    \u2502\n676 \u2502             self.input.get(self.capture_start..end + 1).unwrap()\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:740:7\n    \u2502\n740 \u2502         if !result.as_object().get(\"head\").unwrap().is_object() {\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "81ed28a77f802112a2b8ffecca185c6cd31f5536dd664d9c1b61179498e6da88",
+          "stderr_sha256": "cabb77b360595e8ef89b7e9569da346a163423a31af67b0f9aba222190d2a392",
+          "classification": "Refused"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting Json benchmark ...\nJson: iterations=1\nJson: iterations=1\nJson: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "d0fdcfe3d0f45dfa3538d44ff99c1a5cda3ead2b1024ab3d3be9b512aadc78b7",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15 \"self.table.get(name)\"\n",
+          "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15\n    \u2502\n327 \u2502         let index = self.table.get(name);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:656:19\n    \u2502\n656 \u2502             self.current = self.input.get(self.index..self.index + 1);\n    \u2502                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:668:47\n    \u2502\n668 \u2502         self.capture_buffer = self.capture_buffer + self.input.get(self.capture_start..end + 1).unwrap();\n    \u2502                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:676:4\n    \u2502\n676 \u2502             self.input.get(self.capture_start..end + 1).unwrap()\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:740:7\n    \u2502\n740 \u2502         if !result.as_object().get(\"head\").unwrap().is_object() {\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "81ed28a77f802112a2b8ffecca185c6cd31f5536dd664d9c1b61179498e6da88",
+          "stderr_sha256": "99fb456b73c223e51b556eb533b17895b31fa8b1a00eccbb8ec1ed67a81d9ef2",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "1",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15 \"self.table.get(name)\"\n",
+          "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:327:15\n    \u2502\n327 \u2502         let index = self.table.get(name);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:656:19\n    \u2502\n656 \u2502             self.current = self.input.get(self.index..self.index + 1);\n    \u2502                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:668:47\n    \u2502\n668 \u2502         self.capture_buffer = self.capture_buffer + self.input.get(self.capture_start..end + 1).unwrap();\n    \u2502                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:676:4\n    \u2502\n676 \u2502             self.input.get(self.capture_start..end + 1).unwrap()\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/json.rn:740:7\n    \u2502\n740 \u2502         if !result.as_object().get(\"head\").unwrap().is_object() {\n    \u2502             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "81ed28a77f802112a2b8ffecca185c6cd31f5536dd664d9c1b61179498e6da88",
+          "stderr_sha256": "cabb77b360595e8ef89b7e9569da346a163423a31af67b0f9aba222190d2a392",
+          "classification": "Refused"
+        }
+      }
+    },
+    "cd": {
+      "1": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "1",
+            "2",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting CD benchmark ...\nCD: iterations=1\nCD: iterations=1\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "815a33f41d94334807e059df90b6b40ff058a0a7a0ad845401cbc6eb0e051007",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "1",
+            "2",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:719:7 \"seen.get(e.key)\"\n",
+          "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:718:27\n    \u2502  \n718 \u2502           self.state.for_each(|e| {\n    \u2502 \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^\n719 \u2502 \u2502             if seen.get(e.key).is_none() {\n720 \u2502 \u2502                 to_remove.append(e.key);\n721 \u2502 \u2502             }\n722 \u2502 \u2502         });\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:798:15\n    \u2502\n798 \u2502         let array = voxel_map.get(voxel);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:895:72\n    \u2502\n895 \u2502             frame.append(Aircraft::new(self.aircraft.at(i), Vector3D::new(time, time.cos() * 2.0 + ((i * 3) as f64), 10.0)));\n    \u2502                                                                                 ^^^^^^^^^^ Method\n\nerror: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "073fef0ca1918a1ab349a13dfc2c0c4947bf082416e74d5e734dc1c44e4bd5d1",
+          "stderr_sha256": "e6191314b3bede1dd7c3e19417eed2c82754d4596fe59122b3ddc3b7a3c63a5c",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "1",
+            "2",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:719:7 \"seen.get(e.key)\"\n",
+          "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:718:27\n    \u2502  \n718 \u2502           self.state.for_each(|e| {\n    \u2502 \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^\n719 \u2502 \u2502             if seen.get(e.key).is_none() {\n720 \u2502 \u2502                 to_remove.append(e.key);\n721 \u2502 \u2502             }\n722 \u2502 \u2502         });\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:798:15\n    \u2502\n798 \u2502         let array = voxel_map.get(voxel);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:895:72\n    \u2502\n895 \u2502             frame.append(Aircraft::new(self.aircraft.at(i), Vector3D::new(time, time.cos() * 2.0 + ((i * 3) as f64), 10.0)));\n    \u2502                                                                                 ^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "073fef0ca1918a1ab349a13dfc2c0c4947bf082416e74d5e734dc1c44e4bd5d1",
+          "stderr_sha256": "24f226ac8798e65078575612448179c4441d011a28da6d670315dac1d128d38c",
+          "classification": "Refused"
+        }
+      },
+      "2": {
+        "stock": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-stock",
+            "2",
+            "2",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn"
+          ],
+          "rc": 0,
+          "stdout": "Starting CD benchmark ...\nCD: iterations=1\nCD: iterations=1\nCD: iterations=2\nRESULT ok\n",
+          "stderr": "",
+          "stdout_sha256": "e5eeba930a23381623f6d30a5ad6f84ea4cceafe94643c51789ef3c5234335f1",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-before",
+            "2",
+            "2",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:719:7 \"seen.get(e.key)\"\n",
+          "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:718:27\n    \u2502  \n718 \u2502           self.state.for_each(|e| {\n    \u2502 \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^\n719 \u2502 \u2502             if seen.get(e.key).is_none() {\n720 \u2502 \u2502                 to_remove.append(e.key);\n721 \u2502 \u2502             }\n722 \u2502 \u2502         });\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:798:15\n    \u2502\n798 \u2502         let array = voxel_map.get(voxel);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:895:72\n    \u2502\n895 \u2502             frame.append(Aircraft::new(self.aircraft.at(i), Vector3D::new(time, time.cos() * 2.0 + ((i * 3) as f64), 10.0)));\n    \u2502                                                                                 ^^^^^^^^^^ Method\n\nerror: Method\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:9:2\n  \u2502\n9 \u2502     array.resize(n, None);\n  \u2502     ^^^^^^^^^^^^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "073fef0ca1918a1ab349a13dfc2c0c4947bf082416e74d5e734dc1c44e4bd5d1",
+          "stderr_sha256": "e6191314b3bede1dd7c3e19417eed2c82754d4596fe59122b3ddc3b7a3c63a5c",
+          "classification": "Refused"
+        },
+        "after": {
+          "argv": [
+            "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+            "2",
+            "2",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+            "/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn"
+          ],
+          "rc": 3,
+          "stdout": "REFUSED kind=Method operation=Method error=Unsupported site=/home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:719:7 \"seen.get(e.key)\"\n",
+          "stderr": "error: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:718:27\n    \u2502  \n718 \u2502           self.state.for_each(|e| {\n    \u2502 \u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^\n719 \u2502 \u2502             if seen.get(e.key).is_none() {\n720 \u2502 \u2502                 to_remove.append(e.key);\n721 \u2502 \u2502             }\n722 \u2502 \u2502         });\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:798:15\n    \u2502\n798 \u2502         let array = voxel_map.get(voxel);\n    \u2502                     ^^^^^^^^^^^^^^^^^^^^ Method\n\nerror: Method\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/cd.rn:895:72\n    \u2502\n895 \u2502             frame.append(Aircraft::new(self.aircraft.at(i), Vector3D::new(time, time.cos() * 2.0 + ((i * 3) as f64), 10.0)));\n    \u2502                                                                                 ^^^^^^^^^^ Method\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn:5:1\n   \u2502  \n 5 \u2502 \u256d fn default_inner_benchmark_loop(benchmark, inner_iterations) {\n 6 \u2502 \u2502     for _ in 0..inner_iterations {\n 7 \u2502 \u2502         if !benchmark.verify_result(benchmark.benchmark()) {\n 8 \u2502 \u2502             return false;\n   \u00b7 \u2502\n11 \u2502 \u2502     true\n12 \u2502 \u2502 }\n   \u2502 \u2570\u2500^ Not used\n\nwarning: Not used\n  \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:4:26\n  \u2502\n4 \u2502 const INITIAL_CAPACITY = 16;\n  \u2502                          ^^ Not used\n\nwarning: Not used\n   \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:34:2\n   \u2502  \n34 \u2502 \u256d     fn with(elem) {\n35 \u2502 \u2502         let v = Vector::with_size(1);\n36 \u2502 \u2502         v.append(elem);\n37 \u2502 \u2502         v\n38 \u2502 \u2502     }\n   \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:265:2\n    \u2502  \n265 \u2502 \u256d     fn new() {\n266 \u2502 \u2502         Set::with_size(INITIAL_SIZE)\n267 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:269:2\n    \u2502  \n269 \u2502 \u256d     fn with_size(size) {\n270 \u2502 \u2502         Set { items: Vector::with_size(size) }\n271 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:318:2\n    \u2502  \n318 \u2502 \u256d     fn new() {\n319 \u2502 \u2502         IdentitySet::with_size(INITIAL_SIZE)\n320 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:322:2\n    \u2502  \n322 \u2502 \u256d     fn with_size(size) {\n323 \u2502 \u2502         IdentitySet { items: Vector::with_size(size) }\n324 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:389:2\n    \u2502  \n389 \u2502 \u256d     fn new() {\n390 \u2502 \u2502         Dictionary::with_size(INITIAL_CAPACITY)\n391 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:393:2\n    \u2502  \n393 \u2502 \u256d     fn with_size(size) {\n394 \u2502 \u2502         Dictionary { buckets: alloc_array(size), size: 0 }\n395 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:592:2\n    \u2502  \n592 \u2502 \u256d     fn new() {\n593 \u2502 \u2502         IdentityDictionary::with_size(INITIAL_CAPACITY)\n594 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:596:2\n    \u2502  \n596 \u2502 \u256d     fn with_size(size) {\n597 \u2502 \u2502         IdentityDictionary { buckets: alloc_array(size), size: 0 }\n598 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\nwarning: Not used\n    \u250c\u2500 /home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn:775:2\n    \u2502  \n775 \u2502 \u256d     fn new() {\n776 \u2502 \u2502         Random { seed: 74755 }\n777 \u2502 \u2502     }\n    \u2502 \u2570\u2500\u2500\u2500\u2500\u2500^ Not used\n\n",
+          "stdout_sha256": "073fef0ca1918a1ab349a13dfc2c0c4947bf082416e74d5e734dc1c44e4bd5d1",
+          "stderr_sha256": "24f226ac8798e65078575612448179c4441d011a28da6d670315dac1d128d38c",
+          "classification": "Refused"
+        }
+      }
+    }
+  },
+  "gaps": [
+    {
+      "name": "havlak",
+      "outer": 1,
+      "label": "after",
+      "result": {
+        "argv": [
+          "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+          "1",
+          "1",
+          "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+          "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+          "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+          "/home/me/work/.reviews/0185-c17f-awfy1/ports/havlak.rn"
+        ],
+        "rc": 7,
+        "stdout": "Starting Havlak benchmark ...\n",
+        "stderr": "error: Error { kind: StoreCapacity, location: Some(Location { source: 2, revision: 1, start: 254, end: 275 }), operation: \"store\", refusal: None, detail: None }\n",
+        "stdout_sha256": "1fcebc85f55926c8246e0bec5b6d9f32df50179bc9a702254d5bb05198d56013",
+        "stderr_sha256": "fadaa012d9955b02e1ccfb2182edc1145d62c0ac3a89256fab74ac64b2e3b8ea",
+        "classification": "NEEDS-RULING"
+      }
+    },
+    {
+      "name": "havlak",
+      "outer": 2,
+      "label": "after",
+      "result": {
+        "argv": [
+          "/home/me/work/.reviews/0185-c17f-awfy1/bin-after",
+          "2",
+          "1",
+          "/home/me/work/.reviews/0185-c17f-awfy1/ports/harness.rn",
+          "/home/me/work/.reviews/0185-c17f-awfy1/ports/benchmark.rn",
+          "/home/me/work/.reviews/0185-c17f-awfy1/ports/som.rn",
+          "/home/me/work/.reviews/0185-c17f-awfy1/ports/havlak.rn"
+        ],
+        "rc": 7,
+        "stdout": "Starting Havlak benchmark ...\n",
+        "stderr": "error: Error { kind: StoreCapacity, location: Some(Location { source: 2, revision: 1, start: 254, end: 275 }), operation: \"store\", refusal: None, detail: None }\n",
+        "stdout_sha256": "1fcebc85f55926c8246e0bec5b6d9f32df50179bc9a702254d5bb05198d56013",
+        "stderr_sha256": "fadaa012d9955b02e1ccfb2182edc1145d62c0ac3a89256fab74ac64b2e3b8ea",
+        "classification": "NEEDS-RULING"
+      }
+    }
+  ],
+  "before_pass": [
+    "list",
+    "mandelbrot",
+    "nbody",
+    "permute",
+    "queens",
+    "sieve",
+    "towers"
+  ],
+  "after_pass": [
+    "list",
+    "mandelbrot",
+    "nbody",
+    "permute",
+    "queens",
+    "sieve",
+    "towers"
+  ]
+}
