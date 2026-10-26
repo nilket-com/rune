@@ -1,0 +1,35 @@
+P11 plan: remove the formatter call during trusted standard-module insertion
+
+Base: Rune c7aee7e072dd84604fe41c6d94270942e49da4c8.
+Authority: Claude rune-v1 seq23206, following the read-only P11 Step0.
+This is the third product record after M6 and carries M7.
+
+The sole production caller, Context::insert_native_fn, currently calls
+formatting::State::begin for every native function. During the private
+StdFormatEpoch, begin returns immediately because trusted_install is true.
+Move that check to the caller: call begin only when trusted_install is false.
+Remove the trusted_install arm from begin. Its marked/certificate behavior,
+copy-on-write order, allocation errors and modified-key decisions stay the
+same. The guard still clears on normal return, error and unwind.
+
+Keep numeric::State::invalidate_hash, pipeline, sort and insert-once conflict
+transitions in their current order and byte-for-byte. The numeric state has
+live certifications during standard-module construction, so skipping or
+batching invalidation is not approved. No annotations, recipe, profile,
+measurement protocol, layout or foreign product source changes belong here.
+
+Test paired insertion sequences under a trusted epoch and an untrusted marked
+reference. Observe numeric method, direct and CMP-alias decisions after each
+protocol, item and associated insertion, including conflicts and a later
+public install. Exercise both with_config stdio settings. Retain formatter
+effective-key, certificate, copy-on-write, conflict, provenance, error and
+unwind controls. Compare decisions, not private numeric bit layouts.
+
+After implementation, run focused tests and then the complete Rune and Rnx
+correctness gates under the reviewed host policy. Use V1c1 source, build,
+seal, replay and record evidence for P11. Measure CGU1 standing rules and
+the CGU16 M7 cells and K1 against M6, including the three carried cycle flags.
+Report the actual per-call instruction change; 4,104 calls times 19 old
+formatter instructions is 77,976 old instructions, not a net prediction.
+If M7 fails, stop with attribution. Do not add numeric batching or a cost
+allowance without another reviewed plan.
