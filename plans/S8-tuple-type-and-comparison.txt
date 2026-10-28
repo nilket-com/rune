@@ -1,0 +1,51 @@
+S8: tuple type tests and comparison safety
+
+Authority: S8 Step 0 live audit and rulings. Base: the V2a WIP branch. S8 is
+the first product record after M7 and lands with V2a only after the joint
+fresh-clone verification passes. Measure the standing CGU1 cost rules.
+
+The legacy engine reports unit and tuple values as Tuple. The fresh engine
+represents unit and nonempty tuples separately. Their public type hashes are
+shared, but lowering currently checks the unit hash first, so source-level
+`is Tuple` emits the exact-unit test: unit passes and nonempty tuples fail.
+Internal patterns also use an exact-unit test; widening that operation globally
+would change pattern semantics.
+
+Keep both internal representations and leave the generic Op::Is behavior
+unchanged. For source-level `is Tuple`, evaluate the operand once, emit the
+existing exact-unit and exact-tuple tests, and combine them with boolean OR;
+for `is not Tuple`, combine their negations with boolean AND. Preserve slot
+lifetime, moved-value error order and all non-tuple and nominal type tests.
+Verify a host-created empty heap tuple, unit and nonempty tuple, including
+closed and open tuple patterns. Report the cost at tuple sites and the standing
+CGU1 measurement rather than asserting a hot-path result in advance.
+
+The fresh engine also admits tuple and unit cmp calls that fail at runtime with
+Unsupported. Implement the stock lexicographic comparison for unit and tuple
+receivers, including unit/tuple and tuple/tuple, with correct ownership, moved,
+depth and error semantics. Unit compared with a non-tuple must produce the
+stock Type error. If any dynamic path cannot be implemented safely, refuse it
+at compile time with a sound proof; never let an admitted call fail Unsupported.
+
+Each Step 0 audit case becomes a committed live dual-engine test or a small
+literal design assertion. Narrow the existing cast-failure equivalence to stock
+UnsupportedAs versus fresh InvalidCast for the same operand and target; do not
+expand other error classes. Cover safe refusal by its kind and preserve exact
+unit and tuple pattern behavior. Add a receiver by method sweep for cmp, eq,
+partial_cmp, hash, clone and len over unit, empty and nonempty tuple, scalars,
+Vec, Object, Option, Result and nominal values: admitted runtime Unsupported
+is a failure. Include the five L1 regressions and remove their known-failing
+markers only once they pass. Do not commit generated output as an oracle.
+
+Run focused tests, the full L1 live corpus, Rune and rnx correctness, Miri for
+changed helpers, the product CGU1 rules, and the joint isolated fresh-clone
+one-command checks. Keep all test output in scratch.
+
+Additional Step 0 ruling: the live sweep also found admitted cmp defects for
+Vec, Option, Result and inclusive ranges. S8 covers every admitted cmp receiver,
+not only tuples. The bounded structural walk may serve Vec, Option and Result,
+with live tests for moved values, depth, self-referential vectors, allocation
+failure and mixed elements. Implement stock-exact range comparison where proved,
+or soundly refuse the unproved shape before execution. Sweep full, from, to,
+exclusive and inclusive range forms. Nested floating-point NaN comparison must
+preserve IllegalFloatComparison and operand bits; it is not an allowed mapping.
