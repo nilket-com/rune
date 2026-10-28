@@ -4,6 +4,11 @@ use serde_json::{json, Value as Json};
 include!("tuple_let/cases.rs");
 
 fn legacy_observe(source: &str, mode: &str) -> Json {
+	let mut outcome = legacy_observe_with_warnings(source, mode);
+	outcome.as_object_mut().unwrap().remove("warnings");
+	outcome
+}
+fn legacy_observe_with_warnings(source: &str, mode: &str) -> Json {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -14,55 +19,60 @@ fn legacy_observe(source: &str, mode: &str) -> Json {
 		.with_context(&context)
 		.with_diagnostics(&mut diagnostics)
 		.build_vm();
-	let mut vm = match built {
-		Ok(vm) => vm,
-		Err(e) => {
-			return json!({"status":"compile-error","error":format!("{e:?}"),"diagnostics":format!("{:?}",diagnostics.diagnostics())})
-		}
-	};
-	assert!(matches!(mode, "c8-main" | "c8-small-store"));
-	let result = crate::runtime::budget::with(FUEL, || vm.call(["main"], ())).call();
-	match result {
-		Ok(value) => {
-			if value.into_unit().is_ok() {
-				return json!({"status":"value","type":"Unit"});
+	let warnings = crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics);
+	let mut observation = (|| {
+		let mut vm = match built {
+			Ok(vm) => vm,
+			Err(e) => {
+				return json!({"status":"compile-error","error":format!("{e:?}"),"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics)})
 			}
-			use crate::runtime::Inline;
-			match value.as_inline() {
-				Some(Inline::Float(n)) => {
-					json!({"status":"value","type":"F64","bits":format!("{:016x}",n.to_bits())})
+		};
+		assert!(matches!(mode, "c8-main" | "c8-small-store"));
+		let result = crate::runtime::budget::with(FUEL, || vm.call(["main"], ())).call();
+		match result {
+			Ok(value) => {
+				if value.into_unit().is_ok() {
+					return json!({"status":"value","type":"Unit"});
 				}
-				Some(Inline::Signed(n)) => {
-					json!({"status":"value","type":"I64","value":n.to_string()})
+				use crate::runtime::Inline;
+				match value.as_inline() {
+					Some(Inline::Float(n)) => {
+						json!({"status":"value","type":"F64","bits":format!("{:016x}",n.to_bits())})
+					}
+					Some(Inline::Signed(n)) => {
+						json!({"status":"value","type":"I64","value":n.to_string()})
+					}
+					Some(Inline::Unsigned(n)) => {
+						json!({"status":"value","type":"U64","value":n.to_string()})
+					}
+					Some(Inline::Bool(n)) => json!({"status":"value","type":"Bool","value":n}),
+					_ => panic!("C8 subject returned non-scalar"),
 				}
-				Some(Inline::Unsigned(n)) => {
-					json!({"status":"value","type":"U64","value":n.to_string()})
-				}
-				Some(Inline::Bool(n)) => json!({"status":"value","type":"Bool","value":n}),
-				_ => panic!("C8 subject returned non-scalar"),
 			}
-		}
-		Err(e) => {
-			super::d1e_diagnostics::stock(&e, &sources);
-			// Capture metadata directly inside the crate, no parsing Display/Debug.
-			let kind = e.error().kind();
-			let class = match kind {
-				crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
-				_ => runtime_error_class(kind),
-			};
-			let chain = e
-				.chain()
-				.iter()
-				.map(|at| json!({"kind":format!("{:?}",at.kind()),"display":at.to_string()}))
-				.collect::<Vec<_>>();
-			let sites = e.stacktrace().iter().map(|at| {
+			Err(e) => {
+				super::d1e_diagnostics::stock(&e, &sources);
+				// Capture metadata directly inside the crate, no parsing Display/Debug.
+				let kind = e.error().kind();
+				let class = match kind {
+					crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
+					_ => runtime_error_class(kind),
+				};
+				let chain = e
+					.chain()
+					.iter()
+					.map(|at| json!({"kind":format!("{:?}",at.kind()),"display":at.to_string()}))
+					.collect::<Vec<_>>();
+				let sites = e.stacktrace().iter().map(|at| {
 				let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
 				let range = inst.span.range();
 				json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 			}).collect::<Vec<_>>();
-			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+				json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+			}
 		}
-	}
+	})();
+	observation["warnings"] = json!(warnings);
+	observation
 }
 
 #[test]
@@ -72,15 +82,29 @@ fn child() {
 	assert_eq!(CASES.len(), COUNT);
 	let (label, source, mode, policy) = CASES[index];
 	let engine = std::env::var("C8_ENGINE").unwrap();
-	let (observation, audit) = match engine.as_str() {
-		"stock" => (legacy_observe(source, mode), None),
+	let (mut observation, mut audit) = match engine.as_str() {
+		"stock" => (legacy_observe_with_warnings(source, mode), None),
 		"fresh" => {
 			let (o, a) = observe(source, mode);
 			(o, Some(a))
 		}
 		_ => panic!("unknown C8 engine"),
 	};
-	let mut envelope = json!({"schema":1,"engine":engine,"index":index,"label":label,"mode":mode,"policy":policy,"source_hex":hex(source.as_bytes()),"fuel":FUEL,"outcome":observation});
+
+	let warnings = if let Some(audit) = &mut audit {
+		audit
+			.as_object_mut()
+			.unwrap()
+			.remove("warnings")
+			.expect("execution warning multiset")
+	} else {
+		observation
+			.as_object_mut()
+			.unwrap()
+			.remove("warnings")
+			.expect("legacy warning multiset")
+	};
+	let mut envelope = json!({"schema":1,"engine":engine,"index":index,"label":label,"mode":mode,"policy":policy,"source_hex":hex(source.as_bytes()),"fuel":FUEL,"warnings":warnings,"outcome":observation});
 	if let Some(audit) = audit {
 		envelope["fresh_audit"] = audit;
 	}

@@ -7,7 +7,7 @@
       "id": "enum_variants-051",
       "index": 0,
       "observed": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "identity": {
             "hash": "0x716bc80c01db5389",
@@ -51,7 +51,7 @@
           "row_idle": true,
           "row_live": 0
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "call_chain": [],
           "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x716bc80c01db5389, instance: 0xf727e1feaf2a3ca }",
@@ -85,7 +85,7 @@
       "id": "enum_variants-124",
       "index": 1,
       "observed": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "identity": {
             "hash": "0x33c0b6e2f619102d",
@@ -129,7 +129,7 @@
           "row_idle": true,
           "row_live": 0
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "call_chain": [],
           "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x33c0b6e2f619102d, instance: 0xf727e1feaf2a3ca }",
@@ -163,7 +163,7 @@
       "id": "enum_variants-125",
       "index": 2,
       "observed": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "identity": {
             "hash": "0xeaaeda4df40432a1",
@@ -207,7 +207,7 @@
           "row_idle": true,
           "row_live": 0
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "call_chain": [],
           "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xeaaeda4df40432a1, instance: 0xf727e1feaf2a3ca }",
@@ -331,7 +331,7 @@
       "id": "enum_variants-127",
       "index": 4,
       "observed": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "identity": {
             "hash": "0xf550737dccc83497",
@@ -375,7 +375,7 @@
           "row_idle": true,
           "row_live": 0
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "call_chain": [],
           "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xf550737dccc83497, instance: 0xf727e1feaf2a3ca }",
@@ -487,7 +487,7 @@
       "id": "enum_variants-130",
       "index": 6,
       "observed": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "identity": {
             "hash": "0xa0004ebb729ea66a",
@@ -531,7 +531,7 @@
           "row_idle": true,
           "row_live": 0
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "call_chain": [],
           "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xa0004ebb729ea66a, instance: 0xf727e1feaf2a3ca }",
@@ -565,7 +565,7 @@
       "id": "enum_variants-131",
       "index": 7,
       "observed": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "identity": {
             "hash": "0x67fa487dd2d1a7ec",
@@ -609,7 +609,7 @@
           "row_idle": true,
           "row_live": 0
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "call_chain": [],
           "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x67fa487dd2d1a7ec, instance: 0xf727e1feaf2a3ca }",
@@ -643,7 +643,7 @@
       "id": "enum_variants-132",
       "index": 8,
       "observed": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "identity": {
             "hash": "0xf5125c4034f0d266",
@@ -687,7 +687,7 @@
           "row_idle": true,
           "row_live": 0
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "call_chain": [],
           "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0xf5125c4034f0d266, instance: 0xf727e1feaf2a3ca }",
@@ -979,7 +979,7 @@
       "id": "enum_variants-124-no-context",
       "index": 12,
       "observed": {
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "identity": {
             "hash": "0x33c0b6e2f619102d",
@@ -1023,7 +1023,7 @@
           "row_idle": true,
           "row_live": 0
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[]",
         "outcome": {
           "call_chain": [],
           "detail_debug": "MissingInstanceFunction { target: Struct(Nominal(0)), hash: 0x33c0b6e2f619102d, instance: 0xf727e1feaf2a3ca }",

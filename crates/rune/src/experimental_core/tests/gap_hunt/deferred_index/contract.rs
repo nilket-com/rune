@@ -101,6 +101,10 @@ fn contract() {
 		)
 		.unwrap();
 		let fresh = launch("fresh", i, &folder.join("fresh"));
+		crate::experimental_core::tests::gap_hunt::assert_warning_multisets(
+			&stock.observation,
+			&fresh.observation,
+		);
 		let (e, stdout, stderr) = (&fresh.observation, &fresh.stdout, &fresh.stderr);
 		let category = {
 			let audit = &e["fresh_audit"];
@@ -319,11 +323,13 @@ fn launch(engine: &str, index: usize, folder: &Path) -> super::live_oracle::Run 
 		"source_hex",
 		"fuel",
 		"outcome",
+		"warnings",
 		"fresh_audit",
 	];
 	// Only the execution engine reports an audit.
 	let keys = &keys[..keys.len() - usize::from(engine == "stock")];
 	exact_keys(e.as_object().unwrap(), keys);
+	assert!(e["warnings"].is_array());
 	assert_eq!(e["engine"], engine);
 	assert_eq!(e["schema"], 1);
 	assert_eq!(e["index"], index);

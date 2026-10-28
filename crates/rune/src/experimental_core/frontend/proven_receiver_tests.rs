@@ -858,7 +858,14 @@ fn deferred_refusals_keep_all_body_diagnostics_and_the_closure_span() {
 	assert_eq!(error.location.unwrap().start, 156);
 	assert_eq!(error.location.unwrap().end, 172);
 	assert_eq!(
-		json!(std::format!("{:?}", diagnostics.diagnostics())),
+		json!(std::format!(
+			"{:?}",
+			diagnostics
+				.diagnostics()
+				.iter()
+				.filter(|d| !matches!(d, crate::diagnostics::Diagnostic::Warning(_)))
+				.collect::<std::vec::Vec<_>>()
+		)),
 		rules["rows"][316]["diagnostics"]
 	);
 }

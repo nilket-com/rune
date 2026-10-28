@@ -24,6 +24,7 @@ fn canonical_record(record: &Json) -> Json {
 
 /// Check one execution observation against the live stock observation `stock`.
 fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(stock, actual);
 	use sha2::{Digest, Sha256};
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	let rows = dispositions["rows"].as_array().unwrap();
@@ -73,22 +74,18 @@ fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json) {
 	let refused = classification == "Inherited-refusal";
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
-	let mut execution = canonical_record(actual);
-	let mut expected = canonical_record(stock);
-	if let Some(pin) = rule.get("warnings") {
-		// Stock warns that a `for (k, v)` pattern might panic; the new frontend
-		// does not report that warning.
-		assert_eq!(execution["diagnostics"], pin["fresh"]);
-		assert_eq!(expected["diagnostics"], pin["stock"]);
-		execution["diagnostics"] = Json::Null;
-		expected["diagnostics"] = Json::Null;
-	}
+	let execution = canonical_record(actual);
+	let expected = canonical_record(stock);
 	match classification {
 		"Exact" => assert_eq!(execution, expected),
 		"Intentional-D1" => {
 			// A wrong receiver: new names the missing method (D1). Kind, class,
 			// tape, sites, logical frames and reuse stay stock-exact.
-			assert_eq!(execution, rule["fresh"]);
+			crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+				&execution,
+				&expected,
+				&rule["fresh"],
+			);
 			let (f, s) = (&execution["observation"], &expected["observation"]);
 			for key in ["status", "class", "kind", "sites", "chain"] {
 				assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");

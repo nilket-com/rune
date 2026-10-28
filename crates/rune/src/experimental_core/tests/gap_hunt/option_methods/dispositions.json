@@ -145,7 +145,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:122, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:122, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -324,7 +324,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:123, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:123, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -356,7 +356,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:89, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:89, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -570,7 +570,7 @@
           ],
           "rendered": "Panicked: Called `Result::unwrap()` on an `Err` value: immediate function (function: 1)\n  at c17a.rn:1:73"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Panicked: Called `Result::unwrap()` on an `Err` value: immediate function (at: 0x8)",
       "fresh_display": "Panicked: Called `Result::unwrap()` on an `Err` value: immediate function (function: 1)",
@@ -704,7 +704,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:121, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:121, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -974,7 +974,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:125, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:125, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -1027,7 +1027,7 @@
           ],
           "rendered": "Type `std::vec::Vec` has no method named `unwrap`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::vec::Vec` has no matching method",
       "fresh_display": "Type `std::vec::Vec` has no method named `unwrap`",
@@ -1083,7 +1083,7 @@
           ],
           "rendered": "Type `std::string::String` has no method named `unwrap`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::string::String` has no matching method",
       "fresh_display": "Type `std::string::String` has no method named `unwrap`",
@@ -1139,7 +1139,7 @@
           ],
           "rendered": "Type `std::i64` has no method named `unwrap`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::i64` has no matching method",
       "fresh_display": "Type `std::i64` has no method named `unwrap`",
@@ -1195,7 +1195,7 @@
           ],
           "rendered": "Type `std::f64` has no method named `expect`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::f64` has no matching method",
       "fresh_display": "Type `std::f64` has no method named `expect`",
@@ -1251,7 +1251,7 @@
           ],
           "rendered": "Type `std::bool` has no method named `unwrap_or`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::bool` has no matching method",
       "fresh_display": "Type `std::bool` has no method named `unwrap_or`",
@@ -1307,7 +1307,7 @@
           ],
           "rendered": "Type `std::char` has no method named `is_err`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::char` has no matching method",
       "fresh_display": "Type `std::char` has no method named `is_err`",
@@ -1363,7 +1363,7 @@
           ],
           "rendered": "Type `std::tuple::Tuple` has no method named `is_some`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::tuple::Tuple` has no matching method",
       "fresh_display": "Type `std::tuple::Tuple` has no method named `is_some`",
@@ -1419,7 +1419,7 @@
           ],
           "rendered": "Type `std::object::Object` has no method named `is_some`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::object::Object` has no matching method",
       "fresh_display": "Type `std::object::Object` has no method named `is_some`",
@@ -1475,7 +1475,7 @@
           ],
           "rendered": "Type `std::tuple::Tuple` has no method named `is_ok`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::tuple::Tuple` has no matching method",
       "fresh_display": "Type `std::tuple::Tuple` has no method named `is_ok`",
@@ -1531,7 +1531,7 @@
           ],
           "rendered": "Type `P` has no method named `unwrap`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `P` has no matching method",
       "fresh_display": "Type `P` has no method named `unwrap`",
@@ -1587,7 +1587,7 @@
           ],
           "rendered": "Type `E::A` has no method named `is_some`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `E::A` has no matching method",
       "fresh_display": "Type `E::A` has no method named `is_some`",
@@ -1643,7 +1643,7 @@
           ],
           "rendered": "Type `std::slice::Iter` has no method named `unwrap`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::slice::Iter` has no matching method",
       "fresh_display": "Type `std::slice::Iter` has no method named `unwrap`",
@@ -1699,7 +1699,7 @@
           ],
           "rendered": "Type `std::ops::Range` has no method named `is_none`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::ops::Range` has no matching method",
       "fresh_display": "Type `std::ops::Range` has no method named `is_none`",
@@ -1755,7 +1755,7 @@
           ],
           "rendered": "Type `std::option::Option` has no method named `is_ok`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::option::Option` has no matching method",
       "fresh_display": "Type `std::option::Option` has no method named `is_ok`",
@@ -1811,7 +1811,7 @@
           ],
           "rendered": "Type `std::option::Option` has no method named `is_err`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::option::Option` has no matching method",
       "fresh_display": "Type `std::option::Option` has no method named `is_err`",
@@ -1867,7 +1867,7 @@
           ],
           "rendered": "Type `std::result::Result` has no method named `is_some`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::result::Result` has no matching method",
       "fresh_display": "Type `std::result::Result` has no method named `is_some`",
@@ -1923,7 +1923,7 @@
           ],
           "rendered": "Type `std::result::Result` has no method named `is_none`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::result::Result` has no matching method",
       "fresh_display": "Type `std::result::Result` has no method named `is_none`",
@@ -1987,7 +1987,7 @@
           ],
           "rendered": "Type `std::i64` has no method named `unwrap`\n  at c17a.rn:1:59\n  called from c17a.rn:1:84"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::i64` has no matching method",
       "fresh_display": "Type `std::i64` has no method named `unwrap`",
@@ -2043,7 +2043,7 @@
           ],
           "rendered": "Type `std::i64` has no method named `unwrap`\n  at c17a.rn:1:97"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::i64` has no matching method",
       "fresh_display": "Type `std::i64` has no method named `unwrap`",
@@ -2249,7 +2249,7 @@
           ],
           "rendered": "Type `std::i64` has no method named `is_some`\n  at c17a.rn:1:72\n  called from c17a.rn:1:59\n  called from c17a.rn:1:98"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::i64` has no matching method",
       "fresh_display": "Type `std::i64` has no method named `is_some`",
@@ -2305,7 +2305,7 @@
           ],
           "rendered": "Type `std::any::Type` has no method named `unwrap`\n  at c17a.rn:1:65"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::any::Type` has no matching method",
       "fresh_display": "Type `std::any::Type` has no method named `unwrap`",
@@ -2361,7 +2361,7 @@
           ],
           "rendered": "Type `std::ops::Function` has no method named `is_ok`\n  at c17a.rn:1:73"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::ops::Function` has no matching method",
       "fresh_display": "Type `std::ops::Function` has no method named `is_ok`",
@@ -2382,7 +2382,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 95:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 95:110, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2400,7 +2400,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 96:111, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 96:111, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2418,7 +2418,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:109, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:109, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2436,7 +2436,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:107, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:107, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2454,7 +2454,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 120:142, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 120:142, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2472,7 +2472,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:106, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:106, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2497,7 +2497,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 101:117, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 101:117, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2522,7 +2522,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:87, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:87, kind: Custom { error: \"Native\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2540,7 +2540,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:85, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:85, kind: Custom { error: \"Native\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2558,7 +2558,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:82, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:82, kind: Custom { error: \"Native\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2576,7 +2576,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 70:84, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 70:84, kind: Custom { error: \"Native\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2601,7 +2601,7 @@
         "refusal": "Arity",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:81, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:81, kind: Custom { error: \"Arity\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2619,7 +2619,7 @@
         "refusal": "Arity",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:80, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:80, kind: Custom { error: \"Arity\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2637,7 +2637,7 @@
         "refusal": "Arity",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:80, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:80, kind: Custom { error: \"Arity\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2655,7 +2655,7 @@
         "refusal": "Arity",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:79, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:79, kind: Custom { error: \"Arity\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -2673,7 +2673,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:87, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:87, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {

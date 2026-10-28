@@ -2,7 +2,7 @@
 use super::*;
 use serde_json::{json, Value as Json};
 include!("tuple_let/observe.rs");
-fn legacy_observe(source: &str, mode: &str) -> Json {
+fn legacy_observe_with_warnings(source: &str, mode: &str) -> Json {
 	let context = Context::with_default_modules().unwrap();
 	let mut sources = Sources::new();
 	sources
@@ -13,56 +13,61 @@ fn legacy_observe(source: &str, mode: &str) -> Json {
 		.with_context(&context)
 		.with_diagnostics(&mut diagnostics)
 		.build_vm();
-	let mut vm = match built {
-		Ok(vm) => vm,
-		Err(e) => {
-			return json!({"status":"compile-error","error":format!("{e:?}"),"diagnostics":format!("{:?}",diagnostics.diagnostics())})
-		}
-	};
-	assert!(matches!(mode, "c8-main" | "c8-small-store"));
-	let result = crate::runtime::budget::with(FUEL, || vm.call(["main"], ())).call();
-	match result {
-		Ok(value) => {
-			if value.into_unit().is_ok() {
-				return json!({"status":"value","type":"Unit"});
+	let warnings = crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics);
+	let mut observation = (|| {
+		let mut vm = match built {
+			Ok(vm) => vm,
+			Err(e) => {
+				return json!({"status":"compile-error","error":format!("{e:?}"),"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics)})
 			}
-			use crate::runtime::Inline;
-			match value.as_inline() {
-				Some(Inline::Float(n)) => {
-					json!({"status":"value","type":"F64","bits":format!("{:016x}",n.to_bits())})
+		};
+		assert!(matches!(mode, "c8-main" | "c8-small-store"));
+		let result = crate::runtime::budget::with(FUEL, || vm.call(["main"], ())).call();
+		match result {
+			Ok(value) => {
+				if value.into_unit().is_ok() {
+					return json!({"status":"value","type":"Unit"});
 				}
-				Some(Inline::Signed(n)) => {
-					json!({"status":"value","type":"I64","value":n.to_string()})
+				use crate::runtime::Inline;
+				match value.as_inline() {
+					Some(Inline::Float(n)) => {
+						json!({"status":"value","type":"F64","bits":format!("{:016x}",n.to_bits())})
+					}
+					Some(Inline::Signed(n)) => {
+						json!({"status":"value","type":"I64","value":n.to_string()})
+					}
+					Some(Inline::Unsigned(n)) => {
+						json!({"status":"value","type":"U64","value":n.to_string()})
+					}
+					Some(Inline::Bool(n)) => json!({"status":"value","type":"Bool","value":n}),
+					_ => panic!("C16c subject returned non-scalar"),
 				}
-				Some(Inline::Unsigned(n)) => {
-					json!({"status":"value","type":"U64","value":n.to_string()})
-				}
-				Some(Inline::Bool(n)) => json!({"status":"value","type":"Bool","value":n}),
-				_ => panic!("C16c subject returned non-scalar"),
 			}
-		}
-		Err(e) => {
-			super::d1e_diagnostics::stock(&e, &sources);
-			// Capture metadata directly inside the crate, no parsing Display/Debug.
-			let kind = e.error().kind();
-			let class = match kind {
-				crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
-				crate::runtime::VmErrorKind::UnsupportedCallFn { .. } => "Type".into(),
-				_ => runtime_error_class(kind),
-			};
-			let chain = e
-				.chain()
-				.iter()
-				.map(|at| json!({"kind":format!("{:?}",at.kind()),"display":at.to_string()}))
-				.collect::<Vec<_>>();
-			let sites = e.stacktrace().iter().map(|at| {
+			Err(e) => {
+				super::d1e_diagnostics::stock(&e, &sources);
+				// Capture metadata directly inside the crate, no parsing Display/Debug.
+				let kind = e.error().kind();
+				let class = match kind {
+					crate::runtime::VmErrorKind::Panic { .. } => "Panic".into(),
+					crate::runtime::VmErrorKind::UnsupportedCallFn { .. } => "Type".into(),
+					_ => runtime_error_class(kind),
+				};
+				let chain = e
+					.chain()
+					.iter()
+					.map(|at| json!({"kind":format!("{:?}",at.kind()),"display":at.to_string()}))
+					.collect::<Vec<_>>();
+				let sites = e.stacktrace().iter().map(|at| {
 				let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
 				let range = inst.span.range();
 				json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 			}).collect::<Vec<_>>();
-			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+				json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+			}
 		}
-	}
+	})();
+	observation["warnings"] = json!(warnings);
+	observation
 }
 
 fn exact_keys(o: &serde_json::Map<String, Json>, names: &[&str]) {
@@ -160,20 +165,34 @@ fn child() {
 	let row = &rows[index];
 	let source = row["source"].as_str().unwrap();
 	let engine = std::env::var("C16_ENGINE").unwrap_or_else(|_| "stock".into());
-	let (observation, audit) = match engine.as_str() {
-		"stock" => (legacy_observe(source, "c8-main"), None),
+	let (mut observation, mut audit) = match engine.as_str() {
+		"stock" => (legacy_observe_with_warnings(source, "c8-main"), None),
 		"fresh" => {
 			let (observation, audit) = observe(source, "c8-main");
 			(observation, Some(audit))
 		}
 		_ => panic!("unknown C16 engine"),
 	};
+
+	let warnings = if let Some(audit) = &mut audit {
+		audit
+			.as_object_mut()
+			.unwrap()
+			.remove("warnings")
+			.expect("execution warning multiset")
+	} else {
+		observation
+			.as_object_mut()
+			.unwrap()
+			.remove("warnings")
+			.expect("legacy warning multiset")
+	};
 	let projected = if engine == "stock" {
 		project(&observation)
 	} else {
 		observation.clone()
 	};
-	let envelope = json!({"schema":1,"engine":engine,"index":index,"label":row["label"],"policy":row["policy"],"source":source,"fuel":FUEL,"outcome":observation,"projected":projected,"fresh_audit":audit});
+	let envelope = json!({"schema":1,"engine":engine,"index":index,"label":row["label"],"policy":row["policy"],"source":source,"fuel":FUEL,"warnings":warnings,"outcome":observation,"projected":projected,"fresh_audit":audit});
 	fs::write(
 		std::env::var_os("C16_RESULT").unwrap(),
 		serde_json::to_vec_pretty(&envelope).unwrap(),
@@ -208,6 +227,10 @@ fn contract() {
 		let stock = launch("stock", i, case, &folder.join("stock"));
 		let expected = &stock.observation;
 		let fresh = launch("fresh", i, case, &folder.join("fresh"));
+		crate::experimental_core::tests::gap_hunt::assert_warning_multisets(
+			&stock.observation,
+			&fresh.observation,
+		);
 		let audit = &fresh.observation["fresh_audit"];
 		for key in [
 			"no_cleanup_error",

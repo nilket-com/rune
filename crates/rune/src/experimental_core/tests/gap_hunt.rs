@@ -11,6 +11,7 @@ use super::super::{
 	frontend,
 	heap::{Limits, Store},
 };
+use super::compile_diagnostics::{nonwarning_diagnostics, warning_multiset};
 use crate::{Context, Diagnostics, Hash, Source, Sources};
 use std::{
 	borrow::ToOwned,
@@ -190,6 +191,126 @@ fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
 }
 
 // Test-only C2 seam: existing observations keep the default context and no input.
+// Warning observations have a separate, live multiset comparison. Keep every
+// fatal and runtime diagnostic unchanged in the other observation fields.
+/// Warning order is not an observable compiler difference; multiplicity and
+/// every warning payload field are. Refused programs keep their refusal checks.
+fn assert_warning_multisets(legacy: &serde_json::Value, execution: &serde_json::Value) {
+	let admitted = execution["fresh_audit"]["invoked"]
+		.as_bool()
+		.unwrap_or_else(|| {
+			let status = execution
+				.pointer("/outcome/status")
+				.or_else(|| execution.pointer("/observation/outcome/status"))
+				.and_then(serde_json::Value::as_str)
+				.expect("compile observation status");
+			!matches!(status, "refused" | "compile-error")
+		});
+	if !admitted
+		|| legacy
+			.pointer("/observation/outcome/status")
+			.or_else(|| legacy.pointer("/outcome/status"))
+			.is_some_and(|status| status == "compile-error")
+	{
+		return;
+	}
+	assert!(
+		legacy["warnings"].is_array(),
+		"legacy warning multiset missing"
+	);
+	assert!(
+		execution["warnings"].is_array(),
+		"execution warning multiset missing"
+	);
+	assert_eq!(
+		execution["warnings"], legacy["warnings"],
+		"compile warning multiset"
+	);
+}
+
+fn assert_diverging_initializer_warning(warnings: &serde_json::Value, source: &str, unused: &str) {
+	// Reviewed W1 literal policy: one Unreachable warning on the initializer's
+	// tail, caused by return 7. Derive offsets from the pinned witness source.
+	let start = source.find(unused).unwrap();
+	let end = start + unused.len();
+	let cause = source.find("return 7").unwrap();
+	let cause_end = cause + "return 7".len();
+	assert_eq!(
+		*warnings,
+		serde_json::json!([{
+			"source":0,"start":start,"end":end,"message":"Unreachable code",
+			"kind_and_auxiliary":format!("WarningDiagnostic {{ source_id: 0, kind: Unreachable {{ span: {start}:{end}, cause: {cause}:{cause_end} }} }}")
+		}])
+	);
+}
+
+fn compare_runtime_policy(
+	execution: &serde_json::Value,
+	legacy: &serde_json::Value,
+	policy: &serde_json::Value,
+) {
+	if policy.get("diagnostics") == Some(&serde_json::Value::Null) {
+		// Old warning exemptions also left a null placeholder in some runtime
+		// policies. Warnings now compare live; the other diagnostics must match
+		// in full before retaining that historical runtime-only placeholder.
+		assert!(execution["diagnostics"].is_string() && legacy["diagnostics"].is_string());
+		assert_eq!(execution["diagnostics"], legacy["diagnostics"]);
+		let mut execution = execution.clone();
+		execution["diagnostics"] = serde_json::Value::Null;
+		assert_eq!(execution, *policy);
+	} else {
+		assert_eq!(*execution, *policy);
+	}
+}
+
+#[test]
+fn warning_comparisons_keep_multiplicity_and_nonwarning_diagnostics() {
+	let warning = serde_json::json!({"source":0,"start":1,"end":2,"message":"Not used","kind_and_auxiliary":"NotUsed { context: Some(0:3) }"});
+	let legacy = serde_json::json!({"observation":{"outcome":{"status":"value"}},"warnings":[warning.clone(),warning.clone()]});
+	let mut execution = legacy.clone();
+	execution["fresh_audit"] = serde_json::json!({"invoked":true});
+	assert_warning_multisets(&legacy, &execution);
+	let mut missing = execution.clone();
+	missing["warnings"].as_array_mut().unwrap().pop();
+	assert!(std::panic::catch_unwind(|| assert_warning_multisets(&legacy, &missing)).is_err());
+	for key in [
+		"source",
+		"start",
+		"end",
+		"message",
+		"kind_and_auxiliary",
+		"extra",
+	] {
+		let mut changed = execution.clone();
+		changed["warnings"][0][key] = serde_json::json!("changed");
+		assert!(std::panic::catch_unwind(|| assert_warning_multisets(&legacy, &changed)).is_err());
+	}
+	let value = serde_json::json!({"observation":"value","diagnostics":"[]"});
+	let policy = serde_json::json!({"observation":"value","diagnostics":null});
+	compare_runtime_policy(&value, &value, &policy);
+	let mut changed = value.clone();
+	changed["diagnostics"] = serde_json::json!("[Fatal(original error)]");
+	assert!(
+		std::panic::catch_unwind(|| compare_runtime_policy(&changed, &value, &policy)).is_err()
+	);
+	changed = value.clone();
+	changed["extra"] = serde_json::json!(1);
+	assert!(
+		std::panic::catch_unwind(|| compare_runtime_policy(&changed, &value, &policy)).is_err()
+	);
+}
+
+fn write_warning_multiset(diagnostics: &Diagnostics) {
+	let Some(path) = std::env::var_os("GAP_L1_WARNINGS") else {
+		return;
+	};
+	fs::write(
+		path,
+		serde_json::to_vec(&warning_multiset(diagnostics)).unwrap(),
+	)
+	.unwrap();
+}
+
 fn observe_with_context(
 	path: &Path,
 	mode: &str,
@@ -205,6 +326,7 @@ fn observe_with_context(
 			.with_context(context)
 			.with_diagnostics(&mut diagnostics)
 			.build_vm();
+		write_warning_multiset(&diagnostics);
 		// C3 opt-in metadata; all older contracts keep their observation path.
 		if mode.starts_with("patterns-") {
 			let result = PathBuf::from(std::env::var_os("GAP_RESULT").unwrap());
@@ -314,7 +436,9 @@ fn observe_with_context(
 		};
 	}
 	assert_eq!(engine, "fresh");
-	let program = match frontend::compile(&mut sources, context, &mut diagnostics, 1) {
+	let compiled = frontend::compile(&mut sources, context, &mut diagnostics, 1);
+	write_warning_multiset(&diagnostics);
+	let program = match compiled {
 		Ok(p) => p,
 		Err(e) => {
 			return Observation::new(

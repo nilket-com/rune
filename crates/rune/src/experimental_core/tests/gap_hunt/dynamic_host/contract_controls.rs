@@ -6,7 +6,14 @@ fn c10_live_stock(label: &str) -> Json {
 		.unwrap();
 	cleanup();
 	STATE.with(|s| *s.borrow_mut() = State::default());
-	let portable = c10_project(&legacy_observe(source), i).unwrap();
+	let mut observation = legacy_observe(source);
+	let warnings = observation
+		.as_object_mut()
+		.unwrap()
+		.remove("warnings")
+		.expect("live legacy warnings");
+	assert!(warnings.is_array());
+	let portable = c10_project(&observation, i).unwrap();
 	if C10_LARGE.contains(&label) {
 		let common = c10_common(&portable).unwrap();
 		let bytes = c10_canonical(&common);

@@ -30,6 +30,10 @@ fn verify_case(
 	stock_run: &super::live_oracle::Run,
 	fresh: &super::live_oracle::Run,
 ) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(
+		&stock_run.observation,
+		&fresh.observation,
+	);
 	let stock = &stock_run.observation;
 	let (actual, stdout, stderr) = (&fresh.observation, &fresh.stdout[..], &fresh.stderr[..]);
 	use sha2::{Digest, Sha256};
@@ -73,23 +77,19 @@ fn verify_case(
 	let refused = classification == "Inherited-refusal";
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
-	let mut execution = canonical_record(actual);
-	let mut expected = canonical_record(stock);
-	if let Some(pin) = rule.get("warnings") {
-		// Stock warns that a `for (a, b)` pattern might panic; the new frontend
-		// does not report that warning.
-		assert_eq!(execution["diagnostics"], pin["fresh"]);
-		assert_eq!(expected["diagnostics"], pin["stock"]);
-		execution["diagnostics"] = Json::Null;
-		expected["diagnostics"] = Json::Null;
-	}
+	let execution = canonical_record(actual);
+	let expected = canonical_record(stock);
 	let (f, s) = (&execution["observation"], &expected["observation"]);
 	match classification {
 		"Exact" => assert_eq!(execution, expected),
 		"Intentional-D1" => {
 			// A wrong receiver: new names the missing method (D1). Kind, class,
 			// tape, sites, logical frames and reuse stay stock-exact.
-			assert_eq!(execution, rule["fresh"]);
+			crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+				&execution,
+				&expected,
+				&rule["fresh"],
+			);
 			for key in ["status", "class", "kind", "sites", "chain"] {
 				assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
 			}
@@ -109,7 +109,11 @@ fn verify_case(
 		"Retained-fuel" => {
 			// Fuel is charged per expanded instruction: new halts on its own
 			// count, with the stock class, an empty tape and stock reuse.
-			assert_eq!(execution, rule["fresh"]);
+			crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+				&execution,
+				&expected,
+				&rule["fresh"],
+			);
 			for record in [f, s] {
 				assert_eq!(record["outcome"]["status"], "error");
 				assert_eq!(record["outcome"]["class"], "FuelExhausted");

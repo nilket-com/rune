@@ -101,7 +101,7 @@ fn child() {
 		}
 	};
 	let events = TAPE.with(|tape| tape.borrow().clone());
-	let result = json!({"schema":1,"engine":"stock","phase":phase,"index":index,"label":row["label"],"source_sha256":row["source_sha256"],"source_hex":hex(source.as_bytes()),"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
+	let result = json!({"schema":1,"engine":"stock","phase":phase,"index":index,"label":row["label"],"source_sha256":row["source_sha256"],"source_hex":hex(source.as_bytes()),"fuel":row["fuel"],"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
 	write_result(&result);
 }
 
@@ -333,5 +333,5 @@ fn observe(row: &Json, phase: &str) -> Json {
 	let value = store.import(&held).unwrap();
 	assert_eq!(graph(&mut store, value), outcome["graph"]);
 	store.root_release(held).unwrap();
-	json!({"schema":1,"engine":"fresh","phase":phase,"index":row["id"].as_str().unwrap().parse::<usize>().unwrap(),"label":row["label"],"source_sha256":row["source_sha256"],"source_hex":hex(source.as_bytes()),"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"post_code_drop":true,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes()}})
+	json!({"schema":1,"engine":"fresh","phase":phase,"index":row["id"].as_str().unwrap().parse::<usize>().unwrap(),"label":row["label"],"source_sha256":row["source_sha256"],"source_hex":hex(source.as_bytes()),"fuel":row["fuel"],"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"post_code_drop":true,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes()}})
 }

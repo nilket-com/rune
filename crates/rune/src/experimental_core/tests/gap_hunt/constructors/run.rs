@@ -92,7 +92,9 @@ fn observe(row: &Json) -> Json {
 					// then explicitly sever its sole backedge before normal release.
 					let value = store.import(&root).unwrap();
 					let vector = store.tuple_get(value, 0).unwrap();
-					store.set(vector, 0, crate::experimental_core::value::Value::Unit).unwrap();
+					store
+						.set(vector, 0, crate::experimental_core::value::Value::Unit)
+						.unwrap();
 					store.release(vector).unwrap();
 					fixture_cleanup = json!({"cycle_cleared":true});
 				}
@@ -133,7 +135,7 @@ fn observe(row: &Json) -> Json {
 		}
 		Err(failure) => self::outcome(&failure, program),
 	};
-	json!({"schema":1,"engine":"fresh","index":row["id"].as_str().unwrap().parse::<usize>().unwrap(),"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"fixture":row["fixture"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"fixture_cleanup":fixture_cleanup,"invoked":built.is_ok(),"cleanup_error":cleanup_error,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"reuse_used_fallback":fallback.is_some()}})
+	json!({"schema":1,"engine":"fresh","index":row["id"].as_str().unwrap().parse::<usize>().unwrap(),"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"fixture":row["fixture"],"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"fixture_cleanup":fixture_cleanup,"invoked":built.is_ok(),"cleanup_error":cleanup_error,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"reuse_used_fallback":fallback.is_some()}})
 }
 
 // Project typed runtime diagnostics; never consult frozen observations.

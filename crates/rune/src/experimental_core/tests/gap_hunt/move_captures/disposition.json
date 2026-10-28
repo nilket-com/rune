@@ -59,7 +59,7 @@
 				"authority": 20798,
 				"policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
 				"stock": {
-					"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+					"diagnostics": "[]",
 					"events": [],
 					"logical": {
 						"context": [
@@ -99,7 +99,7 @@
 					"reuse": null
 				},
 				"fresh": {
-					"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+					"diagnostics": "[]",
 					"events": [],
 					"logical": {
 						"context": [],
@@ -141,7 +141,7 @@
 			"source_sha256": "b92c27320caedbfd7f8fddb3f8356a10c13896c2e91273570e15324675ded9e4",
 			"classification": "exact",
 			"previous_exact": {
-				"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+				"diagnostics": "[]",
 				"events": [],
 				"logical": {
 					"context": [
@@ -184,7 +184,7 @@
 				"authority": 20798,
 				"policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
 				"stock": {
-					"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+					"diagnostics": "[]",
 					"events": [],
 					"logical": {
 						"context": [
@@ -224,7 +224,7 @@
 					"reuse": null
 				},
 				"fresh": {
-					"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 47:58, context: None } })]",
+					"diagnostics": "[]",
 					"events": [],
 					"logical": {
 						"context": [],
@@ -309,7 +309,7 @@
 				"authority": 20798,
 				"policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
 				"stock": {
-					"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+					"diagnostics": "[]",
 					"events": [],
 					"logical": {
 						"context": [
@@ -349,7 +349,7 @@
 					"reuse": null
 				},
 				"fresh": {
-					"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+					"diagnostics": "[]",
 					"events": [],
 					"logical": {
 						"context": [],
@@ -391,7 +391,7 @@
 			"source_sha256": "a3db1439716736b613b0701e7c2b322d9c7602b94dc3bf33238bc890aa114596",
 			"classification": "exact",
 			"previous_exact": {
-				"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+				"diagnostics": "[]",
 				"events": [],
 				"logical": {
 					"context": [
@@ -434,7 +434,7 @@
 				"authority": 20798,
 				"policy": "Retained-chain: IndexSet moved receiver context deferred to codegen isolation; original Moved detail",
 				"stock": {
-					"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+					"diagnostics": "[]",
 					"events": [],
 					"logical": {
 						"context": [
@@ -474,7 +474,7 @@
 					"reuse": null
 				},
 				"fresh": {
-					"diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:14, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 14:28, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 28:47, context: None } })]",
+					"diagnostics": "[]",
 					"events": [],
 					"logical": {
 						"context": [],

@@ -14,51 +14,56 @@ fn legacy_observe(source: &str, mode: &str) -> Json {
 		.with_context(&context)
 		.with_diagnostics(&mut diagnostics)
 		.build_vm();
-	let mut vm = match built {
-		Ok(vm) => vm,
-		Err(e) => {
-			return json!({"status":"compile-error","error":format!("{e:?}"),"diagnostics":format!("{:?}",diagnostics.diagnostics())})
-		}
-	};
-	let result = crate::runtime::budget::with(FUEL, || {
-		if let Some(bits) = mode.strip_prefix("c5-f64-") {
-			let input = f64::from_bits(u64::from_str_radix(bits, 16).unwrap());
-			vm.call(["main"], (input,))
-		} else {
-			assert_eq!(mode, "c5-main");
-			vm.call(["main"], ())
-		}
-	})
-	.call();
-	match result {
-		Ok(value) => {
-			if value.into_unit().is_ok() {
-				return json!({"status":"value","type":"Unit"});
+	let warnings = crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics);
+	let mut observation = (|| {
+		let mut vm = match built {
+			Ok(vm) => vm,
+			Err(e) => {
+				return json!({"status":"compile-error","error":format!("{e:?}"),"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics)})
 			}
-			// Observe only explicit Unit or String. No Debug observer can hide output.
-			let string = value
-				.borrow_string_ref()
-				.expect("C5 subject did not return String");
-			json!({"status":"value","type":"String","bytes_hex":hex(string.as_bytes()),"bytes":string.len()})
-		}
-		Err(e) => {
-			super::d1e_diagnostics::stock(&e, &sources);
-			// Capture metadata directly inside the crate, no parsing Display/Debug.
-			let kind = e.error().kind();
-			let class = runtime_error_class(kind);
-			let chain = e
-				.chain()
-				.iter()
-				.map(|at| json!({"kind":format!("{:?}",at.kind()),"display":at.to_string()}))
-				.collect::<Vec<_>>();
-			let sites = e.stacktrace().iter().map(|at| {
+		};
+		let result = crate::runtime::budget::with(FUEL, || {
+			if let Some(bits) = mode.strip_prefix("c5-f64-") {
+				let input = f64::from_bits(u64::from_str_radix(bits, 16).unwrap());
+				vm.call(["main"], (input,))
+			} else {
+				assert_eq!(mode, "c5-main");
+				vm.call(["main"], ())
+			}
+		})
+		.call();
+		match result {
+			Ok(value) => {
+				if value.into_unit().is_ok() {
+					return json!({"status":"value","type":"Unit"});
+				}
+				// Observe only explicit Unit or String. No Debug observer can hide output.
+				let string = value
+					.borrow_string_ref()
+					.expect("C5 subject did not return String");
+				json!({"status":"value","type":"String","bytes_hex":hex(string.as_bytes()),"bytes":string.len()})
+			}
+			Err(e) => {
+				super::d1e_diagnostics::stock(&e, &sources);
+				// Capture metadata directly inside the crate, no parsing Display/Debug.
+				let kind = e.error().kind();
+				let class = runtime_error_class(kind);
+				let chain = e
+					.chain()
+					.iter()
+					.map(|at| json!({"kind":format!("{:?}",at.kind()),"display":at.to_string()}))
+					.collect::<Vec<_>>();
+				let sites = e.stacktrace().iter().map(|at| {
 				let inst = at.unit.debug_info().unwrap().instruction_at(at.ip).unwrap();
 				let range = inst.span.range();
 				json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end,"frames":format!("{:?}",at.frames)})
 			}).collect::<Vec<_>>();
-			json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+				json!({"status":"error","class":class,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(&e),"chain":chain,"sites":sites,"raw":format!("{e:?}")})
+			}
 		}
-	}
+	})();
+	observation["warnings"] = json!(warnings);
+	observation
 }
 
 // C5 new observer reads source/input only; policy is consulted after observation.
@@ -84,7 +89,7 @@ fn observe(source: &str, mode: &str) -> (Json, Json) {
 	let mut no_cleanup_error = true;
 	let observation = match compiled {
 		Err(e) => {
-			json!({"status":compile_status(e.refusal),"error":format!("{e:?}"),"refusal":format!("{:?}",e.refusal),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
+			json!({"status":compile_status(e.refusal),"error":format!("{e:?}"),"refusal":format!("{:?}",e.refusal),"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
 		}
 		Ok(program) => {
 			let main = program.function(Hash::type_hash(["main"])).unwrap();
@@ -193,9 +198,11 @@ fn observe(source: &str, mode: &str) -> (Json, Json) {
 	assert_eq!(store.live_entries(), 0);
 	assert_eq!(store.payload_bytes(), 0);
 	assert!(executor.is_idle());
+	let mut observation = observation;
+	observation.as_object_mut().unwrap().remove("warnings");
 	(
 		observation,
-		json!({"no_cleanup_error":no_cleanup_error,"clean_after_row":clean,"reuse":true,"live_entries":0,"payload_bytes":0,"idle":true,"input_f64_bits":input_bits}),
+		json!({"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"no_cleanup_error":no_cleanup_error,"clean_after_row":clean,"reuse":true,"live_entries":0,"payload_bytes":0,"idle":true,"input_f64_bits":input_bits}),
 	)
 }
 
@@ -206,7 +213,7 @@ fn child() {
 	assert_eq!(CASES.len(), COUNT);
 	let (label, source, mode, policy) = CASES[index];
 	let engine = std::env::var("C5_ENGINE").unwrap_or_else(|_| "stock".into());
-	let (observation, audit) = match engine.as_str() {
+	let (mut observation, mut audit) = match engine.as_str() {
 		"stock" => (legacy_observe(source, mode), None),
 		"fresh" => {
 			let (observation, audit) = observe(source, mode);
@@ -214,8 +221,22 @@ fn child() {
 		}
 		_ => panic!("unknown C5 engine"),
 	};
+
+	let warnings = if let Some(audit) = &mut audit {
+		audit
+			.as_object_mut()
+			.unwrap()
+			.remove("warnings")
+			.expect("execution warning multiset")
+	} else {
+		observation
+			.as_object_mut()
+			.unwrap()
+			.remove("warnings")
+			.expect("legacy warning multiset")
+	};
 	let output = std::env::var_os("C5_RESULT").unwrap();
-	let mut envelope = json!({"schema":1,"index":index,"label":label,"mode":mode,"policy":policy,"source_hex":hex(source.as_bytes()),"fuel":FUEL,"outcome":observation});
+	let mut envelope = json!({"schema":1,"index":index,"label":label,"mode":mode,"policy":policy,"source_hex":hex(source.as_bytes()),"fuel":FUEL,"warnings":warnings,"outcome":observation});
 	if let Some(audit) = audit {
 		envelope["fresh_audit"] = audit;
 	}

@@ -172,7 +172,7 @@ fn child() {
 	let post = json!({"receiver":c12_graph(&v),"state":c12_graph(&state)});
 	let events = C12_TAPE.with(|t| t.borrow().clone());
 	let cleanup = c12_cleanup(fixture, &v);
-	let result = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fixture":fixture,"fuel":row["fuel"],"provisional":row["provisional"],"invoked":invoked,"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"before":before,"post":post,"events":events,"cleanup":cleanup,"reuse":reuse}});
+	let result = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fixture":fixture,"fuel":row["fuel"],"provisional":row["provisional"],"invoked":invoked,"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"observation":{"outcome":outcome,"before":before,"post":post,"events":events,"cleanup":cleanup,"reuse":reuse}});
 	let path = std::env::var_os("C12_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
 		.create_new(true)

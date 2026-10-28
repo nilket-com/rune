@@ -30,6 +30,10 @@ fn verify_case(
 	stock_run: &super::live_oracle::Run,
 	fresh: &super::live_oracle::Run,
 ) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(
+		&stock_run.observation,
+		&fresh.observation,
+	);
 	let stock = &stock_run.observation;
 	let (actual, stdout, stderr) = (&fresh.observation, &fresh.stdout[..], &fresh.stderr[..]);
 	use sha2::{Digest, Sha256};
@@ -92,7 +96,11 @@ fn verify_case(
 		"Intentional-D1" => {
 			// A wrong receiver: new names the missing method (D1). Kind, class,
 			// tape, sites, logical frames and reuse stay stock-exact.
-			assert_eq!(execution, rule["fresh"]);
+			crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+				&execution,
+				&expected,
+				&rule["fresh"],
+			);
 			let (f, s) = (&execution["observation"], &expected["observation"]);
 			for key in ["status", "class", "kind", "sites", "chain"] {
 				assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");

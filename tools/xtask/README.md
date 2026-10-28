@@ -30,7 +30,9 @@ status. Existing host scheduling and measurement locks still apply.
 
 The L1 suite compares the checked-in programs on both engines. Both children
 use the default Rune context, without filesystem or network
-modules; the suite compares captured streams and return observations. Runtime
+modules; the suite compares captured streams, return observations and full compile
+warning multisets for admitted programs. Warning order is ignored; multiplicity,
+source identity, spans, messages and auxiliary warning context are preserved. Runtime
 errors whose typed details are not captured on either side are accepted only
 with an exact message, and the report lists each such case explicitly.
 Historical compiler emission byte checks and serialized Unit snapshots have been retired:

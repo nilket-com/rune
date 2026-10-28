@@ -170,12 +170,31 @@ fn contract() {
 			"C10 whole replay bound"
 		);
 		let dir = out.join(format!("{i:03}"));
-		let (stock, stock_stdout, stock_stderr) = c10_launch("stock", i, &dir.join("stock"));
-		let (fresh, stdout, stderr) = c10_launch("fresh", i, &dir.join("fresh"));
+		let (mut stock, stock_stdout, stock_stderr) = c10_launch("stock", i, &dir.join("stock"));
+		let (mut fresh, stdout, stderr) = c10_launch("fresh", i, &dir.join("fresh"));
 		assert_eq!(stdout, stock_stdout, "stdout {label}");
 		assert_eq!(stderr, stock_stderr, "stderr {label}");
 		assert_eq!(stdout, b"\nrunning 1 test\n", "child framing {label}");
 		assert!(stderr.is_empty(), "child stderr {label}");
+		let legacy_warnings = stock["observation"]
+			.as_object_mut()
+			.unwrap()
+			.remove("warnings")
+			.expect("legacy warning multiset");
+		let execution_warnings = fresh["observation"]
+			.as_object_mut()
+			.unwrap()
+			.remove("warnings")
+			.expect("execution warning multiset");
+		assert!(legacy_warnings.is_array() && execution_warnings.is_array());
+		if stock["observation"]["invoked"] == true && fresh["observation"]["invoked"] == true {
+			assert_eq!(
+				execution_warnings, legacy_warnings,
+				"compile warning multiset {label}"
+			);
+		}
+		// Runtime policies retain every original nonwarning field. The warning
+		// metadata above is verified independently against the live compiler.
 		let portable = c10_project(&stock["observation"], i).unwrap();
 		let stock_common = c10_common(&portable).unwrap();
 		let rule = &certificate["rows"][i];

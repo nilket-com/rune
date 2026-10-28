@@ -155,7 +155,7 @@ fn legacy_child() {
 		use sha2::Digest;
 		hex(sha2::Sha256::digest(program.as_bytes()).as_ref())
 	};
-	let result = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source":source,"origin":row["origin"],"logical":logical,"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"program_sha256":program_sha256,"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
+	let result = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source":source,"origin":row["origin"],"logical":logical,"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"program_sha256":program_sha256,"fuel":row["fuel"],"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":warning_multiset(&diagnostics),"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
 	let mut result = result;
 	result["projected"] = projection(&result);
 	let path = std::env::var_os("C18A_RESULT").unwrap();

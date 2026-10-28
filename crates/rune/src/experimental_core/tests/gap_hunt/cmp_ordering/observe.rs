@@ -69,10 +69,7 @@ fn value(store: &mut Store, value: Value, depth: usize) -> Json {
 }
 
 // Construct diagnostic identities only from actual typed metadata. No expected-row lookup.
-fn type_info(
-	name: TypeName,
-	program: &frontend::Program,
-) -> Option<crate::runtime::TypeInfo> {
+fn type_info(name: TypeName, program: &frontend::Program) -> Option<crate::runtime::TypeInfo> {
 	use crate::runtime::{self as rt, TypeInfo};
 	Some(match name {
 		TypeName::Unit | TypeName::Tuple => TypeInfo::named::<rt::OwnedTuple>(),
@@ -190,7 +187,9 @@ fn primary_kind(
 				_ => return None,
 			}
 		}
-		Detail::FloatComparison { lhs_bits, rhs_bits } if error.kind == ErrorKind::IllegalFloatComparison => {
+		Detail::FloatComparison { lhs_bits, rhs_bits }
+			if error.kind == ErrorKind::IllegalFloatComparison =>
+		{
 			K::IllegalFloatComparison {
 				lhs: f64::from_bits(lhs_bits),
 				rhs: f64::from_bits(rhs_bits),
@@ -403,7 +402,7 @@ fn observe(source: &str, mode: &str) -> Json {
 		}
 		Err(_) => false,
 	};
-	json!({"outcome":outcome,"invoked":invoked,"host_calls":calls.load(std::sync::atomic::Ordering::SeqCst),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"fresh_audit":{"no_cleanup_error":no_cleanup_error,"returned_root":returned_root,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"row_idle":row_idle,"reuse":reuse,"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"idle":executor.is_idle(),"call_chain":call_chain,"failure_site_ops":failure_site_ops,"actual_error":actual_error}})
+	json!({"outcome":outcome,"invoked":invoked,"host_calls":calls.load(std::sync::atomic::Ordering::SeqCst),"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"fresh_audit":{"no_cleanup_error":no_cleanup_error,"returned_root":returned_root,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"row_idle":row_idle,"reuse":reuse,"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"idle":executor.is_idle(),"call_chain":call_chain,"failure_site_ops":failure_site_ops,"actual_error":actual_error}})
 }
 
 fn struct_info(

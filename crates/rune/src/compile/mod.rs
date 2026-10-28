@@ -44,6 +44,9 @@ pub(crate) use self::unit_builder::UnitBuilder;
 
 pub(crate) mod v2;
 
+#[cfg(feature = "execution")]
+mod warnings;
+
 mod options;
 #[cfg(any(feature = "fmt", feature = "languageserver"))]
 pub(crate) use self::options::{FmtOptions, IndentStyle};

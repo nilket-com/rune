@@ -1,4 +1,4 @@
-fn observe(source: &str, mode: &str) -> (Json, Json) {
+fn observe(source: &str, mode: &str) -> (Json, Json, Json) {
 	use crate::experimental_core::{
 		code::Op,
 		error::{Detail, ErrorKind},
@@ -33,7 +33,7 @@ fn observe(source: &str, mode: &str) -> (Json, Json) {
 	let mut failure_site_ops = vec![];
 	let observation = match compiled {
 		Err(e) => {
-			json!({"status":if e.refusal.is_some() && e.refusal != Some(crate::experimental_core::error::Refusal::FrontendDiagnostic) {"refused"} else {"compile-error"},"kind":format!("{:?}",e.kind),"error":format!("{e:?}"),"refusal":e.refusal.map(|r|r.name()),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
+			json!({"status":if e.refusal.is_some() && e.refusal != Some(crate::experimental_core::error::Refusal::FrontendDiagnostic) {"refused"} else {"compile-error"},"kind":format!("{:?}",e.kind),"error":format!("{e:?}"),"refusal":e.refusal.map(|r|r.name()),"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
 		}
 		Ok(program) => {
 			let main = program.function(Hash::type_hash(["main"])).unwrap();
@@ -111,9 +111,8 @@ fn observe(source: &str, mode: &str) -> (Json, Json) {
 						Detail::HostMessage {
 							cause,
 							arg: Some(arg),
-						
-                            ..
-                        } => Some((cause, arg)),
+							..
+						} => Some((cause, arg)),
 						other => other.numeric_argument(),
 					};
 					let chain = argument
@@ -173,5 +172,8 @@ fn observe(source: &str, mode: &str) -> (Json, Json) {
 	(
 		observation,
 		json!({"no_cleanup_error":no_cleanup_error,"clean_after_row":clean,"row_live_entries":row_live,"row_payload_bytes":row_payload,"row_idle":row_idle,"reuse":reuse,"reuse_raw":reuse_raw,"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"idle":executor.is_idle(),"call_chain":call_chain,"invoked":invoked,"returned_root":returned_root,"typed_failure_kind":typed_failure_kind,"failure_at_get":failure_at_get,"failure_site_ops":failure_site_ops,"limits_entries":limits.entries,"limits_bytes":limits.bytes}),
+		json!(crate::experimental_core::tests::gap_hunt::warning_multiset(
+			&diagnostics
+		)),
 	)
 }

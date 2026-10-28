@@ -30,13 +30,23 @@ fn child() {
 			Ok(program) => {
 				let mut text = format!("functions={}\n", program.code.functions());
 				for id in 0..program.code.functions() as u32 {
-					text.push_str(&format!("function{id} entry={}\n{}", program.entry_eligible(id), program.code.function(id).unwrap().emission_snapshot()));
+					text.push_str(&format!(
+						"function{id} entry={}\n{}",
+						program.entry_eligible(id),
+						program.code.function(id).unwrap().emission_snapshot()
+					));
 				}
 				text
 			}
 			Err(error) => format!("refused:{error:?}\n"),
 		};
-		std::fs::OpenOptions::new().create_new(true).write(true).open(path).unwrap().write_all(text.as_bytes()).unwrap();
+		std::fs::OpenOptions::new()
+			.create_new(true)
+			.write(true)
+			.open(path)
+			.unwrap()
+			.write_all(text.as_bytes())
+			.unwrap();
 	}
 
 	let mut store = Store::new(Limits {
@@ -107,7 +117,7 @@ fn child() {
 		.and_then(|p| fs::read(p).ok())
 		.map(|b| serde_json::from_slice::<Json>(&b).unwrap())
 		.unwrap_or(Json::Null);
-	let result = json!({"schema":1,"engine":"fresh","index":index,"label":row["label"],"source":row["source"],"origin":row["origin"],"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"logical":logical,"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"invoked":built.is_ok(),"cleanup_error":cleanup_error,"row_idle":row_idle,"row_live_entries":row_live_entries,"row_payload_bytes":row_payload_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"reuse_used_fallback":fallback.is_some()}});
+	let result = json!({"schema":1,"engine":"fresh","index":index,"label":row["label"],"source":row["source"],"origin":row["origin"],"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":warning_multiset(&diagnostics),"logical":logical,"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"invoked":built.is_ok(),"cleanup_error":cleanup_error,"row_idle":row_idle,"row_live_entries":row_live_entries,"row_payload_bytes":row_payload_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"reuse_used_fallback":fallback.is_some()}});
 	fs::write(
 		std::env::var_os("C18A_RESULT").unwrap(),
 		serde_json::to_vec_pretty(&result).unwrap(),

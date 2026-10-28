@@ -59,7 +59,7 @@
         ],
         "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16f.rn:1:139"
       },
-      "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "diagnostics": "[]"
     }
   }
 }

@@ -229,7 +229,7 @@ fn invoke(
 	source: &str,
 	mode: &str,
 	engine: &str,
-) -> Result<(String, Vec<u8>, Vec<u8>, Option<Value>)> {
+) -> Result<(String, Vec<u8>, Vec<u8>, Option<Value>, Value)> {
 	let output = case_dir.join(engine);
 	fs::create_dir(&output)?;
 	let sandbox_source = format!("/corpus/{source}");
@@ -303,6 +303,9 @@ fn invoke(
 		"--setenv",
 		"GAP_L1_DETAIL",
 		"/work/detail.json",
+		"--setenv",
+		"GAP_L1_WARNINGS",
+		"/work/warnings.json",
 		"--",
 		"/rune-tests",
 		"--exact",
@@ -334,7 +337,9 @@ fn invoke(
 		Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
 		Err(error) => return Err(error.into()),
 	};
-	Ok((record, stdout, stderr, detail))
+	let warnings: Value = serde_json::from_slice(&fs::read(output.join("warnings.json"))?)?;
+	ensure!(warnings.is_array(), "missing L1 warning multiset");
+	Ok((record, stdout, stderr, detail, warnings))
 }
 
 pub(super) fn run(ctx: &Context) -> Result<Value> {
@@ -365,6 +370,14 @@ pub(super) fn run(ctx: &Context) -> Result<Value> {
 					fs::create_dir(&case_dir)?;
 					let s = invoke(ctx, &binary, &corpus, &case_dir, id, source, &mode, "stock")?;
 					let f = invoke(ctx, &binary, &corpus, &case_dir, id, source, &mode, "fresh")?;
+					if phase(&f.0)?[0] != "refused" && phase(&s.0)?[0] != "compile-error" {
+						ensure!(
+							s.4 == f.4,
+							"L1 {id} compile warning multisets differ: legacy={} execution={}",
+							s.4,
+							f.4
+						);
+					}
 					Ok(classify(
 						id,
 						kind,

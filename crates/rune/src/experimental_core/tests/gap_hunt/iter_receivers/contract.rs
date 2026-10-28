@@ -38,6 +38,7 @@ fn verify_case(
 	stdout: &[u8],
 	stderr: &[u8],
 ) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(stock, actual);
 	use sha2::{Digest, Sha256};
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	let rows = dispositions["rows"].as_array().unwrap();
@@ -78,14 +79,6 @@ fn verify_case(
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
 	let (mut f, mut s) = (canonical_record(actual), canonical_record(stock));
-	if let Some(pin) = rule.get("warnings") {
-		// Stock warns that a `for (k, v)` pattern might panic; the new
-		// frontend does not report that warning.
-		assert_eq!(f["diagnostics"], pin["fresh"]);
-		assert_eq!(s["diagnostics"], pin["stock"]);
-		f["diagnostics"] = Json::Null;
-		s["diagnostics"] = Json::Null;
-	}
 	match classification {
 		"Exact" | "Intentional-fix-both" => {
 			assert_eq!(
@@ -96,8 +89,14 @@ fn verify_case(
 		}
 		"Intentional-D1" => {
 			// A missing method: new names it (D1). Everything else is exact.
-			assert_eq!(f["observation"]["outcome"]["display"], rule["fresh_display"]);
-			assert_eq!(s["observation"]["outcome"]["display"], rule["stock_display"]);
+			assert_eq!(
+				f["observation"]["outcome"]["display"],
+				rule["fresh_display"]
+			);
+			assert_eq!(
+				s["observation"]["outcome"]["display"],
+				rule["stock_display"]
+			);
 			f["observation"]["outcome"]["display"] = Json::Null;
 			s["observation"]["outcome"]["display"] = Json::Null;
 			assert_eq!(f, s);

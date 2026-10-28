@@ -17,7 +17,7 @@ fn legacy_observe(source: &str, mode: &str) -> Json {
 	let mut vm = match built {
 		Ok(vm) => vm,
 		Err(e) => {
-			return json!({"status":"compile-error","error":format!("{e:?}"),"diagnostics":format!("{:?}",diagnostics.diagnostics())})
+			return json!({"status":"compile-error","error":format!("{e:?}"),"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics)})
 		}
 	};
 	let result = crate::runtime::budget::with(FUEL, || {

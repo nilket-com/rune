@@ -449,6 +449,23 @@ impl<'arena> CompileBuildEntry<'_, 'arena> {
 						collector.record_failure(error);
 						return Err(compile::Error::msg(span, operation.name()));
 					}
+					super::warnings::function(
+						&exprs,
+						&hir,
+						span.span(),
+						location.source_id,
+						self.q.diagnostics,
+					)?;
+					for build in &secondary_builds {
+						if let SecondaryBuild::Closure(c) = &build.build {
+							super::warnings::closure(
+								&exprs,
+								c.hir,
+								location.source_id,
+								self.q.diagnostics,
+							)?;
+						}
+					}
 					if !self.q.is_used(&item_meta) {
 						self.q
 							.diagnostics

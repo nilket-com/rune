@@ -18,7 +18,7 @@
           "refusal": "Method",
           "status": "refused"
         },
-        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:89, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+        "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:89, kind: Custom { error: \"Method\" } }) })]",
         "classification": "Inherited-refusal"
       },
       "admitted": {

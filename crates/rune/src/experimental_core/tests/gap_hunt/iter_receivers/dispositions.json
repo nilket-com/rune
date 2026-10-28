@@ -67,7 +67,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:81, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:81, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 6,
@@ -192,7 +192,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:78, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 20,
@@ -232,10 +232,6 @@
    "source_sha256": "4ec4ec52f1428500b30f4469cba9d6834dcdf6739e6d0d13a2807cd71bf729b5",
    "stock_canonical_sha256": "a970c9d0bc3ae1270fc7d8a7d9f15c20f44c10a1b7b871cd4f9e8130d1a64282",
    "stock_fix_both": false,
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 65:70, context: Some(52:114) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
-   },
    "classification": "Exact"
   },
   {
@@ -244,10 +240,6 @@
    "source_sha256": "1ceaaf95e20f9c7ae6b13fec33f3cc964f3b7079cdd6b6c2d8f6d6dfc252db42",
    "stock_canonical_sha256": "283d41d011ee3dc296978a264df55809e3c3d8f8545485e7adf347a4d3ec2191",
    "stock_fix_both": false,
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 90:95, context: Some(52:120) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
-   },
    "classification": "Exact"
   },
   {
@@ -299,7 +291,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:86, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:86, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 31,
@@ -307,10 +299,6 @@
    "source_sha256": "def39f54407cb878c046c5c9a409686cf7f1eeffa766acbaa9b61e04c36e1191",
    "stock_canonical_sha256": "437bf3a92ff96c3876a9b1ea8aeb4e21ad34ac4c33039a7c07a0f529cae5c99d",
    "stock_fix_both": false,
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 77:82, context: Some(52:107) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
-   },
    "classification": "Exact"
   },
   {
@@ -330,7 +318,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:113, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:113, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 33,
@@ -346,10 +334,6 @@
    "source_sha256": "74ea639e27ac82a92369392e21365b7dbdf4b83a55e960221da21a776ccd9179",
    "stock_canonical_sha256": "1626f935c3a325caeee45852e29166f00e7191477c4771c571498a92315aa6b3",
    "stock_fix_both": false,
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 65:70, context: Some(52:153) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 110:116, context: Some(106:151) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
-   },
    "classification": "Exact"
   },
   {
@@ -428,10 +412,6 @@
    "source_sha256": "7dfdcbd0b6840eaa5298f3eb2234bdd01914a12e940ac2ab0d1fac44cfed62b8",
    "stock_canonical_sha256": "ffe7c136812e24f31796b3855ec15cbc9fb1956dc906f4b1638952227915a0d9",
    "stock_fix_both": false,
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 81:86, context: Some(52:111) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
-   },
    "classification": "Exact"
   },
   {
@@ -469,7 +449,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:73, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 52:73, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 47,
@@ -657,10 +637,6 @@
    "source_sha256": "93ff24b6b25c09de2a0a2a602f69e58fa6f76128aab89f0d101354bd1bafcbb8",
    "stock_canonical_sha256": "973eb4c1c7b295da5205a08a1ffecebb718b98ebd6403f1f7ee7afc3da09403b",
    "stock_fix_both": true,
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 81:86, context: Some(52:112) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
-   },
    "classification": "Intentional-fix-both"
   },
   {
@@ -704,7 +680,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:82, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:82, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 73,
@@ -723,7 +699,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:84, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:84, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 74,

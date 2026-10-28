@@ -19,13 +19,9 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:127, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:127, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
-    "warnings": {
-     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-    },
     "classification": "Exact"
    }
   },
@@ -47,13 +43,9 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:130, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:130, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
-    "warnings": {
-     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-    },
     "classification": "Exact"
    }
   },
@@ -75,13 +67,9 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:151, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:151, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
-    "warnings": {
-     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-    },
     "classification": "Exact"
    }
   },
@@ -103,13 +91,9 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:110, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
-    "warnings": {
-     "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-     "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-    },
     "classification": "Exact"
    }
   }

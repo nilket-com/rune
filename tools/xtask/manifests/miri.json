@@ -660,6 +660,15 @@
       "ignored": false,
       "first_bound": 600,
       "selected_labels": []
+    },
+    {
+      "first_bound": 600,
+      "fixture_sha256": "e5ade7769c1bacf4e011edc5d309fba0cf4868b7a1f8f1c3d72018616374d868",
+      "ignored": false,
+      "name": "w1-warning-walk",
+      "selected_labels": [],
+      "selector": "compile::warnings::tests::nested_warning_walk_uses_bounded_rust_stack_and_keeps_duplicate_diagnostics",
+      "fixture_source": "crates/rune/src/compile/warnings/tests.rs"
     }
   ],
   "retired": [

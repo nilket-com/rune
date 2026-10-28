@@ -54,7 +54,7 @@ fn legacy_observe(source: &str, fixture_name: &str, mode: &str, fuel: usize) -> 
 		Err(e) => {
 			let post = roots_graph(&v, &state);
 			let cleanup = cleanup_fixture(fixture_name, &v);
-			return json!({"outcome":{"status":"compile-error","error":format!("{e:?}")},"diagnostics":format!("{:?}",diagnostics.diagnostics()),"invoked":false,"before":before,"post":post,"events":tape(),"cleanup":cleanup,"reuse":null});
+			return json!({"outcome":{"status":"compile-error","error":format!("{e:?}")},"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"invoked":false,"before":before,"post":post,"events":tape(),"cleanup":cleanup,"reuse":null});
 		}
 	};
 	let call_sites=vm.unit().iter_instructions().filter_map(|(ip,inst)|{
@@ -88,7 +88,7 @@ fn legacy_observe(source: &str, fixture_name: &str, mode: &str, fuel: usize) -> 
 		Ok(value) => json!({"status":"value","graph":runtime_graph(&value)}),
 		Err(e) => error_projection(&e),
 	};
-	json!({"outcome":outcome,"invoked":true,"diagnostics":format!("{:?}",diagnostics.diagnostics()),"before":before,"post":post,"events":events,"events_after_reuse":tape(),"call_sites":call_sites,"cleanup":cleanup,"reuse":reuse})
+	json!({"outcome":outcome,"invoked":true,"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"before":before,"post":post,"events":events,"events_after_reuse":tape(),"call_sites":call_sites,"cleanup":cleanup,"reuse":reuse})
 }
 #[test]
 #[ignore = "C11 stock oracle child; bounded external controller only"]

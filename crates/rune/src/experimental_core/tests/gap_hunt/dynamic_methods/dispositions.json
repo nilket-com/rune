@@ -164,7 +164,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 373:380, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 373:380, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 22,
@@ -330,7 +330,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `val`\n  at c18b.rn:1:196\n  called from c18b.rn:1:218"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -653,7 +653,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `val`\n  at c18b.rn:1:57\n  called from c18b.rn:1:90"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -771,7 +771,7 @@
      ],
      "rendered": "Type `E::A` has no method named `twice`\n  at c18b.rn:1:151\n  called from c18b.rn:1:348"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 280:295, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -833,7 +833,7 @@
      ],
      "rendered": "Type `std::option::Option` has no method named `val`\n  at c18b.rn:1:151\n  called from c18b.rn:1:173"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -853,7 +853,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 48:55, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 48:55, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 72,
@@ -872,7 +872,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 54:63, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 54:63, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 73,
@@ -898,7 +898,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 56:63, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 56:63, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 75,
@@ -917,7 +917,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 56:63, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 56:63, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 76,
@@ -943,7 +943,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 78,
@@ -962,7 +962,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 79,
@@ -981,7 +981,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:68, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:68, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 80,
@@ -1000,7 +1000,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 56:63, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 56:63, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 81,
@@ -1019,7 +1019,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:76, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 82,
@@ -1038,7 +1038,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:70, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:70, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 83,
@@ -1057,7 +1057,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 69:81, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 69:81, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 84,
@@ -1076,7 +1076,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:82, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:82, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 85,
@@ -1116,7 +1116,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 48:55, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 48:55, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 89,
@@ -1205,7 +1205,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `val`\n  at c18b.rn:1:68\n  called from c18b.rn:1:202"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1295,7 +1295,7 @@
      ],
      "rendered": "Type `std::ops::Function` has no method named `val`\n  at c18b.rn:1:196\n  called from c18b.rn:1:218"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1357,7 +1357,7 @@
      ],
      "rendered": "Type `std::ops::Function` has no method named `val`\n  at c18b.rn:1:196\n  called from c18b.rn:1:218"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1418,7 +1418,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `val`\n  at c18b.rn:1:68"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1479,7 +1479,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `val`\n  at c18b.rn:1:200"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1533,7 +1533,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `val`\n  at c18b.rn:1:212"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1756,7 +1756,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `a1`\n  at c18b.rn:1:150\n  called from c18b.rn:1:172"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1920,7 +1920,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1993,7 +1993,7 @@
      ],
      "rendered": "Type `std::f64` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2066,7 +2066,7 @@
      ],
      "rendered": "Type `std::bool` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2139,7 +2139,7 @@
      ],
      "rendered": "Type `std::char` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2212,7 +2212,7 @@
      ],
      "rendered": "Type `std::u64` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2285,7 +2285,7 @@
      ],
      "rendered": "Type `std::string::String` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2358,7 +2358,7 @@
      ],
      "rendered": "Type `std::vec::Vec` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2431,7 +2431,7 @@
      ],
      "rendered": "Type `std::tuple::Tuple` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2504,7 +2504,7 @@
      ],
      "rendered": "Type `std::tuple::Tuple` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2577,7 +2577,7 @@
      ],
      "rendered": "Type `std::object::Object` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2650,7 +2650,7 @@
      ],
      "rendered": "Type `std::option::Option` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2723,7 +2723,7 @@
      ],
      "rendered": "Type `std::option::Option` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2796,7 +2796,7 @@
      ],
      "rendered": "Type `std::result::Result` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2869,7 +2869,7 @@
      ],
      "rendered": "Type `std::result::Result` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -2942,7 +2942,7 @@
      ],
      "rendered": "Type `std::ops::Range` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3015,7 +3015,7 @@
      ],
      "rendered": "Type `std::ops::RangeInclusive` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3088,7 +3088,7 @@
      ],
      "rendered": "Type `std::ops::RangeFrom` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3161,7 +3161,7 @@
      ],
      "rendered": "Type `std::ops::RangeTo` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3234,7 +3234,7 @@
      ],
      "rendered": "Type `std::ops::RangeFull` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3307,7 +3307,7 @@
      ],
      "rendered": "Type `std::cmp::Ordering` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3380,7 +3380,7 @@
      ],
      "rendered": "Type `std::ops::Function` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3453,7 +3453,7 @@
      ],
      "rendered": "Type `std::ops::Function` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3526,7 +3526,7 @@
      ],
      "rendered": "Type `std::slice::Iter` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3599,7 +3599,7 @@
      ],
      "rendered": "Type `std::ops::RangeIter<std::i64>` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3672,7 +3672,7 @@
      ],
      "rendered": "Type `std::string::Chars` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3745,7 +3745,7 @@
      ],
      "rendered": "Type `std::string::Split<std::string::String>` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3818,7 +3818,7 @@
      ],
      "rendered": "Type `Q` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3891,7 +3891,7 @@
      ],
      "rendered": "Type `E::A` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -3964,7 +3964,7 @@
      ],
      "rendered": "Type `U` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -4044,7 +4044,7 @@
      ],
      "rendered": "Type `std::any::Type` has no method named `plus`\n  at c18b.rn:1:466\n  called from c18b.rn:1:497"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -4124,7 +4124,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `val`\n  at c18b.rn:1:196\n  called from c18b.rn:1:256"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -4192,7 +4192,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `plus`\n  at c18b.rn:1:196\n  called from c18b.rn:1:227"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -4212,7 +4212,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 195:203, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 195:203, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 177,
@@ -4231,7 +4231,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 195:209, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 195:209, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 178,
@@ -4292,7 +4292,7 @@
      ],
      "rendered": "Type `C` has no method named `f`\n  at c18b.rn:1:207\n  called from c18b.rn:1:228"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 145:160, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -4354,7 +4354,7 @@
      ],
      "rendered": "Type `C` has no method named `val`\n  at c18b.rn:1:209\n  called from c18b.rn:1:265"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 147:162, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -4424,7 +4424,7 @@
      ],
      "rendered": "Type `Q` has no method named `plus`\n  at c18b.rn:1:320\n  called from c18b.rn:1:338\n  called from c18b.rn:1:359"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -4482,7 +4482,7 @@
     "refusal": "AsyncFunction",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 187:209, kind: Custom { error: \"AsyncFunction\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 187:209, kind: Custom { error: \"AsyncFunction\" } }) })]"
   },
   {
    "index": 184,
@@ -4501,7 +4501,7 @@
     "refusal": "AsyncBlock",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 203:217, kind: Custom { error: \"AsyncBlock\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 203:217, kind: Custom { error: \"AsyncBlock\" } }) })]"
   },
   {
    "index": 185,
@@ -4539,7 +4539,7 @@
     "refusal": "Yield",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 45:57, kind: Custom { error: \"Yield\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 45:57, kind: Custom { error: \"Yield\" } }) })]"
   },
   {
    "index": 187,
@@ -4593,7 +4593,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 73:94, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 73:94, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 193,
@@ -12845,7 +12845,7 @@
      ],
      "rendered": "execute: FrameCapacity\n  at c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:47\n  called from c18b.rn:1:68\n  called from c18b.rn:1:91"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -12907,7 +12907,7 @@
      ],
      "rendered": "execute: FuelExhausted\n  at c18b.rn:1:212\n  called from c18b.rn:1:236"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -12969,7 +12969,7 @@
      ],
      "rendered": "execute: FuelExhausted\n  at c18b.rn:1:338\n  called from c18b.rn:1:370"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -13031,7 +13031,7 @@
      ],
      "rendered": "execute: FuelExhausted\n  at c18b.rn:1:204\n  called from c18b.rn:1:259"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -13107,7 +13107,7 @@
      ],
      "rendered": "Type `std::i64` has no method named `val`\n  at c18b.rn:1:222\n  called from c18b.rn:1:242\n  called from c18b.rn:1:261"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 134:149, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -18241,7 +18241,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 128:147, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 128:147, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 210,
@@ -18414,7 +18414,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 233,
@@ -18433,7 +18433,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:68, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:68, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 234,
@@ -18452,7 +18452,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 235,
@@ -18471,7 +18471,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:68, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:68, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 236,
@@ -18490,7 +18490,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:71, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:71, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 237,
@@ -18509,7 +18509,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:76, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 238,
@@ -18528,7 +18528,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 239,
@@ -18547,7 +18547,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:72, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:72, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 240,
@@ -18566,7 +18566,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 241,
@@ -18585,7 +18585,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:69, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:69, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 242,
@@ -18604,7 +18604,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 243,
@@ -18623,7 +18623,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:71, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:71, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 244,
@@ -18642,7 +18642,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 245,
@@ -18668,7 +18668,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:77, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:77, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 247,
@@ -18708,7 +18708,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:72, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:72, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 251,
@@ -18727,7 +18727,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:65, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:65, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 252,

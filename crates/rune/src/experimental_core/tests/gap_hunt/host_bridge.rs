@@ -77,7 +77,7 @@ pub(super) fn observe_h1(path: &Path, mode: &str, engine: &str) -> Observation {
 		.build_vm();
 	fs::write(
 		result_path.with_extension("diagnostics"),
-		format!("{:?}", diagnostics.diagnostics()),
+		crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),
 	)
 	.unwrap();
 	let observation = match built {

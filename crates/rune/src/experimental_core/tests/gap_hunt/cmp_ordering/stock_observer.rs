@@ -96,7 +96,7 @@ fn legacy_observe(source: &str, mode: &str) -> Json {
 	let mut vm = match built {
 		Ok(vm) => vm,
 		Err(e) => {
-			return json!({"outcome":{"status":"compile-error","error":format!("{e:?}"),"diagnostics":format!("{:?}",diagnostics.diagnostics())},"invoked":false,"host_calls":calls.load(std::sync::atomic::Ordering::SeqCst),"reuse":null});
+			return json!({"outcome":{"status":"compile-error","error":format!("{e:?}"),"diagnostics":crate::experimental_core::tests::compile_diagnostics::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::compile_diagnostics::warning_multiset(&diagnostics)},"invoked":false,"host_calls":calls.load(std::sync::atomic::Ordering::SeqCst),"reuse":null});
 		}
 	};
 	// Bind future Refused-runtime spans to actual stock compiler debug metadata.
@@ -132,5 +132,5 @@ fn legacy_observe(source: &str, mode: &str) -> Json {
 		Ok(value) => json!({"status":"value","value":value_projection(&value,0)}),
 		Err(error) => error_projection(&error),
 	};
-	json!({"outcome":outcome,"invoked":true,"cmp_sites":cmp_sites,"host_calls":calls.load(std::sync::atomic::Ordering::SeqCst),"reuse":reuse,"diagnostics":format!("{:?}",diagnostics.diagnostics())})
+	json!({"outcome":outcome,"invoked":true,"cmp_sites":cmp_sites,"host_calls":calls.load(std::sync::atomic::Ordering::SeqCst),"reuse":reuse,"diagnostics":crate::experimental_core::tests::compile_diagnostics::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::compile_diagnostics::warning_multiset(&diagnostics)})
 }

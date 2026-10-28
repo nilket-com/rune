@@ -125,7 +125,7 @@
         "refusal": "TypeExpr",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:136, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:136, kind: Custom { error: \"TypeExpr\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -150,7 +150,7 @@
         "refusal": "TypeExpr",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:144, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:144, kind: Custom { error: \"TypeExpr\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -168,7 +168,7 @@
         "refusal": "UnresolvedFunction",
         "status": "refused"
       },
-      "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[]",
       "classification": "Inherited-refusal"
     },
     {
@@ -340,7 +340,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:137, kind: Custom { error: \"Native\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -358,7 +358,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 136:144, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 136:144, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -411,7 +411,7 @@
           ],
           "rendered": "Type `std::any::Type` has no method named `cmp`\n  at c16h.rn:1:120"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::any::Type` has no matching method",
       "fresh_display": "Type `std::any::Type` has no method named `cmp`",
@@ -474,7 +474,7 @@
         "refusal": "TypeExpr",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:144, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:144, kind: Custom { error: \"TypeExpr\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -492,7 +492,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 132:136, kind: ExpectedMeta { expected: \"something that has a type\", meta: MetaInfo { kind: Variant, hash: 0x489be30d02f3940f, item: Some(E::D) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 132:136, kind: ExpectedMeta { expected: \"something that has a type\", meta: MetaInfo { kind: Variant, hash: 0x489be30d02f3940f, item: Some(E::D) } } }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -510,7 +510,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:131, kind: ExpectedMeta { expected: \"something that has a type\", meta: MetaInfo { kind: Variant, hash: 0x31e6fa421a80c8d1, item: Some(E::A) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:131, kind: ExpectedMeta { expected: \"something that has a type\", meta: MetaInfo { kind: Variant, hash: 0x31e6fa421a80c8d1, item: Some(E::A) } } }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -528,7 +528,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 130:134, kind: ExpectedMeta { expected: \"something that has a type\", meta: MetaInfo { kind: Variant, hash: 0x20df65bb1e80fc7, item: Some(E::B) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 130:134, kind: ExpectedMeta { expected: \"something that has a type\", meta: MetaInfo { kind: Variant, hash: 0x20df65bb1e80fc7, item: Some(E::B) } } }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -546,7 +546,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 132:133, kind: MissingItem { item: t } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 132:133, kind: MissingItem { item: t } }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -564,7 +564,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:131, kind: UnsupportedBinding }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:131, kind: UnsupportedBinding }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -582,7 +582,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:120, kind: ExpectedMeta { expected: \"something that can be called as a function\", meta: MetaInfo { kind: Struct, hash: 0xbe6b74e85e3244d6, item: Some(N) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:120, kind: ExpectedMeta { expected: \"something that can be called as a function\", meta: MetaInfo { kind: Struct, hash: 0xbe6b74e85e3244d6, item: Some(N) } } }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -600,7 +600,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:123, kind: ExpectedMeta { expected: \"something that can be called as a function\", meta: MetaInfo { kind: Variant, hash: 0x489be30d02f3940f, item: Some(E::D) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:123, kind: ExpectedMeta { expected: \"something that can be called as a function\", meta: MetaInfo { kind: Variant, hash: 0x489be30d02f3940f, item: Some(E::D) } } }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -618,7 +618,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:120, kind: ExpectedMeta { expected: \"something that can be used as a value\", meta: MetaInfo { kind: Module, hash: 0x1a8040fe7d8e65a4, item: Some(m) } } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:120, kind: ExpectedMeta { expected: \"something that can be used as a value\", meta: MetaInfo { kind: Module, hash: 0x1a8040fe7d8e65a4, item: Some(m) } } }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -636,7 +636,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:123, kind: MissingItem { item: Nope } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:123, kind: MissingItem { item: Nope } }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -654,7 +654,7 @@
         "refusal": "FrontendDiagnostic",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:123, kind: MissingItem { item: N::D } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:123, kind: MissingItem { item: N::D } }) })]",
       "classification": "Frontend-refusal"
     },
     {
@@ -875,7 +875,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:158, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:158, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -900,7 +900,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 125:157, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 125:157, kind: Custom { error: \"Native\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -953,7 +953,7 @@
           ],
           "rendered": "Type `std::any::Type` has no method named `clone`\n  at c16h.rn:1:120"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::any::Type` has no matching method",
       "fresh_display": "Type `std::any::Type` has no method named `clone`",
@@ -1016,7 +1016,7 @@
           ],
           "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:128"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Missing function with hash `0xbe6b74e85e3244d6`",
       "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
@@ -1072,7 +1072,7 @@
           ],
           "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:131"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Missing function with hash `0x489be30d02f3940f`",
       "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
@@ -1128,7 +1128,7 @@
           ],
           "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:128"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Missing function with hash `0xf727e1feaf2a3ca`",
       "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
@@ -1184,7 +1184,7 @@
           ],
           "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:133"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Missing function with hash `0x2f4720d36d2b70c`",
       "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
@@ -1240,7 +1240,7 @@
           ],
           "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:152"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Missing function with hash `0x1cad9186c9641c4f`",
       "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
@@ -1438,7 +1438,7 @@
           ],
           "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:118\n  called from c16h.rn:1:137"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Missing function with hash `0x489be30d02f3940f`",
       "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
@@ -1510,7 +1510,7 @@
           ],
           "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:139\n  called from c16h.rn:1:118\n  called from c16h.rn:1:158"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Missing function with hash `0xbe6b74e85e3244d6`",
       "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
@@ -1574,7 +1574,7 @@
           ],
           "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16h.rn:1:140\n  called from c16h.rn:1:145"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Missing function with hash `0xbe6b74e85e3244d6`",
       "fresh_display": "Type `std::any::Type` cannot be called since it's not a function",
@@ -1595,7 +1595,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:153, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 119:153, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -1620,7 +1620,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 155:162, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 112:132, context: None } })]",
+      "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 155:162, kind: Custom { error: \"Method\" } }) })]",
       "classification": "Inherited-refusal"
     },
     {
@@ -1722,7 +1722,7 @@
           ],
           "rendered": "Type `std::any::Type` has no method named `len`\n  at c16h.rn:1:120"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::any::Type` has no matching method",
       "fresh_display": "Type `std::any::Type` has no method named `len`",
@@ -1778,7 +1778,7 @@
           ],
           "rendered": "Type `std::any::Type` has no method named `foo`\n  at c16h.rn:1:120"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "stock_display": "Type `std::any::Type` has no matching method",
       "fresh_display": "Type `std::any::Type` has no method named `foo`",

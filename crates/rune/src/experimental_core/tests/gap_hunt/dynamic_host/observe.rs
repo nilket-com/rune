@@ -276,7 +276,7 @@ fn observe_dynamic(source: &str) -> (Json, Json) {
 		json!({"status":"value","graph":runtime_graph})
 	};
 	(
-		json!({"outcome":outcome,"diagnostics":format!("{:?}",diagnostics.diagnostics()),"events":before_cleanup,"events_after_reuse":events(),"host_calls":host_calls,"protocol_calls":protocol_calls,"reuse":reuse,"invoked":invoked}),
+		json!({"outcome":outcome,"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"events":before_cleanup,"events_after_reuse":events(),"host_calls":host_calls,"protocol_calls":protocol_calls,"reuse":reuse,"invoked":invoked}),
 		json!({"raw_failure":raw_failure,"boundaries":boundaries,"returned_root":returned,"cleanup_error":cleanup_error,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"row_idle":row_idle,"final_live_entries":store.live_entries(),"final_payload_bytes":store.payload_bytes(),"final_idle":executor.is_idle(),"actual_primary_call":actual_primary_call,"actual_callers":actual_callers,"same_program_reuse":compiled.is_ok()}),
 	)
 }

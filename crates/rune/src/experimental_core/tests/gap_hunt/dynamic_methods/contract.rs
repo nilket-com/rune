@@ -30,6 +30,10 @@ fn verify_case(
 	stock_run: &super::live_oracle::Run,
 	fresh: &super::live_oracle::Run,
 ) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(
+		&stock_run.observation,
+		&fresh.observation,
+	);
 	let stock = &stock_run.observation;
 	let (actual, stdout, stderr) = (&fresh.observation, &fresh.stdout[..], &fresh.stderr[..]);
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
@@ -89,7 +93,11 @@ fn verify_case(
 		// A missing method: new names the method in its message. Everything
 		// else, including the kind, class, sites and chain, is stock-exact.
 		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(execution, rule["fresh"]);
+		crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+			&execution,
+			&expected,
+			&rule["fresh"],
+		);
 		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for key in ["status", "class", "kind", "sites", "chain"] {
 			assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
@@ -108,7 +116,11 @@ fn verify_case(
 		// Fuel is charged per expanded instruction: new halts on its own
 		// count, with the stock class, an empty tape and stock reuse.
 		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(execution, rule["fresh"]);
+		crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+			&execution,
+			&expected,
+			&rule["fresh"],
+		);
 		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for record in [f, s] {
 			assert_eq!(record["outcome"]["status"], "error");
@@ -123,7 +135,11 @@ fn verify_case(
 		// the shorter length. Only the number of iterations before the halt
 		// differs.
 		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(execution, rule["fresh"]);
+		crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+			&execution,
+			&expected,
+			&rule["fresh"],
+		);
 		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for record in [f, s] {
 			assert_eq!(record["outcome"]["status"], "error");
@@ -144,14 +160,15 @@ fn verify_case(
 		// 1024-frame limit trips before the fuel runs out, where stock ends in
 		// FuelExhausted. The tapes agree index by index up to the shorter one.
 		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(execution, rule["fresh"]);
+		crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+			&execution,
+			&expected,
+			&rule["fresh"],
+		);
 		let (f, s) = (&execution["observation"], &expected["observation"]);
 		assert_eq!(f["outcome"]["status"], "error");
 		assert_eq!(f["outcome"]["class"], "FrameCapacity");
-		assert_eq!(
-			f["outcome"]["depth"],
-			1024
-		);
+		assert_eq!(f["outcome"]["depth"], 1024);
 		assert_eq!(s["outcome"]["status"], "error");
 		assert_eq!(s["outcome"]["class"], "FuelExhausted");
 		for (a, b) in f["events"]

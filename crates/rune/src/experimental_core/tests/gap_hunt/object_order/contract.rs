@@ -38,6 +38,7 @@ fn verify_case(
 	stdout: &[u8],
 	stderr: &[u8],
 ) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(stock, actual);
 	use sha2::{Digest, Sha256};
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	let rows = dispositions["rows"].as_array().unwrap();
@@ -56,9 +57,9 @@ fn verify_case(
 		include_str!("c17e_admissions.json"),
 		&admitted(
 			include_str!("c17d_admissions.json"),
-		&admitted(
-			include_str!("c17b_admissions.json"),
-			&admitted(include_str!("o1b_admissions.json"), &rows[index]),
+			&admitted(
+				include_str!("c17b_admissions.json"),
+				&admitted(include_str!("o1b_admissions.json"), &rows[index]),
 			),
 		),
 	);
@@ -87,14 +88,6 @@ fn verify_case(
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
 	let (mut f, mut s) = (canonical_record(actual), canonical_record(stock));
-	if let Some(pin) = rule.get("warnings") {
-		// Stock warns that the `ks` helper's `for (k, _)` pattern might panic;
-		// the new frontend does not report that warning.
-		assert_eq!(f["diagnostics"], pin["fresh"]);
-		assert_eq!(s["diagnostics"], pin["stock"]);
-		f["diagnostics"] = Json::Null;
-		s["diagnostics"] = Json::Null;
-	}
 	match classification {
 		"Exact" => assert_eq!(f, s),
 		"Inherited-kind" => {
@@ -144,14 +137,17 @@ pub(super) fn admitted(doc: &str, rule: &Json) -> Json {
 		return rule.clone();
 	};
 	let without_old_results = |value: &Json| {
-        let mut copy = value.clone();
-        if let Some(object) = copy.as_object_mut() {
-            object.remove("stock_row_sha256");
-            object.remove("stock_canonical_sha256");
-        }
-        copy
-    };
-    assert_eq!(without_old_results(&row["legacy"]), without_old_results(rule));
+		let mut copy = value.clone();
+		if let Some(object) = copy.as_object_mut() {
+			object.remove("stock_row_sha256");
+			object.remove("stock_canonical_sha256");
+		}
+		copy
+	};
+	assert_eq!(
+		without_old_results(&row["legacy"]),
+		without_old_results(rule)
+	);
 	let mut admitted = row["admitted"].clone();
 	for key in ["index", "label", "source_sha256"] {
 		assert!(admitted.get(key).is_none());

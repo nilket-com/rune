@@ -24,6 +24,7 @@ fn canonical_record(record: &Json) -> Json {
 
 /// Check one execution observation against the live stock observation `stock`.
 fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(stock, actual);
 	use sha2::{Digest, Sha256};
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	let rows = dispositions["rows"].as_array().unwrap();
@@ -94,7 +95,11 @@ fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json) {
 		"Intentional-D1" => {
 			// A wrong receiver: new names the missing method (D1). Kind, class,
 			// tape, sites, logical frames and reuse stay stock-exact.
-			assert_eq!(execution, rule["fresh"]);
+			crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+				&execution,
+				&expected,
+				&rule["fresh"],
+			);
 			let (f, s) = (&execution["observation"], &expected["observation"]);
 			for key in ["status", "class", "kind", "sites", "chain"] {
 				assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
@@ -115,7 +120,11 @@ fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json) {
 		"Policy-presentation" => {
 			// Unwrapping an Err that holds a function: stock Debug prints its bytecode
 			// offset, new the function index. Both panic texts are pinned.
-			assert_eq!(execution, rule["fresh"]);
+			crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+				&execution,
+				&expected,
+				&rule["fresh"],
+			);
 			let (f, s) = (&execution["observation"], &expected["observation"]);
 			assert_eq!(s["outcome"]["display"], rule["stock_display"]);
 			for key in ["status", "class", "sites", "chain"] {

@@ -38,6 +38,10 @@ fn contract() {
 			None
 		};
 		let fresh = launch_case("fresh", i, case, &dir.join("fresh"));
+		crate::experimental_core::tests::gap_hunt::assert_warning_multisets(
+			&stock.observation,
+			&fresh.observation,
+		);
 		let mut actual = fresh.observation;
 		actual["observation"]["outcome"] = super::d1c_diagnostics::before(
 			"text_pipeline",

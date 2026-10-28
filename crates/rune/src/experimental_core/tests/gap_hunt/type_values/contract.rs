@@ -24,6 +24,7 @@ fn canonical_record(record: &Json) -> Json {
 
 /// Check one execution observation against the live stock observation `stock`.
 fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(stock, actual);
 	use sha2::{Digest, Sha256};
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	assert_eq!(dispositions["rows"].as_array().unwrap().len(), 120);
@@ -61,7 +62,11 @@ fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json) {
 	match classification {
 		"Exact" => assert_eq!(execution, expected),
 		"Inherited-diagnostic" | "Intentional-D1" => {
-			assert_eq!(execution, rule["fresh"]);
+			crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+				&execution,
+				&expected,
+				&rule["fresh"],
+			);
 			// Only the primary diagnostic differs: tape, sites, logical
 			// frames and reuse stay stock-exact.
 			let (f, s) = (&execution["observation"], &expected["observation"]);

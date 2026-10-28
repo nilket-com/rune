@@ -14,231 +14,147 @@
    "label": "literal/two",
    "source_sha256": "4d8e97a106c3314751883f0450837bde6c37a3617d55b68448f8e52b0147263b",
    "stock_canonical_sha256": "3c9e6bb17a5b42f334bda3b1e9f6df29471fa2eeeb18055917ccc07a0b34aea0",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 1,
    "label": "literal/xyz",
    "source_sha256": "e62fd40af95257fea041e10cd95f29ab5f370cadc15f5a56a82d218c8658d3ad",
    "stock_canonical_sha256": "356bc088b9c365da9e55292f4f261e7349df4908fa41fd6191b5336f5c4c9f2f",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 2,
    "label": "literal/bac",
    "source_sha256": "ebba4f0faaf819cdcacd6d8c43843e1f008992d491e5a60a9138fb8fad96d7e3",
    "stock_canonical_sha256": "0e86f93ec980b1eb00ef1bbb8b52fde6704d6076e264567b4aa882a443bede75",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 3,
    "label": "literal/five-reverse",
    "source_sha256": "ebe403cf7cc3b8a40662439c413b822912e562810df0b156b1af669e686b4b1f",
    "stock_canonical_sha256": "cb9d42e09a4d774fe20304565e750ac0ce9b20364b108882c4b1a04e61301fd5",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 4,
    "label": "literal/ten",
    "source_sha256": "0b92c06124732e058e4e9ba8503e91c2db4fba0b23e2ddf9413d6855ee19aa72",
    "stock_canonical_sha256": "405882a51ed4bc4615a4e8e2649f718c87d7d877200c8d9e7b38af396ee2cc9d",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 5,
    "label": "literal/twenty-reverse",
    "source_sha256": "452ae9827fb8833951cfada5854b3fde7367485252a141f4c40c36e1b8b11d80",
    "stock_canonical_sha256": "1860dcd983f00a11df7af8b9fd5087ebe2bb40aa92c0789e913213f8695c0a5a",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 6,
    "label": "literal/shorthand",
    "source_sha256": "5af78ef27a792d9273ec432c12527a34584ef27a9730bdefca14fc82664c5666",
    "stock_canonical_sha256": "786c12dfcb4aa59f35f37031d1cd9639bf04aba09ce8e086ca57e9698c3c3df6",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 7,
    "label": "literal/string-keys",
    "source_sha256": "095f7b52a1a17753f2755122f500b7c41e0b43d8dff7fd0011058cec246c45f3",
    "stock_canonical_sha256": "9ec88a186765b565ca8aaf6140933bff58adde25af37675a521b149808be63aa",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 8,
    "label": "literal/graph",
    "source_sha256": "1e8b52f52f8ff919c9975ec4635140828356bfbbc4828af07db57df23001c7ea",
    "stock_canonical_sha256": "651b992eb57fba0e35560e14fc5bc10c4b24a3834f60ae737b6313d90d0fb2c6",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 9,
    "label": "literal/nested-graph",
    "source_sha256": "7e17e1ad6af39ad00aeb606ecde3dee5015ce0bcde169cda693f330ee43b66b4",
    "stock_canonical_sha256": "48cf46e1279596736e210b0da31af083eaa2250e1703f0214fea22a6d4295f09",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 10,
    "label": "literal/in-loop",
    "source_sha256": "23c74a6cdffdae424d50fbe83df80a9440256654ba0c55a03e06cb17d01b0ca5",
    "stock_canonical_sha256": "877613d7cc2ebd8e919a112592807694e1e544e84ece7083871cb0dbeb5a8347",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 11,
    "label": "literal/fn-return",
    "source_sha256": "64af6f73474257df00eb33cfb8acba900d0835ec59ca7bb1aae4da3586d4a46e",
    "stock_canonical_sha256": "b04a5088934f903c68a233e99ef5d3cc621d59876135669f1d6638ebe5fe03d9",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 12,
    "label": "literal/repeated-call",
    "source_sha256": "24db37a5014a4aa53fd24e2d76c0f13ab72a438c89c774da25fb11664a176ed1",
    "stock_canonical_sha256": "5ca114ab7f00f0c31bcd9687d79463e7276d2dd727a72116e84d27f8114a6186",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 13,
    "label": "assign/field-add",
    "source_sha256": "dc6eed43d1db01ef2fb61ef38d87681ed8034120619cb021be67a42e0dc8fd1c",
    "stock_canonical_sha256": "aa82512360cfbd0fb3b45a730a9bbfcb4cbaf97cb6155799fac502143b050a3e",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 14,
    "label": "assign/field-add-after-literal",
    "source_sha256": "36bae6341a1587f2b43a458010b3e8dca4c434fbd55f5abe641c81d12cb3f190",
    "stock_canonical_sha256": "0e86f93ec980b1eb00ef1bbb8b52fde6704d6076e264567b4aa882a443bede75",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 15,
    "label": "assign/field-existing",
    "source_sha256": "6205cf19c6e9091474b760873a86aa0de7aa790602f6afa0f12f4160bef49031",
    "stock_canonical_sha256": "c5434c22aa4f522c67ef6a4440bae41230db0fef9b91a4d426eb9ca47f916b52",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 16,
    "label": "assign/field-compound",
    "source_sha256": "9ccdb70371231aebd2642ff729e0977309130f77c828b9d482a7416f633a7a49",
    "stock_canonical_sha256": "f726a75d6eb2eeefd3edf62b8ad1ea35c5e5ccf4eb93d03d47f734b639c62de9",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 17,
    "label": "assign/index-add",
    "source_sha256": "7c793018f0c32e29e1b9ce77615373699f841be8a8084066d3b24b410d83b439",
    "stock_canonical_sha256": "73f5392570ef2a01d17a47d34809176b0fa72e863c44dcf65dfe65d27466f99b",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 18,
    "label": "assign/index-dynamic",
    "source_sha256": "6e95e40092285afa10d3dd0132bec56000727a853dc5a1f75a84cf418cb562ef",
    "stock_canonical_sha256": "32c10cfed0bbdd0f15bea5dad4c9022758ce87b65233cc1f74d1d89fb32140cc",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 19,
    "label": "assign/index-existing",
    "source_sha256": "a842290da6938dd25f2265034e7dd216869cf68e15ee86eb2a330633d6d94d08",
    "stock_canonical_sha256": "c8963c44dcca879f16a5dbebab446503b0460470c702695b68d19aab7e58210f",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 20,
    "label": "assign/nested-field-add",
    "source_sha256": "985e75ff0d85c66a481e5f7aeb180a2d4d41f0a4fb594e8e4499068275a4fb94",
    "stock_canonical_sha256": "a789931b0f74176b954010f59318d06adef903ad2610557840a166c0f51d437b",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 21,
@@ -256,7 +172,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 22,
@@ -274,7 +190,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 23,
@@ -292,7 +208,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 89:104, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 89:104, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 24,
@@ -310,7 +226,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:116, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:116, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 25,
@@ -328,7 +244,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:119, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:119, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 26,
@@ -346,7 +262,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 99:118, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 99:118, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 27,
@@ -364,7 +280,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 28,
@@ -382,7 +298,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 68:81, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 68:81, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 29,
@@ -400,7 +316,7 @@
     "refusal": "Native",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:102, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:102, kind: Custom { error: \"Native\" } }) })]"
   },
   {
    "index": 30,
@@ -418,7 +334,7 @@
     "refusal": "Native",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:91, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:91, kind: Custom { error: \"Native\" } }) })]"
   },
   {
    "index": 31,
@@ -436,7 +352,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 32,
@@ -454,7 +370,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 33,
@@ -472,7 +388,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 34,
@@ -490,7 +406,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 35,
@@ -508,7 +424,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 36,
@@ -526,7 +442,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 37,
@@ -544,7 +460,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 38,
@@ -562,7 +478,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:116, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:116, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 39,
@@ -580,7 +496,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 97:110, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 40,
@@ -598,7 +514,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 99:118, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 99:118, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 41,
@@ -616,7 +532,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 42,
@@ -634,7 +550,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 89:98, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 89:98, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 43,
@@ -652,7 +568,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 44,
@@ -670,18 +586,14 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 45,
    "label": "copy/clone-literal",
    "source_sha256": "b177f2daa77ae883da549dfbc603578ebfc614b60300bcfb357e7dbe97d10113",
    "stock_canonical_sha256": "aa82512360cfbd0fb3b45a730a9bbfcb4cbaf97cb6155799fac502143b050a3e",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 46,
@@ -699,7 +611,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:127, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:127, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 47,
@@ -717,7 +629,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:130, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 78:130, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 48,
@@ -735,7 +647,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:151, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:151, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 49,
@@ -753,7 +665,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:110, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 50,
@@ -771,7 +683,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:110, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:110, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 51,
@@ -789,7 +701,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:112, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:112, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 52,
@@ -807,40 +719,28 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:127, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 72:127, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 53,
    "label": "iter/for-pair",
    "source_sha256": "73e64b8771954fae644af565c2581265fe5c6d8b31d859217f9dfc59a587df26",
    "stock_canonical_sha256": "8c0e1c2fb459e56a569da9e838858c69afcbd04ad55b242508cd2c74451311ad",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 54,
    "label": "iter/first-break",
    "source_sha256": "0deda180f9dd42334c385d075b419a930533c1bd480c9592b6b42c7e999ccbf8",
    "stock_canonical_sha256": "bc9d1d25806a9383e2fb4c0eedec72c51ec64980615ea78261f8165e950086e0",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 87:92, context: Some(72:129) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 55,
    "label": "iter/nested",
    "source_sha256": "87c4eada93307ddfff0e81ab29bcc39147695886682ed1ab4a763f3aa789b3fa",
    "stock_canonical_sha256": "ff1c0fa021703dd27de17e23e51b701878159b90bc457d33c318300bdfe09fd1",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 87:92, context: Some(72:169) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 129:135, context: Some(125:165) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 56,
@@ -858,7 +758,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 57,
@@ -876,7 +776,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 129:143, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 129:143, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 58,
@@ -910,7 +810,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:112, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:112, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 60,
@@ -928,7 +828,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 104:119, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 104:119, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 61,
@@ -946,7 +846,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:106, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:106, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 62,
@@ -954,10 +854,6 @@
    "source_sha256": "d2d45ebc6472399412cc869406af3c63d5ddb4ca9c3a21e7ca5e60dd3a435522",
    "stock_canonical_sha256": "4a83e9622a4bc03f677645dcec2ef4ca3c3d60b187eb86ec7ecba4c9482cb46e",
    "classification": "Inherited-kind",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 93:98, context: Some(72:112) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   },
    "fresh_kind": "WriteBorrowed",
    "stock_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
   },
@@ -967,10 +863,6 @@
    "source_sha256": "201b841504e10d9cd67a89f06bac51b8fd11ed2997bc356e8bc1646efbe0ee59",
    "stock_canonical_sha256": "4a83e9622a4bc03f677645dcec2ef4ca3c3d60b187eb86ec7ecba4c9482cb46e",
    "classification": "Inherited-kind",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 93:98, context: Some(72:112) } }), Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   },
    "fresh_kind": "WriteBorrowed",
    "stock_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
   },
@@ -990,7 +882,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:123, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:123, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 65,
@@ -1008,29 +900,21 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 111:126, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 111:126, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 66,
    "label": "stable/debug-sorted",
    "source_sha256": "f1d0e40a41e94d4904aaf2e0801462d652bcb6f7c6d22418d10b4724760cb421",
    "stock_canonical_sha256": "97e4f14df9972a3ad85a69f54c4c3562a7691b76ed261022e58b98be9e57aada",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 67,
    "label": "stable/debug-nested",
    "source_sha256": "fe4a36d85d5cb1a1fb10b7623d38bca8394e726044f594ab325d8e3ef04fee8d",
    "stock_canonical_sha256": "ba3d8667f2824852ad7550185ebdf104d0f98202b21fc413ab6935ae3d000af0",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   },
   {
    "index": 68,
@@ -1048,7 +932,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 69,
@@ -1066,7 +950,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 70,
@@ -1084,7 +968,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 71,
@@ -1102,7 +986,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 72,
@@ -1120,18 +1004,14 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:97, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 73,
    "label": "stable/vec-of-objects",
    "source_sha256": "77eb84327b1756796f9a267d8343567ca67cfd33f9dbe96f0e21f289055de804",
    "stock_canonical_sha256": "f3282d77b16ab83144378f50985221a7c10c5572bb322439f840d28eb0767b75",
-   "classification": "Exact",
-   "warnings": {
-    "fresh": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]",
-    "stock": "[Warning(WarningDiagnostic { source_id: 0, kind: LetPatternMightPanic { span: 34:39, context: Some(21:57) } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 12:58, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:11, context: None } })]"
-   }
+   "classification": "Exact"
   }
  ]
 }

@@ -153,7 +153,7 @@ fn child(index: usize, row: &Json) -> ! {
 		Json::Null
 	};
 	let events = TAPE.with(|t| t.borrow().clone());
-	let mut result = json!({"schema":1,"engine":"fresh","index":index,"label":row["label"],"source":source,"origin":row["origin"],"logical":logical,"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"invoked":invoked,"cleanup_error":cleanup_error,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"reuse_same_store":!reopened,"reuse_idle":executor.is_idle(),"reuse_live_entries":reuse_store.live_entries(),"reuse_payload_bytes":reuse_store.payload_bytes()}});
+	let mut result = json!({"schema":1,"engine":"fresh","index":index,"label":row["label"],"source":source,"origin":row["origin"],"logical":logical,"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"observation":{"outcome":outcome,"events":events,"reuse":reuse},"fresh_audit":{"invoked":invoked,"cleanup_error":cleanup_error,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"reuse_same_store":!reopened,"reuse_idle":executor.is_idle(),"reuse_live_entries":reuse_store.live_entries(),"reuse_payload_bytes":reuse_store.payload_bytes()}});
 	result["projected"] = projection(&result);
 	fs::write(
 		std::env::var_os("C11C_RESULT").unwrap(),

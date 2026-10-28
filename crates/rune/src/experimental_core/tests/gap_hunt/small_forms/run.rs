@@ -8,12 +8,7 @@ fn c12_fixture(store: &mut Store, fixture: &str) -> (Value, Value) {
 		"ints" => store
 			.list(
 				Type::Vec,
-				&[
-					Value::I64(1),
-					Value::I64(2),
-					Value::I64(3),
-					Value::I64(4),
-				],
+				&[Value::I64(1), Value::I64(2), Value::I64(3), Value::I64(4)],
 			)
 			.unwrap(),
 		"nested" => {
@@ -60,7 +55,10 @@ fn c12_error(
 		return json!({"status":"error","class":"FuelExhausted","kind":"FuelExhausted","display":failure.message(program).to_string(),"sites":c12_sites(failure),"chain":[],"raw":format!("{failure:?}")});
 	}
 	if error.kind == ErrorKind::AccessConflict
-		&& matches!(error.detail, Detail::WriteBorrowed | Detail::SharedArgument { .. }) {
+		&& matches!(
+			error.detail,
+			Detail::WriteBorrowed | Detail::SharedArgument { .. }
+		) {
 		return json!({"status":"error","class":"AccessConflict","kind":format!("{:?}",error.detail),"display":failure.message(program).to_string(),"sites":c12_sites(failure),"chain":[],"raw":format!("{failure:?}")});
 	}
 	let Some(kind) = primary_kind(error, program) else {
@@ -94,8 +92,7 @@ fn c12_observe(row: &Json) -> Json {
 		))
 		.unwrap();
 	let (v, state) = c12_fixture(&mut store, fixture);
-	let before =
-		json!({"receiver":graph(&mut store,v),"state":graph(&mut store,state)});
+	let before = json!({"receiver":graph(&mut store,v),"state":graph(&mut store,state)});
 	let mut invoked = false;
 	let mut cleanup_error = Json::Null;
 	let outcome = match &built {
@@ -169,5 +166,5 @@ fn c12_observe(row: &Json) -> Json {
 		}
 		Err(failure) => c12_error(&failure, program),
 	};
-	json!({"invoked":invoked,"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"before":before,"post":post,"events":events,"cleanup":cleanup,"reuse":reuse},"fresh_audit":{"cleanup_error":cleanup_error,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"reuse_used_fallback":fallback.is_some()}})
+	json!({"invoked":invoked,"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"observation":{"outcome":outcome,"before":before,"post":post,"events":events,"cleanup":cleanup,"reuse":reuse},"fresh_audit":{"cleanup_error":cleanup_error,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"executor_idle":executor.is_idle(),"live_entries":store.live_entries(),"payload_bytes":store.payload_bytes(),"reuse_used_fallback":fallback.is_some()}})
 }

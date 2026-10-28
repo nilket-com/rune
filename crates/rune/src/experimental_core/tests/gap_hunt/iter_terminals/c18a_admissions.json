@@ -18,7 +18,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 91:105, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 91:105, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    },
    "admitted": {
@@ -42,7 +42,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:105, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:105, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    },
    "admitted": {
@@ -66,7 +66,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:115, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:115, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    },
    "admitted": {
@@ -80,7 +80,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:123, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:123, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    }
   },
@@ -101,7 +101,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:112, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:112, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    },
    "admitted": {
@@ -125,7 +125,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 91:103, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 91:103, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    },
    "admitted": {
@@ -149,7 +149,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 92:108, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 92:108, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    },
    "admitted": {
@@ -173,7 +173,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 92:106, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 92:106, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    },
    "admitted": {
@@ -197,7 +197,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 92:105, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 92:105, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    },
    "admitted": {
@@ -211,7 +211,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 106:133, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]",
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 106:133, kind: Custom { error: \"Method\" } }) })]",
     "classification": "Inherited-refusal"
    }
   }

@@ -29,7 +29,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:163, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:163, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -63,7 +63,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:179, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:179, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -97,7 +97,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:184, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:184, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -131,7 +131,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 83:119, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+    "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 83:119, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"

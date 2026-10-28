@@ -119,6 +119,10 @@ fn contract() {
 			&project(&stock.observation["outcome"]),
 		);
 		let fresh = launch("fresh", i, &folder.join("fresh"));
+		crate::experimental_core::tests::gap_hunt::assert_warning_multisets(
+			&stock.observation,
+			&fresh.observation,
+		);
 		let audit = &fresh.observation["fresh_audit"];
 		assert_eq!(audit["clean_after_row"], true);
 		assert_eq!(audit["reuse"], true);
@@ -182,8 +186,12 @@ fn contract() {
 			_ => panic!("unknown C5 policy {policy}"),
 		}
 		for run in [&stock, &fresh] {
-			assert!(!has_address(&String::from_utf8(run.stdout.clone()).unwrap()));
-			assert!(!has_address(&String::from_utf8(run.stderr.clone()).unwrap()));
+			assert!(!has_address(
+				&String::from_utf8(run.stdout.clone()).unwrap()
+			));
+			assert!(!has_address(
+				&String::from_utf8(run.stderr.clone()).unwrap()
+			));
 		}
 		assert_eq!(
 			byte_projection(&fresh.stdout),
@@ -251,18 +259,36 @@ fn launch(engine: &str, index: usize, folder: &Path) -> super::live_oracle::Run 
 
 #[test]
 #[cfg(target_os = "linux")]
-#[cfg_attr(miri, ignore = "Miri: live stock observations use bounded child processes")]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: live stock observations use bounded child processes"
+)]
 fn d1e_moved_parent_chain_allowance_is_retired() {
-    let index = CASES.iter().position(|case| case.0 == "access/moved-parent/?").unwrap();
-    let out = std::env::temp_dir().join(format!("rune-c5-chain-{}-{}", std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
-    let stock = launch("stock", index, &out.join("stock"));
-    let fresh = launch("fresh", index, &out.join("fresh"));
-    let displays = |run: &super::live_oracle::Run| -> Vec<Json> {
-        run.observation["outcome"]["chain"].as_array().unwrap().iter().map(|entry| entry["display"].clone()).collect()
-    };
-    assert_eq!(displays(&stock), vec![json!("Bad argument #0")]);
-    assert_eq!(displays(&fresh), displays(&stock));
-    assert_eq!(fresh.stdout, stock.stdout);
-    assert_eq!(fresh.stderr, stock.stderr);
-    fs::remove_dir_all(out).unwrap();
+	let index = CASES
+		.iter()
+		.position(|case| case.0 == "access/moved-parent/?")
+		.unwrap();
+	let out = std::env::temp_dir().join(format!(
+		"rune-c5-chain-{}-{}",
+		std::process::id(),
+		std::time::SystemTime::now()
+			.duration_since(std::time::UNIX_EPOCH)
+			.unwrap()
+			.as_nanos()
+	));
+	let stock = launch("stock", index, &out.join("stock"));
+	let fresh = launch("fresh", index, &out.join("fresh"));
+	let displays = |run: &super::live_oracle::Run| -> Vec<Json> {
+		run.observation["outcome"]["chain"]
+			.as_array()
+			.unwrap()
+			.iter()
+			.map(|entry| entry["display"].clone())
+			.collect()
+	};
+	assert_eq!(displays(&stock), vec![json!("Bad argument #0")]);
+	assert_eq!(displays(&fresh), displays(&stock));
+	assert_eq!(fresh.stdout, stock.stdout);
+	assert_eq!(fresh.stderr, stock.stderr);
+	fs::remove_dir_all(out).unwrap();
 }

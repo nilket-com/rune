@@ -24,7 +24,11 @@ fn canonical_record(record: &Json) -> Json {
 
 /// Stock outcomes of a wrong-count call that `CallOffset` let run: stock
 /// checks the count only on calls it does not rewrite to an offset.
-const STOCK_DEFECTS: [&str; 3] = ["too-many-runs", "too-few-leaks-empty", "unbounded-recursion"];
+const STOCK_DEFECTS: [&str; 3] = [
+	"too-many-runs",
+	"too-few-leaks-empty",
+	"unbounded-recursion",
+];
 
 /// `stock` is the live legacy run of the same case as `fresh`.
 #[cfg(target_os = "linux")]
@@ -34,6 +38,10 @@ fn verify_case(
 	stock_run: &super::live_oracle::Run,
 	fresh: &super::live_oracle::Run,
 ) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(
+		&stock_run.observation,
+		&fresh.observation,
+	);
 	let stock = &stock_run.observation;
 	let (actual, stdout, stderr) = (&fresh.observation, &fresh.stdout[..], &fresh.stderr[..]);
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
@@ -94,7 +102,11 @@ fn verify_case(
 		// environment as one more argument on both sides, new reports the
 		// counts the caller wrote. Everything else is stock-exact.
 		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(execution, rule["fresh"]);
+		crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+			&execution,
+			&expected,
+			&rule["fresh"],
+		);
 		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for key in ["status", "class", "sites", "chain"] {
 			assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
@@ -103,8 +115,15 @@ fn verify_case(
 		let counts = |kind: &Json| {
 			let kind = kind.as_str().unwrap();
 			let kind = kind.strip_prefix("BadArgumentCount { actual: ").unwrap();
-			let (actual, expected) = kind.strip_suffix(" }").unwrap().split_once(", expected: ").unwrap();
-			(actual.parse::<u32>().unwrap(), expected.parse::<u32>().unwrap())
+			let (actual, expected) = kind
+				.strip_suffix(" }")
+				.unwrap()
+				.split_once(", expected: ")
+				.unwrap();
+			(
+				actual.parse::<u32>().unwrap(),
+				expected.parse::<u32>().unwrap(),
+			)
 		};
 		let (given, wanted) = counts(&f["outcome"]["kind"]);
 		assert_eq!(counts(&s["outcome"]["kind"]), (given + 1, wanted + 1));

@@ -20,7 +20,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:93, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:93, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -45,7 +45,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 259:277, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 259:277, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -60,7 +60,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    }
   },
   {
@@ -82,7 +82,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:217, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:217, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -107,7 +107,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:216, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:216, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -132,7 +132,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:219, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:219, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -157,7 +157,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:217, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:217, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -182,7 +182,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:221, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:221, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -207,7 +207,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:219, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:219, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -232,7 +232,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:223, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:223, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -257,7 +257,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:221, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:221, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -282,7 +282,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:225, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:225, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -307,7 +307,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:216, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:216, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -332,7 +332,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:215, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:215, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -357,7 +357,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:218, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:218, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -382,7 +382,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:216, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:216, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -407,7 +407,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:220, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:220, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -432,7 +432,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:218, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:218, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -457,7 +457,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:222, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:222, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -482,7 +482,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:220, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:220, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -507,7 +507,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:224, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:224, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -532,7 +532,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -557,7 +557,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -572,7 +572,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -594,7 +594,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:236, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -609,7 +609,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:236, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -668,7 +668,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:247, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:247, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -693,7 +693,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -718,7 +718,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -733,7 +733,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -755,7 +755,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:235, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -770,7 +770,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:235, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -829,7 +829,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:246, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:246, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -854,7 +854,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -869,7 +869,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -891,7 +891,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:238, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -906,7 +906,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:238, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -965,7 +965,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:249, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:249, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -990,7 +990,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1015,7 +1015,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1030,7 +1030,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1052,7 +1052,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:236, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1067,7 +1067,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:236, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1126,7 +1126,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:247, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:247, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1151,7 +1151,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1166,7 +1166,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1188,7 +1188,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:240, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1203,7 +1203,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:240, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1262,7 +1262,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:251, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:251, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1287,7 +1287,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1312,7 +1312,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1327,7 +1327,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1349,7 +1349,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:238, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1364,7 +1364,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:238, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1423,7 +1423,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:249, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:249, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1448,7 +1448,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1463,7 +1463,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1485,7 +1485,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:242, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1500,7 +1500,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:242, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1559,7 +1559,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:253, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:253, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1584,7 +1584,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1609,7 +1609,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1624,7 +1624,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1646,7 +1646,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:240, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1661,7 +1661,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:240, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1720,7 +1720,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:251, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:251, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1745,7 +1745,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1760,7 +1760,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1782,7 +1782,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:244, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -1797,7 +1797,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:244, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -1856,7 +1856,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:255, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:255, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1881,7 +1881,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:192, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:192, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1906,7 +1906,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1931,7 +1931,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:211, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:211, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -1981,7 +1981,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:203, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:203, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2006,7 +2006,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2031,7 +2031,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:192, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:192, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2056,7 +2056,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:210, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:210, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2106,7 +2106,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:202, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:202, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2131,7 +2131,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2156,7 +2156,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:213, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:213, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2206,7 +2206,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:205, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:205, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2231,7 +2231,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2256,7 +2256,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2281,7 +2281,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:211, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:211, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2331,7 +2331,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:203, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:203, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2356,7 +2356,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2381,7 +2381,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:215, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:215, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2431,7 +2431,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:207, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:207, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2456,7 +2456,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2481,7 +2481,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2506,7 +2506,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:213, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:213, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2556,7 +2556,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:205, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:205, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2581,7 +2581,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:199, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:199, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2606,7 +2606,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:217, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:217, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2656,7 +2656,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:209, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:209, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2681,7 +2681,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:199, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:199, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2706,7 +2706,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2731,7 +2731,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:215, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:215, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2781,7 +2781,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:207, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:207, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2806,7 +2806,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:201, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:201, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2831,7 +2831,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:219, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:219, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2881,7 +2881,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:211, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:211, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2906,7 +2906,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 71:79, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 71:79, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2931,7 +2931,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2956,7 +2956,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -2981,7 +2981,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -3006,7 +3006,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -3031,7 +3031,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Retained-frame-limit",
@@ -11265,7 +11265,7 @@
       ],
       "rendered": "execute: FrameCapacity\n  at c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:250\n  called from c18a.rn:1:338"
      },
-     "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+     "diagnostics": "[]"
     }
    }
   },
@@ -11288,7 +11288,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11313,7 +11313,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:92, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:92, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11338,7 +11338,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 55:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 55:67, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11363,7 +11363,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 43:51, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 43:51, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11388,7 +11388,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 43:51, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 43:51, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11413,7 +11413,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 45:53, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 45:53, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11438,7 +11438,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:85, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:85, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11463,7 +11463,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 111:120, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 111:120, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11488,7 +11488,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:199, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:199, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -11503,7 +11503,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    }
   },
   {
@@ -11550,7 +11550,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:218, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:218, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -11565,7 +11565,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    }
   },
   {
@@ -11587,7 +11587,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:67, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11612,7 +11612,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 69:90, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 69:90, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11637,7 +11637,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 225:239, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 225:239, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -11652,7 +11652,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    }
   },
   {
@@ -11674,7 +11674,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 253:262, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 253:262, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    },
    "admitted": {
     "classification": "Refused-arity",
@@ -11689,7 +11689,7 @@
      "refusal": "Arity",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
    }
   },
   {
@@ -11711,7 +11711,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11736,7 +11736,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11761,7 +11761,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11786,7 +11786,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11811,7 +11811,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1325:1344, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 959:995, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1044:1057, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1128:1142, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1325:1344, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 959:995, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1044:1057, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1128:1142, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11836,7 +11836,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1210:1229, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1210:1229, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11861,7 +11861,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 573:599, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 352:365, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 436:450, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 107:153, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 185:192, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 573:599, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 352:365, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 436:450, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 107:153, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11886,7 +11886,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 145:181, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 230:243, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 314:328, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 25:32, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 373:411, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 145:181, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 230:243, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 314:328, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11911,7 +11911,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 145:181, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 230:243, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 314:328, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 25:32, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 373:411, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 145:181, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 230:243, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 314:328, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11936,7 +11936,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11961,7 +11961,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1231:1253, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1231:1253, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -11986,7 +11986,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 81:194, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"
@@ -12011,7 +12011,7 @@
      "refusal": "Method",
      "status": "refused"
     },
-    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 192:205, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 276:290, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 466:512, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 25:32, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 335:373, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 192:205, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 276:290, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 466:512, kind: Custom { error: \"Method\" } }) })]"
    },
    "admitted": {
     "classification": "Exact"

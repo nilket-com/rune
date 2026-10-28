@@ -27,7 +27,11 @@ fn canonical_record(index: usize, record: &Json) -> Json {
 				} else {
 					", hash: 0xbd7ccf79d00ee140 }) }"
 				};
-				let address = kind.strip_prefix(prefix).unwrap().strip_suffix(suffix).unwrap();
+				let address = kind
+					.strip_prefix(prefix)
+					.unwrap()
+					.strip_suffix(suffix)
+					.unwrap();
 				assert!((9..=16).contains(&address.len()));
 				assert!(address.bytes().all(|b| b.is_ascii_hexdigit()));
 				outcome["kind"] = json!(format!("{prefix}ADDRESS{suffix}"));
@@ -37,20 +41,43 @@ fn canonical_record(index: usize, record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
-fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json, stdout: &[u8], stderr: &[u8]) {
+fn verify_case(
+	index: usize,
+	case: &Json,
+	stock: &Json,
+	actual: &Json,
+	stdout: &[u8],
+	stderr: &[u8],
+) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(stock, actual);
 	use sha2::{Digest, Sha256};
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	assert_eq!(dispositions["authority"], 21337);
 	assert_eq!(dispositions["rows"].as_array().unwrap().len(), 101);
-	let rule = &super::object_order::admitted(include_str!("c17e_admissions.json"), &dispositions["rows"][index]);
+	let rule = &super::object_order::admitted(
+		include_str!("c17e_admissions.json"),
+		&dispositions["rows"][index],
+	);
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
-	assert_eq!(hex(Sha256::digest(case["source"].as_str().unwrap().as_bytes()).as_ref()), rule["source_sha256"]);
+	assert_eq!(
+		hex(Sha256::digest(case["source"].as_str().unwrap().as_bytes()).as_ref()),
+		rule["source_sha256"]
+	);
 	assert_eq!(stock["source_sha256"], case["source_sha256"]);
 	let audit = &actual["fresh_audit"];
-	for key in ["row_idle", "executor_idle"] { assert_eq!(audit[key], true); }
-	for key in ["row_live_entries", "row_payload_bytes", "live_entries", "payload_bytes"] { assert_eq!(audit[key], 0); }
+	for key in ["row_idle", "executor_idle"] {
+		assert_eq!(audit[key], true);
+	}
+	for key in [
+		"row_live_entries",
+		"row_payload_bytes",
+		"live_entries",
+		"payload_bytes",
+	] {
+		assert_eq!(audit[key], 0);
+	}
 	assert_eq!(audit["cleanup_error"], false);
 	if c16h_admission(index, case, stock, actual, stdout, stderr) {
 		return;
@@ -59,26 +86,41 @@ fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json, stdout: &
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
 	match rule["classification"].as_str().unwrap() {
-		"Exact" => assert_eq!(canonical_record(index, actual), canonical_record(index, stock)),
+		"Exact" => assert_eq!(
+			canonical_record(index, actual),
+			canonical_record(index, stock)
+		),
 		"Intentional-C11c-Copy" => {
 			assert!(matches!(index, 93 | 94));
 			assert_eq!(case["policy"], "C11c-Copy-candidate");
 			assert_eq!(stock["observation"]["outcome"]["class"], "AccessConflict");
-			assert_eq!(canonical_record(index, actual), canonical_record(index, &rule["fresh"]));
-		},
+			assert_eq!(
+				canonical_record(index, actual),
+				canonical_record(index, &rule["fresh"])
+			);
+		}
 		"Inherited-diagnostic" => {
 			assert_eq!(index, 96);
 			assert_eq!(case["label"], "control/named-type-call");
-			assert_eq!(rule["before_full_equals_after_except_type_name_pointer"], true);
-			assert_eq!(canonical_record(index, actual), canonical_record(index, &rule["fresh"]));
-		},
+			assert_eq!(
+				rule["before_full_equals_after_except_type_name_pointer"],
+				true
+			);
+			assert_eq!(
+				canonical_record(index, actual),
+				canonical_record(index, &rule["fresh"])
+			);
+		}
 		"Inherited-refusal" => {
 			assert_eq!(actual["diagnostics"], rule["before_diagnostics"]);
 			assert_eq!(actual["observation"]["outcome"], rule["fresh"]);
 			assert_eq!(actual["observation"]["events"], json!([]));
-			assert_eq!(actual["observation"]["reuse"], stock["observation"]["reuse"]);
+			assert_eq!(
+				actual["observation"]["reuse"],
+				stock["observation"]["reuse"]
+			);
 			assert_eq!(actual["logical"], Json::Null);
-		},
+		}
 		_ => panic!("unknown C16f disposition"),
 	}
 	assert_eq!(hex(stdout), stock["stdout_hex"]);
@@ -109,7 +151,10 @@ fn c16h_admission(
 	match rule["classification"].as_str().unwrap() {
 		"Exact" => {
 			assert_eq!(index, 11);
-			assert_eq!(canonical_record(index, actual), canonical_record(index, stock));
+			assert_eq!(
+				canonical_record(index, actual),
+				canonical_record(index, stock)
+			);
 		}
 		"Inherited-diagnostic" => {
 			// The C16f row 96 call-kind difference, for a variant type value.

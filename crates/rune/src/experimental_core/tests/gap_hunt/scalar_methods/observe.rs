@@ -22,7 +22,7 @@ fn observe(source: &str, mode: &str) -> (Json, Json) {
 	let mut invoked = false;
 	let observation = match compiled {
 		Err(e) => {
-			json!({"status":compile_status(e.refusal),"error":format!("{e:?}"),"refusal":format!("{:?}",e.refusal),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
+			json!({"status":compile_status(e.refusal),"error":format!("{e:?}"),"refusal":format!("{:?}",e.refusal),"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"location":e.location.map(|at|json!({"source":at.source,"start":at.start,"end":at.end})),"operation":e.operation})
 		}
 		Ok(program) => {
 			let main = program.function(Hash::type_hash(["main"])).unwrap();

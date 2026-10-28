@@ -147,7 +147,8 @@ fn contract_controls_reject_output_tape_and_lifecycle_drift() {
 	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
 	let frozen: Json = serde_json::from_str(DISPOSITIONS).unwrap();
 	for index in [0usize, 184, 185] {
-		let stock = expected_stock(&cases[index], &legacy_observe(index, &cases[index]));
+		let raw_stock = legacy_observe(index, &cases[index]);
+		let stock = expected_stock(&cases[index], &raw_stock);
 		let complete = if index == 184 {
 			let mut case = cases[index].clone();
 			case["fuel"] = json!(200000);
@@ -158,6 +159,7 @@ fn contract_controls_reject_output_tape_and_lifecycle_drift() {
 		};
 		TAPE.with(|t| t.borrow_mut().clear());
 		let actual = observe(&cases[index]);
+		crate::experimental_core::tests::gap_hunt::assert_warning_multisets(&raw_stock, &actual);
 		let id = cases[index]["id"].as_str().unwrap();
 		compare(
 			&cases[index],

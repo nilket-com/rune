@@ -17,7 +17,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 1,
@@ -36,7 +36,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 2,
@@ -55,7 +55,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 3,
@@ -74,7 +74,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 4,
@@ -121,7 +121,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:93, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 79:93, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 9,
@@ -168,7 +168,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 14,
@@ -187,7 +187,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:178, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:178, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 15,
@@ -206,7 +206,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 179:186, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 179:186, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 16,
@@ -225,7 +225,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 178:188, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:92, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 148:163, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 178:188, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:92, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 17,
@@ -244,7 +244,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 189:196, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:92, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 148:163, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 189:196, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:92, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 18,
@@ -263,7 +263,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:212, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 105:115, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 171:186, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:212, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 105:115, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 19,
@@ -282,7 +282,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 194:220, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:108, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 164:179, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 194:220, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:108, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 20,
@@ -301,7 +301,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:189, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:189, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 21,
@@ -320,7 +320,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 200:207, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 200:207, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 22,
@@ -339,7 +339,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 259:277, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 259:277, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 23,
@@ -358,7 +358,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 24,
@@ -377,7 +377,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 247:254, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 247:254, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 25,
@@ -396,7 +396,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 263:270, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 263:270, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 26,
@@ -415,7 +415,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 27,
@@ -434,7 +434,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 266:273, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 266:273, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 28,
@@ -453,7 +453,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 29,
@@ -472,7 +472,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 30,
@@ -491,7 +491,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 31,
@@ -510,7 +510,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 176:191, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 176:191, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 32,
@@ -529,7 +529,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:85, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:85, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 33,
@@ -569,7 +569,7 @@
     "refusal": "FrontendDiagnostic",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:102, kind: NotVisible { chain: [], location: Location(0, 42:57), visibility: Inherited, item: m::P::new, from: {root} } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 93:102, kind: NotVisible { chain: [], location: Location(0, 42:57), visibility: Inherited, item: m::P::new, from: {root} } }) })]"
   },
   {
    "index": 37,
@@ -602,7 +602,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 182:192, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 182:192, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 40,
@@ -621,7 +621,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 245:255, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 245:255, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 41,
@@ -640,7 +640,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 259:269, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 259:269, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 42,
@@ -659,7 +659,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 43,
@@ -678,7 +678,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 44,
@@ -697,7 +697,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 45,
@@ -716,7 +716,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 46,
@@ -735,7 +735,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 47,
@@ -754,7 +754,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 48,
@@ -773,7 +773,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 49,
@@ -792,7 +792,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 50,
@@ -811,7 +811,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 51,
@@ -830,7 +830,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 52,
@@ -856,7 +856,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 54,
@@ -875,7 +875,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 172:206, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 55,
@@ -913,7 +913,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:217, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:217, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 57,
@@ -939,7 +939,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 59,
@@ -958,7 +958,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 172:205, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 60,
@@ -996,7 +996,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:216, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:216, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 62,
@@ -1015,7 +1015,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 63,
@@ -1034,7 +1034,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 172:208, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 64,
@@ -1072,7 +1072,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:219, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:219, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 66,
@@ -1098,7 +1098,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 68,
@@ -1117,7 +1117,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 172:206, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 69,
@@ -1155,7 +1155,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:217, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:217, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 71,
@@ -1174,7 +1174,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 72,
@@ -1193,7 +1193,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 172:210, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 73,
@@ -1231,7 +1231,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:221, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:221, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 75,
@@ -1257,7 +1257,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 77,
@@ -1276,7 +1276,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 172:208, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 78,
@@ -1314,7 +1314,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:219, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:219, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 80,
@@ -1333,7 +1333,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 81,
@@ -1352,7 +1352,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 172:212, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 82,
@@ -1390,7 +1390,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:223, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:223, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 84,
@@ -1416,7 +1416,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 86,
@@ -1435,7 +1435,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 172:210, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 87,
@@ -1473,7 +1473,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:221, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:221, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 89,
@@ -1492,7 +1492,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 90,
@@ -1511,7 +1511,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 172:214, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 91,
@@ -1549,7 +1549,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:225, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 208:225, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 93,
@@ -1575,7 +1575,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 95,
@@ -1594,7 +1594,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 173:205, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 96,
@@ -1632,7 +1632,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:216, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:216, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 98,
@@ -1658,7 +1658,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 100,
@@ -1677,7 +1677,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 173:204, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 101,
@@ -1715,7 +1715,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:215, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:215, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 103,
@@ -1734,7 +1734,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 104,
@@ -1753,7 +1753,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 173:207, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 105,
@@ -1791,7 +1791,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:218, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:218, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 107,
@@ -1817,7 +1817,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 109,
@@ -1836,7 +1836,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 173:205, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 110,
@@ -1874,7 +1874,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:216, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:216, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 112,
@@ -1893,7 +1893,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 113,
@@ -1912,7 +1912,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 173:209, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 114,
@@ -1950,7 +1950,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:220, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:220, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 116,
@@ -1976,7 +1976,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 118,
@@ -1995,7 +1995,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 173:207, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 119,
@@ -2033,7 +2033,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:218, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:218, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 121,
@@ -2052,7 +2052,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 122,
@@ -2071,7 +2071,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 173:211, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 123,
@@ -2109,7 +2109,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:222, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:222, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 125,
@@ -2135,7 +2135,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 127,
@@ -2154,7 +2154,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 173:209, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 128,
@@ -2192,7 +2192,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:220, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:220, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 130,
@@ -2211,7 +2211,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 131,
@@ -2230,7 +2230,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 173:213, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[]"
   },
   {
    "index": 132,
@@ -2268,7 +2268,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:224, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 207:224, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 134,
@@ -2287,7 +2287,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 135,
@@ -2306,7 +2306,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 136,
@@ -2325,7 +2325,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:236, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 137,
@@ -2363,7 +2363,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:247, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:247, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 139,
@@ -2382,7 +2382,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 140,
@@ -2401,7 +2401,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 141,
@@ -2420,7 +2420,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:235, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 142,
@@ -2458,7 +2458,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:246, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:246, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 144,
@@ -2477,7 +2477,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 145,
@@ -2496,7 +2496,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:238, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 146,
@@ -2534,7 +2534,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:249, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:249, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 148,
@@ -2553,7 +2553,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 149,
@@ -2572,7 +2572,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 150,
@@ -2591,7 +2591,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:236, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 151,
@@ -2629,7 +2629,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:247, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:247, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 153,
@@ -2648,7 +2648,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 154,
@@ -2667,7 +2667,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:240, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 155,
@@ -2705,7 +2705,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:251, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:251, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 157,
@@ -2724,7 +2724,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 158,
@@ -2743,7 +2743,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 159,
@@ -2762,7 +2762,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:238, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 160,
@@ -2800,7 +2800,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:249, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:249, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 162,
@@ -2819,7 +2819,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 163,
@@ -2838,7 +2838,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:242, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 164,
@@ -2876,7 +2876,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:253, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:253, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 166,
@@ -2895,7 +2895,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 167,
@@ -2914,7 +2914,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 168,
@@ -2933,7 +2933,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:240, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 169,
@@ -2971,7 +2971,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:251, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:251, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 171,
@@ -2990,7 +2990,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 172,
@@ -3009,7 +3009,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 201:244, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 173,
@@ -3047,7 +3047,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:255, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 238:255, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:91, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 110:119, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 143:152, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 175,
@@ -3066,7 +3066,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:192, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:192, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 176,
@@ -3085,7 +3085,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 177,
@@ -3104,7 +3104,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:211, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:211, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 178,
@@ -3142,7 +3142,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:203, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:203, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 180,
@@ -3161,7 +3161,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 181,
@@ -3180,7 +3180,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:192, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:192, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 182,
@@ -3199,7 +3199,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:210, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:210, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 183,
@@ -3237,7 +3237,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:202, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:202, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 185,
@@ -3256,7 +3256,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 186,
@@ -3275,7 +3275,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:213, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:213, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 187,
@@ -3313,7 +3313,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:205, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:205, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 189,
@@ -3332,7 +3332,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 190,
@@ -3351,7 +3351,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:193, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 191,
@@ -3370,7 +3370,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:211, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:211, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 192,
@@ -3408,7 +3408,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:203, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:203, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 194,
@@ -3427,7 +3427,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 195,
@@ -3446,7 +3446,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:215, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:215, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 196,
@@ -3484,7 +3484,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:207, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:207, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 198,
@@ -3503,7 +3503,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 199,
@@ -3522,7 +3522,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:195, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 200,
@@ -3541,7 +3541,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:213, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:213, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 201,
@@ -3579,7 +3579,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:205, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:205, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 203,
@@ -3598,7 +3598,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:199, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:199, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 204,
@@ -3617,7 +3617,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:217, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:217, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 205,
@@ -3655,7 +3655,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:209, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:209, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 207,
@@ -3674,7 +3674,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:199, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:199, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 208,
@@ -3693,7 +3693,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:197, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 209,
@@ -3712,7 +3712,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:215, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:215, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 210,
@@ -3750,7 +3750,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:207, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:207, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 212,
@@ -3769,7 +3769,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:201, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 183:201, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 213,
@@ -3788,7 +3788,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:219, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 201:219, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 214,
@@ -3826,7 +3826,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:211, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:211, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 216,
@@ -3894,7 +3894,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 48:62, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 48:62, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 224,
@@ -3920,7 +3920,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 71:79, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 71:79, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 226,
@@ -3946,7 +3946,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 228,
@@ -3972,7 +3972,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 230,
@@ -3991,7 +3991,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 231,
@@ -4010,7 +4010,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 232,
@@ -4029,7 +4029,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 233,
@@ -4048,7 +4048,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 234,
@@ -4067,7 +4067,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:79, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 115:128, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 164:178, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 216:230, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 249:263, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 293:306, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 235,
@@ -4086,7 +4086,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:92, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 82:92, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 236,
@@ -4105,7 +4105,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 55:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 55:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 237,
@@ -4152,7 +4152,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:84, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:84, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 242,
@@ -4178,7 +4178,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 24:31, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 24:31, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 244,
@@ -4211,7 +4211,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:111, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 102:111, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 247,
@@ -4230,7 +4230,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 43:51, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 43:51, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 248,
@@ -4263,7 +4263,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:124, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 98:124, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 251,
@@ -4296,7 +4296,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 254,
@@ -4322,7 +4322,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 43:51, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 43:51, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 256,
@@ -4348,7 +4348,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 45:53, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 45:53, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:73, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 258,
@@ -4449,7 +4449,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:85, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:85, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 269,
@@ -4475,7 +4475,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 271,
@@ -4515,7 +4515,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 275,
@@ -4548,7 +4548,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 278,
@@ -4567,7 +4567,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 188:195, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 188:195, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 279,
@@ -4586,7 +4586,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 111:120, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 111:120, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 280,
@@ -4605,7 +4605,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:199, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:199, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 281,
@@ -4650,7 +4650,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:218, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:218, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 284,
@@ -4669,7 +4669,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 285,
@@ -4716,7 +4716,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:65, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:65, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 290,
@@ -4742,7 +4742,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:68, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:68, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 292,
@@ -4768,7 +4768,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:69, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:69, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 294,
@@ -4794,7 +4794,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 296,
@@ -4820,7 +4820,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:68, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:68, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 298,
@@ -4846,7 +4846,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:74, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:74, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 300,
@@ -4872,7 +4872,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:71, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:71, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 302,
@@ -4898,7 +4898,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 62:73, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 62:73, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 304,
@@ -4924,7 +4924,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:66, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:66, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 306,
@@ -4950,7 +4950,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:66, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:66, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 308,
@@ -4976,7 +4976,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 310,
@@ -5002,7 +5002,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:77, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:77, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 312,
@@ -5028,7 +5028,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:76, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 314,
@@ -5054,7 +5054,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 316,
@@ -5080,7 +5080,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:72, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:72, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 318,
@@ -5106,7 +5106,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 320,
@@ -5132,7 +5132,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:75, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:75, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 322,
@@ -5158,7 +5158,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:86, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:86, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 324,
@@ -5184,7 +5184,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:84, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:84, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 326,
@@ -5210,7 +5210,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 62:71, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 62:71, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 328,
@@ -5236,7 +5236,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 330,
@@ -5262,7 +5262,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:84, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:84, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 332,
@@ -5288,7 +5288,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:80, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:80, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 334,
@@ -5314,7 +5314,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:75, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:75, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 336,
@@ -5340,7 +5340,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:66, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:66, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 338,
@@ -5366,7 +5366,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 340,
@@ -5392,7 +5392,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:76, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 342,
@@ -5418,7 +5418,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:66, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:66, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 344,
@@ -5444,7 +5444,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:82, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:82, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 346,
@@ -5470,7 +5470,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 348,
@@ -5496,7 +5496,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 69:90, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 69:90, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 350,
@@ -5522,7 +5522,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 352,
@@ -5548,7 +5548,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 354,
@@ -5574,7 +5574,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:66, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:66, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 356,
@@ -5600,7 +5600,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:68, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:68, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 358,
@@ -5626,7 +5626,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:68, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:68, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 360,
@@ -5652,7 +5652,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:68, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:68, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 362,
@@ -5678,7 +5678,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:72, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:72, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 364,
@@ -5704,7 +5704,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:70, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:70, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 366,
@@ -5730,7 +5730,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 64:78, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 368,
@@ -5756,7 +5756,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:64, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 58:64, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 370,
@@ -5782,7 +5782,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 59:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 372,
@@ -5808,7 +5808,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:74, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:74, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 374,
@@ -5834,7 +5834,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:67, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 60:67, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 376,
@@ -5860,7 +5860,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 62:74, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 62:74, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 378,
@@ -5886,7 +5886,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:78, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 380,
@@ -5905,7 +5905,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:82, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:82, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 381,
@@ -5924,7 +5924,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:76, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 382,
@@ -5943,7 +5943,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:74, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 63:74, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 383,
@@ -5962,7 +5962,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:84, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:84, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 384,
@@ -5981,7 +5981,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 96:105, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 96:105, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 385,
@@ -6000,7 +6000,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:78, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:78, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 386,
@@ -6019,7 +6019,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:83, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:83, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 387,
@@ -6038,7 +6038,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:77, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 65:77, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 388,
@@ -6057,7 +6057,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 389,
@@ -6076,7 +6076,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 57:64, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 390,
@@ -6109,7 +6109,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:76, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:76, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 393,
@@ -6162,7 +6162,7 @@
      ],
      "rendered": "Type `S` has no method named `push`\n  at c18a.rn:1:53"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -6216,7 +6216,7 @@
      ],
      "rendered": "Type `S` has no method named `len`\n  at c18a.rn:1:40"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -6250,7 +6250,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:70, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:70, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 398,
@@ -6269,7 +6269,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 62:71, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 62:71, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 399,
@@ -6322,7 +6322,7 @@
      ],
      "rendered": "Type `P` has no method named `nope`\n  at c18a.rn:1:40"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -6342,7 +6342,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 225:239, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 225:239, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 401,
@@ -6361,7 +6361,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 253:262, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 253:262, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 402,
@@ -6380,7 +6380,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:176, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:176, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 403,
@@ -6399,7 +6399,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:199, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:199, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 404,
@@ -6418,7 +6418,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:182, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:182, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 405,
@@ -6471,7 +6471,7 @@
      ],
      "rendered": "Type `P` has no method named `f`\n  at c18a.rn:1:40"
     },
-    "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+    "diagnostics": "[]"
    }
   },
   {
@@ -6512,7 +6512,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 410,
@@ -6531,7 +6531,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 411,
@@ -6550,7 +6550,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 412,
@@ -6569,7 +6569,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 413,
@@ -6588,7 +6588,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 414,
@@ -6614,7 +6614,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 416,
@@ -6633,7 +6633,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 417,
@@ -6652,7 +6652,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 418,
@@ -6671,7 +6671,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 419,
@@ -6690,7 +6690,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 420,
@@ -6709,7 +6709,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 421,
@@ -6735,7 +6735,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:68, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 61:68, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 423,
@@ -6754,7 +6754,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 96:105, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 96:105, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 424,
@@ -6773,7 +6773,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 83:95, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 83:95, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 425,
@@ -6792,7 +6792,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 178:188, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 178:188, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 426,
@@ -6811,7 +6811,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 180:189, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 180:189, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 427,
@@ -6830,7 +6830,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:198, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 191:198, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 428,
@@ -6849,7 +6849,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:190, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 163:190, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 429,
@@ -6868,7 +6868,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:188, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:188, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 430,
@@ -6887,7 +6887,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 199:206, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 199:206, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 431,
@@ -6906,7 +6906,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 172:179, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 172:179, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 432,
@@ -6925,7 +6925,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 181:190, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 433,
@@ -6944,7 +6944,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 261:272, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 261:272, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 434,
@@ -6963,7 +6963,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 261:268, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 261:268, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 435,
@@ -6982,7 +6982,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 178:208, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 133:148, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 178:208, kind: Custom { error: \"Arity\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 67:77, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 436,
@@ -7001,7 +7001,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:84, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 74:84, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 437,
@@ -7020,7 +7020,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:82, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:82, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 438,
@@ -7039,7 +7039,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:73, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 66:73, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 439,
@@ -7058,7 +7058,7 @@
     "refusal": "Arity",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:82, kind: Custom { error: \"Arity\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 75:82, kind: Custom { error: \"Arity\" } }) })]"
   },
   {
    "index": 440,
@@ -7096,7 +7096,7 @@
     "refusal": "Yield",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 45:57, kind: Custom { error: \"Yield\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 45:57, kind: Custom { error: \"Yield\" } }) })]"
   },
   {
    "index": 442,
@@ -7171,7 +7171,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 451,
@@ -7190,7 +7190,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 452,
@@ -7209,7 +7209,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 453,
@@ -7228,7 +7228,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1287:1306, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 454,
@@ -7247,7 +7247,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1325:1344, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 959:995, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1044:1057, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1128:1142, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1325:1344, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 959:995, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1044:1057, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1128:1142, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 455,
@@ -7266,7 +7266,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1210:1229, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1210:1229, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 456,
@@ -7285,7 +7285,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 573:599, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 352:365, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 436:450, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 107:153, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 185:192, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 573:599, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 352:365, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 436:450, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 107:153, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 457,
@@ -7304,7 +7304,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 145:181, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 230:243, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 314:328, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 25:32, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 373:411, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 145:181, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 230:243, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 314:328, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 458,
@@ -7323,7 +7323,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 145:181, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 230:243, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 314:328, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 25:32, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 373:411, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 145:181, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 230:243, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 314:328, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 459,
@@ -7342,7 +7342,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 460,
@@ -7361,7 +7361,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1231:1253, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1231:1253, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 461,
@@ -7380,7 +7380,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 81:194, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 265:279, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 330:388, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 501:515, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1006:1019, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 1090:1104, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 761:807, kind: Custom { error: \"Method\" } }) })]"
   },
   {
    "index": 462,
@@ -7399,7 +7399,7 @@
     "refusal": "Method",
     "status": "refused"
    },
-   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 192:205, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 276:290, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 466:512, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 25:32, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 335:373, context: None } }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+   "diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 192:205, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 276:290, kind: Custom { error: \"Method\" } }) }), Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 466:512, kind: Custom { error: \"Method\" } }) })]"
   }
  ],
  "summary": {

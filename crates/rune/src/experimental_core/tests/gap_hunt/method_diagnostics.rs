@@ -62,7 +62,7 @@ fn legacy_observe(row: &Json) -> Json {
 	};
 	let reuse =
 		crate::from_value::<i64>(vm.call([row["reuse"].as_str().unwrap()], ()).unwrap()).unwrap();
-	json!({"outcome":outcome,"reuse":reuse,"diagnostics":format!("{:?}",diagnostics.diagnostics())})
+	json!({"outcome":outcome,"reuse":reuse,"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics)})
 }
 fn observe(row: &Json) -> Json {
 	let context = context(true);
@@ -126,7 +126,7 @@ fn observe(row: &Json) -> Json {
 		.unwrap();
 	let reuse = store.root_scalar(&root).unwrap();
 	store.root_release(root).unwrap();
-	json!({"outcome":outcome,"reuse":format!("{reuse:?}"),"diagnostics":format!("{:?}",diagnostics.diagnostics()),"audit":{"row_idle":row_idle,"row_live":row_live,"row_bytes":row_bytes,"idle":executor.is_idle(),"live":store.live_entries(),"bytes":store.payload_bytes()}})
+	json!({"outcome":outcome,"reuse":format!("{reuse:?}"),"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"audit":{"row_idle":row_idle,"row_live":row_live,"row_bytes":row_bytes,"idle":executor.is_idle(),"live":store.live_entries(),"bytes":store.payload_bytes()}})
 }
 #[test]
 #[ignore = "D1 bounded source-bound external observation operator only"]

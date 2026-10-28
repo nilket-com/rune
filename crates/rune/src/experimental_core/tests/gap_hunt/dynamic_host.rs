@@ -162,7 +162,7 @@ fn legacy_observe(source: &str) -> Json {
 		Ok(vm) => vm,
 		Err(e) => {
 			cleanup();
-			return json!({"outcome":{"status":"compile-error","error":format!("{e:?}")},"diagnostics":format!("{:?}",diagnostics.diagnostics()),"events":events(),"invoked":false});
+			return json!({"outcome":{"status":"compile-error","error":format!("{e:?}")},"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"events":events(),"invoked":false});
 		}
 	};
 	// Actual compiler call sites, never guessed source ranges.
@@ -194,7 +194,7 @@ fn legacy_observe(source: &str) -> Json {
 		Ok(value) => json!({"status":"value","graph":runtime_graph(&value)}),
 		Err(e) => error_observation(&e),
 	};
-	json!({"outcome":outcome,"host_calls":host_calls,"protocol_calls":protocol_calls,"events":before_cleanup,"events_after_reuse":events(),"reuse":reuse,"host_sites":host_sites,"invoked":true,"diagnostics":format!("{:?}",diagnostics.diagnostics()),"cleanup":"fixture cycles cleared and borrow guards dropped"})
+	json!({"outcome":outcome,"host_calls":host_calls,"protocol_calls":protocol_calls,"events":before_cleanup,"events_after_reuse":events(),"reuse":reuse,"host_sites":host_sites,"invoked":true,"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"cleanup":"fixture cycles cleared and borrow guards dropped"})
 }
 #[test]
 #[ignore = "C10 source-only stock oracle; bounded external controller only"]

@@ -297,7 +297,7 @@ fn observe_with_limits(
 	let mut resource = clean.clone();
 	resource["typed_failure_kind"] = json!(typed_failure);
 	let audit = json!({"clean":clean,"resource":resource,"typed_failure_kind":typed_failure,"raw_failure":actual_failure,"slot_ledger":ledger,"depth_metadata":depth_metadata,"source_sha256":digest(source.as_bytes()),"cancel_at_charge":cancel,"row_idle":row_idle,"row_live_entries":row_live,"row_payload_bytes":row_bytes,"reuse_used_fallback":fallback.is_some()});
-	json!({"outcome":outcome,"invoked":invoked,"diagnostics":format!("{:?}",diagnostics.diagnostics()),"before":before,"post":post,"events":events,"events_after_reuse":tape(),"cleanup":cleanup,"reuse":reuse,"fresh_audit":audit})
+	json!({"outcome":outcome,"invoked":invoked,"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"before":before,"post":post,"events":events,"events_after_reuse":tape(),"cleanup":cleanup,"reuse":reuse,"fresh_audit":audit})
 }
 fn store_value(store: &Store, root: &crate::experimental_core::value::Root) -> Value {
 	store.import(root).unwrap()

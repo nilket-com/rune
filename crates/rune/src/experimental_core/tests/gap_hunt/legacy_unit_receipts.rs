@@ -209,7 +209,7 @@ fn legacy_unit_child() {
 					let bytes = musli::storage::to_vec(&unit).unwrap();
 					(json!({"input":input,"status":"compiled","unit_sha256":digest(&bytes),"unit_bytes":bytes.len(),"encoding":"musli-storage-binary"}), Some(bytes))
 				}
-				Err(error) => (json!({"input":input,"status":"compile-error","error":std::format!("{error:?}"),"diagnostics":std::format!("{:?}",diagnostics.diagnostics())}), None),
+				Err(error) => (json!({"input":input,"status":"compile-error","error":std::format!("{error:?}"),"diagnostics":std::crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics)}), None),
 			}
 		})
 		.unwrap()

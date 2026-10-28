@@ -86,7 +86,7 @@ fn legacy_observe(index: usize, row: &Json) -> Json {
 		}
 	};
 	let events = TAPE.with(|t| t.borrow().clone());
-	json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"fixture":row["fixture"],"observation":{"outcome":outcome,"events":events,"reuse":reuse}})
+	json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),"warnings":crate::experimental_core::tests::gap_hunt::warning_multiset(&diagnostics),"fixture":row["fixture"],"observation":{"outcome":outcome,"events":events,"reuse":reuse}})
 }
 
 #[test]

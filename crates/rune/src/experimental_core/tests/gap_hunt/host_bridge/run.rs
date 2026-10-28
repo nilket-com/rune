@@ -59,7 +59,7 @@ pub(super) fn observe(path: &Path, mode: &str) -> Observation {
 	let built = frontend::compile(&mut src, &context, &mut diagnostics, 1);
 	fs::write(
 		out.with_extension("diagnostics"),
-		format!("{:?}", diagnostics.diagnostics()),
+		crate::experimental_core::tests::gap_hunt::nonwarning_diagnostics(&diagnostics),
 	)
 	.unwrap();
 	let observation = match built {

@@ -74,7 +74,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 6,
@@ -102,7 +102,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 7,
@@ -130,7 +130,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:136, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:136, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 8,
@@ -179,7 +179,7 @@
         "refusal": "TypeExpr",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:131, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:131, kind: Custom { error: \"TypeExpr\" } }) })]"
     },
     {
       "index": 12,
@@ -382,7 +382,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 38,
@@ -410,7 +410,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 150:154, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 150:154, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 39,
@@ -438,7 +438,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:127, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:127, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 40,
@@ -466,7 +466,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:139, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:139, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 41,
@@ -494,7 +494,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 42,
@@ -522,7 +522,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 43,
@@ -550,7 +550,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 150:152, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 150:152, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 44,
@@ -578,7 +578,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:125, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:125, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 45,
@@ -606,7 +606,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:137, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 46,
@@ -634,7 +634,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 47,
@@ -662,7 +662,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:136, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:136, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 48,
@@ -690,7 +690,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 150:153, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 150:153, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 49,
@@ -718,7 +718,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:126, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 123:126, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 50,
@@ -746,7 +746,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:138, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 135:138, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 51,
@@ -774,7 +774,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:136, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:136, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 52,
@@ -977,7 +977,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 78,
@@ -1005,7 +1005,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 79,
@@ -1033,7 +1033,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 80,
@@ -1061,7 +1061,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 81,
@@ -1089,7 +1089,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 82,
@@ -1117,7 +1117,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:135, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 83,
@@ -1159,7 +1159,7 @@
         "refusal": "Native",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:146, kind: Custom { error: \"Native\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:146, kind: Custom { error: \"Native\" } }) })]"
     },
     {
       "index": 86,
@@ -1187,7 +1187,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:163, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 127:163, kind: Custom { error: \"Method\" } }) })]"
     },
     {
       "index": 87,
@@ -1215,7 +1215,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:179, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:179, kind: Custom { error: \"Method\" } }) })]"
     },
     {
       "index": 88,
@@ -1243,7 +1243,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:184, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 141:184, kind: Custom { error: \"Method\" } }) })]"
     },
     {
       "index": 89,
@@ -1324,7 +1324,7 @@
           ],
           "rendered": "Cannot read the value: it has been moved\n  at c16f.rn:1:144"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "fresh": {
         "observation": {
@@ -1368,7 +1368,7 @@
           }
         },
         "logical": null,
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       }
     },
     {
@@ -1422,7 +1422,7 @@
           ],
           "rendered": "Cannot read the value: it has been moved\n  at c16f.rn:1:162"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "fresh": {
         "observation": {
@@ -1490,7 +1490,7 @@
           }
         },
         "logical": null,
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       }
     },
     {
@@ -1551,7 +1551,7 @@
           ],
           "rendered": "Missing function with hash `0xbe6b74e85e3244d6`\n  at c16f.rn:1:136"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "fresh": {
         "observation": {
@@ -1598,7 +1598,7 @@
           ],
           "rendered": "Type `std::any::Type` cannot be called since it's not a function\n  at c16f.rn:1:136"
         },
-        "diagnostics": "[Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+        "diagnostics": "[]"
       },
       "before_full_equals_after_except_type_name_pointer": true
     },
@@ -1628,7 +1628,7 @@
         "refusal": "TypeExpr",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"TypeExpr\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:13, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 133:137, kind: Custom { error: \"TypeExpr\" } }) })]"
     },
     {
       "index": 98,
@@ -1670,7 +1670,7 @@
         "refusal": "Method",
         "status": "refused"
       },
-      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 83:119, kind: Custom { error: \"Method\" } }) }), Warning(WarningDiagnostic { source_id: 0, kind: NotUsed { span: 0:12, context: None } })]"
+      "before_diagnostics": "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 83:119, kind: Custom { error: \"Method\" } }) })]"
     }
   ],
   "authority": 21337,

@@ -28,6 +28,8 @@ struct Library {
 	name: String,
 	features: String,
 	passed: usize,
+	#[serde(default)]
+	selector: Option<String>,
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -339,6 +341,9 @@ fn native(ctx: &Context, m: &Manifest) -> Result<Value> {
 		let binary = ctx.build_rune(&l.name, &l.features)?;
 		let mut cmd = Command::new(&binary);
 		cmd.current_dir(&ctx.repo);
+		if let Some(selector) = &l.selector {
+			cmd.arg(selector);
+		}
 		cmd.arg(format!("--test-threads={}", ctx.test_threads));
 		let r = ctx.run(&format!("{}-library", l.name), &mut cmd, 2400)?;
 		let text = fs::read_to_string(&r.stdout)?;

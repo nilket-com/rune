@@ -30,6 +30,10 @@ fn verify_case(
 	stock_run: &super::live_oracle::Run,
 	fresh: &super::live_oracle::Run,
 ) {
+	crate::experimental_core::tests::gap_hunt::assert_warning_multisets(
+		&stock_run.observation,
+		&fresh.observation,
+	);
 	let stock = &stock_run.observation;
 	let (actual, stdout, stderr) = (&fresh.observation, &fresh.stdout[..], &fresh.stderr[..]);
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
@@ -77,17 +81,22 @@ fn verify_case(
 	let classification = rule["classification"].as_str().unwrap();
 	let refused = !matches!(
 		classification,
-		"Exact" | "Intentional-D1" | "Retained-fuel" | "Retained-frame-limit" | "Known-gap"
+		"Exact" | "Intentional-D1" | "Retained-fuel" | "Retained-frame-limit"
 	);
 	assert_eq!(audit["invoked"], !refused);
 	assert_eq!(audit["reuse_used_fallback"], refused);
+
 	if classification == "Exact" {
 		assert_eq!(canonical_record(actual), canonical_record(stock));
 	} else if classification == "Intentional-D1" {
 		// A missing method: new names the method in its message. Everything
 		// else, including the kind, class, sites and chain, is stock-exact.
 		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(execution, rule["fresh"]);
+		crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+			&execution,
+			&expected,
+			&rule["fresh"],
+		);
 		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for key in ["status", "class", "kind", "sites", "chain"] {
 			assert_eq!(f["outcome"][key], s["outcome"][key], "{key}");
@@ -101,24 +110,13 @@ fn verify_case(
 		assert_eq!(f["events"], s["events"]);
 		assert_eq!(f["reuse"], s["reuse"]);
 		assert_eq!(execution["logical"], expected["logical"]);
-		assert_eq!(execution["diagnostics"], expected["diagnostics"]);
-	} else if classification == "Known-gap" {
-		assert_eq!(index, 48);
-		assert_eq!(case["label"], "receiver/in-template");
-		assert_eq!(rule["gap"]["issue"], "fresh compile-warning parity");
-		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(execution, rule["fresh"]);
-		assert_eq!(execution["observation"], expected["observation"]);
-		assert_eq!(execution["logical"], expected["logical"]);
-		let warning = rule["gap"]["stock_warning"].as_str().unwrap();
-		let diagnostics = expected["diagnostics"].as_str().unwrap();
-		assert_eq!(diagnostics.matches(warning).count(), 1);
-		assert!(diagnostics.starts_with(&format!("[{warning}, ")));
-		assert_eq!(execution["diagnostics"], diagnostics.replacen(&format!("{warning}, "), "", 1));
-
 	} else if classification == "Retained-fuel" {
 		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(execution, rule["fresh"]);
+		crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+			&execution,
+			&expected,
+			&rule["fresh"],
+		);
 		let (f, s) = (&execution["observation"], &expected["observation"]);
 		for record in [f, s] {
 			assert_eq!(record["outcome"]["status"], "error");
@@ -126,20 +124,20 @@ fn verify_case(
 		}
 		assert_eq!(f["events"], json!([]));
 		assert_eq!(f["reuse"], s["reuse"]);
-		assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 	} else if classification == "Retained-frame-limit" {
 		// Unbounded recursion: new charges fuel once per call, so its
 		// 1024-frame limit trips before the fuel runs out, where stock ends in
 		// FuelExhausted. The tapes agree index by index up to the shorter one.
 		let (execution, expected) = (canonical_record(actual), canonical_record(stock));
-		assert_eq!(execution, rule["fresh"]);
+		crate::experimental_core::tests::gap_hunt::compare_runtime_policy(
+			&execution,
+			&expected,
+			&rule["fresh"],
+		);
 		let (f, s) = (&execution["observation"], &expected["observation"]);
 		assert_eq!(f["outcome"]["status"], "error");
 		assert_eq!(f["outcome"]["class"], "FrameCapacity");
-		assert_eq!(
-			f["outcome"]["depth"],
-			1024
-		);
+		assert_eq!(f["outcome"]["depth"], 1024);
 		assert_eq!(s["outcome"]["status"], "error");
 		assert_eq!(s["outcome"]["class"], "FuelExhausted");
 		for (a, b) in f["events"]
@@ -151,7 +149,6 @@ fn verify_case(
 			assert_eq!(a, b);
 		}
 		assert_eq!(f["reuse"], s["reuse"]);
-		assert_eq!(execution["diagnostics"], expected["diagnostics"]);
 	} else {
 		// A located, classified refusal: the program runs on stock instead.
 		let outcome = &actual["observation"]["outcome"];
