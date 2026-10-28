@@ -2344,3 +2344,6 @@ mod formatter_epoch_tests {
 				&& (factory.ends_with("module()?") || factory.ends_with("module(stdio)?"))));
 	}
 }
+
+#[cfg(all(test, feature = "execution", feature = "doc", not(miri)))]
+mod r1b_inventory;

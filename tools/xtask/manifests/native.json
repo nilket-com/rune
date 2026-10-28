@@ -22,6 +22,12 @@
       "features": "fmt,workspace,execution,capture-io,disable-io,sha2,doc,languageserver",
       "passed": 6,
       "selector": "compile::warnings::tests"
+    },
+    {
+      "name": "embedding-inventory-doc",
+      "features": "fmt,workspace,execution,capture-io,disable-io,sha2,doc,languageserver",
+      "passed": 3,
+      "selector": "compile::context::r1b_inventory"
     }
   ],
   "clippy_features": [
