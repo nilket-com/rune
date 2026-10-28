@@ -1,0 +1,48 @@
+W1: compile-warning parity
+
+Base: 9001a1d0 (V2a and S8). Authority: rune-w1 seq23526, following the
+read-only Step 0 report and live witnesses. W1 is product record #2 after M7;
+M8 is not due. Carry the five retained cycle signals to M8. S7c is closed
+by S8's structural comparison work.
+
+For execution-core-admitted programs, match the legacy compile warnings as a
+multiset of kind, source id, span, displayed message, and auxiliary context,
+cause and variant spans. Preserve multiplicity; do not compare emission order.
+Keep the existing broad template spans. No diagnostic improvement in W1.
+
+Use option A: compile-time warning analysis of the existing lowered frontend
+representation, mirroring legacy Needs, divergence and pattern refutability.
+Emit the missing discarded-expression NotUsed, Unreachable,
+LetPatternMightPanic and TemplateWithoutExpansions warnings at their matching
+logical emission points. Preserve shared unused-item/import, tuple-call and
+deprecation warnings exactly once. Do not assemble legacy bytecode or run a
+second legacy compile in production. Add no runtime work or admission change.
+
+Legacy-fatal, execution-core-admitted programs retain their admissions. Their
+warning expectations are reviewed literals, not legacy compiler outcomes.
+For the diverging let initializer from Step 0, require the Unreachable warning
+with exactly the legacy pre-failure warning's source, span and cause.
+
+Test all six kinds and every emission family live on both compilers, including
+negative cases, discarded constants/closures/literals, pattern arguments and
+loops, divergent blocks/iterators, templates, multiple sources and duplicate
+warnings. Enable doc for deprecation metadata tests. Compare full warning
+multisets for all admitted L1 and rnx census programs. No stored warning output. Per rune-w1 seq23537, mechanically remove saved
+warning entries and missing-warning waivers from active policies, including
+nested admission-history snapshots. Preserve every nonwarning diagnostic and
+runtime policy. Add a guard against saved warning-kind entries returning.
+Progress C18b3d row48 to Exact, deleting its saved stock_warning subtraction.
+
+Inspect rnx's current warning presentation. If it prints in emission order,
+sort both engines' displayed warnings by source, span start and kind so the
+visible ordering is deterministic and identical. Report current behavior.
+
+Measure frontend compile-time changes on K1 and the three rnx demos. Run the
+standing product CGU1 rules, counters, CGU16 trend, K1 and relevant correctness
+and Miri gates. Final fresh-clone acceptance uses rnxverify on STRIX. Keep all
+measurement output in scratch. Use blocking sluice for long jobs and message
+Claude at decision points only.
+
+Publication: this signed plan and one signed implementation commit per record.
+Amend plan changes into this plan and implementation/gate fixes into the
+implementation commit. The final signed source must match the accepted gates.
