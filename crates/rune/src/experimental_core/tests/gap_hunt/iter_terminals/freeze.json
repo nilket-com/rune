@@ -3,37 +3,7 @@
   "production_changes": false,
   "files": {
     "cases.json": "326f113ab56a143f449ab47b2c5b1934d6cfd2329526d8db65e8f31a4d5a68df",
-    "stock.json": "59bfb8a620263fe81a9806c066948f5dfd5b83591f47b400bcda313fbfbce520",
-    "stock2.json": "41cf59f39079dbcdb7daa04ff39c2e3a88ec762499222767e0d19f4d982d0af6",
-    "stock3.json": "066c0214778748aafd80ab2ed312d925901b1d04056f5bf0bacb3c61a1017115",
     "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
-  },
-  "stock_binary": {
-    "path": "/home/me/work/.reviews/0185-c17d-oracle1/rune-tests",
-    "sha256": "945e199600edb91392f0cec1fba18ccc7619fd300c7f94e77ac96863ca1a348f",
-    "pins_sha256": "afbd81562db6be592b588b68c08ae511cd4acdbc72038772f2753e2c0675e8d7"
-  },
-  "stock_summary": {
-    "rows": 580,
-    "statuses": {
-      "value": 426,
-      "error": 150,
-      "compile-error": 4
-    },
-    "error_classes": {
-      "Type": 107,
-      "Overflow": 16,
-      "IntegerCoercion": 12,
-      "AccessConflict": 2,
-      "stock:ExpectedTupleLength { actual: 3, expected: 2 }": 1,
-      "stock:ExpectedTupleLength { actual: 1, expected: 2 }": 1,
-      "FuelExhausted": 2,
-      "ArgumentCount": 8,
-      "stock:UnsupportedTryOperand { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xb41669ccb4fdb76a }) }": 1
-    },
-    "replay": false,
-    "logical_traces": 150,
-    "cpu_list": "0-7,10-31"
   },
   "P1": {
     "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",

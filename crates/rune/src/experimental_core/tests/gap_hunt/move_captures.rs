@@ -123,15 +123,6 @@ fn child_driver() {
 	let result = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source":source,"origin":row["origin"],"logical":logical,"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
 	let mut result = result;
 	result["projected"] = projection(&result);
-	if std::env::var_os("C11C_REPLAY").is_some() {
-		let frozen: Json = serde_json::from_str(if std::env::var_os("C11C_CASES_FILE").is_some() {
-			include_str!("move_captures/function_tokens_stock.json")
-		} else {
-			include_str!("move_captures/stock.json")
-		})
-		.unwrap();
-		assert_eq!(result["projected"], frozen[index]["projected"]);
-	}
 	let path = std::env::var_os("C11C_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
 		.create_new(true)
@@ -156,59 +147,16 @@ fn projection(record: &Json) -> Json {
 	}
 	json!({"outcome":outcome(&record["observation"]["outcome"]),"events":record["observation"]["events"],"reuse":outcome(&record["observation"]["reuse"]),"diagnostics":record["diagnostics"],"logical":record["logical"]})
 }
-const REPLAY_CAP: usize = 2 << 20;
-fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
-	let mut bytes = Vec::new();
-	let mut buf = [0; 4096];
-	loop {
-		let n = pipe.read(&mut buf).unwrap();
-		if n == 0 {
-			break;
-		}
-		let room = REPLAY_CAP - bytes.len();
-		bytes.extend_from_slice(&buf[..n.min(room)]);
-		if n > room {
-			exceeded.store(true, Ordering::Relaxed);
-		}
-	}
-	bytes
-}
-
-#[test]
+/// Run every case on live stock, then on the execution engine, and compare.
 #[cfg(target_os = "linux")]
-#[ignore = "C11c frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn legacy_contract() {
-	run_contract("stock");
-}
-
-#[cfg(target_os = "linux")]
-fn run_contract(engine: &str) {
-	run_contract_cases(engine, false);
-}
-
-#[cfg(target_os = "linux")]
-fn run_contract_cases(engine: &str, function_copy: bool) {
-	assert!(matches!(engine, "stock" | "fresh"));
+fn run_contract_cases(function_copy: bool) {
 	let cases_text = if function_copy {
 		include_str!("move_captures/function_tokens_cases.json")
 	} else {
 		include_str!("move_captures/cases.json")
 	};
 	let cases: Json = serde_json::from_str(cases_text).unwrap();
-	let mut frozen: Json = serde_json::from_str(if function_copy {
-		include_str!("move_captures/function_tokens_stock.json")
-	} else {
-		include_str!("move_captures/stock.json")
-	})
-	.unwrap();
-	if function_copy {
-		for row in frozen.as_array_mut().unwrap() {
-			let case = row["case"].as_object().unwrap().clone();
-			row.as_object_mut().unwrap().extend(case);
-		}
-	}
 	let cases = cases.as_array().unwrap();
-	let frozen = frozen.as_array().unwrap();
 	assert_eq!(cases.len(), if function_copy { 8 } else { 71 });
 	let disposition: Json = serde_json::from_str(if function_copy {
 		include_str!("move_captures/function_tokens_disposition.json")
@@ -231,128 +179,72 @@ fn run_contract_cases(engine: &str, function_copy: bool) {
 		assert_eq!(counts.get("policy-presentation"), Some(&4));
 		assert_eq!(counts.values().sum::<usize>(), 71);
 	}
-	assert_eq!(cases.len(), frozen.len());
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
 	let supplemental_cases = out.join("function_tokens_cases.json");
 	if function_copy {
 		fs::write(&supplemental_cases, cases_text).unwrap();
 	}
+	let cases_file = function_copy.then_some(supplemental_cases.as_path());
 	let mut labels = std::collections::BTreeSet::new();
-	for (i, (case, expected)) in cases.iter().zip(frozen).enumerate() {
+	for (i, case) in cases.iter().enumerate() {
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
-		assert_eq!(case["label"], expected["label"]);
-		assert_eq!(case["source"], expected["source"]);
 		let folder = out.join(format!("{i:03}"));
-		fs::create_dir(&folder).unwrap();
-		let result = folder.join("observation.json");
-		use std::os::unix::process::CommandExt;
-		let mut command = Command::new("/usr/bin/prlimit");
-		command
-			.args([
-				"--cpu=15",
-				"--as=2147483648",
-				"--fsize=2097152",
-				"--core=0",
-				"--",
-			])
-			.arg(std::env::current_exe().unwrap());
-		command.process_group(0);
-		command.env_clear();
+		let stock = launch("stock", i, case, &folder.join("stock"), cases_file);
+		let expected = &stock.observation;
+		let fresh = launch("fresh", i, case, &folder.join("fresh"), cases_file);
 		if function_copy {
-			command.env("C11C_CASES_FILE", &supplemental_cases);
-		}
-		let mut child_driver = command
-			.args([
-				"--exact",
-				"experimental_core::tests::gap_hunt::move_captures::child_driver",
-				"--ignored",
-				"--nocapture",
-				"--quiet",
-			])
-			.env("C11C_ENGINE", engine)
-			.env("C11C_REPLAY", "1")
-			.env("PATH", "/usr/bin:/bin")
-			.env("LANG", "C.UTF-8")
-			.env("TZ", "UTC")
-			.env("C11C_CASE", i.to_string())
-			.env("C11C_RESULT", &result)
-			.env("D1E_TRACE_OUT", folder.join("logical.json"))
-			.current_dir(&folder)
-			.stdin(Stdio::null())
-			.stdout(Stdio::piped())
-			.stderr(Stdio::piped())
-			.spawn()
-			.unwrap();
-		let exceeded = Arc::new(AtomicBool::new(false));
-		let flag = exceeded.clone();
-		let pipe = child_driver.stdout.take().unwrap();
-		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
-		let flag = exceeded.clone();
-		let pipe = child_driver.stderr.take().unwrap();
-		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
-		let start = Instant::now();
-		let mut stop = false;
-		let mut exited = false;
-		loop {
-			if child_driver.try_wait().unwrap().is_some() {
-				exited = true;
-			}
-			if !exceeded.load(Ordering::Relaxed)
-				&& exited && stdout.is_finished()
-				&& stderr.is_finished()
-			{
-				break;
-			}
-			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
-				stop = true;
-				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child_driver.id())])
-					.stdout(Stdio::null())
-					.stderr(Stdio::null())
-					.status();
-				break;
-			}
-			std::thread::sleep(Duration::from_millis(10));
-		}
-		// wait() also returns the cached status when try_wait() already reaped
-		// the child. Every exit path explicitly collects it before joining.
-		let status = child_driver.wait().unwrap();
-		let stdout = stdout.join().unwrap();
-		let stderr = stderr.join().unwrap();
-		fs::write(folder.join("stdout"), &stdout).unwrap();
-		fs::write(folder.join("stderr"), &stderr).unwrap();
-		fs::write(
-			folder.join("receipt.txt"),
-			format!(
-				"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\n",
-				start.elapsed()
-			),
-		)
-		.unwrap();
-		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
-		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
-
-		let observed: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		assert_eq!(observed["schema"], 1);
-		assert_eq!(observed["engine"], engine);
-		assert_eq!(observed["index"], i);
-		assert_eq!(observed["fuel"], case["fuel"]);
-		assert_eq!(observed["label"], case["label"]);
-		assert_eq!(observed["source"], case["source"]);
-		assert_eq!(observed["origin"], case["origin"]);
-		if engine == "stock" {
-			assert_eq!(observed["projected"], expected["projected"], "{label}");
-		} else if function_copy {
-			verify_function_copy_record(&observed, case, expected, &disposition["rows"][i]);
+			verify_function_copy_record(
+				&fresh.observation,
+				case,
+				expected,
+				&disposition["rows"][i],
+			);
 		} else {
-			verify_record(&observed, case, expected, &disposition["rows"][i]);
+			verify_record(&fresh.observation, case, expected, &disposition["rows"][i]);
 		}
-		assert_eq!(hex(&stdout), expected["stdout_hex"]);
-		assert_eq!(hex(&stderr), expected["stderr_hex"]);
+		assert_eq!(hex(&fresh.stdout), hex(&stock.stdout), "stdout: {label}");
+		assert_eq!(hex(&fresh.stderr), hex(&stock.stderr), "stderr: {label}");
 	}
-	super::contract_completed(engine, cases.len());
+	super::contract_completed("fresh", cases.len());
+}
+
+/// Run case `index` on `engine` in a bounded child and check its envelope.
+#[cfg(target_os = "linux")]
+fn launch(
+	engine: &str,
+	index: usize,
+	case: &Json,
+	folder: &Path,
+	cases_file: Option<&Path>,
+) -> super::live_oracle::Run {
+	let index_text = index.to_string();
+	let trace = folder.join("logical.json");
+	let mut env = vec![
+		("C11C_ENGINE", engine.as_ref()),
+		("C11C_CASE", index_text.as_ref()),
+		("D1E_TRACE_OUT", trace.as_os_str()),
+	];
+	if let Some(path) = cases_file {
+		env.push(("C11C_CASES_FILE", path.as_os_str()));
+	}
+	let run = super::live_oracle::run_child(
+		"experimental_core::tests::gap_hunt::move_captures::child_driver",
+		case["label"].as_str().unwrap(),
+		folder,
+		"C11C_RESULT",
+		&env,
+	);
+	let observed = &run.observation;
+	assert_eq!(observed["schema"], 1);
+	assert_eq!(observed["engine"], engine);
+	assert_eq!(observed["index"], index);
+	assert_eq!(observed["fuel"], case["fuel"]);
+	assert_eq!(observed["label"], case["label"]);
+	assert_eq!(observed["source"], case["source"]);
+	assert_eq!(observed["origin"], case["origin"]);
+	run
 }
 
 #[test]

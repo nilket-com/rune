@@ -217,43 +217,21 @@ fn run_probe(engine: &str) {
 }
 
 #[test]
-#[ignore = "explicit frozen field/iteration contract; bounded children"]
+#[ignore = "explicit field/iteration contract against live stock; bounded children"]
 fn contract() {
-	let engine = std::env::var("GAP_COMPARE_ENGINE").unwrap_or_else(|_| "stock".into());
-	assert!(matches!(engine.as_str(), "stock" | "fresh"));
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
 	let scratch =
 		Scratch(std::env::temp_dir().join(format!("rune-field-contract-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
 	let generated = cases();
-	let rows: Vec<_> = include_str!("../field_iter_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
-	assert_eq!(rows.len(), generated.len());
 	let mut coverage = 0;
-	for (n, (line, (label, source))) in rows.iter().zip(&generated).enumerate() {
-		let row: Vec<_> = line.split('\t').collect();
-		assert_eq!(row.len(), 5);
-		assert_eq!(row[0], label);
-		assert_eq!(unhex(row[1]), *source, "source drift: {label}");
+	for (n, (label, source)) in generated.iter().enumerate() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
-		let mut run = launch(&path, &path, "main", &engine, &scratch.0, &out, &id);
-		assert!(
-			run.complete,
-			"incomplete {engine} case {label}: {}",
-			run.record
-		);
-		run.record = super::method_diagnostics::intentional_record_before(
-			"field_iter",
-			label,
-			source,
-			&engine,
-			&run.record,
-		);
+		let stock = observe_case("stock", label, source, &path, &scratch.0, &out, &id);
+		let run = observe_case("fresh", label, source, &path, &scratch.0, &out, &id);
 		let actual: Vec<_> = run.record.split('\t').collect();
 		assert_eq!(actual.len(), 5);
 		let mut pieces = label.split('/');
@@ -267,29 +245,52 @@ fn contract() {
 		} else {
 			None
 		};
-		if engine == "fresh" {
-			if let Some(refusal) = refusal {
-				assert_eq!(
-					(&actual[0], &actual[1]),
-					(&"refused", &refusal),
-					"coverage refusal: {label}"
-				);
-				coverage += 1;
-				continue;
-			}
+		if let Some(refusal) = refusal {
+			assert_eq!(
+				(&actual[0], &actual[1]),
+				(&"refused", &refusal),
+				"coverage refusal: {label}"
+			);
+			coverage += 1;
+			continue;
 		}
-		let expected = unhex(row[2]);
-		let expected: Vec<_> = expected.split('\t').collect();
+		let expected: Vec<_> = stock.record.split('\t').collect();
 		assert_eq!(expected.len(), 5);
 		// Operation labels are engine-specific; exact metadata has focused tests.
 		assert_eq!(
 			(&actual[..2], &actual[3..]),
 			(&expected[..2], &expected[3..]),
-			"{engine} observation {label}"
+			"fresh observation {label}"
 		);
-		assert_eq!(hex(&run.stdout), row[3], "{engine} stdout {label}");
-		assert_eq!(hex(&run.stderr), row[4], "{engine} stderr {label}");
+		assert_eq!(hex(&run.stdout), hex(&stock.stdout), "fresh stdout {label}");
+		assert_eq!(hex(&run.stderr), hex(&stock.stderr), "fresh stderr {label}");
 	}
-	assert_eq!(coverage, if engine == "fresh" { 7 } else { 0 });
-	super::contract_completed(&engine, rows.len());
+	assert_eq!(coverage, 7);
+	super::contract_completed("fresh", generated.len());
+}
+
+/// Run one case on `engine` and apply the intentional method-diagnostic mapping.
+fn observe_case(
+	engine: &str,
+	label: &str,
+	source: &str,
+	path: &Path,
+	scratch: &Path,
+	out: &Path,
+	id: &str,
+) -> Run {
+	let mut run = launch(path, path, "main", engine, scratch, out, id);
+	assert!(
+		run.complete,
+		"incomplete {engine} case {label}: {}",
+		run.record
+	);
+	run.record = super::method_diagnostics::intentional_record_before(
+		"field_iter",
+		label,
+		source,
+		engine,
+		&run.record,
+	);
+	run
 }

@@ -8,7 +8,7 @@
         "index": 236,
         "label": "shadow/unwrap/param",
         "source_sha256": "cee4b9a364940d49372edd18b7684ec891db5dc29c2e82bee27043f5ae5cc695",
-        "stock_row_sha256": "c3643ee0a955b2bdabc50a2c9abc25b0f01ad120d96d10224f4b0bedb4feb47c",
+        "stock_row_sha256": "71002439bce3d4eb6f172c79079caaf35aa3de48cc4be3d90c3e0ebf955db058",
         "classification": "Refused-native",
         "fresh": {
           "kind": "Unsupported",

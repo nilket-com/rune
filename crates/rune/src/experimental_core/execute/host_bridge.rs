@@ -210,6 +210,17 @@ impl Executor {
 	fn host_error(&mut self, native: stock::VmError) -> Error {
 		use super::super::error::HostCause;
 		use stock::VmErrorKind as K;
+		let class = match native.error_class() {
+			super::super::error::ErrorProjection::Class(class) => {
+				super::super::error::HostClass::Reviewed(class)
+			}
+			super::super::error::ErrorProjection::Unclassified(name) => {
+				super::super::error::HostClass::Unclassified(name)
+			}
+			super::super::error::ErrorProjection::EngineOnly => {
+				super::super::error::HostClass::Unclassified("legacy EngineOnly")
+			}
+		};
 		let arg = native.chain().iter().find_map(|at| match at.kind() {
 			K::BadArgument { arg } => u8::try_from(*arg).ok(),
 			_ => None,
@@ -220,6 +231,7 @@ impl Executor {
 				Detail::HostMessage {
 					cause: HostCause::IntegerCoercion,
 					arg,
+					class,
 				},
 			),
 			K::Panic { .. } => (ErrorKind::Panic, Detail::PanicMessage),
@@ -243,6 +255,7 @@ impl Executor {
 				Detail::HostMessage {
 					cause: HostCause::Access,
 					arg,
+					class,
 				},
 			),
 			K::MissingInterfaceEnvironment => (
@@ -250,6 +263,7 @@ impl Executor {
 				Detail::HostMessage {
 					cause: HostCause::MissingEnvironment,
 					arg,
+					class,
 				},
 			),
 			K::BadArgumentCount { .. } => return error(ErrorKind::InvalidCode),
@@ -258,6 +272,7 @@ impl Executor {
 				Detail::HostMessage {
 					cause: HostCause::Other,
 					arg,
+					class,
 				},
 			),
 		};
@@ -525,6 +540,24 @@ mod tests {
 	use super::*;
 	use crate::experimental_core::{error::HostCause, frontend, heap::Limits};
 	use crate::{Context, Diagnostics, Hash, Module, Source, Sources};
+
+	#[test]
+	fn host_error_preserves_reviewed_and_unclassified_native_classes() {
+		use crate::experimental_core::error::{ErrorClass, ErrorProjection};
+		let mut executor = Executor::new().unwrap();
+		let reviewed = executor.host_error(stock::VmError::new(stock::VmErrorKind::DivideByZero));
+		assert_eq!(reviewed.kind, ErrorKind::Host);
+		assert!(reviewed
+			.error_class()
+			.same_class(ErrorProjection::Class(ErrorClass::DivisionByZero)));
+		let unknown =
+			executor.host_error(stock::VmError::new(stock::VmErrorKind::MissingCallFrame));
+		assert_eq!(unknown.kind, ErrorKind::Host);
+		assert!(matches!(
+			unknown.error_class(),
+			ErrorProjection::Unclassified("MissingCallFrame")
+		));
+	}
 
 	fn context() -> Context {
 		let mut context = Context::with_default_modules().unwrap();
@@ -927,13 +960,10 @@ mod tests {
 					);
 					assert_eq!(failure.error.detail.numeric_argument(), Some((cause, arg)));
 				}
-				HostCause::Access => assert_eq!(
+				HostCause::Access => assert!(matches!(
 					failure.error.detail,
-					Detail::HostMessage {
-						cause,
-						arg: Some(arg)
-					}
-				),
+					Detail::HostMessage { cause: actual, arg: Some(index), class: super::super::super::error::HostClass::Reviewed(super::super::super::error::ErrorClass::AccessConflict) } if actual == cause && index == arg
+				)),
 				_ => panic!("unlisted h1focused argument cause"),
 			}
 			assert!(failure.host_message.is_some());

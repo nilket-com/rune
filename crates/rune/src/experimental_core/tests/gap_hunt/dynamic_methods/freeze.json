@@ -1,255 +1,228 @@
 {
- "rows": 259,
- "production_changes": false,
- "files": {
-  "cases.json": "7cd5135c15f16cd0d048f05fa523de083a0f8ec4aa16b0d2d497a3e090df43e4",
-  "stock.json": "98cd917995a9f2ed7a6337c3ace77dc4188fc25cd223bcb8f9874a54f58dd2e6",
-  "stock2.json": "d71ba61307a79de891843f5b586d562339f0fe4b60706e9181a622b846a36aef",
-  "stock3.json": "6bf1ed34676b254d71499765d0542300b49a24ce851e483847d6f2898980218c",
-  "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
- },
- "stock_binary": {
-  "path": "/home/me/work/.reviews/0185-c18b1-oracle1/rune-tests",
-  "sha256": "49c30e5cd0795fea3210b2a437d9497aa200e46817329472a93a1a6e53f4a6da",
-  "pins_sha256": "0afbf356b325cc23d1e2b15baf2608511cc1c0ba416f15b58cdeb45ad6b8e12e"
- },
- "stock_summary": {
   "rows": 259,
-  "statuses": {
-   "value": 167,
-   "error": 86,
-   "compile-error": 6
+  "production_changes": false,
+  "files": {
+    "cases.json": "7cd5135c15f16cd0d048f05fa523de083a0f8ec4aa16b0d2d497a3e090df43e4",
+    "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
   },
-  "error_classes": {
-   "Type": 55,
-   "ArgumentCount": 15,
-   "AccessConflict": 4,
-   "FuelExhausted": 5,
-   "Panic": 5,
-   "IndexOutOfBounds": 2
-  },
-  "replay": false,
-  "logical_traces": 86,
-  "cpu_list": "0-7,10-31"
- },
- "P1": {
-  "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte exact; raw observations retained unmasked",
-  "rows": [
-   {
-    "index": 37,
-    "label": "receiver/integer-only",
-    "source_sha256": "3be488aaf854eaa6c7193b741b91daab96221f04ab9cce0f8faa62eef8f9b055"
-   },
-   {
-    "index": 60,
-    "label": "poly/int-and-struct",
-    "source_sha256": "aaef570ccf08f43f61104da98819fbbd224b5860d9720ae7d3a513ada733b835"
-   },
-   {
-    "index": 70,
-    "label": "enum/option-receiver-script-name",
-    "source_sha256": "8fc28aec78c597d5072cdbc6c3274b407047bb1a4380d1e309f4e2ad049e4949"
-   },
-   {
-    "index": 93,
-    "label": "paths/path-call-int",
-    "source_sha256": "1a5b4412254a6e4f756d6178a31a949768556eada0ea0b2326711f3faccd71b1"
-   },
-   {
-    "index": 98,
-    "label": "paths/function-value-receiver",
-    "source_sha256": "28caf6e0a53e8236b59e76638e421586f70eeae9b1e2f51d76060ee02ce31088"
-   },
-   {
-    "index": 99,
-    "label": "paths/closure-receiver",
-    "source_sha256": "c885d6234f36661b737305f22b72b488d1e0b3cf5287996de5fb77080dc43cbe"
-   },
-   {
-    "index": 101,
-    "label": "host/entry-method-int",
-    "source_sha256": "023c4b5ba9082f4de6253ebc94a13b4962d775469024beab9b45eaf3191de1c2"
-   },
-   {
-    "index": 102,
-    "label": "host/entry-method-field-int",
-    "source_sha256": "023c4b5ba9082f4de6253ebc94a13b4962d775469024beab9b45eaf3191de1c2"
-   },
-   {
-    "index": 103,
-    "label": "host/entry-free-dispatch",
-    "source_sha256": "3d5d2376f2c6b6b19e05524bd5ab30bb65d8d1acf1d8a74a410d09d77ae32ed9"
-   },
-   {
-    "index": 104,
-    "label": "host/entry-self-dispatch",
-    "source_sha256": "521235029ac1354e9f83fc4887264d28a1db9b347d5ae5b53aa0f64301cf0e3e"
-   },
-   {
-    "index": 128,
-    "label": "arity/missing-and-wrong-arity",
-    "source_sha256": "7e48611c816e0e00e7c860916da5956d55012e303e20889bc8d73902f503ce19"
-   },
-   {
-    "index": 142,
-    "label": "missing/i64",
-    "source_sha256": "e6679c1999572949c7201d9735a10dcaae3022fdd009446308dc6ac802f7e5cf"
-   },
-   {
-    "index": 143,
-    "label": "missing/f64",
-    "source_sha256": "95810fcf18aa1bff0085b74cba16fad0b2c025db737b35afb3b827a2fbd424df"
-   },
-   {
-    "index": 144,
-    "label": "missing/bool",
-    "source_sha256": "0d566e611ed1cbcb7a65ec3bef0fd4a961337e7ea3dbaf48a3c474546b484d59"
-   },
-   {
-    "index": 145,
-    "label": "missing/char",
-    "source_sha256": "ae171f14dba4d29f747f33ca1db3fc8c3afdd4e4d78af78e1b793743c77fce43"
-   },
-   {
-    "index": 146,
-    "label": "missing/u64",
-    "source_sha256": "6fad73d6de1d673f5eff2b42715d6f0b526394d0eb097a2baa707dfee446be78"
-   },
-   {
-    "index": 147,
-    "label": "missing/string",
-    "source_sha256": "01265ea04b3920da463db565a2d804e44e617d7e2a3f9cd93c53b4f20c59c56b"
-   },
-   {
-    "index": 148,
-    "label": "missing/vec",
-    "source_sha256": "04bb33a6df5554f104b9cdbc4cce6bb89e6010540816b14298dbf121f39e1cb7"
-   },
-   {
-    "index": 149,
-    "label": "missing/tuple",
-    "source_sha256": "4f5203163cf8728a25286a05829724272022c76ad5c6a13f2c9b75bb45c2a3ef"
-   },
-   {
-    "index": 150,
-    "label": "missing/unit",
-    "source_sha256": "913206b695eeafd741e1bbc80fb2359789c76d59e3c9d46fbb3b62c6ef9566e3"
-   },
-   {
-    "index": 151,
-    "label": "missing/object",
-    "source_sha256": "4abfc55c630f448324ecca20284f8085e107a275ed4e5e525b814305e5430401"
-   },
-   {
-    "index": 152,
-    "label": "missing/option-some",
-    "source_sha256": "b588665f961ea230d0f3f4fd33990f8e3737e636664e549b37864ae28350f307"
-   },
-   {
-    "index": 153,
-    "label": "missing/option-none",
-    "source_sha256": "49afce2ac6a43543740f0ecb59ea67c0f0a021a8d9e4aa346c797ed70c36c96a"
-   },
-   {
-    "index": 154,
-    "label": "missing/result-ok",
-    "source_sha256": "8b50df20b22c3a530873e4ce50b41ffe3d2bccc515d3fb57cea655d0cf3fc114"
-   },
-   {
-    "index": 155,
-    "label": "missing/result-err",
-    "source_sha256": "62c921804fbd2170bb1ba3d80827285b8ef87d1e132b593df8a97f4eab11bfc1"
-   },
-   {
-    "index": 156,
-    "label": "missing/range",
-    "source_sha256": "d6d8b54c5950d799c0bdf3abc37348b4952cbe7a70fcf7cc66bde3d8b5b8f85b"
-   },
-   {
-    "index": 157,
-    "label": "missing/range-inclusive",
-    "source_sha256": "040a58896e0232d2beec50d531f90794c781f996a3c4e3ae5aadfa9ade34816c"
-   },
-   {
-    "index": 158,
-    "label": "missing/range-from",
-    "source_sha256": "20f8a033a0ca56e79b5cb9911509bdcb7fc084e1d3f1351a5da851971a3bd2c9"
-   },
-   {
-    "index": 159,
-    "label": "missing/range-to",
-    "source_sha256": "8934f78ee0a90678d2a2a14dadcea22a99ff9a01cbeb82157bb15ac037b42735"
-   },
-   {
-    "index": 160,
-    "label": "missing/range-full",
-    "source_sha256": "463f949336e368a0024f7846db61b43e2809dfd3a0cb319493edd33bb4793ea9"
-   },
-   {
-    "index": 161,
-    "label": "missing/ordering",
-    "source_sha256": "d0755b1cede44280518a41b9ed392ae655eb5968b1b9b0fed8b68a8a6d654d90"
-   },
-   {
-    "index": 162,
-    "label": "missing/closure",
-    "source_sha256": "998e8941b47cedd574123178aace7601f16ced0f738cebf68a803495fe0473c4"
-   },
-   {
-    "index": 163,
-    "label": "missing/fn-value",
-    "source_sha256": "7190bc02d4935a173827f5468124047a090d28f58d006e40c9383ce32655f558"
-   },
-   {
-    "index": 164,
-    "label": "missing/vec-iter",
-    "source_sha256": "d357ddb1a6377d93eac24f578ff7a9a62bde24deea86c14a2d8521b6ea3a0d11"
-   },
-   {
-    "index": 165,
-    "label": "missing/range-iter",
-    "source_sha256": "2b6a9696a93180a7d60d81d689c489b073004b8ba18007eab1b5e02dd4d25c76"
-   },
-   {
-    "index": 166,
-    "label": "missing/chars",
-    "source_sha256": "a1db82ab6f597253c53d2e69f3188cfda7ad4facfa57e0561d787cf90ec3fece"
-   },
-   {
-    "index": 167,
-    "label": "missing/split",
-    "source_sha256": "6a43456f1040f700a1e47463aab4816cc1edb85861ffab641451b853c33c2ac1"
-   },
-   {
-    "index": 172,
-    "label": "missing/type-value",
-    "source_sha256": "a35f0ed0c83e8be5536fc986472f278c2e8e2a22786c07fbcd64a7aba790322d"
-   },
-   {
-    "index": 174,
-    "label": "missing/after-loop-effects",
-    "source_sha256": "e027189739d7da639eef576dc5219c6ec5e3db6fc34eeb4163c71453c656db42"
-   },
-   {
-    "index": 175,
-    "label": "missing/args-evaluated-first",
-    "source_sha256": "d76a6b55640254dee588bf68fed28b6209dcf9bad25f37a7a6c65f96df5ed1c8"
-   },
-   {
-    "index": 199,
-    "label": "budget/loop-then-miss-reached",
-    "source_sha256": "d3dc14faca0ef467b1629705fb2dd2edcd579bbcdc4a492dc266f6fba4550cdd"
-   },
-   {
-    "index": 225,
-    "label": "errors/type-error-three-deep",
-    "source_sha256": "a97d75889b6de0a117dd07ae739f1227b72130422205c20c2deb38f0a7e8a2ca"
-   },
-   {
-    "index": 228,
-    "label": "errors/error-in-arg",
-    "source_sha256": "e8b4b2ba3c40cf002f95c410a2b589a0cd0abdc8d6155d2c2976497c4b63a81d"
-   }
-  ]
- }
+  "P1": {
+    "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte exact; raw observations retained unmasked",
+    "rows": [
+      {
+        "index": 37,
+        "label": "receiver/integer-only",
+        "source_sha256": "3be488aaf854eaa6c7193b741b91daab96221f04ab9cce0f8faa62eef8f9b055"
+      },
+      {
+        "index": 60,
+        "label": "poly/int-and-struct",
+        "source_sha256": "aaef570ccf08f43f61104da98819fbbd224b5860d9720ae7d3a513ada733b835"
+      },
+      {
+        "index": 70,
+        "label": "enum/option-receiver-script-name",
+        "source_sha256": "8fc28aec78c597d5072cdbc6c3274b407047bb1a4380d1e309f4e2ad049e4949"
+      },
+      {
+        "index": 93,
+        "label": "paths/path-call-int",
+        "source_sha256": "1a5b4412254a6e4f756d6178a31a949768556eada0ea0b2326711f3faccd71b1"
+      },
+      {
+        "index": 98,
+        "label": "paths/function-value-receiver",
+        "source_sha256": "28caf6e0a53e8236b59e76638e421586f70eeae9b1e2f51d76060ee02ce31088"
+      },
+      {
+        "index": 99,
+        "label": "paths/closure-receiver",
+        "source_sha256": "c885d6234f36661b737305f22b72b488d1e0b3cf5287996de5fb77080dc43cbe"
+      },
+      {
+        "index": 101,
+        "label": "host/entry-method-int",
+        "source_sha256": "023c4b5ba9082f4de6253ebc94a13b4962d775469024beab9b45eaf3191de1c2"
+      },
+      {
+        "index": 102,
+        "label": "host/entry-method-field-int",
+        "source_sha256": "023c4b5ba9082f4de6253ebc94a13b4962d775469024beab9b45eaf3191de1c2"
+      },
+      {
+        "index": 103,
+        "label": "host/entry-free-dispatch",
+        "source_sha256": "3d5d2376f2c6b6b19e05524bd5ab30bb65d8d1acf1d8a74a410d09d77ae32ed9"
+      },
+      {
+        "index": 104,
+        "label": "host/entry-self-dispatch",
+        "source_sha256": "521235029ac1354e9f83fc4887264d28a1db9b347d5ae5b53aa0f64301cf0e3e"
+      },
+      {
+        "index": 128,
+        "label": "arity/missing-and-wrong-arity",
+        "source_sha256": "7e48611c816e0e00e7c860916da5956d55012e303e20889bc8d73902f503ce19"
+      },
+      {
+        "index": 142,
+        "label": "missing/i64",
+        "source_sha256": "e6679c1999572949c7201d9735a10dcaae3022fdd009446308dc6ac802f7e5cf"
+      },
+      {
+        "index": 143,
+        "label": "missing/f64",
+        "source_sha256": "95810fcf18aa1bff0085b74cba16fad0b2c025db737b35afb3b827a2fbd424df"
+      },
+      {
+        "index": 144,
+        "label": "missing/bool",
+        "source_sha256": "0d566e611ed1cbcb7a65ec3bef0fd4a961337e7ea3dbaf48a3c474546b484d59"
+      },
+      {
+        "index": 145,
+        "label": "missing/char",
+        "source_sha256": "ae171f14dba4d29f747f33ca1db3fc8c3afdd4e4d78af78e1b793743c77fce43"
+      },
+      {
+        "index": 146,
+        "label": "missing/u64",
+        "source_sha256": "6fad73d6de1d673f5eff2b42715d6f0b526394d0eb097a2baa707dfee446be78"
+      },
+      {
+        "index": 147,
+        "label": "missing/string",
+        "source_sha256": "01265ea04b3920da463db565a2d804e44e617d7e2a3f9cd93c53b4f20c59c56b"
+      },
+      {
+        "index": 148,
+        "label": "missing/vec",
+        "source_sha256": "04bb33a6df5554f104b9cdbc4cce6bb89e6010540816b14298dbf121f39e1cb7"
+      },
+      {
+        "index": 149,
+        "label": "missing/tuple",
+        "source_sha256": "4f5203163cf8728a25286a05829724272022c76ad5c6a13f2c9b75bb45c2a3ef"
+      },
+      {
+        "index": 150,
+        "label": "missing/unit",
+        "source_sha256": "913206b695eeafd741e1bbc80fb2359789c76d59e3c9d46fbb3b62c6ef9566e3"
+      },
+      {
+        "index": 151,
+        "label": "missing/object",
+        "source_sha256": "4abfc55c630f448324ecca20284f8085e107a275ed4e5e525b814305e5430401"
+      },
+      {
+        "index": 152,
+        "label": "missing/option-some",
+        "source_sha256": "b588665f961ea230d0f3f4fd33990f8e3737e636664e549b37864ae28350f307"
+      },
+      {
+        "index": 153,
+        "label": "missing/option-none",
+        "source_sha256": "49afce2ac6a43543740f0ecb59ea67c0f0a021a8d9e4aa346c797ed70c36c96a"
+      },
+      {
+        "index": 154,
+        "label": "missing/result-ok",
+        "source_sha256": "8b50df20b22c3a530873e4ce50b41ffe3d2bccc515d3fb57cea655d0cf3fc114"
+      },
+      {
+        "index": 155,
+        "label": "missing/result-err",
+        "source_sha256": "62c921804fbd2170bb1ba3d80827285b8ef87d1e132b593df8a97f4eab11bfc1"
+      },
+      {
+        "index": 156,
+        "label": "missing/range",
+        "source_sha256": "d6d8b54c5950d799c0bdf3abc37348b4952cbe7a70fcf7cc66bde3d8b5b8f85b"
+      },
+      {
+        "index": 157,
+        "label": "missing/range-inclusive",
+        "source_sha256": "040a58896e0232d2beec50d531f90794c781f996a3c4e3ae5aadfa9ade34816c"
+      },
+      {
+        "index": 158,
+        "label": "missing/range-from",
+        "source_sha256": "20f8a033a0ca56e79b5cb9911509bdcb7fc084e1d3f1351a5da851971a3bd2c9"
+      },
+      {
+        "index": 159,
+        "label": "missing/range-to",
+        "source_sha256": "8934f78ee0a90678d2a2a14dadcea22a99ff9a01cbeb82157bb15ac037b42735"
+      },
+      {
+        "index": 160,
+        "label": "missing/range-full",
+        "source_sha256": "463f949336e368a0024f7846db61b43e2809dfd3a0cb319493edd33bb4793ea9"
+      },
+      {
+        "index": 161,
+        "label": "missing/ordering",
+        "source_sha256": "d0755b1cede44280518a41b9ed392ae655eb5968b1b9b0fed8b68a8a6d654d90"
+      },
+      {
+        "index": 162,
+        "label": "missing/closure",
+        "source_sha256": "998e8941b47cedd574123178aace7601f16ced0f738cebf68a803495fe0473c4"
+      },
+      {
+        "index": 163,
+        "label": "missing/fn-value",
+        "source_sha256": "7190bc02d4935a173827f5468124047a090d28f58d006e40c9383ce32655f558"
+      },
+      {
+        "index": 164,
+        "label": "missing/vec-iter",
+        "source_sha256": "d357ddb1a6377d93eac24f578ff7a9a62bde24deea86c14a2d8521b6ea3a0d11"
+      },
+      {
+        "index": 165,
+        "label": "missing/range-iter",
+        "source_sha256": "2b6a9696a93180a7d60d81d689c489b073004b8ba18007eab1b5e02dd4d25c76"
+      },
+      {
+        "index": 166,
+        "label": "missing/chars",
+        "source_sha256": "a1db82ab6f597253c53d2e69f3188cfda7ad4facfa57e0561d787cf90ec3fece"
+      },
+      {
+        "index": 167,
+        "label": "missing/split",
+        "source_sha256": "6a43456f1040f700a1e47463aab4816cc1edb85861ffab641451b853c33c2ac1"
+      },
+      {
+        "index": 172,
+        "label": "missing/type-value",
+        "source_sha256": "a35f0ed0c83e8be5536fc986472f278c2e8e2a22786c07fbcd64a7aba790322d"
+      },
+      {
+        "index": 174,
+        "label": "missing/after-loop-effects",
+        "source_sha256": "e027189739d7da639eef576dc5219c6ec5e3db6fc34eeb4163c71453c656db42"
+      },
+      {
+        "index": 175,
+        "label": "missing/args-evaluated-first",
+        "source_sha256": "d76a6b55640254dee588bf68fed28b6209dcf9bad25f37a7a6c65f96df5ed1c8"
+      },
+      {
+        "index": 199,
+        "label": "budget/loop-then-miss-reached",
+        "source_sha256": "d3dc14faca0ef467b1629705fb2dd2edcd579bbcdc4a492dc266f6fba4550cdd"
+      },
+      {
+        "index": 225,
+        "label": "errors/type-error-three-deep",
+        "source_sha256": "a97d75889b6de0a117dd07ae739f1227b72130422205c20c2deb38f0a7e8a2ca"
+      },
+      {
+        "index": 228,
+        "label": "errors/error-in-arg",
+        "source_sha256": "e8b4b2ba3c40cf002f95c410a2b589a0cd0abdc8d6155d2c2976497c4b63a81d"
+      }
+    ]
+  }
 }

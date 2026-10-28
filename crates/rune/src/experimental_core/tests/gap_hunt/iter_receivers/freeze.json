@@ -3,28 +3,7 @@
   "production_changes": false,
   "files": {
     "cases.json": "811c11205cb5aafdb172e0470ebab91f8beda021380a576461ba5f50f12451e4",
-    "stock.json": "0156657d784af2a6deab30ae584d5255a1e10a332159afc445cdbf0a341b4b6b",
     "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
-  },
-  "stock_binary": {
-    "path": "/home/me/work/.reviews/0185-o1b-oracle2/rune-tests",
-    "sha256": "66188d48b6cee2c29494c60940ad971483af3ce345bc8e3297d564a5b2eb0b60",
-    "pins_sha256": "04a21bdf0ec06d76131ae35202c8e440b0a39a62710575749358fa16927f74f0"
-  },
-  "stock_summary": {
-    "rows": 60,
-    "statuses": {
-      "value": 43,
-      "error": 17
-    },
-    "error_classes": {
-      "Type": 11,
-      "AccessConflict": 5,
-      "ArgumentCount": 1
-    },
-    "replay": false,
-    "logical_traces": 17,
-    "cpu_list": "0-7,10-31"
   },
   "P1": {
     "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",

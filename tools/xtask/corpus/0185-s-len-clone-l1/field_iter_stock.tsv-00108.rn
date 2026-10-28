@@ -1,0 +1,1 @@
+struct P { x } fn g() { 1 } struct U; pub fn main() { let x=U; x.missing }

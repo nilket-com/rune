@@ -1,0 +1,15 @@
+pub fn main() {
+let value = 0;
+
+while value < 100 {
+    if value >= 50 {
+        break;
+    }
+
+    value = value + 1;
+}
+
+// => The value is 50
+println!("The value is {value}");
+
+}

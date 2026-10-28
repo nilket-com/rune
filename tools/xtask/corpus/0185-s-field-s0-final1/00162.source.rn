@@ -1,0 +1,34 @@
+/// Foo documentation.
+struct Foo {
+    /// Struct field.
+    /// Field A.
+    a,
+    /// Struct field.
+    /// Field B.
+    b,
+}
+
+/// Test
+mod module {
+    //! Interior comment 1.
+    //! Interior comment 2.
+
+    /// Bar documentation.
+    struct Bar {}
+}
+
+mod foo {
+    enum Foo {
+        /// This is another test.
+        Hello,
+        /// This is a test.
+        World {
+            /// Variant struct field.
+            /// Field A.
+            a,
+            /// Variant struct field.
+            /// Field B.
+            b,
+        },
+    }
+}

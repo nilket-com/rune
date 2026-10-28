@@ -148,7 +148,7 @@ impl Source {
 			ensure!(path.is_file(), "missing source file {}", path.display());
 			files.insert(name.to_owned(), hash_file(&path)?);
 		}
-		// Cargo.lock is intentionally ignored in this fork, but affects builds.
+		// Include the lockfile even when checking a historical checkout where it was ignored.
 		if repo.join("Cargo.lock").is_file() {
 			files.insert("Cargo.lock".into(), hash_file(&repo.join("Cargo.lock"))?);
 		}
@@ -190,19 +190,33 @@ impl Context {
 			std::env::current_dir()?.join(&out)
 		};
 		let absolute_out = resolved_destination(&absolute_out)?;
-		ensure!(
-			!absolute_out.starts_with(&repo),
-			"output must be outside the source tree"
-		);
+		if absolute_out.starts_with(&repo) {
+			ensure!(
+				absolute_out.starts_with(repo.join("target/xtask-verify")),
+				"output inside the source tree must be under target/xtask-verify"
+			);
+			let relative = absolute_out.strip_prefix(&repo)?;
+			ensure!(
+				Command::new("git")
+					.current_dir(&repo)
+					.args(["check-ignore", "-q", "--"])
+					.arg(relative)
+					.status()?
+					.success(),
+				"in-tree scratch must be ignored by Git"
+			);
+		}
 		if let Some(parent) = absolute_out.parent() {
 			fs::create_dir_all(parent)?;
 		}
 		fs::create_dir(&absolute_out)?;
 		let out = fs::canonicalize(absolute_out)?;
-		ensure!(
-			!out.starts_with(&repo),
-			"output must be outside the source tree"
-		);
+		if out.starts_with(&repo) {
+			ensure!(
+				out.starts_with(repo.join("target/xtask-verify")),
+				"resolved scratch output escaped target/xtask-verify"
+			);
+		}
 		let source = Arc::new(Source::capture(&repo)?);
 		write_json(&out.join("SOURCE.json"), source.as_ref())?;
 		let executable = std::env::current_exe()?;

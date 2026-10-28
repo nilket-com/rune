@@ -1,66 +1,38 @@
 {
- "rows": 463,
- "production_changes": false,
- "files": {
-  "cases.json": "7808ead8767600acd55bf2282d432b46e4961f86a07a28f6d272fd476d456cae",
-  "stock.json": "714afb0e204c0389e03445fdd1540c533ed28d035390836f98722304fb863c13",
-  "stock2.json": "e1d99a32cff7873c20f0e81c02fd03dacf7ac96c0b8e509929aca40b41999830",
-  "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
- },
- "stock_binary": {
-  "path": "/home/me/work/.reviews/0185-c18a-oracle1/rune-tests",
-  "sha256": "fad62a7c8dddcc64c7ab1e5ba44f1c5d3b67bdfcc1358744a17907a4ed4c0b69",
-  "pins_sha256": "90c707705a8ea7f086314820d75e93c65b878d61fde297cd8b0084b80a74de2e"
- },
- "stock_summary": {
   "rows": 463,
-  "statuses": {
-   "value": 394,
-   "error": 67,
-   "compile-error": 2
+  "production_changes": false,
+  "files": {
+    "cases.json": "7808ead8767600acd55bf2282d432b46e4961f86a07a28f6d272fd476d456cae",
+    "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
   },
-  "error_classes": {
-   "Type": 14,
-   "ArgumentCount": 36,
-   "FuelExhausted": 1,
-   "Panic": 8,
-   "IndexOutOfBounds": 3,
-   "Overflow": 1,
-   "DivisionByZero": 1,
-   "AccessConflict": 3
-  },
-  "replay": false,
-  "logical_traces": 67,
-  "cpu_list": "0-7,10-31"
- },
- "P1": {
-  "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte exact; raw observations retained unmasked",
-  "rows": [
-   {
-    "index": 256,
-    "label": "errors/type-error-in-method",
-    "source_sha256": "32b6406800bb4807ed4dac1db4f64d1c64e61194ce2b2ffc0e9558c403623a7c"
-   },
-   {
-    "index": 257,
-    "label": "errors/type-error-three-deep",
-    "source_sha256": "7f192acf94715d3ca547330f8a86c88b930950ed131c8df65d6b83b086a9481c"
-   },
-   {
-    "index": 266,
-    "label": "errors/error-in-arg-before-call",
-    "source_sha256": "7fd5aa60c97f7fc15c8727427f5aac5dcaccd38a55f824d625591119eb01d381"
-   },
-   {
-    "index": 269,
-    "label": "errors/error-in-loop-iteration",
-    "source_sha256": "c259ccab5d744fe95aed294a010ebdbd410fd5eb38a8b5867e54c75f7ba4a08e"
-   },
-   {
-    "index": 439,
-    "label": "uncertain/integer-receiver",
-    "source_sha256": "2bd81c4e8d31c0bc8aa3ae61096e60b9a810d5734fcfd621777d7f4c6eb839ea"
-   }
-  ]
- }
+  "P1": {
+    "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte exact; raw observations retained unmasked",
+    "rows": [
+      {
+        "index": 256,
+        "label": "errors/type-error-in-method",
+        "source_sha256": "32b6406800bb4807ed4dac1db4f64d1c64e61194ce2b2ffc0e9558c403623a7c"
+      },
+      {
+        "index": 257,
+        "label": "errors/type-error-three-deep",
+        "source_sha256": "7f192acf94715d3ca547330f8a86c88b930950ed131c8df65d6b83b086a9481c"
+      },
+      {
+        "index": 266,
+        "label": "errors/error-in-arg-before-call",
+        "source_sha256": "7fd5aa60c97f7fc15c8727427f5aac5dcaccd38a55f824d625591119eb01d381"
+      },
+      {
+        "index": 269,
+        "label": "errors/error-in-loop-iteration",
+        "source_sha256": "c259ccab5d744fe95aed294a010ebdbd410fd5eb38a8b5867e54c75f7ba4a08e"
+      },
+      {
+        "index": 439,
+        "label": "uncertain/integer-receiver",
+        "source_sha256": "2bd81c4e8d31c0bc8aa3ae61096e60b9a810d5734fcfd621777d7f4c6eb839ea"
+      }
+    ]
+  }
 }

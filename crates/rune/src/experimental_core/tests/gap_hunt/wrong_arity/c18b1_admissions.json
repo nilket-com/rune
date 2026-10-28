@@ -7,7 +7,7 @@
     "index": 58,
     "label": "script/method-receiver/too-few/uncalled-closure",
     "source_sha256": "258dbf853a82fa53e57314df5cd3bae32cec3cde75bea104ea88acd66b196003",
-    "stock_row_sha256": "4c5e0e958aec023da8b2b235aa7ad45480d08fb4ddd3e6b953741bfa1550038d",
+    "stock_row_sha256": "50fe5fae5b984be6230eb2598d4309c2d01a29ae10c015320617a8e1c9b77b43",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -32,7 +32,7 @@
     "index": 63,
     "label": "script/method-receiver/too-many/uncalled-closure",
     "source_sha256": "14c7d10758a37b5c19690b382fb665f873624a6c86735932ab4e7540029c0bdb",
-    "stock_row_sha256": "673a0f9f618989215de37c192d9379ef5b6a906f8c7219efd2132e572c5c5b5c",
+    "stock_row_sha256": "50fe5fae5b984be6230eb2598d4309c2d01a29ae10c015320617a8e1c9b77b43",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",

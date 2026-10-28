@@ -85,24 +85,41 @@ fn retained_unit_arity(label: &str, source_hex: &str, observation: &str, stable:
 	miri,
 	ignore = "frontend-heavy host control; native gates cover it; focused Miri uses minimal fixtures"
 )]
-fn native_argument_failure_matches_frozen_kind_message_site_and_effects() {
+fn native_argument_failure_matches_stock_kind_message_site_and_effects() {
 	use crate::experimental_core::error::ErrorKind;
-	let frozen: Vec<_> = include_str!("stock.tsv")
-		.lines()
-		.skip(1)
-		.map(|line| line.split('\t').collect::<Vec<_>>())
-		.find(|r| r[0] == "h1/flow/argument-error-before-host")
+	let case = CASES
+		.iter()
+		.find(|c| c.label == "h1/flow/argument-error-before-host")
 		.unwrap();
-	assert_eq!(
-		unhex(frozen[2]),
-		"pub fn main(){h1::add(h1::mark(\"left\",7),1/0)}"
-	);
+	let source = case.source;
+	assert_eq!(source, "pub fn main(){h1::add(h1::mark(\"left\",7),1/0)}");
+	// The legacy engine's observation of the same source, in process.
+	let legacy_tape = fixture::Recorder::new();
+	let legacy = fixture::legacy_context(&legacy_tape);
+	let mut legacy_sources = Sources::new();
+	legacy_sources
+		.insert(Source::memory(source).unwrap())
+		.unwrap();
+	let mut vm = crate::prepare(&mut legacy_sources)
+		.with_context(&legacy)
+		.build_vm()
+		.unwrap();
+	let legacy_error = crate::runtime::budget::with(FUEL, || vm.call(["main"], ()))
+		.call()
+		.unwrap_err();
+	let (_, stable) = super::legacy_error_metadata(&legacy_error);
+	let legacy_effects = {
+		let (calls, events) = legacy_tape.snapshot();
+		let mut effects = format!("calls:{calls}\n");
+		for event in events {
+			effects.push_str(&format!("event:{}\n", hex(event.as_bytes())));
+		}
+		effects
+	};
 	let tape = fixture::Recorder::new();
 	let context = fixture::context(&tape);
 	let mut sources = Sources::new();
-	sources
-		.insert(Source::memory(unhex(frozen[2])).unwrap())
-		.unwrap();
+	sources.insert(Source::memory(source).unwrap()).unwrap();
 	let program = frontend::compile(&mut sources, &context, &mut Diagnostics::new(), 1).unwrap();
 	let main = program.function(Hash::type_hash(["main"])).unwrap();
 	let mut store = Store::new(Limits::default()).unwrap();
@@ -116,15 +133,12 @@ fn native_argument_failure_matches_frozen_kind_message_site_and_effects() {
 		.invoke(&program, &mut store, main, &[], FUEL)
 		.unwrap_err();
 	assert_eq!(failure.error.kind, ErrorKind::DivisionByZero);
-	let observation = unhex(frozen[3]);
-	let fields: Vec<_> = observation.split('\t').collect();
-	assert_eq!(unhex(fields[3]), "Division by zero");
 	assert_eq!(
 		failure.message(&program).to_string(),
 		"Division by zero in `i64` division (`/`)"
 	);
+	assert_eq!(legacy_error.error().kind().to_string(), "Division by zero");
 	let site = failure.error.location.unwrap();
-	let stable = unhex(frozen[8]);
 	let projected = runtime_error_semantic(&stable).unwrap();
 	assert!(projected.contains(&format!(
 		"site:{}:{}:{}\n",
@@ -138,7 +152,7 @@ fn native_argument_failure_matches_frozen_kind_message_site_and_effects() {
 	for event in events {
 		effects.push_str(&format!("event:{}\n", hex(event.as_bytes())));
 	}
-	assert_eq!(effects, unhex(frozen[7]));
+	assert_eq!(effects, legacy_effects);
 	assert_eq!(store.live_entries(), 0);
 	assert_eq!(store.payload_bytes(), 0);
 	assert!(executor.is_idle());
@@ -210,55 +224,52 @@ fn semantic_schema_refuses_unreviewed_payloads_and_auxiliary_chains() {
 }
 
 #[test]
-#[ignore = "ONE bounded execution H1 144-row contract; frozen stock rows remain read-only"]
+#[ignore = "ONE bounded execution H1 144-row contract against live stock"]
 fn contract() {
-	let mut rows: Vec<Vec<&str>> = include_str!("stock.tsv")
-		.lines()
-		.skip(1)
-		.map(|s| s.split('\t').collect())
-		.collect();
-	rows.extend(
-		include_str!("precedence.tsv")
-			.lines()
-			.skip(1)
-			.map(|s| s.split('\t').collect::<Vec<_>>()),
-	);
-	assert_eq!(rows.len(), 144);
-	assert!(rows.iter().all(|r| r.len() == 11));
-	let full = rows
+	let precedence = precedence_cases();
+	let cases: Vec<&Case> = CASES
 		.iter()
-		.find(|r| r[0] == "h1/flow/nested")
-		.unwrap()
-		.clone();
+		.filter(|c| c.stock)
+		.chain(&precedence)
+		.collect();
+	assert_eq!(cases.len(), 144);
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
 	let scratch =
 		Scratch(std::env::temp_dir().join(format!("rune-h1-execution-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
+	let nested = cases.iter().find(|c| c.label == "h1/flow/nested").unwrap();
+	let path = out.join("full.source.rn");
+	fs::write(&path, nested.source).unwrap();
+	let full = stock_row(nested, &path, &scratch.0, &out, "full");
+	let full: Vec<&str> = full.iter().map(String::as_str).collect();
 	let started = Instant::now();
 	let mut counts = std::collections::BTreeMap::new();
-	for (n, frozen) in rows.iter().enumerate() {
+	for (n, case) in cases.iter().enumerate() {
 		assert!(
 			started.elapsed() < Duration::from_secs(600),
 			"aggregate cap"
 		);
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
-		let source = unhex(frozen[2]);
-		fs::write(&path, &source).unwrap();
-		let expected = if frozen[10] == "source-only-fuel-no-numeric-parity" {
-			assert_eq!(frozen[2], full[2], "fuel source identity");
-			&full
+		let source = case.source;
+		fs::write(&path, source).unwrap();
+		// Stock's numeric fuel is not compared: fuel rows owe the full-fuel result.
+		let fuel = case.policy == "source-only-fuel-no-numeric-parity";
+		let row = if fuel {
+			assert_eq!(source, nested.source, "fuel source identity");
+			full.iter().map(|s| (*s).to_owned()).collect()
 		} else {
-			frozen
+			stock_row(case, &path, &scratch.0, &out, &id)
 		};
+		let expected: Vec<&str> = row.iter().map(String::as_str).collect();
 		for ext in ["typed", "effects", "error", "diagnostics", "semantic-error"] {
 			let _ = fs::remove_file(scratch.0.join(format!("result.{ext}")));
 		}
 		// Every stock-compared row runs at full new fuel. The separate sweep is new-only.
 		fs::write(out.join(format!("{id}.argv")),format!("{:?} --exact {CHILD} --ignored --nocapture --quiet\nGAP_CASE={path:?}\nGAP_ORIGIN={path:?}\nGAP_MODE=h1-normal\nGAP_ENGINE=execution\nGAP_RESULT={:?}\nstdin=/dev/null\n",std::env::current_exe().unwrap(),scratch.0.join("result"))).unwrap();
 		let run = launch(&path, &path, "h1-normal", "fresh", &scratch.0, &out, &id);
-		assert!(run.complete, "{}: {}", frozen[0], run.record);
+		assert!(run.complete, "{}: {}", case.label, run.record);
 		fs::write(out.join(format!("{id}.rc")), "0\n").unwrap();
 		let mut sides = std::collections::BTreeMap::new();
 		for ext in ["typed", "effects", "error", "diagnostics", "semantic-error"] {
@@ -273,22 +284,22 @@ fn contract() {
 		let stock: Vec<_> = oracle_observation.split('\t').collect();
 		assert_eq!(actual.len(), 5);
 		assert_eq!(stock.len(), 5);
-		let policy = if frozen[0] == "h1/wrong/unit/7" {
-			assert_eq!(frozen[10], "stock-kind-map-pending");
+		let policy = if case.label == "h1/wrong/unit/7" {
+			assert_eq!(case.policy, "stock-kind-map-pending");
 			assert!(retained_unit_arity(
-				frozen[0],
-				frozen[2],
+				case.label,
+				expected[2],
 				&oracle_observation,
-				&unhex(frozen[8])
+				&unhex(expected[8])
 			));
 			"compile-refusal-Arity-vs-stock-error"
 		} else {
-			frozen[10]
+			case.policy
 		};
 		*counts.entry(policy).or_insert(0usize) += 1;
 		match policy {
 			"compile-refusal-Arity-vs-stock-error" | "fresh-Native-refusal-no-call" => {
-				assert_eq!(actual[0], "refused", "{}", frozen[0]);
+				assert_eq!(actual[0], "refused", "{}", case.label);
 				assert_eq!(
 					actual[1],
 					if policy == "compile-refusal-Arity-vs-stock-error" {
@@ -297,7 +308,7 @@ fn contract() {
 						"Some(Native)"
 					},
 					"{}",
-					frozen[0]
+					case.label
 				);
 				assert_eq!(sides["effects"], "calls:0\n");
 			}
@@ -315,19 +326,19 @@ fn contract() {
 						"shared frontend diagnostics"
 					);
 				} else {
-					assert_eq!(actual[0], stock[0], "{}", frozen[0]);
+					assert_eq!(actual[0], stock[0], "{}", case.label);
 					if policy != "test-only-VM-error-class" {
-						assert_eq!(actual[1], stock[1], "{}", frozen[0]);
+						assert_eq!(actual[1], stock[1], "{}", case.label);
 					} else {
 						assert_eq!(actual[1], "Panic");
 					}
-					assert_eq!(actual[3..], stock[3..], "message/value {}", frozen[0]);
-					assert_eq!(sides["typed"], unhex(expected[6]), "typed {}", frozen[0]);
+					assert_eq!(actual[3..], stock[3..], "message/value {}", case.label);
+					assert_eq!(sides["typed"], unhex(expected[6]), "typed {}", case.label);
 					assert_eq!(
 						sides["diagnostics"],
 						unhex(expected[9]),
 						"diagnostics {}",
-						frozen[0]
+						case.label
 					);
 					if stock[0] == "error" {
 						let projected = runtime_error_semantic(&unhex(expected[8]))
@@ -335,7 +346,7 @@ fn contract() {
 						assert_eq!(
 							sides["semantic-error"], projected,
 							"semantic error {}",
-							frozen[0]
+							case.label
 						);
 					}
 				}
@@ -343,19 +354,19 @@ fn contract() {
 					sides["effects"],
 					unhex(expected[7]),
 					"effects {}",
-					frozen[0]
+					case.label
 				);
 				assert_eq!(
 					run.stdout,
 					unhex(expected[4]).as_bytes(),
 					"stdout {}",
-					frozen[0]
+					case.label
 				);
 				assert_eq!(
 					run.stderr,
 					unhex(expected[5]).as_bytes(),
 					"stderr {}",
-					frozen[0]
+					case.label
 				);
 			}
 			"unwind-boundary-disposition-pending" => {
@@ -368,7 +379,7 @@ fn contract() {
 			}
 			_ => panic!("unreviewed policy {policy}"),
 		}
-		fs::write(out.join(format!("{id}.PASS")), frozen[0]).unwrap();
+		fs::write(out.join(format!("{id}.PASS")), case.label).unwrap();
 	}
 	for (name, count) in [
 		("candidate-exact", 71),

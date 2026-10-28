@@ -315,6 +315,7 @@ pub enum Detail {
 	HostMessage {
 		cause: HostCause,
 		arg: Option<u8>,
+		class: super::error_class::HostClass,
 	},
 	/// Typed scalar builtin conversion context. Allocates only through diagnostics, never success.
 	NumericArgumentType {

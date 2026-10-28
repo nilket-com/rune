@@ -2,7 +2,7 @@
   "11": {
     "label": "surface/named-variant-type",
     "source_sha256": "f7e97d3c96a02814f44bfd2d7a360b5b9f351079e39cdbe2aee4ff6d5d5b4cdc",
-    "stock_row_sha256": "cc1cc117ac3ff078d204f33057bdc67830cd6bbffedcf0a902f02682a812682b",
+    "stock_canonical_sha256": "c5ab00ce90500b3d39c97ced0dbbcfd8508dff3cfd480319a1c07391a4ce77db",
     "previous_classification": "Inherited-refusal",
     "classification": "Exact",
     "record": "C16h"
@@ -10,7 +10,7 @@
   "97": {
     "label": "control/enum-type-call",
     "source_sha256": "1ba3af9395fbd581c49a66d22a9328aa50adcf0fcc661474fa93118a1e4b4ea4",
-    "stock_row_sha256": "830b16dd329d55f0113f83f339e9932a8892ecd6357bb4f98147edad7be20b26",
+    "stock_canonical_sha256": "81258c4ce8978ca571ec1f80fa27830a45d253dab44ef8de681bd96a65473cc6",
     "previous_classification": "Inherited-refusal",
     "classification": "Inherited-diagnostic",
     "record": "C16h",

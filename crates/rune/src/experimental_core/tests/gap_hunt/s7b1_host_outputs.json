@@ -4,8 +4,7 @@
   "approval": "01a16fe0-0bde-716f-889a-90eef4e941c0",
   "scope": "S7b1 output certificates and importer limits; formatter closure stays S7b2",
   "precedence": "Undeclared host binding before host arity/type checks",
-  "stock_oracle_sha256": "812385ffccc3066ecc55d321120978da6bfea0fd307f499be7d519aa626b1863",
-  "stock_oracle": "dynamic_host_stock.tsv: all 126 stock observations and sources unchanged",
+  "stock_oracle": "Live stock child on each source",
   "rows": [
     {
       "index": 0,

@@ -1,0 +1,1 @@
+pub fn main() { let x=#{x:10}; for p in x { x.x+="bad"; } x.x }

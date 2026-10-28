@@ -1,0 +1,30 @@
+// Semantic search with a pretrained model: embed help articles, rank them for questions.
+// from the checkout root, after sh demos/candle/fetch-model.sh:
+// demos/candle/target/release/rnx-candle-demo run demos/candle/search.rn demos/data demos/models/all-MiniLM-L6-v2
+
+// the three articles closest in meaning to `question`, best first
+fn top3(articles, docs, encoder, question) {
+	let q = encoder.embed([question])?;
+	articles.with_dense(candle::similarity(docs, q, ["score"])?)?
+		.select_(["id", "title", "score"])?
+		.sort(["score"], polars::SortMultipleOptions::new().with_order_descending(true))?
+		.head(Some(3))
+}
+
+pub fn main(args) {
+	let dir = args[0];
+	let articles = polars::read_csv(`${dir}/articles.csv`, [("id", "i64"), ("title", "string"), ("text", "string")])?;
+	let questions = polars::read_csv(`${dir}/questions.csv`, [("id", "i64"), ("question", "string")])?;
+	let encoder = candle::TextEncoder::load(args[1])?;
+	let docs = encoder.embed(articles.strings("text")?)?;
+	let asked = questions.strings("question")?;
+	for question in asked {
+		println!("{}", question);
+		top3(articles, docs, encoder, question)?;
+	}
+	for question in asked {
+		let best = top3(articles, docs, encoder, question)?.column("title")?.str()?.get(0)?.unwrap();
+		println!("{} -> {}", question, best);
+	}
+	Ok(())
+}

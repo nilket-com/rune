@@ -1,0 +1,1 @@
+pub fn main() {let r=0..3; let s=0..3; (r.start,r.end)}

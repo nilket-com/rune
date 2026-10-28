@@ -7,7 +7,7 @@
     "index": 312,
     "label": "script/impl-max",
     "source_sha256": "05112864593a4d83cead1799c1459bad09a237acc8eb4b4e4fae9025766bc4aa",
-    "stock_row_sha256": "a33362d31f52a126f564fe41fc53c88c06b11500888dc3932bcd9b3fe34e1159",
+    "stock_row_sha256": "9d8969743f8e349088eb1104315186a18e3b8f31474476064f8847f9e64afbcc",
     "fresh": {
      "location": {
       "end": 110,
@@ -42,7 +42,7 @@
     "index": 313,
     "label": "script/impl-sqrt",
     "source_sha256": "66d07f478534407e80f1cfa21c8a97009748da62a3106ffc360f877347d4b426",
-    "stock_row_sha256": "48b76dd9dc341d21fb044b2a0a88049d7d665e766719b22a97e895868fbc7860",
+    "stock_row_sha256": "5a59ca349cc3bc87299d044dad25fc088d2e1cc2088bcaa81c2cfc9e6e6f33cc",
     "fresh": {
      "location": {
       "end": 110,
@@ -66,7 +66,7 @@
     "index": 314,
     "label": "script/impl-checked_add-tuple",
     "source_sha256": "ec018197fcd232666a11edc6b029eda76aea2d4049170de932b72a5dbb5f11cd",
-    "stock_row_sha256": "3a3294773e117271176af8abfe0f563b9153895273b4bb0ee5dddba2540bbabd",
+    "stock_row_sha256": "368d5cb5e8f4054e3f6c98d079361970dde00a2de3cefdeb6f9f9525c8c94d81",
     "fresh": {
      "location": {
       "end": 128,
@@ -90,7 +90,7 @@
     "index": 315,
     "label": "script/impl-to_string-enum",
     "source_sha256": "c1a281dc3c7ebe6c67d6b65a9feebb31c287235ed54f0fa1b954ca127e73b5da",
-    "stock_row_sha256": "59bd9dfb3f89322f0a871058065b88050f8ea372501bc8c314ad2ec157410a35",
+    "stock_row_sha256": "0ac9137369bb6f90974c950950ee191936b3014f24f5a2736a4775b677d76e2e",
     "fresh": {
      "location": {
       "end": 112,
@@ -114,7 +114,7 @@
     "index": 317,
     "label": "script/impl-to_i64",
     "source_sha256": "2135a006048983a8067b55135805497c04ffa8a7b8af4a01e69003e65b6c8362",
-    "stock_row_sha256": "6e66dcd7a43be5df98b732383a6cf5a2eea927162764467cb08a21ea583865e6",
+    "stock_row_sha256": "f7f9250ee9a48d9f2e82f9765797a0c212a74125af8f8680c478ba7da6bf39d9",
     "fresh": {
      "location": {
       "end": 107,
@@ -138,7 +138,7 @@
     "index": 318,
     "label": "script/impl-pow-module",
     "source_sha256": "a8450a33b12cbe6c9725eb785f5faacf25a450a466a865ff4076ba801591a0f3",
-    "stock_row_sha256": "7283654feb6f4dbc03a04c67ac371bd5f828a5182e24d262c39837d94944900d",
+    "stock_row_sha256": "44176cdafc6441dde934c091962e69c3c4771fed9d99a069f341f0280dc2461a",
     "fresh": {
      "location": {
       "end": 135,
@@ -162,7 +162,7 @@
     "index": 325,
     "label": "script/struct-named-f64",
     "source_sha256": "ae0a63ca0db65ff98a2cff3fb9b8ce11237cec8df0d6d512c7393704feeed437",
-    "stock_row_sha256": "37b61155104002fc833ec56a7e6eaf3f4fa848d979b8787c7808a7ef416a9ae0",
+    "stock_row_sha256": "82fbdfc79fd32f4f891e267f6299669d415396f1df6ab2ae85820f62f88252e8",
     "fresh": {
      "location": {
       "end": 138,

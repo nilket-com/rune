@@ -5,14 +5,6 @@
 
 use std::{env, fs, path::PathBuf, process::Command};
 
-// One descriptor shared by the integration gate and its focused count test.
-const PATTERNS_STOCK: (&str, &str, &str, usize) = (
-	"patterns-stock",
-	"gap_hunt::patterns::legacy_contract",
-	"stock",
-	348,
-);
-
 #[test]
 #[ignore = "full frozen contracts and S0: explicit operator run, requires GAP_OUT and GAP_EXTERNAL"]
 fn all_frozen_contracts() {
@@ -30,36 +22,17 @@ fn all_frozen_contracts() {
 			675,
 		),
 		(
-			"comparison-stock",
-			"gap_hunt::comparison_contract",
-			"stock",
-			3594,
-		),
-		(
 			"comparison-execution",
 			"gap_hunt::comparison_contract",
 			"fresh",
 			3594,
 		),
-		("index-stock", "gap_hunt::index_contract", "stock", 1035),
 		("index-execution", "gap_hunt::index_contract", "fresh", 1035),
-		(
-			"field-stock",
-			"gap_hunt::field_iter::contract",
-			"stock",
-			228,
-		),
 		(
 			"field-execution",
 			"gap_hunt::field_iter::contract",
 			"fresh",
 			228,
-		),
-		(
-			"len-stock",
-			"gap_hunt::len_clone::legacy_contract",
-			"stock",
-			310,
 		),
 		(
 			"len-execution",
@@ -74,22 +47,10 @@ fn all_frozen_contracts() {
 			39,
 		),
 		(
-			"range-stock",
-			"gap_hunt::range_index::legacy_contract",
-			"stock",
-			522,
-		),
-		(
 			"range-execution",
 			"gap_hunt::range_index::contract",
 			"fresh",
 			522,
-		),
-		(
-			"endpoints-stock",
-			"gap_hunt::range_index::legacy_endpoint_contract",
-			"stock",
-			100,
 		),
 		(
 			"endpoints-execution",
@@ -98,22 +59,15 @@ fn all_frozen_contracts() {
 			100,
 		),
 		(
-			"assertions-stock",
-			"gap_hunt::assertions::legacy_contract",
-			"stock",
-			178,
-		),
-		(
 			"assertions-execution",
 			"gap_hunt::assertions::contract",
 			"fresh",
 			178,
 		),
-		PATTERNS_STOCK,
 		(
-			"result-patterns-both",
-			"gap_hunt::patterns::result_supplement::check_contract",
-			"both",
+			"result-patterns-execution",
+			"gap_hunt::patterns::result_supplement::contract",
+			"fresh",
 			264,
 		),
 		(
@@ -129,22 +83,10 @@ fn all_frozen_contracts() {
 			144,
 		),
 		(
-			"format-specs-stock",
-			"gap_hunt::format_specs::legacy_contract",
-			"stock",
-			266,
-		),
-		(
 			"format-specs-execution",
 			"gap_hunt::format_specs::contract",
 			"fresh",
 			266,
-		),
-		(
-			"scalar-methods-stock",
-			"gap_hunt::scalar_methods::legacy_contract",
-			"stock",
-			199,
 		),
 		(
 			"scalar-methods-execution",
@@ -153,34 +95,16 @@ fn all_frozen_contracts() {
 			199,
 		),
 		(
-			"scalar-supplement-stock",
-			"gap_hunt::scalar_methods_supplement::legacy_contract",
-			"stock",
-			7,
-		),
-		(
 			"scalar-supplement-execution",
 			"gap_hunt::scalar_methods_supplement::contract",
 			"fresh",
 			7,
 		),
 		(
-			"deferred-index-stock",
-			"gap_hunt::deferred_index::legacy_contract",
-			"stock",
-			318,
-		),
-		(
 			"deferred-index-execution",
 			"gap_hunt::deferred_index::contract",
 			"fresh",
 			318,
-		),
-		(
-			"tuple-let-stock",
-			"gap_hunt::tuple_let::legacy_contract",
-			"stock",
-			98,
 		),
 		(
 			"tuple-let-execution",
@@ -190,9 +114,9 @@ fn all_frozen_contracts() {
 		),
 		("s0", "gap_hunt::corpus", "both", 639),
 		(
-			"output-both",
-			"gap_hunt::output_macros::contract_matrix",
-			"both",
+			"output-execution",
+			"gap_hunt::output_macros::contract",
+			"fresh",
 			367,
 		),
 	];
@@ -235,17 +159,4 @@ fn all_frozen_contracts() {
 		fs::write(out.join("COMPLETED"), &completed).unwrap();
 		std::println!("PASS {name}");
 	}
-}
-
-#[test]
-fn patterns_stock_count_hook() {
-	let (name, test, engine, rows) = PATTERNS_STOCK;
-	assert_eq!(name, "patterns-stock");
-	assert_eq!(test, "gap_hunt::patterns::legacy_contract");
-	assert_eq!(engine, "stock");
-	assert_eq!(rows, 348);
-	let mut frozen = include_str!("../patterns_stock.tsv").lines();
-	assert_eq!(frozen.next().unwrap().split('\t').count(), 9);
-	assert_eq!(frozen.count(), rows, "unified pattern hook/table count");
-	super::contract_completed(engine, rows);
 }

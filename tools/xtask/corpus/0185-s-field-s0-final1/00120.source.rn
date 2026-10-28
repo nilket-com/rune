@@ -1,0 +1,17 @@
+mod first {
+    pub fn number() {
+        crate::number() + 2
+    }
+}
+
+mod second {
+    pub fn number() {
+        super::first::number() + 4
+    }
+}
+
+pub fn number() {
+    1
+}
+
+dbg!(self::second::number());

@@ -496,11 +496,10 @@ fn cmp_missing_receivers_close_on_names_and_protocols() {
 #[test]
 #[cfg_attr(
 	miri,
-	ignore = "compiles standard Context/source; pure runtime refusal helpers run under Miri"
+	ignore = "compiles standard Context/source; pure runtime comparison helpers run under Miri"
 )]
-fn cmp_custom_vec_names_and_protocols_stay_open_and_refuse_at_runtime() {
+fn cmp_custom_vec_names_and_protocols_stay_open_and_compare_at_runtime() {
 	use crate::experimental_core::{
-		error::ErrorKind,
 		heap::{Limits, Store},
 		value::{Type, Value},
 	};
@@ -536,10 +535,9 @@ fn cmp_custom_vec_names_and_protocols_stay_open_and_refuse_at_runtime() {
 		let mut store = Store::new(Limits::default()).unwrap();
 		let value = store.list(Type::Vec, &[Value::I64(1)]).unwrap();
 		let before = store.state_for_test();
-		let error = store.method_cmp(value, value).unwrap_err();
 		assert_eq!(
-			(error.kind, error.operation, error.refusal),
-			(ErrorKind::Unsupported, "Method", None)
+			store.method_cmp(value, value).unwrap(),
+			Value::Ordering(std::cmp::Ordering::Equal)
 		);
 		assert_eq!(store.state_for_test(), before);
 		store.release(value).unwrap();

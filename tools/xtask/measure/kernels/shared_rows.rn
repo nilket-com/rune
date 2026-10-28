@@ -1,0 +1,21 @@
+fn add(rows, key, value) {
+	for row in rows {
+		if row[0] == key {
+			row[1] = row[1] + value;
+			return;
+		}
+	}
+	rows.push([key, value]);
+}
+
+pub fn main(x) {
+	let rows = [];
+	add(rows, "a", x % 7);
+	add(rows, "b", x % 11);
+	add(rows, "a", x % 13);
+	let copy = rows.clone();
+	let alias = copy[0];
+	alias[1] = alias[1] + 1;
+	copy.push(["c", x % 17]);
+	rows[0][1] * 1000000 + rows[1][1] * 10000 + copy[2][1] * 100 + rows.len() * 10 + copy.len()
+}

@@ -1,5 +1,4 @@
-// C8 strict projection: no address exemptions or retained-frame adapters.
-const REPLAY_CAP: usize = 2 << 20;
+// C8 strict projection of both engines: no address exemptions or retained-frame adapters.
 fn exact_keys(o: &serde_json::Map<String, Json>, names: &[&str]) {
 	assert_eq!(o.len(), names.len());
 	for name in names {
@@ -86,283 +85,76 @@ fn project(o: &Json) -> Json {
 		_ => panic!("unreviewed status"),
 	}
 }
-fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
-	let mut bytes = Vec::new();
-	let mut buf = [0; 4096];
-	loop {
-		let n = pipe.read(&mut buf).unwrap();
-		if n == 0 {
-			break;
-		}
-		let room = REPLAY_CAP - bytes.len();
-		bytes.extend_from_slice(&buf[..n.min(room)]);
-		if n > room {
-			exceeded.store(true, Ordering::Relaxed);
-		}
-	}
-	bytes
-}
-
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C8 frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn legacy_contract() {
-	run_contract("stock");
-}
-#[test]
-#[cfg(target_os = "linux")]
-#[ignore = "C8 strict execution replay; bounded children and exclusive GAP_OUT"]
+#[ignore = "C8 strict execution contract against live stock; bounded children and exclusive GAP_OUT"]
 fn contract() {
-	run_contract("fresh");
-}
-
-fn refusal_projection(source: &str, outcome: &Json, audit: &Json) -> Json {
-	exact_keys(
-		outcome.as_object().unwrap(),
-		&[
-			"status",
-			"kind",
-			"error",
-			"refusal",
-			"diagnostics",
-			"location",
-			"operation",
-		],
-	);
-	assert_eq!(outcome["status"], "refused");
-	let at = &outcome["location"];
-	exact_keys(at.as_object().unwrap(), &["source", "start", "end"]);
-	let start = at["start"].as_u64().unwrap() as usize;
-	let end = at["end"].as_u64().unwrap() as usize;
-	let span = source.as_bytes().get(start..end).unwrap();
-	json!({"status":outcome["status"],"kind":outcome["kind"],"refusal":outcome["refusal"],"source":at["source"],"start":start,"end":end,"span_hex":hex(span),"invoked":audit["invoked"]})
-}
-
-fn run_contract(engine: &str) {
-	assert!(matches!(engine, "stock" | "fresh"));
-	let frozen = include_str!("../../tuple_let_stock.tsv");
-	let mut lines = frozen.lines();
-	assert_eq!(lines.next().unwrap(), "case\tmode\tsource_hex\tstock_observation_hex\tstdout_hex\tstderr_hex\tpolicy\tfresh_expectation_hex\truling_hex");
-	let lines = lines.collect::<Vec<_>>();
-	assert_eq!(lines.len(), COUNT);
 	assert_eq!(CASES.len(), COUNT);
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
-	let c16e: Json = if engine == "fresh" {
-		let rows: Json = serde_json::from_str(include_str!("c16e_admissions.json")).unwrap();
-		assert_eq!(rows.as_object().unwrap().len(), 9);
-		rows
-	} else {
-		json!({})
-	};
+	let c16e: Json = serde_json::from_str(include_str!("c16e_admissions.json")).unwrap();
+	assert_eq!(c16e.as_object().unwrap().len(), 9);
+	let manifest: Json =
+		serde_json::from_str(include_str!("../../tuple_let_retained.json")).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
 	let mut policies = std::collections::BTreeMap::new();
-	for (i, ((label, source, mode, policy), line)) in CASES.iter().zip(lines).enumerate() {
-		let c = line.split('\t').collect::<Vec<_>>();
-		assert_eq!(c.len(), 9);
-		assert_eq!(c[0], *label);
+	for (i, &(label, source, mode, policy)) in CASES.iter().enumerate() {
 		assert!(labels.insert(label));
-		assert_eq!(c[1], *mode);
-		assert_eq!(c[2], hex(source.as_bytes()));
-		assert_eq!(c[6], *policy);
 		let folder = out.join(format!("{i:03}"));
-		fs::create_dir(&folder).unwrap();
-		let result = folder.join("observation.json");
-		use std::os::unix::process::CommandExt;
-		let mut command = Command::new("/usr/bin/prlimit");
-		command
-			.args([
-				"--cpu=15",
-				"--as=2147483648",
-				"--fsize=2097152",
-				"--core=0",
-				"--",
-			])
-			.arg(std::env::current_exe().unwrap());
-		command.process_group(0);
-		let mut child = command
-			.args([
-				"--exact",
-				"experimental_core::tests::gap_hunt::tuple_let::child",
-				"--ignored",
-				"--nocapture",
-				"--quiet",
-			])
-			.env_clear()
-			.env("C8_ENGINE", engine)
-			.env("PATH", "/usr/bin:/bin")
-			.env("LANG", "C.UTF-8")
-			.env("TZ", "UTC")
-			.env("C8_CASE", i.to_string())
-			.env("C8_RESULT", &result)
-			.current_dir(&folder)
-			.stdin(Stdio::null())
-			.stdout(Stdio::piped())
-			.stderr(Stdio::piped())
-			.spawn()
-			.unwrap();
-		let exceeded = Arc::new(AtomicBool::new(false));
-		let flag = exceeded.clone();
-		let pipe = child.stdout.take().unwrap();
-		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
-		let flag = exceeded.clone();
-		let pipe = child.stderr.take().unwrap();
-		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
-		let start = Instant::now();
-		let mut stop = false;
-		let mut exited = false;
-		loop {
-			if child.try_wait().unwrap().is_some() {
-				exited = true;
-			}
-			if !exceeded.load(Ordering::Relaxed)
-				&& exited && stdout.is_finished()
-				&& stderr.is_finished()
-			{
-				break;
-			}
-			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
-				stop = true;
-				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child.id())])
-					.stdout(Stdio::null())
-					.stderr(Stdio::null())
-					.status();
-				break;
-			}
-			std::thread::sleep(Duration::from_millis(10));
-		}
-		// wait() also returns the cached status when try_wait() already reaped
-		// the child. Every exit path explicitly collects it before joining.
-		let status = child.wait().unwrap();
-		let stdout = stdout.join().unwrap();
-		let stderr = stderr.join().unwrap();
-		fs::write(folder.join("stdout"), &stdout).unwrap();
-		fs::write(folder.join("stderr"), &stderr).unwrap();
-		fs::write(
-			folder.join("receipt.txt"),
-			format!(
-				"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\n",
-				start.elapsed()
-			),
-		)
-		.unwrap();
-		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
-		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
-		let mut e: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		e["outcome"] =
-			super::d1c_diagnostics::before("tuple_let", label, source, engine, &e["outcome"]);
-		if engine == "stock" {
-			exact_keys(
-				e.as_object().unwrap(),
-				&[
-					"schema",
-					"engine",
-					"index",
-					"label",
-					"mode",
-					"policy",
-					"source_hex",
-					"fuel",
-					"outcome",
-				],
-			);
-		} else {
-			exact_keys(
-				e.as_object().unwrap(),
-				&[
-					"schema",
-					"engine",
-					"index",
-					"label",
-					"mode",
-					"policy",
-					"source_hex",
-					"fuel",
-					"outcome",
-					"fresh_audit",
-				],
-			);
-		}
-		assert_eq!(e["engine"], engine);
-		assert_eq!(e["schema"], 1);
-		assert_eq!(e["index"], i);
-		assert_eq!(e["label"], *label);
-		assert_eq!(e["mode"], *mode);
-		assert_eq!(e["policy"], *policy);
-		assert_eq!(e["source_hex"], c[2]);
-		assert_eq!(e["fuel"], FUEL);
-		let oracle_expected: Json = serde_json::from_str(&unhex(c[3])).unwrap();
-		let expected: Json = serde_json::from_str(&unhex(c[7])).unwrap();
-		let ruling: Json = serde_json::from_str(&unhex(c[8])).unwrap();
+		let stock = launch("stock", i, &folder.join("stock"));
+		let oracle_expected = project(&stock.observation["outcome"]);
 		fs::write(
 			folder.join("stock-expected.json"),
 			serde_json::to_vec_pretty(&oracle_expected).unwrap(),
 		)
 		.unwrap();
+		let c16e_admission = c16e.get(label);
+		if let Some(rule) = c16e_admission {
+			use sha2::{Digest, Sha256};
+			assert_eq!(rule["index"], i);
+			assert_eq!(rule["previous_policy"], policy);
+			assert_eq!(rule["policy"], "Exact");
+			assert_eq!(
+				rule["source_sha256"],
+				hex(&Sha256::digest(source.as_bytes()))
+			);
+		}
+		let expected = match policy {
+			"Intentional-divergence" => {
+				let (expected, ruling) = intentional_expectation(label);
+				check_intentional(label, source, &oracle_expected, &expected, &ruling);
+				fs::write(
+					folder.join("ruling.json"),
+					serde_json::to_vec_pretty(&ruling).unwrap(),
+				)
+				.unwrap();
+				expected
+			}
+			"Exact" | "Depth-audit" => oracle_expected.clone(),
+			// C12, C16a, C16b and C16e admitted every former refusal; each now
+			// owes the exact stock result.
+			"Refused-Pattern" | "Refused-Range" => {
+				assert!(
+					c16e_admission.is_some()
+						|| policy == "Refused-Range"
+						|| matches!(
+							label,
+							"refusal/vec-pattern" | "refusal/for-pair" | "refusal/for-nested"
+						),
+					"unadmitted refusal {label}"
+				);
+				oracle_expected.clone()
+			}
+			_ => panic!("unreviewed C8 policy"),
+		};
 		fs::write(
 			folder.join("execution-expected.json"),
 			serde_json::to_vec_pretty(&expected).unwrap(),
 		)
 		.unwrap();
-		fs::write(
-			folder.join("ruling.json"),
-			serde_json::to_vec_pretty(&ruling).unwrap(),
-		)
-		.unwrap();
-		match *policy {
-			"Intentional-divergence" => {
-				check_intentional(label, source, &oracle_expected, &expected, &ruling)
-			}
-			"Exact" | "Depth-audit" => {
-				assert_eq!(expected, oracle_expected);
-				assert!(ruling.is_null());
-			}
-			"Refused-Pattern" | "Refused-Range" => {
-				assert!(ruling.is_null());
-				assert_eq!(expected["status"], "refused");
-				assert_eq!(expected["kind"], "Unsupported");
-				assert_eq!(expected["invoked"], false);
-				assert_eq!(
-					expected["refusal"],
-					if *policy == "Refused-Pattern" {
-						"Pattern"
-					} else {
-						"Range"
-					}
-				);
-				let start = expected["start"].as_u64().unwrap() as usize;
-				let end = expected["end"].as_u64().unwrap() as usize;
-				assert_eq!(
-					hex(source.as_bytes().get(start..end).unwrap()),
-					expected["span_hex"]
-				);
-			}
-			_ => panic!("unreviewed C8 policy"),
-		}
-		let c16e_admission = c16e.get(*label);
-		if let Some(rule) = c16e_admission {
-			use sha2::{Digest, Sha256};
-			assert_eq!(rule["index"], i);
-			assert_eq!(rule["previous_policy"], *policy);
-			assert_eq!(rule["policy"], "Exact");
-			assert_eq!(rule["source_sha256"], hex(&Sha256::digest(source.as_bytes())));
-			assert_eq!(rule["stock_row_sha256"], hex(&Sha256::digest(line.as_bytes())));
-		}
-		// C12, C16a, C16b and C16e admissions retain the historical freeze above and now
-		// owe their exact independently frozen runtime values.
-		let expected = if c16e_admission.is_some() || *policy == "Refused-Range"
-			|| matches!(
-				*label,
-				"refusal/vec-pattern" | "refusal/for-pair" | "refusal/for-nested"
-			) {
-			oracle_expected.clone()
-		} else {
-			expected
-		};
-		let got = if engine == "stock" {
-			project(&e["outcome"])
-		} else {
+		let fresh = launch("fresh", i, &folder.join("fresh"));
+		let e = &fresh.observation;
+		let got = {
 			let audit = &e["fresh_audit"];
 			exact_keys(
 				audit.as_object().unwrap(),
@@ -403,7 +195,7 @@ fn run_contract(engine: &str) {
 			] {
 				assert_eq!(audit[k], 0, "audit {label} {k}");
 			}
-			let (entries, bytes) = if *mode == "c8-small-store" {
+			let (entries, bytes) = if mode == "c8-small-store" {
 				(3, 4096)
 			} else {
 				(4096, 4 << 20)
@@ -414,8 +206,7 @@ fn run_contract(engine: &str) {
 			audit["call_chain"].as_array().unwrap();
 			audit["failure_site_ops"].as_array().unwrap();
 			assert_ne!(e["outcome"]["class"], "UNMAPPED");
-			if expected["status"] == "refused" || matches!(*label, "depth/128" | "depth/129")
-			{
+			if expected["status"] == "refused" || matches!(label, "depth/128" | "depth/129") {
 				assert_eq!(audit["invoked"], false);
 				assert_eq!(audit["returned_root"], false);
 				assert!(audit["typed_failure_kind"].is_null());
@@ -435,34 +226,30 @@ fn run_contract(engine: &str) {
 			serde_json::to_vec_pretty(&got).unwrap(),
 		)
 		.unwrap();
-		let expected = if engine == "stock" {
-			oracle_expected
-		} else {
-			let manifest: Json =
-				serde_json::from_str(include_str!("../../tuple_let_retained.json")).unwrap();
-			retained_expected(
-				&manifest,
-				label,
-				source,
-				&oracle_expected,
-				&expected,
-				&e["fresh_audit"],
-				&e["outcome"],
-			)
-		};
+		let expected = retained_expected(
+			&manifest,
+			label,
+			source,
+			&oracle_expected,
+			&expected,
+			&e["fresh_audit"],
+			&e["outcome"],
+		);
 		fs::write(
 			folder.join("effective-expected.json"),
 			serde_json::to_vec_pretty(&expected).unwrap(),
 		)
 		.unwrap();
-		assert_eq!(got, expected, "C8 strict {engine} {label}");
-		assert_eq!(hex(&stdout), c[4], "stdout {label}");
-		assert_eq!(hex(&stderr), c[5], "stderr {label}");
-		assert!(
-			!has_address(&String::from_utf8_lossy(&stdout))
-				&& !has_address(&String::from_utf8_lossy(&stderr))
-		);
-		*policies.entry(*policy).or_insert(0usize) += 1;
+		assert_eq!(got, expected, "C8 strict fresh {label}");
+		assert_eq!(hex(&fresh.stdout), hex(&stock.stdout), "stdout {label}");
+		assert_eq!(hex(&fresh.stderr), hex(&stock.stderr), "stderr {label}");
+		for run in [&stock, &fresh] {
+			assert!(
+				!has_address(&String::from_utf8_lossy(&run.stdout))
+					&& !has_address(&String::from_utf8_lossy(&run.stderr))
+			);
+		}
+		*policies.entry(policy).or_insert(0usize) += 1;
 	}
 	assert_eq!(
 		policies,
@@ -474,10 +261,77 @@ fn run_contract(engine: &str) {
 			("Depth-audit", 8)
 		])
 	);
-	contract_completed(engine, COUNT);
+	contract_completed("fresh", COUNT);
 	fs::write(
 		out.join("COMPLETE"),
-		format!("C8 {engine} {COUNT} rows complete\n"),
+		format!("C8 fresh {COUNT} rows complete\n"),
 	)
 	.unwrap();
+}
+
+/// Run case `index` on `engine` in a bounded child and check its envelope.
+/// The returned outcome has the D1c display mapping applied.
+#[cfg(target_os = "linux")]
+fn launch(engine: &str, index: usize, folder: &Path) -> super::live_oracle::Run {
+	let (label, source, mode, policy) = CASES[index];
+	let index_text = index.to_string();
+	let mut run = super::live_oracle::run_child(
+		"experimental_core::tests::gap_hunt::tuple_let::child",
+		label,
+		folder,
+		"C8_RESULT",
+		&[
+			("C8_ENGINE", engine.as_ref()),
+			("C8_CASE", index_text.as_ref()),
+		],
+	);
+	let e = &mut run.observation;
+	e["outcome"] =
+		super::d1c_diagnostics::before("tuple_let", label, source, engine, &e["outcome"]);
+	let keys = [
+		"schema",
+		"engine",
+		"index",
+		"label",
+		"mode",
+		"policy",
+		"source_hex",
+		"fuel",
+		"outcome",
+		"fresh_audit",
+	];
+	// Only the execution engine reports an audit.
+	let keys = &keys[..keys.len() - usize::from(engine == "stock")];
+	exact_keys(e.as_object().unwrap(), keys);
+	assert_eq!(e["engine"], engine);
+	assert_eq!(e["schema"], 1);
+	assert_eq!(e["index"], index);
+	assert_eq!(e["label"], label);
+	assert_eq!(e["mode"], mode);
+	assert_eq!(e["policy"], policy);
+	assert_eq!(e["source_hex"], hex(source.as_bytes()));
+	assert_eq!(e["fuel"], FUEL);
+	run
+}
+
+fn refusal_projection(source: &str, outcome: &Json, audit: &Json) -> Json {
+	exact_keys(
+		outcome.as_object().unwrap(),
+		&[
+			"status",
+			"kind",
+			"error",
+			"refusal",
+			"diagnostics",
+			"location",
+			"operation",
+		],
+	);
+	assert_eq!(outcome["status"], "refused");
+	let at = &outcome["location"];
+	exact_keys(at.as_object().unwrap(), &["source", "start", "end"]);
+	let start = at["start"].as_u64().unwrap() as usize;
+	let end = at["end"].as_u64().unwrap() as usize;
+	let span = source.as_bytes().get(start..end).unwrap();
+	json!({"status":outcome["status"],"kind":outcome["kind"],"refusal":outcome["refusal"],"source":at["source"],"start":start,"end":end,"span_hex":hex(span),"invoked":audit["invoked"]})
 }

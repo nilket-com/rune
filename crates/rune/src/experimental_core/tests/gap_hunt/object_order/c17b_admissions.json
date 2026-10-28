@@ -7,7 +7,7 @@
         "index": 21,
         "label": "insert/sequence",
         "source_sha256": "5546d2b6e29a0dbc40cdcee025b648b14a40c60fa12ba046fdcec522d8da0e13",
-        "stock_row_sha256": "913d45f05a95e83a1950eafb4cd1d205ec6689d3b6341bbd3c83ce1490a81a03",
+        "stock_canonical_sha256": "786c12dfcb4aa59f35f37031d1cd9639bf04aba09ce8e086ca57e9698c3c3df6",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -35,7 +35,7 @@
         "index": 22,
         "label": "insert/replace-keeps-position",
         "source_sha256": "981d6373c08e06f584dd856db6906666920f65788f5094c07bc4b4a775fcf844",
-        "stock_row_sha256": "be01b99573d643d55fd7324b74814d5da6e7fe9e175d627bee02309f398fd089",
+        "stock_canonical_sha256": "ee77ca3f37213eda3c19c34ef30463b712d4851944ef44943a51627b5325220e",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -63,7 +63,7 @@
         "index": 23,
         "label": "insert/after-literal",
         "source_sha256": "1e8f0372e1b1a485456670e1760e190ff28b00a67b498e01eca42e3485cddbc3",
-        "stock_row_sha256": "9c9495bca38fa3063114c713adcd10228f7b5bccff1fd8d142cb89535878d8d2",
+        "stock_canonical_sha256": "0ba6c47421143136cb598bf992d6f0e3663ca8cf1fba446123aaa396f6d28a69",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -91,7 +91,7 @@
         "index": 24,
         "label": "insert/forty",
         "source_sha256": "685793047b2643acc8920ce5023c39094200810faf193473af5032ee1d2e2cf6",
-        "stock_row_sha256": "be8b1c3962ef78370a1f73cad3234466193e4d9ed8e28be217f671cdc5ec168d",
+        "stock_canonical_sha256": "b48153aabe85754988473d8fdc5201b703a0bd082488459d23e24948b237d6d7",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -119,7 +119,7 @@
         "index": 25,
         "label": "insert/twenty-reverse",
         "source_sha256": "97febd02357306fea13587bad34fdefeabf9469b246e29edbbee3c9ba45d9a30",
-        "stock_row_sha256": "e3fef8f906c0dae98919489827d2d67b7756536eb732d04704344ef5d317ef78",
+        "stock_canonical_sha256": "1860dcd983f00a11df7af8b9fd5087ebe2bb40aa92c0789e913213f8695c0a5a",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -147,7 +147,7 @@
         "index": 26,
         "label": "insert/thousand",
         "source_sha256": "3c787b8bfd80783930780e992428678ac6683e9095f4a063ac2c5c1fd930d637",
-        "stock_row_sha256": "d62196fc108cd9f8e868e4bb5503ba14cbba671e21b61d91c165360b7e6baee0",
+        "stock_canonical_sha256": "648bbf82e52ae233e36337b57cc87b20b277fbe06abbb07e95f332704521b8ee",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -175,7 +175,7 @@
         "index": 27,
         "label": "insert/graph",
         "source_sha256": "9aca730c9450363a9f524deb96000dd3c9a2ce99a0d76a99af80719bdaf13a05",
-        "stock_row_sha256": "2e553aac4146b07cd6d82da8a7242cd839f774e9caf7cd6fcea000d44081f92e",
+        "stock_canonical_sha256": "2bad7128970a3250d18199a347fa4940ff031eaa4ebc522420f78b0d2a76252e",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -203,7 +203,7 @@
         "index": 31,
         "label": "remove/middle",
         "source_sha256": "1f8b5fde8bc066dde7dadc288b37742595afd45d4c31f6ac3e2af07917926ffd",
-        "stock_row_sha256": "5a4f641f0f38a4fe4ea9722e75148cca2eb5bec41fea480f94a9bb688fa4a3b1",
+        "stock_canonical_sha256": "1c977481b59c619c5b42191e8f54bd654c3f0f437a89541a6852c9264a7635ef",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -231,7 +231,7 @@
         "index": 32,
         "label": "remove/first",
         "source_sha256": "489a4340ae2e309ad1ab394974fa1b0a8d7e3cb7b686819805824155122fc556",
-        "stock_row_sha256": "0070c45cdd3a5960441d577232f617fb768ffc24621eaccda2e3695b7b486351",
+        "stock_canonical_sha256": "6db7743c54ce3a3a2127fd2559bb7667c8e0c8701909d92bbf07db3c5e3a5c35",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -259,7 +259,7 @@
         "index": 33,
         "label": "remove/last",
         "source_sha256": "e994e166963b464842cb67ea563c78ebfbe312f51ac4f40a411ddbd3f6eefd65",
-        "stock_row_sha256": "3959315b63c95d4c59a0ae343ac04cfce37b5fa818223ff44d25bc0e91810432",
+        "stock_canonical_sha256": "7dd2101a722328574a90d04c445ce6dac4f534221ee308ed580987ab0b1cb7e1",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -287,7 +287,7 @@
         "index": 34,
         "label": "remove/missing",
         "source_sha256": "e533931093fcf7d5f13f0e9ec92e6dbf09a655a078027b8b40dfff0e5083a72a",
-        "stock_row_sha256": "9263d5b57f1e56ac21a73c04ca2473e7b15c3d18aff737c1d61aca525ea5818f",
+        "stock_canonical_sha256": "83209d628d9527440456b0d3346950b8d10849fb2701254c9b80cd8e9e30632e",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -315,7 +315,7 @@
         "index": 35,
         "label": "remove/reinsert-appends",
         "source_sha256": "5870f3d7932a2df196ea90a870d36e0b6df0482f18e9ec335d174f0e37516a74",
-        "stock_row_sha256": "0b676bdd921988d0701bb3c0a4ef42be74c04e0d7b163bc14f6014b61af3fba5",
+        "stock_canonical_sha256": "6c049da7c5fc71768ed58b4cb6967aaeccad68e5665e0981328cb56575d5eacd",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -343,7 +343,7 @@
         "index": 36,
         "label": "remove/reinsert-twice",
         "source_sha256": "521f972c12fee54e730039e4a0bd1bfa6cb38ab9776a9d6d96c2e443d63c61b0",
-        "stock_row_sha256": "efe7fb8f515e261f61153cf8323954df488c4ccc6e923ecf852efea0e089e198",
+        "stock_canonical_sha256": "0e86f93ec980b1eb00ef1bbb8b52fde6704d6076e264567b4aa882a443bede75",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -371,7 +371,7 @@
         "index": 37,
         "label": "remove/all-then-insert",
         "source_sha256": "4df4adb0935af49c4110552557229ff400157cedf50689d4449a813963ffc83b",
-        "stock_row_sha256": "4466aec4d1cc86582b9acc89ea10412705b44468d108dde889f55a94498d2ec9",
+        "stock_canonical_sha256": "a789931b0f74176b954010f59318d06adef903ad2610557840a166c0f51d437b",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -399,7 +399,7 @@
         "index": 38,
         "label": "remove/evens",
         "source_sha256": "811636237000fe7ccf53327011a8ef804ccb13582e3575a85f6afb1f3e1ce6a3",
-        "stock_row_sha256": "ac7ddc05786dcfa9466f3d377e03670466aa0c51011c206f181eea85953d84e9",
+        "stock_canonical_sha256": "b4f26a5c9a8de9c7a84c8222b57f0648c11df96b08a90e302a30871366d8b2dc",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -427,7 +427,7 @@
         "index": 39,
         "label": "remove/literal-middle",
         "source_sha256": "8bf07c49d2deed5941a3556b98eae692ff6ffd7ad36a66109b16d370e1732360",
-        "stock_row_sha256": "81d1e57548b7a7a6ab6a2f920b3025096f0bcf6482e0fe150a9ccde040866a4a",
+        "stock_canonical_sha256": "f5d729854107939f54b1f99c550575f2b340a9e82bf39460727631cf06645e6b",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -455,7 +455,7 @@
         "index": 40,
         "label": "remove/thousand-half",
         "source_sha256": "7025bb151bbace3aaa436e7a6c078e5fa52b5f2e9e208f04aa60433843de5172",
-        "stock_row_sha256": "ab1b38b3b47c760ccfa902a934b9ad3d5cd1447444905f9ae99e39aac9e77bdc",
+        "stock_canonical_sha256": "4b1d051f8794381e19d4b5892aebefaf4a9c0b2588cf0fa2ebff7d8663c9da55",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -483,7 +483,7 @@
         "index": 41,
         "label": "remove/graph",
         "source_sha256": "74ad09ab47fbf26bc03e87d348f3338f99a5af9bdeb4cb0698b09442d8398ea6",
-        "stock_row_sha256": "c2436fd1f21742e1a474fcb614a952a8a0a18dbc0dd7b10399bb9ee8db53123c",
+        "stock_canonical_sha256": "ee3d4925319a259963cd41e235936b44e87b2001b3bce403b3afb25ebc9cd86d",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -511,7 +511,7 @@
         "index": 43,
         "label": "copy/clone",
         "source_sha256": "81dbf503fd648e29d0a487fa1179fab6c5cde18237f62540c5836e7c92a5d4c7",
-        "stock_row_sha256": "0db1b65dea72904d4910c98142d388cd46f342a21468dc2b4710a3800d72872c",
+        "stock_canonical_sha256": "b5650d16606622e8a5d5c0cc0cb73baabac69d38b19641b2bc1b7aff6c39588e",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -546,7 +546,7 @@
         "index": 44,
         "label": "copy/clone-after-remove",
         "source_sha256": "391bab38db5e359b0afd8297deb20681fcef0eb77c8c5f489ba53bb5a5398835",
-        "stock_row_sha256": "982a728ee3da61aabcb83f8651b9dfeca8ccdf0401f62e3476873d96d0c46c8d",
+        "stock_canonical_sha256": "c7de1398b5b1678ab8abab2b8923aa0d6f01ba35e63e44465c589f407f292cb3",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -581,7 +581,7 @@
         "index": 56,
         "label": "iter/keys-after-mutation",
         "source_sha256": "150bdfc42ee52ea112ff174d9e8d17e561663aae2c5967b21bb5bc03e3a67231",
-        "stock_row_sha256": "a39a6665aa12f1c71b91602143b541c1aba29bd325ad14e91c1b654c6ee9a9e0",
+        "stock_canonical_sha256": "c1257617cf043de8b4e261c4a90ad73344b088147698dd4c78e662f26fb2a916",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -616,7 +616,7 @@
         "index": 60,
         "label": "iter/guard-insert",
         "source_sha256": "90efe004d594bdaf006fd7a989e3d402e8aa3b8939d57c6d913ad7311b44ad48",
-        "stock_row_sha256": "55dc844aa2434de205c3af2428cefa621b0d6f3a6bdf73a0ebc18b09aaf8ee68",
+        "stock_canonical_sha256": "810aa201deed561e3966ba78b1fa2055b05d89b49e2a64e704c864aba67d8c5f",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -644,7 +644,7 @@
         "index": 64,
         "label": "iter/guard-get",
         "source_sha256": "f0eca4d2e5946b12c8fa3e878ecbc28573a925d6a3560b7c8616e8bde28adc98",
-        "stock_row_sha256": "12d465ecf5571a371e86ff08189be31b4e5b1bc3e2b44047afe5909a06332cdd",
+        "stock_canonical_sha256": "1601b700a36fc3d6bfc1a2069e7f45f858a793dce169ef269bedc1656641826c",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -672,7 +672,7 @@
         "index": 65,
         "label": "iter/after-break-mutate",
         "source_sha256": "804ac437d8ca501308a5cee02d8bd63ef947a7e22bcebe2d3af3c43bcee4d256",
-        "stock_row_sha256": "a5e8f40fd61ebd1c0c50a9d40c88851f48136c861355b7c19b8d07da8eed2bcc",
+        "stock_canonical_sha256": "189766ed3f3da40cb5ff66dfcbeec62b7df78c958d4eda6648a160fce5271697",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -700,7 +700,7 @@
         "index": 68,
         "label": "stable/debug-after-insert",
         "source_sha256": "b310818bd068533955aea429ecd5b7c31e3b058f63c247bc6f34c6e10324ed90",
-        "stock_row_sha256": "d08b30fb32844045dd8c4abdb31da5bf97e140dee440cdea2fb9e251203c0f27",
+        "stock_canonical_sha256": "0d66431c4c848801905fd0936571a846c359519c3f9d43b94311958975f0a8ee",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -728,7 +728,7 @@
         "index": 69,
         "label": "stable/debug-after-remove",
         "source_sha256": "e7ce358511fe47cc77b4d5b08ff52566a6008a03322f30721c5771a92a06161e",
-        "stock_row_sha256": "f7ff71c2a18eb068d69ca75cdffc62ca47be5b5412171759e2e850b01af07889",
+        "stock_canonical_sha256": "22988c55aa49ba125b92508883b3edad1990e9e6f45ab7e934b6da7722acbd6c",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -756,7 +756,7 @@
         "index": 70,
         "label": "stable/eq",
         "source_sha256": "4c76d882adfa250dfcd7617d7ac29974dc5a51180a2143b28b0177fdf5f818a3",
-        "stock_row_sha256": "0b11ca40b6cca684987097a309ccb8663b3f203a802c478fb422b5110120cf0d",
+        "stock_canonical_sha256": "beaa7374779c6d09d43bd60f0229f58818819c3e880b36277776a7764e0c30ab",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -784,7 +784,7 @@
         "index": 71,
         "label": "stable/len",
         "source_sha256": "5793d9fcb13ee77e9a8297086b5319db542468f5344a74d6126676d2342c5dfe",
-        "stock_row_sha256": "973ab1f3665adfee54eff41d8c1fa9927ab240272739d52a2ae27873a3e25f3b",
+        "stock_canonical_sha256": "56409287e749812225b0e8c70dbb9a6e0d6c37fa9ec161cd87e2d0eb38bd5a87",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {
@@ -812,7 +812,7 @@
         "index": 72,
         "label": "stable/contains-get",
         "source_sha256": "65e0f494dce08b99ffe962a3afce21d494351d731f70933da8499b659d5f87be",
-        "stock_row_sha256": "cc629116d0876d362a29645511682bceeb7d22fd63a468edcb23d719457f66da",
+        "stock_canonical_sha256": "83f8f52568b2f7bfebf779995b91e2d58409ed44522a0ba3e1800d4c9a8bacb7",
         "classification": "Inherited-refusal",
         "fresh": {
           "location": {

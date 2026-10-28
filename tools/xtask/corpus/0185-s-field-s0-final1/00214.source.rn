@@ -1,0 +1,183 @@
+// Record 0148, U6: NLI triage of the project's support tickets (0133's D2),
+// by the rule frozen in plans/0148 section 4 before any score: each of 0139's
+// passages (0136's committed byte ranges of title + "\n" + body) is a
+// premise, each frozen label description (labels.tsv, verbatim) a
+// hypothesis; p_entail is the entailment probability of a 3-way softmax over
+// the pair's logits (f32 logits cast to f64, softmax_last_dim in f64); a
+// ticket's score per label is the maximum over its passages; its class is
+// the best label (an exact tie to the first in labels.tsv order), or
+// "review" when the best score is below 0.5 (exactly 0.5 is assigned).
+// args: D2 issues.json, ranges-o0.tsv, frozen labels.tsv, NLI model
+// directory, output directory
+
+fn column_str(name, values) {
+    Ok(polars::Series::from_iter_str(values)?.with_name(name).into_column())
+}
+fn column_i64(name, values) {
+    Ok(polars::Series::from_iter_i64(values)?.with_name(name).into_column())
+}
+fn column_f64(name, values) {
+    Ok(polars::Series::from_iter_f64(values)?.with_name(name).into_column())
+}
+
+/// The per-ticket frame, built afresh for each view.
+fn table(numbers, titles, triage, best, second, best_scores, names, per_label) {
+    let cols = [
+        column_i64("ticket", numbers)?,
+        column_str("title", titles)?,
+        column_str("triage", triage)?,
+        column_str("best", best)?,
+        column_str("second", second)?,
+        column_f64("best score", best_scores)?,
+    ];
+    for j in 0..names.len() { cols.push(column_f64(names[j], per_label[j])?); }
+    polars::DataFrame::new(numbers.len(), cols)
+}
+
+pub fn run(args) {
+    let issues = json::parse(fs::read(args[0])?)?;
+    let names = [];
+    let descriptions = [];
+    for line in fs::read(args[2])?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        names.push(f[0]);
+        descriptions.push(f[1]);
+    }
+    let k = names.len();
+
+    // each ticket's text, by its D2 source name
+    let texts = #{};
+    let numbers = [];
+    let titles = [];
+    for i in issues {
+        numbers.push(i["number"]);
+        titles.push(i["title"]);
+        texts[`d2:#${i["number"]}`] = i["title"] + "\n" + i["body"];
+    }
+    // the passages, from the committed byte ranges, in their order
+    let passages = #{};
+    for line in fs::read(args[1])?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        if !f[0].starts_with("d2:") { continue; }
+        let s = f[2].parse::<i64>()?;
+        let e = f[3].parse::<i64>()?;
+        if passages.get(f[0]).is_none() { passages[f[0]] = []; }
+        passages[f[0]].push(texts[f[0]][s..e]);
+    }
+    // the pairs: ticket (D2 order), passage (range order), label (labels.tsv order)
+    let premises = [];
+    let hypotheses = [];
+    let owner = [];
+    let pindex = [];
+    let counts = [];
+    let n = numbers.len();
+    for t in 0..n {
+        let ps = passages[`d2:#${numbers[t]}`];
+        counts.push(ps.len());
+        for p in 0..ps.len() {
+            for j in 0..k {
+                premises.push(ps[p]);
+                hypotheses.push(descriptions[j]);
+                owner.push(t);
+                pindex.push(p);
+            }
+        }
+    }
+    let nli = candle::NliModel::load(args[3])?;
+    let t0 = time::monotonic_ms();
+    let logits = nli.score(premises, hypotheses)?;
+    let t1 = time::monotonic_ms();
+    let raw = candle::Tensor::from_dense(logits)?;
+    let probs = candle::softmax_last_dim(raw.to_dtype("f64")?)?.to_vec2()?;
+    let raw = raw.to_vec2()?;
+
+    // s_label: the maximum p_entail over each ticket's passages (a ticket's
+    // pairs are contiguous: passage-major, then label)
+    let per_ticket = [];
+    let at = 0;
+    for t in 0..n {
+        let row = [];
+        for j in 0..k {
+            let m = probs[at + j][1];
+            for p in 1..counts[t] {
+                let pe = probs[at + p * k + j][1];
+                if pe > m { m = pe; }
+            }
+            row.push(m);
+        }
+        per_ticket.push(row);
+        at += counts[t] * k;
+    }
+    let predicted = [];
+    let second = [];
+    let best_scores = [];
+    let abstained = [];
+    for row in per_ticket {
+        let best = 0;
+        for j in 1..k { if row[j] > row[best] { best = j; } }
+        let next = if best == 0 { 1 } else { 0 };
+        for j in 0..k { if j != best && row[j] > row[next] { next = j; } }
+        predicted.push(names[best]);
+        second.push(names[next]);
+        best_scores.push(row[best]);
+        abstained.push(if row[best] < 0.5 { "review" } else { names[best] });
+    }
+    let per_label = [];
+    for j in 0..k {
+        let s = [];
+        for row in per_ticket { s.push(row[j]); }
+        per_label.push(s);
+    }
+    println!("{} tickets, {} pairs; NLI scoring {} ms", n, premises.len(), t1 - t0);
+
+    // the summary: tickets per class, review included
+    let counts = table(numbers, titles, abstained, predicted, second, best_scores, names, per_label)?
+        .lazy().group_by([polars::col("triage")])?
+        .agg([polars::col("ticket").count().alias("tickets")])?
+        .collect()?
+        .sort(["tickets", "triage"], polars::SortMultipleOptions::new().with_order_descending_multi([true, false])?)?;
+    println!("tickets per class (\"review\": best entailment score below 0.5):");
+    println!("{}", counts);
+
+    // the review queue: the 20 lowest best scores, ties by ticket number,
+    // shown as two frames of 10 (the preview shows at most 10 rows)
+    println!("the review queue (lowest best scores first):");
+    for half in 0..2 {
+        let queue = table(numbers, titles, abstained, predicted, second, best_scores, names, per_label)?
+            .sort(["best score", "ticket"], polars::SortMultipleOptions::new())?
+            .slice(half * 10, 10)?
+            .select_(["ticket", "title", "best", "second", "best score"])?;
+        println!("{}", queue);
+    }
+
+    // three examples per label: its highest-scoring tickets
+    for j in 0..k {
+        let top = table(numbers, titles, abstained, predicted, second, best_scores, names, per_label)?
+            .sort([names[j], "ticket"], polars::SortMultipleOptions::new().with_order_descending_multi([true, false])?)?
+            .head(Some(3))?
+            .select_(["ticket", "title", names[j]])?;
+        println!("most {}-like:", names[j]);
+        println!("{}", top);
+    }
+
+    // retained for the gates: every pair's logits (f32, as read back), and
+    // the per-ticket table (f64)
+    let rows = "ticket\tpassage\tlabel\tcontradiction\tentailment\tneutral\n";
+    for r in 0..raw.len() {
+        rows += `${numbers[owner[r]]}\t${pindex[r]}\t${names[r % k]}\t${raw[r][0]}\t${raw[r][1]}\t${raw[r][2]}\n`;
+    }
+    fs::write(`${args[4]}/u6-pairs.tsv`, rows)?;
+    let rows = "ticket\ttriage\tbest\tsecond\tbest_score";
+    for j in 0..k { rows += `\t${names[j]}`; }
+    rows += "\n";
+    for t in 0..n {
+        rows += `${numbers[t]}\t${abstained[t]}\t${predicted[t]}\t${second[t]}\t${best_scores[t]}`;
+        for j in 0..k { rows += `\t${per_ticket[t][j]}`; }
+        rows += "\n";
+    }
+    fs::write(`${args[4]}/u6-tickets.tsv`, rows)?;
+    println!("WORKFLOW OK u6");
+    Ok(())
+}

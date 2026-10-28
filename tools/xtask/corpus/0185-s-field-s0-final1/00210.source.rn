@@ -1,0 +1,212 @@
+// Record 0145, E7: traffic spikes in the English Wikipedia articles on Rust,
+// Python, Go and Zig (D3: daily user views, 2023-07-01 to 2026-09-30), frozen
+// in plans/0145 before any analysis. A centred 29-day trend by depthwise
+// convolution, robust z-scores of the residuals, spike events (z >= 4), the
+// weekday pattern by weekly average pooling and nearest upsampling, and each
+// article's busiest week by raw views. The events are dates and ratios; they
+// make no claim about why traffic spiked.
+// args: D3 pageviews.tsv, output directory
+// or: "--synthetic", a JSON file {"series": [...]}, output file
+
+/// Per channel, the median of `t` [1, c, n] along its last axis, as [1, c, 1].
+fn median(t, n) {
+    let s = t.sort_last_dim(true)?.0;
+    if n % 2 == 1 {
+        return s.narrow(2, n / 2, 1);
+    }
+    s.narrow(2, n / 2 - 1, 1)?.add(s.narrow(2, n / 2, 1)?)?.affine(0.5, 0.0)
+}
+
+/// The frozen method on views [1, channels, days] (f64). Returns the trace
+/// values and, for the tables, the events and summaries.
+fn method(views, days) {
+    let c = views.dims()[1];
+    for row in views.reshape([c, days])?.to_vec2()? {
+        for v in row {
+            if !(v > 0.0) { return Err(`a non-positive count ${v}`); }
+        }
+    }
+    let x = views.log()?;
+    // the centred 29-day mean: a depthwise convolution, divided by the same
+    // convolution of ones so the edge days average the days that exist
+    let k = candle::Tensor::full(1.0 / 29.0, [c, 1, 29], "f64")?;
+    let sums = x.conv1d(k, 14, 1, 1, c)?;
+    let norm = candle::Tensor::ones([1, c, days], "f64")?.conv1d(k, 14, 1, 1, c)?;
+    let trend = sums.div(norm)?;
+    let r = x.sub(trend)?;
+    // robust scale: the median (mean of the middle two of an even count, or
+    // the middle one) and 1.4826 times the median absolute deviation
+    let med = median(r, days)?;
+    let dev = r.broadcast_sub(med)?.abs()?;
+    let mad = median(dev, days)?.affine(1.4826, 0.0)?;
+    for v in mad.reshape([c])?.to_vec1()? {
+        if !(v > 0.0) { return Err("zero MAD: the residuals have no spread"); }
+    }
+    let z = r.broadcast_sub(med)?.broadcast_div(mad)?;
+    // the weekday pattern over whole weeks: weekly means of the logs by
+    // average pooling, back to daily length by nearest upsampling
+    let weeks = days / 7;
+    let whole = weeks * 7;
+    let xw = x.narrow(2, 0, whole)?;
+    let wmean = xw.reshape([1, c, 1, whole])?.avg_pool2d_with_stride([1, 7], [1, 7])?;
+    let up = wmean.reshape([1, c, weeks])?.upsample_nearest1d(whole)?;
+    let profile = xw.sub(up)?.reshape([c, weeks, 7])?.mean(1)?.exp()?.affine(1.0, -1.0)?;
+    // the busiest week by raw views: weekly means, then their maximum
+    let raw = views.narrow(2, 0, whole)?.reshape([1, c, 1, whole])?.avg_pool2d_with_stride([1, 7], [1, 7])?;
+    let top = raw.max_pool2d_with_stride([1, weeks], [1, weeks])?.reshape([c])?.to_vec1()?;
+    let rawv = raw.reshape([c, weeks])?.to_vec2()?;
+    let busiest = [];
+    for ch in 0..c {
+        let w = 0;
+        while rawv[ch][w] != top[ch] { w += 1; }
+        busiest.push((w, top[ch]));
+    }
+    // the trend in views, for the tables (Rune's f64 has no exp)
+    let trend_views = trend.exp()?.reshape([c, days])?.to_vec2()?;
+    Ok(#{ trend: trend.reshape([c, days])?.to_vec2()?, z: z.reshape([c, days])?.to_vec2()?,
+          profile: profile.to_vec2()?, busiest, trend_views })
+}
+
+/// An article's short name ("Rust_(programming_language)" is "Rust").
+fn short(n) { n.split("_(").next().unwrap() }
+
+/// Spike events per channel: runs of z >= 4; each run's peak is its highest
+/// z, ties to the earliest day; up to five, by peak z descending, ties to
+/// the earliest peak.
+fn events(z) {
+    let out = [];
+    for row in z {
+        let found = [];
+        let t = 0;
+        while t < row.len() {
+            if row[t] >= 4.0 {
+                let s = t;
+                let p = t;
+                while t < row.len() && row[t] >= 4.0 {
+                    if row[t] > row[p] { p = t; }
+                    t += 1;
+                }
+                found.push((row[p], p, t - s));
+            } else {
+                t += 1;
+            }
+        }
+        let picked = [];
+        let used = [];
+        for _ in 0..found.len() { used.push(false); }
+        while picked.len() < 5 && picked.len() < found.len() {
+            let best = None;
+            for i in 0..found.len() {
+                if used[i] { continue; }
+                best = match best {
+                    None => Some(i),
+                    Some(b) => if found[i].0 > found[b].0 || (found[i].0 == found[b].0 && found[i].1 < found[b].1) { Some(i) } else { Some(b) },
+                };
+            }
+            let b = best.unwrap();
+            used[b] = true;
+            picked.push(found[b]);
+        }
+        out.push(picked);
+    }
+    out
+}
+
+/// The trace, for the exact comparison with the twin.
+fn trace(m, ev) {
+    let out = "";
+    let line = |tag, c, xs| {
+        let s = `${tag}\t${c}\t`;
+        let first = true;
+        for x in xs { if !first { s += ","; } s += `${x}`; first = false; }
+        s + "\n"
+    };
+    for c in 0..m.trend.len() {
+        out += line("trend", c, m.trend[c]);
+        out += line("z", c, m.z[c]);
+        for e in ev[c] { out += `event\t${c}\t${e.1}\t${e.2}\t${e.0}\n`; }
+        out += line("weekday", c, m.profile[c]);
+        out += `busiest\t${c}\t${m.busiest[c].0}\t${m.busiest[c].1}\n`;
+    }
+    out
+}
+
+fn synthetic(args) {
+    let s = json::parse(fs::read(args[1])?)?["series"];
+    let n = s.len();
+    let views = candle::Tensor::from_vec(s, [1, 1, n], "f64")?;
+    let m = method(views, n)?;
+    fs::write(args[2], trace(m, events(m.z)))?;
+    println!("WORKFLOW OK e7 synthetic");
+    Ok(())
+}
+
+pub fn run(args) {
+    if args[0] == "--synthetic" { return synthetic(args); }
+    let t0 = time::monotonic_ms();
+    let lines = fs::read(args[0])?.split("\n").collect::<Vec>();
+    let names = lines[0].split("\t").skip(1).collect::<Vec>();
+    let c = names.len();
+    let dates = [];
+    let flat = [];
+    for ch in 0..c { flat.push([]); }
+    for line in lines.iter().skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        dates.push(f[0]);
+        for ch in 0..c { flat[ch].push(std::i64::parse(f[ch + 1])?); }
+    }
+    let days = dates.len();
+    let all = [];
+    for ch in 0..c { for v in flat[ch] { all.push(v); } }
+    let views = candle::Tensor::from_vec(all, [1, c, days], "f64")?;
+    let t1 = time::monotonic_ms();
+    let m = method(views, days)?;
+    let ev = events(m.z);
+    let t2 = time::monotonic_ms();
+
+    // the tables
+    let a = []; let pd = []; let vv = []; let tv = []; let ratio = []; let zz = []; let len = [];
+    for ch in 0..c {
+        for e in ev[ch] {
+            let d = e.1;
+            let trend_views = m.trend_views[ch][d];
+            a.push(short(names[ch])); pd.push(dates[d]); vv.push(flat[ch][d]);
+            tv.push(trend_views.round() as i64); ratio.push(flat[ch][d] as f64 / trend_views);
+            zz.push(e.0); len.push(e.2);
+        }
+    }
+    let events_df = polars::DataFrame::new(a.len(), [
+        polars::Series::from_iter_str(a)?.with_name("article").into_column(),
+        polars::Series::from_iter_str(pd)?.with_name("peak day").into_column(),
+        polars::Series::from_iter_i64(vv)?.with_name("views").into_column(),
+        polars::Series::from_iter_i64(tv)?.with_name("trend").into_column(),
+        polars::Series::from_iter_f64(ratio)?.with_name("× trend").into_column(),
+        polars::Series::from_iter_f64(zz)?.with_name("z").into_column(),
+        polars::Series::from_iter_i64(len)?.with_name("days").into_column(),
+    ])?;
+    println!("Spike events (z ≥ 4, top 5 per article):\n{}", events_df.preview()?);
+    // weekday columns: position 0 is 2023-07-01, a Saturday
+    let order = [2, 3, 4, 5, 6, 0, 1];
+    let wnames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    let cols = [polars::Series::from_iter_str(names.iter().map(short).collect::<Vec>())?.with_name("article").into_column()];
+    for i in 0..7 {
+        let vals = [];
+        for ch in 0..c { vals.push((m.profile[ch][order[i]] * 1000.0).round() / 10.0); }
+        cols.push(polars::Series::from_iter_f64(vals)?.with_name(wnames[i] + " %").into_column());
+    }
+    println!("Weekday pattern (views vs. that week's geometric mean):\n{}", polars::DataFrame::new(c, cols)?.preview()?);
+    let bw = []; let bv = [];
+    for ch in 0..c { bw.push(dates[m.busiest[ch].0 * 7]); bv.push(m.busiest[ch].1.round() as i64); }
+    let busy = polars::DataFrame::new(c, [
+        polars::Series::from_iter_str(names.iter().map(short).collect::<Vec>())?.with_name("article").into_column(),
+        polars::Series::from_iter_str(bw)?.with_name("week from").into_column(),
+        polars::Series::from_iter_i64(bv)?.with_name("mean daily views").into_column(),
+    ])?;
+    println!("Busiest week by raw views:\n{}", busy.preview()?);
+    let t3 = time::monotonic_ms();
+    fs::write(args[1] + "/e7-trace.tsv", trace(m, ev))?;
+    println!("{} days x {} articles; load {} ms, signal and statistics {} ms, tables {} ms", days, c, t1 - t0, t2 - t1, t3 - t2);
+    println!("WORKFLOW OK e7");
+    Ok(())
+}

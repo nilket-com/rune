@@ -1,0 +1,21 @@
+fn fib() {
+    let a = 0;
+    let b = 1;
+
+    loop {
+        yield a;
+        let c = a + b;
+        a = b;
+        b = c;
+    }
+}
+
+let g = fib();
+
+while let Some(n) = g.next() {
+    println!("{n}");
+
+    if n > 100 {
+        break;
+    }
+}

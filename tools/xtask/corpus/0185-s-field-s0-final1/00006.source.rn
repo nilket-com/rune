@@ -1,0 +1,73 @@
+pub fn add(a, b) { a + b }
+pub fn sub(a, b) { a - b }
+pub fn mul(a, b) { a * b }
+pub fn div(a, b) { a / b }
+pub fn rem(a, b) { a % b }
+pub fn eq(a, b) { a == b }
+pub fn ne(a, b) { a != b }
+pub fn lt(a, b) { a < b }
+pub fn le(a, b) { a <= b }
+pub fn gt(a, b) { a > b }
+pub fn ge(a, b) { a >= b }
+pub fn bitand(a, b) { a & b }
+pub fn bitor(a, b) { a | b }
+pub fn bitxor(a, b) { a ^ b }
+pub fn shl(a, b) { a << b }
+pub fn shr(a, b) { a >> b }
+pub fn and(a, b) { a && b }
+pub fn or(a, b) { a || b }
+pub fn and_effect(a, b, w) { a && mark(w, b) }
+pub fn or_effect(a, b, w) { a || mark(w, b) }
+pub fn add_assign(a, b) { let x = a; x += b; x }
+pub fn sub_assign(a, b) { let x = a; x -= b; x }
+pub fn mul_assign(a, b) { let x = a; x *= b; x }
+pub fn div_assign(a, b) { let x = a; x /= b; x }
+pub fn rem_assign(a, b) { let x = a; x %= b; x }
+pub fn bitand_assign(a, b) { let x = a; x &= b; x }
+pub fn bitor_assign(a, b) { let x = a; x |= b; x }
+pub fn bitxor_assign(a, b) { let x = a; x ^= b; x }
+pub fn shl_assign(a, b) { let x = a; x <<= b; x }
+pub fn shr_assign(a, b) { let x = a; x >>= b; x }
+pub fn add_assign_index(a, b) { let v = [a]; let w = v; w[0] += b; v[0] }
+pub fn add_assign_field(a, b) { let o = #{x: a}; let p = o; p.x += b; o.x }
+pub fn sub_assign_index(a, b) { let v = [a]; let w = v; w[0] -= b; v[0] }
+pub fn sub_assign_field(a, b) { let o = #{x: a}; let p = o; p.x -= b; o.x }
+pub fn mul_assign_index(a, b) { let v = [a]; let w = v; w[0] *= b; v[0] }
+pub fn mul_assign_field(a, b) { let o = #{x: a}; let p = o; p.x *= b; o.x }
+pub fn div_assign_index(a, b) { let v = [a]; let w = v; w[0] /= b; v[0] }
+pub fn div_assign_field(a, b) { let o = #{x: a}; let p = o; p.x /= b; o.x }
+pub fn rem_assign_index(a, b) { let v = [a]; let w = v; w[0] %= b; v[0] }
+pub fn rem_assign_field(a, b) { let o = #{x: a}; let p = o; p.x %= b; o.x }
+pub fn bitand_assign_index(a, b) { let v = [a]; let w = v; w[0] &= b; v[0] }
+pub fn bitand_assign_field(a, b) { let o = #{x: a}; let p = o; p.x &= b; o.x }
+pub fn bitor_assign_index(a, b) { let v = [a]; let w = v; w[0] |= b; v[0] }
+pub fn bitor_assign_field(a, b) { let o = #{x: a}; let p = o; p.x |= b; o.x }
+pub fn bitxor_assign_index(a, b) { let v = [a]; let w = v; w[0] ^= b; v[0] }
+pub fn bitxor_assign_field(a, b) { let o = #{x: a}; let p = o; p.x ^= b; o.x }
+pub fn shl_assign_index(a, b) { let v = [a]; let w = v; w[0] <<= b; v[0] }
+pub fn shl_assign_field(a, b) { let o = #{x: a}; let p = o; p.x <<= b; o.x }
+pub fn shr_assign_index(a, b) { let v = [a]; let w = v; w[0] >>= b; v[0] }
+pub fn shr_assign_field(a, b) { let o = #{x: a}; let p = o; p.x >>= b; o.x }
+pub fn neg(a) { -a }
+pub fn bit_not(a) { !a }
+pub fn as_i64(a) { a as i64 }
+pub fn as_u64(a) { a as u64 }
+pub fn as_f64(a) { a as f64 }
+pub fn as_bool(a) { a as bool }
+pub fn as_char(a) { a as char }
+pub fn as_string(a) { a as String }
+pub fn is_i64(a) { a is i64 }
+pub fn is_not_i64(a) { a is not i64 }
+pub fn is_u64(a) { a is u64 }
+pub fn is_not_u64(a) { a is not u64 }
+pub fn is_f64(a) { a is f64 }
+pub fn is_not_f64(a) { a is not f64 }
+pub fn is_bool(a) { a is bool }
+pub fn is_not_bool(a) { a is not bool }
+pub fn is_char(a) { a is char }
+pub fn is_not_char(a) { a is not char }
+pub fn is_string(a) { a is String }
+pub fn is_not_string(a) { a is not String }
+pub fn index_get(i) { let v = [10, 20]; v[i] }
+pub fn index_set(i) { let v = [10, 20]; let w = v; w[i] = 99; [v[0], v[1]] }
+fn mark(w, x) { w.push(0); x }

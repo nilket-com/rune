@@ -1,0 +1,13 @@
+struct Person {
+    name,
+}
+
+impl Person {
+    fn greet(self) {
+        println!("Greetings from {}, and good luck with this section!", self.name);
+    }
+}
+
+let person = Person { name: "John-John Tedro" };
+
+person.greet();

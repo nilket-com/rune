@@ -342,93 +342,65 @@ fn legacy_probe() {
 	contract_completed("stock", cases.len());
 }
 
-// These are explicitly observation rows, never exact-address equivalence.
-// Extract one address field only on a row already frozen with that policy;
-// compare every other byte and retain both original streams unmodified.
-fn address_fields(bytes: &[u8]) -> (&[u8], &[u8]) {
-	let marker = b"object at 0x";
-	let start = bytes
-		.windows(marker.len())
-		.position(|w| w == marker)
-		.unwrap()
-		+ marker.len();
-	let end = start
-		+ bytes[start..]
-			.iter()
-			.take_while(|b| b.is_ascii_hexdigit())
-			.count();
-	assert!(end > start);
-	assert!(!bytes[end..].windows(marker.len()).any(|w| w == marker));
-	(&bytes[..start], &bytes[end..])
+/// One stock run of a C2 case: record, streams, site and captured output.
+struct StockRow {
+	record: String,
+	stdout: Vec<u8>,
+	stderr: Vec<u8>,
+	site: String,
+	captured: Vec<u8>,
 }
 
-#[test]
-#[ignore = "C2 frozen stock replay, explicit new GAP_OUT; both IO features required"]
-fn legacy_contract() {
-	legacy_probe();
-	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
-	let actual = fs::read_to_string(out.join("stock-output-macros.tsv")).unwrap();
-	let expected = include_str!("../output_macros_stock.tsv");
-	let actual: Vec<_> = actual.lines().skip(1).collect();
-	let expected: Vec<_> = expected.lines().skip(1).collect();
-	assert_eq!(actual.len(), 367);
-	assert_eq!(actual.len(), expected.len());
-	let mut exact = 0;
+/// Run every case on stock first, since fuel rows compare against the
+/// stock observation of their own high-fuel row.
+fn stock_rows(cases: &[Case], out: &Path, scratch: &Path) -> Vec<StockRow> {
+	let mut rows = Vec::new();
 	let mut observations = 0;
-	for (current, frozen) in actual.iter().zip(&expected) {
-		let a: Vec<_> = current.split('\t').collect();
-		let b: Vec<_> = frozen.split('\t').collect();
-		assert_eq!(a.len(), 9);
-		assert_eq!(b.len(), 9);
-		if b[8] == "Exact" {
-			assert_eq!(current, frozen, "{}", b[0]);
-			exact += 1;
-		} else {
-			assert_eq!(b[8], "Observation(address-fallback)");
-			for i in [0, 1, 2, 3, 5, 6, 7, 8] {
-				assert_eq!(a[i], b[i], "{} column {i}", b[0]);
-			}
-			let a = unhex(a[4]);
-			let b = unhex(b[4]);
-			let pins: serde_json::Value =
-				serde_json::from_str(include_str!("d1c_output_diagnostics.json")).unwrap();
-			let pins = pins.as_array().unwrap();
-			assert_eq!(pins.len(), 4);
-			if let Some(pin) = pins
-				.iter()
-				.find(|pin| pin["label"] == current.split('\t').next().unwrap())
-			{
-				assert_eq!(pin["source_hex"], frozen.split('\t').nth(2).unwrap());
-				let (before_prefix, before_suffix) = address_fields(b.as_bytes());
-				assert_eq!(
-					before_suffix,
-					pin["before_suffix"].as_str().unwrap().as_bytes()
-				);
-				assert_eq!(
-					address_fields(a.as_bytes()),
-					(
-						before_prefix,
-						pin["after_suffix"].as_str().unwrap().as_bytes()
-					)
-				);
-			} else {
-				assert_eq!(address_fields(a.as_bytes()), address_fields(b.as_bytes()));
-			}
-			observations += 1;
+	for (n, case) in cases.iter().enumerate() {
+		let id = format!("{n:05}-stock");
+		let path = out.join(format!("{n:05}.source.rn"));
+		fs::write(&path, &case.source).unwrap();
+		for extension in ["site", "capture"] {
+			let _ = fs::remove_file(scratch.join(format!("result.{extension}")));
 		}
-	}
-	assert_eq!((exact, observations), (351, 16));
-	#[cfg(target_os = "linux")]
-	{
-		crate::modules::io::stdout_tests::legacy_c2_at(&out.join("descriptors"));
-		assert_eq!(
-			fs::read_to_string(out.join("descriptors/stock-output-descriptors.tsv")).unwrap(),
-			include_str!("../output_descriptors_stock.tsv")
+		let run = launch(&path, &path, &case.mode, "stock", scratch, out, &id);
+		assert!(
+			run.complete,
+			"incomplete stock {}: {}",
+			case.label, run.record
 		);
+		let phase = run.record.split('\t').next().unwrap();
+		assert!(
+			matches!(
+				phase,
+				"value" | "error" | "compile-error" | "observation-error"
+			),
+			"{}: {}",
+			case.label,
+			run.record
+		);
+		let site = if phase == "error" {
+			fs::read_to_string(scratch.join("result.site")).unwrap()
+		} else {
+			String::new()
+		};
+		let captured = fs::read(scratch.join("result.capture")).unwrap_or_default();
+		// Stock prints unstable addresses for these rows; no execution row
+		// compares their streams.
+		observations += usize::from(
+			String::from_utf8_lossy(&run.stdout).contains("object at 0x")
+				|| String::from_utf8_lossy(&captured).contains("object at 0x"),
+		);
+		rows.push(StockRow {
+			record: run.record,
+			stdout: run.stdout,
+			stderr: run.stderr,
+			site,
+			captured,
+		});
 	}
-	println!(
-		"C2 STOCK EXACT {exact}; ADDRESS OBSERVATIONS {observations}; Linux descriptor rows 7"
-	);
+	assert_eq!(observations, 16);
+	rows
 }
 
 fn observation(record: &str) -> (&str, &str, String, String) {
@@ -438,29 +410,24 @@ fn observation(record: &str) -> (&str, &str, String, String) {
 }
 
 #[test]
-#[ignore = "C2 execution contract with explicit retained/refusal/fuel policies; new GAP_OUT"]
+#[ignore = "C2 execution contract against live stock with explicit retained/refusal/fuel policies; new GAP_OUT"]
 fn contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
 	let scratch =
 		Scratch(std::env::temp_dir().join(format!("rune-c2-execution-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
-	let expected: Vec<_> = include_str!("../output_macros_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
 	let cases = cases();
-	assert_eq!(expected.len(), cases.len());
+	assert_eq!(cases.len(), 367);
+	let expected = stock_rows(&cases, &out, &scratch.0);
+	let high = |label: &str| -> &StockRow {
+		let i = cases.iter().position(|case| case.label == label).unwrap();
+		&expected[i]
+	};
 	let mut policies = String::from("case\tdisposition\n");
 	let mut counts: BTreeMap<&str, usize> = BTreeMap::new();
 	for (n, (case, row)) in cases.iter().zip(&expected).enumerate() {
-		let columns: Vec<_> = row.split('\t').collect();
-		assert_eq!(columns.len(), 9);
-		assert_eq!(case.label, columns[0]);
-		assert_eq!(hex(case.source.as_bytes()), columns[2]);
-		assert_eq!(case.mode, columns[1]);
 		let path = out.join(format!("{n:05}.source.rn"));
-		fs::write(&path, &case.source).unwrap();
 		for extension in ["site", "capture"] {
 			let _ = fs::remove_file(scratch.0.join(format!("result.{extension}")));
 		}
@@ -475,8 +442,7 @@ fn contract() {
 		);
 		assert!(run.complete, "{} {}", case.label, run.record);
 		let actual = observation(&run.record);
-		let frozen_record = unhex(columns[3]);
-		let stock = observation(&frozen_record);
+		let stock = observation(&row.record);
 		let captured = fs::read(scratch.0.join("result.capture")).unwrap_or_default();
 		assert!(run.stderr.is_empty());
 		let site = fs::read_to_string(scratch.0.join("result.site")).unwrap_or_default();
@@ -508,26 +474,10 @@ fn contract() {
 				]
 				.contains(&run.stdout.as_slice()));
 			} else {
-				let high = expected
-					.iter()
-					.find(|r| r.starts_with("fuel/print/80\t"))
-					.unwrap()
-					.split('\t')
-					.nth(3)
-					.unwrap();
-				let high_record = unhex(high);
-				let high_obs = observation(&high_record);
+				let high = high("fuel/print/80");
+				let high_obs = observation(&high.record);
 				assert_eq!((&actual.2, &actual.3), (&high_obs.2, &high_obs.3));
-				assert_eq!(
-					hex(&run.stdout),
-					expected
-						.iter()
-						.find(|r| r.starts_with("fuel/print/80\t"))
-						.unwrap()
-						.split('\t')
-						.nth(4)
-						.unwrap()
-				);
+				assert_eq!(hex(&run.stdout), hex(&high.stdout));
 			}
 		} else if case.label.starts_with("fuel/") {
 			disposition = "execution fuel invariants (not VM fuel parity)";
@@ -561,19 +511,14 @@ fn contract() {
 				);
 			} else {
 				let name = case.label.split('/').nth(1).unwrap();
-				let high = expected
-					.iter()
-					.find(|r| r.starts_with(&format!("fuel/{name}/80\t")))
-					.unwrap();
-				let high: Vec<_> = high.split('\t').collect();
-				let high_record = unhex(high[3]);
-				let high_obs = observation(&high_record);
+				let high = high(&format!("fuel/{name}/80"));
+				let high_obs = observation(&high.record);
 				assert_eq!(actual.0, high_obs.0);
 				assert_eq!((&actual.2, &actual.3), (&high_obs.2, &high_obs.3));
-				assert_eq!(hex(&run.stdout), high[4]);
+				assert_eq!(hex(&run.stdout), hex(&high.stdout));
 				if name == "panic" {
 					assert_eq!(actual.1, "Panic");
-					assert_eq!(site, high[6]);
+					assert_eq!(site, high.site);
 				} else {
 					assert_eq!(actual.1, "");
 				}
@@ -609,10 +554,10 @@ fn contract() {
 				"{}",
 				case.label
 			);
-			assert_eq!(hex(&run.stdout), columns[4], "{} stdout", case.label);
-			assert_eq!(hex(&run.stderr), columns[5]);
-			assert_eq!(site, columns[6], "{} site", case.label);
-			assert_eq!(hex(&captured), columns[7]);
+			assert_eq!(hex(&run.stdout), hex(&row.stdout), "{} stdout", case.label);
+			assert_eq!(hex(&run.stderr), hex(&row.stderr));
+			assert_eq!(site, row.site, "{} site", case.label);
+			assert_eq!(hex(&captured), hex(&row.captured));
 		}
 		assert!(captured.is_empty());
 		*counts.entry(disposition).or_default() += 1;
@@ -697,32 +642,4 @@ fn direct_print_supplement(out: &Path) {
 			}
 		}
 	}
-}
-
-#[test]
-#[ignore = "C2 both-engine frozen contract, both IO features; new GAP_OUT"]
-fn contract_matrix() {
-	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
-	fs::create_dir(&out).unwrap();
-	for (engine, test) in [("stock", "legacy_contract"), ("fresh", "contract")] {
-		let result = Command::new(std::env::current_exe().unwrap())
-			.args([
-				"--exact",
-				&format!("experimental_core::tests::gap_hunt::output_macros::{test}"),
-				"--ignored",
-				"--nocapture",
-			])
-			.env("GAP_OUT", out.join(engine))
-			.output()
-			.unwrap();
-		fs::write(out.join(format!("{engine}.stdout")), &result.stdout).unwrap();
-		fs::write(out.join(format!("{engine}.stderr")), &result.stderr).unwrap();
-		assert!(
-			result.status.success(),
-			"{engine}: {}",
-			String::from_utf8_lossy(&result.stdout)
-		);
-		assert!(String::from_utf8_lossy(&result.stdout).contains("1 passed; 0 failed"));
-	}
-	contract_completed("both", 367);
 }

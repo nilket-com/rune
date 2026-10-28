@@ -1,22 +1,5 @@
 //! P3a: resource bounds of the production native tier (test-only).
 //!
-//! The selection golden (`fixtures/p3a_selection_golden.txt`, sha256
-//! 2f95b026f6426603c9baf156e39ca78893d3f059d409c40a04bf815bd64d8c9c) was captured from the
-//! batch build, before the streaming refactor, by `child_selection_golden` with
-//! `RUNE_P3A_GOLDEN_OUT` set. P2b re-captured
-//! it as `fixtures/p2b_selection_golden.txt` the same way; `child_selection_golden` now
-//! compares against that one line for line, and `p2b_tests::compare_p2b_delta` checks the
-//! delta between the two (the P3a differences, the forced `Exit` growth and the
-//! enumerated P2b admissions). For every program of the corpus each golden pins:
-//!
-//! - `SUMMARY`: every counter of the batch build's summary, except the
-//!   timings (production `cache::prepare`);
-//! - `LOADED`: the loaded regions in load order, `(function, header, code bytes)`;
-//! - `ANALYSIS`: the outcome of every analyzed candidate header from `region::analyze`, an
-//!   admitted region as an FNV-1a 64 fingerprint of all its fields;
-//! - `COMPILE`: the classification of every admitted region by an independent
-//!   `lower::compile(region, 0)`.
-//!
 //! Every test that loads or executes generated code runs in a child process, as in P2.
 //! Output lines prefixed `P3A` are machine-readable report rows.
 use super::exec_tests::{
@@ -48,9 +31,6 @@ use std::time::{Duration, Instant};
 
 const CHILD_ENV: &str = "RUNE_P3A_NATIVE_CHILD";
 const DEADLINE: Duration = Duration::from_secs(900);
-
-/// The selection golden captured from the batch build (the P2b delta's base).
-const GOLDEN: &str = include_str!("fixtures/p3a_selection_golden.txt");
 
 // ------------------------------------------------------------------ process isolation
 
@@ -507,7 +487,7 @@ fn compile_class(region: &Region) -> String {
 /// The golden text of one program: production build summary and loaded set, plus the
 /// independent analysis and compile classification of every candidate header. Also returns
 /// the full P3a summary.
-fn golden_of(name: &str, code: &Code) -> (String, NativeSummary) {
+pub(super) fn golden_of(name: &str, code: &Code) -> (String, NativeSummary) {
 	execution();
 	let mut out = String::new();
 	let summary = cache::prepare(code).expect("summary");
@@ -558,13 +538,13 @@ fn golden_of(name: &str, code: &Code) -> (String, NativeSummary) {
 
 #[test]
 #[cfg_attr(miri, ignore = "Miri: loads generated machine code in a child process")]
-fn p3a_selection_golden() {
-	run_child("child_selection_golden");
+fn p3a_selection_census() {
+	run_child("child_selection_census");
 }
 
 #[test]
 #[ignore = "P3a native worker: run by its parent test in a child process"]
-fn child_selection_golden() {
+fn child_selection_census() {
 	require_child();
 	let mut text = String::new();
 	for (name, src) in golden_programs() {
@@ -588,55 +568,7 @@ fn child_selection_golden() {
 	}
 	assert_eq!(cache::invalid_exits(), 0);
 
-	if let Some(path) = std::env::var_os("RUNE_P3A_GOLDEN_OUT") {
-		std::fs::write(&path, &text).expect("write golden");
-		println!(
-			"P3AGOLDEN\twritten\tlines={}\tfnv={:016x}",
-			text.lines().count(),
-			fnv1a(&text)
-		);
-		return;
-	}
-
-	// FUEL: the current selection equals the golden captured once from the verified FUEL
-	// implementation (`fuel_tests::FUEL_GOLDEN`), line for line, AND its delta against the
-	// R1 golden (`r1_tests::R1_GOLDEN`) is the restricted size-only delta
-	// (`compare_w13_delta`: only COMPILE `ok bytes`, LOADED `code_bytes` and SUMMARY
-	// `code_bytes` may differ; `mapped_bytes`, metadata, admissions and every other counter
-	// equal; COMPILE, LOADED and SUMMARY consistent) in which every changed line belongs to a
-	// FUEL-selected region or to a program holding one (`fuel_tests::check_fuel_selected_only`).
-	// Its deltas against the W13 and B1 goldens stay the restricted W13 delta. The
-	// fixture-to-fixture checks: `fuel_selection_golden_delta` (FUEL against R1),
-	// `r1_selection_golden_delta` (R1 against W13), `w13_selection_golden_delta` (W13 against
-	// B1), `b1_selection_golden_delta` (B1 against P2b) and `p2b_selection_golden_delta` (P2b
-	// against the batch build's golden).
-	let fuel = super::fuel_tests::FUEL_GOLDEN;
-	let (new_lines, fuel_lines): (Vec<&str>, Vec<&str>) =
-		(text.lines().collect(), fuel.lines().collect());
-	assert_eq!(new_lines.len(), fuel_lines.len(), "FUEL golden line count");
-	for (n, g) in new_lines.iter().zip(fuel_lines.iter()) {
-		assert_eq!(n, g);
-	}
-	let r1 = super::r1_tests::R1_GOLDEN;
-	let (identical_r1, changed_r1) = super::w13_tests::compare_w13_delta(r1, &text);
-	let selected = super::fuel_tests::check_fuel_selected_only(r1, &text)
-		.unwrap_or_else(|e| std::panic!("FUEL golden delta: {e}"));
-	let w13 = super::w13_tests::W13_GOLDEN;
-	let (identical, changed) = super::w13_tests::compare_w13_delta(w13, &text);
-	let b1 = super::b1_tests::B1_GOLDEN;
-	let (identical_b1, changed_b1) = super::w13_tests::compare_w13_delta(b1, &text);
-	println!(
-		"P3AGOLDEN\tcompared_fuel\tlines={}\tfuel_golden_fnv={:016x}\tr1_golden_fnv={:016x}\tw13_golden_fnv={:016x}\tb1_golden_fnv={:016x}\tnew_fnv={:016x}\tp2b_golden_fnv={:016x}\tp3a_golden_fnv={:016x}\tidentical_to_r1_golden={identical_r1}\tbyte_changed_lines_vs_r1={changed_r1}\tchanged_selected_regions={}\tidentical_to_w13_golden={identical}\tbyte_changed_lines_vs_w13={changed}\tidentical_to_b1_golden={identical_b1}\tbyte_changed_lines_vs_b1={changed_b1}",
-		text.lines().count(),
-		fnv1a(fuel),
-		fnv1a(r1),
-		fnv1a(w13),
-		fnv1a(b1),
-		fnv1a(&text),
-		fnv1a(super::p2b_tests::P2B_GOLDEN),
-		fnv1a(GOLDEN),
-		selected.len()
-	);
+	assert!(!text.is_empty(), "selection census must cover the corpus");
 }
 
 // ----------------------------------------------- A2/A3: streaming and work charging

@@ -1,0 +1,1 @@
+struct P { x } fn g() { 1 } pub fn main() { let x=Ok(10); x.99 }

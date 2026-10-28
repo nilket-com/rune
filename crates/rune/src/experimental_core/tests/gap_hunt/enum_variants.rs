@@ -47,38 +47,10 @@ include!("enum_variants/run.rs");
 include!("enum_variants/contract.rs");
 include!("enum_variants/bounded.rs");
 
-#[test]
-#[ignore = "C15b stock VM oracle child; explicit bounded external operator only"]
-fn child() {
-	let engine = std::env::var("C15B_ENGINE").unwrap();
-	assert!(engine == "stock" || engine == "fresh");
-	let index: usize = std::env::var("C15B_CASE").unwrap().parse().unwrap();
-	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	let mut row = cases[index].clone();
-	if let Ok(fuel) = std::env::var("C15B_COUNTERFACTUAL_FUEL") {
-		assert_eq!(engine, "stock");
-		assert_eq!(index, 148);
-		assert_eq!(fuel, "200000");
-		row["fuel"] = json!(200000);
-	}
-	let row = &row;
+/// Observe `row` (case `index`) on the stock VM in this process.
+fn legacy_observe(index: usize, row: &Json) -> Json {
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
-
-	if engine == "fresh" {
-		let result = observe(row);
-		let path = std::env::var_os("C15B_RESULT").unwrap();
-		let mut file = std::fs::OpenOptions::new()
-			.create_new(true)
-			.write(true)
-			.open(path)
-			.unwrap();
-		use std::io::Write;
-		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
-			.unwrap();
-		return;
-	}
-
 	let context = context(row["fixture"].as_str().unwrap());
 	let mut sources = Sources::new();
 	sources
@@ -114,7 +86,41 @@ fn child() {
 		}
 	};
 	let events = TAPE.with(|t| t.borrow().clone());
-	let result = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"fixture":row["fixture"],"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
+	json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"fixture":row["fixture"],"observation":{"outcome":outcome,"events":events,"reuse":reuse}})
+}
+
+#[test]
+#[ignore = "C15b stock VM oracle child; explicit bounded external operator only"]
+fn child() {
+	let engine = std::env::var("C15B_ENGINE").unwrap();
+	assert!(engine == "stock" || engine == "fresh");
+	let index: usize = std::env::var("C15B_CASE").unwrap().parse().unwrap();
+	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	let mut row = cases[index].clone();
+	if let Ok(fuel) = std::env::var("C15B_COUNTERFACTUAL_FUEL") {
+		assert_eq!(engine, "stock");
+		assert_eq!(index, 148);
+		assert_eq!(fuel, "200000");
+		row["fuel"] = json!(200000);
+	}
+	let row = &row;
+	TAPE.with(|t| t.borrow_mut().clear());
+
+	if engine == "fresh" {
+		let result = observe(row);
+		let path = std::env::var_os("C15B_RESULT").unwrap();
+		let mut file = std::fs::OpenOptions::new()
+			.create_new(true)
+			.write(true)
+			.open(path)
+			.unwrap();
+		use std::io::Write;
+		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
+			.unwrap();
+		return;
+	}
+
+	let result = legacy_observe(index, row);
 	let path = std::env::var_os("C15B_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
 		.create_new(true)
@@ -459,6 +465,96 @@ fn same_variant_compares_across_tuple_and_named_programs() {
 	assert_eq!(store.payload_bytes(), 0);
 }
 
+/// Drop `raw` debug evidence and mask each `AnyTypeInfo::full_name` pointer in
+/// a typed kind (P1), recording each masked leaf's path and count in `leaves`.
+fn stock_projection(v: &Json, path: &str, leaves: &mut Vec<Json>) -> Json {
+	match v {
+		Json::Object(m) => Json::Object(
+			m.iter()
+				.filter(|(k, _)| k.as_str() != "raw")
+				.map(|(k, v)| {
+					(
+						k.clone(),
+						stock_projection(
+							v,
+							&if path.is_empty() {
+								k.clone()
+							} else {
+								format!("{path}.{k}")
+							},
+							leaves,
+						),
+					)
+				})
+				.collect(),
+		),
+		Json::Array(a) => Json::Array(
+			a.iter()
+				.enumerate()
+				.map(|(i, v)| stock_projection(v, &format!("{path}.{i}"), leaves))
+				.collect(),
+		),
+		Json::String(s) if s.contains("full_name:") => {
+			assert!(path.ends_with("kind"));
+			let mut tail = s.as_str();
+			let mut out = String::new();
+			let mut count = 0;
+			while let Some(i) = tail.find("full_name:") {
+				assert!(tail[..i].ends_with("AnyTypeInfo { "));
+				out.push_str(&tail[..i]);
+				let digits = tail[i..].strip_prefix("full_name: 0x").unwrap();
+				let n = digits.bytes().take_while(|b| b.is_ascii_hexdigit()).count();
+				assert!(n > 0 && digits[n..].starts_with(", hash: 0x"));
+				out.push_str("full_name: <pointer>");
+				tail = &digits[n..];
+				count += 1;
+			}
+			out.push_str(tail);
+			leaves.push(json!({"path":path,"count":count}));
+			json!(out)
+		}
+		_ => v.clone(),
+	}
+}
+
+/// The comparable stock row for `case`: the live stock observation `raw` with
+/// D1 displays restored to their original text and the P1 projection applied
+/// to exactly the leaves `p1.json` allows.
+fn expected_stock(case: &Json, raw: &Json) -> Json {
+	let id = case["id"].as_str().unwrap();
+	let label = case["label"].as_str().unwrap();
+	let source = case["source"].as_str().unwrap();
+	for key in ["label", "source_sha256", "fixture", "fuel"] {
+		assert_eq!(raw[key], case[key], "{id} {key}");
+	}
+	assert_eq!(raw["source_hex"], hex(source.as_bytes()));
+	let mut raw = raw.clone();
+	raw["observation"]["outcome"] = super::d1c_diagnostics::before(
+		"enum_variants",
+		label,
+		source,
+		"stock",
+		&raw["observation"]["outcome"],
+	);
+	raw["observation"]["outcome"] = super::d1b_diagnostics::intentional_json_before(
+		"enum_variants",
+		label,
+		source,
+		"stock",
+		&raw["observation"]["outcome"],
+	);
+	raw["observation"] = d1_enum_before(case, &raw["observation"], "stock");
+	let allowances: Json = serde_json::from_str(include_str!("enum_variants/p1.json")).unwrap();
+	let mut leaves = Vec::new();
+	let projected = stock_projection(&raw, "", &mut leaves);
+	assert_eq!(
+		json!(leaves),
+		allowances.get(id).cloned().unwrap_or(json!([])),
+		"P1 {id}"
+	);
+	projected
+}
+
 #[test]
 fn oracle_controls() {
 	use sha2::{Digest, Sha256};
@@ -469,20 +565,7 @@ fn oracle_controls() {
 			"dispositions.json",
 			include_str!("enum_variants/dispositions.json"),
 		),
-		("stock.json", include_str!("enum_variants/stock.json")),
-		(
-			"stock_raw.json",
-			include_str!("enum_variants/stock_raw.json"),
-		),
 		("p1.json", include_str!("enum_variants/p1.json")),
-		(
-			"intentional.json",
-			include_str!("enum_variants/intentional.json"),
-		),
-		(
-			"resource_complete.json",
-			include_str!("enum_variants/resource_complete.json"),
-		),
 	] {
 		assert_eq!(
 			hex(Sha256::digest(
@@ -493,137 +576,45 @@ fn oracle_controls() {
 		);
 	}
 	let rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	let frozen: Json = serde_json::from_str(include_str!("enum_variants/stock.json")).unwrap();
-	let raw: Json = serde_json::from_str(include_str!("enum_variants/stock_raw.json")).unwrap();
 	let dispositions: Json =
 		serde_json::from_str(include_str!("enum_variants/dispositions.json")).unwrap();
-	let allowances: Json = serde_json::from_str(include_str!("enum_variants/p1.json")).unwrap();
-	fn project(v: &Json, path: &str, leaves: &mut Vec<Json>) -> Json {
-		match v {
-			Json::Object(m) => Json::Object(
-				m.iter()
-					.filter(|(k, _)| k.as_str() != "raw")
-					.map(|(k, v)| {
-						(
-							k.clone(),
-							project(
-								v,
-								&if path.is_empty() {
-									k.clone()
-								} else {
-									format!("{path}.{k}")
-								},
-								leaves,
-							),
-						)
-					})
-					.collect(),
-			),
-			Json::Array(a) => Json::Array(
-				a.iter()
-					.enumerate()
-					.map(|(i, v)| project(v, &format!("{path}.{i}"), leaves))
-					.collect(),
-			),
-			Json::String(s) if s.contains("full_name:") => {
-				assert!(path.ends_with("kind"));
-				let mut tail = s.as_str();
-				let mut out = String::new();
-				let mut count = 0;
-				while let Some(i) = tail.find("full_name:") {
-					assert!(tail[..i].ends_with("AnyTypeInfo { "));
-					out.push_str(&tail[..i]);
-					let digits = tail[i..].strip_prefix("full_name: 0x").unwrap();
-					let n = digits.bytes().take_while(|b| b.is_ascii_hexdigit()).count();
-					assert!(n > 0 && digits[n..].starts_with(", hash: 0x"));
-					out.push_str("full_name: <pointer>");
-					tail = &digits[n..];
-					count += 1;
-				}
-				out.push_str(tail);
-				leaves.push(json!({"path":path,"count":count}));
-				json!(out)
-			}
-			_ => v.clone(),
-		}
-	}
-	for r in rows {
+	for r in &rows {
 		let id = r["id"].as_str().unwrap();
-		let mut leaves = Vec::new();
-		assert_eq!(project(&raw[id], "", &mut leaves), frozen[id]);
-		assert_eq!(
-			json!(leaves),
-			allowances.get(id).cloned().unwrap_or(json!([]))
-		);
 		for key in ["source_sha256", "fixture", "fuel"] {
-			assert_eq!(raw[id][key], r[key]);
 			assert_eq!(dispositions[id][key], r[key]);
 		}
-		assert_eq!(
-			raw[id]["source_hex"],
-			hex(r["source"].as_str().unwrap().as_bytes())
-		);
-		if raw[id]["observation"]["outcome"]["status"] == "compile-error" {
-			assert_eq!(raw[id]["observation"]["reuse"], Json::Null);
-			assert_eq!(dispositions[id]["disposition"], "Refused-frontend");
-		} else {
-			assert_eq!(raw[id]["observation"]["reuse"]["status"], "value");
-		}
 	}
-	let mut bad = raw["014"].clone();
+	let observe = |i: usize| {
+		let raw = legacy_observe(i, &rows[i]);
+		let projected = expected_stock(&rows[i], &raw);
+		(raw, projected)
+	};
+	let (mut bad, good) = observe(14);
 	bad["observation"]["outcome"]["graph"]["nodes"][1][2] = json!("8");
-	assert_ne!(project(&bad, "", &mut Vec::new()), frozen["014"]);
-	let mut bad = raw["035"].clone();
-	bad["observation"]["outcome"]["graph"]["nodes"][0][2] = json!([1, 2]);
-	assert_ne!(project(&bad, "", &mut Vec::new()), frozen["035"]);
-	let mut bad = raw["045"].clone();
+	assert_ne!(stock_projection(&bad, "", &mut Vec::new()), good);
+	let (mut bad, good) = observe(35);
+	bad["observation"]["outcome"]["graph"]["nodes"][0][2] = json!([1, 1]);
+	assert_ne!(stock_projection(&bad, "", &mut Vec::new()), good);
+	let (mut bad, good) = observe(45);
 	let kind = bad["observation"]["outcome"]["kind"]
 		.as_str()
 		.unwrap()
 		.replace("0x1cad9186c9641c4f", "0x1111111111111111");
 	bad["observation"]["outcome"]["kind"] = json!(kind);
-	assert_ne!(project(&bad, "", &mut Vec::new()), frozen["045"]);
-	let intentional: Json =
-		serde_json::from_str(include_str!("enum_variants/intentional.json")).unwrap();
-	assert_eq!(intentional.as_object().unwrap().len(), 4);
-	for id in ["036", "039", "040", "052"] {
-		let rule = &intentional[id];
-		assert_eq!(rule["engines"], json!(["stock", "fresh"]));
-		assert_eq!(rule["source_sha256"], dispositions[id]["source_sha256"]);
-		assert_eq!(
-			dispositions[id]["disposition"],
-			"Intentional-declaration-order"
-		);
-		assert_eq!(rule["stock_before_observation"], frozen[id]["observation"]);
-		let values = if id == "052" {
-			vec![true, true, false]
-		} else {
-			vec![false, true, true, true, false, false]
-		};
-		let mut expected = frozen[id]["observation"].clone();
-		for (node, value) in expected["outcome"]["graph"]["nodes"]
-			.as_array_mut()
-			.unwrap()
-			.iter_mut()
-			.skip(1)
-			.zip(values)
-		{
-			node[2] = json!(value);
-		}
-		assert_eq!(rule["expected_observation"], expected);
-	}
-	assert_ne!(
-		intentional["036"]["expected_observation"],
-		frozen["036"]["observation"]
+	assert_ne!(stock_projection(&bad, "", &mut Vec::new()), good);
+	let mut complete_case = rows[148].clone();
+	complete_case["fuel"] = json!(200000);
+	TAPE.with(|t| t.borrow_mut().clear());
+	let complete = legacy_observe(148, &complete_case);
+	assert_eq!(
+		complete["source_sha256"],
+		dispositions["148"]["source_sha256"]
 	);
-	let complete: Json =
-		serde_json::from_str(include_str!("enum_variants/resource_complete.json")).unwrap();
-	let rule = &complete["148"];
-	assert_eq!(rule["source_sha256"], dispositions["148"]["source_sha256"]);
-	assert_eq!(rule["fresh_fuel"], 32);
-	assert_eq!(rule["stock_fuel"], 200000);
-	assert_eq!(rule["observation"]["outcome"]["status"], "value");
-	let tape = rule["observation"]["events"].as_array().unwrap();
-	assert_eq!(tape.len(), 100);
-	assert_eq!(frozen["148"]["observation"]["events"], json!(&tape[..1]));
+	assert_eq!(rows[148]["fuel"], 32);
+	assert_eq!(complete["fuel"], 200000);
+	assert_eq!(complete["observation"]["outcome"]["status"], "value");
+	assert_eq!(
+		complete["observation"]["events"].as_array().unwrap().len(),
+		100
+	);
 }

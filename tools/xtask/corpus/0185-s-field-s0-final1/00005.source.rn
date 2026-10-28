@@ -1,0 +1,7 @@
+pub fn objdbg_yx(a, b, c) { format!("{:?}", #{y: a, x: b}) }
+pub fn objdbg_xy(a, b, c) { format!("{:?}", #{x: b, y: a}) }
+pub fn objdbg_six_down(a, b, c) { format!("{:?}", #{f: a, e: b, d: c, c: a, b: b, a: c}) }
+pub fn objdbg_six_up(a, b, c) { format!("{:?}", #{a: c, b: b, c: a, d: c, e: b, f: a}) }
+pub fn objdbg_insert(a, b, c) { let o = #{y: a, x: b}; let p = o; p.k = c; format!("{:?}", o) }
+pub fn objdbg_insert_built(a, b, c) { format!("{:?}", #{y: a, x: b, k: c}) }
+pub fn objdbg_overwrite(a, b, c) { let o = #{y: a, x: b}; let p = o; p.y = c; format!("{:?}", o) }

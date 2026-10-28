@@ -1,0 +1,21 @@
+[package]
+name = "p2-probe-harness"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[dependencies]
+rune = { path = "../../../../crates/rune", features = ["execution"] }
+
+[features]
+native = ["rune/native-code"]
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = false
+panic = "unwind"
+debug = false
+incremental = false

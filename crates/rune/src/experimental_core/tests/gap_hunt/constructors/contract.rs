@@ -1,5 +1,4 @@
 const DISPOSITIONS: &str = include_str!("dispositions.json");
-const STOCK: &str = include_str!("stock.json");
 fn project_observation(value: &Json, expected: &Json, path: &str) -> Json {
 	match value {
 		Json::Object(map) => Json::Object(
@@ -53,7 +52,9 @@ fn project_observation(value: &Json, expected: &Json, path: &str) -> Json {
 	}
 }
 
-fn compare(case: &Json, frozen: &Json, actual: &Json) {
+/// Check the execution observation `actual` against `stock`, the
+/// [`expected_stock`] row of the same case.
+fn compare(case: &Json, frozen: &Json, stock: &Json, actual: &Json, complete: Option<&Json>) {
 	for key in ["label", "source_sha256", "fixture", "fuel"] {
 		assert_eq!(actual[key], case[key]);
 		assert_eq!(actual[key], frozen[key]);
@@ -80,14 +81,8 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	] {
 		assert_eq!(audit[key], 0, "{key}");
 	}
-	let stock: Json = serde_json::from_str(STOCK).unwrap();
 	let id = case["id"].as_str().unwrap();
-	let intentional =
-		super::nominal_clone::intentional_json("constructors", case, &stock[id]["observation"]);
-	let mut expected = intentional
-		.as_ref()
-		.unwrap_or(&stock[id]["observation"])
-		.clone();
+	let mut expected = stock["observation"].clone();
 	let d1_observed = super::method_diagnostics::intentional_json_before(
 		"constructors",
 		case["label"].as_str().unwrap(),
@@ -126,11 +121,9 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	let c16f: Json = serde_json::from_str(include_str!("c16f_admissions.json")).unwrap();
 	assert_eq!(c16f.as_object().unwrap().len(), 2);
 	if let Some(rule) = c16f.get(id) {
-		use sha2::{Digest, Sha256};
 		assert!(matches!(id, "116" | "117"));
 		assert_eq!(rule["authority"], 21337);
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
-		assert_eq!(hex(Sha256::digest(serde_json::to_vec(&stock[id]).unwrap()).as_ref()), rule["stock_row_sha256"]);
 		assert_eq!(frozen["disposition"], "Refused-surface");
 		assert_eq!(audit["invoked"], true);
 		assert_eq!(audit["reuse_used_fallback"], false);
@@ -140,11 +133,9 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	let c17e: Json = serde_json::from_str(include_str!("c17e_admissions.json")).unwrap();
 	assert_eq!(c17e.as_object().unwrap().len(), 1);
 	if let Some(rule) = c17e.get(id) {
-		use sha2::{Digest, Sha256};
 		assert_eq!(id, "118");
 		assert_eq!(rule["label"], case["label"]);
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
-		assert_eq!(hex(Sha256::digest(serde_json::to_vec(&stock[id]).unwrap()).as_ref()), rule["stock_row_sha256"]);
 		assert_eq!(frozen["disposition"], rule["previous_disposition"]);
 		assert_eq!(rule["classification"], "Exact");
 		assert_eq!(audit["invoked"], true);
@@ -154,7 +145,7 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	}
 	if frozen["disposition"] == "Refused-frontend-arity" {
 		assert_eq!(audit["invoked"], false);
-		assert_eq!(actual["diagnostics"], stock[id]["diagnostics"]);
+		assert_eq!(actual["diagnostics"], stock["diagnostics"]);
 		assert_eq!(observed["events"], json!([]));
 		assert_eq!(observed["reuse"]["graph"]["nodes"][0][2], "7");
 		return;
@@ -183,14 +174,10 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 		assert_eq!(audit["reuse_used_fallback"], false);
 		if frozen["disposition"] == "Retained-fuel" {
 			let seen = observed["events"].as_array().unwrap();
-			let complete: Json =
-				serde_json::from_str(include_str!("resource_complete.json")).unwrap();
-			let rule = complete
-				.get(id)
-				.expect("Authorized COMPLETE stock tape required");
+			let rule = complete.expect("live COMPLETE stock tape required");
+			assert_eq!(id, "125");
 			assert_eq!(rule["source_sha256"], case["source_sha256"]);
-			assert_eq!(rule["stock_fuel"], 200000);
-			assert_eq!(rule["fresh_fuel"], case["fuel"]);
+			assert_eq!(rule["fuel"], 200000);
 			assert_eq!(rule["observation"]["outcome"]["status"], "value");
 			let tape = rule["observation"]["events"].as_array().unwrap();
 			assert!(seen.len() <= tape.len() && seen.iter().zip(tape).all(|(a, b)| a == b));
@@ -218,9 +205,19 @@ fn contract_controls_reject_output_tape_and_lifecycle_drift() {
 	let frozen: Json = serde_json::from_str(DISPOSITIONS).unwrap();
 	for i in [0usize, 131, 125] {
 		TAPE.with(|t| t.borrow_mut().clear());
+		let stock = expected_stock(&cases[i], &legacy_observe(i, &cases[i]));
+		let complete = if i == 125 {
+			let mut case = cases[i].clone();
+			case["fuel"] = json!(200000);
+			TAPE.with(|t| t.borrow_mut().clear());
+			Some(expected_stock(&case, &legacy_observe(i, &case)))
+		} else {
+			None
+		};
+		TAPE.with(|t| t.borrow_mut().clear());
 		let actual = observe(&cases[i]);
 		let id = cases[i]["id"].as_str().unwrap();
-		compare(&cases[i], &frozen[id], &actual);
+		compare(&cases[i], &frozen[id], &stock, &actual, complete.as_ref());
 		for path in [
 			"/observation/reuse/graph/nodes/0/2",
 			"/fresh_audit/live_entries",
@@ -229,9 +226,14 @@ fn contract_controls_reject_output_tape_and_lifecycle_drift() {
 		] {
 			let mut bad = actual.clone();
 			*bad.pointer_mut(path).unwrap() = json!("drift");
-			assert!(
-				std::panic::catch_unwind(|| compare(&cases[i], &frozen[id], &bad)).is_err()
-			);
+			assert!(std::panic::catch_unwind(|| compare(
+				&cases[i],
+				&frozen[id],
+				&stock,
+				&bad,
+				complete.as_ref()
+			))
+			.is_err());
 		}
 	}
 }

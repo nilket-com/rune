@@ -1,6 +1,6 @@
 // One pre-declared C9 borrow diagnostic pin; all remaining fields stay exact.
 const D1C_ACCESS_DISPLAY: &str = "Cannot write the receiver: it is being read";
-const C9_RETAINED_PIN: &str = r########"{"follow_up":"D-family: leased-parent write borrow primary Snapshot/readers and native wrapper, beside leased-drop take","fresh":{"chain":[{"display":"Bad argument #0","kind":"BadArgument { arg: 0 }","typed":{"arg":0,"tag":"BadArgument"}}],"kind":"AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }","typed":{"raw_kind":"AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"}},"index":170,"label":"access/leased-parent-mutate","p1_fresh_counts":{"/chain/0/kind":0,"/kind":0,"/raw":0,"/typed/raw_kind":0},"p1_stock_counts":{"/chain/0/kind":0,"/kind":0,"/raw":0,"/typed/raw_kind":0},"paths":["kind","typed.raw_kind","chain"],"retained":["Retained-kind","Retained-chain"],"ruling_message":"01a13e28-562d-75dd-b7a6-87c1473e4244","ruling_seq":14575,"schema":1,"source_hex":"70756220666e206d61696e28297b6c657420763d5b2261225d3b666f72207820696e20767b782e636d70287b762e7075736828226322293b2262227d293b7d377d0a70756220666e2063395f726575736528297b377d","source_sha256":"ed04c37527950d21b66bfea500cac197003fc09b5c6ee69d008c32ef432a8519","stock":{"chain":[{"display":"Bad argument #0","kind":"BadArgument { arg: 0 }","typed":{"arg":0,"tag":"BadArgument"}}],"kind":"AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }","typed":{"raw_kind":"AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"}},"witness":{"base":"620ae245c66ef0e9491eab33388a362c8a12e60d","binary_sha256":"20dff3d71223dfb06f765b0c906c0c5ecae2ce165e5ca466368cf51f6d65fd24","observations_sha256":"d0228f749815a5edc3e75e09e00d07a9d479dcb49f1f01b7ff0bb1d5b9855b44","source":"70756220666e206d61696e28297b6c657420763d5b2261225d3b666f72207820696e20767b762e7075736828226322293b7d377d"},"ruling_message_d1c":"01a14f55-a78a-7294-b0f4-e7662161c89a","ruling_seq_d1c":19886}"########;
+const C9_RETAINED_PIN: &str = r########"{"follow_up":"D-family: leased-parent write borrow primary Snapshot/readers and native wrapper, beside leased-drop take","fresh":{"chain":[{"display":"Bad argument #0","kind":"BadArgument { arg: 0 }","typed":{"arg":0,"tag":"BadArgument"}}],"kind":"AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }","typed":{"raw_kind":"AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"}},"index":170,"label":"access/leased-parent-mutate","p1_fresh_counts":{"/chain/0/kind":0,"/kind":0,"/raw":0,"/typed/raw_kind":0},"p1_stock_counts":{"/chain/0/kind":0,"/kind":0,"/raw":0,"/typed/raw_kind":0},"paths":["kind","typed.raw_kind","chain"],"retained":["Retained-kind","Retained-chain"],"ruling_message":"01a13e28-562d-75dd-b7a6-87c1473e4244","ruling_seq":14575,"schema":1,"source_hex":"70756220666e206d61696e28297b6c657420763d5b2261225d3b666f72207820696e20767b782e636d70287b762e7075736828226322293b2262227d293b7d377d0a70756220666e2063395f726575736528297b377d","source_sha256":"ed04c37527950d21b66bfea500cac197003fc09b5c6ee69d008c32ef432a8519","ruling_message_d1c":"01a14f55-a78a-7294-b0f4-e7662161c89a","ruling_seq_d1c":19886}"########;
 
 fn compare_c9_retained(
 	label: &str,
@@ -17,9 +17,12 @@ fn compare_c9_retained(
 	if label != pin["label"].as_str().unwrap() || hex(source.as_bytes()) != pin["source_hex"] {
 		return Err("unlisted C9 retained source".into());
 	}
-	// Independently pinned stock fields must still be exactly those in the frozen oracle.
+	// Both engines must report the reviewed typed access error on this row.
+    for side in ["kind", "typed", "chain"] {
+        if expected[side] != pin["fresh"][side] { return Err("C9 live stock primary/chain drift".into()); }
+    }
 	for side in ["kind", "typed", "chain"] {
-		if expected[side] != pin["stock"][side] || actual[side] != pin["fresh"][side] {
+		if actual[side] != pin["fresh"][side] {
 			return Err("C9 retained primary/chain drift".into());
 		}
 	}
@@ -41,7 +44,6 @@ fn compare_c9_retained(
 #[cfg(not(miri))]
 fn c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 	let pin: Json = serde_json::from_str(C9_RETAINED_PIN).unwrap();
-	let dispositions: Json = serde_json::from_str(C9_PINNED_DISPOSITIONS).unwrap();
 	let counts: Json = serde_json::from_str(C9_PINNED_COUNTS).unwrap();
 	let label = pin["label"].as_str().unwrap();
 	let source_bytes = (0..pin["source_hex"].as_str().unwrap().len())
@@ -49,7 +51,7 @@ fn c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 		.map(|i| u8::from_str_radix(&pin["source_hex"].as_str().unwrap()[i..i + 2], 16).unwrap())
 		.collect::<Vec<_>>();
 	let source = std::str::from_utf8(&source_bytes).unwrap();
-	let stock = &dispositions[label]["fresh_expectation"];
+	let stock = &diagnostic_stock(label, source, &counts[label]);
 	let mut execution = stock.clone();
 	execution["display"] = json!(D1C_ACCESS_DISPLAY);
 	for field in ["kind", "typed", "chain"] {
@@ -96,7 +98,7 @@ fn miri_c9_retained_borrow_pin_rejects_every_other_semantic_drift() {
 		.collect::<Vec<_>>();
 	let source = std::str::from_utf8(&source_bytes).unwrap();
 	assert_eq!(label, "access/leased-parent-mutate");
-	let stock = &fixture["disposition"]["fresh_expectation"];
+	let stock = &diagnostic_stock(label, source, counts);
 	let mut execution = stock.clone();
 	execution["display"] = json!(D1C_ACCESS_DISPLAY);
 	for field in ["kind", "typed", "chain"] {

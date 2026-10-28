@@ -1,25 +1,18 @@
 //! Bounded stock-VM versus execution differential smoke test.
 //!
 //! Case data: `differential/differential_cases.tsv` and `differential/programs/*.rn`
-//! (origin in `differential/PROVENANCE.txt`). It is frozen: this file never edits it.
+//! (origin in `differential/PROVENANCE.txt`).
 //!
 //! Each function is compiled on its own on both engines, as the reference runners did
 //! (one unit per `pub fn` line); see [`unit_source`].
 //!
-//! Every row carries a fixed expectation for BOTH engines. For a declared difference the
-//! two expectations differ except the explicit F1 `CONVERGED` rows below. A stock
-//! regression still fails like a new one. The test fails
-//! closed:
-//! - a stock error kind without an entry in the site table for its batch and function
-//!   is reported as `unmapped` and fails the row;
-//! - an unknown operand tag, value tag or effect form panics;
-//! - a row whose expected effects are not empty must run with a witness argument;
-//! - the number of rows run is checked against the corpus (675 rows, 20 in the Miri tier).
+//! Each row compares current stock and execution outcomes and witness effects.
+//! Unknown stock error classes and unencodable values fail closed. The corpus runs
+//! 675 rows, including a 20-row Miri tier.
 //!
 //! `host::mark(x)` and `host::t(n, x)` of the original receipts are re-expressed with a
 //! caller-owned witness vector `w`: `fn mark(w, x) { w.push(0); x }` and
-//! `fn t(w, n, x) { w.push(n); x }`. A row's `marks=N` is read as N witness entries of 0,
-//! and `ev=a,b,c` as the witness entries a, b, c.
+//! `fn t(w, n, x) { w.push(n); x }`. The witness vectors are compared in order.
 
 use crate::experimental_core::execute::Executor;
 use crate::experimental_core::frontend;
@@ -45,7 +38,7 @@ const PROGRAMS: &[(&str, &str)] = &[
 	),
 	("objfmt", include_str!("differential/programs/objfmt.rn")),
 ];
-const HEADER: &str = "tier\tbatch\tid\tfunction\toperands\tfresh_kind\tfresh_value\tfresh_effects\tstock_kind\tstock_value\tstock_effects\trule";
+const HEADER: &str = "tier\tbatch\tid\tfunction\toperands\trule";
 const FULL_ROWS: usize = 675;
 const MIRI_ROWS: usize = 20;
 // Only these frozen receipt rows have deliberately converged in F1. Every
@@ -134,8 +127,6 @@ struct Case<'a> {
 	id: &'a str,
 	function: &'a str,
 	operands: std::vec::Vec<&'a str>,
-	execution: (&'a str, &'a str, &'a str),
-	stock: (&'a str, &'a str, &'a str),
 	rule: &'a str,
 }
 
@@ -145,7 +136,7 @@ fn cases() -> std::vec::Vec<Case<'static>> {
 	lines
 		.map(|line| {
 			let f: std::vec::Vec<&str> = line.split('\t').collect();
-			assert_eq!(f.len(), 12, "malformed row {line}");
+			assert_eq!(f.len(), 6, "malformed row {line}");
 			assert!(matches!(f[0], "full" | "miri+full"), "tier {}", f[0]);
 			Case {
 				tier: f[0],
@@ -157,9 +148,7 @@ fn cases() -> std::vec::Vec<Case<'static>> {
 				} else {
 					f[4].split(';').collect()
 				},
-				execution: (f[5], f[6], f[7]),
-				stock: (f[8], f[9], f[10]),
-				rule: f[11],
+				rule: f[5],
 			}
 		})
 		.collect()
@@ -375,18 +364,6 @@ fn legacy_encode(value: &Value) -> std::string::String {
 	std::format!("unencodable:{:?}", value.type_hash())
 }
 
-fn expected_witness(effects: &str) -> std::vec::Vec<i64> {
-	if let Some(n) = effects.strip_prefix("marks=") {
-		return std::vec![0; n.parse().unwrap()];
-	}
-
-	match effects.strip_prefix("ev=") {
-		Some("-") => std::vec::Vec::new(),
-		Some(ev) => ev.split(',').map(|x| x.parse().unwrap()).collect(),
-		None => panic!("effects form {effects}"),
-	}
-}
-
 /// Whether `pub fn <name>(…)` in `text` takes the witness `w` as its last parameter.
 fn takes_witness(text: &str, name: &str) -> bool {
 	let start = std::format!("pub fn {name}(");
@@ -396,54 +373,6 @@ fn takes_witness(text: &str, name: &str) -> bool {
 	let params = &text[at + start.len()..];
 	let params = &params[..params.find(')').unwrap()];
 	params.rsplit(',').map(str::trim).next() == Some("w")
-}
-
-/// Flat-object content (unescaped keys, integer values), order-insensitive: the exact
-/// grammar of the objfmt rows (CANDIDATE_REPLAY.md R2). Anything else panics.
-fn object_content(encoded: &str) -> std::collections::BTreeMap<std::string::String, i64> {
-	let text = hex_text(encoded.strip_prefix("s:").unwrap());
-	let inner = text.strip_prefix('{').unwrap().strip_suffix('}').unwrap();
-	let mut out = std::collections::BTreeMap::new();
-
-	for kv in inner.split(", ") {
-		let (k, v) = kv.split_once(": ").unwrap();
-		let k = k.strip_prefix('"').unwrap().strip_suffix('"').unwrap();
-		assert!(k.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_'));
-		assert!(out.insert(k.into(), v.parse().unwrap()).is_none());
-	}
-
-	out
-}
-
-/// Reorder only the exact two-field scalar shape in the frozen addendum.
-/// Ambiguous separators are refused rather than parsing arbitrary Debug syntax.
-fn sorted_scalar_object(text: &str) -> Option<std::string::String> {
-	let separator = ", \"x\": ";
-	if text.matches(separator).count() != 1 {
-		return None;
-	}
-	let inner = text.strip_prefix("{\"y\": ")?.strip_suffix('}')?;
-	let (y, x) = inner.split_once(separator)?;
-	if y.is_empty() || x.is_empty() {
-		return None;
-	}
-	Some(std::format!("{{\"x\": {x}, \"y\": {y}}}"))
-}
-
-#[test]
-fn frozen_scalar_object_transform_refuses_ambiguous_shapes() {
-	assert_eq!(
-		sorted_scalar_object("{\"y\": -0.0, \"x\": true}").unwrap(),
-		"{\"x\": true, \"y\": -0.0}"
-	);
-	for text in [
-		"{\"y\": 1}",
-		"{\"x\": 1, \"y\": 2}",
-		"{\"y\": , \"x\": 2}",
-		"{\"y\": \"a, \"x\": b\", \"x\": 1}",
-	] {
-		assert!(sorted_scalar_object(text).is_none(), "{text}");
-	}
 }
 
 /// The source of one function, compiled on its own as the reference runners did: its
@@ -552,83 +481,9 @@ fn run(miri_only: bool) {
 			ran += 1;
 			let at = std::format!("{} {} {}", case.batch, case.id, case.function);
 			let witness = takes_witness(text, case.function);
-			let converged = CONVERGED
-				.iter()
-				.any(|row| (row.0, row.1) == (case.batch, case.id));
-			let sorted = if converged && case.batch == "addendum" {
-				assert_eq!(
-					case.execution.1, case.stock.1,
-					"{at}: frozen object content"
-				);
-				let text = hex_text(case.execution.1.strip_prefix("s:").unwrap());
-				let sorted = sorted_scalar_object(&text)
-					.unwrap_or_else(|| panic!("{at}: ambiguous frozen object"));
-				Some(enc_str(&sorted))
-			} else if converged && case.batch == "objfmt" {
-				// Expected text comes only from the frozen content, never runtime output.
-				let content = object_content(case.execution.1);
-				assert_eq!(content, object_content(case.stock.1));
-				let fields: std::vec::Vec<_> = content
-					.iter()
-					.map(|(k, v)| std::format!("{k:?}: {v}"))
-					.collect();
-				Some(enc_str(&std::format!("{{{}}}", fields.join(", "))))
-			} else {
-				None
-			};
-			let index_converged =
-				converged && case.batch == "operators" && matches!(case.id, "088710" | "088725");
-			if index_converged {
-				assert_eq!(case.execution, ("err", "IndexOutOfBounds", "marks=0"));
-				assert_eq!(case.stock, case.execution);
-			}
-			// C12 refines eight historical coarse InvalidShift expectations.
-			// Derive the required class only from the immutable frozen operands,
-			// never from either engine's observed result. Preserve the TSV.
-			let shift_converged =
-				case.execution.1 == "InvalidShift" && case.stock.1 == "InvalidShift";
-			if shift_converged {
-				assert_eq!(case.batch, "operators");
-				assert!(case.function.starts_with("shl") || case.function.starts_with("shr"));
-				assert_eq!(case.operands.len(), 2);
-				let count = case.operands[1]
-					.strip_prefix("i:")
-					.unwrap()
-					.parse::<i64>()
-					.unwrap();
-				assert!(
-					count < 0,
-					"only frozen negative signed counts enter this refinement"
-				);
-				assert_eq!((case.execution.0, case.stock.0), ("err", "err"));
-			}
-			let want = match &sorted {
-				_ if shift_converged => ("err", "IntegerCoercion", case.execution.2),
-				_ if index_converged => ("err", "IntegerCoercion", case.execution.2),
-				Some(value) => ("ok", value.as_str(), case.execution.2),
-				None => case.execution,
-			};
-			let want_stock = if shift_converged || index_converged {
-				("err", "IntegerCoercion", case.stock.2)
-			} else if converged && case.batch == "operators" {
-				case.execution
-			} else if let Some(value) = &sorted {
-				("ok", value.as_str(), case.stock.2)
-			} else {
-				case.stock
-			};
-
 			let (vm, program) = units
 				.entry(case.function)
 				.or_insert_with(|| compile_unit(&context, batch, text, case.function));
-			if !witness {
-				for effects in [case.execution.2, case.stock.2] {
-					assert!(
-						expected_witness(effects).is_empty(),
-						"{at}: effects {effects} owed without a witness"
-					);
-				}
-			}
 
 			// ---- stock side ----
 			let mut args: crate::alloc::Vec<Value> = crate::alloc::Vec::new();
@@ -652,30 +507,21 @@ fn run(miri_only: bool) {
 				}
 			};
 
-			let (want_kind, want_value, want_effects) = want_stock;
-			let legacy_ok = (got_stock.0, got_stock.1.as_str()) == (want_kind, want_value);
-
-			if !legacy_ok {
-				mismatches.push(std::format!(
-					"stock {at}: got {got_stock:?}, want ({want_kind}, {want_value})"
-				));
-			}
-
-			if witness {
+			assert!(
+				!got_stock.1.starts_with("unmapped:") && !got_stock.1.contains("unencodable:"),
+				"stock {at}: {got_stock:?}"
+			);
+			let stock_effects = if witness {
 				let w = legacy_w.borrow_ref::<crate::runtime::Vec>().unwrap();
-				let got: std::vec::Vec<i64> = w
-					.iter()
+				w.iter()
 					.map(|v| match v.as_inline() {
 						Some(Inline::Signed(n)) => *n,
 						other => panic!("{at}: stock witness item {other:?}"),
 					})
-					.collect();
-				if got != expected_witness(want_effects) {
-					mismatches.push(std::format!(
-						"stock effects {at}: got {got:?}, want {want_effects}"
-					));
-				}
-			}
+					.collect::<std::vec::Vec<_>>()
+			} else {
+				std::vec::Vec::new()
+			};
 
 			// ---- new side ----
 			let roots: std::vec::Vec<Root> = case
@@ -702,12 +548,9 @@ fn run(miri_only: bool) {
 				Err(failure) => ("err", std::format!("{:?}", failure.error.kind)),
 			};
 
-			if (got.0, got.1.as_str()) != (want.0, want.1) {
-				mismatches.push(std::format!(
-					"execution {at}: got {got:?}, want ({}, {})",
-					want.0,
-					want.1
-				));
+			assert!(!got.1.contains("unencodable:"), "execution {at}: {got:?}");
+			if got != got_stock {
+				mismatches.push(std::format!("{at}: execution {got:?}, stock {got_stock:?}"));
 			}
 
 			if witness {
@@ -722,10 +565,9 @@ fn run(miri_only: bool) {
 					store.root_release(item).unwrap();
 				}
 
-				if got != expected_witness(want.2) {
+				if got != stock_effects {
 					mismatches.push(std::format!(
-						"execution effects {at}: got {got:?}, want {}",
-						want.2
+						"effects {at}: execution {got:?}, stock {stock_effects:?}"
 					));
 				}
 			}

@@ -115,57 +115,7 @@ pub(super) fn observe_h1(path: &Path, mode: &str, engine: &str) -> Observation {
 					)
 				}
 				Ok(Err(e)) => {
-					let mut metadata =
-						format!("primary:{:?}\nchain:{:?}\n", e.error().kind(), e.chain());
-					for at in e.stacktrace() {
-						if let Some(inst) =
-							at.unit.debug_info().and_then(|d| d.instruction_at(at.ip))
-						{
-							let range = inst.span.range();
-							metadata.push_str(&format!(
-								"location:{}:{}:{}:{}\nframes:{:?}\n",
-								at.ip,
-								inst.source_id.into_index(),
-								range.start,
-								range.end,
-								at.frames
-							));
-						} else {
-							metadata.push_str(&format!(
-								"location:{}:none\nframes:{:?}\n",
-								at.ip, at.frames
-							));
-						}
-					}
-					// Raw Debug is provenance only; select stable typed fields separately.
-					let primary = match e.error().kind() {
-						crate::runtime::VmErrorKind::ExpectedNumber { .. } => {
-							"ExpectedNumber".into()
-						}
-						crate::runtime::VmErrorKind::ExpectedType { .. } => "ExpectedType".into(),
-						kind => format!("{kind:?}"),
-					};
-					assert!(
-						!primary.contains("full_name: 0x"),
-						"unreviewed typed primary schema"
-					);
-					let mut auxiliary = Vec::new();
-					for at in e.chain() {
-						assert!(
-							matches!(
-								at.kind(),
-								crate::runtime::VmErrorKind::BadArgument { arg: 0 | 1 }
-							),
-							"unreviewed auxiliary schema"
-						);
-						auxiliary.push(hex(at.to_string().as_bytes()));
-					}
-					let (_, tail) = metadata.split_once('\n').unwrap();
-					let (chain, locations) = tail.split_once('\n').unwrap();
-					let stable = format!(
-						"primary:{primary}\n{chain}\nauxiliary:{}\n{locations}",
-						auxiliary.join(",")
-					);
+					let (metadata, stable) = legacy_error_metadata(&e);
 					fs::write(result_path.with_extension("stable-error"), stable).unwrap();
 					fs::write(result_path.with_extension("error"), metadata).unwrap();
 					Observation::new(
@@ -208,6 +158,58 @@ pub(super) fn observe_h1(path: &Path, mode: &str, engine: &str) -> Observation {
 	}
 	fs::write(result_path.with_extension("effects"), effects).unwrap();
 	observation
+}
+
+/// The raw and stable metadata of a stock runtime error: its primary kind,
+/// argument chain and source locations.
+fn legacy_error_metadata(e: &crate::runtime::VmError) -> (String, String) {
+	let mut metadata = format!("primary:{:?}\nchain:{:?}\n", e.error().kind(), e.chain());
+	for at in e.stacktrace() {
+		if let Some(inst) = at.unit.debug_info().and_then(|d| d.instruction_at(at.ip)) {
+			let range = inst.span.range();
+			metadata.push_str(&format!(
+				"location:{}:{}:{}:{}\nframes:{:?}\n",
+				at.ip,
+				inst.source_id.into_index(),
+				range.start,
+				range.end,
+				at.frames
+			));
+		} else {
+			metadata.push_str(&format!(
+				"location:{}:none\nframes:{:?}\n",
+				at.ip, at.frames
+			));
+		}
+	}
+	// Raw Debug is provenance only; select stable typed fields separately.
+	let primary = match e.error().kind() {
+		crate::runtime::VmErrorKind::ExpectedNumber { .. } => "ExpectedNumber".into(),
+		crate::runtime::VmErrorKind::ExpectedType { .. } => "ExpectedType".into(),
+		kind => format!("{kind:?}"),
+	};
+	assert!(
+		!primary.contains("full_name: 0x"),
+		"unreviewed typed primary schema"
+	);
+	let mut auxiliary = Vec::new();
+	for at in e.chain() {
+		assert!(
+			matches!(
+				at.kind(),
+				crate::runtime::VmErrorKind::BadArgument { arg: 0 | 1 }
+			),
+			"unreviewed auxiliary schema"
+		);
+		auxiliary.push(hex(at.to_string().as_bytes()));
+	}
+	let (_, tail) = metadata.split_once('\n').unwrap();
+	let (chain, locations) = tail.split_once('\n').unwrap();
+	let stable = format!(
+		"primary:{primary}\n{chain}\nauxiliary:{}\n{locations}",
+		auxiliary.join(",")
+	);
+	(metadata, stable)
 }
 
 #[test]
@@ -355,20 +357,9 @@ fn legacy_replay() {
 	contract_completed("stock", 140);
 }
 
-#[test]
-#[ignore = "H1 source-first precedence supplement; exactly four new stock children"]
-fn legacy_precedence_supplement() {
-	precedence_run(false);
-}
-
-#[test]
-#[ignore = "ONE bounded byte-exact replay of four frozen host precedence rows"]
-fn legacy_precedence_replay() {
-	precedence_run(true);
-}
-
-fn precedence_run(replay: bool) {
-	let cases = [
+/// The four source-first precedence supplement cases.
+fn precedence_cases() -> [Case; 4] {
+	[
 		Case {
 			label: r####"h1/supplement/moved-string-to-i64"####,
 			source: r####"pub fn main(){let s="x";drop(s);h1::id_i64(s)}"####,
@@ -397,17 +388,46 @@ fn precedence_run(replay: bool) {
 			policy: "stock-first-pending",
 			stock: true,
 		},
+	]
+}
+
+/// Run one case on stock in a bounded child and return its compared row:
+/// label, mode, source, record, streams, typed value, effects, stable error,
+/// diagnostics and policy, each but the label, mode and policy in hex.
+fn stock_row(case: &Case, path: &Path, scratch: &Path, out: &Path, id: &str) -> Vec<String> {
+	for ext in ["typed", "effects", "error", "diagnostics", "stable-error"] {
+		let _ = fs::remove_file(scratch.join(format!("result.{ext}")));
+	}
+	let mode = format!("h1-{}", case.mode);
+	let id = format!("{id}-stock");
+	let run = launch(path, path, &mode, "stock", scratch, out, &id);
+	assert!(
+		run.complete,
+		"incomplete stock {}: {}",
+		case.label, run.record
+	);
+	let mut row = vec![
+		case.label.to_owned(),
+		case.mode.to_owned(),
+		hex(case.source.as_bytes()),
+		hex(run.record.as_bytes()),
+		hex(&run.stdout),
+		hex(&run.stderr),
 	];
-	let expected = include_str!("host_bridge/precedence.tsv");
-	let rows: Vec<_> = expected.lines().skip(1).collect();
-	assert_eq!(rows.len(), 4);
-	let baseline = if replay {
-		Some(PathBuf::from(
-			std::env::var_os("H1_BASELINE").expect("original supplement origins"),
-		))
-	} else {
-		None
-	};
+	for ext in ["typed", "effects", "stable-error", "diagnostics"] {
+		let bytes = fs::read(scratch.join(format!("result.{ext}"))).unwrap_or_default();
+		assert!(bytes.len() <= CAP);
+		fs::write(out.join(format!("{id}.{ext}")), &bytes).unwrap();
+		row.push(hex(&bytes));
+	}
+	row.push(case.policy.to_owned());
+	row
+}
+
+#[test]
+#[ignore = "H1 source-first precedence supplement; exactly four new stock children"]
+fn legacy_precedence_supplement() {
+	let cases = precedence_cases();
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
 	let scratch =
@@ -420,11 +440,7 @@ fn precedence_run(replay: bool) {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, case.source).unwrap();
-		let origin = baseline
-			.as_ref()
-			.map(|p| p.join(format!("{id}.source.rn")))
-			.unwrap_or_else(|| path.clone());
-		assert_eq!(fs::read_to_string(&origin).unwrap(), case.source);
+		let origin = path.clone();
 		for ext in ["typed", "effects", "error", "diagnostics", "stable-error"] {
 			let _ = fs::remove_file(scratch.0.join(format!("result.{ext}")));
 		}
@@ -454,9 +470,6 @@ fn precedence_run(replay: bool) {
 		actual.push(case.policy.to_owned());
 		let compared = actual.join("\t");
 		fs::write(out.join(format!("{id}.compared")), &compared).unwrap();
-		if replay {
-			assert_eq!(compared, rows[n], "precedence replay {}", case.label);
-		}
 		table.push_str(&compared);
 		table.push('\n');
 		fs::write(out.join("stock-precedence.tsv"), &table).unwrap();

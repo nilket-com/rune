@@ -7,7 +7,7 @@
     "index": 15,
     "label": "get/key-from-vec",
     "source_sha256": "d6250798ff5ce6c96c2b767d29fbd48e42bb3ac713695dfc992785ea0cee4514",
-    "stock_row_sha256": "e51d93e06ee90dbbecd7835bfac1aebf951b17c4460ef80e20535aff1c0e2eb9",
+    "stock_row_sha256": "e6a848122ddadc7d4cf935a437c53aa21d0fa3b9a54cf85581bb2cd61899264c",
     "fresh": {
      "location": {
       "end": 137,
@@ -42,7 +42,7 @@
     "index": 46,
     "label": "contains_key/closure",
     "source_sha256": "40386275c281f47e3cf36c6b74639350375cc2cd1dcd429d69d9e957e35dab58",
-    "stock_row_sha256": "542c7411b67b9681e006df6ec5de8f50574e4606a28743c8df41ae5c9fff7aad",
+    "stock_row_sha256": "4012699bed1144cf5dab7ce918a20828dc614f810287d666cf7b87a6e17f524b",
     "fresh": {
      "location": {
       "end": 136,

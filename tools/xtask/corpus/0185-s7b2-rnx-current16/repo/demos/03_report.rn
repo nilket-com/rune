@@ -1,0 +1,39 @@
+// A readable terminal report from plain format strings: no table library.
+// rnx run demos/03_report.rn [path/to/orders.json]
+
+fn dollars(cents) { format!("{}.{:02}", cents / 100, cents % 100) }
+
+fn bar(n) {
+    let s = "";
+    for i in 0..n { s += "#"; }
+    s
+}
+
+pub fn main(args) {
+    let path = if args.len() > 0 { args[0] } else { "demos/data/orders.json" };
+    let orders = json::parse(fs::read(path)?)?;
+    // [region, orders, shipped units, shipped cents], in first-seen order, then sorted by name
+    let rows = [];
+    for o in orders {
+        let row = None;
+        for r in rows { if r[0] == o.region { row = Some(r); } }
+        let row = match row { Some(r) => r, None => { let r = [o.region, 0, 0, 0]; rows.push(r); r } };
+        row[1] = row[1] + 1;
+        if o.status == "shipped" { row[2] = row[2] + o.qty; row[3] = row[3] + o.qty * o.unit_cents; }
+    }
+    rows.sort_by(|a, b| a[0].cmp(b[0]));
+    let (orders_n, units, total, top) = (0, 0, 0, 0);
+    for r in rows { orders_n += r[1]; units += r[2]; total += r[3]; if r[3] > top { top = r[3]; } }
+    // with no shipped revenue, shares are undefined: shown as "-", with no bars
+    let share = |cents| if total == 0 { "-" } else { format!("{:.1}%", cents as f64 * 100.0 / total as f64) };
+    println!("{:<8}{:>7}{:>7}{:>10}{:>8}", "region", "orders", "units", "revenue", "share");
+    println!("{}", "--------------------------------------------------------------");
+    for r in rows {
+        let width = if top == 0 { 0 } else { (r[3] * 20 + top / 2) / top };
+        let line = format!("{:<8}{:>7}{:>7}{:>10}{:>8}", r[0], r[1], r[2], dollars(r[3]), share(r[3]));
+        println!("{}", if width > 0 { line + "  " + bar(width) } else { line });
+    }
+    println!("{}", "--------------------------------------------------------------");
+    println!("{:<8}{:>7}{:>7}{:>10}{:>8}", "total", orders_n, units, dollars(total), share(total));
+    Ok(())
+}

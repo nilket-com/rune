@@ -2,7 +2,7 @@
 	"refusal/parameter-pair": {
 		"index": 58,
 		"source_sha256": "40d00e0c889beb8a7b8ea75a041d7ad358037d65e2e6cb5cdb1a2d8cd679e6dc",
-		"stock_row_sha256": "266e02894fd4fbd577024090dffcc66ad8febf15be6036cf7eb1665f152c8886",
+		"stock_outcome_sha256": "371c420c2a97fe0ab09d59f4cb3b098d74e7fd072c986bcd83f066a66269be38",
 		"policy": "Exact",
 		"previous_policy": "Refused-Pattern",
 		"authority": "Claude chatd seq21309"
@@ -10,7 +10,7 @@
 	"refusal/parameter-nested": {
 		"index": 59,
 		"source_sha256": "031ca43e80bc597a7c7c05869bcd9c166b2ef89797515b8a15cbc40b70f53dcf",
-		"stock_row_sha256": "fb3ba2fb3f6ecccf8b608bf394b38d9cd9c7895bb17e36145b2936a8bd5d510d",
+		"stock_outcome_sha256": "b4b9cb66aff63946d8a53435e577f5b396b8bb47cbe8183af933e7885dc2829d",
 		"policy": "Exact",
 		"previous_policy": "Refused-Pattern",
 		"authority": "Claude chatd seq21309"
@@ -18,7 +18,7 @@
 	"refusal/object-pattern": {
 		"index": 63,
 		"source_sha256": "a082bba93c467d6c42718171b29100734e502cc6090382ecff64f1dea7b1d2b5",
-		"stock_row_sha256": "b4a66300c43c9e10370580c16faba130c4bfb08d135295c8defe2c29a99c1fba",
+		"stock_outcome_sha256": "371c420c2a97fe0ab09d59f4cb3b098d74e7fd072c986bcd83f066a66269be38",
 		"policy": "Exact",
 		"previous_policy": "Refused-Pattern",
 		"authority": "Claude chatd seq21309"
@@ -26,7 +26,7 @@
 	"refusal/literal-pattern": {
 		"index": 64,
 		"source_sha256": "c6b608ff61612df700885076935228b6394b04d0f5b49e139c2d8cbef432a403",
-		"stock_row_sha256": "706de32ce6e2857fbb36d73e097d547aab873542c855f36a67b0c1c674dd6186",
+		"stock_outcome_sha256": "fadf27c378019ad38dd4d6362af2c0ed492364565e3cacb0533e71206f4e2a62",
 		"policy": "Exact",
 		"previous_policy": "Refused-Pattern",
 		"authority": "Claude chatd seq21309"
@@ -34,7 +34,7 @@
 	"refusal/variant-pattern": {
 		"index": 65,
 		"source_sha256": "ab3f857bfe576b0752d28924c75a851b7ae56a99e4c4334bc1b2306caca34487",
-		"stock_row_sha256": "5139b11dc754b6809456ae40cd71b3581ee8c49a1347ba78c88fe53d4cc8abae",
+		"stock_outcome_sha256": "fadf27c378019ad38dd4d6362af2c0ed492364565e3cacb0533e71206f4e2a62",
 		"policy": "Exact",
 		"previous_policy": "Refused-Pattern",
 		"authority": "Claude chatd seq21309"
@@ -42,7 +42,7 @@
 	"syntax/tail-exact": {
 		"index": 68,
 		"source_sha256": "889fa48f3323af963549da043dca071d1f1ab4ab20bb3ea7b78c4983952fac9f",
-		"stock_row_sha256": "db2b6af1166e5d256700a817afc33cd2c594e423a1e19341e3a8848e540da688",
+		"stock_outcome_sha256": "fadf27c378019ad38dd4d6362af2c0ed492364565e3cacb0533e71206f4e2a62",
 		"policy": "Exact",
 		"previous_policy": "Refused-Pattern",
 		"authority": "Claude chatd seq21309"
@@ -50,7 +50,7 @@
 	"syntax/tail-long": {
 		"index": 69,
 		"source_sha256": "2bb2cbf3303df0618ce1ffd64470a33bc0edc0ea6ee20ca75aae3e5d33a206d7",
-		"stock_row_sha256": "855f6b38eb25be4303a47691d27aa7face54b1e49e12a2c1e5c9a7d6b8676553",
+		"stock_outcome_sha256": "fadf27c378019ad38dd4d6362af2c0ed492364565e3cacb0533e71206f4e2a62",
 		"policy": "Exact",
 		"previous_policy": "Refused-Pattern",
 		"authority": "Claude chatd seq21309"
@@ -58,7 +58,7 @@
 	"syntax/tail-short": {
 		"index": 70,
 		"source_sha256": "41cab800ecd11da48376c0d289d93aba4a6d2410ba294d674ecbccc0aa397128",
-		"stock_row_sha256": "ff17cdb1c5ba06bd2a9d873e830e57ba83d67056584a302ecb384376a73e4669",
+		"stock_outcome_sha256": "a38c8d40887f429650dde159d69ec97f07cfaf479468bc6c142e7be39dbc96df",
 		"policy": "Exact",
 		"previous_policy": "Refused-Pattern",
 		"authority": "Claude chatd seq21309"
@@ -66,7 +66,7 @@
 	"syntax/all": {
 		"index": 71,
 		"source_sha256": "49997b7748458d89892f9932e61378030243aedcb175a739fe824c77a3b05a92",
-		"stock_row_sha256": "f25df3800effcd8dc6ffa3fc735aa9e5475b040d4fc6f155c2caaabd37c66f42",
+		"stock_outcome_sha256": "fadf27c378019ad38dd4d6362af2c0ed492364565e3cacb0533e71206f4e2a62",
 		"policy": "Exact",
 		"previous_policy": "Refused-Pattern",
 		"authority": "Claude chatd seq21309"

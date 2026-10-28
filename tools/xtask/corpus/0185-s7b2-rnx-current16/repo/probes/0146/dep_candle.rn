@@ -1,0 +1,17 @@
+// Record 0146, the after-push `:dep candle` check (no Polars): the
+// cross-encoder scores U5's saved 100 pairs, one score per line, for
+// dep_compare.py to compare in f32 bits with the twin-verified trace.
+// args: cross-encoder directory, u5-pairs.json, output file
+
+pub fn run(args) {
+    let (cross, pairs, out) = (args[0], args[1], args[2]);
+    let ce = candle::CrossEncoder::load(cross)?;
+    let p = json::parse(fs::read(pairs)?)?;
+    let scores = ce.score(p["queries"], p["passages"])?;
+    let text = "";
+    for s in scores { text += `${s}\n`; }
+    fs::write(out, text)?;
+    println!("{} pairs scored", scores.len());
+    println!("WORKFLOW OK dep-candle");
+    Ok(())
+}

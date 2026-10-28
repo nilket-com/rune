@@ -202,28 +202,18 @@ fn probe_cases(cases: Vec<(String, String)>, name: &str) {
 }
 
 #[test]
-#[ignore = "bounded frozen stock range-index contract; requires new GAP_OUT"]
-fn legacy_contract() {
-	check_contract("stock");
-}
-
-#[test]
-#[ignore = "bounded execution range-index convergence contract; requires new GAP_OUT"]
+#[ignore = "bounded execution range-index contract against live stock; requires new GAP_OUT"]
 fn contract() {
-	check_contract("fresh");
+	contract_cases(cases());
 }
 
-fn check_contract(engine: &str) {
-	contract_cases(engine, cases(), include_str!("../range_index_stock.tsv"));
-}
-
-fn contract_cases(engine: &str, generated: Vec<(String, String)>, table: &str) {
+fn contract_cases(generated: Vec<(String, String)>) {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("GAP_OUT"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
 	let scratch =
 		Scratch(std::env::temp_dir().join(format!("rune-range-contract-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
-	if engine == "fresh" && generated.len() == 522 {
+	if generated.len() == 522 {
 		let admitted = generated
 			.iter()
 			.filter(|(label, _)| label.starts_with("literal/") && label.ends_with("/get"))
@@ -234,41 +224,37 @@ fn contract_cases(engine: &str, generated: Vec<(String, String)>, table: &str) {
 			["literal/vec/get", "literal/string/get", "literal/tuple/get"]
 		);
 	}
-	let rows: Vec<_> = table.lines().skip(1).collect();
-	assert_eq!(generated.len(), rows.len());
-	for (n, ((label, source), row)) in generated.iter().zip(rows).enumerate() {
-		let row: Vec<_> = row.split('\t').collect();
-		assert_eq!(row.len(), 5);
-		assert_eq!(label, row[0]);
-		assert_eq!(*source, unhex(row[1]), "source drift: {label}");
+	for (n, (label, source)) in generated.iter().enumerate() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
-		let run = launch(&path, &path, "main", engine, &scratch.0, &out, &id);
-		assert!(run.complete, "{label}: {}", run.record);
-		super::len_clone::assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
+		let [stock, run] = ["stock", "fresh"].map(|engine| {
+			let run = launch(&path, &path, "main", engine, &scratch.0, &out, &id);
+			assert!(run.complete, "{engine} {label}: {}", run.record);
+			super::len_clone::assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
+			let fields: Vec<_> = run.record.split('\t').collect();
+			assert!(!fields[1].contains("0x"), "unstable class: {}", run.record);
+			run
+		});
 		let actual: Vec<_> = run.record.split('\t').collect();
-		assert!(!actual[1].contains("0x"), "unstable class: {}", run.record);
 		// C12 admits all five historical range-shape refusal witnesses.
-		// Compare their complete observations and streams to frozen stock below.
-		let expected = unhex(row[2]);
-		let mut expected: Vec<_> = expected.split('\t').collect();
-		// Nine frozen string-slice rows recorded stock's Debug fallback class.
-		// Equate only those rows to new's public Panic class; preserve the
-		// original table and compare the exact panic message and streams below.
-		if engine == "fresh"
-			&& matches!(
-				label.as_str(),
-				"dynamic/string/reversed/get"
-					| "dynamic/string/reversed/add"
-					| "dynamic/string/past-end/get"
-					| "dynamic/string/past-end/add"
-					| "dynamic/string/start-past-end/get"
-					| "dynamic/string/start-past-end/add"
-					| "witness/utf8-split-start"
-					| "witness/utf8-split-end"
-					| "witness/utf8-empty-split"
-			) {
+		// Compare their complete observations and streams to stock below.
+		let mut expected: Vec<_> = stock.record.split('\t').collect();
+		// Nine string-slice rows report stock's Debug fallback class. Equate
+		// only those rows to new's public Panic class; compare the exact panic
+		// message and streams below.
+		if matches!(
+			label.as_str(),
+			"dynamic/string/reversed/get"
+				| "dynamic/string/reversed/add"
+				| "dynamic/string/past-end/get"
+				| "dynamic/string/past-end/add"
+				| "dynamic/string/start-past-end/get"
+				| "dynamic/string/start-past-end/add"
+				| "witness/utf8-split-start"
+				| "witness/utf8-split-end"
+				| "witness/utf8-empty-split"
+		) {
 			assert_eq!(
 				expected[1],
 				"stock:Panic { reason: Panic { inner: \"missing string slice\" } }"
@@ -281,10 +267,18 @@ fn contract_cases(engine: &str, generated: Vec<(String, String)>, table: &str) {
 			(&expected[..2], &expected[3..]),
 			"observation drift: {label}"
 		);
-		assert_eq!(hex(&run.stdout), row[3], "stdout drift: {label}");
-		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
+		assert_eq!(
+			hex(&run.stdout),
+			hex(&stock.stdout),
+			"stdout drift: {label}"
+		);
+		assert_eq!(
+			hex(&run.stderr),
+			hex(&stock.stderr),
+			"stderr drift: {label}"
+		);
 	}
-	super::contract_completed(engine, generated.len());
+	super::contract_completed("fresh", generated.len());
 }
 
 fn endpoint_cases() -> Vec<(String, String)> {
@@ -378,21 +372,7 @@ fn endpoint_probe() {
 }
 
 #[test]
-#[ignore = "bounded frozen stock endpoint supplement; requires new GAP_OUT"]
-fn legacy_endpoint_contract() {
-	contract_cases(
-		"stock",
-		endpoint_cases(),
-		include_str!("../range_endpoint_stock.tsv"),
-	);
-}
-
-#[test]
-#[ignore = "bounded execution endpoint supplement convergence; requires new GAP_OUT"]
+#[ignore = "bounded execution endpoint supplement against live stock; requires new GAP_OUT"]
 fn endpoint_contract() {
-	contract_cases(
-		"fresh",
-		endpoint_cases(),
-		include_str!("../range_endpoint_stock.tsv"),
-	);
+	contract_cases(endpoint_cases());
 }

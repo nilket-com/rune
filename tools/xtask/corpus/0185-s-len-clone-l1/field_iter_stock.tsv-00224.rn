@@ -1,0 +1,1 @@
+struct P {y} fn target() { println!("target"); P{y:10} } fn rhs() { println!("rhs"); 3 } pub fn main() { target().x }

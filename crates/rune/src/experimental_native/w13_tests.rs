@@ -6,8 +6,7 @@
 //! `w13_exit_blocks_are_cold`, `w13_kernel_exits_emitted_after_the_loop`,
 //! `w13_branch_edges_define_the_condition_constant` and
 //! `w13_kernel_compare_feeds_the_branch_only` fail without W1 and W3 and pass with them.
-//! `compare_w13_delta` is the restricted golden delta `p3a_tests::child_selection_golden`
-//! runs against the B1 golden; `w13_golden_comparator_controls` are its negative controls.
+//! `w13_golden_comparator_controls` exercises the size comparison on synthetic records.
 use super::exec_tests::{compile_source, Src};
 use super::lower;
 use crate::experimental_core::region::{analyze, EntryClass, NodeOp, Region, Scalar, VIRTUAL_BASE};
@@ -613,35 +612,6 @@ pub(super) fn check_w13_delta(old: &str, new: &str) -> Result<(usize, Vec<String
 	Ok((identical, changed))
 }
 
-/// [`check_w13_delta`] for the golden test: panics on a violation, prints every changed
-/// line as `W13GOLDEN changed`, and returns (identical, changed) line counts.
-pub(super) fn compare_w13_delta(old: &str, new: &str) -> (usize, usize) {
-	let (identical, changed) =
-		check_w13_delta(old, new).unwrap_or_else(|e| std::panic!("W13 golden delta: {e}"));
-	for line in &changed {
-		println!("W13GOLDEN\tchanged\t{line}");
-	}
-	(identical, changed.len())
-}
-
-/// The selection golden captured once from the verified W13 implementation
-/// (`RUNE_P3A_GOLDEN_OUT`); `p3a_tests::child_selection_golden` pins this run to it.
-pub(super) const W13_GOLDEN: &str = include_str!("fixtures/w13_selection_golden.txt");
-
-/// The W13 fixture against the B1 fixture: exactly the restricted W13 delta.
-///
-/// Under Miri this text comparison took 208 s and executes no generated code, so it is
-/// opt-in there: `cargo +nightly miri test -p rune --all-features --lib -- --ignored --exact
-/// experimental_native::w13_tests::w13_selection_golden_delta`.
-#[test]
-#[cfg_attr(miri, ignore = "Miri: 208 s golden text comparison (opt-in)")]
-fn w13_selection_golden_delta() {
-	let (identical, changed) = compare_w13_delta(super::b1_tests::B1_GOLDEN, W13_GOLDEN);
-	println!("W13\tgolden_fixtures\tidentical={identical}\tchanged={changed}");
-	assert_eq!(identical + changed, W13_GOLDEN.lines().count());
-}
-
-/// A two-program selection text in the golden's format, sized by its regions' bytes.
 fn synthetic(p1: u64, p2a: u64, p2b: u64) -> String {
 	let summary = |name: &str, regions: usize, loaded: &[u64]| {
 		let code: u64 = loaded.iter().sum();

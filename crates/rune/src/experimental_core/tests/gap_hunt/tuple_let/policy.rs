@@ -35,21 +35,44 @@ fn policy_decode(text: &str) -> std::string::String {
 	std::string::String::from_utf8(bytes).unwrap()
 }
 
+/// The reviewed execution expectation and ruling for each intentional divergence.
+fn intentional_expectation(label: &str) -> (Json, Json) {
+	match label {
+		"effects/return-from-rhs" => (
+			json!({"status":"value","type":"I64","value":"7"}),
+			json!({"default_switch_disclosure":true,"invoked":true,"message_id":"01a13d6d-8e87-7253-b2ad-80633812cd9a","reason":"Stock assembler checks unbound names after a diverging RHS; fresh must return7.","seq":14203}),
+		),
+		"syntax/duplicate-name" => (
+			json!({"end":21,"invoked":false,"kind":"Unsupported","refusal":"Pattern","source":0,"span_hex":"61","start":20,"status":"refused"}),
+			json!({"default_switch_disclosure":true,"invoked":false,"message_id":"01a13d6d-8e87-7253-b2ad-80633812cd9a","reason":"Reject duplicate binding at the second name; do not reproduce silent second-wins.","seq":14203}),
+		),
+		_ => panic!("unlisted intentional divergence"),
+	}
+}
+
+/// The compared stock projection of `source`, observed in process.
+#[cfg(not(miri))]
+fn legacy_projection(label: &str, source: &str, mode: &str) -> Json {
+	project(&super::d1c_diagnostics::before(
+		"tuple_let",
+		label,
+		source,
+		"stock",
+		&legacy_observe(source, mode),
+	))
+}
+
 #[test]
 #[cfg(not(miri))]
 fn intentional_rulings_reject_drift() {
-	let frozen = include_str!("../../tuple_let_stock.tsv");
 	let mut checked = 0;
-	for line in frozen.lines().skip(1) {
-		let c = line.split('\t').collect::<Vec<_>>();
-		if c[6] != "Intentional-divergence" {
+	for &(label, source, mode, policy) in CASES {
+		if policy != "Intentional-divergence" {
 			continue;
 		}
-		let source = policy_decode(c[2]);
-		let stock: Json = serde_json::from_str(&policy_decode(c[3])).unwrap();
-		let execution: Json = serde_json::from_str(&policy_decode(c[7])).unwrap();
-		let ruling: Json = serde_json::from_str(&policy_decode(c[8])).unwrap();
-		check_intentional(c[0], &source, &stock, &execution, &ruling);
+		let stock = legacy_projection(label, source, mode);
+		let (execution, ruling) = intentional_expectation(label);
+		check_intentional(label, source, &stock, &execution, &ruling);
 		assert_ne!(stock, execution);
 		let rejects = |label: &str, source: &str, stock: &Json, execution: &Json, ruling: &Json| {
 			assert!(std::panic::catch_unwind(|| check_intentional(
@@ -57,27 +80,59 @@ fn intentional_rulings_reject_drift() {
 			))
 			.is_err());
 		};
-		rejects(c[0], &source, &stock, &stock, &ruling);
-		rejects("unlisted", &source, &stock, &execution, &ruling);
-		rejects(c[0], &(source.clone() + " "), &stock, &execution, &ruling);
+		rejects(label, source, &stock, &stock, &ruling);
+		rejects("unlisted", source, &stock, &execution, &ruling);
+		rejects(label, &format!("{source} "), &stock, &execution, &ruling);
 		let mut bad = ruling.clone();
 		bad["message_id"] = json!("unreviewed");
-		rejects(c[0], &source, &stock, &execution, &bad);
-		if c[0] == "syntax/duplicate-name" {
+		rejects(label, source, &stock, &execution, &bad);
+		if label == "syntax/duplicate-name" {
 			let mut shifted = execution.clone();
 			shifted["start"] = json!(19);
-			rejects(c[0], &source, &stock, &shifted, &ruling);
+			rejects(label, source, &stock, &shifted, &ruling);
 			let mut changed = stock.clone();
 			changed["value"] = json!("3");
-			rejects(c[0], &source, &changed, &execution, &ruling);
+			rejects(label, source, &changed, &execution, &ruling);
 		} else {
 			let mut changed = execution.clone();
 			changed["value"] = json!("8");
-			rejects(c[0], &source, &stock, &changed, &ruling);
+			rejects(label, source, &stock, &changed, &ruling);
 		}
 		checked += 1;
 	}
 	assert_eq!(checked, 2);
+}
+
+/// The Miri fixtures carry the in-process stock projection and the reviewed
+/// expectations, since Miri cannot observe the legacy engine itself.
+#[test]
+#[cfg(not(miri))]
+fn miri_fixtures_match_live_stock() {
+	for label in ["effects/return-from-rhs", "syntax/duplicate-name"] {
+		let fixture =
+			crate::experimental_core::tests::miri_fixtures::fixture("C8-intentional", label);
+		let c = fixture
+			.as_array()
+			.unwrap()
+			.iter()
+			.map(|v| v.as_str().unwrap())
+			.collect::<Vec<_>>();
+		assert_eq!(c.len(), 9);
+		let &(_, source, mode, policy) = CASES.iter().find(|case| case.0 == label).unwrap();
+		assert_eq!(c[0], label);
+		assert_eq!(c[1], mode);
+		assert_eq!(policy_decode(c[2]), source);
+		let stock: Json = serde_json::from_str(&policy_decode(c[3])).unwrap();
+		assert_eq!(stock, legacy_projection(label, source, mode), "{label}");
+		// Miri does not read captured streams.
+		assert_eq!((c[4], c[5]), ("", ""));
+		assert_eq!(c[6], policy);
+		let (execution, ruling) = intentional_expectation(label);
+		let fixed: Json = serde_json::from_str(&policy_decode(c[7])).unwrap();
+		assert_eq!(fixed, execution);
+		let fixed: Json = serde_json::from_str(&policy_decode(c[8])).unwrap();
+		assert_eq!(fixed, ruling);
+	}
 }
 
 #[test]

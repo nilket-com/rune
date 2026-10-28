@@ -1,9 +1,17 @@
-//! Versioned correctness commands; frozen data remains outside the repository.
+//! Versioned correctness commands with checkout-owned inputs.
 mod awfy;
+mod build_command;
 mod common;
+#[path = "../../../crates/rune/src/experimental_core/d1_message.rs"]
+mod d1_message;
+mod hosts;
+mod measure_checks;
+mod measure_command;
 mod miri;
 mod native;
 mod preservation;
+mod record_command;
+mod seal_command;
 
 use anyhow::{bail, ensure, Context as _};
 use common::{write_json, Context, Result};
@@ -18,26 +26,30 @@ use std::{
 const SUITES: &[&str] = &[
 	"native",
 	"contracts",
-	"emissions",
 	"l1",
-	"legacy-units",
 	"awfy",
 	"clippy",
 	"layouts",
+	"measure-checks",
 	"miri",
 ];
 fn usage() {
 	println!(
-		"cargo xtask verify --suite SUITE[,SUITE] --out NEW [--fixtures-root PATH]\n\
+		"cargo xtask verify [--suite SUITE[,SUITE]] [--out NEW] [--fixtures-root PATH]\n\
       suites: {}\n\
       options: --repo PATH --toolchain VERSION --jobs N --test-threads N --workers N\n\
-               --check-manifests\n\
+               --check-manifests --hosts PATH\n\
       cargo xtask list\n\
-      Output must be new and outside the repository. Miri runs after native work.",
+      cargo xtask build --help\n\
+      cargo xtask measure --help\n\
+      cargo xtask seal --help\n\
+      cargo xtask record --help\n\
+      Output must be new; default scratch is under target/xtask-verify. Miri runs after native work.",
 		SUITES.join(", ")
 	);
 }
 struct Options {
+	hosts: Option<PathBuf>,
 	repo: PathBuf,
 	fixtures: PathBuf,
 	out: PathBuf,
@@ -49,7 +61,7 @@ struct Options {
 	check: bool,
 }
 fn parse(args: &[String]) -> Result<Option<Options>> {
-	if args.is_empty() || args == ["--help"] || args == ["-h"] {
+	if args == ["--help"] || args == ["-h"] {
 		usage();
 		return Ok(None);
 	}
@@ -60,16 +72,18 @@ fn parse(args: &[String]) -> Result<Option<Options>> {
 		return Ok(None);
 	}
 	ensure!(
-		args[0] == "verify",
+		args.first().is_some_and(|arg| arg == "verify"),
 		"unknown command {}; expected verify or list",
-		args[0]
+		args.first().map_or("<empty>", String::as_str)
 	);
 	let mut repo = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+	let mut hosts = None;
 	let mut fixtures = None;
 	let mut out = None;
 	let mut toolchain = "1.98.1".to_owned();
-	let mut jobs = 4;
-	let mut test_threads = 4;
+	let default_parallelism = hosts::available_cpus()?.min(4);
+	let mut jobs = default_parallelism;
+	let mut test_threads = default_parallelism;
 	let mut workers = 1;
 	let mut suites = Vec::new();
 	let mut check = false;
@@ -91,6 +105,7 @@ fn parse(args: &[String]) -> Result<Option<Options>> {
 			.with_context(|| format!("missing value for {flag}"))?;
 		match flag.as_str() {
 			"--repo" => repo = value.into(),
+			"--hosts" => hosts = Some(PathBuf::from(value)),
 			"--fixtures-root" => fixtures = Some(PathBuf::from(value)),
 			"--out" => out = Some(PathBuf::from(value)),
 			"--toolchain" => toolchain = value.clone(),
@@ -106,7 +121,9 @@ fn parse(args: &[String]) -> Result<Option<Options>> {
 		jobs > 0 && test_threads > 0 && workers > 0,
 		"worker counts must be positive"
 	);
-	ensure!(!suites.is_empty(), "select --suite NAME or --suite all");
+	if suites.is_empty() {
+		suites.push("all".to_owned());
+	}
 	if suites == ["all"] {
 		suites = SUITES.iter().map(|s| (*s).to_owned()).collect();
 	}
@@ -115,21 +132,29 @@ fn parse(args: &[String]) -> Result<Option<Options>> {
 		ensure!(SUITES.contains(&suite.as_str()), "unknown suite {suite}");
 		ensure!(unique.insert(suite), "duplicate suite {suite}");
 	}
-	let external = suites.iter().any(|suite| {
-		matches!(
-			suite.as_str(),
-			"contracts" | "emissions" | "l1" | "legacy-units"
-		)
-	});
+	let external = suites
+		.iter()
+		.any(|suite| matches!(suite.as_str(), "contracts" | "l1"));
 	let fixtures = match fixtures {
-        Some(root) => root,
-        None if !external => repo.clone(),
-        None => bail!("--fixtures-root is required for contracts and preservation suites; see tools/xtask/README.md"),
-    };
+		Some(root) => root,
+		None if !external => repo.clone(),
+		None => repo.join("tools/xtask/corpus"),
+	};
+	let out = match out {
+		Some(path) => path,
+		None => {
+			let timestamp = std::time::SystemTime::now()
+				.duration_since(std::time::UNIX_EPOCH)?
+				.as_nanos();
+			repo.join("target/xtask-verify")
+				.join(format!("{}-{timestamp}", std::process::id()))
+		}
+	};
 	Ok(Some(Options {
+		hosts,
 		repo,
 		fixtures,
-		out: out.context("--out is required")?,
+		out,
 		toolchain,
 		jobs,
 		test_threads,
@@ -141,18 +166,24 @@ fn parse(args: &[String]) -> Result<Option<Options>> {
 fn dispatch(ctx: &Context, suite: &str) -> Result<Value> {
 	match suite {
 		"native" | "contracts" | "clippy" | "layouts" => native::run(ctx, suite),
-		"emissions" | "l1" | "legacy-units" => preservation::run(ctx, suite),
+		"l1" => preservation::run(ctx),
 		"miri" => miri::run(ctx),
 		"awfy" => awfy::run(ctx),
+		"measure-checks" => measure_checks::run(ctx),
 		_ => bail!("unknown suite {suite}"),
 	}
 }
-fn external_requirements(suite: &str) -> Result<Value> {
-	let inventory: Value = serde_json::from_str(include_str!("../fixtures/EXTERNAL.json"))?;
-	inventory["per_suite"]
-		.get(suite)
-		.cloned()
-		.with_context(|| format!("missing external fixture inventory for {suite}"))
+fn external_requirements(ctx: &Context, suite: &str) -> Value {
+	// The historical inventory describes the earlier archive, not this checkout.
+	// Current contracts and L1 inputs are checked in. An explicitly supplied
+	// alternative root is external, but its size is not known until inspected.
+	let uses_corpus = matches!(suite, "contracts" | "l1");
+	let bundled = ctx.fixtures == ctx.repo.join("tools/xtask/corpus");
+	if uses_corpus && !bundled {
+		json!({"source":"provided", "external_files":null, "external_bytes":null})
+	} else {
+		json!({"source":if uses_corpus {"bundled"} else {"none"}, "external_files":0, "external_bytes":0})
+	}
 }
 fn one(ctx: &Context, suite: &str) -> Result<Value> {
 	let child = ctx.suite(suite)?;
@@ -163,7 +194,7 @@ fn one(ctx: &Context, suite: &str) -> Result<Value> {
 	let ok = result.is_ok() && source.is_ok();
 	let value = json!({"schema":1,"suite":suite,"status":if ok {"PASS"}else{"FAIL"},
         "seconds":start.elapsed().as_secs_f64(),"result":result.as_ref().ok(),
-        "external_fixtures":external_requirements(suite)?,
+        "external_fixtures":external_requirements(&child, suite),
         "error":result.as_ref().err().map(|e|format!("{e:#}")),
         "source_error":source.as_ref().err().map(|e|format!("{e:#}"))});
 	write_json(&child.out.join("RESULT.json"), &value)?;
@@ -183,7 +214,8 @@ fn validate_budget(workers: usize, jobs: usize, test_threads: usize, cpus: usize
 }
 fn execute(o: Options) -> Result<()> {
 	let started = Instant::now();
-	let cpu_budget = std::thread::available_parallelism()?.get().min(30);
+	let hosts = hosts::load(o.hosts.as_deref())?;
+	let cpu_budget = hosts::available_cpus()?;
 	validate_budget(o.workers, o.jobs, o.test_threads, cpu_budget)?;
 	let ctx = Context::new(
 		o.repo,
@@ -197,7 +229,8 @@ fn execute(o: Options) -> Result<()> {
 		&ctx.root_out.join("CONFIG.json"),
 		&json!({"schema":1,"suites":o.suites,
         "jobs":o.jobs,"test_threads":o.test_threads,"workers":o.workers,"toolchain":ctx.toolchain,
-        "fixtures":ctx.fixtures,"repo":ctx.repo,"cpu_budget":cpu_budget,"check_manifests":o.check}),
+        "fixtures":ctx.fixtures,"repo":ctx.repo,"cpu_budget":cpu_budget,"check_manifests":o.check,
+        "hosts":hosts.as_ref().map(|loaded| &loaded.receipt)}),
 	)?;
 
 	if o.check {
@@ -206,14 +239,15 @@ fn execute(o: Options) -> Result<()> {
 			for suite in &o.suites {
 				let value = match suite.as_str() {
 					"native" | "contracts" | "clippy" | "layouts" => native::check_manifest(&ctx)?,
-					"emissions" | "l1" | "legacy-units" => preservation::check_manifest(&ctx)?,
+					"l1" => preservation::check_l1_manifest(&ctx)?,
 					"miri" => miri::check_manifest(&ctx)?,
 					"awfy" => awfy::check_manifest(&ctx)?,
+					"measure-checks" => measure_checks::check_manifest(&ctx)?,
 					_ => unreachable!(),
 				};
 				checks.insert(
 					suite.clone(),
-					json!({"manifest":value,"external_fixtures":external_requirements(suite)?}),
+					json!({"manifest":value,"external_fixtures":external_requirements(&ctx, suite)}),
 				);
 			}
 			ctx.verify_source()?;
@@ -275,11 +309,25 @@ fn execute(o: Options) -> Result<()> {
 	Ok(())
 }
 fn main() {
-	let args: Vec<_> = std::env::args().skip(1).collect();
-	if let Err(error) = parse(&args).and_then(|options| match options {
-		Some(o) => execute(o),
-		None => Ok(()),
-	}) {
+	let mut args: Vec<_> = std::env::args().skip(1).collect();
+	if args.is_empty() {
+		args.push("verify".to_owned());
+	}
+	let result = if args.first().is_some_and(|arg| arg == "build") {
+		build_command::run(&args[1..])
+	} else if args.first().is_some_and(|arg| arg == "measure") {
+		measure_command::run(&args[1..])
+	} else if args.first().is_some_and(|arg| arg == "record") {
+		record_command::run(&args[1..])
+	} else if args.first().is_some_and(|arg| arg == "seal") {
+		seal_command::run(&args[1..])
+	} else {
+		parse(&args).and_then(|options| match options {
+			Some(o) => execute(o),
+			None => Ok(()),
+		})
+	};
+	if let Err(error) = result {
 		eprintln!("xtask: {error:#}");
 		std::process::exit(1);
 	}
@@ -295,15 +343,14 @@ mod tests {
 			.collect()
 	}
 	#[test]
-	fn repository_only_suites_do_not_require_external_fixtures() {
-		for suite in ["native", "clippy", "layouts", "awfy", "miri"] {
-			let args = ["verify", "--suite", suite, "--out", "/tmp/verify"].map(str::to_owned);
-			assert!(parse(&args).is_ok(), "{suite}");
-		}
-		for suite in ["contracts", "emissions", "l1", "legacy-units", "all"] {
-			let args = ["verify", "--suite", suite, "--out", "/tmp/verify"].map(str::to_owned);
-			assert!(parse(&args).is_err(), "{suite}");
-		}
+	fn default_verification_uses_checkout_inputs_and_scratch() {
+		let args = ["verify"].map(str::to_owned);
+		let options = parse(&args).unwrap().unwrap();
+		assert_eq!(options.suites.len(), SUITES.len());
+		assert_eq!(options.fixtures, options.repo.join("tools/xtask/corpus"));
+		assert!(options
+			.out
+			.starts_with(options.repo.join("target/xtask-verify")));
 	}
 
 	#[test]

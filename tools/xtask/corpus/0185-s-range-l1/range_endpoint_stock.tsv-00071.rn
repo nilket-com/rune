@@ -1,0 +1,1 @@
+pub fn main() {let v=[1,2,3]; let lo=(); let hi=(); v[lo..hi]+=[7,8]; ()}

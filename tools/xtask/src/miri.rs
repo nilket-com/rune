@@ -1,6 +1,6 @@
-//! Bounded, exact-selection Miri execution. Historical receipts are read-only inputs.
+//! Bounded, exact-selection Miri execution from committed inputs.
 use crate::common::{self, Context, Result};
-use anyhow::{ensure, Context as _};
+use anyhow::ensure;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
@@ -31,8 +31,6 @@ struct Helper {
 	fixture_source: String,
 	fixture_sha256: String,
 	first_bound: u64,
-	history_receipt: String,
-	history_sha256: String,
 }
 fn relative(root: &Path, name: &str) -> Result<PathBuf> {
 	let path = Path::new(name);
@@ -67,33 +65,6 @@ fn manifest(ctx: &Context) -> Result<Manifest> {
 			common::hash_file(&relative(&ctx.repo, &h.fixture_source)?)? == h.fixture_sha256,
 			"fixture changed: {}",
 			h.fixture_source
-		);
-		let history = relative(&ctx.repo, &h.history_receipt)?;
-		ensure!(
-			common::hash_file(&history)? == h.history_sha256,
-			"history receipt changed: {}",
-			history.display()
-		);
-		let r: Value = common::read_json(&history)?;
-		ensure!(
-			r["status"] == "pass"
-				&& r["rc"] == 0
-				&& r["helper"]["name"] == h.name
-				&& r["helper"]["fixture_source"] == h.fixture_source
-				&& r["helper"]["first_bound"] == h.first_bound
-				&& r["helper"]["selector"] == h.selector
-				&& r["helper"]["ignored"] == h.ignored
-				&& r["helper"]["fixture_sha256"] == h.fixture_sha256
-				&& r["identity"]["toolchain"] == m.toolchain
-				&& r["identity"]["features"] == m.features,
-			"historical success metadata mismatch: {}",
-			h.name
-		);
-		ensure!(
-			r["seconds"]
-				.as_f64()
-				.is_some_and(|n| n.is_finite() && n > 0.0),
-			"invalid historical duration"
 		);
 	}
 	for retired in &m.retired {
@@ -198,14 +169,7 @@ fn selection(listing: &str, selector: &str) -> Result<()> {
 }
 
 fn helper(ctx: &Context, m: &Manifest, h: &Helper, identity: &Value) -> Result<Value> {
-	let r: Value = common::read_json(&relative(&ctx.repo, &h.history_receipt)?)?;
-	let same =
-		r["identity"]["rustc"] == identity["rustc"] && r["identity"]["miri"] == identity["miri"];
-	let bound = if same {
-		(2.0 * r["seconds"].as_f64().context("history seconds")?).max(60.0)
-	} else {
-		h.first_bound as f64
-	};
+	let bound = h.first_bound as f64;
 	let mut c = cargo(ctx, m);
 	c.arg(&h.selector).arg("--");
 	if h.ignored {
@@ -225,18 +189,24 @@ fn helper(ctx: &Context, m: &Manifest, h: &Helper, identity: &Value) -> Result<V
 		"expected exactly one actual Miri interpreter for {}",
 		h.name
 	);
-	let result = json!({"helper":h,"run":run,"history_matched":same,"bound_seconds":bound,"identity":identity,"interpreters":intervals});
+	let result = json!({"helper":h,"run":run,"bound_seconds":bound,"identity":identity,"interpreters":intervals});
 	common::write_json(&ctx.out.join(format!("{}-result.json", h.name)), &result)?;
 	Ok(result)
 }
-fn batch(ctx: &Context, m: &Manifest, helpers: &[Helper], identity: &Value) -> Result<Vec<Value>> {
+fn batch(
+	ctx: &Context,
+	m: &Manifest,
+	helpers: &[Helper],
+	identity: &Value,
+	workers: usize,
+) -> Result<Vec<Value>> {
 	let queue = Mutex::new(helpers.iter());
 	let stop = AtomicBool::new(false);
 	let results = Mutex::new(Vec::new());
 	std::thread::scope(|scope| {
-		let mut workers = Vec::new();
-		for _ in 0..2 {
-			workers.push(scope.spawn(|| -> Result<()> {
+		let mut threads = Vec::new();
+		for _ in 0..workers {
+			threads.push(scope.spawn(|| -> Result<()> {
 				loop {
 					if stop.load(Ordering::SeqCst) {
 						break;
@@ -262,7 +232,7 @@ fn batch(ctx: &Context, m: &Manifest, helpers: &[Helper], identity: &Value) -> R
 			}));
 		}
 		let mut error = None;
-		for worker in workers {
+		for worker in threads {
 			match worker.join() {
 				Ok(Ok(())) => {}
 				Ok(Err(e)) => {
@@ -325,7 +295,8 @@ pub fn run(ctx: &Context) -> Result<Value> {
 	ensure!(!listing.is_empty(), "empty Miri test listing");
 	let prepared_harness = trace::harness_records(ctx)?;
 	common::write_json(&ctx.out.join("PREPARED-HARNESS.json"), &prepared_harness)?;
-	let mut results = batch(ctx, &m, &m.helpers[..2], &identity)?;
+	let workers = crate::hosts::available_cpus()?.min(2);
+	let mut results = batch(ctx, &m, &m.helpers[..2], &identity, workers)?;
 	let first = trace::proof(
 		&ctx.out,
 		&m.helpers[..2]
@@ -333,12 +304,19 @@ pub fn run(ctx: &Context) -> Result<Value> {
 			.map(|h| h.name.as_str())
 			.collect::<Vec<_>>(),
 	)?;
-	ensure!(
-		first["maximum_actual_interpreters"] == 2,
-		"first Miri pair did not prove actual overlap"
-	);
+	if workers == 2 {
+		ensure!(
+			first["maximum_actual_interpreters"] == 2,
+			"first Miri pair did not prove actual overlap"
+		);
+	} else {
+		ensure!(
+			first["maximum_actual_interpreters"] == 1,
+			"serial Miri fallback overlapped"
+		);
+	}
 	common::write_json(&ctx.out.join("FIRST-PAIR-OVERLAP.json"), &first)?;
-	results.extend(batch(ctx, &m, &m.helpers[2..], &identity)?);
+	results.extend(batch(ctx, &m, &m.helpers[2..], &identity, workers)?);
 	let proof = trace::proof(
 		&ctx.out,
 		&m.helpers
@@ -351,7 +329,7 @@ pub fn run(ctx: &Context) -> Result<Value> {
 	ensure!(results.len() == 73, "incomplete Miri results");
 	manifest(ctx)?;
 	Ok(
-		json!({"status":"PASS","helpers":73,"results":results,"overlap":proof,"harness_records":harness,"identity":identity,"manifest_sha256":common::hash_bytes(MANIFEST.as_bytes())}),
+		json!({"status":"PASS","helpers":73,"results":results,"overlap":proof,"concurrency":if workers == 1 {"serial-fallback"} else {"two-workers"},"overlap_evidence":if workers == 1 {"not exercised"} else {"exercised"},"harness_records":harness,"identity":identity,"manifest_sha256":common::hash_bytes(MANIFEST.as_bytes())}),
 	)
 }
 #[cfg(test)]

@@ -1,0 +1,8 @@
+// A long callback loop; run.sh sends SIGINT while it runs. The session's
+// handler only sets a flag, so the call completes and the value is intact.
+fn ok(r) { match r { Ok(v) => v, Err(e) => panic(`${e.kind()}: ${e.message()}`) } }
+pub fn main() {
+    let ca = fx::sorted_i64(20000);
+    ok(ca.apply_mut_cb(|x| { let i = 0; while i < 6000 { i += 1; } x + 1 }));
+    `completed len=${ca.len()} first=${match ca.values()[0] { Some(v) => `${v}`, None => "null" }}`
+}

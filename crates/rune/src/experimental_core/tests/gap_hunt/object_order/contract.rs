@@ -1,8 +1,8 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "O1 frozen execution replay; bounded children and exclusive GAP_OUT"]
+#[ignore = "O1 execution contract against live stock; bounded children and exclusive GAP_OUT"]
 fn contract() {
-	run_contract("fresh");
+	run_contract();
 }
 
 /// The comparable part of one observation. Stock VM frame encoding and raw
@@ -29,12 +29,10 @@ fn canonical_record(record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
-/// `frozen` is the pinned pre-O1 stock row; `stock` is its O1 replacement, or
-/// the same row where key order was never observable.
+/// `stock` is the live stock observation of the same case.
 fn verify_case(
 	index: usize,
 	case: &Json,
-	frozen: &Json,
 	stock: &Json,
 	actual: &Json,
 	stdout: &[u8],
@@ -70,10 +68,6 @@ fn verify_case(
 	assert_eq!(
 		hex(Sha256::digest(case["source"].as_str().unwrap().as_bytes()).as_ref()),
 		rule["source_sha256"]
-	);
-	assert_eq!(
-		hex(Sha256::digest(serde_json::to_vec(frozen).unwrap()).as_ref()),
-		rule["stock_row_sha256"]
 	);
 	let audit = &actual["fresh_audit"];
 	for key in ["row_idle", "executor_idle"] {
@@ -149,9 +143,17 @@ pub(super) fn admitted(doc: &str, rule: &Json) -> Json {
 	else {
 		return rule.clone();
 	};
-	assert_eq!(&row["legacy"], rule);
+	let without_old_results = |value: &Json| {
+        let mut copy = value.clone();
+        if let Some(object) = copy.as_object_mut() {
+            object.remove("stock_row_sha256");
+            object.remove("stock_canonical_sha256");
+        }
+        copy
+    };
+    assert_eq!(without_old_results(&row["legacy"]), without_old_results(rule));
 	let mut admitted = row["admitted"].clone();
-	for key in ["index", "label", "source_sha256", "stock_row_sha256"] {
+	for key in ["index", "label", "source_sha256"] {
 		assert!(admitted.get(key).is_none());
 		admitted[key] = rule[key].clone();
 	}

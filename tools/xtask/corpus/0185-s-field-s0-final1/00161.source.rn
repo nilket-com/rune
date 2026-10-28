@@ -1,0 +1,64 @@
+// Testing a bunch of control flows.
+
+fn test(n) {
+    if n > 1 {
+        2
+    } else {
+        if n < 1 {
+            0
+        } else {
+            1
+        }
+    }
+}
+
+fn test2(n) {
+    if n > 1 {
+        2
+    } else if n < 1 {
+        0
+    } else {
+        1
+    }
+}
+
+fn test3(n) {
+    let out = if n > 1 {
+        2
+    } else if n < 1 {
+        0
+    } else {
+        1
+    };
+
+    out
+}
+
+fn from_loop() {
+    let n = 1;
+
+    while n < 4 {
+        n = n + 1;
+    }
+
+    n
+}
+
+fn returns_unit(n) {
+    if n > 0 {
+        let _ = 100;
+    }
+}
+
+fn returns_string() {
+    "this is a string"
+}
+
+let a = test(0);
+let b = test2(1);
+let c = test3(2);
+let d = from_loop();
+let e = returns_unit(1);
+let f = returns_string();
+
+dbg!([0, 1, 2, 4, (), "this is a string"] == [a, b, c, d, e, f]);

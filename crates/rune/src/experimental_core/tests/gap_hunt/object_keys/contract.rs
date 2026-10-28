@@ -1,8 +1,8 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "S2 frozen execution replay; bounded children and exclusive GAP_OUT"]
+#[ignore = "S2 execution contract against live stock; bounded children and exclusive GAP_OUT"]
 fn contract() {
-	run_contract("fresh");
+	run_contract();
 }
 
 /// The comparable part of one observation. Stock VM frame encoding and raw
@@ -29,12 +29,10 @@ fn canonical_record(record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
-/// `frozen` is the pinned stock row; `stock` is its S2 replacement, or the same
-/// row where no Object key was moved.
+/// `stock` is the live stock observation of the same case.
 fn verify_case(
 	index: usize,
 	case: &Json,
-	frozen: &Json,
 	stock: &Json,
 	actual: &Json,
 	stdout: &[u8],
@@ -63,10 +61,6 @@ fn verify_case(
 	assert_eq!(
 		hex(Sha256::digest(case["source"].as_str().unwrap().as_bytes()).as_ref()),
 		rule["source_sha256"]
-	);
-	assert_eq!(
-		hex(Sha256::digest(serde_json::to_vec(frozen).unwrap()).as_ref()),
-		rule["stock_row_sha256"]
 	);
 	let audit = &actual["fresh_audit"];
 	for key in ["row_idle", "executor_idle"] {

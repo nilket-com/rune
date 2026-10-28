@@ -1,0 +1,10 @@
+pub fn main() {
+    let values = ["Hello", 42];
+
+    println!("{}", values[0]);
+    println!("{}", values.1); // items in vectors can be accessed like tuple fields.
+
+    for v in values {
+        println!("{v}");
+    }
+}

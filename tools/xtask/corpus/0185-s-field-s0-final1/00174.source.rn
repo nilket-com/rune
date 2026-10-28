@@ -1,0 +1,15 @@
+let rng = rand::SmallRng::try_from_sys_rng()?;
+let v = rng.random::<u64>();
+println!("Random u64: {v}");
+let v = rng.random_range::<i64>(-100..100);
+println!("Random i64 in range: {v}");
+let v = rng.random::<char>();
+println!("Random char: {v:?}");
+
+let rng = rand::StdRng::try_from_sys_rng()?;
+let v = rng.random::<u64>();
+println!("Random u64: {v}");
+let v = rng.random_range::<i64>(-100..100);
+println!("Random i64 in range: {v}");
+let v = rng.random_range::<char>('a'..'z');
+println!("Random char between 'a' and 'z': {v:?}");

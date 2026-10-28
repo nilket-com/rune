@@ -1,0 +1,21 @@
+// Record 0148, the after-push `:dep candle` check (no Polars): NliModel
+// scores the six early-gate pairs one at a time, as `out/early-gate.json`'s
+// "alone" logits were made, for dep_compare.py to compare in f32 bits.
+// args: NLI model directory, early-gate.json, output file
+
+pub fn run(args) {
+    let (model, gate, out) = (args[0], args[1], args[2]);
+    let nli = candle::NliModel::load(model)?;
+    let g = json::parse(fs::read(gate)?)?;
+    let text = "";
+    let n = 0;
+    for k in 0..g["premises"].len() {
+        let d = candle::Tensor::from_dense(nli.score([g["premises"][k]], [g["hypotheses"][k]])?)?.to_vec2()?;
+        for v in d[0] { text += `${v}\n`; }
+        n += 1;
+    }
+    fs::write(out, text)?;
+    println!("{} pairs scored", n);
+    println!("WORKFLOW OK dep-candle");
+    Ok(())
+}

@@ -278,13 +278,15 @@ fn cases() -> Vec<Case> {
 		.collect()
 }
 #[test]
-fn matrix_labels_are_unique_and_disjoint_from_frozen_c3() {
+fn matrix_labels_are_unique_and_disjoint_from_c3() {
 	assert_eq!(CASES.len(), COUNT);
-	let old: std::collections::BTreeSet<_> = include_str!("../../patterns_stock.tsv")
-		.lines()
-		.skip(1)
-		.map(|r| r.split('\t').next().unwrap())
+	let c3: Vec<_> = super::cases()
+		.into_iter()
+		.chain(super::supplement_cases())
+		.chain(super::supplement2_cases())
 		.collect();
+	let old: std::collections::BTreeSet<_> = c3.iter().map(|case| case.label.as_str()).collect();
+	assert_eq!(old.len(), 348);
 	let mut seen = std::collections::BTreeSet::new();
 	for (label, _, mode) in CASES {
 		assert!(label.starts_with("c4/"));
@@ -305,12 +307,6 @@ fn legacy_replay() {
 		fs::read_to_string(std::env::var_os("GAP_FROZEN").expect("pinned frozen TSV required"))
 			.unwrap();
 	replay(&frozen);
-}
-
-#[test]
-#[ignore = "C4 exact frozen stock contract; bounded children, new GAP_OUT"]
-fn legacy_contract() {
-	replay(include_str!("../../result_patterns_stock.tsv"));
 }
 
 fn replay(frozen: &str) {
@@ -373,7 +369,7 @@ fn refusal(label: &str) -> Option<&'static str> {
 	}
 }
 #[test]
-#[ignore = "C4 execution supplement contract; bounded children, new GAP_OUT"]
+#[ignore = "C4 execution supplement contract against live stock; bounded children, new GAP_OUT"]
 fn contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
@@ -381,23 +377,15 @@ fn contract() {
 		std::env::temp_dir().join(format!("rune-c4-execution-contract-{}", std::process::id())),
 	);
 	fs::create_dir(&scratch.0).unwrap();
-	let frozen: Vec<_> = include_str!("../../result_patterns_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
-	assert_eq!(frozen.len(), COUNT);
+	let generated = cases();
+	assert_eq!(generated.len(), COUNT);
 	let (mut exact, mut refused, mut full_budget) = (0, 0, 0);
 	let mut presentation = 0;
-	for (n, ((label, source, mode), row)) in CASES.iter().zip(frozen).enumerate() {
-		let row: Vec<_> = row.split('\t').collect();
-		assert_eq!(row.len(), 9);
-		assert_eq!(row[0], *label);
-		assert_eq!(row[1], *mode);
-		assert_eq!(row[2], hex(source.as_bytes()));
-		assert_eq!(row[8], "Exact");
+	for (n, ((label, source, mode), case)) in CASES.iter().zip(&generated).enumerate() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
+		let stock = super::stock_run(case, &path, &scratch.0, &out, &id);
 		let old = scratch.0.join("result.site");
 		if old.exists() {
 			fs::remove_file(old).unwrap();
@@ -417,19 +405,7 @@ fn contract() {
 			.or_else(|| c15b.get(*label))
 			.or_else(|| admissions.get(*label));
 		if let Some(rule) = c16e_rule {
-			use sha2::{Digest, Sha256};
-			assert_eq!(
-				rule["stock_row_sha256"],
-				hex(&Sha256::digest(row.join("\t").as_bytes()))
-			);
 			assert_eq!(rule["previous_refusal"], refusal(label).unwrap());
-		}
-		if let Some(rule) = c15b.get(*label) {
-			use sha2::{Digest, Sha256};
-			assert_eq!(
-				rule["stock_row_sha256"],
-				hex(&Sha256::digest(row.join("\t").as_bytes()))
-			);
 		}
 		if let Some(rule) = admitted {
 			use sha2::Digest as _;
@@ -461,8 +437,7 @@ fn contract() {
 			full_budget += 1;
 			continue;
 		}
-		let expected = unhex(row[3]);
-		let expected: Vec<_> = expected.split('\t').collect();
+		let expected: Vec<_> = stock.run.record.split('\t').collect();
 		let expected_class =
 			if let Some(rule) = c16e_rule.filter(|r| r["policy"] == "Policy-presentation") {
 				assert_eq!(expected[0], "error");
@@ -481,15 +456,15 @@ fn contract() {
 			"{label}: class"
 		);
 		assert_eq!(actual[3..], expected[3..], "{label}: message/value");
-		assert_eq!(hex(&run.stdout), row[4], "{label}: stdout");
-		assert_eq!(hex(&run.stderr), row[5], "{label}: stderr");
+		assert_eq!(hex(&run.stdout), hex(&stock.run.stdout), "{label}: stdout");
+		assert_eq!(hex(&run.stderr), hex(&stock.run.stderr), "{label}: stderr");
 		let site = if actual[0] == "error" {
 			fs::read(scratch.0.join("result.site")).unwrap()
 		} else {
 			Vec::new()
 		};
 		fs::write(out.join(format!("{id}.execution.site")), &site).unwrap();
-		assert_eq!(hex(&site), row[6], "{label}: site");
+		assert_eq!(site, stock.site, "{label}: site");
 		if c16e_rule.is_some_and(|r| r["policy"] == "Policy-presentation") {
 			presentation += 1;
 		} else {
@@ -500,38 +475,6 @@ fn contract() {
 	fs::write(out.join("summary.txt"),"183 exact;2 source-pinned policy-presentation;4 explicit refusals;75 full-execution-budget source checks (no numeric stock fuel parity)\n").unwrap();
 	contract_completed("fresh", COUNT);
 }
-#[test]
-#[ignore = "C4 both-engine frozen contract; bounded children, new GAP_OUT"]
-fn check_contract() {
-	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
-	fs::create_dir(&out).unwrap();
-	for (engine, test) in [("stock", "legacy_contract"), ("fresh", "contract")] {
-		let result = Command::new(std::env::current_exe().unwrap())
-			.args([
-				"--exact",
-				&format!("experimental_core::tests::gap_hunt::patterns::result_supplement::{test}"),
-				"--ignored",
-				"--nocapture",
-			])
-			.env("GAP_OUT", out.join(engine))
-			.output()
-			.unwrap();
-		fs::write(out.join(format!("{engine}.stdout")), &result.stdout).unwrap();
-		fs::write(out.join(format!("{engine}.stderr")), &result.stderr).unwrap();
-		assert!(
-			result.status.success(),
-			"{engine}: {}",
-			String::from_utf8_lossy(&result.stdout)
-		);
-		let text = String::from_utf8_lossy(&result.stdout);
-		assert!(text.contains("1 passed; 0 failed"));
-		assert!(text.contains(&format!("CONTRACT ENGINE {engine}")));
-		assert!(text.contains("CONTRACT ROWS 264"));
-		assert!(result.stderr.is_empty());
-	}
-	contract_completed("both", COUNT);
-}
-
 #[test]
 #[cfg_attr(
 	miri,

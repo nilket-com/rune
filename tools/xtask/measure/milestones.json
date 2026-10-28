@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "current": "M7",
+  "milestones": [
+    {"id": "M0", "commit": "cd620d67108695e2706acd5091a3a110f91f1987"},
+    {"id": "M2", "commit": "e438cfae644ebb47d297703c8a0221b4ab21a592"},
+    {"id": "M3", "commit": "c4ef4e3a1bfef84c5e7b54513bdb223a45eb02b3"},
+    {"id": "M4", "commit": "092d2cc2e8477822fc6b978956b389b8b094e40a"},
+    {"id": "M5", "commit": "f14362cfacd81ccb1288358bd213f821c0072234"},
+    {"id": "M6", "commit": "7168ed0378102b6ac143f372c1468a48318203a1"},
+    {"id": "M7", "commit": "38ae7e1fb0b43f245e904d9cb281a80b0e17ca16"}
+  ]
+}

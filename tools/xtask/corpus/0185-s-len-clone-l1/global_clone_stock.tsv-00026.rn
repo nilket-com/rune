@@ -1,0 +1,1 @@
+pub fn main() { let x=Err([1]); std::clone::clone(x) }

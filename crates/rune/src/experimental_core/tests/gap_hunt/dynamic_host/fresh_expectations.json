@@ -1,0 +1,1605 @@
+{
+  "isolation/external-host-mutation": {
+    "source_sha256": "8bea23420a9c04a52a9fa99de63b9f8b4ab9ba6f0285d6e48d4a92e01a50c1f7",
+    "policy": "Retained-isolation",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/external",
+        "mutate"
+      ],
+      "events_after_reuse": [
+        "make/external",
+        "mutate"
+      ],
+      "host_calls": 2,
+      "invoked": true,
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "faabb50254b20eb5472e23b5ad02ff49f1d524f9fc616328cb652fda51874d39"
+  },
+  "isolation/external-script-mutation": {
+    "source_sha256": "0d5da757f4fbe4f0d2091b26beca4d8bdf712bf900aea29015f7a51484c9ac9a",
+    "policy": "Retained-isolation",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/external",
+        "inspect"
+      ],
+      "events_after_reuse": [
+        "make/external",
+        "inspect"
+      ],
+      "host_calls": 2,
+      "invoked": true,
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "e0d4d56a2bcd54255c40d44cb2cba412ab78a14da26d7c62c647ef99fa66f521"
+  },
+  "isolation/cross-call-alias": {
+    "source_sha256": "e9301c87a314ba2e6ede1111e2be43bdd26d948a50ed5fce0c63fe060780cd8a",
+    "policy": "Retained-isolation",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/external",
+        "make/external"
+      ],
+      "events_after_reuse": [
+        "make/external",
+        "make/external"
+      ],
+      "host_calls": 2,
+      "invoked": true,
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "4da502913c713908a4d6a91b9eead3dd4ffbd368fb73cb6a579da42733bb0adf"
+  },
+  "isolation/cross-call-later-snapshot": {
+    "source_sha256": "114e6c7e004d3e2deb22e4bf888c0e516aa9f0458fd53a7cc6a924e9b2baebf4",
+    "policy": "Retained-isolation",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/external",
+        "make/external"
+      ],
+      "events_after_reuse": [
+        "make/external",
+        "make/external"
+      ],
+      "host_calls": 2,
+      "invoked": true,
+      "outcome": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "4da502913c713908a4d6a91b9eead3dd4ffbd368fb73cb6a579da42733bb0adf"
+  },
+  "cycle/cycle-vec": {
+    "source_sha256": "c3b90b1a60c3167852618693d13be596e86af2dfc631b22fddcafb8a35ac8c28",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/cycle-vec"
+      ],
+      "events_after_reuse": [
+        "make/cycle-vec"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Cycle",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned a cyclic value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 36,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226379636c652d7665632229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "a673f18baffde78347f7f13f0ef2b79844676a939e72b23204896b8b5d8c9db2"
+  },
+  "cycle/cycle-object": {
+    "source_sha256": "dad711cd1e19b8fc2f0f253406f829bc792ee5fe41b246636080b2a90a30029a",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/cycle-object"
+      ],
+      "events_after_reuse": [
+        "make/cycle-object"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Cycle",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned a cyclic value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 39,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226379636c652d6f626a6563742229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "d4e95b92f292aa7fc8bb2d12e743dd8ad6612bebd0a60bbac6dbff5fa6c19fd2"
+  },
+  "cycle/cycle-two": {
+    "source_sha256": "9912b8e8c02b4a16c3eca60521632b17b9c0a1aaef85c0b233000eb742ce4f99",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/cycle-two"
+      ],
+      "events_after_reuse": [
+        "make/cycle-two"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Cycle",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned a cyclic value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 36,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226379636c652d74776f2229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "8cb92f91457c7353efb078254f9a59f746e0058703b7944ed6e5b9f4afdb5199"
+  },
+  "cycle/cycle-tuple": {
+    "source_sha256": "99ee30c94661c2e3726c8d6e015f9c0cbc1bbb9bf7312154ed162853c8ab2efc",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/cycle-tuple"
+      ],
+      "events_after_reuse": [
+        "make/cycle-tuple"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Cycle",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned a cyclic value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 38,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226379636c652d7475706c652229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "dd226b2da647746bc65c17a77d8357ed86367efe384a3791d7937747634b1f82"
+  },
+  "cycle/cycle-option": {
+    "source_sha256": "50e5206b95638ce98d16941cb475683f3c1a5d1d7c40fa70b9f9713d730c2af4",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/cycle-option"
+      ],
+      "events_after_reuse": [
+        "make/cycle-option"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Cycle",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned a cyclic value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 39,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226379636c652d6f7074696f6e2229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "1d3c9565b5788d576ebe871d6dd072c07ce60cc698270c3e8c0182290f2b106b"
+  },
+  "cycle/cycle-result": {
+    "source_sha256": "44709df915aec41f5ad4e98134383836c62bb5b6388293352eb01785dce718e0",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/cycle-result"
+      ],
+      "events_after_reuse": [
+        "make/cycle-result"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Cycle",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned a cyclic value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 39,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226379636c652d726573756c742229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "2a62cf44185d5f45e7a4cdecd1cd47efc586cb47ff086c73cbf1cc3f0bd95530"
+  },
+  "cycle/unused-result": {
+    "source_sha256": "7eaae71e1b84e275fab074725aeaa63f746376387e24b1531b5e8fd76ce757aa",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/cycle-vec"
+      ],
+      "events_after_reuse": [
+        "make/cycle-vec"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Cycle",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned a cyclic value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 42,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226379636c652d7665632229",
+          "start": 20
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "367b7a24e958b31312e6afeb82181f4959636d6144f59ebe51a82ef29f7b717e"
+  },
+  "unsupported/unused-result": {
+    "source_sha256": "a86f468dd331b75676426c1b1599bf92e04d6a147bc8484b999ea641b3e18eb4",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/custom"
+      ],
+      "events_after_reuse": [
+        "make/custom"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x3ff1947b97674c12"
+        },
+        "display": "host returned an unsupported value of type 0x3ff1947b97674c12",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 39,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b652822637573746f6d2229",
+          "start": 20
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "b05614d420309690b19ea2e30bb3732e2021cbc7cf770809aa28d8ae0a5dd094"
+  },
+  "access/exclusive": {
+    "source_sha256": "a2add78a19cbc19bc11605cbbeb8d5f66992ab6d68b6443d3e5db5d3a62a1280",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/exclusive"
+      ],
+      "events_after_reuse": [
+        "make/exclusive"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "OutputAccess",
+          "tag": "HostDynamic",
+          "type_hash": "0xc11b1e769aea94f2"
+        },
+        "display": "host returned an unreadable value of type 0xc11b1e769aea94f2",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 36,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226578636c75736976652229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "95109e9461c57c84ce7dc86b32377257fe1ae553e190834df67f05689d354bb9"
+  },
+  "access/moved": {
+    "source_sha256": "a70bc7310a674203706dd0ef7a371b944a1e2aa1288900bf118e829695a2d096",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/moved"
+      ],
+      "events_after_reuse": [
+        "make/moved"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "OutputAccess",
+          "tag": "HostDynamic",
+          "type_hash": "0xc11b1e769aea94f2"
+        },
+        "display": "host returned an unreadable value of type 0xc11b1e769aea94f2",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 32,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226d6f7665642229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "a65e949728ca624da0078afe1665582c99982a789229034806c1b0f75f2579a5"
+  },
+  "access/deep-exclusive": {
+    "source_sha256": "d7a0707bf10df93cd75443c3bb0bc1e0534ccf720af203aa33dbd66329d76c46",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/deep-exclusive"
+      ],
+      "events_after_reuse": [
+        "make/deep-exclusive"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "OutputAccess",
+          "tag": "HostDynamic",
+          "type_hash": "0xc11b1e769aea94f2"
+        },
+        "display": "host returned an unreadable value of type 0xc11b1e769aea94f2",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 41,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b652822646565702d6578636c75736976652229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "17f9f6ef03e35436a0bb686280d22cce4af32368df8a5252117a1f19c9413c00"
+  },
+  "access/deep-moved": {
+    "source_sha256": "a78285deda04979227b85dd4037a3b458c6a2b5f52f1ba2813a4217c82172ff3",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/deep-moved"
+      ],
+      "events_after_reuse": [
+        "make/deep-moved"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "OutputAccess",
+          "tag": "HostDynamic",
+          "type_hash": "0xc11b1e769aea94f2"
+        },
+        "display": "host returned an unreadable value of type 0xc11b1e769aea94f2",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 37,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b652822646565702d6d6f7665642229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "854450ffe421c237a1253485ea1a5a589289233287d2f7f96bf0e93fc567417d"
+  },
+  "unsupported/empty": {
+    "source_sha256": "2326b4f4ac547622ac9eea790ac24d5678cbbb0d525ec02c8153d935293134e9",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/empty"
+      ],
+      "events_after_reuse": [
+        "make/empty"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned an unsupported value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 32,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b652822656d7074792229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "68aef8b02a0e1b8b4bc22e680213c75f7142ab6ac327a045069ace79308005ea"
+  },
+  "unsupported/type": {
+    "source_sha256": "c1f14a0bf1ae7521da9468d5c0448bf5198a27583cccb6c1f59b3775ff87596a",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/type"
+      ],
+      "events_after_reuse": [
+        "make/type"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned an unsupported value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 31,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b652822747970652229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "9800201900e4a6542c6dc662dcb727a8df5c058f2065f4c95057bf596849a17f"
+  },
+  "unsupported/hash": {
+    "source_sha256": "a18cf69fddc81a338300c90262da634919c6b123405e5e599d5e0d1842b8488c",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/hash"
+      ],
+      "events_after_reuse": [
+        "make/hash"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host returned an unsupported value",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 31,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b652822686173682229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "7f50a0c074c83099560323f8d7b2fac8095826f64367eaf8ba589f73a61e7055"
+  },
+  "unsupported/bytes": {
+    "source_sha256": "b478e733ef5830db4163b814193875d3dbe3ed5fd49a8146da4b99cabecf0eaa",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/bytes"
+      ],
+      "events_after_reuse": [
+        "make/bytes"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x3470d9498e601529"
+        },
+        "display": "host returned an unsupported value of type 0x3470d9498e601529",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 32,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b65282262797465732229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "f86016968c80423b0459e162655703a055cce458b27fd9ec07e9d6c9cda5a58d"
+  },
+  "unsupported/bytes-empty": {
+    "source_sha256": "bcf07001c41d7f88c4adcd1c6df5db24def89658e1ff0b0e62db2efb7b486223",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/bytes-empty"
+      ],
+      "events_after_reuse": [
+        "make/bytes-empty"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x3470d9498e601529"
+        },
+        "display": "host returned an unsupported value of type 0x3470d9498e601529",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 38,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b65282262797465732d656d7074792229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "ea3a4978b90808a213f6ef596f33e7e5d411d8f43fee70a7f4717db0e96af648"
+  },
+  "unsupported/custom": {
+    "source_sha256": "1e3ae6758de8b5e7a980fe5f6f96be429d901e61ce67a70a551c09251c6cd544",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/custom"
+      ],
+      "events_after_reuse": [
+        "make/custom"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x3ff1947b97674c12"
+        },
+        "display": "host returned an unsupported value of type 0x3ff1947b97674c12",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 33,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b652822637573746f6d2229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "2f7fa50812c8c3abc5d3aea9f9dfc43f1ba4f6f2b4c672d42f5918ab186ded5b"
+  },
+  "unsupported/function": {
+    "source_sha256": "621d510aab2fe6710d82b752bf8238ad95000c01ce27df11f1efefc9a8ae674b",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/function"
+      ],
+      "events_after_reuse": [
+        "make/function"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x20b8050151a2855"
+        },
+        "display": "host returned an unsupported value of type 0x20b8050151a2855",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 35,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b65282266756e6374696f6e2229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "4d0905f20fad99cc661100f7f75c9bda6c4b88b5a279b28bce5fd0f1a9d5bcd2"
+  },
+  "unsupported/future": {
+    "source_sha256": "ce7af47cbc03deb4649eb84bd30340221d2758423c36f7199ea04078087285c5",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/future"
+      ],
+      "events_after_reuse": [
+        "make/future"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x157cfe667ac47042"
+        },
+        "display": "host returned an unsupported value of type 0x157cfe667ac47042",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 33,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226675747572652229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "f106943b6652fe5209e7fa4552babc3cb6aed42ae6c181636394f8078022bb7c"
+  },
+  "unsupported/range": {
+    "source_sha256": "cdadabd5338f11f85c905975ba95a69c659788ac0100bf79f32ca88a558d3c2d",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/range"
+      ],
+      "events_after_reuse": [
+        "make/range"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x700a34bcd6630cba"
+        },
+        "display": "host returned an unsupported value of type 0x700a34bcd6630cba",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 32,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b65282272616e67652229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "c07cc8cff312cfe9ea50f296e44dc05b7aa4d5cdafdf0ccf9f7e19cb88ea8c86"
+  },
+  "unsupported/nominal": {
+    "source_sha256": "5de335dfdc72f72533d5b6011a133b8f6e3bd9896e25afe06bce0ffb9efd862f",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/nominal"
+      ],
+      "events_after_reuse": [
+        "make/nominal"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x803e1698215e9372"
+        },
+        "display": "host returned an unsupported value of type 0x803e1698215e9372",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 34,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226e6f6d696e616c2229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "401cabf409c38b2d972da59c7726052df8511503176830c2060048f898963a9f"
+  },
+  "unsupported/nested-custom": {
+    "source_sha256": "85c3dd684d43f9bf93c343c0c8f78de76c4d1ab906324e6d75d244550df8ea92",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/nested-custom"
+      ],
+      "events_after_reuse": [
+        "make/nested-custom"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x3ff1947b97674c12"
+        },
+        "display": "host returned an unsupported value of type 0x3ff1947b97674c12",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 40,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528226e65737465642d637573746f6d2229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "16e3475622e5ddb3e484b9b50432ac582a0648f46e1c3122d01016c6fcacfbe6"
+  },
+  "depth/plain/129": {
+    "source_sha256": "6936d7b2a42b2de96ad56ee6f7b53d493763d69f07b4e8770a86c704c0f78edc",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/depth/129"
+      ],
+      "events_after_reuse": [
+        "make/depth/129"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "DepthLimit",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host value nesting exceeds 128",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 36,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b65282264657074682f3132392229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "9f48328a3cd3f8b08cff9c1f0c2a9985f483cd4021d48aec4827495cf6fc9d5e"
+  },
+  "depth/result/128": {
+    "source_sha256": "1bd66b424ebc0ee5842a13034222c50907656513b530e0bf20762af9fc5cf8f0",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/depth/128"
+      ],
+      "events_after_reuse": [
+        "make/depth/128"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "DepthLimit",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host value nesting exceeds 128",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 40,
+          "source": 0,
+          "span_hex": "6331303a3a66616c6c69626c65282264657074682f3132382229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "436fdc1b0a1381253ca6a72c5317424d61bf56be0a05a82ec5a1726cba8bea76"
+  },
+  "visits/plain/65536": {
+    "source_sha256": "def8a8ecbf1ad13ed22da5bf9f45d935b80003bbd82dfffd19c9421eefa1e1ca",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/visits/65536"
+      ],
+      "events_after_reuse": [
+        "make/visits/65536"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "VisitLimit",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host value exceeds 65536 visits",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 39,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b6528227669736974732f36353533362229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "f6b05b06197d3d24b0109fd302899d02b48e5825fbcda0f694468befe3408ff3"
+  },
+  "visits/result/65535": {
+    "source_sha256": "4d23f49158029bec51c40a698b6c5dfe94e4010b7458a6e94da1fee2ea6dd866",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/visits/65535"
+      ],
+      "events_after_reuse": [
+        "make/visits/65535"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [],
+        "chain": [],
+        "detail": {
+          "reason": "VisitLimit",
+          "tag": "HostDynamic",
+          "type_hash": null
+        },
+        "display": "host value exceeds 65536 visits",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 43,
+          "source": 0,
+          "span_hex": "6331303a3a66616c6c69626c6528227669736974732f36353533352229",
+          "start": 14
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "87a9bfa2264c699cee882ad309a0dc553157f59b485a096d4722be0ffbf023b6"
+  },
+  "argument/wrong-arity": {
+    "source_sha256": "869001f1820a64e9e45a69efeb6bf9bb8563d25e9284bec66a746f6835900cb0",
+    "policy": "Retained-arity",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [],
+      "events_after_reuse": [],
+      "host_calls": 0,
+      "invoked": false,
+      "outcome": {
+        "kind": "Unsupported",
+        "operation": "Arity",
+        "primary": {
+          "end": 25,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b652829",
+          "start": 14
+        },
+        "refusal": "Arity",
+        "status": "refused"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "f31964e848e3cb772d5be32c689e09c5a6dc466a36a96b2248632db50b2758aa"
+  },
+  "frames/deep-error": {
+    "source_sha256": "92564a652a632273407980167be60bd3df93a6a9c67bb5ee2e0171ea3703f2db",
+    "policy": "Refused-runtime",
+    "fresh": {
+      "diagnostics": "[]",
+      "events": [
+        "make/custom"
+      ],
+      "events_after_reuse": [
+        "make/custom"
+      ],
+      "host_calls": 1,
+      "invoked": true,
+      "outcome": {
+        "call_chain": [
+          {
+            "end": 49,
+            "source": 0,
+            "span_hex": "696e6e65722829",
+            "start": 42
+          },
+          {
+            "end": 71,
+            "source": 0,
+            "span_hex": "6f757465722829",
+            "start": 64
+          }
+        ],
+        "chain": [],
+        "detail": {
+          "reason": "Unsupported",
+          "tag": "HostDynamic",
+          "type_hash": "0x3ff1947b97674c12"
+        },
+        "display": "host returned an unsupported value of type 0x3ff1947b97674c12",
+        "host_message": null,
+        "kind": "Host",
+        "primary": {
+          "end": 30,
+          "source": 0,
+          "span_hex": "6331303a3a6d616b652822637573746f6d2229",
+          "start": 11
+        },
+        "status": "error"
+      },
+      "protocol_calls": 0,
+      "reuse": {
+        "graph": {
+          "nodes": [
+            [
+              "I64",
+              "0x1cad9186c9641c4f",
+              "7"
+            ]
+          ],
+          "root": 0
+        },
+        "status": "value"
+      }
+    },
+    "stock_projected_sha256": "2f7fa50812c8c3abc5d3aea9f9dfc43f1ba4f6f2b4c672d42f5918ab186ded5b"
+  }
+}

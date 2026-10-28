@@ -1,0 +1,16 @@
+fn printer() {
+    loop {
+        println!("waiting for value...");
+        let out = yield;
+        println!("{out:?}");
+    }
+}
+
+let printer = printer();
+
+println!("firing off the printer...");
+printer.resume(());
+println!("ready to go!");
+
+printer.resume("John");
+printer.resume((1, 2, 3));

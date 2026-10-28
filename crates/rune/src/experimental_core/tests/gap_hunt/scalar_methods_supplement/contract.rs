@@ -1,5 +1,4 @@
-// C6 stock replay: raw Debug is provenance; semantic missing-method hashes verified.
-const REPLAY_CAP: usize = 2 << 20;
+// C6 projection of both engines' observations; semantic missing-method hashes verified.
 fn exact_keys(o: &serde_json::Map<String, Json>, names: &[&str]) {
 	assert_eq!(o.len(), names.len());
 	for name in names {
@@ -109,276 +108,160 @@ fn project(source: &str, o: &Json) -> Json {
 		_ => panic!("unreviewed status"),
 	}
 }
-fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
-	let mut bytes = Vec::new();
-	let mut buf = [0; 4096];
-	loop {
-		let n = pipe.read(&mut buf).unwrap();
-		if n == 0 {
-			break;
-		}
-		let room = REPLAY_CAP - bytes.len();
-		bytes.extend_from_slice(&buf[..n.min(room)]);
-		if n > room {
-			exceeded.store(true, Ordering::Relaxed);
-		}
-	}
-	bytes
-}
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C6 frozen stock replay; explicit unique GAP_OUT, bounded children"]
-fn legacy_contract() {
-	run_contract("stock");
-}
-
-#[test]
-#[cfg(target_os = "linux")]
-#[ignore = "C6 bounded execution replay; explicit unique GAP_OUT"]
+#[ignore = "C6 bounded execution contract against live stock; explicit unique GAP_OUT"]
 fn contract() {
-	run_contract("fresh");
-}
-
-fn run_contract(engine: &str) {
-	let frozen = include_str!("../../scalar_methods_supplement_stock.tsv");
-	let lines = frozen.lines().skip(1).collect::<Vec<_>>();
-	assert_eq!(lines.len(), COUNT);
 	assert_eq!(CASES.len(), COUNT);
-	assert_eq!(
-		frozen.lines().next().unwrap(),
-		"case\tmode\tsource_hex\tcompared_observation_hex\tstdout_hex\tstderr_hex\tpolicy"
-	);
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
 	let mut policies = std::collections::BTreeMap::new();
-	for (i, ((label, source, mode, policy), line)) in CASES.iter().zip(lines).enumerate() {
-		let c = line.split('\t').collect::<Vec<_>>();
-		assert_eq!(c.len(), 7);
-		assert_eq!(c[0], *label);
+	for (i, &(label, source, _, policy)) in CASES.iter().enumerate() {
 		assert!(labels.insert(label));
-		assert_eq!(c[1], *mode);
-		assert_eq!(c[2], hex(source.as_bytes()));
-		assert_eq!(c[6], *policy);
 		let folder = out.join(format!("{i:03}"));
-		fs::create_dir(&folder).unwrap();
-		let result = folder.join("observation.json");
-		use std::os::unix::process::CommandExt;
-		let mut command = Command::new("/usr/bin/prlimit");
-		command
-			.args([
-				"--cpu=15",
-				"--as=2147483648",
-				"--fsize=2097152",
-				"--core=0",
-				"--",
-			])
-			.arg(std::env::current_exe().unwrap());
-		command.process_group(0);
-		let mut child = command
-			.args([
-				"--exact",
-				"experimental_core::tests::gap_hunt::scalar_methods_supplement::child",
-				"--ignored",
-				"--nocapture",
-				"--quiet",
-			])
-			.env_clear()
-			.env("C6_ENGINE", engine)
-			.env("PATH", "/usr/bin:/bin")
-			.env("LANG", "C.UTF-8")
-			.env("TZ", "UTC")
-			.env("C6S_CASE", i.to_string())
-			.env("C6S_RESULT", &result)
-			.current_dir(&folder)
-			.stdin(Stdio::null())
-			.stdout(Stdio::piped())
-			.stderr(Stdio::piped())
-			.spawn()
-			.unwrap();
-		let exceeded = Arc::new(AtomicBool::new(false));
-		let flag = exceeded.clone();
-		let pipe = child.stdout.take().unwrap();
-		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
-		let flag = exceeded.clone();
-		let pipe = child.stderr.take().unwrap();
-		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
-		let start = Instant::now();
-		let mut stop = false;
-		let status = loop {
-			if let Some(s) = child.try_wait().unwrap() {
-				break s;
-			}
-			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
-				stop = true;
-				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child.id())])
-					.stdout(Stdio::null())
-					.stderr(Stdio::null())
-					.status();
-				break child.wait().unwrap();
-			}
-			std::thread::sleep(Duration::from_millis(10));
-		};
-		let stdout = stdout.join().unwrap();
-		let stderr = stderr.join().unwrap();
-		fs::write(folder.join("stdout"), &stdout).unwrap();
-		fs::write(folder.join("stderr"), &stderr).unwrap();
+		let stock = launch("stock", i, &folder.join("stock"));
+		let expected = project(source, &stock.observation["outcome"]);
 		fs::write(
-			folder.join("receipt.txt"),
-			format!(
-				"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\n",
-				start.elapsed()
-			),
+			folder.join("expected.json"),
+			serde_json::to_vec_pretty(&expected).unwrap(),
 		)
 		.unwrap();
-		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
-		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
-		let e: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		if engine == "stock" {
-			exact_keys(
-				e.as_object().unwrap(),
-				&[
-					"schema",
-					"engine",
-					"index",
-					"label",
-					"mode",
-					"policy",
-					"source_hex",
-					"fuel",
-					"outcome",
-				],
-			);
-		} else {
-			exact_keys(
-				e.as_object().unwrap(),
-				&[
-					"schema",
-					"engine",
-					"index",
-					"label",
-					"mode",
-					"policy",
-					"source_hex",
-					"fuel",
-					"outcome",
-					"fresh_audit",
-				],
+		let fresh = launch("fresh", i, &folder.join("fresh"));
+		let (e, stdout, stderr) = (&fresh.observation, &fresh.stdout, &fresh.stderr);
+		let audit = &e["fresh_audit"];
+		exact_keys(
+			audit.as_object().unwrap(),
+			&[
+				"no_cleanup_error",
+				"clean_after_row",
+				"reuse",
+				"live_entries",
+				"payload_bytes",
+				"idle",
+				"input_f64_bits",
+				"call_chain",
+				"invoked",
+			],
+		);
+		for k in ["no_cleanup_error", "clean_after_row", "reuse", "idle"] {
+			assert_eq!(audit[k], true, "audit {label} {k}");
+		}
+		assert_eq!(audit["live_entries"], 0);
+		assert_eq!(audit["payload_bytes"], 0);
+		assert_ne!(e["outcome"]["class"], "UNMAPPED");
+		let category = match policy {
+			"Retained-arity" => {
+				assert_eq!(expected["class"], "ArgumentCount");
+				assert_eq!(e["outcome"]["status"], "refused");
+				assert_eq!(e["outcome"]["refusal"], "Some(Arity)");
+				assert_eq!(audit["invoked"], false);
+				assert!(audit["call_chain"].as_array().unwrap().is_empty());
+				assert_eq!(stdout, b"\nrunning 1 test\n");
+				assert!(stderr.is_empty());
+				"Retained-arity"
+			}
+			"Refused-sibling" => {
+				assert_eq!(e["outcome"]["status"], "refused");
+				assert_eq!(e["outcome"]["refusal"], "Some(Method)");
+				assert_eq!(audit["invoked"], false);
+				assert!(audit["call_chain"].as_array().unwrap().is_empty());
+				assert_eq!(stdout, b"\nrunning 1 test\n");
+				assert!(stderr.is_empty());
+				"Refused-sibling"
+			}
+			"Exact" => {
+				assert_eq!(audit["invoked"], true);
+				let got = project(source, &e["outcome"]);
+				fs::write(
+					folder.join("compared.json"),
+					serde_json::to_vec_pretty(&got).unwrap(),
+				)
+				.unwrap();
+				let category = if label == "nested/call-error" {
+					assert!(retained_frame_matches(
+						source,
+						&expected,
+						&got,
+						&audit["call_chain"]
+					));
+					"Retained-frame"
+				} else {
+					assert_eq!(got, expected, "execution {label}");
+					assert!(audit["call_chain"].as_array().unwrap().is_empty());
+					"Exact"
+				};
+				assert_eq!(hex(stdout), hex(&stock.stdout), "stdout {label}");
+				assert_eq!(hex(stderr), hex(&stock.stderr), "stderr {label}");
+				category
+			}
+			_ => panic!("unknown C6 policy"),
+		};
+		for run in [&stock, &fresh] {
+			assert!(
+				!has_address(&String::from_utf8_lossy(&run.stdout))
+					&& !has_address(&String::from_utf8_lossy(&run.stderr))
 			);
 		}
-		assert_eq!(e["engine"], engine);
-		assert_eq!(e["schema"], 1);
-		assert_eq!(e["index"], i);
-		assert_eq!(e["label"], *label);
-		assert_eq!(e["mode"], *mode);
-		assert_eq!(e["policy"], *policy);
-		assert_eq!(e["source_hex"], c[2]);
-		assert_eq!(e["fuel"], FUEL);
-		let mut e = e;
-		e["outcome"] = super::method_diagnostics::intentional_json_before(
-			"scalar_methods_supplement",
-			label,
-			source,
-			engine,
-			&e["outcome"],
-		);
-		let expected: Json = serde_json::from_str(&unhex(c[3])).unwrap();
-		let category = if engine == "stock" {
-			let got = project(source, &e["outcome"]);
-			fs::write(
-				folder.join("compared.json"),
-				serde_json::to_vec_pretty(&got).unwrap(),
-			)
-			.unwrap();
-			assert_eq!(got, expected, "stock {label}");
-			assert_eq!(hex(&stdout), c[4], "stdout {label}");
-			assert_eq!(hex(&stderr), c[5], "stderr {label}");
-			*policy
-		} else {
-			let audit = &e["fresh_audit"];
-			exact_keys(
-				audit.as_object().unwrap(),
-				&[
-					"no_cleanup_error",
-					"clean_after_row",
-					"reuse",
-					"live_entries",
-					"payload_bytes",
-					"idle",
-					"input_f64_bits",
-					"call_chain",
-					"invoked",
-				],
-			);
-			for k in ["no_cleanup_error", "clean_after_row", "reuse", "idle"] {
-				assert_eq!(audit[k], true, "audit {label} {k}");
-			}
-			assert_eq!(audit["live_entries"], 0);
-			assert_eq!(audit["payload_bytes"], 0);
-			assert_ne!(e["outcome"]["class"], "UNMAPPED");
-			let category = match *policy {
-				"Retained-arity" => {
-					assert_eq!(expected["class"], "ArgumentCount");
-					assert_eq!(e["outcome"]["status"], "refused");
-					assert_eq!(e["outcome"]["refusal"], "Some(Arity)");
-					assert_eq!(audit["invoked"], false);
-					assert!(audit["call_chain"].as_array().unwrap().is_empty());
-					assert_eq!(&stdout, b"\nrunning 1 test\n");
-					assert!(stderr.is_empty());
-					"Retained-arity"
-				}
-				"Refused-sibling" => {
-					assert_eq!(e["outcome"]["status"], "refused");
-					assert_eq!(e["outcome"]["refusal"], "Some(Method)");
-					assert_eq!(audit["invoked"], false);
-					assert!(audit["call_chain"].as_array().unwrap().is_empty());
-					assert_eq!(&stdout, b"\nrunning 1 test\n");
-					assert!(stderr.is_empty());
-					"Refused-sibling"
-				}
-				"Exact" => {
-					assert_eq!(audit["invoked"], true);
-					let got = project(source, &e["outcome"]);
-					fs::write(
-						folder.join("compared.json"),
-						serde_json::to_vec_pretty(&got).unwrap(),
-					)
-					.unwrap();
-					let category = if *label == "nested/call-error" {
-						assert!(retained_frame_matches(
-							source,
-							&expected,
-							&got,
-							&audit["call_chain"]
-						));
-						"Retained-frame"
-					} else {
-						assert_eq!(got, expected, "execution {label}");
-						assert!(audit["call_chain"].as_array().unwrap().is_empty());
-						"Exact"
-					};
-					assert_eq!(hex(&stdout), c[4], "stdout {label}");
-					assert_eq!(hex(&stderr), c[5], "stderr {label}");
-					category
-				}
-				_ => panic!("unknown C6 policy"),
-			};
-			category
-		};
-		assert!(
-			!has_address(&String::from_utf8_lossy(&stdout))
-				&& !has_address(&String::from_utf8_lossy(&stderr))
-		);
 		*policies.entry(category).or_insert(0usize) += 1;
 	}
 	assert_eq!(policies, std::collections::BTreeMap::from([("Exact", 7)]));
-	contract_completed(engine, COUNT);
+	contract_completed("fresh", COUNT);
 	fs::write(
 		out.join("COMPLETE"),
-		format!("C6 {engine} {COUNT} rows complete\n"),
+		format!("C6 fresh {COUNT} rows complete\n"),
 	)
 	.unwrap();
+}
+
+/// Run case `index` on `engine` in a bounded child and check its envelope.
+/// The returned outcome has the intentional method-diagnostic mapping applied.
+#[cfg(target_os = "linux")]
+fn launch(engine: &str, index: usize, folder: &Path) -> super::live_oracle::Run {
+	let (label, source, mode, policy) = CASES[index];
+	let index_text = index.to_string();
+	let mut run = super::live_oracle::run_child(
+		"experimental_core::tests::gap_hunt::scalar_methods_supplement::child",
+		label,
+		folder,
+		"C6S_RESULT",
+		&[
+			("C6_ENGINE", engine.as_ref()),
+			("C6S_CASE", index_text.as_ref()),
+		],
+	);
+	let e = &mut run.observation;
+	let keys = [
+		"schema",
+		"engine",
+		"index",
+		"label",
+		"mode",
+		"policy",
+		"source_hex",
+		"fuel",
+		"outcome",
+		"fresh_audit",
+	];
+	// Only the execution engine reports an audit.
+	let keys = &keys[..keys.len() - usize::from(engine == "stock")];
+	exact_keys(e.as_object().unwrap(), keys);
+	assert_eq!(e["engine"], engine);
+	assert_eq!(e["schema"], 1);
+	assert_eq!(e["index"], index);
+	assert_eq!(e["label"], label);
+	assert_eq!(e["mode"], mode);
+	assert_eq!(e["policy"], policy);
+	assert_eq!(e["source_hex"], hex(source.as_bytes()));
+	assert_eq!(e["fuel"], FUEL);
+	e["outcome"] = super::method_diagnostics::intentional_json_before(
+		"scalar_methods_supplement",
+		label,
+		source,
+		engine,
+		&e["outcome"],
+	);
+	run
 }
 
 include!("../scalar_methods/frame_policy.rs");

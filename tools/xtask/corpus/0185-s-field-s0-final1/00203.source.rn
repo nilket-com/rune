@@ -1,0 +1,139 @@
+// Record 0139, U4: zero-shot triage of the project's support tickets (0133's
+// D2). Each whole ticket is chunked (0136) and pooled (0137) into one vector,
+// scored against one-line descriptions of five categories, and assigned the
+// best, unless its margin over the second is below 0.02: then it goes to
+// review. Everything here is frozen in plans/0139 before any score was seen.
+// args: D2 issues.json, model directory, frozen labels.tsv, output directory
+
+fn column_str(name, values) {
+    Ok(polars::Series::from_iter_str(values)?.with_name(name).into_column())
+}
+fn column_i64(name, values) {
+    Ok(polars::Series::from_iter_i64(values)?.with_name(name).into_column())
+}
+fn column_f64(name, values) {
+    Ok(polars::Series::from_iter_f64(values)?.with_name(name).into_column())
+}
+
+/// The per-ticket frame, built afresh for each view. (Corrected by record
+/// 0141: no DataFrame method consumes the frame in Rune, so one frame could
+/// serve every view; `clone()` now gives an independent copy for in-place
+/// methods. The script is kept as 0139 ran it.)
+fn table(numbers, titles, triage, best, second, margins, names, per_label) {
+    let cols = [
+        column_i64("ticket", numbers)?,
+        column_str("title", titles)?,
+        column_str("triage", triage)?,
+        column_str("best", best)?,
+        column_str("second", second)?,
+        column_f64("margin", margins)?,
+    ];
+    for j in 0..names.len() { cols.push(column_f64(names[j], per_label[j])?); }
+    polars::DataFrame::new(numbers.len(), cols)
+}
+
+pub fn run(args) {
+    let issues = json::parse(fs::read(args[0])?)?;
+    let enc = candle::TextEncoder::load(args[1])?;
+    let names = [];
+    let descriptions = [];
+    for line in fs::read(args[2])?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        names.push(f[0]);
+        descriptions.push(f[1]);
+    }
+    let k = names.len();
+
+    // one unit vector per ticket: its whole text, chunked, embedded, pooled
+    let numbers = [];
+    let titles = [];
+    let passages = [];
+    let owner = [];
+    let t = 0;
+    for i in issues {
+        numbers.push(i["number"]);
+        titles.push(i["title"]);
+        for p in enc.chunk(i["title"] + "\n" + i["body"], 0)? {
+            passages.push(p);
+            owner.push(t);
+        }
+        t += 1;
+    }
+    let n = numbers.len();
+    let t0 = time::monotonic_ms();
+    let emb = candle::Tensor::from_dense(enc.embed(passages)?)?;
+    let pooled = candle::segment_mean(emb, candle::Tensor::from_vec(owner, [owner.len()], "u32")?, n)?;
+    let tickets = pooled.broadcast_div(pooled.sqr()?.sum_keepdim(1)?.sqrt()?)?;
+    let labels = candle::Tensor::from_dense(enc.embed(descriptions)?)?;
+    let scores = tickets.matmul(labels.t()?)?.to_vec2()?;
+    let t1 = time::monotonic_ms();
+
+    // the best label (ties to the earlier label), the margin, the abstention
+    let predicted = [];
+    let second = [];
+    let margins = [];
+    let abstained = [];
+    for row in scores {
+        let best = 0;
+        for j in 1..k { if row[j] > row[best] { best = j; } }
+        let next = if best == 0 { 1 } else { 0 };
+        for j in 0..k { if j != best && row[j] > row[next] { next = j; } }
+        let m = row[best] - row[next];
+        predicted.push(names[best]);
+        second.push(names[next]);
+        margins.push(m);
+        abstained.push(if m < 0.02 { "review" } else { names[best] });
+    }
+
+    let per_label = [];
+    for j in 0..k {
+        let s = [];
+        for row in scores { s.push(row[j]); }
+        per_label.push(s);
+    }
+    println!("{} tickets, {} passages; embedding and scoring {} ms", n, passages.len(), t1 - t0);
+
+    // the summary: tickets per triage label, review included
+    let counts = table(numbers, titles, abstained, predicted, second, margins, names, per_label)?
+        .lazy().group_by([polars::col("triage")])?
+        .agg([polars::col("ticket").count().alias("tickets")])?
+        .collect()?
+        .sort(["tickets", "triage"], polars::SortMultipleOptions::new().with_order_descending_multi([true, false])?)?;
+    println!("tickets per label (\"review\": margin below 0.02):");
+    println!("{}", counts);
+
+    // the review queue: the 20 least certain, ties by ticket number
+    // shown as two frames of 10: the preview shows at most 10 rows (0124)
+    println!("the review queue (lowest margins first):");
+    for half in 0..2 {
+        let queue = table(numbers, titles, abstained, predicted, second, margins, names, per_label)?
+            .sort(["margin", "ticket"], polars::SortMultipleOptions::new())?
+            .slice(half * 10, 10)?
+            .select_(["ticket", "title", "best", "second", "margin"])?;
+        println!("{}", queue);
+    }
+
+    // three examples per label: its highest-scoring tickets
+    for j in 0..k {
+        let top = table(numbers, titles, abstained, predicted, second, margins, names, per_label)?
+            .sort([names[j], "ticket"], polars::SortMultipleOptions::new().with_order_descending_multi([true, false])?)?
+            .head(Some(3))?
+            .select_(["ticket", "title", names[j]])?;
+        println!("most {}-like:", names[j]);
+        println!("{}", top);
+    }
+
+    // the complete per-ticket table, machine-readable, f32 scores as read back
+    let rows = "ticket\ttriage\tbest\tsecond\tmargin";
+    for j in 0..k { rows += `\t${names[j]}`; }
+    rows += "\n";
+    for i in 0..n {
+        rows += `${numbers[i]}\t${abstained[i]}\t${predicted[i]}\t${second[i]}\t${margins[i]}`;
+        for j in 0..k { rows += `\t${scores[i][j]}`; }
+        rows += "\n";
+    }
+    fs::write(`${args[3]}/u4.tsv`, rows)?;
+    println!("WORKFLOW OK u4");
+    Ok(())
+}

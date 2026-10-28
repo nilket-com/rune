@@ -1,0 +1,2 @@
+let data = json::from_string("{\"key\": 42}");
+dbg!(data);

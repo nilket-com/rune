@@ -1,0 +1,15 @@
+pub fn main() {
+let a = "foo";
+
+let s = String::with_capacity(42);
+s.push_str(a);
+s.push('/');
+s.push_str("bar");
+
+dbg!(s, s.len(), s.capacity());
+s.shrink_to_fit();
+
+let b = s.into_bytes();
+dbg!(b, b.len(), b.capacity());
+
+}

@@ -1,10 +1,3 @@
-#[test]
-#[cfg(target_os = "linux")]
-#[ignore = "C18a frozen execution replay; bounded children and exclusive GAP_OUT"]
-fn contract() {
-	run_contract("fresh");
-}
-
 /// The comparable part of one observation. Stock VM frame encoding and raw
 /// error dumps are audit data; the process-local `AnyTypeInfo::full_name`
 /// pointer is masked wherever a typed kind or class names a type.
@@ -29,16 +22,16 @@ fn canonical_record(record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
-/// `stock` is the pinned stock row.
+/// `stock` is the live legacy run of the same case as `fresh`.
+#[cfg(target_os = "linux")]
 fn verify_case(
 	index: usize,
 	case: &Json,
-	stock: &Json,
-	actual: &Json,
-	stdout: &[u8],
-	stderr: &[u8],
+	stock_run: &super::live_oracle::Run,
+	fresh: &super::live_oracle::Run,
 ) {
-	use sha2::{Digest, Sha256};
+	let stock = &stock_run.observation;
+	let (actual, stdout, stderr) = (&fresh.observation, &fresh.stdout[..], &fresh.stderr[..]);
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	let rows = dispositions["rows"].as_array().unwrap();
 	assert_eq!(rows.len(), ROWS);
@@ -64,10 +57,6 @@ fn verify_case(
 	assert_eq!(rule["index"], index);
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
-	assert_eq!(
-		hex(Sha256::digest(serde_json::to_vec(stock).unwrap()).as_ref()),
-		rule["stock_row_sha256"]
-	);
 	// Validation is an internal backstop: no row reaches it.
 	assert!(!serde_json::to_string(&actual["observation"])
 		.unwrap()
@@ -197,9 +186,9 @@ fn verify_case(
 		// A refused program prints nothing: only the test harness header.
 		assert_eq!(stdout, b"\nrunning 1 test\n");
 	} else {
-		assert_eq!(hex(stdout), stock["stdout_hex"]);
+		assert_eq!(hex(stdout), hex(&stock_run.stdout), "stdout");
 	}
-	assert_eq!(hex(stderr), stock["stderr_hex"]);
+	assert_eq!(hex(stderr), hex(&stock_run.stderr), "stderr");
 }
 
 const EXPECTED_COUNTS: [(&str, u64); 5] = [

@@ -1,0 +1,148 @@
+// Record 0133, U1: semantic search over rnx's own records (D1).
+// args: D1 directory, model directory, rubric.tsv, output directory
+
+// ---- the frozen chunking rule (no split_whitespace or Vec::join: F1, F2) ----
+
+fn words(s) {
+    let out = [];
+    for w in s.replace("\n", " ").replace("\t", " ").replace("\r", " ").split(" ") {
+        if w != "" { out.push(w); }
+    }
+    out
+}
+
+fn joined(ws, from, to) {
+    let s = "";
+    for i in from..to {
+        if i > from { s += " "; }
+        s += ws[i];
+    }
+    s
+}
+
+pub fn chunks(body) {
+    let out = [];
+    let cur = [];
+    for para in body.split("\n\n") {
+        let ws = words(para);
+        if ws.len() == 0 { continue; }
+        if ws.len() > 180 {
+            if cur.len() > 0 { out.push(joined(cur, 0, cur.len())); cur = []; }
+            let i = 0;
+            while i < ws.len() {
+                let j = i + 180;
+                if j > ws.len() { j = ws.len(); }
+                out.push(joined(ws, i, j));
+                i = j;
+            }
+            continue;
+        }
+        if cur.len() + ws.len() > 180 { out.push(joined(cur, 0, cur.len())); cur = []; }
+        for w in ws { cur.push(w); }
+    }
+    if cur.len() > 0 { out.push(joined(cur, 0, cur.len())); }
+    out
+}
+
+// ---- frames ----
+
+fn column_str(name, values) {
+    Ok(polars::Series::from_iter_str(values)?.with_name(name).into_column())
+}
+
+fn column_i64(name, values) {
+    Ok(polars::Series::from_iter_i64(values)?.with_name(name).into_column())
+}
+
+/// D1 as two frames: documents (doc, path, record, title) and passages
+/// (doc, text) by the frozen chunking rule.
+pub fn load(dir) {
+    let doc = [];
+    let paths = [];
+    let records = [];
+    let titles = [];
+    let pdoc = [];
+    let ptext = [];
+    for n in fs::read_dir(dir)? {
+        if !n.ends_with(".md") { continue; }
+        let text = fs::read(`${dir}/${n}`)?;
+        let first = text.split("\n").next().unwrap_or("");
+        let title = if first.starts_with("# ") { first[2..] } else { first };
+        let d = paths.len();
+        doc.push(d);
+        paths.push(n);
+        records.push(n[0..4]);
+        titles.push(title);
+        for c in chunks(text[first.len()..]) {
+            pdoc.push(d);
+            ptext.push(c);
+        }
+    }
+    let docs = polars::DataFrame::new(paths.len(), [
+        column_i64("doc", doc)?,
+        column_str("path", paths)?,
+        column_str("record", records)?,
+        column_str("title", titles)?,
+    ])?;
+    let pid = [];
+    for i in 0..ptext.len() { pid.push(i); }
+    let passages = polars::DataFrame::new(ptext.len(), [column_i64("doc", pdoc)?, column_i64("pid", pid)?, column_str("text", ptext)?])?;
+    Ok((docs, passages, ptext))
+}
+
+/// The frozen rubric: the ids and texts of the queries.
+pub fn rubric(path) {
+    let ids = [];
+    let texts = [];
+    for line in fs::read(path)?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        ids.push(f[0]);
+        texts.push(f[2]);
+    }
+    Ok((ids, texts))
+}
+
+pub fn run(args) {
+    let dir = args[0];
+    let model = args[1];
+    let rubric_path = args[2];
+    let out = args[3];
+    let rows = "query\trank\tpath\tpid\tscore\n";
+    let t0 = time::monotonic_ms();
+    let (docs, passages, ptext) = load(dir)?;
+    let t_load = time::monotonic_ms();
+    let enc = candle::TextEncoder::load(model)?;
+    let e = enc.embed(ptext)?;
+    let t_embed = time::monotonic_ms();
+    let (ids, texts) = rubric(rubric_path)?;
+    let q = enc.embed(texts)?;
+    let scored = passages.with_dense(candle::similarity(e, q, ids)?)?;
+    println!("{} docs, {} passages; load {} ms, embed {} ms", docs.height()?, passages.height()?, t_load - t0, t_embed - t_load);
+    let i = 0;
+    for id in ids {
+        // each document's best passage, then the top 5 documents
+        let desc = polars::SortMultipleOptions::new().with_order_descending(true);
+        let best = scored.select_(["doc", "pid", "text", id])?.sort([id], desc)?
+            .unique_stable(Some(["doc"]), polars::UniqueKeepStrategy::First(), None)?
+            .head(Some(5))?;
+        let top = best.left_join(docs, ["doc"], ["doc"])?;
+        // the excerpt: the best passage's first 300 characters
+        let excerpts = [];
+        for t in top.strings("text")? { excerpts.push(t.chars().take(300).collect::<String>()); }
+        let answer = top.select_(["record", "title", id])?;
+        answer.with_column(column_str("excerpt", excerpts)?)?;
+        println!("{}: {}", id, texts[i]);
+        println!("{}", answer);
+        // the complete ranked rows, machine-readable (strings, F12)
+        let text = top.lazy().select_([polars::col("path"), polars::col("pid").cast(polars::DataType::String()), polars::col(id).cast(polars::DataType::String())])?.collect()?;
+        let paths = text.strings("path")?;
+        let pids = text.strings("pid")?;
+        let scores = text.strings(id)?;
+        for r in 0..paths.len() { rows += `${id}\t${r + 1}\t${paths[r]}\t${pids[r]}\t${scores[r]}\n`; }
+        i += 1;
+    }
+    fs::write(`${out}/u1.tsv`, rows)?;
+    println!("WORKFLOW OK u1");
+    Ok(())
+}

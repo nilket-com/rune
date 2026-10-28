@@ -1,0 +1,1 @@
+pub fn main() {let r=()..(); let s=()..(); let a=[]; for x in r {a.push(x);} a}

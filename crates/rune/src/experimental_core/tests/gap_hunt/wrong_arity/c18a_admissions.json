@@ -7,7 +7,7 @@
     "index": 54,
     "label": "script/method-receiver/correct/called",
     "source_sha256": "b54069cd3d8f890fe6cfd24757b4eba03885a17802f93ab1061d4cc2e26d278c",
-    "stock_row_sha256": "2b4683269e15177a78e98740f2d17f92b048a567ed6f5ae0cbfa456a32bc13c4",
+    "stock_row_sha256": "5cfd56c82ada4bfe241f9b091081034ce73c8db0989c3be0946121031e373920",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -32,7 +32,7 @@
     "index": 55,
     "label": "script/method-receiver/too-few/called",
     "source_sha256": "8a85df16ed0a0420f9442b239b712edddcd5da1fe76c2cca26eb93c4ef3e96e5",
-    "stock_row_sha256": "4b7e10a2d5ff69fdebb6ad1dc8cc3079fbffc57125fbfcea1bca7ea666fe5057",
+    "stock_row_sha256": "684fb471c99e2d5f141da0ef19700bd0353a6183d451b824786ab01c91691e5f",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -69,7 +69,7 @@
     "index": 56,
     "label": "script/method-receiver/too-few/unused",
     "source_sha256": "dc309cac0920c4cb2bacab9c11e3a681bc0369f17b3186a9084bba333b9d0825",
-    "stock_row_sha256": "bdf86c98822ea0817e8a49afe761f19827fb938c6e156ef6213f27758ed5aa90",
+    "stock_row_sha256": "54309afbb207df307769e7de36a42e97fa1ff695cf2ace41aff7f56a4b3a6fb0",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -106,7 +106,7 @@
     "index": 57,
     "label": "script/method-receiver/too-few/dead-branch",
     "source_sha256": "efb45c45326c56f00fb909c496dd9154cc5311d5297bfc60cab3c20484ced2ba",
-    "stock_row_sha256": "6212a89fb9c9ed8304b36997a8981511ec4d018ca148436f0eaae26e96edbd15",
+    "stock_row_sha256": "7d9f3f60095640914049f073683b14797f473d555d654aca54be38d211981d74",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -143,7 +143,7 @@
     "index": 59,
     "label": "script/method-receiver/none/called",
     "source_sha256": "2f8fa37f8709a6670bb5715b17cb7bb1300915c360f7a91802727eed615711b3",
-    "stock_row_sha256": "ef00ae1318c388fd68142c7d85aa36c45a83567ba271f1081c41ea2f52b4b23a",
+    "stock_row_sha256": "9460a4e464450c91e003b7591f220b92062b1a67b20fbe76b5530faaf736d110",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -180,7 +180,7 @@
     "index": 60,
     "label": "script/method-receiver/too-many/called",
     "source_sha256": "03c01d5756e241351564a3259b0b0c1352ed59f626560888a38c2478e1fad2fc",
-    "stock_row_sha256": "fa410f704ad579422e4dbbf4073deb8ca218d8601848c7a49444355e8a8478e5",
+    "stock_row_sha256": "95f68152829eb024b56b947c4eed1d5aae5b1cc9df26392c08274fa0b18a2f15",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -217,7 +217,7 @@
     "index": 61,
     "label": "script/method-receiver/too-many/unused",
     "source_sha256": "011af5e164bb1fcd9470cbc6fbb2eec31a1dfe28123bae9939840c481937b60b",
-    "stock_row_sha256": "c6d48fe6de266608fb91f30639cdd005e085c6f80d929bfc1f63c79acffbebac",
+    "stock_row_sha256": "7e212c25bad830c5097058a30850d5054dd00518d2cbaa5e8b47f39fbd4e3875",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -254,7 +254,7 @@
     "index": 62,
     "label": "script/method-receiver/too-many/dead-branch",
     "source_sha256": "9e4eb812ce6b1dc0071ec7533ee314f16bfa33f73ced52bf3b743d2eac6089c7",
-    "stock_row_sha256": "9cc5f968f2f9e8d3ea4df8f854c658f8fcfd9b30292340b3a75348f3a0755a10",
+    "stock_row_sha256": "7d9f3f60095640914049f073683b14797f473d555d654aca54be38d211981d74",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",

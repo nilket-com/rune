@@ -39,21 +39,31 @@ fn p1_frozen_rows_and_adversarial_controls() {
 		serde_json::from_str::<Json>(C9_PINNED_DISPOSITIONS).unwrap()
 	);
 	let pinned_cases: Json = serde_json::from_str(C9_PINNED_CASES).unwrap();
+	let out = std::env::temp_dir().join(format!("rune-c9-p1-controls-{}-{}", std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+	fs::create_dir(&out).unwrap();
 	let mut rows = 0;
 	let mut rejected = 0;
 	let mut policies = [0; 4];
-	for line in include_str!("../../cmp_ordering_stock.tsv").lines().skip(1) {
+	for line in include_str!("../../cmp_ordering_inputs.tsv").lines().skip(1) {
 		let cells = line.split('\t').collect::<Vec<_>>();
 		assert_eq!(cells.len(), 9);
+		assert_eq!(cells[3], "-");
+		assert_eq!(cells[8], "-");
+		if cells[6] == "Exact" {
+			assert_eq!(cells[7], "-");
+		}
 		let label = cells[0];
 		assert_eq!(
 			json!([cells[0], cells[1], cells[2], cells[6]]),
 			pinned_cases[rows]
 		);
 		let source = pins_decode(cells[2]);
-		let portable: Json = serde_json::from_str(&pins_decode(cells[3])).unwrap();
-		let expected: Json = serde_json::from_str(&pins_decode(cells[7])).unwrap();
-		assert_eq!(expected, dispositions[label]["fresh_expectation"]);
+		let index = rows.to_string();
+		let stock = super::live_oracle::run_child("experimental_core::tests::gap_hunt::cmp_ordering::child", label, &out.join(format!("row-{rows}")), "C9_RESULT", &[("C9_ENGINE", "stock".as_ref()), ("C9_CASE", index.as_ref())]);
+		assert_eq!(stock.observation["source_hex"], cells[2]);
+		let portable = project_p1(&stock.observation["observation"]["outcome"], &counts[label]).unwrap();
+		let expected: Json = if cells[6] == "Exact" { semantic_projection(&portable).unwrap() } else { serde_json::from_str(&pins_decode(cells[7])).unwrap() };
+		if cells[6] != "Exact" { assert_eq!(expected, dispositions[label]["fresh_expectation"]); }
 		let raw = raw_fixture(&portable);
 		assert_eq!(project_p1(&raw, &counts[label]).unwrap(), portable);
 		let oracle_expected = semantic_projection(&portable).unwrap();
@@ -141,6 +151,7 @@ fn p1_frozen_rows_and_adversarial_controls() {
 		}
 		rows += 1;
 	}
+	fs::remove_dir_all(out).unwrap();
 	assert_eq!(rows, 210);
 	assert_eq!(policies, [177, 16, 9, 8]);
 	let text = "Expected { actual: Any(AnyTypeInfo { full_name: 0xabc, hash: 0x123 }) }";
@@ -194,8 +205,13 @@ fn miri_p1_rows(selected: &[&str], expected_policies: [usize; 4], expected_rejec
 		let cells = &c;
 		let counts = crate::experimental_core::tests::miri_fixtures::fixture("C9-counts", label);
 		let source = pins_decode(cells[2]);
-		let portable: Json = serde_json::from_str(&pins_decode(cells[3])).unwrap();
-		let expected: Json = serde_json::from_str(&pins_decode(cells[7])).unwrap();
+		let outcome = legacy_observe(&source, cells[1])["outcome"].clone();
+		let portable = project_p1(&outcome, &counts).unwrap();
+		let expected = if cells[6] == "Exact" {
+			semantic_projection(&portable).unwrap()
+		} else {
+			serde_json::from_str(&pins_decode(cells[7])).unwrap()
+		};
 		let raw = raw_fixture(&portable);
 		assert_eq!(project_p1(&raw, &counts).unwrap(), portable);
 		let oracle_expected = semantic_projection(&portable).unwrap();

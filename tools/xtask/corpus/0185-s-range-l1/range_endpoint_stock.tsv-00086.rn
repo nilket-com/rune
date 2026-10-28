@@ -1,0 +1,1 @@
+pub fn main() {let r=0..3; let a=[]; for x in r {a.push(x); if x==0 {drop(r);}} a}

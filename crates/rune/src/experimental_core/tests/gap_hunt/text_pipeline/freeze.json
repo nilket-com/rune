@@ -17,15 +17,9 @@
     "leaves": 12,
     "pointers": 13
   },
-  "stock_binary": {
-    "path": "/home/me/work/.reviews/0185-c14b-oracle-build1/native-test",
-    "sha256": "76bcefa34aca3991392eaa9f0f33cefe9b6b486d7170e4184d3839cb96319f98"
-  },
   "files": {
     "cases.json": "e03741fd2c1a637b9baf320672e19f4bf61341f88019195e9f55037803b5f4aa",
     "dispositions.json": "a133cc239e6750daed542ba291cb2978839007abca019244e366a1ac8130cb16",
-    "stock.json": "6097cd987ce22a1b722918c5f55fa41c20f10ae6e321c43af80febe2a39d75f2",
-    "stock_raw.json": "6f01f1cad677779537f9422640e9fd7859d5c1c350dccef4094b38a6a47b8f51",
     "p1.json": "e57dedab7108ce54d7e1b1de3a64f9a01df10c810107eadd03dd17a7d4f7a577"
   },
   "stock_provenance": {

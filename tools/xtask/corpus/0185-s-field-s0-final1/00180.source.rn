@@ -1,0 +1,44 @@
+// JSON in, answers out: which regions earn, who buys most, what is still open?
+// rnx run demos/02_orders.rn [path/to/orders.json]
+
+fn dollars(cents) { format!("{}.{:02}", cents / 100, cents % 100) }
+
+// add `cents` to the [name, total] row for `name`, making the row if new
+fn add(rows, name, cents) {
+    for row in rows { if row[0] == name { row[1] = row[1] + cents; return; } }
+    rows.push([name, cents]);
+}
+
+// largest total first; equal totals by name
+fn by_total(a, b) { if a[1] != b[1] { b[1].cmp(a[1]) } else { a[0].cmp(b[0]) } }
+
+pub fn main(args) {
+    let path = if args.len() > 0 { args[0] } else { "demos/data/orders.json" };
+    let orders = json::parse(fs::read(path)?)?;
+    // [name, cents] rows, so the output order never depends on a map
+    let regions = [];
+    let customers = [];
+    let open = 0;
+    for o in orders {
+        let cents = if o.status == "shipped" { o.qty * o.unit_cents } else { 0 };
+        if o.status == "open" { open += 1; }
+        add(regions, o.region, cents);
+        add(customers, o.customer, cents);
+    }
+    regions.sort_by(by_total);
+    customers.sort_by(by_total);
+    println!("{} orders read from {}", orders.len(), path);
+    if orders.len() == 0 { return Ok(()); }
+    println!("Shipped revenue by region:");
+    for r in regions { println!("  {:<6} {:>8}", r[0], dollars(r[1])); }
+    if customers[0][1] == 0 {
+        println!("Largest customer: none (nothing shipped yet)");
+    } else if customers.len() == 1 {
+        println!("Largest customer: {} ({}), the only customer", customers[0][0], dollars(customers[0][1]));
+    } else {
+        println!("Largest customer: {} ({}), ahead of {} ({})",
+            customers[0][0], dollars(customers[0][1]), customers[1][0], dollars(customers[1][1]));
+    }
+    println!("Still open: {} of {} orders ({:.1}%)", open, orders.len(), open as f64 * 100.0 / orders.len() as f64);
+    Ok(())
+}

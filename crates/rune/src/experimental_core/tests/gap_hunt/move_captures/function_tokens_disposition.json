@@ -1,487 +1,79 @@
 {
-  "schema": 1,
-  "authority": 20725,
-  "total": 8,
-  "rows": [
-    {
-      "index": 0,
-      "label": "token/named-alias",
-      "source_sha256": "7def4412399e07bc33cfa1b01a7e8ed2a90e89b1dbe7f1b02330cb5b45af407a",
-      "classification": "Intentional",
-      "authority": 20725,
-      "policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 80,
-                "source": 0,
-                "start": 76
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:77"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot read the value: it has been moved",
-          "sites": [
-            {
-              "end": 80,
-              "frames": "[]",
-              "source": 0,
-              "start": 76
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "16"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "stock_observation_preserved": true
-    },
-    {
-      "index": 1,
-      "label": "token/empty-closure-alias",
-      "source_sha256": "d85f5f1526add238ffab86e9ce73bacaa1abea5c5512260aaaf61eeb882dce1c",
-      "classification": "Intentional",
-      "authority": 20725,
-      "policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 69,
-                "source": 0,
-                "start": 65
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:66"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot read the value: it has been moved",
-          "sites": [
-            {
-              "end": 69,
-              "frames": "[]",
-              "source": 0,
-              "start": 65
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "16"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "stock_observation_preserved": true
-    },
-    {
-      "index": 2,
-      "label": "token/callback-after-move",
-      "source_sha256": "91167ecc5448313d0e2af6ae76d7be04da3d2855c624043f5154aa662e26a9b9",
-      "classification": "Intentional",
-      "authority": 20725,
-      "policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [
-            {
-              "arg": 1,
-              "tag": "BadArgument"
-            }
-          ],
-          "frames": [
-            {
-              "location": {
-                "end": 101,
-                "source": 0,
-                "start": 89
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:90"
-        },
-        "outcome": {
-          "chain_displays": [
-            "Bad argument #1"
-          ],
-          "class": "AccessConflict",
-          "display": "Cannot read the value: it has been moved",
-          "sites": [
-            {
-              "end": 101,
-              "frames": "[]",
-              "source": 0,
-              "start": 89
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "Vec",
-                "0xc11b1e769aea94f2",
-                [
-                  1,
-                  2
-                ]
-              ],
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "1"
-              ],
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "2"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "stock_observation_preserved": true
-    },
-    {
-      "index": 3,
-      "label": "token/vector-alias",
-      "source_sha256": "6ce186f2063a971d70ece0e074a9baf070327197b6c0611cdceb6676e044c028",
-      "classification": "Intentional",
-      "authority": 20725,
-      "policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 87,
-                "source": 0,
-                "start": 83
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:84"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot read the value: it has been moved",
-          "sites": [
-            {
-              "end": 87,
-              "frames": "[]",
-              "source": 0,
-              "start": 83
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "8"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "stock_observation_preserved": true
-    },
-    {
-      "index": 4,
-      "label": "token/object-alias",
-      "source_sha256": "116f33a7ef591a56463983c6ea03a5ed54a90f7ed15fb6a84ed944aade4f4344",
-      "classification": "Intentional",
-      "authority": 20725,
-      "policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 89,
-                "source": 0,
-                "start": 85
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:86"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot read the value: it has been moved",
-          "sites": [
-            {
-              "end": 89,
-              "frames": "[]",
-              "source": 0,
-              "start": 85
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "8"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "stock_observation_preserved": true
-    },
-    {
-      "index": 5,
-      "label": "token/independent-values",
-      "source_sha256": "17128007d31fb567cf27872331a26028e2c83c6a56fa84691dcd5726ff98f073",
-      "classification": "Intentional",
-      "authority": 20725,
-      "policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "16"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "16"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "stock_observation_preserved": true
-    },
-    {
-      "index": 6,
-      "label": "token/container-moved-into-capture",
-      "source_sha256": "2e5356fd76936170deec3f14709987c128c39679c6e24067b2b332d17e96d433",
-      "classification": "Intentional",
-      "authority": 20725,
-      "policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "16"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "16"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "stock_observation_preserved": true
-    },
-    {
-      "index": 7,
-      "label": "token/function-capture-returned",
-      "source_sha256": "4beb8d97714945dc8c98fa23fcbd39f0cbedee83f4a3640bcf1a2cf910e0e146",
-      "classification": "Intentional",
-      "authority": 20725,
-      "policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
-      "stock": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": {
-          "context": [],
-          "frames": [
-            {
-              "location": {
-                "end": 101,
-                "source": 0,
-                "start": 97
-              },
-              "role": "Origin"
-            }
-          ],
-          "rendered": "Cannot read the value: it has been moved\n  at c11b.rn:1:98"
-        },
-        "outcome": {
-          "chain_displays": [],
-          "class": "AccessConflict",
-          "display": "Cannot read the value: it has been moved",
-          "sites": [
-            {
-              "end": 101,
-              "frames": "[]",
-              "source": 0,
-              "start": 97
-            }
-          ],
-          "status": "error"
-        },
-        "reuse": null
-      },
-      "fresh": {
-        "diagnostics": "[]",
-        "events": [],
-        "logical": null,
-        "outcome": {
-          "graph": {
-            "nodes": [
-              [
-                "I64",
-                "0x1cad9186c9641c4f",
-                "16"
-              ]
-            ],
-            "root": 0
-          },
-          "status": "value"
-        },
-        "reuse": null
-      },
-      "stock_observation_preserved": true
-    }
-  ]
+	"schema": 1,
+	"authority": 20725,
+	"total": 8,
+	"rows": [
+		{
+			"index": 0,
+			"label": "token/named-alias",
+			"source_sha256": "7def4412399e07bc33cfa1b01a7e8ed2a90e89b1dbe7f1b02330cb5b45af407a",
+			"classification": "Intentional",
+			"authority": 20725,
+			"policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
+			"stock_observation_preserved": true
+		},
+		{
+			"index": 1,
+			"label": "token/empty-closure-alias",
+			"source_sha256": "d85f5f1526add238ffab86e9ce73bacaa1abea5c5512260aaaf61eeb882dce1c",
+			"classification": "Intentional",
+			"authority": 20725,
+			"policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
+			"stock_observation_preserved": true
+		},
+		{
+			"index": 2,
+			"label": "token/callback-after-move",
+			"source_sha256": "91167ecc5448313d0e2af6ae76d7be04da3d2855c624043f5154aa662e26a9b9",
+			"classification": "Intentional",
+			"authority": 20725,
+			"policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
+			"stock_observation_preserved": true
+		},
+		{
+			"index": 3,
+			"label": "token/vector-alias",
+			"source_sha256": "6ce186f2063a971d70ece0e074a9baf070327197b6c0611cdceb6676e044c028",
+			"classification": "Intentional",
+			"authority": 20725,
+			"policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
+			"stock_observation_preserved": true
+		},
+		{
+			"index": 4,
+			"label": "token/object-alias",
+			"source_sha256": "116f33a7ef591a56463983c6ea03a5ed54a90f7ed15fb6a84ed944aade4f4344",
+			"classification": "Intentional",
+			"authority": 20725,
+			"policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
+			"stock_observation_preserved": true
+		},
+		{
+			"index": 5,
+			"label": "token/independent-values",
+			"source_sha256": "17128007d31fb567cf27872331a26028e2c83c6a56fa84691dcd5726ff98f073",
+			"classification": "Intentional",
+			"authority": 20725,
+			"policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
+			"stock_observation_preserved": true
+		},
+		{
+			"index": 6,
+			"label": "token/container-moved-into-capture",
+			"source_sha256": "2e5356fd76936170deec3f14709987c128c39679c6e24067b2b332d17e96d433",
+			"classification": "Intentional",
+			"authority": 20725,
+			"policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
+			"stock_observation_preserved": true
+		},
+		{
+			"index": 7,
+			"label": "token/function-capture-returned",
+			"source_sha256": "4beb8d97714945dc8c98fa23fcbd39f0cbedee83f4a3640bcf1a2cf910e0e146",
+			"classification": "Intentional",
+			"authority": 20725,
+			"policy": "Function values and no-capture closures are Copy; heap-capturing closures transfer ownership.",
+			"stock_observation_preserved": true
+		}
+	]
 }

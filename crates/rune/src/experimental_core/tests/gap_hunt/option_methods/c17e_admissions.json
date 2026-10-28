@@ -7,7 +7,7 @@
     "index": 16,
     "label": "is/map",
     "source_sha256": "1596af35b80017a15a795411c53aa03030860fcea8dcd27c5404f1134e27d290",
-    "stock_row_sha256": "a55943a08005a63b5d8316d7bdc78e0acea1ca546b93ec5b29f818cd2b97d863",
+    "stock_row_sha256": "4012699bed1144cf5dab7ce918a20828dc614f810287d666cf7b87a6e17f524b",
     "fresh": {
      "location": {
       "end": 122,
@@ -31,7 +31,7 @@
     "index": 40,
     "label": "unwrap/map",
     "source_sha256": "72c48db830938acad57cc28f4cc43929c0c2e8e27f5994884baa6063f1b9ad95",
-    "stock_row_sha256": "1d9e943d0740648508411740239cd81bd15c91933e374ac486f1ba5948b6d475",
+    "stock_row_sha256": "b39b77c5b0893445a456a2e996a7e5d8bcac8e725020d0fd839222f025053d78",
     "fresh": {
      "location": {
       "end": 123,
@@ -55,7 +55,7 @@
     "index": 84,
     "label": "unwrap-fail/map",
     "source_sha256": "5b0d0b20930c141bef81ac742e4da641a9684f8f92d548e915bf38cc5756c7b2",
-    "stock_row_sha256": "9c32fd1d632f3faec72135cf4c48c06dbf9a69e7c5e373733dd8365ee5308744",
+    "stock_row_sha256": "989812938b16a191e6c6ee5d7b9d0181d82f38fc3f5216e22c1baab7da1132ba",
     "fresh": {
      "location": {
       "end": 121,
@@ -79,7 +79,7 @@
     "index": 121,
     "label": "unwrap_or/map",
     "source_sha256": "897e1fb456a2efd8c702ec04e585284ebd835e977ccce574cfce69e86f12022f",
-    "stock_row_sha256": "cb7fe21efee7def31a389b4b2dc4edd0dbe8674758b541920995b02d5ab1b215",
+    "stock_row_sha256": "4f469ad285e54839edc63c92a3391e3e6b54169211755222d884c8fe192e5bfd",
     "fresh": {
      "location": {
       "end": 125,

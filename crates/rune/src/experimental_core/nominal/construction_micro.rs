@@ -13,7 +13,7 @@ fn construct(store: &mut Store, nominal: Nominal, value: i64) {
 }
 
 #[test]
-#[ignore = "operator-only multi-thread construction measurement on Nano"]
+#[ignore = "operator-only multi-thread construction measurement"]
 fn construction_throughput() {
 	let threads: usize = std::env::var("N1_THREADS").unwrap().parse().unwrap();
 	let iterations: usize = std::env::var("N1_ITERATIONS").unwrap().parse().unwrap();

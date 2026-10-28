@@ -1,5 +1,4 @@
-// C5 stable stock replay projection. Raw Debug metadata remains provenance only.
-const REPLAY_CAP: usize = 2 << 20;
+// C5 projection of both engines' observations. Raw Debug metadata is not compared.
 
 fn exact_keys(o: &serde_json::Map<String, Json>, names: &[&str]) {
 	assert_eq!(o.len(), names.len(), "observation schema");
@@ -93,276 +92,177 @@ fn project(o: &Json) -> Json {
 	);
 	p
 }
-fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
-	let mut bytes = Vec::new();
-	let mut buf = [0; 4096];
-	loop {
-		let n = pipe.read(&mut buf).unwrap();
-		if n == 0 {
-			break;
-		}
-		let room = REPLAY_CAP - bytes.len();
-		bytes.extend_from_slice(&buf[..n.min(room)]);
-		if n > room {
-			exceeded.store(true, Ordering::Relaxed);
-		}
-	}
-	bytes
-}
 
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C5 frozen stock replay on Linux; explicit execution GAP_OUT; bounded children"]
+#[ignore = "C5 bounded execution contract against live stock; explicit new GAP_OUT"]
 #[allow(clippy::assertions_on_constants)]
-fn legacy_contract() {
-	run_contract("stock");
-}
-
-#[test]
-#[cfg(target_os = "linux")]
-#[ignore = "C5 bounded execution contract; explicit new GAP_OUT"]
 fn contract() {
-	run_contract("fresh");
-}
-
-#[allow(clippy::assertions_on_constants)]
-fn run_contract(engine: &str) {
 	assert!(
 		cfg!(feature = "sha2"),
-		"C5 frozen digest replay requires --features sha2"
+		"C5 digest projection requires --features sha2"
 	);
-	let frozen = include_str!("../../format_specs_stock.tsv");
-	let rows = frozen.lines().skip(1).collect::<Vec<_>>();
-	assert_eq!(rows.len(), COUNT);
 	assert_eq!(CASES.len(), COUNT);
-	assert_eq!(
-		frozen.lines().next().unwrap(),
-		"case\tmode\tsource_hex\tcompared_observation_hex\tstdout_projection_hex\tstderr_projection_hex\tpolicy"
-	);
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT"));
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
 	let mut policies = std::collections::BTreeMap::new();
-	for (i, ((label, source, mode, policy), line)) in CASES.iter().zip(rows).enumerate() {
-		let columns = line.split('\t').collect::<Vec<_>>();
-		assert_eq!(columns.len(), 7);
-		assert_eq!(columns[0], *label);
+	for (i, &(label, source, mode, policy)) in CASES.iter().enumerate() {
 		assert!(labels.insert(label));
-		assert_eq!(columns[1], *mode);
-		assert_eq!(columns[2], hex(source.as_bytes()));
-		assert_eq!(columns[6], *policy);
 		let folder = out.join(format!("{i:03}"));
-		fs::create_dir(&folder).unwrap();
-		let result = folder.join("observation.json");
-		use std::os::unix::process::CommandExt;
-		let mut command = Command::new("/usr/bin/prlimit");
-		command
-			.args([
-				"--cpu=15",
-				"--as=2147483648",
-				"--fsize=2097152",
-				"--core=0",
-				"--",
-			])
-			.arg(std::env::current_exe().unwrap());
-		command.process_group(0);
-		let mut child = command
-			.args([
-				"--exact",
-				"experimental_core::tests::gap_hunt::format_specs::child",
-				"--ignored",
-				"--nocapture",
-				"--quiet",
-			])
-			.env_clear()
-			.env("PATH", "/usr/bin:/bin")
-			.env("LANG", "C.UTF-8")
-			.env("TZ", "UTC")
-			.env("C5_ENGINE", engine)
-			.env("C5_CASE", i.to_string())
-			.env("C5_RESULT", &result)
-			.current_dir(&folder)
-			.stdin(Stdio::null())
-			.stdout(Stdio::piped())
-			.stderr(Stdio::piped())
-			.spawn()
-			.unwrap();
-		let exceeded = Arc::new(AtomicBool::new(false));
-		let flag = exceeded.clone();
-		let pipe = child.stdout.take().unwrap();
-		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
-		let flag = exceeded.clone();
-		let pipe = child.stderr.take().unwrap();
-		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
-		let start = Instant::now();
-		let mut stop = false;
-		let status = loop {
-			if let Some(status) = child.try_wait().unwrap() {
-				break status;
-			}
-			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
-				stop = true;
-				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child.id())])
-					.stdout(Stdio::null())
-					.stderr(Stdio::null())
-					.status();
-				break child.wait().unwrap();
-			}
-			std::thread::sleep(Duration::from_millis(10));
-		};
-		let stdout = stdout.join().unwrap();
-		let stderr = stderr.join().unwrap();
-		fs::write(folder.join("stdout"), &stdout).unwrap();
-		fs::write(folder.join("stderr"), &stderr).unwrap();
-		fs::write(
-			folder.join("receipt.txt"),
-			format!(
-				"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\n",
-				start.elapsed()
-			),
-		)
-		.unwrap();
-		assert!(
-			!stop && status.success() && !exceeded.load(Ordering::Relaxed),
-			"stock replay child {label}"
-		);
-		assert!(result.metadata().unwrap().len() <= REPLAY_CAP as u64);
-		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		actual["outcome"] = super::d1c_diagnostics::before(
+		let stock = launch("stock", i, &folder.join("stock"));
+		let expected = super::d1b_diagnostics::intentional_json_before(
 			"format_specs",
 			label,
 			source,
-			engine,
-			&actual["outcome"],
+			"stock",
+			&project(&stock.observation["outcome"]),
 		);
-		assert_eq!(actual["schema"], 1);
-		assert_eq!(actual["index"], i);
-		assert_eq!(actual["label"], *label);
-		assert_eq!(actual["mode"], *mode);
-		assert_eq!(actual["policy"], *policy);
-		assert_eq!(actual["source_hex"], columns[2]);
-		assert_eq!(actual["fuel"], FUEL);
-		let expected: Json = serde_json::from_str(&unhex(columns[3])).unwrap();
-		if engine == "stock" {
-			let projected = project(&actual["outcome"]);
-			let projected = super::d1b_diagnostics::intentional_json_before(
-				"format_specs",
-				label,
-				source,
-				"stock",
-				&projected,
-			);
-			assert_eq!(
-				projected, expected,
-				"stock fields including exact sites: {label}"
-			);
-		} else {
-			let audit = &actual["fresh_audit"];
-			assert_eq!(audit["clean_after_row"], true);
-			assert_eq!(audit["reuse"], true);
-			assert_eq!(audit["no_cleanup_error"], true);
-			assert_eq!(audit["live_entries"], 0);
-			assert_eq!(audit["payload_bytes"], 0);
-			assert_eq!(audit["idle"], true);
-			if let Some(bits) = mode.strip_prefix("c5-f64-") {
-				assert_eq!(audit["input_f64_bits"], bits);
-			}
-			*policies.entry(*policy).or_insert(0usize) += 1;
-			let outcome = &actual["outcome"];
-			assert_ne!(outcome["status"], "unmapped-value", "raw saved: {label}");
-			assert_ne!(outcome["class"], "UNMAPPED", "raw saved: {label}");
-			match *policy {
-				"Exact" => {
-					let projected = project(outcome);
-					let projected = super::d1b_diagnostics::intentional_json_before(
-						"format_specs",
-						label,
-						source,
-						"fresh",
-						&projected,
-					);
-					let mut expected = expected;
-					if let Some(sites) = super::d1b_diagnostics::intentional_sites_before(
-						"format_specs",
-						label,
-						source,
-						"fresh",
-					) {
-						expected["sites"] = sites;
-					}
-					assert_eq!(
-						projected, expected,
-						"execution exact fields/sites/argument chain: {label}"
-					);
-				}
-				"Compile-error" => {
-					assert_eq!(outcome["status"], "compile-error");
-					assert_eq!(
-						outcome["diagnostics"], expected["diagnostics"],
-						"shared frontend diagnostics: {label}"
-					);
-				}
-				"Refused-format-type" => {
-					assert_eq!(outcome["status"], "refused");
-					assert_eq!(outcome["refusal"], "Some(FormatSpec)");
-				}
-				"Retained-dynamic-precision" => {
-					assert_eq!(outcome["status"], "compile-error");
-					assert_eq!(outcome["refusal"], "Some(FrontendDiagnostic)");
-					assert_eq!(outcome["location"], json!({"source":0,"start":22,"end":29}));
-					assert_eq!(outcome["diagnostics"],"[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 22:29, kind: Custom { error: \"execution core: dynamic precision is not admitted\" } }) })]");
-				}
-				"Retained-resource" => {
-					assert_eq!(outcome["status"], "error");
-					assert_eq!(outcome["class"], "FormatLimit");
-					assert_eq!(expected["status"], "value");
-				}
-				_ => panic!("unknown C5 policy {policy}"),
-			}
+		let fresh = launch("fresh", i, &folder.join("fresh"));
+		let audit = &fresh.observation["fresh_audit"];
+		assert_eq!(audit["clean_after_row"], true);
+		assert_eq!(audit["reuse"], true);
+		assert_eq!(audit["no_cleanup_error"], true);
+		assert_eq!(audit["live_entries"], 0);
+		assert_eq!(audit["payload_bytes"], 0);
+		assert_eq!(audit["idle"], true);
+		if let Some(bits) = mode.strip_prefix("c5-f64-") {
+			assert_eq!(audit["input_f64_bits"], bits);
 		}
-
-		assert!(!has_address(&String::from_utf8(stdout.clone()).unwrap()));
-		assert!(!has_address(&String::from_utf8(stderr.clone()).unwrap()));
-		let expected_stdout: Json = serde_json::from_str(&unhex(columns[4])).unwrap();
-		assert_eq!(byte_projection(&stdout), expected_stdout, "stdout: {label}");
-		let expected_stderr: Json = serde_json::from_str(&unhex(columns[5])).unwrap();
-		assert_eq!(byte_projection(&stderr), expected_stderr, "stderr: {label}");
+		*policies.entry(policy).or_insert(0usize) += 1;
+		let outcome = &fresh.observation["outcome"];
+		assert_ne!(outcome["status"], "unmapped-value", "raw saved: {label}");
+		assert_ne!(outcome["class"], "UNMAPPED", "raw saved: {label}");
+		match policy {
+			"Exact" => {
+				let projected = project(outcome);
+				let projected = super::d1b_diagnostics::intentional_json_before(
+					"format_specs",
+					label,
+					source,
+					"fresh",
+					&projected,
+				);
+				let mut expected = expected;
+				if let Some(sites) = super::d1b_diagnostics::intentional_sites_before(
+					"format_specs",
+					label,
+					source,
+					"fresh",
+				) {
+					expected["sites"] = sites;
+				}
+				assert_eq!(
+					projected, expected,
+					"execution exact fields/sites/argument chain: {label}"
+				);
+			}
+			"Compile-error" => {
+				assert_eq!(outcome["status"], "compile-error");
+				assert_eq!(
+					outcome["diagnostics"], expected["diagnostics"],
+					"shared frontend diagnostics: {label}"
+				);
+			}
+			"Refused-format-type" => {
+				assert_eq!(outcome["status"], "refused");
+				assert_eq!(outcome["refusal"], "Some(FormatSpec)");
+			}
+			"Retained-dynamic-precision" => {
+				assert_eq!(outcome["status"], "compile-error");
+				assert_eq!(outcome["refusal"], "Some(FrontendDiagnostic)");
+				assert_eq!(outcome["location"], json!({"source":0,"start":22,"end":29}));
+				assert_eq!(outcome["diagnostics"],"[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 22:29, kind: Custom { error: \"execution core: dynamic precision is not admitted\" } }) })]");
+			}
+			"Retained-resource" => {
+				assert_eq!(outcome["status"], "error");
+				assert_eq!(outcome["class"], "FormatLimit");
+				assert_eq!(expected["status"], "value");
+			}
+			_ => panic!("unknown C5 policy {policy}"),
+		}
+		for run in [&stock, &fresh] {
+			assert!(!has_address(&String::from_utf8(run.stdout.clone()).unwrap()));
+			assert!(!has_address(&String::from_utf8(run.stderr.clone()).unwrap()));
+		}
+		assert_eq!(
+			byte_projection(&fresh.stdout),
+			byte_projection(&stock.stdout),
+			"stdout: {label}"
+		);
+		assert_eq!(
+			byte_projection(&fresh.stderr),
+			byte_projection(&stock.stderr),
+			"stderr: {label}"
+		);
 	}
 	assert_eq!(labels.len(), COUNT);
-	if engine == "fresh" {
-		assert_eq!(
-			policies,
-			std::collections::BTreeMap::from([
-				("Exact", 244),
-				("Compile-error", 14),
-				("Refused-format-type", 5),
-				("Retained-dynamic-precision", 1),
-				("Retained-resource", 2)
-			])
-		);
-	}
-	if engine == "fresh" {
-		fs::write(
-			out.join("RETAINED-ENFORCED.json"),
-			serde_json::to_vec_pretty(&json!({
-				"d1b_site_rows":16,"retained_chains":[],"d1e_intentional_chain_rows":1,
-				"partition":{"Exact":228,"D1b-intentional-sites":16,"Retained-chain":0,
-				"Compile-error":14,"Refused-format-type":5,"Retained-dynamic-precision":1,"Retained-resource":2}
-			}))
-			.unwrap(),
-		)
-		.unwrap();
-	}
-	contract_completed(engine, COUNT);
+	assert_eq!(
+		policies,
+		std::collections::BTreeMap::from([
+			("Exact", 244),
+			("Compile-error", 14),
+			("Refused-format-type", 5),
+			("Retained-dynamic-precision", 1),
+			("Retained-resource", 2)
+		])
+	);
+	fs::write(
+		out.join("RETAINED-ENFORCED.json"),
+		serde_json::to_vec_pretty(&json!({
+			"d1b_site_rows":16,"retained_chains":[],"d1e_intentional_chain_rows":1,
+			"partition":{"Exact":228,"D1b-intentional-sites":16,"Retained-chain":0,
+			"Compile-error":14,"Refused-format-type":5,"Retained-dynamic-precision":1,"Retained-resource":2}
+		}))
+		.unwrap(),
+	)
+	.unwrap();
+	contract_completed("fresh", COUNT);
+}
+
+/// Run case `index` on `engine` in a bounded child and check its envelope.
+/// The returned outcome has the D1c display mapping applied.
+#[cfg(target_os = "linux")]
+fn launch(engine: &str, index: usize, folder: &Path) -> super::live_oracle::Run {
+	let (label, source, mode, policy) = CASES[index];
+	let index_text = index.to_string();
+	let mut run = super::live_oracle::run_child(
+		"experimental_core::tests::gap_hunt::format_specs::child",
+		label,
+		folder,
+		"C5_RESULT",
+		&[
+			("C5_ENGINE", engine.as_ref()),
+			("C5_CASE", index_text.as_ref()),
+		],
+	);
+	let actual = &mut run.observation;
+	actual["outcome"] =
+		super::d1c_diagnostics::before("format_specs", label, source, engine, &actual["outcome"]);
+	assert_eq!(actual["schema"], 1);
+	assert_eq!(actual["index"], index);
+	assert_eq!(actual["label"], label);
+	assert_eq!(actual["mode"], mode);
+	assert_eq!(actual["policy"], policy);
+	assert_eq!(actual["source_hex"], hex(source.as_bytes()));
+	assert_eq!(actual["fuel"], FUEL);
+	run
 }
 
 #[test]
+#[cfg(target_os = "linux")]
+#[cfg_attr(miri, ignore = "Miri: live stock observations use bounded child processes")]
 fn d1e_moved_parent_chain_allowance_is_retired() {
-	let archive: Json = serde_json::from_str(include_str!("d1e_intentional_chain.json")).unwrap();
-	let row = &archive["rows"][0];
-	assert_eq!(row["case"], "access/moved-parent/?");
-	assert_eq!(row["fresh_chains"], json!([]));
-	assert_eq!(row["fresh_after_chains"], row["stock_chains"]);
-	assert_eq!(row["fresh_after_chains"], json!(["Bad argument #0"]));
+    let index = CASES.iter().position(|case| case.0 == "access/moved-parent/?").unwrap();
+    let out = std::env::temp_dir().join(format!("rune-c5-chain-{}-{}", std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+    let stock = launch("stock", index, &out.join("stock"));
+    let fresh = launch("fresh", index, &out.join("fresh"));
+    let displays = |run: &super::live_oracle::Run| -> Vec<Json> {
+        run.observation["outcome"]["chain"].as_array().unwrap().iter().map(|entry| entry["display"].clone()).collect()
+    };
+    assert_eq!(displays(&stock), vec![json!("Bad argument #0")]);
+    assert_eq!(displays(&fresh), displays(&stock));
+    assert_eq!(fresh.stdout, stock.stdout);
+    assert_eq!(fresh.stderr, stock.stderr);
+    fs::remove_dir_all(out).unwrap();
 }

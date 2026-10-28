@@ -3,34 +3,7 @@
   "production_changes": false,
   "files": {
     "cases.json": "fd884e3d6ce22d43a77e69fbc61900d54f889706921b47a834747f2e7ba87567",
-    "stock.json": "47f01d217fb22cf55a3a567ab58b969b0d90f8055d1d58f92d78f1054596878e",
     "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
-  },
-  "stock_binary": {
-    "path": "/home/me/work/.reviews/0185-c16h-oracle2/rune-tests",
-    "sha256": "f4b02280de18a73257c734383db6d4ecbe3bb05d56d14695147524bea8a73ef8",
-    "pins_sha256": "6f7a16e5759eb77760ef9c1d53b3168ad9579061140b9e4bcae33f5abee5991e"
-  },
-  "stock_summary": {
-    "rows": 120,
-    "statuses": {
-      "value": 76,
-      "compile-error": 11,
-      "error": 33
-    },
-    "error_classes": {
-      "Type": 21,
-      "stock:MissingFunction { hash: 0xbe6b74e85e3244d6 }": 5,
-      "stock:MissingFunction { hash: 0x489be30d02f3940f }": 2,
-      "stock:MissingFunction { hash: 0xf727e1feaf2a3ca }": 1,
-      "stock:MissingFunction { hash: 0x2f4720d36d2b70c }": 1,
-      "stock:MissingFunction { hash: 0x1cad9186c9641c4f }": 1,
-      "stock:UnsupportedTryOperand { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }": 1,
-      "stock:UnsupportedAs { value: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0xbd7ccf79d00ee140 }) }": 1
-    },
-    "replay": false,
-    "logical_traces": 33,
-    "cpu_list": "0-7,10-31"
   },
   "P1": {
     "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",

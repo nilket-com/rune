@@ -28,36 +28,6 @@
           "start": 14
         }
       ]
-    },
-    "logical": {
-      "context": [],
-      "frames": [
-        {
-          "location": {
-            "end": 19,
-            "source": 0,
-            "start": 14
-          },
-          "role": "Origin"
-        },
-        {
-          "location": {
-            "end": 44,
-            "source": 0,
-            "start": 37
-          },
-          "role": "Caller"
-        },
-        {
-          "location": {
-            "end": 66,
-            "source": 0,
-            "start": 59
-          },
-          "role": "Caller"
-        }
-      ],
-      "rendered": "Panicked: pattern did not match\n  at c8.rn:1:15\n  called from c8.rn:1:38\n  called from c8.rn:1:60"
     }
   }
 }

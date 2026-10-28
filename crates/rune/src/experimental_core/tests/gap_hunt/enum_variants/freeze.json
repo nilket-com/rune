@@ -9,12 +9,8 @@
   ],
   "files": {
     "cases.json": "548450a9f82596996f4e2bb795b886586ab71ec84f1851099d5f9fd3c7314d2a",
-    "stock_raw.json": "260da7cbd3139710f669e57ed99b4cb7b4ad04e35525818357f053d5e55c9862",
-    "stock.json": "7aa952e68fcba3ad2a47c84e1385de06c036c8681df51bf4a8bcab2440f4dfc6",
     "dispositions.json": "289a9aa27e1bad8bb531abb2ca1539d52ef3c101ff08b4fe076af60a34e2cdfc",
-    "p1.json": "7a8c3145a1600b63de74125ad9e65c4e4eb995a0e40efed20481e2dd02a0e9a3",
-    "intentional.json": "43d39deb45152b31188ca4fb672f1d5c833e17c63933268e58b5273be12c1cd8",
-    "resource_complete.json": "8d3cb9e3232ba8a3487b16b1c1f1ad789527867e710b4a7c278cd07e1c9b2b7b"
+    "p1.json": "7a8c3145a1600b63de74125ad9e65c4e4eb995a0e40efed20481e2dd02a0e9a3"
   },
   "observed_source_hashes": {
     "000": "f068042196046de8f33652918ff36bfbad8eec75be03e788e0d1cfba1fd60b11",
@@ -183,16 +179,6 @@
     "163": "60b5c769d90f7f93693da95bb70adb07b67d231e1d00c0f19dd6c71ac4db3229",
     "164": "91efc4f1b535661ffa2e783c31525f492a66ec89acbc31366fe83700d3ae7f86",
     "165": "608ce6196762106e94b9c2546c76dd447ec13e4b357245e670ce763f5f2fb05c"
-  },
-  "stock_binary_by_epoch": {
-    "1": {
-      "path": "/home/me/work/.reviews/0185-c15b-oracle-build2/native-test",
-      "sha256": "60053a64483fc4e7742427de622b7ffd9ff4597a8781b4a089353a4f96bf0722"
-    },
-    "2": {
-      "path": "/home/me/work/.reviews/0185-c15b-oracle-build3/native-test",
-      "sha256": "39c07868b340a8108231d7d2d71b8bef09b6372230f89ca599b9986861caddc2"
-    }
   },
   "provenance_sha256": "85f236c502729ef41f2a6f72673073032b2b3eae212f618c8fe21d92981557a6",
   "policy": "Original 163 rows unchanged; three appended corrected witnesses. Intentional declaration-order comparison in both engines. Stock-before observations preserved. No implementation output used. Retained fuel compares effects against the complete tape, not numeric fuel parity."

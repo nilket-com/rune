@@ -20,29 +20,9 @@
         "span_hex": "7374643a3a636d703a3a4f72646572696e673a3a4c6573732e726576657273652829"
       },
       "disposition": "Exact",
-      "expected": {
-        "chain": [],
-        "class": "Type",
-        "display": "Missing instance function `0xcc3fb5c24fe5c3bb` for `std::cmp::Ordering`",
-        "kind": "MissingInstanceFunction { hash: 0xcc3fb5c24fe5c3bb, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
-        "sites": [
-          {
-            "end": 48,
-            "frames": "[]",
-            "source": 0,
-            "start": 14
-          }
-        ],
-        "status": "error",
-        "typed": {
-          "hash": "0xcc3fb5c24fe5c3bb",
-          "instance": "::std::cmp::Ordering",
-          "tag": "MissingInstanceFunction"
-        }
-      },
       "stdout_hex": "0a72756e6e696e67203120746573740a",
       "stderr_hex": "",
-      "stock_observation_sha256": "6fe24c0f7d2c1c2add1c1cc1c3135972281dd9b2b4945a0390ceb3058a9ab408"
+      "stock_projected_sha256": "a307fdb344cc1efea8a286f5075d9295703a0867a98408b04a440e883fe1a8e7"
     },
     {
       "index": 180,
@@ -62,29 +42,9 @@
         "span_hex": "7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e287374643a3a636d703a3a4f72646572696e673a3a457175616c29"
       },
       "disposition": "Exact",
-      "expected": {
-        "chain": [],
-        "class": "Type",
-        "display": "Missing instance function `0x2acad8ec2699716e` for `std::cmp::Ordering`",
-        "kind": "MissingInstanceFunction { hash: 0x2acad8ec2699716e, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
-        "sites": [
-          {
-            "end": 70,
-            "frames": "[]",
-            "source": 0,
-            "start": 14
-          }
-        ],
-        "status": "error",
-        "typed": {
-          "hash": "0x2acad8ec2699716e",
-          "instance": "::std::cmp::Ordering",
-          "tag": "MissingInstanceFunction"
-        }
-      },
       "stdout_hex": "0a72756e6e696e67203120746573740a",
       "stderr_hex": "",
-      "stock_observation_sha256": "cf627897b67061625d4e9b0892d5b232adbaeeb01cdbebe2a858bf4caa23d4f0"
+      "stock_projected_sha256": "fdcbf8df09f81b7cfe42d146ca62a0bb9bbbb2168f126260acc57cf4c654ebf0"
     },
     {
       "index": 181,
@@ -104,29 +64,9 @@
         "span_hex": "7374643a3a636d703a3a4f72646572696e673a3a4c6573732e7468656e5f77697468287c7c7374643a3a636d703a3a4f72646572696e673a3a457175616c29"
       },
       "disposition": "Exact",
-      "expected": {
-        "chain": [],
-        "class": "Type",
-        "display": "Missing instance function `0xcbf97ece669297ee` for `std::cmp::Ordering`",
-        "kind": "MissingInstanceFunction { hash: 0xcbf97ece669297ee, instance: Any(AnyTypeInfo { full_name: <fn>, hash: 0x30d24cc3fa13e4b7 }) }",
-        "sites": [
-          {
-            "end": 77,
-            "frames": "[]",
-            "source": 0,
-            "start": 14
-          }
-        ],
-        "status": "error",
-        "typed": {
-          "hash": "0xcbf97ece669297ee",
-          "instance": "::std::cmp::Ordering",
-          "tag": "MissingInstanceFunction"
-        }
-      },
       "stdout_hex": "0a72756e6e696e67203120746573740a",
       "stderr_hex": "",
-      "stock_observation_sha256": "09c0101cf1bd01f48e7f67dff62ec62918be9efb5bed61577479427c236a5ea8"
+      "stock_projected_sha256": "75b2bb1dae584ec467eceebe66ff8d8657538ed57dd91a18f2c1631bb03e773d"
     }
   ]
 }

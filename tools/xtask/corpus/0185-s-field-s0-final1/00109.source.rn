@@ -1,0 +1,10 @@
+fn print_once() {
+    yield 1
+}
+
+let printer = print_once();
+dbg!(printer);
+dbg!(printer.resume(()));
+dbg!(printer.resume("John"));
+dbg!(printer);
+dbg!(printer.resume(()));

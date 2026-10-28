@@ -1,0 +1,1 @@
+pub fn main() {let a="a"; let r=a.."z"; r.start+="b"; (a,r.start)}

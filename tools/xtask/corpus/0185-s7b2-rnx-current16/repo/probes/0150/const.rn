@@ -1,0 +1,10 @@
+const GREETING = "hello";
+const COUNT = 2;
+
+fn twice(s) { s + s }
+
+pub fn run(args) {
+    println!("{} {}", twice(GREETING), COUNT);
+    println!("WORKFLOW OK const");
+    Ok(())
+}

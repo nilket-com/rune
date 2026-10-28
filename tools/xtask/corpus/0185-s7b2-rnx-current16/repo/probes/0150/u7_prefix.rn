@@ -1,0 +1,62 @@
+pub fn run(args) {
+    let issues = json::parse(fs::read(args[0])?)?;
+    let names = [];
+    let descriptions = [];
+    for line in fs::read(args[2])?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        names.push(f[0]);
+        descriptions.push(f[1]);
+    }
+    let sample = [];
+    for line in fs::read(args[3])?.split("\n").skip(1) {
+        if line != "" { sample.push(line); }
+    }
+    // each ticket's first passage, from the committed byte ranges
+    let texts = #{};
+    let numbers = [];
+    let titles = #{};
+    for i in issues {
+        numbers.push(i["number"]);
+        texts[`d2:#${i["number"]}`] = i["title"] + "\n" + i["body"];
+        titles[`${i["number"]}`] = i["title"];
+    }
+    let first = #{};
+    for line in fs::read(args[1])?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        if !f[0].starts_with("d2:") || f[1] != "0" { continue; }
+        let s = f[2].parse::<i64>()?;
+        let e = f[3].parse::<i64>()?;
+        first[f[0]] = texts[f[0]][s..e];
+    }
+    let gen = candle::TextGenerator::load(args[4])?;
+
+    // triage: all 252
+    let systems = [];
+    let users = [];
+    for n in numbers {
+        systems.push(triage_system());
+        users.push(triage_user(names, descriptions, first[`d2:#${n}`]));
+    }
+    let t0 = time::monotonic_ms();
+    let triage = gen.chat_many(systems, users, 8)?;
+    let t1 = time::monotonic_ms();
+    // summaries: the 40 sample tickets
+    let ssys = [];
+    let susers = [];
+    for n in sample {
+        ssys.push(summary_system());
+        susers.push("Summarize this ticket in one sentence of at most 20 words.\n\nTicket:\n" + first[`d2:#${n}`]);
+    }
+    let t2 = time::monotonic_ms();
+    let summaries = gen.chat_many(ssys, susers, 48)?;
+    let t3 = time::monotonic_ms();
+
+    // the triage, parsed
+    let classes = [];
+    let generated = 0;
+    for r in triage { classes.push(parse(r["text"], names)); generated += r["ids"].len(); }
+    let sgenerated = 0;
+    for r in summaries { sgenerated += r["ids"].len(); }
+    println!("{} tickets triaged ({} tokens generated) in {} ms; {} summaries ({} tokens) in {} ms",

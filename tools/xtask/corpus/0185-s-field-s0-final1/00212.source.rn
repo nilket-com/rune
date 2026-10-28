@@ -1,0 +1,251 @@
+// Record 0146, U5: retrieve then re-rank, over rnx's own records (D1),
+// frozen in plans/0146 before any run. Retrieval is 0136's U1' at overlap 0,
+// keeping each query's top 20 documents (each document's best passage by
+// MiniLM cosine); the cross-encoder then scores (query, best passage) for
+// each candidate, and the candidates are reordered by that score, ties to
+// the better retrieval rank. Retrieval's and re-ranking's top 5 are shown
+// with excerpts; the frozen rubric's supporting records are ranked under
+// both. No improvement is promised: retrieval alone already has hit@1 5/5.
+// args: D1 directory, MiniLM directory, cross-encoder directory, rubric.tsv,
+// output directory
+
+fn column_str(name, values) {
+    Ok(polars::Series::from_iter_str(values)?.with_name(name).into_column())
+}
+
+fn column_i64(name, values) {
+    Ok(polars::Series::from_iter_i64(values)?.with_name(name).into_column())
+}
+
+fn column_f64(name, values) {
+    Ok(polars::Series::from_iter_f64(values)?.with_name(name).into_column())
+}
+
+/// D1 as two frames: documents (doc, path, record, title) and passages
+/// (doc, pid, text), chunked by the encoder at overlap 0 (0136).
+fn load(dir, enc) {
+    let doc = [];
+    let paths = [];
+    let records = [];
+    let titles = [];
+    let pdoc = [];
+    let ppaths = [];
+    let ptext = [];
+    for n in fs::read_dir(dir)? {
+        if !n.ends_with(".md") { continue; }
+        let text = fs::read(`${dir}/${n}`)?;
+        let first = text.split("\n").next().unwrap_or("");
+        let title = if first.starts_with("# ") { first[2..] } else { first };
+        let d = paths.len();
+        doc.push(d);
+        paths.push(n);
+        records.push(n[0..4]);
+        titles.push(title);
+        for c in enc.chunk(text[first.len()..], 0)? {
+            pdoc.push(d);
+            ppaths.push(n);
+            ptext.push(c);
+        }
+    }
+    let docs = polars::DataFrame::new(paths.len(), [
+        column_i64("doc", doc)?,
+        column_str("path", paths)?,
+        column_str("record", records)?,
+        column_str("title", titles)?,
+    ])?;
+    let pid = [];
+    for i in 0..ptext.len() { pid.push(i); }
+    let passages = polars::DataFrame::new(ptext.len(), [column_i64("doc", pdoc)?, column_i64("pid", pid)?, column_str("text", ptext)?])?;
+    Ok((docs, passages, ptext, ppaths))
+}
+
+/// The frozen rubric: ids, texts and supporting records.
+fn rubric(path) {
+    let ids = [];
+    let texts = [];
+    let support = [];
+    for line in fs::read(path)?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        ids.push(f[0]);
+        texts.push(f[2]);
+        support.push(f[3].split(" ").collect::<Vec>());
+    }
+    Ok((ids, texts, support))
+}
+
+/// The rank (1-based) of a record among `records` in order: the earliest of
+/// its documents; 0 when absent.
+fn rank_of(records, r) {
+    let i = 0;
+    while i < records.len() {
+        if records[i] == r { return i + 1; }
+        i += 1;
+    }
+    0
+}
+
+/// hit@1, hit@5, recall@5 and MRR for one ordering of candidate records.
+fn measures(records, support) {
+    let ranks = [];
+    for r in support { ranks.push(rank_of(records, r)); }
+    let first = 0;
+    for k in ranks { if k > 0 && (first == 0 || k < first) { first = k; } }
+    let within = 0;
+    for k in ranks { if k > 0 && k <= 5 { within += 1; } }
+    let mrr = if first == 0 { 0.0 } else { 1.0 / (first as f64) };
+    #{ ranks, hit1: first == 1, hit5: first > 0 && first <= 5,
+       recall5: (within as f64) / (support.len() as f64), mrr }
+}
+
+/// Supporting-record ranks as text ("> 20" when absent). A top-level
+/// function: a closure returning a string it built with `+=` handed back an
+/// empty (moved) value in Rune 0.14.2.
+fn ranks_text(ranks) {
+    let t = "";
+    for r in ranks {
+        if t != "" { t += " "; }
+        t += if r == 0 { "> 20" } else { `${r}` };
+    }
+    t
+}
+
+/// The candidates' new order: by score, descending, ties to the better
+/// retrieval rank (a stable selection over the retrieval order).
+fn reorder(scores) {
+    let n = scores.len();
+    let used = [];
+    for _ in 0..n { used.push(false); }
+    let order = [];
+    while order.len() < n {
+        let best = None;
+        for i in 0..n {
+            if used[i] { continue; }
+            best = match best {
+                None => Some(i),
+                Some(b) => if scores[i] > scores[b] { Some(i) } else { Some(b) },
+            };
+        }
+        let b = best.unwrap();
+        used[b] = true;
+        order.push(b);
+    }
+    order
+}
+
+pub fn run(args) {
+    let (dir, model, cross, rubric_path, out) = (args[0], args[1], args[2], args[3], args[4]);
+    let t0 = time::monotonic_ms();
+    let enc = candle::TextEncoder::load(model)?;
+    let ce = candle::CrossEncoder::load(cross)?;
+    let (docs, passages, ptext, ppaths) = load(dir, enc)?;
+    let e = enc.embed(ptext)?;
+    let (ids, texts, support) = rubric(rubric_path)?;
+    let q = enc.embed(texts)?;
+    let scored = passages.with_dense(candle::similarity(e, q, ids)?)?;
+    // retrieval: each document's best passage, the top 20 documents; equal
+    // scores keep passage order
+    let cands = [];
+    for id in ids {
+        let desc = polars::SortMultipleOptions::new().with_order_descending(true).with_maintain_order(true);
+        let best = scored.select_(["doc", "pid", "text", id])?.sort([id], desc)?
+            .unique_stable(Some(["doc"]), polars::UniqueKeepStrategy::First(), None)?
+            .head(Some(20))?;
+        let top = best.left_join(docs, ["doc"], ["doc"])?;
+        let text = top.lazy().select_([polars::col("path"), polars::col("record"), polars::col("title"),
+            polars::col("pid").cast(polars::DataType::String()), polars::col(id).cast(polars::DataType::String())])?.collect()?;
+        cands.push(#{ path: text.strings("path")?, record: text.strings("record")?, title: text.strings("title")?,
+            pid: text.strings("pid")?, score: text.strings(id)?, passage: top.strings("text")? });
+    }
+    let t1 = time::monotonic_ms();
+    // re-ranking: every (query, best passage) pair, in query then retrieval order
+    let pq = [];
+    let pp = [];
+    for i in 0..ids.len() {
+        for p in cands[i].passage { pq.push(texts[i]); pp.push(p); }
+    }
+    let scores = ce.score(pq, pp)?;
+    let t2 = time::monotonic_ms();
+    // review round 1: the retrieval evidence, retained for the comparer: every
+    // passage's document and text, and every passage's score per query
+    // (written after the timings, so neither step's time includes it)
+    fs::write(out + "/u5-passages.json", json::stringify(#{ paths: ppaths, texts: ptext })?)?;
+    let cols = [polars::col("pid").cast(polars::DataType::String())];
+    for id in ids { cols.push(polars::col(id).cast(polars::DataType::String())); }
+    let st = scored.lazy().select_(cols)?.collect()?;
+    let sp = st.strings("pid")?;
+    let sc = [];
+    for id in ids { sc.push(st.strings(id)?); }
+    let retained = "pid";
+    for id in ids { retained += `\t${id}`; }
+    retained += "\n";
+    for i in 0..sp.len() {
+        retained += sp[i];
+        for k in 0..sc.len() { retained += `\t${sc[k][i]}`; }
+        retained += "\n";
+    }
+    fs::write(out + "/u5-retrieval.tsv", retained)?;
+
+    let trace = "";
+    let k = 0;
+    let rows = [];
+    for i in 0..ids.len() {
+        let c = cands[i];
+        let n = c.path.len();
+        let s = [];
+        for j in 0..n { s.push(scores[k + j]); }
+        k += n;
+        let order = reorder(s);
+        for j in 0..n {
+            trace += `cand\t${ids[i]}\t${j + 1}\t${c.path[j]}\t${c.pid[j]}\t${c.score[j]}\t${s[j]}\n`;
+        }
+        let ranks = "";
+        let rrecords = [];
+        for j in 0..n {
+            if j > 0 { ranks += ","; }
+            ranks += `${order[j] + 1}`;
+            rrecords.push(c.record[order[j]]);
+        }
+        trace += `rerank\t${ids[i]}\t${ranks}\n`;
+        let before = measures(c.record, support[i]);
+        let after = measures(rrecords, support[i]);
+        rows.push((ids[i], before, after));
+
+        println!("{}: {}", ids[i], texts[i]);
+        let rr = []; let rt = []; let rs = []; let rret = []; let rx = [];
+        for j in 0..5 {
+            let o = order[j];
+            rr.push(c.record[o]); rt.push(c.title[o]); rs.push(s[o]); rret.push(o + 1);
+            rx.push(c.passage[o].chars().take(300).collect::<String>());
+        }
+        let shown = polars::DataFrame::new(5, [
+            column_str("record", rr)?, column_str("title", rt)?, column_f64("re-rank score", rs)?,
+            column_i64("retrieval rank", rret)?, column_str("excerpt", rx)?,
+        ])?;
+        println!("re-ranked top 5:\n{}", shown.preview()?);
+        let br = []; let bt = [];
+        for j in 0..5 { br.push(c.record[j]); bt.push(c.title[j]); }
+        println!("retrieval top 5: {:?}", br);
+    }
+    // the comparison table
+    let q_ = []; let sup = []; let rb = []; let ra = []; let h1b = []; let h1a = []; let r5b = []; let r5a = []; let mb = []; let ma = [];
+    for (id, b, a) in rows {
+        q_.push(id); rb.push(ranks_text(b.ranks)); ra.push(ranks_text(a.ranks));
+        h1b.push(if b.hit1 { 1 } else { 0 }); h1a.push(if a.hit1 { 1 } else { 0 });
+        r5b.push(b.recall5); r5a.push(a.recall5); mb.push(b.mrr); ma.push(a.mrr);
+        trace += `metrics\t${id}\t${b.hit1}\t${b.hit5}\t${b.recall5}\t${b.mrr}\t${a.hit1}\t${a.hit5}\t${a.recall5}\t${a.mrr}\n`;
+    }
+    let comparison = polars::DataFrame::new(q_.len(), [
+        column_str("query", q_)?, column_str("supporting ranks, retrieval", rb)?, column_str("re-ranked", ra)?,
+        column_i64("hit@1 retrieval", h1b)?, column_i64("hit@1 re-ranked", h1a)?,
+        column_f64("recall@5 retrieval", r5b)?, column_f64("recall@5 re-ranked", r5a)?,
+        column_f64("MRR retrieval", mb)?, column_f64("MRR re-ranked", ma)?,
+    ])?;
+    println!("Retrieval alone against re-ranking (frozen rubric):\n{}", comparison.preview()?);
+    fs::write(out + "/u5-trace.tsv", trace)?;
+    // the exact pairs scored, in order, for the Hugging Face semantic check
+    fs::write(out + "/u5-pairs.json", json::stringify(#{ queries: pq, passages: pp })?)?;
+    println!("{} docs, {} passages; retrieval {} ms, re-ranking {} pairs {} ms", docs.height()?, passages.height()?, t1 - t0, pq.len(), t2 - t1);
+    println!("WORKFLOW OK u5");
+    Ok(())
+}

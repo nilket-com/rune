@@ -1,0 +1,65 @@
+fn ok(r) { match r { Ok(v) => v, Err(e) => panic(`${e.kind()}: ${e.message()}`) } }
+fn join(v, sep) { let s = ""; let first = true; for p in v { if !first { s += sep; } s += p; first = false; } s }
+fn fmt(v) { let parts = []; for x in v { parts.push(match x { Some(y) => `${y}`, None => "null", _ => `${x}` }); } `[${join(parts, ", ")}]` }
+fn show(r) { match r { Ok(_) => "ok", Err(e) => `${e.kind()}: ${e.message()}` } }
+
+pub fn main() {
+    let out = [];
+    // Expr::map, stored, executed by collect
+    let e = ok(polars::col("x").map_cb(|c| c.times(2), |s, f| polars::Field::i64(f.name()))).alias("x2");
+    let df = ok(ok(fx::df().lazy().select_([e])).collect());
+    out.push(`map: ${fmt(ok(ok(df.column("x2")).i64s()))}`);
+    // map_many: vector argument
+    let e2 = ok(polars::col("x").map_many_cb(|cols| cols[0].times(10), [polars::col("x")], |s, flds| polars::Field::i64(flds[0].name())));
+    let df2 = ok(ok(fx::df().lazy().select_([e2.alias("m")])).collect());
+    out.push(`map_many: ${fmt(ok(ok(df2.column("m")).i64s()))}`);
+    // schema resolution sink
+    let sch = ok(ok(fx::df().lazy().select_([ok(polars::col("x").map_cb(|c| ok(c.cast_f64()), |s, f| polars::Field::f64(f.name()))).alias("xf")])).compute_schema());
+    out.push(`compute_schema: ${fmt(sch.names())} ${match sch.dtype_name("xf") { Some(d) => d, None => "none" }}`);
+    // immediate infallible
+    let c = ok(fx::column().apply_unary_elementwise_cb(|s| s.plus(1)));
+    out.push(`apply_unary: ${fmt(ok(c.i64s()))}`);
+    // parallel
+    polars::reset();
+    let cols = ok(fx::wide(8, 1000).apply_columns_par_cb(|c| c.times(3)));
+    out.push(`par: n=${cols.len()} calls=${polars::calls()} threads=${polars::threads_seen()} max_active=${polars::max_active()}`);
+    // apply_mut commit on success
+    let ca = fx::sorted_i64(5);
+    ok(ca.apply_mut_cb(|x| x + 1));
+    out.push(`apply_mut: ${fmt(ca.values())} ${ca.is_sorted_flag()}`);
+    // failure after several elements
+    let ca2 = fx::sorted_i64(5);
+    let r = ca2.apply_mut_cb(|x| if x == 3 { panic("boom") } else { x + 1 });
+    out.push(`apply_mut fail: ${show(r)} values=${fmt(ca2.values())} ${ca2.is_sorted_flag()}`);
+    // result buffer
+    let s = ok(fx::sorted_i64(3).apply_into_string_amortized_cb(|x| `v${x}`));
+    out.push(`amortized: ${fmt(ok(s.strs()))}`);
+    // csv schema modify
+    let lf = ok(ok(polars::LazyCsvReader::new("fixtures/small.csv").with_schema_modify_cb(|s| s.with_all_f64())).finish());
+    out.push(`csv: ${ok(lf.collect()).show()}`);
+    // wrap_msg routed, and an error inside it
+    let pe = ok(polars::PolarsError::compute("base").wrap_msg_cb(|m| `[${m}]`));
+    out.push(`wrap: ${pe.message()}`);
+    let r = polars::PolarsError::compute("base").wrap_msg_cb(|m| panic("inside"));
+    out.push(`wrap fail: ${show(r)}`);
+    // wrong result type in a fallible signature, via collect
+    let r = ok(fx::df().lazy().select_([ok(polars::col("x").map_cb(|c| 42, |s, f| polars::Field::i64(f.name())))])).collect();
+    out.push(`wrong type: ${show(r)}`);
+    // capture refusal
+    let w = fx::wrapped();
+    let r = polars::col("x").map_cb(|c| w, |s, f| polars::Field::i64(f.name()));
+    out.push(`capture: ${show(r)}`);
+    let n = fx::one();
+    let c = ok(fx::column().apply_unary_elementwise_cb(|s| s.plus(n)));
+    out.push(`const capture: ${fmt(ok(c.i64s()))}`);
+    // routed call from a callback: denied
+    let r = fx::column().apply_unary_elementwise_cb(|s| { ok(s.sum_routed()); s });
+    out.push(`reentry: ${show(r)}`);
+    // budget
+    polars::set_callback_budget(1000);
+    let r = fx::column().apply_unary_elementwise_cb(|s| { let i = 0; while true { i += 1; } s });
+    out.push(`budget: ${show(r)}`);
+    polars::set_callback_budget(0);
+    // unrouted control: the failure unwinds (caught by the host)
+    join(out, "\n")
+}

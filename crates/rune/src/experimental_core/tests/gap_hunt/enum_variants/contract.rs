@@ -1,5 +1,4 @@
 const DISPOSITIONS: &str = include_str!("dispositions.json");
-const STOCK: &str = include_str!("stock.json");
 fn project_observation(value: &Json, expected: &Json, path: &str) -> Json {
 	match value {
 		Json::Object(map) => Json::Object(
@@ -67,6 +66,22 @@ fn d1_enum_expectation(case: &Json, expected: &Json, engine: &str) -> Json {
 	expected
 }
 
+/// Restore the original display of a D1 row in a live `engine` observation;
+/// the inverse of [`d1_enum_expectation`].
+fn d1_enum_before(case: &Json, observed: &Json, engine: &str) -> Json {
+	let rows: Vec<Json> = serde_json::from_str(include_str!("d1_diagnostics.json")).unwrap();
+	let mut observed = observed.clone();
+	if let Some(row) = rows.iter().find(|row| row["id"] == case["id"]) {
+		assert_eq!(row["source_sha256"], case["source_sha256"]);
+		assert_eq!(
+			observed["outcome"]["display"],
+			row["changes"][engine]["after"]
+		);
+		observed["outcome"]["display"] = row["changes"][engine]["before"].clone();
+	}
+	observed
+}
+
 fn c16e_admission(case: &Json, frozen: &Json, actual: &Json, expected: &Json) -> bool {
 	let supplement: Json = serde_json::from_str(include_str!("c16e_admissions.json")).unwrap();
 	let rows = supplement["rows"].as_array().unwrap();
@@ -97,7 +112,9 @@ fn c16e_admission(case: &Json, frozen: &Json, actual: &Json, expected: &Json) ->
 	true
 }
 
-fn compare(case: &Json, frozen: &Json, actual: &Json) {
+/// Check the execution observation `actual` against `stock`, the
+/// [`expected_stock`] row of the same case.
+fn compare(case: &Json, frozen: &Json, stock: &Json, actual: &Json, complete: Option<&Json>) {
 	for key in ["label", "source_sha256", "fixture", "fuel"] {
 		assert_eq!(actual[key], case[key]);
 		assert_eq!(actual[key], frozen[key]);
@@ -120,12 +137,8 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	] {
 		assert_eq!(audit[key], 0, "{key}");
 	}
-	let stock: Json = serde_json::from_str(STOCK).unwrap();
 	let id = case["id"].as_str().unwrap();
-	let fixed = super::object_order::order_fixed("enum_variants", id.parse().unwrap(), &stock[id]);
-	let intentional =
-		super::nominal_clone::intentional_json("enum_variants", case, &fixed["observation"]);
-	let expected = intentional.as_ref().unwrap_or(&fixed["observation"]);
+	let expected = &stock["observation"];
 	let observed = &actual["observation"];
 	if c16e_admission(case, frozen, actual, expected) {
 		return;
@@ -133,11 +146,9 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	let c16f: Json = serde_json::from_str(include_str!("c16f_admissions.json")).unwrap();
 	assert_eq!(c16f.as_object().unwrap().len(), 2);
 	if let Some(rule) = c16f.get(id) {
-		use sha2::{Digest, Sha256};
 		assert!(matches!(id, "134" | "136"));
 		assert_eq!(rule["authority"], 21337);
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
-		assert_eq!(hex(Sha256::digest(serde_json::to_vec(&stock[id]).unwrap()).as_ref()), rule["stock_row_sha256"]);
 		assert_eq!(frozen["disposition"], "Refused-surface");
 		assert_eq!(audit["invoked"], true);
 		assert_eq!(audit["reuse_used_fallback"], false);
@@ -147,11 +158,9 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	let c16h: Json = serde_json::from_str(include_str!("c16h_admissions.json")).unwrap();
 	assert_eq!(c16h.as_object().unwrap().len(), 1);
 	if let Some(rule) = c16h.get(id) {
-		use sha2::{Digest, Sha256};
 		assert_eq!(id, "137");
 		assert_eq!(rule["label"], case["label"]);
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
-		assert_eq!(hex(Sha256::digest(serde_json::to_vec(&stock[id]).unwrap()).as_ref()), rule["stock_row_sha256"]);
 		assert_eq!(frozen["disposition"], rule["previous_disposition"]);
 		assert_eq!(rule["classification"], "Exact");
 		assert_eq!(audit["invoked"], true);
@@ -162,11 +171,9 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	let c17e: Json = serde_json::from_str(include_str!("c17e_admissions.json")).unwrap();
 	assert_eq!(c17e.as_object().unwrap().len(), 1);
 	if let Some(rule) = c17e.get(id) {
-		use sha2::{Digest, Sha256};
 		assert_eq!(id, "135");
 		assert_eq!(rule["label"], case["label"]);
 		assert_eq!(rule["source_sha256"], case["source_sha256"]);
-		assert_eq!(hex(Sha256::digest(serde_json::to_vec(&stock[id]).unwrap()).as_ref()), rule["stock_row_sha256"]);
 		assert_eq!(frozen["disposition"], rule["previous_disposition"]);
 		assert_eq!(rule["classification"], "Exact");
 		assert_eq!(audit["invoked"], true);
@@ -176,7 +183,7 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 	}
 	if frozen["disposition"] == "Refused-frontend" {
 		assert_eq!(audit["invoked"], false);
-		assert_eq!(actual["diagnostics"], stock[id]["diagnostics"]);
+		assert_eq!(actual["diagnostics"], stock["diagnostics"]);
 		assert_eq!(observed["events"], json!([]));
 		assert_eq!(observed["reuse"]["graph"]["nodes"][0][2], "7");
 		return;
@@ -207,14 +214,10 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 		assert_eq!(audit["reuse_used_fallback"], false);
 		if frozen["disposition"] == "Retained-fuel" {
 			let seen = observed["events"].as_array().unwrap();
-			let complete: Json =
-				serde_json::from_str(include_str!("resource_complete.json")).unwrap();
-			let rule = complete
-				.get(id)
-				.expect("Authorized COMPLETE stock tape required");
+			let rule = complete.expect("live COMPLETE stock tape required");
+			assert_eq!(id, "148");
 			assert_eq!(rule["source_sha256"], case["source_sha256"]);
-			assert_eq!(rule["stock_fuel"], 200000);
-			assert_eq!(rule["fresh_fuel"], case["fuel"]);
+			assert_eq!(rule["fuel"], 200000);
 			assert_eq!(rule["observation"]["outcome"]["status"], "value");
 			let tape = rule["observation"]["events"].as_array().unwrap();
 			assert!(seen.len() <= tape.len() && seen.iter().zip(tape).all(|(a, b)| a == b));
@@ -227,10 +230,6 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 				);
 			}
 		} else {
-			let intentional: Json = serde_json::from_str(include_str!("intentional.json")).unwrap();
-			let expected = intentional
-				.get(id)
-				.map_or(expected, |rule| &rule["expected_observation"]);
 			let mut d1_expected = d1_enum_expectation(case, expected, "fresh");
 			let mut observed = observed.clone();
 			let d1b_outcome = super::d1b_diagnostics::intentional_json_before(
@@ -258,43 +257,4 @@ fn compare(case: &Json, frozen: &Json, actual: &Json) {
 			);
 		}
 	}
-}
-
-fn compare_stock(case: &Json, actual: &Json) {
-	let stock: Json = serde_json::from_str(STOCK).unwrap();
-	let rules: Json = serde_json::from_str(include_str!("intentional.json")).unwrap();
-	let id = case["id"].as_str().unwrap();
-	for key in [
-		"label",
-		"source_sha256",
-		"fixture",
-		"fuel",
-		"diagnostics",
-		"source_hex",
-	] {
-		assert_eq!(actual[key], stock[id][key], "{id} {key}");
-	}
-	let fixed = super::object_order::order_fixed("enum_variants", id.parse().unwrap(), &stock[id]);
-	let intentional =
-		super::nominal_clone::intentional_json("enum_variants", case, &fixed["observation"]);
-	let expected = rules.get(id).map_or_else(
-		|| intentional.as_ref().unwrap_or(&fixed["observation"]),
-		|rule| &rule["expected_observation"],
-	);
-	let d1_expected = d1_enum_expectation(case, expected, "stock");
-	let expected = &d1_expected;
-	let mut observed = actual["observation"].clone();
-	let d1b_outcome = super::d1b_diagnostics::intentional_json_before(
-		"enum_variants",
-		case["label"].as_str().unwrap(),
-		case["source"].as_str().unwrap(),
-		"stock",
-		&observed["outcome"],
-	);
-	observed["outcome"] = d1b_outcome;
-	assert_eq!(
-		project_observation(&observed, expected, ""),
-		*expected,
-		"C15b stock row {id}"
-	);
 }

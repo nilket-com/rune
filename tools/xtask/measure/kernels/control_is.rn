@@ -1,0 +1,1 @@
+pub fn main(n) { let sum = 0; for _ in 0..n { if n is i64 { sum += 1; } if n is not bool { sum += 2; } if n is f64 { sum += 4; } if n is not i64 { sum += 8; } } sum }

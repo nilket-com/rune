@@ -1,0 +1,9 @@
+fn do_request(url) {
+    async || {
+        Ok(http::get(url).await?.status())
+    }
+}
+
+let future = do_request("https://google.com");
+let status = future().await?;
+println!("Status: {status}");

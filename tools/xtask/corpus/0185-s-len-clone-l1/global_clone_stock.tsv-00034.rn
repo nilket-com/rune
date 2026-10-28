@@ -1,0 +1,1 @@
+struct P{x} fn g(x){x+1} fn clone(x){17} pub fn main(){ let x=g; let y=std::clone::clone(x); y(7) }

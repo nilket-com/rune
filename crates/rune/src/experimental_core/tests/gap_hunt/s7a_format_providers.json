@@ -1,72 +1,55 @@
 {
-  "schema": 1,
-  "context": "default modules plus custom DEBUG_FMT and DISPLAY_FMT for std::ops::Range; handlers increment CALLS and return Unit without output",
-  "classification": "Intentional compile-time refusal in modified-provider Context; finer provenance closure is future work",
-  "capture_sha256": "63fc31b853829b5a1103a611f4ff4b05195b8a02c313a9ebea4b0e457e6a532b",
-  "rows": [
-    {
-      "name": "debug",
-      "source": "pub fn main(){format!(\"{:?}\",1..3)}",
-      "source_sha256": "e421d8e995e3b2ea87db00a0e393a7d89ebae9d665955c10cc823bf78664c5fe",
-      "stock": "PROVIDER debug stock value:\"\" calls=1",
-      "before_fresh": "PROVIDER debug fresh value:\"<::std::ops::Range object at 0x600d6f9dec30>\" calls=0",
-      "policy": "Refused(Native): modified std format providers"
-    },
-    {
-      "name": "display",
-      "source": "pub fn main(){format!(\"{}\",1..3)}",
-      "source_sha256": "de1068cb554632d96f601ce621a1709642f1fa0b9252ae64bce1c25b43e6afd7",
-      "stock": "PROVIDER display stock value:\"\" calls=1",
-      "before_fresh": "PROVIDER display fresh error:`std::ops::Range` cannot be formatted with `{}` calls=0",
-      "policy": "Refused(Native): modified std format providers"
-    },
-    {
-      "name": "string-debug",
-      "source": "pub fn main(){format!(\"{:?}\",\"x\")}",
-      "source_sha256": "a30b151073946a79c56ac462ab1a2be0c3b2e20bef22d8745cde4186522d3ca4",
-      "stock": "PROVIDER string-debug stock value:\"\\\"x\\\"\" calls=0",
-      "before_fresh": "PROVIDER string-debug fresh value:\"\\\"x\\\"\" calls=0",
-      "policy": "Refused(Native): modified std format providers"
-    },
-    {
-      "name": "string-local",
-      "source": "pub fn main(){let s=\"x\";format!(\"{:?}\",s)}",
-      "source_sha256": "18b659a10c7ad32665f41a093aa15617f38b14365e02a7db81212483b46e4562",
-      "stock": "PROVIDER string-local stock value:\"\\\"x\\\"\" calls=0",
-      "before_fresh": "PROVIDER string-local fresh value:\"\\\"x\\\"\" calls=0",
-      "policy": "Refused(Native): modified std format providers"
-    },
-    {
-      "name": "vec-nested",
-      "source": "pub fn main(){format!(\"{:?}\",[1..3])}",
-      "source_sha256": "39402b79b2bbfc12ab2bcf9ce151f828add6e53e5fbd35bfe451f177fe9ac69f",
-      "stock": "PROVIDER vec-nested stock value:\"[]\" calls=1",
-      "before_fresh": "PROVIDER vec-nested fresh value:\"[<::std::ops::Range object at 0x600d6f9de540>]\" calls=0",
-      "policy": "Refused(Native): modified std format providers"
-    },
-    {
-      "name": "struct-nested",
-      "source": "struct S{r}pub fn main(){format!(\"{:?}\",S{r:1..3})}",
-      "source_sha256": "743519993c884f350bbf54946b5a09d79ab85a39229b1caef164cbbf4346c62b",
-      "stock": "PROVIDER struct-nested stock value:\"S {r: }\" calls=1",
-      "before_fresh": "PROVIDER struct-nested fresh value:\"S {r: <::std::ops::Range object at 0x600d6f9dde50>}\" calls=0",
-      "policy": "Refused(Native): modified std format providers"
-    },
-    {
-      "name": "struct-safe",
-      "source": "struct S{r}pub fn main(){format!(\"{:?}\",S{r:1})}",
-      "source_sha256": "27b9e0060ed45dc2274e10934fde935c78faf0deb32fa822911f2a1d32f1283d",
-      "stock": "PROVIDER struct-safe stock value:\"S {r: 1}\" calls=0",
-      "before_fresh": "PROVIDER struct-safe fresh value:\"S {r: 1}\" calls=0",
-      "policy": "Refused(Native): modified std format providers"
-    },
-    {
-      "name": "struct-display",
-      "source": "struct S{r}pub fn main(){format!(\"{}\",S{r:1..3})}",
-      "source_sha256": "9065f7933216b544c94ab08842568d399c40141373b30b660d1364d804007b68",
-      "stock": "PROVIDER struct-display stock error:`S` cannot be formatted with `{}` calls=0",
-      "before_fresh": "PROVIDER struct-display fresh error:`S` cannot be formatted with `{}` calls=0",
-      "policy": "Refused(Native): modified std format providers"
-    }
-  ]
+	"schema": 1,
+	"context": "default modules plus custom DEBUG_FMT and DISPLAY_FMT for std::ops::Range; handlers increment CALLS and return Unit without output",
+	"classification": "Intentional compile-time refusal in modified-provider Context; finer provenance closure is future work",
+	"rows": [
+		{
+			"name": "debug",
+			"source": "pub fn main(){format!(\"{:?}\",1..3)}",
+			"source_sha256": "e421d8e995e3b2ea87db00a0e393a7d89ebae9d665955c10cc823bf78664c5fe",
+			"policy": "Refused(Native): modified std format providers"
+		},
+		{
+			"name": "display",
+			"source": "pub fn main(){format!(\"{}\",1..3)}",
+			"source_sha256": "de1068cb554632d96f601ce621a1709642f1fa0b9252ae64bce1c25b43e6afd7",
+			"policy": "Refused(Native): modified std format providers"
+		},
+		{
+			"name": "string-debug",
+			"source": "pub fn main(){format!(\"{:?}\",\"x\")}",
+			"source_sha256": "a30b151073946a79c56ac462ab1a2be0c3b2e20bef22d8745cde4186522d3ca4",
+			"policy": "Refused(Native): modified std format providers"
+		},
+		{
+			"name": "string-local",
+			"source": "pub fn main(){let s=\"x\";format!(\"{:?}\",s)}",
+			"source_sha256": "18b659a10c7ad32665f41a093aa15617f38b14365e02a7db81212483b46e4562",
+			"policy": "Refused(Native): modified std format providers"
+		},
+		{
+			"name": "vec-nested",
+			"source": "pub fn main(){format!(\"{:?}\",[1..3])}",
+			"source_sha256": "39402b79b2bbfc12ab2bcf9ce151f828add6e53e5fbd35bfe451f177fe9ac69f",
+			"policy": "Refused(Native): modified std format providers"
+		},
+		{
+			"name": "struct-nested",
+			"source": "struct S{r}pub fn main(){format!(\"{:?}\",S{r:1..3})}",
+			"source_sha256": "743519993c884f350bbf54946b5a09d79ab85a39229b1caef164cbbf4346c62b",
+			"policy": "Refused(Native): modified std format providers"
+		},
+		{
+			"name": "struct-safe",
+			"source": "struct S{r}pub fn main(){format!(\"{:?}\",S{r:1})}",
+			"source_sha256": "27b9e0060ed45dc2274e10934fde935c78faf0deb32fa822911f2a1d32f1283d",
+			"policy": "Refused(Native): modified std format providers"
+		},
+		{
+			"name": "struct-display",
+			"source": "struct S{r}pub fn main(){format!(\"{}\",S{r:1..3})}",
+			"source_sha256": "9065f7933216b544c94ab08842568d399c40141373b30b660d1364d804007b68",
+			"policy": "Refused(Native): modified std format providers"
+		}
+	]
 }

@@ -20,18 +20,9 @@
         "span_hex": "537b783a317d2e636d70283229"
       },
       "disposition": "Exact",
-      "expected": {
-        "status": "value",
-        "value": {
-          "payload": {
-            "type": "I64",
-            "value": "99"
-          },
-          "type_hash": "0x1cad9186c9641c4f"
-        }
-      },
       "stdout_hex": "0a72756e6e696e67203120746573740a",
-      "stderr_hex": ""
+      "stderr_hex": "",
+      "stock_projected_sha256": "546c2842e10ba842516ba23122f9cba7b7765a59bc7a630999b7435142a0a72b"
     }
   ]
 }

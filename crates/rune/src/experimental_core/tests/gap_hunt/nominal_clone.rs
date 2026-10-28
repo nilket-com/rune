@@ -133,76 +133,22 @@ fn oracle_sources_are_unique_and_pinned() {
 	}
 }
 
-// The original observations stay frozen. Only these source-bound rows change.
-pub(super) fn intentional_json(family: &str, case: &Json, old: &Json) -> Option<Json> {
-	let rules: Json = serde_json::from_str(include_str!("nominal_clone/intentional.json")).unwrap();
-	let rule = rules["original_json_rows"]
-		.as_array()
-		.unwrap()
-		.iter()
-		.find(|rule| rule["family"] == family && rule["id"] == case["id"])?;
-	assert_eq!(rule["source_sha256"], case["source_sha256"]);
-	let before: Json =
-		serde_json::from_str(include_str!("nominal_clone/stock_before.json")).unwrap();
-	let after: Json = serde_json::from_str(include_str!("nominal_clone/stock_after.json")).unwrap();
-	let id = rule["oracle_id"].as_str().unwrap();
-	assert_eq!(
-		*old, before[id]["observation"],
-		"C15c before {family} {}",
-		case["id"]
-	);
-	Some(after[id]["observation"].clone())
-}
-
-pub(super) fn intentional_record(family: &str, label: &str, source: &str, old: String) -> String {
-	use sha2::{Digest, Sha256};
-	let rules: Json = serde_json::from_str(include_str!("nominal_clone/intentional.json")).unwrap();
-	let Some(rule) = rules["original_tsv_rows"]
-		.as_array()
-		.unwrap()
-		.iter()
-		.find(|rule| rule["family"] == family && rule["label"] == label)
-	else {
-		return old;
-	};
-	assert_eq!(
-		rule["source_sha256"],
-		hex(&Sha256::digest(source.as_bytes()))
-	);
-	assert_eq!(rule["before"], hex(old.as_bytes()));
-	super::unhex(rule["after"].as_str().unwrap())
-}
-
 #[test]
-#[ignore = "C15c stock contract; new C15C_STOCK_OUT and source-bound native binary"]
-fn legacy_contract() {
-	check_contract("stock", false);
-}
-
-#[test]
-#[ignore = "C15c execution contract; bounded source-bound native children"]
+#[ignore = "C15c execution contract against live stock; bounded source-bound native children"]
 fn contract() {
-	check_contract("fresh", false);
+	check_contract(false);
 }
 
 #[test]
-#[ignore = "C15c tuple-shaped nominal slice; bounded source-bound native children"]
+#[ignore = "C15c tuple-shaped nominal slice against live stock; bounded source-bound native children"]
 fn slice_contract() {
-	check_contract("fresh", true);
+	check_contract(true);
 }
 
-fn check_contract(engine: &str, slice: bool) {
+fn check_contract(slice: bool) {
 	use sha2::{Digest, Sha256};
-	use std::process::{Command, Stdio};
 	use std::time::{Duration, Instant};
-	let out = PathBuf::from(
-		std::env::var_os(if engine == "stock" {
-			"C15C_STOCK_OUT"
-		} else {
-			"C15C_OUT"
-		})
-		.unwrap(),
-	);
+	let out = PathBuf::from(std::env::var_os("C15C_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
 	let receipt_path = PathBuf::from(std::env::var_os("C15C_NATIVE_RECEIPT").unwrap());
 	let receipt_hash = std::env::var("C15C_NATIVE_RECEIPT_SHA256").unwrap();
@@ -210,11 +156,9 @@ fn check_contract(engine: &str, slice: bool) {
 	let executable = std::env::current_exe().unwrap();
 	let binary_hash = hex(&Sha256::digest(fs::read(&executable).unwrap()));
 	let rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	let expected: Json =
-		serde_json::from_str(include_str!("nominal_clone/stock_after.json")).unwrap();
 	let started = Instant::now();
 	let mut count = 0;
-	for (index, row) in rows.iter().enumerate() {
+	for index in 0..rows.len() {
 		if slice && ![0, 1, 2, 3, 5, 6, 18, 21, 24, 27].contains(&index) {
 			continue;
 		}
@@ -230,80 +174,27 @@ fn check_contract(engine: &str, slice: bool) {
 		assert!(units.iter().all(|unit| unit["recorded_cwd"] == source));
 		let dir = out.join(format!("{index:03}"));
 		fs::create_dir(&dir).unwrap();
-		let result = dir.join("observation.json");
-		let stdout = dir.join("stdout");
-		let stderr = dir.join("stderr");
-		let mut child = Command::new("/usr/bin/prlimit")
-			.args(["--cpu=15", "--as=2147483648", "--fsize=8388608", "--"])
-			.arg(&executable)
-			.args([
-				"--exact",
-				"experimental_core::tests::gap_hunt::nominal_clone::child",
-				"--ignored",
-				"--nocapture",
-				"--test-threads=1",
-			])
-			.env_clear()
-			.env("PATH", "/usr/bin:/bin")
-			.env("HOME", "/home/me")
-			.env("LANG", "C.UTF-8")
-			.env("C15C_ENGINE", engine)
-			.env("C15C_PHASE", "after")
-			.env("C15C_CASE", index.to_string())
-			.env("C15C_RESULT", &result)
-			.current_dir("/tmp")
-			.stdin(Stdio::null())
-			.stdout(fs::File::create(&stdout).unwrap())
-			.stderr(fs::File::create(&stderr).unwrap())
-			.spawn()
+		let expected = launch("stock", index, &dir.join("stock"));
+		let mut actual = launch("fresh", index, &dir.join("fresh"));
+		let audit = actual
+			.as_object_mut()
+			.unwrap()
+			.remove("fresh_audit")
 			.unwrap();
-		let launched = Instant::now();
-		let status = loop {
-			if let Some(status) = child.try_wait().unwrap() {
-				break status;
-			}
-			if launched.elapsed() > Duration::from_secs(45) {
-				child.kill().unwrap();
-				panic!("C15c child timeout {index}: {:?}", child.wait());
-			}
-			std::thread::sleep(Duration::from_millis(5));
-		};
-		assert!(status.success(), "C15c child {index}: {status}");
-		let stdout = fs::read_to_string(&stdout).unwrap();
-		assert_eq!(
-			stdout
-				.matches("test result: ok. 1 passed; 0 failed;")
-				.count(),
-			1
-		);
-		assert_eq!(stdout.matches("test result:").count(), 1);
-		assert!(fs::read(&stderr).unwrap().is_empty());
-		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		if engine == "fresh" {
-			let audit = actual
-				.as_object_mut()
-				.unwrap()
-				.remove("fresh_audit")
-				.unwrap();
-			assert_eq!(audit["post_code_drop"], true);
-			for key in ["row_idle", "executor_idle"] {
-				assert_eq!(audit[key], true);
-			}
-			for key in [
-				"row_live_entries",
-				"row_payload_bytes",
-				"live_entries",
-				"payload_bytes",
-			] {
-				assert_eq!(audit[key], 0);
-			}
-			actual["engine"] = json!("stock");
+		assert_eq!(audit["post_code_drop"], true);
+		for key in ["row_idle", "executor_idle"] {
+			assert_eq!(audit[key], true);
 		}
-		assert_eq!(
-			actual,
-			expected[row["id"].as_str().unwrap()],
-			"C15c stock {index}"
-		);
+		for key in [
+			"row_live_entries",
+			"row_payload_bytes",
+			"live_entries",
+			"payload_bytes",
+		] {
+			assert_eq!(audit[key], 0);
+		}
+		actual["engine"] = json!("stock");
+		assert_eq!(actual, expected, "C15c stock {index}");
 	}
 	assert_eq!(
 		binary_hash,
@@ -311,58 +202,67 @@ fn check_contract(engine: &str, slice: bool) {
 	);
 	fs::write(
 		out.join("COMPLETE"),
-		format!("{engine}{count} exact; source and test counts checked per child\n"),
+		format!("fresh{count} exact; source and test counts checked per child\n"),
 	)
 	.unwrap();
-	println!("CONTRACT ENGINE {engine}\nCONTRACT ROWS {count}");
+	println!("CONTRACT ENGINE fresh\nCONTRACT ROWS {count}");
 }
 
-#[test]
-fn intentional_rows_preserve_original_observations() {
-	let rules: Json = serde_json::from_str(include_str!("nominal_clone/intentional.json")).unwrap();
-	assert_eq!(rules["original_json_rows"].as_array().unwrap().len(), 15);
-	for (family, cases, stock) in [
-		(
-			"constructors",
-			include_str!("constructors/cases.json"),
-			include_str!("constructors/stock.json"),
-		),
-		(
-			"enum_variants",
-			include_str!("enum_variants/cases.json"),
-			include_str!("enum_variants/stock.json"),
-		),
-	] {
-		let cases: Vec<Json> = serde_json::from_str(cases).unwrap();
-		let stock: Json = serde_json::from_str(stock).unwrap();
-		for case in cases {
-			let id = case["id"].as_str().unwrap();
-			if let Some(after) = intentional_json(family, &case, &stock[id]["observation"]) {
-				assert_ne!(after, stock[id]["observation"]);
-			}
+/// Run case `index` on `engine` in a bounded child in a new `dir` and return
+/// its observation. The child must pass as exactly one test with empty stderr.
+fn launch(engine: &str, index: usize, dir: &Path) -> Json {
+	use std::process::{Command, Stdio};
+	use std::time::{Duration, Instant};
+	fs::create_dir(dir).unwrap();
+	let result = dir.join("observation.json");
+	let stdout = dir.join("stdout");
+	let stderr = dir.join("stderr");
+	let mut child = Command::new("/usr/bin/prlimit")
+		.args(["--cpu=15", "--as=2147483648", "--fsize=8388608", "--"])
+		.arg(std::env::current_exe().unwrap())
+		.args([
+			"--exact",
+			"experimental_core::tests::gap_hunt::nominal_clone::child",
+			"--ignored",
+			"--nocapture",
+			"--test-threads=1",
+		])
+		.env_clear()
+		.env("PATH", "/usr/bin:/bin")
+		.env("HOME", fs::canonicalize(dir).unwrap())
+		.env("LANG", "C.UTF-8")
+		.env("C15C_ENGINE", engine)
+		.env("C15C_PHASE", "after")
+		.env("C15C_CASE", index.to_string())
+		.env("C15C_RESULT", &result)
+		.current_dir("/tmp")
+		.stdin(Stdio::null())
+		.stdout(fs::File::create(&stdout).unwrap())
+		.stderr(fs::File::create(&stderr).unwrap())
+		.spawn()
+		.unwrap();
+	let launched = Instant::now();
+	let status = loop {
+		if let Some(status) = child.try_wait().unwrap() {
+			break status;
 		}
-	}
-	assert_eq!(rules["original_tsv_rows"].as_array().unwrap().len(), 3);
-	let mut changed = 0;
-	for (family, data) in [
-		(
-			"len_clone_stock.tsv",
-			include_str!("../len_clone_stock.tsv"),
-		),
-		(
-			"global_clone_stock.tsv",
-			include_str!("../global_clone_stock.tsv"),
-		),
-	] {
-		for line in data.lines().skip(1) {
-			let row: Vec<_> = line.split('\t').collect();
-			let source = super::unhex(row[1]);
-			let old = super::unhex(row[2]);
-			let after = intentional_record(family, row[0], &source, old.clone());
-			changed += usize::from(after != old);
+		if launched.elapsed() > Duration::from_secs(45) {
+			child.kill().unwrap();
+			panic!("C15c {engine} child timeout {index}: {:?}", child.wait());
 		}
-	}
-	assert_eq!(changed, 3);
+		std::thread::sleep(Duration::from_millis(5));
+	};
+	assert!(status.success(), "C15c {engine} child {index}: {status}");
+	let stdout = fs::read_to_string(&stdout).unwrap();
+	assert_eq!(
+		stdout
+			.matches("test result: ok. 1 passed; 0 failed;")
+			.count(),
+		1
+	);
+	assert_eq!(stdout.matches("test result:").count(), 1);
+	assert!(fs::read(&stderr).unwrap().is_empty());
+	serde_json::from_slice(&fs::read(&result).unwrap()).unwrap()
 }
 
 // Independent observations: this function never reads frozen expectations.

@@ -8,7 +8,7 @@
         "index": 195,
         "label": "budget/forever-recursion-hit",
         "source_sha256": "e963bec89fb35f4c291a53e75638a06b8fb586e7b515229dfc857321ffcdd8a8",
-        "stock_row_sha256": "254e511805dec3b799fc61066b65ee9d0b9dcc87fdcdbc0220d5610c34b4f1d9",
+        "stock_row_sha256": "4fb60c5e0543d7ef8b2ef16e6f330cfbbb2f66fa891308974ab216acc69a4fd4",
         "classification": "Retained-frame-limit",
         "fresh": {
           "observation": {

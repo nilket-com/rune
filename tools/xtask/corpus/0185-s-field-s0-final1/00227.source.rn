@@ -1,0 +1,33 @@
+pub async fn main(request) {
+    if request.path == "/db" {
+        app::record(request.query).await?;
+        if request.query == "fail" { panic("transaction handler failed"); }
+        if request.query == "budget" { loop {} }
+    }
+    if request.path == "/await" {
+        let ms = match request.query { "bench" => 250, "batch" => 40, "mixed" => 40, _ => 10000 };
+        app::phase("await-start");
+        time::sleep(ms).await?;
+        app::phase("await-end");
+    }
+    if request.path == "/cpu" { app::phase("cpu-start"); loop {} }
+    if request.path == "/fail" { panic("fixture failure, not a transaction integration claim"); }
+    let body = request.body;
+    match request.query {
+        "native-stall" => app::stall(),
+        "shutdown-stall" => app::shutdown_stall(),
+        "headers-exact" => return #{status: 200, headers: app::headers(61, 1)?, body},
+        "headers-over" => return #{status: 200, headers: app::headers(62, 1)?, body},
+        "header-bytes-exact" => return #{status: 200, headers: app::headers(1, 16316)?, body},
+        "header-bytes-over" => return #{status: 200, headers: app::headers(1, 16317)?, body},
+        "bad-status" => return #{status: 100, headers: #{}, body},
+        "extra-field" => return #{status: 200, headers: #{}, body, extra: 1},
+        "bad-header" => return #{status: 200, headers: #{bad: ["a\r\nb"]}, body},
+        "framing" => return #{status: 200, headers: #{"cOnTeNt-LeNgTh": ["3"]}, body},
+        "no-content" => return #{status: 204, headers: #{}, body},
+        "too-large" => { body.push(1); },
+        "raw=%00+%2F" => return #{status: 200, headers: #{"x-raw": request.headers["x-raw"]}, body: request.query},
+        _ => (),
+    }
+    #{status: 200, headers: #{}, body}
+}

@@ -1,5 +1,5 @@
-/Cargo.lock
 /target
+/tools/xtask/measure/harness/target
 /*.lua
 /*.py
 /scripts/test.rn

@@ -8,7 +8,7 @@
         "index": 250,
         "label": "shadow/resize/param",
         "source_sha256": "4fb9c9ce3a1b95bef1c469f65b1bb5d2026be42897c0472a4c98e8203569ce6e",
-        "stock_row_sha256": "68f00ab97b9a4f1d429c09276a86f116ae0e043aff8969bc27fe9997285293c0",
+        "stock_row_sha256": "2494ede2c75b4ab4c1959a5968067b547142a76c8d71b1c0c88ad4b66864f519",
         "classification": "Refused-native",
         "fresh": {
           "kind": "Unsupported",

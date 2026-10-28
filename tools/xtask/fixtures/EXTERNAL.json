@@ -37,6 +37,10 @@
     "miri": {
       "external_files": 0,
       "external_bytes": 0
+    },
+    "measure-checks": {
+      "external_files": 0,
+      "external_bytes": 0
     }
   },
   "unique_files": 12272,

@@ -90,6 +90,16 @@ mod cmp_ordering_pins {
 	fn hex(bytes: &[u8]) -> String {
 		bytes.iter().map(|b| std::format!("{b:02x}")).collect()
 	}
+	use crate::{Context, Diagnostics, Hash, Source, Sources};
+	use std::{format, string::ToString};
+	const FUEL: usize = 2_000_000;
+	include!("gap_hunt/runtime_error_class.rs");
+	include!("gap_hunt/cmp_ordering/fixture.rs");
+	include!("gap_hunt/cmp_ordering/stock_observer.rs");
+	include!("gap_hunt/cmp_ordering/control_stock.rs");
+	mod d1b_diagnostics {
+		include!("gap_hunt/d1b_diagnostics.rs");
+	}
 	include!("gap_hunt/cmp_ordering/p1.rs");
 	include!("gap_hunt/cmp_ordering/pins.rs");
 	include!("gap_hunt/cmp_ordering/p1_controls.rs");

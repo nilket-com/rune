@@ -358,23 +358,28 @@ fn c2_contract() {
 
 pub(crate) fn c2_at(out: &std::path::Path) {
 	std::fs::create_dir(out).unwrap();
-	let rows: Vec<_> = include_str!("../experimental_core/tests/output_descriptors_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
-	assert_eq!(rows.len(), 7);
 	let hex = |bytes: &[u8]| bytes.iter().map(|b| format!("{b:02x}")).collect::<String>();
-	for row in rows {
-		let fields: Vec<_> = row.split('\t').collect();
-		assert_eq!(fields.len(), 3);
-		if fields[0].contains("c2-dbg") {
-			continue;
-		}
-		let mode = fields[0].replacen("stock", "fresh", 1);
+	for stock in [
+		"stock-c2-print-first",
+		"stock-c2-print-after",
+		"stock-c2-print-closed",
+		"stock-partial",
+	] {
+		let mode = stock.replacen("stock", "fresh", 1);
+		let (expected_stdout, expected_stderr) = run(stock);
 		let (stdout, stderr) = run(&mode);
-		std::fs::write(out.join(format!("{mode}.stdout")), &stdout).unwrap();
-		std::fs::write(out.join(format!("{mode}.stderr")), &stderr).unwrap();
-		assert_eq!(hex(&stdout), fields[1], "{mode} stdout");
-		assert_eq!(hex(stderr.as_bytes()), fields[2], "{mode} stderr");
+		for (name, stdout, stderr) in [
+			(stock, &expected_stdout, &expected_stderr),
+			(mode.as_str(), &stdout, &stderr),
+		] {
+			std::fs::write(out.join(format!("{name}.stdout")), stdout).unwrap();
+			std::fs::write(out.join(format!("{name}.stderr")), stderr).unwrap();
+		}
+		assert_eq!(hex(&stdout), hex(&expected_stdout), "{mode} stdout");
+		assert_eq!(
+			hex(stderr.as_bytes()),
+			hex(expected_stderr.as_bytes()),
+			"{mode} stderr"
+		);
 	}
 }

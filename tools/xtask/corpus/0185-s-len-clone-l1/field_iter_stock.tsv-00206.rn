@@ -1,0 +1,1 @@
+fn visit(x) { for p in x { return p.1; } 0 } pub fn main() { let x=#{x:10}; let n=visit(x); x.y=2; (n,x.y) }

@@ -20,18 +20,9 @@
         "span_hex": "312e6d696e283229"
       },
       "disposition": "Exact",
-      "expected": {
-        "status": "value",
-        "value": {
-          "payload": {
-            "type": "I64",
-            "value": "1"
-          },
-          "type_hash": "0x1cad9186c9641c4f"
-        }
-      },
       "stdout_hex": "0a72756e6e696e67203120746573740a",
-      "stderr_hex": ""
+      "stderr_hex": "",
+      "stock_projected_sha256": "6d17128de531f3b58377c13fafe59d15893cc14349c3f9bbbb2f859db5deaff8"
     },
     {
       "index": 183,
@@ -51,18 +42,9 @@
         "span_hex": "312e6d6178283229"
       },
       "disposition": "Exact",
-      "expected": {
-        "status": "value",
-        "value": {
-          "payload": {
-            "type": "I64",
-            "value": "2"
-          },
-          "type_hash": "0x1cad9186c9641c4f"
-        }
-      },
       "stdout_hex": "0a72756e6e696e67203120746573740a",
-      "stderr_hex": ""
+      "stderr_hex": "",
+      "stock_projected_sha256": "5f26b5ffd41a37628efcd9f773de87aeed5f01a07bff88f3949198495eed858f"
     }
   ]
 }

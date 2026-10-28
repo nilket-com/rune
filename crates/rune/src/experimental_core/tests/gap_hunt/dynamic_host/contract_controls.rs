@@ -1,7 +1,19 @@
-fn c10_frozen_stock(label: &str) -> Json {
-	let rows = c10_rows();
-	let row = rows.iter().find(|r| r[0] == label).unwrap();
-	c10_decode(row[3])
+fn c10_live_stock(label: &str) -> Json {
+	let (i, &(_, source, _)) = CASES
+		.iter()
+		.enumerate()
+		.find(|(_, c)| c.0 == label)
+		.unwrap();
+	cleanup();
+	STATE.with(|s| *s.borrow_mut() = State::default());
+	let portable = c10_project(&legacy_observe(source), i).unwrap();
+	if C10_LARGE.contains(&label) {
+		let common = c10_common(&portable).unwrap();
+		let bytes = c10_canonical(&common);
+		json!({"encoding":"sha256-common-v1","bytes":bytes.len(),"sha256":c10_sha(&bytes),"summary":c10_summary(&common).unwrap()})
+	} else {
+		portable
+	}
 }
 fn c10_sample_common(name: &str) -> Json {
 	cleanup();
@@ -20,7 +32,7 @@ fn frozen_schema_and_digest_full_projection_controls() {
 		("large/key-1MiB", "key/1048576"),
 	] {
 		let actual = c10_sample_common(name);
-		let expected = c10_frozen_stock(label);
+		let expected = c10_live_stock(label);
 		c10_compare(&actual, &expected, label).unwrap();
 	}
 	// Result-wrapped fixtures have identical recorder events, plus one graph node.
@@ -34,14 +46,14 @@ fn frozen_schema_and_digest_full_projection_controls() {
 		let value = crate::to_value(fallible(name)).unwrap();
 		let tape = events();
 		let actual = json!({"diagnostics":"[]","events":tape,"events_after_reuse":events(),"host_calls":1,"invoked":true,"outcome":{"status":"value","graph":runtime_graph(&value)},"protocol_calls":0,"reuse":{"status":"value","graph":runtime_graph(&RuntimeValue::from(7i64))}});
-		c10_compare(&actual, &c10_frozen_stock(label), label).unwrap();
+		c10_compare(&actual, &c10_live_stock(label), label).unwrap();
 	}
 }
 #[test]
 fn digest_rejects_middle_byte_length_node_count_and_key_drift() {
 	let label = "visits/plain/65534";
 	let original = c10_sample_common("visits/65534");
-	let expected = c10_frozen_stock(label);
+	let expected = c10_live_stock(label);
 	c10_compare(&original, &expected, label).unwrap();
 	let mut changed = original.clone();
 	let mut bytes = changed["outcome"]["graph"]["nodes"][32768][1]
@@ -80,7 +92,7 @@ fn digest_rejects_middle_byte_length_node_count_and_key_drift() {
 	assert!(c10_compare(&changed, &expected, label).is_err());
 	let label = "large/key-1MiB";
 	let mut changed = c10_sample_common("key/1048576");
-	let expected = c10_frozen_stock(label);
+	let expected = c10_live_stock(label);
 	let key = changed["outcome"]["graph"]["nodes"][0][2][0][0]
 		.as_str()
 		.unwrap();
@@ -95,7 +107,7 @@ fn digest_rejects_middle_byte_length_node_count_and_key_drift() {
 	assert!(c10_compare(&changed, &expected, label).is_err());
 }
 fn c10_pointer_control() -> Json {
-	let mut raw = c10_frozen_stock("argument/wrong-type");
+	let mut raw = c10_live_stock("argument/wrong-type");
 	for field in ["kind", "raw"] {
 		raw["outcome"][field] = Json::String(
 			raw["outcome"][field]
@@ -110,7 +122,7 @@ fn c10_pointer_control() -> Json {
 fn p1_rejects_wrong_row_path_count_context_and_nonpointer_drift() {
 	let raw = c10_pointer_control();
 	let portable = c10_project(&raw, 123).unwrap();
-	let expected = c10_common(&c10_frozen_stock("argument/wrong-type")).unwrap();
+	let expected = c10_common(&c10_live_stock("argument/wrong-type")).unwrap();
 	assert_eq!(c10_common(&portable).unwrap(), expected);
 	assert!(c10_project(&raw, 122).is_err());
 	let mut changed = raw.clone();
@@ -167,12 +179,12 @@ fn p1_rejects_wrong_row_path_count_context_and_nonpointer_drift() {
 }
 #[test]
 fn comparison_keeps_graph_identity_order_effects_and_private_raw_boundary() {
-	let original = c10_frozen_stock("sharing/graph/dag-vec");
+	let original = c10_live_stock("sharing/graph/dag-vec");
 	let expected = c10_common(&original).unwrap();
 	let mut changed = original;
 	changed["outcome"]["graph"]["nodes"][0][2][1] = json!(2);
 	assert_ne!(c10_common(&changed).unwrap(), expected);
-	let original = c10_frozen_stock("plain/mixed");
+	let original = c10_live_stock("plain/mixed");
 	let expected = c10_common(&original).unwrap();
 	let mut changed = original;
 	changed["outcome"]["graph"]["nodes"][0][2]
@@ -200,16 +212,19 @@ fn comparison_keeps_graph_identity_order_effects_and_private_raw_boundary() {
 #[test]
 fn arity_diagnostic_pin_rejects_other_rows_counts_and_spans() {
 	c10_data_seals();
-	let rows = c10_rows();
+	let rows: Vec<_> = CASES
+		.iter()
+		.map(|(label, source, policy)| (*label, hex(source.as_bytes()), *policy))
+		.collect();
 	let row = &rows[124];
-	let frozen = c10_decode(row[7]);
-	let expected = c10_arity_expected(124, row[0], row[2], row[6], frozen.clone()).unwrap();
+	let frozen = c10_expectations()[row.0]["fresh"].clone();
+	let expected = c10_arity_expected(124, row.0, &row.1, row.2, frozen.clone()).unwrap();
 	assert_eq!(expected["outcome"], frozen["outcome"]);
 	assert_eq!(expected["diagnostics"], "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 14:25, kind: Custom { error: \"Arity\" } }) })]");
-	c10_compare(&expected, &expected, row[0]).unwrap();
+	c10_compare(&expected, &expected, row.0).unwrap();
 	for diagnostic in ["[]", "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 14:24, kind: Custom { error: \"Arity\" } }) })]", "[Fatal(FatalDiagnostic { source_id: 1, kind: CompileError(Error { span: 14:25, kind: Custom { error: \"Arity\" } }) })]", "[Fatal(FatalDiagnostic { source_id: 0, kind: CompileError(Error { span: 14:25, kind: Custom { error: \"Other\" } }) })]"] {
 		let mut changed = expected.clone(); changed["diagnostics"] = json!(diagnostic);
-		assert!(c10_compare(&changed,&expected,row[0]).is_err());
+		assert!(c10_compare(&changed,&expected,row.0).is_err());
 	}
 	let mut changed = expected.clone();
 	let inner = expected["diagnostics"]
@@ -220,16 +235,15 @@ fn arity_diagnostic_pin_rejects_other_rows_counts_and_spans() {
 		.strip_suffix(']')
 		.unwrap();
 	changed["diagnostics"] = json!(format!("[{inner}, {inner}]"));
-	assert!(c10_compare(&changed, &expected, row[0]).is_err());
-	assert!(c10_arity_expected(123, row[0], row[2], row[6], frozen.clone()).is_err());
-	assert!(c10_arity_expected(124, rows[123][0], row[2], row[6], frozen.clone()).is_err());
-	assert!(c10_arity_expected(124, row[0], rows[123][2], row[6], frozen.clone()).is_err());
-	assert!(c10_arity_expected(124, row[0], row[2], "Exact", frozen).is_err());
-	let other = c10_decode(rows[0][7]);
-	let unchanged =
-		c10_arity_expected(0, rows[0][0], rows[0][2], rows[0][6], other.clone()).unwrap();
+	assert!(c10_compare(&changed, &expected, row.0).is_err());
+	assert!(c10_arity_expected(123, row.0, &row.1, row.2, frozen.clone()).is_err());
+	assert!(c10_arity_expected(124, rows[123].0, &row.1, row.2, frozen.clone()).is_err());
+	assert!(c10_arity_expected(124, row.0, &rows[123].1, row.2, frozen.clone()).is_err());
+	assert!(c10_arity_expected(124, row.0, &row.1, "Exact", frozen).is_err());
+	let other = c10_common(&c10_live_stock(rows[0].0)).unwrap();
+	let unchanged = c10_arity_expected(0, rows[0].0, &rows[0].1, rows[0].2, other.clone()).unwrap();
 	assert_eq!(unchanged, other);
 	let mut changed = unchanged.clone();
 	changed["diagnostics"] = expected["diagnostics"].clone();
-	assert!(c10_compare(&changed, &unchanged, rows[0][0]).is_err());
+	assert!(c10_compare(&changed, &unchanged, rows[0].0).is_err());
 }

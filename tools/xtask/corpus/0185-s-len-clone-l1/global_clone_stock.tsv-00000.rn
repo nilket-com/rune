@@ -1,0 +1,1 @@
+pub fn main() { let x=(); std::clone::clone(x) }

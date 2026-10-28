@@ -1,7 +1,7 @@
 {
   "013": {
     "source_sha256": "58bb569958029417822d9ac4a3ff0774a4de254a973ad0728d8251d8850d1b79",
-    "stock_row_sha256": "5c05fce4667649dbd656a77d4f10c6501c261025ce0c35426ab74e811d5d8a1b",
+    "stock_projected_sha256": "26a2933e080f68f21f741a286b4244dc2b290bb4f0a03342005363e144811576",
     "classification": "Exact",
     "previous_refusal": "Method",
     "record": "C17a"

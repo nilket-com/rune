@@ -7,7 +7,7 @@
     "index": 161,
     "label": "script/impl-get",
     "source_sha256": "f0a5998bdddff2b97b9b446d285177f94884c76bdef62bc2590174b777e59eb6",
-    "stock_row_sha256": "105c569570e765b0dc109fc804cc82fcdd6b78e21ba313b8a12557bb1482c64d",
+    "stock_row_sha256": "4fb4fde2e49358d506eaf1d214216a2ebcabe017a1e3f6f75ebd6634fd0a7c60",
     "fresh": {
      "location": {
       "end": 110,
@@ -31,7 +31,7 @@
     "index": 162,
     "label": "script/impl-insert",
     "source_sha256": "2c2458a369c0be867c9bdd05557fa355f56f59cef7c28f3f4f8656dc894ae7bc",
-    "stock_row_sha256": "2b6fef83c2d12cd8e6e4ee54c39bb10fe0fd3a722e378bf953e995d70a33dbc5",
+    "stock_row_sha256": "cb5cc653534bc3de47bdce976acfe567e9cf6bbaebbb83f3018e4b3d4d506b37",
     "fresh": {
      "location": {
       "end": 132,
@@ -55,7 +55,7 @@
     "index": 163,
     "label": "script/impl-contains_key-enum",
     "source_sha256": "f82dd47904774a03227da22ca40d9d566edc2a32df639750947c2a3b2fe170e9",
-    "stock_row_sha256": "a21fc214c2335a2ed96d98043cbb21683b9e5871037bfc0ecdd8f92789d6ad15",
+    "stock_row_sha256": "34e731dacd82a4720238ab2a55d009f56448d535b4a934cfcccb55c5723ce3a1",
     "fresh": {
      "location": {
       "end": 126,
@@ -79,7 +79,7 @@
     "index": 164,
     "label": "script/impl-remove-module",
     "source_sha256": "9e40ff443bc602510f98d99c50359146259699893445eb72bbdfb11b34a0f868",
-    "stock_row_sha256": "d2bdb681cc189543e44143adc5e8c1f60397eadbb3d13ae0192294ab8b04b131",
+    "stock_row_sha256": "27fc94e294a670a5d543cb3ec0bfd89561c403abcd9e3e5b07e4cc782c6acd26",
     "fresh": {
      "location": {
       "end": 141,
@@ -103,7 +103,7 @@
     "index": 165,
     "label": "script/impl-len-is_empty",
     "source_sha256": "a6496205c49dee488ebfb6554dbc003a84cfb6dcce66597c9ed1c0b5c2a09e60",
-    "stock_row_sha256": "9e7bc7d8e2e529bdccc5771be096386276b098e555030afc725400e0ac626465",
+    "stock_row_sha256": "3d4c5ea35d65095ba367f85873d42bf78abb99c4b01944a6ea8b72141c8915ba",
     "fresh": {
      "location": {
       "end": 123,
@@ -138,7 +138,7 @@
     "index": 171,
     "label": "script/struct-named-object",
     "source_sha256": "d223e7eec5e54c39f6c4c788e3bc0d21744577865052820f60ee7e3044dbbe4c",
-    "stock_row_sha256": "8c76f374945fb3e6884a20682e1df257b59eeb7c1e6793ecf8c9e9834374e79a",
+    "stock_row_sha256": "27fc94e294a670a5d543cb3ec0bfd89561c403abcd9e3e5b07e4cc782c6acd26",
     "fresh": {
      "location": {
       "end": 150,

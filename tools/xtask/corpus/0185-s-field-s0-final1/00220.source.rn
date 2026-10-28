@@ -1,0 +1,7 @@
+pub fn run(args) {
+    if true { 1; }
+    println!("{} after a if ({} ok)",
+        1, 2);
+    println!("WORKFLOW OK if");
+    Ok(())
+}

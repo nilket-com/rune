@@ -1,0 +1,10 @@
+pub async fn main(request) {
+    if request.path == "/db" {
+        app::record(request.query).await?;
+        if request.query == "fail" { panic("roll back this request"); }
+    }
+    if request.path == "/await" { time::sleep(250).await?; }
+    if request.path == "/cpu" { loop {} }
+    if request.path == "/fail" { panic("request failed"); }
+    #{status: 200, headers: #{}, body: request.body}
+}

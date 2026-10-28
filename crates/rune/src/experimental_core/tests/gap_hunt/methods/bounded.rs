@@ -18,6 +18,41 @@ fn c13_drain(
 	out
 }
 
+// Compare program output while ignoring only libtest's elapsed-time summary.
+fn c13_stdout_body(stdout: &[u8]) -> &[u8] {
+    let prefix = b"\nrunning 1 test\n";
+    let suffix = b".\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; ";
+    let rest = stdout.strip_prefix(prefix).expect("C13 libtest prefix");
+    let at = rest.windows(suffix.len()).rposition(|window| window == suffix).expect("C13 libtest summary");
+    let summary = std::str::from_utf8(&rest[at..]).expect("C13 libtest summary UTF-8");
+    assert!(summary.contains(" filtered out; finished in ") && summary.ends_with("s\n\n"));
+    &rest[..at]
+}
+
+// The stock engine is run for this source and fixture on every contract pass.
+fn c13_live_expected(case: &Json, index: usize, row: &Json, dir: &Path) -> (Json, Vec<u8>, Vec<u8>) {
+    let index_text = index.to_string();
+    let stock = super::live_oracle::run_child_with_limits(
+        "experimental_core::tests::gap_hunt::methods::child", case["label"].as_str().unwrap(),
+        dir, "C13_RESULT", &[("C13_CASE", index_text.as_ref()), ("C13_ENGINE", "stock".as_ref())],
+        15, Duration::from_secs(45));
+    assert_eq!(stock.observation["schema"], 1);
+    assert_eq!(stock.observation["engine"], "stock");
+    assert_eq!(stock.observation["index"], index);
+    assert_eq!(stock.observation["source_sha256"], case["source_sha256"]);
+    assert_eq!(stock.observation["fixture"], case["fixture"]);
+    let label = case["label"].as_str().unwrap();
+    let source = case["source"].as_str().unwrap();
+    let mut observation = stock.observation["observation"].clone();
+    observation["outcome"] = super::d1c_diagnostics::d1d_before("methods", label, source, "stock", &observation["outcome"]);
+    observation = super::method_diagnostics::intentional_json_before("methods", label, source, "stock", &observation);
+    let observation = project_observation(&observation, &observation, "");
+    let mut expected = row.clone();
+    expected["stock_observation"] = observation.clone();
+    expected["fresh_expectation"] = observation;
+    (expected, stock.stdout, stock.stderr)
+}
+
 #[test]
 #[ignore = "C13 strict execution contract; explicit new C13_OUT, bounded children"]
 fn contract() {
@@ -36,6 +71,7 @@ fn contract() {
 		assert!(start.elapsed() < Duration::from_secs(1700));
 		let dir = out.join(format!("{i:03}"));
 		fs::create_dir(&dir).unwrap();
+		let (live_expected, stock_stdout, stock_stderr) = c13_live_expected(case, i, &frozen[format!("{i:03}")], &dir.join("stock"));
 		let result = dir.join("observation.json");
 		let mut child = Command::new("/usr/bin/prlimit")
 			.args([
@@ -51,11 +87,12 @@ fn contract() {
 				"experimental_core::tests::gap_hunt::methods::child",
 				"--ignored",
 				"--nocapture",
+                "--quiet",
 				"--test-threads=1",
 			])
 			.env_clear()
 			.env("PATH", "/usr/bin:/bin")
-			.env("HOME", "/home/me")
+			.env("HOME", fs::canonicalize(&dir).unwrap())
 			.env("LANG", "C.UTF-8")
 			.env("C13_ENGINE", "fresh")
 			.env("C13_CASE", i.to_string())
@@ -98,8 +135,9 @@ fn contract() {
 		);
 		let mut actual: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
 		actual["observation"]["outcome"] = super::d1c_diagnostics::d1d_before("methods", case["label"].as_str().unwrap(), case["source"].as_str().unwrap(), "fresh", &actual["observation"]["outcome"]);
-		compare(case, &frozen[format!("{i:03}")], &actual);
-		assert!(stderr.is_empty(), "C13 stderr {i}");
+		compare(case, &live_expected, &actual);
+        assert_eq!(c13_stdout_body(&stdout), c13_stdout_body(&stock_stdout), "C13 stdout {i}");
+        assert_eq!(stderr, stock_stderr, "C13 stderr {i}");
 	}
 	fs::write(
 		out.join("COMPLETE"),

@@ -3,32 +3,7 @@
   "production_changes": false,
   "files": {
     "cases.json": "0f7755650dd899156c029f2fa27fad3e767cdbe4d43abc725095f51454e902f8",
-    "stock.json": "430cc4330e1225a6a8ab27cd803dc8964343feb457e2722cd71d07cc1f7f360b",
-    "stock2.json": "8d2af0d845dcc5b1054b3ea1204929060eb5d901aafd9ceb48743216ad635206",
     "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
-  },
-  "stock_binary": {
-    "path": "/home/me/work/.reviews/0185-c17c-oracle1/rune-tests",
-    "sha256": "eb06e0c9ef215f5f9af45eddf05333f036e19dd0e279d2baf0bcbad36b4638b8",
-    "pins_sha256": "9d6982d5d63e9768903152b4d9fed181edff922880113e485be7a1f9e37b7902"
-  },
-  "stock_summary": {
-    "rows": 370,
-    "statuses": {
-      "value": 242,
-      "error": 128
-    },
-    "error_classes": {
-      "Type": 75,
-      "ArgumentCount": 19,
-      "IntegerCoercion": 9,
-      "Panic": 6,
-      "Overflow": 13,
-      "DivisionByZero": 6
-    },
-    "replay": false,
-    "logical_traces": 128,
-    "cpu_list": "0-7,10-31"
   },
   "P1": {
     "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",

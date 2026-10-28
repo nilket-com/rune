@@ -1,0 +1,16 @@
+// Decision 3's evidence: with the denial switched off, every pool worker
+// enters a callback, waits at a barrier until all have, then each makes a
+// routed call whose engine thread needs the same pool. Under a watchdog.
+fn ok(r) { match r { Ok(v) => v, Err(e) => panic(`${e.kind()}: ${e.message()}`) } }
+pub fn main() {
+    let n = polars::rune_threads();
+    polars::allow_reentry_for_the_experiment(true);
+    polars::barrier_init(n);
+    let cols = ok(fx::wide(n * 2, 100).apply_columns_par_cb(|c| {
+        polars::barrier_wait();
+        // inner work forced onto the same pool: a parallel apply through a routed binding
+        let inner = ok(fx::wide(4, 100).apply_columns_par_cb(|d| d));
+        c.times(inner.len())
+    }));
+    `completed ${cols.len()} columns on ${n} pool threads`
+}

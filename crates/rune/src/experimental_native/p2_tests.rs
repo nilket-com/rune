@@ -295,13 +295,26 @@ pub(super) fn production_case(case: &Case) -> (usize, Totals, Totals) {
 // ------------------------------------------------------------ bench kernels (v2 ports)
 
 /// The v2 bench kernels (while, numeric, calls, fib, shared_rows), as Rune source.
-pub(super) const V2_WHILE: &str =
-	"pub fn main(x) {\n\tlet n = 0;\n\twhile n < x { n += 1; }\n\tn\n}\n";
-pub(super) const V2_NUMERIC: &str = "pub fn main(x) {\n\tlet n = 0;\n\tlet total = 0;\n\twhile n < x { total += n % 17; n += 1; }\n\ttotal\n}\n";
-pub(super) const V2_CALLS: &str = "fn add(a, b) { a + b }\npub fn main(x) {\n\tlet total = 0;\n\tfor i in 0..x { total = add(total, i); }\n\ttotal\n}\n";
-pub(super) const V2_FIB: &str =
-	"fn fib(n) { if n < 2 { n } else { fib(n - 1) + fib(n - 2) } }\npub fn main(x) { fib(x) }\n";
-pub(super) const V2_SHARED_ROWS: &str = "fn add(rows, key, value) {\n\tfor row in rows {\n\t\tif row[0] == key {\n\t\t\trow[1] = row[1] + value;\n\t\t\treturn;\n\t\t}\n\t}\n\trows.push([key, value]);\n}\n\npub fn main(x) {\n\tlet rows = [];\n\tadd(rows, \"a\", x % 7);\n\tadd(rows, \"b\", x % 11);\n\tadd(rows, \"a\", x % 13);\n\tlet copy = rows.clone();\n\tlet alias = copy[0];\n\talias[1] = alias[1] + 1;\n\tcopy.push([\"c\", x % 17]);\n\trows[0][1] * 1000000 + rows[1][1] * 10000 + copy[2][1] * 100 + rows.len() * 10 + copy.len()\n}\n";
+pub(super) const V2_WHILE: &str = include_str!(concat!(
+	env!("CARGO_MANIFEST_DIR"),
+	"/../../tools/xtask/measure/kernels/while.rn"
+));
+pub(super) const V2_NUMERIC: &str = include_str!(concat!(
+	env!("CARGO_MANIFEST_DIR"),
+	"/../../tools/xtask/measure/kernels/numeric.rn"
+));
+pub(super) const V2_CALLS: &str = include_str!(concat!(
+	env!("CARGO_MANIFEST_DIR"),
+	"/../../tools/xtask/measure/kernels/calls.rn"
+));
+pub(super) const V2_FIB: &str = include_str!(concat!(
+	env!("CARGO_MANIFEST_DIR"),
+	"/../../tools/xtask/measure/kernels/fib.rn"
+));
+pub(super) const V2_SHARED_ROWS: &str = include_str!(concat!(
+	env!("CARGO_MANIFEST_DIR"),
+	"/../../tools/xtask/measure/kernels/shared_rows.rn"
+));
 
 /// The official fixed-input stage kernels, as Rune source.
 const STAGE_NUMERIC: &str = "pub fn main(_a) {\n\tlet n = 0;\n\tlet total = 0;\n\twhile n < 10000 { total += n % 17; n += 1; }\n\tprintln!(\"{}\", total);\n}\n";
@@ -404,6 +417,7 @@ fn child_bench_kernel_admission() {
 		("v2/while", V2_WHILE, 1),
 		("v2/numeric", V2_NUMERIC, 1),
 		("v2/calls", V2_CALLS, 1),
+		// fib has no loop candidate; shared_rows has a side entry and is refused.
 		("v2/fib", V2_FIB, 0),
 		("v2/shared_rows", V2_SHARED_ROWS, 0),
 		("stage/while", STAGE_WHILE, 1),

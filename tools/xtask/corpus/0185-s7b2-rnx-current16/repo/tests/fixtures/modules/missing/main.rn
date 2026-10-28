@@ -1,0 +1,2 @@
+mod absent;
+pub fn main(_) { 42 }

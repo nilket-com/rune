@@ -274,10 +274,14 @@ impl VmError {
 		match result {
 			Ok(ok) => Ok(ok),
 			Err(mut err) => {
+				#[cfg(feature = "execution")]
+				let origin = err.capture_origin(vm);
 				err.inner.stacktrace.push(VmErrorLocation {
 					unit: vm.unit().clone(),
 					ip: vm.last_ip(),
 					frames: vm.call_frames().to_vec(),
+					#[cfg(feature = "execution")]
+					origin: Some(origin),
 				});
 
 				Err(err)
@@ -375,7 +379,6 @@ impl fmt::Debug for VmError {
 impl core::error::Error for VmError {}
 
 /// A single unit producing errors.
-#[derive(Debug)]
 #[non_exhaustive]
 pub struct VmErrorLocation {
 	/// Associated unit.
@@ -384,6 +387,21 @@ pub struct VmErrorLocation {
 	pub ip: usize,
 	/// All lower call frames before the unwind trigger point
 	pub frames: rust_alloc::vec::Vec<CallFrame>,
+	#[cfg(feature = "execution")]
+	pub(crate) origin: Option<(
+		crate::experimental_core::error::ErrorOrigin,
+		Option<&'static str>,
+	)>,
+}
+
+impl fmt::Debug for VmErrorLocation {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		f.debug_struct("VmErrorLocation")
+			.field("unit", &self.unit)
+			.field("ip", &self.ip)
+			.field("frames", &self.frames)
+			.finish()
+	}
 }
 
 #[derive(Debug)]
@@ -1469,11 +1487,117 @@ mod logical_frame_tests {
 	use super::*;
 
 	#[test]
+	#[cfg(feature = "execution")]
+	fn origin_snapshot_checks_binding_and_hash_at_capture() {
+		use crate::experimental_core::error::ErrorOrigin;
+		let context = crate::Context::with_default_modules().unwrap();
+		let mut sources = crate::Sources::new();
+		sources
+			.insert(
+				crate::Source::new("origin.rn", "pub fn main() { 1.missing_method() }").unwrap(),
+			)
+			.unwrap();
+		let mut vm = crate::prepare(&mut sources)
+			.with_context(&context)
+			.build_vm()
+			.unwrap();
+		let retained = vm.context().clone();
+		let weak = Arc::downgrade(&retained);
+		let before = weak.strong_count();
+		let mut error = vm.call(["main"], ()).unwrap_err();
+		assert_eq!(error.origin(), ErrorOrigin::Script);
+		assert_eq!(
+			weak.strong_count(),
+			before,
+			"error must not retain the context"
+		);
+		let mut other = crate::Context::with_default_modules().unwrap();
+		let mut module = crate::Module::new();
+		module
+			.associated_function("missing_method", |_: i64| 1i64)
+			.unwrap();
+		other.install(module).unwrap();
+		*vm.context_mut() = Arc::try_new(other.runtime().unwrap()).unwrap();
+		assert_eq!(error.capture_origin(&vm).0, ErrorOrigin::Unknown);
+		assert_eq!(
+			error.origin(),
+			ErrorOrigin::Script,
+			"snapshot must not change with context"
+		);
+		*vm.context_mut() = retained.clone();
+		if let VmErrorKind::MissingInstanceFunction { hash, .. } = &mut error.inner.error.kind {
+			*hash = crate::Hash::EMPTY;
+		} else {
+			panic!("expected missing instance function");
+		}
+		assert_eq!(error.capture_origin(&vm).0, ErrorOrigin::Unknown);
+		assert_eq!(
+			error.origin(),
+			ErrorOrigin::Script,
+			"snapshot must not change with error mutation"
+		);
+		drop(vm);
+		drop(retained);
+		assert_eq!(
+			weak.strong_count(),
+			0,
+			"snapshot must not keep context alive"
+		);
+		assert_eq!(error.origin(), ErrorOrigin::Script);
+		error.inner.stacktrace[0].origin = None;
+		assert_eq!(error.origin(), ErrorOrigin::Unknown);
+	}
+
+	#[test]
+	#[cfg(feature = "execution")]
+	fn error_windows_keep_independent_origin_snapshots_without_context_cycles() {
+		let first = crate::Context::with_default_modules().unwrap();
+		let second = crate::Context::with_default_modules().unwrap();
+		let mut a = crate::Sources::new();
+		let mut b = crate::Sources::new();
+		a.insert(crate::Source::new("a.rn", "pub fn main() { 1 }").unwrap())
+			.unwrap();
+		b.insert(crate::Source::new("b.rn", "pub fn main() { 2 }").unwrap())
+			.unwrap();
+		let vm_a = crate::prepare(&mut a)
+			.with_context(&first)
+			.build_vm()
+			.unwrap();
+		let vm_b = crate::prepare(&mut b)
+			.with_context(&second)
+			.build_vm()
+			.unwrap();
+		let a_weak = Arc::downgrade(vm_a.context());
+		let b_weak = Arc::downgrade(vm_b.context());
+		let error = VmError::with_vm::<()>(Err(VmError::panic("inner")), &vm_a).unwrap_err();
+		let first_snapshot = error.inner.stacktrace[0].origin;
+		let second_snapshot = error.capture_origin(&vm_b);
+		let error = VmError::with_vm::<()>(Err(error), &vm_b).unwrap_err();
+		assert_eq!(error.inner.stacktrace.len(), 2);
+		assert_eq!(error.inner.stacktrace[0].origin, first_snapshot);
+		assert_eq!(error.inner.stacktrace[1].origin, Some(second_snapshot));
+		assert_eq!(
+			(error.origin(), error.origin_instruction()),
+			first_snapshot.unwrap()
+		);
+		drop(vm_a);
+		drop(vm_b);
+		assert_eq!(a_weak.strong_count(), 0);
+		assert_eq!(b_weak.strong_count(), 0);
+		assert_eq!(
+			(error.origin(), error.origin_instruction()),
+			first_snapshot.unwrap()
+		);
+	}
+
+	#[test]
 	fn d1e_unresolved_window_retains_each_frame() {
 		let mut error = VmError::panic("unresolved");
 		error.inner.stacktrace.push(VmErrorLocation {
 			unit: Arc::try_new(Unit::default()).unwrap(),
 			ip: 0,
+			#[cfg(feature = "execution")]
+			origin: None,
 			frames: rust_alloc::vec![CallFrame {
                 ip: 0,
                 top: 0,
@@ -1482,6 +1606,11 @@ mod logical_frame_tests {
             }; 2],
 		});
 		let frames = error.logical_frames().collect::<rust_alloc::vec::Vec<_>>();
+		#[cfg(feature = "execution")]
+		assert_eq!(
+			error.origin(),
+			crate::experimental_core::error::ErrorOrigin::Unknown
+		);
 		assert_eq!(frames.len(), 3);
 		assert!(frames.iter().all(|frame| frame.location.is_none()));
 		assert_eq!(rust_alloc::format!("{}", error.diagnostic(&crate::Sources::new())),

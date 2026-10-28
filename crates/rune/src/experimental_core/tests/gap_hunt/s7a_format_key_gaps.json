@@ -1,112 +1,52 @@
 {
-  "schema": 1,
-  "source_head": "22d30c71615de9a4e76b0cd1a0f766453568b012",
-  "approval": "01a16f0a-7c0e-7185-9728-053a571df4b3",
-  "policy": "Known-gap",
-  "closure_record": "S7b host-boundary certificate",
-  "default_switch_prerequisite_complete": false,
-  "scope": "The S7a guard covers ordinary protocol-kind formatter registrations. Actual-key aliases through other kinds/hashes/containers, and foreign nominal host roots, are not detected. No Exact claim in these Contexts. The unmodified default and empty Contexts are separate controls.",
-  "rows": [
-    {
-      "name": "field-key-debug",
-      "setup": "field",
-      "policy": "Known-gap",
-      "source": "pub fn main(){format!(\"{:?}\",1..3)}",
-      "source_sha256": "e421d8e995e3b2ea87db00a0e393a7d89ebae9d665955c10cc823bf78664c5fe",
-      "stock": {
-        "observation": "value:\"\"",
-        "provider_calls": 1
-      },
-      "before_fresh": {
-        "observation": "value:\"<::std::ops::Range object at 0x61bbdf0a6be0>\"",
-        "provider_calls": 0
-      }
-    },
-    {
-      "name": "field-key-nested",
-      "setup": "field",
-      "policy": "Known-gap",
-      "source": "pub fn main(){format!(\"{:?}\",[1..3])}",
-      "source_sha256": "39402b79b2bbfc12ab2bcf9ce151f828add6e53e5fbd35bfe451f177fe9ac69f",
-      "stock": {
-        "observation": "value:\"[]\"",
-        "provider_calls": 1
-      },
-      "before_fresh": {
-        "observation": "value:\"[<::std::ops::Range object at 0x61bbdf0a6590>]\"",
-        "provider_calls": 0
-      }
-    },
-    {
-      "name": "cross-container-debug",
-      "setup": "raw-range",
-      "policy": "Known-gap",
-      "source": "pub fn main(){format!(\"{:?}\",1..3)}",
-      "source_sha256": "e421d8e995e3b2ea87db00a0e393a7d89ebae9d665955c10cc823bf78664c5fe",
-      "stock": {
-        "observation": "value:\"\"",
-        "provider_calls": 1
-      },
-      "before_fresh": {
-        "observation": "value:\"<::std::ops::Range object at 0x60ec059cfd00>\"",
-        "provider_calls": 0
-      }
-    },
-    {
-      "name": "script-nominal-display",
-      "setup": "raw-nominal",
-      "policy": "Known-gap",
-      "source": "struct S;pub fn main(){format!(\"{}\",S)}",
-      "source_sha256": "6cd588c13f50897a028e7c19d5a3f4b418fbf24736a45a826c3c15de0c4481d1",
-      "stock": {
-        "observation": "value:\"\"",
-        "provider_calls": 1
-      },
-      "before_fresh": {
-        "observation": "error:`S` cannot be formatted with `{}`",
-        "provider_calls": 0
-      }
-    },
-    {
-      "name": "late-foreign-nominal-display",
-      "setup": "raw-late-nominal",
-      "policy": "Known-gap",
-      "source": "pub fn main(x){format!(\"{}\",x)}",
-      "source_sha256": "de8d5f40be84bfddc737114a3282a182346c7294b84b334cca4a909517321adb",
-      "producer_source": "struct LateOnly;pub fn main(){LateOnly}",
-      "producer_sha256": "36b69f1bef6842da9ea0eac6d0c2537e560597dc82afb89113b5910d511d13bc",
-      "compile_order": [
-        "renderer",
-        "producer"
-      ],
-      "stock": {
-        "observation": "value:\"\"",
-        "provider_calls": 1
-      },
-      "before_fresh": {
-        "observation": "error:`LateOnly` cannot be formatted with `{}`",
-        "provider_calls": 0
-      }
-    }
-  ],
-  "captures": [
-    {
-      "package": "0185-s7a-provider-probe7",
-      "raw": "PROVIDER field-key-debug stock value:\"\" calls=1\nPROVIDER field-key-debug fresh value:\"<::std::ops::Range object at 0x61bbdf0a6be0>\" calls=0\nPROVIDER field-key-nested stock value:\"[]\" calls=1\nPROVIDER field-key-nested fresh value:\"[<::std::ops::Range object at 0x61bbdf0a6590>]\" calls=0\n",
-      "raw_sha256": "89ccdcd20708e927c72221a1666ada94f7a63e254e4767cd6175df52001943b1",
-      "harness_sha256": "d943d439be8cd291f9cece6c70d26c5f1e548c4e7fc28598b8a994b5f9394e9b"
-    },
-    {
-      "package": "0185-s7a-provider-probe9",
-      "raw": "PROVIDER cross-container-debug stock value:\"\" calls=1\nPROVIDER cross-container-debug fresh value:\"<::std::ops::Range object at 0x60ec059cfd00>\" calls=0\nPROVIDER script-nominal-display stock value:\"\" calls=1\nPROVIDER script-nominal-display fresh error:`S` cannot be formatted with `{}` calls=0\n",
-      "raw_sha256": "05cf35f287071cdb727155f9750aceaa8a1e97e4ecdf538c62770971ed50282e",
-      "harness_sha256": "e8469d1e60968dc93cc25df557bcaf93c145e96f9e4d09fe218e6d199862d4c5"
-    },
-    {
-      "package": "0185-s7a-provider-probe10",
-      "raw": "LATE_NOMINAL fresh error:`LateOnly` cannot be formatted with `{}` calls=0\nLATE_NOMINAL stock value:\"\" calls=1\n",
-      "raw_sha256": "5172a29872812fa3465c04d290b628472450a65b3d06214f0f23e641e5109010",
-      "harness_sha256": "47a41ce227aeaa81f37c61e5bd1d3b53c778f3db6782560cf1096bffc33f54f2"
-    }
-  ]
+	"schema": 1,
+	"source_head": "22d30c71615de9a4e76b0cd1a0f766453568b012",
+	"approval": "01a16f0a-7c0e-7185-9728-053a571df4b3",
+	"policy": "Known-gap",
+	"closure_record": "S7b host-boundary certificate",
+	"default_switch_prerequisite_complete": false,
+	"scope": "The S7a guard covers ordinary protocol-kind formatter registrations. Actual-key aliases through other kinds/hashes/containers, and foreign nominal host roots, are not detected. No Exact claim in these Contexts. The unmodified default and empty Contexts are separate controls.",
+	"rows": [
+		{
+			"name": "field-key-debug",
+			"setup": "field",
+			"policy": "Known-gap",
+			"source": "pub fn main(){format!(\"{:?}\",1..3)}",
+			"source_sha256": "e421d8e995e3b2ea87db00a0e393a7d89ebae9d665955c10cc823bf78664c5fe"
+		},
+		{
+			"name": "field-key-nested",
+			"setup": "field",
+			"policy": "Known-gap",
+			"source": "pub fn main(){format!(\"{:?}\",[1..3])}",
+			"source_sha256": "39402b79b2bbfc12ab2bcf9ce151f828add6e53e5fbd35bfe451f177fe9ac69f"
+		},
+		{
+			"name": "cross-container-debug",
+			"setup": "raw-range",
+			"policy": "Known-gap",
+			"source": "pub fn main(){format!(\"{:?}\",1..3)}",
+			"source_sha256": "e421d8e995e3b2ea87db00a0e393a7d89ebae9d665955c10cc823bf78664c5fe"
+		},
+		{
+			"name": "script-nominal-display",
+			"setup": "raw-nominal",
+			"policy": "Known-gap",
+			"source": "struct S;pub fn main(){format!(\"{}\",S)}",
+			"source_sha256": "6cd588c13f50897a028e7c19d5a3f4b418fbf24736a45a826c3c15de0c4481d1"
+		},
+		{
+			"name": "late-foreign-nominal-display",
+			"setup": "raw-late-nominal",
+			"policy": "Known-gap",
+			"source": "pub fn main(x){format!(\"{}\",x)}",
+			"source_sha256": "de8d5f40be84bfddc737114a3282a182346c7294b84b334cca4a909517321adb",
+			"producer_source": "struct LateOnly;pub fn main(){LateOnly}",
+			"producer_sha256": "36b69f1bef6842da9ea0eac6d0c2537e560597dc82afb89113b5910d511d13bc",
+			"compile_order": [
+				"renderer",
+				"producer"
+			]
+		}
+	]
 }

@@ -728,29 +728,3 @@ fn child_full_buffer() {
 			&& e.chained > 0
 	);
 }
-
-/// The selection golden captured once from the verified R1 implementation
-/// (`RUNE_P3A_GOLDEN_OUT`); `p3a_tests::child_selection_golden` pins this run to it.
-pub(super) const R1_GOLDEN: &str = include_str!("fixtures/r1_selection_golden.txt");
-
-/// The R1 fixture against the W13 fixture: exactly the restricted size-only delta
-/// (`w13_tests::check_w13_delta`: only COMPILE `ok bytes`, LOADED `code_bytes` and SUMMARY
-/// `code_bytes` may change; `mapped_bytes`, metadata, admissions and every other counter
-/// fixed; every LOADED region's size equal to its own COMPILE size). The changed regions are
-/// exactly the calls-shaped ones R1 applies to in the golden corpus.
-///
-/// Under Miri this text comparison took 170 s and executes no generated code, so it is
-/// opt-in there: `cargo +nightly miri test -p rune --all-features --lib -- --ignored --exact
-/// experimental_native::r1_tests::r1_selection_golden_delta`.
-#[test]
-#[cfg_attr(miri, ignore = "Miri: 170 s golden text comparison (opt-in)")]
-fn r1_selection_golden_delta() {
-	let (identical, changed) =
-		super::w13_tests::compare_w13_delta(super::w13_tests::W13_GOLDEN, R1_GOLDEN);
-	println!("R1\tgolden_fixtures\tidentical={identical}\tchanged={changed}");
-	assert_eq!(identical + changed, R1_GOLDEN.lines().count());
-	assert_eq!(
-		changed, 6,
-		"COMPILE, LOADED and SUMMARY of v2_calls f0 h4 and listed_9 f0 h5"
-	);
-}

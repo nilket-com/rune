@@ -53,9 +53,6 @@ fn c10_hex_bytes(text: &str) -> Result<Vec<u8>, String> {
 		.map(|at| u8::from_str_radix(&text[at..at + 2], 16).map_err(|_| "invalid hex".into()))
 		.collect()
 }
-fn c10_decode(text: &str) -> Json {
-	serde_json::from_slice(&c10_hex_bytes(text).unwrap()).unwrap()
-}
 fn c10_edges(node: &Json) -> Result<Vec<usize>, String> {
 	let arr = node.as_array().ok_or("graph node is not array")?;
 	let tag = arr

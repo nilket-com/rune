@@ -8,7 +8,7 @@
         "index": 301,
         "label": "shadow/unwrap/param",
         "source_sha256": "3be6206f8287471c8e33460512db129d183be96f26ea41af02783042637965da",
-        "stock_row_sha256": "e43bba2846a8632b33eb5bee7017258f0bac59359fd25cdaa4f53f52fbeabf9a",
+        "stock_row_sha256": "71002439bce3d4eb6f172c79079caaf35aa3de48cc4be3d90c3e0ebf955db058",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -33,7 +33,7 @@
         "index": 303,
         "label": "shadow/is_some/param",
         "source_sha256": "ae1aa8cf03b28477603c7f37e5dda6a06507c0594018f0b40931da6662bb8a2b",
-        "stock_row_sha256": "e164512d66ada4fbf86e15c929804ea6f3b76544eba09c41a233413ab76d1633",
+        "stock_row_sha256": "cc9630e20fa229b563b64788af3d4396ae526afa2c166675a7e8483bf2c729f2",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -58,7 +58,7 @@
         "index": 311,
         "label": "shadow/to_string/param",
         "source_sha256": "c9569e2d8faf6474444f92f64ec19b3715b1afa3e52d0c64ca14cc04c6e0f19d",
-        "stock_row_sha256": "bc2d2b5848b42ccf388818d0e27b284dc261cb098ace318940d4fbebad6dccfc",
+        "stock_row_sha256": "cd89a79aac5d236e1c2e1a4addbb6e337055aece80c17d3161d171c4db79289b",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -83,7 +83,7 @@
         "index": 321,
         "label": "shadow/collect/param",
         "source_sha256": "1877ecdc81781d70c14aebc5cbb1102c65c23e889276975109a107f21455d675",
-        "stock_row_sha256": "e361fc236b62043b8fa4b2825fcc78ad0fbfc6f2367a0ff06a1bf4f2a84b2f30",
+        "stock_row_sha256": "5f6f8fe477fa28cb35f9e39d092f79d34baef56eba59a0d452b5ad1fd49a28cb",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -108,7 +108,7 @@
         "index": 325,
         "label": "shadow/starts_with/param",
         "source_sha256": "6d1edbfebf754d74f4ee160b3618c1bca6546e5529be89be2972dc7563aa902e",
-        "stock_row_sha256": "717afdbd71805182c21f35fca6b28c49d850c60520f954f0007e9a3668059aab",
+        "stock_row_sha256": "9a23ad8d4e884dd60f452878ff93bd90e1cce0579290eb7640d13679ed386dad",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -133,7 +133,7 @@
         "index": 337,
         "label": "shadow/pow/param",
         "source_sha256": "3413788ce3151322e81fa77e7aa4a61e252dc36c27bffc746eb86f41955cde78",
-        "stock_row_sha256": "e1409ee06f7481f5dbc905ed3f8f63bd712a9978f989cd8dbef617e9f4929193",
+        "stock_row_sha256": "2494ede2c75b4ab4c1959a5968067b547142a76c8d71b1c0c88ad4b66864f519",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -158,7 +158,7 @@
         "index": 339,
         "label": "shadow/sqrt/param",
         "source_sha256": "47632fbddb49bd7e36f082811ca3dd26c9b70ed2c532c8cbf1cd521c32be0b3f",
-        "stock_row_sha256": "8dd8a68c7121eb3893b4de0182edd32f89bf0de92ee9b9280897f40d476259e4",
+        "stock_row_sha256": "bcccff24f6d439d63c7cb846a6e3f9b5497bb00582e19ec9a998ead51e9a6569",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -183,7 +183,7 @@
         "index": 341,
         "label": "shadow/expect/param",
         "source_sha256": "7d32560a36ccbc600434c1aab00c9049012f47fdf95fe41be01ec748b1b00d5e",
-        "stock_row_sha256": "d422b4c3c2e3ad4ae04a9da19f5542ef7e7ba067b03d200d67095a7887f10cfb",
+        "stock_row_sha256": "584d8723c97b3ab62e786c11dd8c449aac0e9a1091dfe816bc59e3c56c7b0cac",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -208,7 +208,7 @@
         "index": 361,
         "label": "shadow/trim/param",
         "source_sha256": "a8364a6244e9e59372e1e9d6e5beef1a0213fc62e716ade075868c868b40df78",
-        "stock_row_sha256": "d33c58bcc49bec6e666b3a9302c46872f9455de2d7a5178ee81131d41147b4a4",
+        "stock_row_sha256": "cce0c103b72ff4f9284570b00e5b1053d281433d7d8e0141ef9dcd8107b7eee9",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -233,7 +233,7 @@
         "index": 363,
         "label": "shadow/split/param",
         "source_sha256": "a2c175375989aa6a5dc08345e4f0785be47cbe5920fbe96816212395ad5dc988",
-        "stock_row_sha256": "adc83b3b74e379078e8a894b36437c8b042fdb032eafac8e7b509be777e45674",
+        "stock_row_sha256": "9a23ad8d4e884dd60f452878ff93bd90e1cce0579290eb7640d13679ed386dad",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",
@@ -258,7 +258,7 @@
         "index": 386,
         "label": "shadow/unwrap/native-option",
         "source_sha256": "58e964da35efa4ef894b7e4cbb7c3ebb1b2089542387c4127f02e1bc8db1694b",
-        "stock_row_sha256": "ec1d5d468be5f2a9031241ecc7969d25c24dea198a1463bd02bb020d860e4bf9",
+        "stock_row_sha256": "4961b1a525431149fbc8e16b27caa7f8307ce094075a82f7b0b654ec472f1bae",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",

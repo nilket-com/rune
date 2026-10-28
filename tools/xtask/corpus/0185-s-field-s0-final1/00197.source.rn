@@ -1,0 +1,113 @@
+// Record 0134, E1: semantic search over rnx's own records with Candle only:
+// no DataFrame library. Load and chunk with fs and Rune (0133's frozen rule),
+// embed with TextEncoder, score every passage against every query with one
+// matmul, rank with topk, and read the top passages back into Rune.
+// args: D1 directory, model directory, rubric.tsv, and optionally an output file
+
+fn words(s) {
+    let out = [];
+    for w in s.replace("\n", " ").replace("\t", " ").replace("\r", " ").split(" ") {
+        if w != "" { out.push(w); }
+    }
+    out
+}
+
+fn joined(ws, from, to) {
+    let s = "";
+    for i in from..to {
+        if i > from { s += " "; }
+        s += ws[i];
+    }
+    s
+}
+
+pub fn chunks(body) {
+    let out = [];
+    let cur = [];
+    for para in body.split("\n\n") {
+        let ws = words(para);
+        if ws.len() == 0 { continue; }
+        if ws.len() > 180 {
+            if cur.len() > 0 { out.push(joined(cur, 0, cur.len())); cur = []; }
+            let i = 0;
+            while i < ws.len() {
+                let j = i + 180;
+                if j > ws.len() { j = ws.len(); }
+                out.push(joined(ws, i, j));
+                i = j;
+            }
+            continue;
+        }
+        if cur.len() + ws.len() > 180 { out.push(joined(cur, 0, cur.len())); cur = []; }
+        for w in ws { cur.push(w); }
+    }
+    if cur.len() > 0 { out.push(joined(cur, 0, cur.len())); }
+    out
+}
+
+// ---- the search ----
+
+pub fn run(args) {
+    let dir = args[0];
+    let model = args[1];
+    // the corpus: titles per document, passages with their document
+    let titles = [];
+    let paths = [];
+    let records = [];
+    let pdoc = [];
+    let ptext = [];
+    for n in fs::read_dir(dir)? {
+        if !n.ends_with(".md") { continue; }
+        let text = fs::read(`${dir}/${n}`)?;
+        let first = text.split("\n").next().unwrap_or("");
+        let d = titles.len();
+        paths.push(n);
+        titles.push(if first.starts_with("# ") { first[2..] } else { first });
+        records.push(n[0..4]);
+        for c in chunks(text[first.len()..]) {
+            pdoc.push(d);
+            ptext.push(c);
+        }
+    }
+    let qtext = [];
+    for line in fs::read(args[2])?.split("\n").skip(1) {
+        if line != "" { qtext.push(line.split("\t").collect::<Vec>()[2]); }
+    }
+    let enc = candle::TextEncoder::load(model)?;
+    // unit rows, so a dot product is the cosine
+    let e = candle::Tensor::from_dense(enc.embed(ptext)?)?;
+    let q = candle::Tensor::from_dense(enc.embed(qtext)?)?;
+    let scores = e.matmul(q.t()?)?;           // passages x queries
+    println!("{}", scores);
+    let per_query = scores.t()?;              // queries x passages
+    let (top, at) = per_query.topk(60, false)?;
+    let top = top.to_vec2()?;
+    let at = at.to_vec2()?;
+    let k = 0;
+    let out = "";
+    for query in qtext {
+        println!("{}", query);
+        // no Vec::contains in Rune: a flag per document
+        let seen = [];
+        for _ in 0..titles.len() { seen.push(false); }
+        let shown = 0;
+        let r = 0;
+        while shown < 5 && r < 60 {
+            let p = at[k][r];
+            let d = pdoc[p];
+            if !seen[d] {
+                seen[d] = true;
+                let excerpt = ptext[p].chars().take(120).collect::<String>();
+                println!("  {}  {}  {}", top[k][r], records[d], titles[d]);
+                out += `${k}\t${paths[d]}\t${top[k][r]}\n`;
+                println!("      {}", excerpt);
+                shown += 1;
+            }
+            r += 1;
+        }
+        k += 1;
+    }
+    if args.len() > 3 { fs::write(args[3], out)?; }
+    println!("WORKFLOW OK e1");
+    Ok(())
+}

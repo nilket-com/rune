@@ -190,21 +190,19 @@ fn ten_frozen_identity_modes_check_admission_ownership_and_recovery() {
 	ignore = "frontend-heavy host control; native gates cover it; focused Miri uses minimal fixtures"
 )]
 fn fuel_frontiers_keep_complete_host_call_effect_prefixes_and_clean_state() {
-	let rows: Vec<_> = include_str!("stock.tsv")
-		.lines()
-		.skip(1)
-		.map(|s| s.split('\t').collect::<Vec<_>>())
-		.filter(|r| r[10] == "source-only-fuel-no-numeric-parity")
+	let rows: Vec<_> = CASES
+		.iter()
+		.filter(|c| c.stock && c.policy == "source-only-fuel-no-numeric-parity")
 		.collect();
 	assert_eq!(rows.len(), 17);
-	assert!(rows.iter().all(|r| r[2] == rows[0][2]));
+	assert!(rows.iter().all(|r| r.source == rows[0].source));
 	let expected = ["mark", "left", "mark", "right", "add"];
 	let mut frontier = Vec::new();
 	let mut succeeded = false;
 	for budget in 0..=16 {
 		let tape = fixture::Recorder::new();
 		let context = fixture::context(&tape);
-		let compiled = program(&context, &unhex(rows[0][2]));
+		let compiled = program(&context, rows[0].source);
 		let main = compiled.function(Hash::type_hash(["main"])).unwrap();
 		let mut executor = Executor::new().unwrap();
 		executor

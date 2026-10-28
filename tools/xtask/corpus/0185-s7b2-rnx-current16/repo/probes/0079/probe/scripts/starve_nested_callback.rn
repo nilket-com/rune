@@ -1,0 +1,13 @@
+// A nested callback-bearing routed call from inside a callback, denial off, pool synchronized.
+fn ok(r) { match r { Ok(v) => v, Err(e) => panic(`${e.kind()}: ${e.message()}`) } }
+pub fn main() {
+    let n = polars::rune_threads();
+    polars::allow_reentry_for_the_experiment(true);
+    polars::barrier_init(n);
+    let cols = ok(fx::wide(n * 2, 100).apply_columns_par_cb(|c| {
+        polars::barrier_wait();
+        ok(fx::column().apply_unary_elementwise_cb(|s| s.plus(1)));
+        c
+    }));
+    `completed ${cols.len()} columns on ${n} pool threads`
+}

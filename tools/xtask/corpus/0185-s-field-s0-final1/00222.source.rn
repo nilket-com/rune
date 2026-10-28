@@ -1,0 +1,171 @@
+// Record 0150: 0149's U7 with both of its original forms restored (the two
+// const system prompts, and the two-line println! after a for loop), which
+// record 0150 makes pasteable. Otherwise byte-for-byte 0149's script.
+// Record 0149, U7: greedy generation over the project's support tickets
+// (0133's D2), frozen in plans/0149 section 4 before any generation. Each
+// ticket's text is its first passage, exactly 0139's passage 0 (0136's
+// committed byte range of title + "\n" + body). Triage: all 252 tickets,
+// 8 new tokens, the frozen prompt and parse (no retries or fallback).
+// Summaries: the 40 sample tickets, 48 new tokens, displayed, not scored.
+// args: D2 issues.json, ranges-o0.tsv, labels.tsv, sample.tsv, model
+// directory, output directory
+
+const TRIAGE_SYSTEM = "You are a triage assistant for the issue tracker of Rune, a scripting language. Answer with exactly one word.";
+const SUMMARY_SYSTEM = "You are an assistant that summarizes issue tracker tickets.";
+
+fn column_str(name, values) {
+    Ok(polars::Series::from_iter_str(values)?.with_name(name).into_column())
+}
+fn column_i64(name, values) {
+    Ok(polars::Series::from_iter_i64(values)?.with_name(name).into_column())
+}
+
+/// The frozen triage prompt.
+fn triage_user(names, descriptions, passage) {
+    let u = "Which one category fits this ticket best?\n";
+    for j in 0..names.len() { u += `${names[j]}: ${descriptions[j]}\n`; }
+    u += "\nTicket:\n" + passage + "\n\nAnswer with one word: bug, feature, question, documentation or performance.";
+    u
+}
+
+/// The frozen parse: trimmed, lowercased, trailing . , : ; ! stripped; a
+/// label exactly, or "review".
+fn parse(text, names) {
+    let t = text.trim().to_lowercase();
+    let more = true;
+    while more {
+        more = false;
+        for c in [".", ",", ":", ";", "!"] {
+            if t.ends_with(c) { t = t[0..t.len() - 1]; more = true; }
+        }
+    }
+    for n in names { if t == n { return n; } }
+    "review"
+}
+
+/// A retained row's text field: JSON-escaped, so tabs and newlines survive.
+fn quoted(text) {
+    json::stringify(text).unwrap()
+}
+
+/// The ids as "1,2,3".
+fn joined(ids) {
+    let s = "";
+    for i in 0..ids.len() {
+        if i > 0 { s += ","; }
+        s += `${ids[i]}`;
+    }
+    s
+}
+
+pub fn run(args) {
+    let issues = json::parse(fs::read(args[0])?)?;
+    let names = [];
+    let descriptions = [];
+    for line in fs::read(args[2])?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        names.push(f[0]);
+        descriptions.push(f[1]);
+    }
+    let sample = [];
+    for line in fs::read(args[3])?.split("\n").skip(1) {
+        if line != "" { sample.push(line); }
+    }
+    // each ticket's first passage, from the committed byte ranges
+    let texts = #{};
+    let numbers = [];
+    let titles = #{};
+    for i in issues {
+        numbers.push(i["number"]);
+        texts[`d2:#${i["number"]}`] = i["title"] + "\n" + i["body"];
+        titles[`${i["number"]}`] = i["title"];
+    }
+    let first = #{};
+    for line in fs::read(args[1])?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        if !f[0].starts_with("d2:") || f[1] != "0" { continue; }
+        let s = f[2].parse::<i64>()?;
+        let e = f[3].parse::<i64>()?;
+        first[f[0]] = texts[f[0]][s..e];
+    }
+    let gen = candle::TextGenerator::load(args[4])?;
+
+    // triage: all 252
+    let systems = [];
+    let users = [];
+    for n in numbers {
+        systems.push(TRIAGE_SYSTEM);
+        users.push(triage_user(names, descriptions, first[`d2:#${n}`]));
+    }
+    let t0 = time::monotonic_ms();
+    let triage = gen.chat_many(systems, users, 8)?;
+    let t1 = time::monotonic_ms();
+    // summaries: the 40 sample tickets
+    let ssys = [];
+    let susers = [];
+    for n in sample {
+        ssys.push(SUMMARY_SYSTEM);
+        susers.push("Summarize this ticket in one sentence of at most 20 words.\n\nTicket:\n" + first[`d2:#${n}`]);
+    }
+    let t2 = time::monotonic_ms();
+    let summaries = gen.chat_many(ssys, susers, 48)?;
+    let t3 = time::monotonic_ms();
+
+    // the triage, parsed
+    let classes = [];
+    let generated = 0;
+    for r in triage { classes.push(parse(r["text"], names)); generated += r["ids"].len(); }
+    let sgenerated = 0;
+    for r in summaries { sgenerated += r["ids"].len(); }
+    println!("{} tickets triaged ({} tokens generated) in {} ms; {} summaries ({} tokens) in {} ms",
+        numbers.len(), generated, t1 - t0, sample.len(), sgenerated, t3 - t2);
+    let counts = polars::DataFrame::new(numbers.len(), [column_i64("ticket", numbers)?, column_str("triage", classes)?])?
+        .lazy().group_by([polars::col("triage")])?
+        .agg([polars::col("ticket").count().alias("tickets")])?
+        .collect()?
+        .sort(["tickets", "triage"], polars::SortMultipleOptions::new().with_order_descending_multi([true, false])?)?;
+    println!("tickets per class (\"review\": the answer was not exactly one label):");
+    println!("{}", counts);
+    // the sample's summaries, beside their tickets and the triage
+    let index = #{};
+    for k in 0..numbers.len() { index[`${numbers[k]}`] = k; }
+    for part in 0..4 {
+        let tk = []; let tt = []; let cl = []; let sm = [];
+        for k in (part * 10)..(part * 10 + 10) {
+            let n = sample[k];
+            tk.push(n.parse::<i64>()?);
+            tt.push(titles[n]);
+            cl.push(classes[index[n]]);
+            sm.push(summaries[k]["text"]);
+        }
+        let shown = polars::DataFrame::new(10, [column_i64("ticket", tk)?, column_str("title", tt)?,
+            column_str("triage", cl)?, column_str("summary", sm)?])?;
+        println!("{}", shown.preview()?);
+    }
+
+    // retained for the gates (plans/0149 section 4a)
+    let rows = "ticket\tprompt_tokens\tids\tstop\ttext\tclass\n";
+    let steps = "task\tticket\tk\tp\tposition\tid\ttop_ids\ttop_logits\n";
+    for k in 0..numbers.len() {
+        let r = triage[k];
+        rows += `${numbers[k]}\t${r["prompt_tokens"]}\t${joined(r["ids"])}\t${r["stop"]}\t${quoted(r["text"])}\t${classes[k]}\n`;
+        for j in 0..r["ids"].len() {
+            steps += `triage\t${numbers[k]}\t${j}\t${r["prompt_tokens"]}\t${r["prompt_tokens"] + j}\t${r["ids"][j]}\t${joined(r["top_ids"][j])}\t${joined(r["top_logits"][j])}\n`;
+        }
+    }
+    fs::write(`${args[5]}/u7-triage.tsv`, rows)?;
+    let rows = "ticket\tprompt_tokens\tids\tstop\ttext\n";
+    for k in 0..sample.len() {
+        let r = summaries[k];
+        rows += `${sample[k]}\t${r["prompt_tokens"]}\t${joined(r["ids"])}\t${r["stop"]}\t${quoted(r["text"])}\n`;
+        for j in 0..r["ids"].len() {
+            steps += `summary\t${sample[k]}\t${j}\t${r["prompt_tokens"]}\t${r["prompt_tokens"] + j}\t${r["ids"][j]}\t${joined(r["top_ids"][j])}\t${joined(r["top_logits"][j])}\n`;
+        }
+    }
+    fs::write(`${args[5]}/u7-summaries.tsv`, rows)?;
+    fs::write(`${args[5]}/u7-steps.tsv`, steps)?;
+    println!("WORKFLOW OK u7");
+    Ok(())
+}

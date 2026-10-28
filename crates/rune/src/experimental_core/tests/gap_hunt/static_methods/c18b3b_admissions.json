@@ -8,7 +8,7 @@
         "index": 335,
         "label": "shadow/is_empty/param",
         "source_sha256": "a59a7ca73d0e1e6693e3ad65d7ad1428a0f40e16ba48563e43dcab3984620441",
-        "stock_row_sha256": "6587d961f2e40ff7b47df890e2d3ebf107491b3ff3b7fa47ed1e24d29ca52558",
+        "stock_row_sha256": "d3d732a4697fbba4cef4f63575bb44c25a603161bd46416bbb9705e7f50c6707",
         "classification": "Inherited-refusal",
         "fresh": {
           "kind": "Unsupported",

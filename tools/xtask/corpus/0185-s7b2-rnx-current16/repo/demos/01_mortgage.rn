@@ -1,0 +1,43 @@
+// A useful calculation: what does a 30-year mortgage cost?
+// rnx run demos/01_mortgage.rn
+
+fn payment(principal, yearly_rate, years) {
+    let r = yearly_rate / 12.0;
+    let n = years * 12;
+    principal * r / (1.0 - (1.0 + r).powf(-(n as f64)))
+}
+
+fn money(x) {
+    // two decimals, with a thousands separator
+    let cents = (x * 100.0).round() as i64;
+    let whole = `${cents / 100}`;
+    let out = "";
+    for i in 0..whole.len() {
+        if i > 0 && (whole.len() - i) % 3 == 0 { out += ","; }
+        out += whole[i..i + 1];
+    }
+    format!("{}.{:02}", out, cents % 100)
+}
+
+pub fn main(args) {
+    let (principal, rate, years) = (300000.0, 0.06, 30);
+    let pay = payment(principal, rate, years);
+    println!("Loan {} at {:.1}% a year for {} years, paid monthly", money(principal), rate * 100.0, years);
+    println!("(a constant rate; totals exclude fees, taxes and insurance)");
+    println!("Monthly payment   {:>12}", money(pay));
+    println!("(totals use the unrounded payment, shown here to four decimals: {:.4})", pay);
+    println!("Total paid        {:>12}", money(pay * 360.0));
+    println!("Total interest    {:>12}", money(pay * 360.0 - principal));
+    println!("");
+    println!("Balance after each year:");
+    let balance = principal;
+    for month in 1..=years * 12 {
+        balance -= pay - balance * rate / 12.0;
+        let year = month / 12;
+        if month % 12 == 0 && [1, 5, 10, 20, 30].iter().any(|y| y == year) {
+            let shown = if balance.abs() < 0.005 { 0.0 } else { balance };
+            println!("  year {:>2}  {:>12}", year, money(shown));
+        }
+    }
+    Ok(())
+}

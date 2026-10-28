@@ -254,12 +254,13 @@ fn refusal_valid(label: &str, source: &str, execution: &Json, audit: &Json) -> b
 			== &json!({"cleanup_error":null,"executor_idle":true,"live_entries":0,"payload_bytes":0,"reuse_i64":7})
 }
 
-// Bind to an already frozen complete stock execution, independent of fuel parity.
-fn resource_completion(
+// Bind the live completion to the reviewed source and fixture, independent of fuel parity.
+fn resource_completion_live(
 	label: &str,
 	source: &str,
 	input_fixture: &str,
-	resources: &Json,
+	current: &Json,
+	stock: &Json,
 ) -> Result<(Json, Json), String> {
 	let anchors = read_json(include_str!("../../callback_sort_resource_anchors.json"));
 	let binding = anchors.get(label).ok_or("unbound resource row")?;
@@ -280,18 +281,6 @@ fn resource_completion(
 		.enumerate()
 		.find(|(_, c)| c.0 == anchor_label)
 		.ok_or("completion case")?;
-	let stock = &resources[anchor_label]["stock_common"];
-	let before = &resources[label]["stock_common"]["before"];
-	let fixture_hash = digest(
-		&serde_json::to_vec(&json!({"name":input_fixture,"mode":case.4,"before":before}))
-			.map_err(|_| "fixture encoding")?,
-	);
-	let anchor_fixture_hash = digest(
-		&serde_json::to_vec(
-			&json!({"name":anchor_case.2,"mode":anchor_case.4,"before":stock["before"]}),
-		)
-		.map_err(|_| "fixture encoding")?,
-	);
 	if source != case.1
 		|| input_fixture != case.2
 		|| source != anchor_case.1
@@ -302,14 +291,10 @@ fn resource_completion(
 		|| binding["index"] != json!(index)
 		|| binding["source_sha256"] != digest(source.as_bytes())
 		|| binding["fixture"] != input_fixture
-		|| binding["fixture_sha256"] != fixture_hash
 		|| binding["anchor_label"] != anchor_label
 		|| binding["anchor_index"] != json!(anchor_index)
 		|| binding["anchor_source_sha256"] != digest(anchor_case.1.as_bytes())
-		|| binding["anchor_fixture_sha256"] != anchor_fixture_hash
-		|| fixture_hash != anchor_fixture_hash
-		|| binding["anchor_stock_common_sha256"]
-			!= digest(&serde_json::to_vec(stock).map_err(|_| "completion encoding")?)
+		|| current["before"] != stock["before"]
 	{
 		return Err("resource completion identity drift".into());
 	}

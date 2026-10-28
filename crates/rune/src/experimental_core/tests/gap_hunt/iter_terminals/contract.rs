@@ -1,10 +1,3 @@
-#[test]
-#[cfg(target_os = "linux")]
-#[ignore = "C17d frozen execution replay; bounded children and exclusive GAP_OUT"]
-fn contract() {
-	run_contract("fresh");
-}
-
 /// The comparable part of one observation. Stock VM frame encoding and raw
 /// error dumps are audit data; the process-local `AnyTypeInfo::full_name`
 /// pointer is masked wherever a typed kind or class names a type.
@@ -29,17 +22,16 @@ fn canonical_record(record: &Json) -> Json {
 	json!({"observation":observation,"logical":record["logical"],"diagnostics":record["diagnostics"]})
 }
 
-/// `frozen` is the pinned stock row; `stock` is its S2 replacement, or the same
-/// row where no Object key was moved.
+/// `stock` is the live legacy run of the same case as `fresh`.
+#[cfg(target_os = "linux")]
 fn verify_case(
 	index: usize,
 	case: &Json,
-	frozen: &Json,
-	stock: &Json,
-	actual: &Json,
-	stdout: &[u8],
-	stderr: &[u8],
+	stock_run: &super::live_oracle::Run,
+	fresh: &super::live_oracle::Run,
 ) {
+	let stock = &stock_run.observation;
+	let (actual, stdout, stderr) = (&fresh.observation, &fresh.stdout[..], &fresh.stderr[..]);
 	use sha2::{Digest, Sha256};
 	let dispositions: Json = serde_json::from_str(include_str!("dispositions.json")).unwrap();
 	let rows = dispositions["rows"].as_array().unwrap();
@@ -63,10 +55,6 @@ fn verify_case(
 	assert_eq!(
 		hex(Sha256::digest(case["source"].as_str().unwrap().as_bytes()).as_ref()),
 		rule["source_sha256"]
-	);
-	assert_eq!(
-		hex(Sha256::digest(serde_json::to_vec(frozen).unwrap()).as_ref()),
-		rule["stock_row_sha256"]
 	);
 	let audit = &actual["fresh_audit"];
 	for key in ["row_idle", "executor_idle"] {
@@ -149,8 +137,8 @@ fn verify_case(
 		}
 		_ => panic!("unknown C17d disposition"),
 	}
-	assert_eq!(hex(stdout), stock["stdout_hex"]);
-	assert_eq!(hex(stderr), stock["stderr_hex"]);
+	assert_eq!(hex(stdout), hex(&stock_run.stdout), "stdout");
+	assert_eq!(hex(stderr), hex(&stock_run.stderr), "stderr");
 }
 
 const EXPECTED_COUNTS: [(&str, u64); 4] = [

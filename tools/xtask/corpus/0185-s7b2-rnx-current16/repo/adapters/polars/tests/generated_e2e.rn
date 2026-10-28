@@ -1,0 +1,14 @@
+pub fn main(_) {
+    let df = polars::DataFrame::empty();
+    println!("height {} width {}", df.height()?, df.width());
+    let e = polars::col("x").alias("y");
+    println!("expr {}", `${e}`);
+    let lf = df.lazy().select_([polars::lit(1)?.cast(polars::DataTypeExpr::Literal(polars::DataType::Int64())).alias("one")])?;
+    let out = lf.collect()?;
+    println!("collected {} rows, {} cols", out.height()?, out.width());
+    let opts = polars::SortMultipleOptions::default_().with_maintain_order(true);
+    println!("opts {}", opts.maintain_order());
+    match df.try_get_column_index("nope") { Ok(i) => println!("index {}", i), Err(e) => println!("error kind {}", e.kind()) }
+    let dt = polars::DataType::Datetime(polars::TimeUnit::Milliseconds(), None)?;
+    println!("dtype {}", dt);
+}

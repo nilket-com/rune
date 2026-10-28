@@ -1,85 +1,50 @@
 {
-	"schema": 1,
-	"note": "C11/C12 fresh capabilities admit these source-pinned C9 closure cases; immutable cmp_ordering_stock.tsv and legacy disposition refusals remain archived.",
-	"rows": [
-		{
-			"index": 185,
-			"label": "refusal/sort-by",
-			"source_hex": "70756220666e206d61696e28297b6c657420613d5b322c315d3b612e736f72745f6279287c612c627c612e636d70286229293b617d0a70756220666e2063395f726575736528297b377d",
-			"source_sha256": "8fd815e7ee428d20e658c36ac7de8e3f6ce52547df86a1b10548ff3326949558",
-			"legacy_policy": "Refused-surface",
-			"legacy_fresh_refusal": {
-				"status": "refused",
-				"kind": "Unsupported",
-				"operation": "Method",
-				"refusal": "Method",
-				"invoked": false,
-				"source": 0,
-				"start": 26,
-				"end": 50,
-				"span_hex": "612e736f72745f6279287c612c627c612e636d7028622929"
-			},
-			"disposition": "Exact",
-			"expected": {
-				"status": "value",
-				"value": {
-					"payload": {
-						"type": "Vec",
-						"values": [
-							{
-								"payload": {
-									"type": "I64",
-									"value": "1"
-								},
-								"type_hash": "0x1cad9186c9641c4f"
-							},
-							{
-								"payload": {
-									"type": "I64",
-									"value": "2"
-								},
-								"type_hash": "0x1cad9186c9641c4f"
-							}
-						]
-					},
-					"type_hash": "0xc11b1e769aea94f2"
-				}
-			},
-			"stdout_hex": "0a72756e6e696e67203120746573740a",
-			"stderr_hex": "",
-			"stock_observation_sha256": "1fa0f1283953cecf314ed868bbcb001fe1184cf861d4d9ef9f57a0dd56b5de3b"
-		},
-		{
-			"index": 186,
-			"label": "refusal/iter-any",
-			"source_hex": "70756220666e206d61696e28297b5b312c325d2e6974657228292e616e79287c767c763d3d31297d0a70756220666e2063395f726575736528297b377d",
-			"source_sha256": "80ca27965d6c3e4406e9c97e8628aae704d446e7b62149f6b3b268b411d7b95e",
-			"legacy_policy": "Refused-surface",
-			"legacy_fresh_refusal": {
-				"status": "refused",
-				"kind": "Unsupported",
-				"operation": "Method",
-				"refusal": "Method",
-				"invoked": false,
-				"source": 0,
-				"start": 14,
-				"end": 39,
-				"span_hex": "5b312c325d2e6974657228292e616e79287c767c763d3d3129"
-			},
-			"disposition": "Exact",
-			"expected": {
-				"status": "value",
-				"value": {
-					"payload": {
-						"type": "Bool",
-						"value": true
-					},
-					"type_hash": "0x981333df5abb043f"
-				}
-			},
-			"stdout_hex": "0a72756e6e696e67203120746573740a",
-			"stderr_hex": "",
-			"stock_observation_sha256": "2186969977c33345a2d1c890f5fb1478c99d8eca0db4cf7c7758adb454baccc7"
-		}
-	]
+  "schema": 1,
+  "note": "C11/C12 fresh capabilities admit these source-pinned C9 closure cases; immutable cmp_ordering_stock.tsv and legacy disposition refusals remain archived.",
+  "rows": [
+    {
+      "index": 185,
+      "label": "refusal/sort-by",
+      "source_hex": "70756220666e206d61696e28297b6c657420613d5b322c315d3b612e736f72745f6279287c612c627c612e636d70286229293b617d0a70756220666e2063395f726575736528297b377d",
+      "source_sha256": "8fd815e7ee428d20e658c36ac7de8e3f6ce52547df86a1b10548ff3326949558",
+      "legacy_policy": "Refused-surface",
+      "legacy_fresh_refusal": {
+        "status": "refused",
+        "kind": "Unsupported",
+        "operation": "Method",
+        "refusal": "Method",
+        "invoked": false,
+        "source": 0,
+        "start": 26,
+        "end": 50,
+        "span_hex": "612e736f72745f6279287c612c627c612e636d7028622929"
+      },
+      "disposition": "Exact",
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": "",
+      "stock_projected_sha256": "1fa0f1283953cecf314ed868bbcb001fe1184cf861d4d9ef9f57a0dd56b5de3b"
+    },
+    {
+      "index": 186,
+      "label": "refusal/iter-any",
+      "source_hex": "70756220666e206d61696e28297b5b312c325d2e6974657228292e616e79287c767c763d3d31297d0a70756220666e2063395f726575736528297b377d",
+      "source_sha256": "80ca27965d6c3e4406e9c97e8628aae704d446e7b62149f6b3b268b411d7b95e",
+      "legacy_policy": "Refused-surface",
+      "legacy_fresh_refusal": {
+        "status": "refused",
+        "kind": "Unsupported",
+        "operation": "Method",
+        "refusal": "Method",
+        "invoked": false,
+        "source": 0,
+        "start": 14,
+        "end": 39,
+        "span_hex": "5b312c325d2e6974657228292e616e79287c767c763d3d3129"
+      },
+      "disposition": "Exact",
+      "stdout_hex": "0a72756e6e696e67203120746573740a",
+      "stderr_hex": "",
+      "stock_projected_sha256": "2186969977c33345a2d1c890f5fb1478c99d8eca0db4cf7c7758adb454baccc7"
+    }
+  ]
 }

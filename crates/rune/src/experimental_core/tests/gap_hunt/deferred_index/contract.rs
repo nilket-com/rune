@@ -1,5 +1,4 @@
-// C7 strict projection: no address exemptions or retained-frame adapters.
-const REPLAY_CAP: usize = 2 << 20;
+// C7 strict projection of both engines: no address exemptions or retained-frame adapters.
 fn exact_keys(o: &serde_json::Map<String, Json>, names: &[&str]) {
 	assert_eq!(o.len(), names.len());
 	for name in names {
@@ -82,202 +81,28 @@ fn project(o: &Json) -> Json {
 		_ => panic!("unreviewed status"),
 	}
 }
-fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
-	let mut bytes = Vec::new();
-	let mut buf = [0; 4096];
-	loop {
-		let n = pipe.read(&mut buf).unwrap();
-		if n == 0 {
-			break;
-		}
-		let room = REPLAY_CAP - bytes.len();
-		bytes.extend_from_slice(&buf[..n.min(room)]);
-		if n > room {
-			exceeded.store(true, Ordering::Relaxed);
-		}
-	}
-	bytes
-}
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C7 frozen stock replay; explicit unique GAP_OUT, bounded children"]
-fn legacy_contract() {
-	run_contract("stock");
-}
-
-#[test]
-#[cfg(target_os = "linux")]
-#[ignore = "C7 strict execution replay; explicit unique GAP_OUT, bounded children"]
+#[ignore = "C7 strict execution contract against live stock; explicit unique GAP_OUT, bounded children"]
 fn contract() {
-	run_contract("fresh");
-}
-
-fn run_contract(engine: &str) {
-	let frozen = include_str!("../../index_targets_stock.tsv");
-	let lines = frozen.lines().skip(1).collect::<Vec<_>>();
-	assert_eq!(lines.len(), COUNT);
 	assert_eq!(CASES.len(), COUNT);
-	assert_eq!(
-		frozen.lines().next().unwrap(),
-		"case\tmode\tsource_hex\tcompared_observation_hex\tstdout_hex\tstderr_hex\tpolicy"
-	);
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
 	let mut policies = std::collections::BTreeMap::new();
-	for (i, ((label, source, mode, policy), line)) in CASES.iter().zip(lines).enumerate() {
-		let c = line.split('\t').collect::<Vec<_>>();
-		assert_eq!(c.len(), 7);
-		assert_eq!(c[0], *label);
+	for (i, &(label, source, mode, policy)) in CASES.iter().enumerate() {
 		assert!(labels.insert(label));
-		assert_eq!(c[1], *mode);
-		assert_eq!(c[2], hex(source.as_bytes()));
-		assert_eq!(c[6], *policy);
 		let folder = out.join(format!("{i:03}"));
-		fs::create_dir(&folder).unwrap();
-		let result = folder.join("observation.json");
-		use std::os::unix::process::CommandExt;
-		let mut command = Command::new("/usr/bin/prlimit");
-		command
-			.args([
-				"--cpu=15",
-				"--as=2147483648",
-				"--fsize=2097152",
-				"--core=0",
-				"--",
-			])
-			.arg(std::env::current_exe().unwrap());
-		command.process_group(0);
-		let mut child = command
-			.args([
-				"--exact",
-				"experimental_core::tests::gap_hunt::deferred_index::child",
-				"--ignored",
-				"--nocapture",
-				"--quiet",
-			])
-			.env_clear()
-			.env("C7_ENGINE", engine)
-			.env("PATH", "/usr/bin:/bin")
-			.env("LANG", "C.UTF-8")
-			.env("TZ", "UTC")
-			.env("C7_CASE", i.to_string())
-			.env("C7_RESULT", &result)
-			.current_dir(&folder)
-			.stdin(Stdio::null())
-			.stdout(Stdio::piped())
-			.stderr(Stdio::piped())
-			.spawn()
-			.unwrap();
-		let exceeded = Arc::new(AtomicBool::new(false));
-		let flag = exceeded.clone();
-		let pipe = child.stdout.take().unwrap();
-		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
-		let flag = exceeded.clone();
-		let pipe = child.stderr.take().unwrap();
-		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
-		let start = Instant::now();
-		let mut stop = false;
-		let mut exited = false;
-		loop {
-			if child.try_wait().unwrap().is_some() {
-				exited = true;
-			}
-			if !exceeded.load(Ordering::Relaxed)
-				&& exited && stdout.is_finished()
-				&& stderr.is_finished()
-			{
-				break;
-			}
-			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
-				stop = true;
-				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child.id())])
-					.stdout(Stdio::null())
-					.stderr(Stdio::null())
-					.status();
-				break;
-			}
-			std::thread::sleep(Duration::from_millis(10));
-		}
-		// wait() also returns the cached status when try_wait() already reaped
-		// the child. Every exit path explicitly collects it before joining.
-		let status = child.wait().unwrap();
-		let stdout = stdout.join().unwrap();
-		let stderr = stderr.join().unwrap();
-		fs::write(folder.join("stdout"), &stdout).unwrap();
-		fs::write(folder.join("stderr"), &stderr).unwrap();
-		fs::write(
-			folder.join("receipt.txt"),
-			format!(
-				"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\n",
-				start.elapsed()
-			),
-		)
-		.unwrap();
-		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
-		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
-		let mut e: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		e["outcome"] =
-			super::d1c_diagnostics::before("deferred_index", label, source, engine, &e["outcome"]);
-		if engine == "stock" {
-			exact_keys(
-				e.as_object().unwrap(),
-				&[
-					"schema",
-					"engine",
-					"index",
-					"label",
-					"mode",
-					"policy",
-					"source_hex",
-					"fuel",
-					"outcome",
-				],
-			);
-		} else {
-			exact_keys(
-				e.as_object().unwrap(),
-				&[
-					"schema",
-					"engine",
-					"index",
-					"label",
-					"mode",
-					"policy",
-					"source_hex",
-					"fuel",
-					"outcome",
-					"fresh_audit",
-				],
-			);
-		}
-		assert_eq!(e["engine"], engine);
-		assert_eq!(e["schema"], 1);
-		assert_eq!(e["index"], i);
-		assert_eq!(e["label"], *label);
-		assert_eq!(e["mode"], *mode);
-		assert_eq!(e["policy"], *policy);
-		assert_eq!(e["source_hex"], c[2]);
-		assert_eq!(e["fuel"], FUEL);
-		let expected: Json = serde_json::from_str(&unhex(c[3])).unwrap();
+		let stock = launch("stock", i, &folder.join("stock"));
+		let expected = project(&stock.observation["outcome"]);
 		fs::write(
 			folder.join("expected.json"),
 			serde_json::to_vec_pretty(&expected).unwrap(),
 		)
 		.unwrap();
-		let category = if engine == "stock" {
-			let got = project(&e["outcome"]);
-			fs::write(
-				folder.join("compared.json"),
-				serde_json::to_vec_pretty(&got).unwrap(),
-			)
-			.unwrap();
-			assert_eq!(got, expected, "stock {label}");
-			assert_eq!(hex(&stdout), c[4], "stdout {label}");
-			assert_eq!(hex(&stderr), c[5], "stderr {label}");
-			*policy
-		} else {
+		let fresh = launch("fresh", i, &folder.join("fresh"));
+		let (e, stdout, stderr) = (&fresh.observation, &fresh.stdout, &fresh.stderr);
+		let category = {
 			let audit = &e["fresh_audit"];
 			exact_keys(
 				audit.as_object().unwrap(),
@@ -319,7 +144,7 @@ fn run_contract(engine: &str) {
 			] {
 				assert_eq!(audit[k], 0, "audit {label} {k}");
 			}
-			let (entries, bytes) = if *mode == "c7-small-store" {
+			let (entries, bytes) = if mode == "c7-small-store" {
 				(2, 4096)
 			} else {
 				(4096, 4 << 20)
@@ -329,8 +154,8 @@ fn run_contract(engine: &str) {
 			assert_eq!(audit["reuse_raw"], "Some(I64(7))");
 			audit["call_chain"].as_array().unwrap();
 			assert_ne!(e["outcome"]["class"], "UNMAPPED");
-			let mut category = *policy;
-			match *policy {
+			let mut category = policy;
+			match policy {
 				"Refused-ByteStr" => {
 					let o = &e["outcome"];
 					exact_keys(
@@ -347,7 +172,7 @@ fn run_contract(engine: &str) {
 					);
 					assert_eq!(o["status"], "refused");
 					assert_eq!(o["kind"], "Unsupported");
-					let refusal = if *policy == "Refused-Range" {
+					let refusal = if policy == "Refused-Range" {
 						"Range"
 					} else {
 						"ByteStr"
@@ -355,7 +180,7 @@ fn run_contract(engine: &str) {
 					assert_eq!(o["refusal"], refusal);
 					let (_, start, end) = REFUSAL_SITES
 						.iter()
-						.find(|(name, _, _)| name == label)
+						.find(|(name, _, _)| *name == label)
 						.unwrap();
 					// These explicit source-bound controls cover the entire indexed
 					// expression (Range) or literal (ByteStr), with no exemption.
@@ -372,12 +197,12 @@ fn run_contract(engine: &str) {
 					assert_eq!(audit["returned_root"], false);
 					assert!(audit["typed_failure_kind"].is_null());
 					assert!(audit["call_chain"].as_array().unwrap().is_empty());
-					assert_eq!(&stdout, b"\nrunning 1 test\n");
+					assert_eq!(stdout, b"\nrunning 1 test\n");
 					assert!(stderr.is_empty());
 				}
 				"Retained-resource" => {
-					assert_eq!(*label, "limits/result-entry");
-					assert_eq!(*mode, "c7-small-store");
+					assert_eq!(label, "limits/result-entry");
+					assert_eq!(mode, "c7-small-store");
 					assert_eq!(
 						expected,
 						json!({"status":"value","type":"Bool","value":true})
@@ -402,11 +227,11 @@ fn run_contract(engine: &str) {
 						got["sites"],
 						json!([{"source":0,"start":start,"end":start+7,"frames":"[]"}])
 					);
-					assert_eq!(hex(&stdout), c[4], "stdout {label}");
-					assert_eq!(hex(&stderr), c[5], "stderr {label}");
+					assert_eq!(hex(stdout), hex(&stock.stdout), "stdout {label}");
+					assert_eq!(hex(stderr), hex(&stock.stderr), "stderr {label}");
 				}
 				"Exact" | "Refused-Range" => {
-					if *policy == "Refused-Range" {
+					if policy == "Refused-Range" {
 						category = "C12-admitted-range";
 					}
 					assert_eq!(audit["invoked"], true);
@@ -424,33 +249,29 @@ fn run_contract(engine: &str) {
 							retained_matches(label, source, &expected, &got, &audit["call_chain"])
 								.unwrap_or_else(|| {
 									panic!(
-										"retained pin drift {label}: stock={expected} execution={got}"
-									)
+									"retained pin drift {label}: stock={expected} execution={got}"
+								)
 								});
 					} else {
 						assert_eq!(got, expected, "execution {label}");
 					}
-					assert_eq!(hex(&stdout), c[4], "stdout {label}");
-					assert_eq!(hex(&stderr), c[5], "stderr {label}");
+					assert_eq!(hex(stdout), hex(&stock.stdout), "stdout {label}");
+					assert_eq!(hex(stderr), hex(&stock.stderr), "stderr {label}");
 				}
 				_ => panic!("unknown C7 policy"),
 			}
 			category
 		};
-		assert!(
-			!has_address(&String::from_utf8_lossy(&stdout))
-				&& !has_address(&String::from_utf8_lossy(&stderr))
-		);
+		for run in [&stock, &fresh] {
+			assert!(
+				!has_address(&String::from_utf8_lossy(&run.stdout))
+					&& !has_address(&String::from_utf8_lossy(&run.stderr))
+			);
+		}
 		*policies.entry(category).or_insert(0usize) += 1;
 	}
-	let expected = if engine == "stock" {
-		std::collections::BTreeMap::from([
-			("Exact", 306),
-			("Refused-Range", 10),
-			("Refused-ByteStr", 1),
-			("Retained-resource", 1),
-		])
-	} else {
+	assert_eq!(
+		policies,
 		std::collections::BTreeMap::from([
 			("Exact", 286),
 			("Retained-chain", 17),
@@ -460,14 +281,58 @@ fn run_contract(engine: &str) {
 			("Refused-ByteStr", 1),
 			("Retained-resource", 1),
 		])
-	};
-	assert_eq!(policies, expected);
-	contract_completed(engine, COUNT);
+	);
+	contract_completed("fresh", COUNT);
 	fs::write(
 		out.join("COMPLETE"),
-		format!("C7 {engine} {COUNT} rows complete\n"),
+		format!("C7 fresh {COUNT} rows complete\n"),
 	)
 	.unwrap();
+}
+
+/// Run case `index` on `engine` in a bounded child and check its envelope.
+/// The returned outcome has the D1c display mapping applied.
+#[cfg(target_os = "linux")]
+fn launch(engine: &str, index: usize, folder: &Path) -> super::live_oracle::Run {
+	let (label, source, mode, policy) = CASES[index];
+	let index_text = index.to_string();
+	let mut run = super::live_oracle::run_child(
+		"experimental_core::tests::gap_hunt::deferred_index::child",
+		label,
+		folder,
+		"C7_RESULT",
+		&[
+			("C7_ENGINE", engine.as_ref()),
+			("C7_CASE", index_text.as_ref()),
+		],
+	);
+	let e = &mut run.observation;
+	e["outcome"] =
+		super::d1c_diagnostics::before("deferred_index", label, source, engine, &e["outcome"]);
+	let keys = [
+		"schema",
+		"engine",
+		"index",
+		"label",
+		"mode",
+		"policy",
+		"source_hex",
+		"fuel",
+		"outcome",
+		"fresh_audit",
+	];
+	// Only the execution engine reports an audit.
+	let keys = &keys[..keys.len() - usize::from(engine == "stock")];
+	exact_keys(e.as_object().unwrap(), keys);
+	assert_eq!(e["engine"], engine);
+	assert_eq!(e["schema"], 1);
+	assert_eq!(e["index"], index);
+	assert_eq!(e["label"], label);
+	assert_eq!(e["mode"], mode);
+	assert_eq!(e["policy"], policy);
+	assert_eq!(e["source_hex"], hex(source.as_bytes()));
+	assert_eq!(e["fuel"], FUEL);
+	run
 }
 
 include!("retained.rs");

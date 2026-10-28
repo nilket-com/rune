@@ -1,1575 +1,342 @@
 {
-  "000": {
-    "index": 0,
-    "label": "capture/read",
-    "source_sha256": "96f3bc2731d5daf8592f368ede05a6691fec807d0a0e87ccc4a9fa77187d893d",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "0fa0e5f5c0273dd28e16ca654e3480688cdcda1073faf7feab15eb51ced3d35b"
-  },
-  "001": {
-    "index": 1,
-    "label": "capture/rebind-after-create",
-    "source_sha256": "1176e719d32a4580f3fd8a547ce5e2befc70027b562be3655b9377630346ded9",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "e17a307d9bcc46d7463ca19827122fd7cee09117d9d3deeb5fcc3ad694ab3709"
-  },
-  "002": {
-    "index": 2,
-    "label": "capture/shadow-after-create",
-    "source_sha256": "6ed3046f82e29973bc7e4de1d2feffb3ef502b0692cbc5c9b7f8d3354146deb8",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Tuple",
-              "0xfeb65b3f4755aef0",
-              [
-                1,
-                2
-              ]
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "9"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "71271dba1f3ea4a4cfba5c89c83daba2c9c31778246e820892d3105423e15900"
-  },
-  "003": {
-    "index": 3,
-    "label": "capture/scalar-assign-repeated",
-    "source_sha256": "a4f654378db4a44cfc97819024a596a673d3485450f77422839c9063413628b8",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Tuple",
-              "0xfeb65b3f4755aef0",
-              [
-                1,
-                2,
-                3
-              ]
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "1"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "1"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "0"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "4d5c6897f505a0d3243e3458330709de00534a7c25894df35012d6c5cd72adea"
-  },
-  "004": {
-    "index": 4,
-    "label": "capture/heap-handle-mutation",
-    "source_sha256": "3719270e8f12ee0cbb44d44a04ee61bffabdc6e6904a23552b5641fb1609ac9b",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Tuple",
-              "0xfeb65b3f4755aef0",
-              [
-                1,
-                2,
-                3
-              ]
-            ],
-            [
-              "U64",
-              "0xb41669ccb4fdb76a",
-              "1"
-            ],
-            [
-              "U64",
-              "0xb41669ccb4fdb76a",
-              "1"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "d9c1b8cebe2069f31df6426da9f11d492dc13781cd0bb5310dd265add126c14a"
-  },
-  "005": {
-    "index": 5,
-    "label": "capture/move-scalar",
-    "source_sha256": "56ee01721ade3ce61099b548ec2335dbbea6b8392ebcb39900f14898e787a335",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "9"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "04ec1dd9b720dbf93469a93d760016c6231273d8f7fcf30999e00acd02e3c9bd"
-  },
-  "006": {
-    "index": 6,
-    "label": "capture/move-heap",
-    "source_sha256": "0d14daefdef0dec19c02f1e0b79a0caf85426a70d78d2bcd2fa4c1ff7da88565",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Tuple",
-              "0xfeb65b3f4755aef0",
-              [
-                1,
-                2
-              ]
-            ],
-            [
-              "U64",
-              "0xb41669ccb4fdb76a",
-              "1"
-            ],
-            [
-              "U64",
-              "0xb41669ccb4fdb76a",
-              "2"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "c9f5b556ac1b282007f9ce1bf305c4a82f91abff47f96f3e7a8706bac9185fac"
-  },
-  "007": {
-    "index": 7,
-    "label": "capture/nested",
-    "source_sha256": "8bd4008c2348c99867831e8e25b37468845ceb717f0c56f6f73b2f50579030a8",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "ec00b79fa296632e52e5b5d34742b1c4baa65f43d6533c6181bd640440fa3cdb"
-  },
-  "008": {
-    "index": 8,
-    "label": "capture/loop-environments",
-    "source_sha256": "4c903f0d25963e65396b2cd77183fc0348132565e8d9b40f30bf37508a4219db",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Tuple",
-              "0xfeb65b3f4755aef0",
-              [
-                1,
-                2,
-                3
-              ]
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "0"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "1"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "2"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "7478422195a7fdb412342ccfa17a356ddbf6463e321c684d1b878052b4e6d1a0"
-  },
-  "009": {
-    "index": 9,
-    "label": "capture/return-escape",
-    "source_sha256": "36097b945f51dddc39ab942f97b0a6dba0eb0c218601627f580d53e54f2bc242",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Tuple",
-              "0xfeb65b3f4755aef0",
-              [
-                1,
-                2
-              ]
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "12"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "12"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "428ba3f7a22904865e3a9ff01901b6d94e11961efe8d88eb1f9e175d95975c1a"
-  },
-  "010": {
-    "index": 10,
-    "label": "capture/store-vector",
-    "source_sha256": "263c394666b35777e5685353a785881bf8ee0c0cf752438d2d2dd674bc1756c6",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "13"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "41eb2c132c492ac5a920c46dffc4c757e899cdd6f13420a70868193027b54162"
-  },
-  "011": {
-    "index": 11,
-    "label": "capture/named-caller",
-    "source_sha256": "b0ae892639cbadb076f8557c01e0fd8105b057aed271c0b8ecfef58809e05239",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "af8e5f07dcc9173a33444faefef43dfcf7ff1356ea8e36162a2e458259b12973"
-  },
-  "012": {
-    "index": 12,
-    "label": "capture/callback-any",
-    "source_sha256": "6a663b6c2d3629208eb9336b5bdc4f71e2958f4203bbc93a59ab9161e725521d",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Bool",
-              "0x981333df5abb043f",
-              true
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "6cc55fcb2d776bf3c349f489808e0b5347b040a2d31c180f917217b071f2df3b"
-  },
-  "013": {
-    "index": 13,
-    "label": "capture/callback-sort",
-    "source_sha256": "f3e4d056a8a09cf029c8fcd29ec3ccc8230c04305ccedc05ed9af2dbde1221e6",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Vec",
-              "0xc11b1e769aea94f2",
-              [
-                1,
-                2,
-                3
-              ]
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "1"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "2"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "3"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "00a817c8979d02a28d1d727c60677a34faac1f56e12a8d266327a4eb61403573"
-  },
-  "014": {
-    "index": 14,
-    "label": "capture/receiver-alias",
-    "source_sha256": "e4b18dbfde4bc8bd7cba16a10bf764d278da1be59975834925fda03cf802e32e",
-    "fuel": 200000,
-    "disposition": "Exact-or-Retained-diag",
-    "reason": "Preserve the stock leased-parent error kind and display exactly; if fresh detail or chain differs, require a bounded twin.",
-    "stock_error": {
-      "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
-      "display": "Cannot read, the value is being written to"
-    },
-    "stock_observation_sha256": "f92b6d260b03dba0a40d769ae7aa43f73b8a45db495fb149b7d7a0724888dad5"
-  },
-  "015": {
-    "index": 15,
-    "label": "error/wrong-arity",
-    "source_sha256": "05d196a94558c53ca69a1ffbf37ace3930245ec5f4fff5505ab70e769053ae4e",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "error",
-        "kind": "BadArgumentCount { actual: 1, expected: 2 }",
-        "display": "Wrong number of arguments 1, expected 2",
-        "sites": [
-          {
-            "end": 38,
-            "frames": "[]",
-            "source": 0,
-            "start": 35
-          }
-        ],
-        "chain": []
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "9b0c7ea163b818d53e13e1a70074e244485319b92ea6300abd8977f917867be5"
-  },
-  "016": {
-    "index": 16,
-    "label": "error/panic-in-call",
-    "source_sha256": "6b5a3448062adab324dbfaa316200d19db4c18ac7b9552da861bc51ee64b4286",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "error",
-        "kind": "Panic { reason: Panic { inner: \"capture\" } }",
-        "display": "Panicked: capture",
-        "sites": [
-          {
-            "end": 56,
-            "frames": "[CallFrame { ip: 5, top: 0, isolated: None, out: keep(2) }]",
-            "source": 0,
-            "start": 39
-          }
-        ],
-        "chain": []
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "f562098749b799fa69ef4e7d4f68bbe54a5a0c487510e51460f3bb517a573e25"
-  },
-  "017": {
-    "index": 17,
-    "label": "error/captured-type-at-use",
-    "source_sha256": "5c88a599e1895e3266a03857b3b8b9eecf714292000a0c4c9f44e8d7b23d8962",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "error",
-        "kind": "ExpectedType { expected: Any(AnyTypeInfo { full_name: 0x6498c6dd8360, hash: 0x2f4720d36d2b70c }), actual: Any(AnyTypeInfo { full_name: 0x6498c6a85120, hash: 0x1cad9186c9641c4f }) }",
-        "display": "Expected type `std::string::String` but found `std::i64`",
-        "sites": [
-          {
-            "end": 37,
-            "frames": "[CallFrame { ip: 5, top: 0, isolated: None, out: keep(2) }]",
-            "source": 0,
-            "start": 34
-          }
-        ],
-        "chain": [
-          {
-            "display": "Bad argument #1",
-            "kind": "BadArgument { arg: 1 }"
-          }
-        ]
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "98d92abb67d09b1508f8c5e9cbdb5d73888e1aaf1b0b9368a510d627e4759617"
-  },
-  "018": {
-    "index": 18,
-    "label": "error/fuel-in-call",
-    "source_sha256": "34f78f345c1939c1f4e31ff6176837f8e2d483451697a1fb5128d321518b0c8f",
-    "fuel": 100,
-    "disposition": "Retained-fuel",
-    "reason": "Must exhaust; fresh cleanup must be clean and executor reuse must pass. No fuel-charge parity.",
-    "stock_outcome": {
-      "status": "error",
-      "kind": "Halted { halt: Limited }",
-      "display": "Exhausted the budget it was given",
-      "sites": [],
-      "chain": []
-    },
-    "fresh_requirements": [
-      "fuel exhaustion",
-      "clean cleanup",
-      "executor reuse passes"
-    ],
-    "stock_observation_sha256": "9f5d24b804f25d97dedec39725714ce8d46ca0054fe44e8656c7b5304a8b2f67"
-  },
-  "019": {
-    "index": 19,
-    "label": "identity/function-value",
-    "source_sha256": "b19f1073a2853b0d0009f20212e091864561cd9dacd04ab4a9788d9ff2713f1c",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "String",
-              "0x2f4720d36d2b70c",
-              "3a3a7374643a3a6f70733a3a46756e6374696f6e"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "c6c67eaf40a113506762e9d3eeb10e0906656c8b819064733d71ba0b83b7df1a"
-  },
-  "020": {
-    "index": 20,
-    "label": "capture/cycle-in-vector",
-    "source_sha256": "05edf8a01c113bb8eb94261a511eba47dfc9e76cf43785b2b7e9a3e1a0fbc5ea",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "U64",
-              "0xb41669ccb4fdb76a",
-              "1"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "29aa0e565782b8a1229c236efba0ca0703ac197051d69f52e07489a65835a672"
-  },
-  "021": {
-    "index": 21,
-    "label": "capture/independent-closures",
-    "source_sha256": "755240d18f63f9032101aa71153492807702dde408c95123ea9c790b14accd9c",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Tuple",
-              "0xfeb65b3f4755aef0",
-              [
-                1,
-                2
-              ]
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "4"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "6"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "d2088ca2fdc1c5a0b9c19d94b8ec68da8bb053b52067e86d4821556a0b3fcbaa"
-  },
-  "022": {
-    "index": 22,
-    "label": "capture/closure-created-in-loop-and-escape",
-    "source_sha256": "578280a4b76b41954fd1aeb09dd55b0e80eb0adaa8b22636a0c41fb4cd712369",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Tuple",
-              "0xfeb65b3f4755aef0",
-              [
-                1,
-                2,
-                3
-              ]
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "1"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "2"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "3"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "cf0ec9be301e895507fd02bc4640e305104ffc495c3ec723c96c50e6913a0ce2"
-  },
-  "023": {
-    "index": 23,
-    "label": "capture/create-event-order",
-    "source_sha256": "3a7a7f047c153d0ba39092a98beff7b0206d29ca70cd4b61915033a35152589a",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "9"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [
-        {
-          "kind": "i64",
-          "tag": 1,
-          "value": "4"
-        },
-        {
-          "kind": "i64",
-          "tag": 2,
-          "value": "5"
-        }
-      ],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "f984def09b8a9bbb1b26d5b03b808478af12e16ffa7152930492cc3dffa993ac"
-  },
-  "024": {
-    "index": 24,
-    "label": "capture/call-event-order",
-    "source_sha256": "efdbd9c96c49eaaaba122a32920a67eb06bec002ca3ebf77042e1a484fadba36",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Tuple",
-              "0xfeb65b3f4755aef0",
-              [
-                1,
-                2
-              ]
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "8"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "8"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [
-        {
-          "kind": "i64",
-          "tag": 1,
-          "value": "8"
-        },
-        {
-          "kind": "i64",
-          "tag": 2,
-          "value": "8"
-        },
-        {
-          "kind": "i64",
-          "tag": 2,
-          "value": "8"
-        }
-      ],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "ad3cad1af1b21625f3f296e55ea3e6e8fd25d71cb08ebd10f1e256b939679378"
-  },
-  "025": {
-    "index": 25,
-    "label": "capture/nested-event-order",
-    "source_sha256": "36d9101000e6b7a0aa916cc0964eb7214c6a8bf64bae3477b697f797c74d0538",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "9"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [
-        {
-          "kind": "i64",
-          "tag": 1,
-          "value": "6"
-        },
-        {
-          "kind": "i64",
-          "tag": 2,
-          "value": "3"
-        },
-        {
-          "kind": "i64",
-          "tag": 3,
-          "value": "9"
-        }
-      ],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "7913c8a3d0928a24cd934a97bb3d27b05e73454aa1aa803bdc28b965bfdf8d45"
-  },
-  "026": {
-    "index": 26,
-    "label": "callback/any-order-short-circuit",
-    "source_sha256": "c615cc38757de1791953de1255d952222f3509fc996454804edd1193608c10ec",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Bool",
-              "0x981333df5abb043f",
-              true
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [
-        {
-          "kind": "i64",
-          "tag": 1,
-          "value": "2"
-        },
-        {
-          "kind": "bool",
-          "tag": 1,
-          "value": false
-        },
-        {
-          "kind": "bool",
-          "tag": 2,
-          "value": true
-        }
-      ],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "888eb64195a21413f6502fc0ef5fa38a28fd6e216bc513c86d1a6047cf2d6e3f"
-  },
-  "027": {
-    "index": 27,
-    "label": "callback/sort-order",
-    "source_sha256": "310812376328de39457ba80a7a887557bc8857d21e65033c2844f80458d92b1c",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "Vec",
-              "0xc11b1e769aea94f2",
-              [
-                1,
-                2,
-                3
-              ]
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "1"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "2"
-            ],
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "3"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [
-        {
-          "kind": "i64",
-          "tag": 1,
-          "value": "0"
-        },
-        {
-          "kind": "i64",
-          "tag": 2,
-          "value": "0"
-        },
-        {
-          "kind": "i64",
-          "tag": 2,
-          "value": "0"
-        },
-        {
-          "kind": "i64",
-          "tag": 2,
-          "value": "0"
-        }
-      ],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "07d489fe2a07342b90392dc4b058b03bbce2524d97827ff0485501781118e392"
-  },
-  "028": {
-    "index": 28,
-    "label": "callback/leased-parent-capture",
-    "source_sha256": "e4b18dbfde4bc8bd7cba16a10bf764d278da1be59975834925fda03cf802e32e",
-    "fuel": 200000,
-    "disposition": "Exact-or-Retained-diag",
-    "reason": "Preserve the stock leased-parent error kind and display exactly; if fresh detail or chain differs, require a bounded twin.",
-    "stock_error": {
-      "kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
-      "display": "Cannot read, the value is being written to"
-    },
-    "stock_observation_sha256": "f74c213de67ed8b25bbfc85c2d7b0140b90175b6ff015514232832ec42ee402f"
-  },
-  "029": {
-    "index": 29,
-    "label": "perf/closure-create-256",
-    "source_sha256": "804776744671947fe2caf7b09e5789958866d1c6cff594833c343edf41bbabd8",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "32640"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "45fbd639af3f92e7d6315351c585dc40a307cd5a2eccf3f4f637f8dccb23b3f9"
-  },
-  "030": {
-    "index": 30,
-    "label": "perf/closure-invoke-256",
-    "source_sha256": "1799690fba510ba0d79988b8f4f22d10aa7515a067dafd9f2366d54ec1cd3c11",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "32896"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "ab3524b5ef5756f8aeae619318facd789101cb63f089e0439962290d494f1a2d"
-  },
-  "031": {
-    "index": 31,
-    "label": "perf/plain-function-256",
-    "source_sha256": "793482a327ffa05b3266620fb15ef1640288aff240b4db352609065f85c9d4d7",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "32896"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "5d7206e5215b5b7458f8dbeb9b2c0fd3ed7946f5b8d2add6f13e705c89891fb5"
-  },
-  "032": {
-    "index": 32,
-    "label": "async/refused",
-    "source_sha256": "416494cab2035c06474f930c7d99a372a29ef16336db5968cb22cbc66b196af6",
-    "fuel": 200000,
-    "disposition": "Refused-surface",
-    "reason": "Fresh continues refusing async closures at the frozen source site; stock value is recorded but not owed.",
-    "stock_outcome": {
-      "status": "value",
-      "graph": {
-        "nodes": [
-          [
-            "I64",
-            "0x1cad9186c9641c4f",
-            "7"
-          ]
-        ],
-        "root": 0
-      }
-    },
-    "fresh_refusal_site": {
-      "source_id": 0,
-      "start": 20,
-      "end": 32,
-      "source_slice": "async |x|x+1"
-    },
-    "stock_observation_sha256": "9646971bdea97b95c848b491b37bc00cf9b471c49bbbfdc5b21bdf71d9b4de7c"
-  },
-  "033": {
-    "index": 33,
-    "label": "capture/store-object",
-    "source_sha256": "2a163242c4e00601d4793b9be381cbd0730604b899da500181f05a48b09daec6",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "8"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "2d1a0c3797c8608da764ed419ad26cce30ad7811103c23f5274cd4242769df68"
-  },
-  "034": {
-    "index": 34,
-    "label": "capture/closure-captures-closure",
-    "source_sha256": "1e91dcf1908900aae8e4ecf0be0cb43610438c65e1b9065151c9d92e29b59946",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "4"
-            ]
-          ],
-          "root": 0
-        }
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "5f5c30817b75b05b65bec4c81c3472f39817dc1fffa27e3b61e7679a9e130d51"
-  },
-  "035": {
-    "index": 35,
-    "label": "identity/format",
-    "source_sha256": "8c9de9d06f836b4c6744528bdcc53394d0f602989a4cbc492a9a33621d5eb01e",
-    "fuel": 200000,
-    "disposition": "Retained-format",
-    "reason": "Freeze fresh rendering literally after implementation; require env:[2]. Stock `at: 0x8` is a unit code offset and must not be fabricated.",
-    "stock_format": "closure (at: 0x8, env:[2])",
-    "fresh_requirements": [
-      "freeze fresh display literally after first implementation result",
-      "rendered environment suffix contains env:[2]"
-    ],
-    "stock_observation_sha256": "41b2200bb0801e9c0a1ed8332a5fb19d288e22c0ad438ce226a6752718cd509a"
-  },
-  "036": {
-    "index": 36,
-    "label": "capture/store-object-method-call",
-    "source_sha256": "64d9283554618798c4fc1e469fbcfcab6a9a26c7f986ffdfb67aa7f77d61e4f7",
-    "fuel": 200000,
-    "disposition": "Exact",
-    "reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020.",
-    "fresh_expectation": {
-      "outcome": {
-        "status": "error",
-        "kind": "MissingInstanceFunction { hash: 0x72ab1e7475b6df25, instance: Any(AnyTypeInfo { full_name: 0x6219d86bc270, hash: 0x2f5c2c7799148025 }) }",
-        "display": "Missing instance function `0x72ab1e7475b6df25` for `std::object::Object`",
-        "sites": [
-          {
-            "end": 50,
-            "frames": "[]",
-            "source": 0,
-            "start": 42
-          }
-        ],
-        "chain": []
-      },
-      "events": [],
-      "reuse": {
-        "status": "value",
-        "graph": {
-          "nodes": [
-            [
-              "I64",
-              "0x1cad9186c9641c4f",
-              "7"
-            ]
-          ],
-          "root": 0
-        }
-      }
-    },
-    "stock_observation_sha256": "03a72390de377cbde9a5fe37ffec518595c4135419d2ea6e0ec591cbb19b7ce7"
-  }
+	"000": {
+		"index": 0,
+		"label": "capture/read",
+		"source_sha256": "96f3bc2731d5daf8592f368ede05a6691fec807d0a0e87ccc4a9fa77187d893d",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"001": {
+		"index": 1,
+		"label": "capture/rebind-after-create",
+		"source_sha256": "1176e719d32a4580f3fd8a547ce5e2befc70027b562be3655b9377630346ded9",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"002": {
+		"index": 2,
+		"label": "capture/shadow-after-create",
+		"source_sha256": "6ed3046f82e29973bc7e4de1d2feffb3ef502b0692cbc5c9b7f8d3354146deb8",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"003": {
+		"index": 3,
+		"label": "capture/scalar-assign-repeated",
+		"source_sha256": "a4f654378db4a44cfc97819024a596a673d3485450f77422839c9063413628b8",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"004": {
+		"index": 4,
+		"label": "capture/heap-handle-mutation",
+		"source_sha256": "3719270e8f12ee0cbb44d44a04ee61bffabdc6e6904a23552b5641fb1609ac9b",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"005": {
+		"index": 5,
+		"label": "capture/move-scalar",
+		"source_sha256": "56ee01721ade3ce61099b548ec2335dbbea6b8392ebcb39900f14898e787a335",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"006": {
+		"index": 6,
+		"label": "capture/move-heap",
+		"source_sha256": "0d14daefdef0dec19c02f1e0b79a0caf85426a70d78d2bcd2fa4c1ff7da88565",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"007": {
+		"index": 7,
+		"label": "capture/nested",
+		"source_sha256": "8bd4008c2348c99867831e8e25b37468845ceb717f0c56f6f73b2f50579030a8",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"008": {
+		"index": 8,
+		"label": "capture/loop-environments",
+		"source_sha256": "4c903f0d25963e65396b2cd77183fc0348132565e8d9b40f30bf37508a4219db",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"009": {
+		"index": 9,
+		"label": "capture/return-escape",
+		"source_sha256": "36097b945f51dddc39ab942f97b0a6dba0eb0c218601627f580d53e54f2bc242",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"010": {
+		"index": 10,
+		"label": "capture/store-vector",
+		"source_sha256": "263c394666b35777e5685353a785881bf8ee0c0cf752438d2d2dd674bc1756c6",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"011": {
+		"index": 11,
+		"label": "capture/named-caller",
+		"source_sha256": "b0ae892639cbadb076f8557c01e0fd8105b057aed271c0b8ecfef58809e05239",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"012": {
+		"index": 12,
+		"label": "capture/callback-any",
+		"source_sha256": "6a663b6c2d3629208eb9336b5bdc4f71e2958f4203bbc93a59ab9161e725521d",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"013": {
+		"index": 13,
+		"label": "capture/callback-sort",
+		"source_sha256": "f3e4d056a8a09cf029c8fcd29ec3ccc8230c04305ccedc05ed9af2dbde1221e6",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"014": {
+		"index": 14,
+		"label": "capture/receiver-alias",
+		"source_sha256": "e4b18dbfde4bc8bd7cba16a10bf764d278da1be59975834925fda03cf802e32e",
+		"fuel": 200000,
+		"disposition": "Exact-or-Retained-diag",
+		"reason": "Preserve the stock leased-parent error kind and display exactly; if fresh detail or chain differs, require a bounded twin.",
+		"stock_error": {
+			"kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+			"display": "Cannot read, the value is being written to"
+		}
+	},
+	"015": {
+		"index": 15,
+		"label": "error/wrong-arity",
+		"source_sha256": "05d196a94558c53ca69a1ffbf37ace3930245ec5f4fff5505ab70e769053ae4e",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"016": {
+		"index": 16,
+		"label": "error/panic-in-call",
+		"source_sha256": "6b5a3448062adab324dbfaa316200d19db4c18ac7b9552da861bc51ee64b4286",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"017": {
+		"index": 17,
+		"label": "error/captured-type-at-use",
+		"source_sha256": "5c88a599e1895e3266a03857b3b8b9eecf714292000a0c4c9f44e8d7b23d8962",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"018": {
+		"index": 18,
+		"label": "error/fuel-in-call",
+		"source_sha256": "34f78f345c1939c1f4e31ff6176837f8e2d483451697a1fb5128d321518b0c8f",
+		"fuel": 100,
+		"disposition": "Retained-fuel",
+		"reason": "Must exhaust; fresh cleanup must be clean and executor reuse must pass. No fuel-charge parity.",
+		"stock_outcome": {
+			"status": "error",
+			"kind": "Halted { halt: Limited }",
+			"display": "Exhausted the budget it was given",
+			"sites": [],
+			"chain": []
+		},
+		"fresh_requirements": [
+			"fuel exhaustion",
+			"clean cleanup",
+			"executor reuse passes"
+		]
+	},
+	"019": {
+		"index": 19,
+		"label": "identity/function-value",
+		"source_sha256": "b19f1073a2853b0d0009f20212e091864561cd9dacd04ab4a9788d9ff2713f1c",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"020": {
+		"index": 20,
+		"label": "capture/cycle-in-vector",
+		"source_sha256": "05edf8a01c113bb8eb94261a511eba47dfc9e76cf43785b2b7e9a3e1a0fbc5ea",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"021": {
+		"index": 21,
+		"label": "capture/independent-closures",
+		"source_sha256": "755240d18f63f9032101aa71153492807702dde408c95123ea9c790b14accd9c",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"022": {
+		"index": 22,
+		"label": "capture/closure-created-in-loop-and-escape",
+		"source_sha256": "578280a4b76b41954fd1aeb09dd55b0e80eb0adaa8b22636a0c41fb4cd712369",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"023": {
+		"index": 23,
+		"label": "capture/create-event-order",
+		"source_sha256": "3a7a7f047c153d0ba39092a98beff7b0206d29ca70cd4b61915033a35152589a",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"024": {
+		"index": 24,
+		"label": "capture/call-event-order",
+		"source_sha256": "efdbd9c96c49eaaaba122a32920a67eb06bec002ca3ebf77042e1a484fadba36",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"025": {
+		"index": 25,
+		"label": "capture/nested-event-order",
+		"source_sha256": "36d9101000e6b7a0aa916cc0964eb7214c6a8bf64bae3477b697f797c74d0538",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"026": {
+		"index": 26,
+		"label": "callback/any-order-short-circuit",
+		"source_sha256": "c615cc38757de1791953de1255d952222f3509fc996454804edd1193608c10ec",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"027": {
+		"index": 27,
+		"label": "callback/sort-order",
+		"source_sha256": "310812376328de39457ba80a7a887557bc8857d21e65033c2844f80458d92b1c",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"028": {
+		"index": 28,
+		"label": "callback/leased-parent-capture",
+		"source_sha256": "e4b18dbfde4bc8bd7cba16a10bf764d278da1be59975834925fda03cf802e32e",
+		"fuel": 200000,
+		"disposition": "Exact-or-Retained-diag",
+		"reason": "Preserve the stock leased-parent error kind and display exactly; if fresh detail or chain differs, require a bounded twin.",
+		"stock_error": {
+			"kind": "AccessError { error: AccessError { kind: NotAccessibleRef(Snapshot(-X000000)) } }",
+			"display": "Cannot read, the value is being written to"
+		}
+	},
+	"029": {
+		"index": 29,
+		"label": "perf/closure-create-256",
+		"source_sha256": "804776744671947fe2caf7b09e5789958866d1c6cff594833c343edf41bbabd8",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"030": {
+		"index": 30,
+		"label": "perf/closure-invoke-256",
+		"source_sha256": "1799690fba510ba0d79988b8f4f22d10aa7515a067dafd9f2366d54ec1cd3c11",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"031": {
+		"index": 31,
+		"label": "perf/plain-function-256",
+		"source_sha256": "793482a327ffa05b3266620fb15ef1640288aff240b4db352609065f85c9d4d7",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"032": {
+		"index": 32,
+		"label": "async/refused",
+		"source_sha256": "416494cab2035c06474f930c7d99a372a29ef16336db5968cb22cbc66b196af6",
+		"fuel": 200000,
+		"disposition": "Refused-surface",
+		"reason": "Fresh continues refusing async closures at the frozen source site; stock value is recorded but not owed.",
+		"stock_outcome": {
+			"status": "value",
+			"graph": {
+				"nodes": [
+					[
+						"I64",
+						"0x1cad9186c9641c4f",
+						"7"
+					]
+				],
+				"root": 0
+			}
+		},
+		"fresh_refusal_site": {
+			"source_id": 0,
+			"start": 20,
+			"end": 32,
+			"source_slice": "async |x|x+1"
+		}
+	},
+	"033": {
+		"index": 33,
+		"label": "capture/store-object",
+		"source_sha256": "2a163242c4e00601d4793b9be381cbd0730604b899da500181f05a48b09daec6",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"034": {
+		"index": 34,
+		"label": "capture/closure-captures-closure",
+		"source_sha256": "1e91dcf1908900aae8e4ecf0be0cb43610438c65e1b9065151c9d92e29b59946",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	},
+	"035": {
+		"index": 35,
+		"label": "identity/format",
+		"source_sha256": "8c9de9d06f836b4c6744528bdcc53394d0f602989a4cbc492a9a33621d5eb01e",
+		"fuel": 200000,
+		"disposition": "Retained-format",
+		"reason": "Freeze fresh rendering literally after implementation; require env:[2]. Stock `at: 0x8` is a unit code offset and must not be fabricated.",
+		"stock_format": "closure (at: 0x8, env:[2])",
+		"fresh_requirements": [
+			"freeze fresh display literally after first implementation result",
+			"rendered environment suffix contains env:[2]"
+		]
+	},
+	"036": {
+		"index": 36,
+		"label": "capture/store-object-method-call",
+		"source_sha256": "64d9283554618798c4fc1e469fbcfcab6a9a26c7f986ffdfb67aa7f77d61e4f7",
+		"fuel": 200000,
+		"disposition": "Exact",
+		"reason": "Fresh outcome graph/error and sites, event tape, and executor reuse match frozen stock; cycle ownership/reclamation is additional fresh-only testing for row 020."
+	}
 }

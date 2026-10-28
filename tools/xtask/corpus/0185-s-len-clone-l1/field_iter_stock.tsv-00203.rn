@@ -1,0 +1,1 @@
+pub fn main() { let x=#{x:10}; for p in x { for q in x { break; } break; } x.y=2; x.y }

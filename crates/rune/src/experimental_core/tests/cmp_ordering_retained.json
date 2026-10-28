@@ -1,265 +1,195 @@
 {
-  "schema": 2,
-  "leased_parent": {
-    "follow_up": "D-family: leased-parent write borrow primary Snapshot/readers and native wrapper, beside leased-drop take",
-    "fresh": {
-      "chain": [
-        {
-          "display": "Bad argument #0",
-          "kind": "BadArgument { arg: 0 }",
-          "typed": {
-            "arg": 0,
-            "tag": "BadArgument"
-          }
-        }
-      ],
-      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
-      "typed": {
-        "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
-      }
-    },
-    "index": 170,
-    "label": "access/leased-parent-mutate",
-    "p1_fresh_counts": {
-      "/chain/0/kind": 0,
-      "/kind": 0,
-      "/raw": 0,
-      "/typed/raw_kind": 0
-    },
-    "p1_stock_counts": {
-      "/chain/0/kind": 0,
-      "/kind": 0,
-      "/raw": 0,
-      "/typed/raw_kind": 0
-    },
-    "paths": [
-      "kind",
-      "typed.raw_kind",
-      "chain"
-    ],
-    "retained": [
-      "Retained-kind",
-      "Retained-chain"
-    ],
-    "ruling_message": "01a13e28-562d-75dd-b7a6-87c1473e4244",
-    "ruling_seq": 14575,
-    "schema": 1,
-    "source_hex": "70756220666e206d61696e28297b6c657420763d5b2261225d3b666f72207820696e20767b782e636d70287b762e7075736828226322293b2262227d293b7d377d0a70756220666e2063395f726575736528297b377d",
-    "source_sha256": "ed04c37527950d21b66bfea500cac197003fc09b5c6ee69d008c32ef432a8519",
-    "stock": {
-      "chain": [
-        {
-          "display": "Bad argument #0",
-          "kind": "BadArgument { arg: 0 }",
-          "typed": {
-            "arg": 0,
-            "tag": "BadArgument"
-          }
-        }
-      ],
-      "kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
-      "typed": {
-        "raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
-      }
-    },
-    "witness": {
-      "base": "620ae245c66ef0e9491eab33388a362c8a12e60d",
-      "binary_sha256": "20dff3d71223dfb06f765b0c906c0c5ecae2ce165e5ca466368cf51f6d65fd24",
-      "observations_sha256": "d0228f749815a5edc3e75e09e00d07a9d479dcb49f1f01b7ff0bb1d5b9855b44",
-      "source": "70756220666e206d61696e28297b6c657420763d5b2261225d3b666f72207820696e20767b762e7075736828226322293b7d377d"
-    },
-    "ruling_message_d1c": "01a14f55-a78a-7294-b0f4-e7662161c89a",
-    "ruling_seq_d1c": 19886
-  },
-  "diagnostics": {
-    "schema": 1,
-    "rows": [
-      {
-        "index": 120,
-        "label": "format/display/Less",
-        "retained": {
-          "fresh_sites": [
-            {
-              "end": 52,
-              "frames": "[]",
-              "source": 0,
-              "start": 14
-            }
-          ],
-          "invocation_hex": "666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a4c65737329",
-          "stock_sites": [
-            {
-              "end": 51,
-              "frames": "[]",
-              "source": 0,
-              "start": 0
-            }
-          ]
-        },
-        "source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a4c657373297d0a70756220666e2063395f726575736528297b377d",
-        "category": "Retained-site",
-        "source_sha256": "a335297156466dd086cfa6418d55554aac98fd507c89215442586ab8b49e6b53"
-      },
-      {
-        "index": 122,
-        "label": "format/display/Equal",
-        "retained": {
-          "fresh_sites": [
-            {
-              "end": 53,
-              "frames": "[]",
-              "source": 0,
-              "start": 14
-            }
-          ],
-          "invocation_hex": "666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a457175616c29",
-          "stock_sites": [
-            {
-              "end": 52,
-              "frames": "[]",
-              "source": 0,
-              "start": 0
-            }
-          ]
-        },
-        "source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a457175616c297d0a70756220666e2063395f726575736528297b377d",
-        "category": "Retained-site",
-        "source_sha256": "16f74a8939062209a5a4ed51018678a103d58dff83b7d0ccb1919b7020f898e6"
-      },
-      {
-        "index": 124,
-        "label": "format/display/Greater",
-        "retained": {
-          "fresh_sites": [
-            {
-              "end": 55,
-              "frames": "[]",
-              "source": 0,
-              "start": 14
-            }
-          ],
-          "invocation_hex": "666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a4772656174657229",
-          "stock_sites": [
-            {
-              "end": 54,
-              "frames": "[]",
-              "source": 0,
-              "start": 0
-            }
-          ]
-        },
-        "source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a47726561746572297d0a70756220666e2063395f726575736528297b377d",
-        "category": "Retained-site",
-        "source_sha256": "34b812c22aae5e484a46e853af2d1aaa6f8ae66eb2a1dbd9fe158b62fe5f586c"
-      },
-      {
-        "index": 127,
-        "label": "format/display-nested",
-        "retained": {
-          "fresh_sites": [
-            {
-              "end": 55,
-              "frames": "[]",
-              "source": 0,
-              "start": 14
-            }
-          ],
-          "invocation_hex": "666f726d61742128227b7d222c287374643a3a636d703a3a4f72646572696e673a3a4c6573732c2929",
-          "stock_sites": [
-            {
-              "end": 54,
-              "frames": "[]",
-              "source": 0,
-              "start": 0
-            }
-          ]
-        },
-        "source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c287374643a3a636d703a3a4f72646572696e673a3a4c6573732c29297d0a70756220666e2063395f726575736528297b377d",
-        "category": "Retained-site",
-        "source_sha256": "acf332962f2c7618ea7851b805efdad6b434c3d6e9ec36ee472aae1f7820d32a"
-      },
-      {
-        "index": 173,
-        "label": "frames/missing",
-        "retained": {
-          "call_chain": [
-            {
-              "end": 41,
-              "source": 0,
-              "start": 34
-            },
-            {
-              "end": 63,
-              "source": 0,
-              "start": 56
-            }
-          ],
-          "caller_hex": [
-            "696e6e65722829",
-            "6f757465722829"
-          ],
-          "fresh_sites": [
-            {
-              "end": 22,
-              "frames": "[{\"end\":41,\"source\":0,\"start\":34},{\"end\":63,\"source\":0,\"start\":56}]",
-              "source": 0,
-              "start": 11
-            }
-          ],
-          "stock_sites": [
-            {
-              "end": 22,
-              "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 8, top: 1, isolated: None, out: keep(0) }]",
-              "source": 0,
-              "start": 11
-            }
-          ]
-        },
-        "source_hex": "666e20696e6e657228297b747275652e636d702831297d666e206f7574657228297b696e6e657228297d70756220666e206d61696e28297b6f7574657228297d0a70756220666e2063395f726575736528297b377d",
-        "category": "Retained-frame",
-        "source_sha256": "cbb65703d94e95efe5f33c566ddf3fba430c9fadfa54b9125c39fc2e0eacc676"
-      },
-      {
-        "index": 174,
-        "label": "frames/invalid-rhs",
-        "retained": {
-          "call_chain": [
-            {
-              "end": 42,
-              "source": 0,
-              "start": 35
-            },
-            {
-              "end": 64,
-              "source": 0,
-              "start": 57
-            }
-          ],
-          "caller_hex": [
-            "696e6e65722829",
-            "6f757465722829"
-          ],
-          "fresh_sites": [
-            {
-              "end": 23,
-              "frames": "[{\"end\":42,\"source\":0,\"start\":35},{\"end\":64,\"source\":0,\"start\":57}]",
-              "source": 0,
-              "start": 11
-            }
-          ],
-          "stock_sites": [
-            {
-              "end": 23,
-              "frames": "[CallFrame { ip: 2, top: 0, isolated: None, out: keep(0) }, CallFrame { ip: 8, top: 1, isolated: None, out: keep(0) }]",
-              "source": 0,
-              "start": 11
-            }
-          ]
-        },
-        "source_hex": "666e20696e6e657228297b312e636d702866616c7365297d666e206f7574657228297b696e6e657228297d70756220666e206d61696e28297b6f7574657228297d0a70756220666e2063395f726575736528297b377d",
-        "category": "Retained-frame",
-        "source_sha256": "514a55630f58f9343156cb4e192de5bc6e2f2e28aaf1d51e6dc6e7f856ad8641"
-      }
-    ]
-  }
+	"schema": 2,
+	"leased_parent": {
+		"follow_up": "D-family: leased-parent write borrow primary Snapshot/readers and native wrapper, beside leased-drop take",
+		"fresh": {
+			"chain": [
+				{
+					"display": "Bad argument #0",
+					"kind": "BadArgument { arg: 0 }",
+					"typed": {
+						"arg": 0,
+						"tag": "BadArgument"
+					}
+				}
+			],
+			"kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }",
+			"typed": {
+				"raw_kind": "AccessError { error: AccessError { kind: NotAccessibleMut(Snapshot(--000001)) } }"
+			}
+		},
+		"index": 170,
+		"label": "access/leased-parent-mutate",
+		"p1_fresh_counts": {
+			"/chain/0/kind": 0,
+			"/kind": 0,
+			"/raw": 0,
+			"/typed/raw_kind": 0
+		},
+		"p1_stock_counts": {
+			"/chain/0/kind": 0,
+			"/kind": 0,
+			"/raw": 0,
+			"/typed/raw_kind": 0
+		},
+		"paths": [
+			"kind",
+			"typed.raw_kind",
+			"chain"
+		],
+		"retained": [
+			"Retained-kind",
+			"Retained-chain"
+		],
+		"ruling_message": "01a13e28-562d-75dd-b7a6-87c1473e4244",
+		"ruling_seq": 14575,
+		"schema": 1,
+		"source_hex": "70756220666e206d61696e28297b6c657420763d5b2261225d3b666f72207820696e20767b782e636d70287b762e7075736828226322293b2262227d293b7d377d0a70756220666e2063395f726575736528297b377d",
+		"source_sha256": "ed04c37527950d21b66bfea500cac197003fc09b5c6ee69d008c32ef432a8519",
+		"ruling_message_d1c": "01a14f55-a78a-7294-b0f4-e7662161c89a",
+		"ruling_seq_d1c": 19886
+	},
+	"diagnostics": {
+		"schema": 1,
+		"rows": [
+			{
+				"index": 120,
+				"label": "format/display/Less",
+				"retained": {
+					"fresh_sites": [
+						{
+							"end": 52,
+							"frames": "[]",
+							"source": 0,
+							"start": 14
+						}
+					],
+					"invocation_hex": "666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a4c65737329"
+				},
+				"source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a4c657373297d0a70756220666e2063395f726575736528297b377d",
+				"category": "Retained-site",
+				"source_sha256": "a335297156466dd086cfa6418d55554aac98fd507c89215442586ab8b49e6b53"
+			},
+			{
+				"index": 122,
+				"label": "format/display/Equal",
+				"retained": {
+					"fresh_sites": [
+						{
+							"end": 53,
+							"frames": "[]",
+							"source": 0,
+							"start": 14
+						}
+					],
+					"invocation_hex": "666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a457175616c29"
+				},
+				"source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a457175616c297d0a70756220666e2063395f726575736528297b377d",
+				"category": "Retained-site",
+				"source_sha256": "16f74a8939062209a5a4ed51018678a103d58dff83b7d0ccb1919b7020f898e6"
+			},
+			{
+				"index": 124,
+				"label": "format/display/Greater",
+				"retained": {
+					"fresh_sites": [
+						{
+							"end": 55,
+							"frames": "[]",
+							"source": 0,
+							"start": 14
+						}
+					],
+					"invocation_hex": "666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a4772656174657229"
+				},
+				"source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c7374643a3a636d703a3a4f72646572696e673a3a47726561746572297d0a70756220666e2063395f726575736528297b377d",
+				"category": "Retained-site",
+				"source_sha256": "34b812c22aae5e484a46e853af2d1aaa6f8ae66eb2a1dbd9fe158b62fe5f586c"
+			},
+			{
+				"index": 127,
+				"label": "format/display-nested",
+				"retained": {
+					"fresh_sites": [
+						{
+							"end": 55,
+							"frames": "[]",
+							"source": 0,
+							"start": 14
+						}
+					],
+					"invocation_hex": "666f726d61742128227b7d222c287374643a3a636d703a3a4f72646572696e673a3a4c6573732c2929"
+				},
+				"source_hex": "70756220666e206d61696e28297b666f726d61742128227b7d222c287374643a3a636d703a3a4f72646572696e673a3a4c6573732c29297d0a70756220666e2063395f726575736528297b377d",
+				"category": "Retained-site",
+				"source_sha256": "acf332962f2c7618ea7851b805efdad6b434c3d6e9ec36ee472aae1f7820d32a"
+			},
+			{
+				"index": 173,
+				"label": "frames/missing",
+				"retained": {
+					"call_chain": [
+						{
+							"end": 41,
+							"source": 0,
+							"start": 34
+						},
+						{
+							"end": 63,
+							"source": 0,
+							"start": 56
+						}
+					],
+					"caller_hex": [
+						"696e6e65722829",
+						"6f757465722829"
+					],
+					"fresh_sites": [
+						{
+							"end": 22,
+							"frames": "[{\"end\":41,\"source\":0,\"start\":34},{\"end\":63,\"source\":0,\"start\":56}]",
+							"source": 0,
+							"start": 11
+						}
+					]
+				},
+				"source_hex": "666e20696e6e657228297b747275652e636d702831297d666e206f7574657228297b696e6e657228297d70756220666e206d61696e28297b6f7574657228297d0a70756220666e2063395f726575736528297b377d",
+				"category": "Retained-frame",
+				"source_sha256": "cbb65703d94e95efe5f33c566ddf3fba430c9fadfa54b9125c39fc2e0eacc676"
+			},
+			{
+				"index": 174,
+				"label": "frames/invalid-rhs",
+				"retained": {
+					"call_chain": [
+						{
+							"end": 42,
+							"source": 0,
+							"start": 35
+						},
+						{
+							"end": 64,
+							"source": 0,
+							"start": 57
+						}
+					],
+					"caller_hex": [
+						"696e6e65722829",
+						"6f757465722829"
+					],
+					"fresh_sites": [
+						{
+							"end": 23,
+							"frames": "[{\"end\":42,\"source\":0,\"start\":35},{\"end\":64,\"source\":0,\"start\":57}]",
+							"source": 0,
+							"start": 11
+						}
+					]
+				},
+				"source_hex": "666e20696e6e657228297b312e636d702866616c7365297d666e206f7574657228297b696e6e657228297d70756220666e206d61696e28297b6f7574657228297d0a70756220666e2063395f726575736528297b377d",
+				"category": "Retained-frame",
+				"source_sha256": "514a55630f58f9343156cb4e192de5bc6e2f2e28aaf1d51e6dc6e7f856ad8641"
+			}
+		]
+	}
 }

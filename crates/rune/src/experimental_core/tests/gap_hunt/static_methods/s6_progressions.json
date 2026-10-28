@@ -8241,7 +8241,7 @@
         "index": 233,
         "label": "recursion/forever-fuel",
         "source_sha256": "c1c078371b93e034f5055ca795564c256c567b8d66472cd06425ff8b3c8cc792",
-        "stock_row_sha256": "2f862216628314b58b59ba77d7488ff353a2dd6347a40b2c156129480f29fcfb"
+        "stock_row_sha256": "4fb60c5e0543d7ef8b2ef16e6f330cfbbb2f66fa891308974ab216acc69a4fd4"
       },
       "admitted": {
         "classification": "Retained-fuel",

@@ -1,0 +1,1 @@
+fn visit(x) { for v in x { return v; } [] } pub fn main() { let x=Some([1]); let a=visit(x); a.push(2); x }

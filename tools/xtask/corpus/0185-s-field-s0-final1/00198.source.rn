@@ -1,0 +1,102 @@
+// Record 0134, E2: z-scores and correlation with Candle only (no Polars).
+// For each of rnx's records (0133's D1): words, passages, code fences, table
+// rows, headings and title length. Which statistics move together, and which
+// documents are most unusual?
+// args: D1 directory, and optionally an output file for the comparison
+
+fn words(s) {
+    let out = [];
+    for w in s.replace("\n", " ").replace("\t", " ").replace("\r", " ").split(" ") {
+        if w != "" { out.push(w); }
+    }
+    out
+}
+
+/// 0133's frozen chunking rule, counting passages only.
+fn passages(body) {
+    let n = 0;
+    let cur = 0;
+    for para in body.split("\n\n") {
+        let w = words(para).len();
+        if w == 0 { continue; }
+        if w > 180 {
+            if cur > 0 { n += 1; cur = 0; }
+            n += (w + 179) / 180;
+            continue;
+        }
+        if cur + w > 180 { n += 1; cur = 0; }
+        cur += w;
+    }
+    if cur > 0 { n += 1; }
+    n
+}
+
+pub fn run(args) {
+    let dir = args[0];
+    let names = ["words", "passages", "code fences", "table rows", "headings", "title length"];
+    let docs = [];
+    let values = [];
+    for n in fs::read_dir(dir)? {
+        if !n.ends_with(".md") { continue; }
+        let text = fs::read(`${dir}/${n}`)?;
+        let first = text.split("\n").next().unwrap_or("");
+        let fences = 0;
+        let rows = 0;
+        let heads = 0;
+        for line in text.split("\n") {
+            if line.starts_with("```") { fences += 1; }
+            if line.starts_with("|") { rows += 1; }
+            if line.starts_with("#") { heads += 1; }
+        }
+        docs.push(n);
+        values.push(words(text).len());
+        values.push(passages(text[first.len()..]));
+        values.push(fences);
+        values.push(rows);
+        values.push(heads);
+        values.push(first.chars().count());
+    }
+    let n = docs.len();
+    let k = names.len();
+    let x = candle::Tensor::from_vec(values, [n, k], "f64")?;
+    // standardize each column: (x - mean) / sd, sd unbiased
+    let mu = x.mean_keepdim(0)?;
+    let sd = x.var_keepdim(0)?.sqrt()?;
+    let z = x.broadcast_sub(mu)?.broadcast_div(sd)?;
+    // the correlation matrix: z' z / (n - 1)
+    let corr = (z.t()?.matmul(z)? * (1.0 / (n - 1) as f64))?;
+    println!("{}", corr);
+    // the strongest pairs: |corr| over the strict upper triangle
+    let i = candle::Tensor::arange(0, k, "u32")?.unsqueeze(1)?;
+    let j = candle::Tensor::arange(0, k, "u32")?.unsqueeze(0)?;
+    let upper = j.broadcast_gt(i)?;
+    let a = corr.abs()?;
+    let masked = upper.where_cond(a, a.zeros_like()?)?;
+    let (top, at) = masked.flatten_all()?.topk(5, false)?;
+    let c = corr.to_vec2()?;
+    println!("strongest correlations:");
+    for p in at.to_vec()? {
+        let (r, q) = (p / k, p % k);
+        println!("  {:+.3}  {} ~ {}", c[r][q], names[r], names[q]);
+    }
+    // the most unusual documents: the largest |z| over any statistic
+    let (score, who) = z.abs()?.max(1)?.topk(5, false)?;
+    let s = score.to_vec()?;
+    println!("most unusual documents (max |z|):");
+    let w = 0;
+    let unusual = "";
+    for d in who.to_vec()? {
+        println!("  {:.2}  {}", s[w], docs[d]);
+        unusual += `unusual\t${s[w]}\t${docs[d]}\n`;
+        w += 1;
+    }
+    if args.len() > 1 {
+        // machine-readable, for the twin comparison: f64 text round-trips
+        let out = "";
+        for row in c { out += "corr"; for v in row { out += `\t${v}`; } out += "\n"; }
+        for p in at.to_vec()? { out += `pair\t${p / k}\t${p % k}\n`; }
+        fs::write(args[1], out + unusual)?;
+    }
+    println!("WORKFLOW OK e2");
+    Ok(())
+}

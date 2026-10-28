@@ -1,0 +1,7 @@
+pub fn run(args) {
+    let s = format!("{} and {}",
+        1, 2);
+    println!("{s}");
+    println!("WORKFLOW OK format");
+    Ok(())
+}

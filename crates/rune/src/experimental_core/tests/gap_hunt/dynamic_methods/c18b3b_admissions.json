@@ -8,7 +8,7 @@
         "index": 83,
         "label": "native/is-empty-script-only",
         "source_sha256": "0d4f4ccde11bb94d599e077f7cae2d442d678cfb559c2d562e5206f665707748",
-        "stock_row_sha256": "83de2d21aa5896086b14af55c7de41f499aee5d16d6b9b3958a22a6173df1afd",
+        "stock_row_sha256": "bb687c45f50b8530136002f3814afe74d87ce682ecb8ffaad551e14a3a0a1335",
         "classification": "Refused-native",
         "fresh": {
           "kind": "Unsupported",

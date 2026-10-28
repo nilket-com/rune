@@ -1,0 +1,1 @@
+struct P {x} fn g() {7} fn make_range() {0..2} fn index() {println!("index"); 0..2} fn rhs() {println!("rhs"); [7,8]} pub fn main() {let v=true; let lo=0; let hi=3; let r=lo..hi; v[r]=[7,8]; ()}

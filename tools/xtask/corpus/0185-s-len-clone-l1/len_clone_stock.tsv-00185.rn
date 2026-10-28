@@ -1,0 +1,1 @@
+struct P {x} fn g() { 7 } pub fn main() { let a=Some(P{x:1}); let b=a.clone(); b.0.x=5; (a,b) }

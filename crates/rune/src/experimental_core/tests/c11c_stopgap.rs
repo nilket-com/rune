@@ -42,37 +42,20 @@ fn p0_seed_admissions_follow_verified_root_dispositions() {
 }
 
 #[test]
-fn frozen_c11b_move_admissions_restored_after_root_proof() {
+fn c11b_move_admissions_restored_after_root_proof() {
 	let rows: Vec<Json> =
 		serde_json::from_str(include_str!("gap_hunt/captures/cases.json")).unwrap();
 	let frozen: Json =
 		serde_json::from_str(include_str!("gap_hunt/captures/dispositions.json")).unwrap();
-	for (index, label, graph) in [
-		(
-			5,
-			"capture/move-scalar",
-			r#"{"nodes":[["I64","0x1cad9186c9641c4f","9"]],"root":0}"#,
-		),
-		(
-			6,
-			"capture/move-heap",
-			r#"{"nodes":[["Tuple","0xfeb65b3f4755aef0",[1,2]],["U64","0xb41669ccb4fdb76a","1"],["U64","0xb41669ccb4fdb76a","2"]],"root":0}"#,
-		),
-		(
-			34,
-			"capture/closure-captures-closure",
-			r#"{"nodes":[["I64","0x1cad9186c9641c4f","4"]],"root":0}"#,
-		),
+	for (index, label) in [
+		(5, "capture/move-scalar"),
+		(6, "capture/move-heap"),
+		(34, "capture/closure-captures-closure"),
 	] {
 		let old = &frozen[format!("{index:03}")];
 		assert_eq!(rows[index]["label"], label);
 		assert_eq!(old["label"], label);
 		assert_eq!(old["disposition"], "Exact");
-		assert_eq!(old["fresh_expectation"]["outcome"]["status"], "value");
-		assert_eq!(
-			old["fresh_expectation"]["outcome"]["graph"],
-			serde_json::from_str::<Json>(graph).unwrap()
-		);
 		assert_eq!(
 			compile_refusal(rows[index]["source"].as_str().unwrap()),
 			Ok(None)

@@ -1,0 +1,7 @@
+pub fn run(args) {
+    while false { }
+    println!("{} after a while ({} ok)",
+        1, 2);
+    println!("WORKFLOW OK while");
+    Ok(())
+}

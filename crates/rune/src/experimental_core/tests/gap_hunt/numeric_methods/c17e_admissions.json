@@ -7,7 +7,7 @@
     "index": 222,
     "label": "int/closure-map",
     "source_sha256": "58226bcc61a29c6fdff3c6b062ebaeb8c6806b575b0623ecb095708fa340398e",
-    "stock_row_sha256": "9467c22018c9a482d6918c57033f8b8f8985f6fc4fdfa291c8e4d7c97f654f42",
+    "stock_row_sha256": "9723d499a3b984d2cae19cc26b298fa280591aec7dadf6d82d78d4f5251e2b31",
     "fresh": {
      "location": {
       "end": 112,
@@ -31,7 +31,7 @@
     "index": 223,
     "label": "int/closure-map-overflow",
     "source_sha256": "2cd16b979d977f29ce9d4cb170ec3a27774c94009100249a8123983be0c232ba",
-    "stock_row_sha256": "e42de4ddaa2b4e39d05bc4a85e692996e28c3d557671d7e93a4b100dfa60af62",
+    "stock_row_sha256": "2e66fc7b503dd9939f75cf85593139903d72b1e74034397b8a192eaf51fd9029",
     "fresh": {
      "location": {
       "end": 113,
@@ -55,7 +55,7 @@
     "index": 277,
     "label": "char/from_i64-map",
     "source_sha256": "d15eaaff2ed92e5b8fa3966de460ec294da9a094523a5a482806254a69fbbd45",
-    "stock_row_sha256": "08bd2ba7be24462addc9efa6dbcdcad3da1bf7c0cfc714c6e3b4104f57f9b0f8",
+    "stock_row_sha256": "cbd95ef9014de998fac568f973db6848aa7cd32ed1cefd43e5aa5b23b25090d6",
     "fresh": {
      "location": {
       "end": 123,

@@ -1,0 +1,6 @@
+use std::iter::once;
+
+let it = once(0);
+
+dbg!(it.next());
+dbg!(it.next());

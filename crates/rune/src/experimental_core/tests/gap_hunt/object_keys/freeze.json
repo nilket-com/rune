@@ -3,30 +3,7 @@
   "production_changes": false,
   "files": {
     "cases.json": "e4b58b7982f543ed59f61390a7c49afdd973d53acd9e6444fa64bf3db35fe0a9",
-    "stock.json": "1548367b4d68876e33e09b9e07cd19181b860121d9df3cd9084d9e6a650ffed3",
     "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
-  },
-  "stock_binary": {
-    "path": "/home/me/work/.reviews/0185-s2-oracle1/rune-tests",
-    "sha256": "a484c7039896b5ea5bec78a518517727032410c4f5d8341b4fa2d40523eb1b5c",
-    "pins_sha256": "f6a559063ab7c26a88fee9ba0ae60f05f234a858a208a5e98bbcd1330dd81314"
-  },
-  "stock_summary": {
-    "rows": 70,
-    "statuses": {
-      "error": 44,
-      "value": 26
-    },
-    "error_classes": {
-      "AccessConflict": 19,
-      "Type": 21,
-      "stock:ExpectedTupleLength { actual: 0, expected: 2 }": 1,
-      "stock:ExpectedTupleLength { actual: 1, expected: 2 }": 1,
-      "stock:ExpectedTupleLength { actual: 3, expected: 2 }": 2
-    },
-    "replay": false,
-    "logical_traces": 44,
-    "cpu_list": "0-7,10-31"
   },
   "P1": {
     "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",

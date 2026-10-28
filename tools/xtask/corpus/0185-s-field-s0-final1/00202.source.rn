@@ -1,0 +1,61 @@
+// Record 0137, E5: a tour of Candle's shape, indexing and composition
+// families, with Candle only. Each step is printed, and every result is
+// written for an exact comparison with the Rust twin.
+// args: optionally an output file
+
+/// One result row: its name, its shape and its values.
+fn row(name, t) {
+    let dims = "";
+    for d in t.dims() { dims += `${d},`; }
+    let vals = "";
+    for x in t.to_vec()? { vals += `${x},`; }
+    Ok(`${name}\t${dims}\t${vals}\n`)
+}
+
+pub fn run(args) {
+    let a = candle::Tensor::arange(0.0, 12.0, "f32")?.reshape([3, 4])?;
+    let b = candle::Tensor::arange(100.0, 108.0, "f32")?.reshape([2, 4])?;
+    let out = "";
+
+    // join and stack
+    let joined = candle::Tensor::cat([a, b], 0)?;
+    println!("cat [3, 4] and [2, 4] on axis 0:\n{}", joined);
+    out += row("cat", joined)?;
+    let stacked = candle::Tensor::stack([a, a], 1)?;
+    out += row("stack", stacked)?;
+    // reorder axes: (3, 2, 4) to (4, 3, 2)
+    let moved = stacked.permute([2, 0, 1])?;
+    println!("stack then permute: {:?}", moved.dims());
+    out += row("permute", moved)?;
+
+    // select rows, and gather one value per row along an axis
+    let picked = joined.index_select(candle::Tensor::from_vec([4, 0, 2], [3], "u32")?, 0)?;
+    println!("rows 4, 0, 2 of the joined tensor:\n{}", picked);
+    out += row("index_select", picked)?;
+    let ids = candle::Tensor::from_vec([3, 2, 1, 0, 0, 1, 2, 3, 1, 1, 1, 1], [3, 4], "i64")?;
+    out += row("gather", a.gather(ids, 1)?)?;
+
+    // running totals, sliding windows, and a patch written into a copy
+    let totals = a.cumsum(1)?;
+    println!("cumulative sums along each row:\n{}", totals);
+    out += row("cumsum", totals)?;
+    let windows = candle::Tensor::arange(0.0, 6.0, "f32")?.unfold(0, 3, 1)?;
+    println!("windows of 3 over 0..6:\n{}", windows);
+    out += row("unfold", windows)?;
+    let patched = a.slice_assign([[0, 2], [1, 3]], candle::Tensor::full(-1.0, [2, 2], "f32")?)?;
+    println!("a with a -1 patch (a itself unchanged):\n{}", patched);
+    out += row("slice_assign", patched)?;
+    out += row("a_unchanged", a)?;
+
+    // group sums: rows 0 and 2 of `a` into group 1, row 1 into group 0
+    let groups = candle::Tensor::zeros([2, 4], "f32")?.index_add(candle::Tensor::from_vec([1, 0, 1], [3], "u32")?, a, 0)?;
+    out += row("index_add", groups)?;
+    // and their means, the pooling helper
+    let means = candle::segment_mean(a, candle::Tensor::from_vec([1, 0, 1], [3], "u32")?, 2)?;
+    println!("segment means:\n{}", means);
+    out += row("segment_mean", means)?;
+
+    if args.len() > 0 { fs::write(args[0], out)?; }
+    println!("WORKFLOW OK e5");
+    Ok(())
+}

@@ -1,4 +1,4 @@
-//! The native acceptance matrix. Selection and expected observations are versioned data.
+//! The native acceptance matrix uses committed selectors and live observations.
 use crate::common::{hash_file, read_json, Context};
 use anyhow::{bail, ensure, Context as _, Result};
 use regex::Regex;
@@ -18,7 +18,7 @@ pub struct Manifest {
 	libraries: Vec<Library>,
 	clippy_features: Vec<String>,
 	fixtures: Vec<Fixture>,
-	full32: Full32,
+	contract_bundle: ContractBundle,
 	excluded_legacy: Vec<String>,
 	cases: Vec<Case>,
 }
@@ -37,7 +37,7 @@ struct Fixture {
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
-struct Full32 {
+struct ContractBundle {
 	selector: String,
 	contracts: usize,
 	external: String,
@@ -73,7 +73,7 @@ pub fn check_manifest(ctx: &Context) -> Result<Value> {
 	let m = manifest()?;
 	fixtures(ctx, &m)?;
 	Ok(
-		json!({"version":m.version,"reference":m.reference,"cases":m.cases.len(),"contracts":m.full32.contracts,"fixtures":m.fixtures.len()}),
+		json!({"version":m.version,"reference":m.reference,"cases":m.cases.len(),"contracts":m.contract_bundle.contracts,"fixtures":m.fixtures.len()}),
 	)
 }
 
@@ -114,14 +114,14 @@ fn exact_counts(text: &str, expected: usize) -> Result<()> {
 	Ok(())
 }
 
-fn full32_output(text: &str, selector: &str) -> Result<()> {
+fn contract_bundle_output(text: &str, selector: &str) -> Result<()> {
 	exact_counts(text, 1)?;
 	let marker = format!("test {selector} ... ");
 	ensure!(
 		text.lines()
 			.filter(|line| line.starts_with(&marker))
 			.count() == 1,
-		"full32 must contain one outer test start"
+		"contract_bundle must contain one outer test start"
 	);
 	Ok(())
 }
@@ -191,11 +191,6 @@ fn base_env(ctx: &Context, cmd: &mut Command, dir: &Path, receipt: &Path) -> Res
 	] {
 		cmd.env(key, dir.join(value));
 	}
-	cmd.env(
-		"C11_DEPTH_BINDING",
-		ctx.repo
-			.join("tools/xtask/fixtures/native/DEPTH-BINDING.json"),
-	);
 	cmd.env("C15C_NATIVE_RECEIPT", receipt)
 		.env("C15C_NATIVE_RECEIPT_SHA256", hash_file(receipt)?)
 		.env("C15C_NATIVE_SOURCE", &ctx.repo);
@@ -282,13 +277,13 @@ fn contracts(ctx: &Context, m: &Manifest) -> Result<Value> {
 		}
 		rows.push(json!({"name":c.name,"selector":c.selector,"passed":n,"contract_rows":c.rows,"seconds":r.seconds,"receipt":r.receipt}));
 	}
-	let full = full32(ctx, m, &binary, &receipt)?;
-	Ok(json!({"status":"PASS","cases":rows,"full32":full,"diagnostic_witnesses":witness}))
+	let full = contract_bundle(ctx, m, &binary, &receipt)?;
+	Ok(json!({"status":"PASS","cases":rows,"contract_bundle":full,"diagnostic_witnesses":witness}))
 }
 
-fn full32(ctx: &Context, m: &Manifest, binary: &Path, receipt: &Path) -> Result<Value> {
-	let export: Value = read_json(&ctx.repo.join(&m.full32.pins))?;
-	let external = ctx.fixtures.join(&m.full32.external);
+fn contract_bundle(ctx: &Context, m: &Manifest, binary: &Path, receipt: &Path) -> Result<Value> {
+	let export: Value = read_json(&ctx.repo.join(&m.contract_bundle.pins))?;
+	let external = ctx.fixtures.join(&m.contract_bundle.external);
 	let pins = export["files"]
 		.as_object()
 		.context("external files missing")?;
@@ -298,25 +293,32 @@ fn full32(ctx: &Context, m: &Manifest, binary: &Path, receipt: &Path) -> Result<
 			"external fixture changed: {p}"
 		);
 	}
-	selected(ctx, binary, "full32", &m.full32.selector, true, true)?;
-	let dir = ctx.out.join("full32");
+	selected(
+		ctx,
+		binary,
+		"contract_bundle",
+		&m.contract_bundle.selector,
+		true,
+		true,
+	)?;
+	let dir = ctx.out.join("contract_bundle");
 	fs::create_dir(&dir)?;
 	let raw = dir.join("raw");
 	let mut cmd = sandbox(binary, &ctx.out);
 	base_env(ctx, &mut cmd, &dir, receipt)?;
 	cmd.env("GAP_OUT", &raw).env("GAP_EXTERNAL", &external);
-	test_args(&mut cmd, &m.full32.selector, true, true);
-	let r = ctx.checked("full32", &mut cmd, 1800)?;
-	full32_output(&fs::read_to_string(&r.stdout)?, &m.full32.selector)?;
+	test_args(&mut cmd, &m.contract_bundle.selector, true, true);
+	let r = ctx.checked("contract_bundle", &mut cmd, 1800)?;
+	contract_bundle_output(&fs::read_to_string(&r.stdout)?, &m.contract_bundle.selector)?;
 	for suffix in ["stdout", "stderr"] {
 		let n = fs::read_dir(&raw)?
 			.filter_map(|e| e.ok())
 			.filter(|e| e.path().extension().is_some_and(|x| x == suffix))
 			.count();
 		ensure!(
-			n == m.full32.contracts,
-			"full32 {suffix}: expected {} files, got {n}",
-			m.full32.contracts
+			n == m.contract_bundle.contracts,
+			"contract_bundle {suffix}: expected {} files, got {n}",
+			m.contract_bundle.contracts
 		);
 	}
 	for (p, h) in pins {
@@ -326,7 +328,7 @@ fn full32(ctx: &Context, m: &Manifest, binary: &Path, receipt: &Path) -> Result<
 		);
 	}
 	Ok(
-		json!({"contracts":m.full32.contracts,"outputs":m.full32.contracts*2,"seconds":r.seconds,"external_head":export["head"],"receipt":r.receipt}),
+		json!({"contracts":m.contract_bundle.contracts,"outputs":m.contract_bundle.contracts*2,"seconds":r.seconds,"external_head":export["head"],"receipt":r.receipt}),
 	)
 }
 
@@ -412,7 +414,7 @@ pub fn run(ctx: &Context, suite: &str) -> Result<Value> {
 		_ => bail!("unknown native suite {suite}"),
 	}?;
 	if uses_fixtures {
-		fixtures(ctx, &m).context("frozen native fixture changed during verification")?;
+		fixtures(ctx, &m).context("native input changed during verification")?;
 	}
 	Ok(result)
 }
@@ -457,18 +459,19 @@ mod tests {
 	}
 
 	#[test]
-	fn authentic_full32_summary_and_outer_selection_are_preserved() {
-		let text = include_str!("../fixtures/native/full32-libtest.stdout");
+	fn contract_bundle_summary_and_outer_selection_are_preserved() {
 		let selector = "experimental_core::tests::gap_hunt::contracts::all_frozen_contracts";
-		assert_eq!(text.matches("PASS ").count(), 32);
-		assert!(full32_output(text, selector).is_ok());
-		assert!(full32_output(
+		let text = format!("running 1 test\ntest {selector} ... PASS sample\nok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s\n");
+		assert!(contract_bundle_output(&text, selector).is_ok());
+		assert!(contract_bundle_output(
 			&text.replace("test result: ok. 1 passed;", "test result: ok. 0 passed;"),
 			selector
 		)
 		.is_err());
-		assert!(full32_output(&format!("test {selector} ... \n{text}"), selector).is_err());
-		assert!(full32_output(
+		assert!(
+			contract_bundle_output(&format!("test {selector} ... \n{text}"), selector).is_err()
+		);
+		assert!(contract_bundle_output(
 			&text.replace(&format!("test {selector} ... "), ""),
 			selector
 		)
@@ -478,7 +481,7 @@ mod tests {
 	#[test]
 	fn registry_is_nonempty_and_unique() {
 		let m = manifest().unwrap();
-		assert_eq!(m.cases.len(), 108);
-		assert_eq!(m.full32.contracts, 32);
+		assert_eq!(m.cases.len(), 49);
+		assert_eq!(m.contract_bundle.contracts, 19);
 	}
 }

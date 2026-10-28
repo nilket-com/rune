@@ -1,0 +1,16 @@
+// Record 0129: the one cross-adapter workflow. Polars data -> a tensor ->
+// small-model inference on the CPU -> predictions back into a frame -> display.
+pub fn main(args) {
+    let dir = args[0];
+    let df = polars::read_csv(`${dir}/features.csv`)?;
+    let x = df.to_dense(["a", "b", "c"], "f32")?;
+    let model = candle::Mlp::load(`${dir}/mlp.safetensors`)?;
+    let y = model.forward(candle::Tensor::from_dense(x)?)?;
+    let out = df.with_dense(y.to_dense(["score"])?)?;
+    out.write_parquet_new(`${dir}/out.parquet`)?;
+    println!("{}", out);
+    println!("{}", y);
+    // every binding is still usable
+    println!("reuse: {} rows, block {:?}, model {:?}", df.height()?, x.shape(), model.dims());
+    Ok(())
+}

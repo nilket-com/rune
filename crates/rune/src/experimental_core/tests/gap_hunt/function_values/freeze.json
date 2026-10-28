@@ -2,30 +2,6 @@
   "rows": 101,
   "production_changes": false,
   "files": {
-    "cases.json": "d1c76baba7b5eccf705ba47f35b0cf2a861d30b3c7844928f1761d2274e11a6b",
-    "stock.json": "0d228a700eae5c61c6a1628af1ae5ecf948179946e01e6efc625a1c22c253b85"
-  },
-  "stock_binary": {
-    "path": "/home/me/work/.reviews/0185-c16f-oracle1/rune-tests",
-    "sha256": "fbbc315ff17ed301462fe4677c8e1ba5c795dd4ffe00b75483709a569841327c",
-    "pins_sha256": "ec8cb490acb98693fbb0e9d61a17952bcdf687a74af8421de4bb0eb9dd712a41"
-  },
-  "stock_summary": {
-    "rows": 101,
-    "statuses": {
-      "error": 36,
-      "value": 65
-    },
-    "error_classes": {
-      "Type": 10,
-      "DivisionByZero": 1,
-      "ArgumentCount": 21,
-      "AccessConflict": 2,
-      "stock:MissingFunction { hash: 0xbe6b74e85e3244d6 }": 1,
-      "stock:MissingFunction { hash: 0x489be30d02f3940f }": 1
-    },
-    "replay": false,
-    "logical_traces": 36,
-    "cpu_list": "0-7,10-31"
+    "cases.json": "d1c76baba7b5eccf705ba47f35b0cf2a861d30b3c7844928f1761d2274e11a6b"
   }
 }

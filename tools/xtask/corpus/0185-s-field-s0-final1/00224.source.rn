@@ -1,0 +1,228 @@
+// Record 0151, U8: search development (plans/0151, frozen before any run).
+// Retrieval is U5's (0136's U1' at overlap 0: each document's best passage
+// by MiniLM cosine, equal scores keeping passage order). For each
+// development query, the top 40 candidate documents, and for each
+// candidate its top 3 passages by retrieval score (ties to the lower pid;
+// all of them when fewer). Every (query, passage) pair in that pool is
+// scored ALONE, by its own ce.score([q], [p]) call (a batch of one, no
+// padding), in a fixed order: query, candidate rank, passage rank. The
+// eight systems are computed from the retained pool by evaluate.py.
+// args: D1 directory, MiniLM directory, cross-encoder directory, dev.tsv,
+// output directory
+
+fn column_str(name, values) {
+    Ok(polars::Series::from_iter_str(values)?.with_name(name).into_column())
+}
+
+fn column_i64(name, values) {
+    Ok(polars::Series::from_iter_i64(values)?.with_name(name).into_column())
+}
+
+fn column_f64(name, values) {
+    Ok(polars::Series::from_iter_f64(values)?.with_name(name).into_column())
+}
+
+/// D1 as two frames: documents (doc, path, record, title) and passages
+/// (doc, pid, text), chunked by the encoder at overlap 0 (0136).
+fn load(dir, enc) {
+    let doc = [];
+    let paths = [];
+    let records = [];
+    let titles = [];
+    let pdoc = [];
+    let ppaths = [];
+    let ptext = [];
+    for n in fs::read_dir(dir)? {
+        if !n.ends_with(".md") { continue; }
+        let text = fs::read(`${dir}/${n}`)?;
+        let first = text.split("\n").next().unwrap_or("");
+        let title = if first.starts_with("# ") { first[2..] } else { first };
+        let d = paths.len();
+        doc.push(d);
+        paths.push(n);
+        records.push(n[0..4]);
+        titles.push(title);
+        for c in enc.chunk(text[first.len()..], 0)? {
+            pdoc.push(d);
+            ppaths.push(n);
+            ptext.push(c);
+        }
+    }
+    let docs = polars::DataFrame::new(paths.len(), [
+        column_i64("doc", doc)?,
+        column_str("path", paths)?,
+        column_str("record", records)?,
+        column_str("title", titles)?,
+    ])?;
+    let pid = [];
+    for i in 0..ptext.len() { pid.push(i); }
+    let passages = polars::DataFrame::new(ptext.len(), [column_i64("doc", pdoc)?, column_i64("pid", pid)?, column_str("text", ptext)?])?;
+    Ok((docs, passages, ptext, ppaths))
+}
+
+/// The frozen rubric: ids, texts and supporting records.
+fn rubric(path) {
+    let ids = [];
+    let texts = [];
+    let support = [];
+    for line in fs::read(path)?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        ids.push(f[0]);
+        texts.push(f[2]);
+        support.push(f[3].split(" ").collect::<Vec>());
+    }
+    Ok((ids, texts, support))
+}
+
+fn joined(values) {
+    let out = "";
+    for v in values { if out != "" { out += ","; } out += v; }
+    out
+}
+
+/// One query's passages in the frozen order: a stable descending sort on the
+/// NUMERIC score column (equal scores keep pid order), cast to text only
+/// afterwards, for readback. Returns (pids, scores) as strings.
+fn order(frame, id) {
+    let desc = polars::SortMultipleOptions::new().with_order_descending(true).with_maintain_order(true);
+    let sorted = frame.sort([id], desc)?.lazy().select_([polars::col("pid").cast(polars::DataType::String()),
+        polars::col(id).cast(polars::DataType::String())])?.collect()?;
+    Ok((sorted.strings("pid")?, sorted.strings(id)?))
+}
+
+/// The ordering control, run before any model loads: negative, zero and
+/// positive f32 scores, ties, values a text sort misorders (10 against 0.2,
+/// negatives, scientific notation). Fails the run unless `order` gives the
+/// numeric order with ties to the lower pid.
+fn order_controls() {
+    let scores = [-0.9, -0.1, 0.0, 0.2, 0.00001, 0.2, -0.1, 0.000000035, 10.0];
+    let pid = [];
+    for i in 0..scores.len() { pid.push(i); }
+    let frame = polars::DataFrame::new(scores.len(), [column_i64("pid", pid)?, column_f64("s", scores)?])?
+        .lazy().select_([polars::col("pid"), polars::col("s").cast(polars::DataType::Float32())])?.collect()?;
+    let (pids, _) = order(frame, "s")?;
+    let got = joined(pids);
+    if got != "8,3,5,4,7,2,1,6,0" {
+        return Err(`ordering control: got ${got}, want 8,3,5,4,7,2,1,6,0`);
+    }
+    println!("ordering control: {}", got);
+    Ok(())
+}
+
+/// `rnx run u8_rerank_dev.rn RETAINED_TSV OUT`: applies `order` to a retained
+/// u8-retrieval.tsv (each score read back to its f32) and writes every
+/// query's full pid order, for comparison with validate.py's numeric sort.
+pub fn main(args) {
+    order_controls()?;
+    let lines = fs::read(args[0])?.split("\n").filter(|l| l != "").collect::<Vec>();
+    let ids = lines[0].split("\t").skip(1).collect::<Vec>();
+    let pid = [];
+    let cols = [];
+    for k in 0..ids.len() { cols.push([]); }
+    for line in lines.iter().skip(1) {
+        let f = line.split("\t").collect::<Vec>();
+        pid.push(f[0].parse::<i64>()?);
+        for k in 0..ids.len() { cols[k].push(f[k + 1].parse::<f64>()?); }
+    }
+    let columns = [column_i64("pid", pid)?];
+    let casts = [polars::col("pid")];
+    for k in 0..ids.len() {
+        columns.push(column_f64(ids[k], cols[k])?);
+        casts.push(polars::col(ids[k]).cast(polars::DataType::Float32()));
+    }
+    let frame = polars::DataFrame::new(pid.len(), columns)?.lazy().select_(casts)?.collect()?;
+    let out = "";
+    for id in ids {
+        let (pids, _) = order(frame, id)?;
+        out += `${id}\t${joined(pids)}\n`;
+    }
+    fs::write(args[1], out)?;
+    println!("ordered {} queries over {} passages", ids.len(), pid.len());
+    Ok(())
+}
+
+pub fn run(args) {
+    let (dir, model, cross, rubric_path, out) = (args[0], args[1], args[2], args[3], args[4]);
+    // 0152: an optional sixth argument `retrieval` runs the same path up to
+    // the pool without the cross-encoder; the pool then has no ce column
+    let retrieval_only = if args.len() == 5 { false } else if args.len() == 6 && args[5] == "retrieval" { true } else {
+        return Err(`run: want 5 arguments, or a sixth "retrieval"`);
+    };
+    order_controls()?;
+    let t0 = time::monotonic_ms();
+    let enc = candle::TextEncoder::load(model)?;
+    let ce = if retrieval_only { None } else { Some(candle::CrossEncoder::load(cross)?) };
+    let (docs, passages, ptext, ppaths) = load(dir, enc)?;
+    let e = enc.embed(ptext)?;
+    let (ids, texts, support) = rubric(rubric_path)?;
+    let q = enc.embed(texts)?;
+    let scored = passages.with_dense(candle::similarity(e, q, ids)?)?;
+    // the pool: per query, the top 40 documents by their best passage, and
+    // each one's top 3 passages, in sorted order (equal scores keep pid order)
+    let ordered = [];
+    for i in 0..ids.len() {
+        let id = ids[i];
+        let (pids, scores) = order(scored, id)?;
+        // one slot per candidate, in candidate rank order; each slot its
+        // passages in sorted (passage rank) order
+        let rank = #{};
+        let slots = [];
+        for r in 0..pids.len() {
+            let pid = pids[r].parse::<i64>()?;
+            let path = ppaths[pid];
+            if rank.get(path).is_none() {
+                if slots.len() == 40 { continue; }
+                slots.push([]);
+                rank[path] = slots.len();
+            }
+            let slot = slots[rank[path] - 1];
+            if slot.len() < 3 {
+                slot.push(#{ query: id, text: texts[i], cand: rank[path], path: path, prank: slot.len() + 1, pid: pid, retrieval: scores[r] });
+            }
+        }
+        for slot in slots { for p in slot { ordered.push(p); } }
+    }
+    let t1 = time::monotonic_ms();
+    // every pair alone, in query, candidate rank, passage rank order
+    let ce_scores = [];
+    if let Some(model) = ce {
+        for p in ordered {
+            let s = model.score([p.text], [ptext[p.pid]])?;
+            ce_scores.push(s[0]);
+        }
+    }
+    let t2 = time::monotonic_ms();
+    // retained: the passages, the retrieval scores, the pool
+    fs::write(out + "/u8-passages.json", json::stringify(#{ paths: ppaths, texts: ptext })?)?;
+    let cols = [polars::col("pid").cast(polars::DataType::String())];
+    for id in ids { cols.push(polars::col(id).cast(polars::DataType::String())); }
+    let st = scored.lazy().select_(cols)?.collect()?;
+    let sp = st.strings("pid")?;
+    let sc = [];
+    for id in ids { sc.push(st.strings(id)?); }
+    let retained = "pid";
+    for id in ids { retained += `\t${id}`; }
+    retained += "\n";
+    for i in 0..sp.len() {
+        retained += sp[i];
+        for k in 0..sc.len() { retained += `\t${sc[k][i]}`; }
+        retained += "\n";
+    }
+    fs::write(out + "/u8-retrieval.tsv", retained)?;
+    let text = if retrieval_only { "query\tcand\tpath\tprank\tpid\tretrieval\n" } else { "query\tcand\tpath\tprank\tpid\tretrieval\tce\n" };
+    for j in 0..ordered.len() {
+        let p = ordered[j];
+        text += `${p.query}\t${p.cand}\t${p.path}\t${p.prank}\t${p.pid}\t${p.retrieval}`;
+        text += if retrieval_only { "\n" } else { `\t${ce_scores[j]}\n` };
+    }
+    fs::write(out + "/u8-pool.tsv", text)?;
+    let line = if retrieval_only {
+        `${docs.height()?} docs, ${passages.height()?} passages, ${ids.len()} queries; retrieval and pool ${t1 - t0} ms; retrieval only, ${ordered.len()} pool rows, no pairs scored`
+    } else {
+        `${docs.height()?} docs, ${passages.height()?} passages, ${ids.len()} queries; retrieval and pool ${t1 - t0} ms; ${ordered.len()} pairs scored one at a time in ${t2 - t1} ms`
+    };
+    println!("{}", line);
+    println!("WORKFLOW OK u8");
+    Ok(())
+}

@@ -1,4 +1,4 @@
-//! C11 frozen stock oracle and independent new observer.
+//! C11 live stock oracle and independent new observer.
 use super::*;
 use serde_json::{json, Value as Json};
 include!("callback_sort/cases.rs");

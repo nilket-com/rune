@@ -111,7 +111,9 @@ fn observe(source: &str, mode: &str) -> (Json, Json) {
 						Detail::HostMessage {
 							cause,
 							arg: Some(arg),
-						} => Some((cause, arg)),
+						
+                            ..
+                        } => Some((cause, arg)),
 						other => other.numeric_argument(),
 					};
 					let chain = argument

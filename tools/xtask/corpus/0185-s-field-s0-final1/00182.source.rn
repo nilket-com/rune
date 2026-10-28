@@ -1,0 +1,16 @@
+// A frame becomes a tensor, a tiny fixed model scores it, the scores come back as a frame.
+// The model's weights are fixed values (record 0129), not trained: this shows the plumbing.
+// from the checkout root: demos/candle/target/release/rnx-candle-demo run demos/candle/model.rn demos/data
+pub fn main(args) {
+	let dir = args[0];
+	let df = polars::read_csv(`${dir}/features.csv`, [("id", "i64"), ("a", "f64"), ("b", "f64"), ("c", "f64")])?;
+	let x = candle::Tensor::from_dense(df.to_dense(["a", "b", "c"], "f32")?)?;
+	let model = candle::Mlp::load(`${dir}/mlp.safetensors`)?;
+	let y = model.forward(x)?;
+	let scored = df.with_dense(y.to_dense(["score"])?)?;
+	let top = scored.sort(["score"], polars::SortMultipleOptions::new().with_order_descending(true))?;
+	let id = top.column("id")?.i64()?.get(0)?.unwrap();
+	let score = top.column("score")?.f32()?.get(0)?.unwrap();
+	println!("Highest score: row {} with {}, of {} rows scored", id, score, scored.height()?);
+	Ok(())
+}

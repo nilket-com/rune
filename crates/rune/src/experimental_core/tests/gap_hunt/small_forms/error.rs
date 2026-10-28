@@ -163,7 +163,7 @@ pub(super) fn primary_kind(
 				to,
 			}
 		}
-		Detail::FloatComparison { lhs_bits, rhs_bits } if error.kind == ErrorKind::Type => {
+		Detail::FloatComparison { lhs_bits, rhs_bits } if error.kind == ErrorKind::IllegalFloatComparison => {
 			K::IllegalFloatComparison {
 				lhs: f64::from_bits(lhs_bits),
 				rhs: f64::from_bits(rhs_bits),

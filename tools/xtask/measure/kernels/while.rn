@@ -1,0 +1,5 @@
+pub fn main(x) {
+	let n = 0;
+	while n < x { n += 1; }
+	n
+}

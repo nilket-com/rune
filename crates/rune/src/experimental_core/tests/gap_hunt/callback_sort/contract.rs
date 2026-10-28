@@ -1,5 +1,40 @@
+fn live_stock_case(index: usize, dir: &Path, counts: &Json) -> (super::live_oracle::Run, Json) {
+	let (label, source, fixture, policy, mode, fuel, _) = CASES[index];
+	let index_text = index.to_string();
+	let run = super::live_oracle::run_child_with_limits(
+		"experimental_core::tests::gap_hunt::callback_sort::child", label, dir,
+		"C11_RESULT", &[("C11_CASE", index_text.as_ref()), ("C11_ENGINE", "stock".as_ref())],
+		45, Duration::from_secs(45),
+	);
+	let mut raw = run.observation.clone();
+	assert_eq!(raw["schema"], 1);
+	assert_eq!(raw["engine"], "stock");
+	assert_eq!(raw["index"], index);
+	assert_eq!(raw["label"], label);
+	assert_eq!(raw["source_hex"], hex(source.as_bytes()));
+	assert_eq!(raw["fixture"], fixture);
+	assert_eq!(raw["policy"], policy);
+	assert_eq!(raw["mode"], mode);
+	assert_eq!(raw["fuel"], fuel);
+	raw["observation"]["outcome"] = super::d1c_diagnostics::before(
+		"callback_sort", label, source, "stock", &raw["observation"]["outcome"],
+	);
+	let mut stock = common(&project_p1(&raw["observation"], &counts[label]).unwrap());
+	// This progression compares the stock kind display directly; its fresh
+	// public display is translated separately in c11_s7a_runtime_progression.
+	if label != "type/non-vector" {
+		stock["outcome"] = super::d1b_diagnostics::intentional_json_before(
+			"callback_sort", label, source, "stock", &stock["outcome"],
+		);
+		stock = super::method_diagnostics::intentional_json_before(
+			"callback_sort", label, source, "stock", &stock,
+		);
+	}
+	(run, stock)
+}
+
 #[test]
-#[ignore = "C11 strict execution 131; external depth binding and raw receipts required"]
+#[ignore = "C11 strict execution 131; live child observations required"]
 fn contract() {
 	let out =
 		PathBuf::from(std::env::var_os("C11_REPLAY_OUT").expect("explicit raw replay directory"));
@@ -8,30 +43,32 @@ fn contract() {
 
 	let dispositions = read_json(include_str!("../../callback_sort_dispositions.json"));
 	let start = Instant::now();
-	let binding: Json = serde_json::from_slice(
-		&fs::read(std::env::var_os("C11_DEPTH_BINDING").expect("reviewed depth binding")).unwrap(),
-	)
-	.unwrap();
-	c11_check_depth_binding(&binding).unwrap();
 	let mut completed = 0;
 
-	for (i, line) in FROZEN.lines().skip(1).enumerate() {
+	for (i, line) in INPUTS.lines().skip(1).enumerate() {
 		assert!(start.elapsed() < Duration::from_secs(3600));
 		let cells = line.split('\t').collect::<Vec<_>>();
-		assert_eq!(cells.len(), 9);
+		assert_eq!(cells.len(), 6);
 		let (label, source, fixture, proposed_policy, mode, fuel, cancel) = CASES[i];
 		assert_eq!(cells[0], label);
 		assert_eq!(decode(cells[2]), source.as_bytes());
 		assert_eq!(cells[1], mode);
 		if label == "depth/8" {
 			assert_eq!(proposed_policy, "Retained-depth");
-			assert_eq!(cells[6], "Exact");
+			assert_eq!(cells[5], "Exact");
 		} else {
-			assert_eq!(proposed_policy, cells[6]);
+			assert_eq!(proposed_policy, cells[5]);
 		}
-		assert_eq!(dispositions[label]["policy"], cells[6]);
+		assert_eq!(dispositions[label]["policy"], cells[5]);
 		let dir = out.join(format!("{i:03}"));
 		fs::create_dir(&dir).unwrap();
+		let (stock_run, live_stock) = live_stock_case(i, &dir.join("stock"), &counts);
+		let completion = if cells[5] == "Retained-fuel" {
+			let anchor = CASES.iter().position(|case| case.0 == "fuel/128").unwrap();
+			Some(live_stock_case(anchor, &dir.join("stock-completion"), &counts).1)
+		} else if cells[5] == "Retained-cancel" {
+			Some(live_stock.clone())
+		} else { None };
 		let result = dir.join("observation.json");
 		fs::write(dir.join("source.rn"), source).unwrap();
 		let mut child = Command::new(std::env::current_exe().unwrap())
@@ -44,7 +81,7 @@ fn contract() {
 			])
 			.env_clear()
 			.env("PATH", "/usr/bin:/bin")
-			.env("HOME", "/home/me")
+			.env("HOME", fs::canonicalize(&dir).unwrap())
 			.env("LANG", "C.UTF-8")
 			.env("TZ", "UTC")
 			.env("C11_CASE", i.to_string())
@@ -87,8 +124,10 @@ fn contract() {
 			status.success() && !exceeded.load(Ordering::SeqCst),
 			"child STOP {i}"
 		);
-		assert_eq!(stdout, decode(cells[4]));
-		assert_eq!(stderr, decode(cells[5]));
+		assert_eq!(stdout, decode(cells[3]));
+		assert_eq!(stderr, decode(cells[4]));
+		assert_eq!(stdout, stock_run.stdout, "stock stdout {label}");
+		assert_eq!(stderr, stock_run.stderr, "stock stderr {label}");
 		assert!(fs::metadata(&result).unwrap().len() <= 64 * 1024 * 1024);
 		// The child archive is already preserved; only a copy is projected.
 		let mut raw: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
@@ -123,11 +162,12 @@ fn contract() {
 			label,
 			source,
 			fixture,
-			cells[6],
+			cells[5],
 			observation,
 			&counts[label],
 			&dispositions[label],
-			&binding,
+			&live_stock,
+			completion.as_ref(),
 		)
 		.unwrap();
 		completed += 1;
@@ -143,7 +183,8 @@ fn compare_row(
 	observation: &Json,
 	counts: &Json,
 	disposition: &Json,
-	binding: &Json,
+	live_stock: &Json,
+	completion: Option<&Json>,
 ) -> Result<(), String> {
 	let audit = &observation["fresh_audit"];
 	let clean = json!({"cleanup_error":null,"executor_idle":true,"live_entries":0,"payload_bytes":0,"reuse_i64":7});
@@ -155,23 +196,16 @@ fn compare_row(
 	{
 		return Err(format!("audit drift {label}: {audit}"));
 	}
-	if fixture.starts_with("depth/")
-		&& (audit["depth_metadata"] != binding["metadata"]
-			|| binding["source_sha256"] != digest(source.as_bytes()))
-	{
-		return Err("depth emitted metadata binding drift".into());
-	}
-	if c11_check_stale_refusal_admission(label, source, observation, counts, disposition)? {
+	if c11_check_stale_refusal_admission(label, source, observation, counts, disposition, live_stock)? {
 		return Ok(());
 	}
-	if c11_s7a_runtime_progression(label, source, fixture, policy, observation, disposition)? {
+	if c11_s7a_runtime_progression(label, source, fixture, policy, observation, disposition, live_stock)? {
 		return Ok(());
 	}
 	if matches!(policy, "Refused-surface" | "Refused-runtime") {
 		let spans = read_json(include_str!("../../callback_sort_refusal_spans.json"));
 		let expected = &spans[label];
-		let refusals = read_json(include_str!("../../callback_sort_refusals.json"));
-		let baseline = &refusals[label]["stock_common"];
+		let baseline = live_stock;
 		let mut actual = observation["outcome"].clone();
 		actual["source_sha256"] = json!(digest(source.as_bytes()));
 		actual["invoked"] = observation["invoked"].clone();
@@ -206,24 +240,15 @@ fn compare_row(
 	}
 	let actual = common(&project_p1(observation, counts)?);
 	if policy == "Retained-depth" {
-		let progression = s6_depth_progression(label, source, binding)?;
-		let expected = progression.as_ref().or_else(|| binding["rows"].get(label)).ok_or("missing derived row")?;
-		if audit["typed_failure_kind"]
-			!= if expected["outcome"]["status"] == "error" {
-				json!("FrameCapacity")
-			} else {
-				Json::Null
-			} {
-			return Err("derived typed failure drift".into());
-		}
-		if &actual != expected {
-			return Err(format!("derived depth drift {label}"));
-		}
-		return Ok(());
-	}
+        let depth: usize = label.strip_prefix("depth/").ok_or("depth label")?.parse().map_err(|_| "depth number")?;
+        let expected = c11_expected_depth(depth, false);
+        if audit["typed_failure_kind"] != Json::Null || actual != expected {
+            return Err(format!("derived depth drift {label}"));
+        }
+        return Ok(());
+    }
 	if matches!(policy, "Retained-fuel" | "Retained-cancel") {
-		let resources = read_json(include_str!("../../callback_sort_resources.json"));
-		let (stock, anchor) = resource_completion(label, source, fixture, &resources)?;
+		let (stock, _anchor) = resource_completion_live(label, source, fixture, live_stock, completion.ok_or("missing live completion")?)?;
 		let kind = if policy == "Retained-fuel" {
 			"FuelExhausted"
 		} else {
@@ -232,31 +257,84 @@ fn compare_row(
 		if !resource_valid(&stock, &actual, &audit["resource"], kind) {
 			return Err(format!("resource constraint drift {label}"));
 		}
-		c11_enforce_resource(label, source, fixture, &actual, &audit["resource"], &anchor)?;
+		if actual["outcome"]["status"] == "error" {
+            let error = &actual["outcome"];
+            let sites = error["sites"].as_array().ok_or("resource error sites")?;
+            if error["kind"] != kind || error["typed"] != json!({"raw_kind":kind})
+                || error["display"] != format!("execute: {kind}") || error["chain"] != json!([])
+                || error.as_object().map(|o| o.len()) != Some(7) || sites.len() != 1 {
+                return Err(format!("resource error detail drift {label}"));
+            }
+            let site = &sites[0];
+            let start = site["start"].as_u64().ok_or("resource start")? as usize;
+            let end = site["end"].as_u64().ok_or("resource end")? as usize;
+            if site["source"] != 0 || source.get(start..end).is_none()
+                || serde_json::from_str::<Json>(site["frames"].as_str().ok_or("resource frames")?).is_err() {
+                return Err(format!("resource site drift {label}"));
+            }
+        }
 		return Ok(());
 	}
 	if !matches!(policy, "Exact" | "Intentional-divergence") {
 		return Err("unknown execution policy".into());
 	}
-	let manifest = c11_retained_manifest()?;
-	if manifest["diagnostics"]
-		.as_array()
-		.ok_or("diagnostic rows")?
-		.iter()
-		.any(|r| r["label"] == label)
-	{
+	let expected = c11_live_expectation(label, fixture, &actual, live_stock)?;
+
+    if c11_diagnostic_span(label).is_some() {
 		return c11_enforce_diagnostic(
 			label,
 			source,
 			&actual,
-			&disposition["fresh_expectation"],
+			&expected,
 			&audit["raw_failure"]["call_chain"],
 		);
 	}
-	if actual != disposition["fresh_expectation"] {
+	if actual != expected {
 		return Err(format!("strict portable drift {label}"));
 	}
 	Ok(())
+}
+
+// A failure stops the new sort immediately. Stock continues its comparison
+// tape; only the reviewed failure rows have that difference. Compare the
+// retained prefix to the live stock tape and model the resulting graph.
+fn c11_live_expectation(label: &str, input_fixture: &str, actual: &Json, stock: &Json) -> Result<Json, String> {
+    let count = match label {
+        "failure/first-call-failure" | "failure/all-failing" | "failure/non-ordering-return"
+        | "failure/panic" | "frames/caller-chain" | "failure/child-mutation"
+        | "failure/shared-child-mutation" => Some(1),
+        "failure/later-failure" => Some(3),
+        "nested/different-error" => Some(2),
+        _ => None,
+    };
+    let Some(count) = count else { return Ok(stock.clone()); };
+    let tape = actual["events"].as_array().ok_or("failure tape")?;
+    let stock_tape = stock["events"].as_array().ok_or("stock failure tape")?;
+    if tape.len() != count || stock_tape.get(..count) != Some(tape.as_slice()) {
+        return Err(format!("failure callback prefix drift {label}"));
+    }
+    let mut after = tape.clone();
+    after.push(json!({"event":"mark","hex":"7265757365"}));
+    if actual["events_after_reuse"] != json!(after) || actual["before"] != stock["before"] {
+        return Err(format!("failure lifecycle drift {label}"));
+    }
+    let expected_post = if matches!(label, "failure/child-mutation" | "failure/shared-child-mutation") {
+        let mut store = Store::new(Limits::default()).map_err(|_| "model store")?;
+        let (root, values, state) = fixture(&mut store, input_fixture);
+        let first = store.get(values, 0).map_err(|_| "model first")?;
+        let child = store.get(first, 1).map_err(|_| "model child")?;
+        store.push(child, Value::I64(9)).map_err(|_| "model mutation")?;
+        let result = graph(&mut store, root);
+        for value in [child, first, values, state, root] { store.release(value).map_err(|_| "model release")?; }
+        if store.live_entries() != 0 || store.payload_bytes() != 0 { return Err("model cleanup".into()); }
+        result
+    } else { actual["before"].clone() };
+    if actual["post"] != expected_post { return Err(format!("failure post-state drift {label}")); }
+    let mut expected = stock.clone();
+    expected["events"] = actual["events"].clone();
+    expected["events_after_reuse"] = actual["events_after_reuse"].clone();
+    expected["post"] = expected_post;
+    Ok(expected)
 }
 
 fn c11_check_stale_refusal_admission(
@@ -265,6 +343,7 @@ fn c11_check_stale_refusal_admission(
 	observation: &Json,
 	counts: &Json,
 	disposition: &Json,
+	live_stock: &Json,
 ) -> Result<bool, String> {
 	let overlay: Json = serde_json::from_str(C11_STALE_REFUSAL_ADMISSIONS)
 		.map_err(|_| "stale refusal admissions JSON")?;
@@ -307,48 +386,21 @@ fn c11_check_stale_refusal_admission(
 	{
 		return Err(format!("stale refusal history drift {label}"));
 	}
-	let stock = legacy["stock_common"].clone();
-	if row["stock_common_sha256"] != digest(&canonical(&stock)) {
-		return Err(format!("stale refusal stock pin drift {label}"));
-	}
+	let stock = live_stock;
 	let actual = common(&project_p1(observation, counts)?);
 	if label == "refused/move-capture" {
-		// Pin both the historical C11c stopgap refusal and the original admission.
-		// C11c root restores this admission after independent ownership proof.
-		if row["fresh_expectation"]["outcome"]["status"] != "value"
-			|| row["fresh_expectation"]["invoked"] != true
-			|| digest(&canonical(&row["fresh_expectation"]))
-				!= "c687396d8a21727c22946d6d9d569d57fd4dc7fbaa184b60ae5b7a34710881f3"
-		{
-			return Err("C11c historical move admission drift".into());
-		}
-		let mut expected = row["fresh_expectation"].clone();
-		expected["outcome"] = json!({"status":"refused","kind":"Unsupported","operation":"CallClosure","refusal":"CallClosure","location":{"source":0,"start":72,"end":104}});
-		expected["post"] = expected["before"].clone();
-		expected["invoked"] = json!(false);
-		let historical_stopgap = json!({"status":"refused","kind":"Unsupported","operation":"CallClosure","refusal":"CallClosure","location":{"source":0,"start":72,"end":104}});
-		if expected["outcome"] != historical_stopgap
-			|| expected["invoked"] != false
-			|| expected["post"] != expected["before"]
-		{
-			return Err("C11c historical stopgap pin drift".into());
-		}
-		// The root fix also closes the old Retained-ownership state-alias gap.
-		// Keep both historical admissions/refusal pins; require actual stock now.
-		if actual != stock {
+		// The root fix closes the old ownership gap; require actual stock now.
+		if actual != *stock {
 			return Err(format!("C11c exact move ownership drift {label}"));
 		}
 		return Ok(true);
-	}
-	if actual != row["fresh_expectation"] {
-		return Err(format!("stale refusal execution pin drift {label}"));
 	}
 	match row["disposition"]
 		.as_str()
 		.ok_or("stale admission disposition")?
 	{
 		"Exact" => {
-			if actual != stock {
+			if actual != *stock {
 				return Err(format!("stale admission not stock-exact {label}"));
 			}
 		}
@@ -366,7 +418,7 @@ fn c11_check_stale_refusal_admission(
 			if parsed != call_chain {
 				return Err("retained frame caller drift".into());
 			}
-			let retained = c11_retained_frame_shape(source, &actual, &stock, &call_chain)?;
+			let retained = c11_retained_frame_shape(source, &actual, stock, &call_chain)?;
 			if retained["categories"] != frame["categories"] {
 				return Err("retained frame category drift".into());
 			}
@@ -375,7 +427,7 @@ fn c11_check_stale_refusal_admission(
 			let path = row["only_allowed_difference"]
 				.as_str()
 				.ok_or("ownership difference path")?;
-			let differences = c11_json_differences(&stock, &actual, "", Some(path));
+			let differences = c11_json_differences(stock, &actual, "", Some(path));
 			if differences != [path]
 				|| stock["post"]["nodes"][2][0] != "OpaqueAny"
 				|| actual["post"]["nodes"][2][0] != "Vec"
@@ -533,12 +585,15 @@ fn c11_retained_frame_shape(
 	)
 }
 
+fn c11_control_stock(sites: Json) -> Json {
+    json!({"outcome":{"status":"error","class":"test","kind":"test","typed":{},"display":"test","chain":[],"sites":sites},"before":{},"post":{},"events":[],"events_after_reuse":[],"reuse":{},"invoked":true})
+}
+
 #[test]
 fn callback_frame_discovery_rejects_semantic_and_unpaired_drift() {
 	c11_mixed_frame_controls();
-	let dispositions = read_json(include_str!("../../callback_sort_dispositions.json"));
 	let source = CASES[40].1;
-	let stock = &dispositions[CASES[40].0]["fresh_expectation"];
+	let stock = &c11_control_stock(json!([{"source":0,"start":45,"end":52,"frames":"[]"},{"source":0,"start":86,"end":104,"frames":"[]"}]));
 	let at = json!({"source":0,"start":86,"end":104});
 	let callers = json!([at]);
 	let mut actual = stock.clone();
@@ -568,7 +623,7 @@ fn callback_frame_discovery_rejects_semantic_and_unpaired_drift() {
 	}
 	assert!(c11_retained_frame_shape(source, &actual, stock, &json!([])).is_err());
 	let single_source = CASES[43].1;
-	let single_stock = &dispositions[CASES[43].0]["fresh_expectation"];
+	let single_stock = &c11_control_stock(json!([{"source":0,"start":55,"end":73,"frames":"[]"}]));
 	assert!(
 		c11_retained_frame_shape(single_source, single_stock, single_stock, &json!([])).is_ok()
 	);
@@ -631,10 +686,9 @@ fn c11_c5_primary(source: &str, execution: &Json, stock: &Json) -> Result<(), St
 
 #[test]
 fn callback_and_c5_discovery_compose_only_independently_valid_halves() {
-	let dispositions = read_json(include_str!("../../callback_sort_dispositions.json"));
 	let source = CASES[78].1;
 	assert_eq!(CASES[78].0, "parent/read-format");
-	let stock = &dispositions[CASES[78].0]["fresh_expectation"];
+	let stock = &c11_control_stock(json!([{"source":0,"start":0,"end":54,"frames":"[]"},{"source":0,"start":103,"end":121,"frames":"[]"}]));
 	let caller = json!({"source":0,"start":103,"end":121});
 	let chain = json!([caller]);
 	let mut primary = stock["outcome"]["sites"][0].clone();
@@ -688,10 +742,9 @@ fn callback_and_c5_discovery_compose_only_independently_valid_halves() {
 
 // Called by the existing discovery control: no extra ignored/control test surface.
 fn c11_mixed_frame_controls() {
-	let dispositions = read_json(include_str!("../../callback_sort_dispositions.json"));
 	let source = CASES[89].1;
 	assert_eq!(CASES[89].0, "frames/caller-chain");
-	let stock = &dispositions[CASES[89].0]["fresh_expectation"];
+	let stock = &c11_control_stock(json!([{"source":0,"start":31,"end":54,"frames":"[]"},{"source":0,"start":101,"end":119,"frames":"[CallFrame { ip: 3, top: 0, isolated: None, out: discard }, CallFrame { ip: 12, top: 3, isolated: None, out: discard }]"}]));
 	let chain = json!([{"source":0,"start":101,"end":119},{"source":0,"start":134,"end":142},{"source":0,"start":77,"end":85}]);
 	let mut actual = stock.clone();
 	let mut primary = stock["outcome"]["sites"][0].clone();
@@ -724,42 +777,36 @@ fn c11_mixed_frame_controls() {
 	assert!(c11_retained_frame_shape(source, &actual, &short_stock, &chain).is_err());
 }
 
-// Only these two source-pinned rows outgrow the explicit historical frame cap.
-// Stock retains its independent nested-VM limit; these are not Exact rows.
-fn s6_depth_progression(label: &str, source: &str, binding: &Json) -> Result<Option<Json>, String> {
-	let overlay = read_json(include_str!("../../../frontend/frame_budget_c11_contract.json"));
-	let Some(row) = overlay["rows"].as_array().unwrap().iter().find(|row| row["label"] == label) else { return Ok(None); };
-	if row["source_sha256"] != digest(source.as_bytes()) || row["classification"] != "Retained-depth" || row["stock_limit"] != 32 { return Err("S6 depth identity drift".into()); }
-	let depth: usize = label.strip_prefix("depth/").unwrap().parse().unwrap();
-	let mut expected = binding["rows"]["depth/510"].clone();
-	for path in ["/outcome/graph/nodes", "/before/nodes", "/post/nodes"] {
-		for node in expected.pointer_mut(path).unwrap().as_array_mut().unwrap() {
-			if node[0] == "I64" && node[2] == "510" { node[2] = json!(depth.to_string()); }
-		}
-	}
-	let events: Vec<_> = (0..=depth).map(|n| json!({"event":"compare","n":n+1,"a":(depth-n).to_string(),"b":(depth-n).to_string()})).collect();
-	expected["events"] = json!(events);
-	let mut after = events;
-	after.push(json!({"event":"mark","hex":"7265757365"}));
-	expected["events_after_reuse"] = json!(after);
-	Ok(Some(expected))
+// Model the depth probe independently from saved observations. The historical
+// 1024-frame limit admits depths through 510; default limits admit these cases.
+fn c11_expected_depth(depth: usize, historical: bool) -> Json {
+    let fail = historical && depth >= 511;
+    let iterations = if fail { 511 } else { depth + 1 };
+    let events: Vec<_> = (0..iterations).map(|n| json!({"event":"compare","n":n+1,"a":(depth-n).to_string(),"b":(depth-n).to_string()})).collect();
+    let mut after = events.clone();
+    after.push(json!({"event":"mark","hex":"7265757365"}));
+    let before = json!({"root":0,"nodes":[["Tuple","0xfeb65b3f4755aef0",[1,2]],["Vec","0xc11b1e769aea94f2",[3,4]],["Vec","0xc11b1e769aea94f2",[]],["I64","0x1cad9186c9641c4f",depth.to_string()],["I64","0x1cad9186c9641c4f",depth.to_string()]]});
+    let outcome = if fail {
+        let mut frames = vec![json!({"source":0,"start":54,"end":72}); 510];
+        frames.push(json!({"source":0,"start":123,"end":141}));
+        json!({"status":"error","class":"FrameCapacity","kind":"FrameCapacity","typed":{"raw_kind":"FrameCapacity"},"display":"execute: FrameCapacity","chain":[],"sites":[{"source":0,"start":54,"end":72,"frames":serde_json::to_string(&frames).unwrap()}]})
+    } else {
+        json!({"status":"value","graph":{"root":0,"nodes":[["Vec","0xc11b1e769aea94f2",[1,2]],["I64","0x1cad9186c9641c4f",depth.to_string()],["I64","0x1cad9186c9641c4f",depth.to_string()]]}})
+    };
+    json!({"outcome":outcome,"before":before,"post":before,"events":events,"events_after_reuse":after,"reuse":{"status":"value","graph":{"root":0,"nodes":[["I64","0x1cad9186c9641c4f","7"]]}},"invoked":true})
 }
 
 #[test]
-fn s6_callback_depth_preserves_historical_limits_and_checks_default_progressions() {
-	let manifest = c11_retained_manifest().unwrap();
-	let binding = &manifest["depth"];
-	c11_check_depth_binding(binding).unwrap();
-	let counts = read_json(include_str!("../../callback_sort_p1_counts.json"));
-	for &(label, source, fixture, _, mode, fuel, cancel) in CASES.iter().filter(|row| row.0.starts_with("depth/")) {
-		let historical = observe_with_limits(source, fixture, mode, fuel, cancel, crate::experimental_core::execute::ExecutorLimits { frames: 1024, slots: 65_536 });
-		if let Some(expected) = binding["rows"].get(label) {
-			assert_eq!(&common(&project_p1(&historical, &counts[label]).unwrap()), expected, "{label}");
-		}
-		if let Some(expected) = s6_depth_progression(label, source, binding).unwrap() {
-			let current = observe(source, fixture, mode, fuel, cancel);
-			assert_eq!(common(&project_p1(&current, &counts[label]).unwrap()), expected, "{label}");
-			assert_eq!(current["fresh_audit"]["typed_failure_kind"], Json::Null);
-		}
-	}
+fn s6_callback_depth_checks_historical_limits_and_default_progressions() {
+    let counts = read_json(include_str!("../../callback_sort_p1_counts.json"));
+    for &(label, source, fixture, _, mode, fuel, cancel) in CASES.iter().filter(|row| row.0.starts_with("depth/")) {
+        let depth: usize = label.strip_prefix("depth/").unwrap().parse().unwrap();
+        let historical = observe_with_limits(source, fixture, mode, fuel, cancel, crate::experimental_core::execute::ExecutorLimits { frames: 1024, slots: 65_536 });
+        assert_eq!(common(&project_p1(&historical, &counts[label]).unwrap()), c11_expected_depth(depth, true), "{label}");
+        if depth >= 511 {
+            let current = observe(source, fixture, mode, fuel, cancel);
+            assert_eq!(common(&project_p1(&current, &counts[label]).unwrap()), c11_expected_depth(depth, false), "{label}");
+            assert_eq!(current["fresh_audit"]["typed_failure_kind"], Json::Null);
+        }
+    }
 }

@@ -1,14 +1,14 @@
 {
   "paths/enum": {
     "source_sha256": "6c209e0342e6f6c0c72a3e869bb2914c8ace764d7847ce9d2692a229dc587c20",
-    "stock_row_sha256": "5d57d9e691adef7c327462d37662c2d3029716cb4b0ddd8f3a15e83b36d25069",
+    "stock_outcome_sha256": "5ba55e22707cdaf2a48b42de3bf8fd7f5671106cc58fcc1cfa3591e68b6c9c9f",
     "authority": "chatd seq19017",
     "policy": "Exact original stock observation",
     "evidence_sha256": "93da7c5b9cf6f168447baed378db821deee0701d89a9ff30c8b06a8ad48ad5f3"
   },
   "c4/nominal/user-enum": {
     "source_sha256": "763309e1dedc24b86be0645597cd310b420b0ac19c465cf32bdb2913f6b6b53e",
-    "stock_row_sha256": "125636148815799bd800adca0d47c8d60ce966ab0df1d84a192b29fc0984a4b2",
+    "stock_outcome_sha256": "5ba55e22707cdaf2a48b42de3bf8fd7f5671106cc58fcc1cfa3591e68b6c9c9f",
     "authority": "chatd seq19017",
     "policy": "Exact original stock observation",
     "evidence_sha256": "93da7c5b9cf6f168447baed378db821deee0701d89a9ff30c8b06a8ad48ad5f3"

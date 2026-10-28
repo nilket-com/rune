@@ -1,0 +1,6 @@
+fn foo(a, b) {
+    a + b
+}
+
+let a = 3;
+foo(1, 2) + a

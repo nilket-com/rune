@@ -1,0 +1,6 @@
+pub fn run(args) {
+    println!{"{} and {}",
+        1, 2};
+    println!("WORKFLOW OK brace");
+    Ok(())
+}

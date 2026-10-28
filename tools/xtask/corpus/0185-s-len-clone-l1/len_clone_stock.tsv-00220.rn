@@ -1,0 +1,1 @@
+struct P {f} fn pass(x) { 1 } pub fn main() { let a=[[1]]; let b=a; let c=a[0]; drop(c); a }

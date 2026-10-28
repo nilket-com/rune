@@ -1,0 +1,6 @@
+use time::Duration;
+
+loop {
+    println!("Hello forever!");
+    time::sleep(Duration::from_secs(1)).await;
+}

@@ -1,0 +1,1 @@
+pub fn main() {let r=0..3; r.start=0.0; let a=r.start; r.end=3.0; let b=r.end; r.start=0; r.end=3; let v=[]; for x in r {v.push(x);} (a,b,v,r.start,r.end)}

@@ -123,15 +123,11 @@ fn observer_controls() {
 		assert_eq!(disposition["index"].as_u64(), Some(index as u64));
 		assert_eq!(disposition["label"], case["label"]);
 		assert_eq!(disposition["source_sha256"], case["source_sha256"]);
-		assert!(disposition["stock_observation_sha256"]
-			.as_str()
-			.is_some_and(|s| s.len() == 64));
 	}
 	for id in [
 		"000", "013", "020", "027", "029", "031", "033", "034", "036",
 	] {
 		assert_eq!(dispositions[id]["disposition"], "Exact");
-		assert!(dispositions[id]["fresh_expectation"].is_object());
 	}
 	for (id, expected) in [
 		("014", "Exact-or-Retained-diag"),

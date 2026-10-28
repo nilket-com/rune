@@ -1,0 +1,1 @@
+fn target() { println!("target"); 7 } fn rhs() { println!("rhs"); 3 } pub fn main() { target().x }

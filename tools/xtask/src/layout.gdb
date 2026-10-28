@@ -2,7 +2,7 @@
 # This observer never executes the subject. Rust owns acceptance and comparisons.
 python
 import gdb, json
-probe = ['rune::experimental_core::detail::Detail', 'rune::experimental_core::error::Error', 'rune::experimental_core::execute::Failure', 'core::option::Option<rune::experimental_core::error::Error>', 'core::result::Result<rune::experimental_core::value::Value, rune::experimental_core::error::Error>']
+probe = ['rune::experimental_core::detail::Detail', 'rune::experimental_core::error::Error', 'rune::experimental_core::execute::Failure', 'core::option::Option<rune::experimental_core::error::Error>', 'core::result::Result<rune::experimental_core::value::Value, rune::experimental_core::error::Error>', 'core::result::Result<(), rune::experimental_core::error::Error>', 'core::result::Result<rune::experimental_core::value::Value, rune::experimental_core::execute::Failure>']
 variants = ['rune::experimental_core::detail::Detail::NumericArgumentCoerce', 'rune::experimental_core::detail::Detail::Coerce', 'rune::experimental_core::detail::IntValue', 'rune::experimental_core::detail::IntTarget', 'core::option::Option<rune::experimental_core::detail::Detail>']
 result = {'layout_probe': {}, 'layout_variants': {}}
 for name in probe:

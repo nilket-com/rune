@@ -1,0 +1,7 @@
+fn test_ignore(vector) {
+    match vector {
+        [_, b] => println!("Second item in vector is {b}."),
+    }
+}
+
+test_ignore([1, 2]);

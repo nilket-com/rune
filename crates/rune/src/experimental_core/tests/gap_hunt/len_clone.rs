@@ -269,65 +269,41 @@ fn run_probe(engine: &str) {
 	}
 	fs::write(out.join("summary.txt"), format!("{} cases: {counts:?}\nBounded M/C/V matrix. Full phase/class/message/value/stdout/stderr retained. Deep and recursive-cycle stock probes excluded.\n", cases.len())).unwrap();
 }
-#[test]
-#[ignore = "explicit frozen stock method/clone/invalidation contract; bounded children"]
-fn legacy_contract() {
-	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
-	fs::create_dir(&out).expect("new GAP_OUT required");
-	let scratch = Scratch(
-		std::env::temp_dir().join(format!("rune-len-clone-contract-{}", std::process::id())),
+/// Run `source` on live stock and return its record with the shared D1
+/// mappings applied, as both engines' records are compared.
+fn stock_expected(
+	family: &str,
+	label: &str,
+	source: &str,
+	path: &Path,
+	scratch: &Path,
+	out: &Path,
+	id: &str,
+) -> Run {
+	let mut run = launch(path, path, "main", "stock", scratch, out, id);
+	assert!(run.complete, "incomplete {label}/stock: {}", run.record);
+	run.record = super::method_diagnostics::intentional_record_before(
+		family,
+		label,
+		source,
+		"stock",
+		&run.record,
 	);
-	fs::create_dir(&scratch.0).unwrap();
-	let generated = cases();
-	let rows: Vec<_> = include_str!("../len_clone_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
-	assert_eq!(rows.len(), generated.len());
-	for (n, (line, (label, source))) in rows.iter().zip(&generated).enumerate() {
-		let row: Vec<_> = line.split('\t').collect();
-		assert_eq!(row.len(), 5);
-		assert_eq!(row[0], label);
-		assert_eq!(unhex(row[1]), *source, "source drift: {label}");
-		let id = format!("{n:05}");
-		let path = out.join(format!("{id}.source.rn"));
-		fs::write(&path, source).unwrap();
-		let mut run = launch(&path, &path, "main", "stock", &scratch.0, &out, &id);
-		assert!(run.complete, "incomplete {label}: {}", run.record);
-		run.record = super::method_diagnostics::intentional_record_before(
-			"len_clone",
-			label,
-			source,
-			"stock",
-			&run.record,
-		);
+	if family == "len_clone" {
 		run.record = super::d1b_diagnostics::intentional_record_before(
-			"len_clone",
+			family,
 			label,
 			source,
 			"stock",
 			&run.record,
 		);
-		assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
-		assert_no_addresses(label, &unhex(row[2]), &[], &[]);
-		assert_eq!(
-			run.record,
-			super::nominal_clone::intentional_record(
-				"len_clone_stock.tsv",
-				label,
-				source,
-				unhex(row[2])
-			),
-			"observation drift: {label}"
-		);
-		assert_eq!(hex(&run.stdout), row[3], "stdout drift: {label}");
-		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
 	}
-	super::contract_completed("stock", rows.len());
+	assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
+	run
 }
 
 #[test]
-#[ignore = "explicit execution method/clone/invalidation contract with exact coverage refusals; bounded children"]
+#[ignore = "explicit execution method/clone/invalidation contract against live stock with exact coverage refusals; bounded children"]
 fn contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).expect("new GAP_OUT required");
@@ -337,21 +313,16 @@ fn contract() {
 	)));
 	fs::create_dir(&scratch.0).unwrap();
 	let generated = cases();
-	let rows: Vec<_> = include_str!("../len_clone_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
-	assert_eq!(rows.len(), generated.len());
+	assert_eq!(generated.len(), 310);
+	let mut labels = std::collections::BTreeSet::new();
 	let mut coverage = 0;
 	let mut presented = 0;
-	for (n, (line, (label, source))) in rows.iter().zip(&generated).enumerate() {
-		let row: Vec<_> = line.split('\t').collect();
-		assert_eq!(row.len(), 5);
-		assert_eq!(row[0], label);
-		assert_eq!(unhex(row[1]), *source, "source drift: {label}");
+	for (n, (label, source)) in generated.iter().enumerate() {
+		assert!(labels.insert(label));
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
+		let stock = stock_expected("len_clone", label, source, &path, &scratch.0, &out, &id);
 		let mut run = launch(&path, &path, "main", "fresh", &scratch.0, &out, &id);
 		assert!(run.complete, "incomplete {label}: {}", run.record);
 		run.record = super::method_diagnostics::intentional_record_before(
@@ -369,7 +340,6 @@ fn contract() {
 			&run.record,
 		);
 		assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
-		assert_no_addresses(label, &unhex(row[2]), &[], &[]);
 		let actual: Vec<_> = run.record.split('\t').collect();
 		let pieces: Vec<_> = label.split('/').collect();
 		let refusal = if pieces[0] == "method" {
@@ -394,36 +364,36 @@ fn contract() {
 			coverage += 1;
 			continue;
 		}
+		let expected: Vec<_> = stock.record.split('\t').collect();
 		if label == "method/function/clone" {
 			// Policy presentation: stock Debug prints its bytecode offset, new the
 			// function index (C17a). Both strings are pinned.
-			let stock = unhex(row[2]);
-			let stock: Vec<_> = stock.split('\t').collect();
-			assert_eq!(&stock[..4], &["value", "", "", ""]);
-			assert_eq!(unhex(stock[4]), "immediate function (at: 0x5)");
+			assert_eq!(&expected[..4], &["value", "", "", ""]);
+			assert_eq!(unhex(expected[4]), "immediate function (at: 0x5)");
 			assert_eq!(&actual[..4], &["value", "", "", ""]);
 			assert_eq!(unhex(actual[4]), "immediate function (function: 1)");
 			presented += 1;
 		} else {
-			let expected = super::nominal_clone::intentional_record(
-				"len_clone_stock.tsv",
-				label,
-				source,
-				unhex(row[2]),
-			);
-			let expected: Vec<_> = expected.split('\t').collect();
 			assert_eq!(
 				(&actual[..2], &actual[3..]),
 				(&expected[..2], &expected[3..]),
 				"observation drift: {label}"
 			);
 		}
-		assert_eq!(hex(&run.stdout), row[3], "stdout drift: {label}");
-		assert_eq!(hex(&run.stderr), row[4], "stderr drift: {label}");
+		assert_eq!(
+			hex(&run.stdout),
+			hex(&stock.stdout),
+			"stdout drift: {label}"
+		);
+		assert_eq!(
+			hex(&run.stderr),
+			hex(&stock.stderr),
+			"stderr drift: {label}"
+		);
 	}
 	assert_eq!(coverage, 51);
 	assert_eq!(presented, 1);
-	super::contract_completed("fresh", rows.len());
+	super::contract_completed("fresh", generated.len());
 }
 
 #[test]
@@ -556,7 +526,7 @@ fn clone_op_layout() {
 }
 
 #[test]
-#[ignore = "stock/execution supplementary global clone contract; bounded children"]
+#[ignore = "execution global clone contract against live stock; bounded children"]
 fn global_contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).unwrap();
@@ -564,54 +534,33 @@ fn global_contract() {
 		Scratch(std::env::temp_dir().join(format!("rune-global-contract-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
 	let cases = global_cases();
-	let rows: Vec<_> = include_str!("../global_clone_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
-	assert_eq!(rows.len(), cases.len());
-	for (n, (row, (label, source))) in rows.iter().zip(&cases).enumerate() {
-		let row: Vec<_> = row.split('\t').collect();
-		assert_eq!(row[0], label);
-		assert_eq!(unhex(row[1]), *source);
-		let path = out.join(format!("{n:05}.source.rn"));
+	assert_eq!(cases.len(), 39);
+	for (n, (label, source)) in cases.iter().enumerate() {
+		let id = format!("{n:05}");
+		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
-		for engine in ["stock", "fresh"] {
-			let mut run = launch(
-				&path,
-				&path,
-				"main",
-				engine,
-				&scratch.0,
-				&out,
-				&format!("{n:05}"),
-			);
-			assert!(run.complete, "{label}/{engine}: {}", run.record);
-			run.record = super::method_diagnostics::intentional_record_before(
-				"global_clone",
-				label,
-				source,
-				engine,
-				&run.record,
-			);
-			assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
-			let expected = super::nominal_clone::intentional_record(
-				"global_clone_stock.tsv",
-				label,
-				source,
-				unhex(row[2]),
-			);
-			let expected: Vec<_> = expected.split('\t').collect();
-			let actual: Vec<_> = run.record.split('\t').collect();
-			assert_eq!(
-				(&actual[..2], &actual[3..]),
-				(&expected[..2], &expected[3..]),
-				"{label}/{engine}"
-			);
-			assert_eq!(hex(&run.stdout), row[3]);
-			assert_eq!(hex(&run.stderr), row[4]);
-		}
+		let stock = stock_expected("global_clone", label, source, &path, &scratch.0, &out, &id);
+		let expected: Vec<_> = stock.record.split('\t').collect();
+		let mut run = launch(&path, &path, "main", "fresh", &scratch.0, &out, &id);
+		assert!(run.complete, "{label}/fresh: {}", run.record);
+		run.record = super::method_diagnostics::intentional_record_before(
+			"global_clone",
+			label,
+			source,
+			"fresh",
+			&run.record,
+		);
+		assert_no_addresses(label, &run.record, &run.stdout, &run.stderr);
+		let actual: Vec<_> = run.record.split('\t').collect();
+		assert_eq!(
+			(&actual[..2], &actual[3..]),
+			(&expected[..2], &expected[3..]),
+			"{label}/fresh"
+		);
+		assert_eq!(hex(&run.stdout), hex(&stock.stdout), "stdout: {label}");
+		assert_eq!(hex(&run.stderr), hex(&stock.stderr), "stderr: {label}");
 	}
-	super::contract_completed("both", rows.len());
+	super::contract_completed("both", cases.len());
 }
 
 #[test]

@@ -1,0 +1,3 @@
+const VALUE = 0b001 << 3;
+
+dbg!(VALUE == 8);

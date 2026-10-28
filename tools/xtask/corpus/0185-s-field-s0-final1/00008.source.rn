@@ -1,0 +1,10 @@
+pub fn order_supp_str_alias_local(a, b, c) { let s = a; let t = s; s += b; [s, t] }
+pub fn order_supp_str_alias_index(a, b, c) { let v = [a]; let t = v[0]; v[0] += b; [v[0], t] }
+pub fn order_supp_str_alias_field(a, b, c) { let o = #{x: a}; let t = o.x; o.x += b; [o.x, t] }
+pub fn order_supp_str_add_fresh(a, b, c) { let s = a; let t = s; let u = s + b; [s, t, u] }
+pub fn order_supp_field_read_missing(a, b, c) { let o = #{x: a}; o.y }
+pub fn order_supp_field_write_missing(a, b, c) { let o = #{x: a}; o.y = c; [o.x, o.y] }
+pub fn order_supp_field_write_missing_alias(a, b, c) { let o = #{x: a}; let p = o; p.y = c; o.y }
+pub fn order_supp_field_compound_missing(a, b, c) { let o = #{x: a}; o.y += c; o.y }
+pub fn order_supp_const_forward(a, b, c) { B + a } const B = A * 3; const A = 2;
+pub fn order_supp_const_backward(a, b, c) { B + a } const A = 2; const B = A * 3;

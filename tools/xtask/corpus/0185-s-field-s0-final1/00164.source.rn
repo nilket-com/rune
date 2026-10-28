@@ -1,0 +1,11 @@
+fn foo() {
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+let gen = foo();
+
+while let Some(value) = gen.next() {
+    println!("from generator: {value}");
+}

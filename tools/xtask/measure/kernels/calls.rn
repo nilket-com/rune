@@ -1,0 +1,6 @@
+fn add(a, b) { a + b }
+pub fn main(x) {
+	let total = 0;
+	for i in 0..x { total = add(total, i); }
+	total
+}

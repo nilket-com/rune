@@ -1,0 +1,57 @@
+// Record 0137, E4: near-duplicate support tickets from whole tickets, with
+// Candle only. 0133's U3 embedded each ticket's title and its first 180
+// words, truncated at the model's 256 tokens (a third of the tickets lost
+// their tails). Here each whole ticket is chunked into passages the model
+// takes without truncation (0136), the passages embedded, and pooled back
+// into one vector per ticket with the passage-to-document mean.
+// args: D2 issues.json, model directory, optionally an output file
+
+pub fn run(args) {
+    let issues = json::parse(fs::read(args[0])?)?;
+    let enc = candle::TextEncoder::load(args[1])?;
+    let numbers = [];
+    let titles = [];
+    let passages = [];
+    let owner = [];
+    let t = 0;
+    for i in issues {
+        numbers.push(i["number"]);
+        titles.push(i["title"]);
+        for p in enc.chunk(i["title"] + "\n" + i["body"], 0)? {
+            passages.push(p);
+            owner.push(t);
+        }
+        t += 1;
+    }
+    let n = numbers.len();
+    let t0 = time::monotonic_ms();
+    let emb = candle::Tensor::from_dense(enc.embed(passages)?)?;
+    let t1 = time::monotonic_ms();
+    // one vector per ticket: the mean of its passages, renormalized
+    let segments = candle::Tensor::from_vec(owner, [owner.len()], "u32")?;
+    let pooled = candle::segment_mean(emb, segments, n)?;
+    let unit = pooled.broadcast_div(pooled.sqr()?.sum_keepdim(1)?.sqrt()?)?;
+    let sims = unit.matmul(unit.t()?)?.to_vec2()?;
+    println!("{} tickets, {} passages; embed {} ms", n, passages.len(), t1 - t0);
+
+    // every pair at or above U3's frozen edge of 0.80
+    let rows = "issue_a\tissue_b\tscore\n";
+    let pairs = [];
+    for a in 0..n {
+        for b in (a + 1)..n {
+            let s = sims[a][b];
+            if s >= 0.80 {
+                pairs.push((s, a, b));
+                rows += `#${numbers[a]}\t#${numbers[b]}\t${s}\n`;
+            }
+        }
+    }
+    println!("{} pairs at or above 0.80:", pairs.len());
+    for p in pairs {
+        println!("  {}  #{} {}", p.0, numbers[p.1], titles[p.1]);
+        println!("        #{} {}", numbers[p.2], titles[p.2]);
+    }
+    if args.len() > 2 { fs::write(args[2], rows)?; }
+    println!("WORKFLOW OK e4");
+    Ok(())
+}

@@ -1,0 +1,1 @@
+pub fn main() { let a=Some([1]); let b=a.clone(); b.0.push(9); (a.0.len(),b.0.len()) }

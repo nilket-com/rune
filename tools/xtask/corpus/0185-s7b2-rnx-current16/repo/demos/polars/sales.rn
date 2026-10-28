@@ -1,0 +1,31 @@
+// Polars on a small CSV: which region earned most, net of returns?
+// from the checkout root: demos/polars/target/release/rnx-polars-demo run demos/polars/sales.rn demos/data/sales.csv
+
+fn dollars(cents) { format!("{}.{:02}", cents / 100, cents % 100) }
+
+// one value out of a one-row-or-more frame
+fn int_at(frame, name, row) { Ok(frame.column(name)?.i64()?.get(row)?.unwrap()) }
+
+pub fn main(args) {
+	let sales = polars::read_csv(args[0], [("month", "string"), ("region", "string"), ("product", "string"),
+		("units", "i64"), ("price_cents", "i64"), ("returned", "bool")])?;
+	let revenue = (polars::col("units") * polars::col("price_cents"))?.alias("revenue_cents");
+	let kept = sales.lazy().filter(polars::col("returned").not_()).with_columns([revenue])?.collect()?;
+	let by_region = kept.lazy().group_by([polars::col("region")])?
+		.agg([polars::col("units").sum().alias("units"), polars::col("revenue_cents").sum().alias("revenue_cents"),
+			polars::len().alias("orders")])?
+		.sort_by_exprs([polars::col("revenue_cents")], polars::SortMultipleOptions::new().with_order_descending(true))?
+		.collect()?;
+	let summary = kept.lazy().select_([polars::col("revenue_cents").sum().alias("total_cents"),
+		polars::col("revenue_cents").mean().alias("mean_cents")])?.collect()?;
+
+	let orders = kept.height()?;
+	let returned = sales.height()? - orders;
+	let total = int_at(summary, "total_cents", 0)?;
+	let top = by_region.column("region")?.str()?.get(0)?.unwrap();
+	let top_cents = int_at(by_region, "revenue_cents", 0)?;
+	// tenths of a percent, rounded half up, in integers
+	let tenths = (top_cents * 2000 + total) / (2 * total);
+	println!("Net revenue: ${} from {} orders ({} returned, left out)", dollars(total), orders, returned);
+	println!("Top region: {}, ${}, {}.{}% of net revenue", top, dollars(top_cents), tenths / 10, tenths % 10);
+}

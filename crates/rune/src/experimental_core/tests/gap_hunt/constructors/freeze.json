@@ -4,8 +4,6 @@
   "rows": 133,
   "files": {
     "cases.json": "08f0606be7ebeae66a377f6c6081ca13269da76e52e81f6965f838d79b1177ae",
-    "stock.json": "a4499c834c188f53491794d666a3bfa04c5fbfeeb6b33883fa4fe8c504bc11ee",
-    "stock_raw.json": "7e0096d9235d421e9b8b201f7f2fabcd0f8047b816d9aa0d064e869d9a78d6c4",
     "dispositions.json": "19287dfca1d09969012b22cd6d7d1ed512d035bddb137b4d9cec6da66bf79c9c",
     "p1.json": "e4f9151c388039aa21b02a7838d3c23bad79fc214d88e9908f95b6897f7d7634"
   },
@@ -143,20 +141,6 @@
     "130": "06a8b620c715f09c3df34ac91a5d42dafd2e45ae93d01e53cab205520a7018fe",
     "131": "526ab977249cdf9ba068e92d6bb14dd4573d9f76a15c16d07aceed24bfdeb576",
     "132": "f218e55e9b994fdcf97e7d02cb09ef27def8db95d247cea2ba4e5e6f3d7716b2"
-  },
-  "stock_binary_by_epoch": {
-    "1": {
-      "path": "/home/me/work/.reviews/0185-c15-oracle-build1/native-test",
-      "sha256": "4b043aca48e2f0bb5184269ad6874e551b2337c7766ddd7ce133c2c14f53d4ca"
-    },
-    "2": {
-      "path": "/home/me/work/.reviews/0185-c15-oracle-build2/native-test",
-      "sha256": "22f7c876fd46fb349541b8aeb30586bc45598ba2d3c2b56a1ebcbb22f664df74"
-    },
-    "3": {
-      "path": "/home/me/work/.reviews/0185-c15-oracle-build3/native-test",
-      "sha256": "fb1aa2079374dfde25961f7010b4525e3df66a5048259138bc69123bcf79f943"
-    }
   },
   "provenance_sha256": "d1d29995692632664c18e3b6c574b78939198ea7bad0785fe7b718c7bdc32430",
   "policy": "Exact observations except listed compile-time surfaces and preauthorized fuel row125; full raw preserved; P1 typed pointers only; no implementation output used",

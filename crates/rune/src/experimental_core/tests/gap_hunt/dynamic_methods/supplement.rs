@@ -1,4 +1,4 @@
-// Live checks outside the frozen oracle: the frame limit on plain recursion,
+// Live checks outside the contract cases: the frame limit on plain recursion,
 // and a dispatched name on a host-returned type the context registers.
 
 use crate as rune;

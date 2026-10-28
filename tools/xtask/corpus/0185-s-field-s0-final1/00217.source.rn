@@ -1,0 +1,7 @@
+pub fn run(args) {
+    { 1; }
+    println!("{} after a block ({} ok)",
+        1, 2);
+    println!("WORKFLOW OK block");
+    Ok(())
+}

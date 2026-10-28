@@ -7,7 +7,7 @@
     "index": 8,
     "label": "receiver/unit-returned-self",
     "source_sha256": "b9dc49c9ed2610e59a66ccae90155eebb9d1dd208c66d196b9e0f9cad34c2525",
-    "stock_row_sha256": "7136f7441ecbaab00c74abde7bff74bf4d83975036e42a13cf0d1bdbc342013e",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -32,7 +32,7 @@
     "index": 22,
     "label": "receiver/other-type-result",
     "source_sha256": "23d14472c523eea74d11f4b471786ff9dea71b36b9725c731e6d63d07c5185cb",
-    "stock_row_sha256": "a090cc1b738b69fa5d11b7e980490384f0adccc3b6e3f2c4842c981fb1a4f250",
+    "stock_row_sha256": "bdd80c281c8f9bdc50c6d2d2d8767b7f879c113096ea3b85fb5cfdba4772c077",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -69,7 +69,7 @@
     "index": 56,
     "label": "arity/named/a0/too-many/uncalled-closure",
     "source_sha256": "837f816d734d9045f7c8ec3f0b7c66a127525ac0f1cca3df41049ef5cc738066",
-    "stock_row_sha256": "b8dfc7d3b4ac3dd000eed1c312cb60db376501ab5537654f0af926ab1f66b99e",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -94,7 +94,7 @@
     "index": 61,
     "label": "arity/named/a1/too-few/uncalled-closure",
     "source_sha256": "70235c2e7ad5504ba600c7fd5222627cca1d2e0b8d20f71a267dba99835b3f8b",
-    "stock_row_sha256": "32b8297cf61433d8682b2f8c0f7f2a71022b0593331d68398453421b15d0b631",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -119,7 +119,7 @@
     "index": 65,
     "label": "arity/named/a1/too-many/uncalled-closure",
     "source_sha256": "bf2468f727f9ef37397da5def2f7f72e4fed59677c4bfa9106fa1d61acc25880",
-    "stock_row_sha256": "0b7761d7fb4d90138acfc69f17f68da25a88006a85e9fd7a50cf8a9a0cb5897c",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -144,7 +144,7 @@
     "index": 70,
     "label": "arity/named/a2/too-few/uncalled-closure",
     "source_sha256": "5ab66a86e409b6acbd2d4cfb161084703c24fdceda0a2b0bd3a3f5641d8a9d12",
-    "stock_row_sha256": "994496cd44a537b129118a63ecf2db739d7b4398510cc2e1cac1620c11e60b0f",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -169,7 +169,7 @@
     "index": 74,
     "label": "arity/named/a2/too-many/uncalled-closure",
     "source_sha256": "1fcdc4247696671ed932b708696de19466f3d466bfbaf2c41c4fff94ae3fd3cd",
-    "stock_row_sha256": "dab50f2c29a090077064b86c812d72d4a86a41c2faa97ae9956b3fabb67eda86",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -194,7 +194,7 @@
     "index": 79,
     "label": "arity/named/a3/too-few/uncalled-closure",
     "source_sha256": "026aabc86d2543ec2dadea3678258461fbd0a4f78d06313e6debf1ab3c97f29e",
-    "stock_row_sha256": "b671427693f842df46891e48d48ef363d5b5dd1702fa50cc6db0c55964291599",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -219,7 +219,7 @@
     "index": 83,
     "label": "arity/named/a3/too-many/uncalled-closure",
     "source_sha256": "5dedb809ad5576314fef48d47d5cd567566488695628287ad756e689aec7f7c7",
-    "stock_row_sha256": "1500832290e1f1920eaa3f56e30d27582543642a929747b7c8230a580a89da03",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -244,7 +244,7 @@
     "index": 88,
     "label": "arity/named/a4/too-few/uncalled-closure",
     "source_sha256": "ae308e5363572a700be22fbd11dcb826fdedaad32bcfc2b14584d7b6b85a5fbd",
-    "stock_row_sha256": "9ee809b2d0eb52f81deb5031aa4e37595b793ec902089d9caf030f0bd75bf269",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -269,7 +269,7 @@
     "index": 92,
     "label": "arity/named/a4/too-many/uncalled-closure",
     "source_sha256": "7799a114243db05c35b7b16769037b766e151486be282b49f6c21d933fd39955",
-    "stock_row_sha256": "d349d25209b6192ae1a9ce4f782791b8d294479f4fb2ad5727e4872021b852e0",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -294,7 +294,7 @@
     "index": 97,
     "label": "arity/tuple/a0/too-many/uncalled-closure",
     "source_sha256": "050af135d2c777e674f8e4abfc1c4edb7c5404d5703b66415d49fa48f80712da",
-    "stock_row_sha256": "41526f95577113bbf1485d5be576101ac33c2bef1ab630be9eb6f743373ddf84",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -319,7 +319,7 @@
     "index": 102,
     "label": "arity/tuple/a1/too-few/uncalled-closure",
     "source_sha256": "f7728e8806db6b59ee6d17fbe38736e4eab3d381dc8ff5a097f4324c2660aee9",
-    "stock_row_sha256": "ee955092de8308c85b04d4826008b80256e9ee0c7c467584cb694c05a27b2489",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -344,7 +344,7 @@
     "index": 106,
     "label": "arity/tuple/a1/too-many/uncalled-closure",
     "source_sha256": "22ec81c6629f6f7a85aba2bd6d707b1d0025d6ff41eafa7f943d5ad67bc4ae5c",
-    "stock_row_sha256": "832e53eb3c7ae148e55e96f989d09d2c7e53719122c607199b058943e31c5506",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -369,7 +369,7 @@
     "index": 111,
     "label": "arity/tuple/a2/too-few/uncalled-closure",
     "source_sha256": "fd6b066bc024624d42ee8e370009a98d86d4c4cf657f2d3daf5d74e7d3e4d58e",
-    "stock_row_sha256": "90d1869957c8a671adc3bd6a5c675417c723eac253858fc7ea543303fa5c01db",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -394,7 +394,7 @@
     "index": 115,
     "label": "arity/tuple/a2/too-many/uncalled-closure",
     "source_sha256": "dd9cf2f89e5fdd57e7cfb2eb09ae4bd79b39570d5e8cdeb31c9fa4ea16e3dd84",
-    "stock_row_sha256": "d87ecc627dd3c02dc892be60e80c315f848576186e7c7876e1790124ca0b6720",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -419,7 +419,7 @@
     "index": 120,
     "label": "arity/tuple/a3/too-few/uncalled-closure",
     "source_sha256": "5a2b2b6f6a6043a73f77ea1f8b70b9b71db9dd755392b409013b1436e4424554",
-    "stock_row_sha256": "4d7c0afc54a90013e79f3af6651fd81bf0aa74f0ff06ab80fae26e91bf4fadf7",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -444,7 +444,7 @@
     "index": 124,
     "label": "arity/tuple/a3/too-many/uncalled-closure",
     "source_sha256": "e5dce5d7fc3d8b29445a74ff71fb28c2df52b365edae6309574672d1188b9fbf",
-    "stock_row_sha256": "0c6a0274ec75a5272b8c1387ca4420dd98d99482f7d9dd0937540ae68b8d252e",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -469,7 +469,7 @@
     "index": 129,
     "label": "arity/tuple/a4/too-few/uncalled-closure",
     "source_sha256": "09c95dda9971ffc2309545bcbca14bf7a79994e195f92893adff75afd1206bde",
-    "stock_row_sha256": "1d51c30edd8d8c9db0b6b31e79b6e3ce1647be9ba57ea81c91043a8a570e8c09",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -494,7 +494,7 @@
     "index": 133,
     "label": "arity/tuple/a4/too-many/uncalled-closure",
     "source_sha256": "bb6c88ccfd780b65b3230902c6b2a8e7af8f09288c7a0578fd492fa1ee70c65b",
-    "stock_row_sha256": "9f73bc19db05fa3f2093c68ba6d59972a76ca3b41498ad7172d766f3447c02b1",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -519,7 +519,7 @@
     "index": 134,
     "label": "arity/enum/a0/correct/called",
     "source_sha256": "79c4f4d0fa5a260fd733b97ac33fc337f1549e7672e98a70f5f0b4434e598d27",
-    "stock_row_sha256": "1248b21fad056002175e5b548f28eeb11a2476663de5f911b54b211d8f985ce1",
+    "stock_row_sha256": "34db8a5bd6d3899ef9ddc00296ebe6a53a808b502c0baaf607244b2c52229079",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -544,7 +544,7 @@
     "index": 135,
     "label": "arity/enum/a0/too-many/called",
     "source_sha256": "47b37de25570bdbe68137b6ab2764733b5edc6f696a1d393927386b1d46e31f6",
-    "stock_row_sha256": "cfe6c2c48c04415a531fb9837677e519bb0650ded4ce4a660431a31bdcba4d04",
+    "stock_row_sha256": "b6e409172c5aed50912f5e7987452f68548fc1ada580e4ee46c9406e633b25d6",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -581,7 +581,7 @@
     "index": 136,
     "label": "arity/enum/a0/too-many/unused",
     "source_sha256": "f613f3ed4eec3622cad151efbdaa49fd92efe644f08d9cb413c414255d282e33",
-    "stock_row_sha256": "423dedd9c97ecf7a1c43d68acc424d0b2afdacafbc3ed1966e5e5f3093566231",
+    "stock_row_sha256": "60331c99af84c76b909bc93d0c24398e000cd96ed88d7710bd81e3637d5461bd",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -618,7 +618,7 @@
     "index": 137,
     "label": "arity/enum/a0/too-many/dead-branch",
     "source_sha256": "3207ca28a97f07ac80db4ea504a8752977b8f494506cda3d7a8de514ae138d59",
-    "stock_row_sha256": "81b181c98061c6c3098615c9837ba523f3f783cfa01a650d25eca7f56e93d68e",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -655,7 +655,7 @@
     "index": 138,
     "label": "arity/enum/a0/too-many/uncalled-closure",
     "source_sha256": "d60462b7fecc1006c54c24eaffc40a934f4adc82eba860995faf10e8462a3be4",
-    "stock_row_sha256": "85e22f158d08caef0ca51e91e967e00751f191efdaeae59075cb2cc0cbc6f8c2",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -680,7 +680,7 @@
     "index": 139,
     "label": "arity/enum/a1/correct/called",
     "source_sha256": "7a0b727e1ac578283a0e6bcb7592d322bcb5638d5977dba3dd0abfc57c5e11be",
-    "stock_row_sha256": "9ee0228e47fb00eca3bd0947161aa805138d27ba1aceefb3fc174a1e5d973851",
+    "stock_row_sha256": "d9d8ff02458cd8fa3f025f85db380a14ba7beecdd51f2a63360f3f8837eba748",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -705,7 +705,7 @@
     "index": 140,
     "label": "arity/enum/a1/too-few/called",
     "source_sha256": "306c1bd991c3947b7e09e1b113e2a805defcba1ddc99dcf6d8ce2a56fbea26a2",
-    "stock_row_sha256": "3dfe8890aa9a1f34cc17cdf7ce42ace094b713518d8e9c4642bb3614f5e90738",
+    "stock_row_sha256": "024316e1a990cd0868fef067c5600dde6bce5e0c9dd60c29c151c7d356c2f2a3",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -742,7 +742,7 @@
     "index": 141,
     "label": "arity/enum/a1/too-few/unused",
     "source_sha256": "d1fad6eb6a289271cebd16b03ef9ede87ec6ef5c75a789919d771de9e3a5bf6f",
-    "stock_row_sha256": "63ce33446cec3b81823d1ace4c3277a405c200c324a8d69f64debfbf1890016c",
+    "stock_row_sha256": "2087695d3124d7d649f3d5080fb998265045b2736079ca532101f5075278a583",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -779,7 +779,7 @@
     "index": 142,
     "label": "arity/enum/a1/too-few/dead-branch",
     "source_sha256": "1390a783172b0ea27f6bc1035e0cd00e665ab8f316bf7a187d24aafe5f1465f4",
-    "stock_row_sha256": "cbee0bb6211aadf55ccc801fd296e04f9ef88fcda858709ddef170ae2e2dfae2",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -816,7 +816,7 @@
     "index": 143,
     "label": "arity/enum/a1/too-few/uncalled-closure",
     "source_sha256": "844c1439c3f91066f011a713743c3545fa4d858c2216f1f20c9bc4c9b51aed19",
-    "stock_row_sha256": "fcc1aa21ebff1dd4b43d47752853cb31b14313e65b60d31d6cc9218d3bc4bcc6",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -841,7 +841,7 @@
     "index": 144,
     "label": "arity/enum/a1/too-many/called",
     "source_sha256": "3945b92d6c956370b7eead8cbeb9e7114805262760cde883c478926120a60dd9",
-    "stock_row_sha256": "1fbcb2b874601f7d28483d8e9c1a3345a802077418bf9393686a7060934a7f91",
+    "stock_row_sha256": "fa0078a137977152143e938ea9a1093a5ecba8044c1abeba83df74abc5928a98",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -878,7 +878,7 @@
     "index": 145,
     "label": "arity/enum/a1/too-many/unused",
     "source_sha256": "d0dc00ea92ca5c48a006e2eacc472dd83b5225165372fea1dae1e491f09fdcb1",
-    "stock_row_sha256": "519cafd7c99fafbbbb568761c17a0bca5b61fea5c6cf97e9bb5289268bfd7861",
+    "stock_row_sha256": "31cf470fe3af8f985c26031eaa4c352f7cf7359397d41d526b96d84c128b4ba4",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -915,7 +915,7 @@
     "index": 146,
     "label": "arity/enum/a1/too-many/dead-branch",
     "source_sha256": "4758c8452db576a8becd68e68df75a6ea2b41feccdeb4dfb2723a5810814eb13",
-    "stock_row_sha256": "720d36fdeadedea6cbc95a592e243bd19103e1a6cd5e4b8f3cbd0d527636a15e",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -952,7 +952,7 @@
     "index": 147,
     "label": "arity/enum/a1/too-many/uncalled-closure",
     "source_sha256": "15348524b4fc541a1984b15b7656e67788d084d1d9ce800aa537d41d682971c1",
-    "stock_row_sha256": "cbff91f41644e261f4608049809e3d6f47ac9099ba8268f69c60ce1bb48ae615",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -977,7 +977,7 @@
     "index": 148,
     "label": "arity/enum/a2/correct/called",
     "source_sha256": "1030f4ec587baa1128effafa23e11a2c90a119a16a4d4b217ace17b2bcd41608",
-    "stock_row_sha256": "473179be3bf03fcf343fc78c3612da80ef756a695105de200b4566eb27e7c1df",
+    "stock_row_sha256": "70b867ab36832484bf6d2eadfa184b158a3a74b496d0af5460fb18830a8c58cd",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1002,7 +1002,7 @@
     "index": 149,
     "label": "arity/enum/a2/too-few/called",
     "source_sha256": "5921aabe194f8b3051d0a9874c6dfc604867352203a4bd5b164c71c3866cb7ae",
-    "stock_row_sha256": "ff852e83c09533a36e46569491b3b1a938f5defd1a968d22a3ac2d0e527cd5b4",
+    "stock_row_sha256": "9b5009da9974af277b666f3a6344391d20cc0fe2fa67a61e0563b3db26ed6fe5",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1039,7 +1039,7 @@
     "index": 150,
     "label": "arity/enum/a2/too-few/unused",
     "source_sha256": "083e67c011bd691968e21f296bc74b5aa19de02fbb8ee225072ba5d418299914",
-    "stock_row_sha256": "7aa26c845acbed5d0e785710ce7a06cf6a0940fb3f7d0fde05d34b2749294278",
+    "stock_row_sha256": "60331c99af84c76b909bc93d0c24398e000cd96ed88d7710bd81e3637d5461bd",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1076,7 +1076,7 @@
     "index": 151,
     "label": "arity/enum/a2/too-few/dead-branch",
     "source_sha256": "3fe3f4e6f9ea196e8aa1c2add93eaff03576fdb360507bd7a191e4b6be3b6258",
-    "stock_row_sha256": "7aeaff3bfedf887a038251c01c4cbedcd36dd38174800302f88c496ab2782223",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1113,7 +1113,7 @@
     "index": 152,
     "label": "arity/enum/a2/too-few/uncalled-closure",
     "source_sha256": "0b59189267fb511e56937426b0c70b0ffe79b40d2d5cde4fc19f72f54f7e2369",
-    "stock_row_sha256": "5cd0bab068a4904372417e7c615db1585cc978cc053a5f6a788ab653ceccce00",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1138,7 +1138,7 @@
     "index": 153,
     "label": "arity/enum/a2/too-many/called",
     "source_sha256": "7736b1b914a71df7d12935ab8097992651230ed665dbc7247aaa94676865d6c2",
-    "stock_row_sha256": "7b36bbfb198d389bac34a6dcfccdfc0675048e93d41bd2f6f963b47469b08ba4",
+    "stock_row_sha256": "a26cdc97b6005306471390051c93da88ddf02c8ce0a3a5aa3bff782923a7ec90",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1175,7 +1175,7 @@
     "index": 154,
     "label": "arity/enum/a2/too-many/unused",
     "source_sha256": "e39db8f5f9e7feac44ff51ce99f797ca9295009c9710cd2708783cb4d51380e4",
-    "stock_row_sha256": "edeead8156c886dc9fe13234d07d655e4058f73c8cf6d6f61949a70479e011c6",
+    "stock_row_sha256": "16f180289dd3f6c16dc2736e8dc966027a90be73fe95e79ab94424f83eb87cf0",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1212,7 +1212,7 @@
     "index": 155,
     "label": "arity/enum/a2/too-many/dead-branch",
     "source_sha256": "f5309574f7f5b4c2eedb4295e35ed0060f0e6d006dbafb25706f7bfc0db41cda",
-    "stock_row_sha256": "67f32bae74e153f2db2b3d72a55bbd81e00c615fea653459c12d58fb466975ae",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1249,7 +1249,7 @@
     "index": 156,
     "label": "arity/enum/a2/too-many/uncalled-closure",
     "source_sha256": "c961c6f4919e580fc5730e7534e6f55bf6d8142fe63cca300186b76995f33754",
-    "stock_row_sha256": "96373b9beebf444907690ae0f9ca8a7f0a28f4a91d329452d7a48b2e4c2c562b",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1274,7 +1274,7 @@
     "index": 157,
     "label": "arity/enum/a3/correct/called",
     "source_sha256": "bdacbf62de6f7ab4267cb4d602f46768004be46402dfd5d5886003e815a42b43",
-    "stock_row_sha256": "259aae423336b0ff44e092450dfbfdf491e0cce450a1e5346f53822e7d4aa469",
+    "stock_row_sha256": "f6b7ebdde7c0c5b61780f06458e3c464cefa0f602b9e74c22e40a3d8771f6bcc",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1299,7 +1299,7 @@
     "index": 158,
     "label": "arity/enum/a3/too-few/called",
     "source_sha256": "2dab1784b42248f2723e465ec20ca6e553e7b22d9865e57bb17a55447de53aa9",
-    "stock_row_sha256": "03e6f4ee7faed82f64cf0fb1c1ef9b2ad78b83907a832fc3e0320c9adaa07d70",
+    "stock_row_sha256": "3ef31f55cfce33c3bc742fcbb6353cef03cb5d20b68f432c4344addbadbc47f5",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1336,7 +1336,7 @@
     "index": 159,
     "label": "arity/enum/a3/too-few/unused",
     "source_sha256": "6c73cbb977b44895ca6115784fc67e2adf763e0e480bdc61e14f14eba43d2818",
-    "stock_row_sha256": "42158643a4d517fa3f1c1a5b11f9197cb05effee59200f475833a9bb7fdb0eb5",
+    "stock_row_sha256": "31cf470fe3af8f985c26031eaa4c352f7cf7359397d41d526b96d84c128b4ba4",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1373,7 +1373,7 @@
     "index": 160,
     "label": "arity/enum/a3/too-few/dead-branch",
     "source_sha256": "56bc95e11a911046bc4aed882562ca55384fa9d9e5e4d1c46d4d1a06a5aeb2f6",
-    "stock_row_sha256": "ac74b51c0bb022d3866c975c907df75b70766a0b454eb8f6be7ee30c9681b141",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1410,7 +1410,7 @@
     "index": 161,
     "label": "arity/enum/a3/too-few/uncalled-closure",
     "source_sha256": "7a5e3dcaf64f149beca295fddb782c0e0ed5bd99b6d1b87e5eac544b33456b53",
-    "stock_row_sha256": "facbed798042a969944761eee793507c82a00090934c96519f3a35c3ee4f4788",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1435,7 +1435,7 @@
     "index": 162,
     "label": "arity/enum/a3/too-many/called",
     "source_sha256": "019a1e1657ed8faaa3e373ebf357c0f754a9edb4e3103379ec23bd40cd1d36b9",
-    "stock_row_sha256": "b7e5d9f8e2d289a17e47e15e0fd8d9162beda197537a4c5f42b1bc2478e83fb2",
+    "stock_row_sha256": "a437424ce586af7e25cbd0d7b277404f14e5474bf087e33594a3a3825afcadad",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1472,7 +1472,7 @@
     "index": 163,
     "label": "arity/enum/a3/too-many/unused",
     "source_sha256": "a4e808a2231d956e906ffd3c692e3c4291e5f8189de614daa64d28646d5bf29b",
-    "stock_row_sha256": "8f3a0f413f3c5d7b3a54b8799e0a58f48702f53d6310dc8b9c903788c07521a0",
+    "stock_row_sha256": "970c2d745b57264ec0009e1797ebeddccb3cd12980c91a51147d66927d777264",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1509,7 +1509,7 @@
     "index": 164,
     "label": "arity/enum/a3/too-many/dead-branch",
     "source_sha256": "cb8f5b5284baca399d12fb9918087ac17a56fed8370cf4640d00a7788cbdf42d",
-    "stock_row_sha256": "b52e91515cf806201339bc3be680f563e7eca02a64fe366901baf7b202c1b7ee",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1546,7 +1546,7 @@
     "index": 165,
     "label": "arity/enum/a3/too-many/uncalled-closure",
     "source_sha256": "157cae74384bcbe7c2d362277a2ae44aee9f5d1bc6af7e785c23c83a2fed4e96",
-    "stock_row_sha256": "d83c224023ea496718f1828ab4661e953c6af9d243a5fe4fed136e04b9bf6fa6",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1571,7 +1571,7 @@
     "index": 166,
     "label": "arity/enum/a4/correct/called",
     "source_sha256": "bcfcb4b022014077dcc6d723d77e5ff8dd5244139cd999e4e726b5e646bb9ce1",
-    "stock_row_sha256": "42480f78c8d68d342beb5379b6ee3e61b4cfde43adc374bce236e6174af81c6b",
+    "stock_row_sha256": "1a8430c9139d11f3ad5dd6168f5f91b19e829b204de083d07a2ab562f0555da9",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1596,7 +1596,7 @@
     "index": 167,
     "label": "arity/enum/a4/too-few/called",
     "source_sha256": "723e55ec1ac6b26fa974d06d94ebc423e53e74a9b6eabce09ca99d2e19d4030a",
-    "stock_row_sha256": "54d738d32c5ed0ba5f253f29124f4a44d364642ce19cf04863991aee572cbc1f",
+    "stock_row_sha256": "1470788277923cd234364b86dbf3e264953936f453cc1304a60e6821a422a1b7",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1633,7 +1633,7 @@
     "index": 168,
     "label": "arity/enum/a4/too-few/unused",
     "source_sha256": "e026d0fa2eb73fe5a260146ef178ad1cecde2a1188c5bb29b3f6291c4fd4ebbc",
-    "stock_row_sha256": "dcfe88319f6472b35d8bc744f6643e78087e8a27e270f23630083d8b0c1bb6d0",
+    "stock_row_sha256": "16f180289dd3f6c16dc2736e8dc966027a90be73fe95e79ab94424f83eb87cf0",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1670,7 +1670,7 @@
     "index": 169,
     "label": "arity/enum/a4/too-few/dead-branch",
     "source_sha256": "44d8c3f370ee09ac5a9ad0780482bfc2d8d24c48d8cb51db98f8362907215709",
-    "stock_row_sha256": "eb3d86c32c06996e02c44f4a31c30b2d2901360678f833a9ff1c0b4e36831317",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1707,7 +1707,7 @@
     "index": 170,
     "label": "arity/enum/a4/too-few/uncalled-closure",
     "source_sha256": "6bbdfd6225b84e7c4d642c56e9f9fae032280e3fa11f95290a06b62d2ba64c86",
-    "stock_row_sha256": "bc72fa26e73cd4b886af71d6bfee59fd0b48b7b9203dcaa6e22e0cbf49bd8431",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1732,7 +1732,7 @@
     "index": 171,
     "label": "arity/enum/a4/too-many/called",
     "source_sha256": "d35a3092b396fed38f1cdaf2b1a9a1cf09ded5cefe393d5aef6147cb5a61657f",
-    "stock_row_sha256": "07f6aefd12e409dcbb61da2be94c369b35f25e37ffef55607ed68ba7e917211a",
+    "stock_row_sha256": "76e3f28247e4451df51a5eeb123db3abd1500279cbcc617f59dbeae6c1bb6272",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1769,7 +1769,7 @@
     "index": 172,
     "label": "arity/enum/a4/too-many/unused",
     "source_sha256": "0542d7375adf322fb82f6f4d69fe2b2b406239b88a0bd979304f09a591cf2e29",
-    "stock_row_sha256": "7af9a0efd33685ee83d7250c8db4288484aaf6509904470c44655f23a56c6a7f",
+    "stock_row_sha256": "d32b98e01bef53ab6250972d6aae10a402d1738711c9fdc2d5bc2bba0817b41b",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1806,7 +1806,7 @@
     "index": 173,
     "label": "arity/enum/a4/too-many/dead-branch",
     "source_sha256": "444232e853d4fecd05c4e0dfbae0871144f4e7575aeae8d84f1687c12a5e6afe",
-    "stock_row_sha256": "009e1e6cf6bac8cf9aaa37a51e27efc9e79fa6598b17a9ee1fb8cd5f41e9cfe8",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1843,7 +1843,7 @@
     "index": 174,
     "label": "arity/enum/a4/too-many/uncalled-closure",
     "source_sha256": "63f7174f71ea6c5f16d30508d699765f0216d705d01b6e5beb5d0f4877ab378d",
-    "stock_row_sha256": "5342d8796eb3aadcba216850c37f01c188abf412d65c73b597b350f88cf37961",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1868,7 +1868,7 @@
     "index": 175,
     "label": "arity/self/a0/correct/called",
     "source_sha256": "84e14fcc2ce15af96793321925de6f8cf3f7d4f5dfb95542f4a8d064ab056223",
-    "stock_row_sha256": "2cc1d18392385ab272b3c1233eb9e6eeeea040d39fe3d23bdecdb0de997063cb",
+    "stock_row_sha256": "34db8a5bd6d3899ef9ddc00296ebe6a53a808b502c0baaf607244b2c52229079",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1893,7 +1893,7 @@
     "index": 176,
     "label": "arity/self/a0/too-many/called",
     "source_sha256": "75bdc69137374327e29a6d54684fa8c2e38d4abcd109372ce43667a15d48851a",
-    "stock_row_sha256": "388368b10f637be8bda8e2e4f36f86531c1bfb2b81e81c8eec1c742d03a2de9c",
+    "stock_row_sha256": "ea57ba689c88639d37ef271c44c1a8b37852c5037021b1a1ce940e6915d85a3e",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1918,7 +1918,7 @@
     "index": 177,
     "label": "arity/self/a0/too-many/unused",
     "source_sha256": "8eebe34787f1dfc151f17e3370e5352ac70c1cb01fecc8b88bc71e82ccac729f",
-    "stock_row_sha256": "832f2d15e80c48fd2b70706e1870b6f849ccc51dc459e2ccc1de182f289ee7f9",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1943,7 +1943,7 @@
     "index": 178,
     "label": "arity/self/a0/too-many/dead-branch",
     "source_sha256": "02b8cc1ee24075d265dec8e0a9248d4b4558a1671bac8160a357c66a0f256e90",
-    "stock_row_sha256": "440a7ee11627f94339e1c9421fde4fffbac1ca57c8dadd81e6688616b1e12eae",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1968,7 +1968,7 @@
     "index": 179,
     "label": "arity/self/a0/too-many/uncalled-closure",
     "source_sha256": "1dbaf3776590cd61112ed824558b5a954d5c5e20c031e89b1ced3ae65ed0d47d",
-    "stock_row_sha256": "753f7019b3f74d97f9a7ec80ac619a6f5fd1b0d4bc5b15a2da9dc275266d628a",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -1993,7 +1993,7 @@
     "index": 180,
     "label": "arity/self/a1/correct/called",
     "source_sha256": "655e6871b4b88e9a76814fce281aa6e92bafaf328f7ec6c03a9f6fac1f012c1a",
-    "stock_row_sha256": "c05699c5673e60a00e7f7b552fe3edfa47e727e70f289b5a174cc214b05d16f2",
+    "stock_row_sha256": "d9d8ff02458cd8fa3f025f85db380a14ba7beecdd51f2a63360f3f8837eba748",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2018,7 +2018,7 @@
     "index": 181,
     "label": "arity/self/a1/too-few/called",
     "source_sha256": "0b327e206440019335980d31d6202d21af89fa13411a0b9ec6af39adce1aa806",
-    "stock_row_sha256": "3b8f29be2ca49aefe26e26ab8abdcf4019c74324e6af5a1c2f1a45d121b6532b",
+    "stock_row_sha256": "4e5feafca4b13ae873bcbd7dd2c9538a4cd4c8c632bc6e6df3c7a8e1a58bd0fd",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2043,7 +2043,7 @@
     "index": 182,
     "label": "arity/self/a1/too-few/unused",
     "source_sha256": "aa1b84adc7ce8b4740e79395f20ab6038efdc8e44baa8eaa06b4ff8ed9e4a781",
-    "stock_row_sha256": "045ccf829fd86d04ba95f74693013da258a64132b8c2888fce07c4ede0b5dee9",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2068,7 +2068,7 @@
     "index": 183,
     "label": "arity/self/a1/too-few/dead-branch",
     "source_sha256": "957f0e209716739a5748a5a519ab34ee92969c2f8351ed32f447d10e79863783",
-    "stock_row_sha256": "efb582bca983ea630329f6b4a36ef69a0cb9357ffbdd79ee7ff8aca4d723bf9f",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2093,7 +2093,7 @@
     "index": 184,
     "label": "arity/self/a1/too-few/uncalled-closure",
     "source_sha256": "4d278feffdab67e435eeab5b8af9e3fb341a8c668dc3b9d3c0c4cef0b8ccba4c",
-    "stock_row_sha256": "b12d40c62d46a6eae6abd3c6d0c94f8af99c0f6caf80b7e2c7ae03a3072b33a0",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2118,7 +2118,7 @@
     "index": 185,
     "label": "arity/self/a1/too-many/called",
     "source_sha256": "6f222530b5faeb8d043df65bab09b7d56d47be2461fa1156362a8ba8ee501655",
-    "stock_row_sha256": "c6765bfa8f96fcb8931269d3b6ef6a516ee1984f82402cf96227d2c7d04802bb",
+    "stock_row_sha256": "bd9eba4c50ff9c21c4333086780c409aff8d18fae7b9defdec1d5e447f03ce43",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2143,7 +2143,7 @@
     "index": 186,
     "label": "arity/self/a1/too-many/unused",
     "source_sha256": "92af5924006c274ee49c6eeb20a5932e1bc6049289eb60d0c5740279633826e3",
-    "stock_row_sha256": "e8385b1e9e9856acb787725af02ecac73ef86a3132c7038371193caec4106a73",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2168,7 +2168,7 @@
     "index": 187,
     "label": "arity/self/a1/too-many/dead-branch",
     "source_sha256": "64314c112d88ab76c19ed49d08b0c3d53e80a88fc6941a4f041b49e3315bf0ea",
-    "stock_row_sha256": "ae9e0c27fb92d8ee1bd2da3ab0462256118edd743fc5215737ac3538bcc8557c",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2193,7 +2193,7 @@
     "index": 188,
     "label": "arity/self/a1/too-many/uncalled-closure",
     "source_sha256": "fc27569275cd8e1c9427dad47dfb06d767d09db2c7042f0980bbe640c3b8966f",
-    "stock_row_sha256": "16b273b4f0cceecc95e4bf4d166c037b4b838083403210302c30b5fe38987f19",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2218,7 +2218,7 @@
     "index": 189,
     "label": "arity/self/a2/correct/called",
     "source_sha256": "e67b907ee8955f97c455287cd430fa692fc625c2324d64940f059464b69a1e41",
-    "stock_row_sha256": "70120133c4a6285c4272a0d12acc32b9f880493a9bcb7d015afcb36579d0f1c2",
+    "stock_row_sha256": "70b867ab36832484bf6d2eadfa184b158a3a74b496d0af5460fb18830a8c58cd",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2243,7 +2243,7 @@
     "index": 190,
     "label": "arity/self/a2/too-few/called",
     "source_sha256": "4df7cabac06bcf871d24bc9941620e30b5bc89e77e2b1b1d170db39ba42106e7",
-    "stock_row_sha256": "d3f93e7b05e9950856606b2bb61142fe7b539fafb9619e21138cdeab84dceec2",
+    "stock_row_sha256": "bb3ef4d2e3442abcfb32ab43932399a268d1eb6d1b73ae464447bc465cd5115e",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2268,7 +2268,7 @@
     "index": 191,
     "label": "arity/self/a2/too-few/unused",
     "source_sha256": "5fa8cf1f48b0c28282001a3587b77b00179276a3c21907c497aff3b545149a7b",
-    "stock_row_sha256": "213fa05eb8bac428516f97c12ce93170e445223b6b83f6267ab9dbb86f76e08b",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2293,7 +2293,7 @@
     "index": 192,
     "label": "arity/self/a2/too-few/dead-branch",
     "source_sha256": "bf8b18c553fe724de976916de71c069424d6d173988b19576cc6c3469a249156",
-    "stock_row_sha256": "a4ed7ab356d1bc5cb75d01b6b95d741a74f047902a596993fcfdc653561c2507",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2318,7 +2318,7 @@
     "index": 193,
     "label": "arity/self/a2/too-few/uncalled-closure",
     "source_sha256": "c019cd4089063b5e59422fbd1ab254d1f4540ebe0c74c65ae6b98a83e8631a12",
-    "stock_row_sha256": "a5fb7b749c3f0c3cbe070e68b4bae10e6cffa42102792240d7a5b0207ec61e7d",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2343,7 +2343,7 @@
     "index": 194,
     "label": "arity/self/a2/too-many/called",
     "source_sha256": "cdbc70d22ad39bb020441132920d1f8787a21b4243418a9c3ec4b24846d77fc7",
-    "stock_row_sha256": "f4f15e8d753c721998d589a9f5bc6281f6cb33ef34bfb7c0c6487e2b28483410",
+    "stock_row_sha256": "9821802632dffcbe9bb4c22ca5ffd44aa5a87d4de5df0005e73bfe5d5ef691c0",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2368,7 +2368,7 @@
     "index": 195,
     "label": "arity/self/a2/too-many/unused",
     "source_sha256": "5ad727836862f6e2b4e2b60374032a35d6cf6deb723fc808dce599e8aea814e9",
-    "stock_row_sha256": "b87f19ab034b138b22039305198e693f127c0d19f6ee061b2f97c4a98872ed2f",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2393,7 +2393,7 @@
     "index": 196,
     "label": "arity/self/a2/too-many/dead-branch",
     "source_sha256": "70bc6a55e857891d5c9c87aa7003b9726c4ff4744001e6eafeadc92acae8a0b5",
-    "stock_row_sha256": "c483844d953b247c565b0e29268beec63915169b7a51f80a48fa06cf73d8392d",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2418,7 +2418,7 @@
     "index": 197,
     "label": "arity/self/a2/too-many/uncalled-closure",
     "source_sha256": "5558a6a9947e1e1cce42e499bbaee1fcad77dacec85bcf5d90d91615be416090",
-    "stock_row_sha256": "17d57edcb2e01cad452116aa739805edd6ac2290377f36c11219a4a820e06c2e",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2443,7 +2443,7 @@
     "index": 198,
     "label": "arity/self/a3/correct/called",
     "source_sha256": "54d3ba76dcfb77c07543d9a40968f5339de1e212b32d3d1cdfe21b0fa13d4e44",
-    "stock_row_sha256": "ecdc033dc185ce010a1c31c67c1b0b3894acd65c3d568af4e43699b1a181d690",
+    "stock_row_sha256": "f6b7ebdde7c0c5b61780f06458e3c464cefa0f602b9e74c22e40a3d8771f6bcc",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2468,7 +2468,7 @@
     "index": 199,
     "label": "arity/self/a3/too-few/called",
     "source_sha256": "76e95ebf51fdf6c1d897f937e1c537165b0f9e4b39556911c3524cbbb40790cc",
-    "stock_row_sha256": "23fd8b27c627b19e13878f84a370a09a2a50a284073ce63cad43ebe1641be8f8",
+    "stock_row_sha256": "8582b6f7ae807edb684e301b8f484ac07f136587a3a0aefbee93550bc92d359e",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2493,7 +2493,7 @@
     "index": 200,
     "label": "arity/self/a3/too-few/unused",
     "source_sha256": "4b6f166996260ad394bdf9e20e76b2454f414f95170e8ea7660084be7e26ce7c",
-    "stock_row_sha256": "b1fa17a7c599b42e75e7b6b35f06d1ed2a938e68aea156e205c7fd7153143027",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2518,7 +2518,7 @@
     "index": 201,
     "label": "arity/self/a3/too-few/dead-branch",
     "source_sha256": "ad0f37fe1f1d06488187c9db18becd75552929b3f05debe81911e2920dacbe7d",
-    "stock_row_sha256": "8d50efa2ab718f27de5d2c4b9f82342ceee340c16e79a0b9d82bf392d32f8e5d",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2543,7 +2543,7 @@
     "index": 202,
     "label": "arity/self/a3/too-few/uncalled-closure",
     "source_sha256": "8515b683fd345445e820235ff4e263bc9b7d8a2ed648eff1f3c8ee345bbb9689",
-    "stock_row_sha256": "2dac863da2d32c6274ebcd5b16007fd0fb7d3723c66ffc6c318cbdb65e1cd21a",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2568,7 +2568,7 @@
     "index": 203,
     "label": "arity/self/a3/too-many/called",
     "source_sha256": "12a098fafa96eb0b0c94522c7bd1bd9a009d50b56ad1dd4c23c2c8b751475627",
-    "stock_row_sha256": "566c3b3dc9072db56dcdd3a436000274e6567c280926b2117ae9cd3bc27bb167",
+    "stock_row_sha256": "fcbddfd159891235524ba7f1e033991a9c34d9de201124e15e8041c2ec90080c",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2593,7 +2593,7 @@
     "index": 204,
     "label": "arity/self/a3/too-many/unused",
     "source_sha256": "7cb32ad5f43b07aa3896d07254293d19b03dc04bafc522c0bde99a610d30f4ee",
-    "stock_row_sha256": "d4f13ae0eaa3feffc66dd0699b0089460644f2c726d847f3c0d5c9958e96197d",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2618,7 +2618,7 @@
     "index": 205,
     "label": "arity/self/a3/too-many/dead-branch",
     "source_sha256": "53604ed3911c0cf85e1c93e8d5eefd98f7210363afd26272f31f8f03b9f86673",
-    "stock_row_sha256": "5f8ca1bbc9191d4d55f7579782098b59993cf76496a18b43b78977a621c05ffd",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2643,7 +2643,7 @@
     "index": 206,
     "label": "arity/self/a3/too-many/uncalled-closure",
     "source_sha256": "f61108613997a01ed581c0cc6b8dbe986f06992738cbaf15a132f02c34529a88",
-    "stock_row_sha256": "8810f823a7119a3271436c9c0be9ece5c2289d96de1aad96ca99622a1ee52e8b",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2668,7 +2668,7 @@
     "index": 207,
     "label": "arity/self/a4/correct/called",
     "source_sha256": "8ac0cf3213c8d5799f342a1bc7bfb76991399365a8cb92d69b24b5493bd8d070",
-    "stock_row_sha256": "c847159593e95dbda9b2ade02bacb54bbd9d5ffd804b0e87d317d6d6911b0212",
+    "stock_row_sha256": "1a8430c9139d11f3ad5dd6168f5f91b19e829b204de083d07a2ab562f0555da9",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2693,7 +2693,7 @@
     "index": 208,
     "label": "arity/self/a4/too-few/called",
     "source_sha256": "9a47ada78e5a4a6639f99b2e1744a735ffc029bdab68a5303500f6c536fde453",
-    "stock_row_sha256": "f5db69234f0537344beec8b71ad9669665efce0497ef6d2bbb51783c7c75c6b1",
+    "stock_row_sha256": "6cdaab7bd5d887a0581199a896e374b950cd92cc4450549b05eae3901b6ae051",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2718,7 +2718,7 @@
     "index": 209,
     "label": "arity/self/a4/too-few/unused",
     "source_sha256": "36b5827c6393ed751c339ca5305581399af324f756afbfb98a3cfbb6fc8ac5b8",
-    "stock_row_sha256": "83f03317dbb0843237dc50828ddf3246697183c2bef3a3b6e2221b250382a2e2",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2743,7 +2743,7 @@
     "index": 210,
     "label": "arity/self/a4/too-few/dead-branch",
     "source_sha256": "237b9c8bcc1403d3f51d416ab70f2c9a0371b933a26e76406002be66258ba2a3",
-    "stock_row_sha256": "5e636c7a9606f9bc06964f0f0ebd128101994553550bcad3a0965164596fc01b",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2768,7 +2768,7 @@
     "index": 211,
     "label": "arity/self/a4/too-few/uncalled-closure",
     "source_sha256": "5d6cbe74c2c9e74bdfd8491331a0fe3bf8c9b875f9ad9f44311739713331e993",
-    "stock_row_sha256": "d2b82bb85cf37e4faf492857ef22e36b595927d8cffd95d26febcbe89c10fbaf",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2793,7 +2793,7 @@
     "index": 212,
     "label": "arity/self/a4/too-many/called",
     "source_sha256": "1a825d289a7fe2a51c51c3ba72c7a5eeeabd8de0a89dbe20bc153ce09cc864b2",
-    "stock_row_sha256": "90b2a3c1b2091bd5f30166403bd6f3a1e9c938ad71c97d00872da38345c52299",
+    "stock_row_sha256": "8ee2fe1421fc8c00ae8c3f20495b1ee3f7285c60f3c7397de9df3168464238ad",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2818,7 +2818,7 @@
     "index": 213,
     "label": "arity/self/a4/too-many/unused",
     "source_sha256": "1f088612cbdaab1adf0238f7b4d0078aab4cd6c62a9c31ac4ceddb26a51f1328",
-    "stock_row_sha256": "e569ae12ede2295d666695a9346c8b66bb9255b196f2d77e838b5e2499f6d3cf",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2843,7 +2843,7 @@
     "index": 214,
     "label": "arity/self/a4/too-many/dead-branch",
     "source_sha256": "806036522b93a9ded8547dc73fd7dd2fc7c3b39ebb6a3dbff4249bf85f121ee1",
-    "stock_row_sha256": "feb98e940418ae48130fb467d04527a30f0db4308c03738c748265cdb830ed42",
+    "stock_row_sha256": "ea1af3c1765e89a61a137f9933cf8e6be14e716ae0c20698b19a2b30dae4d358",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2868,7 +2868,7 @@
     "index": 215,
     "label": "arity/self/a4/too-many/uncalled-closure",
     "source_sha256": "7a2078df0456a4057ca6753b1d257ea80b07c3532333962810c09c84cebaf5a2",
-    "stock_row_sha256": "6566faec24ecd82e443a1efb460be536f7d1dc27b67d2c7404ea70ce096a98c0",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2893,7 +2893,7 @@
     "index": 225,
     "label": "mutate/field-from-method",
     "source_sha256": "e99440a8292e00663cd0e8c43210813d990de9d6cd0f704f5da2c46e622e0373",
-    "stock_row_sha256": "98a5d676f1342bd86426a133e5e3c308503436487e3c249b83dd61c2c7bc5628",
+    "stock_row_sha256": "1ff57b5cfd5bb936b9e2901b4b1abae0473e3d68c6333ab1782fcce63ef4fd8b",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2918,7 +2918,7 @@
     "index": 229,
     "label": "recursion/fact",
     "source_sha256": "009a7ef8a7b8aa5713cc24d0597a6f7780f2e4cf6beb2eec7c4fcdd96bde626d",
-    "stock_row_sha256": "808d2a570e2c7b535a434bda1ce453491e654efe11a965eacf6768169e5c15ad",
+    "stock_row_sha256": "a96aec38bd6e2b89c63026733e05d3aca3a21f348cddfc55ebb8686f60e3ca4b",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2943,7 +2943,7 @@
     "index": 230,
     "label": "recursion/mutual",
     "source_sha256": "540a8f3666214e752cc2b247dbe4c3a595c588c3582b0f042ccaf8b1f348836f",
-    "stock_row_sha256": "cf058f7f07b41e3f1091e68a062928f25b65bcc210f59cc8e45969a8fefef24a",
+    "stock_row_sha256": "be296df204b53e1e5f4c1e30e3fb6dfa30f303f1fcb077bd2ce971f342661d0e",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2968,7 +2968,7 @@
     "index": 231,
     "label": "recursion/deep-500",
     "source_sha256": "ee71fae58011bbd2e4a84f6952b1dcee549d5f1e34318ef85f552177d6ef2285",
-    "stock_row_sha256": "c35c288fe2ed614eeeb28deff0af609d4bfe088fb2e5bb47ec0737042a21fba4",
+    "stock_row_sha256": "1ff57b5cfd5bb936b9e2901b4b1abae0473e3d68c6333ab1782fcce63ef4fd8b",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -2993,7 +2993,7 @@
     "index": 232,
     "label": "recursion/fib",
     "source_sha256": "740d77f061b5b398bff208cce327d126e5252d544683f9c6a30d94391daa4421",
-    "stock_row_sha256": "7b6b9ed89f4a48716a3f9d2423e1890f3d793a49d6476ccd03ccdb48c4722093",
+    "stock_row_sha256": "f01d194eaf563d89d373254aec6e95f649751cbbcd623fe0638876f71fe02a52",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -3018,7 +3018,7 @@
     "index": 233,
     "label": "recursion/forever-fuel",
     "source_sha256": "c1c078371b93e034f5055ca795564c256c567b8d66472cd06425ff8b3c8cc792",
-    "stock_row_sha256": "2f862216628314b58b59ba77d7488ff353a2dd6347a40b2c156129480f29fcfb",
+    "stock_row_sha256": "4fb60c5e0543d7ef8b2ef16e6f330cfbbb2f66fa891308974ab216acc69a4fd4",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11275,7 +11275,7 @@
     "index": 234,
     "label": "recursion/through-free-fn",
     "source_sha256": "3a6ad04026e51f99a75fc17d21e51bf9fb89c38173494bf0870f756fa8dc6c26",
-    "stock_row_sha256": "c624681d39fe0008d14cd4f9c8a5e07e22563176c54d3d56774bf7787d305c43",
+    "stock_row_sha256": "4961b1a525431149fbc8e16b27caa7f8307ce094075a82f7b0b654ec472f1bae",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11300,7 +11300,7 @@
     "index": 235,
     "label": "recursion/list-length",
     "source_sha256": "d87623c4fcff01af9bb9948837837e67956972894de8013a3e072f5105f7780d",
-    "stock_row_sha256": "1de23d9c1f47403d7fc3fd2e2e512f372bcb08044bbe5270733940fbf7399591",
+    "stock_row_sha256": "2494ede2c75b4ab4c1959a5968067b547142a76c8d71b1c0c88ad4b66864f519",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11325,7 +11325,7 @@
     "index": 236,
     "label": "recursion/list-length-self-only",
     "source_sha256": "e5c261d4f00bb66cf2d49a480082bbef73b6d365e2c4367e2e07b8589ad0e5e1",
-    "stock_row_sha256": "76965bcf8ba6aa236d2fca13577758589416b1384f70a11e8b8b3e9b162e1784",
+    "stock_row_sha256": "4dfda4f9ca3454950bc5cd7fdc867e8956564c34b09583542bdb431cb66b78af",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11350,7 +11350,7 @@
     "index": 247,
     "label": "calls/three-level-chain",
     "source_sha256": "fb0e33cf1c138e41351235371c91f038d019f4c1e72456c02e5e5cbde69f5868",
-    "stock_row_sha256": "3128662cf05147a181127d06a007fdaa907e5b163de34b908c0479db2cd2fa1e",
+    "stock_row_sha256": "1ff57b5cfd5bb936b9e2901b4b1abae0473e3d68c6333ab1782fcce63ef4fd8b",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11375,7 +11375,7 @@
     "index": 255,
     "label": "errors/panic-two-deep",
     "source_sha256": "51a5796d05868bb6b111bc9ca5c3ccb54ee23a5ad791011317fc62bc57401974",
-    "stock_row_sha256": "a090e39c10295775fb447879f1cec222771d67a3603f89d307e880490b949534",
+    "stock_row_sha256": "f7308daca1be90ac90f3ae352060df9814e2081184f3ac4805057e323360ff56",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11400,7 +11400,7 @@
     "index": 257,
     "label": "errors/type-error-three-deep",
     "source_sha256": "7f192acf94715d3ca547330f8a86c88b930950ed131c8df65d6b83b086a9481c",
-    "stock_row_sha256": "77f9bff0a10eb98b191652f399fc8c145a46d9e078c34b99eeb97329a0a928cf",
+    "stock_row_sha256": "73a7847ef6357a7f023463abd452570b45906c1b41a652aa10157d323ca92d6a",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11425,7 +11425,7 @@
     "index": 268,
     "label": "errors/panic-in-recursion",
     "source_sha256": "463235d5ee08780609929c5cc07b3700d10acfff8482c6c2cb47cfd754b5a757",
-    "stock_row_sha256": "bb369b25e49af7e2b204a5021c5a3c3b1dcc6aae1df06eb5ef618f1f7af72db1",
+    "stock_row_sha256": "1c4efe40e9595b820115ccb99d80dc181023ca0d1575640cc3c6718267c61dd6",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11450,7 +11450,7 @@
     "index": 279,
     "label": "ownership/receiver-returned-self",
     "source_sha256": "aa13ad024d67a51b3b5e17317a6ca379cfc6000874407a88ed8c6cac1ada61b4",
-    "stock_row_sha256": "3230b6a6c4669cb92042d04146993ec5d3a5acacfb6a4721ee3d7049c5be2aaa",
+    "stock_row_sha256": "bdc4a77bec0f8166707f8e00bbaa1207b58e2373fe0d85b3a4b76f040898833f",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11475,7 +11475,7 @@
     "index": 280,
     "label": "ownership/method-result-is-receiver",
     "source_sha256": "ea3d8684449f6803094a85ef04fe5b76716380ef09d9b532290ee747580315b8",
-    "stock_row_sha256": "7174d1db119171b7c4bfa8f1e149000aef6f3902cb049628017f3fa7e4d3c36a",
+    "stock_row_sha256": "08088bd34e737fa95f740f0289f502d7b6c3151b44a19d4a0b81280179f1b996",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11512,7 +11512,7 @@
     "index": 282,
     "label": "effects/receiver-once",
     "source_sha256": "1da036af2e7c2b70cce38d90920260c4d66e141e2757382fe8a6420f9e5d938b",
-    "stock_row_sha256": "937ef61c8840072b3307fd6d9952debda94dcf98b1d16685fe98dcfe97815e09",
+    "stock_row_sha256": "19b9fd30c9e8da187265dd6760502007350bc72d191c211563dbe67eda5dd163",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11537,7 +11537,7 @@
     "index": 283,
     "label": "effects/chain-order",
     "source_sha256": "47c13416b134cb1386be19c0baf10b612afa4f6b34ad7ae9126d98e7559555d6",
-    "stock_row_sha256": "55ee83753ebb4522528645a1b68849b157625ead3347ee5c47d5bda5b44c9742",
+    "stock_row_sha256": "afecbda7e097b2a192486936caaf5a721cf92206229f406396a4809ae3637e17",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11574,7 +11574,7 @@
     "index": 329,
     "label": "shadow/sum/param",
     "source_sha256": "4c6efbb24fa66a70438f413f4e9c534ab26f5fbccf561bc20f65dc41549df313",
-    "stock_row_sha256": "d65cddf8ef2345db0cf1698f2d9de151466a15f8faea1b6e4d46599e2f452eb0",
+    "stock_row_sha256": "c6702d537b4cda9c08798d3b257ec468d3b897958e3ed5bb2cb0f4e9a4920f1a",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11599,7 +11599,7 @@
     "index": 349,
     "label": "shadow/string_display/param",
     "source_sha256": "2be04a3d88f9a5093b45055633af3ba09c026181bc8aab7615dfc1152ceb5bec",
-    "stock_row_sha256": "d4d2310d14f3850d43ecd1d52cbbc2d15a36960eb0e80e4c23414245e3e060ff",
+    "stock_row_sha256": "8940dbd932292a321aee401406f35165ab9e520c779a085727bb0a81077228b4",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11624,7 +11624,7 @@
     "index": 400,
     "label": "absent/method-on-other-type",
     "source_sha256": "e917f99638d2ed082691e530d9f31a8dd3d87ccec61f808a688f576296ccc73b",
-    "stock_row_sha256": "b251f557dbdf751827b195fc61eefbb0dff422f8b03b68a619f561ae398fc549",
+    "stock_row_sha256": "7dc0d48e4ee0ddb14bf28fd3f57052153229090101292db447855da76110db46",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11661,7 +11661,7 @@
     "index": 401,
     "label": "absent/method-on-other-type-unused",
     "source_sha256": "90db26f0fa7927df4848e801faeeb1a628bca659313b5f4c1a9fcc7201a75935",
-    "stock_row_sha256": "3262790d86993b279f5cf6e61f6dde5ebd1eb86a87d10ea65bfb658e855de87c",
+    "stock_row_sha256": "05f1172ca747b477c7fd08124c055366cf0785a376c27ab920439d1a74950119",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11698,7 +11698,7 @@
     "index": 450,
     "label": "awfy/harness-count",
     "source_sha256": "b3b49516d9dce6af564a699db7c4e0ee49a5c5e1cd2096b82800f40e25f39481",
-    "stock_row_sha256": "204e9a95e90b9d73023df73287877cda736f420dd8f221a35278147ca311a023",
+    "stock_row_sha256": "bb687c45f50b8530136002f3814afe74d87ce682ecb8ffaad551e14a3a0a1335",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11723,7 +11723,7 @@
     "index": 451,
     "label": "awfy/harness-count-one",
     "source_sha256": "b3b49516d9dce6af564a699db7c4e0ee49a5c5e1cd2096b82800f40e25f39481",
-    "stock_row_sha256": "f8f8ef09dab492be634d4eddececf336f5469ed2ef1252b234d2aa892750899a",
+    "stock_row_sha256": "bb687c45f50b8530136002f3814afe74d87ce682ecb8ffaad551e14a3a0a1335",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11748,7 +11748,7 @@
     "index": 452,
     "label": "awfy/harness-count-zero",
     "source_sha256": "b3b49516d9dce6af564a699db7c4e0ee49a5c5e1cd2096b82800f40e25f39481",
-    "stock_row_sha256": "64321f6a449cb6ee071e92b51e82fb53e6dd96509fd29b0d2ce9d91f0c8c73ca",
+    "stock_row_sha256": "bb687c45f50b8530136002f3814afe74d87ce682ecb8ffaad551e14a3a0a1335",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11773,7 +11773,7 @@
     "index": 453,
     "label": "awfy/harness-count-failed-verify",
     "source_sha256": "1c9f6e32e0c35a67acd09664c53956b35c06b275b6494b82c6d59b60b89e68c8",
-    "stock_row_sha256": "fa1aed9c83fd7d7aa44768a021dc8a61105b58ff9c4abee409349abd71a21239",
+    "stock_row_sha256": "25dcf637a4536b68d6889b7b48910ddfe1339e0edd3d9489c01172ada49df9b8",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11798,7 +11798,7 @@
     "index": 454,
     "label": "awfy/harness-own-loop",
     "source_sha256": "80bddc027f31b575dcefcdf0947595ef7809ee8fd1efc0d5677ca7f067fdb5d3",
-    "stock_row_sha256": "10dcf53c3dc44d89e203c71b95deb8abdf25fbb40974f8413779734e16225e35",
+    "stock_row_sha256": "1f19ca15371221649df63a3dcedeeee9b06478609e170a5effa365736be47a47",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11823,7 +11823,7 @@
     "index": 455,
     "label": "awfy/harness-unit-bench",
     "source_sha256": "5f36e03a7094383d951d6f21df705a6f8299bd421272bb543aa6f8c4994b54da",
-    "stock_row_sha256": "ab0644017f34ac1244f8dc4e437d5595162c36564ffc8a504cd9858dbae21bd7",
+    "stock_row_sha256": "bb687c45f50b8530136002f3814afe74d87ce682ecb8ffaad551e14a3a0a1335",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11848,7 +11848,7 @@
     "index": 456,
     "label": "awfy/bench-direct-local",
     "source_sha256": "534009b16a9b103f6d4cc0f627a3f0ac77b05550cf4685d0ba7f6476a106a34e",
-    "stock_row_sha256": "6b14aa093c9a047738a64887a93f21db355c509c5b6cde41dc6ec2b8cea705a3",
+    "stock_row_sha256": "34c9d6a53d78fbf430ee577c94ea5079c0ff129e83af5e84911c292c96a08514",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11873,7 +11873,7 @@
     "index": 457,
     "label": "awfy/bench-own-loop-local",
     "source_sha256": "601586cf6549c68ed808268b79be32fe5e2880e39674ba5e5d9afa4f840ac175",
-    "stock_row_sha256": "23f790ee221cad8d9fd5aea886a373b74b7605340319431f1aaf2fb0b1496d0f",
+    "stock_row_sha256": "8e455d76dd24f1575cd59fc5d01d1c083f36965cea282653caba008c95e1fbe0",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11898,7 +11898,7 @@
     "index": 458,
     "label": "awfy/bench-own-loop-literal",
     "source_sha256": "ed938ae81905617cb04a25f236d4646bfd079ed17cd35fc6685964913cf37329",
-    "stock_row_sha256": "04deffcd06ca2ce9a4a804a22b7859bd98760556f5492bbd527f63b11ad00044",
+    "stock_row_sha256": "8e455d76dd24f1575cd59fc5d01d1c083f36965cea282653caba008c95e1fbe0",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11923,7 +11923,7 @@
     "index": 459,
     "label": "awfy/run-new-only",
     "source_sha256": "742320ec9b9597df845b7dd5cfca7043235d1cc77e1a85764851e0758980e980",
-    "stock_row_sha256": "b7d0b9ac1a68645d5b6b2eab46756af1ba2b7a6cdb11532d6060e395648debd5",
+    "stock_row_sha256": "9e0602203dfa1c70390ad913ca7c4c40710d39e5b3301a2e6fb1092b2bb8c7e9",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11948,7 +11948,7 @@
     "index": 460,
     "label": "awfy/run-report-only",
     "source_sha256": "74c7b642037d58e10dcd7dcd807a19af2c9d4e7683cdabec2c47119933cf9cb4",
-    "stock_row_sha256": "27a8efd6fdcf9433336f3249e55f60ffd2de2305ffe9e6689fb0b1d1649c99da",
+    "stock_row_sha256": "45a2a4c747b8bbcc8e2ea9ff599a746649253be3c2f51b13640f3faa431a7cdf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11973,7 +11973,7 @@
     "index": 461,
     "label": "awfy/run-literal-report",
     "source_sha256": "f2d3465f7a06bd28c765040fed9bd53026f4111776679f3e98bd898fe2d02d85",
-    "stock_row_sha256": "0741a2d519fc3e36ed80f6098e01dec7a5197c862a1dbc600d4a2d17773c802e",
+    "stock_row_sha256": "c9edcd236535816178f4473b961b41e01ce9742d100db7b3222097b3d3a787a3",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",
@@ -11998,7 +11998,7 @@
     "index": 462,
     "label": "awfy/verify-result-direct",
     "source_sha256": "afe50bdab01383189abe3a5b6c3cdd5227fa2d91a7499d4585a05e2686092b5d",
-    "stock_row_sha256": "ac6cf1e734ad8a1c9d68a9f083d98358e4c1365bcff78a6cb61db02802a82955",
+    "stock_row_sha256": "8187c828a68362a85044ad6bf669554fed13b05007f4edc74c417d9106d087cf",
     "classification": "Inherited-refusal",
     "fresh": {
      "kind": "Unsupported",

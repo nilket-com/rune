@@ -1,0 +1,15 @@
+mod foo {
+    pub fn number() {
+        1
+    }
+}
+
+mod bar {
+    pub fn number() {
+        2
+    }
+}
+
+pub fn main() {
+    dbg!(foo::number() + bar::number());
+}

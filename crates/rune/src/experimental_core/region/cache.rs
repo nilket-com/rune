@@ -1425,12 +1425,6 @@ std::thread_local! {
 	static INJECTED_INVALID_SEEN: Cell<bool> = const { Cell::new(false) };
 }
 
-/// `size_of::<Ready>()` (the B1 golden's metadata delta).
-#[cfg(test)]
-pub(crate) fn ready_bytes_for_test() -> usize {
-	core::mem::size_of::<Ready>()
-}
-
 #[cfg(test)]
 pub(crate) fn enable_for_test(on: bool) {
 	PRODUCTION_FOR_TEST.with(|c| c.set(on));

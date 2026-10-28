@@ -1,0 +1,11 @@
+// Record 0074: the direct repeated-join check cited in the evidence. Run
+// with the rc2 scratch adapter's fixture binary in an empty directory:
+//   target/0074-adapter-target/release/rnx-polars-fixture run probes/0074/diag-join-order.rn
+pub fn main(_) {
+    fs::write_new("j.csv", "x,y\n1,a\n2,b\n3,c\n")?;
+    let df = polars::read_csv("j.csv", [("x", "i64"), ("y", "string")])?;
+    for i in 0..4 {
+        let out = df.lazy().inner_join(df.lazy(), polars::col("x"), polars::col("x")).collect()?;
+        println!("run {}: {}", i, out.preview()?.split("\n").skip(2).collect::<Vec>().iter().fold("", |a, b| a + " " + b));
+    }
+}

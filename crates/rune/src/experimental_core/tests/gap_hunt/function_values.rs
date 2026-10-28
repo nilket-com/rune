@@ -118,11 +118,6 @@ fn legacy_child() {
 	let result = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source":source,"origin":row["origin"],"logical":logical,"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
 	let mut result = result;
 	result["projected"] = projection(&result);
-	if std::env::var_os("C16F_REPLAY").is_some() {
-		let frozen: Json =
-			serde_json::from_str(include_str!("function_values/stock.json")).unwrap();
-		assert_eq!(result["projected"], frozen[index]["projected"]);
-	}
 	let path = std::env::var_os("C16F_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
 		.create_new(true)
@@ -152,18 +147,13 @@ fn projection(record: &Json) -> Json {
 fn observer_controls() {
 	use sha2::{Digest, Sha256};
 	let freeze: Json = serde_json::from_str(include_str!("function_values/freeze.json")).unwrap();
-	for (name, bytes) in [
-		("cases.json", CASES),
-		("stock.json", include_str!("function_values/stock.json")),
-	] {
-		assert_eq!(
-			hex(Sha256::digest(
-				crate::experimental_core::tests::name_projection::observer_bytes(name, bytes)
-			)
-			.as_ref()),
-			freeze["files"][name]
-		);
-	}
+	assert_eq!(
+		hex(Sha256::digest(
+			crate::experimental_core::tests::name_projection::observer_bytes("cases.json", CASES)
+		)
+		.as_ref()),
+		freeze["files"]["cases.json"]
+	);
 	let rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
 	assert_eq!(rows.len(), 101);
 	let mut labels = std::collections::BTreeSet::new();
@@ -179,166 +169,65 @@ fn observer_controls() {
 		observed(&RuntimeValue::from(2i64))
 	);
 }
-const REPLAY_CAP: usize = 2 << 20;
-fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
-	let mut bytes = Vec::new();
-	let mut buf = [0; 4096];
-	loop {
-		let n = pipe.read(&mut buf).unwrap();
-		if n == 0 {
-			break;
-		}
-		let room = REPLAY_CAP - bytes.len();
-		bytes.extend_from_slice(&buf[..n.min(room)]);
-		if n > room {
-			exceeded.store(true, Ordering::Relaxed);
-		}
-	}
-	bytes
-}
-
-#[test]
+/// Run every case on live stock, then on the execution engine, and compare.
 #[cfg(target_os = "linux")]
-#[ignore = "C16f frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn legacy_contract() {
-	run_contract("stock");
-}
-
-#[cfg(target_os = "linux")]
-fn run_contract(engine: &str) {
-	assert!(matches!(engine, "stock" | "fresh"));
+fn run_contract() {
 	let cases: Json = serde_json::from_str(CASES).unwrap();
-	let frozen: Json = serde_json::from_str(include_str!("function_values/stock.json")).unwrap();
 	let cases = cases.as_array().unwrap();
-	let frozen = frozen.as_array().unwrap();
 	assert_eq!(cases.len(), 101);
-	assert_eq!(cases.len(), frozen.len());
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
-	for (i, (case, expected)) in cases.iter().zip(frozen).enumerate() {
+	for (i, case) in cases.iter().enumerate() {
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
-		assert_eq!(case["label"], expected["label"]);
-		assert_eq!(case["source"], expected["source"]);
 		let folder = out.join(format!("{i:03}"));
-		fs::create_dir(&folder).unwrap();
-		let result = folder.join("observation.json");
-		use std::os::unix::process::CommandExt;
-		let mut command = Command::new("/usr/bin/prlimit");
-		command
-			.args([
-				"--cpu=15",
-				"--as=2147483648",
-				"--fsize=2097152",
-				"--core=0",
-				"--",
-			])
-			.arg(std::env::current_exe().unwrap());
-		command.process_group(0);
-		command.env_clear();
-		let mut child_process = command
-			.args([
-				"--exact",
-				if engine == "stock" {
-					"experimental_core::tests::gap_hunt::function_values::legacy_child"
-				} else {
-					"experimental_core::tests::gap_hunt::function_values::child"
-				},
-				"--ignored",
-				"--nocapture",
-				"--quiet",
-			])
-			.env("C16F_ENGINE", engine)
-			.env("C16F_REPLAY", "1")
-			.env("PATH", "/usr/bin:/bin")
-			.env("LANG", "C.UTF-8")
-			.env("TZ", "UTC")
-			.env("C16F_CASE", i.to_string())
-			.env("C16F_RESULT", &result)
-			.env("D1E_TRACE_OUT", folder.join("logical.json"))
-			.current_dir(&folder)
-			.stdin(Stdio::null())
-			.stdout(Stdio::piped())
-			.stderr(Stdio::piped())
-			.spawn()
-			.unwrap();
-		let exceeded = Arc::new(AtomicBool::new(false));
-		let flag = exceeded.clone();
-		let pipe = child_process.stdout.take().unwrap();
-		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
-		let flag = exceeded.clone();
-		let pipe = child_process.stderr.take().unwrap();
-		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
-		let start = Instant::now();
-		let mut stop = false;
-		let mut exited = false;
-		loop {
-			if child_process.try_wait().unwrap().is_some() {
-				exited = true;
-			}
-			if !exceeded.load(Ordering::Relaxed)
-				&& exited && stdout.is_finished()
-				&& stderr.is_finished()
-			{
-				break;
-			}
-			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
-				stop = true;
-				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child_process.id())])
-					.stdout(Stdio::null())
-					.stderr(Stdio::null())
-					.status();
-				break;
-			}
-			std::thread::sleep(Duration::from_millis(10));
-		}
-		// wait() also returns the cached status when try_wait() already reaped
-		// the child. Every exit path explicitly collects it before joining.
-		let status = child_process.wait().unwrap();
-		let stdout = stdout.join().unwrap();
-		let stderr = stderr.join().unwrap();
-		fs::write(folder.join("stdout"), &stdout).unwrap();
-		fs::write(folder.join("stderr"), &stderr).unwrap();
-		fs::write(
-			folder.join("receipt.txt"),
-			format!(
-				"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\n",
-				start.elapsed()
-			),
-		)
-		.unwrap();
-		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
-		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
-
-		let observed: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		assert_eq!(observed["schema"], 1);
-		assert_eq!(observed["engine"], engine);
-		assert_eq!(observed["index"], i);
-		assert_eq!(observed["fuel"], case["fuel"]);
-		assert_eq!(observed["label"], case["label"]);
-		assert_eq!(observed["source"], case["source"]);
-		assert_eq!(observed["origin"], case["origin"]);
-		if engine == "fresh" {
-			verify_case(i, case, expected, &observed, &stdout, &stderr);
-			continue;
-		}
-		if engine == "stock" {
-			assert_eq!(observed["projected"], expected["projected"], "{label}");
-		}
-		assert_eq!(
-			runtime_error_kind(i, case, &observed["observation"]["outcome"]),
-			runtime_error_kind(i, case, &expected["observation"]["outcome"])
+		let stock = launch("stock", i, case, &folder.join("stock"));
+		let mut expected = stock.observation;
+		expected["stdout_hex"] = json!(hex(&stock.stdout));
+		expected["stderr_hex"] = json!(hex(&stock.stderr));
+		let fresh = launch("fresh", i, case, &folder.join("fresh"));
+		verify_case(
+			i,
+			case,
+			&expected,
+			&fresh.observation,
+			&fresh.stdout,
+			&fresh.stderr,
 		);
-		assert_eq!(
-			observed["observation"]["reuse"]["kind"],
-			expected["observation"]["reuse"]["kind"]
-		);
-		assert_eq!(hex(&stdout), expected["stdout_hex"]);
-		assert_eq!(hex(&stderr), expected["stderr_hex"]);
 	}
-	super::contract_completed(engine, cases.len());
+	super::contract_completed("fresh", cases.len());
+}
+
+/// Run case `index` on `engine` in a bounded child and check its envelope.
+#[cfg(target_os = "linux")]
+fn launch(engine: &str, index: usize, case: &Json, folder: &Path) -> super::live_oracle::Run {
+	let index_text = index.to_string();
+	let trace = folder.join("logical.json");
+	let run = super::live_oracle::run_child(
+		if engine == "stock" {
+			"experimental_core::tests::gap_hunt::function_values::legacy_child"
+		} else {
+			"experimental_core::tests::gap_hunt::function_values::child"
+		},
+		case["label"].as_str().unwrap(),
+		folder,
+		"C16F_RESULT",
+		&[
+			("C16F_ENGINE", engine.as_ref()),
+			("C16F_CASE", index_text.as_ref()),
+			("D1E_TRACE_OUT", trace.as_os_str()),
+		],
+	);
+	let observed = &run.observation;
+	assert_eq!(observed["schema"], 1);
+	assert_eq!(observed["engine"], engine);
+	assert_eq!(observed["index"], index);
+	assert_eq!(observed["fuel"], case["fuel"]);
+	assert_eq!(observed["label"], case["label"]);
+	assert_eq!(observed["source"], case["source"]);
+	assert_eq!(observed["origin"], case["origin"]);
+	run
 }
 
 #[test]
@@ -369,30 +258,6 @@ fn compile_child() {
 		serde_json::to_vec_pretty(&result).unwrap(),
 	)
 	.unwrap();
-}
-
-// P1: only this source's diagnostic AnyTypeInfo::full_name address is process-local.
-// The public type hash, typed primary variant and every other byte stay exact.
-fn runtime_error_kind(index: usize, case: &Json, outcome: &Json) -> Json {
-	if index != 95 {
-		return outcome["kind"].clone();
-	}
-	assert_eq!(case["label"], "control/non-callable");
-	assert_eq!(
-		case["source_sha256"],
-		"a673ffcf0cd0e4906894b433bb4d39844e5a0bda8dc9eca5ec23ba79a1bcce72"
-	);
-	let kind = outcome["kind"].as_str().unwrap();
-	let prefix = "UnsupportedCallFn { actual: Any(AnyTypeInfo { full_name: 0x";
-	let suffix = ", hash: 0x1cad9186c9641c4f }) }";
-	let address = kind
-		.strip_prefix(prefix)
-		.unwrap()
-		.strip_suffix(suffix)
-		.unwrap();
-	assert!((9..=16).contains(&address.len()));
-	assert!(address.bytes().all(|b| b.is_ascii_hexdigit()));
-	json!(format!("{prefix}ADDRESS{suffix}"))
 }
 
 include!("function_values/run.rs");

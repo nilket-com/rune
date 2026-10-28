@@ -1,0 +1,22 @@
+// Record 0131: semantic search over a document table, on the CPU.
+// args: DATA (docs.csv, queries.csv) and MODEL (the pinned all-MiniLM-L6-v2 files)
+pub fn main(args) {
+    let dir = args[0];
+    let docs = polars::read_csv(`${dir}/docs.csv`)?;
+    let texts = docs.strings("text")?;
+    let enc = candle::TextEncoder::load(args[1])?;
+    let d = enc.embed(texts)?;
+    let queries = polars::read_csv(`${dir}/queries.csv`)?.strings("query")?;
+    let q = enc.embed(queries)?;
+    let names = ["q0", "q1", "q2", "q3", "q4", "q5", "q6", "q7"];
+    let scores = docs.with_dense(candle::similarity(d, q, names)?)?;
+    scores.write_parquet_new(`${dir}/scores.parquet`)?;
+    // the plan's single-query search, ranked
+    let s = candle::similarity(d, enc.embed(["how do I reset my password?"])?, ["score"])?;
+    let ranked = docs.with_dense(s)?.sort(["score"], polars::SortMultipleOptions::new().with_order_descending(true))?.head(Some(5))?;
+    println!("{}", enc);
+    println!("{}", d);
+    println!("{}", ranked);
+    println!("reuse: {} texts, {} queries, docs {} rows", texts.len(), queries.len(), docs.height()?);
+    Ok(())
+}

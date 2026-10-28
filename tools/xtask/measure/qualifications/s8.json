@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "record": "S8",
+  "baseline_milestone": "M7",
+  "candidate_commit": null,
+  "entries": [
+    {
+      "rule": "invoke-entry-zero-controls",
+      "symbols": [
+        "<rune::experimental_core::execute::Executor>::invoke_args::{closure#0}",
+        "<rune::experimental_core::execute::Executor>::invoke_args::<false>::{closure#0}"
+      ],
+      "control_symbol": "<rune::experimental_core::execute::Executor>::invoke_args::{closure#0}",
+      "cells": ["off/while", "off/numeric", "off/calls", "off/fib", "off/shared_rows", "on/while", "on/numeric", "on/calls", "on/fib", "on/shared_rows"],
+      "control_bound": "nonpositive",
+      "proof": "live-control-bytecode-equal",
+      "entry_proof": "live-invocation-source-equal"
+    },
+    {
+      "rule": "per-iteration-growth",
+      "symbols": ["<rune::experimental_core::heap::Store>::dynamic_get"],
+      "cells": ["off/shared_rows", "on/shared_rows"],
+      "max_ir_per_call": 1,
+      "proof": "live-indexing-source-equal"
+    }
+  ]
+}

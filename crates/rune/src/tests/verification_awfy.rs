@@ -18,6 +18,8 @@ struct Input {
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Config {
+	#[serde(default)]
+	engine: Option<std::string::String>,
 	num: i64,
 	inner: i64,
 	inputs: Vec<Input>,
@@ -136,6 +138,34 @@ fn observe(
 	}
 	let context = Context::with_default_modules().expect("context");
 	let mut diagnostics = Diagnostics::new();
+	if c.engine.as_deref() == Some("stock") {
+		assert!(
+			frame_limit.is_none() && slot_limit.is_none(),
+			"stock controls are not comparable"
+		);
+		let mut vm = match crate::prepare(&mut sources)
+			.with_context(&context)
+			.with_diagnostics(&mut diagnostics)
+			.build_vm()
+		{
+			Ok(vm) => vm,
+			Err(error) => return (3, std::format!("stock compile: {error:?}")),
+		};
+		let result = match vm.call(["main"], (c.num, c.inner)) {
+			Ok(value) => value,
+			Err(error) => return (7, std::format!("stock runtime: {error:?}")),
+		};
+		let ok: bool = match crate::from_value(result) {
+			Ok(value) => value,
+			Err(error) => return (7, std::format!("stock result: {error:?}")),
+		};
+		std::println!("RESULT {}", if ok { "ok" } else { "FAILED" });
+		return (if ok { 0 } else { 1 }, stderr);
+	}
+	assert!(
+		c.engine.is_none() || c.engine.as_deref() == Some("fresh"),
+		"unknown engine"
+	);
 	let program = match frontend::compile(&mut sources, &context, &mut diagnostics, 1) {
 		Ok(p) => p,
 		Err(error) => {

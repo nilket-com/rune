@@ -67,8 +67,10 @@
 
 pub(crate) mod arithmetic;
 pub(crate) mod code;
+mod d1_message;
 mod detail;
 pub mod error;
+mod error_class;
 pub mod execute;
 pub mod heap;
 pub(crate) mod nominal;

@@ -1,0 +1,11 @@
+fn dynamic_type(n) {
+    match n {
+        n if n is String => "n is a String",
+        n if n is Vec => "n is a vector",
+        _ => "n is unknown",
+    }
+}
+
+println!("{}", dynamic_type("Hello"));
+println!("{}", dynamic_type([1, 2, 3, 4]));
+println!("{}", dynamic_type(42));

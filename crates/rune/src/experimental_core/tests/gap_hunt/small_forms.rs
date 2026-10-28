@@ -1,4 +1,4 @@
-//! C12 frozen stock oracle and independent new observations.
+//! C12 live stock oracle and independent new observations.
 use super::*;
 use crate::runtime::{self as stock, Value as RuntimeValue};
 use serde_json::{json, Value as Json};

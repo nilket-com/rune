@@ -7,7 +7,7 @@
     "index": 88,
     "label": "pass/map",
     "source_sha256": "1ec490139e6f3e51d2f03449ca6d63537f329668d3733175b2ad94df23c0e616",
-    "stock_row_sha256": "2a3fb4d8e213f32a89bb48ea4015e62c001b250c96e481cc38519c550994cf00",
+    "stock_row_sha256": "0ab32b5ca6882b256e26a7498f235ad5b7f32fef6853456e9c668021f157c5d2",
     "fresh": {
      "location": {
       "end": 158,
@@ -31,7 +31,7 @@
     "index": 103,
     "label": "call/map-callback",
     "source_sha256": "c6f69b229d07642aa349b835f3265d81f6ce668b06022eabe050346ae5720547",
-    "stock_row_sha256": "c1b15512c82bf19df3cc7a675fe7aa7f4a148d382caed4a5b9aa37cfe3046e41",
+    "stock_row_sha256": "aacca339d32d9db3ff1d825e9c0c7b56b9579acc5edda256c10b9ee4485596d4",
     "fresh": {
      "location": {
       "end": 153,

@@ -29,9 +29,12 @@ use std::{
 	vec::Vec,
 };
 
+
 pub(super) mod d1b_diagnostics;
 mod d1c_diagnostics;
 mod d1e_diagnostics;
+#[cfg(target_os = "linux")]
+mod live_oracle;
 
 pub(super) fn contract_completed(engine: &str, rows: usize) {
 	println!("\nCONTRACT ENGINE {engine}");
@@ -102,38 +105,7 @@ fn sources(path: &Path, mode: &str) -> Sources {
 	sources
 }
 
-fn runtime_error_class(k: &crate::runtime::VmErrorKind) -> String {
-	use crate::runtime::VmErrorKind as K;
-	let class = match k {
-		K::Overflow | K::Underflow => "Overflow",
-		K::ValueToIntegerCoercionError { .. } => "IntegerCoercion",
-		K::DivideByZero => "DivisionByZero",
-		K::BadArgumentCount { .. } => "ArgumentCount",
-		K::AccessError { .. } => "AccessConflict",
-		K::Halted {
-			halt: crate::runtime::VmHaltInfo::Limited,
-		} => "FuelExhausted",
-		K::MissingField { .. }
-		| K::MissingIndexInteger { .. }
-		| K::MissingIndex { .. }
-		| K::OutOfRange { .. } => "IndexOutOfBounds",
-		K::UnsupportedBinaryOperation { .. }
-		| K::UnsupportedUnaryOperation { .. }
-		| K::UnsupportedIndexGet { .. }
-		| K::UnsupportedIndexSet { .. }
-		| K::UnsupportedObjectSlotIndexGet { .. }
-		| K::UnsupportedObjectSlotIndexSet { .. }
-		| K::UnsupportedTupleIndexGet { .. }
-		| K::UnsupportedTupleIndexSet { .. }
-		| K::ExpectedNumber { .. }
-		| K::ExpectedType { .. }
-		| K::MissingInstanceFunction { .. }
-		| K::MissingProtocolFunction { .. }
-		| K::UnsupportedIterRange { .. } => "Type",
-		_ => return format!("stock:{k:?}"),
-	};
-	class.into()
-}
+include!("gap_hunt/runtime_error_class.rs");
 
 fn runtime_scalar(value: &crate::runtime::Value) -> String {
 	use crate::runtime::Inline;
@@ -158,6 +130,56 @@ fn scalar(store: &Store, root: &super::super::value::Root) -> String {
 		Some(Scalar::Ordering(n)) => format!("ordering:{n:?}:"),
 		_ => String::new(),
 	}
+}
+
+fn l1_class(projection: super::super::error::ErrorProjection) -> serde_json::Value {
+	use super::super::error::ErrorProjection;
+	match projection {
+		ErrorProjection::Class(class) => {
+			serde_json::json!({"status":"class","name":format!("{class:?}")})
+		}
+		ErrorProjection::EngineOnly => serde_json::json!({"status":"engine-only"}),
+		ErrorProjection::Unclassified(name) => {
+			serde_json::json!({"status":"unclassified","name":name})
+		}
+	}
+}
+
+fn l1_stock_detail(error: &crate::runtime::VmError) {
+	let Some(path) = std::env::var_os("GAP_L1_DETAIL") else {
+		return;
+	};
+	let site = error.first_location().and_then(|at| {
+		let inst = at.unit.debug_info()?.instruction_at(at.ip)?;
+		let range = inst.span.range();
+		Some(
+			serde_json::json!({"source":inst.source_id.into_index(),"start":range.start,"end":range.end}),
+		)
+	});
+	let detail = error.missing_instance_function().map(|m| serde_json::json!({"kind":"missing-instance-function","hash":m.hash.to_string(),"instance":m.instance.to_string()}));
+	let value = serde_json::json!({"schema":1,"class":l1_class(error.error_class()),"origin":format!("{:?}",error.origin()),"instruction":error.origin_instruction(),"site":site,"detail":detail});
+	fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
+}
+
+fn l1_fresh_detail(failure: &super::super::execute::Failure) {
+	let Some(path) = std::env::var_os("GAP_L1_DETAIL") else {
+		return;
+	};
+	let site = failure
+		.error
+		.location
+		.map(|at| serde_json::json!({"source":at.source,"start":at.start,"end":at.end}));
+	let missing = failure.missing_instance_function();
+	let detail = missing.map(|m| serde_json::json!({"kind":"missing-instance-function","hash":m.hash.to_string(),"instance":m.instance.to_string()}));
+	// Only this typed execution-core lookup failure proves script origin here.
+	// All other origins remain unknown until individually reviewed.
+	let origin = if missing.is_some() && failure.host_message.is_none() {
+		"Script"
+	} else {
+		"Unknown"
+	};
+	let value = serde_json::json!({"schema":1,"class":l1_class(failure.error.error_class()),"origin":origin,"instruction":null,"site":site,"detail":detail});
+	fs::write(path, serde_json::to_vec(&value).unwrap()).unwrap();
 }
 
 fn observe(path: &Path, mode: &str, engine: &str) -> Observation {
@@ -199,7 +221,7 @@ fn observe_with_context(
 					"stock compiler",
 					format!("{e:?}: {:?}", diagnostics.diagnostics()),
 					String::new(),
-				)
+				);
 			}
 		};
 		if mode == "compile" {
@@ -238,6 +260,7 @@ fn observe_with_context(
 				}
 			}
 			Err(e) => {
+				l1_stock_detail(&e);
 				// Assertion oracle opt-in: preserve exact legacy VM failure metadata without
 				// changing any existing frozen observation or running the case twice.
 				if mode == "assert-main" || mode == "output-main" || mode.starts_with("patterns-") {
@@ -355,6 +378,7 @@ fn observe_with_context(
 			observed
 		}
 		Err(f) => {
+			l1_fresh_detail(&f);
 			if f.error.kind == super::super::error::ErrorKind::AccessConflict {
 				if let Some(path) = std::env::var_os("GAP_ACCESS_RESULT") {
 					use super::super::error::Detail;
@@ -1185,87 +1209,148 @@ fn order_policy_allows(policy: &str, phase: &str, class: &str, message: &str, va
 	}
 }
 
+/// Object equality rows whose stock result depends on hash iteration order,
+/// with the alternatives each admits. Every other comparison row is exact.
+const ORDER_POLICIES: [(&str, &str); 14] = [
+	(
+		"unspecified/object-sequence/multiple/eq",
+		"object-sequence-bool",
+	),
+	(
+		"unspecified/object-sequence/multiple/ne",
+		"object-sequence-bool",
+	),
+	(
+		"unspecified/object-missing-and-error/eq",
+		"object-false-or-string-error",
+	),
+	(
+		"unspecified/object-missing-and-error/ne",
+		"object-true-or-string-error",
+	),
+	(
+		"unspecified/object-two-errors/eq",
+		"object-two-type-messages",
+	),
+	(
+		"unspecified/object-two-errors/ne",
+		"object-two-type-messages",
+	),
+	(
+		"unspecified/object-false-and-error/aa/eq",
+		"object-false-or-string-error",
+	),
+	(
+		"unspecified/object-false-and-error/aa/ne",
+		"object-true-or-string-error",
+	),
+	(
+		"unspecified/object-false-and-error/ab/eq",
+		"object-false-or-string-error",
+	),
+	(
+		"unspecified/object-false-and-error/ab/ne",
+		"object-true-or-string-error",
+	),
+	(
+		"unspecified/object-false-and-error/ba/eq",
+		"object-false-or-string-error",
+	),
+	(
+		"unspecified/object-false-and-error/ba/ne",
+		"object-true-or-string-error",
+	),
+	(
+		"unspecified/object-false-and-error/bb/eq",
+		"object-false-or-string-error",
+	),
+	(
+		"unspecified/object-false-and-error/bb/ne",
+		"object-true-or-string-error",
+	),
+];
+
 #[test]
-#[ignore = "explicit full frozen comparison contract; bounded children, not ordinary CI"]
+#[ignore = "explicit full comparison contract against live stock; bounded children, not ordinary CI"]
 fn comparison_contract() {
-	let engine = std::env::var("GAP_COMPARE_ENGINE").unwrap_or_else(|_| "stock".into());
-	assert!(matches!(engine.as_str(), "stock" | "fresh"));
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).unwrap();
 	let scratch =
 		Scratch(std::env::temp_dir().join(format!("rune-eq-contract-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
-	let mut sources: BTreeMap<_, _> = comparison_cases()
-		.into_iter()
-		.chain(comparison_supplement())
-		.collect();
-	let mut rows = include_str!("comparison_stock.tsv").lines();
-	assert_eq!(
-		rows.next(),
-		Some("case\tpolicy\tphase\tclass\tmessage\tvalue")
-	);
+	let primary = comparison_cases();
+	let supplement = comparison_supplement();
+	assert_eq!((primary.len(), supplement.len()), (3432, 162));
+	let sources: BTreeMap<_, _> = primary.into_iter().chain(supplement).collect();
+	let policies: BTreeMap<_, _> = ORDER_POLICIES.into_iter().collect();
+	assert_eq!(policies.len(), ORDER_POLICIES.len());
+	assert!(policies.keys().all(|id| sources.contains_key(*id)));
 	let mut count = 0;
-	for (n, line) in rows.enumerate() {
-		let fields: Vec<_> = line.split('\t').collect();
-		assert_eq!(fields.len(), 6);
-		let [id, policy, phase, class, message, value] = fields.as_slice() else {
-			unreachable!()
-		};
-		let source = sources
-			.remove(*id)
-			.unwrap_or_else(|| panic!("duplicate/unknown {id}"));
+	for (n, (id, source)) in sources.iter().enumerate() {
 		let path = out.join(format!("{n:05}.source.rn"));
 		fs::write(&path, source).unwrap();
-		let run = launch(
-			&path,
-			&path,
-			"main",
-			&engine,
-			&scratch.0,
-			&out,
-			&format!("{n:05}"),
-		);
-		assert!(run.complete, "{id}: child gap {}", run.record);
+		let [stock, run] = ["stock", "fresh"].map(|engine| {
+			let run = launch(
+				&path,
+				&path,
+				"main",
+				engine,
+				&scratch.0,
+				&out,
+				&format!("{n:05}"),
+			);
+			assert!(run.complete, "{id}: {engine} child gap {}", run.record);
+			// The fixed sources print nothing; retain the raw libtest startup banner.
+			assert_eq!(
+				run.stdout, b"\nrunning 1 test\n",
+				"unexpected {engine} stdout: {id}"
+			);
+			assert!(run.stderr.is_empty(), "unexpected {engine} stderr: {id}");
+			run
+		});
+		let expected: Vec<_> = stock.record.split('\t').collect();
+		assert_eq!(expected.len(), 5);
 		let actual: Vec<_> = run.record.split('\t').collect();
 		assert_eq!(actual.len(), 5);
-		let actual_message = unhex(actual[3]);
-		let actual_value = unhex(actual[4]);
-		if *policy == "exact" {
+		if let Some(policy) = policies.get(id.as_str()) {
+			for (engine, fields) in [("stock", &expected), ("fresh", &actual)] {
+				assert!(
+					order_policy_allows(
+						policy,
+						fields[0],
+						fields[1],
+						&unhex(fields[3]),
+						&unhex(fields[4])
+					),
+					"{id}: policy {policy}, {engine} {}",
+					fields.join("\t")
+				);
+			}
+		} else {
+			let class = expected[1];
 			// Only these legacy VM resource/coercion classes have execution core names.
-			let expected_class = if engine == "fresh" && class.starts_with("stock:MaxValueDepth ") {
+			let expected_class = if class.starts_with("stock:MaxValueDepth ") {
 				"ValueDepth"
-			// S-index gave the legacy VM classifier this same public class.
-			// Preserve the frozen Debug label and equate only its coercion rows.
 			} else if class.starts_with("stock:ValueToIntegerCoercionError ") {
 				"IntegerCoercion"
 			} else {
-				*class
+				class
 			};
 			assert_eq!(
+				(actual[0], actual[1], unhex(actual[3]), unhex(actual[4])),
 				(
-					actual[0],
-					actual[1],
-					actual_message.as_str(),
-					actual_value.as_str()
+					expected[0],
+					expected_class,
+					unhex(expected[3]),
+					unhex(expected[4])
 				),
-				(*phase, expected_class, *message, *value),
 				"{id}"
 			);
-		} else {
-			assert!(
-				order_policy_allows(policy, actual[0], actual[1], &actual_message, &actual_value),
-				"{id}: policy {policy}, actual {}",
-				run.record
-			);
 		}
-		// The fixed sources print nothing; retain the raw libtest startup banner.
-		assert_eq!(run.stdout, b"\nrunning 1 test\n", "unexpected stdout: {id}");
-		assert!(run.stderr.is_empty(), "unexpected stderr: {id}");
 		count += 1;
 	}
 	assert_eq!(count, 3594);
-	assert!(sources.is_empty());
-	contract_completed(&engine, count);
+	contract_completed("fresh", count);
 }
 
 #[test]
@@ -1460,49 +1545,45 @@ fn legacy_index_probe() {
 }
 
 #[test]
-#[ignore = "explicit full frozen indexing contract; bounded children, not ordinary CI"]
+#[ignore = "explicit full indexing contract against live stock; bounded children, not ordinary CI"]
 fn index_contract() {
-	let engine = std::env::var("GAP_COMPARE_ENGINE").unwrap_or_else(|_| "stock".into());
-	assert!(matches!(engine.as_str(), "stock" | "fresh"));
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).expect("GAP_OUT must be new");
 	let scratch =
 		Scratch(std::env::temp_dir().join(format!("rune-index-contract-{}", std::process::id())));
 	fs::create_dir(&scratch.0).unwrap();
 	let generated = index_cases();
-	let rows: Vec<_> = include_str!("index_stock.tsv").lines().skip(1).collect();
-	assert_eq!(rows.len(), generated.len());
-	for (n, (line, (label, source))) in rows.iter().zip(&generated).enumerate() {
-		let row: Vec<_> = line.split('\t').collect();
-		assert_eq!(row.len(), 5);
-		assert_eq!(row[0], label);
-		assert_eq!(unhex(row[1]), *source, "fixture source drift: {label}");
+	assert_eq!(generated.len(), 1035);
+	for (n, (label, source)) in generated.iter().enumerate() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
-		let run = launch(&path, &path, "main", &engine, &scratch.0, &out, &id);
-		assert!(
-			run.complete,
-			"incomplete {engine} case {label}: {}",
-			run.record
-		);
-		let expected = unhex(row[2]);
-		let expected: Vec<_> = expected.split('\t').collect();
+		let [stock, run] = ["stock", "fresh"].map(|engine| {
+			let run = launch(&path, &path, "main", engine, &scratch.0, &out, &id);
+			assert!(
+				run.complete,
+				"incomplete {engine} case {label}: {}",
+				run.record
+			);
+			run
+		});
+		let expected: Vec<_> = stock.record.split('\t').collect();
+		assert_eq!(expected.len(), 5);
 		let actual: Vec<_> = run.record.split('\t').collect();
 		assert_eq!(actual.len(), 5);
 		// Runtime site labels are frontend-specific. Exact spans have focused tests.
 		assert_eq!(
 			(&actual[..2], &actual[3..]),
 			(&expected[..2], &expected[3..]),
-			"{engine} observation {label}"
+			"fresh observation {label}"
 		);
-		assert_eq!(hex(&run.stdout), row[3], "{engine} stdout {label}");
-		assert_eq!(hex(&run.stderr), row[4], "{engine} stderr {label}");
+		assert_eq!(hex(&run.stdout), hex(&stock.stdout), "fresh stdout {label}");
+		assert_eq!(hex(&run.stderr), hex(&stock.stderr), "fresh stderr {label}");
 		if n.is_multiple_of(100) {
-			println!("{engine} index contract {n}/{}", rows.len());
+			println!("index contract {n}/{}", generated.len());
 		}
 	}
-	contract_completed(&engine, rows.len());
+	contract_completed("fresh", generated.len());
 }
 
 #[path = "gap_hunt/field_iter.rs"]

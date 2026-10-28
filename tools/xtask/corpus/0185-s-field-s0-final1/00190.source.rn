@@ -1,0 +1,11 @@
+// The same shape with the denial in force: no hang, a refusal instead.
+fn show(r) { match r { Ok(_) => "ok", Err(e) => `${e.kind()}: ${e.message()}` } }
+pub fn main() {
+    let n = polars::rune_threads();
+    polars::barrier_init(n);
+    let r = fx::wide(n * 2, 100).apply_columns_par_cb(|c| {
+        polars::barrier_wait();
+        match fx::wide(4, 100).apply_columns_par_cb(|d| d) { Ok(_) => panic("routed call was allowed"), Err(e) => panic(`${e.kind()}|${e.message()}`) }
+    });
+    show(r)
+}

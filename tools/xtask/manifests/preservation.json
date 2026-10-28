@@ -16,36 +16,27 @@
   },
   "repository_pins": {
     "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/cases.json": "7808ead8767600acd55bf2282d432b46e4961f86a07a28f6d272fd476d456cae",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/dispositions.json": "b76190ba0910c112123ef7483f1c4e401af21c84af989000058a815a405bcb29",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/stock.json": "714afb0e204c0389e03445fdd1540c533ed28d035390836f98722304fb863c13",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/stock2.json": "e1d99a32cff7873c20f0e81c02fd03dacf7ac96c0b8e509929aca40b41999830",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b1_admissions.json": "c514a6132f7d965f0e7bd6fe6a926995dc9f46800eb9764806f56b2c27b713b7",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b3a_admissions.json": "5db11d6a0bc6517cf5c0dbaada3cad841010239f88270dd4311dabe0551d7198",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b3b_admissions.json": "c50e7dec46d5198fbda334bc7491c7c8934a428d26ce009c49011ea60e2f0a50",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b3d_admissions.json": "036c751127b06d3f9216bb9e8f9a75922962dd0c2e0b7f9094f53ecb8d965676",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b3e_admissions.json": "40ab29ab39ce054d0afca2298a23efb733a00106eb573e017b7d8289153e2dbf",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c17f_admissions.json": "1a3c7b2ecdd8a70c2a53bca5d97095fa444cca8181092d32188e81c27a8a5a4c",
-    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/s6_progressions.json": "6560482da735b22a12626d7d9f087fa44a39ba8718d177126cab7684336c94a3",
+    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/dispositions.json": "b6f39e932ef87455c69ce52a188e1014b0c0413e25102be2d3e74bfbc7e677ba",
+    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b1_admissions.json": "94a575831f1f0061052b83355b2d03cb7616b32c4b0ff488a71c67b27b3835ab",
+    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b3a_admissions.json": "06fa180962805b02a9c204b81df283c5b7a02052dd3f14ca1bf382504a0eb0cb",
+    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b3b_admissions.json": "b3f1cadd46a4a4fced87288fccf21af7dc341d6550042c9cf474114cfa030b8d",
+    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b3d_admissions.json": "05484ee7ef4d625f04597349ab4873b9bdb686243ec3306385cf41633347b8c0",
+    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b3e_admissions.json": "b974a0f5e447eec21cf5eff39c777357dd2c5f1c3d996317ae00dd57db87dde1",
+    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c17f_admissions.json": "29f4187445a7401f799a57b4fb28f1c9ff7273d9b4844c041f7389b5909ed401",
+    "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/s6_progressions.json": "056569078d45ca9179ab73c6965c88b99110282c81afc133103e64549df06fb2",
     "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/cases.json": "7cd5135c15f16cd0d048f05fa523de083a0f8ec4aa16b0d2d497a3e090df43e4",
-    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/dispositions.json": "4838fa98aa5fca71307b1d69947a7d8c28a1d9063bc34ec33cfb4eeb0638f29c",
-    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/stock.json": "98cd917995a9f2ed7a6337c3ace77dc4188fc25cd223bcb8f9874a54f58dd2e6",
-    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/stock2.json": "d71ba61307a79de891843f5b586d562339f0fe4b60706e9181a622b846a36aef",
-    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/stock3.json": "6bf1ed34676b254d71499765d0542300b49a24ce851e483847d6f2898980218c",
-    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c18b3a_admissions.json": "0e3d1aa5f4f98421c2cab452d51c0d620b78ecd2ca04ce7b00358eeeaf264b88",
-    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c18b3b_admissions.json": "291fd8d1ec592f336d9fb29ba94425c1cb5e6f89c1bf445d3e8b9a34d674e358",
-    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c18b3e_admissions.json": "9495623e04a4f266bc2176a9041f5138dd69abde98bcba553a74d25aff276ac0",
-    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c17f_admissions.json": "8a018a9a04e90d4e678a5ec413b2d6cb395dc55ad3ad7c3bc54d4c7e798e2f09",
-    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/s6_progressions.json": "667078dce979107a22a99e6f84fa24dabd2d3983e05e9f67c3714bc9b525037e"
+    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/dispositions.json": "abe06bfac452b3d02f2fdd2de39cde27ff3fe83a0ed4374fc023af00263ad6ec",
+    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c18b3a_admissions.json": "ba79bb8301c873ff020f83c0a57006a594c055420b4e09e605fb87d4f37fa882",
+    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c18b3b_admissions.json": "afa5d3a4ae8413c354887585b1472d3a39723f62cbd5d45d8864d777eb329a58",
+    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c18b3e_admissions.json": "07db6b32f2c5cfff1ae67eb38d028a66182cea2691f51b1153def50a59dfdbd0",
+    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c17f_admissions.json": "781a6e93daa48ab65a791eb8a99022a3da0e2b48a616ba30ed29606662f1328d",
+    "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/s6_progressions.json": "52c821c837977e41c0504b55d18c9d4a3dd217e7711568f1279ee6ea6d29b8de"
   },
   "modules": [
     {
       "name": "static_methods",
       "prefix": "C18A",
       "root": "crates/rune/src/experimental_core/tests/gap_hunt/static_methods",
-      "stocks": [
-        "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/stock.json",
-        "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/stock2.json"
-      ],
       "overlays": [
         "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b1_admissions.json",
         "crates/rune/src/experimental_core/tests/gap_hunt/static_methods/c18b3a_admissions.json",
@@ -61,11 +52,6 @@
       "name": "dynamic_methods",
       "prefix": "C18B",
       "root": "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods",
-      "stocks": [
-        "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/stock.json",
-        "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/stock2.json",
-        "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/stock3.json"
-      ],
       "overlays": [
         "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c18b3a_admissions.json",
         "crates/rune/src/experimental_core/tests/gap_hunt/dynamic_methods/c18b3b_admissions.json",

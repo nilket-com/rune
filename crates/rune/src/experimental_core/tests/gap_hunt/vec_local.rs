@@ -167,12 +167,6 @@ fn child() {
 		}
 		_ => panic!("unknown C16 engine"),
 	};
-	if engine == "stock" && std::env::var_os("C16_REPLAY").is_some() {
-		let frozen: Json = serde_json::from_str(include_str!("vec_local/stock.json")).unwrap();
-		assert_eq!(frozen[index]["label"], row["label"]);
-		assert_eq!(frozen[index]["source"], row["source"]);
-		assert_eq!(project(&observation), frozen[index]["projected"]);
-	}
 	let projected = if engine == "stock" {
 		project(&observation)
 	} else {
@@ -189,259 +183,148 @@ fn child() {
 	std::process::exit(0);
 }
 
-const REPLAY_CAP: usize = 2 << 20;
-fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
-	let mut bytes = Vec::new();
-	let mut buf = [0; 4096];
-	loop {
-		let n = pipe.read(&mut buf).unwrap();
-		if n == 0 {
-			break;
-		}
-		let room = REPLAY_CAP - bytes.len();
-		bytes.extend_from_slice(&buf[..n.min(room)]);
-		if n > room {
-			exceeded.store(true, Ordering::Relaxed);
-		}
-	}
-	bytes
-}
-
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C16a frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn legacy_contract() {
-	run_contract("stock");
-}
-
-#[test]
-#[cfg(target_os = "linux")]
-#[ignore = "C16a strict execution replay; bounded children and exclusive GAP_OUT"]
+#[ignore = "C16a strict execution contract against live stock; bounded children and exclusive GAP_OUT"]
 fn contract() {
-	run_contract("fresh");
-}
-
-#[cfg(target_os = "linux")]
-fn run_contract(engine: &str) {
-	assert!(matches!(engine, "stock" | "fresh"));
 	let cases: Json = serde_json::from_str(include_str!("vec_local/cases.json")).unwrap();
-	let frozen: Json = serde_json::from_str(include_str!("vec_local/stock.json")).unwrap();
 	let dispositions: Json =
 		serde_json::from_str(include_str!("vec_local/dispositions.json")).unwrap();
 	let c16e_admissions: Vec<Json> =
 		serde_json::from_str(include_str!("vec_local/c16e_admissions.json")).unwrap();
 	assert_eq!(c16e_admissions.len(), 5);
 	let cases = cases.as_array().unwrap();
-	let frozen = frozen.as_array().unwrap();
 	assert_eq!(cases.len(), 92);
-	assert_eq!(cases.len(), frozen.len());
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
-	for (i, (case, expected)) in cases.iter().zip(frozen).enumerate() {
+	for (i, case) in cases.iter().enumerate() {
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
-		assert_eq!(case["label"], expected["label"]);
-		assert_eq!(case["source"], expected["source"]);
 		let folder = out.join(format!("{i:03}"));
-		fs::create_dir(&folder).unwrap();
-		let result = folder.join("observation.json");
-		use std::os::unix::process::CommandExt;
-		let mut command = Command::new("/usr/bin/prlimit");
-		command
-			.args([
-				"--cpu=15",
-				"--as=2147483648",
-				"--fsize=2097152",
-				"--core=0",
-				"--",
-			])
-			.arg(std::env::current_exe().unwrap());
-		command.process_group(0);
-		let mut child = command
-			.args([
-				"--exact",
-				"experimental_core::tests::gap_hunt::vec_local::child",
-				"--ignored",
-				"--nocapture",
-				"--quiet",
-			])
-			.env_clear()
-			.env("C16_ENGINE", engine)
-			.env("C16_REPLAY", "1")
-			.env("PATH", "/usr/bin:/bin")
-			.env("LANG", "C.UTF-8")
-			.env("TZ", "UTC")
-			.env("C16_CASE", i.to_string())
-			.env("C16_RESULT", &result)
-			.env("D1E_TRACE_OUT", folder.join("logical.json"))
-			.current_dir(&folder)
-			.stdin(Stdio::null())
-			.stdout(Stdio::piped())
-			.stderr(Stdio::piped())
-			.spawn()
-			.unwrap();
-		let exceeded = Arc::new(AtomicBool::new(false));
-		let flag = exceeded.clone();
-		let pipe = child.stdout.take().unwrap();
-		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
-		let flag = exceeded.clone();
-		let pipe = child.stderr.take().unwrap();
-		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
-		let start = Instant::now();
-		let mut stop = false;
-		let mut exited = false;
-		loop {
-			if child.try_wait().unwrap().is_some() {
-				exited = true;
-			}
-			if !exceeded.load(Ordering::Relaxed)
-				&& exited && stdout.is_finished()
-				&& stderr.is_finished()
-			{
-				break;
-			}
-			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
-				stop = true;
-				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child.id())])
-					.stdout(Stdio::null())
-					.stderr(Stdio::null())
-					.status();
-				break;
-			}
-			std::thread::sleep(Duration::from_millis(10));
+		let stock = launch("stock", i, case, &folder.join("stock"));
+		let expected = &stock.observation;
+		let fresh = launch("fresh", i, case, &folder.join("fresh"));
+		let observed = &fresh.observation;
+		let audit = &observed["fresh_audit"];
+		for key in [
+			"no_cleanup_error",
+			"clean_after_row",
+			"row_idle",
+			"reuse",
+			"idle",
+		] {
+			assert_eq!(audit[key], true, "{label}: {key}");
 		}
-		// wait() also returns the cached status when try_wait() already reaped
-		// the child. Every exit path explicitly collects it before joining.
-		let status = child.wait().unwrap();
-		let stdout = stdout.join().unwrap();
-		let stderr = stderr.join().unwrap();
-		fs::write(folder.join("stdout"), &stdout).unwrap();
-		fs::write(folder.join("stderr"), &stderr).unwrap();
-		fs::write(
-			folder.join("receipt.txt"),
-			format!(
-				"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\n",
-				start.elapsed()
-			),
-		)
-		.unwrap();
-		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
-		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
-
-		let observed: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		assert_eq!(observed["schema"], 1);
-		assert_eq!(observed["engine"], engine);
-		assert_eq!(observed["index"], i);
-		assert_eq!(observed["fuel"], FUEL);
-		assert_eq!(observed["label"], case["label"]);
-		assert_eq!(observed["source"], case["source"]);
-		assert_eq!(observed["policy"], case["policy"]);
-		if engine == "stock" {
-			assert_eq!(observed["projected"], expected["projected"]);
-			if let Some(rule) = dispositions
-				.get(label)
-				.filter(|rule| rule.get("logical").is_some())
-			{
-				let logical: Json =
-					serde_json::from_slice(&fs::read(folder.join("logical.json")).unwrap())
-						.unwrap();
-				assert_eq!(logical, rule["logical"]);
-			}
-		} else {
-			let audit = &observed["fresh_audit"];
-			for key in [
-				"no_cleanup_error",
-				"clean_after_row",
-				"row_idle",
-				"reuse",
-				"idle",
-			] {
-				assert_eq!(audit[key], true, "{label}: {key}");
-			}
-			for key in [
-				"row_live_entries",
-				"row_payload_bytes",
-				"live_entries",
-				"payload_bytes",
-			] {
-				assert_eq!(audit[key], 0, "{label}: {key}");
-			}
-			let outcome = &observed["outcome"];
-			if let Some(rule) = dispositions.get(label) {
-				use sha2::{Digest, Sha256};
-				assert_eq!(rule["ruling"], "01a1511a-f99b-722e-a49a-e7a74e601943");
+		for key in [
+			"row_live_entries",
+			"row_payload_bytes",
+			"live_entries",
+			"payload_bytes",
+		] {
+			assert_eq!(audit[key], 0, "{label}: {key}");
+		}
+		let outcome = &observed["outcome"];
+		if let Some(rule) = dispositions.get(label) {
+			use sha2::{Digest, Sha256};
+			assert_eq!(rule["ruling"], "01a1511a-f99b-722e-a49a-e7a74e601943");
+			assert_eq!(
+				rule["source_sha256"],
+				hex(&Sha256::digest(case["source"].as_str().unwrap().as_bytes()))
+			);
+			assert_eq!(audit["invoked"], true, "{label}");
+			assert_eq!(project(outcome), rule["fresh"], "{label}");
+			if label == "frames/miss" {
+				assert_eq!(rule["policy"], "Raw-frame-disposition");
+				let trace = |folder: &Path| -> Json {
+					serde_json::from_slice(&fs::read(folder.join("logical.json")).unwrap()).unwrap()
+				};
 				assert_eq!(
-					rule["source_sha256"],
-					hex(&Sha256::digest(case["source"].as_str().unwrap().as_bytes()))
+					trace(&folder.join("fresh")),
+					trace(&folder.join("stock")),
+					"{label}: logical frames/context/rendered"
 				);
-				assert_eq!(
-					rule["stock_outcome_sha256"],
-					hex(&Sha256::digest(
-						serde_json::to_vec(&expected["outcome"]).unwrap()
-					))
-				);
-				assert_eq!(audit["invoked"], true, "{label}");
-				assert_eq!(project(outcome), rule["fresh"], "{label}");
-				if label == "frames/miss" {
-					assert_eq!(rule["policy"], "Raw-frame-disposition");
-					let logical: Json =
-						serde_json::from_slice(&fs::read(folder.join("logical.json")).unwrap())
-							.unwrap();
-					assert_eq!(logical, rule["logical"]);
-				} else {
-					assert_eq!(label, "value/return-rhs");
-					assert_eq!(rule["policy"], "Intentional-divergence");
-					assert_eq!(expected["outcome"]["status"], "compile-error");
-				}
-			} else if expected["outcome"]["status"] == "compile-error" {
-				assert_eq!(outcome["status"], "compile-error", "{label}");
-				assert_eq!(
-					outcome["diagnostics"], expected["outcome"]["diagnostics"],
-					"{label}"
-				);
-				assert_eq!(audit["invoked"], false, "{label}");
-			} else if let Some(rule) = c16e_admissions.iter().find(|row| row["label"] == label) {
-				use sha2::{Digest, Sha256};
-				assert_eq!(rule["index"], i);
-				assert_eq!(rule["previous_policy"], case["policy"]);
-				assert_eq!(rule["disposition"], "Exact");
-				assert_eq!(
-					rule["source_sha256"],
-					hex(&Sha256::digest(case["source"].as_str().unwrap().as_bytes()))
-				);
-				assert_eq!(audit["invoked"], true, "{label}");
-				assert_eq!(project(outcome), expected["projected"], "{label}");
-			} else if case["policy"] == "Retain-refusal" && label != "excluded/for" {
-				assert_eq!(outcome["status"], "refused", "{label}");
-				assert_eq!(outcome["refusal"], "Pattern", "{label}");
-				assert_eq!(audit["invoked"], false, "{label}");
-				let at = &outcome["location"];
-				let source = case["source"].as_str().unwrap();
-				let start = at["start"].as_u64().unwrap() as usize;
-				let end = at["end"].as_u64().unwrap() as usize;
-				assert!(!source.get(start..end).unwrap().is_empty(), "{label}");
 			} else {
-				assert_eq!(audit["invoked"], true, "{label}");
-				assert_eq!(project(outcome), expected["projected"], "{label}");
+				assert_eq!(label, "value/return-rhs");
+				assert_eq!(rule["policy"], "Intentional-divergence");
+				assert_eq!(expected["outcome"]["status"], "compile-error");
 			}
+		} else if expected["outcome"]["status"] == "compile-error" {
+			assert_eq!(outcome["status"], "compile-error", "{label}");
+			assert_eq!(
+				outcome["diagnostics"], expected["outcome"]["diagnostics"],
+				"{label}"
+			);
+			assert_eq!(audit["invoked"], false, "{label}");
+		} else if let Some(rule) = c16e_admissions.iter().find(|row| row["label"] == label) {
+			use sha2::{Digest, Sha256};
+			assert_eq!(rule["index"], i);
+			assert_eq!(rule["previous_policy"], case["policy"]);
+			assert_eq!(rule["disposition"], "Exact");
+			assert_eq!(
+				rule["source_sha256"],
+				hex(&Sha256::digest(case["source"].as_str().unwrap().as_bytes()))
+			);
+			assert_eq!(audit["invoked"], true, "{label}");
+			assert_eq!(project(outcome), expected["projected"], "{label}");
+		} else if case["policy"] == "Retain-refusal" && label != "excluded/for" {
+			assert_eq!(outcome["status"], "refused", "{label}");
+			assert_eq!(outcome["refusal"], "Pattern", "{label}");
+			assert_eq!(audit["invoked"], false, "{label}");
+			let at = &outcome["location"];
+			let source = case["source"].as_str().unwrap();
+			let start = at["start"].as_u64().unwrap() as usize;
+			let end = at["end"].as_u64().unwrap() as usize;
+			assert!(!source.get(start..end).unwrap().is_empty(), "{label}");
+		} else {
+			assert_eq!(audit["invoked"], true, "{label}");
+			assert_eq!(project(outcome), expected["projected"], "{label}");
 		}
-		assert_eq!(hex(&stdout), expected["stdout_hex"]);
-		assert_eq!(hex(&stderr), expected["stderr_hex"]);
+		assert_eq!(hex(&fresh.stdout), hex(&stock.stdout), "stdout: {label}");
+		assert_eq!(hex(&fresh.stderr), hex(&stock.stderr), "stderr: {label}");
 	}
-	super::contract_completed(engine, cases.len());
+	super::contract_completed("fresh", cases.len());
+}
+
+/// Run case `index` on `engine` in a bounded child and check its envelope.
+#[cfg(target_os = "linux")]
+fn launch(engine: &str, index: usize, case: &Json, folder: &Path) -> super::live_oracle::Run {
+	let index_text = index.to_string();
+	let trace = folder.join("logical.json");
+	let run = super::live_oracle::run_child(
+		"experimental_core::tests::gap_hunt::vec_local::child",
+		case["label"].as_str().unwrap(),
+		folder,
+		"C16_RESULT",
+		&[
+			("C16_ENGINE", engine.as_ref()),
+			("C16_CASE", index_text.as_ref()),
+			("D1E_TRACE_OUT", trace.as_os_str()),
+		],
+	);
+	let observed = &run.observation;
+	assert_eq!(observed["schema"], 1);
+	assert_eq!(observed["engine"], engine);
+	assert_eq!(observed["index"], index);
+	assert_eq!(observed["fuel"], FUEL);
+	assert_eq!(observed["label"], case["label"]);
+	assert_eq!(observed["source"], case["source"]);
+	assert_eq!(observed["policy"], case["policy"]);
+	run
 }
 
 #[test]
 fn vec_local_patterns_preserve_aliases_failures_and_store_reuse() {
 	let cases: Json = serde_json::from_str(include_str!("vec_local/cases.json")).unwrap();
-	let frozen: Json = serde_json::from_str(include_str!("vec_local/stock.json")).unwrap();
 	let selected = [0usize, 5, 7, 8, 9, 13, 18, 19, 26, 29, 30, 33];
 	assert_eq!(selected.len(), 12);
 	for index in selected {
-		let (actual, audit) = observe(cases[index]["source"].as_str().unwrap(), "c8-main");
-		assert_eq!(project(&actual), frozen[index]["projected"]);
+		let source = cases[index]["source"].as_str().unwrap();
+		let (actual, audit) = observe(source, "c8-main");
+		assert_eq!(
+			project(&actual),
+			project(&legacy_observe(source, "c8-main"))
+		);
 		for key in [
 			"no_cleanup_error",
 			"clean_after_row",

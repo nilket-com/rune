@@ -167,12 +167,6 @@ fn child() {
 		}
 		_ => panic!("unknown C16 engine"),
 	};
-	if engine == "stock" && std::env::var_os("C16_REPLAY").is_some() {
-		let frozen: Json = serde_json::from_str(include_str!("loop_binders/stock.json")).unwrap();
-		assert_eq!(frozen[index]["label"], row["label"]);
-		assert_eq!(frozen[index]["source"], row["source"]);
-		assert_eq!(project(&observation), frozen[index]["projected"]);
-	}
 	let projected = if engine == "stock" {
 		project(&observation)
 	} else {
@@ -188,228 +182,130 @@ fn child() {
 	std::io::stderr().flush().unwrap();
 	std::process::exit(0);
 }
-const REPLAY_CAP: usize = 2 << 20;
-fn replay_drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
-	let mut bytes = Vec::new();
-	let mut buf = [0; 4096];
-	loop {
-		let n = pipe.read(&mut buf).unwrap();
-		if n == 0 {
-			break;
-		}
-		let room = REPLAY_CAP - bytes.len();
-		bytes.extend_from_slice(&buf[..n.min(room)]);
-		if n > room {
-			exceeded.store(true, Ordering::Relaxed);
-		}
-	}
-	bytes
-}
+/// Cases whose logical trace is compared between engines.
+const LOGICAL: [&str; 1] = ["frames/miss"];
 
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C16b frozen stock replay; bounded children and exclusive GAP_OUT"]
-fn legacy_contract() {
-	run_contract("stock");
-}
-
-#[test]
-#[cfg(target_os = "linux")]
-#[ignore = "C16b strict execution replay; bounded children and exclusive GAP_OUT"]
+#[ignore = "C16b strict execution contract against live stock; bounded children and exclusive GAP_OUT"]
 fn contract() {
-	run_contract("fresh");
-}
-
-#[cfg(target_os = "linux")]
-fn run_contract(engine: &str) {
-	assert!(matches!(engine, "stock" | "fresh"));
 	let cases: Json = serde_json::from_str(include_str!("loop_binders/cases.json")).unwrap();
-	let frozen: Json = serde_json::from_str(include_str!("loop_binders/stock.json")).unwrap();
 	let c16e_admissions: Vec<Json> =
 		serde_json::from_str(include_str!("loop_binders/c16e_admissions.json")).unwrap();
 	assert_eq!(c16e_admissions.len(), 5);
 	let cases = cases.as_array().unwrap();
-	let frozen = frozen.as_array().unwrap();
 	assert_eq!(cases.len(), 118);
-	assert_eq!(cases.len(), frozen.len());
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
 	fs::create_dir(&out).unwrap();
 	let mut labels = std::collections::BTreeSet::new();
-	for (i, (case, expected)) in cases.iter().zip(frozen).enumerate() {
+	for (i, case) in cases.iter().enumerate() {
 		let label = case["label"].as_str().unwrap();
 		assert!(labels.insert(label));
-		assert_eq!(case["label"], expected["label"]);
-		assert_eq!(case["source"], expected["source"]);
 		let folder = out.join(format!("{i:03}"));
-		fs::create_dir(&folder).unwrap();
-		let result = folder.join("observation.json");
-		use std::os::unix::process::CommandExt;
-		let mut command = Command::new("/usr/bin/prlimit");
-		command
-			.args([
-				"--cpu=15",
-				"--as=2147483648",
-				"--fsize=2097152",
-				"--core=0",
-				"--",
-			])
-			.arg(std::env::current_exe().unwrap());
-		command.process_group(0);
-		let mut child = command
-			.args([
-				"--exact",
-				"experimental_core::tests::gap_hunt::loop_binders::child",
-				"--ignored",
-				"--nocapture",
-				"--quiet",
-			])
-			.env_clear()
-			.env("C16_ENGINE", engine)
-			.env("C16_REPLAY", "1")
-			.env("PATH", "/usr/bin:/bin")
-			.env("LANG", "C.UTF-8")
-			.env("TZ", "UTC")
-			.env("C16_CASE", i.to_string())
-			.env("C16_RESULT", &result)
-			.env("D1E_TRACE_OUT", folder.join("logical.json"))
-			.current_dir(&folder)
-			.stdin(Stdio::null())
-			.stdout(Stdio::piped())
-			.stderr(Stdio::piped())
-			.spawn()
-			.unwrap();
-		let exceeded = Arc::new(AtomicBool::new(false));
-		let flag = exceeded.clone();
-		let pipe = child.stdout.take().unwrap();
-		let stdout = std::thread::spawn(move || replay_drain(pipe, flag));
-		let flag = exceeded.clone();
-		let pipe = child.stderr.take().unwrap();
-		let stderr = std::thread::spawn(move || replay_drain(pipe, flag));
-		let start = Instant::now();
-		let mut stop = false;
-		let mut exited = false;
-		loop {
-			if child.try_wait().unwrap().is_some() {
-				exited = true;
-			}
-			if !exceeded.load(Ordering::Relaxed)
-				&& exited && stdout.is_finished()
-				&& stderr.is_finished()
-			{
-				break;
-			}
-			if exceeded.load(Ordering::Relaxed) || start.elapsed() >= Duration::from_secs(20) {
-				stop = true;
-				let _ = Command::new("/usr/bin/kill")
-					.args(["-KILL", "--", &format!("-{}", child.id())])
-					.stdout(Stdio::null())
-					.stderr(Stdio::null())
-					.status();
-				break;
-			}
-			std::thread::sleep(Duration::from_millis(10));
+		let stock = launch("stock", i, case, &folder.join("stock"));
+		let expected = &stock.observation;
+		let fresh = launch("fresh", i, case, &folder.join("fresh"));
+		let audit = &fresh.observation["fresh_audit"];
+		for key in [
+			"no_cleanup_error",
+			"clean_after_row",
+			"row_idle",
+			"reuse",
+			"idle",
+		] {
+			assert_eq!(audit[key], true, "{label}: {key}");
 		}
-		// wait() also returns the cached status when try_wait() already reaped
-		// the child. Every exit path explicitly collects it before joining.
-		let status = child.wait().unwrap();
-		let stdout = stdout.join().unwrap();
-		let stderr = stderr.join().unwrap();
-		fs::write(folder.join("stdout"), &stdout).unwrap();
-		fs::write(folder.join("stderr"), &stderr).unwrap();
-		fs::write(
-			folder.join("receipt.txt"),
-			format!(
-				"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\n",
-				start.elapsed()
-			),
-		)
-		.unwrap();
-		assert!(!stop && status.success() && !exceeded.load(Ordering::Relaxed));
-		assert!(fs::metadata(&result).unwrap().len() <= REPLAY_CAP as u64);
-
-		let observed: Json = serde_json::from_slice(&fs::read(&result).unwrap()).unwrap();
-		assert_eq!(observed["schema"], 1);
-		assert_eq!(observed["engine"], engine);
-		assert_eq!(observed["index"], i);
-		assert_eq!(observed["fuel"], FUEL);
-		assert_eq!(observed["label"], case["label"]);
-		assert_eq!(observed["source"], case["source"]);
-		assert_eq!(observed["policy"], case["policy"]);
-		let logical: Json =
-			serde_json::from_str(include_str!("loop_binders/logical.json")).unwrap();
-		if engine == "stock" {
-			assert_eq!(observed["projected"], expected["projected"], "{label}");
-		} else {
-			let audit = &observed["fresh_audit"];
-			for key in [
-				"no_cleanup_error",
-				"clean_after_row",
-				"row_idle",
-				"reuse",
-				"idle",
-			] {
-				assert_eq!(audit[key], true, "{label}: {key}");
-			}
-			for key in [
-				"row_live_entries",
-				"row_payload_bytes",
-				"live_entries",
-				"payload_bytes",
-			] {
-				assert_eq!(audit[key], 0, "{label}: {key}");
-			}
-			let actual = &observed["outcome"];
-			if expected["outcome"]["status"] == "compile-error" {
-				assert_eq!(actual["status"], "compile-error", "{label}");
-				assert_eq!(
-					actual["diagnostics"], expected["outcome"]["diagnostics"],
-					"{label}"
-				);
-				assert_eq!(audit["invoked"], false);
-			} else if let Some(rule) = c16e_admissions.iter().find(|row| row["label"] == label) {
-				use sha2::{Digest, Sha256};
-				assert_eq!(rule["index"], i);
-				assert_eq!(rule["previous_policy"], case["policy"]);
-				assert_eq!(rule["disposition"], "Exact");
-				assert_eq!(
-					rule["source_sha256"],
-					hex(&Sha256::digest(case["source"].as_str().unwrap().as_bytes()))
-				);
-				assert_eq!(audit["invoked"], true, "{label}");
-				assert_eq!(project(actual), expected["projected"], "{label}");
-			} else if case["policy"] == "Retain-refusal" {
-				assert_eq!(actual["status"], "refused", "{label}");
-				assert_eq!(actual["refusal"], "Pattern", "{label}");
-				assert_eq!(audit["invoked"], false);
-			} else if logical.get(label).is_some() {
-				let actual = project(actual);
-				let expected = &expected["projected"];
-				for key in ["status", "class", "display", "chain_displays"] {
-					assert_eq!(actual[key], expected[key], "{label}: {key}");
-				}
-				let sites = actual["sites"].as_array().unwrap();
-				let oracle_sites = expected["sites"].as_array().unwrap();
-				assert_eq!(sites.len(), oracle_sites.len());
-				for (a, b) in sites.iter().zip(oracle_sites) {
-					for key in ["source", "start", "end"] {
-						assert_eq!(a[key], b[key]);
-					}
-				}
-			} else {
-				assert_eq!(audit["invoked"], true, "{label}");
-				assert_eq!(project(actual), expected["projected"], "{label}");
-			}
+		for key in [
+			"row_live_entries",
+			"row_payload_bytes",
+			"live_entries",
+			"payload_bytes",
+		] {
+			assert_eq!(audit[key], 0, "{label}: {key}");
 		}
-		if let Some(expected) = logical.get(label) {
-			let actual: Json =
-				serde_json::from_slice(&fs::read(folder.join("logical.json")).unwrap()).unwrap();
+		let actual = &fresh.observation["outcome"];
+		if expected["outcome"]["status"] == "compile-error" {
+			assert_eq!(actual["status"], "compile-error", "{label}");
 			assert_eq!(
-				actual, *expected,
+				actual["diagnostics"], expected["outcome"]["diagnostics"],
+				"{label}"
+			);
+			assert_eq!(audit["invoked"], false);
+		} else if let Some(rule) = c16e_admissions.iter().find(|row| row["label"] == label) {
+			use sha2::{Digest, Sha256};
+			assert_eq!(rule["index"], i);
+			assert_eq!(rule["previous_policy"], case["policy"]);
+			assert_eq!(rule["disposition"], "Exact");
+			assert_eq!(
+				rule["source_sha256"],
+				hex(&Sha256::digest(case["source"].as_str().unwrap().as_bytes()))
+			);
+			assert_eq!(audit["invoked"], true, "{label}");
+			assert_eq!(project(actual), expected["projected"], "{label}");
+		} else if case["policy"] == "Retain-refusal" {
+			assert_eq!(actual["status"], "refused", "{label}");
+			assert_eq!(actual["refusal"], "Pattern", "{label}");
+			assert_eq!(audit["invoked"], false);
+		} else if LOGICAL.contains(&label) {
+			let actual = project(actual);
+			let expected = &expected["projected"];
+			for key in ["status", "class", "display", "chain_displays"] {
+				assert_eq!(actual[key], expected[key], "{label}: {key}");
+			}
+			let sites = actual["sites"].as_array().unwrap();
+			let oracle_sites = expected["sites"].as_array().unwrap();
+			assert_eq!(sites.len(), oracle_sites.len());
+			for (a, b) in sites.iter().zip(oracle_sites) {
+				for key in ["source", "start", "end"] {
+					assert_eq!(a[key], b[key]);
+				}
+			}
+		} else {
+			assert_eq!(audit["invoked"], true, "{label}");
+			assert_eq!(project(actual), expected["projected"], "{label}");
+		}
+		if LOGICAL.contains(&label) {
+			assert_eq!(
+				trace(&folder.join("fresh")),
+				trace(&folder.join("stock")),
 				"{label}: logical frames/context/rendered"
 			);
 		}
-		assert_eq!(hex(&stdout), expected["stdout_hex"]);
-		assert_eq!(hex(&stderr), expected["stderr_hex"]);
+		assert_eq!(hex(&fresh.stdout), hex(&stock.stdout), "stdout: {label}");
+		assert_eq!(hex(&fresh.stderr), hex(&stock.stderr), "stderr: {label}");
 	}
-	super::contract_completed(engine, cases.len());
+	super::contract_completed("fresh", cases.len());
+}
+
+/// Read the logical trace a child wrote to `folder`.
+#[cfg(target_os = "linux")]
+fn trace(folder: &Path) -> Json {
+	serde_json::from_slice(&fs::read(folder.join("logical.json")).unwrap()).unwrap()
+}
+
+/// Run case `index` on `engine` in a bounded child and check its envelope.
+#[cfg(target_os = "linux")]
+fn launch(engine: &str, index: usize, case: &Json, folder: &Path) -> super::live_oracle::Run {
+	let index_text = index.to_string();
+	let trace = folder.join("logical.json");
+	let run = super::live_oracle::run_child(
+		"experimental_core::tests::gap_hunt::loop_binders::child",
+		case["label"].as_str().unwrap(),
+		folder,
+		"C16_RESULT",
+		&[
+			("C16_ENGINE", engine.as_ref()),
+			("C16_CASE", index_text.as_ref()),
+			("D1E_TRACE_OUT", trace.as_os_str()),
+		],
+	);
+	let observed = &run.observation;
+	assert_eq!(observed["schema"], 1);
+	assert_eq!(observed["engine"], engine);
+	assert_eq!(observed["index"], index);
+	assert_eq!(observed["fuel"], FUEL);
+	assert_eq!(observed["label"], case["label"]);
+	assert_eq!(observed["source"], case["source"]);
+	assert_eq!(observed["policy"], case["policy"]);
+	run
 }

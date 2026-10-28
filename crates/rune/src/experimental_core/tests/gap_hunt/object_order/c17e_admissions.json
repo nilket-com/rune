@@ -7,7 +7,7 @@
     "index": 52,
     "label": "iter/iter-map",
     "source_sha256": "72a29933b01acf597e6dd2bff72da3e18e49577c58f3d2d7a716333b5ba26031",
-    "stock_row_sha256": "9057e06af2b8cc4558032b6399f546a5a6829f62cff6fa4c37c3db6a2f7532f5",
+    "stock_canonical_sha256": "9b6d2833724d0f06c7f6c7bca321fb348aee323041a43d6716eb347a1e9bb3f6",
     "classification": "Inherited-refusal",
     "fresh": {
      "location": {

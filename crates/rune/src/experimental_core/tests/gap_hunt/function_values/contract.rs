@@ -1,8 +1,8 @@
 #[test]
 #[cfg(target_os = "linux")]
-#[ignore = "C16f frozen execution replay; bounded children and exclusive GAP_OUT"]
+#[ignore = "C16f execution contract against live stock; bounded children and exclusive GAP_OUT"]
 fn contract() {
-	run_contract("fresh");
+	run_contract();
 }
 
 fn canonical_record(index: usize, record: &Json) -> Json {
@@ -47,11 +47,7 @@ fn verify_case(index: usize, case: &Json, stock: &Json, actual: &Json, stdout: &
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
 	assert_eq!(hex(Sha256::digest(case["source"].as_str().unwrap().as_bytes()).as_ref()), rule["source_sha256"]);
-	// The stock source and whole raw row are frozen independently in stock.json.
 	assert_eq!(stock["source_sha256"], case["source_sha256"]);
-	let mut raw_stock = stock.clone();
-	for key in ["stdout_hex", "stderr_hex"] { raw_stock.as_object_mut().unwrap().remove(key); }
-	assert_eq!(hex(Sha256::digest(serde_json::to_vec(&raw_stock).unwrap()).as_ref()), rule["stock_row_sha256"]);
 	let audit = &actual["fresh_audit"];
 	for key in ["row_idle", "executor_idle"] { assert_eq!(audit[key], true); }
 	for key in ["row_live_entries", "row_payload_bytes", "live_entries", "payload_bytes"] { assert_eq!(audit[key], 0); }
@@ -100,7 +96,6 @@ fn c16h_admission(
 	stdout: &[u8],
 	stderr: &[u8],
 ) -> bool {
-	use sha2::{Digest, Sha256};
 	let supplement: Json = serde_json::from_str(include_str!("c16h_admissions.json")).unwrap();
 	assert_eq!(supplement.as_object().unwrap().len(), 2);
 	let Some(rule) = supplement.get(index.to_string()) else {
@@ -108,14 +103,6 @@ fn c16h_admission(
 	};
 	assert_eq!(rule["label"], case["label"]);
 	assert_eq!(rule["source_sha256"], case["source_sha256"]);
-	let mut raw_stock = stock.clone();
-	for key in ["stdout_hex", "stderr_hex"] {
-		raw_stock.as_object_mut().unwrap().remove(key);
-	}
-	assert_eq!(
-		hex(Sha256::digest(serde_json::to_vec(&raw_stock).unwrap()).as_ref()),
-		rule["stock_row_sha256"]
-	);
 	let audit = &actual["fresh_audit"];
 	assert_eq!(audit["invoked"], true);
 	assert_eq!(audit["reuse_used_fallback"], false);

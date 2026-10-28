@@ -3,39 +3,7 @@
   "production_changes": false,
   "files": {
     "cases.json": "b0f5dfde6193038e6473a29d714cbc788e6faee361ef55e36b43a018658d007d",
-    "stock.json": "16b8fc3bcdecdcb5d1abb2e9deca080b6f965266fd63355db7b861263ac1d5bf",
-    "stock2.json": "7ecb1e3da0326ff88fd1d25520e9d175398bd53f49bd2e8fefa052cd09da63e3",
-    "stock3.json": "16794a8b67587139edc856889854e91cadc8f3e909669ec2570c3ef8605b0d7b",
-    "stock4.json": "4cc474678bc448146be821f6230f0dc04796172c08d3ce670a9965625d6b01d4",
     "constructors/graph.rs": "0e7e64bb198f6f00de691758220a2995bd280f49219f315df3f4b203453d1d28"
-  },
-  "stock_binary": {
-    "path": "/home/me/work/.reviews/0185-c17e-oracle1/rune-tests",
-    "sha256": "fd52d176d8d242a854becd7ab41899615685db7fc53d348ac366d3557bbe4985",
-    "pins_sha256": "c9b416f3531f86335c8ab6a54e02bcde0e626209589105dd3fe5129d8a800d97"
-  },
-  "stock_summary": {
-    "rows": 1134,
-    "statuses": {
-      "value": 941,
-      "error": 185,
-      "compile-error": 8
-    },
-    "error_classes": {
-      "Type": 95,
-      "Panic": 8,
-      "AccessConflict": 38,
-      "IntegerCoercion": 1,
-      "Overflow": 3,
-      "DivisionByZero": 3,
-      "stock:UnsupportedTryOperand { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x1cad9186c9641c4f }) }": 1,
-      "ArgumentCount": 23,
-      "stock:UnsupportedTryOperand { actual: Any(AnyTypeInfo { full_name: 0x<process-local>, hash: 0x33665308296af63d }) }": 1,
-      "FuelExhausted": 11
-    },
-    "replay": false,
-    "logical_traces": 185,
-    "cpu_list": "0-7,10-31"
   },
   "P1": {
     "rule": "Only AnyTypeInfo::full_name process-local function addresses in class, kind and chain kinds; every other byte, type hash and typed primary/chain shape exact; raw observations retained unmasked",

@@ -1,0 +1,523 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "name": "bounce-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/bounce.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "bounce-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/bounce.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "list-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/list.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "list-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/list.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "mandelbrot-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/mandelbrot.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "mandelbrot-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/mandelbrot.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "nbody-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/nbody.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "nbody-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/nbody.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "permute-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/permute.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "permute-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/permute.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "queens-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/queens.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "queens-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/queens.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "sieve-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/sieve.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "sieve-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/sieve.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "storage-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/storage.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "storage-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/storage.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "towers-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/towers.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "towers-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/towers.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "havlak-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "havlak-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {},
+      "policy": "match"
+    },
+    {
+      "name": "json-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/json.rn"
+      ],
+      "environment": {},
+      "policy": "refuse-method"
+    },
+    {
+      "name": "json-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/json.rn"
+      ],
+      "environment": {},
+      "policy": "refuse-method"
+    },
+    {
+      "name": "cd-1",
+      "family": "candidate",
+      "num": 1,
+      "inner": 2,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/cd.rn"
+      ],
+      "environment": {},
+      "policy": "refuse-method"
+    },
+    {
+      "name": "cd-2",
+      "family": "candidate",
+      "num": 2,
+      "inner": 2,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/cd.rn"
+      ],
+      "environment": {},
+      "policy": "refuse-method"
+    },
+    {
+      "name": "havlak-1-control-frames",
+      "family": "historical-inactive-control",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S7A_FRAME_LIMIT": "1024"
+      },
+      "policy": "match"
+    },
+    {
+      "name": "havlak-1-control-slots",
+      "family": "historical-inactive-control",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S7A_SLOT_LIMIT": "65536"
+      },
+      "policy": "match"
+    },
+    {
+      "name": "havlak-1-control-both",
+      "family": "historical-inactive-control",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S7A_FRAME_LIMIT": "1024",
+        "S7A_SLOT_LIMIT": "65536"
+      },
+      "policy": "match"
+    },
+    {
+      "name": "havlak-2-control-frames",
+      "family": "historical-inactive-control",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S7A_FRAME_LIMIT": "1024"
+      },
+      "policy": "match"
+    },
+    {
+      "name": "havlak-2-control-slots",
+      "family": "historical-inactive-control",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S7A_SLOT_LIMIT": "65536"
+      },
+      "policy": "match"
+    },
+    {
+      "name": "havlak-2-control-both",
+      "family": "historical-inactive-control",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S7A_FRAME_LIMIT": "1024",
+        "S7A_SLOT_LIMIT": "65536"
+      },
+      "policy": "match"
+    },
+    {
+      "name": "havlak-1-active-frames",
+      "family": "active-limit-control",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S6_FRAME_LIMIT": "1024"
+      },
+      "policy": "frame-limit"
+    },
+    {
+      "name": "havlak-1-active-slots",
+      "family": "active-limit-control",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S6_SLOT_LIMIT": "65536"
+      },
+      "policy": "match"
+    },
+    {
+      "name": "havlak-1-active-both",
+      "family": "active-limit-control",
+      "num": 1,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S6_FRAME_LIMIT": "1024",
+        "S6_SLOT_LIMIT": "65536"
+      },
+      "policy": "frame-limit"
+    },
+    {
+      "name": "havlak-2-active-frames",
+      "family": "active-limit-control",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S6_FRAME_LIMIT": "1024"
+      },
+      "policy": "frame-limit"
+    },
+    {
+      "name": "havlak-2-active-slots",
+      "family": "active-limit-control",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S6_SLOT_LIMIT": "65536"
+      },
+      "policy": "match"
+    },
+    {
+      "name": "havlak-2-active-both",
+      "family": "active-limit-control",
+      "num": 2,
+      "inner": 1,
+      "inputs": [
+        "benches/awfy/harness.rn",
+        "benches/awfy/benchmark.rn",
+        "benches/awfy/som.rn",
+        "benches/awfy/havlak.rn"
+      ],
+      "environment": {
+        "S6_FRAME_LIMIT": "1024",
+        "S6_SLOT_LIMIT": "65536"
+      },
+      "policy": "frame-limit"
+    }
+  ]
+}

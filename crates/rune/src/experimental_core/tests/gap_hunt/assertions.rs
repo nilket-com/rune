@@ -211,55 +211,6 @@ fn run_probe(engine: &str) {
 }
 
 #[test]
-#[ignore = "explicit frozen C1 stock contract; bounded children"]
-fn legacy_contract() {
-	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
-	fs::create_dir(&out).unwrap();
-	let scratch =
-		Scratch(std::env::temp_dir().join(format!("rune-assert-contract-{}", std::process::id())));
-	fs::create_dir(&scratch.0).unwrap();
-	let cases = cases();
-	let rows: Vec<_> = include_str!("../assertions_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
-	assert_eq!(rows.len(), cases.len());
-	for (n, (line, (label, source))) in rows.iter().zip(&cases).enumerate() {
-		let row: Vec<_> = line.split('\t').collect();
-		assert_eq!(row.len(), 6);
-		assert_eq!(row[0], label);
-		assert_eq!(unhex(row[1]), *source);
-		let id = format!("{n:05}");
-		let path = out.join(format!("{id}.source.rn"));
-		fs::write(&path, source).unwrap();
-		let site = scratch.0.join("result.site");
-		let _ = fs::remove_file(&site);
-		let run = launch(&path, &path, "assert-main", "stock", &scratch.0, &out, &id);
-		assert!(run.complete, "{label}");
-		assert_eq!(hex(run.record.as_bytes()), row[2], "observation {label}");
-		assert_eq!(hex(&run.stdout), row[3], "stdout {label}");
-		assert_eq!(hex(&run.stderr), row[4], "stderr {label}");
-		let actual = if run.record.starts_with("error\t") {
-			fs::read_to_string(site).unwrap()
-		} else {
-			String::new()
-		};
-		let intentional = super::d1b_diagnostics::intentional_site_before(
-			"assertions",
-			label,
-			source,
-			"stock",
-			&actual,
-			row[5],
-		);
-		if intentional.is_none() {
-			assert_eq!(actual, row[5], "site {label}");
-		}
-	}
-	super::contract_completed("stock", rows.len());
-}
-
-#[test]
 #[ignore = "explicit C1 depth64 supplement; no other FormatLimits changed"]
 fn raised_depth_probe() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
@@ -306,6 +257,57 @@ fn raised_depth_probe() {
 	fs::write(out.join("execution-depth64.tsv"), table).unwrap();
 }
 
+/// Run `source` on stock and return its compared row: label, source, record,
+/// streams and site, with the D1b site mapping applied.
+fn stock_row(
+	label: &str,
+	source: &str,
+	path: &Path,
+	scratch: &Path,
+	out: &Path,
+	id: &str,
+) -> Vec<String> {
+	let site = scratch.join("result.site");
+	let _ = fs::remove_file(&site);
+	let run = launch(path, path, "assert-main", "stock", scratch, out, id);
+	assert!(run.complete, "stock {label}");
+	let actual = if run.record.starts_with("error\t") {
+		fs::read_to_string(site).unwrap()
+	} else {
+		String::new()
+	};
+	let site = match super::d1b_diagnostics::intentional_sites_before(
+		"assertions",
+		label,
+		source,
+		"stock",
+	) {
+		Some(before) => {
+			let before = &before[0];
+			let before = format!("{}:{}:{}", before["source"], before["start"], before["end"]);
+			super::d1b_diagnostics::intentional_site_before(
+				"assertions",
+				label,
+				source,
+				"stock",
+				&actual,
+				&before,
+			)
+			.unwrap();
+			before
+		}
+		None => actual,
+	};
+	vec![
+		label.to_owned(),
+		hex(source.as_bytes()),
+		hex(run.record.as_bytes()),
+		hex(&run.stdout),
+		hex(&run.stderr),
+		site,
+	]
+}
+
 fn expected_record(row: &[&str]) -> Vec<String> {
 	let raw = unhex(row[2]);
 	let mut fields: Vec<String> = raw.split('\t').map(str::to_owned).collect();
@@ -341,25 +343,20 @@ fn contract() {
 		std::process::id()
 	)));
 	fs::create_dir(&scratch.0).unwrap();
-	let rows: Vec<_> = include_str!("../assertions_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
 	let generated = cases();
-	assert_eq!(rows.len(), 178);
-	assert_eq!(rows.len(), generated.len());
+	assert_eq!(generated.len(), 178);
 	let mut nan = 0;
 	let mut budget = 0;
 	let mut semantic = 0;
 	let mut retained = String::from("case\tpolicy\n");
-	for (n, (line, (label, source))) in rows.iter().zip(&generated).enumerate() {
-		let row: Vec<_> = line.split('\t').collect();
-		assert_eq!(row.len(), 6);
-		assert_eq!(row[0], label);
-		assert_eq!(unhex(row[1]), *source);
+	let mut rows = std::collections::BTreeMap::new();
+	for (n, (label, source)) in generated.iter().enumerate() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
+		let stock = stock_row(label, source, &path, &scratch.0, &out, &id);
+		rows.insert(label.clone(), stock.clone());
+		let row: Vec<&str> = stock.iter().map(String::as_str).collect();
 		let site_path = scratch.0.join("result.site");
 		let _ = fs::remove_file(&site_path);
 		let run = launch(&path, &path, "assert-main", "fresh", &scratch.0, &out, &id);
@@ -406,15 +403,11 @@ fn contract() {
 		let raised_site = fs::read_to_string(&site_path).unwrap();
 		if parts[2] == "63" && parts[1] != "object" {
 			// Independent formatter-walk semantics gap, NOT a budget-only proof.
-			// Derive the complete depth63 message from the frozen depth62 stock
+			// Derive the complete depth63 message from the live depth62 stock
 			// representation by adding exactly one source container wrapper.
 			let lower = label.replace("/63/", "/62/");
-			let lower_row: Vec<_> = rows
-				.iter()
-				.find(|r| r.starts_with(&format!("{lower}\t")))
-				.unwrap()
-				.split('\t')
-				.collect();
+			let lower_row: &Vec<String> = rows.get(&lower).expect("depth62 row runs first");
+			let lower_row: Vec<&str> = lower_row.iter().map(String::as_str).collect();
 			let lower_expected = expected_record(&lower_row);
 			let message = unhex(&lower_expected[3]);
 			let (_, rest) = message.split_once("\nleft: ").unwrap();
@@ -446,5 +439,5 @@ fn contract() {
 	}
 	assert_eq!((nan, budget, semantic), (4, 6, 4));
 	fs::write(out.join("RETAINED.tsv"), retained).unwrap();
-	super::contract_completed("fresh", rows.len());
+	super::contract_completed("fresh", generated.len());
 }

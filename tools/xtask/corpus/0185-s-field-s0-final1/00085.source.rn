@@ -1,0 +1,5 @@
+mod module;
+
+pub fn main() {
+    println!("A simple example: {}", module::test());
+}

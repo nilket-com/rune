@@ -1,0 +1,7 @@
+fn work(op) {
+    op(1, 2)
+}
+
+let n = 1;
+println!("Result: {}", work(|a, b| n + a + b));
+println!("Result: {}", work(|a, b| n + a * b));

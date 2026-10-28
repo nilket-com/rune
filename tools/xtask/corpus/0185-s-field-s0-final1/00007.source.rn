@@ -1,0 +1,6 @@
+pub fn order_rebind_target2(a, b, c) { let v = [a]; let w = [b]; let orig = v; v[0] = { v = w; c }; [orig[0], w[0]] }
+pub fn order_rebind_field(a, b, c) { let o = #{x: a}; let p = #{x: b}; let orig = o; o.x = { o = p; c }; [orig.x, p.x] }
+pub fn order_rebind_index(a, b, c) { let v = [b, b]; let i = b; v[i] = { i = a; c }; [v[b], v[a]] }
+pub fn order_rebind_both(a, b, c) { let v = [b, b]; let w = [b, b]; let orig = v; let i = b; v[i] = { v = w; i = a; c }; [orig[b], orig[a], w[b], w[a]] }
+pub fn order_rebind_target_compound(a, b, c) { let v = [a]; let w = [b]; let orig = v; v[0] += { v = w; c }; [orig[0], w[0]] }
+pub fn order_rebind_field_compound(a, b, c) { let o = #{x: a}; let p = #{x: b}; let orig = o; o.x += { o = p; c }; [orig.x, p.x] }

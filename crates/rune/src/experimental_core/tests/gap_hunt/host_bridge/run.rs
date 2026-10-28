@@ -126,6 +126,7 @@ pub(super) fn observe(path: &Path, mode: &str) -> Observation {
 							Detail::HostMessage {
 								cause: HostCause::ExpectedNumber,
 								arg,
+								..
 							},
 						)
 						| (ErrorKind::Host, Detail::HostExpectedNumber { arg, .. }) => {
@@ -136,6 +137,7 @@ pub(super) fn observe(path: &Path, mode: &str) -> Observation {
 							Detail::HostMessage {
 								cause: HostCause::ExpectedType,
 								arg,
+								..
 							},
 						)
 						| (ErrorKind::Host, Detail::HostExpectedType { arg, .. }) => ("ExpectedType", "Type", arg),
@@ -144,6 +146,7 @@ pub(super) fn observe(path: &Path, mode: &str) -> Observation {
 							Detail::HostMessage {
 								cause: HostCause::Access,
 								arg,
+								..
 							},
 						) => ("AccessErrorMoved", "AccessConflict", arg),
 						(
@@ -151,6 +154,7 @@ pub(super) fn observe(path: &Path, mode: &str) -> Observation {
 							Detail::HostMessage {
 								cause: HostCause::IntegerCoercion,
 								arg,
+								..
 							},
 						) => ("ValueToIntegerCoercionError", "IntegerCoercion", arg),
 						(ErrorKind::Panic, Detail::PanicMessage) => ("Panic", "Panic", None),

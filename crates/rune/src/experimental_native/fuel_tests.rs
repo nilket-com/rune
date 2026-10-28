@@ -14,11 +14,6 @@
 //! census against the R1 lowering (`fuel_unselected_regions_keep_r1_machine_bytes`) and the
 //! golden comparator controls (`fuel_selected_only_controls`) pass before and after.
 //!
-//! The selection golden (`p3a_tests::p3a_selection_golden`) is pinned to `FUEL_GOLDEN`,
-//! captured once from this implementation after the semantic tests passed; its delta against
-//! R1's golden is size-only and selected-only (`fuel_selection_golden_delta`, with the
-//! comparator controls `fuel_selected_only_controls`).
-//!
 //! Whole-buffer equality here is scratch equality of native code against the simulator
 //! (every cell, written or not, plus the whole record and the status); the simulator is the
 //! R1 semantics (R1's own every-fuel test holds native R1 to it on the same points).
@@ -1137,32 +1132,6 @@ pub(super) fn check_fuel_selected_only(old: &str, new: &str) -> Result<BTreeSet<
 	Ok(changed)
 }
 
-/// The selection golden captured once from the FUEL implementation (`RUNE_P3A_GOLDEN_OUT`,
-/// after the semantic tests passed): `p3a_tests::child_selection_golden` pins it line for line.
-pub(super) const FUEL_GOLDEN: &str = include_str!("fixtures/fuel_selection_golden.txt");
-
-/// FUEL's golden against R1's, fixture to fixture: the restricted size-only delta
-/// (`w13_tests::compare_w13_delta`, page crossings refused) in which every changed line is a
-/// FUEL-selected region's or a SUMMARY of a program holding one (`check_fuel_selected_only`,
-/// whose selected set is a census of the golden programs, not the golden text). Pinned to
-/// the observed 6 changed lines in 2 regions: COMPILE, LOADED and SUMMARY of v2_calls f0 h4
-/// and listed_9 f0 h5.
-#[test]
-#[cfg_attr(miri, ignore = "Miri: compiles Rune source")]
-fn fuel_selection_golden_delta() {
-	let r1 = super::r1_tests::R1_GOLDEN;
-	let (identical, changed) = super::w13_tests::compare_w13_delta(r1, FUEL_GOLDEN);
-	let regions = check_fuel_selected_only(r1, FUEL_GOLDEN)
-		.unwrap_or_else(|e| std::panic!("FUEL golden delta: {e}"));
-	println!("FUEL\tgolden_fixtures\tidentical={identical}\tchanged={changed}\tchanged_regions={regions:?}");
-	assert_eq!(identical + changed, FUEL_GOLDEN.lines().count());
-	assert_eq!(
-		(changed, regions.len()),
-		(6, 2),
-		"COMPILE, LOADED and SUMMARY of v2_calls f0 h4 and listed_9 f0 h5"
-	);
-}
-
 /// Controls of the restricted golden rule on the R1 golden text: a byte change of an
 /// unselected region's COMPILE or LOADED line, or of the SUMMARY of a program without a
 /// selected region, is refused by the selected-only rule; the same change on a selected
@@ -1171,9 +1140,20 @@ fn fuel_selection_golden_delta() {
 /// (`w13_tests::check_w13_delta`) although the selected-only rule alone accepts it. Passes
 /// before and after FUEL.
 #[test]
-#[cfg_attr(miri, ignore = "Miri: compiles Rune source")]
+#[cfg_attr(miri, ignore = "Miri: loads generated machine code in a child process")]
 fn fuel_selected_only_controls() {
-	let old = super::r1_tests::R1_GOLDEN;
+	run_child("child_selected_only_controls");
+}
+
+#[test]
+#[ignore = "FUEL native worker: run by its parent test in a child process"]
+fn child_selected_only_controls() {
+	require_child();
+	let current = super::p3a_tests::golden_programs()
+		.into_iter()
+		.map(|(name, src)| super::p3a_tests::golden_of(&name, src.code()).0)
+		.collect::<String>();
+	let old = current.as_str();
 	let (regions, programs) = golden_selected();
 	assert!(!regions.is_empty(), "the golden has FUEL-selected regions");
 	let number = |l: &str, marker: &str| -> (usize, usize, u64) {

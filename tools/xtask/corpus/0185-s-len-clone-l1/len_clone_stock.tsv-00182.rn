@@ -1,0 +1,1 @@
+struct P {x} fn g() { 7 } pub fn main() { let a=#{k:[1]}; let b=a.clone(); b.k.push(9); b.z=2; (a.k,b.k,b.z) }

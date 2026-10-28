@@ -7,7 +7,7 @@
     "index": 58,
     "label": "iter/iter-exhaust",
     "source_sha256": "aca14a016119d87745c4028c99031b09e158efe0fafd53f742726246fd70549e",
-    "stock_row_sha256": "401fe562fa046e1035091d18e95ddae621c472de37360e9e8aad0024188e72f4",
+    "stock_canonical_sha256": "697c84a8aef7c9204214317e83bac5a68b0e03eeb3ea23226145e879abe43f39",
     "classification": "Inherited-runtime-refusal",
     "fresh": {
      "location": {

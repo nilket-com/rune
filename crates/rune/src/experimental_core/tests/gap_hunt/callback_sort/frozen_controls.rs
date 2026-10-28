@@ -1,81 +1,19 @@
-const FROZEN: &str = include_str!("../../callback_sort_stock.tsv");
+const INPUTS: &str = include_str!("../../callback_sort_inputs.tsv");
 fn read_json(text: &str) -> Json {
 	serde_json::from_str(text).unwrap()
 }
-fn synthetic_raw(common: &Json) -> Json {
-	fn inflate(value: &Json) -> Json {
-		match value {
-			Json::Object(map) => {
-				Json::Object(map.iter().map(|(k, v)| (k.clone(), inflate(v))).collect())
-			}
-			Json::Array(values) => Json::Array(values.iter().map(inflate).collect()),
-			Json::String(s) => json!(s.replace("full_name: <fn>", "full_name: 0xabcdef012345")),
-			_ => value.clone(),
-		}
-	}
-	let mut value = inflate(common);
-	// Pure reconstruction for comparator controls only; never an observer input.
-	if value["outcome"]["status"] == "error" {
-		value["outcome"]["raw"] = value["outcome"]["kind"].clone();
-	}
-	value
-}
-fn oracle_cell(cells: &[&str], dispositions: &Json) -> Json {
-	let stored: Json = serde_json::from_slice(&decode(cells[3])).unwrap();
-	if stored.get("storage").is_some() {
-		assert_eq!(cells[6], "Exact");
-		dispositions[cells[0]]["fresh_expectation"].clone()
-	} else {
-		stored
-	}
-}
 #[test]
-fn frozen_cells_and_python_canonical_crosscheck() {
-	let dispositions = read_json(include_str!("../../callback_sort_dispositions.json"));
-	let cross = read_json(include_str!("../../callback_sort_canonical.json"));
-	let counts = read_json(include_str!("../../callback_sort_p1_counts.json"));
-	let mut rows = 0;
-	let mut digests = 0;
-	let mut pointers = 0;
-	for line in FROZEN.lines().skip(1) {
-		let c = line.split('\t').collect::<Vec<_>>();
-		assert_eq!(c.len(), 9);
-		assert_eq!(c[0], CASES[rows].0);
-		assert_eq!(decode(c[2]), CASES[rows].1.as_bytes());
-		assert_eq!(c[6], dispositions[c[0]]["policy"].as_str().unwrap());
-		let stock = oracle_cell(&c, &dispositions);
-		let execution = &dispositions[c[0]]["fresh_expectation"];
-		for (side, cell, value) in [("stock", c[3], &stock), ("fresh", c[7], execution)] {
-			let stored: Json = serde_json::from_slice(&decode(cell)).unwrap();
-			check_cell(&stored, value).unwrap();
-			digests += usize::from(stored.get("storage").is_some());
-			let bytes = canonical(value);
-			assert_eq!(cross[c[0]][side]["bytes"], bytes.len());
-			assert_eq!(cross[c[0]][side]["sha256"], digest(&bytes));
-		}
-		let raw = synthetic_raw(&stock);
-		assert_eq!(common(&project_p1(&raw, &counts[c[0]]).unwrap()), stock);
-		if !counts[c[0]].as_object().unwrap().is_empty() {
-			pointers += 1;
-		}
-		rows += 1;
-	}
-	assert_eq!((rows, digests, pointers), (131, 18, 12));
-	let depth = read_json(include_str!("../../callback_sort_depth.json"));
-	assert_eq!(depth.as_object().unwrap().len(), 7);
-	for row in depth.as_object().unwrap().values() {
-		assert!(row["fresh_constraint"]["literal_fresh_expectation"].is_null());
-	}
-}
-#[test]
+#[cfg_attr(miri, ignore = "Miri: live stock observations use bounded child processes")]
 fn p1_digest_and_semantic_drift_are_rejected() {
-	let dispositions = read_json(include_str!("../../callback_sort_dispositions.json"));
 	let counts = read_json(include_str!("../../callback_sort_p1_counts.json"));
+	let out = std::env::temp_dir().join(format!("rune-c11-p1-controls-{}-{}", std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+	fs::create_dir(&out).unwrap();
 	let mut checked = 0;
-	for line in FROZEN.lines().skip(1) {
+	for (index, line) in INPUTS.lines().skip(1).enumerate() {
 		let c = line.split('\t').collect::<Vec<_>>();
-		let stock = oracle_cell(&c, &dispositions);
-		let raw = synthetic_raw(&stock);
+		let run = live_stock_case(index, &out.join(format!("row-{index}")), &counts).0;
+		let raw = run.observation["observation"].clone();
+		let stock = common(&project_p1(&raw, &counts[c[0]]).unwrap());
 		for field in [
 			"before",
 			"post",
@@ -126,22 +64,21 @@ fn p1_digest_and_semantic_drift_are_rejected() {
 			assert!(project_p1(&bad, &counts[c[0]]).is_err());
 			checked += 3;
 		}
-		let stored: Json = serde_json::from_slice(&decode(c[3])).unwrap();
-		if stored.get("storage").is_some() {
-			let mut bad = stock.clone();
-			let middle = bad["events"].as_array().unwrap().len() / 2;
-			bad["events"][middle]["a"] = json!("999999999");
-			assert!(check_cell(&stored, &bad).is_err());
-			let mut bad_stored = stored.clone();
-			bad_stored["bytes"] = json!(0);
-			assert!(check_cell(&bad_stored, &stock).is_err());
-			bad_stored = stored.clone();
-			bad_stored["extra"] = true.into();
-			assert!(check_cell(&bad_stored, &stock).is_err());
-			checked += 3;
-		}
+		let bytes = canonical(&stock);
+		let stored = json!({"storage":"canonical-json-sha256", "bytes":bytes.len(), "sha256":digest(&bytes)});
+		let mut bad = stock.clone();
+		bad["invoked"] = Json::Null;
+		assert!(check_cell(&stored, &bad).is_err());
+		let mut bad_stored = stored.clone();
+		bad_stored["bytes"] = json!(0);
+		assert!(check_cell(&bad_stored, &stock).is_err());
+		bad_stored = stored.clone();
+		bad_stored["extra"] = true.into();
+		assert!(check_cell(&bad_stored, &stock).is_err());
+		checked += 3;
 	}
-	assert_eq!(checked, 1137);
+	assert_eq!(checked, 1503);
+	fs::remove_dir_all(out).unwrap();
 	let text = "AnyTypeInfo { full_name: 0xabc, hash: 0x123 }";
 	assert_eq!(p1_debug(text, 1).unwrap(), text.replace("0xabc", "<fn>"));
 	for bad in [
@@ -156,13 +93,22 @@ fn p1_digest_and_semantic_drift_are_rejected() {
 	assert!(p1_debug(text, 2).is_err());
 }
 #[test]
+#[cfg_attr(miri, ignore = "Miri: live stock observations use bounded child processes")]
 fn resource_and_refusal_constraints_reject_drift() {
 	let resources = read_json(include_str!("../../callback_sort_resources.json"));
 	let refusals = read_json(include_str!("../../callback_sort_refusals.json"));
+	let counts = read_json(include_str!("../../callback_sort_p1_counts.json"));
+	let out = std::env::temp_dir().join(format!("rune-c11-resource-controls-{}-{}", std::process::id(), std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos()));
+	fs::create_dir(&out).unwrap();
+	let fuel_anchor = CASES.iter().position(|c| c.0 == "fuel/128").unwrap();
+	let complete_fuel = live_stock_case(fuel_anchor, &out.join("fuel-anchor"), &counts).1;
 	let mut resource_rows = 0;
 	for (label, row) in resources.as_object().unwrap() {
-		let (_, source, input_fixture, _, _, _, _) = *CASES.iter().find(|c| c.0 == label).unwrap();
-		let (complete, _) = resource_completion(label, source, input_fixture, &resources).unwrap();
+		let index = CASES.iter().position(|c| c.0 == label).unwrap();
+		let (_, source, input_fixture, _, _, _, _) = CASES[index];
+		let current = live_stock_case(index, &out.join(format!("row-{index}")), &counts).1;
+		let anchor = if label.starts_with("fuel/") { &complete_fuel } else { &current };
+		let (complete, _) = resource_completion_live(label, source, input_fixture, &current, anchor).unwrap();
 		let stock = &complete;
 		let kind = if label.starts_with("cancel/") {
 			"Cancelled"
@@ -207,9 +153,10 @@ fn resource_and_refusal_constraints_reject_drift() {
 	}
 	assert_eq!(resource_rows, 17);
 	let (_, source, input_fixture, _, _, _, _) = CASES[112];
-	let (complete, _) = resource_completion("fuel/16", source, input_fixture, &resources).unwrap();
+	let current = live_stock_case(112, &out.join("fuel-16-control"), &counts).1;
+	let (complete, _) = resource_completion_live("fuel/16", source, input_fixture, &current, &complete_fuel).unwrap();
 	assert_eq!(
-		resources["fuel/16"]["stock_common"]["events"]
+		current["events"]
 			.as_array()
 			.unwrap()
 			.len(),
@@ -237,8 +184,9 @@ fn resource_and_refusal_constraints_reject_drift() {
 		bad["events_after_reuse"] = json!(after);
 		assert!(!resource_valid(&complete, &bad, &audit, "FuelExhausted"));
 	}
-	assert!(resource_completion("fuel/16", &format!("{source} "), input_fixture, &resources).is_err());
-	assert!(resource_completion("fuel/16", source, "wrong-fixture", &resources).is_err());
+	assert!(resource_completion_live("fuel/16", &format!("{source} "), input_fixture, &current, &complete_fuel).is_err());
+	assert!(resource_completion_live("fuel/16", source, "wrong-fixture", &current, &complete_fuel).is_err());
+	fs::remove_dir_all(out).unwrap();
 
 	for (label, row) in refusals.as_object().unwrap() {
 		let source = CASES.iter().find(|c| c.0 == label).unwrap().1;

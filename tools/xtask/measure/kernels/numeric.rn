@@ -1,0 +1,6 @@
+pub fn main(x) {
+	let n = 0;
+	let total = 0;
+	while n < x { total += n % 17; n += 1; }
+	total
+}

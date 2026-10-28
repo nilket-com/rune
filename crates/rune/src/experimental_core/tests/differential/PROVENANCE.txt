@@ -1,7 +1,10 @@
 Provenance of this directory's case data
 
 Files: differential_cases.tsv and programs/{operators,addendum,rebind,supplement,objfmt}.rn
-(paths relative to this directory), generated from rnx replay receipts and kept unchanged.
+(paths relative to this directory), derived from rnx replay receipts. The program
+files remain unchanged. V2a removed the historical outcome columns from the case
+table; its current SHA-256 is 62e274d441c6df52766ea558ef49a71291606c7dd9355f981d640e2e03252e66.
+The original table's hash and grant are preserved below as historical provenance.
 
 Origin:      the rnx repository (github.com/nilket-com/rnx) at revision
              bc286c817cae84e06a3254246bc4dc212b85fc26, paths

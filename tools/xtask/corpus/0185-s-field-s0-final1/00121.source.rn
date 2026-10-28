@@ -1,0 +1,4 @@
+mod foo;
+mod bar;
+
+dbg!(foo::number() + bar::number());

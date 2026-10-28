@@ -1,49 +1,49 @@
 {
 	"access/option/scalar": {
 		"source_sha256": "6283b82579e954355184584e3a3932589ab96e3a4e9ff960a96401e99ca8ced5",
-		"stock_row_sha256": "76fd32f81a20ac45fdf0be333c52bada993b6b37e674ec9afde53959a9122c67",
+		"stock_outcome_sha256": "242aca1bccdda6364a57de26281fc2ab4cec710ce000abf72dcccbb13eb4d348",
 		"policy": "Exact",
 		"previous_refusal": "Some(Method)",
 		"record": "C17a"
 	},
 	"access/option/string": {
 		"source_sha256": "706e2157a8f5f1e8fd5af4aa38937c90983b124d3ca540153e445cfecc701db8",
-		"stock_row_sha256": "11305e668fe84822c61e14815b792608ce62a9512fd4ca73c62db7944b3cba1d",
+		"stock_outcome_sha256": "242aca1bccdda6364a57de26281fc2ab4cec710ce000abf72dcccbb13eb4d348",
 		"policy": "Exact",
 		"previous_refusal": "Some(Method)",
 		"record": "C17a"
 	},
 	"access/option/tuple": {
 		"source_sha256": "f37cdcd41c62e3611a678dfebb3c20236cc9731a99f36e358560a0353ca52f82",
-		"stock_row_sha256": "b6ae84730d90ace0817fe5b30880f93eed6224d203cd871839381b77dd879b5c",
+		"stock_outcome_sha256": "242aca1bccdda6364a57de26281fc2ab4cec710ce000abf72dcccbb13eb4d348",
 		"policy": "Exact",
 		"previous_refusal": "Some(Method)",
 		"record": "C17a"
 	},
 	"access/option/vec": {
 		"source_sha256": "aa48586b63e1690447a0240cc5c6c607b8a69d9d964ce5d714900b34541dc0fe",
-		"stock_row_sha256": "3e79254a974c04dafe6ea40e408b60997c2efed883c6dd76f1dc0990dcb9745f",
+		"stock_outcome_sha256": "242aca1bccdda6364a57de26281fc2ab4cec710ce000abf72dcccbb13eb4d348",
 		"policy": "Exact",
 		"previous_refusal": "Some(Method)",
 		"record": "C17a"
 	},
 	"access/option/option": {
 		"source_sha256": "858086f76115bc2cae2e350787a0a83c1abb954657080c4afd061bfe7a1880d8",
-		"stock_row_sha256": "3b6a8a29b87b6a15a3477f77f83b6d9e0ff68380e711b49c46728495bd0caade",
+		"stock_outcome_sha256": "e27024211ab6be2cb4048714d8273c88585cea84d927e16f7f13f14b1230ff84",
 		"policy": "Exact",
 		"previous_refusal": "Some(Method)",
 		"record": "C17a"
 	},
 	"access/option/wildcard": {
 		"source_sha256": "6ba2162621af82076ca2e47bacd868f1bfacb816331f1cb077567faa15eda1c4",
-		"stock_row_sha256": "2292a7a6441169556c6473c1c5ebcfacc63818dbce45150a97aca59da41fc315",
+		"stock_outcome_sha256": "e27024211ab6be2cb4048714d8273c88585cea84d927e16f7f13f14b1230ff84",
 		"policy": "Exact",
 		"previous_refusal": "Some(Method)",
 		"record": "C17a"
 	},
 	"life/W1-parent-move": {
 		"source_sha256": "da3e23ce123b0b3217c98941ea288db0ff17dac675e345e227a1af59fd5c2ea5",
-		"stock_row_sha256": "3827dc20e808e51e4544306128573b92b87c3949766902f822b11d4b30a14494",
+		"stock_outcome_sha256": "7f81198518add7ad73a16747eb17cb9860dfd877deefbbb04d16d9da89b065ad",
 		"policy": "Exact",
 		"previous_refusal": "Some(Method)",
 		"record": "C17a"

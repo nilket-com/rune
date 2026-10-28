@@ -1,0 +1,1 @@
+pub fn main() { let x=#{x:"a"}; for p in x { x.x+=1; } x.x }

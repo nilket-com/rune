@@ -7,7 +7,7 @@
     "index": 5,
     "label": "tuple/collect",
     "source_sha256": "e39981d3392f963f83a0924dd3fa93b7517baff84f628447773bd4f14b3c1f7b",
-    "stock_row_sha256": "d61c5ccee1ca6d0aa26d58166f5c923a0f7d805c95a53be50a739d7147890b02",
+    "stock_canonical_sha256": "34980d134f61e3a5488179e84cb9a98d5c593b79d39987859426074f61c3a601",
     "stock_fix_both": false,
     "classification": "Inherited-refusal",
     "fresh": {
@@ -33,7 +33,7 @@
     "index": 19,
     "label": "unit/collect",
     "source_sha256": "2dd173221a58d9d31db447c209d2aee52998be2acc30e0c77e873453cc111c8d",
-    "stock_row_sha256": "7814291d731cf4b979bd12768c4ee7e94722dcdc62e599c43fa814bd5b546165",
+    "stock_canonical_sha256": "24b9942d2e4eae1b5942ed31a961e73185e54bd406dea9c9a0c850663df38e47",
     "stock_fix_both": false,
     "classification": "Inherited-refusal",
     "fresh": {
@@ -59,7 +59,7 @@
     "index": 30,
     "label": "object/collect",
     "source_sha256": "c03328f19a8d4f22f70da19d85dfd197f5b124f492f7b467bd965cae2eba1406",
-    "stock_row_sha256": "6a40146ecb044349c953fbef58066e903f42088598ff4cfc8a7b8ba3916dbe11",
+    "stock_canonical_sha256": "20326d31dbe1d76bc97255ed358cdc63d248324ecc555a2f970860fd6ee517b0",
     "stock_fix_both": false,
     "classification": "Inherited-refusal",
     "fresh": {

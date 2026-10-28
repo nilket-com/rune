@@ -1,0 +1,212 @@
+// Record 0153: the triage producers' session half (plans/0153 sections 4,
+// 5a, 7). Over a split's tickets (in the split file's order) it retains
+// evidence only; every routing decision is the evaluator's.
+//
+// - Z and C's input: each ticket's title + "\n" + body, chunked by the
+//   encoder at overlap 0 (0136), embedded, pooled by candle::segment_mean
+//   (0137) over the tickets that have passages, renormalized; the unit
+//   embedding and its cosine to each frozen description.
+// - N's input: every (passage, description) pair's three NLI logits, scored
+//   per ticket, so a named 512-token pair refusal marks only that ticket.
+// - Edge cases (5a): a ticket with no passages is retained as `no_passages`;
+//   a named pair-length refusal as `nli_refused`; any other error stops.
+//
+// run(args): issues.json, split.tsv (a `number` column), labels.tsv, MiniLM
+// directory, NLI directory, output directory
+// main(args): the controls (rnx run): NLI directory
+
+const REFUSAL = "tokens, at most 512 (chunk the passage; pairs are never truncated)";
+
+/// One ticket's NLI logits, or `None` for the named pair-length refusal
+/// (5a); any other error is returned, and stops the record.
+fn score_ticket(nli, premises, hypotheses) {
+    match nli.score(premises, hypotheses) {
+        Ok(logits) => Ok(Some(candle::Tensor::from_dense(logits)?.to_vec2()?)),
+        Err(e) => {
+            let msg = `${e}`;
+            if msg.contains(REFUSAL) { Ok(None) } else { Err(msg) }
+        }
+    }
+}
+
+/// The ticket embeddings (5a, review R1). The division and the matmul run
+/// batched over all pooled rows, so an invalid intermediate row (NaN or
+/// infinite values) may exist; the arithmetic is row-independent, so it
+/// cannot affect any other row. Each row is then classified from its pooled
+/// values and norm: a norm of 0 is `zero_norm`, a non-finite component or
+/// norm is `nonfinite_embedding`, else `ok`; invalid rows are excluded
+/// before retention, routing and training. Returns (statuses, units,
+/// cosines), indexed like the pooled rows.
+fn embed_tickets(pooled, labels) {
+    let norms = pooled.sqr()?.sum_keepdim(1)?.sqrt()?.to_vec2()?;
+    let rows = pooled.to_vec2()?;
+    let tickets = pooled.broadcast_div(pooled.sqr()?.sum_keepdim(1)?.sqrt()?)?;
+    let units = tickets.to_vec2()?;
+    let cosines = tickets.matmul(labels.t()?)?.to_vec2()?;
+    let statuses = [];
+    for i in 0..rows.len() {
+        let finite = true;
+        for x in rows[i] { if !(x - x == 0.0) { finite = false; } }
+        let norm = norms[i][0];
+        if !finite || !(norm - norm == 0.0) {
+            statuses.push("nonfinite_embedding");
+        } else if norm == 0.0 {
+            statuses.push("zero_norm");
+        } else {
+            statuses.push("ok");
+        }
+    }
+    Ok((statuses, units, cosines))
+}
+
+fn split_numbers(path) {
+    let out = [];
+    let lines = fs::read(path)?.split("\n").collect::<Vec>();
+    if lines[0] != "number" { return Err(`${path}: header is not number`); }
+    for line in lines.iter().skip(1) {
+        if line == "" { continue; }
+        out.push(line.parse::<i64>()?);
+    }
+    Ok(out)
+}
+
+pub fn run(args) {
+    let (issues_path, split_path, labels_path, minilm, nli_dir, out) = (args[0], args[1], args[2], args[3], args[4], args[5]);
+    let by = #{};
+    for i in json::parse(fs::read(issues_path)?)? { by[`${i["number"]}`] = i; }
+    let numbers = split_numbers(split_path)?;
+    let names = [];
+    let descriptions = [];
+    for line in fs::read(labels_path)?.split("\n").skip(1) {
+        if line == "" { continue; }
+        let f = line.split("\t").collect::<Vec>();
+        names.push(f[0]);
+        descriptions.push(f[1]);
+    }
+    let k = names.len();
+    let enc = candle::TextEncoder::load(minilm)?;
+    let nli = candle::NliModel::load(nli_dir)?;
+    let t0 = time::monotonic_ms();
+
+    // passages, per ticket in split order; tickets with passages get a
+    // compact index for pooling
+    let per_ticket = [];
+    let passages = [];
+    let owner = [];
+    let compact = [];
+    let pooled_n = 0;
+    for n in numbers {
+        let i = by[`${n}`];
+        let ps = enc.chunk(i["title"] + "\n" + i["body"], 0)?;
+        per_ticket.push(ps);
+        if ps.len() == 0 { compact.push(-1); continue; }
+        compact.push(pooled_n);
+        for p in ps { passages.push(p); owner.push(pooled_n); }
+        pooled_n += 1;
+    }
+    let units = [];
+    let cosines = [];
+    let estatus = [];
+    if pooled_n > 0 {
+        let emb = candle::Tensor::from_dense(enc.embed(passages)?)?;
+        let pooled = candle::segment_mean(emb, candle::Tensor::from_vec(owner, [owner.len()], "u32")?, pooled_n)?;
+        let labels = candle::Tensor::from_dense(enc.embed(descriptions)?)?;
+        let (st, u, c) = embed_tickets(pooled, labels)?;
+        estatus = st;
+        units = u;
+        cosines = c;
+    }
+    let t1 = time::monotonic_ms();
+
+    // NLI, per ticket: passage-major, then label (labels.tsv order)
+    let nli_rows = "ticket\tpassage\tlabel\tcontradiction\tentailment\tneutral\n";
+    let status = "ticket\tstatus\n";
+    let pairs = 0;
+    for t in 0..numbers.len() {
+        let ps = per_ticket[t];
+        if ps.len() == 0 { status += `${numbers[t]}\tno_passages\n`; continue; }
+        let premises = [];
+        let hypotheses = [];
+        for p in ps { for d in descriptions { premises.push(p); hypotheses.push(d); } }
+        match score_ticket(nli, premises, hypotheses)? {
+            Some(rows) => {
+                for r in 0..rows.len() {
+                    nli_rows += `${numbers[t]}\t${r / k}\t${names[r % k]}\t${rows[r][0]}\t${rows[r][1]}\t${rows[r][2]}\n`;
+                }
+                pairs += rows.len();
+                status += `${numbers[t]}\tok\n`;
+            }
+            None => { status += `${numbers[t]}\tnli_refused\n`; }
+        }
+    }
+    let t2 = time::monotonic_ms();
+
+    // retained
+    let ptext = [];
+    for t in 0..numbers.len() { ptext.push(per_ticket[t]); }
+    fs::write(out + "/t3-passages.json", json::stringify(#{ tickets: numbers, passages: ptext })?)?;
+    let emb_rows = "ticket";
+    for c in 0..384 { emb_rows += `\te${c}`; }
+    emb_rows += "\n";
+    let cos_rows = "ticket";
+    for name in names { cos_rows += `\t${name}`; }
+    cos_rows += "\n";
+    let emb_status = "ticket\tembedding\n";
+    for t in 0..numbers.len() {
+        if compact[t] < 0 { emb_status += `${numbers[t]}\tno_passages\n`; continue; }
+        emb_status += `${numbers[t]}\t${estatus[compact[t]]}\n`;
+        if estatus[compact[t]] != "ok" { continue; }
+        let u = units[compact[t]];
+        emb_rows += `${numbers[t]}`;
+        for x in u { emb_rows += `\t${x}`; }
+        emb_rows += "\n";
+        let c = cosines[compact[t]];
+        cos_rows += `${numbers[t]}`;
+        for x in c { cos_rows += `\t${x}`; }
+        cos_rows += "\n";
+    }
+    fs::write(out + "/t3-embeddings.tsv", emb_rows)?;
+    fs::write(out + "/t3-cosines.tsv", cos_rows)?;
+    fs::write(out + "/t3-nli.tsv", nli_rows)?;
+    fs::write(out + "/t3-status.tsv", status)?;
+    fs::write(out + "/t3-embedding-status.tsv", emb_status)?;
+    println!("{} tickets, {} passages; embedding and cosines {} ms; {} NLI pairs scored per ticket in {} ms", numbers.len(), passages.len(), t1 - t0, pairs, t2 - t1);
+    println!("WORKFLOW OK t3");
+    Ok(())
+}
+
+/// The controls (5a): the NLI handler (the named pair-length refusal
+/// becomes `None`; every other error is returned), and `embed_tickets` on a
+/// synthetic pooled matrix with a zero row and a non-finite row (review R1).
+pub fn main(args) {
+    let nan = 0.0 / 0.0;
+    let pooled = candle::Tensor::from_vec([3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 1.0, nan, 0.0, 2.0, 0.0, 0.0], [3, 4], "f32")?;
+    let labels = candle::Tensor::from_vec([1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0], [2, 4], "f32")?;
+    let (st, units, cos) = embed_tickets(pooled, labels)?;
+    if st[0] != "ok" || st[1] != "nonfinite_embedding" || st[2] != "ok" { return Err(`control: statuses ${st}`); }
+    let d = units[0][0] - 0.6;
+    if d * d > 0.000000000001 { return Err(`control: unit row 0 ${units[0]}`); }
+    if cos[2][1] != 1.0 { return Err(`control: cosine row 2 ${cos[2]}`); }
+    let zero = candle::Tensor::from_vec([0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0], [2, 4], "f32")?;
+    let (st2, _, _) = embed_tickets(zero, labels)?;
+    if st2[0] != "zero_norm" || st2[1] != "ok" { return Err(`control: zero statuses ${st2}`); }
+    println!("control: a zero pooled row is zero_norm, a non-finite row nonfinite_embedding; other rows unaffected");
+    let nli = candle::NliModel::load(args[0])?;
+    let long = "";
+    for i in 0..700 { long += "word "; }
+    let ok = score_ticket(nli, ["a short premise"], ["a short hypothesis"])?;
+    if ok.is_none() { return Err("control: a short pair was refused"); }
+    println!("control: a short pair scores");
+    let refused = score_ticket(nli, [long], ["a short hypothesis"])?;
+    if refused.is_some() { return Err("control: an over-512-token pair was scored"); }
+    println!("control: an over-512-token pair is the named refusal (None)");
+    let mixed = score_ticket(nli, ["a short premise", long], ["h", "h"])?;
+    if mixed.is_some() { return Err("control: a ticket with one over-limit pair was scored"); }
+    println!("control: one over-limit pair marks the whole ticket");
+    match score_ticket(nli, ["a", "b"], ["h"]) {
+        Ok(_) => { return Err("control: a mismatched call was not an error"); }
+        Err(e) => { println!("control: another error is returned, not absorbed: {}", e); }
+    }
+    println!("all NLI handler controls behave");
+    Ok(())
+}

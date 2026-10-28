@@ -1,0 +1,1 @@
+fn target() { println!("target"); #{x:10} } fn index() { println!("index"); "absent" } fn rhs() { println!("rhs"); 3 } pub fn main() { target()[index()] = rhs(); () }

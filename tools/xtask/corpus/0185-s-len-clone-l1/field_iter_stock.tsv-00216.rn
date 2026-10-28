@@ -1,0 +1,1 @@
+pub fn main() { let x=None; let a=[]; for v in x { x=Some(2); a.push(v); } (x,a) }

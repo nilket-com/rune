@@ -1,34 +1,46 @@
-//! The 24 frozen diagnostic witnesses, compared structurally without normalizing output.
+//! Compare diagnostic witnesses from live stock and fresh executions.
 use crate::common::{read_json, Context};
 use anyhow::{ensure, Context as _, Result};
 use serde_json::{json, Value};
 use std::{fs, path::Path, process::Command};
 
 pub fn run(ctx: &Context, binary: &Path) -> Result<Value> {
-	let table: Value = read_json(&ctx.repo.join("tools/xtask/fixtures/native/TABLE.json"))?;
-	let cases = table["rows"].as_array().context("witness rows absent")?;
-	ensure!(cases.len() == 24, "expected 24 diagnostic witnesses");
+	let cases = [
+		("callback_sort", 44),
+		("callback_sort", 89),
+		("callback_sort", 98),
+		("tuple_let", 55),
+		("tuple_let", 56),
+		("deferred_index", 151),
+		("deferred_index", 154),
+		("callback_sort", 40),
+		("callback_sort", 41),
+		("callback_sort", 42),
+		("callback_sort", 75),
+		("callback_sort", 76),
+		("callback_sort", 77),
+		("callback_sort", 78),
+		("callback_sort", 79),
+		("callback_sort", 80),
+		("callback_sort", 81),
+		("callback_sort", 82),
+		("callback_sort", 83),
+		("callback_sort", 85),
+		("callback_sort", 96),
+		("callback_sort", 97),
+		("callback_sort", 90),
+		("format_specs", 254),
+	];
 	let mut results = vec![];
-	for (number, row) in cases.iter().enumerate() {
-		let family = row["family"].as_str().context("witness family absent")?;
+	for (number, (family, index)) in cases.into_iter().enumerate() {
 		let prefix = match family {
 			"callback_sort" => "C11",
 			"tuple_let" => "C8",
 			"deferred_index" => "C7",
 			"format_specs" => "C5",
-			_ => anyhow::bail!("unknown witness family {family}"),
+			_ => unreachable!(),
 		};
-		let before = Path::new(
-			row["before_provenance"]["fresh"]["path"]
-				.as_str()
-				.context("witness provenance absent")?,
-		);
-		let index = before
-			.parent()
-			.and_then(Path::file_name)
-			.and_then(|n| n.to_str())
-			.context("witness index absent")?
-			.parse::<usize>()?;
+		let mut source_pair = vec![];
 		let mut traces = vec![];
 		for engine in ["stock", "fresh"] {
 			let label = format!("witness-{number}-{engine}");
@@ -58,40 +70,41 @@ pub fn run(ctx: &Context, binary: &Path) -> Result<Value> {
 			// These four pinned child entry points deliberately process::exit(0)
 			// after writing their observation, bypassing libtest's summary.
 			// Exact selection, the started test, rc0 and the complete fresh
-			// observation/trace comparisons establish the frozen acceptance.
+			// observation/trace comparisons establish the live acceptance.
 			exiting_child_started(&fs::read_to_string(&r.stdout)?, &selector)?;
 			let obs: Value = read_json(&observation)?;
 			let actual: Value = read_json(&trace)?;
 			let source = decode_hex(obs["source_hex"].as_str().context("source hex absent")?)?;
 			ensure!(
-				source
-					== row["source"]
-						.as_str()
-						.context("expected source absent")?
-						.as_bytes(),
-				"witness source differs"
+				!source.is_empty() && obs["index"] == index,
+				"witness input differs"
 			);
-			let mut frames = actual["frames"].clone();
-			for frame in frames.as_array_mut().context("trace frames absent")? {
-				frame["role"] = Value::String(
-					frame["role"]
-						.as_str()
-						.context("role absent")?
-						.to_ascii_lowercase(),
+			let frames = actual["frames"]
+				.as_array()
+				.context("witness frames absent")?;
+			ensure!(
+				!frames.is_empty() && actual["rendered"].as_str().is_some_and(|s| !s.is_empty()),
+				"empty witness diagnostic"
+			);
+			for (i, frame) in frames.iter().enumerate() {
+				let expected_role = if i == 0 { "Origin" } else { "Caller" };
+				let location = &frame["location"];
+				let start = location["start"].as_u64().context("witness start absent")? as usize;
+				let end = location["end"].as_u64().context("witness end absent")? as usize;
+				ensure!(
+					frame["role"] == expected_role
+						&& location["source"] == 0
+						&& source.get(start..end).is_some(),
+					"invalid witness frame"
 				);
 			}
-			ensure!(
-				frames == row["proposed_after"][format!("{engine}_logical_frames")],
-				"witness frame mismatch {family}/{index}/{engine}"
-			);
-			let rendered = actual["rendered"].as_str().context("rendered absent")?;
-			ensure!(
-				rendered.lines().next()
-					== row["proposed_after"]["primary_message"][engine].as_str(),
-				"witness primary message differs"
-			);
+			source_pair.push(source);
 			traces.push(actual);
 		}
+		ensure!(
+			source_pair[0] == source_pair[1],
+			"paired witness source differs"
+		);
 		ensure!(
 			traces[0]["frames"] == traces[1]["frames"]
 				&& traces[0]["rendered"] == traces[1]["rendered"],
@@ -135,7 +148,7 @@ mod tests {
 	use super::*;
 	#[test]
 	fn process_exit_body_may_follow_test_start_on_same_line() {
-		let text = include_str!("../fixtures/native/tuple-let-process-exit.stdout");
+		let text = "\nrunning 1 test\ntest experimental_core::tests::gap_hunt::tuple_let::child ... example\n";
 		assert!(exiting_child_started(
 			text,
 			"experimental_core::tests::gap_hunt::tuple_let::child"

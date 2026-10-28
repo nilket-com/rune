@@ -44,37 +44,10 @@ fn error(error: &stock::VmError) -> Json {
 	json!({"status":"error","missing":missing,"kind":format!("{kind:?}"),"display":super::d1c_diagnostics::runtime_error_display(error),"sites":sites,"chain":chain,"raw":format!("{error:?}")})
 }
 
-#[test]
-#[ignore = "C14B stock-oracle child; explicit bounded external operator only"]
-fn child() {
-	let engine = std::env::var("C14B_ENGINE").unwrap();
-	assert!(engine == "stock" || engine == "fresh");
-	let index: usize = std::env::var("C14B_CASE").unwrap().parse().unwrap();
-	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	let mut row = cases[index].clone();
-	if let Ok(fuel) = std::env::var("C14B_COUNTERFACTUAL_FUEL") {
-		assert_eq!(engine, "stock");
-		assert!(index == 163 || index == 164);
-		assert_eq!(fuel, "200000");
-		row["fuel"] = json!(200000);
-	}
-	let row = &row;
+/// Observe `row` (case `index`) on the stock VM in this process.
+fn legacy_observe(index: usize, row: &Json) -> Json {
 	let source = row["source"].as_str().unwrap();
 	TAPE.with(|t| t.borrow_mut().clear());
-
-	if engine == "fresh" {
-		let result = observe(row);
-		let path = std::env::var_os("C14B_RESULT").unwrap();
-		let mut file = std::fs::OpenOptions::new()
-			.create_new(true)
-			.write(true)
-			.open(path)
-			.unwrap();
-		use std::io::Write;
-		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
-			.unwrap();
-		return;
-	}
 	let context = context(row["fixture"].as_str().unwrap());
 	let mut sources = Sources::new();
 	sources
@@ -110,7 +83,129 @@ fn child() {
 		}
 	};
 	let events = TAPE.with(|t| t.borrow().clone());
-	let result = json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"fixture":row["fixture"],"observation":{"outcome":outcome,"events":events,"reuse":reuse}});
+	json!({"schema":1,"engine":"stock","index":index,"label":row["label"],"source_hex":hex(source.as_bytes()),"source_sha256":row["source_sha256"],"fuel":row["fuel"],"diagnostics":format!("{:?}",diagnostics.diagnostics()),"fixture":row["fixture"],"observation":{"outcome":outcome,"events":events,"reuse":reuse}})
+}
+
+/// Drop `raw` debug evidence and mask each `AnyTypeInfo::full_name` pointer in
+/// a typed kind (P1), recording each masked leaf's path and count in `leaves`.
+fn stock_projection(v: &Json, path: &str, leaves: &mut Vec<Json>) -> Json {
+	match v {
+		Json::Object(m) => Json::Object(
+			m.iter()
+				.filter(|(k, _)| k.as_str() != "raw")
+				.map(|(k, v)| {
+					(
+						k.clone(),
+						stock_projection(
+							v,
+							&if path.is_empty() {
+								k.clone()
+							} else {
+								format!("{path}.{k}")
+							},
+							leaves,
+						),
+					)
+				})
+				.collect(),
+		),
+		Json::Array(a) => Json::Array(
+			a.iter()
+				.enumerate()
+				.map(|(i, v)| stock_projection(v, &format!("{path}.{i}"), leaves))
+				.collect(),
+		),
+		Json::String(s) if s.contains("full_name:") => {
+			assert!(path.ends_with("kind"));
+			let mut tail = s.as_str();
+			let mut out = String::new();
+			let mut count = 0;
+			while let Some(i) = tail.find("full_name:") {
+				assert!(tail[..i].ends_with("AnyTypeInfo { "));
+				out.push_str(&tail[..i]);
+				let digits = tail[i..].strip_prefix("full_name: 0x").unwrap();
+				let n = digits.bytes().take_while(|b| b.is_ascii_hexdigit()).count();
+				assert!(n > 0 && digits[n..].starts_with(", hash: 0x"));
+				out.push_str("full_name: <pointer>");
+				tail = &digits[n..];
+				count += 1;
+			}
+			out.push_str(tail);
+			leaves.push(json!({"path":path,"count":count}));
+			json!(out)
+		}
+		_ => v.clone(),
+	}
+}
+
+/// The comparable stock row for `case`: the live stock observation `raw` with
+/// D1 displays restored to their original text and the P1 projection applied
+/// to exactly the leaves `p1.json` allows.
+fn expected_stock(case: &Json, raw: &Json) -> Json {
+	let id = case["id"].as_str().unwrap();
+	let label = case["label"].as_str().unwrap();
+	let source = case["source"].as_str().unwrap();
+	for key in ["label", "source_sha256", "fixture", "fuel"] {
+		assert_eq!(raw[key], case[key], "{id} {key}");
+	}
+	assert_eq!(raw["source_hex"], hex(source.as_bytes()));
+	let mut raw = raw.clone();
+	raw["observation"]["outcome"] = super::d1c_diagnostics::before(
+		"text_pipeline",
+		label,
+		source,
+		"stock",
+		&raw["observation"]["outcome"],
+	);
+	raw["observation"] = super::method_diagnostics::intentional_json_before(
+		"text_pipeline",
+		label,
+		source,
+		"stock",
+		&raw["observation"],
+	);
+	let allowances: Json = serde_json::from_str(include_str!("text_pipeline/p1.json")).unwrap();
+	let mut leaves = Vec::new();
+	let projected = stock_projection(&raw, "", &mut leaves);
+	assert_eq!(
+		json!(leaves),
+		allowances.get(id).cloned().unwrap_or(json!([])),
+		"P1 {id}"
+	);
+	projected
+}
+
+#[test]
+#[ignore = "C14B stock-oracle child; explicit bounded external operator only"]
+fn child() {
+	let engine = std::env::var("C14B_ENGINE").unwrap();
+	assert!(engine == "stock" || engine == "fresh");
+	let index: usize = std::env::var("C14B_CASE").unwrap().parse().unwrap();
+	let cases: Vec<Json> = serde_json::from_str(CASES).unwrap();
+	let mut row = cases[index].clone();
+	if let Ok(fuel) = std::env::var("C14B_COUNTERFACTUAL_FUEL") {
+		assert_eq!(engine, "stock");
+		assert!(index == 163 || index == 164);
+		assert_eq!(fuel, "200000");
+		row["fuel"] = json!(200000);
+	}
+	let row = &row;
+	TAPE.with(|t| t.borrow_mut().clear());
+
+	if engine == "fresh" {
+		let result = observe(row);
+		let path = std::env::var_os("C14B_RESULT").unwrap();
+		let mut file = std::fs::OpenOptions::new()
+			.create_new(true)
+			.write(true)
+			.open(path)
+			.unwrap();
+		use std::io::Write;
+		file.write_all(serde_json::to_string_pretty(&result).unwrap().as_bytes())
+			.unwrap();
+		return;
+	}
+	let result = legacy_observe(index, row);
 	let path = std::env::var_os("C14B_RESULT").unwrap();
 	let mut file = std::fs::OpenOptions::new()
 		.create_new(true)
@@ -167,11 +262,6 @@ fn oracle_controls() {
 			"dispositions.json",
 			include_str!("text_pipeline/dispositions.json"),
 		),
-		("stock.json", include_str!("text_pipeline/stock.json")),
-		(
-			"stock_raw.json",
-			include_str!("text_pipeline/stock_raw.json"),
-		),
 		("p1.json", include_str!("text_pipeline/p1.json")),
 	] {
 		assert_eq!(
@@ -183,77 +273,13 @@ fn oracle_controls() {
 		);
 	}
 	let rows: Vec<Json> = serde_json::from_str(CASES).unwrap();
-	let frozen: Json = serde_json::from_str(include_str!("text_pipeline/stock.json")).unwrap();
-	let raw: Json = serde_json::from_str(include_str!("text_pipeline/stock_raw.json")).unwrap();
 	let dispositions: Json =
 		serde_json::from_str(include_str!("text_pipeline/dispositions.json")).unwrap();
-	let allowances: Json = serde_json::from_str(include_str!("text_pipeline/p1.json")).unwrap();
-	fn project(v: &Json, path: &str, leaves: &mut Vec<Json>) -> Json {
-		match v {
-			Json::Object(m) => Json::Object(
-				m.iter()
-					.filter(|(k, _)| k.as_str() != "raw")
-					.map(|(k, v)| {
-						(
-							k.clone(),
-							project(
-								v,
-								&if path.is_empty() {
-									k.clone()
-								} else {
-									format!("{path}.{k}")
-								},
-								leaves,
-							),
-						)
-					})
-					.collect(),
-			),
-			Json::Array(a) => Json::Array(
-				a.iter()
-					.enumerate()
-					.map(|(i, v)| project(v, &format!("{path}.{i}"), leaves))
-					.collect(),
-			),
-			Json::String(s) if s.contains("full_name:") => {
-				assert!(path.ends_with("kind"));
-				let mut tail = s.as_str();
-				let mut out = String::new();
-				let mut count = 0;
-				while let Some(i) = tail.find("full_name:") {
-					assert!(tail[..i].ends_with("AnyTypeInfo { "));
-					out.push_str(&tail[..i]);
-					let digits = tail[i..].strip_prefix("full_name: 0x").unwrap();
-					let n = digits.bytes().take_while(|b| b.is_ascii_hexdigit()).count();
-					assert!(n > 0 && digits[n..].starts_with(", hash: 0x"));
-					out.push_str("full_name: <pointer>");
-					tail = &digits[n..];
-					count += 1;
-				}
-				out.push_str(tail);
-				leaves.push(json!({"path":path,"count":count}));
-				json!(out)
-			}
-			_ => v.clone(),
-		}
-	}
 	for r in rows {
 		let id = r["id"].as_str().unwrap();
-		let mut leaves = Vec::new();
-		assert_eq!(project(&raw[id], "", &mut leaves), frozen[id]);
-		assert_eq!(
-			json!(leaves),
-			allowances.get(id).cloned().unwrap_or(json!([]))
-		);
 		for key in ["source_sha256", "fixture", "fuel"] {
-			assert_eq!(raw[id][key], r[key]);
 			assert_eq!(dispositions[id][key], r[key]);
 		}
-		assert_eq!(
-			raw[id]["source_hex"],
-			hex(r["source"].as_str().unwrap().as_bytes())
-		);
-		assert_eq!(raw[id]["observation"]["reuse"]["status"], "value");
 	}
 }
 

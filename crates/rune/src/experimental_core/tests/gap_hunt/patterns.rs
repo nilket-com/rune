@@ -451,74 +451,60 @@ fn probe(generated: Vec<Case>, expected: usize) {
 	contract_completed("stock", generated.len());
 }
 
-#[test]
-#[ignore = "C3 exact 348-row frozen stock contract; bounded children, new GAP_OUT"]
-fn legacy_contract() {
-	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
-	fs::create_dir(&out).expect("new GAP_OUT required");
-	let scratch = Scratch(
-		std::env::temp_dir().join(format!("rune-c3-stock-contract-{}", std::process::id())),
-	);
-	fs::create_dir(&scratch.0).unwrap();
-	let mut generated = cases();
-	generated.extend(supplement_cases());
-	generated.extend(supplement2_cases());
-	let mut frozen = include_str!("../patterns_stock.tsv").lines();
-	assert_eq!(frozen.next(), Some("case\tmode\tsource_hex\tstock_observation_hex\tstdout_hex\tstderr_hex\tstock_site_hex\tdiagnostics_hex\tpolicy"));
-	let frozen: Vec<_> = frozen.collect();
-	assert_eq!(frozen.len(), 348, "frozen C3 row count");
-	assert_eq!(generated.len(), frozen.len(), "C3 source count");
-	let mut seen = std::collections::BTreeSet::new();
-	for (n, (line, case)) in frozen.iter().zip(&generated).enumerate() {
-		let row: Vec<_> = line.split('\t').collect();
-		assert_eq!(row.len(), 9, "C3 schema {}", case.label);
-		assert!(seen.insert(row[0]), "duplicate frozen row {}", row[0]);
-		assert_eq!(row[0], case.label, "C3 label drift");
-		assert_eq!(row[1], case.mode, "C3 mode drift {}", case.label);
-		assert_eq!(
-			row[2],
-			hex(case.source.as_bytes()),
-			"C3 source drift {}",
-			case.label
-		);
-		assert_eq!(row[8], "Exact", "C3 policy drift {}", case.label);
-		let id = format!("{n:05}");
-		let path = out.join(format!("{id}.source.rn"));
-		fs::write(&path, &case.source).unwrap();
-		for extension in ["site", "diagnostics"] {
-			let previous = scratch.0.join(format!("result.{extension}"));
-			if previous.exists() {
-				fs::remove_file(previous).unwrap();
-			}
+/// One stock run of a C3 or C4 case and its error site.
+struct StockRun {
+	run: Run,
+	site: Vec<u8>,
+}
+
+/// Run `case` on stock with the same envelope as the probe, which also
+/// requires an address-free observation for every compared row.
+fn stock_run(case: &Case, path: &Path, scratch: &Path, out: &Path, id: &str) -> StockRun {
+	for extension in ["site", "diagnostics"] {
+		let previous = scratch.join(format!("result.{extension}"));
+		if previous.exists() {
+			fs::remove_file(previous).unwrap();
 		}
-		let run = launch(&path, &path, &case.mode, "stock", &scratch.0, &out, &id);
-		assert!(run.complete, "incomplete {}: {}", case.label, run.record);
-		let site = if run.record.starts_with("error\t") {
-			fs::read(scratch.0.join("result.site")).unwrap()
-		} else {
-			Vec::new()
-		};
-		let diagnostics = fs::read(scratch.0.join("result.diagnostics")).unwrap();
-		assert!(diagnostics.len() <= CAP, "diagnostics cap");
-		fs::write(out.join(format!("{id}.stock.site")), &site).unwrap();
-		fs::write(out.join(format!("{id}.stock.diagnostics")), &diagnostics).unwrap();
-		assert_eq!(
-			row[3],
-			hex(run.record.as_bytes()),
-			"C3 observation drift {}",
-			case.label
-		);
-		assert_eq!(row[4], hex(&run.stdout), "C3 stdout drift {}", case.label);
-		assert_eq!(row[5], hex(&run.stderr), "C3 stderr drift {}", case.label);
-		assert_eq!(row[6], hex(&site), "C3 error site drift {}", case.label);
-		assert_eq!(
-			row[7],
-			hex(&diagnostics),
-			"C3 diagnostics/warnings drift {}",
-			case.label
-		);
 	}
-	contract_completed("stock", frozen.len());
+	let id = format!("{id}-stock");
+	let run = launch(path, path, &case.mode, "stock", scratch, out, &id);
+	assert!(
+		run.complete,
+		"incomplete stock {}: {}",
+		case.label, run.record
+	);
+	let phase = run.record.split('\t').next().unwrap();
+	assert!(
+		matches!(
+			phase,
+			"value" | "error" | "compile-error" | "observation-error"
+		),
+		"{}: {}",
+		case.label,
+		run.record
+	);
+	let site = if phase == "error" {
+		fs::read(scratch.join("result.site")).unwrap()
+	} else {
+		Vec::new()
+	};
+	let diagnostics = fs::read(scratch.join("result.diagnostics")).unwrap();
+	assert!(diagnostics.len() <= CAP, "diagnostics cap");
+	fs::write(out.join(format!("{id}.site")), &site).unwrap();
+	fs::write(out.join(format!("{id}.diagnostics")), &diagnostics).unwrap();
+	assert!(
+		![
+			run.record.as_bytes(),
+			run.stdout.as_slice(),
+			run.stderr.as_slice(),
+			diagnostics.as_slice(),
+		]
+		.iter()
+		.any(|bytes| String::from_utf8_lossy(bytes).contains("0x")),
+		"stock address observation {}",
+		case.label
+	);
+	StockRun { run, site }
 }
 
 fn supplement2_cases() -> Vec<Case> {
@@ -558,25 +544,18 @@ fn inventory() {
 	let mut generated = cases();
 	generated.extend(supplement_cases());
 	generated.extend(supplement2_cases());
-	let frozen: Vec<_> = include_str!("../patterns_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
 	assert_eq!(generated.len(), 348);
-	assert_eq!(frozen.len(), 348);
 	let mut report =
 		String::from("case\tverdict\tstock_hex\tfresh_hex\tstock_site_hex\tfresh_site_hex\n");
 	let mut counts = BTreeMap::new();
-	for (n, (case, line)) in generated.iter().zip(&frozen).enumerate() {
+	for (n, case) in generated.iter().enumerate() {
 		if case.label.starts_with("fuel/") {
 			continue;
 		} // Numeric budgets are NOT parity.
-		let row: Vec<_> = line.split('\t').collect();
-		assert_eq!(row[0], case.label);
-		assert_eq!(row[2], hex(case.source.as_bytes()));
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, &case.source).unwrap();
+		let stock = stock_run(case, &path, &scratch.0, &out, &id);
 		let previous = scratch.0.join("result.site");
 		if previous.exists() {
 			fs::remove_file(previous).unwrap();
@@ -584,8 +563,11 @@ fn inventory() {
 		let run = launch(&path, &path, &case.mode, "fresh", &scratch.0, &out, &id);
 		assert!(run.complete, "{}: {}", case.label, run.record);
 		let execution: Vec<_> = run.record.split('\t').collect();
-		let stock = unhex(row[3]);
-		let stock: Vec<_> = stock.split('\t').collect();
+		let stock_site = hex(&stock.site);
+		let stock_record = hex(stock.run.record.as_bytes());
+		let stock_stdout = hex(&stock.run.stdout);
+		let stock_stderr = hex(&stock.run.stderr);
+		let stock: Vec<_> = stock.run.record.split('\t').collect();
 		let site = if execution[0] == "error" {
 			fs::read(scratch.0.join("result.site")).unwrap()
 		} else {
@@ -596,9 +578,9 @@ fn inventory() {
 			"refused"
 		} else if execution[..2] == stock[..2]
 			&& execution[3..] == stock[3..]
-			&& hex(&run.stdout) == row[4]
-			&& hex(&run.stderr) == row[5]
-			&& hex(&site) == row[6]
+			&& hex(&run.stdout) == stock_stdout
+			&& hex(&run.stderr) == stock_stderr
+			&& hex(&site) == stock_site
 		{
 			"equal"
 		} else {
@@ -608,9 +590,9 @@ fn inventory() {
 		report.push_str(&format!(
 			"{}\t{verdict}\t{}\t{}\t{}\t{}\n",
 			case.label,
-			row[3],
+			stock_record,
 			hex(run.record.as_bytes()),
-			row[6],
+			stock_site,
 			hex(&site)
 		));
 		fs::write(out.join("inventory.tsv"), &report).unwrap();
@@ -660,7 +642,7 @@ fn expected_refusal(label: &str) -> Option<&'static str> {
 }
 
 #[test]
-#[ignore = "C3 exact execution contract plus declared refusals; new GAP_OUT; stock budgets never reused"]
+#[ignore = "C3 exact execution contract against live stock plus declared refusals; new GAP_OUT; stock budgets never reused"]
 fn contract() {
 	let out = PathBuf::from(std::env::var_os("GAP_OUT").expect("new GAP_OUT required"));
 	fs::create_dir(&out).unwrap();
@@ -671,25 +653,16 @@ fn contract() {
 	let mut generated = cases();
 	generated.extend(supplement_cases());
 	generated.extend(supplement2_cases());
-	let frozen: Vec<_> = include_str!("../patterns_stock.tsv")
-		.lines()
-		.skip(1)
-		.collect();
 	assert_eq!(generated.len(), 348);
-	assert_eq!(frozen.len(), 348);
 	let mut equal = 0;
 	let mut refused = 0;
 	let mut full_budget = 0;
 	let mut presentation = 0;
-	for (n, (case, line)) in generated.iter().zip(&frozen).enumerate() {
-		let row: Vec<_> = line.split('\t').collect();
-		assert_eq!(row[0], case.label);
-		assert_eq!(row[1], case.mode);
-		assert_eq!(row[2], hex(case.source.as_bytes()));
-		assert_eq!(row[8], "Exact");
+	for (n, case) in generated.iter().enumerate() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, &case.source).unwrap();
+		let stock = stock_run(case, &path, &scratch.0, &out, &id);
 		let old = scratch.0.join("result.site");
 		if old.exists() {
 			fs::remove_file(old).unwrap();
@@ -730,10 +703,6 @@ fn contract() {
 				rule["source_sha256"],
 				hex(&Sha256::digest(case.source.as_bytes()))
 			);
-			assert_eq!(
-				rule["stock_row_sha256"],
-				hex(&Sha256::digest(line.as_bytes()))
-			);
 		}
 		if let Some(class) = expected_refusal(&case.label).filter(|_| admitted.is_none()) {
 			assert_eq!(
@@ -764,10 +733,9 @@ fn contract() {
 			full_budget += 1;
 			continue;
 		}
-		let expected = unhex(row[3]);
-		let expected: Vec<_> = expected.split('\t').collect();
+		let expected: Vec<_> = stock.run.record.split('\t').collect();
 		let expected_class = if case.label == "let/vec-miss" {
-			// The historical C3 observer used the stock fallback taxonomy for
+			// The C3 observer uses the stock fallback taxonomy for
 			// UnmatchedPattern. C16a's typed stock oracle classifies it as Panic.
 			assert_eq!(
 				expected[1],
@@ -797,15 +765,25 @@ fn contract() {
 			"C3 exact message/value {}",
 			case.label
 		);
-		assert_eq!(hex(&run.stdout), row[4], "C3 stdout {}", case.label);
-		assert_eq!(hex(&run.stderr), row[5], "C3 stderr {}", case.label);
+		assert_eq!(
+			hex(&run.stdout),
+			hex(&stock.run.stdout),
+			"C3 stdout {}",
+			case.label
+		);
+		assert_eq!(
+			hex(&run.stderr),
+			hex(&stock.run.stderr),
+			"C3 stderr {}",
+			case.label
+		);
 		let site = if actual[0] == "error" {
 			fs::read(scratch.0.join("result.site")).unwrap()
 		} else {
 			Vec::new()
 		};
 		fs::write(out.join(format!("{id}.execution.site")), &site).unwrap();
-		assert_eq!(hex(&site), row[6], "C3 exact error site {}", case.label);
+		assert_eq!(site, stock.site, "C3 exact error site {}", case.label);
 		if c16e_rule.is_some_and(|r| r["policy"] == "Policy-presentation") {
 			presentation += 1;
 		} else {

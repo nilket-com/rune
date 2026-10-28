@@ -1,0 +1,23 @@
+// Record 0149, the after-push `:dep candle` check (no Polars): the
+// TextGenerator regenerates the five early-gate chats, each with its own
+// chat call, for dep_compare.py to compare with the saved gate's ids.
+// args: model directory, out/gate/gate.json, output file
+
+pub fn run(args) {
+    let (model, gate, out) = (args[0], args[1], args[2]);
+    let g = candle::TextGenerator::load(model)?;
+    let chats = json::parse(fs::read(gate)?)?;
+    let text = "";
+    for c in chats {
+        let r = g.chat(c["system"], c["user"], c["max_new_tokens"])?;
+        let line = "";
+        for i in 0..r["ids"].len() {
+            if i > 0 { line += ","; }
+            line += `${r["ids"][i]}`;
+        }
+        text += line + "\n";
+    }
+    fs::write(out, text)?;
+    println!("WORKFLOW OK dep-candle");
+    Ok(())
+}

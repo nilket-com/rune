@@ -1,0 +1,4 @@
+pub fn main() {
+assert!(["hello", "world"] is String, "vectors should be strings");
+
+}

@@ -1,0 +1,10 @@
+fn foo(n) {
+    if n < 1 {
+        return "less than one";
+    }
+
+    "something else"
+}
+
+println!("{}", foo(0)); // => outputs: "less than one"
+println!("{}", foo(10)); // => outputs: "something else"

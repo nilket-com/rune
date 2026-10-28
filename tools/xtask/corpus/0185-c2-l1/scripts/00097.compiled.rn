@@ -1,0 +1,5 @@
+pub fn main() {
+let callable = || 42;
+dbg!(callable());
+
+}

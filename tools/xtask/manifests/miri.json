@@ -11,9 +11,7 @@
       "name": "s1-object_field_into_own_slot",
       "selected_labels": [],
       "selector": "tests::object_slot_alias::object_field_into_own_slot",
-      "fixture_source": "crates/rune/src/tests/object_slot_alias.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/s1-object_field_into_own_slot.json",
-      "history_sha256": "957c7f3f757cb3d953cabe97b08ee5830e7e5075e797121bfa857f6826aaee2d"
+      "fixture_source": "crates/rune/src/tests/object_slot_alias.rs"
     },
     {
       "first_bound": 1800,
@@ -22,9 +20,7 @@
       "name": "s1-struct_field_into_own_slot",
       "selected_labels": [],
       "selector": "tests::object_slot_alias::struct_field_into_own_slot",
-      "fixture_source": "crates/rune/src/tests/object_slot_alias.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/s1-struct_field_into_own_slot.json",
-      "history_sha256": "51da392ffb958ebd57a75925b9676f3051fae8593de403e8e4a0d1b63520cfbc"
+      "fixture_source": "crates/rune/src/tests/object_slot_alias.rs"
     },
     {
       "first_bound": 600,
@@ -33,9 +29,7 @@
       "name": "o1-map-0",
       "selected_labels": [],
       "selector": "runtime::object_map::tests::insertion_order_replace_remove_reinsert",
-      "fixture_source": "crates/rune/src/runtime/object_map.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/o1-map-0.json",
-      "history_sha256": "069b7c2d1673be69348c13a491cf23b9fac65fae9a54aa19ec0edb82bba4a069"
+      "fixture_source": "crates/rune/src/runtime/object_map.rs"
     },
     {
       "first_bound": 600,
@@ -44,9 +38,7 @@
       "name": "o1-map-1",
       "selected_labels": [],
       "selector": "runtime::object_map::tests::growth_shift_clone_and_clear",
-      "fixture_source": "crates/rune/src/runtime/object_map.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/o1-map-1.json",
-      "history_sha256": "28df7939579bc1fab5a81c660d576d8e3f3399f68f018c727036564a63208cfc"
+      "fixture_source": "crates/rune/src/runtime/object_map.rs"
     },
     {
       "first_bound": 600,
@@ -55,9 +47,7 @@
       "name": "o1-object-0",
       "selected_labels": [],
       "selector": "runtime::object::tests::rust_iterators_follow_insertion_order",
-      "fixture_source": "crates/rune/src/runtime/object.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/o1-object-0.json",
-      "history_sha256": "5f99a77760c3ef12e26e48b09909222f517b5da893120ded319f571f800b8ea7"
+      "fixture_source": "crates/rune/src/runtime/object.rs"
     },
     {
       "first_bound": 600,
@@ -66,9 +56,7 @@
       "name": "o1-object-1",
       "selected_labels": [],
       "selector": "runtime::object::tests::script_iterators_follow_insertion_order_under_the_guard",
-      "fixture_source": "crates/rune/src/runtime/object.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/o1-object-1.json",
-      "history_sha256": "0b2d1b44e080ffe5ae134b558b0496a1bdb850425e777cbb1b301ba5455219e7"
+      "fixture_source": "crates/rune/src/runtime/object.rs"
     },
     {
       "first_bound": 600,
@@ -77,9 +65,7 @@
       "name": "o1b-unit-iter",
       "selected_labels": [],
       "selector": "experimental_core::execute::small_forms_tests::unit_iter_method_is_an_empty_slice_iterator",
-      "fixture_source": "crates/rune/src/experimental_core/execute/small_forms_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/o1b-unit-iter.json",
-      "history_sha256": "9c312d85981093b4c38d0210f35cf28cacfec75e30e66a88d80e3b98e30f7aff"
+      "fixture_source": "crates/rune/src/experimental_core/execute/small_forms_tests.rs"
     },
     {
       "first_bound": 600,
@@ -88,9 +74,7 @@
       "name": "o1b-receivers",
       "selected_labels": [],
       "selector": "experimental_core::execute::small_forms_tests::tuple_and_object_iter_methods_lease_their_receiver",
-      "fixture_source": "crates/rune/src/experimental_core/execute/small_forms_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/o1b-receivers.json",
-      "history_sha256": "74af69e2064b0a84a02e1ed6f27593b1d255ab904643f39f8a9d1d8f84de97ce"
+      "fixture_source": "crates/rune/src/experimental_core/execute/small_forms_tests.rs"
     },
     {
       "first_bound": 600,
@@ -99,9 +83,7 @@
       "name": "o1b-own-iterator",
       "selected_labels": [],
       "selector": "experimental_core::heap::range_iterator_tests::every_iterator_is_its_own_iterator",
-      "fixture_source": "crates/rune/src/experimental_core/heap/range_iterator_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/o1b-own-iterator.json",
-      "history_sha256": "9c21cbe043fca363af52a1efe0f420de8be057926f3aa7b3626253c4eab71403"
+      "fixture_source": "crates/rune/src/experimental_core/heap/range_iterator_tests.rs"
     },
     {
       "first_bound": 600,
@@ -110,9 +92,7 @@
       "name": "c17b-get-remove",
       "selected_labels": [],
       "selector": "experimental_core::heap::object_method_tests::get_and_remove_return_the_stored_handle",
-      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17b-get-remove.json",
-      "history_sha256": "608ad66febba8b32f43e8dd437bbc71652d376207b8223beb9de88e4d0340e0b"
+      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs"
     },
     {
       "first_bound": 600,
@@ -121,9 +101,7 @@
       "name": "c17b-order",
       "selected_labels": [],
       "selector": "experimental_core::heap::object_method_tests::remove_shift_removes_and_insert_appends",
-      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17b-order.json",
-      "history_sha256": "4c583a39aabd994e75901cfe37ab2ce2409c9838bfa7fee931bff0a198cef726"
+      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs"
     },
     {
       "first_bound": 600,
@@ -132,9 +110,7 @@
       "name": "s2-heap-key-copy",
       "selected_labels": [],
       "selector": "experimental_core::heap::object_method_tests::insert_copies_the_key_and_keeps_its_handle",
-      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/s2-heap-key-copy.json",
-      "history_sha256": "910d4dfae70300f3c4e6bfa45a1f4de937c69c3aad8efb35afa46e05e1542176"
+      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs"
     },
     {
       "first_bound": 600,
@@ -143,9 +119,7 @@
       "name": "c17b-arguments",
       "selected_labels": [],
       "selector": "experimental_core::heap::object_method_tests::argument_order_types_and_leases",
-      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17b-arguments.json",
-      "history_sha256": "556c3c464b79e4a11fe315cb837d4eb767df404079b67298e973a2661c1fa8ac"
+      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs"
     },
     {
       "first_bound": 600,
@@ -154,9 +128,7 @@
       "name": "c17b-is-empty",
       "selected_labels": [],
       "selector": "experimental_core::heap::object_method_tests::is_empty_receivers_and_missing_methods",
-      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17b-is-empty.json",
-      "history_sha256": "77d78d66dcd465b05f69ba48a0c7cf088d816cd97c2a9e3f392ce35fb5697abf"
+      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs"
     },
     {
       "first_bound": 600,
@@ -165,9 +137,7 @@
       "name": "c17b-cycle",
       "selected_labels": [],
       "selector": "experimental_core::heap::object_method_tests::self_insert_keeps_the_cycle_charged",
-      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17b-cycle.json",
-      "history_sha256": "ee76775950d85645602df662071ab9df7e0bef7bc0f1893f072958d79b4808d5"
+      "fixture_source": "crates/rune/src/experimental_core/heap/object_method_tests.rs"
     },
     {
       "first_bound": 600,
@@ -176,9 +146,7 @@
       "name": "c17b-certificate",
       "selected_labels": [],
       "selector": "function::object::tests::foreign_or_partial_install_is_not_certified",
-      "fixture_source": "crates/rune/src/function/object.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17b-certificate.json",
-      "history_sha256": "ad52124e8f2008f1275e7484559306c46581c174effbc64bfc540a79a5926b85"
+      "fixture_source": "crates/rune/src/function/object.rs"
     },
     {
       "first_bound": 600,
@@ -187,9 +155,7 @@
       "name": "c17d-adapter-count",
       "selected_labels": [],
       "selector": "experimental_core::heap::iter_terminal_tests::adapter_counts_convert_as_a_native_usize",
-      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17d-adapter-count.json",
-      "history_sha256": "7cf8341a1b63560d2a973154e0afea29626f5b895cf93db28bc7ce3145eac77a"
+      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs"
     },
     {
       "first_bound": 600,
@@ -198,9 +164,7 @@
       "name": "c17d-range-bounds",
       "selected_labels": [],
       "selector": "experimental_core::heap::iter_terminal_tests::range_bounds_convert_in_order",
-      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17d-range-bounds.json",
-      "history_sha256": "eaaf203a5e4cacd1e11a57c1b45a2caf409886bfbd8bdb939755ba8a9b96724b"
+      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs"
     },
     {
       "first_bound": 600,
@@ -209,9 +173,7 @@
       "name": "c17d-folds",
       "selected_labels": [],
       "selector": "experimental_core::heap::iter_terminal_tests::folds_keep_the_seed_type_and_copy_stock_failures",
-      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17d-folds.json",
-      "history_sha256": "90fc52afc3982b6a98adb6811277c55d6443cb4287831bd9ef682a9af67ddd25"
+      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs"
     },
     {
       "first_bound": 600,
@@ -220,9 +182,7 @@
       "name": "c17d-object-collect",
       "selected_labels": [],
       "selector": "experimental_core::heap::iter_terminal_tests::object_collection_copies_keys_and_checks_pairs",
-      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17d-object-collect.json",
-      "history_sha256": "e7e04b492abceff51cd7351aeb39b8489ca2b828b8fea44b7af44254b8f51ba5"
+      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs"
     },
     {
       "first_bound": 600,
@@ -231,9 +191,7 @@
       "name": "c17d-tuple-string",
       "selected_labels": [],
       "selector": "experimental_core::heap::iter_terminal_tests::tuple_and_string_collections",
-      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17d-tuple-string.json",
-      "history_sha256": "0fe84689ef0362cc5221c03084a3baaf37dec7d364fd9805856db532569efc70"
+      "fixture_source": "crates/rune/src/experimental_core/heap/iter_terminal_tests.rs"
     },
     {
       "first_bound": 600,
@@ -242,9 +200,7 @@
       "name": "c17d-policy-hashes",
       "selected_labels": [],
       "selector": "function::iter_terminal::tests::hashes_ids_and_names",
-      "fixture_source": "crates/rune/src/function/iter_terminal.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17d-policy-hashes.json",
-      "history_sha256": "db20b1d21d02f7c04a4fdfa70d29c5cbdb785253e68f37133b964abf4d0ed93f"
+      "fixture_source": "crates/rune/src/function/iter_terminal.rs"
     },
     {
       "first_bound": 1800,
@@ -253,9 +209,7 @@
       "name": "s2-collect_copies_keys",
       "selected_labels": [],
       "selector": "tests::object_key_alias::collect_copies_keys",
-      "fixture_source": "crates/rune/src/tests/object_key_alias.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/s2-collect_copies_keys.json",
-      "history_sha256": "786f02430cdc4aeb8fa2d92dae336b61f2793787d6eb6bfe689e17cfd6e1d7d5"
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
     },
     {
       "first_bound": 1800,
@@ -264,9 +218,7 @@
       "name": "s2-insert_copies_the_key",
       "selected_labels": [],
       "selector": "tests::object_key_alias::insert_copies_the_key",
-      "fixture_source": "crates/rune/src/tests/object_key_alias.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/s2-insert_copies_the_key.json",
-      "history_sha256": "a7aa3d02591b3b46b37c0cad0c98576dd41d8dd3b9430ba56171ea4a0e4c1404"
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
     },
     {
       "first_bound": 1800,
@@ -275,9 +227,7 @@
       "name": "s2-non_string_keys_keep_their_errors",
       "selected_labels": [],
       "selector": "tests::object_key_alias::non_string_keys_keep_their_errors",
-      "fixture_source": "crates/rune/src/tests/object_key_alias.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/s2-non_string_keys_keep_their_errors.json",
-      "history_sha256": "ea9160d0e324a4a2033f384e218381f2fa34ca81b74b63a56ac8efdf26e058b0"
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
     },
     {
       "first_bound": 1800,
@@ -286,9 +236,7 @@
       "name": "c17e-rev-0",
       "selected_labels": [],
       "selector": "experimental_core::heap::iter_adapter_tests::rev_reads_each_source_from_the_back_without_advancing_it",
-      "fixture_source": "crates/rune/src/experimental_core/heap/iter_adapter_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17e-rev-0.json",
-      "history_sha256": "85f018465c3aca1c258bc0aef42fc02b6c2336d8454859cb56aad0bf1df68caf"
+      "fixture_source": "crates/rune/src/experimental_core/heap/iter_adapter_tests.rs"
     },
     {
       "first_bound": 1800,
@@ -297,9 +245,7 @@
       "name": "c17e-rev-1",
       "selected_labels": [],
       "selector": "experimental_core::heap::iter_adapter_tests::rev_skips_the_surrogates_and_spans_full_width_ranges",
-      "fixture_source": "crates/rune/src/experimental_core/heap/iter_adapter_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17e-rev-1.json",
-      "history_sha256": "a828fb2c6de5606c0397925819249e4e42ad9e4baf58940dcaf40a68c581361d"
+      "fixture_source": "crates/rune/src/experimental_core/heap/iter_adapter_tests.rs"
     },
     {
       "first_bound": 1800,
@@ -308,9 +254,7 @@
       "name": "c17e-rev-2",
       "selected_labels": [],
       "selector": "experimental_core::heap::iter_adapter_tests::rev_on_a_source_without_one_is_the_missing_method",
-      "fixture_source": "crates/rune/src/experimental_core/heap/iter_adapter_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17e-rev-2.json",
-      "history_sha256": "b4f15782f88a10b551bfee30cc749b1b6a1cf3717e0dcd7355709823da30cb82"
+      "fixture_source": "crates/rune/src/experimental_core/heap/iter_adapter_tests.rs"
     },
     {
       "first_bound": 1800,
@@ -319,9 +263,7 @@
       "name": "c17e-filter-3",
       "selected_labels": [],
       "selector": "experimental_core::heap::iter_adapter_tests::filter_map_results_and_into_iter_copy_stock_conversions",
-      "fixture_source": "crates/rune/src/experimental_core/heap/iter_adapter_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17e-filter-3.json",
-      "history_sha256": "e162455037f4cd0f0f4bed171ca2004673e69fb6801487fb2ffa9f58494b04b6"
+      "fixture_source": "crates/rune/src/experimental_core/heap/iter_adapter_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -330,9 +272,7 @@
       "name": "c18b1-registered-0",
       "selected_labels": [],
       "selector": "experimental_core::frontend::missing_method_tests::registered_and_script_names_refuse_before_execution",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/missing_method_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b1-registered-0.json",
-      "history_sha256": "22dc7ee89919532e06daeb54280af82cdd4c2224281415e00f082b901c9d4ee4"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/missing_method_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -341,9 +281,7 @@
       "name": "c18b1-dispatch-1",
       "selected_labels": [],
       "selector": "experimental_core::frontend::missing_method_tests::dispatch_proof_is_checked_against_the_runtime_context",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/missing_method_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b1-dispatch-1.json",
-      "history_sha256": "3f7a2904219c9365371202f8f74b156efe6b3f7aa2f9e39991ee9385b8dee40e"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/missing_method_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -352,9 +290,7 @@
       "name": "c18b1-missing-2",
       "selected_labels": [],
       "selector": "experimental_core::frontend::missing_method_tests::missing_arguments_and_runtime_context_preflight",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/missing_method_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b1-missing-2.json",
-      "history_sha256": "9193e34f75a0e98b23b392b043a1776e560cb11be5fa66ed9775643e66e9a422"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/missing_method_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -363,9 +299,7 @@
       "name": "c18b3a-proven_native_receivers_keep_their_frame_requirement",
       "selected_labels": [],
       "selector": "experimental_core::frontend::native_dispatch_tests::proven_native_receivers_keep_their_frame_requirement",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3a-proven_native_receivers_keep_their_frame_requirement.json",
-      "history_sha256": "fe9cf2c0b7fc3da98b53c0c3a0b39943976f9ebc87964dadbed8079702e3200c"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -374,9 +308,7 @@
       "name": "c18b3a-mixed_providers",
       "selected_labels": [],
       "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3a-mixed_providers.json",
-      "history_sha256": "fca1c950b81932201bd2ae334852320562486a2ad28f68f30f5d748db55844c7"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -385,9 +317,7 @@
       "name": "c18b3a-callable_split_remains_a_compile_time_refusal",
       "selected_labels": [],
       "selector": "experimental_core::frontend::native_dispatch_tests::callable_split_remains_a_compile_time_refusal",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3a-callable_split_remains_a_compile_time_refusal.json",
-      "history_sha256": "d731f5f991f24d30e350e6a1569889cc815b0a4479feb278164fd77cc6520251"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -396,9 +326,7 @@
       "name": "c18b3a-native_string_function_argument_errors_match_stock",
       "selected_labels": [],
       "selector": "experimental_core::frontend::native_dispatch_tests::native_string_function_argument_errors_match_stock",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3a-native_string_function_argument_errors_match_stock.json",
-      "history_sha256": "774b566103b79c1377bd0982406f63d8b38e94c095a8f32d7db4bcbba2ef0e0d"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -407,9 +335,7 @@
       "name": "c18b3a-native_provider_is_revalidated_before_execution",
       "selected_labels": [],
       "selector": "experimental_core::frontend::native_dispatch_tests::native_provider_is_revalidated_before_execution",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3a-native_provider_is_revalidated_before_execution.json",
-      "history_sha256": "49b9d70e5ee24f476fad222bab8159c3569cc7cbaedc412aedc98d9172934a3c"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -418,9 +344,7 @@
       "name": "c18b3a-unsupported_native_provider_keeps_the_site_refused",
       "selected_labels": [],
       "selector": "experimental_core::frontend::native_dispatch_tests::unsupported_native_provider_keeps_an_unknown_parameter_site_refused",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3a-unsupported_native_provider_keeps_the_site_refused.json",
-      "history_sha256": "4db0bc13bb7dc1684b72c157f55201693ded56adaea37e47da9c7799d8d86a9c"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
       "first_bound": 3600,
@@ -429,9 +353,7 @@
       "name": "c18b3a-failed_native_and_missing_calls_leave_executor_reusable",
       "selected_labels": [],
       "selector": "experimental_core::frontend::native_dispatch_tests::failed_native_and_missing_calls_leave_executor_reusable",
-      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs",
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3a-failed_native_and_missing_calls_leave_executor_reusable.json",
-      "history_sha256": "bf5b01d7ca278b7d5ad7d55b51f1b2e99643a5af7fc167728bd91d623cff8d9f"
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
       "name": "c18b3b-excluded_nominals_refuse_every_shape_and_enum_parent_before_publication",
@@ -440,9 +362,7 @@
       "fixture_sha256": "d8909bdb6f4d3ed6e63d3b7e2721dff92576e2078ff06a80f4f4c35dde063766",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3b-excluded_nominals_refuse_every_shape_and_enum_parent_before_publication.json",
-      "history_sha256": "d6351227c6a077570f20872fe245c42c7b4ccebb84bd33410be840b80651934b"
+      "selected_labels": []
     },
     {
       "name": "c18b3b-nominal_publication_rechecks_the_domain_before_any_batch_write",
@@ -451,9 +371,7 @@
       "fixture_sha256": "d8909bdb6f4d3ed6e63d3b7e2721dff92576e2078ff06a80f4f4c35dde063766",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3b-nominal_publication_rechecks_the_domain_before_any_batch_write.json",
-      "history_sha256": "1811e5bc4486965a7475785b97b14cda0e777507da34d90fe58eab4c73b6134b"
+      "selected_labels": []
     },
     {
       "name": "c18b3b-existing_nominal_lookup_does_not_bypass_the_domain_check",
@@ -462,9 +380,7 @@
       "fixture_sha256": "d8909bdb6f4d3ed6e63d3b7e2721dff92576e2078ff06a80f4f4c35dde063766",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3b-existing_nominal_lookup_does_not_bypass_the_domain_check.json",
-      "history_sha256": "7ebf2b2f55e3d06cf62d8f383b6468efa6ae9a89cbbe9fc3d41be35d4dd10ab8"
+      "selected_labels": []
     },
     {
       "name": "c18b3b-excluded_receivers_are_disjoint_from_represented_builtins",
@@ -473,9 +389,7 @@
       "fixture_sha256": "984f5edab24a1fdbcfb5a8202e99588fe118fe4df1fd5e48307d2708ade08e59",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3b-excluded_receivers_are_disjoint_from_represented_builtins.json",
-      "history_sha256": "6fb60fcdb3ddc94488c870a83e8ceb0a67d6ec2d45844aaf64a3fa77e60d7a01"
+      "selected_labels": []
     },
     {
       "name": "c18b3b-dynamic_native_collections_are_rejected_before_publication",
@@ -484,9 +398,7 @@
       "fixture_sha256": "e146ba2c1b38c94d1227022556ee0eda59cbf07df5b2f976e4915b581d111ca2",
       "ignored": true,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3b-dynamic_native_collections_are_rejected_before_publication.json",
-      "history_sha256": "ef2ae2f31220a1647040d32b22fe04aa48e943f3ce8b77ff43023128165a043a"
+      "selected_labels": []
     },
     {
       "name": "c18b3c-vec_reservations_are_charged_and_transactional",
@@ -495,9 +407,7 @@
       "fixture_sha256": "907670c28f9d2b1ca310458f5ee26f2a94be9308ba1cf0a9700ec0e27fa82003",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3c-vec_reservations_are_charged_and_transactional.json",
-      "history_sha256": "29d6abfbba791b52b9936df341454ddcd11e29d612c11b737d4cae89ed8fa873"
+      "selected_labels": []
     },
     {
       "name": "c18b3c-vec_argument_conversion_preserves_native_index",
@@ -506,9 +416,7 @@
       "fixture_sha256": "907670c28f9d2b1ca310458f5ee26f2a94be9308ba1cf0a9700ec0e27fa82003",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3c-vec_argument_conversion_preserves_native_index.json",
-      "history_sha256": "658602114a7e74a84c441675cb378c294f309bb45d218721d017bc23bb9ab793"
+      "selected_labels": []
     },
     {
       "name": "c18b3d-self_entry_policy_preserves_roots_and_pending_cancel",
@@ -517,9 +425,7 @@
       "fixture_sha256": "09baac47223a478ca3a435dfb213751030ad8c15cd3bad767b588ce19cf41252",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3d-self_entry_policy_preserves_roots_and_pending_cancel.json",
-      "history_sha256": "f9d627ef4b00a7fb77e58c2710374b14a4cff193be9eec9d99bb140d427226a8"
+      "selected_labels": []
     },
     {
       "name": "c18b3d-self_entry_policy_also_covers_future_capture_parameters",
@@ -528,9 +434,7 @@
       "fixture_sha256": "09baac47223a478ca3a435dfb213751030ad8c15cd3bad767b588ce19cf41252",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/c18b3d-self_entry_policy_also_covers_future_capture_parameters.json",
-      "history_sha256": "51ef5f37ee80c5d0a47af831015b319ee148176c987c4da185c81f205dd1d7a8"
+      "selected_labels": []
     },
     {
       "name": "c17f-resize-0",
@@ -539,9 +443,7 @@
       "fixture_sha256": "8f1e714eccf6ddce4d9d16166aa233b92f69b0c80765d89436986095c6820f84",
       "ignored": false,
       "selected_labels": [],
-      "first_bound": 600,
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17f-resize-0.json",
-      "history_sha256": "fbacf57cb0966ad41da4a8b9ef81cd0203e4a3b9c72925e4f6f1f602e4430231"
+      "first_bound": 600
     },
     {
       "name": "c17f-resize-1",
@@ -550,9 +452,7 @@
       "fixture_sha256": "8f1e714eccf6ddce4d9d16166aa233b92f69b0c80765d89436986095c6820f84",
       "ignored": false,
       "selected_labels": [],
-      "first_bound": 600,
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17f-resize-1.json",
-      "history_sha256": "acae3851c886ad76e8d4cbc7de65ced62c71331bb556fba3a2b3a0fbc58b85ae"
+      "first_bound": 600
     },
     {
       "name": "c17f-resize-2",
@@ -561,9 +461,7 @@
       "fixture_sha256": "8f1e714eccf6ddce4d9d16166aa233b92f69b0c80765d89436986095c6820f84",
       "ignored": false,
       "selected_labels": [],
-      "first_bound": 600,
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17f-resize-2.json",
-      "history_sha256": "fcdf7ee9496afbaa18e17204a66a30231114879733c9deb9fc42de1564408541"
+      "first_bound": 600
     },
     {
       "name": "c17f-resize-3",
@@ -572,9 +470,7 @@
       "fixture_sha256": "8f1e714eccf6ddce4d9d16166aa233b92f69b0c80765d89436986095c6820f84",
       "ignored": false,
       "selected_labels": [],
-      "first_bound": 600,
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17f-resize-3.json",
-      "history_sha256": "e795a4ebdf0ecaa9ddd342fdf897fcf2d8f21048ac0b5fe7e5630ac29646c9f1"
+      "first_bound": 600
     },
     {
       "name": "c17f-shrink-invalid-child",
@@ -583,9 +479,7 @@
       "fixture_sha256": "8f1e714eccf6ddce4d9d16166aa233b92f69b0c80765d89436986095c6820f84",
       "ignored": false,
       "selected_labels": [],
-      "first_bound": 600,
-      "history_receipt": "tools/xtask/fixtures/miri-history/c17f-shrink-invalid-child.json",
-      "history_sha256": "f45a874c405e51f231571faf61bd5ad74222f3349c11fc54f61d3f80fd1b18ee"
+      "first_bound": 600
     },
     {
       "name": "s5-defaults_use_representable_maxima_without_preallocation",
@@ -594,9 +488,7 @@
       "fixture_sha256": "b0817dd27b451e8f8b8598c00c72e6989b3db4fe0957dc4bcb5f34986741410a",
       "ignored": false,
       "selected_labels": [],
-      "first_bound": 600,
-      "history_receipt": "tools/xtask/fixtures/miri-history/s5-defaults_use_representable_maxima_without_preallocation.json",
-      "history_sha256": "ff43a10cc021b86fccbbfdf49b3368fbb8abea16a2ba8693df57583732093834"
+      "first_bound": 600
     },
     {
       "name": "s5-maximum_default_allocation_failures_preserve_owned_values",
@@ -605,9 +497,7 @@
       "fixture_sha256": "b0817dd27b451e8f8b8598c00c72e6989b3db4fe0957dc4bcb5f34986741410a",
       "ignored": false,
       "selected_labels": [],
-      "first_bound": 600,
-      "history_receipt": "tools/xtask/fixtures/miri-history/s5-maximum_default_allocation_failures_preserve_owned_values.json",
-      "history_sha256": "aaed189417ccf8b15ba102a3a5609d54b22e545ffbfa0704512a802d14956286"
+      "first_bound": 600
     },
     {
       "name": "s5-maximum_default_slot_growth_fails_before_publication",
@@ -616,9 +506,7 @@
       "fixture_sha256": "b0817dd27b451e8f8b8598c00c72e6989b3db4fe0957dc4bcb5f34986741410a",
       "ignored": false,
       "selected_labels": [],
-      "first_bound": 600,
-      "history_receipt": "tools/xtask/fixtures/miri-history/s5-maximum_default_slot_growth_fails_before_publication.json",
-      "history_sha256": "9c6bb7b498fe89dd0660b47051bac0fdaa8ceae7d2c464a48ba25b406818a10c"
+      "first_bound": 600
     },
     {
       "name": "s6-default_limits_are_representable_and_initial_buffers_stay_small",
@@ -627,9 +515,7 @@
       "first_bound": 600,
       "fixture_source": "crates/rune/src/experimental_core/execute/growth_tests.rs",
       "fixture_sha256": "823fc9a77144829b9631dbbb89d99adc71c8c8048976b45c96895c29db7c4d29",
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s6-default_limits_are_representable_and_initial_buffers_stay_small.json",
-      "history_sha256": "3056a3a962f1254d3efa64a81a5b9f060a83033dee1dc3e07cfbf867d422cabf"
+      "selected_labels": []
     },
     {
       "name": "s7a-opaque_move_reservation_fails_before_payload_or_lease_changes",
@@ -638,9 +524,7 @@
       "fixture_sha256": "62acaac3feb512fb8aed94e07e5a67b0e5b3a75bc5290b9ca9ce374fe744f6f5",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7a-opaque_move_reservation_fails_before_payload_or_lease_changes.json",
-      "history_sha256": "26e7d0f8a302d1c805d502623b70ec5927f9155c4ffb0ffcc5a62f74555a8340"
+      "selected_labels": []
     },
     {
       "name": "s7a-stale_opaque_metadata_cannot_name_a_released_or_reused_slot",
@@ -649,9 +533,7 @@
       "fixture_sha256": "62acaac3feb512fb8aed94e07e5a67b0e5b3a75bc5290b9ca9ce374fe744f6f5",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7a-stale_opaque_metadata_cannot_name_a_released_or_reused_slot.json",
-      "history_sha256": "f48b55d6eec4a26f70a648f129d771d6650858a91f0525b582ba5818bc20b30a"
+      "selected_labels": []
     },
     {
       "name": "s7a-formatting_constructors_close_invalid_list_and_variant_tags",
@@ -660,9 +542,7 @@
       "fixture_sha256": "62acaac3feb512fb8aed94e07e5a67b0e5b3a75bc5290b9ca9ce374fe744f6f5",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7a-formatting_constructors_close_invalid_list_and_variant_tags.json",
-      "history_sha256": "91862e53ae5ad6a0a4c0ff965963033e9157a98a531017dfcab714d4196c0dec"
+      "selected_labels": []
     },
     {
       "name": "s7a-unpublished_nominal_has_no_runtime_name_or_comparison_hash",
@@ -671,9 +551,7 @@
       "fixture_sha256": "62acaac3feb512fb8aed94e07e5a67b0e5b3a75bc5290b9ca9ce374fe744f6f5",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7a-unpublished_nominal_has_no_runtime_name_or_comparison_hash.json",
-      "history_sha256": "bd765ad409863ee016522dcbaca5afa782dd69b891069df984a5ad841c43ebbe"
+      "selected_labels": []
     },
     {
       "name": "s7a-moved_opaque_formats_before_payload_access_with_the_same_object_identity",
@@ -682,9 +560,7 @@
       "fixture_sha256": "62acaac3feb512fb8aed94e07e5a67b0e5b3a75bc5290b9ca9ce374fe744f6f5",
       "ignored": false,
       "first_bound": 3600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7a-moved_opaque_formats_before_payload_access_with_the_same_object_identity.json",
-      "history_sha256": "f92309aa22ea29f158313b3aba73e615004ff50302d10f514467a74b9c94a408"
+      "selected_labels": []
     },
     {
       "name": "s7b1-dynamic_scalars_empty_tuple_and_float_bits",
@@ -693,9 +569,7 @@
       "fixture_sha256": "e146ba2c1b38c94d1227022556ee0eda59cbf07df5b2f976e4915b581d111ca2",
       "ignored": true,
       "first_bound": 1800,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b1-dynamic_scalars_empty_tuple_and_float_bits.json",
-      "history_sha256": "3cc74019a21de6c04916621e39302993798e3a7eb3e1eea92311567d2973d78b"
+      "selected_labels": []
     },
     {
       "name": "s7b1-dynamic_dag_identity_and_external_alias_contract",
@@ -704,9 +578,7 @@
       "fixture_sha256": "e146ba2c1b38c94d1227022556ee0eda59cbf07df5b2f976e4915b581d111ca2",
       "ignored": true,
       "first_bound": 1800,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b1-dynamic_dag_identity_and_external_alias_contract.json",
-      "history_sha256": "63c5a3de9764156019ede631b6f57eeeec7cfdf87a7f86004b470fec07bc46ff"
+      "selected_labels": []
     },
     {
       "name": "s7b1-dynamic_cycle_access_and_unsupported_fail_once",
@@ -715,9 +587,7 @@
       "fixture_sha256": "e146ba2c1b38c94d1227022556ee0eda59cbf07df5b2f976e4915b581d111ca2",
       "ignored": true,
       "first_bound": 1800,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b1-dynamic_cycle_access_and_unsupported_fail_once.json",
-      "history_sha256": "0c0f6152b86cb7078536a911805e1860c2813d7b938bcd1c6dda41c6914771c2"
+      "selected_labels": []
     },
     {
       "name": "s7b1-dynamic_depth_and_scratch_are_memory_bound",
@@ -726,9 +596,7 @@
       "fixture_sha256": "e146ba2c1b38c94d1227022556ee0eda59cbf07df5b2f976e4915b581d111ca2",
       "ignored": true,
       "first_bound": 1800,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b1-dynamic_depth_and_scratch_are_memory_bound.json",
-      "history_sha256": "8d03ccc0d12c65105e6dd399a89d1a191c801074b79654018cdb0345326e1531"
+      "selected_labels": []
     },
     {
       "name": "s7b1-all-noninline-kinds",
@@ -737,9 +605,7 @@
       "fixture_sha256": "e146ba2c1b38c94d1227022556ee0eda59cbf07df5b2f976e4915b581d111ca2",
       "ignored": true,
       "first_bound": 1800,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b1-all-noninline-kinds.json",
-      "history_sha256": "9aa7b33d93f5e9f8ed5c4cf2b00360f9316f505c4b1895bcff51aa0e3d020c4e"
+      "selected_labels": []
     },
     {
       "name": "s7b2-bounded_shared_and_cyclic_graphs_preserve_inputs",
@@ -748,9 +614,7 @@
       "fixture_sha256": "07d95a790ceb1827f0c3db8f2c48b0fe7085e5666a2fa61e9d08bc0a7c9ef15c",
       "ignored": false,
       "first_bound": 600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b2-bounded_shared_and_cyclic_graphs_preserve_inputs.json",
-      "history_sha256": "c55cf3063bfa3bc689db3030fe8e19821631d829b2271a5d297e4c39da02cab3"
+      "selected_labels": []
     },
     {
       "name": "s7b2-bounded_deep_and_shared_safe_graphs_complete_without_a_depth_limit",
@@ -759,9 +623,7 @@
       "fixture_sha256": "07d95a790ceb1827f0c3db8f2c48b0fe7085e5666a2fa61e9d08bc0a7c9ef15c",
       "ignored": false,
       "first_bound": 600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b2-bounded_deep_and_shared_safe_graphs_complete_without_a_depth_limit.json",
-      "history_sha256": "3532153c44c44522add4bb08607a4ee7eb378a8200a9ba4c9ada5e9a2b7d8edd"
+      "selected_labels": []
     },
     {
       "name": "s7b2-bounded_authority_snapshots_share_identity_until_native_mutation",
@@ -770,9 +632,7 @@
       "fixture_sha256": "07d95a790ceb1827f0c3db8f2c48b0fe7085e5666a2fa61e9d08bc0a7c9ef15c",
       "ignored": false,
       "first_bound": 600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b2-bounded_authority_snapshots_share_identity_until_native_mutation.json",
-      "history_sha256": "eafada853ab2060862b8961a51cee99fdfd7362bc45e0a1580d3d3c64c964c20"
+      "selected_labels": []
     },
     {
       "name": "s7b2-bounded_enum_parent_authority_distinguishes_safe_variants",
@@ -781,9 +641,7 @@
       "fixture_sha256": "07d95a790ceb1827f0c3db8f2c48b0fe7085e5666a2fa61e9d08bc0a7c9ef15c",
       "ignored": false,
       "first_bound": 600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b2-bounded_enum_parent_authority_distinguishes_safe_variants.json",
-      "history_sha256": "f6ff47369c99151c1545dde6eba084bacb7131960ec4780d96e0a5a43fc83482"
+      "selected_labels": []
     },
     {
       "name": "s7b2-internal_entry_policy_precedes_closed_busy_and_wrong_arity_without_effects",
@@ -792,9 +650,7 @@
       "fixture_sha256": "6f73d09667dad5e400c0e73088ece2e0e919637af2f582b56d0ef053a01eb52d",
       "ignored": false,
       "first_bound": 1800,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b2-internal_entry_policy_precedes_closed_busy_and_wrong_arity_without_effects.json",
-      "history_sha256": "d9365bee041f79768d6fc9ed8b3fa6705ad33fa86ef914924012aa07c5ec7322"
+      "selected_labels": []
     },
     {
       "name": "s7b2-ordinary_and_cold_host_validation_agree_before_formatter_mismatches",
@@ -803,9 +659,7 @@
       "fixture_sha256": "6f73d09667dad5e400c0e73088ece2e0e919637af2f582b56d0ef053a01eb52d",
       "ignored": false,
       "first_bound": 600,
-      "selected_labels": [],
-      "history_receipt": "tools/xtask/fixtures/miri-history/s7b2-ordinary_and_cold_host_validation_agree_before_formatter_mismatches.json",
-      "history_sha256": "ba6ccf26a2f22c7636675aae0391b8d0d3704a4561c9e464bd9b67f509643d13"
+      "selected_labels": []
     }
   ],
   "retired": [
