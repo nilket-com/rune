@@ -1,0 +1,34 @@
+V2a: portable Rune measurement and evidence tools
+
+Authority: V2 migration plan and Step 0 rulings, 2026-10-26.
+Anchor: published P11 and M7. Historical plans and frozen observations remain
+unchanged. Each repository owns its verification; Rune never requires rnx.
+
+Add a closed host configuration for resource and transport settings. Without
+one, correctness derives local parallelism from effective affinity and
+measurement requires an explicitly declared core. Keep actual machine settings
+outside version control and record the configuration and its hash in receipts.
+Remove host-specific active code and documentation; preserve historical logical
+labels in fixture manifests and separate them from physical input paths.
+
+Extend xtask with isolated release builds, frozen callgrind, counter and K1
+measurement protocols, typed host execution receipts, source-aware seals and
+atomic ledger entry and milestone recording. Resolve relative specification
+and output paths against the working directory and record absolute paths.
+Declare controller and analyzer inputs; reject incomplete seals and prove
+closure with restricted packages and optional-branch coverage, including the
+two P11 missing-input regressions. Preserve prior ledger history and the M7
+anchor. Keep process settings explicit and preserve measurement locking.
+
+Prove equivalence by replaying both S7b2 and P11/M7 historical raw data through
+the new implementation, including P11's failed analyzer invocation and
+accepted recovery. Preserve exact outputs, historical flags, original evidence,
+and logical-path identity; fresh hardware observations are separate results.
+Record the implementation's new identity rather than claiming old script bytes.
+Git contains code, small essential inputs and lightweight hashes, not bulk
+results. A durable archive requires a separately configured destination and
+verified restore; this slice neither deletes evidence nor claims archival.
+
+The rnx-owned combined workflow, attested parallel scheduling and wall-time
+acceptance follow separately. Local single-CPU Miri fallback must report that
+overlap was not exercised while preserving every correctness selector.

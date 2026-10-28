@@ -1,0 +1,48 @@
+V2a addendum: self-contained tests and fresh measurements
+
+Authority: revised V2a Step 0 and rulings in the V2 discussion. This addendum
+supersedes the earlier archival and historical-output replay requirements.
+The self-contained guarantee begins with the first commit passing the acceptance
+below; earlier commits are unchanged and are not claimed reproducible.
+
+Test input programs and deterministic generators belong in the owning repository.
+Each input file is smaller than one megabyte. Retain the L1 and contract corpus
+inputs in Rune, deduplicating by content where source identity and the loader
+permit, with a small reconstructed case index. Do not add bulk observations,
+traces, receipts, binaries, or output files to Git. Run artifacts are scratch.
+
+Retire historical fresh-compiler emission byte checks for the L1 and method
+emission suites and historical serialized legacy Unit and diagnostic snapshot
+checks. They compare a compiler with its previous bytes rather than establishing
+correctness. Run the same L1 programs through both engines and compare observable
+behavior where both admit; use targeted assertions only for real design invariants.
+Classify all other stored stock, golden, AWFY and Miri-history observations per
+assertion: use a live comparison or a small literal design assertion, or retire
+the check. AWFY uses live engine comparison and explicit divergence assertions;
+Miri keeps selectors and bounds in Git without depending on old receipts.
+
+The downstream census records an explicit small admission-class table and
+compares observable behavior live whenever both compilers admit. Explicitly
+assert the existing Native, Method and Await refusal policies. Enrollment runs
+both engines live; assert the retained Arity and Resource divergences and the
+control, envelope, fuel and helper policies. Remove stored census expected
+outputs only with their replacements; never copy the external enrollment oracle.
+Rune must not depend on a downstream checkout.
+
+Commit Rune's lockfile and pin the default toolchain in rust-toolchain.toml.
+Pin and explicitly invoke the Miri nightly and its component from committed
+configuration. The downstream lockfile's pinned Git dependency is obtained from
+its declared source, or a declared read-only prefetched cache; a sibling checkout
+is not required. Cross-revision checks remain an explicit opt-in.
+
+Acceptance: from a fresh clone in a sandbox exposing the checkout, pinned
+toolchains and declared dependency sources only, run one documented command per
+repository. Verify that unrelated home paths, review data and sibling repositories
+cannot be read. The Rune command is cargo xtask verify with scratch under target
+by default; the downstream command likewise has no required path arguments.
+Measure performance by freshly rebuilding the committed baseline and candidate;
+maintain a small committed milestone registry. Do not depend on historical run
+artifacts or claim that fresh hardware counters reproduce old bytes.
+
+Existing external review data and the separate orchestration repository are
+untouched. Ephemeral job orchestration is a subsequent slice.
