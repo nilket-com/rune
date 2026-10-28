@@ -1,4 +1,4 @@
-//! Certified associated cmp only: no VM/native invocation or recursive walk.
+//! Certified associated cmp without VM or native invocation.
 use super::*;
 use crate::experimental_core::error::{
 	Detail, HostCause, IntTarget, IntValue, MovedAccess, TypeName,
@@ -46,6 +46,27 @@ impl Store {
 			}
 		})
 	}
+	fn cmp_structural_argument(&self, value: Value, arg: u8) -> Result<()> {
+		if let Value::Heap(handle) = value {
+			self.payload(handle).map_err(|error| {
+				if matches!(
+					error.detail,
+					Detail::Moved {
+						access: MovedAccess::Read
+					}
+				) {
+					error.with_detail(Detail::CmpArgumentAccess {
+						arg,
+						access: MovedAccess::Read,
+					})
+				} else {
+					error
+				}
+			})?;
+		}
+		Ok(())
+	}
+
 	#[cold]
 	#[inline(never)]
 	pub(crate) fn method_cmp(&self, lhs: Value, rhs: Value) -> Result<Value> {
@@ -77,7 +98,7 @@ impl Store {
 					return Err(self.cmp_argument_type(TypeName::F64, rhs)?);
 				};
 				a.partial_cmp(&b).ok_or_else(|| {
-					err(ErrorKind::Type).with_detail(Detail::FloatComparison {
+					err(ErrorKind::IllegalFloatComparison).with_detail(Detail::FloatComparison {
 						lhs_bits: a.to_bits(),
 						rhs_bits: b.to_bits(),
 					})
@@ -101,8 +122,18 @@ impl Store {
 					| TypeName::Vec
 					| TypeName::Option
 					| TypeName::Result
-					| TypeName::Range => {
-						return Err(Error::new(ErrorKind::Unsupported, "Method"));
+					| TypeName::Range
+					| TypeName::RangeFrom
+					| TypeName::RangeFull
+					| TypeName::RangeInclusive
+					| TypeName::RangeTo
+					| TypeName::RangeToInclusive => {
+						self.cmp_structural_argument(lhs, 0)?;
+						self.cmp_structural_argument(rhs, 1)?;
+						self.method_compare_order(lhs, rhs).map_err(|mut error| {
+							error.operation = "Method";
+							error
+						})?
 					}
 					_ => {
 						let instance = match target {
@@ -180,6 +211,7 @@ mod tests {
 		let err = store
 			.method_cmp(Value::F64(f64::from_bits(bits)), Value::F64(-0.0))
 			.unwrap_err();
+		assert_eq!(err.kind, ErrorKind::IllegalFloatComparison);
 		assert_eq!(
 			err.detail,
 			Detail::FloatComparison {
@@ -225,12 +257,91 @@ mod tests {
 		let err = store.method_cmp(vector, Value::Unit).unwrap_err();
 		assert_eq!(
 			(err.kind, err.operation, err.refusal),
-			(ErrorKind::Unsupported, "Method", None)
+			(ErrorKind::Type, "Method", None)
 		);
 		assert_eq!(store.state_for_test(), before);
 		store.release(vector).unwrap();
 		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 	}
+	#[test]
+	fn tuple_cmp_preserves_nan_bits_and_never_mutates_inputs() {
+		let mut store = Store::new(Limits::default()).unwrap();
+		let bits = 0x7ff8_0000_0000_1234;
+		let left = store
+			.list(Type::Tuple, &[Value::F64(f64::from_bits(bits))])
+			.unwrap();
+		let right = store.list(Type::Tuple, &[Value::F64(0.0)]).unwrap();
+		let before = store.state_for_test();
+		let error = store.method_cmp(left, right).unwrap_err();
+		assert_eq!(
+			(error.kind, error.operation),
+			(ErrorKind::IllegalFloatComparison, "Method")
+		);
+		assert_eq!(
+			error.detail,
+			Detail::FloatComparison {
+				lhs_bits: bits,
+				rhs_bits: 0.0f64.to_bits()
+			}
+		);
+		assert_eq!(store.state_for_test(), before);
+		store.release(left).unwrap();
+		store.release(right).unwrap();
+	}
+
+	#[test]
+	fn structural_cmp_failure_preserves_store_and_bounds_the_walk() {
+		let mut store = Store::new(Limits::default()).unwrap();
+		let mut nested = Value::I64(1);
+		for _ in 0..63 {
+			let next = store.list(Type::Vec, &[nested]).unwrap();
+			store.release(nested).unwrap();
+			nested = next;
+		}
+		assert_eq!(
+			store.method_cmp(nested, nested).unwrap(),
+			Value::Ordering(Equal)
+		);
+		let deeper = store.list(Type::Vec, &[nested]).unwrap();
+		assert_eq!(
+			store.method_cmp(deeper, deeper).unwrap(),
+			Value::Ordering(Equal)
+		);
+		let too_deep = store.list(Type::Vec, &[deeper]).unwrap();
+		let before = store.state_for_test();
+		assert_eq!(
+			store.method_cmp(too_deep, too_deep).unwrap_err().kind,
+			ErrorKind::ValueDepth
+		);
+		assert_eq!(before, store.state_for_test());
+		assert_eq!(
+			rune_alloc::limit::with(0, || store.method_cmp(nested, nested))
+				.call()
+				.unwrap_err()
+				.kind,
+			ErrorKind::Allocation
+		);
+		assert_eq!(before, store.state_for_test());
+		let cycle = store.list(Type::Vec, &[]).unwrap();
+		store.push(cycle, cycle).unwrap();
+		let before = store.state_for_test();
+		assert_eq!(
+			store.method_cmp(cycle, cycle).unwrap_err().kind,
+			ErrorKind::ValueDepth
+		);
+		assert_eq!(before, store.state_for_test());
+		store.invalidate(nested).unwrap();
+		for (lhs, rhs, arg) in [(nested, deeper, 0), (deeper, nested, 1)] {
+			let before = store.state_for_test();
+			let error = store.method_cmp(lhs, rhs).unwrap_err();
+			assert_eq!(
+				error.detail.numeric_argument(),
+				Some((HostCause::Access, arg))
+			);
+			assert_eq!(before, store.state_for_test());
+		}
+	}
+
 	#[test]
 	fn ordering_nested_equality_debug_and_display_use_the_immediate_value() {
 		let mut store = Store::new(Limits::default()).unwrap();

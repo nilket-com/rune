@@ -29,6 +29,8 @@ use std::{
 	vec::Vec,
 };
 
+#[path = "gap_hunt/s8_tuple.rs"]
+mod s8_tuple;
 
 pub(super) mod d1b_diagnostics;
 mod d1c_diagnostics;

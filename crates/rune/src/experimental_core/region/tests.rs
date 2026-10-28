@@ -28,6 +28,34 @@ use crate::experimental_core::{
 use crate::{Context, Diagnostics, Hash, Source, Sources};
 use std::vec::Vec as StdVec;
 
+#[test]
+fn tuple_type_test_operations_are_not_admitted_to_native_regions() {
+	let is = Op::Is {
+		out: 0,
+		value: 1,
+		tag: crate::experimental_core::value::Type::Tuple,
+		negate: false,
+	};
+	for op in [
+		is,
+		Op::Binary {
+			out: 0,
+			op: Binary::BitAnd,
+			lhs: 1,
+			rhs: 2,
+		},
+		Op::Binary {
+			out: 0,
+			op: Binary::BitOr,
+			lhs: 1,
+			rhs: 2,
+		},
+	] {
+		assert!(!super::admitted(op));
+		assert!(!super::inlinable(op));
+	}
+}
+
 pub(super) fn loc(n: u32) -> Location {
 	Location {
 		source: 1,

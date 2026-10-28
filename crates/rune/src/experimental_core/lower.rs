@@ -1964,6 +1964,50 @@ impl<'a, 'hir> Lower<'a, 'hir> {
 			};
 
 			let hash = tag.into_hash();
+			// Rune gives unit and tuple values the same public tuple type hash.
+			// Source-level type tests therefore match either internal tag. Keep
+			// exact-unit Op::Is unchanged for pattern matching.
+			use crate::TypeHash;
+			if !matches!(binary.op, BinOp::As(..)) && hash == crate::runtime::OwnedTuple::HASH {
+				let value = self.operand(binary.lhs)?;
+				let mark = self.next;
+				let unit = self.slot()?;
+				let tuple = self.slot()?;
+				let negate = matches!(binary.op, BinOp::IsNot(..));
+				self.emit(
+					Op::Is {
+						out: unit,
+						value,
+						tag: Type::Unit,
+						negate,
+					},
+					span,
+				)?;
+				self.emit(
+					Op::Is {
+						out: tuple,
+						value,
+						tag: Type::Tuple,
+						negate,
+					},
+					span,
+				)?;
+				self.emit(
+					Op::Binary {
+						out,
+						op: if negate {
+							Binary::BitAnd
+						} else {
+							Binary::BitOr
+						},
+						lhs: unit,
+						rhs: tuple,
+					},
+					span,
+				)?;
+				self.pop_to(mark, span)?;
+				return Ok(());
+			}
 			let Some(tag) = self.type_tag(hash, span)? else {
 				if !matches!(binary.op, BinOp::As(..))
 					&& hash == crate::hash_in!(crate, ::std::any::Type)

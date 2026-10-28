@@ -4,10 +4,12 @@
 //! nothing. Refusals before execution carry a [`Refusal`] category; run-time errors carry
 //! an [`ErrorKind`], optional owned [`Detail`], and, when known, a source [`Location`].
 
+pub use super::d1_message::d1_missing_method_message;
 pub use super::detail::{
 	AdmittedMethod, BinarySymbol, Detail, FieldRef, HostCause, HostDynamicReason, IntTarget,
 	IntValue, Message, MovedAccess, TypeName, UnarySymbol,
 };
+pub use super::error_class::{ErrorClass, ErrorOrigin, ErrorProjection, HostClass};
 
 /// The class of an error.
 ///
@@ -19,6 +21,8 @@ pub enum ErrorKind {
 	Unsupported,
 	/// An operand or value has the wrong type for the operation, including a missing display form.
 	Type,
+	/// Ordering a floating-point NaN is undefined; the detail retains both operands.
+	IllegalFloatComparison,
 	/// Checked integer arithmetic overflowed or underflowed.
 	Overflow,
 	/// Integer division or remainder by zero.

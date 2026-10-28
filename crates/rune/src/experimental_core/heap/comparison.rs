@@ -196,6 +196,29 @@ impl Store {
 	/// Iterative DFS: a non-equal child decides every enclosing comparison.
 	/// Continuations retain only borrowed views; errors leave roots/edges untouched.
 	pub(crate) fn compare(&self, op: Binary, a: Value, b: Value) -> Result<Value> {
+		let result = self.compare_order(op, a, b, false)?;
+		arithmetic::compare(
+			op,
+			result == Some(Ordering::Equal),
+			result == Some(Ordering::Less),
+			result == Some(Ordering::Greater),
+		)
+	}
+
+	/// Associated cmp uses the stock tuple/sequence relation, including unit
+	/// as an empty tuple. Binary operators retain their own stricter behavior.
+	pub(super) fn method_compare_order(&self, a: Value, b: Value) -> Result<Ordering> {
+		self.compare_order(Binary::Lt, a, b, true)?
+			.ok_or_else(|| Error::new(ErrorKind::Type, "Method"))
+	}
+
+	fn compare_order(
+		&self,
+		op: Binary,
+		a: Value,
+		b: Value,
+		method: bool,
+	) -> Result<Option<Ordering>> {
 		let equality = matches!(op, Binary::Eq | Binary::Ne);
 		let mut stack = Vec::new();
 		let mut first = Some(Task::Pair(Item::Value(a), Item::Value(b), 1));
@@ -230,7 +253,9 @@ impl Store {
 					}
 				}
 				Task::Pair(a, b, depth) => {
-					if depth > 64 {
+					// Associated cmp's receiver occupies one level outside the stock
+					// value walk; binary comparisons count the root within it.
+					if depth > if method { 65 } else { 64 } {
 						return Err(error(ErrorKind::ValueDepth).with_detail(Detail::ValueDepth));
 					}
 					// Validate handles before producing type diagnostics, without changing ownership.
@@ -284,7 +309,7 @@ impl Store {
 						},
 					)? {
 						// Unit is inline on the left, even though it is an empty iterable RHS.
-						if matches!(a, Item::Value(Value::Unit)) {
+						if matches!(a, Item::Value(Value::Unit)) && !method {
 							if matches!(b, Item::Value(Value::Unit)) {
 								None
 							} else {
@@ -395,6 +420,35 @@ impl Store {
 									None
 								}
 							}
+							Payload::OtherRange(shape) if method => {
+								let other = match b {
+									Item::Value(Value::Heap(h)) => match self.payload(h)? {
+										Payload::OtherRange(other) if shape.tag == other.tag => {
+											Some(other)
+										}
+										_ => None,
+									},
+									_ => None,
+								}
+								.ok_or_else(|| self.expected_pair(lhs, b))?;
+								let sequence = |shape: &super::ranges::RangeShape| match (
+									shape.start,
+									shape.end,
+								) {
+									(Some(start), Some(end)) => Sequence::Bounds(start, end),
+									(Some(value), None) | (None, Some(value)) => {
+										Sequence::One(Some(value))
+									}
+									(None, None) => Sequence::One(None),
+								};
+								stack.try_push(Task::Sequence(
+									sequence(shape),
+									sequence(other),
+									0,
+									depth,
+								))?;
+								None
+							}
 							payload @ (Payload::Range { .. } | Payload::ValueRange { .. }) => {
 								let bounds = payload.range_values()?;
 								let other = match b {
@@ -443,6 +497,20 @@ impl Store {
 							} else {
 								let lt = arithmetic::binary(Binary::Lt, a_value, b_value)?;
 								let gt = arithmetic::binary(Binary::Gt, a_value, b_value)?;
+								if method && lt != Value::Bool(true) && gt != Value::Bool(true) {
+									if let (Value::F64(left), Value::F64(right)) =
+										(a_value, b_value)
+									{
+										return Err(Error::new(
+											ErrorKind::IllegalFloatComparison,
+											"Method",
+										)
+										.with_detail(Detail::FloatComparison {
+											lhs_bits: left.to_bits(),
+											rhs_bits: right.to_bits(),
+										}));
+									}
+								}
 								Some(if lt == Value::Bool(true) {
 									Some(Ordering::Less)
 								} else if gt == Value::Bool(true) {
@@ -464,12 +532,7 @@ impl Store {
 				}
 			}
 		}
-		arithmetic::compare(
-			op,
-			result == Some(Ordering::Equal),
-			result == Some(Ordering::Less),
-			result == Some(Ordering::Greater),
-		)
+		Ok(result)
 	}
 }
 
