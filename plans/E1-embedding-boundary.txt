@@ -1,0 +1,184 @@
+E1: prepare invocations and expose read-only results
+
+Base: Rune 33df28715f8f6643e807c4a188cc6cea391687d0. Authority: Claude's
+Step 0 ruling in rune-routing, seq23650, and the user's 2026-10-28 ruling.
+The read-only report, seq23648, completes Step 0. E1 is product record #3
+since M7 and carries M8. One signed plan and one signed implementation in
+Rune. Amend this plan if its scope or acceptance changes.
+
+Purpose
+
+Provide the embedding boundary needed by rnx's later one-shot switch.
+Do not route rnx or change the legacy VM in E1. The execution core must
+stand independently of legacy execution; production must not compile or
+execute legacy bytecode to implement its work accounting or value view.
+
+Budget contract
+
+The allowance counts the execution core's own work units, not legacy VM
+instructions. Given allowance N, any admitted program that completes on
+legacy must also complete on the execution core with identical output.
+A new halt where legacy reaches any non-budget outcome fails acceptance.
+Per the clarifying rulings seq23661 and seq23666, the execution core may
+get further, never less far. A natural outcome includes a successful return
+or a terminal language error. Report these four classes by name and count:
+reaches-further/success, reaches-further/error, budget-annotation, and
+both-halt/further. Retain full raw streams and ordered host-effect logs.
+
+For reaches-further/error, run legacy again at a larger allowance in the
+test harness and require the same primary error with identical rendering.
+When both reach the same primary error, only legacy may add the exhausted-
+at-that-point annotation because its own allowance reached zero. The new
+engine adding it where legacy has remaining work fails acceptance.
+
+When both halt on budget, require the same diagnostic template and exit
+code, with the same location policy; the halt location may differ. Partial
+progress need not be equal. Legacy's partial stdout, stderr before the
+diagnostic and ordered effect log must each be a prefix of the new engine's.
+The new engine's partial streams and effects must each be a prefix of a
+live larger-allowance legacy run. Apply this prefix discipline to all four
+classes wherever partial output exists. A shorter new prefix or either
+failed prefix relation fails acceptance. The extra legacy runs are test-
+side checks only. A runtime failure never permits product re-execution.
+Check this property live at the Rune level over L1 and budget-edge
+witnesses, with native code disabled and enabled, including admitted
+callbacks. Fix any counterexample in metering; do not select legacy to
+hide it. Keep admission/refusal and compile-only cases separate from
+executed coverage. Do not alter existing preserved semantic policies or
+normalize output to manufacture equality.
+
+Prepared invocation
+
+Add a typed prepare operation that establishes entry policy, function
+identity and arity, argument ownership/generations, host-runtime pairing
+and formatting authority before program effects. Its explicit refusal
+type is the fallback boundary. Distinguish a policy refusal from invalid
+embedder input or allocation failure; runtime ErrorKind values are not a
+fallback allowlist. Context/host builders run once, with the exact same
+handler identities retained. Compilation already returns typed refusals;
+uncertified macro handlers must remain uncalled before that refusal.
+
+A prepared token borrows the immutable Program and arguments and holds
+exclusive access to the Executor and Store until consumed or dropped.
+This prevents changing bindings, limits, arguments or heap identity
+between validation and invocation. Dropping it executes nothing and
+retains no arguments. Its consuming invoke returns success or terminal
+failure, never a fallback decision. Keep the existing invoke/run API for
+current callers and use the same execution implementation. Preserve
+cancellation requests across preparation/refusal. No eager double compile.
+
+Read-only results
+
+Add a Rune-owned borrowed Root view, independent of legacy runtime Value.
+Validate owner, closed Store and generation at entry. Child views cannot
+outlive the Store or mutate/retain/release its heap. Expose scalars and
+string data; indexed list/tuple children; object field names and children;
+Option/Result discriminants and payloads; nominal names and shapes,
+including enum variants and tuple/empty forms; stable opaque graph
+identity for alias/cycle recognition; function and opaque type markers.
+Preserve moved/access failures rather than exposing invalid payloads.
+
+Keep inspection bounded and fallible: explicit traversal depth/node
+limits, checked indices and lengths, no recursive materialization or
+unbounded graph copying. Graph identity is an opaque comparable token,
+not a raw address or forgeable heap handle. A view must not run a script
+protocol or host callback. rnx's existing display and config policies will
+consume this surface in the routing record. No source projectors, text
+parsing, address stripping or automatic conversion into legacy Values.
+
+Formatting and cold failure outcome
+
+Provide a named formatting policy that imposes no smaller artificial
+bytes/nodes/depth/scratch ceiling than legacy script formatting. Store
+memory limits and checked representable allocation remain real bounds;
+do not reserve maxima. Keep the existing bounded default for embedders
+that choose it. The later rnx route explicitly selects the permissive
+policy before execution. Preview/result display limits are independent.
+
+Expose remaining work on a terminal invocation failure as typed cold
+outcome data. Distinguish failures before execution from an invocation
+whose allowance is exhausted, including a different primary error at
+zero remaining work. Capture it before cleanup without parsing messages,
+guessing from error kinds, adding a hot counter or changing fuel charges.
+
+Tests and acceptance
+
+- Live prepared-token witnesses: valid entry, refused entry/formatter,
+  wrong arity, foreign/stale roots, mismatched host identities, pending
+  cancellation, dropped token and runtime failure after one mutation.
+  Prove pre-effect refusal and exactly one execution after invocation.
+  Promote the custom-macro effect control into a committed live test.
+- Read-only view witnesses: shared children, self/mutual cycles, returned
+  Err, config containers, Unicode keys, named/tuple/empty nominal values,
+  enum variants, closures/function tokens, ranges/iterators, moved values,
+  closed/foreign/stale roots and traversal-limit boundaries. Compile-fail
+  examples prove borrow/ownership constraints. Test formatting policy
+  consumers without introducing an independent production renderer.
+- Live formatting comparison at and beyond 65,536 bytes, 4,096 nodes
+  and depth 32, including the 35,000-byte string duplicated after a
+  counted effect. Compare outputs and effects on both engines with the
+  permissive policy; bounded-policy refusals remain tested separately.
+- Test cold outcome data for zero fuel, exhaustion, primary failure on
+  the last charged instruction, early setup failure, cleanup and reuse,
+  native off/on. No new runtime retry path.
+- Commit live panic, index, println-plus-loop and ordered host-effect
+  budget-edge probes under all four classes, native off/on. Use actual
+  captured streams, typed remaining work and live larger-allowance legacy
+  controls; do not infer outcomes from prose or normalize differing output.
+- Put the executor API invariant in a Rune-owned test. Enumerate the
+  public surface and assert synchronous invocation, exclusive cancellation
+  and the prepared-token contract. rnx removes its cross-repository source
+  parsing when it consumes E1 in the routing record, retaining its own
+  exhaustive type assertion. Do not change the registry certificates or
+  method_policy/protocol_policy admission sets; a later certificate record
+  must explicitly update both duplicated policies.
+- Run existing correctness, L1, native and relevant Miri gates. Final
+  acceptance uses a fresh clone as rnxverify on strix. Both sides of
+  semantic and budget comparisons execute live; no stored output fixtures.
+
+M8
+
+Use protocol v2 and its current controllers, with an uncommitted local
+host configuration and source/compiler/linker/input/analyzer identities.
+Produce five fresh seals: callgrind-v1 (CGU1 and CGU16), counter2-v1 at
+each CGU, and k1-v1 at each CGU. Apply all CGU1 controls and bounds, the
+CGU16 candidate/M7 core +1% gate and the K1 +0.5% instruction gate. Do
+not inherit S8's candidate-specific qualifications. Keep normative harness
+measurements separate from shipping ThinLTO CLI measurements.
+Rebuild the M7 references as required by the standing measurement ruling
+seq23567. Preserve the canonical counter2 schedule seed
+24201f16ba83c60e7eea44b641967d5c; input generation records its separate seed.
+
+Investigate all five retained cycle signals: off/fib, while/off, while/on,
+CGU16 on/shared_rows, CGU1 off/shared_rows +2.81%. Fresh measurements of
+the relevant original source pairs are required where attribution needs
+them; a new candidate/M7 ratio does not erase an older signal. Run the
+dynamic_get forced-alignment diagnostic separately, changing only
+-C llvm-args=-align-all-functions=6 and verifying the resulting alignment
+and code identities. Layout remains a hypothesis until the evidence
+supports it. Do not ship alignment tuning or substitute diagnostic
+results for normative seals. Missing or multiplexed counters fail.
+
+Use the protocol's cycle soft rule and spreads. Measurements, host
+settings, receipts and results stay uncommitted under target/ or temp
+directories. No dependency on /home/me/work/.reviews.
+
+Deferred to the routing record
+
+Wire file/module/project/generated and adapter assembly runs, config and
+the internal startup probe through prepare. File run currently uses
+drive_async with WhenInterrupted::Finish. Its synchronous VM work is not
+sliced and has no between-instruction interrupt polling; the outer async
+watcher and runtime teardown remain separate. Preserve that finish policy.
+Fresh eval remains legacy with persistent sessions, Jupyter and servers;
+safe cancellation belongs to the later cancellation record. Unsupported
+external loaders select legacy before effects.
+
+The routing record adds Auto | Legacy, --engine=legacy and opt-in
+--debug-engine with separate route evidence; default N remains 2,000,000
+and user-facing budget docs say work units. It proves live CLI output,
+diagnostics and exits under the budget classes above as rnxverify on
+strix. Corpus arity/compile errors do not count as execution coverage;
+any zero-argument entry adapter must be hygienic. Native code is built
+in, but its default waits for the real CLI native off/on and LuaJIT
+benchmark and the user's ruling. E1 does not decide that default.
