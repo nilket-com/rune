@@ -341,6 +341,11 @@ fn native(ctx: &Context, m: &Manifest) -> Result<Value> {
 		let binary = ctx.build_rune(&l.name, &l.features)?;
 		let mut cmd = Command::new(&binary);
 		cmd.current_dir(&ctx.repo);
+		let edge_output = ctx.out.join(format!("{}-budget-edges", l.name));
+		let has_edges = matches!(l.name.as_str(), "execution-serde" | "native");
+		if has_edges {
+			cmd.env("E1_EDGE_OUTPUT", &edge_output);
+		}
 		if let Some(selector) = &l.selector {
 			cmd.arg(selector);
 		}
@@ -374,9 +379,37 @@ fn native(ctx: &Context, m: &Manifest) -> Result<Value> {
 			passed + failed,
 			l.passed
 		);
-		rows.push(json!({"name":l.name,"features":l.features,"passed":passed,"failed":failed,"flaky_rerun":retry,"expected":l.passed,"receipt":r.receipt,"seconds":r.seconds}));
+		let budget_classes = if has_edges {
+			read_json::<Value>(&edge_output.join("COUNTS.json"))?
+		} else {
+			Value::Null
+		};
+		rows.push(json!({"name":l.name,"features":l.features,"passed":passed,"failed":failed,"flaky_rerun":retry,"expected":l.passed,"receipt":r.receipt,"seconds":r.seconds,"budget_classes":budget_classes,"budget_observations":if has_edges {Some(edge_output)}else{None}}));
 	}
-	Ok(json!({"status":"PASS","libraries":rows}))
+	let mut docs = Vec::new();
+	for (label, selector) in [
+		(
+			"prepared-borrows",
+			"experimental_core::execute::PreparedInvocation",
+		),
+		("view-borrows", "experimental_core::heap::view::RootView"),
+	] {
+		let mut command = ctx.cargo();
+		command.args([
+			"test",
+			"--locked",
+			"-p",
+			"rune",
+			"--doc",
+			"--features",
+			"fmt,workspace,execution",
+			selector,
+		]);
+		let run = ctx.checked(label, &mut command, 600)?;
+		exact_counts(&fs::read_to_string(&run.stdout)?, 2)?;
+		docs.push(json!({"selector":selector,"receipt":run.receipt,"passed":2}));
+	}
+	Ok(json!({"status":"PASS","libraries":rows,"embedding_borrow_docs":docs}))
 }
 
 fn clippy(ctx: &Context, m: &Manifest) -> Result<Value> {

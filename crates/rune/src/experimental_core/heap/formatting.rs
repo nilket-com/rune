@@ -12,7 +12,7 @@ use core::fmt::{self, Write};
 use core::mem::size_of;
 
 // Only a proven moved native Debug receiver has argument-zero provenance.
-// Stock FormatSpec handles String directly; nominal/dynamic and unknown paths
+// Legacy FormatSpec handles String directly; nominal/dynamic and unknown paths
 // must keep the generic failure. Read the retained tag only after failure.
 #[cold]
 #[inline(never)]
@@ -75,6 +75,23 @@ pub struct FormatLimits {
 	pub depth: usize,
 	/// Maximum retained traversal/sort allocation capacities, in bytes.
 	pub scratch_bytes: usize,
+}
+
+impl FormatLimits {
+	/// No artificial formatting ceiling below platform-representable sizes.
+	///
+	/// Select this for script formatting when the embedder's work allowance and
+	/// Store limits govern execution. This does not reserve any memory. Checked
+	/// growth and fallible allocations still apply to traversal, output and the
+	/// resulting Store payload. Result previews use their own policy.
+	pub const fn permissive() -> Self {
+		Self {
+			bytes: usize::MAX,
+			nodes: usize::MAX,
+			depth: usize::MAX,
+			scratch_bytes: usize::MAX,
+		}
+	}
 }
 
 impl Default for FormatLimits {
@@ -207,7 +224,9 @@ impl<'a> Sink<'a> {
 
 	fn frame<'s>(&mut self, stack: &mut Vec<Frame<'s>>, frame: Frame<'s>) -> Result<()> {
 		let needed = stack.len().checked_add(1).ok_or_else(limit)?;
-		let max = self.limits.depth.checked_add(1).ok_or_else(limit)?;
+		// The inclusive maximum may be usize::MAX for the permissive policy.
+		// Actual frame growth remains checked and fallible.
+		let max = self.limits.depth.saturating_add(1);
 		if needed > max {
 			return Err(limit());
 		}
@@ -240,7 +259,7 @@ fn accounting() -> Error {
 	Error::new(ErrorKind::InvalidCode, "format accounting")
 }
 
-/// Debug and Display of a type value are both stock's `Type(<hash>)`.
+/// Debug and Display of a type value are both legacy's `Type(<hash>)`.
 #[cold]
 #[inline(never)]
 fn type_value(tag: Type, sink: &mut Sink<'_>) -> Result<()> {
@@ -667,7 +686,7 @@ impl Store {
 					.and_then(super::opaque::full_name)
 					.ok_or_else(invalid)?;
 				// Named Intentional divergence: the address is new's own object
-				// identity. Keep stock's full text and nested generic spelling.
+				// identity. Keep legacy's full text and nested generic spelling.
 				sink.formatted(format_args!("<{name} object at {:p}>", entry))?;
 				return Ok(None);
 			}
@@ -890,7 +909,7 @@ impl Store {
 				_ => return Err(invalid()),
 			},
 			Value::Type(tag) => type_value(tag, sink)?,
-			// Stock prints its bytecode offset here; new names the function index,
+			// Legacy prints its bytecode offset here; new names the function index,
 			// as the closure form does.
 			Value::Function { id, .. } if debug => {
 				sink.formatted(format_args!("immediate function (function: {id})"))?

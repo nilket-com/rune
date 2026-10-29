@@ -1,4 +1,4 @@
-//! Frozen stock oracles and the exact-self admission boundary.
+//! Frozen legacy oracles and the exact-self admission boundary.
 use super::*;
 use crate::experimental_core::{
 	execute::Executor,
@@ -435,6 +435,7 @@ fn self_entry_policy_empty_set_checks_code_only_in_invoke_code() {
 	let policy = policy.split("\n\t}").next().unwrap();
 	assert!(!policy.contains("self.code"));
 	let execute = include_str!("../execute.rs");
+	let execute = execute.split("impl Executor {").nth(1).unwrap();
 	let invoke = execute.split("pub fn invoke(").nth(1).unwrap();
 	let invoke = invoke.split("\n\t}").next().unwrap();
 	assert!(invoke.contains("program.formatting.guard() | self.runtime_format_guard"));
@@ -504,8 +505,8 @@ fn self_receiver_native_families_preserve_m3_lowering_or_match_stock() {
 			.with_context(&context)
 			.build_vm()
 			.unwrap();
-		let stock = crate::from_value::<i64>(vm.call(["main"], ()).unwrap()).unwrap();
-		assert_eq!(stock, row["stock_expected"].as_i64().unwrap());
+		let legacy = crate::from_value::<i64>(vm.call(["main"], ()).unwrap()).unwrap();
+		assert_eq!(legacy, row["stock_expected"].as_i64().unwrap());
 		let program = compile_source(source, &context).unwrap();
 		let run = program.function(Hash::type_hash(["S", "run"])).unwrap();
 		if row["M3"] == "Exact" {
@@ -550,7 +551,7 @@ fn self_receiver_native_families_preserve_m3_lowering_or_match_stock() {
 				10000,
 			)
 			.unwrap();
-		assert!(matches!(store.import(&root).unwrap(),Value::I64(value) if value==stock));
+		assert!(matches!(store.import(&root).unwrap(),Value::I64(value) if value==legacy));
 		store.root_release(root).unwrap();
 		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 	}

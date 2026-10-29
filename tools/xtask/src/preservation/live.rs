@@ -1,4 +1,4 @@
-//! Execute the checked-in L1 inputs in isolated stock and fresh child processes.
+//! Execute the checked-in L1 inputs in isolated legacy and fresh child processes.
 //! Unknown differences fail closed after the complete corpus has been surveyed.
 use super::inputs;
 use crate::common::{self, Context, Result};
@@ -89,11 +89,11 @@ fn valid_site(site: &Value) -> bool {
 
 // S7a explicitly accepts the differing opaque function Debug display, only
 // for the two cases whose value is the function object itself.
-fn opaque_function_debug(id: &str, stock: &str, fresh: &str) -> bool {
+fn opaque_function_debug(id: &str, legacy: &str, fresh: &str) -> bool {
 	if !matches!(id, "00620" | "02057") {
 		return false;
 	}
-	let old = stock
+	let old = legacy
 		.strip_prefix("immediate function (at: 0x")
 		.and_then(|s| s.strip_suffix(')'));
 	let new = fresh
@@ -106,18 +106,18 @@ fn opaque_function_debug(id: &str, stock: &str, fresh: &str) -> bool {
 fn classify(
 	id: &str,
 	mode: &str,
-	stock: &str,
+	legacy: &str,
 	fresh: &str,
-	stock_stdout: &[u8],
+	legacy_stdout: &[u8],
 	fresh_stdout: &[u8],
-	stock_stderr: &[u8],
+	legacy_stderr: &[u8],
 	fresh_stderr: &[u8],
-	stock_detail: Option<&Value>,
+	legacy_detail: Option<&Value>,
 	fresh_detail: Option<&Value>,
 ) -> Result<String> {
-	let s = phase(stock)?;
+	let s = phase(legacy)?;
 	let f = phase(fresh)?;
-	let streams_equal = stock_stdout == fresh_stdout && stock_stderr == fresh_stderr;
+	let streams_equal = legacy_stdout == fresh_stdout && legacy_stderr == fresh_stderr;
 	if f[0] == "refused" {
 		ensure!(
 			f[1].starts_with("Some(") && f[1].ends_with(')'),
@@ -146,7 +146,7 @@ fn classify(
 		return Ok("non-executed-or-observation-failure".into());
 	}
 	if s[0] == "error" || f[0] == "error" {
-		if let (Some(a), Some(b)) = (stock_detail, fresh_detail) {
+		if let (Some(a), Some(b)) = (legacy_detail, fresh_detail) {
 			let entry_arity = id == "00179"
 				&& mode == "main"
 				&& a["class"]["name"] == "ArgumentCount"
@@ -230,6 +230,23 @@ fn invoke(
 	mode: &str,
 	engine: &str,
 ) -> Result<(String, Vec<u8>, Vec<u8>, Option<Value>, Value)> {
+	invoke_child(
+		ctx, binary, corpus, case_dir, id, source, mode, engine, CHILD,
+	)
+}
+
+/// The common isolated process boundary for semantic and work observations.
+pub(super) fn invoke_child(
+	ctx: &Context,
+	binary: &Path,
+	corpus: &Path,
+	case_dir: &Path,
+	id: &str,
+	source: &str,
+	mode: &str,
+	engine: &str,
+	child: &str,
+) -> Result<(String, Vec<u8>, Vec<u8>, Option<Value>, Value)> {
 	let output = case_dir.join(engine);
 	fs::create_dir(&output)?;
 	let sandbox_source = format!("/corpus/{source}");
@@ -309,7 +326,7 @@ fn invoke(
 		"--",
 		"/rune-tests",
 		"--exact",
-		CHILD,
+		child,
 		"--ignored",
 		"--nocapture",
 		"--quiet",
@@ -343,12 +360,16 @@ fn invoke(
 }
 
 pub(super) fn run(ctx: &Context) -> Result<Value> {
+	let binary = ctx.test_binary()?;
+	run_with_binary(ctx, &binary)
+}
+
+pub(super) fn run_with_binary(ctx: &Context, binary: &Path) -> Result<Value> {
 	let modes = inputs::verify(&ctx.repo)?;
 	let corpus = ctx.repo.join("tools/xtask/corpus").canonicalize()?;
 	let index = fs::read_to_string(corpus.join("l1-cases.tsv"))?;
 	let cases = inputs::rows(&index)?;
-	let binary = ctx.test_binary()?;
-	let binary_sha256 = common::hash_file(&binary)?;
+	let binary_sha256 = common::hash_file(binary)?;
 	let root = ctx.out.join("cases");
 	fs::create_dir(&root)?;
 	let next = std::sync::atomic::AtomicUsize::new(0);
@@ -368,8 +389,8 @@ pub(super) fn run(ctx: &Context) -> Result<Value> {
 				let case_dir = root.join(id);
 				let result = (|| -> Result<_> {
 					fs::create_dir(&case_dir)?;
-					let s = invoke(ctx, &binary, &corpus, &case_dir, id, source, &mode, "stock")?;
-					let f = invoke(ctx, &binary, &corpus, &case_dir, id, source, &mode, "fresh")?;
+					let s = invoke(ctx, binary, &corpus, &case_dir, id, source, &mode, "stock")?;
+					let f = invoke(ctx, binary, &corpus, &case_dir, id, source, &mode, "fresh")?;
 					if phase(&f.0)?[0] != "refused" && phase(&s.0)?[0] != "compile-error" {
 						ensure!(
 							s.4 == f.4,
@@ -436,7 +457,7 @@ pub(super) fn run(ctx: &Context) -> Result<Value> {
 
 	ctx.verify_source()?;
 	ensure!(
-		common::hash_file(&binary)? == binary_sha256,
+		common::hash_file(binary)? == binary_sha256,
 		"L1 test binary changed"
 	);
 	let value = json!({"cases":2941,"input_modes":modes,"classes":counts,"unreviewed":unexpected,"detail_not_captured":detail_not_captured,"binary_sha256":binary_sha256});
@@ -451,8 +472,11 @@ pub(super) fn run(ctx: &Context) -> Result<Value> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-	fn c(id: &str, mode: &str, stock: &str, fresh: &str) -> String {
-		classify(id, mode, stock, fresh, b"out", b"out", b"", b"", None, None).unwrap()
+	fn c(id: &str, mode: &str, legacy: &str, fresh: &str) -> String {
+		classify(
+			id, mode, legacy, fresh, b"out", b"out", b"", b"", None, None,
+		)
+		.unwrap()
 	}
 	#[test]
 	fn narrow_policy_fails_closed() {
@@ -520,11 +544,11 @@ mod tests {
 	#[test]
 	fn uncaptured_detail_requires_exact_observables() {
 		let evidence = json!({"schema":1,"class":{"status":"class","name":"TypeMismatch"},"origin":"Unknown","site":{"source":0,"start":2,"end":5},"detail":null});
-		let run = |id: &str, stock: &str, fresh: &str, a: &Value, b: &Value| {
+		let run = |id: &str, legacy: &str, fresh: &str, a: &Value, b: &Value| {
 			classify(
 				id,
 				"main",
-				stock,
+				legacy,
 				fresh,
 				b"out",
 				b"out",
@@ -589,7 +613,7 @@ mod tests {
 				.map(|b| format!("{b:02x}"))
 				.collect::<String>()
 		};
-		let stock = format!(
+		let legacy = format!(
 			"error\tType\t\t{}\t",
 			hex("Type `std::i64` has no matching method")
 		);
@@ -602,7 +626,7 @@ mod tests {
 			classify(
 				"x",
 				"main",
-				&stock,
+				&legacy,
 				message,
 				b"",
 				b"",

@@ -37,6 +37,10 @@ mod text_methods;
 mod text_pipeline;
 mod variant_methods;
 pub(crate) use variant_methods::VariantOutcome;
+mod view;
+pub use view::{
+	NominalInfo, NominalShape, RootView, ValueIdentity, ValueView, ViewKind, ViewLimits,
+};
 
 #[cfg(feature = "native-code")]
 pub(crate) mod native;

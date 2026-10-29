@@ -2654,6 +2654,7 @@ dependencies = [
  "similar",
  "static_assertions",
  "stats_alloc",
+ "syn 2.0.119",
  "syntect",
  "syntree",
  "tokio",

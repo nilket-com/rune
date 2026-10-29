@@ -44,6 +44,7 @@ mod compile_diagnostics;
 mod diagnostics;
 mod differential;
 mod dispatch_state;
+mod embedding_boundary;
 mod executor;
 mod formatting;
 mod frontend;

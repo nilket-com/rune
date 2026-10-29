@@ -5,7 +5,7 @@
     {
       "name": "execution-serde",
       "features": "fmt,workspace,execution,capture-io,disable-io,sha2,serde",
-      "passed": 1471
+      "passed": 1484
     },
     {
       "name": "legacy",
@@ -15,7 +15,7 @@
     {
       "name": "native",
       "features": "fmt,workspace,native-code,capture-io,disable-io,sha2",
-      "passed": 1665
+      "passed": 1678
     },
     {
       "name": "warning-doc",

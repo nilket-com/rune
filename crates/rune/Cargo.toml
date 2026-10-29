@@ -22,7 +22,7 @@ tracing = ["tracing/enabled"]
 emit = ["std", "anyhow", "codespan-reporting"]
 bench = []
 # Opt-in execution core (unstable API); never enabled by default.
-# Needs `anyhow`: the stock compiler front end it drives uses `anyhow` under `std`.
+# Needs `anyhow`: the compiler frontend it drives uses `anyhow` under `std`.
 execution = ["std", "anyhow"]
 # P0 native loop-region tier for the execution core (unstable, experimental, off by default).
 # Analysis and exit simulator build everywhere; the Cranelift backend exists only on
@@ -97,6 +97,7 @@ cranelift-jit = { version = "=0.135.5", optional = true }
 region = { version = "=3.0.2", optional = true }
 
 [dev-dependencies]
+syn = { version = "2.0.104", features = ["full"] }
 serde_json = "1.0.96"
 sha2 = "0.11.0"
 tokio = { version = "1.28.1", features = ["full"] }

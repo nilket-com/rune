@@ -28,13 +28,19 @@ starts only after all selected native suites finish and runs at most two actual
 interpreters. The runner blocks on process completion; it does not poll process
 status. Existing host scheduling and measurement locks still apply.
 
-The L1 suite compares the checked-in programs on both engines. Both children
+The L1 suite compares the checked-in programs on both engines, with native
+code disabled and enabled. Both children
 use the default Rune context, without filesystem or network
 modules; the suite compares captured streams, return observations and full compile
 warning multisets for admitted programs. Warning order is ignored; multiplicity,
 source identity, spans, messages and auxiliary warning context are preserved. Runtime
 errors whose typed details are not captured on either side are accepted only
 with an exact message, and the report lists each such case explicitly.
+An additional isolated work audit uses the execution core's permissive script
+formatting policy. For each legacy completion it requires execution-core
+completion with no greater work charge. A legacy budget halt followed by a
+new completion is counted as `reaches-further/success`. Compile-only inputs and
+refusals are reported separately and do not count as execution coverage.
 Historical compiler emission byte checks and serialized Unit snapshots have been retired:
 they detected changes in stored output rather than comparing behavior. The
 corresponding L1 inputs remain in the live corpus. AWFY compares its benchmark
@@ -54,3 +60,11 @@ describe the host; the verification runner currently records the description
 and its hash but does not use it to launch remote jobs or reserve resources.
 Treat configuration receipts as sensitive if the local description contains
 private information.
+
+E1's isolated budget-edge probes cover `reaches-further/success`,
+`reaches-further/error`, `budget-annotation`, and `both-halt/further` with
+live larger-allowance legacy controls. They retain raw streams and ordered
+host effects and require progress prefixes in both directions. Primary
+errors and complete natural-outcome output must match. User-facing halt
+wording, location policy and exit status belong to the real CLI routing
+acceptance; these Rune probes observe typed outcomes and program streams.

@@ -33,6 +33,17 @@ const MAX_FRAMES: usize = {
 const INITIAL_FRAMES: usize = 8;
 const INITIAL_SLOTS: usize = 64;
 
+#[cfg(test)]
+std::thread_local! {
+	static LAST_REMAINING_WORK: core::cell::Cell<Option<usize>> = const { core::cell::Cell::new(None) };
+}
+
+/// Test observation at invocation completion, never a production work counter.
+#[cfg(test)]
+pub(crate) fn take_remaining_work_for_test() -> Option<usize> {
+	LAST_REMAINING_WORK.with(|remaining| remaining.take())
+}
+
 /// Logical invocation limits; bookkeeping grows with use. Allocator overgrowth
 /// can exceed these limits physically. Payloads and output are separate.
 /// Defaults allow platform-representable frame and slot buffers without reserving
@@ -154,6 +165,10 @@ struct Frame {
 /// script heap.
 #[derive(Debug)]
 pub struct Failure {
+	/// Remaining work after successful initial frame setup, captured before cleanup.
+	/// `None` means setup did not complete. `Some(0)` also applies when another
+	/// primary error used the last work unit. Neither value permits a retry.
+	pub remaining_work: Option<usize>,
 	numeric_context: Option<NumericContext>,
 	/// The error that stopped the invocation.
 	pub error: Error,
@@ -309,16 +324,17 @@ impl core::fmt::Display for FailureMessage<'_> {
 			if let Detail::Coerce { value, to } = error.detail {
 				return crate::runtime::messages::shift_coerce(
 					f,
-					if context.rhs == TypeName::U64 {
-						"u64"
-					} else {
-						"i64"
-					},
+					if context.rhs_unsigned { "u64" } else { "i64" },
 					value,
 					to,
 					context.op,
 				);
 			}
+			let lhs = if context.lhs_unsigned {
+				TypeName::U64
+			} else {
+				TypeName::I64
+			};
 			let reason = if error.detail == Detail::Underflow {
 				"Numerical underflow"
 			} else if error.kind == ErrorKind::DivisionByZero {
@@ -330,7 +346,7 @@ impl core::fmt::Display for FailureMessage<'_> {
 				f,
 				reason,
 				op,
-				crate::runtime::messages::Operand(&context.lhs),
+				crate::runtime::messages::Operand(&lhs),
 			);
 		}
 		core::fmt::Display::fmt(&self.failure.error.message(self.program), f)
@@ -369,6 +385,74 @@ pub struct Executor {
 	/// so `Executor` stays `Send`.
 	#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 	no_region_code: u32,
+}
+
+/// Preparation stopped before argument transfer or program execution.
+#[derive(Debug)]
+pub enum PrepareError {
+	/// A typed admission refusal. An embedder may choose legacy execution here.
+	Refused(super::error::Refusal),
+	/// Invalid embedder input or an operational failure, not a fallback decision.
+	Invalid(Error),
+}
+
+impl From<Error> for PrepareError {
+	fn from(error: Error) -> Self {
+		Self::Invalid(error)
+	}
+}
+
+/// An invocation whose admission is complete and whose inputs cannot change.
+///
+/// The exclusive borrows prevent changing the Store, executor configuration or
+/// arguments between preparation and execution. Dropping this token executes
+/// nothing and owns no transferred argument references. It is not resumable.
+///
+/// ```compile_fail
+/// use rune::experimental_core::{execute::Executor, frontend::Program, heap::Store};
+/// fn change(executor: &mut Executor, program: &Program, store: &mut Store) {
+///     let prepared = executor.prepare(program, store, 0, &[]).unwrap();
+///     executor.request_cancel();
+///     let _ = prepared.invoke(1);
+/// }
+/// ```
+///
+/// ```compile_fail
+/// use rune::experimental_core::{execute::Executor, frontend::Program, heap::Store};
+/// fn close(executor: &mut Executor, program: &Program, store: &mut Store) {
+///     let prepared = executor.prepare(program, store, 0, &[]).unwrap();
+///     store.close().unwrap();
+///     let _ = prepared.invoke(1);
+/// }
+/// ```
+#[must_use = "invoke the prepared program or drop it without executing"]
+pub struct PreparedInvocation<'a> {
+	executor: &'a mut Executor,
+	program: &'a Program,
+	store: &'a mut Store,
+	function: u32,
+	args: &'a [&'a Root],
+}
+
+impl core::fmt::Debug for PreparedInvocation<'_> {
+	fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+		f.debug_struct("PreparedInvocation").finish_non_exhaustive()
+	}
+}
+
+// Preserve the same unboxed public failure type as Executor::invoke.
+#[allow(clippy::result_large_err)]
+impl PreparedInvocation<'_> {
+	/// Execute exactly once. Every failure is terminal; none permits fallback.
+	pub fn invoke(self, work: usize) -> core::result::Result<Root, Failure> {
+		self.executor.invoke_ready(
+			&self.program.code,
+			self.store,
+			self.function,
+			self.args,
+			work,
+		)
+	}
 }
 
 fn error(kind: ErrorKind) -> Error {
@@ -489,6 +573,62 @@ impl Executor {
 		self.format_limits = limits;
 	}
 
+	/// Validate a complete invocation before any argument transfer or effect.
+	///
+	/// Only [`PrepareError::Refused`] is a fallback decision. A runtime failure
+	/// from the returned token is terminal, even if it carries refusal metadata.
+	/// Preparation does not consume work or a pending cancellation request.
+	pub fn prepare<'a>(
+		&'a mut self,
+		program: &'a Program,
+		store: &'a mut Store,
+		function: u32,
+		args: &'a [&'a Root],
+	) -> core::result::Result<PreparedInvocation<'a>, PrepareError> {
+		if store.is_closed() {
+			return Err(error(ErrorKind::ClosedStore).into());
+		}
+		if !self.is_idle() || self.active_host_runtime.is_some() {
+			return Err(error(ErrorKind::InvalidCode).into());
+		}
+		let entry = program
+			.code
+			.function(function)
+			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
+		if args.len() != entry.parameters as usize {
+			let mut error = error(ErrorKind::ArgumentCount);
+			error.detail = Detail::Arity {
+				given: u32::try_from(args.len()).unwrap_or(u32::MAX),
+				expected: entry.parameters,
+			};
+			return Err(error.into());
+		}
+		store.import_all(args.iter().copied())?;
+		program
+			.code
+			.validate_hosts(self.configured_host_runtime.as_deref())?;
+		// This is a read-only admission operation. Classify its explicit refusal,
+		// not a runtime ErrorKind, and never run this mapping after execution.
+		self.validate_format_entry(
+			Some(program),
+			(&program.code, function),
+			program.formatting.as_ref(),
+			store,
+			args,
+		)
+		.map_err(|error| match error.refusal {
+			Some(refusal) => PrepareError::Refused(refusal),
+			None => PrepareError::Invalid(error),
+		})?;
+		Ok(PreparedInvocation {
+			executor: self,
+			program,
+			store,
+			function,
+			args,
+		})
+	}
+
 	/// Single-shot entry: one invocation on an executor that is then dropped.
 	/// Literally `invoke`; there is no separate execution path.
 	pub fn run(
@@ -506,7 +646,7 @@ impl Executor {
 	///
 	/// Internal proof-dependent entries return [`super::error::Refusal::Entry`]
 	/// before argument transfer or any charged instruction. On Entry refusal,
-	/// run stock from the untouched input; never retry after charged execution.
+	/// run legacy from the untouched input; never retry after charged execution.
 	/// The function, its
 	/// arity and then every argument root (closed-store policy, store,
 	/// generation) are checked before any argument is retained: a refused
@@ -542,6 +682,7 @@ impl Executor {
 				args,
 			) {
 				return Err(Failure {
+					remaining_work: None,
 					numeric_context: None,
 					error,
 					missing_key: None,
@@ -575,6 +716,7 @@ impl Executor {
 				self.validate_format_entry(None, (code, function), authority.as_ref(), store, args)
 			{
 				return Err(Failure {
+					remaining_work: None,
 					numeric_context: None,
 					error,
 					missing_key: None,
@@ -588,6 +730,7 @@ impl Executor {
 		self.invoke_checked(code, store, function, args, fuel)
 	}
 
+	#[inline(always)]
 	fn invoke_checked(
 		&mut self,
 		code: &Code,
@@ -608,7 +751,7 @@ impl Executor {
 				.function(function)
 				.ok_or_else(|| error(ErrorKind::InvalidCode))?;
 			if args.len() != entry.parameters as usize {
-				// Stock raises the same error when an embedder calls an entry
+				// Legacy raises the same error when an embedder calls an entry
 				// with the wrong count.
 				let mut error = error(ErrorKind::ArgumentCount);
 				error.detail = Detail::Arity {
@@ -622,6 +765,7 @@ impl Executor {
 		})();
 		if let Err(error) = admission {
 			return Err(Failure {
+				remaining_work: None,
 				numeric_context: None,
 				error,
 				missing_key: None,
@@ -631,6 +775,20 @@ impl Executor {
 				cleanup_error: None,
 			});
 		}
+		self.invoke_ready(code, store, function, args, fuel)
+	}
+
+	// A token has already checked host/format/outer admission. Keep the shared
+	// interpreter's defensive frame checks and capture shape unchanged.
+	#[inline(always)]
+	fn invoke_ready(
+		&mut self,
+		code: &Code,
+		store: &mut Store,
+		function: u32,
+		args: &[&Root],
+		fuel: usize,
+	) -> core::result::Result<Root, Failure> {
 		self.active_host_runtime = self.configured_host_runtime.clone();
 		let result = {
 			#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
@@ -639,8 +797,21 @@ impl Executor {
 			let value = self.invoke_native(code, store, function, Args::Roots(args), fuel);
 			value
 		};
+		match result {
+			Ok(value) => {
+				self.active_host_runtime = None;
+				Ok(value)
+			}
+			Err(failure) => self.return_failure(failure),
+		}
+	}
+
+	// Keep the wide failure payload off the successful result-conversion path.
+	#[cold]
+	#[inline(never)]
+	fn return_failure(&mut self, failure: Failure) -> core::result::Result<Root, Failure> {
 		self.active_host_runtime = None;
-		result.map(|value| store.export(value))
+		Err(failure)
 	}
 
 	#[cold]
@@ -676,7 +847,7 @@ impl Executor {
 			.function(function)
 			.ok_or_else(|| error(ErrorKind::InvalidCode))?;
 		if args.len() != entry.parameters as usize {
-			// Stock raises the same error when an embedder calls an entry
+			// Legacy raises the same error when an embedder calls an entry
 			// with the wrong count.
 			let mut error = error(ErrorKind::ArgumentCount);
 			error.detail = Detail::Arity {
@@ -1104,6 +1275,7 @@ impl Executor {
 	// D21-derived execution logic preserved during extraction: the loops read fixed
 	// (slot, flag) pairs from the argument table.
 	#[allow(clippy::chunks_exact_to_as_chunks)]
+	#[inline(always)]
 	fn invoke_args<
 		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))] const NATIVE: bool,
 	>(
@@ -1115,7 +1287,8 @@ impl Executor {
 		mut fuel: usize,
 		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
 		regions: Option<&super::region::cache::ProgramRegions>,
-	) -> core::result::Result<Value, Failure> {
+	) -> core::result::Result<Root, Failure> {
+		let mut entered = false;
 		let mut setup_cleanup_error = None;
 		let mut missing_key = None;
 		let mut panic_message = None;
@@ -1133,6 +1306,7 @@ impl Executor {
 				setup_cleanup_error = f.cleanup_error;
 				f.error
 			})?;
+			entered = true;
 			'frames: loop {
 				let frame = *self
 					.frames
@@ -1786,9 +1960,11 @@ impl Executor {
 		// P1 tests only: the remaining fuel, compared across engines.
 		#[cfg(all(test, feature = "native-code"))]
 		super::region::hook::record_final_fuel(fuel);
+		#[cfg(test)]
+		LAST_REMAINING_WORK.with(|remaining| remaining.set(entered.then_some(fuel)));
 
 		match result {
-			Ok(value) => Ok(value),
+			Ok(value) => Ok(store.export(value)),
 			Err(mut failure) => {
 				let numeric_context =
 					invocation_numeric_context(&failure, code, store, &self.frames, &self.slots);
@@ -1813,6 +1989,7 @@ impl Executor {
 
 				self.frames.clear();
 				Err(Failure {
+					remaining_work: entered.then_some(fuel),
 					numeric_context,
 					error: failure,
 					missing_key,
@@ -1829,6 +2006,7 @@ impl Executor {
 	/// (also on unwind); a code with no loaded region runs the `NATIVE = false` loop, whose
 	/// body is the feature-off loop.
 	#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
+	#[inline(always)]
 	fn invoke_native(
 		&mut self,
 		code: &Code,
@@ -1836,7 +2014,7 @@ impl Executor {
 		function: u32,
 		args: Args<'_>,
 		fuel: usize,
-	) -> core::result::Result<Value, Failure> {
+	) -> core::result::Result<Root, Failure> {
 		use super::region::cache::{self, Checkout};
 
 		if code.id() == self.no_region_code {
@@ -2658,9 +2836,13 @@ impl Executor {
 		fuel: usize,
 	) -> core::result::Result<Value, Failure> {
 		#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
-		return self.invoke_args(code, store, function, args, fuel);
+		return self
+			.invoke_args(code, store, function, args, fuel)
+			.map(|root| root.value);
 		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
-		return self.invoke_native(code, store, function, args, fuel);
+		return self
+			.invoke_native(code, store, function, args, fuel)
+			.map(|root| root.value);
 	}
 
 	/// Owner-free single-shot entry for the crate's own tests.
@@ -2673,9 +2855,13 @@ impl Executor {
 		fuel: usize,
 	) -> core::result::Result<Value, Failure> {
 		#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
-		return self.invoke_args(code, store, function, Args::Values(args), fuel);
+		return self
+			.invoke_args(code, store, function, Args::Values(args), fuel)
+			.map(|root| root.value);
 		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
-		return self.invoke_native(code, store, function, Args::Values(args), fuel);
+		return self
+			.invoke_native(code, store, function, Args::Values(args), fuel)
+			.map(|root| root.value);
 	}
 }
 
@@ -2945,8 +3131,10 @@ impl Executor {
 #[derive(Clone, Copy, Debug)]
 struct NumericContext {
 	op: BinarySymbol,
-	lhs: TypeName,
-	rhs: TypeName,
+	// Only signed/unsigned integer operands can create this cold context.
+	// Keep their tags compact so remaining_work fits the existing Failure budget.
+	lhs_unsigned: bool,
+	rhs_unsigned: bool,
 }
 
 #[cold]
@@ -2993,8 +3181,8 @@ fn invocation_numeric_context(
 	}
 	Some(NumericContext {
 		op: BinarySymbol::from_op(operator, assign),
-		lhs,
-		rhs,
+		lhs_unsigned: lhs == TypeName::U64,
+		rhs_unsigned: rhs == TypeName::U64,
 	})
 }
 
@@ -3005,6 +3193,7 @@ mod d1e_frame_tests {
 	#[test]
 	fn unresolved_origin_and_repeated_callers_are_retained() {
 		let failure = Failure {
+			remaining_work: None,
 			numeric_context: None,
 			error: Error::new(ErrorKind::InvalidCode, "contextless"),
 			missing_key: None,

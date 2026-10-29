@@ -45,7 +45,7 @@ fn relative(root: &Path, name: &str) -> Result<PathBuf> {
 }
 fn manifest(ctx: &Context) -> Result<Manifest> {
 	let m: Manifest = serde_json::from_str(MANIFEST)?;
-	ensure!(m.helpers.len() == 74, "expected 74 Miri helpers");
+	ensure!(m.helpers.len() == 78, "expected 78 Miri helpers");
 	let mut names = BTreeSet::new();
 	let mut selectors = BTreeSet::new();
 	for h in &m.helpers {
@@ -326,10 +326,10 @@ pub fn run(ctx: &Context) -> Result<Value> {
 	)?;
 	common::write_json(&ctx.out.join("INTERPRETER-EVENTS.json"), &proof)?;
 	let harness = prepared_harness;
-	ensure!(results.len() == 74, "incomplete Miri results");
+	ensure!(results.len() == 78, "incomplete Miri results");
 	manifest(ctx)?;
 	Ok(
-		json!({"status":"PASS","helpers":74,"results":results,"overlap":proof,"concurrency":if workers == 1 {"serial-fallback"} else {"two-workers"},"overlap_evidence":if workers == 1 {"not exercised"} else {"exercised"},"harness_records":harness,"identity":identity,"manifest_sha256":common::hash_bytes(MANIFEST.as_bytes())}),
+		json!({"status":"PASS","helpers":78,"results":results,"overlap":proof,"concurrency":if workers == 1 {"serial-fallback"} else {"two-workers"},"overlap_evidence":if workers == 1 {"not exercised"} else {"exercised"},"harness_records":harness,"identity":identity,"manifest_sha256":common::hash_bytes(MANIFEST.as_bytes())}),
 	)
 }
 #[cfg(test)]

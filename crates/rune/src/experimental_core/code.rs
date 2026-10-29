@@ -2048,6 +2048,9 @@ impl Code {
 	pub(crate) fn host_validation_parts(&self) -> (&[crate::function::host::HostBinding], bool) {
 		(&self.hosts, !self.absent.is_empty())
 	}
+	// Preparation shares these checks with the compatibility entry. Keep that
+	// sharing from adding a call boundary to the ordinary invocation path.
+	#[inline(always)]
 	pub(crate) fn validate_hosts(
 		&self,
 		runtime: Option<&crate::runtime::RuntimeContext>,

@@ -422,7 +422,7 @@
       "name": "c18b3d-self_entry_policy_preserves_roots_and_pending_cancel",
       "selector": "experimental_core::frontend::self_receiver_tests::self_entry_policy_preserves_roots_and_pending_cancel",
       "fixture_source": "crates/rune/src/experimental_core/frontend/self_receiver_tests.rs",
-      "fixture_sha256": "09baac47223a478ca3a435dfb213751030ad8c15cd3bad767b588ce19cf41252",
+      "fixture_sha256": "3020e47ec77d43f73a24186292724f112003fba4a11e9533d6ea77fe35f94846",
       "ignored": false,
       "first_bound": 3600,
       "selected_labels": []
@@ -431,7 +431,7 @@
       "name": "c18b3d-self_entry_policy_also_covers_future_capture_parameters",
       "selector": "experimental_core::frontend::self_receiver_tests::self_entry_policy_also_covers_future_capture_parameters",
       "fixture_source": "crates/rune/src/experimental_core/frontend/self_receiver_tests.rs",
-      "fixture_sha256": "09baac47223a478ca3a435dfb213751030ad8c15cd3bad767b588ce19cf41252",
+      "fixture_sha256": "3020e47ec77d43f73a24186292724f112003fba4a11e9533d6ea77fe35f94846",
       "ignored": false,
       "first_bound": 3600,
       "selected_labels": []
@@ -669,6 +669,42 @@
       "selected_labels": [],
       "selector": "compile::warnings::tests::nested_warning_walk_uses_bounded_rust_stack_and_keeps_duplicate_diagnostics",
       "fixture_source": "crates/rune/src/compile/warnings/tests.rs"
+    },
+    {
+      "first_bound": 600,
+      "fixture_sha256": "1da80b56fdb14bd7d3dbcab444ee5db909c09e913184d3548660fe238f3a8d80",
+      "ignored": false,
+      "name": "e1-borrowed-view-preserves-aliases-cycles-and-shared-visit-bounds",
+      "selected_labels": [],
+      "selector": "experimental_core::tests::embedding_boundary::borrowed_view_preserves_aliases_cycles_and_shared_visit_bounds",
+      "fixture_source": "crates/rune/src/experimental_core/tests/embedding_boundary.rs"
+    },
+    {
+      "first_bound": 600,
+      "fixture_sha256": "1da80b56fdb14bd7d3dbcab444ee5db909c09e913184d3548660fe238f3a8d80",
+      "ignored": false,
+      "name": "e1-view-rejects-foreign-stale-and-closed-roots-and-checks-indices",
+      "selected_labels": [],
+      "selector": "experimental_core::tests::embedding_boundary::view_rejects_foreign_stale_and_closed_roots_and_checks_indices",
+      "fixture_source": "crates/rune/src/experimental_core/tests/embedding_boundary.rs"
+    },
+    {
+      "first_bound": 600,
+      "fixture_sha256": "1da80b56fdb14bd7d3dbcab444ee5db909c09e913184d3548660fe238f3a8d80",
+      "ignored": false,
+      "name": "e1-view-keeps-mutual-cycles-variants-keys-and-moved-access-without-allocating",
+      "selected_labels": [],
+      "selector": "experimental_core::tests::embedding_boundary::view_keeps_mutual_cycles_variants_keys_and_moved_access_without_allocating",
+      "fixture_source": "crates/rune/src/experimental_core/tests/embedding_boundary.rs"
+    },
+    {
+      "first_bound": 600,
+      "fixture_sha256": "1da80b56fdb14bd7d3dbcab444ee5db909c09e913184d3548660fe238f3a8d80",
+      "ignored": false,
+      "name": "e1-prepared-empty-context-preserves-cancellation-and-reuses-clean-state",
+      "selected_labels": [],
+      "selector": "experimental_core::tests::embedding_boundary::prepared_empty_context_preserves_cancellation_and_reuses_clean_state",
+      "fixture_source": "crates/rune/src/experimental_core/tests/embedding_boundary.rs"
     }
   ],
   "retired": [
