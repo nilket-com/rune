@@ -1,0 +1,51 @@
+N2: native fixed-length scalar collection regions
+
+Authority: Claude rune-native seq24436, confirmed by the user. Base 482109111e.
+Step 0 receipt: target/n2-step0-48210911/RECEIPT.json in the enclosing workspace.
+
+Admit Get/Set on one rooted, stable Vec handle with homogeneous Bool or I64
+items. Infer the scalar demands from the region, then scan the entry payload
+and guard its tag. Mixed elements refuse. Heap handle Copy/Release/overwrite,
+Push, Len, VectorIterator, fields, Clone, dynamic calls and recursion remain
+refused. No change to legacy behavior or runtime fallback to legacy.
+
+Use a private, fallibly allocated i64 snapshot. Charge its actual capacity
+against existing Store memory limits and the native transient budget; no
+arbitrary element cap. No Store, Value or payload pointer enters generated
+code. Native reads/writes only its exclusive snapshot, with nonnegative,
+in-bounds indices proved before address formation. Preserve Bool canonical
+values and full-range I64, checked index arithmetic and exact Retry state.
+
+Validate the entire scalar exit, fuel, iterator and snapshot before writing
+anything. Revalidate the live handle/generation, payload/tag/length and lease.
+Commit the snapshot, iterator and scalar window under one exclusive Store
+borrow with no allocation, callbacks or fallible ownership changes after the
+first mutation. Invalid exits discard all speculative work. A bounds Retry
+commits only completed work and resumes the execution interpreter at the
+failing instruction with the correct pre-charge fuel and diagnostic context.
+Pending cancel refuses entry; existing cancellation exclusivity stays intact.
+
+Extend both pre/post CLIF audits with a narrow checked snapshot-address proof;
+retain no-call/no-trap/no-relocation rules and the sealed unsafe boundary.
+Preserve scalar lowering, ABI and commit specialization. Collection scratch,
+scans and index checks must not enter scalar or interpreter instruction loops.
+Review generated production code and pass unchanged CGU1 per-record gates;
+there is no implicit allowance for scalar regressions.
+
+Admit Sieve's OUTER for region, including its inner while, and witness exactly
+one snapshot/commit per uninterrupted sieve call. Avoid independently selecting
+nested collection regions that repeatedly snapshot. Measure real production
+native entry and return, instructions/cycles and cold entry/compile costs.
+
+Witness Bool and I64, full-range integers, aliases/read-after-write, empty and
+large vectors, size/budget/allocation refusal, mixed/type-changing elements,
+negative/out-of-bounds indices after earlier writes, stale generations, leases,
+Moved/closed/foreign ownership, every fuel boundary and Retry, cancel, invalid
+exit/snapshot injection and pre/post audit negative cases. Compare full engine
+state off/on, including roots/refcounts/edges/bytes and error context. Retain
+shared_rows and permute as unchanged refused controls. The full Step 0 witness
+list remains required; document any limitation rather than claiming coverage.
+
+One signed plan and one signed implementation on local main; disposable exact
+source clones for checks. Block on job exits; no polling or watchers; terminal
+receipts only. Push after acceptance, then a separately scoped rnx pin record.
