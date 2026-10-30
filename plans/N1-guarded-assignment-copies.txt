@@ -1,0 +1,59 @@
+N1: admit numeric assignment copies through checked entry guards
+
+Authority: chatd rune-routing seq24288, seq24317. Base: Rune 145e7540.
+rnx 0198 is landed independently. Step 0 read-only listing found the original
+for-loop assignment refuses Type at pc9, and its while equivalent at pc8.
+Copy snapshots the loop-carried total into a temporary, whose region type
+becomes Top because the source is not definitely written since region entry.
+The compound form reads total directly and already establishes an I64 guard.
+Even a literal initial total does not repair the plain assignment refusal.
+
+Extend only numeric live-in Copy admission in the region analyzer. Identify
+Copy sources not definitely written from the existing written-state fixpoint;
+require I64 entry guards and reject conflicting demands. Rerun the forward
+transfer with the guarded current type (entry type joined with any region-
+written type). Admit each new Copy only when that current type is exactly
+I64. Keep existing definitely-written I64/Bool/Unit copies. Mixed tags refuse;
+no heap or Bool/Unit live-in expansion, divisor-constant propagation, unchecked
+whole-function inference, general alias solver, frontend or bytecode changes.
+Native lowering and checked arithmetic stay unchanged. Use the same checked
+source type to construct Copy nodes and exit states.
+
+Both analysis passes share ONE existing bounded transfer budget; exhaustion
+returns typed Steps refusal. Reuse charged buffers, preserve transient/cache
+limits, and report the combined analysis work. No new hot-path counters/API.
+
+Live tests cover original parameter/literal for/while forms, chained and self
+copies, source/destination aliases, nested calls and conditional/join conflicts.
+Guard failure for float, Unit, Bool and heap values occurs before native
+mutation and preserves interpreter output/effects/ownership. Retain existing
+written Bool/Unit admission. Exercise checked addition overflow, MIN/-1,
+MIN%-1, zero/negative divisors with identical retry error location/call chain.
+Sweep fuel boundaries across Copy/arithmetic/release, failed guard, fault and
+cancel/deopt, including temporary state, written masks and cleanup. Exercise
+analysis work/bytes failures and mutation-free cache fallback.
+
+Fold the existing test-only std::crate:: path typo in legacy_unit_receipts.rs
+into this record. Compile all features as a focused check; record the broader
+all-features gate coverage question in BACKLOG if it requires tooling work.
+
+Acceptance: existing region/native suites, L1 native off/on, exact-source
+fresh-clone correctness under the verification account, and appropriate CGU1
+per-record performance gates. The original real rnx loops kernel must show
+native entry AND return on the production binary through breakpoint counts,
+plus instruction reduction; requested-policy labels are not entry evidence.
+Keep the benchmark short. Qualify cycles/instructions under the approved
+protocol; wall remains diagnostic if throttled. No recursion or collections.
+
+One signed plan and one signed impl on local main, no branches/worktrees;
+disposable exact-source clones for verification. Block on job exits and read
+terminal receipts once; no polling or progress watchers. Publish after review
+and gates, then perform any separately authorized embedding pin update.
+
+Gate interface refinement (Claude seq24341): use an operator-only CGU1 packet
+through committed cell/packet, K1 and counter2 analyzers and unchanged rules.
+The saved operator only orchestrates; retain its exact text, every command,
+raw files and source/input/binary bindings. Bind reused reference builds by
+binary hash. No E1a qualification is inherited. Record that the full 68-profile
+controller seal and diagnostic CGU16 captures were not run; no tooling record,
+new cache or controller belongs here. Bring every flag to review.
