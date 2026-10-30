@@ -1,0 +1,83 @@
+V4: single-machine parallel verification in xtask
+
+Authority and scope
+
+This replaces the unlanded V4 drafts. Authority is the user's runner request,
+Claude's approved N/4 and Havlak guard rulings, and the user's final scope cut
+in rune-v4 seq23920, 01a18aa7-4600-7143-81de-a669392b521c. One signed plan and
+one signed implementation replace the earlier V4 pair on top of E1 9ee355f3.
+This is verifier/test tooling only. Runtime behavior and engine routing stay
+unchanged. The routing record starts immediately after V4 lands.
+
+The verifier runs on the machine where cargo xtask verify is invoked. Keep
+scheduling inside Rust xtask. No fleet, Python runner, RPC, remote execution,
+bundle transport, delivery framework or cross-host configuration belongs in
+Rune. Process supervision, memory ceilings and an exit notice are uncommitted
+operator launch tooling. No cache or warm gates are part of V4; cache work is
+deferred to a later V5. There is no under-30-minute acceptance requirement.
+
+Local execution and resource accounting
+
+N comes from std::thread::available_parallelism(). Native workers, build jobs
+and test threads default to N, with one shared CPU budget/jobserver so nested
+work cannot multiply the allocation. Preserve explicit pool options as upper
+bounds. Child Cargo/rustc uses the same jobserver. Ordinary native libraries
+take available slots up to their requested maximum and use exactly that many
+libtest threads, avoiding the previous wait for the whole machine. Sensitive
+exclusive contracts retain their original limits and full-width reservation.
+
+Miri uses max(1, N/4), the reviewed general memory policy after two retained OOM
+attempts. No per-machine CPU table or worker-count tuning study is introduced.
+Start native and Miri work on their own dependencies. Remove the first-pair
+barrier and the max<=2 assertion. Prove actual native/Miri overlap from local
+process traces, and enforce interpreter concurrency against the effective pool.
+
+Schedule independent work longest estimated first on this machine. Split the
+heavy independent Miri groups into 98 jobs for the same 78 parent witnesses.
+Keep native full-group wrappers and their original counts. A failure followed
+by reuse of the same Executor/Store remains one row; cancellation, ownership,
+cleanup, leak and idle-state assertions are preserved. All rows of a parent
+share the original parent deadline, beginning at first CPU admission, and the
+same local prepared context. Missing, duplicate or omitted rows fail coverage.
+
+Retain the other local splits: contract cases and complete bundle, native
+libraries and borrow docs, and all 60 AWFY observations / 36 cases. Keep the
+existing complete L1 and small tooling-suite validators. Share builds by their
+complete source/toolchain/features/flags inputs within the invocation. This is
+build coalescing, not reuse of an earlier correctness result. Immutable job,
+suite, source, binary/DWARF and aggregate receipts retain actual execution.
+
+Bounds and exit handling
+
+The Havlak-2 600-second generic wall guard was a hang guard, not a performance
+assertion. Measured standalone CPU cost was 250.94 seconds legacy / 257.53
+fresh, with identical output. Apply the approved 1200-second CPU hang guard
+and 3600-second outer wall cleanup bound to every Havlak-2 engine/control
+observation. Keep every other AWFY guard and typed comparison unchanged, and
+remove the whole-machine AWFY isolation cohort.
+
+Keep timeout accounting after CPU admission, strict actual-executable trace
+parsing, and the blocking native oracle exit/deadline fix. No periodic ps,
+kill -0, result scans, progress watchers or sleep/check loops. Wait for child
+exit or a condition-variable event, then read terminal output. Failures remain
+failures and never cause retry-until-green. Native test source additions use
+tabs, including the miri_rows macros; manifests retain two-space JSON style.
+
+Acceptance and landing
+
+1. Implement and check the local graph, shared tokens, row coverage, exact
+   selections, input identity, cleanup/cancellation and typed outcome checks.
+   Run focused xtask tests, formatting, strict Clippy and manifest validation.
+2. Commit the exact candidate, then materialize a fresh clone by hash as
+   rnxverify on strix. Start with empty project targets; pinned installed
+   toolchains/sysroots and declared read-only dependency sources are provisioned
+   inputs. Run every correctness suite once. No sibling/review tree or stored
+   success is needed. The launcher is operator tooling, not Rune code.
+3. State the expected wall time and resources before that cold run. Block on
+   exit, retain terminal PASS/FAIL and report actual total wall time and the
+   critical path. Correctness PASS is the acceptance gate, whatever wall time
+   one machine delivers; there is no 30-minute gate or cross-host timing proof.
+4. Obtain review of the reduced committed diff and the fresh-clone receipt,
+   then fast-forward main and push main only. Switch the checkout to main and
+   delete the V4 branch locally and on GitHub (remote cleanup is approved).
+   No new branches or worktrees. Begin routing's Step 0 delta immediately.
