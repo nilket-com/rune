@@ -1246,7 +1246,7 @@ fn p3a_budgeted_analysis_equals_unbudgeted_and_refuses_cleanly() {
 	let budget = Budget::unlimited();
 	let headers = super::scan_headers(f, &budget).unwrap();
 	let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR).unwrap();
-	let (region, bytes) = context.analyze_header(headers[0]).unwrap().unwrap();
+	let (region, bytes) = context.analyze_candidate(headers[0]).unwrap().unwrap();
 	assert_eq!(
 		(region.nodes.as_slice(), region.exits.as_slice()),
 		(expected.nodes.as_slice(), expected.exits.as_slice())
@@ -1262,7 +1262,7 @@ fn p3a_budgeted_analysis_equals_unbudgeted_and_refuses_cleanly() {
 		let outcome = (|| -> Result<bool, Stop> {
 			let headers = super::scan_headers(f, &budget)?;
 			let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR)?;
-			let found = context.analyze_header(headers[0])?;
+			let found = context.analyze_candidate(headers[0])?;
 			let (region, bytes) = found.unwrap();
 			let _held = Held::adopt(&budget, bytes);
 			Ok(region.nodes.as_slice() == expected.nodes.as_slice())
@@ -1301,10 +1301,10 @@ fn p3a_transfer_cutoff_zero_slots_and_overflow() {
 	let budget = super::budget::Budget::unlimited();
 	let refused = FunctionContext::new(&code, 0, &budget, 0)
 		.unwrap()
-		.analyze_header(1)
+		.analyze_candidate(1)
 		.unwrap();
 	assert!(matches!(refused, Err(RegionRefusal::Steps)));
 	let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR).unwrap();
-	assert!(context.analyze_header(1).unwrap().is_ok());
+	assert!(context.analyze_candidate(1).unwrap().is_ok());
 	assert_eq!(context.max_transfers(), 1);
 }

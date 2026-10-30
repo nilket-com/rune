@@ -450,7 +450,7 @@ fn d14_diagnostics_exhaustion_breaks_after_the_last_pushed_site() {
 	// builder directly; public H1 admission correctly refuses such a state.
 	let failure = rune_alloc::limit::with(0, || {
 		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))]
-		let result = e.invoke_args::<false>(&c, &mut s, 0, Args::Roots(&[&a, &b]), 100, None);
+		let result = e.invoke_args::<false, false>(&c, &mut s, 0, Args::Roots(&[&a, &b]), 100, None);
 		#[cfg(not(all(feature = "native-code", target_arch = "x86_64", target_os = "linux")))]
 		let result = e.invoke_args(&c, &mut s, 0, Args::Roots(&[&a, &b]), 100);
 		result

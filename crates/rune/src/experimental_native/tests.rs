@@ -284,3 +284,78 @@ fn ir_audit_negative_cases() {
 		Err(Finding::Opcode(_))
 	));
 }
+
+#[test]
+#[cfg_attr(miri, ignore = "Miri: compiles Rune source and runs Cranelift")]
+fn n2_snapshot_audit_rejects_unchecked_addresses() {
+	use cranelift_codegen::ir::condcodes::IntCC;
+	let mut regions = regions(crate::experimental_core::region::n2_tests::INTEGER);
+	let region = regions.pop().unwrap();
+	let map = audit::AccessMap::of(&region);
+	for fault in 0..11 {
+		let mut func = ir::Function::with_name_signature(
+			UserFuncName::user(0, 0),
+			lower::collection_signature(),
+		);
+		let mut fctx = FunctionBuilderContext::new();
+		let mut b = FunctionBuilder::new(&mut func, &mut fctx);
+		let entry = b.create_block();
+		b.append_block_params_for_function_params(entry);
+		b.switch_to_block(entry);
+		let params = b.block_params(entry).to_vec();
+		let index = if fault == 8 {
+			b.ins().iconst(types::I64, 1)
+		} else {
+			params[0]
+		};
+		let len = if fault == 1 {
+			b.ins().iconst(types::I64, i64::MAX)
+		} else {
+			params[3]
+		};
+		let cond = if fault == 2 {
+			IntCC::SignedLessThan
+		} else {
+			IntCC::UnsignedLessThan
+		};
+		let valid = if fault == 8 {
+			let separate_one = b.ins().iconst(types::I64, 1);
+			b.ins().icmp(IntCC::UnsignedGreaterThan, len, separate_one)
+		} else {
+			b.ins().icmp(cond, index, len)
+		};
+		let fallback = b.ins().iconst(types::I64, if fault == 3 { 1 } else { 0 });
+		let safe = if fault == 4 {
+			index
+		} else {
+			b.ins().select_spectre_guard(valid, index, fallback)
+		};
+		let scaled = b.ins().ishl_imm_s(safe, if fault == 5 { 2 } else { 3 });
+		let base = if fault == 6 { params[1] } else { params[2] };
+		let address = if fault >= 9 {
+			params[2]
+		} else {
+			b.ins().iadd(base, scaled)
+		};
+		let ty = if fault == 7 { types::I32 } else { types::I64 };
+		let _ = b.ins().load(
+			ty,
+			MemFlagsData::trusted(),
+			address,
+			if fault == 10 { 8 } else { 0 },
+		);
+		let status = b.ins().iconst(types::I32, 0);
+		b.ins().return_(&[status]);
+		b.seal_all_blocks();
+		b.finalize(lower::isa().unwrap().frontend_config());
+		let result = audit::ir(&func, &map);
+		if matches!(fault, 0 | 8 | 9) {
+			assert_eq!(result, Ok(()));
+		} else {
+			assert!(
+				matches!(result, Err(Finding::Memory(_))),
+				"fault {fault}: {result:?}"
+			);
+		}
+	}
+}

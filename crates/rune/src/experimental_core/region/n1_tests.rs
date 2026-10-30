@@ -183,7 +183,7 @@ fn n1_second_pass_shares_the_transfer_cutoff_and_releases_all_bytes() {
 	let header = regions(&p.code, main)[0].0;
 	let budget = Budget::unlimited();
 	let context = FunctionContext::new(&p.code, main, &budget, super::TRANSFER_FACTOR).unwrap();
-	let (region, bytes) = context.analyze_header(header).unwrap().unwrap();
+	let (region, bytes) = context.analyze_candidate(header).unwrap().unwrap();
 	let held = Held::adopt(&budget, bytes);
 	let combined = context.max_transfers();
 	let body = region.nodes.len();
@@ -199,7 +199,7 @@ fn n1_second_pass_shares_the_transfer_cutoff_and_releases_all_bytes() {
 	for factor in 0..super::TRANSFER_FACTOR {
 		let b = Budget::unlimited();
 		let c = FunctionContext::new(&p.code, main, &b, factor).unwrap();
-		match c.analyze_header(header).unwrap() {
+		match c.analyze_candidate(header).unwrap() {
 			Ok((region, bytes)) => {
 				let held = Held::adopt(&b, bytes);
 				drop(region);
@@ -215,7 +215,7 @@ fn n1_second_pass_shares_the_transfer_cutoff_and_releases_all_bytes() {
 	for limit in [0, 64, 1024, 4096] {
 		let b = Budget::new(limit);
 		if let Ok(c) = FunctionContext::new(&p.code, main, &b, super::TRANSFER_FACTOR) {
-			match c.analyze_header(header) {
+			match c.analyze_candidate(header) {
 				Ok(Ok((region, bytes))) => {
 					let held = Held::adopt(&b, bytes);
 					drop(region);
@@ -242,14 +242,14 @@ fn n1_guarded_pass_cannot_restart_the_transfer_allowance() {
 	// must stop in the guarded pass; resetting the allowance would incorrectly pass.
 	let tight = FunctionContext::new(&code, 0, &budget, 2).unwrap();
 	assert!(matches!(
-		tight.analyze_header(0),
+		tight.analyze_candidate(0),
 		Ok(Err(RegionRefusal::Steps))
 	));
 	assert_eq!(tight.max_transfers(), 4);
 	drop(tight);
 	assert_eq!(budget.used(), 0);
 	let enough = FunctionContext::new(&code, 0, &budget, 3).unwrap();
-	let (region, bytes) = enough.analyze_header(0).unwrap().unwrap();
+	let (region, bytes) = enough.analyze_candidate(0).unwrap().unwrap();
 	let held = Held::adopt(&budget, bytes);
 	assert_eq!(enough.max_transfers(), 6);
 	drop(region);

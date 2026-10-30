@@ -36,7 +36,7 @@ pub(crate) fn compare(op: Binary, a: i64, b: i64) -> i64 {
 /// returns the status. A contract violation (which validated regions cannot produce)
 /// returns status 0, which the commit step rejects as an invalid exit.
 pub(crate) fn simulate(region: &Region, buf: &mut [i64], record: &mut ExitRecord) -> u32 {
-	run(region, buf, record, &mut None)
+	run(region, buf, record, &mut None, &mut [], 0)
 }
 
 /// B1 test trace: the state at every `Enter` (the pre-Call checkpoint) and the number of
@@ -69,7 +69,7 @@ pub(crate) fn simulate_traced(
 	record: &mut ExitRecord,
 ) -> (u32, Trace) {
 	let mut trace = Some(Trace::default());
-	let status = run(region, buf, record, &mut trace);
+	let status = run(region, buf, record, &mut trace, &mut [], 0);
 	(status, trace.unwrap_or_default())
 }
 
@@ -78,7 +78,24 @@ type Tracer = Option<Trace>;
 #[cfg(not(test))]
 type Tracer = Option<core::convert::Infallible>;
 
-fn run(region: &Region, buf: &mut [i64], record: &mut ExitRecord, trace: &mut Tracer) -> u32 {
+pub(crate) fn simulate_collection(
+	region: &Region,
+	buf: &mut [i64],
+	record: &mut ExitRecord,
+	snapshot: &mut [i64],
+	len: usize,
+) -> u32 {
+	run(region, buf, record, &mut None, snapshot, len)
+}
+
+fn run(
+	region: &Region,
+	buf: &mut [i64],
+	record: &mut ExitRecord,
+	trace: &mut Tracer,
+	snapshot: &mut [i64],
+	len: usize,
+) -> u32 {
 	let n = region.slots.len();
 	let cells = region.cells();
 	if n > MAX_REGION_SLOTS || cells > MAX_REGION_CELLS || buf.len() != cells {
@@ -187,6 +204,31 @@ fn run(region: &Region, buf: &mut [i64], record: &mut ExitRecord, trace: &mut Tr
 			};
 		}
 		let next = match nd.op {
+			NodeOp::Get { index, retry, .. } | NodeOp::Set { index, retry, .. } => {
+				let index = get!(index);
+				if index < 0 || index as u64 >= len as u64 {
+					let Some(f) = exit_fuel(retry, fuel, before, checkpoint) else {
+						return 0;
+					};
+					return finish(record, buf, retry, f, written, tags);
+				}
+				match nd.op {
+					NodeOp::Get { out, ty, .. } => {
+						let Some(&value) = snapshot.get(index as usize) else {
+							return 0;
+						};
+						write!(out, value, ty);
+					}
+					NodeOp::Set { new, .. } => {
+						let Some(slot) = snapshot.get_mut(index as usize) else {
+							return 0;
+						};
+						*slot = get!(new);
+					}
+					_ => unreachable!(),
+				}
+				nd.next
+			}
 			NodeOp::Literal { out, value, ty } => {
 				write!(out, value, ty);
 				nd.next

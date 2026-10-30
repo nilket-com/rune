@@ -1294,6 +1294,7 @@ impl Executor {
 	#[inline(always)]
 	fn invoke_args<
 		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))] const NATIVE: bool,
+		#[cfg(all(feature = "native-code", target_arch = "x86_64", target_os = "linux"))] const COLLECTIONS: bool,
 	>(
 		&mut self,
 		code: &Code,
@@ -1416,7 +1417,12 @@ impl Executor {
 									self.capacities(),
 								);
 								if let Some(window) = self.slots.get_mut(frame.base..end) {
-									match ready.enter(window, store, self.canceled, fuel, room) {
+									let outcome = if COLLECTIONS {
+										ready.enter_mixed(window, store, self.canceled, fuel, room)
+									} else {
+										ready.enter(window, store, self.canceled, fuel, room)
+									};
+									match outcome {
 										Ok(Some((next, left))) => {
 											pc = next;
 											fuel = left;
@@ -2034,13 +2040,32 @@ impl Executor {
 		use super::region::cache::{self, Checkout};
 
 		if !self.native_enabled || code.id() == self.no_region_code {
-			return self.invoke_args::<false>(code, store, function, args, fuel, None);
+			return self.invoke_args::<false, false>(code, store, function, args, fuel, None);
 		}
 
 		match cache::checkout(code) {
 			Checkout::Native(guard) => {
-				let result =
-					self.invoke_args::<true>(code, store, function, args, fuel, guard.regions());
+				// N2 selects once per invocation. Scalar-only native and native-off
+				// instruction loops contain no collection dispatch or snapshot work.
+				let result = if guard.regions().is_some_and(|r| r.has_collections()) {
+					self.invoke_args::<true, true>(
+						code,
+						store,
+						function,
+						args,
+						fuel,
+						guard.regions(),
+					)
+				} else {
+					self.invoke_args::<true, false>(
+						code,
+						store,
+						function,
+						args,
+						fuel,
+						guard.regions(),
+					)
+				};
 				drop(guard);
 				result
 			}
@@ -2048,7 +2073,7 @@ impl Executor {
 				if no_regions {
 					self.no_region_code = code.id();
 				}
-				self.invoke_args::<false>(code, store, function, args, fuel, None)
+				self.invoke_args::<false, false>(code, store, function, args, fuel, None)
 			}
 		}
 	}

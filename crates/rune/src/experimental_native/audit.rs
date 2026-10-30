@@ -66,6 +66,7 @@ const NONE: Perm = Perm {
 /// written has both (the union). `next` is load and store; `end` is load only.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct AccessMap {
+	collection: Option<Perm>,
 	buf: [Perm; MAX_REGION_CELLS],
 	cells: usize,
 }
@@ -96,7 +97,14 @@ impl AccessMap {
 			};
 			cells = n + 2;
 		}
-		Self { buf, cells }
+		Self {
+			buf,
+			cells,
+			collection: region.collection.map(|c| Perm {
+				load: true,
+				store: c.writes,
+			}),
+		}
 	}
 
 	/// The permission of cell `i` (none past the cells).
@@ -118,7 +126,11 @@ impl AccessMap {
 				store: true,
 			};
 		}
-		Self { buf, cells }
+		Self {
+			buf,
+			cells,
+			collection: None,
+		}
 	}
 }
 
@@ -148,6 +160,9 @@ pub(crate) fn ir(func: &ir::Function, map: &AccessMap) -> Result<(), Finding> {
 		.entry_block()
 		.ok_or_else(|| Finding::Opcode("no entry block".into()))?;
 	let params = func.dfg.block_params(entry);
+	if params.len() != if map.collection.is_some() { 4 } else { 2 } {
+		return Err(Finding::Memory("signature".into()));
+	}
 	let (buf, rec) = (params[0], params[1]);
 	let constant = |v: ir::Value| -> Option<i64> {
 		let v = func.dfg.resolve_aliases(v);
@@ -192,6 +207,7 @@ pub(crate) fn ir(func: &ir::Function, map: &AccessMap) -> Result<(), Finding> {
 				| Opcode::Sextend
 				| Opcode::Ireduce
 				| Opcode::Select
+				| Opcode::SelectSpectreGuard
 				| Opcode::Smin
 				| Opcode::Smax
 				| Opcode::Umin
@@ -253,6 +269,14 @@ pub(crate) fn ir(func: &ir::Function, map: &AccessMap) -> Result<(), Finding> {
 						RECORD.iter().any(|&(o, bytes, load, store)| {
 							offset == o && size == bytes && if is_store { store } else { load }
 						})
+					} else if let Some(permission) = map.collection {
+						offset == 0
+							&& size == 8 && ty == types::I64
+							&& (if is_store {
+								permission.store
+							} else {
+								permission.load
+							}) && snapshot_address(func, base, params[2], params[3])
 					} else {
 						false
 					};
@@ -265,6 +289,88 @@ pub(crate) fn ir(func: &ir::Function, map: &AccessMap) -> Result<(), Finding> {
 		}
 	}
 	Ok(())
+}
+
+/// Match only base + (select_spectre_guard(index < len, index, 0) << 3).
+/// The boundary supplies max(1,len) cells, so even the false arm's zero names a
+/// live sentinel. This proof is independent of CFG dominance and remains safe
+/// under speculative execution. An unrecognized optimized shape refuses codegen.
+fn snapshot_address(f: &ir::Function, address: ir::Value, base: ir::Value, len: ir::Value) -> bool {
+	// Optimization folds constant-zero addressing to the base. Cell zero is always
+	// allocated, including the sentinel for len == 0. This is an ADDRESS permission;
+	// the lowering must still take Retry when the logical bounds check fails.
+	if f.dfg.resolve_aliases(address) == base {
+		return true;
+	}
+	let resolve = |v| f.dfg.resolve_aliases(v);
+	let inst = |v| f.dfg.value_def(resolve(v)).inst();
+	let constant = |v| {
+		inst(v).and_then(|i| match f.dfg.insts[i] {
+			InstructionData::UnaryImm {
+				opcode: Opcode::Iconst,
+				imm,
+				..
+			} => Some(imm.bits()),
+			_ => None,
+		})
+	};
+	let Some(add) = inst(address) else {
+		return false;
+	};
+	if f.dfg.insts[add].opcode() != Opcode::Iadd {
+		return false;
+	}
+	let args = f.dfg.inst_args(add);
+	let scaled = if resolve(args[0]) == base {
+		args[1]
+	} else if resolve(args[1]) == base {
+		args[0]
+	} else {
+		return false;
+	};
+	let Some(shift) = inst(scaled) else {
+		return false;
+	};
+	let safe = match f.dfg.insts[shift] {
+		_ if f.dfg.insts[shift].opcode() == Opcode::Ishl => {
+			let args = f.dfg.inst_args(shift);
+			if constant(args[1]) != Some(3) {
+				return false;
+			}
+			args[0]
+		}
+		_ => return false,
+	};
+	let Some(select) = inst(safe) else {
+		return false;
+	};
+	if f.dfg.insts[select].opcode() != Opcode::SelectSpectreGuard {
+		return false;
+	}
+	let args = f.dfg.inst_args(select);
+	if constant(args[2]) != Some(0) {
+		return false;
+	}
+	let Some(check) = inst(args[0]) else {
+		return false;
+	};
+	// The optimizer swaps constant comparisons (1 < len becomes len > 1),
+	// and may materialize separate definitions of the same constant at the select.
+	let same =
+		|a, b| resolve(a) == resolve(b) || constant(a).is_some_and(|v| constant(b) == Some(v));
+	match f.dfg.insts[check] {
+		InstructionData::IntCompare {
+			cond: ir::condcodes::IntCC::UnsignedLessThan,
+			args: check,
+			..
+		} => same(check[0], args[1]) && resolve(check[1]) == len,
+		InstructionData::IntCompare {
+			cond: ir::condcodes::IntCC::UnsignedGreaterThan,
+			args: check,
+			..
+		} => resolve(check[0]) == len && same(check[1], args[1]),
+		_ => false,
+	}
 }
 
 /// Machine audit from the backend's own tables plus the lowered listing.

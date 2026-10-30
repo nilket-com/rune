@@ -1816,7 +1816,7 @@ fn b1_inline_temporaries_charged_before_allocation() {
 	let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR).unwrap();
 	let before = budget.used();
 	super::reset_inline_charged_for_test();
-	let (region, bytes) = context.analyze_header(headers[0]).unwrap().unwrap();
+	let (region, bytes) = context.analyze_candidate(headers[0]).unwrap().unwrap();
 	let inline_peak = super::inline_charged_peak_for_test();
 	assert_eq!(region.nodes.as_slice(), expected.nodes.as_slice());
 	let held = Held::adopt(&budget, bytes);
@@ -1843,7 +1843,7 @@ fn b1_inline_temporaries_charged_before_allocation() {
 	let outcome = (|| -> Result<(), Stop> {
 		let headers = scan_headers(code.function(0).unwrap(), &budget)?;
 		let context = FunctionContext::new(&code, 0, &budget, TRANSFER_FACTOR)?;
-		let (region, bytes) = context.analyze_header(headers[0])?.unwrap();
+		let (region, bytes) = context.analyze_candidate(headers[0])?.unwrap();
 		let _held = Held::adopt(&budget, bytes);
 		drop(region);
 		Ok(())

@@ -105,6 +105,7 @@ fn refs_to(region: &Region, j: u32) -> usize {
 	for node in &region.nodes {
 		refs += node.next.map_or(0, hit);
 		refs += match node.op {
+			NodeOp::Get { .. } | NodeOp::Set { .. } => 0,
 			NodeOp::Branch { yes, no, .. } => hit(yes) + hit(no),
 			NodeOp::Jump { target } => hit(target),
 			NodeOp::IterNext { none, .. } => hit(none),
@@ -125,6 +126,7 @@ fn refs_to(region: &Region, j: u32) -> usize {
 /// wildcard): any IterNext but the header's, and the B1 test protocol.
 fn rules_out(op: &NodeOp, is_header: bool) -> bool {
 	match *op {
+		NodeOp::Get { .. } | NodeOp::Set { .. } => true,
 		NodeOp::IterNext { .. } => !is_header,
 		NodeOp::ForceReplay { .. } => true,
 		NodeOp::Enter { .. } => false,

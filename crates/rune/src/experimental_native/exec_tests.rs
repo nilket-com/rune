@@ -1554,3 +1554,201 @@ fn p1c_maps_parser_synthetic_lines() {
 	assert!(maps_overlapping(text, 0x4000, 0x8000).is_empty());
 	assert_eq!(maps_overlapping(text, 0, u64::MAX).len(), 3);
 }
+
+#[test]
+#[cfg_attr(miri, ignore = "Miri: executes native code in an isolated process")]
+fn n2_collection_native_differentials() {
+	run_child("n2_collection_native_worker");
+}
+
+#[test]
+#[ignore]
+fn n2_collection_native_worker() {
+	assert!(
+		std::env::var_os(CHILD_ENV).is_some(),
+		"isolated worker only"
+	);
+	use crate::experimental_core::region::n2_tests::{BOOLEAN, INTEGER, SIEVE};
+	for (name, text) in [
+		("n2_integer", INTEGER),
+		("n2_boolean", BOOLEAN),
+		(
+			"n2_bounds",
+			"pub fn main(x) { let v=[x,1,2]; for i in 0..4 { v[i]=v[i]+1; } 0 }",
+		),
+		(
+			"n2_negative",
+			"pub fn main(x) { let v=[1,2]; for i in -1..2 { v[i]=9; } 0 }",
+		),
+	] {
+		let targets = if name == "n2_boolean" {
+			"CF"
+		} else if name == "n2_integer" {
+			"CFR"
+		} else {
+			"FR"
+		};
+		let case = rune(
+			name,
+			text,
+			vec![
+				vec![Arg::I(0)],
+				vec![Arg::I(i64::MAX)],
+				vec![Arg::I(i64::MIN)],
+			],
+			1,
+			targets,
+		);
+		let (stats, _) = run_case(&case);
+		assert!(stats.native_entries > 0);
+	}
+	for (name, text) in [
+		(
+			"n2_empty",
+			"pub fn main(x) { let v=[]; for i in 0..1 { v[i]=9; } 0 }",
+		),
+		(
+			"n2_index_overflow",
+			"pub fn main(x) { let v=[1,2]; for i in 0..2 { v[i+x]=9; } 0 }",
+		),
+	] {
+		let case = rune(
+			name,
+			text,
+			vec![
+				vec![Arg::I(0)],
+				vec![Arg::I(i64::MAX)],
+				vec![Arg::I(i64::MIN)],
+			],
+			1,
+			"FR",
+		);
+		run_case(&case);
+	}
+	for (name, text) in [
+		(
+			"n2_mixed",
+			"pub fn main(x) { let v=[x,true]; for i in 0..2 { v[i]=v[i]+1; } 0 }",
+		),
+		(
+			"n2_type_change",
+			"pub fn main(x) { let v=[x,2]; for i in 0..2 { v[i]=false; } 0 }",
+		),
+	] {
+		let mut case = rune(name, text, vec![vec![Arg::I(0)]], 1, "");
+		case.entry_refusals = true;
+		run_case(&case);
+	}
+	for (name,text,targets) in [
+		("n2_constant_zero","pub fn main(x) { let v=[1,2,3]; for i in 0..3 { v[0]=v[0]+1; } v[0] }","CF"),
+		("n2_constant_one","pub fn main(x) { let v=[1,2,3]; for i in 0..3 { v[1]=v[1]+1; } v[1] }","CF"),
+		("n2_constant_boolean","pub fn main(x) { let v=[true,false]; let count=0; for i in 0..3 { if v[0] { count+=1; } v[0]=false; } count }","CF"),
+		// Address permission for the sentinel MUST NOT make its value observable.
+		// Both entry tags preserve the interpreter's constant-zero error/location.
+		("n2_empty_constant_i64","pub fn main(x) { let v=[]; let count=0; for i in 0..1 { count+=v[0]; } count }","FR"),
+		("n2_empty_constant_bool","pub fn main(x) { let v=[]; let count=0; for i in 0..1 { if v[0] { count+=1; } } count }","FR"),
+	] {
+		let case=rune(name,text,vec![vec![Arg::I(0)]],1,targets);
+		run_case(&case);
+	}
+	let reduced=format!("{SIEVE}\npub fn main(x) {{ Sieve::sieve([true,true,true,true,true,true,true,true,true,true],10) }}");
+	let reduced_case = rune(
+		"n2_nested_sieve_every_fuel",
+		&reduced,
+		vec![vec![Arg::I(0)]],
+		1,
+		"CF",
+	);
+	run_case(&reduced_case);
+	let p = compile_source(&format!("{SIEVE}\npub fn main(x) {{ kernel(x) }}"));
+	let main = p.function(Hash::type_hash(["main"])).unwrap();
+	let install = hook::install_native(&p.code, None);
+	assert_eq!(install.loaded, 1, "{install:?}");
+	// The general tiny-case harness deliberately limits heap payloads to 64 KiB;
+	// the real 5000-element flags Vec needs 80 KiB plus its private snapshot.
+	let observe = || {
+		let mut store = Store::new(Limits::default()).unwrap();
+		let arg = store.root_i64(0);
+		let mut executor = Executor::new().unwrap();
+		hook::take_final_fuel();
+		let outcome = match executor.invoke_code(&p.code, &mut store, main, &[&arg], BIG_FUEL) {
+			Ok(root) => Outcome::Value(store.root_scalar(&root).unwrap()),
+			Err(failure) => Outcome::Failure {
+				error: failure.error,
+				call_chain: failure.call_chain.iter().copied().collect(),
+				cleanup_error: failure.cleanup_error,
+			},
+		};
+		Observed {
+			outcome,
+			live_entries: store.live_entries(),
+			idle: executor.is_idle(),
+			fuel_left: hook::take_final_fuel(),
+			store_state: store.state_for_test(),
+		}
+	};
+	hook::suspend();
+	let off = observe();
+	hook::resume();
+	let on = observe();
+	let stats = hook::uninstall().unwrap();
+	assert_eq!(off, on);
+	assert!(matches!(
+		on.outcome,
+		Outcome::Value(Some(HostScalar::I64(669)))
+	));
+	assert_eq!(stats.native_entries, 1, "one outer snapshot per sieve call");
+	assert_eq!(stats.native_continue, 1);
+	// Exercise the production cache and collection-enabled executor specialization,
+	// independently of the P1 simulator hook.
+	use crate::experimental_core::region::cache;
+	cache::clear_for_test();
+	cache::enable_for_test(true);
+	assert_eq!(off, observe());
+	let counters = cache::regions_for_test(p.code.id()).unwrap();
+	assert_eq!(counters.len(), 1);
+	assert_eq!(counters[0].entries, 1);
+	assert_eq!(counters[0].exits[0], 1);
+	cache::inject_invalid_exit_for_test(1);
+	assert_eq!(off, observe());
+	assert_eq!(
+		cache::regions_for_test(p.code.id()).unwrap()[0].state,
+		cache::State::Poisoned
+	);
+	cache::clear_for_test();
+	cache::enable_for_test(false);
+
+	// Real native entry at the existing transient-byte boundary, followed by a
+	// mutation-free entry refusal one element above that configured budget.
+	let large = compile_source("pub fn main(v,x) { for i in 0..1 { v[x]=v[x]+1; } v[x] }");
+	let large_main = large.function(Hash::type_hash(["main"])).unwrap();
+	let max = cache::MAX_TRANSIENT_ANALYSIS_BYTES / core::mem::size_of::<i64>();
+	assert!(max >= 1_000_000);
+	for (len, expected_entries) in [(max, 1), (max + 1, 0)] {
+		cache::clear_for_test();
+		cache::enable_for_test(true);
+		let mut store = Store::new(Limits::default()).unwrap();
+		let values = vec![Value::I64(i64::MIN); len];
+		let value = store
+			.list(crate::experimental_core::value::Type::Vec, &values)
+			.unwrap();
+		let vector = store.export(value);
+		let index = store.root_i64((len - 1) as i64);
+		let mut executor = Executor::new().unwrap();
+		let out = executor
+			.invoke(&large, &mut store, large_main, &[&vector, &index], 100)
+			.unwrap();
+		assert_eq!(
+			store.root_scalar(&out).unwrap(),
+			Some(HostScalar::I64(i64::MIN + 1))
+		);
+		let counters = cache::regions_for_test(large.code.id()).unwrap();
+		assert_eq!(counters.len(), 1);
+		assert_eq!(counters[0].entries, expected_entries);
+		if expected_entries == 0 {
+			assert!(counters[0].refused_tag > 0);
+		}
+	}
+	cache::clear_for_test();
+	cache::enable_for_test(false);
+}

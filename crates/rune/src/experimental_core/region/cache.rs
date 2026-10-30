@@ -364,6 +364,7 @@ pub(crate) struct Ready {
 
 /// The loaded regions of one code, checked out for one invocation at a time.
 pub(crate) struct ProgramRegions {
+	collections: bool,
 	code: u32,
 	/// `(function, start, end)` into `headers`, sorted by function.
 	functions: StdVec<(u32, u32, u32)>,
@@ -374,6 +375,10 @@ pub(crate) struct ProgramRegions {
 }
 
 impl ProgramRegions {
+	pub(crate) fn has_collections(&self) -> bool {
+		self.collections
+	}
+
 	/// The header table of `function`; empty when it has no loaded region. Once per frame.
 	#[inline]
 	pub(crate) fn function(&self, function: u32) -> &[(u32, u32)] {
@@ -480,6 +485,94 @@ impl Ready {
 			Err(refused @ (Refused::Window | Refused::InvalidExit)) => {
 				self.invalid(refused);
 				Ok(None)
+			}
+		}
+	}
+
+	/// Used only by the collection-enabled invocation specialization. Scalar-only
+	/// programs use enter directly and never branch on collection metadata per entry.
+	#[inline]
+	pub(crate) fn enter_mixed(
+		&self,
+		window: &mut [Value],
+		store: &mut Store,
+		cancel_pending: bool,
+		fuel: usize,
+		room: Room,
+	) -> Result<Option<(usize, usize)>> {
+		if self.region.collection.is_some() {
+			self.enter_collection(window, store, cancel_pending, fuel, room)
+		} else {
+			self.enter(window, store, cancel_pending, fuel, room)
+		}
+	}
+
+	#[inline(never)]
+	fn enter_collection(
+		&self,
+		window: &mut [Value],
+		store: &mut Store,
+		cancel_pending: bool,
+		fuel: usize,
+		room: Room,
+	) -> Result<Option<(usize, usize)>> {
+		let outcome = commit::enter_collection(
+			&self.region,
+			window,
+			store,
+			cancel_pending,
+			fuel,
+			room,
+			|_, buf, record, snapshot, len| {
+				let status = self
+					.native
+					.call_collection(buf, record, snapshot, len)
+					.unwrap_or(0);
+				#[cfg(test)]
+				if take_injected_invalid_exit() {
+					record.status = 0;
+					return 0;
+				}
+				status
+			},
+		);
+		match outcome {
+			Ok(Ok(exited)) => {
+				self.entries.set(self.entries.get() + 1);
+				self.exits[exited.status as usize - 1]
+					.set(self.exits[exited.status as usize - 1].get() + 1);
+				self.consecutive.set(0);
+				Ok(Some((exited.pc, exited.fuel)))
+			}
+			Ok(Err(Refused::InvalidExit | Refused::Window)) => {
+				self.invalid(Refused::InvalidExit);
+				Ok(None)
+			}
+			Ok(Err(Refused::Cancel)) => {
+				self.refused_cancel.set(self.refused_cancel.get() + 1);
+				Ok(None)
+			}
+			Ok(Err(Refused::Room)) => {
+				self.refused_room.set(self.refused_room.get() + 1);
+				Ok(None)
+			}
+			Ok(Err(refused)) => {
+				let counter = match refused {
+					Refused::Tag { .. } => &self.refused_tag,
+					Refused::Iter { .. } => &self.refused_iter,
+					_ => &self.refused_store,
+				};
+				counter.set(counter.get() + 1);
+				let consecutive = self.consecutive.get() + 1;
+				self.consecutive.set(consecutive);
+				if consecutive >= COLD_AFTER_REFUSALS {
+					self.state.set(State::Cold);
+				}
+				Ok(None)
+			}
+			Err(error) => {
+				self.invalid(Refused::InvalidExit);
+				Err(error)
 			}
 		}
 	}
@@ -1300,7 +1393,7 @@ fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 			#[cfg(test)]
 			TEST_COUNTERS.with(|c| c.analyzed_headers.set(c.analyzed_headers.get() + 1));
 
-			let (region, bytes) = match context.analyze_header(header) {
+			let (mut region, bytes) = match context.analyze_candidate(header) {
 				Ok(Ok(found)) => found,
 				Ok(Err(RegionRefusal::Steps)) => {
 					b.summary.steps += 1;
@@ -1327,6 +1420,9 @@ fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 					break;
 				}
 			};
+			if let Some(c) = &mut region.collection {
+				c.scratch_bytes = limits.transient_analysis_bytes;
+			}
 			let held = Held::adopt(&budget, bytes);
 			b.summary.regions += 1;
 
@@ -1370,6 +1466,7 @@ fn build(code: &Code, enabled: Enabled, limits: &Limits) -> ProgramRegions {
 	}
 
 	ProgramRegions {
+		collections: ready.iter().any(|r| r.region.collection.is_some()),
 		code: b.id,
 		functions,
 		headers,

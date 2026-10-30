@@ -422,6 +422,24 @@ pub(crate) fn try_enter(
 		let mut traced = None;
 		let (outcome, native) = match installed.mode {
 			Mode::Off => return None,
+			Mode::Simulate if installed.regions[index].collection.is_some() => (
+				commit::enter_collection(
+					&installed.regions[index],
+					window,
+					store,
+					cancel_pending,
+					fuel,
+					room,
+					|region, buf, record, snapshot, len| {
+						let status = super::simulate::simulate_collection(
+							region, buf, record, snapshot, len,
+						);
+						seen = Some(*record);
+						status
+					},
+				),
+				false,
+			),
 			Mode::Simulate => (
 				commit::enter(
 					&installed.regions[index],
@@ -624,6 +642,47 @@ fn enter_native(
 		region.header
 	);
 
+	if region.collection.is_some() {
+		let mut seen = None;
+		let outcome = commit::enter_collection(
+			region,
+			window,
+			store,
+			cancel_pending,
+			fuel,
+			room,
+			|region, buf, record, snapshot, len| {
+				let mut sim = buf.to_vec();
+				let mut sim_snapshot = snapshot.to_vec();
+				let mut sim_record = *record;
+				let status = loaded
+					.native
+					.call_collection(buf, record, snapshot, len)
+					.expect("native collection ABI");
+				let sim_status = super::simulate::simulate_collection(
+					region,
+					&mut sim,
+					&mut sim_record,
+					&mut sim_snapshot,
+					len,
+				);
+				assert_eq!(status, sim_status);
+				assert_eq!(*record, sim_record);
+				assert_eq!(snapshot, sim_snapshot.as_slice());
+				for l in 0..region.slots.len() {
+					if record.written & (1 << l) != 0 {
+						assert_eq!(buf[l], sim[l]);
+					}
+				}
+				if region.iter.is_some() {
+					assert_eq!(&buf[region.slots.len()..], &sim[region.slots.len()..]);
+				}
+				seen = Some(*record);
+				status
+			},
+		);
+		return Some((outcome, seen, None));
+	}
 	let mut call_refused = false;
 	let mut mismatch = None;
 	let mut seen = None;

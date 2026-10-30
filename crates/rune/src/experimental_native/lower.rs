@@ -136,6 +136,15 @@ pub(crate) fn signature() -> Signature {
 	sig
 }
 
+/// N2 adds only a private snapshot pointer and its logical length. Scalar regions
+/// retain the original two-parameter ABI and identical lowering.
+pub(crate) fn collection_signature() -> Signature {
+	let mut sig = signature();
+	sig.params.push(AbiParam::new(types::I64));
+	sig.params.push(AbiParam::new(types::I64));
+	sig
+}
+
 /// Builds the region's IR. `Shape` if the region exceeds the ABI's slot, cell or node
 /// bound (checked before anything is lowered).
 pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Function, NativeRefusal> {
@@ -149,8 +158,14 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 	{
 		return Err(NativeRefusal::Shape);
 	}
-	let mut func =
-		ir::Function::with_name_signature(UserFuncName::user(0, region.header), signature());
+	let mut func = ir::Function::with_name_signature(
+		UserFuncName::user(0, region.header),
+		if region.collection.is_some() {
+			collection_signature()
+		} else {
+			signature()
+		},
+	);
 	let mut fctx = FunctionBuilderContext::new();
 	let mut b = FunctionBuilder::new(&mut func, &mut fctx);
 	// Aligned and non-trapping: the audit requires every access to carry no trap code.
@@ -168,6 +183,9 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 	b.switch_to_block(entry);
 	let buf = b.block_params(entry)[0];
 	let rec = b.block_params(entry)[1];
+	let collection = region
+		.collection
+		.map(|_| (b.block_params(entry)[2], b.block_params(entry)[3]));
 	let vars: Vec<Variable> = (0..n).map(|_| b.declare_var(types::I64)).collect();
 	let fuel = b.declare_var(types::I64);
 	let written = b.declare_var(types::I64);
@@ -352,6 +370,33 @@ pub(crate) fn build(region: &Region, isa: &OwnedTargetIsa) -> Result<ir::Functio
 			Ok(())
 		};
 		match node.op {
+			NodeOp::Get { index, retry, .. } | NodeOp::Set { index, retry, .. } => {
+				let (snapshot, len) = collection.ok_or(NativeRefusal::Shape)?;
+				let index = b.use_var(var(index)?);
+				// len is bounded by the allocated slice and isize::MAX / 8 at the
+				// boundary. This single unsigned check also rejects negative I64.
+				let valid = b.ins().icmp(IntCC::UnsignedLessThan, index, len);
+				let zero = b.ins().iconst(types::I64, 0);
+				let safe = b.ins().select_spectre_guard(valid, index, zero);
+				let access = b.create_block();
+				b.ins().brif(valid, access, &[], exits[retry as usize], &[]);
+				b.switch_to_block(access);
+				// Address formation follows the check, and the clamped index also
+				// confines speculative accesses. Empty arrays have one live sentinel.
+				let offset = b.ins().ishl_imm_s(safe, 3);
+				let address = b.ins().iadd(snapshot, offset);
+				match node.op {
+					NodeOp::Get { out, ty, .. } => {
+						let value = b.ins().load(types::I64, mem, address, 0);
+						define(&mut b, out, value, ty)?;
+					}
+					NodeOp::Set { new, .. } => {
+						let value = b.use_var(var(new)?);
+						b.ins().store(mem, value, address, 0);
+					}
+					_ => unreachable!(),
+				}
+			}
 			NodeOp::Literal { out, value, ty } => {
 				let v = b.ins().iconst(types::I64, value);
 				define(&mut b, out, v, ty)?;
@@ -619,6 +664,8 @@ fn iter_out_remat(region: &Region) -> Option<u32> {
 /// redefines its condition's variable; `Enter` and `Arg` define virtual locals only).
 fn r1_disqualifies(op: &NodeOp, out: u32) -> bool {
 	match *op {
+		NodeOp::Get { out: o, .. } => o == out,
+		NodeOp::Set { .. } => false,
 		NodeOp::IterNext { .. } => true,
 		NodeOp::Enter { slots, .. } => out >= VIRTUAL_BASE && out - VIRTUAL_BASE < slots,
 		NodeOp::Arg { param, .. } => VIRTUAL_BASE.checked_add(param) == Some(out),
@@ -709,6 +756,7 @@ fn fuel_fold(region: &Region) -> Option<(u32, u32)> {
 /// lowering neither exits, branches nor charges. Exhaustive over `NodeOp` (no wildcard).
 fn fuel_link(op: &NodeOp) -> bool {
 	match *op {
+		NodeOp::Get { .. } | NodeOp::Set { .. } => true,
 		NodeOp::Enter { .. } => true,
 		NodeOp::Arg { .. } => true,
 		NodeOp::IterNext { .. } => false,
@@ -730,6 +778,7 @@ fn fuel_link(op: &NodeOp) -> bool {
 /// existing lowering).
 fn fuel_disqualifies(op: &NodeOp, header: bool) -> bool {
 	match *op {
+		NodeOp::Get { .. } | NodeOp::Set { .. } => true,
 		NodeOp::IterNext { .. } => !header,
 		#[cfg(test)]
 		NodeOp::ForceReplay { .. } => true,
@@ -754,6 +803,7 @@ fn node_refs(region: &Region, j: u32) -> usize {
 	for node in &region.nodes {
 		refs += node.next.map_or(0, to);
 		refs += match node.op {
+			NodeOp::Get { retry, .. } | NodeOp::Set { retry, .. } => to(Target::Exit(retry)),
 			NodeOp::Branch { yes, no, .. } => to(yes) + to(no),
 			NodeOp::Jump { target } => to(target),
 			NodeOp::IterNext { none, .. } => to(none),
@@ -799,6 +849,7 @@ fn condition(op: Binary) -> Result<IntCC, NativeRefusal> {
 /// A production `Compiled` holds the bytes and two numbers only: no listing, no text. The
 /// [`Listing`] exists in test builds only (diagnostics).
 pub(crate) struct Compiled {
+	collection: bool,
 	bytes: Vec<u8>,
 	/// Required code alignment (from Cranelift's function alignment).
 	alignment: u64,
@@ -819,6 +870,10 @@ pub(crate) struct Listing {
 }
 
 impl Compiled {
+	pub(crate) fn collection(&self) -> bool {
+		self.collection
+	}
+
 	pub(crate) fn bytes(&self) -> &[u8] {
 		&self.bytes
 	}
@@ -853,6 +908,7 @@ pub(crate) fn compile(region: &Region, program_bytes: usize) -> Result<Compiled,
 	#[cfg_attr(not(test), allow(unused_variables))]
 	let (bytes, alignment, listing) = lower(region, program_bytes, Gates::All)?;
 	Ok(Compiled {
+		collection: region.collection.is_some(),
 		bytes,
 		alignment,
 		cells: region.cells(),

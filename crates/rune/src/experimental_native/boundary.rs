@@ -26,7 +26,9 @@
 //!    shared ISA flags, passed the IR and machine audits (no trap site, no call, no
 //!    relocation, no divide instruction; B1: every IR-level load/store is one whole,
 //!    aligned 8-byte cell of `buf[0..cells]` permitted by the region's per-cell map, or one
-//!    whole record field permitted by the per-field table, at a constant offset), and was
+//!    whole record field permitted by the per-field table, at a constant offset; N2
+//!    additionally admits snapshot + 8 * select_spectre_guard(index < len, index, 0),
+//!    proved by the narrow dataflow audit before AND after optimization), and was
 //!    finalized read+execute by
 //!    `JITModule::finalize_definitions`. The machine code also touches memory the IR does
 //!    not name: backend stack spills in its own frame and read-only constant pools in the
@@ -36,13 +38,24 @@
 //! fixture disassembly corroborate the contract; they are not a general proof that the
 //! machine code is safe.
 //! 2. The signature is `extern "C" fn(*mut i64, *mut ExitRecord) -> u32` under System V,
-//!    which is the signature `lower::signature` declares to Cranelift.
+//!    which is the signature `lower::signature` declares to Cranelift. N2's separate
+//!    collection entry appends `(*mut i64, u64)` for the private snapshot and length.
+//!    Loading seals the signature choice. A collection's scalar entry is a rejecting
+//!    static stub, so calling either API cannot invoke code with the wrong signature.
 //! 3. `buf` is a live, exclusive, initialized `&mut [i64]` of exactly `cells` elements (B1:
 //!    the region's slots, plus `next` and `end` with an iterator), and `record` a live,
 //!    exclusive, initialized `&mut ExitRecord` (`#[repr(C)]`, 48 bytes since P2b, align 8):
 //!    checked by `call` before the call. The IR audit admits only whole aligned 8-byte cell
 //!    accesses within `buf[0..cells]` under the per-cell permission map (`end` load-only),
 //!    and whole record fields under the per-field permission table (never `reserved`).
+//!    N2's snapshot is a separate exclusive initialized i64 slice of max(1,len) cells,
+//!    whose byte size fits isize. The boundary checks these lengths. The audit clamps
+//!    every index to index < len ? index : 0 before shifting or forming an address.
+//!    Nonempty lengths fit the allocation; empty lengths have a live zero sentinel.
+//!    The checked length bounds the shift/add, including negative I64 indices treated
+//!    as unsigned. The lowering also exits to Retry before a failing logical access.
+//!    No Store, Value, payload pointer, borrow or Rust enum representation crosses the
+//!    boundary. Snapshot writes remain speculative until safe Rust validates commit.
 //! 4. The function only loops while fuel lasts (every iteration passes the charged header,
 //!    which exits at fuel 0) and never unwinds: there is no call, so no panic can cross it.
 #![allow(unsafe_code)]
@@ -57,10 +70,20 @@ use crate::experimental_core::region::abi::ExitRecord;
 use cranelift_jit::{JITBuilder, JITModule};
 use cranelift_module::{default_libcall_names, Linkage, Module};
 
+type CollectionEntry = unsafe extern "C" fn(*mut i64, *mut ExitRecord, *mut i64, u64) -> u32;
+
 type Entry = unsafe extern "C" fn(*mut i64, *mut ExitRecord) -> u32;
+
+// A collection region cannot accidentally be called with the scalar ABI. The
+// scalar call stays unchanged: its safe rejection entry returns an invalid status
+// without touching either pointer. Real collection code has a separate typed entry.
+extern "C" fn refuse_collection_as_scalar(_: *mut i64, _: *mut ExitRecord) -> u32 {
+	0
+}
 
 /// One loaded region: owned executable memory plus its private entry point.
 pub(crate) struct NativeRegion {
+	collection_entry: *const u8,
 	/// `Some` until `Drop` frees it.
 	module: Option<JITModule>,
 	entry: *const u8,
@@ -78,7 +101,15 @@ impl NativeRegion {
 		let mut module = JITModule::new(JITBuilder::with_isa(isa, default_libcall_names()));
 		let result = (|| {
 			let id = module
-				.declare_function("region", Linkage::Local, &lower::signature())
+				.declare_function(
+					"region",
+					Linkage::Local,
+					&if compiled.collection() {
+						lower::collection_signature()
+					} else {
+						lower::signature()
+					},
+				)
 				.map_err(|e| NativeRefusal::Codegen(e.to_string()))?;
 			module
 				.define_function_bytes(id, compiled.alignment(), compiled.bytes(), &[])
@@ -105,8 +136,17 @@ impl NativeRegion {
 		})();
 		match result {
 			Ok(entry) => Ok(Self {
+				collection_entry: if compiled.collection() {
+					entry
+				} else {
+					core::ptr::null()
+				},
 				module: Some(module),
-				entry,
+				entry: if compiled.collection() {
+					refuse_collection_as_scalar as *const u8
+				} else {
+					entry
+				},
 				cells: compiled.cells(),
 			}),
 			Err(refusal) => {
@@ -127,13 +167,49 @@ impl NativeRegion {
 			return None;
 		}
 		// SAFETY: see the module documentation, items 1 to 4. `entry` came from
-		// `get_finalized_function` of the module `self` still owns (it is freed only in
-		// `Drop`, which cannot run while `&self` is borrowed); `Entry` is the signature the
+		// `get_finalized_function` of the module `self` still owns, or is the static
+		// rejecting scalar stub of a collection region. The module is freed only in
+		// `Drop`, which cannot run while `&self` is borrowed; `Entry` is the signature the
 		// code was compiled for; both pointers come from live exclusive borrows checked
 		// above, and the code touches only `buf[0..cells]` and the 48-byte record.
 		let status = unsafe {
 			let entry = core::mem::transmute::<*const u8, Entry>(self.entry);
 			entry(buf.as_mut_ptr(), record as *mut ExitRecord)
+		};
+		Some(status)
+	}
+	/// N2's separate ABI. Scratch is exclusive, initialized, includes an empty-array
+	/// sentinel, and has a byte length representable by isize. The sealed compiler
+	/// audits every dynamic access as snapshot + 8 * clamped(index < len, index, 0).
+	/// No pointer to the Store or to a Value enters native code.
+	pub(crate) fn call_collection(
+		&self,
+		buf: &mut [i64],
+		record: &mut ExitRecord,
+		snapshot: &mut [i64],
+		len: usize,
+	) -> Option<u32> {
+		if self.collection_entry.is_null()
+			|| buf.len() != self.cells
+			|| self.module.is_none()
+			|| record.reserved != 0
+			|| snapshot.len() != len.max(1)
+			|| snapshot.len() > isize::MAX as usize / core::mem::size_of::<i64>()
+		{
+			return None;
+		}
+		// SAFETY: the sealed code has the collection signature and passed both IR
+		// audits and the machine gate. Each supplied pointer is exclusive and live for
+		// this call; length and sentinel checks establish the dynamic array contract.
+		// Audited code cannot touch a Store, call, trap, unwind or outlive these borrows.
+		let status = unsafe {
+			let entry = core::mem::transmute::<*const u8, CollectionEntry>(self.collection_entry);
+			entry(
+				buf.as_mut_ptr(),
+				record as *mut ExitRecord,
+				snapshot.as_mut_ptr(),
+				len as u64,
+			)
 		};
 		Some(status)
 	}

@@ -116,6 +116,9 @@ pub(crate) fn enter(
 
 /// Steps 1 and 2: every entry check, then the unboxed buffer. Shared borrows only: a
 /// refusal changes nothing. The cell bound is checked first, before any cell is filled.
+// Keep these shared helpers inlined: sharing them with collection entry must not
+// add calls and temporary copies to the original scalar entry path.
+#[inline(always)]
 fn unbox(
 	region: &Region,
 	window: &[Value],
@@ -272,6 +275,7 @@ impl Plan<'_> {
 ///   the final `next` reachable from the entry's; an `iter_done` exit exhausted it; and
 ///   the progress does not exceed the fuel consumed (widened, [`iter_progress_ok`]).
 #[allow(clippy::too_many_arguments)]
+#[inline(always)]
 fn validate<'r>(
 	region: &'r Region,
 	window: &[Value],
@@ -312,16 +316,7 @@ fn validate<'r>(
 	let agreed = written & region.tracked & !exit.dynamic;
 	let agree_ok = record.bools & agreed == exit.bools & agreed
 		&& record.units & agreed == exit.units & agreed;
-	let payloads_ok = (0..n).all(|l| {
-		let bit = 1u64 << l;
-		if bools & bit != 0 {
-			matches!(buf[l], 0 | 1)
-		} else if units & bit != 0 {
-			buf[l] == 0
-		} else {
-			true
-		}
-	});
+	let payloads_ok = canonical_payloads(buf, bools, units, all);
 	// `record.fuel <= entry_fuel` first; nothing here subtracts.
 	let fuel_ok = record.fuel <= entry_fuel
 		&& match (exit.status, exit.replay) {
@@ -413,6 +408,24 @@ fn validate<'r>(
 	})
 }
 
+/// Only Bool/Unit-tagged cells constrain their payload; integer cells need no scan.
+#[inline(always)]
+fn canonical_payloads(buf: &[i64], bools: u64, units: u64, all: u64) -> bool {
+	let mut typed = (bools | units) & all;
+	while typed != 0 {
+		let local = typed.trailing_zeros() as usize;
+		let bit = 1u64 << local;
+		typed &= typed - 1;
+		let Some(&value) = buf.get(local) else {
+			return false;
+		};
+		if !(value == 0 || (value == 1 && bools & bit != 0)) {
+			return false;
+		}
+	}
+	true
+}
+
 #[cfg(test)]
 std::thread_local! {
 	static INJECT_M1_FAILURE: core::cell::Cell<bool> = const { core::cell::Cell::new(false) };
@@ -451,6 +464,7 @@ fn write_back_invariant() -> Error {
 /// mutation: exactly the interpreter's last `put` per slot. An M2 failure anyway is an
 /// invariant failure, surfaced as an `Err`. Refuses (`InvalidExit`, nothing written) a
 /// window or store other than the ones `validate` checked.
+#[inline(always)]
 fn apply(
 	plan: Plan<'_>,
 	window: &mut [Value],
@@ -526,6 +540,39 @@ mod tests {
 				_ => 0,
 			})
 			.collect()
+	}
+
+	#[test]
+	fn canonical_payload_bit_scan_matches_cell_predicate() {
+		let samples = [
+			[i64::MIN, -1, 0, 1],
+			[0, 1, 2, i64::MAX],
+			[1, 0, 1, 0],
+			[0, 0, 0, 0],
+		];
+		for n in 0..=4 {
+			let all = (1u64 << n) - 1;
+			// Include a bit beyond the cell window, just as the old range scan did.
+			for bools in 0..(1u64 << (n + 1)) {
+				for units in 0..(1u64 << (n + 1)) {
+					for values in samples {
+						let buf = &values[..n];
+						let expected = (0..n).all(|l| {
+							if bools & (1 << l) != 0 {
+								matches!(buf[l], 0 | 1)
+							} else if units & (1 << l) != 0 {
+								buf[l] == 0
+							} else {
+								true
+							}
+						});
+						assert_eq!(super::canonical_payloads(buf, bools, units, all), expected);
+					}
+				}
+			}
+		}
+		assert!(super::canonical_payloads(&[1; 64], u64::MAX, 0, u64::MAX));
+		assert!(!super::canonical_payloads(&[1; 64], 0, u64::MAX, u64::MAX));
 	}
 
 	#[test]
@@ -640,3 +687,62 @@ mod b1_tests;
 
 #[cfg(test)]
 mod r1_tests;
+
+/// N2 collection specialization. The original scalar entry/commit has no snapshot
+/// allocation, scan or dynamic-index work. All speculative state stays private until
+/// scalar/iterator validation and the combined heap transaction have succeeded.
+#[inline(never)]
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn enter_collection(
+	region: &Region,
+	window: &mut [Value],
+	store: &mut Store,
+	cancel_pending: bool,
+	fuel: usize,
+	room: Room,
+	run: impl FnOnce(&Region, &mut [i64], &mut ExitRecord, &mut [i64], usize) -> u32,
+) -> Result<core::result::Result<Exited, Refused>> {
+	let Some(c) = region.collection else {
+		return Ok(Err(Refused::Window));
+	};
+	let mut storage = [0i64; MAX_REGION_CELLS];
+	let (entry_fuel, iter) = match unbox(
+		region,
+		window,
+		store,
+		cancel_pending,
+		fuel,
+		room,
+		&mut storage,
+	) {
+		Ok(entry) => entry,
+		Err(refused) => return Ok(Err(refused)),
+	};
+	let Some(&value) = window.get(c.slot as usize) else {
+		return Ok(Err(Refused::Window));
+	};
+	let budget = super::budget::Budget::new(c.scratch_bytes.min(store.native_snapshot_room()));
+	let Some((mut snapshot, len)) = store.snapshot_for_native(value, c.ty, &budget) else {
+		return Ok(Err(Refused::Tag { slot: c.slot }));
+	};
+	let buf = &mut storage[..region.cells()];
+	let mut record = ExitRecord::new(entry_fuel);
+	let returned = run(region, buf, &mut record, &mut snapshot, len);
+	let mut plan = match validate(
+		region, window, store, entry_fuel, iter, buf, &record, returned,
+	) {
+		Ok(plan) => plan,
+		Err(refused) => return Ok(Err(refused)),
+	};
+	if window.get(c.slot as usize) != Some(&value) || snapshot.len() != len.max(1) {
+		return Ok(Err(Refused::InvalidExit));
+	}
+	let iter = plan.iter.map(|i| (i.value, i.expect, i.new));
+	if !store.commit_snapshot_for_native(value, c.ty, &snapshot[..len], iter) {
+		return Ok(Err(Refused::InvalidExit));
+	}
+	// The combined transaction already committed next. Remaining window writes release
+	// only scalars in the same open, idle Store and therefore cannot fail.
+	plan.iter = None;
+	apply(plan, window, store)
+}

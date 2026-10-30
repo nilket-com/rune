@@ -1,0 +1,40 @@
+// Port of AWFY benchmarks/Lua/sieve.lua.
+
+const NAME = "Sieve";
+
+struct Sieve;
+
+impl Sieve {
+	fn benchmark(self) {
+		let flags = Vec::with_capacity(5000);
+		for _ in 0..5000 {
+			flags.push(true);
+		}
+		Sieve::sieve(flags, 5000)
+	}
+
+	fn verify_result(self, result) {
+		result == 669
+	}
+
+	fn sieve(flags, size) {
+		let prime_count = 0;
+		for i in 2..size + 1 {
+			if flags[i - 2] {
+				prime_count = prime_count + 1;
+				let k = i + i;
+				while k <= size {
+					flags[k - 2] = false;
+					k = k + i;
+				}
+			}
+		}
+		prime_count
+	}
+}
+
+fn new_benchmark() {
+	Sieve
+}
+
+fn kernel(x) { let b=new_benchmark(); let result=b.benchmark(); assert!(b.verify_result(result)); result }

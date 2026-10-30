@@ -8,7 +8,8 @@
 //!   machine code with a fixed baseline x86-64 ISA (no host feature detection).
 //! - [`audit`]: the post-compile gate. A region whose IR or lowered machine code contains a
 //!   trap site, a call, a relocation, a division instruction, or a memory access outside
-//!   `buf[0..n]` and the exit record is refused: the interpreter keeps it.
+//!   `buf[0..n]`, the exit record and N2's checked private scalar snapshot is refused:
+//!   the interpreter keeps it.
 //! - [`boundary`]: the only module allowed `unsafe` (executable memory ownership, the
 //!   function-pointer conversion and the call).
 //!
