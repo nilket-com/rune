@@ -1,0 +1,92 @@
+E1a: preserve the embedding formatting and prepare boundaries
+
+Authority: routing rulings, chatd rune-routing seq23987, seq23999, seq24003,
+seq24029 and seq24041.
+Base: E1 plus V4, 3eea6d30. Small prerequisite to rnx record 0197.
+
+Match legacy's semantic formatting walk-depth limit of 64 with the existing
+typed ErrorKind::ValueDepth and Detail::ValueDepth. Do not detect cycles or
+introduce a different printed representation. Match anonymous Object Rust Debug:
+inline children bypass the walk charge; child semantic ValueDepth becomes the
+legacy bounded type/address/error marker using the current engine identity.
+Compare live marker structure and validate each raw address; do not erase
+addresses or count these as byte-identical output. Never catch host resource
+FormatLimit at this boundary. Cover mixed shapes and self/mutual Object cycles.
+Keep permissive byte, node and
+scratch limits; retain explicit narrower host-selected formatting limits.
+Measure exact walk counting on live legacy and execution witnesses at depths
+63, 64 and 65 with scalar leaves, vectors, tuples, Option, Result and nominals.
+Self and mutual cycles must terminate promptly without allocation exhaustion;
+shared acyclic aliases must remain legal with byte-identical text.
+
+Add complete Store and argument snapshots around both Refused and Invalid
+prepare, including a refusal after import_all validation. Compare generations,
+reference counts, roots, live counts, bytes, free slots and bookkeeping, not
+only host-effect counters. Exercise stale and foreign arguments and host
+binding errors without mutating the original state. No execution or fallback
+is performed by prepare.
+
+Use live tests, with no committed observed outputs. Run focused native tests,
+appropriate CGU1 per-record gates and fresh-clone verification as rnxverify on
+strix. M8 is already closed; no new milestone study. Block on jobs and read
+terminal receipts once, never poll. One signed plan and one signed impl on
+local main, no branch/worktree; publish after acceptance and review, then pin
+rnx to the accepted source.
+
+Native policy addition (seq24003): add per-Executor set_native_enabled(bool)
+and native_enabled(). Default true when native-code is compiled; unsupported
+platforms remain interpreted. Disabled bypasses cache checkout/analysis/mapping
+without changing the process environment. Preserve prepared-token exclusivity.
+Prove off/on/off outcomes, budgets and failures match and disabled invocations
+leave native cache state/counters/environment decision untouched. Extend the
+Rune-owned public-surface invariant. rnx compiles native in, initially selects
+off, and forwards --native=on|off until the benchmark/user runtime ruling.
+
+Gate interface ruling (seq23999): use the committed full twelve-role, 68-run
+callgrind capture plus both counter2 and K1 profiles and five seals. Gate only
+CGU1 per-record bounds; report CGU16 as diagnostics, not a new milestone.
+Account explicitly for the native-on per-call entry branch against 3eea6d30.
+The CGU1-only controller entry point is later backlog work, not this record.
+
+Bookkeeping ruling (seq24029): promote the closed M8 registry to E1 source
+9ee355f3. Use it for baseline/milestone references; keep 3eea6d30 as tip. Do not
+relabel old captures or reopen the milestone. Strengthen C1 retained depth-gap
+rows into live legacy exact comparisons now that E1a closes that gap.
+
+Result boundary ruling (seq24062): expose ViewKind::Moved(Type) through the
+borrowed view. Preserve generation/foreign/closed checks and shared visit
+budgets. Read identity and diagnostic type metadata only; child, field,
+nominal/content access still returns AccessConflict. rnx renders its existing
+opaque type marker from typed metadata, without error-prose parsing or value
+reconstruction. Test moved roots and children without allocation and preserve
+all negative view invariants; update source-pinned Miri fixtures.
+
+Unit.clone() deliberately stays Unit, directly and wrapped. Do not manufacture
+an owned empty Tuple to match legacy's representation artifact. Pin this in
+Rune. Routing reports only the three SHA-pinned L1 rows01903/01966/02213 as the
+named unit-clone difference, requiring exact legacy ()\n/exit0 versus new empty
+output/exit0 and live typed Unit root evidence. These rows are never counted
+as byte-identical. Any census/demo occurrence requires a new ruling. No clone
+implementation change, no runtime fallback and no other output exception.
+
+Entry-cost qualification (seq24098, seq24103): keep the original failed
+Callgrind receipt immutable. Commit the one-record qualifications/e1a.json and
+its replay/negative controls; run the existing analyzer unchanged against the
+same verified 68 raw captures. Qualify only measured 1d1bb786 vs 3eea6d30:
+Executor::invoke +3000 Ir in native-on while/numeric/calls, +2002 in native-on
+fib/shared_rows per exactly 1000 calls; with_limits +1 Ir once in every cell.
+No other positive core symbol is allowed. Report raw and qualified costs,
+prove interpreter hot-closure/native-source identity, and preserve every other
+bound plus the K1/counter2 gates. Bring any counter2 cycle flag for those cells
+to review. Seal/recheck against original CAPTURE-CONTEXT and raw pins. A
+bookkeeping-only amendment may reuse acceptance/build/capture evidence only
+with a mechanical complete tree diff proving production, harness and lock
+inputs byte-identical; no full fresh rerun. This exception is never inherited
+by another candidate. Backlog: combine native_enabled with no_region_code.
+
+Speed ruling (seq24124): CGU1 counter2 PASS with zero cycle flags settles its
+gate. Skip CGU16 counter2 for E1a: "not run: diagnostic-only, role-inventory
+mismatch". Keep the operator KeyError receipt. No additional baseline-role
+build is required. Put counter2 base/milestone naming compatibility with the
+existing committed --cgu1-only interface backlog. Keep both K1 profiles and
+the full 68-profile Callgrind replay, including its CGU16 diagnostic report.
