@@ -31,6 +31,16 @@ INSTALL_CALLS = ('<rune::compile::names::Names>::insert::<&rune_core::item::item
                  '<rune::compile::context::Context>::install::<rune::module::module::Module>')
 
 
+def _cold_analysis_iterator(row, invocations):
+	# These Rust iterators scan the bounded compiler analysis, not Rune ranges.
+	# Unknown or iteration-scale call counts still take the strict hot-range rule;
+	# admitted cold costs still face the ordinary core/whole/per-invocation bounds.
+	name, calls = row['function'], row['calls']
+	return (type(calls) is int and 0 < calls <= invocations + 2
+			and name.startswith('<core::ops::range::Range<usize> as core::iter::traits::iterator::Iterator>::try_fold::<')
+			and '&mut <rune::experimental_core::region::FunctionContext>::analyze_header::{closure#' in name)
+
+
 def assess(tip, candidate, reference, *, invocations, iterations, controls, guard=None):
     return _assess(tip, candidate, reference, invocations=invocations, iterations=iterations,
                    controls=controls, guard=guard, allow_residue=False, allow_control_growth=False)
@@ -63,6 +73,7 @@ def _assess(tip, candidate, reference, *, invocations, iterations, controls, gua
         if iterations is not None and calls * 100 >= iterations:
             raise ValueError('range swap scales with iterations')
     if any(row['delta'] > 0 and row['function'] not in SWAP
+		   and not _cold_analysis_iterator(row, invocations)
            and 'range' in row['function'].lower()
            and ('iterator' in row['function'].lower() or 'range_next' in row['function'].lower()) for row in diff):
         raise ValueError('hot range cost grows')

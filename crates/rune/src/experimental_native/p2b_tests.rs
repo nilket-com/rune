@@ -148,6 +148,52 @@ const LISTED_7: &str = "pub fn main(a) { let i = 0; let s = 0; let j = 0; while 
 fn admitted_cases() -> Vec<Case> {
 	let mut cases = vec![
 		rune(
+			"n1_for_assignment",
+			crate::experimental_core::region::n1_tests::FOR,
+			ints(&[&[0], &[-5], &[17]]),
+			1,
+			"CF",
+		),
+		rune(
+			"n1_while_assignment",
+			crate::experimental_core::region::n1_tests::WHILE,
+			ints(&[&[0], &[-5], &[17]]),
+			1,
+			"CF",
+		),
+		rune(
+			"n1_assignment_overflow",
+			crate::experimental_core::region::n1_tests::OVERFLOW,
+			vec![
+				vec![Arg::I(i64::MAX), Arg::I(1)],
+				vec![Arg::I(i64::MIN), Arg::I(-1)],
+				vec![Arg::I(7), Arg::I(2)],
+			],
+			1,
+			"CFR",
+		),
+		rune(
+			"n1_copy_of_loop_variable",
+			built::COPY_OF_LOOP_VARIABLE,
+			ints(&[&[0], &[4]]),
+			1,
+			"CF",
+		),
+		built_case(
+			"n1_copy_from_parameter",
+			built::copy_from_live_in(0),
+			ints(&[&[0], &[3]]),
+			1,
+			"CF",
+		),
+		built_case(
+			"n1_copy_from_maybe_written",
+			built::copy_from_live_in(1),
+			ints(&[&[0], &[3]]),
+			1,
+			"CF",
+		),
+		rune(
 			"p2b_listed_3_let_t",
 			LISTED_3,
 			ints(&[&[0], &[5], &[9]]),
@@ -306,36 +352,6 @@ fn admitted_cases() -> Vec<Case> {
 /// header. They still run both differentials: zero native entries, equal observations.
 fn refused_cases() -> Vec<(Case, Vec<Option<&'static str>>)> {
 	vec![
-		(
-			rune(
-				"p2b_copy_of_loop_variable",
-				built::COPY_OF_LOOP_VARIABLE,
-				ints(&[&[0], &[4]]),
-				0,
-				"",
-			),
-			vec![Some("Type")],
-		),
-		(
-			built_case(
-				"p2b_copy_from_parameter",
-				built::copy_from_live_in(0),
-				ints(&[&[0], &[3]]),
-				0,
-				"",
-			),
-			vec![Some("CopySource")],
-		),
-		(
-			built_case(
-				"p2b_copy_from_maybe_written",
-				built::copy_from_live_in(1),
-				ints(&[&[0], &[3]]),
-				0,
-				"",
-			),
-			vec![Some("CopySource")],
-		),
 		(
 			built_case(
 				"p2b_copy_from_top",
@@ -602,4 +618,47 @@ fn p2b_audit_record_bound_is_48() {
 		audit::ir(&store32(48), &audit::AccessMap::uniform_for_test(2)),
 		Err(Finding::Memory(_))
 	));
+}
+
+#[test]
+#[cfg_attr(
+	miri,
+	ignore = "Miri: executes generated machine code in a child process"
+)]
+fn n1_guarded_copy_fallback_preserves_full_state() {
+	run_child("child_n1_guarded_fallback");
+}
+
+#[test]
+#[ignore = "N1 native worker: run by its parent test in a child process"]
+fn child_n1_guarded_fallback() {
+	require_child();
+	let mut cases = vec![built_case(
+		"n1_float_bool_copy_source",
+		crate::experimental_core::region::n1_tests::copied_parameter(),
+		vec![vec![Arg::I(3), Arg::F(1.5)], vec![Arg::I(3), Arg::B(true)]],
+		1,
+		"",
+	)];
+	for (name, src) in [
+		(
+			"n1_unit_copy_source",
+			"pub fn main(a) { let x=(); let y=(); let i=0; while i<a { y=x; i+=1; } y }",
+		),
+		(
+			"n1_heap_copy_source",
+			"pub fn main(a) { let x=[a]; let y=(); let i=0; while i<a { y=x; i+=1; } y.len() }",
+		),
+	] {
+		cases.push(rune(name, src, ints(&[&[3]]), 1, ""));
+	}
+	for mut case in cases {
+		case.entry_refusals = true;
+		let (observed, _) = run_case(&case);
+		assert_eq!(observed.native_entries, 0, "{}", case.name);
+		assert!(observed.refused_tag > 0, "{}", case.name);
+		let (_, _, production) = production_case(&case);
+		assert_eq!(production.entries, 0, "{}", case.name);
+		assert!(production.tag > 0, "{}", case.name);
+	}
 }

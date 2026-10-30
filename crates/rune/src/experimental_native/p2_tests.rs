@@ -851,6 +851,20 @@ fn child_cancel_tick() {
 	let o = native(code, main, &[Arg::I(25)], BIG_FUEL);
 	assert_eq!(o, plain(code, main, &[Arg::I(25)], BIG_FUEL));
 	assert_eq!(totals(code).entries, 1);
+	let assignment = compile_source(crate::experimental_core::region::n1_tests::FOR);
+	let main = assignment.function(Hash::type_hash(["main"])).unwrap();
+	let code = &assignment.code;
+	assert_eq!(cache::prepare(code).unwrap().loaded, 1);
+	for n in [0, 1, 3, 7, 20] {
+		cancel_at_charge_for_test(Some(n));
+		let p = plain(code, main, &[Arg::I(25)], BIG_FUEL);
+		cancel_at_charge_for_test(Some(n));
+		let before = totals(code);
+		let observed = native(code, main, &[Arg::I(25)], BIG_FUEL);
+		cancel_at_charge_for_test(None);
+		assert_eq!(observed, p, "N1 assignment tick {n}");
+		assert_eq!(minus(totals(code), before), Totals::default());
+	}
 }
 
 // ---------------------------------------- 10. resume rule: equal to the P1 hook entries

@@ -9,8 +9,9 @@
 //!   entry, whose reached instructions are all `Literal` (`I64`/`Bool`/`Unit`), `Binary` or
 //!   `AssignBinary` with an op in {Add, Sub, Mul, Div, Rem, Eq, Ne, Lt, Le, Gt, Ge} on
 //!   proven `I64` operands, `Branch` on a proven `Bool`, `Jump`, `Release` (writes `Unit`),
-//!   or `Copy` (P2b) from a source written in the region on every path with a concrete
-//!   `I64`/`Bool`/`Unit` type in the final fixpoint (otherwise `CopySource`). Anything else
+//!   or `Copy` from a definitely written `I64`/`Bool`/`Unit` source (P2b), or an
+//!   I64-guarded entry source whose joined current type is exactly I64 (N1), in the
+//!   final fixpoint (otherwise `CopySource`). Anything else
 //!   refuses the region; the interpreter runs it unchanged.
 //! - **Entry** happens at the header, *before* the interpreter's own cancel/fuel step for
 //!   that instruction, and only when no cancel is pending, the store is open with no queued
@@ -58,6 +59,8 @@ pub(crate) mod cache;
 pub(crate) mod b1_tests;
 #[cfg(test)]
 pub(crate) mod hook;
+#[cfg(test)]
+pub(crate) mod n1_tests;
 #[cfg(test)]
 pub(crate) mod p2b_tests;
 #[cfg(test)]
@@ -544,8 +547,8 @@ pub(crate) enum RegionRefusal {
 	Transient,
 	/// The region fixpoint reached the [`TRANSFER_FACTOR`] cutoff.
 	Steps,
-	/// P2b: a `Copy` whose source is not written in the region on every path with one
-	/// concrete type (I64, Bool or Unit) in the final fixpoint.
+	/// A `Copy` without a definitely written concrete scalar source or an I64-guarded
+	/// entry source whose joined current type is I64 in the final fixpoint.
 	CopySource { pc: u32 },
 	/// B1: an `IterNext` other than the header's.
 	Iter { pc: u32, reason: IterReason },
@@ -666,12 +669,11 @@ impl From<Grow> for Stop {
 	}
 }
 
-/// The fixpoint transfer cutoff factor: a region fixpoint may run at most
+/// The fixpoint transfer cutoff factor: both region passes together may run at most
 /// `TRANSFER_FACTOR * body * max(slots, 1)` transfers, and the function-level inference at
 /// most `TRANSFER_FACTOR * instructions * max(slots, 1)`. This is an OPERATIONAL cutoff, not
-/// a proof of the fixpoints' complexity. (A lattice-height argument suggests about
-/// `body * (1 + 6 * slots)` region transfers and `len * (1 + 2 * slots)` function
-/// transfers, below the cutoff, but that argument is not relied on.) Hitting it refuses the
+/// a proof of the fixpoints' complexity. The guarded pass does not reset the allowance.
+/// Hitting the cutoff refuses the
 /// region (`RegionRefusal::Steps`) or abandons the function-level inference (as past
 /// [`MAX_FUNCTION_INFERENCE_CELLS`]); both fall back to the interpreter normally.
 pub(crate) const TRANSFER_FACTOR: usize = 8;
@@ -1024,77 +1026,6 @@ impl<'f, 'b> FunctionContext<'f, 'b> {
 			return Err(invalid().into());
 		}
 
-		// Forward fixpoint over (written, written type, written constant) per slot. The
-		// work list holds each body index at most once (the `in_work` bitmap), so its
-		// capacity is the body length. B1: IterNext's write is on its some edge only (the
-		// none edge carries the state before it).
-		let cells = body.len().checked_mul(n).ok_or(Stop::Budget)?;
-		let mut states: BVec<'b, SlotState> = BVec::new(budget);
-		states.resize(cells, SlotState::ENTRY)?;
-		let mut reached: BVec<'b, bool> = BVec::new(budget);
-		reached.resize(body.len(), false)?;
-		reached[header_index] = true;
-		let mut work: BVec<'b, usize> = BVec::with_capacity(budget, body.len())?;
-		let mut in_work: BVec<'b, bool> = BVec::new(budget);
-		in_work.resize(body.len(), false)?;
-		work.push(header_index)?;
-		in_work[header_index] = true;
-		let mut scratch: BVec<'b, SlotState> = BVec::new(budget);
-		scratch.resize(n, SlotState::ENTRY)?;
-		let mut pre: BVec<'b, SlotState> = BVec::new(budget);
-		if iter.is_some() {
-			pre.resize(n, SlotState::ENTRY)?;
-		}
-		let limit = cutoff(self.factor, body.len(), n);
-		let mut transfers = 0usize;
-		while let Some(i) = work.pop() {
-			in_work[i] = false;
-			transfers += 1;
-			if transfers > limit {
-				return Ok(Err(RegionRefusal::Steps));
-			}
-			let is_iter = matches!(ops[i], Op::IterNext { .. });
-			if is_iter {
-				pre.copy_from_slice(&states[i * n..(i + 1) * n]);
-			}
-			scratch.copy_from_slice(&states[i * n..(i + 1) * n]);
-			transfer_at(ops[i], &slots, &mut scratch, ret_of(ops[i], body[i])?)?;
-			for (k, q) in successors(f, body[i] as usize)?.into_iter().enumerate() {
-				let Some(q) = q else {
-					continue;
-				};
-				let Some(j) = index_of(&body, q) else {
-					continue;
-				};
-				// IterNext's successors are [pc + 1 (some), none].
-				let source: &[SlotState] = if is_iter && k == 1 { &pre } else { &scratch };
-				let target = &mut states[j * n..(j + 1) * n];
-				let changed = if reached[j] {
-					let mut changed = false;
-					for (t, s) in target.iter_mut().zip(source.iter()) {
-						let joined = t.join(*s);
-						changed |= joined != *t;
-						*t = joined;
-					}
-					changed
-				} else {
-					reached[j] = true;
-					target.copy_from_slice(source);
-					true
-				};
-				if changed && !in_work[j] {
-					in_work[j] = true;
-					work.push(j)?;
-				}
-			}
-		}
-		if transfers > self.max_transfers.get() {
-			self.max_transfers.set(transfers);
-		}
-		drop(work);
-		drop(in_work);
-		drop(pre);
-
 		// Every typed read of body index `i`: the op's own, plus a Call's arguments whose
 		// parameter the callee demands (an unread parameter's argument is touched only).
 		let typed_reads =
@@ -1124,25 +1055,136 @@ impl<'f, 'b> FunctionContext<'f, 'b> {
 				Ok(None)
 			};
 
-		// Live-in demands: a read that can observe the entry value fixes that slot's guard.
+		// Forward fixpoint over (written, written type, written constant) per slot. The
+		// work list holds each body index at most once (the `in_work` bitmap), so its
+		// capacity is the body length. B1: IterNext's write is on its some edge only (the
+		// none edge carries the state before it).
+		let cells = body.len().checked_mul(n).ok_or(Stop::Budget)?;
+		let mut states: BVec<'b, SlotState> = BVec::new(budget);
+		states.resize(cells, SlotState::ENTRY)?;
+		let mut reached: BVec<'b, bool> = BVec::new(budget);
+		reached.resize(body.len(), false)?;
+		reached[header_index] = true;
+		let mut work: BVec<'b, usize> = BVec::with_capacity(budget, body.len())?;
+		let mut in_work: BVec<'b, bool> = BVec::new(budget);
+		in_work.resize(body.len(), false)?;
+		work.push(header_index)?;
+		in_work[header_index] = true;
+		let mut scratch: BVec<'b, SlotState> = BVec::new(budget);
+		scratch.resize(n, SlotState::ENTRY)?;
+		let mut pre: BVec<'b, SlotState> = BVec::new(budget);
+		if iter.is_some() {
+			pre.resize(n, SlotState::ENTRY)?;
+		}
 		let mut demand: BVec<'b, Option<Scalar>> = BVec::new(budget);
 		demand.resize(n, None)?;
-		for i in (0..body.len()).filter(|&i| reached[i]) {
-			let refusal = typed_reads(i, &mut |slot, want| {
-				let l = local(slot)?;
-				if states[i * n + l].written != Written::Yes {
-					match demand[l] {
-						None => demand[l] = Some(want),
-						Some(d) if d == want => (),
-						Some(_) => return Ok(Some(RegionRefusal::LiveIn { pc: body[i], slot })),
+		let limit = cutoff(self.factor, body.len(), n);
+		let mut transfers = 0usize;
+		// N1: the unguarded written-state pass and guarded typing pass share this cutoff.
+		for pass in 0..2 {
+			if pass != 0 {
+				states.fill(SlotState::ENTRY);
+				reached.fill(false);
+				reached[header_index] = true;
+				in_work[header_index] = true;
+				work.push(header_index)?;
+			}
+			while let Some(i) = work.pop() {
+				in_work[i] = false;
+				if transfers == limit {
+					self.max_transfers
+						.set(self.max_transfers.get().max(transfers));
+					return Ok(Err(RegionRefusal::Steps));
+				}
+				transfers += 1;
+				let is_iter = matches!(ops[i], Op::IterNext { .. });
+				if is_iter {
+					pre.copy_from_slice(&states[i * n..(i + 1) * n]);
+				}
+				scratch.copy_from_slice(&states[i * n..(i + 1) * n]);
+				transfer_guarded_at(
+					ops[i],
+					&slots,
+					&mut scratch,
+					ret_of(ops[i], body[i])?,
+					if pass == 0 { &[] } else { &demand },
+				)?;
+				for (k, q) in successors(f, body[i] as usize)?.into_iter().enumerate() {
+					let Some(q) = q else {
+						continue;
+					};
+					let Some(j) = index_of(&body, q) else {
+						continue;
+					};
+					// IterNext's successors are [pc + 1 (some), none].
+					let source: &[SlotState] = if is_iter && k == 1 { &pre } else { &scratch };
+					let target = &mut states[j * n..(j + 1) * n];
+					let changed = if reached[j] {
+						let mut changed = false;
+						for (t, s) in target.iter_mut().zip(source.iter()) {
+							let joined = t.join(*s);
+							changed |= joined != *t;
+							*t = joined;
+						}
+						changed
+					} else {
+						reached[j] = true;
+						target.copy_from_slice(source);
+						true
+					};
+					if changed && !in_work[j] {
+						in_work[j] = true;
+						work.push(j)?;
 					}
 				}
-				Ok(None)
-			})?;
-			if let Some(refusal) = refusal {
-				return Ok(Err(refusal));
+			}
+			// Live-in demands: a read that can observe the entry value fixes that slot's guard.
+			for i in (0..body.len()).filter(|&i| reached[i]) {
+				let refusal = typed_reads(i, &mut |slot, want| {
+					let l = local(slot)?;
+					if states[i * n + l].written != Written::Yes {
+						match demand[l] {
+							None => demand[l] = Some(want),
+							Some(d) if d == want => (),
+							Some(_) => {
+								return Ok(Some(RegionRefusal::LiveIn { pc: body[i], slot }))
+							}
+						}
+					}
+					Ok(None)
+				})?;
+				if let Some(refusal) = refusal {
+					return Ok(Err(refusal));
+				}
+			}
+			if pass == 0 {
+				let mut guarded_copy = false;
+				for i in (0..body.len()).filter(|&i| reached[i]) {
+					if let Some(src) = copy_source(ops[i]) {
+						let l = local(src)?;
+						if states[i * n + l].written != Written::Yes {
+							match demand[l] {
+								None | Some(Scalar::I64) => demand[l] = Some(Scalar::I64),
+								Some(_) => {
+									return Ok(Err(RegionRefusal::CopySource { pc: body[i] }))
+								}
+							}
+							guarded_copy = true;
+						}
+					}
+				}
+				if !guarded_copy {
+					break;
+				}
 			}
 		}
+		if transfers > self.max_transfers.get() {
+			self.max_transfers.set(transfers);
+		}
+		drop(work);
+		drop(in_work);
+		drop(pre);
+
 		let entry_ty = |l: usize| demand[l].map_or(Ty::Top, Ty::of);
 		let current = |s: SlotState, l: usize| match s.written {
 			Written::No => entry_ty(l),
@@ -1161,13 +1203,18 @@ impl<'f, 'b> FunctionContext<'f, 'b> {
 			}
 		}
 
-		// P2b: every reached Copy's source, in the FINAL fixpoint state before the Copy, is
-		// written in the region on every path with one concrete scalar type. (The fixpoint
+		// Every reached Copy has a definitely written scalar source, or an I64-guarded
+		// entry source with joined current type I64 in the FINAL fixpoint. (The fixpoint
 		// is complete here: the cutoff returned `Steps` above otherwise.)
 		for i in (0..body.len()).filter(|&i| reached[i]) {
 			if let Some(src) = copy_source(ops[i]) {
 				let s = states[i * n + local(src)?];
-				if s.written != Written::Yes || !matches!(s.ty, Ty::I64 | Ty::Bool | Ty::Unit) {
+				let admitted = if s.written == Written::Yes {
+					matches!(s.ty, Ty::I64 | Ty::Bool | Ty::Unit)
+				} else {
+					demand[local(src)?] == Some(Scalar::I64) && current(s, local(src)?) == Ty::I64
+				};
+				if !admitted {
 					return Ok(Err(RegionRefusal::CopySource { pc: body[i] }));
 				}
 			}
@@ -1329,7 +1376,7 @@ impl<'f, 'b> FunctionContext<'f, 'b> {
 				replay_exits = Some((k, fuel_exit, fault_exit));
 			}
 			scratch.copy_from_slice(state);
-			transfer_at(ops[i], &slots, &mut scratch, ret_of(ops[i], pc)?)?;
+			transfer_guarded_at(ops[i], &slots, &mut scratch, ret_of(ops[i], pc)?, &demand)?;
 			let mut target = |q: usize,
 			                  from: &[SlotState],
 			                  iter_done: bool|
@@ -1377,7 +1424,7 @@ impl<'f, 'b> FunctionContext<'f, 'b> {
 				),
 				Op::Copy { out, value } => {
 					// The source's final state; the CopySource check admitted only these.
-					let ty = match state[local(value)?].ty {
+					let ty = match current(state[local(value)?], local(value)?) {
 						Ty::I64 => Scalar::I64,
 						Ty::Bool => Scalar::Bool,
 						Ty::Unit => Scalar::Unit,
@@ -2098,6 +2145,40 @@ fn transfer_at(
 		konst: Konst::Top,
 	};
 	Ok(())
+}
+
+/// Copy may read a numeric entry value only after the analysis installs its I64 guard.
+/// The first pass uses the original transfer; the second joins that guarded entry type
+/// with any value written on other paths. Constants never flow through Copy.
+fn transfer_guarded_at(
+	op: Op,
+	slots: &[u32],
+	state: &mut [SlotState],
+	ret: Option<Scalar>,
+	entry: &[Option<Scalar>],
+) -> Result<(), Error> {
+	if let Op::Copy { out, value } = op {
+		if !entry.is_empty() {
+			let src = slots.binary_search(&value).map_err(|_| invalid())?;
+			let previous = state[src];
+			if previous.written != Written::Yes {
+				let ty = entry[src].map_or(Ty::Top, Ty::of);
+				let ty = if previous.written == Written::No {
+					ty
+				} else {
+					ty.join(previous.ty)
+				};
+				let dest = slots.binary_search(&out).map_err(|_| invalid())?;
+				state[dest] = SlotState {
+					written: Written::Yes,
+					ty,
+					konst: Konst::Top,
+				};
+				return Ok(());
+			}
+		}
+	}
+	transfer_at(op, slots, state, ret)
 }
 
 /// The structural checks of an expansion (exactly one charged node per site, the

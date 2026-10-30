@@ -357,13 +357,14 @@ fn counted_loop_region_shape_and_constant_divisors() {
 	}
 	// A divisor that is the parameter is never a constant, even if every call passes 17.
 	let code = counted(Binary::Rem, None);
-	assert_eq!(
-		regions(&code, 0)[0].1.as_ref().err(),
-		Some(&RegionRefusal::Type { pc: 5 }),
-		"P2b: the Copy (pc 4) of the never-written parameter is admitted as an op, but its out \
-		 is Top, so the Rem reading it is refused by the read-type check (which runs before \
-		 the CopySource check)"
-	);
+	let found = regions(&code, 0);
+	let region = found[0]
+		.1
+		.as_ref()
+		.expect("N1: copied parameter has an I64 entry guard");
+	assert!(region
+		.entry
+		.contains(&super::EntryClass::Guard(Scalar::I64)));
 }
 
 #[test]

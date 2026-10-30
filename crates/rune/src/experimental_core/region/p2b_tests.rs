@@ -61,7 +61,7 @@ fn ret(f: &mut Function, value: u32, at: u32) {
 }
 
 /// The one region of function 0 at `header`, admitted.
-fn admitted(code: &Code, function: u32, header: u32) -> Region {
+pub(super) fn admitted(code: &Code, function: u32, header: u32) -> Region {
 	let found = regions(code, function);
 	let (_, region) = found
 		.into_iter()
@@ -83,7 +83,7 @@ fn refusal(code: &Code, function: u32, header: u32) -> RegionRefusal {
 }
 
 /// The local index of frame slot `slot` in `region`.
-fn local(region: &Region, slot: u32) -> u32 {
+pub(super) fn local(region: &Region, slot: u32) -> u32 {
 	region
 		.slots
 		.iter()
@@ -150,7 +150,7 @@ fn add(total: &mut Stats, s: &Stats) {
 
 /// Plain interpreter against the simulator install at every fuel value from 0 to two past
 /// completion, comparing the full observation. Returns the summed hook statistics.
-fn sweep_full(code: &Code, function: u32, args: &[Arg]) -> Stats {
+pub(super) fn sweep_full(code: &Code, function: u32, args: &[Arg]) -> Stats {
 	let done = fuel_to_finish(code, function, args, 20_000);
 	let mut total = Stats::default();
 	for fuel in 0..=done + 2 {
@@ -169,7 +169,7 @@ fn sweep_full(code: &Code, function: u32, args: &[Arg]) -> Stats {
 	total
 }
 
-fn sweep_inputs(code: &Code, function: u32, inputs: &[StdVec<Arg>]) -> Stats {
+pub(super) fn sweep_inputs(code: &Code, function: u32, inputs: &[StdVec<Arg>]) -> Stats {
 	let mut total = Stats::default();
 	for args in inputs {
 		let s = sweep_full(code, function, args);
@@ -817,33 +817,25 @@ fn p2b_copy_from_in_region_scalar_types_out_like_source() {
 }
 
 #[test]
-fn p2b_copy_from_live_in_or_maybe_written_refused_copy_source() {
-	// A loop variable is Maybe at the Copy; the parameter is never written (No).
+fn n1_copy_from_live_in_or_maybe_written_has_i64_guard() {
 	for source in [1, 0] {
 		let code = build(vec![copy_from_live_in(source)]);
+		let region = admitted(&code, 0, 1);
 		assert_eq!(
-			refusal(&code, 0, 1),
-			RegionRefusal::CopySource { pc: 3 },
-			"source slot {source}"
+			region.entry[local(&region, source) as usize],
+			EntryClass::Guard(Scalar::I64)
 		);
 	}
 }
 
-/// `let y = i; s += y` with `i` a loop variable: the Copy's out is Top (its source is
-/// Maybe), and the Add reading `y` is refused by the read-type check, which runs before the
-/// CopySource check. The mismatch refusal is not weakened to admit a live-in Copy.
 #[test]
 #[cfg_attr(miri, ignore = "Miri: compiles Rune source")]
-fn p2b_copy_of_loop_variable_in_rune_refused() {
+fn n1_copy_of_loop_variable_in_rune_admitted() {
 	let program = compile(COPY_OF_LOOP_VARIABLE);
 	let main = main_of(&program);
 	let found = regions(&program.code, main);
 	assert_eq!(found.len(), 1);
-	assert!(
-		matches!(found[0].1, Err(RegionRefusal::Type { .. })),
-		"{:?}",
-		found[0].1.as_ref().err()
-	);
+	assert!(found[0].1.is_ok());
 }
 
 #[test]
@@ -870,10 +862,10 @@ fn p2b_copy_source_uses_final_fixpoint_not_visit_order() {
 		branch(&mut f, 2, 1, 10, 9); // 9
 		ret(&mut f, 5, 10); // 10
 		let code = build(vec![f]);
+		let region = admitted(&code, 0, 1);
 		assert_eq!(
-			refusal(&code, 0, 1),
-			RegionRefusal::CopySource { pc: 5 },
-			"arms ({yes}, {no})"
+			region.entry[local(&region, 4) as usize],
+			EntryClass::Guard(Scalar::I64)
 		);
 	}
 

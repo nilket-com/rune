@@ -15,7 +15,7 @@
     {
       "name": "native",
       "features": "fmt,workspace,native-code,capture-io,disable-io,sha2",
-      "passed": 1683
+      "passed": 1689
     },
     {
       "name": "warning-doc",
