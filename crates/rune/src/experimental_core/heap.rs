@@ -53,6 +53,8 @@ mod children_tests;
 mod default_limits_tests;
 #[cfg(test)]
 mod growth_tests;
+#[cfg(all(test, not(miri)))]
+mod prepare_boundary_tests;
 #[cfg(test)]
 mod range_iterator_tests;
 #[cfg(test)]

@@ -852,7 +852,7 @@
     },
     {
       "first_bound": 600,
-      "fixture_sha256": "1da80b56fdb14bd7d3dbcab444ee5db909c09e913184d3548660fe238f3a8d80",
+      "fixture_sha256": "ca89a0cd1113d3e52b669654d5c40a226cb9f99735b694407c951ecaf1845c5c",
       "ignored": false,
       "name": "e1-borrowed-view-preserves-aliases-cycles-and-shared-visit-bounds",
       "selected_labels": [],
@@ -861,7 +861,7 @@
     },
     {
       "first_bound": 600,
-      "fixture_sha256": "1da80b56fdb14bd7d3dbcab444ee5db909c09e913184d3548660fe238f3a8d80",
+      "fixture_sha256": "ca89a0cd1113d3e52b669654d5c40a226cb9f99735b694407c951ecaf1845c5c",
       "ignored": false,
       "name": "e1-view-rejects-foreign-stale-and-closed-roots-and-checks-indices",
       "selected_labels": [],
@@ -870,7 +870,7 @@
     },
     {
       "first_bound": 600,
-      "fixture_sha256": "1da80b56fdb14bd7d3dbcab444ee5db909c09e913184d3548660fe238f3a8d80",
+      "fixture_sha256": "ca89a0cd1113d3e52b669654d5c40a226cb9f99735b694407c951ecaf1845c5c",
       "ignored": false,
       "name": "e1-view-keeps-mutual-cycles-variants-keys-and-moved-access-without-allocating",
       "selected_labels": [],
@@ -879,7 +879,7 @@
     },
     {
       "first_bound": 600,
-      "fixture_sha256": "1da80b56fdb14bd7d3dbcab444ee5db909c09e913184d3548660fe238f3a8d80",
+      "fixture_sha256": "ca89a0cd1113d3e52b669654d5c40a226cb9f99735b694407c951ecaf1845c5c",
       "ignored": false,
       "name": "e1-prepared-empty-context-preserves-cancellation-and-reuses-clean-state",
       "selected_labels": [],

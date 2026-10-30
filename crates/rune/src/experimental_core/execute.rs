@@ -363,6 +363,7 @@ pub struct Executor {
 	diagnostics: Vec<Location>,
 	canceled: bool,
 	format_limits: FormatLimits,
+	native_enabled: bool,
 	limits: ExecutorLimits,
 	configured_host_runtime: Option<crate::sync::Arc<crate::runtime::RuntimeContext>>,
 	// Integer tag so the cold-arm predicate combines both authorities before branching.
@@ -494,6 +495,7 @@ impl Executor {
 			diagnostics: Vec::try_with_capacity(limits.frames.min(INITIAL_FRAMES))?,
 			canceled: false,
 			format_limits: FormatLimits::default(),
+			native_enabled: cfg!(feature = "native-code"),
 			limits,
 			configured_host_runtime: None,
 			runtime_format_guard: 0,
@@ -571,6 +573,20 @@ impl Executor {
 	/// traversal; raise bytes, nodes, depth and scratch independently as needed.
 	pub fn set_format_limits(&mut self, limits: FormatLimits) {
 		self.format_limits = limits;
+	}
+
+	/// Whether this executor permits the optional native tier. This reports the
+	/// requested policy, not platform support or a promise that a region qualifies.
+	pub fn native_enabled(&self) -> bool {
+		self.native_enabled
+	}
+
+	/// Select native-region execution before preparing an invocation. Disabled
+	/// invocations do not consult or populate the native cache. The default is
+	/// true with `native-code`, false otherwise; unsupported platforms interpret
+	/// regardless of this setting. No process environment is read or changed.
+	pub fn set_native_enabled(&mut self, enabled: bool) {
+		self.native_enabled = enabled;
 	}
 
 	/// Validate a complete invocation before any argument transfer or effect.
@@ -2017,7 +2033,7 @@ impl Executor {
 	) -> core::result::Result<Root, Failure> {
 		use super::region::cache::{self, Checkout};
 
-		if code.id() == self.no_region_code {
+		if !self.native_enabled || code.id() == self.no_region_code {
 			return self.invoke_args::<false>(code, store, function, args, fuel, None);
 		}
 

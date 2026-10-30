@@ -76,6 +76,9 @@ impl NominalInfo {
 /// One value's presentation shape. Containers expose their children separately.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ViewKind<'a> {
+	/// A moved payload: only identity and diagnostic type remain readable.
+	/// Child, field and content access continue to return AccessConflict.
+	Moved(Type),
 	/// A scalar, including unit.
 	Scalar(Scalar),
 	/// Borrowed string bytes; no string is copied.
@@ -151,7 +154,7 @@ impl Store {
 	pub fn root_view(&self, root: &Root, limits: ViewLimits) -> Result<RootView<'_>> {
 		let value = self.import(root)?;
 		if let Value::Heap(handle) = value {
-			self.payload(handle)?;
+			self.entry(handle)?;
 		}
 		Ok(RootView {
 			store: self,
@@ -173,7 +176,7 @@ impl<'s> RootView<'s> {
 			return Err(Error::new(ErrorKind::FormatLimit, "value view nodes/depth"));
 		}
 		if let Value::Heap(handle) = value {
-			self.store.payload(handle)?;
+			self.store.entry(handle)?;
 		}
 		self.remaining.set(self.remaining.get() - 1);
 		Ok(ValueView {
@@ -201,6 +204,11 @@ impl<'v, 's> ValueView<'v, 's> {
 
 	/// Inspect the node's shape without copying any children.
 	pub fn kind(&self) -> Result<ViewKind<'s>> {
+		if let Value::Heap(handle) = self.value {
+			if let Some(Payload::Moved(tag)) = self.view.store.entry(handle)?.payload.as_ref() {
+				return Ok(ViewKind::Moved(*tag));
+			}
+		}
 		Ok(match self.value {
 			Value::Unit => ViewKind::Scalar(Scalar::Unit),
 			Value::Bool(v) => ViewKind::Scalar(Scalar::Bool(v)),

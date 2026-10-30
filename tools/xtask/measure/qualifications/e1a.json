@@ -1,0 +1,39 @@
+{
+	"schema": 1,
+	"record": "E1a",
+	"baseline_milestone": "M8",
+	"candidate_commit": "1d1bb786e5de14beea771af8cf4f63af33fe3bdd",
+	"tip_commit": "3eea6d307a5df84a24f5f75d2e4fc9362254a80b",
+	"entries": [
+		{
+			"rule": "native-policy-entry",
+			"symbol": "<rune::experimental_core::execute::Executor>::invoke",
+			"cells": {
+				"on/while": 3000,
+				"on/numeric": 3000,
+				"on/calls": 3000,
+				"on/fib": 2002,
+				"on/shared_rows": 2002
+			},
+			"calls": 1000
+		},
+		{
+			"rule": "native-policy-initialization",
+			"symbol": "<rune::experimental_core::execute::Executor>::with_limits",
+			"cells": {
+				"off/while": 1,
+				"off/numeric": 1,
+				"off/calls": 1,
+				"off/fib": 1,
+				"off/shared_rows": 1,
+				"on/while": 1,
+				"on/numeric": 1,
+				"on/calls": 1,
+				"on/fib": 1,
+				"on/shared_rows": 1
+			},
+			"calls": 1
+		}
+	],
+	"proof": "live-hot-closure-and-native-source-equal"
+}

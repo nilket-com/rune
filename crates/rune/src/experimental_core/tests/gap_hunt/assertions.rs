@@ -258,7 +258,8 @@ fn raised_depth_probe() {
 }
 
 /// Run `source` on stock and return its compared row: label, source, record,
-/// streams and site, with the D1b site mapping applied.
+/// streams and the live site. Validate the D1b provenance without projecting
+/// these now-closed depth rows back to their pre-D1b locations.
 fn stock_row(
 	label: &str,
 	source: &str,
@@ -294,7 +295,7 @@ fn stock_row(
 				&before,
 			)
 			.unwrap();
-			before
+			actual
 		}
 		None => actual,
 	};
@@ -347,15 +348,13 @@ fn contract() {
 	assert_eq!(generated.len(), 178);
 	let mut nan = 0;
 	let mut budget = 0;
-	let mut semantic = 0;
+	let mut closed = 0;
 	let mut retained = String::from("case\tpolicy\n");
-	let mut rows = std::collections::BTreeMap::new();
 	for (n, (label, source)) in generated.iter().enumerate() {
 		let id = format!("{n:05}");
 		let path = out.join(format!("{id}.source.rn"));
 		fs::write(&path, source).unwrap();
 		let stock = stock_row(label, source, &path, &scratch.0, &out, &id);
-		rows.insert(label.clone(), stock.clone());
 		let row: Vec<&str> = stock.iter().map(String::as_str).collect();
 		let site_path = scratch.0.join("result.site");
 		let _ = fs::remove_file(&site_path);
@@ -401,43 +400,20 @@ fn contract() {
 		);
 		assert!(raised.complete, "{label}");
 		let raised_site = fs::read_to_string(&site_path).unwrap();
+		assert_exact(label, &row, &raised, &raised_site);
 		if parts[2] == "63" && parts[1] != "object" {
-			// Independent formatter-walk semantics gap, NOT a budget-only proof.
-			// Derive the complete depth63 message from the live depth62 stock
-			// representation by adding exactly one source container wrapper.
-			let lower = label.replace("/63/", "/62/");
-			let lower_row: &Vec<String> = rows.get(&lower).expect("depth62 row runs first");
-			let lower_row: Vec<&str> = lower_row.iter().map(String::as_str).collect();
-			let lower_expected = expected_record(&lower_row);
-			let message = unhex(&lower_expected[3]);
-			let (_, rest) = message.split_once("\nleft: ").unwrap();
-			let (left, right) = rest.split_once("\nright: ").unwrap();
-			let (prefix, suffix) = match parts[1] {
-				"vec" => ("[", "]"),
-				"tuple" => ("(", ")"),
-				"option" => ("Some(", ")"),
-				"result" => ("Ok(", ")"),
-				_ => unreachable!(),
-			};
-			let expected=format!("Panicked: assertion failed (left != right):\nleft: {prefix}{left}{suffix}\nright: {prefix}{right}{suffix}");
-			let fields: Vec<_> = raised.record.split('\t').collect();
-			assert_eq!(&fields[..2], &["error", "Panic"]);
-			assert_eq!(unhex(fields[3]), expected);
-			assert!(fields[4].is_empty());
-			assert_eq!(raised_site, expected_site);
-			assert_eq!(hex(&raised.stdout), row[3]);
-			assert_eq!(hex(&raised.stderr), row[4]);
-			semantic += 1;
-			retained.push_str(&format!("{label}\tRetained(formatter-depth semantics)\n"));
+			closed += 1;
+			retained.push_str(&format!(
+				"{label}\tClosed(formatter-depth semantics); exact against live legacy\n"
+			));
 		} else {
-			assert_exact(label, &row, &raised, &raised_site);
 			budget += 1;
 			retained.push_str(&format!(
 				"{label}\tRetained(format budget); exact at configured depth64\n"
 			));
 		}
 	}
-	assert_eq!((nan, budget, semantic), (4, 6, 4));
+	assert_eq!((nan, budget, closed), (4, 6, 4));
 	fs::write(out.join("RETAINED.tsv"), retained).unwrap();
 	super::contract_completed("fresh", generated.len());
 }

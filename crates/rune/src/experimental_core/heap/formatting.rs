@@ -84,6 +84,8 @@ impl FormatLimits {
 	/// Store limits govern execution. This does not reserve any memory. Checked
 	/// growth and fallible allocations still apply to traversal, output and the
 	/// resulting Store payload. Result previews use their own policy.
+	/// Script templates still enforce the language's semantic value-walk depth
+	/// boundary, independently of these resource ceilings.
 	pub const fn permissive() -> Self {
 		Self {
 			bytes: usize::MAX,
@@ -115,6 +117,14 @@ fn scratch_model(nodes: usize, depth: usize) -> Option<usize> {
 
 // Only container continuations are retained. A level-zero container can have a
 // level-32 container child: at most depth+1 frames are simultaneously live.
+#[derive(Clone, Copy)]
+struct DebugChild {
+	value: Value,
+	bytes: usize,
+	pending_nodes: usize,
+	pending_bytes: usize,
+}
+
 enum Frame<'a> {
 	List {
 		values: &'a [Value],
@@ -126,6 +136,7 @@ enum Frame<'a> {
 		next: usize,
 		order: Vec<usize>,
 		sorted: bool,
+		child: Option<DebugChild>,
 	},
 	Variant,
 }
@@ -143,6 +154,9 @@ struct Stats {
 
 struct Sink<'a> {
 	limits: &'a FormatLimits,
+	// Templates reserve one legacy walk level for the formatting receiver.
+	// Host result inspection retains its independently selected depth policy.
+	template: bool,
 	text: Option<String>,
 	bytes: usize,
 	nodes: usize,
@@ -158,6 +172,7 @@ impl<'a> Sink<'a> {
 	fn new(limits: &'a FormatLimits, text: Option<String>) -> Self {
 		Self {
 			limits,
+			template: false,
 			text,
 			bytes: 0,
 			nodes: 0,
@@ -316,6 +331,7 @@ impl Store {
 			return Err(Error::new(ErrorKind::ClosedStore, "format value"));
 		}
 		let mut sink = Sink::new(limits, None);
+		sink.template = template;
 		for part in parts.clone() {
 			let (value, debug, spec) = part?;
 			if let Some(spec) = spec {
@@ -359,6 +375,7 @@ impl Store {
 		// Actual capacity remains subject to string_owned admission, independently
 		// of the counted preflight (including allocator overgrowth).
 		sink = Sink::new(limits, Some(output));
+		sink.template = template;
 		for part in parts {
 			let (value, debug, spec) = part?;
 			if let Some(spec) = spec {
@@ -553,15 +570,57 @@ impl Store {
 
 	fn render(&self, value: Value, debug: bool, sink: &mut Sink<'_>) -> Result<()> {
 		let mut stack = Vec::new();
-		let mut current = Some((value, debug));
+		let mut current = Some((value, debug, false));
 		// All owned buffers drop on every return, including failures. No store
 		// references or reference counts are acquired by this read-only traversal.
 		let result = (|| {
 			loop {
-				if let Some((value, debug)) = current.take() {
-					current = self
-						.start_value(value, debug, sink, &mut stack)?
-						.map(|v| (v, true));
+				if let Some((value, debug, object_child)) = current.take() {
+					match self.start_value(value, debug, sink, &mut stack, object_child) {
+						Ok(next) => current = next.map(|value| (value, true, false)),
+						// Rust Debug catches a failed child at the nearest Object.
+						// Host-selected resource failures keep propagating.
+						Err(error) if error.kind == ErrorKind::ValueDepth => {
+							let catch = stack.iter().rposition(|frame| {
+								matches!(
+									frame,
+									Frame::Record {
+										sorted: true,
+										child: Some(_),
+										..
+									}
+								)
+							});
+							let Some(index) = catch else {
+								return Err(error);
+							};
+							while stack.len() > index + 1 {
+								if let Some(Frame::Record { order, .. }) = stack.pop() {
+									sink.scratch_bytes = sink
+										.scratch_bytes
+										.checked_sub(
+											order
+												.capacity()
+												.checked_mul(size_of::<usize>())
+												.ok_or_else(accounting)?,
+										)
+										.ok_or_else(accounting)?;
+								}
+							}
+							let Frame::Record { child, .. } = &mut stack[index] else {
+								unreachable!()
+							};
+							let checkpoint = child.take().ok_or_else(accounting)?;
+							sink.bytes = checkpoint.bytes;
+							sink.pending_nodes = checkpoint.pending_nodes;
+							sink.pending_bytes = checkpoint.pending_bytes;
+							if let Some(text) = &mut sink.text {
+								text.truncate(checkpoint.bytes);
+							}
+							self.object_depth_marker(checkpoint.value, sink)?;
+						}
+						Err(error) => return Err(error),
+					}
 					continue;
 				}
 				let Some(frame) = stack.last_mut() else { break };
@@ -576,7 +635,7 @@ impl Store {
 								sink.push(", ")?;
 							}
 							*next += 1;
-							current = Some((*value, true));
+							current = Some((*value, true, false));
 							continue;
 						}
 						sink.push(close)?;
@@ -586,7 +645,9 @@ impl Store {
 						next,
 						order,
 						sorted,
+						child,
 					} => {
+						*child = None;
 						if *next < fields.len() {
 							let index = if *sorted { order[*next] } else { *next };
 							let (key, value) = &fields[index];
@@ -608,7 +669,15 @@ impl Store {
 								sink.push(": ")?;
 							}
 							*next += 1;
-							current = Some((*value, true));
+							if *sorted {
+								*child = Some(DebugChild {
+									value: *value,
+									bytes: sink.bytes,
+									pending_nodes: sink.pending_nodes,
+									pending_bytes: sink.pending_bytes,
+								});
+							}
+							current = Some((*value, true, *sorted));
 							continue;
 						}
 						sink.push("}")?;
@@ -646,12 +715,42 @@ impl Store {
 		result
 	}
 
+	fn object_depth_marker(&self, value: Value, sink: &mut Sink<'_>) -> Result<()> {
+		use crate::experimental_core::error::TypeName;
+		let Value::Heap(handle) = value else {
+			return Err(invalid());
+		};
+		let name = self.diagnostic_type(value).ok_or_else(invalid)?;
+		let mut nominal = [0; 256];
+		let full = if let TypeName::Struct(n) = name {
+			let len = super::super::nominal::name_copy(n, &mut nominal).ok_or_else(invalid)?;
+			core::str::from_utf8(&nominal[..len]).map_err(|_| invalid())?
+		} else {
+			match name {
+				TypeName::String => "::std::string::String",
+				TypeName::Vec => "::std::vec::Vec",
+				TypeName::Tuple => "::std::tuple::Tuple",
+				TypeName::Object => "::std::object::Object",
+				TypeName::Option => "::std::option::Option",
+				TypeName::Result => "::std::result::Result",
+				TypeName::Function => "::std::ops::Function",
+				other => super::opaque::full_name(other).ok_or_else(invalid)?,
+			}
+		};
+		sink.formatted(format_args!(
+			"<{full} object at {:p}: Value is nested too deeply to walk, limit is {}>",
+			self.entry(handle)?,
+			crate::runtime::MAX_VALUE_DEPTH
+		))
+	}
+
 	fn start_value<'s>(
 		&'s self,
 		value: Value,
 		debug: bool,
 		sink: &mut Sink<'_>,
 		stack: &mut Vec<Frame<'s>>,
+		object_child: bool,
 	) -> Result<Option<Value>> {
 		if stack.len() > sink.limits.depth
 			|| sink
@@ -661,6 +760,16 @@ impl Store {
 				>= sink.limits.nodes
 		{
 			return Err(limit());
+		}
+		// Legacy enters the formatting receiver and then each visited value,
+		// including scalar leaves. Checking before descent also bounds cycles;
+		// repeated aliases on separate paths are not cycles and remain legal.
+		if sink.template
+			&& !(object_child && !matches!(value, Value::Heap(_)))
+			&& stack.len() >= crate::runtime::MAX_VALUE_DEPTH - 1
+		{
+			return Err(Error::new(ErrorKind::ValueDepth, "format value")
+				.with_detail(crate::experimental_core::error::Detail::ValueDepth));
 		}
 		sink.nodes += 1;
 		if let Value::Heap(h) = value {
@@ -852,6 +961,7 @@ impl Store {
 							next: 0,
 							order,
 							sorted: true,
+							child: None,
 						},
 					)?;
 				}
@@ -873,6 +983,7 @@ impl Store {
 							next: 0,
 							order: Vec::new(),
 							sorted: false,
+							child: None,
 						},
 					)?;
 				}

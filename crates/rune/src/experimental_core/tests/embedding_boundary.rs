@@ -13,7 +13,18 @@ use std::{borrow::ToOwned, string::ToString};
 #[cfg(not(miri))]
 mod budget_edges;
 #[cfg(not(miri))]
+mod formatting_depth;
+#[cfg(not(miri))]
 mod metering;
+#[cfg(all(
+	not(miri),
+	feature = "native-code",
+	target_arch = "x86_64",
+	target_os = "linux"
+))]
+mod native_policy;
+#[cfg(not(miri))]
+mod result_shapes;
 use std::sync::{
 	atomic::{AtomicUsize, Ordering},
 	Arc,
@@ -106,7 +117,7 @@ fn public_executor_surface_keeps_exclusive_synchronous_execution() {
 			}
 		}
 	}
-	let expected: BTreeSet<_> = "new with_limits limits bookkeeping_bytes set_host_runtime request_cancel format_limits set_format_limits prepare run invoke is_idle".split_whitespace().map(str::to_owned).collect();
+	let expected: BTreeSet<_> = "new with_limits limits bookkeeping_bytes set_host_runtime request_cancel format_limits set_format_limits native_enabled set_native_enabled prepare run invoke is_idle".split_whitespace().map(str::to_owned).collect();
 	assert_eq!(
 		names, expected,
 		"new public executor API needs an embedding review"
@@ -239,13 +250,30 @@ fn view_keeps_mutual_cycles_variants_keys_and_moved_access_without_allocating() 
 	})
 	.call();
 	store.invalidate(text.value).unwrap();
-	assert!(
-		matches!(store.root_view(&text,ViewLimits::default()),Err(error) if error.kind==ErrorKind::AccessConflict)
-	);
-	let view = store.root_view(&some, ViewLimits::default()).unwrap();
-	assert!(
-		matches!(view.root().unwrap().child(0),Err(error) if error.kind==ErrorKind::AccessConflict)
-	);
+	rune_alloc::limit::with(0, || {
+		let view = store.root_view(&text, ViewLimits::default()).unwrap();
+		let node = view.root().unwrap();
+		assert_eq!(node.kind().unwrap(), ViewKind::Moved(Type::String));
+		assert_eq!(
+			node.type_name().unwrap(),
+			crate::experimental_core::error::TypeName::String
+		);
+		assert!(node.identity().is_some());
+		assert!(matches!(node.child(0), Err(error) if error.kind == ErrorKind::AccessConflict));
+		assert!(
+			matches!(node.field_name(0), Err(error) if error.kind == ErrorKind::AccessConflict)
+		);
+		assert!(matches!(node.nominal(), Err(error) if error.kind == ErrorKind::AccessConflict));
+		let view = store.root_view(&some, ViewLimits::default()).unwrap();
+		let child = view.root().unwrap().child(0).unwrap();
+		assert_eq!(child.kind().unwrap(), ViewKind::Moved(Type::String));
+		assert!(matches!(child.child(0), Err(error) if error.kind == ErrorKind::AccessConflict));
+		let bounded = store
+			.root_view(&text, ViewLimits { nodes: 0, depth: 0 })
+			.unwrap();
+		assert!(matches!(bounded.root(), Err(error) if error.kind == ErrorKind::FormatLimit));
+	})
+	.call();
 	store.close().unwrap();
 }
 

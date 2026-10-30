@@ -9,9 +9,10 @@ import milestone_registry
 
 
 class MilestoneRegistryTests(unittest.TestCase):
-    def test_committed_registry_is_source_only_and_anchors_m7(self):
+    def test_committed_registry_is_source_only_and_anchors_m8(self):
         value = milestone_registry.load()
-        self.assertEqual(value['milestones'][-1], {'id': 'M7', 'commit': '38ae7e1fb0b43f245e904d9cb281a80b0e17ca16'})
+        self.assertEqual(value['current'], 'M8')
+        self.assertEqual(value['milestones'][-1], {'id': 'M8', 'commit': '9ee355f31ac34aae963f16830ea8b7a76fbd5cb1'})
 
     def test_invalid_or_duplicated_source_identities_fail(self):
         with tempfile.TemporaryDirectory() as tmp:
