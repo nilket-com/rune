@@ -54,6 +54,8 @@ struct Case {
 	ignored: bool,
 	exact: bool,
 	sandbox: bool,
+	#[serde(default)]
+	exclusive: bool,
 	empty_stderr: bool,
 	timeout: u64,
 	env: BTreeMap<String, String>,
@@ -222,9 +224,28 @@ fn sandbox(binary: &Path, out: &Path) -> Command {
 fn contracts(ctx: &Context, m: &Manifest) -> Result<Value> {
 	let binary = ctx.test_binary()?;
 	let receipt = ctx.test_binary_receipt()?;
+	contract_registry(ctx, m, &binary)?;
+	// Check the process-exit child protocol before the expensive contract matrix.
+	let witness = witness::run(ctx, &binary)?;
+	let (rows, full) = std::thread::scope(|scope| -> Result<_> {
+		let bundle = scope.spawn(|| contract_bundle(ctx, m, &binary, &receipt));
+		let mut cases: Vec<_> = m.cases.iter().collect();
+		cases.sort_by_key(|case| std::cmp::Reverse(case.timeout));
+		let rows = crate::scheduler::map(&cases, ctx.jobs, |c| {
+			contract_case(ctx, &binary, &receipt, c)
+		});
+		let full = bundle
+			.join()
+			.map_err(|_| anyhow::anyhow!("contract bundle worker panicked"))?;
+		Ok((rows?, full?))
+	})?;
+	Ok(json!({"status":"PASS","cases":rows,"contract_bundle":full,"diagnostic_witnesses":witness}))
+}
+
+fn contract_registry(ctx: &Context, m: &Manifest, binary: &Path) -> Result<Value> {
 	// Compare discovered legacy contracts to the registry so new or missing contracts
 	// cannot silently change acceptance coverage.
-	let mut cmd = Command::new(&binary);
+	let mut cmd = Command::new(binary);
 	cmd.args(["--list", "--ignored"]);
 	let listing = ctx.checked("contract-registry", &mut cmd, 60)?;
 	let mut actual: Vec<_> = listed(&fs::read_to_string(listing.stdout)?)
@@ -243,44 +264,58 @@ fn contracts(ctx: &Context, m: &Manifest) -> Result<Value> {
 		actual == expected,
 		"legacy registry differs from test binary"
 	);
-	// Check the process-exit child protocol before the expensive contract matrix.
-	let witness = witness::run(ctx, &binary)?;
-	let mut rows = vec![];
-	for c in &m.cases {
-		let n = selected(ctx, &binary, &c.name, &c.selector, c.exact, c.ignored)?;
-		let dir = ctx.out.join(&c.name);
-		fs::create_dir(&dir)?;
-		let mut cmd = if c.sandbox {
-			sandbox(&binary, &ctx.out)
-		} else {
-			let mut cmd = Command::new(&binary);
-			cmd.current_dir(&dir);
-			cmd
-		};
-		base_env(ctx, &mut cmd, &dir, &receipt)?;
-		cmd.envs(&c.env);
-		test_args(&mut cmd, &c.selector, c.exact, c.ignored);
-		let r = ctx.checked(&c.name, &mut cmd, c.timeout)?;
-		let text = fs::read_to_string(&r.stdout)?;
-		exact_counts(&text, n).with_context(|| c.name.clone())?;
-		if let Some(count) = c.rows {
-			ensure!(
-				text.contains(&format!("CONTRACT ROWS {count}\n")),
-				"{} contract rows mismatch",
-				c.name
-			);
-		}
-		if c.empty_stderr {
-			ensure!(
-				fs::metadata(&r.stderr)?.len() == 0,
-				"{} nonempty stderr",
-				c.name
-			);
-		}
-		rows.push(json!({"name":c.name,"selector":c.selector,"passed":n,"contract_rows":c.rows,"seconds":r.seconds,"receipt":r.receipt}));
+	Ok(json!({"contracts":expected.len()}))
+}
+
+fn contract_case(ctx: &Context, binary: &Path, receipt: &Path, c: &Case) -> Result<Value> {
+	let n = selected(ctx, binary, &c.name, &c.selector, c.exact, c.ignored)?;
+	let dir = ctx.out.join(&c.name);
+	fs::create_dir(&dir)?;
+	let mut cmd = if c.sandbox {
+		sandbox(binary, &ctx.out)
+	} else {
+		let mut cmd = Command::new(binary);
+		cmd.current_dir(&dir);
+		cmd
+	};
+	base_env(ctx, &mut cmd, &dir, receipt)?;
+	cmd.envs(&c.env);
+	test_args(&mut cmd, &c.selector, c.exact, c.ignored);
+	// The existing short compiler-limit child bound is sensitive to
+	// contention. Preserve its bound and run this observed case alone.
+	let r = if c.exclusive {
+		let run = ctx.run_exclusive(&c.name, &mut cmd, c.timeout)?;
+		ensure!(
+			run.code == 0,
+			"{} failed with code {}; raw logs: {}, {}",
+			c.name,
+			run.code,
+			run.stdout.display(),
+			run.stderr.display()
+		);
+		run
+	} else {
+		ctx.checked(&c.name, &mut cmd, c.timeout)?
+	};
+	let text = fs::read_to_string(&r.stdout)?;
+	exact_counts(&text, n).with_context(|| c.name.clone())?;
+	if let Some(count) = c.rows {
+		ensure!(
+			text.contains(&format!("CONTRACT ROWS {count}\n")),
+			"{} contract rows mismatch",
+			c.name
+		);
 	}
-	let full = contract_bundle(ctx, m, &binary, &receipt)?;
-	Ok(json!({"status":"PASS","cases":rows,"contract_bundle":full,"diagnostic_witnesses":witness}))
+	if c.empty_stderr {
+		ensure!(
+			fs::metadata(&r.stderr)?.len() == 0,
+			"{} nonempty stderr",
+			c.name
+		);
+	}
+	Ok(
+		json!({"name":c.name,"selector":c.selector,"passed":n,"contract_rows":c.rows,"seconds":r.seconds,"receipt":r.receipt}),
+	)
 }
 
 fn contract_bundle(ctx: &Context, m: &Manifest, binary: &Path, receipt: &Path) -> Result<Value> {
@@ -335,57 +370,7 @@ fn contract_bundle(ctx: &Context, m: &Manifest, binary: &Path, receipt: &Path) -
 }
 
 fn native(ctx: &Context, m: &Manifest) -> Result<Value> {
-	let mut rows = vec![];
-	let failure_names = Regex::new(r"(?m)^    (\S+)$")?;
-	for l in &m.libraries {
-		let binary = ctx.build_rune(&l.name, &l.features)?;
-		let mut cmd = Command::new(&binary);
-		cmd.current_dir(&ctx.repo);
-		let edge_output = ctx.out.join(format!("{}-budget-edges", l.name));
-		let has_edges = matches!(l.name.as_str(), "execution-serde" | "native");
-		if has_edges {
-			cmd.env("E1_EDGE_OUTPUT", &edge_output);
-		}
-		if let Some(selector) = &l.selector {
-			cmd.arg(selector);
-		}
-		cmd.arg(format!("--test-threads={}", ctx.test_threads));
-		let r = ctx.run(&format!("{}-library", l.name), &mut cmd, 2400)?;
-		let text = fs::read_to_string(&r.stdout)?;
-		let (passed, failed) = counts(&text)?;
-		let mut retry = Value::Null;
-		if r.code != 0 || failed != 0 {
-			let flaky = "experimental_core::nominal::tests::limits_refuse_before_publishing";
-			let failures = text.rsplit("\nfailures:\n").next().unwrap_or("");
-			let names: std::collections::BTreeSet<_> = failure_names
-				.captures_iter(failures)
-				.map(|c| c[1].to_owned())
-				.collect();
-			ensure!(
-				failed == 1 && names == [flaky.to_owned()].into_iter().collect(),
-				"{} library failed",
-				l.name
-			);
-			let mut cmd = Command::new(&binary);
-			cmd.current_dir(&ctx.repo).args(["--exact", flaky]);
-			let rerun = ctx.checked(&format!("{}-known-flaky-rerun", l.name), &mut cmd, 600)?;
-			exact_counts(&fs::read_to_string(&rerun.stdout)?, 1)?;
-			retry = json!({"receipt":rerun.receipt,"passed":1});
-		}
-		ensure!(
-			passed + failed == l.passed,
-			"{} library count changed: {} vs {}",
-			l.name,
-			passed + failed,
-			l.passed
-		);
-		let budget_classes = if has_edges {
-			read_json::<Value>(&edge_output.join("COUNTS.json"))?
-		} else {
-			Value::Null
-		};
-		rows.push(json!({"name":l.name,"features":l.features,"passed":passed,"failed":failed,"flaky_rerun":retry,"expected":l.passed,"receipt":r.receipt,"seconds":r.seconds,"budget_classes":budget_classes,"budget_observations":if has_edges {Some(edge_output)}else{None}}));
-	}
+	let rows = crate::scheduler::map(&m.libraries, ctx.jobs, |l| library(ctx, l))?;
 	let mut docs = Vec::new();
 	for (label, selector) in [
 		(
@@ -394,22 +379,80 @@ fn native(ctx: &Context, m: &Manifest) -> Result<Value> {
 		),
 		("view-borrows", "experimental_core::heap::view::RootView"),
 	] {
-		let mut command = ctx.cargo();
-		command.args([
-			"test",
-			"--locked",
-			"-p",
-			"rune",
-			"--doc",
-			"--features",
-			"fmt,workspace,execution",
-			selector,
-		]);
-		let run = ctx.checked(label, &mut command, 600)?;
-		exact_counts(&fs::read_to_string(&run.stdout)?, 2)?;
-		docs.push(json!({"selector":selector,"receipt":run.receipt,"passed":2}));
+		docs.push(borrow_doc(ctx, label, selector)?);
 	}
 	Ok(json!({"status":"PASS","libraries":rows,"embedding_borrow_docs":docs}))
+}
+
+fn borrow_doc(ctx: &Context, label: &str, selector: &str) -> Result<Value> {
+	let mut command = ctx.cargo();
+	command.env("CARGO_TARGET_DIR", ctx.root_out.join("borrow-doc-target"));
+	command.args([
+		"test",
+		"--locked",
+		"-p",
+		"rune",
+		"--doc",
+		"--features",
+		"fmt,workspace,execution",
+		selector,
+	]);
+	let run = ctx.checked(label, &mut command, 600)?;
+	exact_counts(&fs::read_to_string(&run.stdout)?, 2)?;
+	Ok(json!({"selector":selector,"receipt":run.receipt,"passed":2}))
+}
+
+fn library(ctx: &Context, l: &Library) -> Result<Value> {
+	let failure_names = Regex::new(r"(?m)^    (\S+)$")?;
+	let binary = ctx.build_rune(&l.name, &l.features)?;
+	let mut cmd = Command::new(&binary);
+	cmd.current_dir(&ctx.repo);
+	let edge_output = ctx.out.join(format!("{}-budget-edges", l.name));
+	let has_edges = matches!(l.name.as_str(), "execution-serde" | "native");
+	if has_edges {
+		cmd.env("E1_EDGE_OUTPUT", &edge_output);
+	}
+	if let Some(selector) = &l.selector {
+		cmd.arg(selector);
+	}
+	cmd.arg(format!("--test-threads={}", ctx.test_threads));
+	let r = ctx.run(&format!("{}-library", l.name), &mut cmd, 2400)?;
+	let text = fs::read_to_string(&r.stdout)?;
+	let (passed, failed) = counts(&text)?;
+	let mut retry = Value::Null;
+	if r.code != 0 || failed != 0 {
+		let flaky = "experimental_core::nominal::tests::limits_refuse_before_publishing";
+		let failures = text.rsplit("\nfailures:\n").next().unwrap_or("");
+		let names: std::collections::BTreeSet<_> = failure_names
+			.captures_iter(failures)
+			.map(|c| c[1].to_owned())
+			.collect();
+		ensure!(
+			failed == 1 && names == [flaky.to_owned()].into_iter().collect(),
+			"{} library failed",
+			l.name
+		);
+		let mut cmd = Command::new(&binary);
+		cmd.current_dir(&ctx.repo).args(["--exact", flaky]);
+		let rerun = ctx.checked(&format!("{}-known-flaky-rerun", l.name), &mut cmd, 600)?;
+		exact_counts(&fs::read_to_string(&rerun.stdout)?, 1)?;
+		retry = json!({"receipt":rerun.receipt,"passed":1});
+	}
+	ensure!(
+		passed + failed == l.passed,
+		"{} library count changed: {} vs {}",
+		l.name,
+		passed + failed,
+		l.passed
+	);
+	let budget_classes = if has_edges {
+		read_json::<Value>(&edge_output.join("COUNTS.json"))?
+	} else {
+		Value::Null
+	};
+	Ok(
+		json!({"name":l.name,"features":l.features,"passed":passed,"failed":failed,"flaky_rerun":retry,"expected":l.passed,"receipt":r.receipt,"seconds":r.seconds,"budget_classes":budget_classes,"budget_observations":if has_edges {Some(edge_output)}else{None}}),
+	)
 }
 
 fn clippy(ctx: &Context, m: &Manifest) -> Result<Value> {
@@ -455,6 +498,68 @@ pub fn run(ctx: &Context, suite: &str) -> Result<Value> {
 		fixtures(ctx, &m).context("native input changed during verification")?;
 	}
 	Ok(result)
+}
+
+pub fn task_specs(suite: &str) -> Result<Vec<crate::tasks::Task>> {
+	use crate::tasks::Task;
+	let m = manifest()?;
+	let mut tasks = Vec::new();
+	if suite == "contracts" {
+		tasks.push(Task::new(suite, "registry", "all", 30.0));
+		tasks.push(Task::new(suite, "bundle", "all", 1200.0));
+		tasks.extend(
+			m.cases
+				.iter()
+				.map(|c| Task::new(suite, "case", &c.name, c.timeout.min(900) as f64)),
+		);
+	} else {
+		tasks.extend(
+			m.libraries
+				.iter()
+				.map(|l| Task::new(suite, "library", &l.name, 700.0)),
+		);
+		for name in ["prepared-borrows", "view-borrows"] {
+			tasks.push(Task::new(suite, "doc", name, 60.0));
+		}
+	}
+	Ok(tasks)
+}
+pub fn run_task(ctx: &Context, task: &crate::tasks::Task) -> Result<Value> {
+	let m = manifest()?;
+	match task.action.as_str() {
+		"registry" => {
+			fixtures(ctx, &m)?;
+			let binary = ctx.test_binary()?;
+			Ok(
+				json!({"registry":contract_registry(ctx,&m,&binary)?,"witness":witness::run(ctx,&binary)?}),
+			)
+		}
+		"bundle" => contract_bundle(ctx, &m, &ctx.test_binary()?, &ctx.test_binary_receipt()?),
+		"case" => {
+			let c = m
+				.cases
+				.iter()
+				.find(|c| c.name == task.key)
+				.context("unknown contract task")?;
+			contract_case(ctx, &ctx.test_binary()?, &ctx.test_binary_receipt()?, c)
+		}
+		"library" => library(
+			ctx,
+			m.libraries
+				.iter()
+				.find(|l| l.name == task.key)
+				.context("unknown library task")?,
+		),
+		"doc" => {
+			let selector = match task.key.as_str() {
+				"prepared-borrows" => "experimental_core::execute::PreparedInvocation",
+				"view-borrows" => "experimental_core::heap::view::RootView",
+				_ => bail!("unknown borrow-doc task"),
+			};
+			borrow_doc(ctx, &task.key, selector)
+		}
+		_ => bail!("unknown native task"),
+	}
 }
 
 #[cfg(test)]
@@ -519,7 +624,15 @@ mod tests {
 	#[test]
 	fn registry_is_nonempty_and_unique() {
 		let m = manifest().unwrap();
-		assert_eq!(m.cases.len(), 49);
+		assert_eq!(m.cases.len(), 50);
+		assert_eq!(
+			m.cases
+				.iter()
+				.filter(|c| c.exclusive)
+				.map(|c| c.name.as_str())
+				.collect::<Vec<_>>(),
+			vec!["wrong_arity-fresh"]
+		);
 		assert_eq!(m.contract_bundle.contracts, 19);
 	}
 }

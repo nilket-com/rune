@@ -11,17 +11,14 @@ mod miri;
 mod native;
 mod preservation;
 mod record_command;
+mod scheduler;
 mod seal_command;
+mod tasks;
 
 use anyhow::{bail, ensure, Context as _};
 use common::{write_json, Context, Result};
 use serde_json::{json, Value};
-use std::{
-	collections::{BTreeSet, VecDeque},
-	path::PathBuf,
-	sync::Mutex,
-	time::Instant,
-};
+use std::{collections::BTreeSet, path::PathBuf, time::Instant};
 
 const SUITES: &[&str] = &[
 	"native",
@@ -36,15 +33,15 @@ const SUITES: &[&str] = &[
 fn usage() {
 	println!(
 		"cargo xtask verify [--suite SUITE[,SUITE]] [--out NEW] [--fixtures-root PATH]\n\
-      suites: {}\n\
-      options: --repo PATH --toolchain VERSION --jobs N --test-threads N --workers N\n\
-               --check-manifests --hosts PATH\n\
-      cargo xtask list\n\
-      cargo xtask build --help\n\
-      cargo xtask measure --help\n\
-      cargo xtask seal --help\n\
-      cargo xtask record --help\n\
-      Output must be new; default scratch is under target/xtask-verify. Miri runs after native work.",
+	  suites: {}\n\
+	  options: --repo PATH --toolchain VERSION --jobs N --test-threads N --workers N\n\
+			   --check-manifests --cold --hosts PATH\n\
+	  cargo xtask list\n\
+	  cargo xtask build --help\n\
+	  cargo xtask measure --help\n\
+	  cargo xtask seal --help\n\
+	  cargo xtask record --help\n\
+	  Output must be new; default scratch is under target/xtask-verify. Native and Miri work share one local CPU budget.",
 		SUITES.join(", ")
 	);
 }
@@ -59,6 +56,7 @@ struct Options {
 	workers: usize,
 	suites: Vec<String>,
 	check: bool,
+	cold: bool,
 }
 fn parse(args: &[String]) -> Result<Option<Options>> {
 	if args == ["--help"] || args == ["-h"] {
@@ -81,15 +79,21 @@ fn parse(args: &[String]) -> Result<Option<Options>> {
 	let mut fixtures = None;
 	let mut out = None;
 	let mut toolchain = "1.98.1".to_owned();
-	let default_parallelism = hosts::available_cpus()?.min(4);
+	let default_parallelism = hosts::available_cpus()?;
 	let mut jobs = default_parallelism;
 	let mut test_threads = default_parallelism;
-	let mut workers = 1;
+	let mut workers = default_parallelism;
 	let mut suites = Vec::new();
 	let mut check = false;
+	let mut cold = false;
 	let mut i = 1;
 	while i < args.len() {
 		let flag = &args[i];
+		if flag == "--cold" {
+			cold = true;
+			i += 1;
+			continue;
+		}
 		if flag == "--check-manifests" {
 			check = true;
 			i += 1;
@@ -161,17 +165,8 @@ fn parse(args: &[String]) -> Result<Option<Options>> {
 		workers,
 		suites,
 		check,
+		cold,
 	}))
-}
-fn dispatch(ctx: &Context, suite: &str) -> Result<Value> {
-	match suite {
-		"native" | "contracts" | "clippy" | "layouts" => native::run(ctx, suite),
-		"l1" => preservation::run(ctx),
-		"miri" => miri::run(ctx),
-		"awfy" => awfy::run(ctx),
-		"measure-checks" => measure_checks::run(ctx),
-		_ => bail!("unknown suite {suite}"),
-	}
 }
 fn external_requirements(ctx: &Context, suite: &str) -> Value {
 	// The historical inventory describes the earlier archive, not this checkout.
@@ -185,33 +180,18 @@ fn external_requirements(ctx: &Context, suite: &str) -> Value {
 		json!({"source":if uses_corpus {"bundled"} else {"none"}, "external_files":0, "external_bytes":0})
 	}
 }
-fn one(ctx: &Context, suite: &str) -> Result<Value> {
-	let child = ctx.suite(suite)?;
-	child.verify_source()?;
-	let start = Instant::now();
-	let result = dispatch(&child, suite);
-	let source = child.verify_source();
-	let ok = result.is_ok() && source.is_ok();
-	let value = json!({"schema":1,"suite":suite,"status":if ok {"PASS"}else{"FAIL"},
-        "seconds":start.elapsed().as_secs_f64(),"result":result.as_ref().ok(),
-        "external_fixtures":external_requirements(&child, suite),
-        "error":result.as_ref().err().map(|e|format!("{e:#}")),
-        "source_error":source.as_ref().err().map(|e|format!("{e:#}"))});
-	write_json(&child.out.join("RESULT.json"), &value)?;
-	source?;
-	result?;
-	Ok(value)
-}
 fn validate_budget(workers: usize, jobs: usize, test_threads: usize, cpus: usize) -> Result<()> {
-	let allocation = workers
-		.checked_mul(jobs.max(test_threads))
-		.context("worker allocation overflow")?;
 	ensure!(
-		allocation <= cpus,
-		"worker allocation {allocation} exceeds {cpus} available CPUs"
+		cpus > 0 && workers > 0 && jobs > 0 && test_threads > 0,
+		"worker capacities must be positive"
+	);
+	ensure!(
+		workers <= cpus && jobs <= cpus && test_threads <= cpus,
+		"requested capacity exceeds {cpus} available CPUs"
 	);
 	Ok(())
 }
+
 fn execute(o: Options) -> Result<()> {
 	let started = Instant::now();
 	let hosts = hosts::load(o.hosts.as_deref())?;
@@ -228,9 +208,9 @@ fn execute(o: Options) -> Result<()> {
 	write_json(
 		&ctx.root_out.join("CONFIG.json"),
 		&json!({"schema":1,"suites":o.suites,
-        "jobs":o.jobs,"test_threads":o.test_threads,"workers":o.workers,"toolchain":ctx.toolchain,
-        "fixtures":ctx.fixtures,"repo":ctx.repo,"cpu_budget":cpu_budget,"check_manifests":o.check,
-        "hosts":hosts.as_ref().map(|loaded| &loaded.receipt)}),
+		"jobs":o.jobs,"test_threads":o.test_threads,"workers":o.workers,"toolchain":ctx.toolchain,
+		"fixtures":ctx.fixtures,"repo":ctx.repo,"cpu_budget":cpu_budget,"check_manifests":o.check,"cold":o.cold,
+		"hosts":hosts.as_ref().map(|loaded| &loaded.receipt)}),
 	)?;
 
 	if o.check {
@@ -256,49 +236,65 @@ fn execute(o: Options) -> Result<()> {
 		write_json(
 			&ctx.root_out.join("RESULT.json"),
 			&json!({"schema":1,
-            "status":if checked.is_ok() {"PASS"} else {"FAIL"},
-            "manifests":checked.as_ref().ok(),"error":checked.as_ref().err().map(|e|format!("{e:#}")),
-            "seconds":started.elapsed().as_secs_f64()}),
+			"status":if checked.is_ok() {"PASS"} else {"FAIL"},
+			"manifests":checked.as_ref().ok(),"error":checked.as_ref().err().map(|e|format!("{e:#}")),
+			"seconds":started.elapsed().as_secs_f64()}),
 		)?;
 		checked?;
 		return Ok(());
 	}
 
-	// V1c owns the cross-suite resource DAG. Here callers explicitly bound native
-	// workers, and Miri remains a separate final phase with at most two interpreters.
-	let queue = Mutex::new(VecDeque::from_iter(
-		o.suites.iter().filter(|s| *s != "miri").cloned(),
-	));
-	let results = Mutex::new(Vec::new());
-	let errors = Mutex::new(Vec::new());
-	std::thread::scope(|scope| {
-		for _ in 0..o.workers {
-			scope.spawn(|| loop {
-				if !errors.lock().unwrap().is_empty() {
-					break;
-				}
-				let Some(suite) = queue.lock().unwrap().pop_front() else {
-					break;
-				};
-				match one(&ctx, &suite) {
-					Ok(value) => results.lock().unwrap().push(value),
-					Err(error) => errors.lock().unwrap().push(format!("{suite}: {error:#}")),
-				}
-			});
-		}
-	});
-	if errors.lock().unwrap().is_empty() && o.suites.iter().any(|s| s == "miri") {
-		match one(&ctx, "miri") {
-			Ok(value) => results.lock().unwrap().push(value),
-			Err(error) => errors.lock().unwrap().push(format!("miri: {error:#}")),
-		}
+	if o.suites.iter().any(|suite| suite == "miri") {
+		miri::preflight(&ctx)?;
 	}
-	let errors = errors.into_inner().unwrap();
-	let status = if errors.is_empty() { "PASS" } else { "FAIL" };
+	let graph = tasks::run_all(&ctx, &o.suites, o.workers);
+	let mut results = Vec::new();
+	let mut errors = Vec::new();
+	match graph {
+		Ok(rows) => {
+			for row in rows {
+				if row["status"] != "PASS" {
+					errors.push(format!("{}: {}", row["suite"], row["error"]));
+				}
+				results.push(row);
+			}
+		}
+		Err(error) => errors.push(format!("job graph: {error:#}")),
+	}
+	if let Err(error) = ctx.verify_source() {
+		errors.push(format!("source: {error:#}"));
+	}
+	write_json(&ctx.root_out.join("SCHEDULER.json"), &ctx.budget.events()?)?;
+	let native = ctx.native_intervals()?;
+	let interpreters = results
+		.iter()
+		.find(|row| row["suite"] == "miri")
+		.and_then(|row| row["result"]["overlap"]["intervals"].as_array())
+		.cloned()
+		.unwrap_or_default();
+	let overlap = native.iter().any(|a| {
+		interpreters.iter().any(|b| {
+			a["start_ns"].as_u64() < b["end_ns"].as_u64()
+				&& b["start_ns"].as_u64() < a["end_ns"].as_u64()
+		})
+	});
+	write_json(
+		&ctx.root_out.join("CORRECTNESS-EVENTS.json"),
+		&json!({"native":native,"interpreters":interpreters,"native_miri_overlap":overlap,"cpu_budget":ctx.budget.capacity()}),
+	)?;
+	if errors.is_empty()
+		&& ctx.budget.capacity() > 1
+		&& o.suites.iter().any(|suite| suite == "miri")
+		&& o.suites
+			.iter()
+			.any(|suite| suite == "native" || suite == "awfy")
+		&& !overlap
+	{
+		errors.push("actual native/Miri overlap was not exercised".into());
+	}
 	write_json(
 		&ctx.root_out.join("RESULT.json"),
-		&json!({"schema":1,"status":status,
-        "seconds":started.elapsed().as_secs_f64(),"results":results.into_inner().unwrap(),"errors":errors}),
+		&json!({"schema":1,"status":if errors.is_empty(){"PASS"}else{"FAIL"},"seconds":started.elapsed().as_secs_f64(),"results":results,"errors":errors}),
 	)?;
 	ensure!(
 		errors.is_empty(),
@@ -308,6 +304,7 @@ fn execute(o: Options) -> Result<()> {
 	println!("verification PASS: {}", ctx.root_out.display());
 	Ok(())
 }
+
 fn main() {
 	let mut args: Vec<_> = std::env::args().skip(1).collect();
 	if args.is_empty() {
@@ -354,10 +351,11 @@ mod tests {
 	}
 
 	#[test]
-	fn worker_allocation_respects_affinity_and_overflow() {
+	fn worker_capacities_share_the_same_cpu_budget() {
 		assert!(validate_budget(3, 8, 4, 30).is_ok());
-		assert!(validate_budget(4, 8, 4, 30).is_err());
-		assert!(validate_budget(2, 1, 16, 30).is_err());
+		assert!(validate_budget(4, 8, 4, 30).is_ok());
+		assert!(validate_budget(30, 30, 30, 30).is_ok());
+		assert!(validate_budget(31, 30, 30, 30).is_err());
 		assert!(validate_budget(usize::MAX, 2, 1, 30).is_err());
 	}
 

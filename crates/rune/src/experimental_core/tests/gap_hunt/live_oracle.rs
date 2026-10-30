@@ -68,48 +68,45 @@ pub(super) fn run_child_with_limits(
 		command.env(key, value);
 	}
 	let mut child = command.spawn().unwrap();
+	let group = child.id();
 	let exceeded = Arc::new(AtomicBool::new(false));
 	let flag = exceeded.clone();
 	let pipe = child.stdout.take().unwrap();
-	let stdout = std::thread::spawn(move || drain(pipe, flag));
+	let stdout = std::thread::spawn(move || drain(pipe, flag, group));
 	let flag = exceeded.clone();
 	let pipe = child.stderr.take().unwrap();
-	let stderr = std::thread::spawn(move || drain(pipe, flag));
+	let stderr = std::thread::spawn(move || drain(pipe, flag, group));
 	let start = Instant::now();
-	let mut stop = false;
-	let mut exited = false;
-	loop {
-		if child.try_wait().unwrap().is_some() {
-			exited = true;
+
+	let timed_out = Arc::new(AtomicBool::new(false));
+	let deadline_flag = timed_out.clone();
+	let (completed, exit) = std::sync::mpsc::channel();
+	let timer = std::thread::spawn(move || {
+		if matches!(
+			exit.recv_timeout(wall),
+			Err(std::sync::mpsc::RecvTimeoutError::Timeout)
+		) {
+			deadline_flag.store(true, Ordering::Relaxed);
+			kill_group(group);
 		}
-		if !exceeded.load(Ordering::Relaxed)
-			&& exited && stdout.is_finished()
-			&& stderr.is_finished()
-		{
-			break;
-		}
-		if exceeded.load(Ordering::Relaxed) || start.elapsed() >= wall {
-			stop = true;
-			let _ = Command::new("/usr/bin/kill")
-				.args(["-KILL", "--", &format!("-{}", child.id())])
-				.stdout(Stdio::null())
-				.stderr(Stdio::null())
-				.status();
-			break;
-		}
-		std::thread::sleep(Duration::from_millis(10));
-	}
-	// wait() returns the cached status when try_wait() already reaped the child.
+	});
+	// Exit and stream EOF drive completion; the one-shot deadline also covers
+	// descendants that retain a pipe after their immediate parent exits.
 	let status = child.wait().unwrap();
 	let stdout = stdout.join().unwrap();
 	let stderr = stderr.join().unwrap();
+	let _ = completed.send(());
+	timer.join().unwrap();
+	let stop = timed_out.load(Ordering::Relaxed) || exceeded.load(Ordering::Relaxed);
 	fs::write(folder.join("stdout"), &stdout).unwrap();
 	fs::write(folder.join("stderr"), &stderr).unwrap();
 	fs::write(
 		folder.join("receipt.txt"),
 		format!(
-			"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\n",
-			start.elapsed()
+			"case:{label}\nrc:{status}\nstop:{stop}\nelapsed:{:?}\ntimeout:{}\nstream_limit:{}\n",
+			start.elapsed(),
+			timed_out.load(Ordering::Relaxed),
+			exceeded.load(Ordering::Relaxed)
 		),
 	)
 	.unwrap();
@@ -126,7 +123,15 @@ pub(super) fn run_child_with_limits(
 	}
 }
 
-fn drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
+fn kill_group(group: u32) {
+	let _ = Command::new("/usr/bin/kill")
+		.args(["-KILL", "--", &format!("-{group}")])
+		.stdout(Stdio::null())
+		.stderr(Stdio::null())
+		.status();
+}
+
+fn drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>, group: u32) -> Vec<u8> {
 	let mut bytes = Vec::new();
 	let mut buf = [0; 4096];
 	loop {
@@ -136,9 +141,79 @@ fn drain(mut pipe: impl Read, exceeded: Arc<AtomicBool>) -> Vec<u8> {
 		}
 		let room = CAP - bytes.len();
 		bytes.extend_from_slice(&buf[..n.min(room)]);
-		if n > room {
-			exceeded.store(true, Ordering::Relaxed);
+		if n > room && !exceeded.swap(true, Ordering::Relaxed) {
+			kill_group(group);
 		}
 	}
 	bytes
+}
+
+#[test]
+#[ignore = "internal child for blocking bounds controls"]
+fn blocking_wait_child() {
+	match std::env::var("V4_ORACLE_MODE").unwrap().as_str() {
+		"timeout" => {
+			let (_sender, receiver) = std::sync::mpsc::channel::<()>();
+			receiver.recv().unwrap();
+		}
+		"stream" => {
+			use std::io::Write as _;
+			let _ = std::io::stdout().write_all(&std::vec![b'x'; CAP + 4096]);
+		}
+		"success" => {
+			fs::write(
+				std::env::var_os("V4_ORACLE_RESULT").unwrap(),
+				b"{\"ok\":true}",
+			)
+			.unwrap();
+		}
+		_ => panic!("invalid bounds control"),
+	}
+}
+
+#[test]
+#[ignore = "explicit bounds regression for the native contract supervisor"]
+fn blocking_wait_controls() {
+	let root = std::path::PathBuf::from(std::env::var_os("GAP_OUT").unwrap());
+	let selector = "experimental_core::tests::gap_hunt::live_oracle::blocking_wait_child";
+	let success = run_child_with_limits(
+		selector,
+		"success",
+		&root.join("success"),
+		"V4_ORACLE_RESULT",
+		&[("V4_ORACLE_MODE", "success".as_ref())],
+		5,
+		Duration::from_secs(5),
+	);
+	assert_eq!(success.observation, serde_json::json!({"ok":true}));
+	for (mode, wall) in [
+		("timeout", Duration::from_millis(250)),
+		("stream", Duration::from_secs(5)),
+	] {
+		let folder = root.join(mode);
+		let failed = std::panic::catch_unwind(|| {
+			run_child_with_limits(
+				selector,
+				mode,
+				&folder,
+				"V4_ORACLE_RESULT",
+				&[("V4_ORACLE_MODE", mode.as_ref())],
+				5,
+				wall,
+			)
+		});
+		assert!(failed.is_err(), "{mode}: required stop missing");
+		let receipt = fs::read_to_string(folder.join("receipt.txt")).unwrap();
+		assert!(receipt.contains("stop:true\n"));
+		assert!(receipt.contains(if mode == "timeout" {
+			"timeout:true\nstream_limit:false\n"
+		} else {
+			"timeout:false\nstream_limit:true\n"
+		}));
+		for stream in ["stdout", "stderr"] {
+			assert!(fs::metadata(folder.join(stream)).unwrap().len() <= CAP as u64);
+		}
+	}
+	std::println!("CONTRACT ENGINE both");
+	std::println!("CONTRACT ROWS 3");
 }

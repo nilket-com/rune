@@ -33,6 +33,10 @@ struct Case {
 	inputs: Vec<String>,
 	environment: BTreeMap<String, String>,
 	policy: String,
+	#[serde(default)]
+	cpu_seconds: Option<u64>,
+	#[serde(default)]
+	wall_seconds: Option<u64>,
 }
 fn source(ctx: &Context, name: &str) -> Result<PathBuf> {
 	let path = Path::new(name);
@@ -75,6 +79,11 @@ fn manifest(ctx: &Context) -> Result<Manifest> {
 		ensure!(
 			c.num > 0 && c.inner > 0 && !c.inputs.is_empty(),
 			"invalid AWFY input"
+		);
+		let large = c.name.starts_with("havlak-2");
+		ensure!(
+			c.cpu_seconds == large.then_some(1200) && c.wall_seconds == large.then_some(3600),
+			"AWFY guard differs from approved policy"
 		);
 		for input in &c.inputs {
 			source(ctx, input)?;
@@ -208,7 +217,16 @@ fn observe(ctx: &Context, binary: &Path, c: &Case, engine: &str) -> Result<Value
 		&config,
 		&json!({"engine":engine,"num":c.num,"inner":c.inner,"inputs":inputs,"stdout":stdout,"control_mode":control,"control_environment":env}),
 	)?;
-	let mut child = Command::new(binary);
+	let mut child = if let Some(cpu) = c.cpu_seconds {
+		let mut command = Command::new("/usr/bin/prlimit");
+		command
+			.arg(format!("--cpu={cpu}:{cpu}"))
+			.arg("--")
+			.arg(binary);
+		command
+	} else {
+		Command::new(binary)
+	};
 	child
 		.args([
 			SELECTOR,
@@ -221,7 +239,7 @@ fn observe(ctx: &Context, binary: &Path, c: &Case, engine: &str) -> Result<Value
 		.env("RUNE_VERIFY_AWFY_CONFIG", &config)
 		.env("RUNE_VERIFY_AWFY_OUTPUT", &output)
 		.envs(&env);
-	let run = ctx.checked(&label, &mut child, 600)?;
+	let run = ctx.checked(&label, &mut child, c.wall_seconds.unwrap_or(600))?;
 	ensure!(
 		fs::read(&run.stderr)?.is_empty(),
 		"unexpected observer process stderr: {label}"
@@ -240,20 +258,37 @@ fn observe(ctx: &Context, binary: &Path, c: &Case, engine: &str) -> Result<Value
 	Ok(wire)
 }
 
-pub fn run(ctx: &Context) -> Result<Value> {
-	let m = manifest(ctx)?;
-	let binary = ctx.build_rune("awfy-native", FEATURES)?;
-	let mut list = Command::new(&binary);
-	list.args([SELECTOR, "--ignored", "--exact", "--list"]);
-	let selected = ctx.checked("select", &mut list, 30)?;
-	common::require_one_selection(&selected.stdout, SELECTOR)?;
-	let negatives = negative_controls(ctx, &binary, SELECTOR)?;
+fn validate_observations(
+	ctx: &Context,
+	m: &Manifest,
+	mut observed: BTreeMap<(String, String), Value>,
+	negatives: Value,
+) -> Result<Value> {
+	ensure!(
+		observed.len() == 60,
+		"missing or duplicate AWFY observation"
+	);
 	let mut baselines = BTreeMap::<i64, Value>::new();
+	for case in &m.cases {
+		if case.family == "candidate" && case.name.starts_with("havlak-") {
+			baselines.insert(
+				case.num,
+				observed
+					.get(&(case.name.clone(), "fresh".to_owned()))
+					.context("missing live Havlak observation")?
+					.clone(),
+			);
+		}
+	}
 	let mut counts = BTreeMap::<String, usize>::new();
 	for c in &m.cases {
-		let fresh = observe(ctx, &binary, c, "fresh")?;
+		let fresh = observed
+			.remove(&(c.name.clone(), "fresh".to_owned()))
+			.context("missing fresh AWFY observation")?;
 		if c.family == "candidate" {
-			let stock = observe(ctx, &binary, c, "stock")?;
+			let stock = observed
+				.remove(&(c.name.clone(), "stock".to_owned()))
+				.context("missing legacy AWFY observation")?;
 			ensure!(
 				stock["code"] == 0 && stock["stderr"] == "",
 				"stock AWFY failed: {}",
@@ -283,9 +318,6 @@ pub fn run(ctx: &Context) -> Result<Value> {
 					c.name
 				);
 			}
-			if c.name.starts_with("havlak-") {
-				baselines.insert(c.num, fresh.clone());
-			}
 		} else if c.policy == "frame-limit" {
 			let error = fresh["stderr"].as_str().context("frame limit stderr")?;
 			ensure!(
@@ -307,8 +339,89 @@ pub fn run(ctx: &Context) -> Result<Value> {
 		}
 		*counts.entry(c.policy.clone()).or_default() += 1;
 	}
+	ensure!(observed.is_empty(), "unexpected AWFY observations");
 	ctx.verify_source()?;
 	Ok(
 		json!({"status":"PASS","cases":m.cases.len(),"policies":counts,"negative_controls":negatives}),
+	)
+}
+
+pub fn task_specs(ctx: &Context) -> Result<Vec<crate::tasks::Task>> {
+	use crate::tasks::Task;
+	let m = manifest(ctx)?;
+	let mut tasks = vec![Task::new("awfy", "controls", "all", 30.0)];
+	for case in &m.cases {
+		for engine in if case.family == "candidate" {
+			vec!["fresh", "stock"]
+		} else {
+			vec!["fresh"]
+		} {
+			tasks.push(Task::new(
+				"awfy",
+				"observation",
+				&format!("{}/{engine}", case.name),
+				if case.name.starts_with("havlak-2") {
+					600.0
+				} else {
+					60.0
+				},
+			));
+		}
+	}
+	Ok(tasks)
+}
+pub fn run_task(ctx: &Context, task: &crate::tasks::Task) -> Result<Value> {
+	let m = manifest(ctx)?;
+	let binary = ctx.build_rune("awfy-native", FEATURES)?;
+	if task.action == "controls" {
+		let mut list = Command::new(&binary);
+		list.args([SELECTOR, "--ignored", "--exact", "--list"]);
+		let selected = ctx.checked("select", &mut list, 30)?;
+		common::require_one_selection(&selected.stdout, SELECTOR)?;
+		return negative_controls(ctx, &binary, SELECTOR);
+	}
+	let (name, engine) = task
+		.key
+		.split_once('/')
+		.context("invalid observation task")?;
+	let case = m
+		.cases
+		.iter()
+		.find(|c| c.name == name)
+		.context("unknown AWFY task")?;
+	ensure!(
+		engine == "fresh" || engine == "stock" && case.family == "candidate",
+		"invalid AWFY task engine"
+	);
+	observe(ctx, &binary, case, engine)
+}
+pub fn aggregate_tasks(ctx: &Context, rows: &[Value]) -> Result<Value> {
+	let m = manifest(ctx)?;
+	let mut observations = BTreeMap::new();
+	let mut negatives = None;
+	for row in rows {
+		let task = &row["task"];
+		if task["action"] == "controls" {
+			ensure!(negatives.is_none(), "duplicate AWFY controls");
+			negatives = Some(row["result"].clone());
+		} else {
+			let (name, engine) = task["key"]
+				.as_str()
+				.context("AWFY key")?
+				.split_once('/')
+				.context("AWFY observation key")?;
+			ensure!(
+				observations
+					.insert((name.into(), engine.into()), row["result"].clone())
+					.is_none(),
+				"duplicate AWFY observation"
+			);
+		}
+	}
+	validate_observations(
+		ctx,
+		&m,
+		observations,
+		negatives.context("missing AWFY controls")?,
 	)
 }

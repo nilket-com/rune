@@ -224,7 +224,8 @@
       "sandbox": false,
       "empty_stderr": false,
       "env": {},
-      "timeout": 1800
+      "timeout": 1800,
+      "exclusive": true
     },
     {
       "name": "static_methods-fresh",
@@ -590,6 +591,17 @@
       "empty_stderr": false,
       "env": {},
       "timeout": 1800
+    },
+    {
+      "name": "live-oracle-blocking-bounds",
+      "selector": "experimental_core::tests::gap_hunt::live_oracle::blocking_wait_controls",
+      "rows": 3,
+      "ignored": true,
+      "exact": true,
+      "sandbox": false,
+      "empty_stderr": false,
+      "timeout": 30,
+      "env": {}
     }
   ]
 }

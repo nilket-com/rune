@@ -4,17 +4,19 @@ use anyhow::ensure;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
-	collections::BTreeSet,
+	collections::{BTreeMap, BTreeSet},
 	fs,
 	path::{Path, PathBuf},
 	process::Command,
-	sync::{
-		atomic::{AtomicBool, Ordering},
-		Mutex,
-	},
+	sync::OnceLock,
+	time::{Duration, Instant},
 };
 #[path = "miri_trace.rs"]
 mod trace;
+// Full-capacity and N/2 runs exhausted physical memory. Apply the reviewed
+// general memory policy uniformly, without a per-host concurrency table.
+const MEMORY_DIVISOR: usize = 4;
+
 const MANIFEST: &str = include_str!("../manifests/miri.json");
 #[derive(Deserialize)]
 struct Manifest {
@@ -22,6 +24,12 @@ struct Manifest {
 	features: String,
 	helpers: Vec<Helper>,
 	retired: Vec<String>,
+	coverage: BTreeMap<String, Coverage>,
+}
+#[derive(Deserialize, Serialize)]
+struct Coverage {
+	bound_seconds: u64,
+	jobs: Vec<String>,
 }
 #[derive(Clone, Deserialize, Serialize)]
 struct Helper {
@@ -43,9 +51,48 @@ fn relative(root: &Path, name: &str) -> Result<PathBuf> {
 	);
 	Ok(root.join(path))
 }
+fn validate_coverage(m: &Manifest) -> Result<()> {
+	ensure!(
+		m.helpers.len() == 98 && m.coverage.len() == 78,
+		"Miri witness inventory changed"
+	);
+	let mut names = BTreeSet::new();
+	let mut selectors = BTreeSet::new();
+	for h in &m.helpers {
+		ensure!(
+			names.insert(&h.name) && selectors.insert(&h.selector),
+			"duplicate Miri job or selector"
+		);
+	}
+	let mut covered = BTreeSet::new();
+	for parent in m.coverage.values() {
+		ensure!(
+			parent.bound_seconds > 0 && !parent.jobs.is_empty(),
+			"empty Miri witness group"
+		);
+		for name in &parent.jobs {
+			ensure!(covered.insert(name), "duplicate witness row");
+			let h = m
+				.helpers
+				.iter()
+				.find(|h| &h.name == name)
+				.ok_or_else(|| anyhow::anyhow!("missing witness row"))?;
+			ensure!(
+				h.first_bound <= parent.bound_seconds,
+				"row bound exceeds parent bound"
+			);
+		}
+	}
+	ensure!(covered == names, "omitted witness row");
+	Ok(())
+}
 fn manifest(ctx: &Context) -> Result<Manifest> {
 	let m: Manifest = serde_json::from_str(MANIFEST)?;
-	ensure!(m.helpers.len() == 78, "expected 78 Miri helpers");
+	validate_coverage(&m)?;
+	ensure!(
+		m.helpers.len() == 98 && m.coverage.len() == 78,
+		"expected 78 witness groups and 98 Miri row jobs"
+	);
 	let mut names = BTreeSet::new();
 	let mut selectors = BTreeSet::new();
 	for h in &m.helpers {
@@ -67,6 +114,20 @@ fn manifest(ctx: &Context) -> Result<Manifest> {
 			h.fixture_source
 		);
 	}
+	let mut covered = BTreeSet::new();
+	for group in m.coverage.values() {
+		ensure!(
+			group.bound_seconds > 0 && !group.jobs.is_empty(),
+			"empty Miri witness group"
+		);
+		for name in &group.jobs {
+			ensure!(
+				names.contains(name) && covered.insert(name),
+				"missing or duplicate Miri row coverage: {name}"
+			);
+		}
+	}
+	ensure!(covered == names, "Miri row omitted from witness coverage");
 	for retired in &m.retired {
 		ensure!(
 			!relative(&ctx.repo, retired)?.exists(),
@@ -78,7 +139,7 @@ fn manifest(ctx: &Context) -> Result<Manifest> {
 pub fn check_manifest(ctx: &Context) -> Result<Value> {
 	let m = manifest(ctx)?;
 	Ok(
-		json!({"helpers":m.helpers.len(),"toolchain":m.toolchain,"features":m.features,"manifest_sha256":common::hash_bytes(MANIFEST.as_bytes())}),
+		json!({"helpers":m.helpers.len(),"witnesses":m.coverage.len(),"toolchain":m.toolchain,"features":m.features,"manifest_sha256":common::hash_bytes(MANIFEST.as_bytes())}),
 	)
 }
 fn cargo(ctx: &Context, m: &Manifest) -> Command {
@@ -94,18 +155,24 @@ fn cargo(ctx: &Context, m: &Manifest) -> Command {
 		&m.features,
 	])
 	.env("CARGO_TARGET_DIR", ctx.out.join("target-miri"))
-	.env("CARGO_BUILD_JOBS", "2")
 	.env_remove("MIRIFLAGS")
 	.env_remove("MIRI_SYSROOT");
 	c
 }
 fn traced(ctx: &Context, label: &str, command: &Command) -> Command {
 	let mut c = Command::new("/usr/bin/strace");
-	c.args(["-ff", "-ttt", "-e", "trace=execve,exit_group", "-o"])
-		.arg(ctx.out.join(format!("{label}.trace")))
-		.arg(command.get_program())
-		.args(command.get_args())
-		.current_dir(command.get_current_dir().unwrap_or(&ctx.repo));
+	c.args([
+		"--seccomp-bpf",
+		"-ff",
+		"-ttt",
+		"-e",
+		"trace=execve,exit_group",
+		"-o",
+	])
+	.arg(ctx.out.join(format!("{label}.trace")))
+	.arg(command.get_program())
+	.args(command.get_args())
+	.current_dir(command.get_current_dir().unwrap_or(&ctx.repo));
 	for (k, v) in command.get_envs() {
 		if let Some(v) = v {
 			c.env(k, v);
@@ -133,8 +200,8 @@ fn pass(stdout: &str, stderr: &str, selector: &str) -> Result<()> {
 		"Miri must pass exactly one test"
 	);
 	let marker = match selector {
-        "experimental_core::tests::patterns_safety::vec_local_host_shapes_moved_values_and_reuse" => Some("C16a Vec local Miri rows 12"),
-        "experimental_core::tests::patterns_safety::loop_binders_control_flow_failures_and_reuse" => Some("C16b loop Miri rows 24"), _ => None };
+		"experimental_core::tests::patterns_safety::vec_local_host_shapes_moved_values_and_reuse" => Some("C16a Vec local Miri rows 12"),
+		"experimental_core::tests::patterns_safety::loop_binders_control_flow_failures_and_reuse" => Some("C16b loop Miri rows 24"), _ => None };
 	if let Some(marker) = marker {
 		ensure!(
 			stdout.matches(marker).count() == 1
@@ -168,7 +235,14 @@ fn selection(listing: &str, selector: &str) -> Result<()> {
 	Ok(())
 }
 
-fn helper(ctx: &Context, m: &Manifest, h: &Helper, identity: &Value) -> Result<Value> {
+fn helper(
+	ctx: &Context,
+	m: &Manifest,
+	h: &Helper,
+	identity: &Value,
+	started: &OnceLock<Instant>,
+	parent_bound: u64,
+) -> Result<Value> {
 	let bound = h.first_bound as f64;
 	let mut c = cargo(ctx, m);
 	c.arg(&h.selector).arg("--");
@@ -176,7 +250,9 @@ fn helper(ctx: &Context, m: &Manifest, h: &Helper, identity: &Value) -> Result<V
 		c.arg("--ignored");
 	}
 	c.args(["--exact", "--nocapture", "--test-threads=1"]);
-	let run = ctx.run_seconds(&h.name, &mut traced(ctx, &h.name, &c), bound)?;
+	let run = ctx.run_with_deadline(&h.name, &mut traced(ctx, &h.name, &c), bound, || {
+		*started.get_or_init(Instant::now) + Duration::from_secs(parent_bound)
+	})?;
 	ensure!(run.code == 0, "Miri {} failed: {}", h.name, run.code);
 	pass(
 		&fs::read_to_string(&run.stdout)?,
@@ -193,70 +269,11 @@ fn helper(ctx: &Context, m: &Manifest, h: &Helper, identity: &Value) -> Result<V
 	common::write_json(&ctx.out.join(format!("{}-result.json", h.name)), &result)?;
 	Ok(result)
 }
-fn batch(
-	ctx: &Context,
-	m: &Manifest,
-	helpers: &[Helper],
-	identity: &Value,
-	workers: usize,
-) -> Result<Vec<Value>> {
-	let queue = Mutex::new(helpers.iter());
-	let stop = AtomicBool::new(false);
-	let results = Mutex::new(Vec::new());
-	std::thread::scope(|scope| {
-		let mut threads = Vec::new();
-		for _ in 0..workers {
-			threads.push(scope.spawn(|| -> Result<()> {
-				loop {
-					if stop.load(Ordering::SeqCst) {
-						break;
-					}
-					let next = queue
-						.lock()
-						.map_err(|_| anyhow::anyhow!("helper queue poisoned"))?
-						.next()
-						.cloned();
-					let Some(h) = next else { break };
-					match helper(ctx, m, &h, identity) {
-						Ok(r) => results
-							.lock()
-							.map_err(|_| anyhow::anyhow!("result lock poisoned"))?
-							.push(r),
-						Err(e) => {
-							stop.store(true, Ordering::SeqCst);
-							return Err(e);
-						}
-					}
-				}
-				Ok(())
-			}));
-		}
-		let mut error = None;
-		for worker in threads {
-			match worker.join() {
-				Ok(Ok(())) => {}
-				Ok(Err(e)) => {
-					if error.is_none() {
-						error = Some(e);
-					}
-				}
-				Err(_) => {
-					error = Some(anyhow::anyhow!("Miri worker panicked"));
-				}
-			}
-		}
-		if let Some(e) = error {
-			return Err(e);
-		}
-		Ok(())
-	})?;
-	results
-		.into_inner()
-		.map_err(|_| anyhow::anyhow!("result lock poisoned"))
+pub fn native_intervals(dir: &Path, label: &str) -> Result<Vec<Value>> {
+	trace::native_intervals(dir, label)
 }
-pub fn run(ctx: &Context) -> Result<Value> {
-	let m = manifest(ctx)?;
-	// One snapshot before starting: do not weaken V1a's native/Miri exclusion.
+pub fn preflight(ctx: &Context) -> Result<()> {
+	// One snapshot before managed correctness jobs are dispatched; no status watcher.
 	let ps = ctx.checked(
 		"preflight-processes",
 		Command::new("ps").args(["-eo", "pid,args"]),
@@ -277,6 +294,47 @@ pub fn run(ctx: &Context) -> Result<Value> {
 			"native or Miri job already active: {line}"
 		);
 	}
+	Ok(())
+}
+pub fn workers() -> Result<usize> {
+	Ok((crate::hosts::available_cpus()? / MEMORY_DIVISOR).max(1))
+}
+
+pub struct Prepared {
+	ctx: Context,
+	manifest: Manifest,
+	identity: Value,
+	harness: Value,
+	starts: BTreeMap<String, OnceLock<Instant>>,
+}
+pub fn task_specs(ctx: &Context) -> Result<Vec<crate::tasks::Task>> {
+	let m = manifest(ctx)?;
+	let mut tasks = Vec::new();
+	for (parent, coverage) in &m.coverage {
+		for name in &coverage.jobs {
+			let helper = m
+				.helpers
+				.iter()
+				.find(|h| &h.name == name)
+				.expect("validated coverage");
+			let mut task = crate::tasks::Task::new(
+				"miri",
+				"row",
+				name,
+				(helper.first_bound as f64 / 4.0).max(30.0),
+			);
+
+			task.parent = Some(parent.clone());
+			tasks.push(task);
+		}
+	}
+	Ok(tasks)
+}
+pub fn prepare(root: &Context) -> Result<Prepared> {
+	let ctx = root.suite("miri")?;
+	let ctx = &ctx;
+
+	let m = manifest(ctx)?;
 	let mut rustc = Command::new("rustc");
 	rustc.arg(format!("+{}", m.toolchain)).arg("-vV");
 	let rustc = ctx.checked("rustc-identity", &mut rustc, 30)?;
@@ -295,62 +353,118 @@ pub fn run(ctx: &Context) -> Result<Value> {
 	ensure!(!listing.is_empty(), "empty Miri test listing");
 	let prepared_harness = trace::harness_records(ctx)?;
 	common::write_json(&ctx.out.join("PREPARED-HARNESS.json"), &prepared_harness)?;
-	let workers = crate::hosts::available_cpus()?.min(2);
-	let mut results = batch(ctx, &m, &m.helpers[..2], &identity, workers)?;
-	let first = trace::proof(
-		&ctx.out,
-		&m.helpers[..2]
-			.iter()
-			.map(|h| h.name.as_str())
-			.collect::<Vec<_>>(),
-	)?;
-	if workers == 2 {
-		ensure!(
-			first["maximum_actual_interpreters"] == 2,
-			"first Miri pair did not prove actual overlap"
-		);
-	} else {
-		ensure!(
-			first["maximum_actual_interpreters"] == 1,
-			"serial Miri fallback overlapped"
-		);
-	}
-	common::write_json(&ctx.out.join("FIRST-PAIR-OVERLAP.json"), &first)?;
-	results.extend(batch(ctx, &m, &m.helpers[2..], &identity, workers)?);
-	let proof = trace::proof(
-		&ctx.out,
-		&m.helpers
-			.iter()
-			.map(|h| h.name.as_str())
-			.collect::<Vec<_>>(),
-	)?;
-	common::write_json(&ctx.out.join("INTERPRETER-EVENTS.json"), &proof)?;
-	let harness = prepared_harness;
-	ensure!(results.len() == 78, "incomplete Miri results");
-	manifest(ctx)?;
-	Ok(
-		json!({"status":"PASS","helpers":78,"results":results,"overlap":proof,"concurrency":if workers == 1 {"serial-fallback"} else {"two-workers"},"overlap_evidence":if workers == 1 {"not exercised"} else {"exercised"},"harness_records":harness,"identity":identity,"manifest_sha256":common::hash_bytes(MANIFEST.as_bytes())}),
+	let starts = m
+		.coverage
+		.keys()
+		.map(|name| (name.clone(), OnceLock::new()))
+		.collect();
+	Ok(Prepared {
+		ctx: ctx.clone(),
+		manifest: m,
+		identity,
+		harness: prepared_harness,
+		starts,
+	})
+}
+pub fn run_prepared(state: &Prepared, name: &str) -> Result<Value> {
+	let m = &state.manifest;
+	let h = m
+		.helpers
+		.iter()
+		.find(|h| h.name == name)
+		.ok_or_else(|| anyhow::anyhow!("unknown Miri row"))?;
+	let (parent, coverage) = m
+		.coverage
+		.iter()
+		.find(|(_, p)| p.jobs.iter().any(|job| job == name))
+		.expect("validated coverage");
+	helper(
+		&state.ctx,
+		m,
+		h,
+		&state.identity,
+		&state.starts[parent],
+		coverage.bound_seconds,
 	)
 }
+pub fn finish(state: &Prepared, rows: &[Value], lanes: usize) -> Result<Value> {
+	let names: Vec<_> = rows
+		.iter()
+		.map(|row| {
+			row["task"]["key"]
+				.as_str()
+				.ok_or_else(|| anyhow::anyhow!("missing Miri task key"))
+		})
+		.collect::<Result<_>>()?;
+	let capacity = (crate::hosts::available_cpus()? / MEMORY_DIVISOR)
+		.max(1)
+		.min(state.ctx.budget.capacity())
+		.min(lanes);
+	let proof = trace::proof(&state.ctx.out, &names, capacity)?;
+	common::write_json(&state.ctx.out.join("INTERPRETER-EVENTS.json"), &proof)?;
+	ensure!(
+		rows.len() == state.manifest.helpers.len(),
+		"incomplete Miri rows"
+	);
+	if capacity > 1 && names.len() > 1 {
+		ensure!(
+			proof["maximum_actual_interpreters"].as_u64().unwrap_or(0) > 1,
+			"Miri interpreter overlap was not exercised"
+		);
+	}
+	Ok(
+		json!({"status":"PASS","helpers":names.len(),"witnesses":state.manifest.coverage.len(),"coverage":state.manifest.coverage,"results":rows.iter().map(|row|&row["result"]).collect::<Vec<_>>(),"workers":capacity,"memory_divisor":MEMORY_DIVISOR,"overlap":proof,"identity":state.identity,"harness_records":state.harness}),
+	)
+}
+
 #[cfg(test)]
 mod tests {
 	use super::*;
 	#[test]
+	fn missing_duplicate_and_omitted_rows_fail_coverage() {
+		let mut value: Value = serde_json::from_str(MANIFEST).unwrap();
+		let m: Manifest = serde_json::from_value(value.clone()).unwrap();
+		assert!(validate_coverage(&m).is_ok());
+		let first = value["coverage"]
+			.as_object()
+			.unwrap()
+			.keys()
+			.next()
+			.unwrap()
+			.clone();
+		value["coverage"][&first]["jobs"]
+			.as_array_mut()
+			.unwrap()
+			.clear();
+		assert!(validate_coverage(&serde_json::from_value(value).unwrap()).is_err());
+		let mut value: Value = serde_json::from_str(MANIFEST).unwrap();
+		let job = value["coverage"][&first]["jobs"][0].clone();
+		value["coverage"][&first]["jobs"]
+			.as_array_mut()
+			.unwrap()
+			.push(job);
+		assert!(validate_coverage(&serde_json::from_value(value).unwrap()).is_err());
+		let mut value: Value = serde_json::from_str(MANIFEST).unwrap();
+		value["helpers"].as_array_mut().unwrap().pop();
+		assert!(validate_coverage(&serde_json::from_value(value).unwrap()).is_err());
+	}
+
+	#[test]
 	fn special_markers_require_exact_adjacent_pass_lines() {
 		for (selector, marker) in [
-            ("experimental_core::tests::patterns_safety::vec_local_host_shapes_moved_values_and_reuse", "C16a Vec local Miri rows 12"),
-            ("experimental_core::tests::patterns_safety::loop_binders_control_flow_failures_and_reuse", "C16b loop Miri rows 24"),
-        ] {
-            let summary = "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out\n";
-            assert!(pass(&format!("test {selector} ... {marker}\nok\n{summary}"), "", selector).is_ok());
-            for wrong in [
-                format!("test {selector} ... ok\n{marker}\n{summary}"),
-                format!("test {selector} ... {marker}\n{summary}"),
-                format!("test {selector}_suffix ... {marker}\nok\n{summary}"),
-                format!("test {selector} ... {marker}\nok_suffix\n{summary}"),
-                format!("prefix test {selector} ... {marker}\nok\n{summary}"),
-            ] { assert!(pass(&wrong, "", selector).is_err(), "accepted malformed marker output: {wrong}"); }
-        }
+			("experimental_core::tests::patterns_safety::vec_local_host_shapes_moved_values_and_reuse", "C16a Vec local Miri rows 12"),
+			("experimental_core::tests::patterns_safety::loop_binders_control_flow_failures_and_reuse", "C16b loop Miri rows 24"),
+		] {
+			let summary = "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out\n";
+			assert!(pass(&format!("test {selector} ... {marker}\nok\n{summary}"), "", selector).is_ok());
+			for wrong in [
+				format!("test {selector} ... ok\n{marker}\n{summary}"),
+				format!("test {selector} ... {marker}\n{summary}"),
+				format!("test {selector}_suffix ... {marker}\nok\n{summary}"),
+				format!("test {selector} ... {marker}\nok_suffix\n{summary}"),
+				format!("prefix test {selector} ... {marker}\nok\n{summary}"),
+			] { assert!(pass(&wrong, "", selector).is_err(), "accepted malformed marker output: {wrong}"); }
+		}
 	}
 
 	#[test]

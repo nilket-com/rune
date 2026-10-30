@@ -1,21 +1,39 @@
 {
-  "schema": 1,
+  "schema": 2,
   "baseline": "f0baf933382039f2b8c44b84a04532ba5703b459",
   "toolchain": "nightly-2026-09-01",
   "features": "fmt,workspace,execution,capture-io,disable-io,sha2",
   "helpers": [
     {
       "first_bound": 1800,
-      "fixture_sha256": "5f057ed25e7590c1ae94d099ee88a6aeb995fb886eb3208413b0b5424ba0af81",
+      "fixture_sha256": "4375a7d1c28c5eb122942f240a69ffc9adba5fbecbcc5dabd54333ff48cc731e",
       "ignored": false,
-      "name": "s1-object_field_into_own_slot",
+      "name": "s1-object_field_into_own_slot-row-0",
       "selected_labels": [],
-      "selector": "tests::object_slot_alias::object_field_into_own_slot",
+      "selector": "tests::object_slot_alias::object_field_into_own_slot__row_0",
       "fixture_source": "crates/rune/src/tests/object_slot_alias.rs"
     },
     {
       "first_bound": 1800,
-      "fixture_sha256": "5f057ed25e7590c1ae94d099ee88a6aeb995fb886eb3208413b0b5424ba0af81",
+      "fixture_sha256": "4375a7d1c28c5eb122942f240a69ffc9adba5fbecbcc5dabd54333ff48cc731e",
+      "ignored": false,
+      "name": "s1-object_field_into_own_slot-row-1",
+      "selected_labels": [],
+      "selector": "tests::object_slot_alias::object_field_into_own_slot__row_1",
+      "fixture_source": "crates/rune/src/tests/object_slot_alias.rs"
+    },
+    {
+      "first_bound": 1800,
+      "fixture_sha256": "4375a7d1c28c5eb122942f240a69ffc9adba5fbecbcc5dabd54333ff48cc731e",
+      "ignored": false,
+      "name": "s1-object_field_into_own_slot-row-2",
+      "selected_labels": [],
+      "selector": "tests::object_slot_alias::object_field_into_own_slot__row_2",
+      "fixture_source": "crates/rune/src/tests/object_slot_alias.rs"
+    },
+    {
+      "first_bound": 1800,
+      "fixture_sha256": "4375a7d1c28c5eb122942f240a69ffc9adba5fbecbcc5dabd54333ff48cc731e",
       "ignored": false,
       "name": "s1-struct_field_into_own_slot",
       "selected_labels": [],
@@ -204,29 +222,92 @@
     },
     {
       "first_bound": 1800,
-      "fixture_sha256": "c1342c94bc0e928d09a5cd244177678c929dac0ed690f6a90c2fb6d5e99944e9",
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
       "ignored": false,
-      "name": "s2-collect_copies_keys",
+      "name": "s2-collect_copies_keys-row-0",
       "selected_labels": [],
-      "selector": "tests::object_key_alias::collect_copies_keys",
+      "selector": "tests::object_key_alias::collect_copies_keys__row_0",
       "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
     },
     {
       "first_bound": 1800,
-      "fixture_sha256": "c1342c94bc0e928d09a5cd244177678c929dac0ed690f6a90c2fb6d5e99944e9",
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
       "ignored": false,
-      "name": "s2-insert_copies_the_key",
+      "name": "s2-collect_copies_keys-row-1",
       "selected_labels": [],
-      "selector": "tests::object_key_alias::insert_copies_the_key",
+      "selector": "tests::object_key_alias::collect_copies_keys__row_1",
       "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
     },
     {
       "first_bound": 1800,
-      "fixture_sha256": "c1342c94bc0e928d09a5cd244177678c929dac0ed690f6a90c2fb6d5e99944e9",
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
       "ignored": false,
-      "name": "s2-non_string_keys_keep_their_errors",
+      "name": "s2-collect_copies_keys-row-2",
       "selected_labels": [],
-      "selector": "tests::object_key_alias::non_string_keys_keep_their_errors",
+      "selector": "tests::object_key_alias::collect_copies_keys__row_2",
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
+    },
+    {
+      "first_bound": 1800,
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
+      "ignored": false,
+      "name": "s2-collect_copies_keys-row-3",
+      "selected_labels": [],
+      "selector": "tests::object_key_alias::collect_copies_keys__row_3",
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
+    },
+    {
+      "first_bound": 1800,
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
+      "ignored": false,
+      "name": "s2-insert_copies_the_key-row-0",
+      "selected_labels": [],
+      "selector": "tests::object_key_alias::insert_copies_the_key__row_0",
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
+    },
+    {
+      "first_bound": 1800,
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
+      "ignored": false,
+      "name": "s2-insert_copies_the_key-row-1",
+      "selected_labels": [],
+      "selector": "tests::object_key_alias::insert_copies_the_key__row_1",
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
+    },
+    {
+      "first_bound": 1800,
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
+      "ignored": false,
+      "name": "s2-non_string_keys_keep_their_errors-row-0",
+      "selected_labels": [],
+      "selector": "tests::object_key_alias::non_string_keys_keep_their_errors__row_0",
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
+    },
+    {
+      "first_bound": 1800,
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
+      "ignored": false,
+      "name": "s2-non_string_keys_keep_their_errors-row-1",
+      "selected_labels": [],
+      "selector": "tests::object_key_alias::non_string_keys_keep_their_errors__row_1",
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
+    },
+    {
+      "first_bound": 1800,
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
+      "ignored": false,
+      "name": "s2-non_string_keys_keep_their_errors-row-2",
+      "selected_labels": [],
+      "selector": "tests::object_key_alias::non_string_keys_keep_their_errors__row_2",
+      "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
+    },
+    {
+      "first_bound": 1800,
+      "fixture_sha256": "6d274fc71e349687a56d84b5620d790173806131d7f3b46f71f7fa7646a8574c",
+      "ignored": false,
+      "name": "s2-non_string_keys_keep_their_errors-row-3",
+      "selected_labels": [],
+      "selector": "tests::object_key_alias::non_string_keys_keep_their_errors__row_3",
       "fixture_source": "crates/rune/src/tests/object_key_alias.rs"
     },
     {
@@ -294,7 +375,7 @@
     },
     {
       "first_bound": 3600,
-      "fixture_sha256": "3b864a8d1d0c712eae2f86af0646908109bf269e535b1e1f7229cd1dd1508cc7",
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
       "ignored": false,
       "name": "c18b3a-proven_native_receivers_keep_their_frame_requirement",
       "selected_labels": [],
@@ -303,16 +384,88 @@
     },
     {
       "first_bound": 3600,
-      "fixture_sha256": "3b864a8d1d0c712eae2f86af0646908109bf269e535b1e1f7229cd1dd1508cc7",
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
       "ignored": false,
-      "name": "c18b3a-mixed_providers",
+      "name": "c18b3a-mixed_providers-row-0",
       "selected_labels": [],
-      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers",
+      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers__row_0",
       "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
       "first_bound": 3600,
-      "fixture_sha256": "3b864a8d1d0c712eae2f86af0646908109bf269e535b1e1f7229cd1dd1508cc7",
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-mixed_providers-row-1",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers__row_1",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-mixed_providers-row-2",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers__row_2",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-mixed_providers-row-3",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers__row_3",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-mixed_providers-row-4",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers__row_4",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-mixed_providers-row-5",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers__row_5",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-mixed_providers-row-6",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers__row_6",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-mixed_providers-row-7",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers__row_7",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-mixed_providers-row-8",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::mixed_providers__row_8",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
       "ignored": false,
       "name": "c18b3a-callable_split_remains_a_compile_time_refusal",
       "selected_labels": [],
@@ -321,16 +474,25 @@
     },
     {
       "first_bound": 3600,
-      "fixture_sha256": "3b864a8d1d0c712eae2f86af0646908109bf269e535b1e1f7229cd1dd1508cc7",
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
       "ignored": false,
-      "name": "c18b3a-native_string_function_argument_errors_match_stock",
+      "name": "c18b3a-native_string_function_argument_errors_match_stock-row-0",
       "selected_labels": [],
-      "selector": "experimental_core::frontend::native_dispatch_tests::native_string_function_argument_errors_match_stock",
+      "selector": "experimental_core::frontend::native_dispatch_tests::native_string_function_argument_errors_match_stock__row_0",
       "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
       "first_bound": 3600,
-      "fixture_sha256": "3b864a8d1d0c712eae2f86af0646908109bf269e535b1e1f7229cd1dd1508cc7",
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-native_string_function_argument_errors_match_stock-row-1",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::native_string_function_argument_errors_match_stock__row_1",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
       "ignored": false,
       "name": "c18b3a-native_provider_is_revalidated_before_execution",
       "selected_labels": [],
@@ -339,7 +501,7 @@
     },
     {
       "first_bound": 3600,
-      "fixture_sha256": "3b864a8d1d0c712eae2f86af0646908109bf269e535b1e1f7229cd1dd1508cc7",
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
       "ignored": false,
       "name": "c18b3a-unsupported_native_provider_keeps_the_site_refused",
       "selected_labels": [],
@@ -348,11 +510,29 @@
     },
     {
       "first_bound": 3600,
-      "fixture_sha256": "3b864a8d1d0c712eae2f86af0646908109bf269e535b1e1f7229cd1dd1508cc7",
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
       "ignored": false,
-      "name": "c18b3a-failed_native_and_missing_calls_leave_executor_reusable",
+      "name": "c18b3a-failed_native_and_missing_calls_leave_executor_reusable-row-0",
       "selected_labels": [],
-      "selector": "experimental_core::frontend::native_dispatch_tests::failed_native_and_missing_calls_leave_executor_reusable",
+      "selector": "experimental_core::frontend::native_dispatch_tests::failed_native_and_missing_calls_leave_executor_reusable__row_0",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-failed_native_and_missing_calls_leave_executor_reusable-row-1",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::failed_native_and_missing_calls_leave_executor_reusable__row_1",
+      "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
+    },
+    {
+      "first_bound": 3600,
+      "fixture_sha256": "217311fe609913b0288463a4802d00c893e407743332dc680a28ff85be327d69",
+      "ignored": false,
+      "name": "c18b3a-failed_native_and_missing_calls_leave_executor_reusable-row-2",
+      "selected_labels": [],
+      "selector": "experimental_core::frontend::native_dispatch_tests::failed_native_and_missing_calls_leave_executor_reusable__row_2",
       "fixture_source": "crates/rune/src/experimental_core/frontend/native_dispatch_tests.rs"
     },
     {
@@ -710,5 +890,495 @@
   "retired": [
     "crates/rune/src/experimental_core/tests/gap_hunt/constructors/retained_sites.json",
     "crates/rune/src/experimental_core/tests/gap_hunt/enum_variants/retained_sites.json"
-  ]
+  ],
+  "coverage": {
+    "s1-object_field_into_own_slot": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s1-object_field_into_own_slot-row-0",
+        "s1-object_field_into_own_slot-row-1",
+        "s1-object_field_into_own_slot-row-2"
+      ]
+    },
+    "s1-struct_field_into_own_slot": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s1-struct_field_into_own_slot"
+      ]
+    },
+    "o1-map-0": {
+      "bound_seconds": 600,
+      "jobs": [
+        "o1-map-0"
+      ]
+    },
+    "o1-map-1": {
+      "bound_seconds": 600,
+      "jobs": [
+        "o1-map-1"
+      ]
+    },
+    "o1-object-0": {
+      "bound_seconds": 600,
+      "jobs": [
+        "o1-object-0"
+      ]
+    },
+    "o1-object-1": {
+      "bound_seconds": 600,
+      "jobs": [
+        "o1-object-1"
+      ]
+    },
+    "o1b-unit-iter": {
+      "bound_seconds": 600,
+      "jobs": [
+        "o1b-unit-iter"
+      ]
+    },
+    "o1b-receivers": {
+      "bound_seconds": 600,
+      "jobs": [
+        "o1b-receivers"
+      ]
+    },
+    "o1b-own-iterator": {
+      "bound_seconds": 600,
+      "jobs": [
+        "o1b-own-iterator"
+      ]
+    },
+    "c17b-get-remove": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17b-get-remove"
+      ]
+    },
+    "c17b-order": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17b-order"
+      ]
+    },
+    "s2-heap-key-copy": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s2-heap-key-copy"
+      ]
+    },
+    "c17b-arguments": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17b-arguments"
+      ]
+    },
+    "c17b-is-empty": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17b-is-empty"
+      ]
+    },
+    "c17b-cycle": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17b-cycle"
+      ]
+    },
+    "c17b-certificate": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17b-certificate"
+      ]
+    },
+    "c17d-adapter-count": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17d-adapter-count"
+      ]
+    },
+    "c17d-range-bounds": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17d-range-bounds"
+      ]
+    },
+    "c17d-folds": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17d-folds"
+      ]
+    },
+    "c17d-object-collect": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17d-object-collect"
+      ]
+    },
+    "c17d-tuple-string": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17d-tuple-string"
+      ]
+    },
+    "c17d-policy-hashes": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17d-policy-hashes"
+      ]
+    },
+    "s2-collect_copies_keys": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s2-collect_copies_keys-row-0",
+        "s2-collect_copies_keys-row-1",
+        "s2-collect_copies_keys-row-2",
+        "s2-collect_copies_keys-row-3"
+      ]
+    },
+    "s2-insert_copies_the_key": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s2-insert_copies_the_key-row-0",
+        "s2-insert_copies_the_key-row-1"
+      ]
+    },
+    "s2-non_string_keys_keep_their_errors": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s2-non_string_keys_keep_their_errors-row-0",
+        "s2-non_string_keys_keep_their_errors-row-1",
+        "s2-non_string_keys_keep_their_errors-row-2",
+        "s2-non_string_keys_keep_their_errors-row-3"
+      ]
+    },
+    "c17e-rev-0": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "c17e-rev-0"
+      ]
+    },
+    "c17e-rev-1": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "c17e-rev-1"
+      ]
+    },
+    "c17e-rev-2": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "c17e-rev-2"
+      ]
+    },
+    "c17e-filter-3": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "c17e-filter-3"
+      ]
+    },
+    "c18b1-registered-0": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b1-registered-0"
+      ]
+    },
+    "c18b1-dispatch-1": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b1-dispatch-1"
+      ]
+    },
+    "c18b1-missing-2": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b1-missing-2"
+      ]
+    },
+    "c18b3a-proven_native_receivers_keep_their_frame_requirement": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3a-proven_native_receivers_keep_their_frame_requirement"
+      ]
+    },
+    "c18b3a-mixed_providers": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3a-mixed_providers-row-0",
+        "c18b3a-mixed_providers-row-1",
+        "c18b3a-mixed_providers-row-2",
+        "c18b3a-mixed_providers-row-3",
+        "c18b3a-mixed_providers-row-4",
+        "c18b3a-mixed_providers-row-5",
+        "c18b3a-mixed_providers-row-6",
+        "c18b3a-mixed_providers-row-7",
+        "c18b3a-mixed_providers-row-8"
+      ]
+    },
+    "c18b3a-callable_split_remains_a_compile_time_refusal": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3a-callable_split_remains_a_compile_time_refusal"
+      ]
+    },
+    "c18b3a-native_string_function_argument_errors_match_stock": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3a-native_string_function_argument_errors_match_stock-row-0",
+        "c18b3a-native_string_function_argument_errors_match_stock-row-1"
+      ]
+    },
+    "c18b3a-native_provider_is_revalidated_before_execution": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3a-native_provider_is_revalidated_before_execution"
+      ]
+    },
+    "c18b3a-unsupported_native_provider_keeps_the_site_refused": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3a-unsupported_native_provider_keeps_the_site_refused"
+      ]
+    },
+    "c18b3a-failed_native_and_missing_calls_leave_executor_reusable": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3a-failed_native_and_missing_calls_leave_executor_reusable-row-0",
+        "c18b3a-failed_native_and_missing_calls_leave_executor_reusable-row-1",
+        "c18b3a-failed_native_and_missing_calls_leave_executor_reusable-row-2"
+      ]
+    },
+    "c18b3b-excluded_nominals_refuse_every_shape_and_enum_parent_before_publication": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3b-excluded_nominals_refuse_every_shape_and_enum_parent_before_publication"
+      ]
+    },
+    "c18b3b-nominal_publication_rechecks_the_domain_before_any_batch_write": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3b-nominal_publication_rechecks_the_domain_before_any_batch_write"
+      ]
+    },
+    "c18b3b-existing_nominal_lookup_does_not_bypass_the_domain_check": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3b-existing_nominal_lookup_does_not_bypass_the_domain_check"
+      ]
+    },
+    "c18b3b-excluded_receivers_are_disjoint_from_represented_builtins": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3b-excluded_receivers_are_disjoint_from_represented_builtins"
+      ]
+    },
+    "c18b3b-dynamic_native_collections_are_rejected_before_publication": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3b-dynamic_native_collections_are_rejected_before_publication"
+      ]
+    },
+    "c18b3c-vec_reservations_are_charged_and_transactional": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3c-vec_reservations_are_charged_and_transactional"
+      ]
+    },
+    "c18b3c-vec_argument_conversion_preserves_native_index": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3c-vec_argument_conversion_preserves_native_index"
+      ]
+    },
+    "c18b3d-self_entry_policy_preserves_roots_and_pending_cancel": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3d-self_entry_policy_preserves_roots_and_pending_cancel"
+      ]
+    },
+    "c18b3d-self_entry_policy_also_covers_future_capture_parameters": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "c18b3d-self_entry_policy_also_covers_future_capture_parameters"
+      ]
+    },
+    "c17f-resize-0": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17f-resize-0"
+      ]
+    },
+    "c17f-resize-1": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17f-resize-1"
+      ]
+    },
+    "c17f-resize-2": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17f-resize-2"
+      ]
+    },
+    "c17f-resize-3": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17f-resize-3"
+      ]
+    },
+    "c17f-shrink-invalid-child": {
+      "bound_seconds": 600,
+      "jobs": [
+        "c17f-shrink-invalid-child"
+      ]
+    },
+    "s5-defaults_use_representable_maxima_without_preallocation": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s5-defaults_use_representable_maxima_without_preallocation"
+      ]
+    },
+    "s5-maximum_default_allocation_failures_preserve_owned_values": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s5-maximum_default_allocation_failures_preserve_owned_values"
+      ]
+    },
+    "s5-maximum_default_slot_growth_fails_before_publication": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s5-maximum_default_slot_growth_fails_before_publication"
+      ]
+    },
+    "s6-default_limits_are_representable_and_initial_buffers_stay_small": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s6-default_limits_are_representable_and_initial_buffers_stay_small"
+      ]
+    },
+    "s7a-opaque_move_reservation_fails_before_payload_or_lease_changes": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "s7a-opaque_move_reservation_fails_before_payload_or_lease_changes"
+      ]
+    },
+    "s7a-stale_opaque_metadata_cannot_name_a_released_or_reused_slot": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "s7a-stale_opaque_metadata_cannot_name_a_released_or_reused_slot"
+      ]
+    },
+    "s7a-formatting_constructors_close_invalid_list_and_variant_tags": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "s7a-formatting_constructors_close_invalid_list_and_variant_tags"
+      ]
+    },
+    "s7a-unpublished_nominal_has_no_runtime_name_or_comparison_hash": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "s7a-unpublished_nominal_has_no_runtime_name_or_comparison_hash"
+      ]
+    },
+    "s7a-moved_opaque_formats_before_payload_access_with_the_same_object_identity": {
+      "bound_seconds": 3600,
+      "jobs": [
+        "s7a-moved_opaque_formats_before_payload_access_with_the_same_object_identity"
+      ]
+    },
+    "s7b1-dynamic_scalars_empty_tuple_and_float_bits": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s7b1-dynamic_scalars_empty_tuple_and_float_bits"
+      ]
+    },
+    "s7b1-dynamic_dag_identity_and_external_alias_contract": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s7b1-dynamic_dag_identity_and_external_alias_contract"
+      ]
+    },
+    "s7b1-dynamic_cycle_access_and_unsupported_fail_once": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s7b1-dynamic_cycle_access_and_unsupported_fail_once"
+      ]
+    },
+    "s7b1-dynamic_depth_and_scratch_are_memory_bound": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s7b1-dynamic_depth_and_scratch_are_memory_bound"
+      ]
+    },
+    "s7b1-all-noninline-kinds": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s7b1-all-noninline-kinds"
+      ]
+    },
+    "s7b2-bounded_shared_and_cyclic_graphs_preserve_inputs": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s7b2-bounded_shared_and_cyclic_graphs_preserve_inputs"
+      ]
+    },
+    "s7b2-bounded_deep_and_shared_safe_graphs_complete_without_a_depth_limit": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s7b2-bounded_deep_and_shared_safe_graphs_complete_without_a_depth_limit"
+      ]
+    },
+    "s7b2-bounded_authority_snapshots_share_identity_until_native_mutation": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s7b2-bounded_authority_snapshots_share_identity_until_native_mutation"
+      ]
+    },
+    "s7b2-bounded_enum_parent_authority_distinguishes_safe_variants": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s7b2-bounded_enum_parent_authority_distinguishes_safe_variants"
+      ]
+    },
+    "s7b2-internal_entry_policy_precedes_closed_busy_and_wrong_arity_without_effects": {
+      "bound_seconds": 1800,
+      "jobs": [
+        "s7b2-internal_entry_policy_precedes_closed_busy_and_wrong_arity_without_effects"
+      ]
+    },
+    "s7b2-ordinary_and_cold_host_validation_agree_before_formatter_mismatches": {
+      "bound_seconds": 600,
+      "jobs": [
+        "s7b2-ordinary_and_cold_host_validation_agree_before_formatter_mismatches"
+      ]
+    },
+    "w1-warning-walk": {
+      "bound_seconds": 600,
+      "jobs": [
+        "w1-warning-walk"
+      ]
+    },
+    "e1-borrowed-view-preserves-aliases-cycles-and-shared-visit-bounds": {
+      "bound_seconds": 600,
+      "jobs": [
+        "e1-borrowed-view-preserves-aliases-cycles-and-shared-visit-bounds"
+      ]
+    },
+    "e1-view-rejects-foreign-stale-and-closed-roots-and-checks-indices": {
+      "bound_seconds": 600,
+      "jobs": [
+        "e1-view-rejects-foreign-stale-and-closed-roots-and-checks-indices"
+      ]
+    },
+    "e1-view-keeps-mutual-cycles-variants-keys-and-moved-access-without-allocating": {
+      "bound_seconds": 600,
+      "jobs": [
+        "e1-view-keeps-mutual-cycles-variants-keys-and-moved-access-without-allocating"
+      ]
+    },
+    "e1-prepared-empty-context-preserves-cancellation-and-reuses-clean-state": {
+      "bound_seconds": 600,
+      "jobs": [
+        "e1-prepared-empty-context-preserves-cancellation-and-reuses-clean-state"
+      ]
+    }
+  }
 }

@@ -265,7 +265,9 @@
         "benches/awfy/havlak.rn"
       ],
       "environment": {},
-      "policy": "match"
+      "policy": "match",
+      "cpu_seconds": 1200,
+      "wall_seconds": 3600
     },
     {
       "name": "json-1",
@@ -386,7 +388,9 @@
       "environment": {
         "S7A_FRAME_LIMIT": "1024"
       },
-      "policy": "match"
+      "policy": "match",
+      "cpu_seconds": 1200,
+      "wall_seconds": 3600
     },
     {
       "name": "havlak-2-control-slots",
@@ -402,7 +406,9 @@
       "environment": {
         "S7A_SLOT_LIMIT": "65536"
       },
-      "policy": "match"
+      "policy": "match",
+      "cpu_seconds": 1200,
+      "wall_seconds": 3600
     },
     {
       "name": "havlak-2-control-both",
@@ -419,7 +425,9 @@
         "S7A_FRAME_LIMIT": "1024",
         "S7A_SLOT_LIMIT": "65536"
       },
-      "policy": "match"
+      "policy": "match",
+      "cpu_seconds": 1200,
+      "wall_seconds": 3600
     },
     {
       "name": "havlak-1-active-frames",
@@ -484,7 +492,9 @@
       "environment": {
         "S6_FRAME_LIMIT": "1024"
       },
-      "policy": "frame-limit"
+      "policy": "frame-limit",
+      "cpu_seconds": 1200,
+      "wall_seconds": 3600
     },
     {
       "name": "havlak-2-active-slots",
@@ -500,7 +510,9 @@
       "environment": {
         "S6_SLOT_LIMIT": "65536"
       },
-      "policy": "match"
+      "policy": "match",
+      "cpu_seconds": 1200,
+      "wall_seconds": 3600
     },
     {
       "name": "havlak-2-active-both",
@@ -517,7 +529,9 @@
         "S6_FRAME_LIMIT": "1024",
         "S6_SLOT_LIMIT": "65536"
       },
-      "policy": "frame-limit"
+      "policy": "frame-limit",
+      "cpu_seconds": 1200,
+      "wall_seconds": 3600
     }
   ]
 }

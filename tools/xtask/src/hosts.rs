@@ -9,37 +9,7 @@ use std::{
 	path::{Path, PathBuf},
 };
 
-/// Linux exposes the effective affinity directly; the standard library may also
-/// apply a cgroup quota, which is a different resource from a CPU set.
-#[cfg(target_os = "linux")]
-pub fn available_cpus() -> Result<usize> {
-	unsafe extern "C" {
-		fn sched_getaffinity(pid: i32, size: usize, mask: *mut usize) -> i32;
-	}
-	let mut words = 16usize;
-	loop {
-		let mut mask = vec![0usize; words];
-		// The buffer is aligned, writable and valid for the supplied byte count.
-		let rc = unsafe {
-			sched_getaffinity(
-				0,
-				mask.len() * std::mem::size_of::<usize>(),
-				mask.as_mut_ptr(),
-			)
-		};
-		if rc == 0 {
-			let count = mask.iter().map(|word| word.count_ones() as usize).sum();
-			ensure!(count > 0, "process has an empty CPU affinity");
-			return Ok(count);
-		}
-		let error = std::io::Error::last_os_error();
-		if error.raw_os_error() != Some(22) || words >= 16384 {
-			return Err(error).context("sched_getaffinity failed");
-		}
-		words *= 2;
-	}
-}
-#[cfg(not(target_os = "linux"))]
+/// Use the standard library's effective parallelism, including resource limits.
 pub fn available_cpus() -> Result<usize> {
 	Ok(std::thread::available_parallelism()?.get())
 }

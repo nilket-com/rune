@@ -1,4 +1,12 @@
 //! Script and native providers of the same plain method name.
+
+#[cfg(miri)]
+macro_rules! miri_rows {
+	($helper:ident; $($name:ident => $row:expr),+ $(,)?) => {
+		$(#[test] fn $name() { $helper($row); })+
+	};
+}
+
 use super::*;
 use crate::experimental_core::{
 	execute::Executor,
@@ -78,47 +86,67 @@ fn legacy_contract() {
 	}
 }
 
+#[cfg(not(miri))]
 #[test]
 fn mixed_providers() {
-	for &(source, expected) in CASES {
-		let context = Context::with_default_modules().unwrap();
-		let mut sources = Sources::new();
-		sources
-			.insert(crate::Source::memory(source).unwrap())
-			.unwrap();
-		let program = super::compile(&mut sources, &context, &mut Diagnostics::new(), 18).unwrap();
-		use crate::TypeHash;
-		assert!(program
-			.function(Hash::associated_function(
-				<Option<crate::runtime::Value>>::HASH,
-				Hash::ident("unwrap")
-			))
-			.is_none());
-		let mut store = Store::new(Limits::default()).unwrap();
-		let mut executor = Executor::new().unwrap();
-		executor
-			.set_host_runtime(Some(
-				crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
-			))
-			.unwrap();
-		let root = executor
-			.invoke(
-				&program,
-				&mut store,
-				program.function(Hash::type_hash(["main"])).unwrap(),
-				&[],
-				100000,
-			)
-			.unwrap();
-		let crate::experimental_core::value::Value::I64(got) = store.import(&root).unwrap() else {
-			panic!("expected i64")
-		};
-		assert_eq!(got, expected, "{source}");
-		store.root_release(root).unwrap();
-		assert!(executor.is_idle());
-		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	for row in 0..9 {
+		mixed_provider_case(row);
 	}
 }
+
+fn mixed_provider_case(row: usize) {
+	let (source, expected) = CASES[row];
+
+	let context = Context::with_default_modules().unwrap();
+	let mut sources = Sources::new();
+	sources
+		.insert(crate::Source::memory(source).unwrap())
+		.unwrap();
+	let program = super::compile(&mut sources, &context, &mut Diagnostics::new(), 18).unwrap();
+	use crate::TypeHash;
+	assert!(program
+		.function(Hash::associated_function(
+			<Option<crate::runtime::Value>>::HASH,
+			Hash::ident("unwrap")
+		))
+		.is_none());
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	executor
+		.set_host_runtime(Some(
+			crate::sync::Arc::try_new(context.runtime().unwrap()).unwrap(),
+		))
+		.unwrap();
+	let root = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["main"])).unwrap(),
+			&[],
+			100000,
+		)
+		.unwrap();
+	let crate::experimental_core::value::Value::I64(got) = store.import(&root).unwrap() else {
+		panic!("expected i64")
+	};
+	assert_eq!(got, expected, "{source}");
+	store.root_release(root).unwrap();
+	assert!(executor.is_idle());
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+}
+
+#[cfg(miri)]
+miri_rows!(mixed_provider_case;
+	mixed_providers__row_0 => 0,
+	mixed_providers__row_1 => 1,
+	mixed_providers__row_2 => 2,
+	mixed_providers__row_3 => 3,
+	mixed_providers__row_4 => 4,
+	mixed_providers__row_5 => 5,
+	mixed_providers__row_6 => 6,
+	mixed_providers__row_7 => 7,
+	mixed_providers__row_8 => 8
+);
 
 #[test]
 fn callable_split_remains_a_compile_time_refusal() {
@@ -147,64 +175,78 @@ fn callable_split_remains_a_compile_time_refusal() {
 	assert_eq!(error.refusal, Some(Refusal::Method));
 }
 
+#[cfg(not(miri))]
 #[test]
 fn native_string_function_argument_errors_match_stock() {
-	use crate::runtime::InvocationContext;
-	for pattern in ["|x|x", "{let n=1;move |x|x+n}"] {
-		let source = format!("struct H{{h}}impl H{{fn ends_with(self,a){{\"script\"}}}}pub fn main(){{\"abc\".ends_with({pattern})}}");
-		let context = Context::with_default_modules().unwrap();
-		let mut sources = Sources::new();
-		sources
-			.insert(crate::Source::memory(&source).unwrap())
-			.unwrap();
-		let mut vm = crate::prepare(&mut sources)
-			.with_context(&context)
-			.with_diagnostics(&mut Diagnostics::new())
-			.build_vm()
-			.unwrap();
-		let stock = vm.call(["main"], ()).unwrap_err();
-		let trace = stock.stacktrace().first().unwrap();
-		let legacy_span = trace
-			.unit
-			.debug_info()
-			.unwrap()
-			.instruction_at(trace.ip)
-			.unwrap()
-			.span
-			.range();
-		let mut sources = Sources::new();
-		sources
-			.insert(crate::Source::memory(&source).unwrap())
-			.unwrap();
-		let program = super::compile(&mut sources, &context, &mut Diagnostics::new(), 18).unwrap();
-		let mut store = Store::new(Limits::default()).unwrap();
-		let mut executor = Executor::new().unwrap();
-		let failure = executor
-			.invoke(
-				&program,
-				&mut store,
-				program.function(Hash::type_hash(["main"])).unwrap(),
-				&[],
-				10000,
-			)
-			.unwrap_err();
-		assert_eq!(
-			failure.message(&program).to_string(),
-			stock.error().kind().to_string()
-		);
-		let at = failure.error.location.unwrap();
-		assert_eq!(at.start as usize..at.end as usize, legacy_span);
-		assert!(failure.call_chain.is_empty());
-		let contexts = failure.invocation_context().collect::<std::vec::Vec<_>>();
-		assert!(matches!(
-			&contexts[..],
-			[InvocationContext::BadArgument { arg: 1 }]
-		));
-		assert!(failure.cleanup_error.is_none());
-		assert!(executor.is_idle());
-		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	for row in 0..2 {
+		native_string_argument_case(row);
 	}
 }
+
+fn native_string_argument_case(row: usize) {
+	use crate::runtime::InvocationContext;
+
+	let pattern = ["|x|x", "{let n=1;move |x|x+n}"][row];
+
+	let source = format!("struct H{{h}}impl H{{fn ends_with(self,a){{\"script\"}}}}pub fn main(){{\"abc\".ends_with({pattern})}}");
+	let context = Context::with_default_modules().unwrap();
+	let mut sources = Sources::new();
+	sources
+		.insert(crate::Source::memory(&source).unwrap())
+		.unwrap();
+	let mut vm = crate::prepare(&mut sources)
+		.with_context(&context)
+		.with_diagnostics(&mut Diagnostics::new())
+		.build_vm()
+		.unwrap();
+	let stock = vm.call(["main"], ()).unwrap_err();
+	let trace = stock.stacktrace().first().unwrap();
+	let legacy_span = trace
+		.unit
+		.debug_info()
+		.unwrap()
+		.instruction_at(trace.ip)
+		.unwrap()
+		.span
+		.range();
+	let mut sources = Sources::new();
+	sources
+		.insert(crate::Source::memory(&source).unwrap())
+		.unwrap();
+	let program = super::compile(&mut sources, &context, &mut Diagnostics::new(), 18).unwrap();
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let failure = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["main"])).unwrap(),
+			&[],
+			10000,
+		)
+		.unwrap_err();
+	assert_eq!(
+		failure.message(&program).to_string(),
+		stock.error().kind().to_string()
+	);
+	let at = failure.error.location.unwrap();
+	assert_eq!(at.start as usize..at.end as usize, legacy_span);
+	assert!(failure.call_chain.is_empty());
+	let contexts = failure.invocation_context().collect::<std::vec::Vec<_>>();
+	assert!(matches!(
+		&contexts[..],
+		[InvocationContext::BadArgument { arg: 1 }]
+	));
+	assert!(failure.cleanup_error.is_none());
+	assert!(executor.is_idle());
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+}
+
+#[cfg(miri)]
+miri_rows!(native_string_argument_case;
+	native_string_function_argument_errors_match_stock__row_0 => 0,
+	native_string_function_argument_errors_match_stock__row_1 => 1
+);
 
 #[test]
 fn native_provider_is_revalidated_before_execution() {
@@ -305,26 +347,58 @@ fn exact_parameter_skips_an_unrelated_unsupported_native_provider() {
 	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
 }
 
+#[cfg(not(miri))]
 #[test]
 fn failed_native_and_missing_calls_leave_executor_reusable() {
-	for source in [
+	for row in 0..3 {
+		failed_native_call_case(row);
+	}
+}
+
+fn failed_native_call_case(row: usize) {
+	let source = [
 		"struct S;impl S{fn unwrap(self){1}}fn f(x){x.unwrap()}pub fn main(){f(None)}pub fn again(){7}",
 		"struct S;impl S{fn unwrap(self){1}}fn f(x){x.unwrap()}pub fn main(){f(42)}pub fn again(){7}",
 		"struct S;impl S{fn is_some(self,x){x}}fn f(x){x.is_some(7)}pub fn main(){f(Some(1))}pub fn again(){7}",
-	] {
-		let context = Context::with_default_modules().unwrap();
-		let mut sources = Sources::new();
-		sources.insert(crate::Source::memory(source).unwrap()).unwrap();
-		let program = super::compile(&mut sources, &context, &mut Diagnostics::new(), 18).unwrap();
-		let mut store = Store::new(Limits::default()).unwrap();
-		let mut executor = Executor::new().unwrap();
-		let failure = executor.invoke(&program, &mut store, program.function(Hash::type_hash(["main"])).unwrap(), &[], 100000).unwrap_err();
-		assert_ne!(failure.error.kind, ErrorKind::InvalidCode, "{source}");
-		assert!(failure.cleanup_error.is_none());
-		assert!(executor.is_idle());
-		assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
-		let root = executor.invoke(&program, &mut store, program.function(Hash::type_hash(["again"])).unwrap(), &[], 1000).unwrap();
-		store.root_release(root).unwrap();
-		assert_eq!(store.live_entries(), 0);
-	}
+	][row];
+
+	let context = Context::with_default_modules().unwrap();
+	let mut sources = Sources::new();
+	sources
+		.insert(crate::Source::memory(source).unwrap())
+		.unwrap();
+	let program = super::compile(&mut sources, &context, &mut Diagnostics::new(), 18).unwrap();
+	let mut store = Store::new(Limits::default()).unwrap();
+	let mut executor = Executor::new().unwrap();
+	let failure = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["main"])).unwrap(),
+			&[],
+			100000,
+		)
+		.unwrap_err();
+	assert_ne!(failure.error.kind, ErrorKind::InvalidCode, "{source}");
+	assert!(failure.cleanup_error.is_none());
+	assert!(executor.is_idle());
+	assert_eq!((store.live_entries(), store.payload_bytes()), (0, 0));
+	let root = executor
+		.invoke(
+			&program,
+			&mut store,
+			program.function(Hash::type_hash(["again"])).unwrap(),
+			&[],
+			1000,
+		)
+		.unwrap();
+	store.root_release(root).unwrap();
+	assert_eq!(store.live_entries(), 0);
 }
+
+#[cfg(miri)]
+miri_rows!(failed_native_call_case;
+	failed_native_and_missing_calls_leave_executor_reusable__row_0 => 0,
+	failed_native_and_missing_calls_leave_executor_reusable__row_1 => 1,
+	failed_native_and_missing_calls_leave_executor_reusable__row_2 => 2
+);

@@ -22,11 +22,37 @@ executables and verify the Rune compilation units' source directories in DWARF.
 Suite and overall `RESULT.json` files report acceptance or retain the failure.
 A failed output directory is evidence; use a new directory for another attempt.
 
-`--workers` bounds independent suites. Its product with the larger of `--jobs`
-and `--test-threads` must fit the process's available CPUs. Miri
-starts only after all selected native suites finish and runs at most two actual
-interpreters. The runner blocks on process completion; it does not poll process
-status. Existing host scheduling and measurement locks still apply.
+The verifier runs on the machine where it is invoked. Pool defaults come from
+`std::thread::available_parallelism()`: native jobs, Cargo jobs and native test
+threads share one CPU budget/jobserver. Miri uses the reviewed general memory
+policy `max(1, N / 4)`. Explicit `--workers`, `--jobs` and `--test-threads` are
+upper bounds. A native library uses the available reserved slots as its actual
+libtest thread count, so it can start alongside Miri without waiting for all
+interpreters to finish. Explicit exclusive cases keep their full reservation.
+
+Independent jobs run longest estimated first. The local job list splits the
+98 Miri rows (the same 78 parent witnesses), contract cases/bundle, native
+libraries/docs and all 60 AWFY observations. Failure/reuse sequences remain
+inside their original row. Each Miri parent shares its original deadline,
+starting only after its first CPU admission, and its rows use the same local
+prepared state. Builds coalesce by complete inputs within this invocation.
+`TASKS.json` and per-job receipts identify exactly what ran. Suite validators
+still require all original selected/pass counts, comparisons and trace proof.
+Miri overlaps native work; there is no first-pair or two-interpreter barrier.
+
+Havlak-2 has an approved 1200-second CPU hang guard and a 3600-second wall
+cleanup bound on every engine/control observation. Standalone measured CPU
+costs were 250.94 seconds legacy and 257.53 fresh. These are hang guards, not
+performance assertions. Other AWFY bounds and all comparisons are unchanged.
+The large whole-machine AWFY isolation cohort has been removed.
+
+`--cold` records explicit cold execution. There is no semantic pass cache:
+every required job executes, and each output directory is new. Acceptance uses
+one fresh clone with empty project targets and reports its wall time; there is
+no under-30-minute gate. Cache work is deferred. Launch supervision, memory
+ceilings and exit notifications belong to operator tooling outside Rune.
+The runner blocks on child waits and condition variables, without progress
+polling or progress watchers.
 
 The L1 suite compares the checked-in programs on both engines, with native
 code disabled and enabled. Both children

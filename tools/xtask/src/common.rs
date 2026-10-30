@@ -10,7 +10,7 @@ use std::{
 	io::{Read, Write},
 	path::{Path, PathBuf},
 	process::{Command, Stdio},
-	sync::{Arc, Mutex},
+	sync::{Arc, Mutex, OnceLock},
 	time::{Instant, SystemTime, UNIX_EPOCH},
 };
 pub type Result<T> = anyhow::Result<T>;
@@ -25,8 +25,14 @@ pub struct Context {
 	pub toolchain: String,
 	pub jobs: usize,
 	pub test_threads: usize,
-	builds: Arc<Mutex<BTreeMap<String, Build>>>,
+	builds: Arc<Mutex<BTreeMap<String, Arc<BuildSlot>>>>,
+	aliases: Arc<Mutex<BTreeMap<String, String>>>,
+	pub budget: Arc<crate::scheduler::Budget>,
+	native_events: Arc<Mutex<Vec<serde_json::Value>>>,
 	source: Arc<Source>,
+}
+struct BuildSlot {
+	value: OnceLock<std::result::Result<Build, String>>,
 }
 struct Build {
 	features: String,
@@ -223,8 +229,8 @@ impl Context {
 		write_json(
 			&out.join("TOOL.json"),
 			&json!({"schema":1,"executable":executable,
-            "sha256":hash_file(&executable)?,"revision":env!("XTASK_REVISION"),
-            "dirty":env!("XTASK_DIRTY"),"version":env!("CARGO_PKG_VERSION")}),
+			"sha256":hash_file(&executable)?,"revision":env!("XTASK_REVISION"),
+			"dirty":env!("XTASK_DIRTY"),"version":env!("CARGO_PKG_VERSION")}),
 		)?;
 		Ok(Self {
 			repo,
@@ -233,8 +239,11 @@ impl Context {
 			out,
 			toolchain,
 			jobs,
-			test_threads,
+			test_threads: test_threads.min(crate::hosts::available_cpus()?.min(jobs)),
 			builds: Arc::new(Mutex::new(BTreeMap::new())),
+			aliases: Arc::new(Mutex::new(BTreeMap::new())),
+			budget: crate::scheduler::Budget::new(crate::hosts::available_cpus()?.min(jobs))?,
+			native_events: Arc::new(Mutex::new(Vec::new())),
 			source,
 		})
 	}
@@ -254,8 +263,12 @@ impl Context {
 			.builds
 			.lock()
 			.map_err(|_| anyhow::anyhow!("build cache poisoned"))?;
-		for build in cache.values() {
-			build.verify()?;
+		let slots: Vec<_> = cache.values().cloned().collect();
+		drop(cache);
+		for slot in slots {
+			if let Some(Ok(build)) = slot.value.get() {
+				build.verify()?;
+			}
 		}
 		Ok(())
 	}
@@ -267,7 +280,6 @@ impl Context {
 		command
 			.arg(format!("+{toolchain}"))
 			.current_dir(&self.repo)
-			.env("CARGO_BUILD_JOBS", self.jobs.to_string())
 			.env("CARGO_INCREMENTAL", "0")
 			.env("CARGO_PROFILE_DEV_DEBUG", "2")
 			.env("CARGO_PROFILE_TEST_DEBUG", "2")
@@ -284,10 +296,83 @@ impl Context {
 		command: &mut Command,
 		timeout_secs: f64,
 	) -> Result<Run> {
+		self.run_with_admission(label, command, timeout_secs, || None, None)
+	}
+
+	pub fn run_with_deadline(
+		&self,
+		label: &str,
+		command: &mut Command,
+		timeout_secs: f64,
+		deadline: impl FnOnce() -> Instant,
+	) -> Result<Run> {
+		self.run_with_admission(label, command, timeout_secs, || Some(deadline()), None)
+	}
+	pub fn run_exclusive(
+		&self,
+		label: &str,
+		command: &mut Command,
+		timeout_secs: u64,
+	) -> Result<Run> {
+		self.run_with_admission(
+			label,
+			command,
+			timeout_secs as f64,
+			|| None,
+			Some(self.budget.capacity()),
+		)
+	}
+	fn run_with_admission(
+		&self,
+		label: &str,
+		command: &mut Command,
+		timeout_secs: f64,
+		deadline: impl FnOnce() -> Option<Instant>,
+		reservation: Option<usize>,
+	) -> Result<Run> {
 		valid_label(label)?;
 		ensure!(
 			timeout_secs.is_finite() && timeout_secs > 0.0,
 			"timeout must be finite and positive"
+		);
+		let args_for_budget: Vec<_> = command.get_args().map(|x| x.to_string_lossy()).collect();
+		let cargo = command.get_program().to_string_lossy().ends_with("cargo")
+			|| args_for_budget
+				.iter()
+				.any(|x| x.ends_with("/cargo") || x == "cargo");
+		let slots = reservation.unwrap_or_else(|| {
+			if cargo {
+				1
+			} else {
+				args_for_budget
+					.iter()
+					.find_map(|x| {
+						x.strip_prefix("--test-threads=")
+							.and_then(|n| n.parse::<usize>().ok())
+					})
+					.unwrap_or(1)
+					.min(self.budget.capacity())
+			}
+		});
+		let adaptive = reservation.is_none() && !cargo && slots > 1;
+		let permit = if adaptive {
+			self.budget.acquire_up_to(label, slots)?
+		} else {
+			self.budget.acquire(label, slots)?
+		};
+		let effective_slots = permit.slots();
+		let timeout_secs = if let Some(deadline) = deadline() {
+			timeout_secs.min(
+				deadline
+					.saturating_duration_since(Instant::now())
+					.as_secs_f64(),
+			)
+		} else {
+			timeout_secs
+		};
+		ensure!(
+			timeout_secs > 0.0,
+			"job deadline expired while waiting for CPU slots: {label}"
 		);
 		let stdout = self.out.join(format!("{label}.stdout"));
 		let stderr = self.out.join(format!("{label}.stderr"));
@@ -306,7 +391,16 @@ impl Context {
 			.create_new(true)
 			.open(&stderr)?;
 		let program = command.get_program().to_os_string();
-		let args: Vec<OsString> = command.get_args().map(Into::into).collect();
+		let args: Vec<OsString> = command
+			.get_args()
+			.map(|arg| {
+				if adaptive && arg.to_string_lossy().starts_with("--test-threads=") {
+					OsString::from(format!("--test-threads={effective_slots}"))
+				} else {
+					arg.into()
+				}
+			})
+			.collect();
 		let environment: Vec<(OsString, Option<OsString>)> = command
 			.get_envs()
 			.map(|(k, v)| (k.to_os_string(), v.map(Into::into)))
@@ -315,8 +409,19 @@ impl Context {
 			.get_current_dir()
 			.unwrap_or(&self.repo)
 			.to_path_buf();
-		// timeout owns a process group and blocks; no process-status polling loop.
-		let mut child = Command::new("/usr/bin/timeout");
+		let resources = self.out.join(format!("{label}.resources"));
+		ensure!(!resources.exists(), "resource receipt already exists");
+		let native = program.to_string_lossy().ends_with("rune-tests")
+			|| args
+				.iter()
+				.any(|arg| arg.to_string_lossy().ends_with("/rune-tests"));
+		let trace_prefix = self.out.join(format!("{label}.native.trace"));
+		// time collects kernel resource usage only after wait; timeout owns the process group.
+		let mut child = Command::new("/usr/bin/time");
+		child
+			.args(["-q", "-f", "%M %U %S", "-o"])
+			.arg(&resources)
+			.arg("/usr/bin/timeout");
 		child.env_clear();
 		for key in ["PATH", "HOME", "CARGO_HOME", "RUSTUP_HOME", "TMPDIR"] {
 			if let Some(value) = std::env::var_os(key) {
@@ -325,7 +430,22 @@ impl Context {
 		}
 		child
 			.args(["--signal=TERM", "--kill-after=5s"])
-			.arg(format!("{timeout_secs}s"))
+			.arg(format!("{timeout_secs}s"));
+		if native {
+			child
+				.args([
+					"/usr/bin/strace",
+					"--seccomp-bpf",
+					"-q",
+					"-ff",
+					"-ttt",
+					"-e",
+					"trace=execve,exit_group",
+					"-o",
+				])
+				.arg(&trace_prefix);
+		}
+		child
 			.arg(&program)
 			.args(&args)
 			.current_dir(&cwd)
@@ -343,6 +463,10 @@ impl Context {
 			}
 		}
 		child.env("LANG", "C.UTF-8").env("TZ", "UTC");
+		if cargo {
+			child.env_remove("CARGO_BUILD_JOBS");
+			self.budget.configure(&mut child);
+		}
 		let effective_environment: Vec<(OsString, OsString)> = child
 			.get_envs()
 			.filter_map(|(key, value)| {
@@ -351,18 +475,47 @@ impl Context {
 			.collect();
 		let start = Instant::now();
 		let epoch = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs_f64();
-		let result = child.status();
+		let (result, pid) = match child.spawn() {
+			Ok(mut process) => {
+				let pid = process.id();
+				(process.wait(), Some(pid))
+			}
+			Err(error) => (Err(error), None),
+		};
 		let seconds = start.elapsed().as_secs_f64();
 		let (code, spawn_error) = match result {
 			Ok(status) => (status.code().unwrap_or(-1), None),
 			Err(error) => (-1, Some(error.to_string())),
 		};
+		if cargo && code != 0 {
+			self.budget.abort();
+		}
+		let resource_usage=fs::read_to_string(&resources).ok().and_then(|text|{
+			let fields:Vec<_>=text.lines().last()?.split_whitespace().collect();
+			if fields.len()!=3{return None;}
+			Some(json!({"peak_individual_rss_kib":fields[0].parse::<u64>().ok()?,"user_seconds":fields[1].parse::<f64>().ok()?,"system_seconds":fields[2].parse::<f64>().ok()?}))
+		});
+		if code == 0 {
+			ensure!(
+				resource_usage.is_some(),
+				"missing terminal resource observation: {label}"
+			);
+		}
+		let native_intervals = if native {
+			crate::miri::native_intervals(&self.out, label)?
+		} else {
+			Vec::new()
+		};
+		self.native_events
+			.lock()
+			.map_err(|_| anyhow::anyhow!("native event lock poisoned"))?
+			.extend(native_intervals.iter().cloned());
 		write_json(
 			&receipt,
-			&json!({"schema":1,"program":program,"args":args,"cwd":cwd,
-            "environment":effective_environment,"environment_overrides":environment,"start_epoch":epoch,"timeout_seconds":timeout_secs,
-            "seconds":seconds,"code":code,"spawn_error":spawn_error,
-            "stdout":stdout,"stdout_sha256":hash_file(&stdout)?,"stderr":stderr,"stderr_sha256":hash_file(&stderr)?}),
+			&json!({"schema":1,"requested_cpu_slots":slots,"effective_cpu_slots":effective_slots,"pid":pid,"resources":resources,"resource_usage":resource_usage,"native_intervals":native_intervals,"program":program,"args":args,"cwd":cwd,
+			"environment":effective_environment,"environment_overrides":environment,"start_epoch":epoch,"timeout_seconds":timeout_secs,
+			"seconds":seconds,"code":code,"spawn_error":spawn_error,
+			"stdout":stdout,"stdout_sha256":hash_file(&stdout)?,"stderr":stderr,"stderr_sha256":hash_file(&stderr)?}),
 		)?;
 		Ok(Run {
 			code,
@@ -383,10 +536,18 @@ impl Context {
 		);
 		Ok(run)
 	}
+	pub fn native_intervals(&self) -> Result<Vec<serde_json::Value>> {
+		Ok(self
+			.native_events
+			.lock()
+			.map_err(|_| anyhow::anyhow!("native event lock poisoned"))?
+			.clone())
+	}
 	pub fn binary_receipt(&self, profile: &str) -> PathBuf {
+		let aliases = self.aliases.lock().expect("build alias lock poisoned");
 		self.root_out
 			.join("build")
-			.join(profile)
+			.join(aliases.get(profile).map(String::as_str).unwrap_or(profile))
 			.join("BINARY.json")
 	}
 	pub fn test_binary_receipt(&self) -> Result<PathBuf> {
@@ -398,20 +559,50 @@ impl Context {
 	}
 	pub fn build_rune(&self, profile: &str, features: &str) -> Result<PathBuf> {
 		valid_label(profile)?;
-		let mut cache = self
-			.builds
-			.lock()
-			.map_err(|_| anyhow::anyhow!("build cache poisoned"))?;
-		if let Some(build) = cache.get(profile) {
-			ensure!(
-				build.features == features,
-				"profile reused with different features: {profile}"
-			);
-			build.verify()?;
-			return Ok(build.binary.clone());
+		let key = hash_bytes(&serde_json::to_vec(&json!({
+			"source":self.source.files,"repo":self.repo,"toolchain":self.toolchain,
+			"features":features,"package":"rune","lib":true,"debug":2,"incremental":false,
+			"target":std::env::consts::ARCH,"profile":"test"
+		}))?);
+		{
+			let mut aliases = self
+				.aliases
+				.lock()
+				.map_err(|_| anyhow::anyhow!("build alias lock poisoned"))?;
+			if let Some(old) = aliases.get(profile) {
+				ensure!(
+					old == &key,
+					"profile reused with different inputs: {profile}"
+				);
+			}
+			aliases.insert(profile.to_owned(), key.clone());
 		}
+		let slot = {
+			let mut cache = self
+				.builds
+				.lock()
+				.map_err(|_| anyhow::anyhow!("build cache poisoned"))?;
+			cache
+				.entry(key.clone())
+				.or_insert_with(|| {
+					Arc::new(BuildSlot {
+						value: OnceLock::new(),
+					})
+				})
+				.clone()
+		};
+		let result = slot.value.get_or_init(|| {
+			self.build_rune_once(profile, features, &key)
+				.map_err(|e| format!("{e:#}"))
+		});
+		let build = result.as_ref().map_err(|e| anyhow::anyhow!(e.clone()))?;
+		ensure!(build.features == features, "build feature identity changed");
+		build.verify()?;
+		Ok(build.binary.clone())
+	}
+	fn build_rune_once(&self, profile: &str, features: &str, key: &str) -> Result<Build> {
 		self.source.verify()?;
-		let build_dir = self.root_out.join("build").join(profile);
+		let build_dir = self.root_out.join("build").join(key);
 		fs::create_dir_all(build_dir.parent().unwrap())?;
 		fs::create_dir(&build_dir)?;
 		let mut ctx = self.clone();
@@ -429,10 +620,7 @@ impl Context {
 				"--no-run",
 				"--message-format=json",
 			])
-			.env(
-				"CARGO_TARGET_DIR",
-				self.root_out.join("targets").join(profile),
-			);
+			.env("CARGO_TARGET_DIR", self.root_out.join("targets").join(key));
 		let run = ctx.checked("cargo", &mut command, 3600)?;
 		let mut binaries = Vec::new();
 		for line in fs::read_to_string(&run.stdout)?.lines() {
@@ -464,9 +652,9 @@ impl Context {
 		write_json(
 			&self.binary_receipt(profile),
 			&json!({"status":"PASS","binary":binary,"path":binary,
-            "binary_sha256":hash_file(&binary)?,"sha256":hash_file(&binary)?,"source":self.repo,
-            "expected_repo":self.repo,"units":units,"features":features,"toolchain":self.toolchain,
-            "dwarf_dump":dump.stdout,"dwarf_dump_sha256":hash_file(&dump.stdout)?,"source_manifest":self.root_out.join("SOURCE.json")}),
+			"binary_sha256":hash_file(&binary)?,"sha256":hash_file(&binary)?,"source":self.repo,
+			"expected_repo":self.repo,"units":units,"features":features,"toolchain":self.toolchain,
+			"dwarf_dump":dump.stdout,"dwarf_dump_sha256":hash_file(&dump.stdout)?,"source_manifest":self.root_out.join("SOURCE.json")}),
 		)?;
 		self.source.verify()?;
 		let receipt = self.binary_receipt(profile);
@@ -480,8 +668,7 @@ impl Context {
 			dwarf: dump.stdout,
 		};
 		build.verify()?;
-		cache.insert(profile.to_owned(), build);
-		Ok(binary)
+		Ok(build)
 	}
 }
 // Resolve existing symlinks before creating any directory. Missing suffixes are
@@ -677,7 +864,14 @@ mod tests {
 			dwarf_sha256: hash_file(&dwarf).unwrap(),
 			dwarf: dwarf.clone(),
 		};
-		ctx.builds.lock().unwrap().insert("test".into(), build);
+		let slot = BuildSlot {
+			value: OnceLock::new(),
+		};
+		assert!(slot.value.set(Ok(build)).is_ok());
+		ctx.builds
+			.lock()
+			.unwrap()
+			.insert("test".into(), Arc::new(slot));
 		assert!(ctx.verify_binaries().is_ok());
 		for path in [&binary, &receipt, &dwarf] {
 			fs::write(path, b"changed").unwrap();
@@ -686,6 +880,107 @@ mod tests {
 		}
 		assert!(ctx.verify_binaries().is_ok());
 	}
+	#[test]
+	fn admitted_native_threads_match_reserved_capacity() {
+		let tree = TestTree::new();
+		let mut ctx = tree.context();
+		ctx.budget = crate::scheduler::Budget::new(3).unwrap();
+		let interpreter = ctx.budget.acquire("interpreter", 1).unwrap();
+		let mut command = Command::new("/bin/echo");
+		command.arg("--test-threads=3");
+		let run = ctx.checked("adaptive-native", &mut command, 30).unwrap();
+		assert_eq!(
+			fs::read_to_string(run.stdout).unwrap(),
+			"--test-threads=2\n"
+		);
+		let receipt: serde_json::Value = read_json(&run.receipt).unwrap();
+		assert_eq!(receipt["requested_cpu_slots"], 3);
+		assert_eq!(receipt["effective_cpu_slots"], 2);
+		drop(interpreter);
+		let all = ctx.budget.acquire("all", 3).unwrap();
+		assert_eq!(all.slots(), 3);
+	}
+
+	#[test]
+	fn cargo_inherits_jobserver_through_timeout_and_resource_wrapper() {
+		use std::os::unix::fs::PermissionsExt;
+		let tree = TestTree::new();
+		let mut ctx = tree.context();
+		ctx.budget = crate::scheduler::Budget::new(2).unwrap();
+		let program = tree.0.join("cargo");
+		fs::write(&program,"#!/bin/sh\nexec \"$V4_PROBE\" --exact scheduler::tests::jobserver_child --ignored --nocapture --test-threads=1\n").unwrap();
+		fs::set_permissions(&program, fs::Permissions::from_mode(0o700)).unwrap();
+		let mut command = Command::new(program);
+		command
+			.env("V4_PROBE", std::env::current_exe().unwrap())
+			.env("V4_JOBSERVER_CHILD", "1");
+		let run = ctx.checked("shared-client", &mut command, 30).unwrap();
+		assert!(fs::read_to_string(run.stdout)
+			.unwrap()
+			.contains("SHARED_JOBSERVER_OK"));
+		let receipt: serde_json::Value = read_json(&run.receipt).unwrap();
+		assert!(receipt["resource_usage"]["peak_individual_rss_kib"].is_u64());
+		// A child that exits without RAII cleanup loses its borrowed token.
+		// Failure must cancel blocked/new launches, rather than waiting forever.
+		command.env("V4_EXIT_WITH_TOKEN", "1");
+		let failed = ctx.run("lost-child-token", &mut command, 30).unwrap();
+		assert_eq!(failed.code, 7);
+		assert!(ctx.budget.acquire("after-failed-cargo", 1).is_err());
+	}
+
+	#[test]
+	fn parent_deadline_starts_after_cpu_admission() {
+		let tree = TestTree::new();
+		let ctx = tree.context();
+		let held = ctx.budget.acquire("existing", 1).unwrap();
+		let (deadline_tx, deadline_rx) = std::sync::mpsc::channel();
+		std::thread::scope(|scope| {
+			let worker = scope.spawn(|| {
+				ctx.run_with_deadline("admitted", &mut Command::new("/bin/true"), 5.0, || {
+					deadline_tx.send(()).unwrap();
+					Instant::now() + std::time::Duration::from_secs(5)
+				})
+			});
+			assert!(matches!(
+				deadline_rx.recv_timeout(std::time::Duration::from_millis(25)),
+				Err(std::sync::mpsc::RecvTimeoutError::Timeout)
+			));
+			drop(held);
+			assert_eq!(worker.join().unwrap().unwrap().code, 0);
+			deadline_rx.recv().unwrap();
+		});
+	}
+
+	#[test]
+	fn actual_sandbox_wrappers_produce_one_native_exec_interval() {
+		use std::os::unix::fs::PermissionsExt;
+		let tree = TestTree::new();
+		let ctx = tree.context();
+		let binary = tree.0.join("rune-tests");
+		fs::write(&binary, "#!/bin/sh\nprintf NATIVE_WRAPPER_OK\n").unwrap();
+		fs::set_permissions(&binary, fs::Permissions::from_mode(0o700)).unwrap();
+		let mut command = Command::new("/usr/bin/prlimit");
+		command
+			.args([
+				"--core=0",
+				"--",
+				"/usr/bin/bwrap",
+				"--ro-bind",
+				"/",
+				"/",
+				"--",
+			])
+			.arg(&binary);
+		let run = ctx.checked("sandbox-exec", &mut command, 10).unwrap();
+		assert_eq!(
+			fs::read_to_string(&run.stdout).unwrap(),
+			"NATIVE_WRAPPER_OK"
+		);
+		let receipt: serde_json::Value = read_json(&run.receipt).unwrap();
+		assert_eq!(receipt["native_intervals"].as_array().unwrap().len(), 1);
+		assert_eq!(ctx.native_intervals().unwrap().len(), 1);
+	}
+
 	#[test]
 	fn dwarf_requires_expected_source_directory() {
 		let tree = TestTree::new();

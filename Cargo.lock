@@ -4248,6 +4248,7 @@ name = "xtask"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "jobserver",
  "regex",
  "serde",
  "serde_json",

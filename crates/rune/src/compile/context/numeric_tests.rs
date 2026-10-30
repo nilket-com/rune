@@ -13,7 +13,6 @@ struct Extra;
 #[rune(item = ::c6)]
 struct Missing;
 static INVOCATIONS: AtomicUsize = AtomicUsize::new(0);
-static REGISTRATIONS: AtomicUsize = AtomicUsize::new(0);
 fn forbidden(_: &Extra) -> f64 {
 	INVOCATIONS.fetch_add(1, Ordering::SeqCst);
 	panic!("C6 custom handler must not execute at compile time")
@@ -131,10 +130,12 @@ fn default_extension_trait_and_custom_first_contexts_preserve_exact_sets() {
 	let mut cx = Context::with_default_modules().unwrap();
 	let mut m = Module::with_item(["c6"]).unwrap();
 	m.ty::<Extra>().unwrap();
+	let registrations = std::sync::Arc::new(AtomicUsize::new(0));
+	let observed = registrations.clone();
 	m.define_trait(["RoundTrait"])
 		.unwrap()
-		.handler(|cx| {
-			REGISTRATIONS.fetch_add(1, Ordering::SeqCst);
+		.handler(move |cx| {
+			observed.fetch_add(1, Ordering::SeqCst);
 			cx.function("round", forbidden)?;
 			Ok(())
 		})
@@ -142,9 +143,9 @@ fn default_extension_trait_and_custom_first_contexts_preserve_exact_sets() {
 	let trait_item = m.item.join(["RoundTrait"]).unwrap();
 	m.implement_trait::<Extra>(&trait_item).unwrap();
 	cx.install(m).unwrap();
-	let before = REGISTRATIONS.load(Ordering::SeqCst);
+	let before = registrations.load(Ordering::SeqCst);
 	matrix(&cx, [true, false, true], [true; 4]);
-	assert_eq!(REGISTRATIONS.load(Ordering::SeqCst), before);
+	assert_eq!(registrations.load(Ordering::SeqCst), before);
 }
 #[test]
 #[cfg_attr(
@@ -416,7 +417,6 @@ fn cmp_i64_module(kind: CmpInstall) -> Module {
 			m.define_trait(["CmpShadow"])
 				.unwrap()
 				.handler(|cx| {
-					REGISTRATIONS.fetch_add(1, Ordering::SeqCst);
 					cx.function("cmp", cmp_forbidden_i64)?;
 					Ok(())
 				})

@@ -32,12 +32,20 @@ fn timestamp(line: &str) -> Result<u64> {
 		+ fraction.parse::<u64>()? * 10u64.pow((9 - fraction.len()) as u32))
 }
 pub fn intervals(dir: &Path, label: &str) -> Result<Vec<Interval>> {
-	let prefix = format!("{label}.trace.");
+	execution_intervals(dir, &format!("{label}.trace."), true)
+}
+pub fn native_intervals(dir: &Path, label: &str) -> Result<Vec<serde_json::Value>> {
+	execution_intervals(dir, &format!("{label}.native.trace."), false)?
+		.into_iter()
+		.map(|i| Ok(serde_json::to_value(i)?))
+		.collect()
+}
+fn execution_intervals(dir: &Path, prefix: &str, miri: bool) -> Result<Vec<Interval>> {
 	let mut out = Vec::new();
 	for entry in fs::read_dir(dir)? {
 		let path = entry?.path();
 		let name = path.file_name().context("trace name")?.to_string_lossy();
-		let Some(pid) = name.strip_prefix(&prefix) else {
+		let Some(pid) = name.strip_prefix(prefix) else {
 			continue;
 		};
 		let pid = pid.parse()?;
@@ -45,12 +53,19 @@ pub fn intervals(dir: &Path, label: &str) -> Result<Vec<Interval>> {
 		let mut start = None;
 		let mut end = None;
 		for line in text.lines() {
-			if line.contains("execve(")
-				&& line.contains("/miri\"")
-				&& line.contains("\"--test\"")
-				&& line.contains("\"--crate-name\"")
-				&& line.ends_with("= 0")
-			{
+			let executable = line
+				.split_once("execve(\"")
+				.and_then(|(_, rest)| rest.split_once('"').map(|(path, _)| path));
+			let selected = executable.is_some_and(|path| {
+				if miri {
+					path.ends_with("/miri")
+						&& line.contains("\"--test\"")
+						&& line.contains("\"--crate-name\"")
+				} else {
+					path.ends_with("/rune-tests")
+				}
+			});
+			if line.contains("execve(") && selected && line.ends_with("= 0") {
 				ensure!(
 					start.is_none(),
 					"multiple interpreter execs in {}",
@@ -97,7 +112,7 @@ fn maximum(intervals: &[Interval]) -> Result<usize> {
 	ensure!(active == 0, "unterminated interpreter");
 	Ok(maximum as usize)
 }
-pub fn proof(dir: &Path, labels: &[&str]) -> Result<Value> {
+pub fn proof(dir: &Path, labels: &[&str], capacity: usize) -> Result<Value> {
 	let mut all = Vec::new();
 	for label in labels {
 		let selected = intervals(dir, label)?;
@@ -108,7 +123,10 @@ pub fn proof(dir: &Path, labels: &[&str]) -> Result<Value> {
 		all.extend(selected);
 	}
 	let max = maximum(&all)?;
-	ensure!(max <= 2, "more than two actual Miri interpreters");
+	ensure!(
+		capacity > 0 && max <= capacity,
+		"actual Miri interpreters exceed declared CPU budget"
+	);
 	Ok(
 		json!({"maximum_actual_interpreters":max,"intervals":all,"method":"strace execve/exit_group terminal process events; ends sort before simultaneous starts"}),
 	)
@@ -204,5 +222,26 @@ mod tests {
 	#[test]
 	fn timestamp_is_integer_exact() {
 		assert_eq!(timestamp("123.000001 execve(").unwrap(), 123000001000);
+	}
+	#[test]
+	fn wrapper_arguments_are_not_executable_events() {
+		let root = std::env::temp_dir().join(format!("rune-native-trace-{}", std::process::id()));
+		fs::create_dir(&root).unwrap();
+		let path = root.join("wrapped.native.trace.123");
+		fs::write(
+			&path,
+			concat!(
+            "1.000001 execve(\"/usr/bin/prlimit\", [\"prlimit\", \"/tmp/rune-tests\"], 0x0) = 0\n",
+            "1.000002 execve(\"/usr/bin/bwrap\", [\"bwrap\", \"/tmp/rune-tests\"], 0x0) = 0\n",
+            "1.000003 execve(\"/tmp/rune-tests\", [\"rune-tests\"], 0x0) = 0\n",
+            "2.000001 exit_group(0) = ?\n"
+        ),
+		)
+		.unwrap();
+		let rows = execution_intervals(&root, "wrapped.native.trace.", false).unwrap();
+		assert_eq!(rows.len(), 1);
+		assert_eq!(rows[0].start_ns, 1_000_003_000);
+		assert_eq!(rows[0].end_ns, 2_000_001_000);
+		fs::remove_dir_all(root).unwrap();
 	}
 }

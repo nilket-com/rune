@@ -6,6 +6,8 @@ use anyhow::{ensure, Context as _};
 use serde_json::{json, Value};
 use std::{collections::BTreeMap, fs, path::Path, process::Command};
 
+type ChildObservation = (String, Vec<u8>, Vec<u8>, Option<Value>, Value);
+
 const CHILD: &str = "experimental_core::tests::gap_hunt::child";
 
 fn phase(record: &str) -> Result<[&str; 5]> {
@@ -19,7 +21,9 @@ fn decode_hex(text: &str) -> Result<String> {
 	ensure!(text.len().is_multiple_of(2), "invalid observation encoding");
 	let bytes = text
 		.as_bytes()
-		.chunks_exact(2)
+		.as_chunks::<2>()
+		.0
+		.iter()
 		.map(|part| u8::from_str_radix(std::str::from_utf8(part)?, 16).map_err(Into::into))
 		.collect::<Result<Vec<_>>>()?;
 	Ok(String::from_utf8(bytes)?)
@@ -103,6 +107,7 @@ fn opaque_function_debug(id: &str, legacy: &str, fresh: &str) -> bool {
 		&& new.is_some_and(|s| !s.is_empty() && s.bytes().all(|c| c.is_ascii_digit()))
 }
 
+#[allow(clippy::too_many_arguments)] // Paired observations retain the existing comparison boundary.
 fn classify(
 	id: &str,
 	mode: &str,
@@ -220,6 +225,7 @@ fn classify(
 	Ok("divergence".into())
 }
 
+#[allow(clippy::too_many_arguments)] // Keep the shared isolated child boundary explicit.
 fn invoke(
 	ctx: &Context,
 	binary: &Path,
@@ -229,13 +235,14 @@ fn invoke(
 	source: &str,
 	mode: &str,
 	engine: &str,
-) -> Result<(String, Vec<u8>, Vec<u8>, Option<Value>, Value)> {
+) -> Result<ChildObservation> {
 	invoke_child(
 		ctx, binary, corpus, case_dir, id, source, mode, engine, CHILD,
 	)
 }
 
 /// The common isolated process boundary for semantic and work observations.
+#[allow(clippy::too_many_arguments)]
 pub(super) fn invoke_child(
 	ctx: &Context,
 	binary: &Path,
@@ -246,7 +253,7 @@ pub(super) fn invoke_child(
 	mode: &str,
 	engine: &str,
 	child: &str,
-) -> Result<(String, Vec<u8>, Vec<u8>, Option<Value>, Value)> {
+) -> Result<ChildObservation> {
 	let output = case_dir.join(engine);
 	fs::create_dir(&output)?;
 	let sandbox_source = format!("/corpus/{source}");
@@ -399,7 +406,7 @@ pub(super) fn run_with_binary(ctx: &Context, binary: &Path) -> Result<Value> {
 							f.4
 						);
 					}
-					Ok(classify(
+					classify(
 						id,
 						kind,
 						&s.0,
@@ -410,7 +417,7 @@ pub(super) fn run_with_binary(ctx: &Context, binary: &Path) -> Result<Value> {
 						&f.2,
 						s.3.as_ref(),
 						f.3.as_ref(),
-					)?)
+					)
 				})();
 				let class = match result {
 					Ok(class) => class,
